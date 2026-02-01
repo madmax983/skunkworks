@@ -107,7 +107,12 @@ impl Universe {
             1 => {
                 // Bottom edge
                 let x = rng.gen_range(0.0..self.width);
-                (x, self.height, rng.gen_range(-0.3..0.3), rng.gen_range(-0.5..-0.2))
+                (
+                    x,
+                    self.height,
+                    rng.gen_range(-0.3..0.3),
+                    rng.gen_range(-0.5..-0.2),
+                )
             }
             2 => {
                 // Left edge
@@ -117,7 +122,12 @@ impl Universe {
             _ => {
                 // Right edge
                 let y = rng.gen_range(0.0..self.height);
-                (self.width, y, rng.gen_range(-0.5..-0.2), rng.gen_range(-0.3..0.3))
+                (
+                    self.width,
+                    y,
+                    rng.gen_range(-0.5..-0.2),
+                    rng.gen_range(-0.3..0.3),
+                )
             }
         };
 
@@ -282,8 +292,16 @@ impl SemanticState for Universe {
         // Add available actions
         snap = snap
             .with_action(Action::new("quit").key("q").describe("Exit the simulation"))
-            .with_action(Action::new("reset").key("r").describe("Reset with new random wells"))
-            .with_action(Action::new("toggle_pause").key("space").describe("Pause/resume simulation"));
+            .with_action(
+                Action::new("reset")
+                    .key("r")
+                    .describe("Reset with new random wells"),
+            )
+            .with_action(
+                Action::new("toggle_pause")
+                    .key("space")
+                    .describe("Pause/resume simulation"),
+            );
 
         snap
     }

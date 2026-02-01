@@ -69,7 +69,11 @@ fn run<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
             let block = Block::default()
                 .borders(Borders::ALL)
                 .title(" Orbital Decay ")
-                .title_style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD));
+                .title_style(
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                );
 
             let inner = block.inner(chunks[0]);
             f.render_widget(block, chunks[0]);
@@ -78,15 +82,19 @@ fn run<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
             universe.width = inner.width as f64;
             universe.height = inner.height as f64;
 
-            f.render_widget(UniverseWidget { universe: &universe }, inner);
+            f.render_widget(
+                UniverseWidget {
+                    universe: &universe,
+                },
+                inner,
+            );
 
             let status = format!(
                 " [Q]uit | [R]eset | [D]ump | [Space] {} | Absorbed: {} ",
                 if paused { "Resume" } else { "Pause" },
                 universe.absorbed_count
             );
-            let status_bar = Paragraph::new(status)
-                .style(Style::default().fg(Color::DarkGray));
+            let status_bar = Paragraph::new(status).style(Style::default().fg(Color::DarkGray));
             f.render_widget(status_bar, chunks[1]);
         })?;
 
@@ -147,8 +155,11 @@ impl Widget for UniverseWidget<'_> {
                 if x < area.width && y < area.height {
                     let intensity = (i as f32 / particle.trail.len() as f32 * 155.0) as u8 + 40;
                     if let Some(cell) = buf.cell_mut((area.left() + x, area.top() + y)) {
-                        cell.set_char('·')
-                            .set_fg(Color::Rgb(intensity / 2, intensity / 2, intensity));
+                        cell.set_char('·').set_fg(Color::Rgb(
+                            intensity / 2,
+                            intensity / 2,
+                            intensity,
+                        ));
                     }
                 }
             }
@@ -189,9 +200,14 @@ impl Widget for UniverseWidget<'_> {
                             let gy = (y as i16 + dy) as u16;
                             if gx < area.width && gy < area.height {
                                 let intensity = ((1.0 - dist / glow_radius as f64) * 100.0) as u8;
-                                if let Some(cell) = buf.cell_mut((area.left() + gx, area.top() + gy)) {
-                                    cell.set_char('░')
-                                        .set_fg(Color::Rgb(intensity + 50, intensity / 2, intensity + 80));
+                                if let Some(cell) =
+                                    buf.cell_mut((area.left() + gx, area.top() + gy))
+                                {
+                                    cell.set_char('░').set_fg(Color::Rgb(
+                                        intensity + 50,
+                                        intensity / 2,
+                                        intensity + 80,
+                                    ));
                                 }
                             }
                         }
@@ -199,8 +215,11 @@ impl Widget for UniverseWidget<'_> {
                 }
                 // Well center
                 if let Some(cell) = buf.cell_mut((area.left() + x, area.top() + y)) {
-                    cell.set_char(well.char)
-                        .set_style(Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD));
+                    cell.set_char(well.char).set_style(
+                        Style::default()
+                            .fg(Color::Magenta)
+                            .add_modifier(Modifier::BOLD),
+                    );
                 }
             }
         }

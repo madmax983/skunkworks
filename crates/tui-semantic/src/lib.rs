@@ -106,28 +106,44 @@ pub enum PropValue {
 }
 
 impl From<i32> for PropValue {
-    fn from(v: i32) -> Self { PropValue::Int(v as i64) }
+    fn from(v: i32) -> Self {
+        PropValue::Int(v as i64)
+    }
 }
 impl From<i64> for PropValue {
-    fn from(v: i64) -> Self { PropValue::Int(v) }
+    fn from(v: i64) -> Self {
+        PropValue::Int(v)
+    }
 }
 impl From<usize> for PropValue {
-    fn from(v: usize) -> Self { PropValue::Int(v as i64) }
+    fn from(v: usize) -> Self {
+        PropValue::Int(v as i64)
+    }
 }
 impl From<f64> for PropValue {
-    fn from(v: f64) -> Self { PropValue::Float(v) }
+    fn from(v: f64) -> Self {
+        PropValue::Float(v)
+    }
 }
 impl From<f32> for PropValue {
-    fn from(v: f32) -> Self { PropValue::Float(v as f64) }
+    fn from(v: f32) -> Self {
+        PropValue::Float(v as f64)
+    }
 }
 impl From<bool> for PropValue {
-    fn from(v: bool) -> Self { PropValue::Bool(v) }
+    fn from(v: bool) -> Self {
+        PropValue::Bool(v)
+    }
 }
 impl From<&str> for PropValue {
-    fn from(v: &str) -> Self { PropValue::Text(v.to_string()) }
+    fn from(v: &str) -> Self {
+        PropValue::Text(v.to_string())
+    }
 }
 impl From<String> for PropValue {
-    fn from(v: String) -> Self { PropValue::Text(v) }
+    fn from(v: String) -> Self {
+        PropValue::Text(v)
+    }
 }
 
 /// A rectangular region of interest

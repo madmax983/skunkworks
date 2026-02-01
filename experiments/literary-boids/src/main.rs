@@ -19,6 +19,8 @@ use ratatui::{
 pub mod boid;
 #[cfg(feature = "nova")]
 pub mod syntax_physics;
+#[cfg(feature = "nova")]
+pub mod traces;
 pub mod world;
 
 use world::World;
@@ -49,6 +51,8 @@ fn main() -> Result<()> {
 struct App {
     world: World,
     running: bool,
+    #[cfg(feature = "nova")]
+    traces: traces::TraceLayer,
 }
 
 impl App {
@@ -58,11 +62,31 @@ impl App {
         Self {
             world: World::new(width, height, text),
             running: true,
+            #[cfg(feature = "nova")]
+            traces: traces::TraceLayer::new(500),
         }
     }
 
     fn on_tick(&mut self) {
         self.world.update();
+
+        #[cfg(feature = "nova")]
+        {
+            use rand::Rng;
+            let mut rng = rand::thread_rng();
+            for boid in &self.world.boids {
+                // 2% chance per tick to leave a trace
+                if rng.gen_bool(0.02) {
+                    self.traces.add(traces::Trace {
+                        position: boid.position,
+                        content: boid.dna.char_representation,
+                        color: boid.dna.color,
+                        lifetime: 100.0,
+                    });
+                }
+            }
+            self.traces.update();
+        }
     }
 }
 
@@ -126,6 +150,9 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         .x_bounds([0.0, app.world.width])
         .y_bounds([0.0, app.world.height])
         .paint(|ctx| {
+            #[cfg(feature = "nova")]
+            app.traces.draw(ctx);
+
             // Draw Food
             for food in &app.world.food {
                 ctx.print(

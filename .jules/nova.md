@@ -57,3 +57,8 @@
 **Concept:** A new mutation layer for Literary Boids where eating characters physically alters the boid's physics engine (e.g., 'A' increases view radius, uppercase increases speed).
 **Fate:** Merged
 **Lesson:** Feature flags are excellent for hiding experimental mechanics without breaking core simulation logic.
+
+## [Poetic Traces]
+**Concept:** Boids in the Literary Boids experiment leave fading traces of the characters they carry, creating a visual history or "manuscript" of their movement on the canvas.
+**Fate:** Merged
+**Lesson:** Adding a background layer to a `ratatui` Canvas enriches the visualization without interfering with the active agents.
