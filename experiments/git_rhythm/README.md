@@ -10,11 +10,12 @@ To generate a narrative from your git history, use the Nova engine:
 
 ```rust
 // examples/story_demo.rs
+// Run with: cargo run --features nova --example story_demo
 use git_rhythm::nova::NarrativeGenerator;
 
 fn main() {
-     let gen = NarrativeGenerator::new();
-     println!("{}", gen.generate("start"));
+     let generator = NarrativeGenerator::new();
+     println!("{}", generator.generate("start"));
 }
 ```
 
