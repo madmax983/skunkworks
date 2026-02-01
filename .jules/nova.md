@@ -42,3 +42,8 @@
 **Concept:** A TUI-based neural network visualization that trains a simple MLP on a 2D classification problem in real-time.
 **Fate:** Merged
 **Lesson:** Visualizing the decision boundary on a grid requires careful optimization or subsampling to maintain frame rates in a TUI. Pure Rust ML from scratch is viable for simple visualizations.
+
+## [Sculpt Term]
+**Concept:** Real-time Raymarching of SDFs in the terminal using pure Rust math (no external linear algebra libs).
+**Fate:** Merged
+**Lesson:** Ratatui's `Buffer::cell_mut` returns an Option which must be handled. Terminal aspect ratio correction is crucial for raymarching (y * 2.0).
