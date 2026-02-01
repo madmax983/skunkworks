@@ -12,5 +12,6 @@ members = [
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
+    "experiments/fugue-state",
 ]
 resolver = "2"

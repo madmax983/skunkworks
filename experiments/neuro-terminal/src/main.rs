@@ -176,7 +176,7 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                 for y_i in 0..40 {
                     let x = -1.0 + x_i as f64 * 2.0 / 39.0;
                     let y = -1.0 + y_i as f64 * 2.0 / 39.0;
-                    let out = app.network.predict(vec![x, y]);
+                    let out = app.network.predict(&[x, y]);
 
                     if out[0] > 0.5 {
                         ctx.draw(&Points {
