@@ -1,0 +1,13 @@
+[package]
+name = "sonic-scribbler"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+ttf-parser = "0.20"
+fastrand = "2.0"
+tui-shared = { path = "../../crates/tui-shared" }
+glam = "0.25"
