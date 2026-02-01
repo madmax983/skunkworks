@@ -11,5 +11,6 @@ members = [
     "experiments/text-hydro",
     "experiments/code-metropolis",
     "experiments/neuro-terminal",
+    "experiments/fugue-state",
 ]
 resolver = "2"
