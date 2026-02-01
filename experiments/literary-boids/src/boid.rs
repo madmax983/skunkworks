@@ -184,11 +184,11 @@ impl Boid {
     }
 }
 
-pub fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
+pub(crate) fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
     distance_squared(p1, p2).sqrt()
 }
 
-pub fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
+fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
     (p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)
 }
 
