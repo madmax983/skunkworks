@@ -183,7 +183,9 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                     critic.position.1,
                     Span::styled(
                         critic.symbol.to_string(),
-                        Style::default().fg(critic.color).add_modifier(ratatui::style::Modifier::BOLD),
+                        Style::default()
+                            .fg(critic.color)
+                            .add_modifier(ratatui::style::Modifier::BOLD),
                     ),
                 );
             }

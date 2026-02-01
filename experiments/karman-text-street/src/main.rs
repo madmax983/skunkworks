@@ -8,19 +8,16 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
+    backend::Backend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
+use tui_shared::Tui;
 
 use lbm::Fluid;
 use renderer::FluidWidget;
@@ -57,26 +54,17 @@ impl App {
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Initial size guess
-    let size = terminal.size()?;
+    let size = tui.terminal.size()?;
     // Reserve space for UI?
     let width = size.width as usize;
     let height = size.height.saturating_sub(2) as usize; // -2 for borders/help
 
     let mut app = App::new(width, height);
 
-    let res = run_app(&mut terminal, &mut app);
-
-    // Restore terminal
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen,)?;
-    terminal.show_cursor()?;
+    let res = run_app(&mut tui.terminal, &mut app);
 
     if let Err(err) = res {
         println!("{:?}", err);

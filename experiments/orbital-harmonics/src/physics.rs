@@ -108,7 +108,7 @@ impl Universe {
 
                 let dx = self.bodies[j].pos.x - self.bodies[i].pos.x;
                 let dy = self.bodies[j].pos.y - self.bodies[i].pos.y;
-                let dist_sq = dx*dx + dy*dy;
+                let dist_sq = dx * dx + dy * dy;
                 // Softening parameter to prevent explosion at r=0
                 let softening = 5.0;
                 let dist_cubed = (dist_sq + softening).powf(1.5);
@@ -148,8 +148,11 @@ impl Universe {
 
                 if prev_y < 0.0 && curr_y >= 0.0 && curr_x > 0.0 {
                     // Orbit complete!
-                    let radius = (curr_x*curr_x + curr_y*curr_y).sqrt();
-                    self.events.push(AudioEvent::OrbitComplete { body_index: i, radius });
+                    let radius = (curr_x * curr_x + curr_y * curr_y).sqrt();
+                    self.events.push(AudioEvent::OrbitComplete {
+                        body_index: i,
+                        radius,
+                    });
                 }
             }
 
@@ -170,11 +173,20 @@ mod tests {
         // V = sqrt(100 * 1000 / 100) = sqrt(1000) approx 31.62
 
         let mut universe = Universe::new();
-        universe.add_body(Body::new(0.0, 0.0, 1000.0, 10.0, Color::Yellow, "Sun".to_string()));
+        universe.add_body(Body::new(
+            0.0,
+            0.0,
+            1000.0,
+            10.0,
+            Color::Yellow,
+            "Sun".to_string(),
+        ));
 
         let v_circ = (100.0f64 * 1000.0 / 100.0).sqrt();
-        universe.add_body(Body::new(100.0, 0.0, 10.0, 2.0, Color::Blue, "Earth".to_string())
-            .with_velocity(0.0, v_circ)); // Perpendicular velocity
+        universe.add_body(
+            Body::new(100.0, 0.0, 10.0, 2.0, Color::Blue, "Earth".to_string())
+                .with_velocity(0.0, v_circ),
+        ); // Perpendicular velocity
 
         // Simulate for a bit
         let dt = 0.1;
@@ -186,6 +198,10 @@ mod tests {
         let r = earth.pos.distance(&Vector2::zero());
 
         // Should remain roughly 100.0
-        assert!((r - 100.0).abs() < 5.0, "Orbit drifted too much: radius {}", r);
+        assert!(
+            (r - 100.0).abs() < 5.0,
+            "Orbit drifted too much: radius {}",
+            r
+        );
     }
 }

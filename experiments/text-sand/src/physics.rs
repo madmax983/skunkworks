@@ -148,7 +148,7 @@ impl World {
         }
         // Try down-left
         else if x > 0 && self.is_empty_or_liquid(x - 1, y + 1) {
-             self.swap(x, y, x - 1, y + 1);
+            self.swap(x, y, x - 1, y + 1);
         }
         // Try down-right
         else if x + 1 < self.width && self.is_empty_or_liquid(x + 1, y + 1) {
@@ -158,16 +158,16 @@ impl World {
 
     fn update_water(&mut self, x: usize, y: usize, rng: &mut impl Rng) {
         if y + 1 >= self.height {
-             // Spread sideways if on floor
-             self.spread_water(x, y, rng);
-             return;
+            // Spread sideways if on floor
+            self.spread_water(x, y, rng);
+            return;
         }
 
         // Try down
         if self.get(x, y + 1).kind == ParticleKind::Empty {
-             self.swap(x, y, x, y + 1);
+            self.swap(x, y, x, y + 1);
         } else {
-             self.spread_water(x, y, rng);
+            self.spread_water(x, y, rng);
         }
     }
 
@@ -182,9 +182,9 @@ impl World {
                 self.swap(x, y, x + 1, y);
             }
         } else if left_empty {
-             self.swap(x, y, x - 1, y);
+            self.swap(x, y, x - 1, y);
         } else if right_empty {
-             self.swap(x, y, x + 1, y);
+            self.swap(x, y, x + 1, y);
         }
     }
 

@@ -1,4 +1,3 @@
-
 use ratatui::style::Color;
 
 pub type AgentId = usize;

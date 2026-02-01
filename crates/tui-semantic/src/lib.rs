@@ -365,13 +365,14 @@ mod tests {
                     .with_id("e1")
                     .at(50.0, 10.0)
                     .with_prop("health", 100)
-                    .with_prop("is_boss", true)
+                    .with_prop("is_boss", true),
             )
             .with_region(Region::new("main_view", 0, 0, 80, 24).describe("The main game view"))
             .with_metric("fps", 60.0);
 
         let json = original.to_json();
-        let recovered: Snapshot = serde_json::from_str(&json).expect("Failed to deserialize snapshot");
+        let recovered: Snapshot =
+            serde_json::from_str(&json).expect("Failed to deserialize snapshot");
 
         assert_eq!(original.app, recovered.app);
         assert_eq!(original.frame, recovered.frame);

@@ -213,33 +213,33 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     // Update Voronoi dimensions to match current view
     let canvas_area = chunks[0];
-    if canvas_area.width as f64 != app.voronoi.width || canvas_area.height as f64 != app.voronoi.height {
-         // If resized, we might want to scale positions or just clamp/wrap?
-         // For simplicity, let's just update bounds and let points float.
-         // Or better, re-initialize if drastically different?
-         // Let's just update bounds. Points outside will be pulled back by Lloyd's eventually if we clamp sampling.
-         app.voronoi.width = canvas_area.width as f64;
-         app.voronoi.height = canvas_area.height as f64;
+    if canvas_area.width as f64 != app.voronoi.width
+        || canvas_area.height as f64 != app.voronoi.height
+    {
+        // If resized, we might want to scale positions or just clamp/wrap?
+        // For simplicity, let's just update bounds and let points float.
+        // Or better, re-initialize if drastically different?
+        // Let's just update bounds. Points outside will be pulled back by Lloyd's eventually if we clamp sampling.
+        app.voronoi.width = canvas_area.width as f64;
+        app.voronoi.height = canvas_area.height as f64;
     }
 
-    let voronoi_widget = VoronoiWidget { voronoi: &app.voronoi };
+    let voronoi_widget = VoronoiWidget {
+        voronoi: &app.voronoi,
+    };
     f.render_widget(voronoi_widget, chunks[0]);
 
+    let status_text = vec![Line::from(vec![
+        " [Space] ".yellow().bold(),
+        "Toggle Relaxation ".into(),
+        " [R] ".yellow().bold(),
+        "Reset ".into(),
+        " [Q] ".yellow().bold(),
+        "Quit ".into(),
+        format!(" | Relaxing: {}", app.voronoi.relaxing).into(),
+    ])];
 
-    let status_text = vec![
-        Line::from(vec![
-            " [Space] ".yellow().bold(),
-            "Toggle Relaxation ".into(),
-            " [R] ".yellow().bold(),
-            "Reset ".into(),
-            " [Q] ".yellow().bold(),
-            "Quit ".into(),
-            format!(" | Relaxing: {}", app.voronoi.relaxing).into(),
-        ]),
-    ];
-
-    let status = Paragraph::new(status_text)
-        .block(Block::default().borders(Borders::ALL));
+    let status = Paragraph::new(status_text).block(Block::default().borders(Borders::ALL));
     f.render_widget(status, chunks[1]);
 }
 
@@ -265,7 +265,7 @@ impl<'a> Widget for VoronoiWidget<'a> {
                     let dx = px - site.position.x;
                     // Visual aspect ratio correction for distance
                     let dy = (py - site.position.y) * 2.0;
-                    let dist_sq = dx*dx + dy*dy;
+                    let dist_sq = dx * dx + dy * dy;
 
                     if dist_sq < min_dist_sq {
                         min_dist_sq = dist_sq;
@@ -305,7 +305,7 @@ mod tests {
         let p2 = Point { x: 3.0, y: 4.0 };
         let dx = p1.x - p2.x;
         let dy = p1.y - p2.y;
-        assert_eq!(dx*dx + dy*dy, 25.0);
+        assert_eq!(dx * dx + dy * dy, 25.0);
     }
 
     #[test]

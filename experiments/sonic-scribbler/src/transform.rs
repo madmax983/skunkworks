@@ -11,15 +11,18 @@ pub struct AudioState {
 }
 
 pub fn distort(commands: &[PathCommand], audio: &AudioState) -> Vec<PathCommand> {
-    commands.iter().map(|cmd| {
-        match cmd {
+    commands
+        .iter()
+        .map(|cmd| match cmd {
             PathCommand::MoveTo(p) => PathCommand::MoveTo(warp(*p, audio)),
             PathCommand::LineTo(p) => PathCommand::LineTo(warp(*p, audio)),
             PathCommand::QuadTo(c, e) => PathCommand::QuadTo(warp(*c, audio), warp(*e, audio)),
-            PathCommand::CurveTo(c1, c2, e) => PathCommand::CurveTo(warp(*c1, audio), warp(*c2, audio), warp(*e, audio)),
+            PathCommand::CurveTo(c1, c2, e) => {
+                PathCommand::CurveTo(warp(*c1, audio), warp(*c2, audio), warp(*e, audio))
+            }
             PathCommand::Close => PathCommand::Close,
-        }
-    }).collect()
+        })
+        .collect()
 }
 
 fn warp(p: Point, audio: &AudioState) -> Point {
@@ -115,16 +118,18 @@ mod tests {
 
     #[test]
     fn test_distort() {
-        let cmds = vec![
-            PathCommand::MoveTo(Vec2::new(0.0, 0.0)),
-        ];
-        let audio = AudioState { amplitude: 1.0, frequency: 1.0, phase: 0.0 };
+        let cmds = vec![PathCommand::MoveTo(Vec2::new(0.0, 0.0))];
+        let audio = AudioState {
+            amplitude: 1.0,
+            frequency: 1.0,
+            phase: 0.0,
+        };
         let distorted = distort(&cmds, &audio);
         if let PathCommand::MoveTo(p) = distorted[0] {
-             // With phase 0, sin(0) is 0, cos(0) is 1.
-             // dx = cos(0) * 1.0 * 50.0 = 50.0
-             // dy = sin(0) * ... = 0.0
-             assert!(p.x.abs() > 0.0, "p.x should be modified");
+            // With phase 0, sin(0) is 0, cos(0) is 1.
+            // dx = cos(0) * 1.0 * 50.0 = 50.0
+            // dy = sin(0) * ... = 0.0
+            assert!(p.x.abs() > 0.0, "p.x should be modified");
         } else {
             panic!("Wrong command type");
         }

@@ -1,4 +1,4 @@
-use crate::model::{Agent, MarketState, Bid, AgentId};
+use crate::model::{Agent, AgentId, Bid, MarketState};
 use std::collections::HashMap;
 
 /// Resolves the market auction.
@@ -6,7 +6,11 @@ pub fn resolve_market(agents: &mut [Agent], state: &mut MarketState, mut bids: V
     // 1. Sort bids by price (descending)
     // We use partial_cmp because f64 doesn't implement Ord.
     // Handling NaN by treating it as -infinity (pushing to end).
-    bids.sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap_or(std::cmp::Ordering::Less));
+    bids.sort_by(|a, b| {
+        b.price
+            .partial_cmp(&a.price)
+            .unwrap_or(std::cmp::Ordering::Less)
+    });
 
     // 2. Determine winners (Top N bids, where N is total pages)
     let total_pages = state.total_pages();
@@ -133,8 +137,14 @@ mod tests {
 
         // Agent 2 bids higher
         let bids = vec![
-            Bid { agent_id: 0, price: 10.0 },
-            Bid { agent_id: 1, price: 20.0 },
+            Bid {
+                agent_id: 0,
+                price: 10.0,
+            },
+            Bid {
+                agent_id: 1,
+                price: 20.0,
+            },
         ];
 
         let mut agents = vec![agent1.clone(), agent2.clone()];
@@ -142,10 +152,17 @@ mod tests {
         resolve_market(&mut agents, &mut state, bids);
 
         // Assert Agent 2 (id 1) owns the page
-        assert_eq!(state.pages[0].owner, Some(1), "Highest bidder should own the page");
+        assert_eq!(
+            state.pages[0].owner,
+            Some(1),
+            "Highest bidder should own the page"
+        );
         // With Single Price Auction logic, the price is the lowest *winning* bid.
         // Since only Agent 2 wins, the clearing price is 20.0.
-        assert_eq!(state.pages[0].rent, 20.0, "Rent should match the clearing price");
+        assert_eq!(
+            state.pages[0].rent, 20.0,
+            "Rent should match the clearing price"
+        );
 
         // Verify agent stats
         assert_eq!(agents[1].owned_pages, 1);

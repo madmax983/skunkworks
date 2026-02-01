@@ -7,3 +7,4 @@ edition = "2021"
 anyhow.workspace = true
 crossterm.workspace = true
 ratatui.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }

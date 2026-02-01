@@ -42,10 +42,18 @@ impl Critic {
         self.acceleration = (0.0, 0.0);
 
         // Wrap around
-        if self.position.0 < 0.0 { self.position.0 += width; }
-        if self.position.0 >= width { self.position.0 -= width; }
-        if self.position.1 < 0.0 { self.position.1 += height; }
-        if self.position.1 >= height { self.position.1 -= height; }
+        if self.position.0 < 0.0 {
+            self.position.0 += width;
+        }
+        if self.position.0 >= width {
+            self.position.0 -= width;
+        }
+        if self.position.1 < 0.0 {
+            self.position.1 += height;
+        }
+        if self.position.1 >= height {
+            self.position.1 -= height;
+        }
     }
 
     pub fn apply_force(&mut self, force: (f64, f64)) {
@@ -77,11 +85,13 @@ impl Critic {
         let desired = (target.0 - self.position.0, target.1 - self.position.1);
         // Normalize and scale to max_speed
         let len = (desired.0.powi(2) + desired.1.powi(2)).sqrt();
-        if len == 0.0 { return (0.0, 0.0); }
+        if len == 0.0 {
+            return (0.0, 0.0);
+        }
 
         let desired = (
             (desired.0 / len) * self.max_speed,
-            (desired.1 / len) * self.max_speed
+            (desired.1 / len) * self.max_speed,
         );
 
         let steer = (desired.0 - self.velocity.0, desired.1 - self.velocity.1);
@@ -90,20 +100,26 @@ impl Critic {
 }
 
 // Helper for boids to flee from critic
-pub fn flee(boid_pos: (f64, f64), boid_vel: (f64, f64), critic_pos: (f64, f64), max_speed: f64, max_force: f64) -> (f64, f64) {
+pub fn flee(
+    boid_pos: (f64, f64),
+    boid_vel: (f64, f64),
+    critic_pos: (f64, f64),
+    max_speed: f64,
+    max_force: f64,
+) -> (f64, f64) {
     let d_sq = distance_squared(boid_pos, critic_pos);
-    if d_sq > 2500.0 { // 50.0 radius
+    if d_sq > 2500.0 {
+        // 50.0 radius
         return (0.0, 0.0);
     }
 
     let desired = (boid_pos.0 - critic_pos.0, boid_pos.1 - critic_pos.1);
     let len = (desired.0.powi(2) + desired.1.powi(2)).sqrt();
-    if len == 0.0 { return (0.0, 0.0); }
+    if len == 0.0 {
+        return (0.0, 0.0);
+    }
 
-    let desired = (
-        (desired.0 / len) * max_speed,
-        (desired.1 / len) * max_speed
-    );
+    let desired = ((desired.0 / len) * max_speed, (desired.1 / len) * max_speed);
 
     let steer = (desired.0 - boid_vel.0, desired.1 - boid_vel.1);
     limit(steer, max_force)
