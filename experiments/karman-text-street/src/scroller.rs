@@ -1,5 +1,5 @@
-use font8x8::legacy::BASIC_LEGACY;
 use crate::lbm::Fluid;
+use font8x8::legacy::BASIC_LEGACY;
 
 pub struct Scroller {
     text: String,
@@ -13,7 +13,7 @@ impl Scroller {
         Self {
             text: String::from("  TYPE TO ADD OBSTACLES  "),
             scroll_offset: -(width as f32), // Start off-screen or partial? Start at right.
-            scroll_speed: 0.5, // 0.5 cells per frame
+            scroll_speed: 0.5,              // 0.5 cells per frame
             y_pos: height / 2 - 4,
         }
     }
@@ -35,7 +35,7 @@ impl Scroller {
         // Approx width of text = len * 8.
         let text_width = self.text.len() * 8;
         if self.scroll_offset < -(text_width as f32) {
-             self.scroll_offset = fluid.width as f32;
+            self.scroll_offset = fluid.width as f32;
         }
 
         // Render to fluid
@@ -64,12 +64,12 @@ impl Scroller {
                     for col in 0..8 {
                         // bit 0 is right-most (x+7). bit 7 is left-most (x+0).
                         if (byte & (1 << col)) != 0 {
-                             let px = char_x + (7 - col) as i32;
-                             let py = y_base + row;
+                            let px = char_x + (7 - col) as i32;
+                            let py = y_base + row;
 
-                             if px >= 0 && px < fluid.width as i32 && py < fluid.height {
-                                 fluid.add_obstacle(px as usize, py);
-                             }
+                            if px >= 0 && px < fluid.width as i32 && py < fluid.height {
+                                fluid.add_obstacle(px as usize, py);
+                            }
                         }
                     }
                 }

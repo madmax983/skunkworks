@@ -115,7 +115,9 @@ impl Swarm {
         }
 
         let n = self.fireflies.len() as f64;
-        if n == 0.0 { return 0.0; }
+        if n == 0.0 {
+            return 0.0;
+        }
         ((sum_sin / n).powi(2) + (sum_cos / n).powi(2)).sqrt()
     }
 }
@@ -133,8 +135,8 @@ mod tests {
         // Manual update logic simulation
         fly.phase += fly.natural_freq;
         if fly.phase >= 1.0 {
-             fly.phase -= 1.0;
-             fly.flash_timer = 5;
+            fly.phase -= 1.0;
+            fly.flash_timer = 5;
         }
 
         assert!(fly.phase < 1.0);

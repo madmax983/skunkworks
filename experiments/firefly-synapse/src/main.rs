@@ -81,7 +81,9 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                         KeyCode::Char('q') => app.running = false,
                         KeyCode::Char('r') => app.swarm.randomize_phases(),
                         KeyCode::Char('k') => app.swarm.coupling += 0.005,
-                        KeyCode::Char('j') => app.swarm.coupling = (app.swarm.coupling - 0.005).max(0.0),
+                        KeyCode::Char('j') => {
+                            app.swarm.coupling = (app.swarm.coupling - 0.005).max(0.0)
+                        }
                         _ => {}
                     }
                 }
@@ -116,25 +118,21 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         .x_bounds([0.0, app.swarm.width])
         .y_bounds([0.0, app.swarm.height])
         .paint(|ctx| {
-             for fly in &app.swarm.fireflies {
-                 let (char, color) = if fly.flash_timer > 0 {
-                     ("★", Color::Yellow)
-                 } else {
-                     // Gradient based on phase
-                     match (fly.phase * 4.0) as u8 {
-                         0 => ("•", Color::DarkGray),
-                         1 => ("•", Color::Gray),
-                         2 => ("•", Color::White),
-                         _ => ("•", Color::Cyan), // Almost ready
-                     }
-                 };
+            for fly in &app.swarm.fireflies {
+                let (char, color) = if fly.flash_timer > 0 {
+                    ("★", Color::Yellow)
+                } else {
+                    // Gradient based on phase
+                    match (fly.phase * 4.0) as u8 {
+                        0 => ("•", Color::DarkGray),
+                        1 => ("•", Color::Gray),
+                        2 => ("•", Color::White),
+                        _ => ("•", Color::Cyan), // Almost ready
+                    }
+                };
 
-                 ctx.print(
-                     fly.x,
-                     fly.y,
-                     Span::styled(char, Style::default().fg(color)),
-                 );
-             }
+                ctx.print(fly.x, fly.y, Span::styled(char, Style::default().fg(color)));
+            }
         });
 
     f.render_widget(canvas, chunks[0]);
