@@ -29,11 +29,23 @@ struct App {
 
 impl App {
     fn new() -> Self {
-        // Default text for rules
-        let text = "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG\n\
-                    the quick brown fox jumps over the lazy dog\n\
-                    0123456789\n\
-                    !@#$%^&*()_+";
+        // Sample text with repeating patterns for WFC
+        // Using simple patterns that can tile and combine
+        let text = "░▒▓█▓▒░\n\
+                    ▒▓█ █▓▒\n\
+                    ▓█ ⚛ █▓\n\
+                    █ ⚛ ⚛ █\n\
+                    ▓█ ⚛ █▓\n\
+                    ▒▓█ █▓▒\n\
+                    ░▒▓█▓▒░\n\
+                    \n\
+                    .:~^~:.\n\
+                    :~^*^~:\n\
+                    ~^*⚛*^~\n\
+                    ^*⚛⚛⚛*^\n\
+                    ~^*⚛*^~\n\
+                    :~^*^~:\n\
+                    .:~^~:.";
         let rules = PatternExtractor::from_text(text);
         let wave = WaveFunction::new(80, 24, rules);
 
