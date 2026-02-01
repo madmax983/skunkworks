@@ -1,5 +1,3 @@
-use std::io::{self};
-use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
@@ -9,10 +7,11 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    widgets::{Block, Borders, Paragraph, Sparkline},
+    widgets::{Block, Borders, Gauge, Paragraph, Sparkline},
     Terminal,
 };
-use hound;
+use std::io::{self};
+use std::time::{Duration, Instant};
 
 mod harvester;
 mod synth;
@@ -101,7 +100,8 @@ fn main() -> Result<()> {
                 .constraints(
                     [
                         Constraint::Percentage(20),
-                        Constraint::Percentage(80),
+                        Constraint::Percentage(60),
+                        Constraint::Percentage(20),
                     ]
                     .as_ref(),
                 )
@@ -109,9 +109,7 @@ fn main() -> Result<()> {
 
             let info_text = format!(
                 "Commit: {}\nAuthor: {}\nTime: {}\nPress 'q' to quit",
-                commit.hash,
-                commit.author,
-                commit.timestamp
+                commit.hash, commit.author, commit.timestamp
             );
             let info = Paragraph::new(info_text)
                 .block(Block::default().title("Meta").borders(Borders::ALL));
@@ -119,7 +117,9 @@ fn main() -> Result<()> {
 
             // Waveform (Sparkline needs u64, so we map f32 to u64)
             // Sparkline expects a slice of u64
-            let data: Vec<u64> = vis.waveform_buffer.iter()
+            let data: Vec<u64> = vis
+                .waveform_buffer
+                .iter()
                 .map(|&s| ((s + 1.0) * 50.0) as u64) // Map -1..1 to 0..100
                 .collect();
 
@@ -128,6 +128,16 @@ fn main() -> Result<()> {
                 .data(&data)
                 .max(100); // 100 height
             f.render_widget(sparkline, chunks[1]);
+
+            // Churn Gauge
+            // Normalize churn to percentage (cap at 2000 lines)
+            let churn_ratio = (commit.churn as f64 / 2000.0).min(1.0);
+            let gauge = Gauge::default()
+                .block(Block::default().title("Flux (Churn)").borders(Borders::ALL))
+                .gauge_style(ratatui::style::Style::default().fg(ratatui::style::Color::Red))
+                .ratio(churn_ratio)
+                .label(format!("{} lines", commit.churn));
+            f.render_widget(gauge, chunks[2]);
         })?;
 
         // Limit FPS
@@ -139,10 +149,7 @@ fn main() -> Result<()> {
 
     // Cleanup
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     println!("Done! Written to skunkworks_symphony.wav");
