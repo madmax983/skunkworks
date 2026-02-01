@@ -9,7 +9,7 @@ pub struct MusicalCommit {
 }
 
 pub fn harvest_repo(path: &str) -> Result<Vec<MusicalCommit>> {
-    let repo = Repository::open(path).context("Failed to open git repo")?;
+    let repo = Repository::discover(path).context("Failed to open git repo")?;
     let mut walker = repo.revwalk().context("Failed to create revwalker")?;
     walker.set_sorting(Sort::TIME)?;
     walker.push_head()?;
