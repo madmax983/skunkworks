@@ -13,13 +13,9 @@ use ratatui::{
 use std::io::{self};
 use std::time::{Duration, Instant};
 
-mod harvester;
-mod synth;
-mod vis;
-
-use harvester::harvest_repo;
-use synth::Synthesizer;
-use vis::VisualState;
+use git_rhythm::harvester::harvest_repo;
+use git_rhythm::synth::Synthesizer;
+use git_rhythm::vis::VisualState;
 
 fn main() -> Result<()> {
     // 1. Harvest
