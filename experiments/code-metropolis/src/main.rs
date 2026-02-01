@@ -214,7 +214,7 @@ fn main() -> Result<()> {
 
     let res = app.run(&mut terminal);
 
-    // 5. Cleanup
+    // Restore terminal state
     disable_raw_mode()?;
     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
