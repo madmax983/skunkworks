@@ -124,9 +124,7 @@ impl FluidSolver {
                     fx += f_p * (dx / r);
                     fy += f_p * (dy / r);
 
-                    // Viscosity Force (simplified)
-                    // Fv = mu * (vj - vi) / rho_j * laplacian W (using simple approximation)
-                    // Actually let's use a simpler damping for now or correct viscosity kernel
+                    // Note: viscosity forces are not currently implemented here.
                 }
             }
 
