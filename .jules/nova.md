@@ -63,6 +63,11 @@
 **Fate:** Merged
 **Lesson:** Adding a background layer to a `ratatui` Canvas enriches the visualization without interfering with the active agents.
 
+## [Voronoi Relaxation]
+**Concept:** A dynamic Voronoi diagram visualization that uses Lloyd's Algorithm to relax random seed positions into a regular honeycomb structure. Visualized as "Stained Glass" in the terminal.
+**Fate:** In Progress
+**Lesson:** TUI `Buffer` manipulation is efficient enough for real-time pixel-like effects if the resolution is kept to standard terminal sizes.
+
 ## [Text Sand]
 **Concept:** A falling sand cellular automata where particles are text characters that interact with physics (gravity, displacement).
 **Fate:** Merged
