@@ -1,4 +1,4 @@
-use crate::boid::{distance, Boid, DNA};
+use crate::boid::{Boid, DNA, distance};
 use rand::Rng;
 use ratatui::style::Color;
 

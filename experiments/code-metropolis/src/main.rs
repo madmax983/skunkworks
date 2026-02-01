@@ -8,18 +8,15 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::Color,
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Frame, Terminal,
 };
 use std::io::{self};
 use std::time::{Duration, Instant};
 
-use code_metropolis::scanner::scan;
-use code_metropolis::layout::generate_layout;
 use code_metropolis::iso::{Camera, Cube, Point3D};
+use code_metropolis::layout::generate_layout;
+use code_metropolis::scanner::scan;
 
 fn main() -> Result<()> {
     // 1. Setup & Scan
@@ -33,26 +30,39 @@ fn main() -> Result<()> {
     println!("Generated {} blocks.", blocks.len());
 
     // 3. Convert to Cubes
-    let cubes: Vec<Cube> = blocks.iter().map(|b| {
-        let color = if b.is_dir {
-            Color::DarkGray
-        } else {
-            // Color map based on height (complexity/size)
-            if b.height > 10.0 { Color::Red }
-            else if b.height > 6.0 { Color::Magenta }
-            else if b.height > 4.0 { Color::Yellow }
-            else if b.height > 2.0 { Color::Cyan }
-            else { Color::Green }
-        };
+    let cubes: Vec<Cube> = blocks
+        .iter()
+        .map(|b| {
+            let color = if b.is_dir {
+                Color::DarkGray
+            } else {
+                // Color map based on height (complexity/size)
+                if b.height > 10.0 {
+                    Color::Red
+                } else if b.height > 6.0 {
+                    Color::Magenta
+                } else if b.height > 4.0 {
+                    Color::Yellow
+                } else if b.height > 2.0 {
+                    Color::Cyan
+                } else {
+                    Color::Green
+                }
+            };
 
-        Cube {
-            origin: Point3D { x: b.x, y: 0.0, z: b.z },
-            width: b.width,
-            depth: b.depth,
-            height: b.height,
-            color,
-        }
-    }).collect();
+            Cube {
+                origin: Point3D {
+                    x: b.x,
+                    y: 0.0,
+                    z: b.z,
+                },
+                width: b.width,
+                depth: b.depth,
+                height: b.height,
+                color,
+            }
+        })
+        .collect();
 
     if cubes.is_empty() {
         println!("No files found to visualize.");
@@ -164,11 +174,17 @@ fn ui(f: &mut Frame, cubes: &[Cube], camera: &Camera) {
         // If angle=0, z is depth. Small z is far?
         // Let's assume standard Z-buffer: draw furthest first.
         // Try ascending sort.
-        z_rot_b.partial_cmp(&z_rot_a).unwrap_or(std::cmp::Ordering::Equal)
+        z_rot_b
+            .partial_cmp(&z_rot_a)
+            .unwrap_or(std::cmp::Ordering::Equal)
     });
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Code Metropolis"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Code Metropolis"),
+        )
         .x_bounds([-150.0, 150.0])
         .y_bounds([-100.0, 100.0]) // Aspect correction handled by projection?
         .paint(|ctx| {
@@ -185,10 +201,11 @@ fn ui(f: &mut Frame, cubes: &[Cube], camera: &Camera) {
 
     let help_text = format!(
         "WASD: Pan | ZX: Zoom | RF: Rotate | Q: Quit | Objects: {} | Angle: {:.2}",
-        cubes.len(), camera.angle
+        cubes.len(),
+        camera.angle
     );
     f.render_widget(
         Paragraph::new(help_text).block(Block::default().borders(Borders::ALL)),
-        chunks[1]
+        chunks[1],
     );
 }

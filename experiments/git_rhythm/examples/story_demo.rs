@@ -3,7 +3,7 @@ use git_rhythm::nova::NarrativeGenerator;
 
 fn main() {
     println!("Starting Story Mode...");
-    let gen = NarrativeGenerator::new();
-    let story = gen.generate("Once upon a commit...");
+    let generator = NarrativeGenerator::new();
+    let story = generator.generate("Once upon a commit...");
     println!("{}", story);
 }

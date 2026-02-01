@@ -947,6 +947,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "neuro-terminal"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "rand 0.8.5",
+ "ratatui 0.29.0",
+]
+
+[[package]]
 name = "nix"
 version = "0.29.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

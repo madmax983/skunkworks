@@ -25,7 +25,11 @@ pub fn generate_layout(node: &Node, x: f64, z: f64, w: f64, d: f64) -> Vec<Block
             let h = (*size as f64 + 1.0).log2().max(1.0);
 
             blocks.push(Block {
-                x, z, width: w, depth: d, height: h,
+                x,
+                z,
+                width: w,
+                depth: d,
+                height: h,
                 is_dir: false,
                 path: path.clone(),
             });
@@ -33,7 +37,11 @@ pub fn generate_layout(node: &Node, x: f64, z: f64, w: f64, d: f64) -> Vec<Block
         Node::Dir { path, children } => {
             // District floor
             blocks.push(Block {
-                x, z, width: w, depth: d, height: 0.1, // Flat
+                x,
+                z,
+                width: w,
+                depth: d,
+                height: 0.1, // Flat
                 is_dir: true,
                 path: path.clone(),
             });
@@ -41,7 +49,9 @@ pub fn generate_layout(node: &Node, x: f64, z: f64, w: f64, d: f64) -> Vec<Block
             let total_size: u64 = children.iter().map(|c| c.size()).sum();
 
             // If empty or size 0, we are done
-            if total_size == 0 { return blocks; }
+            if total_size == 0 {
+                return blocks;
+            }
 
             // Calculate inner area
             let inner_x = x + padding;
@@ -95,8 +105,14 @@ mod tests {
         let node = Node::Dir {
             path: PathBuf::from("root"),
             children: vec![
-                Node::File { path: PathBuf::from("a"), size: 100 },
-                Node::File { path: PathBuf::from("b"), size: 300 },
+                Node::File {
+                    path: PathBuf::from("a"),
+                    size: 100,
+                },
+                Node::File {
+                    path: PathBuf::from("b"),
+                    size: 300,
+                },
             ],
         };
 
