@@ -112,6 +112,7 @@ pub fn sigmoid(x: f64) -> f64 {
     1.0 / (1.0 + (-x).exp())
 }
 
+#[derive(Clone)]
 pub struct Network {
     pub layers: Vec<usize>,
     pub weights: Vec<Matrix>,
@@ -229,11 +230,11 @@ mod tests {
 
         for _ in 0..20000 {
             let idx = rand::random::<usize>() % 4;
-            nn.train(inputs[idx].clone(), targets[idx].clone());
+            nn.train(&inputs[idx], &targets[idx]);
         }
 
         for i in 0..4 {
-            let out = nn.forward(inputs[i].clone());
+            let out = nn.forward(&inputs[i]);
             let target = targets[i][0];
             println!(
                 "In: {:?}, Target: {}, Out: {:.4}",
