@@ -12,3 +12,8 @@
 **Concept:** Synesthetic color generation for git commits. Hash determines Hue, Churn determines Lightness. Visualized in TUI elements.
 **Fate:** Merged
 **Lesson:** Visual feedback complements audio well in TUI environments.
+
+## [Circadian Rhythm]
+**Concept:** Visualize commits based on the time of day they were made (Night, Dawn, Day, Dusk) with corresponding color themes.
+**Fate:** Merged
+**Lesson:** Simple time-based mapping creates a strong emotional connection to the code history.

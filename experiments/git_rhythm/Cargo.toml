@@ -17,3 +17,7 @@ nova = []
 [[example]]
 name = "story_demo"
 required-features = ["nova"]
+
+[[example]]
+name = "circadian_clock"
+required-features = ["nova"]
