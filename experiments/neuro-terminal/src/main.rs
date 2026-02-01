@@ -99,8 +99,7 @@ impl App {
         // Train on random batch
         for _ in 0..10 {
             let idx = rng.gen_range(0..self.inputs.len());
-            self.network
-                .train(&self.inputs[idx], &self.targets[idx]);
+            self.network.train(&self.inputs[idx], &self.targets[idx]);
             self.steps += 1;
         }
     }
