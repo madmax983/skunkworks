@@ -2,6 +2,7 @@
 members = [
     "experiments/automata-warfare",
     "experiments/code-metropolis",
+    "experiments/firefly-synapse",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/hyphal-commute",
