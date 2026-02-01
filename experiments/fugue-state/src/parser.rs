@@ -24,6 +24,12 @@ pub struct CodeParser {
     pub current_depth: usize,
 }
 
+impl Default for CodeParser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CodeParser {
     pub fn new() -> Self {
         Self {

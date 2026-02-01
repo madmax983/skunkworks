@@ -127,6 +127,7 @@ dependencies = [
  "crossterm 0.28.1",
  "rand 0.8.5",
  "ratatui 0.29.0",
+ "tui-shared",
 ]
 
 [[package]]
@@ -1483,6 +1484,7 @@ dependencies = [
  "crossterm 0.28.1",
  "rand 0.8.5",
  "ratatui 0.29.0",
+ "tui-shared",
 ]
 
 [[package]]
@@ -2627,6 +2629,14 @@ checksum = "42d3e9c45c09de15d06dd8acf5f4e0e399e85927b7f00711024eb7ae10fa4869"
 dependencies = [
  "displaydoc",
  "zerovec",
+]
+
+[[package]]
+name = "tui-shared"
+version = "0.1.0"
+dependencies = [
+ "crossterm 0.28.1",
+ "ratatui 0.29.0",
 ]
 
 [[package]]

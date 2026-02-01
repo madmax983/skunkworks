@@ -4,6 +4,12 @@ pub struct NarrativeGenerator {
     templates: Vec<&'static str>,
 }
 
+impl Default for NarrativeGenerator {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl NarrativeGenerator {
     pub fn new() -> Self {
         Self {

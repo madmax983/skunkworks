@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/tui-shared",
     "experiments/automata-warfare",
     "experiments/code-metropolis",
     "experiments/fugue-state",

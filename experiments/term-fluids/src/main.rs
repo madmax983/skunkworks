@@ -1,3 +1,4 @@
+#![allow(clippy::collapsible_if)]
 mod app;
 mod physics;
 

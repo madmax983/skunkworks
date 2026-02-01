@@ -7,6 +7,12 @@ pub struct VisualState {
     pub buffer_capacity: usize,
 }
 
+impl Default for VisualState {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl VisualState {
     pub fn new() -> Self {
         Self {
