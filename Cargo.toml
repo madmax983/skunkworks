@@ -6,6 +6,7 @@ members = [
     "experiments/cellular-beats",
     "experiments/code-metropolis",
     "experiments/crystal-structure",
+    "experiments/echo-chamber",
     "experiments/euclidean-pulse",
     "experiments/firefly-synapse",
     "experiments/fugue-state",

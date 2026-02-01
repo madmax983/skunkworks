@@ -76,3 +76,8 @@
 **Concept:** A falling sand cellular automata where particles are text characters that interact with physics (gravity, displacement).
 **Fate:** Merged
 **Lesson:** Traditional falling sand algorithms (bottom-up iteration) translate well to TUI grids, allowing for interactive "Typographic Physics".
+
+## [Echo Chamber]
+**Concept:** An audiovisual typing experience where keystrokes trigger generative soundscapes and particle physics. "Typing as performance."
+**Fate:** Merged
+**Lesson:** TUI Canvas widgets are great for particle systems but coordinate mapping with text widgets requires manual synchronization.
