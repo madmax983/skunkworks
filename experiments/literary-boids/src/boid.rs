@@ -104,24 +104,22 @@ impl Boid {
         let mut ali_count = 0;
         let mut coh_count = 0;
 
+        let view_radius_sq = self.dna.view_radius.powi(2);
+        let separation_radius_sq = (self.dna.view_radius / 2.0).powi(2);
+
         for other in boids {
-            let d = distance(self.position, other.position);
+            let d_sq = distance_squared(self.position, other.position);
 
             // Avoid self (and exact overlaps, unlikely but possible)
-            if d == 0.0 {
-                continue;
-            }
+            if d_sq == 0.0 { continue; }
 
-            if d < self.dna.view_radius {
+            if d_sq < view_radius_sq {
                 // Separation
-                if d < self.dna.view_radius / 2.0 {
-                    let diff = (
-                        self.position.0 - other.position.0,
-                        self.position.1 - other.position.1,
-                    );
+                if d_sq < separation_radius_sq {
+                    let diff = (self.position.0 - other.position.0, self.position.1 - other.position.1);
                     // Weight by distance squared inversely
-                    separation.0 += diff.0 / (d * d);
-                    separation.1 += diff.1 / (d * d);
+                    separation.0 += diff.0 / d_sq;
+                    separation.1 += diff.1 / d_sq;
                     sep_count += 1;
                 }
 
@@ -194,8 +192,12 @@ impl Boid {
     }
 }
 
-fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
-    ((p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)).sqrt()
+pub fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
+    distance_squared(p1, p2).sqrt()
+}
+
+pub fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
+    (p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)
 }
 
 fn limit(vector: (f64, f64), max: f64) -> (f64, f64) {
@@ -233,5 +235,44 @@ mod tests {
 
         // Should wrap to 0.5
         assert!((boid.position.0 - 0.5).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_distance_squared() {
+        let p1 = (0.0, 0.0);
+        let p2 = (3.0, 4.0);
+        assert!((distance_squared(p1, p2) - 25.0).abs() < 1e-6);
+        assert!((distance(p1, p2) - 5.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_flocking_force_zero_alone() {
+        let boid = Boid::new(50.0, 50.0);
+        let flock = vec![];
+        let force = boid.calculate_flocking_force(&flock);
+        assert_eq!(force, (0.0, 0.0));
+    }
+
+    #[test]
+    fn test_flocking_force_separation() {
+        // Create a boid at (50, 50)
+        let mut boid1 = Boid::new(50.0, 50.0);
+        boid1.velocity = (0.0, 0.0);
+        boid1.dna.view_radius = 10.0;
+        boid1.dna.max_speed = 2.0;
+        boid1.dna.max_force = 0.1;
+        boid1.dna.separation_weight = 1.0;
+        boid1.dna.alignment_weight = 0.0; // Isolate separation
+        boid1.dna.cohesion_weight = 0.0;
+
+        // Create another boid very close (50.1, 50.0)
+        let boid2 = Boid::new(50.1, 50.0);
+
+        // This should trigger separation force pushing boid1 to the LEFT (negative X)
+        // boid1 is at 50, boid2 is at 50.1. Diff is 50 - 50.1 = -0.1.
+        let force = boid1.calculate_flocking_force(&[boid2]);
+
+        assert!(force.0 < 0.0, "Force X should be negative (separation), got {}", force.0);
+        assert_eq!(force.1, 0.0, "Force Y should be zero");
     }
 }

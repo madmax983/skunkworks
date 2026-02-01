@@ -1,11 +1,12 @@
 [workspace]
 members = [
+    "experiments/automata-warfare",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/literary-boids",
+    "experiments/schrodingers-text",
     "experiments/term-fluids",
     "experiments/text-hydro",
-    "experiments/automata-warfare",
     "experiments/syntax-invaders",
 ]
 resolver = "2"

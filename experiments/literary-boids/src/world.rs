@@ -1,4 +1,4 @@
-use crate::boid::{Boid, DNA};
+use crate::boid::{distance, Boid, DNA};
 use rand::Rng;
 use ratatui::style::Color;
 
@@ -67,11 +67,10 @@ impl World {
         // We need to clone boids or use a way to access them immutably while modifying others.
         // Since Boid struct is small enough, cloning the vector for read-access is acceptable for performance in this context (~100s of boids).
         // For millions, we'd use a spatial grid or separate arrays.
-        let boids_snapshot = self.boids.clone();
         let mut forces = Vec::with_capacity(self.boids.len());
 
         for boid in &self.boids {
-            forces.push(boid.calculate_flocking_force(&boids_snapshot));
+            forces.push(boid.calculate_flocking_force(&self.boids));
         }
 
         // 2. Apply forces and update physics
@@ -83,7 +82,7 @@ impl World {
         // 3. Interactions (Eating)
         let mut eaten_indices = Vec::new();
 
-        for (_boid_idx, boid) in self.boids.iter_mut().enumerate() {
+        for boid in self.boids.iter_mut() {
             for (food_idx, food) in self.food.iter().enumerate() {
                 if distance(boid.position, food.position) < 2.0 {
                     // Eating radius
@@ -132,10 +131,6 @@ impl World {
             }
         }
     }
-}
-
-fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
-    ((p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)).sqrt()
 }
 
 fn mutate_dna(dna: &mut DNA) {
