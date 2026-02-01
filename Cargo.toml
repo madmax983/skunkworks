@@ -2,5 +2,6 @@
 members = [
     "experiments/git_rhythm",
     "experiments/term-fluids",
+    "experiments/gallifrey-db",
 ]
 resolver = "2"
