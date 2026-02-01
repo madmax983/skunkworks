@@ -20,6 +20,6 @@ members = [
     "experiments/karman-text-street",
     "experiments/rhizome-seeker",
     "experiments/crystal-structure",
-    "experiments/euclidean-pulse",
+    "experiments/euclidean-pulse", "experiments/system-weather",
 ]
 resolver = "2"
