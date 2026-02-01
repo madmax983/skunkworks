@@ -23,9 +23,9 @@ pub fn generate_wav(events: &[MusicalEvent], filepath: &str) -> anyhow::Result<(
                 Timbre::Sine => (t * event.frequency * 2.0 * PI).sin(),
                 Timbre::Square => (t * event.frequency * 2.0 * PI).sin().signum(),
                 Timbre::Triangle => {
-                     // 2 * asin(sin(2pi * freq * t)) / pi
-                     (t * event.frequency * 2.0 * PI).sin().asin() * 2.0 / PI
-                },
+                    // 2 * asin(sin(2pi * freq * t)) / pi
+                    (t * event.frequency * 2.0 * PI).sin().asin() * 2.0 / PI
+                }
                 Timbre::Sawtooth => {
                     // 2 * (t * freq - floor(0.5 + t * freq))
                     2.0 * (t * event.frequency - (t * event.frequency + 0.5).floor())
@@ -58,14 +58,14 @@ mod tests {
 
     #[test]
     fn test_generate_wav_file() {
-        let events = vec![
-            MusicalEvent {
-                frequency: 440.0,
-                duration: 0.1,
-                timbre: Timbre::Sine,
-                description: "Test".to_string(),
-            },
-        ];
+        let events = vec![MusicalEvent {
+            frequency: 440.0,
+            duration: 0.1,
+            timbre: Timbre::Sine,
+            description: "Test".to_string(),
+            #[cfg(feature = "nova")]
+            span: None,
+        }];
         let filename = "test_output.wav";
 
         generate_wav(&events, filename).unwrap();

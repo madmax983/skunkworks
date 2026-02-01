@@ -42,3 +42,8 @@
 **Concept:** A TUI-based neural network visualization that trains a simple MLP on a 2D classification problem in real-time.
 **Fate:** Merged
 **Lesson:** Visualizing the decision boundary on a grid requires careful optimization or subsampling to maintain frame rates in a TUI. Pure Rust ML from scratch is viable for simple visualizations.
+
+## [Fugue State: Code Karaoke]
+**Concept:** Visualize the source code while it's being "played" by the synthesizer, highlighting the specific AST nodes (functions, structs) corresponding to the current musical event.
+**Fate:** Merged
+**Lesson:** Visualizing code structure in sync with audio creates a powerful "synesthetic" experience. Handling `syn` spans and mapping them to TUI lines requires careful coordinate conversion (char indices vs byte indices).

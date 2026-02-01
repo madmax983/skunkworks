@@ -9,6 +9,8 @@ pub struct App {
     pub is_playing: bool,
     pub total_duration: f32,
     pub elapsed: f32,
+    #[cfg(feature = "nova")]
+    pub source_code: Vec<String>,
 }
 
 impl App {
@@ -29,7 +31,14 @@ impl App {
             is_playing: false,
             total_duration,
             elapsed: 0.0,
+            #[cfg(feature = "nova")]
+            source_code: Vec::new(),
         }
+    }
+
+    #[cfg(feature = "nova")]
+    pub fn set_source_code(&mut self, code: String) {
+        self.source_code = code.lines().map(|s| s.to_string()).collect();
     }
 
     pub fn start(&mut self) {
@@ -43,23 +52,26 @@ impl App {
         }
 
         if let Some(start) = self.start_time {
-             let now = Instant::now();
-             let duration = now.duration_since(start);
-             self.elapsed = duration.as_secs_f32();
+            let now = Instant::now();
+            let duration = now.duration_since(start);
+            self.elapsed = duration.as_secs_f32();
 
-             // Update index
-             if self.elapsed >= self.total_duration {
-                 self.is_playing = false;
-                 self.current_event_index = self.events.len();
-             } else {
-                 // Binary search or linear scan
-                 // Linear is fine for small N, but binary is better.
-                 // `event_start_times` is sorted.
-                 match self.event_start_times.binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap()) {
-                     Ok(idx) => self.current_event_index = idx,
-                     Err(idx) => self.current_event_index = idx.saturating_sub(1),
-                 }
-             }
+            // Update index
+            if self.elapsed >= self.total_duration {
+                self.is_playing = false;
+                self.current_event_index = self.events.len();
+            } else {
+                // Binary search or linear scan
+                // Linear is fine for small N, but binary is better.
+                // `event_start_times` is sorted.
+                match self
+                    .event_start_times
+                    .binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap())
+                {
+                    Ok(idx) => self.current_event_index = idx,
+                    Err(idx) => self.current_event_index = idx.saturating_sub(1),
+                }
+            }
         }
     }
 
@@ -73,10 +85,13 @@ impl App {
             self.is_playing = false;
             self.current_event_index = self.events.len();
         } else {
-             match self.event_start_times.binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap()) {
-                 Ok(idx) => self.current_event_index = idx,
-                 Err(idx) => self.current_event_index = idx.saturating_sub(1),
-             }
+            match self
+                .event_start_times
+                .binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap())
+            {
+                Ok(idx) => self.current_event_index = idx,
+                Err(idx) => self.current_event_index = idx.saturating_sub(1),
+            }
         }
     }
 }
@@ -94,12 +109,16 @@ mod tests {
                 duration: 1.0,
                 timbre: Timbre::Sine,
                 description: "A".to_string(),
+                #[cfg(feature = "nova")]
+                span: None,
             },
             MusicalEvent {
                 frequency: 880.0,
                 duration: 1.0,
                 timbre: Timbre::Sine,
                 description: "B".to_string(),
+                #[cfg(feature = "nova")]
+                span: None,
             },
         ];
 
