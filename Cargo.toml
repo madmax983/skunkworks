@@ -19,12 +19,14 @@ members = [
     "experiments/origami-singularity",
     "experiments/orbital-decay",
     "experiments/phonetic-decay",
+    "experiments/ram-bazaar", 
     "experiments/rhizome-seeker",
     "experiments/schrodingers-text",
+    "experiments/sonic-scribbler",
     "experiments/sculpt-term",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
-    "experiments/text-hydro", "experiments/ram-bazaar",
+    "experiments/text-hydro", 
     "experiments/text-sand",
 ]
 resolver = "2"
