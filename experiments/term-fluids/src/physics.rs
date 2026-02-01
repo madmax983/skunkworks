@@ -130,8 +130,10 @@ impl FluidSolver {
                 }
             }
 
-            self.particles[i].ax = fx;
-            self.particles[i].ay = fy + self.gravity;
+            // Convert accumulated force to acceleration using the particle's density.
+            let inv_rho = 1.0 / self.particles[i].rho;
+            self.particles[i].ax = fx * inv_rho;
+            self.particles[i].ay = fy * inv_rho + self.gravity;
         }
     }
 
