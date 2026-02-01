@@ -3,6 +3,7 @@ members = [
     "experiments/automata-warfare",
     "experiments/code-metropolis",
     "experiments/fugue-state",
+    "experiments/firefly-synapse",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/hyphal-commute",
@@ -14,5 +15,8 @@ members = [
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
+    "experiments/rhizome-seeker",
+    "experiments/crystal-structure",
+    "experiments/euclidean-pulse",
 ]
 resolver = "2"

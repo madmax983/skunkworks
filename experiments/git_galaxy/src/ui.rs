@@ -1,21 +1,66 @@
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::Color,
+    style::{Color, Style},
     symbols::Marker,
+    text::{Line as TextLine, Span},
     widgets::{
         canvas::{Canvas, Line, Points},
         Block, Borders, Paragraph,
     },
     Frame,
 };
+use std::collections::HashMap;
 
 use crate::physics::Graph;
 
-pub fn ui(f: &mut Frame, graph: &Graph) {
-    let chunks = Layout::default()
+fn get_top_authors(graph: &Graph) -> Vec<(String, usize, (u8, u8, u8))> {
+    let mut counts: HashMap<String, usize> = HashMap::new();
+    let mut colors: HashMap<String, (u8, u8, u8)> = HashMap::new();
+
+    for node in &graph.nodes {
+        *counts.entry(node.author.clone()).or_insert(0) += 1;
+        colors.entry(node.author.clone()).or_insert(node.color);
+    }
+
+    let mut result: Vec<_> = counts
+        .into_iter()
+        .map(|(author, count)| {
+            let color = colors[&author];
+            (author, count, color)
+        })
+        .collect();
+
+    result.sort_by(|a, b| b.1.cmp(&a.1));
+    result.truncate(10); // Top 10
+    result
+}
+
+pub struct ViewState {
+    pub zoom: f64,
+    pub pan_x: f64,
+    pub pan_y: f64,
+}
+
+impl Default for ViewState {
+    fn default() -> Self {
+        Self {
+            zoom: 1.0,
+            pan_x: 0.0,
+            pan_y: 0.0,
+        }
+    }
+}
+
+pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
+    let main_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
+        .split(f.area());
+
+    let left_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)])
-        .split(f.area());
+        .split(main_chunks[0]);
 
     // Calculate bounds to center the galaxy
     // Find min/max x and y
@@ -53,11 +98,25 @@ pub fn ui(f: &mut Frame, graph: &Graph) {
     min_y -= padding;
     max_y += padding;
 
+    // Apply ViewState (Zoom and Pan)
+    let center_x = (min_x + max_x) / 2.0;
+    let center_y = (min_y + max_y) / 2.0;
+    let width = max_x - min_x;
+    let height = max_y - min_y;
+
+    let view_width = width / view_state.zoom;
+    let view_height = height / view_state.zoom;
+
+    let final_min_x = center_x + view_state.pan_x - view_width / 2.0;
+    let final_max_x = center_x + view_state.pan_x + view_width / 2.0;
+    let final_min_y = center_y + view_state.pan_y - view_height / 2.0;
+    let final_max_y = center_y + view_state.pan_y + view_height / 2.0;
+
     // Canvas
     let canvas = Canvas::default()
         .block(Block::default().borders(Borders::ALL).title("Git Galaxy"))
-        .x_bounds([min_x, max_x])
-        .y_bounds([min_y, max_y])
+        .x_bounds([final_min_x, final_max_x])
+        .y_bounds([final_min_y, final_max_y])
         .marker(Marker::Braille)
         .paint(|ctx| {
             // Draw Edges
@@ -84,15 +143,52 @@ pub fn ui(f: &mut Frame, graph: &Graph) {
             }
         });
 
-    f.render_widget(canvas, chunks[0]);
+    f.render_widget(canvas, left_chunks[0]);
 
     // Info
     let node_count = graph.nodes.len();
     let edge_count = graph.edges.len();
     let info_text = format!(
-        "Nodes: {} | Edges: {} | Press 'q' to quit",
+        "Nodes: {} | Edges: {} | Press 'q' to quit | +/- Zoom | Arrows Pan",
         node_count, edge_count
     );
     let info = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL));
-    f.render_widget(info, chunks[1]);
+    f.render_widget(info, left_chunks[1]);
+
+    // Sidebar
+    let sidebar_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(10), Constraint::Min(0)])
+        .split(main_chunks[1]);
+
+    // Stats
+    let stats_text = vec![
+        TextLine::from(vec![Span::raw("Galaxy Stats")]),
+        TextLine::from(vec![Span::raw(format!("Nodes: {}", graph.nodes.len()))]),
+        TextLine::from(vec![Span::raw(format!("Edges: {}", graph.edges.len()))]),
+        TextLine::from(vec![Span::raw(format!("Zoom: {:.1}x", view_state.zoom))]),
+        TextLine::from(vec![Span::raw(format!(
+            "Pan: {:.0}, {:.0}",
+            view_state.pan_x, view_state.pan_y
+        ))]),
+    ];
+    let stats = Paragraph::new(stats_text)
+        .block(Block::default().borders(Borders::ALL).title("Stats"));
+    f.render_widget(stats, sidebar_chunks[0]);
+
+    // Legend
+    let top_authors = get_top_authors(graph);
+    let mut legend_lines = Vec::new();
+    for (author, count, color) in top_authors {
+        legend_lines.push(TextLine::from(vec![
+            Span::styled(
+                "■ ",
+                Style::default().fg(Color::Rgb(color.0, color.1, color.2)),
+            ),
+            Span::raw(format!(" {} ({})", author, count)),
+        ]));
+    }
+    let legend = Paragraph::new(legend_lines)
+        .block(Block::default().borders(Borders::ALL).title("Top Authors"));
+    f.render_widget(legend, sidebar_chunks[1]);
 }
