@@ -1,16 +1,17 @@
 [workspace]
 members = [
     "experiments/automata-warfare",
+    "experiments/code-metropolis",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/hyphal-commute",
+    "experiments/l-system-garden",
     "experiments/literary-boids",
+    "experiments/neuro-terminal",
     "experiments/schrodingers-text",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
-    "experiments/code-metropolis",
-    "experiments/neuro-terminal",
     "experiments/fugue-state",
 ]
 resolver = "2"
