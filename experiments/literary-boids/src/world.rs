@@ -64,9 +64,9 @@ impl World {
 
     pub fn update(&mut self) {
         // 1. Calculate flocking forces
-        // We iterate immutably over all boids and store the resulting forces separately,
-        // so we can later update each boid's state without aliasing mutable and immutable access.
-        // For very large numbers of boids, we would likely switch to a spatial grid or separate arrays.
+        // We need to clone boids or use a way to access them immutably while modifying others.
+        // Since Boid struct is small enough, cloning the vector for read-access is acceptable for performance in this context (~100s of boids).
+        // For millions, we'd use a spatial grid or separate arrays.
         let mut forces = Vec::with_capacity(self.boids.len());
 
         for boid in &self.boids {
