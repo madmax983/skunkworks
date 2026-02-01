@@ -96,19 +96,22 @@ impl Boid {
         let mut ali_count = 0;
         let mut coh_count = 0;
 
+        let view_radius_sq = self.dna.view_radius.powi(2);
+        let separation_radius_sq = (self.dna.view_radius / 2.0).powi(2);
+
         for other in boids {
-            let d = distance(self.position, other.position);
+            let d_sq = distance_squared(self.position, other.position);
 
             // Avoid self (and exact overlaps, unlikely but possible)
-            if d == 0.0 { continue; }
+            if d_sq == 0.0 { continue; }
 
-            if d < self.dna.view_radius {
+            if d_sq < view_radius_sq {
                 // Separation
-                if d < self.dna.view_radius / 2.0 {
+                if d_sq < separation_radius_sq {
                     let diff = (self.position.0 - other.position.0, self.position.1 - other.position.1);
                     // Weight by distance squared inversely
-                    separation.0 += diff.0 / (d * d);
-                    separation.1 += diff.1 / (d * d);
+                    separation.0 += diff.0 / d_sq;
+                    separation.1 += diff.1 / d_sq;
                     sep_count += 1;
                 }
 
@@ -181,8 +184,12 @@ impl Boid {
     }
 }
 
-fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
-    ((p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)).sqrt()
+pub fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
+    distance_squared(p1, p2).sqrt()
+}
+
+pub fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
+    (p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)
 }
 
 fn limit(vector: (f64, f64), max: f64) -> (f64, f64) {
