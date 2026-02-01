@@ -53,7 +53,7 @@ pub struct Entity {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub display: Option<String>,
     /// Arbitrary properties (health, mass, state, etc.)
-    #[serde(skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub props: HashMap<String, PropValue>,
 }
 
@@ -172,19 +172,19 @@ pub struct Snapshot {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub viewport: Option<(u16, u16)>,
     /// All semantic entities
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub entities: Vec<Entity>,
     /// Named regions of interest
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub regions: Vec<Region>,
     /// Top-level metrics (score, time, counts)
-    #[serde(skip_serializing_if = "HashMap::is_empty")]
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub metrics: HashMap<String, PropValue>,
     /// Current app state/mode
     #[serde(skip_serializing_if = "Option::is_none")]
     pub state: Option<String>,
     /// Available actions the user/LLM can take
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub actions: Vec<Action>,
 }
 
@@ -337,5 +337,125 @@ mod tests {
         assert!(json.contains("test-app"));
         assert!(json.contains("particle"));
         assert!(json.contains("10.5"));
+    }
+
+    #[test]
+    fn test_snapshot_roundtrip() {
+        let original = Snapshot::new("roundtrip-app")
+            .with_frame(100)
+            .with_viewport(120, 40)
+            .with_entity(
+                Entity::new("enemy")
+                    .with_id("e1")
+                    .at(50.0, 10.0)
+                    .with_prop("health", 100)
+                    .with_prop("is_boss", true)
+            )
+            .with_region(Region::new("main_view", 0, 0, 80, 24).describe("The main game view"))
+            .with_metric("fps", 60.0);
+
+        let json = original.to_json();
+        let recovered: Snapshot = serde_json::from_str(&json).expect("Failed to deserialize snapshot");
+
+        assert_eq!(original.app, recovered.app);
+        assert_eq!(original.frame, recovered.frame);
+        assert_eq!(original.viewport, recovered.viewport);
+        assert_eq!(original.entities.len(), recovered.entities.len());
+        assert_eq!(original.regions.len(), recovered.regions.len());
+        assert_eq!(original.metrics.len(), recovered.metrics.len());
+
+        let entity = &recovered.entities[0];
+        assert_eq!(entity.kind, "enemy");
+        assert_eq!(entity.id.as_deref(), Some("e1"));
+
+        // Check props
+        match entity.props.get("health") {
+            Some(PropValue::Int(v)) => assert_eq!(*v, 100),
+            _ => panic!("Expected health to be Int(100)"),
+        }
+        match entity.props.get("is_boss") {
+            Some(PropValue::Bool(v)) => assert!(v),
+            _ => panic!("Expected is_boss to be Bool(true)"),
+        }
+    }
+
+    #[test]
+    fn test_command_deserialization() {
+        // Test GetSnapshot
+        let json = r#"{"type": "GetSnapshot"}"#;
+        let cmd = Command::from_json(json).expect("Failed to parse GetSnapshot");
+        assert!(matches!(cmd, Command::GetSnapshot));
+
+        // Test SendKey
+        let json = r#"{"type": "SendKey", "key": "Enter"}"#;
+        let cmd = Command::from_json(json).expect("Failed to parse SendKey");
+        if let Command::SendKey { key } = cmd {
+            assert_eq!(key, "Enter");
+        } else {
+            panic!("Expected SendKey");
+        }
+
+        // Test InvokeAction
+        let json = r#"{"type": "InvokeAction", "name": "fire"}"#;
+        let cmd = Command::from_json(json).expect("Failed to parse InvokeAction");
+        if let Command::InvokeAction { name } = cmd {
+            assert_eq!(name, "fire");
+        } else {
+            panic!("Expected InvokeAction");
+        }
+
+        // Test Quit
+        let json = r#"{"type": "Quit"}"#;
+        let cmd = Command::from_json(json).expect("Failed to parse Quit");
+        assert!(matches!(cmd, Command::Quit));
+    }
+
+    #[test]
+    fn test_prop_value_types() {
+        // Test Int
+        let json = "42";
+        let val: PropValue = serde_json::from_str(json).unwrap();
+        assert!(matches!(val, PropValue::Int(42)));
+
+        // Test Float
+        let json = "3.14";
+        let val: PropValue = serde_json::from_str(json).unwrap();
+        assert!(matches!(val, PropValue::Float(v) if (v - 3.14).abs() < f64::EPSILON));
+
+        // Test Bool
+        let json = "true";
+        let val: PropValue = serde_json::from_str(json).unwrap();
+        assert!(matches!(val, PropValue::Bool(true)));
+
+        // Test Text
+        let json = "\"hello\"";
+        let val: PropValue = serde_json::from_str(json).unwrap();
+        if let PropValue::Text(s) = val {
+            assert_eq!(s, "hello");
+        } else {
+            panic!("Expected Text");
+        }
+    }
+
+    #[test]
+    fn test_builder_methods() {
+        let action = Action::new("jump").key("Space").describe("Jump up");
+        assert_eq!(action.name, "jump");
+        assert_eq!(action.key.as_deref(), Some("Space"));
+        assert_eq!(action.description.as_deref(), Some("Jump up"));
+
+        let region = Region::new("inventory", 0, 25, 20, 10).describe("Player inventory");
+        assert_eq!(region.name, "inventory");
+        assert_eq!(region.x, 0);
+        assert_eq!(region.y, 25);
+        assert_eq!(region.width, 20);
+        assert_eq!(region.height, 10);
+        assert_eq!(region.description.as_deref(), Some("Player inventory"));
+
+        let entity = Entity::new("mob").moving(1.0, 2.0).display("@");
+        assert!(entity.position.is_none());
+        assert_eq!(entity.velocity.unwrap().x, 1.0);
+        assert_eq!(entity.velocity.unwrap().y, 2.0);
+        assert_eq!(entity.display.as_deref(), Some("@"));
     }
 }
