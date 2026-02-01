@@ -1,5 +1,7 @@
 mod app;
 mod physics;
+#[cfg(test)]
+mod chaos;
 
 use app::App;
 use crossterm::{
