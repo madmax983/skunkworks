@@ -2,3 +2,8 @@
 **Concept:** Use git commit "churn" (insertions + deletions) to modulate the synthesis parameters (FM Synthesis), creating "noise" or "complexity" in the sound for large commits.
 **Fate:** In Progress
 **Lesson:**
+
+## [Mood Lighting]
+**Concept:** Synesthetic color generation for git commits. Hash determines Hue, Churn determines Lightness. Visualized in TUI elements.
+**Fate:** Merged
+**Lesson:** Visual feedback complements audio well in TUI environments.
