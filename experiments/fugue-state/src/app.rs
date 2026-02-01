@@ -43,23 +43,26 @@ impl App {
         }
 
         if let Some(start) = self.start_time {
-             let now = Instant::now();
-             let duration = now.duration_since(start);
-             self.elapsed = duration.as_secs_f32();
+            let now = Instant::now();
+            let duration = now.duration_since(start);
+            self.elapsed = duration.as_secs_f32();
 
-             // Update index
-             if self.elapsed >= self.total_duration {
-                 self.is_playing = false;
-                 self.current_event_index = self.events.len();
-             } else {
-                 // Binary search or linear scan
-                 // Linear is fine for small N, but binary is better.
-                 // `event_start_times` is sorted.
-                 match self.event_start_times.binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap()) {
-                     Ok(idx) => self.current_event_index = idx,
-                     Err(idx) => self.current_event_index = idx.saturating_sub(1),
-                 }
-             }
+            // Update index
+            if self.elapsed >= self.total_duration {
+                self.is_playing = false;
+                self.current_event_index = self.events.len();
+            } else {
+                // Binary search or linear scan
+                // Linear is fine for small N, but binary is better.
+                // `event_start_times` is sorted.
+                match self
+                    .event_start_times
+                    .binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap())
+                {
+                    Ok(idx) => self.current_event_index = idx,
+                    Err(idx) => self.current_event_index = idx.saturating_sub(1),
+                }
+            }
         }
     }
 
@@ -73,10 +76,13 @@ impl App {
             self.is_playing = false;
             self.current_event_index = self.events.len();
         } else {
-             match self.event_start_times.binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap()) {
-                 Ok(idx) => self.current_event_index = idx,
-                 Err(idx) => self.current_event_index = idx.saturating_sub(1),
-             }
+            match self
+                .event_start_times
+                .binary_search_by(|t| t.partial_cmp(&self.elapsed).unwrap())
+            {
+                Ok(idx) => self.current_event_index = idx,
+                Err(idx) => self.current_event_index = idx.saturating_sub(1),
+            }
         }
     }
 }

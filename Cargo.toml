@@ -13,5 +13,6 @@ members = [
     "experiments/term-fluids",
     "experiments/text-hydro",
     "experiments/fugue-state",
+    "experiments/cellular-beats",
 ]
 resolver = "2"
