@@ -1,14 +1,14 @@
-use crate::network::{Network, construct_cpg};
 use crate::body::Creature;
-use tui_shared::Tui;
+use crate::network::{construct_cpg, Network};
+use crossterm::event::{self, Event, KeyCode};
+use ratatui::{
+    layout::{Constraint, Direction, Layout},
+    prelude::*,
+    widgets::{Block, Borders, Gauge, Paragraph, Sparkline},
+};
 use std::io;
 use std::time::{Duration, Instant};
-use ratatui::{
-    prelude::*,
-    widgets::{Block, Borders, Paragraph, Sparkline, Gauge},
-    layout::{Layout, Constraint, Direction},
-};
-use crossterm::event::{self, Event, KeyCode};
+use tui_shared::Tui;
 
 pub struct App {
     network: Network,
@@ -76,8 +76,12 @@ impl App {
 
             self.history_v1.push(v1);
             self.history_v2.push(v2);
-            if self.history_v1.len() > 200 { self.history_v1.remove(0); }
-            if self.history_v2.len() > 200 { self.history_v2.remove(0); }
+            if self.history_v1.len() > 200 {
+                self.history_v1.remove(0);
+            }
+            if self.history_v2.len() > 200 {
+                self.history_v2.remove(0);
+            }
 
             self.steps += 1;
         }
@@ -129,13 +133,21 @@ impl App {
             .split(chunks[2]);
 
         let sparkline_1 = Sparkline::default()
-            .block(Block::default().title("Neuron 1 (Left Drive)").borders(Borders::ALL))
+            .block(
+                Block::default()
+                    .title("Neuron 1 (Left Drive)")
+                    .borders(Borders::ALL),
+            )
             .data(&self.history_v1)
             .style(Style::default().fg(Color::Yellow));
         frame.render_widget(sparkline_1, neural_chunks[0]);
 
         let sparkline_2 = Sparkline::default()
-            .block(Block::default().title("Neuron 2 (Right Drive)").borders(Borders::ALL))
+            .block(
+                Block::default()
+                    .title("Neuron 2 (Right Drive)")
+                    .borders(Borders::ALL),
+            )
             .data(&self.history_v2)
             .style(Style::default().fg(Color::Cyan));
         frame.render_widget(sparkline_2, neural_chunks[1]);

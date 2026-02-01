@@ -9,3 +9,4 @@ crossterm.workspace = true
 git2 = "0.18"
 rand.workspace = true
 ratatui.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }

@@ -1,22 +1,19 @@
+use crate::model::{Agent, MarketState};
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
     text::{Line, Span},
     widgets::{
+        Block, Borders, Paragraph, Sparkline,
         canvas::{Canvas, Rectangle},
-        Block, Borders, Sparkline, Paragraph,
     },
-    Frame,
 };
-use crate::model::{MarketState, Agent};
 
 pub fn draw_ui(f: &mut Frame, state: &MarketState, agents: &[Agent]) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(60),
-            Constraint::Percentage(40),
-        ])
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)])
         .split(f.area());
 
     draw_memory_grid(f, chunks[0], state, agents);
@@ -25,7 +22,11 @@ pub fn draw_ui(f: &mut Frame, state: &MarketState, agents: &[Agent]) {
 
 fn draw_memory_grid(f: &mut Frame, area: Rect, state: &MarketState, agents: &[Agent]) {
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" RAM Bazaar: Memory Map "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" RAM Bazaar: Memory Map "),
+        )
         .x_bounds([0.0, state.width as f64])
         .y_bounds([0.0, state.height as f64])
         .paint(|ctx| {
@@ -62,16 +63,17 @@ fn draw_memory_grid(f: &mut Frame, area: Rect, state: &MarketState, agents: &[Ag
 fn draw_sidebar(f: &mut Frame, area: Rect, state: &MarketState, agents: &[Agent]) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(10),
-            Constraint::Min(10),
-        ])
+        .constraints([Constraint::Length(10), Constraint::Min(10)])
         .split(area);
 
     // Price Chart
     let price_history: Vec<u64> = state.price_history.iter().map(|p| *p as u64).collect();
     let sparkline = Sparkline::default()
-        .block(Block::default().title(" Memory Price Index ").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title(" Memory Price Index ")
+                .borders(Borders::ALL),
+        )
         .data(&price_history)
         .style(Style::default().fg(Color::Cyan));
 
@@ -86,8 +88,14 @@ fn draw_sidebar(f: &mut Frame, area: Rect, state: &MarketState, agents: &[Agent]
     for agent in sorted_agents.iter().take(20) {
         let style = Style::default().fg(agent.strategy.color());
         let line = Line::from(vec![
-            Span::styled(format!("Agent {:02} [{:?}]", agent.id, agent.strategy), style),
-            Span::raw(format!(": {} pages, ${:.1}", agent.owned_pages, agent.budget)),
+            Span::styled(
+                format!("Agent {:02} [{:?}]", agent.id, agent.strategy),
+                style,
+            ),
+            Span::raw(format!(
+                ": {} pages, ${:.1}",
+                agent.owned_pages, agent.budget
+            )),
         ]);
         agent_lines.push(line);
     }

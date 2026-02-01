@@ -1,6 +1,6 @@
-pub mod model;
-pub mod market;
 pub mod agent;
+pub mod market;
+pub mod model;
 pub mod ui;
 
 use anyhow::Result;
@@ -8,9 +8,9 @@ use crossterm::event::{self, Event, KeyCode};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use crate::model::{Agent, MarketState, Strategy};
 use crate::agent::AgentLogic;
 use crate::market::resolve_market;
+use crate::model::{Agent, MarketState, Strategy};
 use crate::ui::draw_ui;
 
 struct App {
@@ -24,7 +24,12 @@ impl App {
         let width = 32;
         let height = 32;
         let mut agents = Vec::new();
-        let strategies = [Strategy::Greedy, Strategy::Saver, Strategy::Hoarder, Strategy::Panic];
+        let strategies = [
+            Strategy::Greedy,
+            Strategy::Saver,
+            Strategy::Hoarder,
+            Strategy::Panic,
+        ];
 
         for i in 0..100 {
             let strategy = strategies[i % strategies.len()];

@@ -7,3 +7,4 @@ edition = "2024"
 crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }

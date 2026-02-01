@@ -1,7 +1,7 @@
-pub mod neuron;
-pub mod network;
-pub mod body;
 pub mod app;
+pub mod body;
+pub mod network;
+pub mod neuron;
 
 use app::App;
 use std::io;

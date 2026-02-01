@@ -1,18 +1,13 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::Color,
     widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Frame, Terminal,
 };
-use std::io::{self};
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 use code_metropolis::iso::{Camera, Cube, Point3D};
 use code_metropolis::layout::{generate_layout, Block as LayoutBlock};
@@ -68,18 +63,16 @@ impl App {
 
         let cubes: Vec<Cube> = blocks
             .iter()
-            .map(|b| {
-                Cube {
-                    origin: Point3D {
-                        x: b.x,
-                        y: 0.0,
-                        z: b.z,
-                    },
-                    width: b.width,
-                    depth: b.depth,
-                    height: b.height,
-                    color: determine_block_color(b),
-                }
+            .map(|b| Cube {
+                origin: Point3D {
+                    x: b.x,
+                    y: 0.0,
+                    z: b.z,
+                },
+                width: b.width,
+                depth: b.depth,
+                height: b.height,
+                color: determine_block_color(b),
             })
             .collect();
 
@@ -127,10 +120,8 @@ impl App {
                 .checked_sub(last_tick.elapsed())
                 .unwrap_or_else(|| Duration::from_secs(0));
 
-            if event::poll(timeout)? {
-                if self.handle_event(event::read()?)? {
-                    return Ok(());
-                }
+            if event::poll(timeout)? && self.handle_event(event::read()?)? {
+                return Ok(());
             }
 
             if last_tick.elapsed() >= tick_rate {
@@ -218,22 +209,9 @@ fn main() -> Result<()> {
     }
 
     // 4. Terminal UI Loop
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
-    let res = app.run(&mut terminal);
-
-    // Restore terminal state
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
-
-    if let Err(err) = res {
-        eprintln!("Error: {:?}", err);
-    }
+    app.run(&mut tui.terminal)?;
 
     Ok(())
 }
@@ -241,8 +219,8 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ratatui::style::Color;
     use code_metropolis::layout::Block as LayoutBlock;
+    use ratatui::style::Color;
     use std::path::PathBuf;
 
     #[test]

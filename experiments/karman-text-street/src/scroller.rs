@@ -59,12 +59,11 @@ impl Scroller {
                 // LSB is left? or MSB is left?
                 // font8x8: 0x80 is left-most pixel.
 
-                for row in 0..8 {
-                    let byte = glyph[row];
+                for (row, &byte) in glyph.iter().enumerate() {
                     for col in 0..8 {
                         // bit 0 is right-most (x+7). bit 7 is left-most (x+0).
                         if (byte & (1 << col)) != 0 {
-                            let px = char_x + (7 - col) as i32;
+                            let px = char_x + (7 - col);
                             let py = y_base + row;
 
                             if px >= 0 && px < fluid.width as i32 && py < fluid.height {

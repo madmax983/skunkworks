@@ -95,7 +95,7 @@ impl App {
                 self.world.set(
                     grid_x + dx as usize,
                     grid_y + dy as usize,
-                    Particle::new(kind, p_char, color)
+                    Particle::new(kind, p_char, color),
                 );
             }
         }
@@ -126,14 +126,13 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
             let block = Block::default()
                 .borders(Borders::ALL)
                 .title(" Text Sand - Creative Mode ")
-                .title_style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD));
+                .title_style(
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                );
 
-            f.render_widget(
-                WorldWidget {
-                    world: &app.world,
-                },
-                block.inner(main_area),
-            );
+            f.render_widget(WorldWidget { world: &app.world }, block.inner(main_area));
             f.render_widget(block, main_area);
 
             let tool_name = match app.selected_kind {
@@ -149,7 +148,10 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
                 Span::styled(tool_name, Style::default().fg(Color::Yellow)),
                 Span::raw(" | [Space] Pause | [C]lear | Type to spawn text | Click to draw"),
             ]);
-            f.render_widget(Paragraph::new(status).style(Style::default().bg(Color::DarkGray)), status_area);
+            f.render_widget(
+                Paragraph::new(status).style(Style::default().bg(Color::DarkGray)),
+                status_area,
+            );
         })?;
 
         let timeout = tick_rate
@@ -167,7 +169,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
                                 let w = app.world.width;
                                 let h = app.world.height;
                                 app.world = World::new(w, h);
-                            },
+                            }
                             KeyCode::Char('s') => app.selected_kind = ParticleKind::Sand,
                             KeyCode::Char('w') => app.selected_kind = ParticleKind::Water,
                             KeyCode::Char('#') => app.selected_kind = ParticleKind::Wall,
@@ -193,8 +195,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
                             app.is_drawing = false;
                         }
                         MouseEventKind::Drag(MouseButton::Left) => {
-                             app.is_drawing = true; // Ensure drawing state
-                             app.spawn_at_mouse(None);
+                            app.is_drawing = true; // Ensure drawing state
+                            app.spawn_at_mouse(None);
                         }
                         _ => {}
                     }
@@ -222,9 +224,9 @@ impl<'a> Widget for WorldWidget<'a> {
             for x in 0..area.width {
                 let p = self.world.get(x as usize, y as usize);
                 if p.kind != ParticleKind::Empty {
-                     if let Some(cell) = buf.cell_mut((area.x + x, area.y + y)) {
-                         cell.set_char(p.char).set_fg(p.color);
-                     }
+                    if let Some(cell) = buf.cell_mut((area.x + x, area.y + y)) {
+                        cell.set_char(p.char).set_fg(p.color);
+                    }
                 }
             }
         }

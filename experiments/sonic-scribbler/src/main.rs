@@ -1,20 +1,26 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use glam::Vec2;
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction, Layout},
     style::Color,
-    widgets::{canvas::{Canvas, Line, Context}, Block, Borders, Paragraph},
-    Frame,
+    widgets::{
+        Block, Borders, Paragraph,
+        canvas::{Canvas, Context, Line},
+    },
 };
-use std::{time::{Duration, Instant}, path::PathBuf};
+use std::{
+    path::PathBuf,
+    time::{Duration, Instant},
+};
 use tui_shared::Tui;
-use glam::Vec2;
 
 mod font;
 mod transform;
 
 use font::{FontLoader, PathCommand};
-use transform::{distort, flatten, AudioState};
+use transform::{AudioState, distort, flatten};
 
 struct App {
     audio: AudioState,
@@ -85,7 +91,11 @@ impl App {
             .split(frame.area());
 
         let canvas = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title("Sonic Scribbler"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Sonic Scribbler"),
+            )
             .marker(ratatui::symbols::Marker::Braille)
             .x_bounds([0.0, 12000.0])
             .y_bounds([-1000.0, 3000.0])
@@ -101,41 +111,42 @@ impl App {
         );
         frame.render_widget(
             Paragraph::new(info).block(Block::default().borders(Borders::ALL)),
-            chunks[1]
+            chunks[1],
         );
     }
 
     fn draw_text(&self, ctx: &mut Context) {
         if let Some(loader) = FontLoader::new(&self.font_data) {
-             let mut cursor_x = 500.0;
-             let baseline_y = 500.0;
+            let mut cursor_x = 500.0;
+            let baseline_y = 500.0;
 
-             for c in self.text.chars() {
-                 let cmds = loader.get_glyph_path(c);
+            for c in self.text.chars() {
+                let cmds = loader.get_glyph_path(c);
 
-                 // Shift to position
-                 let shifted_cmds: Vec<PathCommand> = cmds.iter().map(|cmd| {
-                     shift_cmd(cmd, Vec2::new(cursor_x, baseline_y))
-                 }).collect();
+                // Shift to position
+                let shifted_cmds: Vec<PathCommand> = cmds
+                    .iter()
+                    .map(|cmd| shift_cmd(cmd, Vec2::new(cursor_x, baseline_y)))
+                    .collect();
 
-                 // Distort
-                 let distorted = distort(&shifted_cmds, &self.audio);
+                // Distort
+                let distorted = distort(&shifted_cmds, &self.audio);
 
-                 // Flatten
-                 let lines = flatten(&distorted);
+                // Flatten
+                let lines = flatten(&distorted);
 
-                 for (p1, p2) in lines {
-                     ctx.draw(&Line {
-                         x1: p1.x as f64,
-                         y1: p1.y as f64,
-                         x2: p2.x as f64,
-                         y2: p2.y as f64,
-                         color: Color::Cyan,
-                     });
-                 }
+                for (p1, p2) in lines {
+                    ctx.draw(&Line {
+                        x1: p1.x as f64,
+                        y1: p1.y as f64,
+                        x2: p2.x as f64,
+                        y2: p2.y as f64,
+                        color: Color::Cyan,
+                    });
+                }
 
-                 cursor_x += loader.get_glyph_advance(c);
-             }
+                cursor_x += loader.get_glyph_advance(c);
+            }
         }
     }
 }
@@ -145,7 +156,9 @@ fn shift_cmd(cmd: &PathCommand, offset: Vec2) -> PathCommand {
         PathCommand::MoveTo(p) => PathCommand::MoveTo(*p + offset),
         PathCommand::LineTo(p) => PathCommand::LineTo(*p + offset),
         PathCommand::QuadTo(c, e) => PathCommand::QuadTo(*c + offset, *e + offset),
-        PathCommand::CurveTo(c1, c2, e) => PathCommand::CurveTo(*c1 + offset, *c2 + offset, *e + offset),
+        PathCommand::CurveTo(c1, c2, e) => {
+            PathCommand::CurveTo(*c1 + offset, *c2 + offset, *e + offset)
+        }
         PathCommand::Close => PathCommand::Close,
     }
 }

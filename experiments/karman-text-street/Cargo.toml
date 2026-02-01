@@ -9,3 +9,4 @@ font8x8 = "0.3.1"
 rand.workspace = true
 ratatui.workspace = true
 rayon = "1.10.0"
+tui-shared = { path = "../../crates/tui-shared" }

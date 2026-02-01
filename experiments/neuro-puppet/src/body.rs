@@ -14,8 +14,16 @@ impl Creature {
     pub fn update(&mut self, spikes: &[bool]) {
         // Neuron 0 -> Left Muscle
         // Neuron 1 -> Right Muscle
-        let spike_l = if spikes.len() > 0 && spikes[0] { 1.0 } else { 0.0 };
-        let spike_r = if spikes.len() > 1 && spikes[1] { 1.0 } else { 0.0 };
+        let spike_l = if spikes.len() > 0 && spikes[0] {
+            1.0
+        } else {
+            0.0
+        };
+        let spike_r = if spikes.len() > 1 && spikes[1] {
+            1.0
+        } else {
+            0.0
+        };
 
         // Leaky integrator for smooth muscle movement
         // decay factor must be < 1.0

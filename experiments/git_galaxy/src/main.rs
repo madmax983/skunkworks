@@ -1,12 +1,7 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{backend::CrosstermBackend, Terminal};
-use std::io::{self};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 use git_galaxy::harvester::harvest_repo;
 use git_galaxy::physics::Graph;
@@ -39,18 +34,15 @@ impl App {
 
     fn run(&mut self) -> Result<()> {
         // Setup Terminal
-        enable_raw_mode()?;
-        let mut stdout = io::stdout();
-        execute!(stdout, EnterAlternateScreen)?;
-        let backend = CrosstermBackend::new(stdout);
-        let mut terminal = Terminal::new(backend)?;
+        let mut tui = Tui::init()?;
 
         // Loop
         let tick_rate = Duration::from_millis(16); // 60 FPS
         let mut last_tick = Instant::now();
 
         while self.running {
-            terminal.draw(|f| ui(f, &self.graph, &self.view_state))?;
+            tui.terminal
+                .draw(|f| ui(f, &self.graph, &self.view_state))?;
 
             let timeout = tick_rate
                 .checked_sub(last_tick.elapsed())
@@ -83,11 +75,6 @@ impl App {
                 last_tick = Instant::now();
             }
         }
-
-        // Cleanup
-        disable_raw_mode()?;
-        execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-        terminal.show_cursor()?;
 
         Ok(())
     }

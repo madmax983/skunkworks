@@ -19,7 +19,7 @@ impl AgentLogic for Agent {
             Strategy::Greedy => {
                 // Aggressive: Bid above market to steal pages
                 (current_market_price * 1.5).max(10.0)
-            },
+            }
             Strategy::Saver => {
                 // Conservative: Only bid if cheap, or slightly above market to maintain
                 if self.owned_pages < self.desired_memory / 2 {
@@ -27,11 +27,11 @@ impl AgentLogic for Agent {
                 } else {
                     current_market_price * 0.9 // Cheapskate for extra
                 }
-            },
+            }
             Strategy::Hoarder => {
                 // Irrationally high valuation, sticky
                 50.0 + (rng.random::<f64>() * 20.0)
-            },
+            }
             Strategy::Panic => {
                 // High volatility
                 if rng.random_bool(0.05) {
@@ -39,7 +39,7 @@ impl AgentLogic for Agent {
                 } else {
                     current_market_price * 0.5 // Dump
                 }
-            },
+            }
         };
 
         // Generate bids for each desired page
@@ -57,10 +57,10 @@ impl AgentLogic for Agent {
             let estimated_total_cost = bid_price * (i as f64 + 1.0);
 
             if estimated_total_cost <= self.budget {
-                 bids.push(Bid {
-                     agent_id: self.id,
-                     price: bid_price.max(0.1) // Minimum bid
-                 });
+                bids.push(Bid {
+                    agent_id: self.id,
+                    price: bid_price.max(0.1), // Minimum bid
+                });
             } else {
                 // Can't afford more pages at this price
                 break;
