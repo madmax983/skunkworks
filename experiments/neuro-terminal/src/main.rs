@@ -82,7 +82,7 @@ impl App {
         }
 
         Self {
-            network: Network::new(vec![2, 5, 4, 1], 0.1),
+            network: Network::new(vec![2, 5, 4, 1], 0.1).expect("Failed to create network"),
             inputs,
             targets,
             steps: 0,
@@ -99,8 +99,10 @@ impl App {
         // Train on random batch
         for _ in 0..10 {
             let idx = rng.gen_range(0..self.inputs.len());
-            self.network
-                .train(&self.inputs[idx], &self.targets[idx]);
+            // Ignore training errors (e.g. if we had invalid data, but here data is fixed)
+            let _ = self
+                .network
+                .train(self.inputs[idx].clone(), self.targets[idx].clone());
             self.steps += 1;
         }
     }
@@ -123,8 +125,11 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char('p') => app.paused = !app.paused,
                     KeyCode::Char('r') => {
-                        app.network = Network::new(vec![2, 5, 4, 1], 0.1);
-                        app.steps = 0;
+                        // Reset network
+                        if let Ok(new_net) = Network::new(vec![2, 5, 4, 1], 0.1) {
+                            app.network = new_net;
+                            app.steps = 0;
+                        }
                     }
                     _ => {}
                 }
@@ -177,13 +182,14 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                 for y_i in 0..40 {
                     let x = -1.0 + x_i as f64 * 2.0 / 39.0;
                     let y = -1.0 + y_i as f64 * 2.0 / 39.0;
-                    let out = app.network.predict(vec![x, y]);
 
-                    if out[0] > 0.5 {
-                        ctx.draw(&Points {
-                            coords: &[(x, y)],
-                            color: Color::Rgb(50, 50, 50), // Faint grey/white
-                        });
+                    if let Ok(out) = app.network.predict(vec![x, y]) {
+                        if out[0] > 0.5 {
+                            ctx.draw(&Points {
+                                coords: &[(x, y)],
+                                color: Color::Rgb(50, 50, 50), // Faint grey/white
+                            });
+                        }
                     }
                 }
             }
@@ -218,7 +224,6 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                     layer_nodes.push((x, y));
 
                     // Draw node
-                    // We can use a small circle or point
                     ctx.draw(&Points {
                         coords: &[(x, y)],
                         color: Color::Yellow,
@@ -236,26 +241,29 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                 for (i, to_pos) in next_layer_nodes.iter().enumerate() {
                     for (j, from_pos) in current_layer_nodes.iter().enumerate() {
                         // Weight connects from_pos (j) to to_pos (i)
-                        // weights matrix is [next_layer_size, current_layer_size]
-                        // value is weights[i][j] (row i, col j)
+
+                        // Safety: Accessing weights.data with index.
+                        // We must ensure index is within bounds.
+                        // weights.cols should be current_layer_size (neuron_count of l)
+                        // weights.rows should be next_layer_size (neuron_count of l+1)
+                        // This logic relies on Network::new being correct.
 
                         let idx = i * weights.cols + j;
-                        let w = weights.data[idx];
+                        if idx < weights.data.len() {
+                            let w = weights.data[idx];
 
-                        // Color based on weight sign
-                        let color = if w > 0.0 { Color::Green } else { Color::Red };
+                            // Color based on weight sign
+                            let color = if w > 0.0 { Color::Green } else { Color::Red };
 
-                        // Thickness/brightness based on magnitude?
-                        // Canvas Line doesn't support thickness.
-                        // We can threshold drawing.
-                        if w.abs() > 0.5 {
-                            ctx.draw(&Line {
-                                x1: from_pos.0,
-                                y1: from_pos.1,
-                                x2: to_pos.0,
-                                y2: to_pos.1,
-                                color,
-                            });
+                            if w.abs() > 0.5 {
+                                ctx.draw(&Line {
+                                    x1: from_pos.0,
+                                    y1: from_pos.1,
+                                    x2: to_pos.0,
+                                    y2: to_pos.1,
+                                    color,
+                                });
+                            }
                         }
                     }
                 }
