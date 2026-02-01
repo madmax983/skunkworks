@@ -1,0 +1,11 @@
+[package]
+name = "crystal-structure"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.29.0"
+crossterm = "0.28.1"
+anyhow = "1.0"
+nalgebra = "0.33"
+rand = "0.8.5"

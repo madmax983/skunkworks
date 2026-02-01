@@ -1,14 +1,29 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(usize)]
 pub enum Cell {
-    Empty,
-    Rock,
-    Paper,
-    Scissors,
-    Lizard,
-    Spock,
+    Empty = 0,
+    Rock = 1,
+    Paper = 2,
+    Scissors = 3,
+    Lizard = 4,
+    Spock = 5,
 }
 
 use rand::Rng;
+
+impl From<usize> for Cell {
+    fn from(value: usize) -> Self {
+        match value {
+            0 => Cell::Empty,
+            1 => Cell::Rock,
+            2 => Cell::Paper,
+            3 => Cell::Scissors,
+            4 => Cell::Lizard,
+            5 => Cell::Spock,
+            _ => Cell::Empty,
+        }
+    }
+}
 
 impl Cell {
     #[allow(clippy::match_like_matches_macro)]
@@ -24,14 +39,7 @@ impl Cell {
     }
 
     pub fn random() -> Self {
-        match rand::thread_rng().gen_range(0..6) {
-            0 => Cell::Empty,
-            1 => Cell::Rock,
-            2 => Cell::Paper,
-            3 => Cell::Scissors,
-            4 => Cell::Lizard,
-            _ => Cell::Spock,
-        }
+        Cell::from(rand::thread_rng().gen_range(0..6))
     }
 }
 
@@ -76,23 +84,12 @@ impl Grid {
                         let n_idx = self.get_index(nx, ny);
                         let neighbor = self.cells[n_idx];
 
-                        match neighbor {
-                            Cell::Empty => counts[0] += 1,
-                            Cell::Rock => counts[1] += 1,
-                            Cell::Paper => counts[2] += 1,
-                            Cell::Scissors => counts[3] += 1,
-                            Cell::Lizard => counts[4] += 1,
-                            Cell::Spock => counts[5] += 1,
-                        }
+                        counts[neighbor as usize] += 1;
                     }
                 }
 
                 if current == Cell::Empty {
                     // Reproduction: If exactly 3 neighbors of a species, become it.
-                    // If multiple, pick the one with max count (or random? Logic needs to be deterministic preferably)
-                    // Let's iterate and find species with exactly 3 (standard GoL is 3).
-                    // Or maybe > 2?
-                    // Let's try: Find species with max count. If max count == 3, become it.
                     let mut max_count = 0;
                     let mut max_species = Cell::Empty;
 
@@ -100,14 +97,7 @@ impl Grid {
                         // Skip Empty
                         if count > max_count {
                             max_count = count;
-                            max_species = match i {
-                                1 => Cell::Rock,
-                                2 => Cell::Paper,
-                                3 => Cell::Scissors,
-                                4 => Cell::Lizard,
-                                5 => Cell::Spock,
-                                _ => Cell::Empty,
-                            };
+                            max_species = Cell::from(i);
                         } else if count == max_count {
                             // Tie breaker? No birth if tie?
                             max_species = Cell::Empty;
@@ -123,14 +113,7 @@ impl Grid {
                     let mut max_threat = Cell::Empty;
 
                     for (i, &count) in counts.iter().enumerate().skip(1) {
-                        let species = match i {
-                            1 => Cell::Rock,
-                            2 => Cell::Paper,
-                            3 => Cell::Scissors,
-                            4 => Cell::Lizard,
-                            5 => Cell::Spock,
-                            _ => Cell::Empty,
-                        };
+                        let species = Cell::from(i);
 
                         if species.beats(&current) {
                             if count > max_threat_count {
@@ -138,8 +121,6 @@ impl Grid {
                                 max_threat = species;
                             } else if count == max_threat_count {
                                 // Tie? Pick one? Or stay same?
-                                // If multiple predators attacking with same force, maybe just pick the last one or stay
-                                // Let's simplify: if any predator has >= 3, succumb to the strongest threat.
                             }
                         }
                     }
