@@ -62,3 +62,8 @@
 **Concept:** Boids in the Literary Boids experiment leave fading traces of the characters they carry, creating a visual history or "manuscript" of their movement on the canvas.
 **Fate:** Merged
 **Lesson:** Adding a background layer to a `ratatui` Canvas enriches the visualization without interfering with the active agents.
+
+## [Voronoi Relaxation]
+**Concept:** A dynamic Voronoi diagram visualization that uses Lloyd's Algorithm to relax random seed positions into a regular honeycomb structure. Visualized as "Stained Glass" in the terminal.
+**Fate:** In Progress
+**Lesson:** TUI `Buffer` manipulation is efficient enough for real-time pixel-like effects if the resolution is kept to standard terminal sizes.

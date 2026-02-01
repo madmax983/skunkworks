@@ -24,7 +24,9 @@ members = [
     "experiments/sculpt-term",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
-    "experiments/text-hydro", "experiments/ram-bazaar",
+    "experiments/text-hydro",
+    "experiments/ram-bazaar",
+    "experiments/voronoi-relaxation",
 ]
 resolver = "2"
 
