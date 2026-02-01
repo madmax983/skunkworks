@@ -13,6 +13,11 @@
 **Fate:** Merged
 **Lesson:** Visual feedback complements audio well in TUI environments.
 
+## [Literary Boids]
+**Concept:** A bio-digital ecosystem where Boids consume text characters as food, evolving based on energy intake. Visualized in TUI.
+**Fate:** Merged
+
+**Lesson:** Ratatui's `Canvas` widget can render arbitrary text at coordinates, enabling particle systems made of characters.
 ## [Circadian Rhythm]
 **Concept:** Visualize commits based on the time of day they were made (Night, Dawn, Day, Dusk) with corresponding color themes.
 **Fate:** Merged
