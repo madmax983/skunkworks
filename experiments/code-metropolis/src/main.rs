@@ -132,7 +132,7 @@ impl App {
         let mut sorted_indices: Vec<usize> = (0..self.cubes.len()).collect();
 
         // Sort by depth (furthest first).
-        sorted_indices.sort_by(|&a_idx, &b_idx| {
+        sorted_indices.sort_unstable_by(|&a_idx, &b_idx| {
             let a = &self.cubes[a_idx];
             let b = &self.cubes[b_idx];
 
@@ -145,8 +145,9 @@ impl App {
             let z_rot_a = a_mx * self.camera.angle.sin() + a_mz * self.camera.angle.cos();
             let z_rot_b = b_mx * self.camera.angle.sin() + b_mz * self.camera.angle.cos();
 
-            // Draw smallest first (assuming coordinate system where smaller is "further back")
-            // Try ascending sort.
+            // For a Painter's Algorithm, we need to draw objects from furthest to nearest.
+            // Here, a larger rotated Z-coordinate (`z_rot`) is considered further away.
+            // Therefore, we sort in descending order of `z_rot`.
             z_rot_b
                 .partial_cmp(&z_rot_a)
                 .unwrap_or(std::cmp::Ordering::Equal)
