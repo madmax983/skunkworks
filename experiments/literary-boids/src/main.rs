@@ -17,6 +17,8 @@ use ratatui::{
 };
 
 pub mod boid;
+#[cfg(feature = "nova")]
+pub mod syntax_physics;
 pub mod world;
 
 use world::World;

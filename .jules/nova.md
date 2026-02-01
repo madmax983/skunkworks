@@ -52,3 +52,8 @@
 **Concept:** A simulation of pulse-coupled oscillators (Kuramoto model) where fireflies synchronize their flashing over time.
 **Fate:** Merged
 **Lesson:** TUI particle systems with simple N^2 interactions can simulate complex emergent behavior effectively.
+
+## [Syntax Physics]
+**Concept:** A new mutation layer for Literary Boids where eating characters physically alters the boid's physics engine (e.g., 'A' increases view radius, uppercase increases speed).
+**Fate:** Merged
+**Lesson:** Feature flags are excellent for hiding experimental mechanics without breaking core simulation logic.

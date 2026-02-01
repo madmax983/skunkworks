@@ -1,4 +1,6 @@
 use crate::boid::{Boid, DNA, distance};
+#[cfg(feature = "nova")]
+use crate::syntax_physics;
 use rand::Rng;
 use ratatui::style::Color;
 
@@ -89,6 +91,10 @@ impl World {
                     // Eat
                     boid.energy += 20.0;
                     boid.dna.char_representation = food.content; // Transform into what you eat
+
+                    #[cfg(feature = "nova")]
+                    syntax_physics::apply_syntax_mutation(&mut boid.dna, food.content);
+
                     eaten_indices.push(food_idx);
                     break; // One food per frame per boid? Or greedy? Let's say one.
                 }
