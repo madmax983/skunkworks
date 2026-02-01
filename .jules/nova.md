@@ -32,3 +32,8 @@
 **Concept:** A "typing of the dead" style game that scans the local codebase for keywords, which fall from the sky. Players must type them to "refactor" them away.
 **Fate:** Merged
 **Lesson:** Gamification of codebase familiarity works well. `ratatui` Canvas requires owned Strings for rendering text to avoid lifetime issues.
+
+## [Code Metropolis]
+**Concept:** A 3D isometric city visualization of the file system where files are buildings (height = size) and directories are districts. Rendered in TUI using Ratatui Canvas.
+**Fate:** Merged
+**Lesson:** Isometric projection in terminal requires careful aspect ratio handling (2:1). Recursive Treemap layouts provide a great way to visualize hierarchical data in limited space.
