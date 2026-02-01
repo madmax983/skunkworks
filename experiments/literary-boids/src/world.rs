@@ -85,7 +85,8 @@ impl World {
 
         for (_boid_idx, boid) in self.boids.iter_mut().enumerate() {
             for (food_idx, food) in self.food.iter().enumerate() {
-                if distance(boid.position, food.position) < 2.0 { // Eating radius
+                if distance(boid.position, food.position) < 2.0 {
+                    // Eating radius
                     // Eat
                     boid.energy += 20.0;
                     boid.dna.char_representation = food.content; // Transform into what you eat
@@ -125,8 +126,9 @@ impl World {
 
         // Extinction prevention
         if self.boids.is_empty() {
-             for _ in 0..10 {
-                self.boids.push(Boid::new(self.width / 2.0, self.height / 2.0));
+            for _ in 0..10 {
+                self.boids
+                    .push(Boid::new(self.width / 2.0, self.height / 2.0));
             }
         }
     }
@@ -147,7 +149,11 @@ fn mutate_dna(dna: &mut DNA) {
         dna.view_radius = dna.view_radius.clamp(2.0, 20.0);
     }
     // Color mutation based on traits
-    if dna.max_speed > 1.0 { dna.color = Color::Red; }
-    else if dna.view_radius > 10.0 { dna.color = Color::Blue; }
-    else { dna.color = Color::Green; }
+    if dna.max_speed > 1.0 {
+        dna.color = Color::Red;
+    } else if dna.view_radius > 10.0 {
+        dna.color = Color::Blue;
+    } else {
+        dna.color = Color::Green;
+    }
 }

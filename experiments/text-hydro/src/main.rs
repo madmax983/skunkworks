@@ -1,19 +1,25 @@
 pub mod solver;
 pub mod view;
 
-use std::{io, time::{Duration, Instant}};
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind, MouseButton, MouseEventKind},
+    event::{
+        self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind, MouseButton,
+        MouseEventKind,
+    },
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     widgets::{Block, Borders, Paragraph},
-    Terminal,
 };
 use solver::Fluid;
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 use view::FluidWidget;
 
 struct App {
@@ -76,10 +82,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(0),
-                    Constraint::Length(1),
-                ])
+                .constraints([Constraint::Min(0), Constraint::Length(1)])
                 .split(f.area());
 
             let fluid_area = chunks[0];
@@ -155,8 +158,12 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                                 app.fluid.add_velocity(fluid_x, fluid_y, dx, dy);
 
                                 // Also inject neighbors for "brush" effect
-                                if fluid_x > 0 { app.fluid.add_density(fluid_x-1, fluid_y, 25.0); }
-                                if fluid_y > 0 { app.fluid.add_density(fluid_x, fluid_y-1, 25.0); }
+                                if fluid_x > 0 {
+                                    app.fluid.add_density(fluid_x - 1, fluid_y, 25.0);
+                                }
+                                if fluid_y > 0 {
+                                    app.fluid.add_density(fluid_x, fluid_y - 1, 25.0);
+                                }
 
                                 app.last_mouse_pos = Some((x, y));
                             }

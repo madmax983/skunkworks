@@ -1,15 +1,15 @@
 use crossterm::{
     event::{self, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use git_rhythm::experimental::circadian::CircadianContext;
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Alignment, Constraint, Direction, Layout},
     style::{Color, Style},
     widgets::{Block, Borders, Paragraph},
-    Terminal,
 };
 use std::{io, thread, time::Duration};
 
@@ -25,10 +25,7 @@ fn main() -> io::Result<()> {
 
     // Restore terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -83,7 +80,11 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> io::Resu
             let main_block = Paragraph::new(content)
                 .style(Style::default().fg(Color::Black).bg(theme_color))
                 .alignment(Alignment::Center)
-                .block(Block::default().borders(Borders::ALL).title("Visualization"));
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Visualization"),
+                );
 
             f.render_widget(main_block, chunks[1]);
         })?;

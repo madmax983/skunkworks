@@ -1,10 +1,5 @@
-use ratatui::{
-    buffer::Buffer,
-    layout::Rect,
-    style::{Color},
-    widgets::Widget,
-};
 use crate::solver::Fluid;
+use ratatui::{buffer::Buffer, layout::Rect, style::Color, widgets::Widget};
 use std::f32::consts::PI;
 
 pub struct FluidWidget<'a> {

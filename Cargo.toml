@@ -6,5 +6,6 @@ members = [
     "experiments/term-fluids",
     "experiments/text-hydro",
     "experiments/automata-warfare",
+    "experiments/syntax-invaders",
 ]
 resolver = "2"
