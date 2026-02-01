@@ -12,6 +12,7 @@ members = [
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
+    "experiments/rhizome-seeker",
     "experiments/fugue-state",
     "experiments/crystal-structure",
     "experiments/euclidean-pulse",
