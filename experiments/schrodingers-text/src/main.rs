@@ -51,8 +51,7 @@ impl App {
             if !self.paused {
                 for _ in 0..5 {
                     if !self.wave.collapse() {
-                        // Done
-                        break;
+                       // Done
                     }
                 }
             }
@@ -93,14 +92,21 @@ fn main() -> Result<(), Box<dyn Error>> {
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()>
 where B::Error: From<io::Error> + Into<io::Error>
 {
+    let tick_rate = std::time::Duration::from_millis(16);
+    let mut last_tick = std::time::Instant::now();
+
     loop {
         terminal.draw(|f| ui(f, app)).map_err(|e| e.into())?;
 
-        if event::poll(std::time::Duration::from_millis(16))? {
-            if let Event::Key(key) = event::read()?
-                && key.kind == KeyEventKind::Press
-            {
-                match app.state {
+        let timeout = tick_rate
+            .checked_sub(last_tick.elapsed())
+            .unwrap_or_else(|| std::time::Duration::from_secs(0));
+
+        if event::poll(timeout)?
+            && let Event::Key(key) = event::read()?
+            && key.kind == KeyEventKind::Press
+        {
+            match app.state {
                     AppState::Splash => {
                         match key.code {
                             KeyCode::Enter => app.state = AppState::Running,
@@ -118,12 +124,13 @@ where B::Error: From<io::Error> + Into<io::Error>
                             }
                             _ => {}
                         }
-                    }
                 }
             }
-        } else {
-            // No event, tick
+        }
+
+        if last_tick.elapsed() >= tick_rate {
             app.on_tick();
+            last_tick = std::time::Instant::now();
         }
     }
 }

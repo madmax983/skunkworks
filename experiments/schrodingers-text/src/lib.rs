@@ -54,16 +54,34 @@ impl Superposition {
         self.possibilities.len() == 1
     }
 
-    pub fn observe(&mut self) -> Option<char> {
+    // Observe now takes weights to bias the choice
+    pub fn observe(&mut self, weights: &HashMap<char, usize>) -> Option<char> {
         if self.possibilities.is_empty() {
             return None;
         }
+
         let mut rng = rand::rng();
-        if let Some(&chosen) = self.possibilities.choose(&mut rng) {
-             self.possibilities = vec![chosen];
-             Some(chosen)
-        } else {
-            None
+
+        // Choose based on weight
+        let chosen = self.possibilities.choose_weighted(&mut rng, |c| {
+            // Default to weight 1 if unknown, though that shouldn't happen with correct extraction
+            *weights.get(c).unwrap_or(&1)
+        });
+
+        match chosen {
+            Ok(&c) => {
+                self.possibilities = vec![c];
+                Some(c)
+            },
+            Err(_) => {
+                // Fallback (e.g. if all weights are 0, which is weird)
+                if let Some(&c) = self.possibilities.choose(&mut rng) {
+                    self.possibilities = vec![c];
+                    Some(c)
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -80,6 +98,8 @@ pub struct Rules {
     // A -> Direction -> [Allowed Neighbors]
     pub adjacency: HashMap<char, HashMap<Direction, HashSet<char>>>,
     pub all_chars: HashSet<char>,
+    // Global frequency/weight of each character found in input
+    pub weights: HashMap<char, usize>,
 }
 
 impl Default for Rules {
@@ -90,7 +110,11 @@ impl Default for Rules {
 
 impl Rules {
     pub fn new() -> Self {
-        Self { adjacency: HashMap::new(), all_chars: HashSet::new() }
+        Self {
+            adjacency: HashMap::new(),
+            all_chars: HashSet::new(),
+            weights: HashMap::new(),
+        }
     }
 
     pub fn check_adjacency(&self, from: char, to: char, dir: Direction) -> bool {
@@ -119,6 +143,10 @@ impl Rules {
             .insert(from);
     }
 
+    pub fn record_frequency(&mut self, c: char) {
+        *self.weights.entry(c).or_insert(0) += 1;
+    }
+
     pub fn get_allowed_neighbors(&self, from: char, dir: Direction) -> HashSet<char> {
         self.adjacency
             .get(&from)
@@ -140,6 +168,9 @@ impl PatternExtractor {
             let width = lines[y].len();
             for x in 0..width {
                 let current = lines[y][x];
+
+                // Record weight
+                rules.record_frequency(current);
 
                 // Check Right (x+1)
                 if x + 1 < width {
@@ -207,10 +238,10 @@ impl WaveFunction {
             return false; // Fully collapsed or failed
         }
 
-        // 2. Pick random candidate and observe
+        // 2. Pick random candidate and observe (using weighted collapse)
         let mut rng = rand::rng();
         let (cx, cy) = *candidates.choose(&mut rng).unwrap();
-        self.grid[cy][cx].observe();
+        self.grid[cy][cx].observe(&self.rules.weights);
 
         // 3. Propagate
         self.propagate(cx, cy);
@@ -246,7 +277,7 @@ impl WaveFunction {
                     if self.grid[ny][nx].constrain(&allowed_for_neighbor) {
                         queue.push_back((nx, ny));
 
-                        // If neighbor became empty, we have a contradiction (TODO: Handle this? WFC usually backtracks or restarts. We'll just let it die for now)
+                        // If neighbor became empty, we have a contradiction
                         if self.grid[ny][nx].entropy() == 0 {
                             // Glitch out?
                         }
@@ -272,8 +303,12 @@ mod tests {
     #[test]
     fn test_superposition_collapse() {
         let chars = vec!['a', 'b'];
+        let mut weights = HashMap::new();
+        weights.insert('a', 1);
+        weights.insert('b', 1);
+
         let mut sup = Superposition::new(chars);
-        let observed = sup.observe();
+        let observed = sup.observe(&weights);
         assert!(observed.is_some());
         assert!(sup.is_collapsed());
         assert_eq!(sup.entropy(), 1);
@@ -289,6 +324,9 @@ mod tests {
         assert!(rules.check_adjacency('A', 'C', Direction::Down));
         assert!(rules.check_adjacency('C', 'A', Direction::Up));
         assert!(!rules.check_adjacency('A', 'A', Direction::Right));
+
+        // Check weights
+        assert_eq!(*rules.weights.get(&'A').unwrap(), 1);
     }
 
     #[test]
