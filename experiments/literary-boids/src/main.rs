@@ -90,12 +90,12 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
             .unwrap_or_else(|| Duration::from_secs(0));
 
         if crossterm::event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') => app.running = false,
-                        _ => {}
-                    }
+            let event = event::read()?;
+            if let Event::Key(key) = event {
+                // Check if key is 'q' to quit
+                let is_q = key.code == KeyCode::Char('q');
+                if key.kind == KeyEventKind::Press && is_q {
+                    app.running = false;
                 }
             }
         }
