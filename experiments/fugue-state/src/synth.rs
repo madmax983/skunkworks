@@ -1,8 +1,9 @@
 use crate::parser::{MusicalEvent, Timbre};
 use hound;
 use std::f32::consts::PI;
+use std::path::Path;
 
-pub fn generate_wav(events: &[MusicalEvent], filepath: &str) -> anyhow::Result<()> {
+pub fn generate_wav<P: AsRef<Path>>(events: &[MusicalEvent], filepath: P) -> anyhow::Result<()> {
     let spec = hound::WavSpec {
         channels: 1,
         sample_rate: 44100,
