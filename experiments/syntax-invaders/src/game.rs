@@ -31,7 +31,12 @@ impl Game {
 
     pub fn spawn_word(&mut self, text: String) {
         let mut rng = rand::thread_rng();
-        let x = rng.gen_range(0.0..(self.width as f64 - text.len() as f64).max(0.0));
+        let max_x = (self.width as f64 - text.len() as f64).max(0.0);
+        let x = if max_x > 0.0 {
+            rng.gen_range(0.0..max_x)
+        } else {
+            0.0
+        };
         let speed = rng.gen_range(0.1..0.5); // Slow fall
 
         self.words.push(Word {
