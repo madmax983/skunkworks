@@ -16,6 +16,33 @@ C4Context
     Rel(skunkworks, git_repo, "Reads History", "libgit2")
 ```
 
+## Shared Infrastructure
+
+Common components used across multiple experiments to enforce consistency and reduce boilerplate.
+
+### TUI Lifecycle (crates/tui-shared)
+
+The `tui-shared` crate provides a RAII wrapper for Ratatui terminal initialization.
+
+```mermaid
+classDiagram
+    direction LR
+    class Tui {
+        +Terminal terminal
+        +init() Result~Self~
+        +exit() Result
+        +drop()
+    }
+
+    class NeuroTerminal
+    class AutomataWarfare
+
+    NeuroTerminal ..> Tui : Uses
+    AutomataWarfare ..> Tui : Uses
+
+    note for Tui "Handles raw mode, alternate screen,\nand mouse capture automatically."
+```
+
 ## Experiment: Git Rhythm
 
 **Git Rhythm** sonifies and visualizes the history of a git repository.
