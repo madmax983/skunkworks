@@ -196,7 +196,7 @@ impl App {
 }
 
 fn main() -> Result<()> {
-    // 1. Setup & Scan
+    // Create and initialize the application
     let path = std::env::args().nth(1).unwrap_or_else(|| ".".to_string());
     let mut app = App::new(path)?;
 
