@@ -19,6 +19,7 @@ members = [
     "experiments/neuro-terminal",
     "experiments/origami-singularity",
     "experiments/orbital-decay",
+    "experiments/orbital-harmonics",
     "experiments/phonetic-decay",
     "experiments/ram-bazaar", 
     "experiments/rhizome-seeker",
