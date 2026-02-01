@@ -1,44 +1,21 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{
-    backend::{Backend, CrosstermBackend},
-    layout::Rect,
-    style::Color,
-    widgets::Widget,
-    Terminal,
-};
+use crossterm::event::{self, Event, KeyCode};
+use ratatui::{backend::Backend, layout::Rect, style::Color, widgets::Widget, Terminal};
 use std::{
     io,
     time::{Duration, Instant},
 };
+use tui_shared::Tui;
 
 use automata_warfare::automata::{Cell, Grid};
 
 fn main() -> Result<()> {
-    // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
-    // Run app
-    let res = run_app(&mut terminal);
-
-    // Restore terminal
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
+    let res = run_app(&mut tui.terminal);
 
     if let Err(err) = res {
+        tui.exit()?;
         println!("{:?}", err);
     }
 

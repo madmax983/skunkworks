@@ -1,21 +1,21 @@
+pub mod app;
 pub mod parser;
 pub mod synth;
-pub mod app;
 pub mod ui;
 
+use app::App;
 use clap::Parser;
-use std::path::PathBuf;
-use std::fs;
-use std::time::{Duration, Instant};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use parser::CodeParser;
 use ratatui::backend::CrosstermBackend;
 use ratatui::Terminal;
-use app::App;
-use parser::CodeParser;
+use std::fs;
+use std::path::PathBuf;
+use std::time::{Duration, Instant};
 use synth::generate_wav;
 
 #[derive(Parser)]
@@ -37,9 +37,9 @@ fn main() -> anyhow::Result<()> {
     let code = match fs::read_to_string(&cli.input) {
         Ok(c) => c,
         Err(e) => {
-             // Fallback to absolute path or just fail nicely
-             eprintln!("Error reading file {:?}: {}", cli.input, e);
-             return Ok(());
+            // Fallback to absolute path or just fail nicely
+            eprintln!("Error reading file {:?}: {}", cli.input, e);
+            return Ok(());
         }
     };
 

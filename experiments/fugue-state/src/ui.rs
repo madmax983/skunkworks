@@ -1,12 +1,12 @@
+use crate::app::App;
+use crate::parser::Timbre;
+use ratatui::widgets::canvas::{Canvas, Line as CanvasLine, Rectangle};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
-use ratatui::widgets::canvas::{Canvas, Line as CanvasLine, Rectangle};
-use crate::app::App;
-use crate::parser::Timbre;
 
 pub fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
@@ -71,8 +71,10 @@ pub fn ui(f: &mut Frame, app: &App) {
         "Finished"
     };
 
-    let status = Paragraph::new(format!("Event: {} | Time: {:.2}s / {:.2}s",
-        current_desc, app.elapsed, app.total_duration))
-        .block(Block::default().borders(Borders::ALL));
+    let status = Paragraph::new(format!(
+        "Event: {} | Time: {:.2}s / {:.2}s",
+        current_desc, app.elapsed, app.total_duration
+    ))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(status, chunks[2]);
 }

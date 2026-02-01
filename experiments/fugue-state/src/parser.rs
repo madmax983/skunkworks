@@ -1,7 +1,7 @@
-use syn::visit::{self, Visit};
-use syn::{File, ItemFn, Local, ItemStruct, ExprLoop};
-use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+use syn::visit::{self, Visit};
+use syn::{ExprLoop, File, ItemFn, ItemStruct, Local};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Timbre {
@@ -22,6 +22,12 @@ pub struct MusicalEvent {
 pub struct CodeParser {
     pub events: Vec<MusicalEvent>,
     pub current_depth: usize,
+}
+
+impl Default for CodeParser {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl CodeParser {
@@ -45,7 +51,9 @@ impl CodeParser {
 
         // Map hash to a pentatonic scale (C major pentatonic: C, D, E, G, A)
         // MIDI notes: 60, 62, 64, 67, 69
-        let scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00];
+        let scale = [
+            261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00,
+        ];
         let index = (hash as usize) % scale.len();
         scale[index]
     }
@@ -120,10 +128,16 @@ mod tests {
 
         assert!(!parser.events.is_empty(), "Should generate events");
 
-        let fn_event = parser.events.iter().find(|e| e.description.contains("Function"));
+        let fn_event = parser
+            .events
+            .iter()
+            .find(|e| e.description.contains("Function"));
         assert!(fn_event.is_some(), "Should detect function");
 
-        let let_event = parser.events.iter().find(|e| e.description.contains("Let Binding"));
+        let let_event = parser
+            .events
+            .iter()
+            .find(|e| e.description.contains("Let Binding"));
         assert!(let_event.is_some(), "Should detect let binding");
     }
 
@@ -137,7 +151,10 @@ mod tests {
         let mut parser = CodeParser::new();
         parser.parse(code).unwrap();
 
-        let struct_event = parser.events.iter().find(|e| e.description.contains("Struct"));
+        let struct_event = parser
+            .events
+            .iter()
+            .find(|e| e.description.contains("Struct"));
         assert!(struct_event.is_some());
         assert_eq!(struct_event.unwrap().timbre, Timbre::Square);
     }

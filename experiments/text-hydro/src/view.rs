@@ -33,7 +33,7 @@ impl<'a> Widget for FluidWidget<'a> {
 
                 // Color mapping (Density)
                 // Clamp density 0.0 - 1.0 (it can go higher)
-                let d_clamped = d.min(1.0).max(0.0);
+                let d_clamped = d.clamp(0.0, 1.0);
 
                 let bg = if d_clamped > 0.8 {
                     Color::White
