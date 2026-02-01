@@ -37,3 +37,8 @@
 **Concept:** A 3D isometric city visualization of the file system where files are buildings (height = size) and directories are districts. Rendered in TUI using Ratatui Canvas.
 **Fate:** Merged
 **Lesson:** Isometric projection in terminal requires careful aspect ratio handling (2:1). Recursive Treemap layouts provide a great way to visualize hierarchical data in limited space.
+
+## [Neuro-Terminal]
+**Concept:** A TUI-based neural network visualization that trains a simple MLP on a 2D classification problem in real-time.
+**Fate:** Merged
+**Lesson:** Visualizing the decision boundary on a grid requires careful optimization or subsampling to maintain frame rates in a TUI. Pure Rust ML from scratch is viable for simple visualizations.
