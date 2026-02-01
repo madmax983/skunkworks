@@ -21,7 +21,7 @@ impl CircadianContext {
         // Timestamp is seconds since epoch.
         // We assume UTC for simplicity in this artistic context.
         // 86400 seconds in a day.
-        let seconds_in_day = self.timestamp % 86400;
+        let seconds_in_day = self.timestamp.rem_euclid(86400);
         let hour = seconds_in_day / 3600;
 
         match hour {
