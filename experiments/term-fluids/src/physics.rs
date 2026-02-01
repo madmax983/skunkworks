@@ -206,4 +206,95 @@ mod tests {
         assert!(solver.particles[0].x <= 100.0);
         assert!(solver.particles[0].vx < 0.0);
     }
+
+    #[test]
+    fn test_stacked_particles_nan_explosion() {
+        let mut solver = FluidSolver::new(100.0, 100.0);
+        // Add two particles at the exact same position
+        solver.add_particle(50.0, 50.0);
+        solver.add_particle(50.0, 50.0);
+
+        solver.gravity = 0.0; // Isolate from gravity
+        solver.update(0.1);
+
+        // Check for NaN
+        let p1 = &solver.particles[0];
+        let p2 = &solver.particles[1];
+
+        assert!(!p1.x.is_nan(), "Particle 1 x is NaN");
+        assert!(!p1.y.is_nan(), "Particle 1 y is NaN");
+        assert!(!p1.vx.is_nan(), "Particle 1 vx is NaN");
+        assert!(!p1.vy.is_nan(), "Particle 1 vy is NaN");
+
+        assert!(!p2.x.is_nan(), "Particle 2 x is NaN");
+        assert!(!p2.y.is_nan(), "Particle 2 y is NaN");
+        assert!(!p2.vx.is_nan(), "Particle 2 vx is NaN");
+        assert!(!p2.vy.is_nan(), "Particle 2 vy is NaN");
+    }
+
+    #[test]
+    fn test_particle_interaction() {
+        let mut solver = FluidSolver::new(100.0, 100.0);
+        // Place two particles within smoothing radius h=4.0
+        // P1 at (50, 50)
+        // P2 at (52, 50) -> distance r=2.0
+        solver.add_particle(50.0, 50.0);
+        solver.add_particle(52.0, 50.0);
+
+        solver.gravity = 0.0;
+
+        // Initial state: velocity 0
+        assert_eq!(solver.particles[0].vx, 0.0);
+        assert_eq!(solver.particles[1].vx, 0.0);
+
+        solver.update(0.1);
+
+        // They should interact.
+        // If pressure is positive, they repel.
+        // P1 should move left (vx < 0), P2 should move right (vx > 0).
+        // Or at least, their velocities should change from 0.
+
+        let p1 = &solver.particles[0];
+        let p2 = &solver.particles[1];
+
+        assert!(p1.vx.abs() > 0.0, "Particle 1 should acquire velocity from interaction");
+        assert!(p2.vx.abs() > 0.0, "Particle 2 should acquire velocity from interaction");
+
+        // Symmetry check: forces should be equal and opposite (if masses equal)
+        // Since integration is simple Euler, positions update too.
+        // We check ax mainly, but ax is overwritten each step.
+        // vx accumulates ax.
+        // Since they started at x=50 and x=52, symmetric around 51.
+        // P1.vx should be -P2.vx approximately.
+        assert!((p1.vx + p2.vx).abs() < 0.0001, "Momentum should be conserved (sum of velocities approx 0)");
+    }
+
+    #[test]
+    fn test_kernels() {
+        let solver = FluidSolver::new(100.0, 100.0);
+        let h = solver.h;
+
+        // Poly6 Kernel
+        // Check r > h (r2 > h2)
+        assert_eq!(solver.poly6_kernel(h * h + 0.1), 0.0);
+
+        // Check r = 0
+        let expected_poly6_0 = 315.0 / (64.0 * PI * h.powi(9)) * (h * h).powi(3);
+        // diff = h^2 - 0 = h^2. diff^3 = h^6.
+        // formula: coeff * h^6
+        assert!((solver.poly6_kernel(0.0) - expected_poly6_0).abs() < 0.000001);
+
+        // Spiky Gradient
+        // Check r > h
+        assert_eq!(solver.spiky_kernel_gradient(h + 0.1), 0.0);
+
+        // Check r = 0 (implementation specific)
+        assert_eq!(solver.spiky_kernel_gradient(0.0), 0.0);
+
+        // Check intermediate value
+        let r = h / 2.0;
+        let diff = h - r;
+        let expected_grad = -(45.0 / (PI * h.powi(6))) * diff.powi(2);
+        assert!((solver.spiky_kernel_gradient(r) - expected_grad).abs() < 0.000001);
+    }
 }
