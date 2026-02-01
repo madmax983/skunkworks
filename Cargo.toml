@@ -16,6 +16,7 @@ members = [
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
+    "experiments/cellular-beats",
     "experiments/sculpt-term",
     "experiments/karman-text-street",
     "experiments/rhizome-seeker",
