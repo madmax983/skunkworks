@@ -73,8 +73,8 @@ fn run_app<B: ratatui::backend::Backend>(
                         .particles
                         .iter()
                         .map(|p| (p.x as f64, p.y as f64))
-                        // Invert Y for rendering: 100 - y.
-                        .map(|(x, y)| (x, 100.0 - y))
+                        // Invert Y for rendering using solver height.
+                        .map(|(x, y)| (x, app.solver.height as f64 - y))
                         .collect();
 
                     ctx.draw(&Points {
