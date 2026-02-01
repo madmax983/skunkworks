@@ -118,15 +118,6 @@ pub fn resolve_market(agents: &mut [Agent], state: &mut MarketState, mut bids: V
             }
         }
     }
-
-    // Deduct rent from each agent's budget based on the number of pages they own.
-    // Total rent per agent = clearing_price * owned_pages.
-    for agent in agents.iter_mut() {
-        let rent_payment = clearing_price * agent.owned_pages as f64;
-        if rent_payment > 0.0 {
-            agent.budget -= rent_payment;
-        }
-    }
 }
 
 #[cfg(test)]
