@@ -8,3 +8,6 @@ anyhow.workspace = true
 crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
+
+[features]
+nova = []
