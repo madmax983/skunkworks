@@ -72,10 +72,18 @@ impl Boid {
         self.acceleration = (0.0, 0.0);
 
         // Wrap around edges
-        if self.position.0 < 0.0 { self.position.0 += width; }
-        if self.position.0 >= width { self.position.0 -= width; }
-        if self.position.1 < 0.0 { self.position.1 += height; }
-        if self.position.1 >= height { self.position.1 -= height; }
+        if self.position.0 < 0.0 {
+            self.position.0 += width;
+        }
+        if self.position.0 >= width {
+            self.position.0 -= width;
+        }
+        if self.position.1 < 0.0 {
+            self.position.1 += height;
+        }
+        if self.position.1 >= height {
+            self.position.1 -= height;
+        }
 
         // Decay energy
         self.energy -= 0.05;
@@ -166,7 +174,7 @@ impl Boid {
 
             // Cohesion is steering towards the target position
             let mut desired = (cohesion.0 - self.position.0, cohesion.1 - self.position.1);
-             let len = (desired.0.powi(2) + desired.1.powi(2)).sqrt();
+            let len = (desired.0.powi(2) + desired.1.powi(2)).sqrt();
             if len > 0.0 {
                 desired.0 = (desired.0 / len) * self.dna.max_speed;
                 desired.1 = (desired.1 / len) * self.dna.max_speed;

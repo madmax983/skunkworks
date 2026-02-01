@@ -5,18 +5,15 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
-    Terminal,
+    widgets::{Block, Borders, Paragraph, canvas::Canvas},
 };
 
 pub mod boid;
@@ -114,26 +111,38 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
 fn ui(f: &mut ratatui::Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(1),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(1)])
         .split(f.area()); // Changed from f.size() to f.area() for ratatui 0.26+
 
     // Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Literary Boids"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Literary Boids"),
+        )
         .x_bounds([0.0, app.world.width])
         .y_bounds([0.0, app.world.height])
         .paint(|ctx| {
             // Draw Food
             for food in &app.world.food {
-                ctx.print(food.position.0, food.position.1, Span::styled(food.content.to_string(), Style::default().fg(Color::Green)));
+                ctx.print(
+                    food.position.0,
+                    food.position.1,
+                    Span::styled(food.content.to_string(), Style::default().fg(Color::Green)),
+                );
             }
 
             // Draw Boids
             for boid in &app.world.boids {
-                ctx.print(boid.position.0, boid.position.1, Span::styled(boid.dna.char_representation.to_string(), Style::default().fg(boid.dna.color)));
+                ctx.print(
+                    boid.position.0,
+                    boid.position.1,
+                    Span::styled(
+                        boid.dna.char_representation.to_string(),
+                        Style::default().fg(boid.dna.color),
+                    ),
+                );
             }
         });
 
@@ -142,7 +151,10 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     // Status bar
     let boid_count = app.world.boids.len();
     let food_count = app.world.food.len();
-    let status = format!("Boids: {} | Food: {} | Press 'q' to quit", boid_count, food_count);
+    let status = format!(
+        "Boids: {} | Food: {} | Press 'q' to quit",
+        boid_count, food_count
+    );
     let p = Paragraph::new(status).style(Style::default().fg(Color::White).bg(Color::Blue));
     f.render_widget(p, chunks[1]);
 }

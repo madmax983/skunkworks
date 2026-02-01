@@ -1664,6 +1664,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "syntax-invaders"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "rand 0.8.5",
+ "ratatui 0.30.0",
+]
+
+[[package]]
 name = "term-fluids"
 version = "0.1.0"
 dependencies = [

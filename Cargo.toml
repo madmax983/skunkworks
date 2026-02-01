@@ -7,5 +7,6 @@ members = [
     "experiments/schrodingers-text",
     "experiments/term-fluids",
     "experiments/text-hydro",
+    "experiments/syntax-invaders",
 ]
 resolver = "2"

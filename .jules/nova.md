@@ -27,3 +27,8 @@
 **Concept:** Force-directed graph visualization of git history in the terminal. Commits are bodies with mass (churn) connected by gravity/springs (ancestry).
 **Fate:** Merged
 **Lesson:** Physics simulations provide an intuitive "shape" to code history.
+
+## [Syntax Invaders]
+**Concept:** A "typing of the dead" style game that scans the local codebase for keywords, which fall from the sky. Players must type them to "refactor" them away.
+**Fate:** Merged
+**Lesson:** Gamification of codebase familiarity works well. `ratatui` Canvas requires owned Strings for rendering text to avoid lifetime issues.
