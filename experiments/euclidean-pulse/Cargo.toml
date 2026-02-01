@@ -1,0 +1,21 @@
+[package]
+name = "euclidean-pulse"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.29.0"
+crossterm = "0.28.1"
+sysinfo = "0.33"
+anyhow = "1.0"
+parking_lot = "0.12"
+crossbeam-channel = "0.5"
+rand = "0.8"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = [] # Audio disabled by default to pass CI in environments without ALSA
+audio = ["cpal"]
