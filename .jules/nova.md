@@ -62,3 +62,8 @@
 **Concept:** Boids in the Literary Boids experiment leave fading traces of the characters they carry, creating a visual history or "manuscript" of their movement on the canvas.
 **Fate:** Merged
 **Lesson:** Adding a background layer to a `ratatui` Canvas enriches the visualization without interfering with the active agents.
+
+## [The Critic]
+**Concept:** A new "Predator" agent for Literary Boids that hunts regular boids, introducing a predator-prey dynamic and evolutionary pressure.
+**Fate:** Merged
+**Lesson:** Modifying core simulation loop (World::update) is safe if done additively behind a feature flag and careful with borrowing rules (collecting indices first).

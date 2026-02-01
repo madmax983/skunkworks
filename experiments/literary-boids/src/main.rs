@@ -18,6 +18,8 @@ use ratatui::{
 
 pub mod boid;
 #[cfg(feature = "nova")]
+pub mod critic;
+#[cfg(feature = "nova")]
 pub mod syntax_physics;
 #[cfg(feature = "nova")]
 pub mod traces;
@@ -173,6 +175,18 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                     ),
                 );
             }
+
+            #[cfg(feature = "nova")]
+            for critic in &app.world.critics {
+                ctx.print(
+                    critic.position.0,
+                    critic.position.1,
+                    Span::styled(
+                        critic.symbol.to_string(),
+                        Style::default().fg(critic.color).add_modifier(ratatui::style::Modifier::BOLD),
+                    ),
+                );
+            }
         });
 
     f.render_widget(canvas, chunks[0]);
@@ -180,10 +194,21 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     // Status bar
     let boid_count = app.world.boids.len();
     let food_count = app.world.food.len();
+
+    #[cfg(feature = "nova")]
+    let status = format!(
+        "Boids: {} | Food: {} | Critics: {} | Press 'q' to quit",
+        boid_count,
+        food_count,
+        app.world.critics.len()
+    );
+
+    #[cfg(not(feature = "nova"))]
     let status = format!(
         "Boids: {} | Food: {} | Press 'q' to quit",
         boid_count, food_count
     );
+
     let p = Paragraph::new(status).style(Style::default().fg(Color::White).bg(Color::Blue));
     f.render_widget(p, chunks[1]);
 }

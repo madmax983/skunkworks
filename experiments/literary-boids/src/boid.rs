@@ -205,7 +205,7 @@ pub fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
     (p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)
 }
 
-fn limit(vector: (f64, f64), max: f64) -> (f64, f64) {
+pub fn limit(vector: (f64, f64), max: f64) -> (f64, f64) {
     let len_sq = vector.0.powi(2) + vector.1.powi(2);
     if len_sq > max.powi(2) {
         let len = len_sq.sqrt();
