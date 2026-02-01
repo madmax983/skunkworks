@@ -5,6 +5,7 @@ use std::collections::HashMap;
 #[derive(Debug, Clone)]
 pub struct Node {
     pub id: String,
+    pub author: String,
     pub x: f64,
     pub y: f64,
     pub vx: f64,
@@ -47,6 +48,7 @@ impl Graph {
 
             nodes.push(Node {
                 id: commit.hash.clone(),
+                author: commit.author.clone(),
                 x,
                 y,
                 vx: 0.0,
@@ -167,10 +169,35 @@ fn string_to_rgb(s: &str) -> (u8, u8, u8) {
     hash ^= hash >> 11;
     hash = hash.wrapping_add(hash << 15);
 
+    // Use hash to generate Hue (0-360)
+    let hue = (hash % 360) as f64;
+    // Saturation and Value high for distinct colors
+    hsv_to_rgb(hue, 0.8, 0.95)
+}
+
+fn hsv_to_rgb(h: f64, s: f64, v: f64) -> (u8, u8, u8) {
+    let c = v * s;
+    let x = c * (1.0 - ((h / 60.0) % 2.0 - 1.0).abs());
+    let m = v - c;
+
+    let (r_prime, g_prime, b_prime) = if (0.0..60.0).contains(&h) {
+        (c, x, 0.0)
+    } else if (60.0..120.0).contains(&h) {
+        (x, c, 0.0)
+    } else if (120.0..180.0).contains(&h) {
+        (0.0, c, x)
+    } else if (180.0..240.0).contains(&h) {
+        (0.0, x, c)
+    } else if (240.0..300.0).contains(&h) {
+        (x, 0.0, c)
+    } else {
+        (c, 0.0, x)
+    };
+
     (
-        (hash & 0xFF) as u8,
-        ((hash >> 8) & 0xFF) as u8,
-        ((hash >> 16) & 0xFF) as u8,
+        ((r_prime + m) * 255.0) as u8,
+        ((g_prime + m) * 255.0) as u8,
+        ((b_prime + m) * 255.0) as u8,
     )
 }
 
