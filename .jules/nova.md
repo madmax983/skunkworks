@@ -22,3 +22,8 @@
 **Concept:** Visualize commits based on the time of day they were made (Night, Dawn, Day, Dusk) with corresponding color themes.
 **Fate:** Merged
 **Lesson:** Simple time-based mapping creates a strong emotional connection to the code history.
+
+## [Git Galaxy]
+**Concept:** Force-directed graph visualization of git history in the terminal. Commits are bodies with mass (churn) connected by gravity/springs (ancestry).
+**Fate:** Merged
+**Lesson:** Physics simulations provide an intuitive "shape" to code history.

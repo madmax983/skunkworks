@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/literary-boids",
     "experiments/term-fluids",

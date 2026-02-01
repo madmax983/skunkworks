@@ -487,6 +487,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "git_galaxy"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "crossterm 0.28.1",
+ "git2",
+ "rand 0.8.5",
+ "ratatui 0.29.0",
+]
+
+[[package]]
 name = "git_rhythm"
 version = "0.1.0"
 dependencies = [
