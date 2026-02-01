@@ -184,8 +184,7 @@ impl Network {
             // Gradient = error * sigmoid_derivative(outputs)
             // sigmoid_derivative(z) = sigmoid(z) * (1 - sigmoid(z)) = outputs * (1 - outputs)
             let d_outputs = outputs.map(|x| x * (1.0 - x));
-            let gradients = errors.mul(&d_outputs);
-            let gradients = gradients.mul_scalar(self.learning_rate);
+            let gradients = errors.mul(&d_outputs).mul_scalar(self.learning_rate);
 
             // Calculate deltas
             let weight_deltas = gradients.dot(&prev_outputs.transpose());
