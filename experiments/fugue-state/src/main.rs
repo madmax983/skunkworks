@@ -56,7 +56,7 @@ fn main() -> anyhow::Result<()> {
 
     // 2. Synthesize
     println!("Generating audio...");
-    generate_wav(&parser.events, cli.output.to_str().unwrap())?;
+    generate_wav(&parser.events, &cli.output)?;
     println!("Generated {}", cli.output.display());
     println!("Starting visualization... (Press 'q' to quit)");
 

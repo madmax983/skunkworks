@@ -104,7 +104,9 @@ impl<'a> Widget for FluidWidget<'a> {
                 // Rust char from u32
                 if let Some(c) = char::from_u32(0x2800 + mask) {
                     // ratatui 0.29+ uses cell_mut((x,y))
-                    buf.cell_mut((x, y)).unwrap().set_char(c).set_fg(color);
+                    if let Some(cell) = buf.cell_mut((x, y)) {
+                        cell.set_char(c).set_fg(color);
+                    }
                 }
             }
         }
