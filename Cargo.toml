@@ -15,6 +15,7 @@ members = [
     "experiments/l-system-garden",
     "experiments/literary-boids",
     "experiments/neuro-terminal",
+    "experiments/orbital-decay",
     "experiments/phonetic-decay",
     "experiments/rhizome-seeker",
     "experiments/schrodingers-text",
