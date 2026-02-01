@@ -62,3 +62,8 @@
 **Concept:** Boids in the Literary Boids experiment leave fading traces of the characters they carry, creating a visual history or "manuscript" of their movement on the canvas.
 **Fate:** Merged
 **Lesson:** Adding a background layer to a `ratatui` Canvas enriches the visualization without interfering with the active agents.
+
+## [Text Sand]
+**Concept:** A falling sand cellular automata where particles are text characters that interact with physics (gravity, displacement).
+**Fate:** Merged
+**Lesson:** Traditional falling sand algorithms (bottom-up iteration) translate well to TUI grids, allowing for interactive "Typographic Physics".
