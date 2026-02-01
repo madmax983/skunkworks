@@ -17,9 +17,9 @@ impl App {
         let mut solver = FluidSolver::new(100.0, 100.0);
         // Add some initial particles in a block
         for i in 0..10 {
-             for j in 0..20 {
-                 solver.add_particle(30.0 + i as f32 * 1.5, 10.0 + j as f32 * 1.5);
-             }
+            for j in 0..20 {
+                solver.add_particle(30.0 + i as f32 * 1.5, 10.0 + j as f32 * 1.5);
+            }
         }
 
         Self {
@@ -34,21 +34,22 @@ impl App {
     }
 
     pub fn spawn_particles(&mut self) {
-         let mut rng = rand::thread_rng();
-         for _ in 0..5 {
-             self.solver.add_particle(
-                 50.0 + rng.gen_range(-5.0..5.0),
-                 10.0 + rng.gen_range(-5.0..5.0)
-             );
-         }
+        let mut rng = rand::thread_rng();
+        for _ in 0..5 {
+            self.solver.add_particle(
+                50.0 + rng.gen_range(-5.0..5.0),
+                10.0 + rng.gen_range(-5.0..5.0),
+            );
+        }
     }
 
     pub fn reset(&mut self) {
         self.solver.particles.clear();
-         for i in 0..10 {
-             for j in 0..20 {
-                 self.solver.add_particle(30.0 + i as f32 * 1.5, 10.0 + j as f32 * 1.5);
-             }
+        for i in 0..10 {
+            for j in 0..20 {
+                self.solver
+                    .add_particle(30.0 + i as f32 * 1.5, 10.0 + j as f32 * 1.5);
+            }
         }
     }
 }

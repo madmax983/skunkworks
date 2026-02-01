@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "experiments/git_rhythm"
-, "experiments/term-fluids"]
+    "experiments/git_rhythm",
+    "experiments/term-fluids",
+]
 resolver = "2"

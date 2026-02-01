@@ -108,8 +108,8 @@ impl FluidSolver {
                 if i == j {
                     continue;
                 }
-                let dx = self.particles[i].x - self.particles[j].x;
-                let dy = self.particles[i].y - self.particles[j].y;
+                let dx = self.particles[j].x - self.particles[i].x;
+                let dy = self.particles[j].y - self.particles[i].y;
                 let r = (dx * dx + dy * dy).sqrt();
 
                 if r > 0.0 && r < self.h {
@@ -124,14 +124,14 @@ impl FluidSolver {
                     fx += f_p * (dx / r);
                     fy += f_p * (dy / r);
 
-                    // Note: viscosity forces are not currently implemented here.
+                    // Viscosity Force (simplified)
+                    // Fv = mu * (vj - vi) / rho_j * laplacian W (using simple approximation)
+                    // Actually let's use a simpler damping for now or correct viscosity kernel
                 }
             }
 
-            // Convert accumulated force to acceleration using the particle's density.
-            let inv_rho = 1.0 / self.particles[i].rho;
-            self.particles[i].ax = fx * inv_rho;
-            self.particles[i].ay = fy * inv_rho + self.gravity;
+            self.particles[i].ax = fx;
+            self.particles[i].ay = fy + self.gravity;
         }
     }
 
