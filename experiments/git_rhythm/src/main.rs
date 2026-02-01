@@ -17,6 +17,9 @@ use git_rhythm::harvester::harvest_repo;
 use git_rhythm::synth::Synthesizer;
 use git_rhythm::vis::VisualState;
 
+#[cfg(feature = "nova")]
+use git_rhythm::experimental::mood;
+
 fn main() -> Result<()> {
     // 1. Harvest
     let commits = harvest_repo(".")?;
@@ -119,8 +122,20 @@ fn main() -> Result<()> {
                 .map(|&s| ((s + 1.0) * 50.0) as u64) // Map -1..1 to 0..100
                 .collect();
 
+            let mood_color = {
+                #[cfg(feature = "nova")]
+                {
+                    mood::calculate_color(commit)
+                }
+                #[cfg(not(feature = "nova"))]
+                {
+                    ratatui::style::Color::Red
+                }
+            };
+
             let sparkline = Sparkline::default()
                 .block(Block::default().title("Waveform").borders(Borders::ALL))
+                .style(ratatui::style::Style::default().fg(mood_color))
                 .data(&data)
                 .max(100); // 100 height
             f.render_widget(sparkline, chunks[1]);
@@ -130,7 +145,7 @@ fn main() -> Result<()> {
             let churn_ratio = (commit.churn as f64 / 2000.0).min(1.0);
             let gauge = Gauge::default()
                 .block(Block::default().title("Flux (Churn)").borders(Borders::ALL))
-                .gauge_style(ratatui::style::Style::default().fg(ratatui::style::Color::Red))
+                .gauge_style(ratatui::style::Style::default().fg(mood_color))
                 .ratio(churn_ratio)
                 .label(format!("{} lines", commit.churn));
             f.render_widget(gauge, chunks[2]);
