@@ -141,8 +141,8 @@ impl Network {
         }
     }
 
-    pub fn forward(&mut self, inputs: Vec<f64>) -> Vec<f64> {
-        let inputs = Matrix::from_vec(inputs);
+    pub fn forward(&mut self, inputs: &[f64]) -> Vec<f64> {
+        let inputs = Matrix::from_vec(inputs.to_vec());
         self.data = vec![inputs.clone()];
         self.z_data = vec![];
 
@@ -158,8 +158,8 @@ impl Network {
         current.data
     }
 
-    pub fn predict(&self, inputs: Vec<f64>) -> Vec<f64> {
-        let inputs = Matrix::from_vec(inputs);
+    pub fn predict(&self, inputs: &[f64]) -> Vec<f64> {
+        let inputs = Matrix::from_vec(inputs.to_vec());
         let mut current = inputs;
 
         for i in 0..self.weights.len() {
@@ -170,11 +170,11 @@ impl Network {
         current.data
     }
 
-    pub fn train(&mut self, inputs: Vec<f64>, targets: Vec<f64>) {
+    pub fn train(&mut self, inputs: &[f64], targets: &[f64]) {
         // Forward pass
         self.forward(inputs);
 
-        let targets = Matrix::from_vec(targets);
+        let targets = Matrix::from_vec(targets.to_vec());
         let mut errors = targets.sub(self.data.last().unwrap());
 
         for i in (0..self.weights.len()).rev() {
