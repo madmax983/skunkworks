@@ -3,8 +3,14 @@ use rayon::prelude::*;
 const Q: usize = 9;
 const W: [f32; Q] = [
     4.0 / 9.0,
-    1.0 / 9.0, 1.0 / 9.0, 1.0 / 9.0, 1.0 / 9.0,
-    1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0,
+    1.0 / 9.0,
+    1.0 / 9.0,
+    1.0 / 9.0,
+    1.0 / 9.0,
+    1.0 / 36.0,
+    1.0 / 36.0,
+    1.0 / 36.0,
+    1.0 / 36.0,
 ];
 
 // Directions: 0:C, 1:E, 2:N, 3:W, 4:S, 5:NE, 6:NW, 7:SW, 8:SE
@@ -16,13 +22,13 @@ const OPPOSITE: [usize; Q] = [0, 3, 4, 1, 2, 7, 8, 5, 6];
 pub struct Fluid {
     pub width: usize,
     pub height: usize,
-    cells: Vec<f32>,     // flattened [width * height * Q]
-    new_cells: Vec<f32>, // double buffer
+    cells: Vec<f32>,          // flattened [width * height * Q]
+    new_cells: Vec<f32>,      // double buffer
     pub obstacles: Vec<bool>, // flattened [width * height]
-    pub rho: Vec<f32>,   // cache for viz
-    pub u_x: Vec<f32>,   // cache for viz
-    pub u_y: Vec<f32>,   // cache for viz
-    tau: f32,            // relaxation time
+    pub rho: Vec<f32>,        // cache for viz
+    pub u_x: Vec<f32>,        // cache for viz
+    pub u_y: Vec<f32>,        // cache for viz
+    tau: f32,                 // relaxation time
 }
 
 impl Fluid {
@@ -89,7 +95,7 @@ impl Fluid {
             .for_each(|(y, row_slice)| {
                 for x in 0..width {
                     let idx = y * width + x; // This idx is global if we didn't use chunks, but here we just need x.
-                    // Actually, let's just use global index mapping for simplicity inside the loop.
+                                             // Actually, let's just use global index mapping for simplicity inside the loop.
                     let current_idx = idx;
                     let is_solid = obstacles[current_idx];
 
@@ -101,8 +107,8 @@ impl Fluid {
                     // 3. Collide: f_out[i] = f_in[i] - (f_in[i] - feq[i])/tau
 
                     if is_solid {
-                         // Solid cell. Keep previous values to avoid garbage.
-                         for i in 0..Q {
+                        // Solid cell. Keep previous values to avoid garbage.
+                        for i in 0..Q {
                             row_slice[x * Q + i] = cells[current_idx * Q + i];
                         }
                     } else {
@@ -179,11 +185,11 @@ impl Fluid {
                             u_y = 0.0;
                             rho = 1.0;
                             // Reset f_in to equilibrium for inlet
-                             let u2 = u_x * u_x + u_y * u_y;
-                             for i in 0..Q {
+                            let u2 = u_x * u_x + u_y * u_y;
+                            for i in 0..Q {
                                 let eu = (CX[i] as f32) * u_x + (CY[i] as f32) * u_y;
                                 f_in[i] = W[i] * rho * (1.0 + 3.0 * eu + 4.5 * eu * eu - 1.5 * u2);
-                             }
+                            }
                         }
 
                         // Collision
@@ -216,26 +222,26 @@ impl Fluid {
 
         // Sequential cache update for simplicity
         for idx in 0..size {
-             if obstacles[idx] {
-                 self.rho[idx] = 0.0;
-                 self.u_x[idx] = 0.0;
-                 self.u_y[idx] = 0.0;
-                 continue;
-             }
-             let mut r = 0.0;
-             let mut ux = 0.0;
-             let mut uy = 0.0;
-             for i in 0..Q {
+            if obstacles[idx] {
+                self.rho[idx] = 0.0;
+                self.u_x[idx] = 0.0;
+                self.u_y[idx] = 0.0;
+                continue;
+            }
+            let mut r = 0.0;
+            let mut ux = 0.0;
+            let mut uy = 0.0;
+            for i in 0..Q {
                 let val = cells[idx * Q + i];
                 r += val;
                 ux += val * CX[i] as f32;
                 uy += val * CY[i] as f32;
-             }
-             self.rho[idx] = r;
-             if r > 0.0 {
-                 self.u_x[idx] = ux / r;
-                 self.u_y[idx] = uy / r;
-             }
+            }
+            self.rho[idx] = r;
+            if r > 0.0 {
+                self.u_x[idx] = ux / r;
+                self.u_y[idx] = uy / r;
+            }
         }
     }
 

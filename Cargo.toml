@@ -21,5 +21,6 @@ members = [
     "experiments/rhizome-seeker",
     "experiments/crystal-structure",
     "experiments/euclidean-pulse",
+    "experiments/chemical-burn",
 ]
 resolver = "2"

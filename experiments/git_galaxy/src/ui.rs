@@ -172,8 +172,8 @@ pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
             view_state.pan_x, view_state.pan_y
         ))]),
     ];
-    let stats = Paragraph::new(stats_text)
-        .block(Block::default().borders(Borders::ALL).title("Stats"));
+    let stats =
+        Paragraph::new(stats_text).block(Block::default().borders(Borders::ALL).title("Stats"));
     f.render_widget(stats, sidebar_chunks[0]);
 
     // Legend

@@ -52,3 +52,8 @@
 **Concept:** A simulation of pulse-coupled oscillators (Kuramoto model) where fireflies synchronize their flashing over time.
 **Fate:** Merged
 **Lesson:** TUI particle systems with simple N^2 interactions can simulate complex emergent behavior effectively.
+
+## [Chemical Burn]
+**Concept:** Real-time Reaction-Diffusion simulation (Gray-Scott model) in the terminal, visualizing biological pattern formation (mitosis, coral, maze).
+**Fate:** Merged
+**Lesson:** `ratatui`'s `Buffer` is perfect for grid-based cellular automata. `Cargo.lock` corruption can happen unexpectedly and requires manual surgery.

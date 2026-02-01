@@ -34,7 +34,7 @@ pub struct FluidSolver {
     pub gravity: f32,
     pub h: f32, // Smoothing radius
     pub rest_density: f32,
-    pub k: f32,  // Gas constant (stiffness)
+    pub k: f32, // Gas constant (stiffness)
     #[allow(dead_code)]
     pub mu: f32, // Viscosity
 }

@@ -1,10 +1,5 @@
-use ratatui::{
-    buffer::Buffer,
-    layout::Rect,
-    style::Color,
-    widgets::Widget,
-};
 use crate::lbm::Fluid;
+use ratatui::{buffer::Buffer, layout::Rect, style::Color, widgets::Widget};
 
 pub struct FluidWidget<'a> {
     pub fluid: &'a Fluid,
@@ -80,7 +75,7 @@ impl<'a> Widget for FluidWidget<'a> {
 
                         // Threshold for dot
                         if curl.abs() > 0.005 || speed > 0.05 {
-                             mask |= bit;
+                            mask |= bit;
                         }
                     }
                 }
@@ -109,10 +104,7 @@ impl<'a> Widget for FluidWidget<'a> {
                 // Rust char from u32
                 if let Some(c) = char::from_u32(0x2800 + mask) {
                     // ratatui 0.29+ uses cell_mut((x,y))
-                    buf.cell_mut((x, y))
-                        .unwrap()
-                        .set_char(c)
-                        .set_fg(color);
+                    buf.cell_mut((x, y)).unwrap().set_char(c).set_fg(color);
                 }
             }
         }
