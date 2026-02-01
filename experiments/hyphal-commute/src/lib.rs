@@ -151,11 +151,13 @@ impl World {
     pub fn new(width: usize, height: usize, num_agents: usize) -> Self {
         let mut rng = rand::rng();
         let agents = (0..num_agents)
-            .map(|_| Agent::new(
-                rng.random_range(0.0..width as f64),
-                rng.random_range(0.0..height as f64),
-                rng.random_range(0.0..std::f64::consts::TAU),
-            ))
+            .map(|_| {
+                Agent::new(
+                    rng.random_range(0.0..width as f64),
+                    rng.random_range(0.0..height as f64),
+                    rng.random_range(0.0..std::f64::consts::TAU),
+                )
+            })
             .collect();
 
         Self {

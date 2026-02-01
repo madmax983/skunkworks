@@ -1,17 +1,11 @@
+use anyhow::Result;
 use std::fs;
 use std::path::{Path, PathBuf};
-use anyhow::Result;
 
 #[derive(Debug, Clone)]
 pub enum Node {
-    File {
-        path: PathBuf,
-        size: u64,
-    },
-    Dir {
-        path: PathBuf,
-        children: Vec<Node>,
-    },
+    File { path: PathBuf, size: u64 },
+    Dir { path: PathBuf, children: Vec<Node> },
 }
 
 impl Node {
@@ -82,13 +76,13 @@ mod tests {
         let node = scan(test_dir).unwrap();
 
         if let Node::Dir { children, .. } = node {
-             // Should have file1 and subdir
-             assert_eq!(children.len(), 2);
+            // Should have file1 and subdir
+            assert_eq!(children.len(), 2);
 
-             let total_size = children.iter().map(|c| c.size()).sum::<u64>();
-             assert_eq!(total_size, 10); // 5 + 5 bytes
+            let total_size = children.iter().map(|c| c.size()).sum::<u64>();
+            assert_eq!(total_size, 10); // 5 + 5 bytes
         } else {
-             panic!("Root should be dir");
+            panic!("Root should be dir");
         }
 
         // Clean up

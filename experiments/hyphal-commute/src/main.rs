@@ -2,22 +2,22 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
     widgets::{Block, Borders, Paragraph, Widget},
-    Terminal,
 };
 use std::{
     io,
     time::{Duration, Instant},
 };
 
-use hyphal_commute::{World, Grid};
+use hyphal_commute::{Grid, World};
 
 fn main() -> Result<()> {
     // Setup Terminal
@@ -36,10 +36,7 @@ fn main() -> Result<()> {
 
     // Cleanup
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -53,7 +50,8 @@ fn run_app<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     world: &mut World,
 ) -> Result<()>
-where <B as ratatui::backend::Backend>::Error: Send + Sync + 'static
+where
+    <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(33); // ~30 FPS
@@ -62,10 +60,7 @@ where <B as ratatui::backend::Backend>::Error: Send + Sync + 'static
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(0),
-                    Constraint::Length(1),
-                ])
+                .constraints([Constraint::Min(0), Constraint::Length(1)])
                 .split(f.area());
 
             // Main Area
@@ -95,13 +90,14 @@ where <B as ratatui::backend::Backend>::Error: Send + Sync + 'static
                     match key.code {
                         KeyCode::Char('q') => return Ok(()),
                         KeyCode::Char('g') => {
-                             world.generate_city();
+                            world.generate_city();
                         }
                         KeyCode::Char('r') => {
-                             // Reset
-                             let mut new_world = World::new(world.grid.width, world.grid.height, 2000);
-                             new_world.generate_city();
-                             *world = new_world;
+                            // Reset
+                            let mut new_world =
+                                World::new(world.grid.width, world.grid.height, 2000);
+                            new_world.generate_city();
+                            *world = new_world;
                         }
                         _ => {}
                     }
@@ -132,11 +128,13 @@ impl<'a> Widget for HyphalMap<'a> {
                 // We want 2 vertical pixels per cell (HalfBlock)
 
                 // Top half
-                let gy_top = (y as f64 * 2.0 / (area.height as f64 * 2.0) * self.grid.height as f64) as usize;
+                let gy_top = (y as f64 * 2.0 / (area.height as f64 * 2.0) * self.grid.height as f64)
+                    as usize;
                 let gx = (x as f64 / area.width as f64 * self.grid.width as f64) as usize;
 
                 // Bottom half
-                let gy_bot = ((y as f64 * 2.0 + 1.0) / (area.height as f64 * 2.0) * self.grid.height as f64) as usize;
+                let gy_bot = ((y as f64 * 2.0 + 1.0) / (area.height as f64 * 2.0)
+                    * self.grid.height as f64) as usize;
 
                 let v_top = self.grid.get(gx, gy_top);
                 let v_bot = self.grid.get(gx, gy_bot);
@@ -146,9 +144,7 @@ impl<'a> Widget for HyphalMap<'a> {
 
                 let cell = buf.cell_mut((area.left() + x, area.top() + y));
                 if let Some(cell) = cell {
-                     cell.set_symbol("▀")
-                         .set_fg(c_top)
-                         .set_bg(c_bot);
+                    cell.set_symbol("▀").set_fg(c_top).set_bg(c_bot);
                 }
             }
         }
@@ -163,7 +159,11 @@ fn val_to_color(v: f32) -> Color {
         // Green: 50..255
         let g = (50.0 + v * 40.0).clamp(50.0, 255.0) as u8;
         // Red/Blue increase only at high intensity (hotspots)
-        let rb = if v > 5.0 { ((v - 5.0) * 50.0).clamp(0.0, 255.0) as u8 } else { 0 };
+        let rb = if v > 5.0 {
+            ((v - 5.0) * 50.0).clamp(0.0, 255.0) as u8
+        } else {
+            0
+        };
         Color::Rgb(rb, g, rb)
     }
 }

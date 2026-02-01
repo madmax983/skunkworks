@@ -1,4 +1,4 @@
-use hyphal_commute::{World, Agent};
+use hyphal_commute::{Agent, World};
 
 #[test]
 fn test_agent_movement_and_deposition() {
@@ -16,11 +16,20 @@ fn test_agent_movement_and_deposition() {
 
     // Check movement
     let new_x = world.agents[0].x;
-    assert!(new_x > initial_x, "Agent should move forward. Old: {}, New: {}", initial_x, new_x);
+    assert!(
+        new_x > initial_x,
+        "Agent should move forward. Old: {}, New: {}",
+        initial_x,
+        new_x
+    );
 
     // Check deposition at previous location (approximate)
     let grid_val = world.grid.get(50, 50);
-    assert!(grid_val > 0.0, "Agent should deposit pheromone at its location. Value: {}", grid_val);
+    assert!(
+        grid_val > 0.0,
+        "Agent should deposit pheromone at its location. Value: {}",
+        grid_val
+    );
 }
 
 #[test]
@@ -35,6 +44,14 @@ fn test_grid_decay() {
     world.tick();
 
     let new_val = world.grid.cells[0];
-    assert!(new_val < 1.0, "Grid value should decay. Old: 1.0, New: {}", new_val);
-    assert!(new_val > 0.0, "Grid value should not disappear instantly. New: {}", new_val);
+    assert!(
+        new_val < 1.0,
+        "Grid value should decay. Old: 1.0, New: {}",
+        new_val
+    );
+    assert!(
+        new_val > 0.0,
+        "Grid value should not disappear instantly. New: {}",
+        new_val
+    );
 }

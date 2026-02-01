@@ -257,8 +257,14 @@ mod tests {
         let p1 = &solver.particles[0];
         let p2 = &solver.particles[1];
 
-        assert!(p1.vx.abs() > 0.0, "Particle 1 should acquire velocity from interaction");
-        assert!(p2.vx.abs() > 0.0, "Particle 2 should acquire velocity from interaction");
+        assert!(
+            p1.vx.abs() > 0.0,
+            "Particle 1 should acquire velocity from interaction"
+        );
+        assert!(
+            p2.vx.abs() > 0.0,
+            "Particle 2 should acquire velocity from interaction"
+        );
 
         // Symmetry check: forces should be equal and opposite (if masses equal)
         // Since integration is simple Euler, positions update too.
@@ -266,7 +272,10 @@ mod tests {
         // vx accumulates ax.
         // Since they started at x=50 and x=52, symmetric around 51.
         // P1.vx should be -P2.vx approximately.
-        assert!((p1.vx + p2.vx).abs() < 0.0001, "Momentum should be conserved (sum of velocities approx 0)");
+        assert!(
+            (p1.vx + p2.vx).abs() < 0.0001,
+            "Momentum should be conserved (sum of velocities approx 0)"
+        );
     }
 
     #[test]

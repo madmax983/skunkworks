@@ -29,7 +29,12 @@ impl Direction {
     }
 
     pub fn all() -> [Direction; 4] {
-        [Direction::Up, Direction::Down, Direction::Left, Direction::Right]
+        [
+            Direction::Up,
+            Direction::Down,
+            Direction::Left,
+            Direction::Right,
+        ]
     }
 }
 
@@ -43,7 +48,9 @@ impl Superposition {
         let mut unique_chars = chars;
         unique_chars.sort();
         unique_chars.dedup();
-        Self { possibilities: unique_chars }
+        Self {
+            possibilities: unique_chars,
+        }
     }
 
     pub fn entropy(&self) -> usize {
@@ -72,7 +79,7 @@ impl Superposition {
             Ok(&c) => {
                 self.possibilities = vec![c];
                 Some(c)
-            },
+            }
             Err(_) => {
                 // Fallback (e.g. if all weights are 0, which is weird)
                 if let Some(&c) = self.possibilities.choose(&mut rng) {
@@ -174,15 +181,15 @@ impl PatternExtractor {
 
                 // Check Right (x+1)
                 if x + 1 < width {
-                    let right = lines[y][x+1];
+                    let right = lines[y][x + 1];
                     rules.add_rule(current, right, Direction::Right);
                 }
 
                 // Check Down (y+1)
                 if y + 1 < height {
                     // Ensure the line below has a character at this x
-                    if x < lines[y+1].len() {
-                        let down = lines[y+1][x];
+                    if x < lines[y + 1].len() {
+                        let down = lines[y + 1][x];
                         rules.add_rule(current, down, Direction::Down);
                     }
                 }
@@ -203,10 +210,10 @@ impl WaveFunction {
     pub fn new(width: usize, height: usize, rules: Rules) -> Self {
         let all_chars_vec: Vec<char> = rules.all_chars.iter().cloned().collect();
         Self {
-             grid: vec![vec![Superposition::new(all_chars_vec); width]; height],
-             width,
-             height,
-             rules
+            grid: vec![vec![Superposition::new(all_chars_vec); width]; height],
+            width,
+            height,
+            rules,
         }
     }
 

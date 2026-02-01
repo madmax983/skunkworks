@@ -69,34 +69,60 @@ impl Cube {
         let d = self.depth;
 
         let vertices = [
-            Point3D { x, y, z },             // 0: bottom-back-left
-            Point3D { x: x+w, y, z },        // 1: bottom-back-right
-            Point3D { x: x+w, y, z: z+d },   // 2: bottom-front-right
-            Point3D { x, y, z: z+d },        // 3: bottom-front-left
-            Point3D { x, y: y+h, z },        // 4: top-back-left
-            Point3D { x: x+w, y: y+h, z },   // 5: top-back-right
-            Point3D { x: x+w, y: y+h, z: z+d }, // 6: top-front-right
-            Point3D { x, y: y+h, z: z+d },      // 7: top-front-left
+            Point3D { x, y, z },        // 0: bottom-back-left
+            Point3D { x: x + w, y, z }, // 1: bottom-back-right
+            Point3D {
+                x: x + w,
+                y,
+                z: z + d,
+            }, // 2: bottom-front-right
+            Point3D { x, y, z: z + d }, // 3: bottom-front-left
+            Point3D { x, y: y + h, z }, // 4: top-back-left
+            Point3D {
+                x: x + w,
+                y: y + h,
+                z,
+            }, // 5: top-back-right
+            Point3D {
+                x: x + w,
+                y: y + h,
+                z: z + d,
+            }, // 6: top-front-right
+            Point3D {
+                x,
+                y: y + h,
+                z: z + d,
+            }, // 7: top-front-left
         ];
 
         let proj: Vec<Point2D> = vertices.iter().map(|v| project(*v, camera)).collect();
 
         // Define the 12 edges
         let edges = [
-            (0,1), (1,2), (2,3), (3,0), // Bottom
-            (4,5), (5,6), (6,7), (7,4), // Top
-            (0,4), (1,5), (2,6), (3,7)  // Vertical
+            (0, 1),
+            (1, 2),
+            (2, 3),
+            (3, 0), // Bottom
+            (4, 5),
+            (5, 6),
+            (6, 7),
+            (7, 4), // Top
+            (0, 4),
+            (1, 5),
+            (2, 6),
+            (3, 7), // Vertical
         ];
 
-        edges.iter().map(|&(start, end)| {
-            Line {
+        edges
+            .iter()
+            .map(|&(start, end)| Line {
                 x1: proj[start].x,
                 y1: proj[start].y,
                 x2: proj[end].x,
                 y2: proj[end].y,
                 color: self.color,
-            }
-        }).collect()
+            })
+            .collect()
     }
 }
 
@@ -112,7 +138,11 @@ mod tests {
             offset_y: 0.0,
             angle: 0.0,
         };
-        let p = Point3D { x: 0.0, y: 0.0, z: 0.0 };
+        let p = Point3D {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        };
         let proj = project(p, &camera);
         assert!((proj.x - 0.0).abs() < 1e-6);
         assert!((proj.y - 0.0).abs() < 1e-6);
@@ -122,7 +152,11 @@ mod tests {
     fn test_cube_lines() {
         let camera = Camera::default();
         let cube = Cube {
-            origin: Point3D { x: 0.0, y: 0.0, z: 0.0 },
+            origin: Point3D {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            },
             width: 10.0,
             height: 10.0,
             depth: 10.0,
