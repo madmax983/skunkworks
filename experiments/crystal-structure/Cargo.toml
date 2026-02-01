@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ratatui = "0.29.0"
-crossterm = "0.28.1"
-anyhow = "1.0"
+anyhow.workspace = true
+crossterm.workspace = true
 nalgebra = "0.33"
-rand = "0.8.5"
+rand.workspace = true
+ratatui.workspace = true

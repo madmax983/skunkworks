@@ -44,13 +44,13 @@ impl Grid {
     }
 
     pub fn generate(&mut self) {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
 
         // simple cellular automata / noise simulation
         for y in 0..self.height {
             for x in 0..self.width {
                 let idx = y * self.width + x;
-                let val: f32 = rng.random();
+                let val: f32 = rng.r#gen();
 
                 // Base generation
                 if val > 0.98 {
@@ -90,7 +90,7 @@ impl Grid {
     }
 
     fn smooth(&mut self, iterations: usize) {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         for _ in 0..iterations {
             let mut new_cells = self.cells.clone();
             for y in 1..self.height - 1 {
@@ -131,7 +131,7 @@ impl Grid {
                             kind: SoilType::Water,
                             occupied_by: None,
                         };
-                    } else if rng.random_bool(0.05) && water_neighbors > 0 {
+                    } else if rng.gen_bool(0.05) && water_neighbors > 0 {
                         // Seepage
                         new_cells[idx].moisture += 0.2;
                         new_cells[idx].moisture = new_cells[idx].moisture.min(1.0);

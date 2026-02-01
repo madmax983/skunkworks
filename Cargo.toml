@@ -2,25 +2,32 @@
 members = [
     "crates/tui-shared",
     "experiments/automata-warfare",
+    "experiments/cellular-beats",
     "experiments/code-metropolis",
-    "experiments/fugue-state",
+    "experiments/crystal-structure",
+    "experiments/euclidean-pulse",
     "experiments/firefly-synapse",
+    "experiments/fugue-state",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/hyphal-commute",
+    "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/literary-boids",
     "experiments/neuro-terminal",
     "experiments/phonetic-decay",
+    "experiments/rhizome-seeker",
     "experiments/schrodingers-text",
+    "experiments/sculpt-term",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
-    "experiments/cellular-beats",
-    "experiments/sculpt-term",
-    "experiments/karman-text-street",
-    "experiments/rhizome-seeker",
-    "experiments/crystal-structure",
-    "experiments/euclidean-pulse",
 ]
 resolver = "2"
+
+[workspace.dependencies]
+anyhow = "1.0"
+crossterm = "0.28"
+rand = "0.8"
+ratatui = "0.29"
+tui-shared = { path = "crates/tui-shared" }

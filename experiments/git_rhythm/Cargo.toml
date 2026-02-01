@@ -4,12 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
 git2 = "0.18"
 hound = "3.5"
-ratatui = "0.29.0"
-crossterm = "0.28.1"
-anyhow = "1.0"
-rand = "0.8"
+rand.workspace = true
+ratatui.workspace = true
 
 [features]
 nova = []

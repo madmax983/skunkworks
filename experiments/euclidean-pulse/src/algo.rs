@@ -52,7 +52,7 @@ mod tests {
 
     #[test]
     fn test_empty() {
-        assert_eq!(bjorklund(0, 5), vec![]);
+        assert_eq!(bjorklund(0, 5), Vec::<bool>::new());
     }
 
     #[test]

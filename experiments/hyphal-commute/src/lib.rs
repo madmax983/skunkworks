@@ -34,16 +34,16 @@ impl Agent {
         let v_r = sense(grid, self.angle + sensor_angle);
 
         // 2. Turn
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
 
         if v_c > v_l && v_c > v_r {
             // Continue forward (maybe slight random wobble)
-            if rng.random_bool(0.1) {
-                self.angle += (rng.random::<f64>() - 0.5) * 0.1;
+            if rng.gen_bool(0.1) {
+                self.angle += (rng.r#gen::<f64>() - 0.5) * 0.1;
             }
         } else if v_c < v_l && v_c < v_r {
             // Rotate randomly
-            if rng.random_bool(0.5) {
+            if rng.gen_bool(0.5) {
                 self.angle += turn_angle;
             } else {
                 self.angle -= turn_angle;
@@ -60,7 +60,7 @@ impl Agent {
 
         // 4. Bounds (Bounce)
         if self.x < 0.0 || self.x >= width || self.y < 0.0 || self.y >= height {
-            self.angle = rng.random_range(0.0..std::f64::consts::TAU);
+            self.angle = rng.gen_range(0.0..std::f64::consts::TAU);
             self.x = self.x.clamp(0.0, width - 0.1);
             self.y = self.y.clamp(0.0, height - 0.1);
         }
@@ -149,13 +149,13 @@ pub struct World {
 
 impl World {
     pub fn new(width: usize, height: usize, num_agents: usize) -> Self {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         let agents = (0..num_agents)
             .map(|_| {
                 Agent::new(
-                    rng.random_range(0.0..width as f64),
-                    rng.random_range(0.0..height as f64),
-                    rng.random_range(0.0..std::f64::consts::TAU),
+                    rng.gen_range(0.0..width as f64),
+                    rng.gen_range(0.0..height as f64),
+                    rng.gen_range(0.0..std::f64::consts::TAU),
                 )
             })
             .collect();
@@ -168,13 +168,13 @@ impl World {
     }
 
     pub fn generate_city(&mut self) {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         self.stations.clear();
-        let num_stations = rng.random_range(5..15);
+        let num_stations = rng.gen_range(5..15);
 
         for _ in 0..num_stations {
-            let x = rng.random_range(10..self.grid.width - 10);
-            let y = rng.random_range(10..self.grid.height - 10);
+            let x = rng.gen_range(10..self.grid.width - 10);
+            let y = rng.gen_range(10..self.grid.height - 10);
             self.stations.push(Station {
                 x,
                 y,

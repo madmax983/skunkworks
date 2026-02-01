@@ -52,9 +52,9 @@ impl World {
         let char_to_spawn = self.text_source[self.text_index];
         self.text_index += 1;
 
-        let mut rng = rand::rng();
-        let x = rng.random_range(0.0..self.width);
-        let y = rng.random_range(0.0..self.height);
+        let mut rng = rand::thread_rng();
+        let x = rng.gen_range(0.0..self.width);
+        let y = rng.gen_range(0.0..self.height);
 
         self.food.push(Food {
             position: (x, y),
@@ -134,13 +134,13 @@ impl World {
 }
 
 fn mutate_dna(dna: &mut DNA) {
-    let mut rng = rand::rng();
-    if rng.random_bool(0.1) {
-        dna.max_speed += rng.random_range(-0.1..0.1);
+    let mut rng = rand::thread_rng();
+    if rng.gen_bool(0.1) {
+        dna.max_speed += rng.gen_range(-0.1..0.1);
         dna.max_speed = dna.max_speed.clamp(0.2, 2.0);
     }
-    if rng.random_bool(0.1) {
-        dna.view_radius += rng.random_range(-1.0..1.0);
+    if rng.gen_bool(0.1) {
+        dna.view_radius += rng.gen_range(-1.0..1.0);
         dna.view_radius = dna.view_radius.clamp(2.0, 20.0);
     }
     // Color mutation based on traits

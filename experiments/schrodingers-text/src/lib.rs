@@ -1,4 +1,4 @@
-use rand::prelude::IndexedRandom;
+use rand::prelude::SliceRandom;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -67,7 +67,7 @@ impl Superposition {
             return None;
         }
 
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
 
         // Choose based on weight
         let chosen = self.possibilities.choose_weighted(&mut rng, |c| {
@@ -246,7 +246,7 @@ impl WaveFunction {
         }
 
         // 2. Pick random candidate and observe (using weighted collapse)
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         let (cx, cy) = *candidates.choose(&mut rng).unwrap();
         self.grid[cy][cx].observe(&self.rules.weights);
 

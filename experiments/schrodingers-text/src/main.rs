@@ -101,15 +101,12 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()>
-where
-    B::Error: From<io::Error> + Into<io::Error>,
-{
+fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()> {
     let tick_rate = std::time::Duration::from_millis(16);
     let mut last_tick = std::time::Instant::now();
 
     loop {
-        terminal.draw(|f| ui(f, app)).map_err(|e| e.into())?;
+        terminal.draw(|f| ui(f, app))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())

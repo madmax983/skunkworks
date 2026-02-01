@@ -16,14 +16,14 @@ pub struct DNA {
 
 impl DNA {
     pub fn random() -> Self {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         Self {
-            max_speed: rng.random_range(0.5..1.5),
-            max_force: rng.random_range(0.02..0.1),
-            view_radius: rng.random_range(5.0..15.0),
-            separation_weight: rng.random_range(1.0..2.0),
-            alignment_weight: rng.random_range(0.8..1.2),
-            cohesion_weight: rng.random_range(0.8..1.2),
+            max_speed: rng.gen_range(0.5..1.5),
+            max_force: rng.gen_range(0.02..0.1),
+            view_radius: rng.gen_range(5.0..15.0),
+            separation_weight: rng.gen_range(1.0..2.0),
+            alignment_weight: rng.gen_range(0.8..1.2),
+            cohesion_weight: rng.gen_range(0.8..1.2),
             color: Color::White,
             char_representation: '*',
         }
@@ -41,8 +41,8 @@ pub struct Boid {
 
 impl Boid {
     pub fn new(x: f64, y: f64) -> Self {
-        let mut rng = rand::rng();
-        let angle = rng.random_range(0.0..TAU);
+        let mut rng = rand::thread_rng();
+        let angle = rng.gen_range(0.0..TAU);
         let dna = DNA::random();
 
         Self {

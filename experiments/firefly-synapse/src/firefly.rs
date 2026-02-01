@@ -12,13 +12,13 @@ pub struct Firefly {
 
 impl Firefly {
     pub fn new(x: f64, y: f64) -> Self {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         Self {
             x,
             y,
-            phase: rng.random::<f64>(),
+            phase: rng.r#gen::<f64>(),
             // Frequency between 0.005 and 0.025
-            natural_freq: 0.005 + rng.random::<f64>() * 0.02,
+            natural_freq: 0.005 + rng.r#gen::<f64>() * 0.02,
             flash_timer: 0,
         }
     }
@@ -35,11 +35,11 @@ pub struct Swarm {
 impl Swarm {
     pub fn new(count: usize, width: f64, height: f64) -> Self {
         let mut fireflies = Vec::with_capacity(count);
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         for _ in 0..count {
             fireflies.push(Firefly::new(
-                rng.random::<f64>() * width,
-                rng.random::<f64>() * height,
+                rng.r#gen::<f64>() * width,
+                rng.r#gen::<f64>() * height,
             ));
         }
 
@@ -98,9 +98,9 @@ impl Swarm {
     }
 
     pub fn randomize_phases(&mut self) {
-        let mut rng = rand::rng();
+        let mut rng = rand::thread_rng();
         for fly in &mut self.fireflies {
-            fly.phase = rng.random::<f64>();
+            fly.phase = rng.r#gen::<f64>();
         }
     }
 

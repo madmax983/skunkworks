@@ -50,10 +50,7 @@ fn main() -> Result<()> {
 fn run_app<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     world: &mut World,
-) -> Result<()>
-where
-    <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
-{
+) -> Result<()> {
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(33); // ~30 FPS
 
