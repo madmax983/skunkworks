@@ -1,3 +1,4 @@
+#![allow(clippy::collapsible_if)]
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},

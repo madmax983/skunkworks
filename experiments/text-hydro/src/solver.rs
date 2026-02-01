@@ -1,3 +1,5 @@
+#![allow(clippy::identity_op, clippy::erasing_op)]
+
 pub struct Fluid {
     pub size: usize,
     pub dt: f32,
