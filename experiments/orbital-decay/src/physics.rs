@@ -1,4 +1,5 @@
 use rand::Rng;
+use tui_semantic::{Action, Entity, SemanticState, Snapshot};
 
 #[derive(Clone)]
 pub struct Particle {
@@ -204,5 +205,86 @@ impl Universe {
         for _ in 0..60 {
             self.spawn_particle();
         }
+    }
+
+    /// Track frame number for semantic snapshots
+    pub fn frame_count(&self) -> u64 {
+        self.absorbed_count as u64 // Rough proxy for time
+    }
+}
+
+impl SemanticState for Universe {
+    fn snapshot(&self) -> Snapshot {
+        let mut snap = Snapshot::new("orbital-decay")
+            .with_viewport(self.width as u16, self.height as u16)
+            .with_metric("absorbed_total", self.absorbed_count)
+            .with_metric("particle_count", self.particles.len())
+            .with_metric("well_count", self.wells.len())
+            .with_state("running");
+
+        // Add gravity wells
+        for (i, well) in self.wells.iter().enumerate() {
+            snap = snap.with_entity(
+                Entity::new("gravity_well")
+                    .with_id(format!("well_{}", i))
+                    .at(well.x, well.y)
+                    .display(well.char.to_string())
+                    .with_prop("mass", well.mass),
+            );
+        }
+
+        // Add particles (summarize if too many)
+        if self.particles.len() <= 20 {
+            // Show all particles
+            for (i, p) in self.particles.iter().enumerate() {
+                let speed = (p.vx * p.vx + p.vy * p.vy).sqrt();
+                snap = snap.with_entity(
+                    Entity::new("particle")
+                        .with_id(format!("p_{}", i))
+                        .at(p.x, p.y)
+                        .moving(p.vx, p.vy)
+                        .display(p.char.to_string())
+                        .with_prop("speed", speed)
+                        .with_prop("age", p.age),
+                );
+            }
+        } else {
+            // Summarize particles by speed category
+            let (slow, medium, fast) = self.particles.iter().fold((0, 0, 0), |acc, p| {
+                let speed = (p.vx * p.vx + p.vy * p.vy).sqrt();
+                if speed > 0.8 {
+                    (acc.0, acc.1, acc.2 + 1)
+                } else if speed > 0.4 {
+                    (acc.0, acc.1 + 1, acc.2)
+                } else {
+                    (acc.0 + 1, acc.1, acc.2)
+                }
+            });
+            snap = snap
+                .with_metric("particles_slow", slow)
+                .with_metric("particles_medium", medium)
+                .with_metric("particles_fast", fast);
+
+            // Still show a few sample particles
+            for (i, p) in self.particles.iter().take(5).enumerate() {
+                let speed = (p.vx * p.vx + p.vy * p.vy).sqrt();
+                snap = snap.with_entity(
+                    Entity::new("particle_sample")
+                        .with_id(format!("sample_{}", i))
+                        .at(p.x, p.y)
+                        .moving(p.vx, p.vy)
+                        .display(p.char.to_string())
+                        .with_prop("speed", speed),
+                );
+            }
+        }
+
+        // Add available actions
+        snap = snap
+            .with_action(Action::new("quit").key("q").describe("Exit the simulation"))
+            .with_action(Action::new("reset").key("r").describe("Reset with new random wells"))
+            .with_action(Action::new("toggle_pause").key("space").describe("Pause/resume simulation"));
+
+        snap
     }
 }

@@ -13,25 +13,34 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, Widget},
 };
 use std::{
-    io,
+    env,
+    io::{self, Write as _},
     time::{Duration, Instant},
 };
+use tui_semantic::SemanticState;
 
 mod physics;
 use physics::Universe;
 
 fn main() -> Result<()> {
-    // Setup terminal
+    let args: Vec<String> = env::args().collect();
+
+    // --semantic mode: output a snapshot and exit (no TUI)
+    if args.iter().any(|a| a == "--semantic") {
+        let universe = Universe::new(80.0, 40.0);
+        println!("{}", universe.snapshot().to_json_pretty());
+        return Ok(());
+    }
+
+    // Normal TUI mode
     enable_raw_mode()?;
     let mut stdout = io::stdout();
     execute!(stdout, EnterAlternateScreen)?;
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    // Run
     let res = run(&mut terminal);
 
-    // Cleanup
     disable_raw_mode()?;
     execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
@@ -48,6 +57,7 @@ fn run<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
     let mut paused = false;
     let mut last_tick = Instant::now();
     let tick_rate = Duration::from_millis(33);
+    let mut pending_snapshot: Option<String> = None;
 
     loop {
         terminal.draw(|f| {
@@ -71,7 +81,7 @@ fn run<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
             f.render_widget(UniverseWidget { universe: &universe }, inner);
 
             let status = format!(
-                " [Q]uit | [R]eset | [Space] {} | Absorbed: {} ",
+                " [Q]uit | [R]eset | [D]ump | [Space] {} | Absorbed: {} ",
                 if paused { "Resume" } else { "Pause" },
                 universe.absorbed_count
             );
@@ -91,6 +101,10 @@ fn run<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
                         KeyCode::Char('q') => return Ok(()),
                         KeyCode::Char('r') => universe.reset(),
                         KeyCode::Char(' ') => paused = !paused,
+                        KeyCode::Char('d') => {
+                            // Queue snapshot to be written after we leave alternate screen
+                            pending_snapshot = Some(universe.snapshot().to_json_pretty());
+                        }
                         _ => {}
                     }
                 }
@@ -103,7 +117,20 @@ fn run<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<()> {
             }
             last_tick = Instant::now();
         }
+
+        // If we have a pending snapshot, exit and print it
+        if pending_snapshot.is_some() {
+            break;
+        }
     }
+
+    // Print snapshot after leaving alternate screen (handled by caller cleanup)
+    if let Some(snapshot) = pending_snapshot {
+        // Write to stderr so it doesn't interfere with terminal restore
+        eprintln!("\n--- Semantic Snapshot ---\n{}", snapshot);
+    }
+
+    Ok(())
 }
 
 struct UniverseWidget<'a> {

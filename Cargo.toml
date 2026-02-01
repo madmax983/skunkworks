@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/tui-semantic",
     "crates/tui-shared",
     "experiments/automata-warfare",
     "experiments/cellular-beats",
@@ -31,4 +32,5 @@ anyhow = "1.0"
 crossterm = "0.28"
 rand = "0.8"
 ratatui = "0.29"
+tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
