@@ -123,8 +123,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char('p') => app.paused = !app.paused,
                     KeyCode::Char('r') => {
-                        let new_app = App::new();
-                        app.network = new_app.network;
+                        app.network = Network::new(vec![2, 5, 4, 1], 0.1);
                         app.steps = 0;
                     }
                     _ => {}
