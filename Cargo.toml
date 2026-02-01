@@ -2,6 +2,7 @@
 members = [
     "experiments/automata-warfare",
     "experiments/code-metropolis",
+    "experiments/fugue-state",
     "experiments/firefly-synapse",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
@@ -9,12 +10,12 @@ members = [
     "experiments/l-system-garden",
     "experiments/literary-boids",
     "experiments/neuro-terminal",
+    "experiments/phonetic-decay",
     "experiments/schrodingers-text",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
     "experiments/rhizome-seeker",
-    "experiments/fugue-state",
     "experiments/crystal-structure",
     "experiments/euclidean-pulse",
 ]
