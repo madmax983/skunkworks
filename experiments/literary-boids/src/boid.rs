@@ -111,12 +111,17 @@ impl Boid {
             let d_sq = distance_squared(self.position, other.position);
 
             // Avoid self (and exact overlaps, unlikely but possible)
-            if d_sq == 0.0 { continue; }
+            if d_sq == 0.0 {
+                continue;
+            }
 
             if d_sq < view_radius_sq {
                 // Separation
                 if d_sq < separation_radius_sq {
-                    let diff = (self.position.0 - other.position.0, self.position.1 - other.position.1);
+                    let diff = (
+                        self.position.0 - other.position.0,
+                        self.position.1 - other.position.1,
+                    );
                     // Weight by distance squared inversely
                     separation.0 += diff.0 / d_sq;
                     separation.1 += diff.1 / d_sq;
@@ -272,7 +277,11 @@ mod tests {
         // boid1 is at 50, boid2 is at 50.1. Diff is 50 - 50.1 = -0.1.
         let force = boid1.calculate_flocking_force(&[boid2]);
 
-        assert!(force.0 < 0.0, "Force X should be negative (separation), got {}", force.0);
+        assert!(
+            force.0 < 0.0,
+            "Force X should be negative (separation), got {}",
+            force.0
+        );
         assert_eq!(force.1, 0.0, "Force Y should be zero");
     }
 }

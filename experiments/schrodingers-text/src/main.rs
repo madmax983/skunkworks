@@ -1,15 +1,15 @@
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
-    backend::{Backend, CrosstermBackend},
     Terminal,
-    layout::{Constraint, Direction, Layout, Rect, Alignment},
-    widgets::{Block, Borders, Paragraph, Widget},
-    style::{Style, Color, Modifier},
+    backend::{Backend, CrosstermBackend},
     buffer::Buffer,
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
+    style::{Color, Modifier, Style},
+    widgets::{Block, Borders, Paragraph, Widget},
 };
 use schrodingers_text::{PatternExtractor, WaveFunction};
 use std::{error::Error, io};
@@ -51,7 +51,7 @@ impl App {
             if !self.paused {
                 for _ in 0..5 {
                     if !self.wave.collapse() {
-                       // Done
+                        // Done
                     }
                 }
             }
@@ -90,7 +90,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()>
-where B::Error: From<io::Error> + Into<io::Error>
+where
+    B::Error: From<io::Error> + Into<io::Error>,
 {
     let tick_rate = std::time::Duration::from_millis(16);
     let mut last_tick = std::time::Instant::now();
@@ -107,23 +108,21 @@ where B::Error: From<io::Error> + Into<io::Error>
             && key.kind == KeyEventKind::Press
         {
             match app.state {
-                    AppState::Splash => {
-                        match key.code {
-                            KeyCode::Enter => app.state = AppState::Running,
-                            KeyCode::Char('q') => return Ok(()),
-                            _ => {}
+                AppState::Splash => match key.code {
+                    KeyCode::Enter => app.state = AppState::Running,
+                    KeyCode::Char('q') => return Ok(()),
+                    _ => {}
+                },
+                AppState::Running => {
+                    match key.code {
+                        KeyCode::Char('q') => return Ok(()),
+                        KeyCode::Char(' ') => app.paused = !app.paused,
+                        KeyCode::Char('r') => {
+                            *app = App::new();
+                            app.state = AppState::Running; // Skip splash on reset
                         }
+                        _ => {}
                     }
-                    AppState::Running => {
-                        match key.code {
-                            KeyCode::Char('q') => return Ok(()),
-                            KeyCode::Char(' ') => app.paused = !app.paused,
-                            KeyCode::Char('r') => {
-                                *app = App::new();
-                                app.state = AppState::Running; // Skip splash on reset
-                            }
-                            _ => {}
-                        }
                 }
             }
         }
@@ -163,12 +162,22 @@ impl<'a> Widget for GridWidget<'a> {
                     if let Some(c) = cell.possibilities.first() {
                         (*c, Style::default().fg(Color::White))
                     } else {
-                        ('X', Style::default().fg(Color::Magenta).add_modifier(Modifier::RAPID_BLINK)) // Contradiction
+                        (
+                            'X',
+                            Style::default()
+                                .fg(Color::Magenta)
+                                .add_modifier(Modifier::RAPID_BLINK),
+                        ) // Contradiction
                     }
                 } else {
                     let entropy = cell.entropy();
                     if entropy == 0 {
-                         ('!', Style::default().fg(Color::Magenta).add_modifier(Modifier::RAPID_BLINK))
+                        (
+                            '!',
+                            Style::default()
+                                .fg(Color::Magenta)
+                                .add_modifier(Modifier::RAPID_BLINK),
+                        )
                     } else {
                         // "Quantum Shimmer"
                         // Pick char based on tick and position to look random but deterministic per frame
@@ -213,11 +222,17 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
             let title = Paragraph::new("⚛️  SCHRÖDINGER'S TEXT ⚛️")
                 .alignment(Alignment::Center)
-                .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD));
+                .style(
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                );
 
-            let subtitle = Paragraph::new("Wave Function Collapse Text Generation\n\nPress [ENTER] to Observe")
-                .alignment(Alignment::Center)
-                .style(Style::default().fg(Color::White));
+            let subtitle = Paragraph::new(
+                "Wave Function Collapse Text Generation\n\nPress [ENTER] to Observe",
+            )
+            .alignment(Alignment::Center)
+            .style(Style::default().fg(Color::White));
 
             f.render_widget(title, chunks[1]);
             f.render_widget(subtitle, chunks[2]); // actually 2 is bottom part, let's put it there
@@ -225,18 +240,14 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         AppState::Running => {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints(
-                    [
-                        Constraint::Length(3),
-                        Constraint::Min(0),
-                    ]
-                    .as_ref(),
-                )
+                .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
                 .split(f.area());
 
             // Title
-            let title = Paragraph::new("Schrödinger's Text (WFC) | [Space] Pause/Play | [R] Reset | [Q] Quit")
-                .block(Block::default().borders(Borders::ALL).title(" ⚛️ Genesis "));
+            let title = Paragraph::new(
+                "Schrödinger's Text (WFC) | [Space] Pause/Play | [R] Reset | [Q] Quit",
+            )
+            .block(Block::default().borders(Borders::ALL).title(" ⚛️ Genesis "));
             f.render_widget(title, chunks[0]);
 
             // Grid
@@ -245,11 +256,16 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                 tick: app.tick_count,
             };
 
-            let grid_block = Block::default().borders(Borders::ALL).title(" Observation Window ");
+            let grid_block = Block::default()
+                .borders(Borders::ALL)
+                .title(" Observation Window ");
             f.render_widget(grid_block, chunks[1]);
 
             // We need to render grid INSIDE the block's inner area
-            let inner_area = chunks[1].inner(ratatui::layout::Margin { vertical: 1, horizontal: 1 });
+            let inner_area = chunks[1].inner(ratatui::layout::Margin {
+                vertical: 1,
+                horizontal: 1,
+            });
             f.render_widget(grid, inner_area);
         }
     }
