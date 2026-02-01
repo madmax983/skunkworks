@@ -108,8 +108,8 @@ impl FluidSolver {
                 if i == j {
                     continue;
                 }
-                let dx = self.particles[j].x - self.particles[i].x;
-                let dy = self.particles[j].y - self.particles[i].y;
+                let dx = self.particles[i].x - self.particles[j].x;
+                let dy = self.particles[i].y - self.particles[j].y;
                 let r = (dx * dx + dy * dy).sqrt();
 
                 if r > 0.0 && r < self.h {
