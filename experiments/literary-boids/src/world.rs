@@ -1,5 +1,7 @@
 use crate::boid::{Boid, DNA, distance};
 #[cfg(feature = "nova")]
+use crate::critic::Critic;
+#[cfg(feature = "nova")]
 use crate::syntax_physics;
 use rand::Rng;
 use ratatui::style::Color;
@@ -13,6 +15,8 @@ pub struct Food {
 pub struct World {
     pub boids: Vec<Boid>,
     pub food: Vec<Food>,
+    #[cfg(feature = "nova")]
+    pub critics: Vec<Critic>,
     pub width: f64,
     pub height: f64,
     pub text_source: Vec<char>,
@@ -32,11 +36,19 @@ impl World {
         let mut world = Self {
             boids,
             food: Vec::new(),
+            #[cfg(feature = "nova")]
+            critics: Vec::new(),
             width,
             height,
             text_source,
             text_index: 0,
         };
+
+        #[cfg(feature = "nova")]
+        {
+            // Spawn one critic
+            world.critics.push(Critic::new(width / 2.0, height / 2.0));
+        }
 
         // Initial food spawn
         for _ in 0..50 {
@@ -72,13 +84,64 @@ impl World {
         let mut forces = Vec::with_capacity(self.boids.len());
 
         for boid in &self.boids {
-            forces.push(boid.calculate_flocking_force(&self.boids));
+            #[allow(unused_mut)]
+            let mut force = boid.calculate_flocking_force(&self.boids);
+
+            #[cfg(feature = "nova")]
+            {
+                // Flee from critics
+                for critic in &self.critics {
+                    let flee_force = crate::critic::flee(
+                        boid.position,
+                        boid.velocity,
+                        critic.position,
+                        boid.dna.max_speed,
+                        boid.dna.max_force,
+                    );
+                    force.0 += flee_force.0;
+                    force.1 += flee_force.1;
+                }
+            }
+            forces.push(force);
         }
 
         // 2. Apply forces and update physics
         for (i, boid) in self.boids.iter_mut().enumerate() {
             boid.apply_force(forces[i]);
             boid.update(self.width, self.height);
+        }
+
+        #[cfg(feature = "nova")]
+        {
+            // Update critics
+            let mut eaten_boid_indices = Vec::new();
+
+            // Calculate forces for critics
+            let mut critic_forces = Vec::new();
+            for critic in &self.critics {
+                critic_forces.push(critic.hunt(&self.boids));
+            }
+
+            for (i, critic) in self.critics.iter_mut().enumerate() {
+                critic.apply_force(critic_forces[i]);
+                critic.update(self.width, self.height);
+
+                // Eat boids
+                for (b_idx, boid) in self.boids.iter().enumerate() {
+                    if distance(critic.position, boid.position) < critic.kill_radius {
+                        eaten_boid_indices.push(b_idx);
+                    }
+                }
+            }
+
+            // Remove eaten boids
+            eaten_boid_indices.sort_unstable();
+            eaten_boid_indices.dedup();
+            for &index in eaten_boid_indices.iter().rev() {
+                if index < self.boids.len() {
+                    self.boids.swap_remove(index);
+                }
+            }
         }
 
         // 3. Interactions (Eating)

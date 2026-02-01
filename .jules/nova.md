@@ -63,6 +63,10 @@
 **Fate:** Merged
 **Lesson:** Adding a background layer to a `ratatui` Canvas enriches the visualization without interfering with the active agents.
 
+## [The Critic]
+**Concept:** A new "Predator" agent for Literary Boids that hunts regular boids, introducing a predator-prey dynamic and evolutionary pressure.
+**Fate:** Merged
+**Lesson:** Modifying core simulation loop (World::update) is safe if done additively behind a feature flag and careful with borrowing rules (collecting indices first).
 ## [Voronoi Relaxation]
 **Concept:** A dynamic Voronoi diagram visualization that uses Lloyd's Algorithm to relax random seed positions into a regular honeycomb structure. Visualized as "Stained Glass" in the terminal.
 **Fate:** In Progress
