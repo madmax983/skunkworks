@@ -75,10 +75,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Restore terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen,)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -134,8 +131,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                         KeyCode::Char('q') if key.modifiers.is_empty() => app.running = false, // Allow 'q' in text? No, 'q' quits.
                         KeyCode::Char(' ') => app.paused = !app.paused,
                         KeyCode::Char(c) => {
-                             // Add to scroller
-                             app.scroller.add_char(c);
+                            // Add to scroller
+                            app.scroller.add_char(c);
                         }
                         KeyCode::Backspace => {
                             app.scroller.pop_char();

@@ -3,12 +3,9 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
-use ratatui::{
-    prelude::*,
-    widgets::Widget,
-};
+use ratatui::{prelude::*, widgets::Widget};
 use std::{
     io,
     time::{Duration, Instant},
@@ -67,7 +64,7 @@ impl App {
         // So we just iterate indices.
 
         for i in 0..self.roots.len() {
-             // Grow faster by doing multiple steps per frame
+            // Grow faster by doing multiple steps per frame
             for _ in 0..5 {
                 self.roots[i].step(&mut self.grid, i);
             }
@@ -108,7 +105,8 @@ fn main() -> Result<()> {
     loop {
         terminal.draw(|f| ui(f, &app))?;
 
-        let timeout = app.tick_rate
+        let timeout = app
+            .tick_rate
             .checked_sub(app.last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
@@ -136,10 +134,7 @@ fn main() -> Result<()> {
 
     // Restore terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     Ok(())
@@ -184,9 +179,7 @@ impl Widget for SoilWidget<'_> {
                 };
 
                 if let Some(cell) = buf.cell_mut((area.left() + x, area.top() + y)) {
-                    cell.set_symbol(symbol)
-                        .set_fg(fg)
-                        .set_bg(bg);
+                    cell.set_symbol(symbol).set_fg(fg).set_bg(bg);
                 }
             }
         }
@@ -195,8 +188,8 @@ impl Widget for SoilWidget<'_> {
         for root in self.roots.iter() {
             let color = match root.algorithm {
                 Algorithm::Dijkstra => Color::Green, // Classic biology
-                Algorithm::AStar => Color::Magenta, // Smart logic
-                Algorithm::Greedy => Color::Red, // Aggressive
+                Algorithm::AStar => Color::Magenta,  // Smart logic
+                Algorithm::Greedy => Color::Red,     // Aggressive
             };
 
             for &idx in root.visited.keys() {
@@ -204,9 +197,10 @@ impl Widget for SoilWidget<'_> {
                 let ry = idx / self.grid.width;
 
                 if rx < width as usize && ry < height as usize {
-                    if let Some(cell) = buf.cell_mut((area.left() + rx as u16, area.top() + ry as u16)) {
-                        cell.set_symbol("√")
-                            .set_fg(color);
+                    if let Some(cell) =
+                        buf.cell_mut((area.left() + rx as u16, area.top() + ry as u16))
+                    {
+                        cell.set_symbol("√").set_fg(color);
                     }
                 }
             }
@@ -216,11 +210,11 @@ impl Widget for SoilWidget<'_> {
                 let idx = state.position;
                 let rx = idx % self.grid.width;
                 let ry = idx / self.grid.width;
-                 if rx < width as usize && ry < height as usize {
-                    if let Some(cell) = buf.cell_mut((area.left() + rx as u16, area.top() + ry as u16)) {
-                        cell.set_symbol("o")
-                            .set_fg(Color::White)
-                            .set_bg(color);
+                if rx < width as usize && ry < height as usize {
+                    if let Some(cell) =
+                        buf.cell_mut((area.left() + rx as u16, area.top() + ry as u16))
+                    {
+                        cell.set_symbol("o").set_fg(Color::White).set_bg(color);
                     }
                 }
             }
@@ -228,6 +222,11 @@ impl Widget for SoilWidget<'_> {
 
         // Overlay Help Text
         let help_text = "Q: Quit | R: Reset";
-        buf.set_string(area.left(), area.top(), help_text, Style::default().fg(Color::White).bg(Color::Black));
+        buf.set_string(
+            area.left(),
+            area.top(),
+            help_text,
+            Style::default().fg(Color::White).bg(Color::Black),
+        );
     }
 }

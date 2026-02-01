@@ -34,7 +34,7 @@ pub struct FluidSolver {
     pub gravity: f32,
     pub h: f32, // Smoothing radius
     pub rest_density: f32,
-    pub k: f32,  // Gas constant (stiffness)
+    pub k: f32, // Gas constant (stiffness)
     #[allow(dead_code)]
     pub mu: f32, // Viscosity
 }
@@ -64,6 +64,8 @@ impl FluidSolver {
     }
 
     // Poly6 Kernel for Density
+    // Kept for tests and reference; logic is inlined in compute_density_pressure for performance
+    #[allow(dead_code)]
     fn poly6_kernel(&self, r2: f32) -> f32 {
         let h2 = self.h * self.h;
         if r2 < 0.0 || r2 > h2 {
@@ -74,6 +76,8 @@ impl FluidSolver {
     }
 
     // Spiky Kernel Gradient for Pressure
+    // Kept for tests and reference; logic is inlined in compute_forces for performance
+    #[allow(dead_code)]
     fn spiky_kernel_gradient(&self, r: f32) -> f32 {
         if r <= 0.0 || r > self.h {
             return 0.0;
@@ -84,6 +88,10 @@ impl FluidSolver {
 
     fn compute_density_pressure(&mut self) {
         let n = self.particles.len();
+        let h2 = self.h * self.h;
+        // Precompute poly6 coefficient: 315 / (64 * PI * h^9)
+        let poly6_coeff = 315.0 / (64.0 * PI * self.h.powi(9));
+
         // Naive O(N^2)
         for i in 0..n {
             let mut rho = 0.0;
@@ -91,7 +99,11 @@ impl FluidSolver {
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;
                 let r2 = dx * dx + dy * dy;
-                rho += self.poly6_kernel(r2);
+
+                // Optimization: Inline kernel and check r2 < h2
+                if r2 < h2 {
+                    rho += poly6_coeff * (h2 - r2).powi(3);
+                }
             }
             self.particles[i].rho = rho.max(0.0001); // Avoid div by zero
             // P = k * (rho - rho0)
@@ -101,6 +113,10 @@ impl FluidSolver {
 
     fn compute_forces(&mut self) {
         let n = self.particles.len();
+        let h2 = self.h * self.h;
+        // Precompute spiky gradient coefficient: -45 / (PI * h^6)
+        let spiky_grad_coeff = -45.0 / (PI * self.h.powi(6));
+
         for i in 0..n {
             let mut fx = 0.0;
             let mut fy = 0.0;
@@ -111,15 +127,23 @@ impl FluidSolver {
                 }
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;
-                let r = (dx * dx + dy * dy).sqrt();
 
-                if r > 0.0 && r < self.h {
+                // Optimization: Check distance squared before sqrt to avoid expensive sqrt for far particles
+                let r2 = dx * dx + dy * dy;
+
+                if r2 > 0.0 && r2 < h2 {
+                    let r = r2.sqrt();
+
                     // Pressure Force
                     // Fp = - mass * (Pi + Pj) / (2 * rho_j) * grad W
                     // Assuming mass = 1 for simplicity
                     let force_pressure = (self.particles[i].pressure + self.particles[j].pressure)
                         / (2.0 * self.particles[j].rho);
-                    let grad = self.spiky_kernel_gradient(r);
+
+                    // Optimization: Inline spiky gradient
+                    // let grad = self.spiky_kernel_gradient(r);
+                    let grad = spiky_grad_coeff * (self.h - r).powi(2);
+
                     let f_p = -force_pressure * grad;
 
                     fx += f_p * (dx / r);
@@ -306,5 +330,30 @@ mod tests {
         let diff = h - r;
         let expected_grad = -(45.0 / (PI * h.powi(6))) * diff.powi(2);
         assert!((solver.spiky_kernel_gradient(r) - expected_grad).abs() < 0.000001);
+    }
+
+    #[test]
+    #[ignore]
+    fn benchmark_performance() {
+        let mut solver = FluidSolver::new(100.0, 100.0);
+        // Add 500 particles (smaller set for faster feedback but large enough for N^2)
+        // 500^2 = 250,000. 100 frames = 25M interactions.
+        for i in 0..20 {
+            for j in 0..25 {
+                solver.add_particle(i as f32 * 2.0 + 1.0, j as f32 * 2.0 + 1.0);
+            }
+        }
+        assert_eq!(solver.particles.len(), 500);
+
+        let start = std::time::Instant::now();
+        for _ in 0..50 {
+            solver.update(0.1);
+        }
+        let duration = start.elapsed();
+        println!(
+            "Time for 50 updates with {} particles: {:?}",
+            solver.particles.len(),
+            duration
+        );
     }
 }
