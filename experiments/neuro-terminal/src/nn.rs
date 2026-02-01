@@ -112,6 +112,7 @@ pub fn sigmoid(x: f64) -> f64 {
     1.0 / (1.0 + (-x).exp())
 }
 
+#[derive(Clone)]
 pub struct Network {
     pub layers: Vec<usize>,
     pub weights: Vec<Matrix>,
