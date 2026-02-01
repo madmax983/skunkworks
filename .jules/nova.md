@@ -12,3 +12,8 @@
 **Concept:** Synesthetic color generation for git commits. Hash determines Hue, Churn determines Lightness. Visualized in TUI elements.
 **Fate:** Merged
 **Lesson:** Visual feedback complements audio well in TUI environments.
+
+## [Literary Boids]
+**Concept:** A bio-digital ecosystem where Boids consume text characters as food, evolving based on energy intake. Visualized in TUI.
+**Fate:** Merged
+**Lesson:** Ratatui's `Canvas` widget can render arbitrary text at coordinates, enabling particle systems made of characters.
