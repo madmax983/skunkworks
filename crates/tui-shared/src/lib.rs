@@ -1,3 +1,32 @@
+//! # TUI Shared
+//!
+//! A shared library for initializing and managing Terminal User Interface (TUI) environments
+//! using `ratatui` and `crossterm`.
+//!
+//! This crate provides a RAII (Resource Acquisition Is Initialization) wrapper around the terminal
+//! setup, ensuring that the terminal is correctly restored (raw mode disabled, cursor shown, etc.)
+//! when the application exits or panics.
+//!
+//! ## Example
+//!
+//! ```no_run
+//! use tui_shared::Tui;
+//! use std::io;
+//!
+//! fn main() -> io::Result<()> {
+//!     // Initialize the terminal
+//!     let mut tui = Tui::init()?;
+//!
+//!     // Draw something to the terminal
+//!     tui.terminal.draw(|f| {
+//!         // ... render your widgets here ...
+//!     })?;
+//!
+//!     // The terminal is automatically restored when `tui` goes out of scope
+//!     Ok(())
+//! }
+//! ```
+
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
@@ -6,11 +35,32 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io::{self, Stdout};
 
+/// A RAII wrapper for the Ratatui Terminal.
+///
+/// This struct handles the initialization and cleanup of the terminal environment.
+/// Upon creation via [`Tui::init`], it:
+/// - Enables raw mode.
+/// - Enters the alternate screen buffer.
+/// - Enables mouse capture.
+///
+/// When dropped (or when [`Tui::exit`] is called), it reverses these actions to restore
+/// the terminal to its original state.
 pub struct Tui {
+    /// The underlying Ratatui `Terminal` instance.
     pub terminal: Terminal<CrosstermBackend<Stdout>>,
 }
 
 impl Tui {
+    /// Initializes the terminal interface.
+    ///
+    /// This function sets up the terminal for a TUI application by:
+    /// 1. Enabling raw mode (so input is processed character-by-character).
+    /// 2. Entering the alternate screen (so the previous shell history is preserved).
+    /// 3. Enabling mouse capture (so mouse events can be handled).
+    ///
+    /// # Errors
+    ///
+    /// Returns an `io::Error` if any of the terminal setup operations fail.
     pub fn init() -> io::Result<Self> {
         enable_raw_mode()?;
         let mut stdout = io::stdout();
@@ -20,6 +70,20 @@ impl Tui {
         Ok(Self { terminal })
     }
 
+    /// Restores the terminal to its original state.
+    ///
+    /// This function acts as a manual destructor. It:
+    /// 1. Disables raw mode.
+    /// 2. Leaves the alternate screen.
+    /// 3. Disables mouse capture.
+    /// 4. Shows the cursor.
+    ///
+    /// This is automatically called when the `Tui` struct is dropped, but can be called
+    /// manually if early cleanup is required.
+    ///
+    /// # Errors
+    ///
+    /// Returns an `io::Error` if any of the terminal restoration operations fail.
     pub fn exit(&mut self) -> io::Result<()> {
         disable_raw_mode()?;
         execute!(
