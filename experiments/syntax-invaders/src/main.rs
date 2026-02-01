@@ -63,11 +63,11 @@ impl App {
                 "struct".into(),
                 "enum".into(),
                 "impl".into(),
-                "fn".into(),
-                "let".into(),
-                "mut".into(),
+                "trait".into(),
+                "type".into(),
+                "const".into(),
                 "crate".into(),
-                "mod".into(),
+                "match".into(),
             ];
         }
 
@@ -104,7 +104,7 @@ impl App {
 fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result<()> {
     let size = terminal.size()?;
     // We use the terminal size directly for the game world
-    let mut app = App::new(size.width, size.height - 3); // Reserve 3 lines for status bar
+    let mut app = App::new(size.width, size.height - 2); // Reserve 2 lines for status bar
 
     let tick_rate = Duration::from_millis(33); // ~30 FPS
     let mut last_tick = Instant::now();

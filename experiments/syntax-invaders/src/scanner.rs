@@ -45,6 +45,18 @@ mod tests {
     use std::fs::File;
     use std::io::Write;
 
+    struct TempDir<'a> {
+        path: &'a Path,
+    }
+
+    impl<'a> Drop for TempDir<'a> {
+        fn drop(&mut self) {
+            if self.path.exists() {
+                let _ = fs::remove_dir_all(self.path);
+            }
+        }
+    }
+
     #[test]
     fn test_scan_words() -> Result<()> {
         let dir = Path::new("test_scan_data");
@@ -53,14 +65,14 @@ mod tests {
         }
         fs::create_dir(dir)?;
 
+        // RAII guard to clean up directory
+        let _guard = TempDir { path: dir };
+
         let file_path = dir.join("test.rs");
         let mut file = File::create(&file_path)?;
         writeln!(file, "struct NovaScanner {{ score: u32 }}")?;
 
         let words = scan_words(dir)?;
-
-        // Cleanup first to ensure it runs even if assert fails? No, standard test behavior.
-        fs::remove_dir_all(dir)?;
 
         assert!(words.contains(&"struct".to_string()));
         assert!(words.contains(&"NovaScanner".to_string()));
