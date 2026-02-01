@@ -4,5 +4,6 @@ members = [
     "experiments/literary-boids",
     "experiments/term-fluids",
     "experiments/text-hydro",
+    "experiments/automata-warfare",
 ]
 resolver = "2"
