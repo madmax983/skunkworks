@@ -47,6 +47,7 @@ mod tests {
             hash: "123".to_string(),
             author: "Me".to_string(),
             timestamp: 100,
+            churn: 50,
         };
 
         vis.update(commit.clone(), 0.5);

@@ -1,4 +1,4 @@
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use git2::{Repository, Sort};
 
 #[derive(Debug, Clone)]
@@ -6,6 +6,7 @@ pub struct MusicalCommit {
     pub hash: String,
     pub author: String,
     pub timestamp: i64,
+    pub churn: usize,
 }
 
 pub fn harvest_repo(path: &str) -> Result<Vec<MusicalCommit>> {
@@ -24,10 +25,28 @@ pub fn harvest_repo(path: &str) -> Result<Vec<MusicalCommit>> {
         let author = commit.author().name().unwrap_or("Unknown").to_string();
         let timestamp = commit.time().seconds();
 
+        // Calculate churn (insertions + deletions)
+        let churn = if let Ok(parent) = commit.parent(0) {
+            if let (Ok(tree), Ok(parent_tree)) = (commit.tree(), parent.tree()) {
+                repo.diff_tree_to_tree(Some(&parent_tree), Some(&tree), None)
+                    .map(|diff| {
+                        diff.stats()
+                            .map(|s| s.insertions() + s.deletions())
+                            .unwrap_or(0)
+                    })
+                    .unwrap_or(0)
+            } else {
+                0
+            }
+        } else {
+            0
+        };
+
         musical_commits.push(MusicalCommit {
             hash,
             author,
             timestamp,
+            churn,
         });
     }
 
