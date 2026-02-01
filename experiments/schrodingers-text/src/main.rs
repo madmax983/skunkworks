@@ -51,7 +51,8 @@ impl App {
             if !self.paused {
                 for _ in 0..5 {
                     if !self.wave.collapse() {
-                       // Done
+                        // Done
+                        break;
                     }
                 }
             }
