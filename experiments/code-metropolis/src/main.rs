@@ -15,7 +15,7 @@ use std::io::{self};
 use std::time::{Duration, Instant};
 
 use code_metropolis::iso::{Camera, Cube, Point3D};
-use code_metropolis::layout::generate_layout;
+use code_metropolis::layout::{generate_layout, Block as LayoutBlock};
 use code_metropolis::scanner::scan;
 
 const LAYOUT_X: f64 = -50.0;
@@ -42,6 +42,22 @@ struct App {
     camera: Camera,
 }
 
+fn determine_block_color(b: &LayoutBlock) -> Color {
+    if b.is_dir {
+        Color::DarkGray
+    } else if b.height > HEIGHT_THRESHOLD_RED {
+        Color::Red
+    } else if b.height > HEIGHT_THRESHOLD_MAGENTA {
+        Color::Magenta
+    } else if b.height > HEIGHT_THRESHOLD_YELLOW {
+        Color::Yellow
+    } else if b.height > HEIGHT_THRESHOLD_CYAN {
+        Color::Cyan
+    } else {
+        Color::Green
+    }
+}
+
 impl App {
     fn new(path: String) -> Result<Self> {
         println!("Scanning {}... (This might take a moment)", path);
@@ -53,20 +69,6 @@ impl App {
         let cubes: Vec<Cube> = blocks
             .iter()
             .map(|b| {
-                let color = if b.is_dir {
-                    Color::DarkGray
-                } else if b.height > HEIGHT_THRESHOLD_RED {
-                    Color::Red
-                } else if b.height > HEIGHT_THRESHOLD_MAGENTA {
-                    Color::Magenta
-                } else if b.height > HEIGHT_THRESHOLD_YELLOW {
-                    Color::Yellow
-                } else if b.height > HEIGHT_THRESHOLD_CYAN {
-                    Color::Cyan
-                } else {
-                    Color::Green
-                };
-
                 Cube {
                     origin: Point3D {
                         x: b.x,
@@ -76,7 +78,7 @@ impl App {
                     width: b.width,
                     depth: b.depth,
                     height: b.height,
-                    color,
+                    color: determine_block_color(b),
                 }
             })
             .collect();
@@ -91,6 +93,29 @@ impl App {
         })
     }
 
+    fn handle_event(&mut self, event: Event) -> Result<bool> {
+        let Event::Key(key) = event else {
+            return Ok(false);
+        };
+        if key.kind != KeyEventKind::Press {
+            return Ok(false);
+        }
+
+        match key.code {
+            KeyCode::Char('q') => return Ok(true),
+            KeyCode::Char('w') => self.camera.offset_y -= CAMERA_MOVE_SPEED,
+            KeyCode::Char('s') => self.camera.offset_y += CAMERA_MOVE_SPEED,
+            KeyCode::Char('a') => self.camera.offset_x += CAMERA_MOVE_SPEED,
+            KeyCode::Char('d') => self.camera.offset_x -= CAMERA_MOVE_SPEED,
+            KeyCode::Char('z') => self.camera.scale *= CAMERA_ZOOM_FACTOR,
+            KeyCode::Char('x') => self.camera.scale /= CAMERA_ZOOM_FACTOR,
+            KeyCode::Char('r') => self.camera.angle += CAMERA_ROTATE_SPEED,
+            KeyCode::Char('f') => self.camera.angle -= CAMERA_ROTATE_SPEED,
+            _ => {}
+        }
+        Ok(false)
+    }
+
     fn run<B: ratatui::backend::Backend>(&mut self, terminal: &mut Terminal<B>) -> Result<()> {
         let tick_rate = Duration::from_millis(TICK_RATE_MS);
         let mut last_tick = Instant::now();
@@ -103,21 +128,8 @@ impl App {
                 .unwrap_or_else(|| Duration::from_secs(0));
 
             if event::poll(timeout)? {
-                if let Event::Key(key) = event::read()? {
-                    if key.kind == KeyEventKind::Press {
-                        match key.code {
-                            KeyCode::Char('q') => return Ok(()),
-                            KeyCode::Char('w') => self.camera.offset_y -= CAMERA_MOVE_SPEED,
-                            KeyCode::Char('s') => self.camera.offset_y += CAMERA_MOVE_SPEED,
-                            KeyCode::Char('a') => self.camera.offset_x += CAMERA_MOVE_SPEED,
-                            KeyCode::Char('d') => self.camera.offset_x -= CAMERA_MOVE_SPEED,
-                            KeyCode::Char('z') => self.camera.scale *= CAMERA_ZOOM_FACTOR,
-                            KeyCode::Char('x') => self.camera.scale /= CAMERA_ZOOM_FACTOR,
-                            KeyCode::Char('r') => self.camera.angle += CAMERA_ROTATE_SPEED,
-                            KeyCode::Char('f') => self.camera.angle -= CAMERA_ROTATE_SPEED,
-                            _ => {}
-                        }
-                    }
+                if self.handle_event(event::read()?)? {
+                    return Ok(());
                 }
             }
 
@@ -224,4 +236,80 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ratatui::style::Color;
+    use code_metropolis::layout::Block as LayoutBlock;
+    use std::path::PathBuf;
+
+    #[test]
+    fn test_determine_block_color() {
+        // Helper to create a dummy block
+        let create_block = |height: f64, is_dir: bool| -> LayoutBlock {
+            LayoutBlock {
+                x: 0.0,
+                z: 0.0,
+                width: 10.0,
+                depth: 10.0,
+                height,
+                is_dir,
+                path: PathBuf::new(),
+            }
+        };
+
+        // Test Directory
+        assert_eq!(
+            determine_block_color(&create_block(100.0, true)),
+            Color::DarkGray
+        );
+
+        // Test Red (> 10.0)
+        assert_eq!(
+            determine_block_color(&create_block(10.1, false)),
+            Color::Red
+        );
+
+        // Test Magenta (> 6.0 and <= 10.0)
+        assert_eq!(
+            determine_block_color(&create_block(6.1, false)),
+            Color::Magenta
+        );
+        assert_eq!(
+            determine_block_color(&create_block(10.0, false)),
+            Color::Magenta
+        );
+
+        // Test Yellow (> 4.0 and <= 6.0)
+        assert_eq!(
+            determine_block_color(&create_block(4.1, false)),
+            Color::Yellow
+        );
+        assert_eq!(
+            determine_block_color(&create_block(6.0, false)),
+            Color::Yellow
+        );
+
+        // Test Cyan (> 2.0 and <= 4.0)
+        assert_eq!(
+            determine_block_color(&create_block(2.1, false)),
+            Color::Cyan
+        );
+        assert_eq!(
+            determine_block_color(&create_block(4.0, false)),
+            Color::Cyan
+        );
+
+        // Test Green (<= 2.0)
+        assert_eq!(
+            determine_block_color(&create_block(2.0, false)),
+            Color::Green
+        );
+        assert_eq!(
+            determine_block_color(&create_block(0.0, false)),
+            Color::Green
+        );
+    }
 }
