@@ -3,10 +3,11 @@ members = [
     "experiments/automata-warfare",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
+    "experiments/hyphal-commute",
     "experiments/literary-boids",
     "experiments/schrodingers-text",
+    "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
-    "experiments/syntax-invaders",
 ]
 resolver = "2"
