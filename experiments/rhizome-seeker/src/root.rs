@@ -1,7 +1,7 @@
 #![allow(clippy::collapsible_if)]
+use crate::model::{Grid, SoilType};
 use std::cmp::Ordering;
 use std::collections::{BinaryHeap, HashMap};
-use crate::model::{Grid, SoilType};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Algorithm {
@@ -12,7 +12,7 @@ pub enum Algorithm {
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 pub struct State {
-    pub cost: usize, // using integer cost for stability and Ord
+    pub cost: usize,     // using integer cost for stability and Ord
     pub position: usize, // index in grid
 }
 
@@ -24,7 +24,9 @@ impl Ord for State {
         // Notice that the we flip the ordering on costs.
         // In case of a tie we compare positions - this step is necessary
         // to make implementations of `PartialEq` and `Ord` consistent.
-        other.cost.cmp(&self.cost)
+        other
+            .cost
+            .cmp(&self.cost)
             .then_with(|| self.position.cmp(&other.position))
     }
 }
@@ -50,7 +52,10 @@ impl RootSystem {
         let start_idx = start_y * grid_width + start_x;
         let mut frontier = BinaryHeap::new();
 
-        frontier.push(State { cost: 0, position: start_idx });
+        frontier.push(State {
+            cost: 0,
+            position: start_idx,
+        });
 
         let mut visited = HashMap::new();
         visited.insert(start_idx, start_idx); // root's parent is itself
@@ -115,9 +120,9 @@ impl RootSystem {
 
                 if let Some(occupier) = cell.occupied_by {
                     if occupier != root_id {
-                         // Collision with another root!
-                         // For now, treat it like rock (can't cross)
-                         continue;
+                        // Collision with another root!
+                        // For now, treat it like rock (can't cross)
+                        continue;
                     }
                 }
 
@@ -157,7 +162,9 @@ impl RootSystem {
                 } else if let Some(t_idx) = self.target_idx {
                     let tx = t_idx % grid.width;
                     let ty = t_idx / grid.width;
-                    let dist = ((nx as isize - tx as isize).abs() + (ny as isize - ty as isize).abs()) as usize;
+                    let dist = ((nx as isize - tx as isize).abs()
+                        + (ny as isize - ty as isize).abs())
+                        as usize;
 
                     if self.algorithm == Algorithm::Greedy {
                         dist * 20 // Heavily weight distance
@@ -176,7 +183,10 @@ impl RootSystem {
 
                 self.visited.insert(n_idx, position);
                 grid.cells[n_idx].occupied_by = Some(root_id); // Mark grid
-                self.frontier.push(State { cost: priority, position: n_idx });
+                self.frontier.push(State {
+                    cost: priority,
+                    position: n_idx,
+                });
             }
         }
     }
@@ -194,7 +204,12 @@ mod tests {
         // Place a rock wall at x=2, leaving a gap at y=0
         for y in 1..5 {
             let idx = y * 5 + 2;
-            grid.cells[idx] = SoilCell { density: 1.0, moisture: 0.0, kind: SoilType::Rock, occupied_by: None };
+            grid.cells[idx] = SoilCell {
+                density: 1.0,
+                moisture: 0.0,
+                kind: SoilType::Rock,
+                occupied_by: None,
+            };
         }
 
         let mut root = RootSystem::new(Algorithm::Dijkstra, 0, 2, 5);
@@ -207,15 +222,24 @@ mod tests {
 
         // Check if we reached the target
         let target_idx = 2 * 5 + 4;
-        assert!(root.visited.contains_key(&target_idx), "Root should have reached the target");
+        assert!(
+            root.visited.contains_key(&target_idx),
+            "Root should have reached the target"
+        );
 
         // Check if we avoided the wall
         let wall_center = 2 * 5 + 2;
-        assert!(!root.visited.contains_key(&wall_center), "Root should not grow into rock");
+        assert!(
+            !root.visited.contains_key(&wall_center),
+            "Root should not grow into rock"
+        );
 
         // Check path finding logic (simplified)
         // Ensure it went through the gap at (2,0)
         let gap_idx = 0 * 5 + 2;
-        assert!(root.visited.contains_key(&gap_idx), "Root should have passed through the gap");
+        assert!(
+            root.visited.contains_key(&gap_idx),
+            "Root should have passed through the gap"
+        );
     }
 }
