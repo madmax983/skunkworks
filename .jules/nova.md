@@ -67,3 +67,8 @@
 **Concept:** A dynamic Voronoi diagram visualization that uses Lloyd's Algorithm to relax random seed positions into a regular honeycomb structure. Visualized as "Stained Glass" in the terminal.
 **Fate:** In Progress
 **Lesson:** TUI `Buffer` manipulation is efficient enough for real-time pixel-like effects if the resolution is kept to standard terminal sizes.
+
+## [Text Sand]
+**Concept:** A falling sand cellular automata where particles are text characters that interact with physics (gravity, displacement).
+**Fate:** Merged
+**Lesson:** Traditional falling sand algorithms (bottom-up iteration) translate well to TUI grids, allowing for interactive "Typographic Physics".
