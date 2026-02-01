@@ -73,7 +73,7 @@ impl App {
             inputs.push(vec![x, y]);
 
             // Circle radius 0.6
-            let dist = (x.powi(2) + y.powi(2)).sqrt();
+            let dist = x.hypot(y);
             if dist < 0.6 {
                 targets.push(vec![1.0]);
             } else {
