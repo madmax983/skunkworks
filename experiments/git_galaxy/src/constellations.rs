@@ -23,28 +23,20 @@ impl ConstellationFinder {
 
     fn find_supernovas(graph: &Graph) -> Vec<Constellation> {
         // Top 3 heaviest nodes
-        let mut nodes_with_mass: Vec<(usize, f64)> = graph
-            .nodes
-            .iter()
-            .enumerate()
+        let mut nodes_with_mass: Vec<(usize, f64)> = graph.nodes.iter().enumerate()
             .map(|(i, n)| (i, n.mass))
             .collect();
         // Sort descending
         nodes_with_mass.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
 
-        nodes_with_mass
-            .into_iter()
-            .take(3)
-            .map(|(i, mass)| Constellation {
-                name: format!(
-                    "Supernova {}",
-                    &graph.nodes[i].id.chars().take(6).collect::<String>()
-                ),
+        nodes_with_mass.into_iter().take(3).map(|(i, mass)| {
+            Constellation {
+                name: format!("Supernova {}", &graph.nodes[i].id.chars().take(6).collect::<String>()),
                 description: format!("Massive commit (churn: {:.0})", mass),
                 nodes: vec![i],
                 color: Color::Red,
-            })
-            .collect()
+            }
+        }).collect()
     }
 
     fn find_chains(graph: &Graph) -> Vec<Constellation> {
@@ -60,9 +52,7 @@ impl ConstellationFinder {
         let mut constellations = Vec::new();
 
         for i in 0..graph.nodes.len() {
-            if visited[i] {
-                continue;
-            }
+            if visited[i] { continue; }
 
             // Look for linear chains: nodes with 1 child
             if adj[i].len() == 1 {
@@ -84,9 +74,7 @@ impl ConstellationFinder {
                         break;
                     }
 
-                    if visited[next] {
-                        break;
-                    } // Loop detected
+                    if visited[next] { break; } // Loop detected
 
                     chain.push(next);
                     visited[next] = true;
@@ -94,7 +82,7 @@ impl ConstellationFinder {
                 }
 
                 if chain.len() >= 5 {
-                    constellations.push(Constellation {
+                     constellations.push(Constellation {
                         name: "The Chain".to_string(),
                         description: format!("A sequence of {} commits", chain.len()),
                         nodes: chain,
@@ -133,7 +121,7 @@ impl ConstellationFinder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::physics::{Edge, Graph, Node};
+    use crate::physics::{Graph, Node, Edge};
 
     fn make_node(id: &str, author: &str, mass: f64) -> Node {
         Node {
@@ -177,22 +165,10 @@ mod tests {
             make_node("4", "A", 1.0),
         ];
         let edges = vec![
-            Edge {
-                source: 0,
-                target: 1,
-            },
-            Edge {
-                source: 1,
-                target: 2,
-            },
-            Edge {
-                source: 2,
-                target: 3,
-            },
-            Edge {
-                source: 3,
-                target: 4,
-            },
+            Edge { source: 0, target: 1 },
+            Edge { source: 1, target: 2 },
+            Edge { source: 2, target: 3 },
+            Edge { source: 3, target: 4 },
         ];
         let graph = Graph {
             nodes,

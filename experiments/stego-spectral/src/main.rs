@@ -3,7 +3,6 @@ mod stego;
 mod ui;
 
 use anyhow::Result;
-use app::App;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
@@ -11,6 +10,7 @@ use crossterm::{
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
+use app::App;
 
 fn main() -> Result<()> {
     // Setup terminal
@@ -52,22 +52,22 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
                     KeyCode::Esc => return Ok(()),
                     KeyCode::Enter => {
                         app.embed_message();
-                    }
+                    },
                     KeyCode::F(2) => {
                         app.extract_message();
-                    }
+                    },
                     KeyCode::F(5) => {
                         app.regenerate_noise();
-                    }
+                    },
                     KeyCode::Tab => {
                         app.toggle_view();
-                    }
+                    },
                     KeyCode::Backspace => {
                         app.input.pop();
-                    }
+                    },
                     KeyCode::Char(c) => {
                         app.input.push(c);
-                    }
+                    },
                     _ => {}
                 }
             }

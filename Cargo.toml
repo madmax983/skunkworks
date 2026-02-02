@@ -17,6 +17,7 @@ members = [
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/hyphal-commute",
+    "experiments/hyperbolic-fs",
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/literary-boids",

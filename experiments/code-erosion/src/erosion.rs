@@ -67,11 +67,7 @@ impl Droplet {
         self.y += self.dir_y;
 
         // Check bounds after move
-        if self.x < 0.0
-            || self.y < 0.0
-            || self.x >= (map.width - 1) as f64
-            || self.y >= (map.height - 1) as f64
-        {
+        if self.x < 0.0 || self.y < 0.0 || self.x >= (map.width - 1) as f64 || self.y >= (map.height - 1) as f64 {
             return false;
         }
 
@@ -112,9 +108,7 @@ impl Droplet {
 
         // Update velocity
         self.velocity = (self.velocity * self.velocity + diff * GRAVITY).sqrt();
-        if self.velocity.is_nan() {
-            self.velocity = 0.0;
-        } // Sqrt of negative if going uphill fast
+        if self.velocity.is_nan() { self.velocity = 0.0; } // Sqrt of negative if going uphill fast
 
         // Evaporate
         self.water *= 1.0 - EVAPORATION_RATE;
@@ -146,11 +140,7 @@ mod tests {
         let mut drop = Droplet::new(5.0, 5.0);
         drop.erode(&mut map);
 
-        assert!(
-            drop.x < 5.0,
-            "Water should flow downhill (negative x direction), got x={}",
-            drop.x
-        );
+        assert!(drop.x < 5.0, "Water should flow downhill (negative x direction), got x={}", drop.x);
     }
 
     #[test]
@@ -194,10 +184,6 @@ mod tests {
         // That also makes sense if I'm slowing down.
 
         let h_after = map.get(5, 5);
-        assert!(
-            h_after > 10.0,
-            "Should have deposited sediment at old position, h was 10.0, now {}",
-            h_after
-        );
+        assert!(h_after > 10.0, "Should have deposited sediment at old position, h was 10.0, now {}", h_after);
     }
 }

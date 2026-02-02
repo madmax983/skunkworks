@@ -8,17 +8,15 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
+    Frame,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{
-        canvas::{Canvas, Points},
-        Block, Borders, Paragraph,
-    },
-    Frame, Terminal,
+    widgets::{Block, Borders, Paragraph, canvas::{Canvas, Points}},
 };
 
 fn main() -> Result<()> {
@@ -120,20 +118,13 @@ fn ui(f: &mut Frame, app: &App) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Particle Life"),
-        )
+        .block(Block::default().borders(Borders::ALL).title("Particle Life"))
         .x_bounds([0.0, app.universe.width])
         .y_bounds([0.0, app.universe.height])
         .marker(ratatui::symbols::Marker::Braille)
         .paint(|ctx| {
-            for i in 0..app.colors.len() {
-                let species_points: Vec<(f64, f64)> = app
-                    .universe
-                    .particles
-                    .iter()
+             for i in 0..app.colors.len() {
+                let species_points: Vec<(f64, f64)> = app.universe.particles.iter()
                     .filter(|p| p.species == i)
                     .map(|p| (p.x, p.y))
                     .collect();
@@ -147,10 +138,7 @@ fn ui(f: &mut Frame, app: &App) {
 
     f.render_widget(canvas, chunks[0]);
 
-    let info = format!(
-        "Particles: {} | R: Reset | Q: Quit",
-        app.universe.particles.len()
-    );
+    let info = format!("Particles: {} | R: Reset | Q: Quit", app.universe.particles.len());
     let status = Paragraph::new(info).style(Style::default().bg(Color::White).fg(Color::Black));
     f.render_widget(status, chunks[1]);
 }

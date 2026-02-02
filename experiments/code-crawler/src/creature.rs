@@ -1,6 +1,6 @@
+use glam::Vec2;
 use crate::ik::IKChain;
 use crate::world::World;
-use glam::Vec2;
 
 pub struct Leg {
     pub chain: IKChain,
@@ -12,13 +12,9 @@ pub struct Leg {
 pub enum LegState {
     Stance {
         #[allow(dead_code)]
-        node_index: Option<usize>,
+        node_index: Option<usize>
     },
-    Swing {
-        start: Vec2,
-        end: Vec2,
-        progress: f32,
-    },
+    Swing { start: Vec2, end: Vec2, progress: f32 },
 }
 
 pub struct Creature {
@@ -66,7 +62,7 @@ impl Creature {
         // Simple easing
         if dist > 0.1 {
             let speed = 40.0; // Units per second
-                              // Proportional control
+            // Proportional control
             self.velocity = diff * 2.0;
             // Cap speed
             if self.velocity.length() > speed {
@@ -119,11 +115,7 @@ impl Creature {
                         };
                     }
                 }
-                LegState::Swing {
-                    start,
-                    end,
-                    progress,
-                } => {
+                LegState::Swing { start, end, progress } => {
                     *progress += dt * 4.0; // Swing speed
                     if *progress >= 1.0 {
                         leg.target = *end;

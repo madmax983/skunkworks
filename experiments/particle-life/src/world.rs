@@ -46,7 +46,7 @@ impl Universe {
             height,
             particles,
             rules,
-            r_max: 20.0,   // Adjust based on terminal resolution density
+            r_max: 20.0, // Adjust based on terminal resolution density
             friction: 0.2, // Velocity decay
             beta: 0.3,
         }
@@ -66,26 +66,16 @@ impl Universe {
             let p1 = &old_particles[i];
 
             for (j, p2) in old_particles.iter().enumerate() {
-                if i == j {
-                    continue;
-                }
+                if i == j { continue; }
 
                 let mut dx = p2.x - p1.x;
                 let mut dy = p2.y - p1.y;
 
                 // Toroidal wrap - Shortest path
-                if dx > self.width * 0.5 {
-                    dx -= self.width;
-                }
-                if dx < -self.width * 0.5 {
-                    dx += self.width;
-                }
-                if dy > self.height * 0.5 {
-                    dy -= self.height;
-                }
-                if dy < -self.height * 0.5 {
-                    dy += self.height;
-                }
+                if dx > self.width * 0.5 { dx -= self.width; }
+                if dx < -self.width * 0.5 { dx += self.width; }
+                if dy > self.height * 0.5 { dy -= self.height; }
+                if dy < -self.height * 0.5 { dy += self.height; }
 
                 let dist_sq = dx * dx + dy * dy;
 
@@ -103,9 +93,9 @@ impl Universe {
                 } else if r < 1.0 {
                     // Attraction/Repulsion based on species rule
                     // Smooth tent function peaking between beta and 1.0
-                    let numer = (2.0 * r - 1.0 - self.beta).abs();
-                    let denom = 1.0 - self.beta;
-                    self.rules[p1.species][p2.species] * (1.0 - numer / denom)
+                     let numer = (2.0 * r - 1.0 - self.beta).abs();
+                     let denom = 1.0 - self.beta;
+                     self.rules[p1.species][p2.species] * (1.0 - numer / denom)
                 } else {
                     0.0
                 };
@@ -127,18 +117,10 @@ impl Universe {
             p.y += p.vy * dt;
 
             // Wrap position
-            if p.x < 0.0 {
-                p.x += self.width;
-            }
-            if p.x >= self.width {
-                p.x -= self.width;
-            }
-            if p.y < 0.0 {
-                p.y += self.height;
-            }
-            if p.y >= self.height {
-                p.y -= self.height;
-            }
+            if p.x < 0.0 { p.x += self.width; }
+            if p.x >= self.width { p.x -= self.width; }
+            if p.y < 0.0 { p.y += self.height; }
+            if p.y >= self.height { p.y -= self.height; }
         }
     }
 }
@@ -164,17 +146,9 @@ mod tests {
         u.update(0.1);
 
         // p0 should be pushed LEFT (negative X velocity) away from p1
-        assert!(
-            u.particles[0].vx < 0.0,
-            "Particle 0 should be pushed left, got vx={}",
-            u.particles[0].vx
-        );
+        assert!(u.particles[0].vx < 0.0, "Particle 0 should be pushed left, got vx={}", u.particles[0].vx);
         // p1 should be pushed RIGHT (positive X velocity) away from p0
-        assert!(
-            u.particles[1].vx > 0.0,
-            "Particle 1 should be pushed right, got vx={}",
-            u.particles[1].vx
-        );
+        assert!(u.particles[1].vx > 0.0, "Particle 1 should be pushed right, got vx={}", u.particles[1].vx);
     }
 
     #[test]

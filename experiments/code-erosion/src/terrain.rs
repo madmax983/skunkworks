@@ -127,10 +127,6 @@ mod tests {
         // We know there are at least 2 files (main.rs, terrain.rs)
         // so heightmap should have some non-zero values.
         let non_zeros = map.data.iter().filter(|&&h| h > 0.0).count();
-        assert!(
-            non_zeros >= 2,
-            "Expected at least 2 non-zero heights, found {}",
-            non_zeros
-        );
+        assert!(non_zeros >= 2, "Expected at least 2 non-zero heights, found {}", non_zeros);
     }
 }

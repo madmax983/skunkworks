@@ -1,6 +1,6 @@
-use crate::stego::StegoBuffer;
 use anyhow::Result;
 use rand::Rng;
+use crate::stego::StegoBuffer;
 
 pub enum ViewMode {
     Normal,
@@ -29,8 +29,7 @@ impl App {
             buffer,
             input: String::new(),
             view_mode: ViewMode::Normal,
-            status_message: "Ready. Type message and press Enter to Embed. [F5] New Pattern"
-                .to_string(),
+            status_message: "Ready. Type message and press Enter to Embed. [F5] New Pattern".to_string(),
             time,
         }
     }

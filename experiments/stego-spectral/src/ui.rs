@@ -1,13 +1,10 @@
-use crate::app::{App, ViewMode};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    widgets::{
-        canvas::{Canvas, Points},
-        Block, Borders, Paragraph, Wrap,
-    },
+    style::{Color, Style, Modifier},
+    widgets::{Block, Borders, Paragraph, canvas::{Canvas, Points}, Wrap},
     Frame,
 };
+use crate::app::{App, ViewMode};
 
 pub fn draw(frame: &mut Frame, app: &App) {
     let chunks = Layout::default()
@@ -21,11 +18,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
 
     // Title
     let title = Paragraph::new("⚛️  SPECTRE-STEGO  ⚛️")
-        .style(
-            Style::default()
-                .fg(Color::Cyan)
-                .add_modifier(Modifier::BOLD),
-        )
+        .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
         .block(Block::default().borders(Borders::ALL));
     frame.render_widget(title, chunks[0]);
 
@@ -39,9 +32,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         .split(chunks[1]);
 
     // Input Area
-    let input_block = Block::default()
-        .title("Payload (Text)")
-        .borders(Borders::ALL);
+    let input_block = Block::default().title("Payload (Text)").borders(Borders::ALL);
     let input = Paragraph::new(app.input.as_str())
         .block(input_block)
         .wrap(Wrap { trim: true });
@@ -75,7 +66,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
                             // Since terminal colors are limited, we threshold or use RGB if supported.
                             // Ratatui supports Rgb color.
                             Color::Rgb(val, val, val)
-                        }
+                        },
                         ViewMode::BitPlane => {
                             // LSB is 0 or 1.
                             // 0 -> Black, 1 -> Green (Matrix style)
@@ -106,8 +97,6 @@ pub fn draw(frame: &mut Frame, app: &App) {
     // Status Area
     let status = Paragraph::new(app.status_message.as_str())
         .style(Style::default().fg(Color::Yellow))
-        .block(Block::default().borders(Borders::ALL).title(
-            "Status / Controls: [Esc] Quit, [Enter] Embed, [F2] Extract, [F5] Regen, [Tab] View",
-        ));
+        .block(Block::default().borders(Borders::ALL).title("Status / Controls: [Esc] Quit, [Enter] Embed, [F2] Extract, [F5] Regen, [Tab] View"));
     frame.render_widget(status, chunks[2]);
 }

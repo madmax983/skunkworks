@@ -54,12 +54,7 @@ impl Default for ViewState {
     }
 }
 
-pub fn ui(
-    f: &mut Frame,
-    graph: &Graph,
-    view_state: &ViewState,
-    #[cfg(feature = "nova")] constellations: &[Constellation],
-) {
+pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState, #[cfg(feature = "nova")] constellations: &[Constellation]) {
     let main_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
@@ -144,36 +139,32 @@ pub fn ui(
             #[cfg(feature = "nova")]
             {
                 for constellation in constellations {
-                    if constellation.nodes.len() > 1 {
+                     if constellation.nodes.len() > 1 {
                         for i in 0..constellation.nodes.len() - 1 {
-                            let idx1 = constellation.nodes[i];
-                            let idx2 = constellation.nodes[i + 1];
-                            let u = &graph.nodes[idx1];
-                            let v = &graph.nodes[idx2];
-                            ctx.draw(&Line {
+                             let idx1 = constellation.nodes[i];
+                             let idx2 = constellation.nodes[i+1];
+                             let u = &graph.nodes[idx1];
+                             let v = &graph.nodes[idx2];
+                             ctx.draw(&Line {
                                 x1: u.x,
                                 y1: u.y,
                                 x2: v.x,
                                 y2: v.y,
                                 color: constellation.color,
-                            });
+                             });
                         }
                     } else if constellation.nodes.len() == 1 {
                         let u = &graph.nodes[constellation.nodes[0]];
                         // Cross
                         ctx.draw(&Line {
-                            x1: u.x - 2.0,
-                            y1: u.y,
-                            x2: u.x + 2.0,
-                            y2: u.y,
-                            color: constellation.color,
+                                x1: u.x - 2.0, y1: u.y,
+                                x2: u.x + 2.0, y2: u.y,
+                                color: constellation.color,
                         });
                         ctx.draw(&Line {
-                            x1: u.x,
-                            y1: u.y - 2.0,
-                            x2: u.x,
-                            y2: u.y + 2.0,
-                            color: constellation.color,
+                                x1: u.x, y1: u.y - 2.0,
+                                x2: u.x, y2: u.y + 2.0,
+                                color: constellation.color,
                         });
                     }
                 }
@@ -206,11 +197,7 @@ pub fn ui(
     #[cfg(feature = "nova")]
     let sidebar_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(10),
-            Constraint::Length(15),
-            Constraint::Min(0),
-        ])
+        .constraints([Constraint::Length(10), Constraint::Length(15), Constraint::Min(0)])
         .split(main_chunks[1]);
 
     #[cfg(not(feature = "nova"))]
@@ -237,21 +224,15 @@ pub fn ui(
     // Constellations (Nova)
     #[cfg(feature = "nova")]
     {
-        let const_text: Vec<TextLine> = constellations
-            .iter()
-            .map(|c| {
-                TextLine::from(vec![
-                    Span::styled("★ ", Style::default().fg(c.color)),
-                    Span::raw(format!("{}", c.name)),
-                ])
-            })
-            .collect();
+        let const_text: Vec<TextLine> = constellations.iter().map(|c| {
+             TextLine::from(vec![
+                Span::styled("★ ", Style::default().fg(c.color)),
+                Span::raw(format!("{}", c.name)),
+             ])
+        }).collect();
 
-        let const_block = Paragraph::new(const_text).block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Constellations"),
-        );
+        let const_block = Paragraph::new(const_text)
+            .block(Block::default().borders(Borders::ALL).title("Constellations"));
         f.render_widget(const_block, sidebar_chunks[1]);
     }
 
