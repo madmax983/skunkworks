@@ -48,7 +48,7 @@ members = [
     "experiments/text-hydro",
     "experiments/text-sand",
     "experiments/voronoi-relaxation", "experiments/myco-transit", "experiments/clockwork-cpu", "experiments/git-harmony",
-    "experiments/cargo-jenga",
+    "experiments/cargo-jenga", "experiments/aperiodic-labyrinth",
 ]
 resolver = "2"
 

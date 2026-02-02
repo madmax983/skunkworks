@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/aperiodic-labyrinth
+- **Scent Origin:** Genesis
+- **Status:** The Penrose tiles are shifting. Aperiodic lattice generation stabilized. The Dungeon has no center.
+
 ### [Concentration Level: HIGH] - Location: experiments/git-harmony
 - **Scent Origin:** Genesis
 - **Status:** The code sings. Synesthetic translation active.

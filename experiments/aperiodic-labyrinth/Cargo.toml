@@ -1,0 +1,12 @@
+[package]
+name = "aperiodic-labyrinth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+nalgebra = "0.33"
+tui-shared = { path = "../../crates/tui-shared" }
