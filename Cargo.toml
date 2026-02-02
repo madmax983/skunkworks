@@ -30,6 +30,7 @@ members = [
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/literary-boids",
+    "experiments/log-landscape",
     "experiments/market-flow",
     "experiments/neuro-puppet",
     "experiments/neuro-terminal",
