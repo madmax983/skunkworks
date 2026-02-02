@@ -88,7 +88,7 @@ impl App {
         // Smooth interpolation
         let diff = self.target_center - self.view_center;
         if diff.norm() > 0.001 {
-            self.view_center = self.view_center + diff * 0.1;
+            self.view_center += diff * 0.1;
         } else {
             self.view_center = self.target_center;
         }
@@ -240,12 +240,10 @@ fn draw_node(
         Color::Yellow
     } else if is_ancestor {
         Color::Blue
+    } else if node.fs.is_dir {
+        Color::Green
     } else {
-        if node.fs.is_dir {
-            Color::Green
-        } else {
-            Color::Gray
-        }
+        Color::Gray
     };
 
     // Highlight selected child
