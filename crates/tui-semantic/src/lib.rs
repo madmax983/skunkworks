@@ -3,10 +3,16 @@
 //! A bridge between TUI applications and LLMs. Apps expose their semantic state
 //! (not just pixels) so AI can understand, reason about, and interact with them.
 //!
+//! This crate is **framework-agnostic**: it provides pure data structures and does
+//! not depend on `ratatui`, `crossterm`, or any specific TUI backend.
+//!
 //! ## Example
 //!
-//! ```ignore
-//! use tui_semantic::{SemanticState, Snapshot, Entity, Vec2};
+//! ```
+//! use tui_semantic::{SemanticState, Snapshot, Entity};
+//!
+//! struct Player { x: f64, y: f64, health: i64 }
+//! struct MyApp { player: Player, score: i64 }
 //!
 //! impl SemanticState for MyApp {
 //!     fn snapshot(&self) -> Snapshot {
@@ -17,6 +23,15 @@
 //!             .with_metric("score", self.score)
 //!     }
 //! }
+//!
+//! let app = MyApp {
+//!     player: Player { x: 10.0, y: 20.0, health: 100 },
+//!     score: 500,
+//! };
+//!
+//! let json = app.snapshot().to_json();
+//! assert!(json.contains("my-app"));
+//! assert!(json.contains("health"));
 //! ```
 
 use serde::{Deserialize, Serialize};

@@ -30,6 +30,13 @@ The other 47 bots have equally specific obsessions:
 - Organic growth patterns
 - *...and 37 more*
 
+## Core Infrastructure
+
+While the experiments are diverse, they share a common foundation located in `crates/`:
+
+*   **`tui-shared`**: A robust wrapper for `ratatui` terminal initialization. It handles the "boilerplate" of entering raw mode, setting up alternate screens, and ensuring graceful cleanup (even on panic).
+*   **`tui-semantic`**: A framework-agnostic bridge for AI interaction. It allows TUI applications to export their "semantic state" (entities, metrics, game state) as structured JSON, enabling LLMs to "see" and "play" the applications without parsing pixels.
+
 ## How It Works
 
 **Schedule:** 2 bots run every hour, cycling through all 48 personas
