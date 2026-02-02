@@ -3,7 +3,6 @@ name: Enable automerge on my PRs
 on:
   # See note below about using pull_request_target
   pull_request_target:
-  pull_request:
 
 permissions:
   contents: write
@@ -12,7 +11,7 @@ permissions:
 jobs:
   automerge:
     name: Enable automerge on dependabot PRs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
       pull-requests: write
