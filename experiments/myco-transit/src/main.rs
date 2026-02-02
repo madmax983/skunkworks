@@ -12,9 +12,7 @@ use ratatui::{
     },
 };
 use simulation::World;
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 fn main() -> Result<()> {
@@ -37,7 +35,11 @@ fn main() -> Result<()> {
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Myco-Transit: Slime Mold Urban Planning"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Myco-Transit: Slime Mold Urban Planning"),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -49,7 +51,12 @@ fn main() -> Result<()> {
                         });
                         // Make cities bigger
                         ctx.draw(&Points {
-                            coords: &[(*cx + 1.0, *cy), (*cx - 1.0, *cy), (*cx, *cy + 1.0), (*cx, *cy - 1.0)],
+                            coords: &[
+                                (*cx + 1.0, *cy),
+                                (*cx - 1.0, *cy),
+                                (*cx, *cy + 1.0),
+                                (*cx, *cy - 1.0),
+                            ],
                             color: Color::Red,
                         });
                     }
@@ -85,7 +92,10 @@ fn main() -> Result<()> {
                 Span::raw("Press "),
                 Span::styled("q", Style::default().fg(Color::Yellow)),
                 Span::raw(" to quit. Agents: "),
-                Span::styled(format!("{}", agents.len()), Style::default().fg(Color::Cyan)),
+                Span::styled(
+                    format!("{}", agents.len()),
+                    Style::default().fg(Color::Cyan),
+                ),
             ]);
             f.render_widget(status, chunks[1]);
         })?;

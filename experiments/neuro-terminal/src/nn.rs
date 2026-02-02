@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::ops::{Add, Mul, Sub};
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Matrix {
@@ -27,6 +28,14 @@ impl Matrix {
         Self { rows, cols, data }
     }
 
+    pub fn get(&self, row: usize, col: usize) -> f64 {
+        self.data[row * self.cols + col]
+    }
+
+    pub fn get_mut(&mut self, row: usize, col: usize) -> &mut f64 {
+        &mut self.data[row * self.cols + col]
+    }
+
     pub fn dot(&self, other: &Matrix) -> Matrix {
         assert_eq!(
             self.cols, other.rows,
@@ -38,15 +47,58 @@ impl Matrix {
             for j in 0..other.cols {
                 let mut sum = 0.0;
                 for k in 0..self.cols {
-                    sum += self.data[i * self.cols + k] * other.data[k * other.cols + j];
+                    sum += self.get(i, k) * other.get(k, j);
                 }
-                result.data[i * result.cols + j] = sum;
+                *result.get_mut(i, j) = sum;
             }
         }
         result
     }
 
     pub fn add(&self, other: &Matrix) -> Matrix {
+        self + other
+    }
+
+    pub fn sub(&self, other: &Matrix) -> Matrix {
+        self - other
+    }
+
+    pub fn mul(&self, other: &Matrix) -> Matrix {
+        self * other
+    }
+
+    pub fn mul_scalar(&self, scalar: f64) -> Matrix {
+        let data = self.data.iter().map(|a| a * scalar).collect();
+        Matrix::new(self.rows, self.cols, data)
+    }
+
+    pub fn map<F>(&self, func: F) -> Matrix
+    where
+        F: Fn(f64) -> f64,
+    {
+        let data = self.data.iter().map(|&x| func(x)).collect();
+        Matrix::new(self.rows, self.cols, data)
+    }
+
+    pub fn transpose(&self) -> Matrix {
+        let mut result = Matrix::zeros(self.cols, self.rows);
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                *result.get_mut(j, i) = self.get(i, j);
+            }
+        }
+        result
+    }
+
+    pub fn from_vec(data: Vec<f64>) -> Matrix {
+        Matrix::new(data.len(), 1, data)
+    }
+}
+
+impl<'b> Add<&'b Matrix> for &Matrix {
+    type Output = Matrix;
+
+    fn add(self, other: &'b Matrix) -> Matrix {
         assert_eq!(self.rows, other.rows);
         assert_eq!(self.cols, other.cols);
         let data = self
@@ -57,8 +109,12 @@ impl Matrix {
             .collect();
         Matrix::new(self.rows, self.cols, data)
     }
+}
 
-    pub fn sub(&self, other: &Matrix) -> Matrix {
+impl<'b> Sub<&'b Matrix> for &Matrix {
+    type Output = Matrix;
+
+    fn sub(self, other: &'b Matrix) -> Matrix {
         assert_eq!(self.rows, other.rows);
         assert_eq!(self.cols, other.cols);
         let data = self
@@ -69,9 +125,12 @@ impl Matrix {
             .collect();
         Matrix::new(self.rows, self.cols, data)
     }
+}
 
-    pub fn mul(&self, other: &Matrix) -> Matrix {
-        // Element-wise multiplication (Hadamard product)
+impl<'b> Mul<&'b Matrix> for &Matrix {
+    type Output = Matrix;
+
+    fn mul(self, other: &'b Matrix) -> Matrix {
         assert_eq!(self.rows, other.rows);
         assert_eq!(self.cols, other.cols);
         let data = self
@@ -81,30 +140,6 @@ impl Matrix {
             .map(|(a, b)| a * b)
             .collect();
         Matrix::new(self.rows, self.cols, data)
-    }
-
-    pub fn mul_scalar(&self, scalar: f64) -> Matrix {
-        let data = self.data.iter().map(|a| a * scalar).collect();
-        Matrix::new(self.rows, self.cols, data)
-    }
-
-    pub fn map(&self, func: fn(f64) -> f64) -> Matrix {
-        let data = self.data.iter().map(|&x| func(x)).collect();
-        Matrix::new(self.rows, self.cols, data)
-    }
-
-    pub fn transpose(&self) -> Matrix {
-        let mut result = Matrix::zeros(self.cols, self.rows);
-        for i in 0..self.rows {
-            for j in 0..self.cols {
-                result.data[j * result.cols + i] = self.data[i * self.cols + j];
-            }
-        }
-        result
-    }
-
-    pub fn from_vec(data: Vec<f64>) -> Matrix {
-        Matrix::new(data.len(), 1, data)
     }
 }
 
@@ -150,7 +185,7 @@ impl Network {
         let mut current = inputs;
 
         for i in 0..self.weights.len() {
-            let z = self.weights[i].dot(&current).add(&self.biases[i]);
+            let z = &self.weights[i].dot(&current) + &self.biases[i];
             self.z_data.push(z.clone());
             current = z.map(sigmoid);
             self.data.push(current.clone());
@@ -164,7 +199,7 @@ impl Network {
         let mut current = inputs;
 
         for i in 0..self.weights.len() {
-            let z = self.weights[i].dot(&current).add(&self.biases[i]);
+            let z = &self.weights[i].dot(&current) + &self.biases[i];
             current = z.map(sigmoid);
         }
 
@@ -176,30 +211,34 @@ impl Network {
         self.forward(inputs);
 
         let targets = Matrix::from_vec(targets.to_vec());
-        let mut errors = targets.sub(self.data.last().unwrap());
+        let mut errors = &targets - self.data.last().unwrap();
 
         for i in (0..self.weights.len()).rev() {
-            let outputs = &self.data[i + 1];
-            let prev_outputs = &self.data[i];
-
-            // Gradient = error * sigmoid_derivative(outputs)
-            // sigmoid_derivative(z) = sigmoid(z) * (1 - sigmoid(z)) = outputs * (1 - outputs)
-            let d_outputs = outputs.map(|x| x * (1.0 - x));
-            let gradients = errors.mul(&d_outputs).mul_scalar(self.learning_rate);
-
-            // Calculate deltas
-            let weight_deltas = gradients.dot(&prev_outputs.transpose());
-
-            // Store old weights for error propagation
-            let old_weights = &self.weights[i];
-            let next_errors = old_weights.transpose().dot(&errors);
-
-            // Update weights and biases
-            self.weights[i] = self.weights[i].add(&weight_deltas);
-            self.biases[i] = self.biases[i].add(&gradients);
-
-            errors = next_errors;
+            errors = self.backward_pass_layer(i, errors);
         }
+    }
+
+    fn backward_pass_layer(&mut self, layer_idx: usize, errors: Matrix) -> Matrix {
+        let outputs = &self.data[layer_idx + 1];
+        let prev_outputs = &self.data[layer_idx];
+
+        // Gradient = error * sigmoid_derivative(outputs)
+        // sigmoid_derivative(z) = sigmoid(z) * (1 - sigmoid(z)) = outputs * (1 - outputs)
+        let d_outputs = outputs.map(|x| x * (1.0 - x));
+        let gradients = (&errors * &d_outputs).mul_scalar(self.learning_rate);
+
+        // Calculate deltas
+        let weight_deltas = gradients.dot(&prev_outputs.transpose());
+
+        // Store old weights for error propagation
+        let old_weights = &self.weights[layer_idx];
+        let next_errors = old_weights.transpose().dot(&errors);
+
+        // Update weights and biases
+        self.weights[layer_idx] = &self.weights[layer_idx] + &weight_deltas;
+        self.biases[layer_idx] = &self.biases[layer_idx] + &gradients;
+
+        next_errors
     }
 }
 

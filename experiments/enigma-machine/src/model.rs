@@ -296,26 +296,26 @@ mod tests {
 
         enigma.right.position = 20; // 'U'
         enigma.middle.position = 3; // 'D'
-        enigma.left.position = 0;   // 'A'
+        enigma.left.position = 0; // 'A'
 
         // Step 1: Right U->V. Middle stays D.
         enigma.step_rotors();
         assert_eq!(enigma.right.position, 21); // V
         assert_eq!(enigma.middle.position, 3); // D
-        assert_eq!(enigma.left.position, 0);   // A
+        assert_eq!(enigma.left.position, 0); // A
 
         // Step 2: Right V->W. Middle pushed D->E.
         enigma.step_rotors();
         assert_eq!(enigma.right.position, 22); // W
         assert_eq!(enigma.middle.position, 4); // E
-        assert_eq!(enigma.left.position, 0);   // A
+        assert_eq!(enigma.left.position, 0); // A
 
         // Step 3: Right W->X. Middle (at Notch E) steps E->F. Left steps A->B.
         // This is the "Double Step" - Middle stepped in Step 2 AND Step 3.
         enigma.step_rotors();
         assert_eq!(enigma.right.position, 23); // X
         assert_eq!(enigma.middle.position, 5); // F
-        assert_eq!(enigma.left.position, 1);   // B
+        assert_eq!(enigma.left.position, 1); // B
     }
 
     #[test]
