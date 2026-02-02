@@ -38,13 +38,14 @@ pub enum LineChange {
 
 pub fn get_diff() -> Result<DiffState> {
     // Run git diff HEAD. If it fails, maybe there is no HEAD (fresh repo), so try git diff --staged or just empty.
-    let output = Command::new("git")
-        .args(&["diff", "HEAD"])
-        .output();
+    let output = Command::new("git").args(&["diff", "HEAD"]).output();
 
     // If command fails, return empty diff
     if output.is_err() {
-        return Ok(DiffState { files: vec![], stats: DiffStats::default() });
+        return Ok(DiffState {
+            files: vec![],
+            stats: DiffStats::default(),
+        });
     }
 
     let output = output.unwrap();
@@ -86,18 +87,18 @@ pub fn parse_diff(diff_str: &str) -> Result<DiffState> {
         } else if line.starts_with("index ") {
             // ignore
         } else if line.starts_with("--- ") {
-             // ignore
+            // ignore
         } else if line.starts_with("+++ ") {
-             if let Some(file) = current_file.as_mut() {
-                 let new_path = line.trim_start_matches("+++ b/");
-                 // If it didn't have b/, try matching a/ or just take the whole thing
-                 if new_path == line {
-                     // Fallback
-                     file.path = line.trim_start_matches("+++ ").to_string();
-                 } else {
-                     file.path = new_path.to_string();
-                 }
-             }
+            if let Some(file) = current_file.as_mut() {
+                let new_path = line.trim_start_matches("+++ b/");
+                // If it didn't have b/, try matching a/ or just take the whole thing
+                if new_path == line {
+                    // Fallback
+                    file.path = line.trim_start_matches("+++ ").to_string();
+                } else {
+                    file.path = new_path.to_string();
+                }
+            }
         } else if line.starts_with("@@ ") {
             // New hunk
             if let Some(file) = current_file.as_mut() {
@@ -111,15 +112,19 @@ pub fn parse_diff(diff_str: &str) -> Result<DiffState> {
                 lines: Vec::new(),
             });
         } else if let Some(hunk) = current_hunk.as_mut() {
-             if line.starts_with('+') && !line.starts_with("+++") {
-                 hunk.lines.push(LineChange::Added(line[1..].to_string()));
-                 if let Some(file) = current_file.as_mut() { file.added += 1; }
-             } else if line.starts_with('-') && !line.starts_with("---") {
-                 hunk.lines.push(LineChange::Removed(line[1..].to_string()));
-                 if let Some(file) = current_file.as_mut() { file.removed += 1; }
-             } else {
-                 hunk.lines.push(LineChange::Context(line.to_string()));
-             }
+            if line.starts_with('+') && !line.starts_with("+++") {
+                hunk.lines.push(LineChange::Added(line[1..].to_string()));
+                if let Some(file) = current_file.as_mut() {
+                    file.added += 1;
+                }
+            } else if line.starts_with('-') && !line.starts_with("---") {
+                hunk.lines.push(LineChange::Removed(line[1..].to_string()));
+                if let Some(file) = current_file.as_mut() {
+                    file.removed += 1;
+                }
+            } else {
+                hunk.lines.push(LineChange::Context(line.to_string()));
+            }
         }
     }
 

@@ -1,14 +1,17 @@
-use clockwork_cpu::physics::{PhysicsWorld, RenderBody};
 use clockwork_cpu::mechanism::Clockwork;
-use tui_shared::Tui;
+use clockwork_cpu::physics::{PhysicsWorld, RenderBody};
+use crossterm::event::{self, Event, KeyCode};
+use nalgebra::point;
+use rapier2d::prelude::*;
 use ratatui::{
     prelude::*,
-    widgets::{canvas::{Line as CanvasLine, *}, *},
+    widgets::{
+        canvas::{Line as CanvasLine, *},
+        *,
+    },
 };
-use crossterm::event::{self, Event, KeyCode};
 use std::time::{Duration, Instant};
-use rapier2d::prelude::*;
-use nalgebra::point;
+use tui_shared::Tui;
 
 fn main() -> anyhow::Result<()> {
     let mut tui = Tui::init()?;
@@ -79,7 +82,7 @@ fn main() -> anyhow::Result<()> {
                         radius: 0.2,
                         color: Color::Red,
                     });
-                     ctx.draw(&Circle {
+                    ctx.draw(&Circle {
                         x: 0.0,
                         y: 3.5,
                         radius: 0.2,
@@ -90,8 +93,11 @@ fn main() -> anyhow::Result<()> {
             f.render_widget(canvas, area);
 
             // Stats overlay
-            let stats = Paragraph::new(format!("Frames: {}\nTorque: -50.0\nPress 'q' to quit", frame_count))
-                .block(Block::default().borders(Borders::ALL));
+            let stats = Paragraph::new(format!(
+                "Frames: {}\nTorque: -50.0\nPress 'q' to quit",
+                frame_count
+            ))
+            .block(Block::default().borders(Borders::ALL));
             let stats_area = Rect::new(area.width.saturating_sub(25), 0, 25, 5);
             f.render_widget(stats, stats_area);
         })?;
@@ -109,12 +115,12 @@ fn draw_body(ctx: &mut Context, body: &RenderBody) {
 fn draw_shape(ctx: &mut Context, pos: &Isometry<Real>, shape: &SharedShape) {
     match shape.as_typed_shape() {
         TypedShape::Ball(b) => {
-             ctx.draw(&Circle {
-                 x: pos.translation.x as f64,
-                 y: pos.translation.y as f64,
-                 radius: b.radius as f64,
-                 color: Color::Cyan,
-             });
+            ctx.draw(&Circle {
+                x: pos.translation.x as f64,
+                y: pos.translation.y as f64,
+                radius: b.radius as f64,
+                color: Color::Cyan,
+            });
         }
         TypedShape::Cuboid(c) => {
             // Calculate 4 corners
@@ -127,17 +133,23 @@ fn draw_shape(ctx: &mut Context, pos: &Isometry<Real>, shape: &SharedShape) {
                 point![-hx, hy],
             ];
 
-            let world_corners: Vec<(f64, f64)> = corners.iter().map(|p| {
-                let wp = pos * p;
-                (wp.x as f64, wp.y as f64)
-            }).collect();
+            let world_corners: Vec<(f64, f64)> = corners
+                .iter()
+                .map(|p| {
+                    let wp = pos * p;
+                    (wp.x as f64, wp.y as f64)
+                })
+                .collect();
 
             // Draw lines
             for i in 0..4 {
                 let (x1, y1) = world_corners[i];
                 let (x2, y2) = world_corners[(i + 1) % 4];
                 ctx.draw(&CanvasLine {
-                    x1, y1, x2, y2,
+                    x1,
+                    y1,
+                    x2,
+                    y2,
                     color: Color::Green,
                 });
             }
