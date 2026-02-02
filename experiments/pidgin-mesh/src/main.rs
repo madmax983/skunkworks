@@ -1,18 +1,18 @@
 pub mod model;
 
+use crate::model::*;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    widgets::{Block, Borders, Paragraph},
-    widgets::canvas::{Canvas, Line, Circle},
     style::Color,
+    widgets::canvas::{Canvas, Circle, Line},
+    widgets::{Block, Borders, Paragraph},
     Frame,
 };
-use std::time::{Duration, Instant};
 use std::collections::HashMap;
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use crate::model::*;
 
 fn main() -> Result<()> {
     // Check for semantic flag (primitive check before proper arg parsing)
@@ -109,8 +109,10 @@ fn draw(f: &mut Frame, network: &Network) {
     let mut counts: HashMap<Meaning, HashMap<String, usize>> = HashMap::new();
 
     for agent in &network.agents {
-        for (m, w) in &agent.lexicon.map {
-            *counts.entry(*m).or_default().entry(w.clone()).or_default() += 1;
+        for m in Meaning::iter() {
+            if let Some(w) = &agent.lexicon.words[m.to_index()] {
+                *counts.entry(m).or_default().entry(w.clone()).or_default() += 1;
+            }
         }
     }
 
@@ -120,12 +122,13 @@ fn draw(f: &mut Frame, network: &Network) {
             let mut sorted: Vec<_> = word_counts.iter().collect();
             sorted.sort_by_key(|(_, c)| std::cmp::Reverse(**c));
             for (w, c) in sorted.into_iter().take(3) {
-                 stats_text.push_str(&format!("  {}: {}\n", w, c));
+                stats_text.push_str(&format!("  {}: {}\n", w, c));
             }
         }
         stats_text.push('\n');
     }
 
-    let p = Paragraph::new(stats_text).block(Block::default().title("Pidgin Stats").borders(Borders::ALL));
+    let p = Paragraph::new(stats_text)
+        .block(Block::default().title("Pidgin Stats").borders(Borders::ALL));
     f.render_widget(p, chunks[1]);
 }
