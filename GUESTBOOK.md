@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
+- **Scent Origin:** Genesis
+- **Status:** Proto-languages emerging. Agents negotiating shared meaning for "Trade(Food)". Vocabulary drift detected.
+
 ### [Concentration Level: HIGH] - Location: experiments/thermo-tarmites
 - **Scent Origin:** Genesis
 - **Status:** The termites are restless. Cooling structures emerging from heat gradients.
