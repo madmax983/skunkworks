@@ -7,10 +7,15 @@ use git_galaxy::harvester::harvest_repo;
 use git_galaxy::physics::Graph;
 use git_galaxy::ui::{ui, ViewState};
 
+#[cfg(feature = "nova")]
+use git_galaxy::constellations::{Constellation, ConstellationFinder};
+
 struct App {
     graph: Graph,
     view_state: ViewState,
     running: bool,
+    #[cfg(feature = "nova")]
+    constellations: Vec<Constellation>,
 }
 
 impl App {
@@ -25,10 +30,15 @@ impl App {
         let graph = Graph::new(commits);
         let view_state = ViewState::default();
 
+        #[cfg(feature = "nova")]
+        let constellations = ConstellationFinder::find_all(&graph);
+
         Ok(Self {
             graph,
             view_state,
             running: true,
+            #[cfg(feature = "nova")]
+            constellations,
         })
     }
 
@@ -42,7 +52,13 @@ impl App {
 
         while self.running {
             tui.terminal
-                .draw(|f| ui(f, &self.graph, &self.view_state))?;
+                .draw(|f| {
+                    #[cfg(feature = "nova")]
+                    ui(f, &self.graph, &self.view_state, &self.constellations);
+
+                    #[cfg(not(feature = "nova"))]
+                    ui(f, &self.graph, &self.view_state);
+                })?;
 
             let timeout = tick_rate
                 .checked_sub(last_tick.elapsed())
