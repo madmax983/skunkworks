@@ -86,3 +86,8 @@
 **Concept:** A simulation of artificial life using particles with pairwise attraction/repulsion rules based on species, creating emergent cell-like structures.
 **Fate:** Merged
 **Lesson:** Splitting the physics logic into a separate `world` module and using `ratatui`'s `Canvas` with `Points` allows for clean separation of concerns and performant rendering of hundreds of particles.
+
+## [Epicycle Draw]
+**Concept:** Interactive visualization of Discrete Fourier Transform. Users draw a path, and the system reconstructs it using rotating epicycles.
+**Fate:** Merged
+**Lesson:** Visualizing math concepts like DFT in a TUI is powerful when paired with interactive input. Mouse coordinate mapping between terminal cells and canvas requires careful handling of Y-axis inversion.
