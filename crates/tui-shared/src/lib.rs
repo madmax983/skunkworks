@@ -35,7 +35,6 @@
 //! ```rust
 //! use ratatui::{backend::TestBackend, Terminal, widgets::{Paragraph, Block, Borders}};
 //!
-//! #[test]
 //! fn test_ui() {
 //!     let backend = TestBackend::new(20, 10);
 //!     let mut terminal = Terminal::new(backend).unwrap();
