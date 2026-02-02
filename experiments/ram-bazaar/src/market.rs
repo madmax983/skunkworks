@@ -7,9 +7,12 @@ pub fn resolve_market(agents: &mut [Agent], state: &mut MarketState, mut bids: V
     // We use partial_cmp because f64 doesn't implement Ord.
     // Handling NaN by treating it as -infinity (pushing to end).
     bids.sort_by(|a, b| {
-        b.price
-            .partial_cmp(&a.price)
-            .unwrap_or(std::cmp::Ordering::Less)
+        match (a.price.is_nan(), b.price.is_nan()) {
+            (true, true) => std::cmp::Ordering::Equal,
+            (true, false) => std::cmp::Ordering::Greater, // NaN (a) < Real (b) -> a comes after b
+            (false, true) => std::cmp::Ordering::Less,    // Real (a) > NaN (b) -> a comes before b
+            (false, false) => b.price.partial_cmp(&a.price).unwrap(),
+        }
     });
 
     // 2. Determine winners (Top N bids, where N is total pages)
@@ -150,5 +153,55 @@ mod tests {
         // Verify agent stats
         assert_eq!(agents[1].owned_pages, 1);
         assert_eq!(agents[0].owned_pages, 0);
+    }
+}
+
+#[cfg(test)]
+mod proptests {
+    use super::*;
+    use crate::model::{Agent, Strategy};
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn test_nan_bids_lose(
+            // We want to specifically ensure NaNs are generated to trigger the failure.
+            // proptest::num::f64::ANY includes NaNs and Infs.
+            prices in proptest::collection::vec(proptest::num::f64::ANY, 1..20)
+        ) {
+            let mut state = MarketState::new(1, 1);
+            let mut agents = vec![
+                Agent::new(100, Strategy::Greedy, 100.0, 1)
+            ];
+
+            // Valid bid that SHOULD win if others are NaN/low
+            let valid_bid_price = 10.0;
+            let mut bids = vec![
+                Bid { agent_id: 100, price: valid_bid_price }
+            ];
+
+            // Inject random bids
+            for (i, p) in prices.iter().enumerate() {
+                bids.push(Bid { agent_id: i, price: *p });
+            }
+
+            resolve_market(&mut agents, &mut state, bids.clone());
+
+            if let Some(owner) = state.pages[0].owner {
+                let winning_bid = bids.iter().find(|b| b.agent_id == owner).unwrap();
+
+                // FAILURE CONDITION: NaN should never win
+                prop_assert!(!winning_bid.price.is_nan(), "Winning bid is NaN!");
+
+                // If not our valid bidder, it must be better than our valid bid
+                if owner != 100 {
+                    prop_assert!(winning_bid.price >= valid_bid_price,
+                        "Winner {:?} with price {:?} beat valid bid {:?}",
+                        owner, winning_bid.price, valid_bid_price);
+                }
+            } else {
+                prop_assert!(false, "No winner declared!");
+            }
+        }
     }
 }
