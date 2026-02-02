@@ -9,3 +9,4 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-semantic.workspace = true
+tui-shared.workspace = true

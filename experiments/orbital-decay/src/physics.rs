@@ -1,5 +1,5 @@
 use rand::Rng;
-use tui_semantic::{Action, Entity, SemanticState, Snapshot};
+use tui_semantic::{Action, Entity, Snapshot};
 
 #[derive(Clone)]
 pub struct Particle {
@@ -217,14 +217,7 @@ impl Universe {
         }
     }
 
-    /// Track frame number for semantic snapshots
-    pub fn frame_count(&self) -> u64 {
-        self.absorbed_count as u64 // Rough proxy for time
-    }
-}
-
-impl SemanticState for Universe {
-    fn snapshot(&self) -> Snapshot {
+    pub fn snapshot(&self) -> Snapshot {
         let mut snap = Snapshot::new("orbital-decay")
             .with_viewport(self.width as u16, self.height as u16)
             .with_metric("absorbed_total", self.absorbed_count)
