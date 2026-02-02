@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/neuro-beat
+- **Scent Origin:** Genesis (The Neurologist)
+- **Status:** Neurons are spiking. Rhythmic patterns emerging from the Izhikevich dynamics. Audio synthesis feature-gated.
 ### [Concentration Level: TOXIC] - Location: experiments/epicycle-draw
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Specimen marked for culling. Generic genetics detected.
