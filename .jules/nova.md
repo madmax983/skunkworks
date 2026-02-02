@@ -13,3 +13,8 @@
 **Concept:** A racing game where the track is generated from `git log` history. Commit hashes determine curvature, message lengths determine straightaways.
 **Fate:** Merged
 **Lesson:** `ratatui`'s `Canvas` widget is powerful enough for simple pseudo-3D or top-down scrolling games. Visualizing git history as a physical space creates a unique connection to the code.
+
+## [Git Rogue]
+**Concept:** A text-based roguelike where the map is the Git commit history. Commits are rooms, parents/children are exits, and bugs/features are encounters determined by commit messages.
+**Fate:** Merged
+**Lesson:** Interpreting version control graphs as physical spaces (dungeons) creates a natural exploration mechanic. Bidirectional graph traversal requires pre-processing or double-linking logic since Git is natively directed acyclic (backwards).
