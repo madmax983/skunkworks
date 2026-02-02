@@ -59,7 +59,7 @@ members = [
     "experiments/quantum-tarot", "experiments/thermo-tarmites",
     "experiments/semantic-spy", "experiments/pidgin-mesh", "experiments/terra-fluid", "experiments/thread-phase",
     "experiments/hyperbolic-dungeon", "experiments/venation-vines", "experiments/sys-weather",
-    "experiments/cpu-casino", "experiments/neuro-beat", "experiments/glyph-terrain",
+    "experiments/cpu-casino", "experiments/neuro-beat", "experiments/glyph-terrain", "experiments/process-orbit",
 ]
 resolver = "2"
 
