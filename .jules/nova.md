@@ -101,3 +101,8 @@
 **Concept:** A 2D simulation where light rays reflect and interact with ASCII characters (`/`, `\`, `|`, `-`, etc.) acting as optical elements. Visualized using `ratatui`'s Canvas.
 **Fate:** Merged
 **Lesson:** Discrete grid logic combined with continuous ray tracing vectors creates a satisfying "retro-future" physics engine. `ratatui`'s `Context::print` is essential for mixing text and vector graphics on a Canvas.
+
+## [Enigma Machine]
+**Concept:** A fully functional simulation of the WWII Enigma Machine with Rotor (I-III), Reflector, and Plugboard logic, visualized in a TUI with interactive rotors and lampboard.
+**Fate:** Merged
+**Lesson:** Complex mechanical logic (double stepping) requires careful state management. TUI visualization of internal state (rotors) helps demystify encryption processes.
