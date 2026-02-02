@@ -1,0 +1,75 @@
+name: Jules PR Auto-Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  auto-review:
+    # Only run for Jules bot PRs
+    if: github.actor == 'jules-bot' || github.actor == 'jules[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Review and Auto-Merge Jules PR
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            You are reviewing a pull request from Jules, an autonomous AI coding assistant.
+
+            **Your Task:**
+            1. Analyze the PR changes for risk and quality
+            2. Calculate a risk score (0-10)
+            3. Auto-merge if safe, or flag for human review if risky
+
+            **Risk Scoring Criteria:**
+
+            Diff size:
+            - lines_changed > 500: +3 points
+            - lines_changed > 200: +2 points
+            - lines_changed > 50: +1 point
+
+            Files changed:
+            - Touches critical experiment files (core logic): +2 points
+            - files_changed > 10: +1 point
+
+            Code quality issues:
+            - Security vulnerabilities (injection, XSS, unsafe code): +3 points
+            - Breaking changes to public APIs: +2 points
+            - Test coverage decreased: +1 point
+            - Minor fixable issues (formatting, simple refactors): +0 points
+
+            **Decision Logic:**
+            - Risk score <= 5: Auto-merge with comment explaining review
+            - Risk score > 5: Comment with findings and DO NOT merge
+
+            **For Auto-Merge:**
+            1. Post a comment with:
+               - Risk score
+               - Summary of changes
+               - Why it's safe to merge
+            2. Merge the PR using: `gh pr merge ${{ github.event.pull_request.number }} --squash --auto`
+
+            **For Flagged PRs:**
+            1. Post a comment with:
+               - Risk score
+               - Specific concerns
+               - What needs human review
+            2. DO NOT merge
+
+            **Context:**
+            - Repository: skunkworks (creative experiments, low-stakes)
+            - Default risk threshold: 5 (moderate)
+            - CI must pass before any merge
+
+            Begin your review now.
