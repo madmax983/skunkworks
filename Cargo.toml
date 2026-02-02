@@ -12,6 +12,7 @@ members = [
     "experiments/code-metropolis",
     "experiments/crystal-structure",
     "experiments/diff-drift",
+    "experiments/dx-audit",
     "experiments/echo-chamber",
     "experiments/enigma-machine",
     "experiments/entropy-garden",
