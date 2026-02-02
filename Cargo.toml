@@ -10,7 +10,7 @@ members = [
     "experiments/crystal-structure",
     "experiments/echo-chamber",
     "experiments/entropy-garden",
-    "experiments/epicycle-draw"
+    "experiments/epicycle-draw",
     "experiments/euclidean-pulse",
     "experiments/firefly-synapse",
     "experiments/fugue-state",
