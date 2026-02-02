@@ -37,7 +37,14 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-/// 2D position/vector
+/// 2D position/vector used for positioning entities in the TUI space.
+///
+/// # Examples
+///
+/// ```
+/// use tui_semantic::Vec2;
+/// let pos = Vec2::new(10.0, 5.0);
+/// ```
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
 pub struct Vec2 {
     pub x: f64,
@@ -45,12 +52,27 @@ pub struct Vec2 {
 }
 
 impl Vec2 {
+    /// Creates a new vector with the given coordinates.
     pub fn new(x: f64, y: f64) -> Self {
         Self { x, y }
     }
 }
 
-/// A semantic entity in the TUI (particle, player, enemy, UI element, etc.)
+/// A semantic entity in the TUI (particle, player, enemy, UI element, etc.).
+///
+/// Entities are the nouns of your TUI story. They represent anything that has a presence
+/// in the interface, whether it's a game character, a button, or a data point.
+///
+/// # Examples
+///
+/// ```
+/// use tui_semantic::Entity;
+///
+/// let player = Entity::new("hero")
+///     .with_id("p1")
+///     .at(40.0, 12.0)
+///     .with_prop("hp", 100);
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Entity {
     /// Unique identifier for this entity type
@@ -73,6 +95,14 @@ pub struct Entity {
 }
 
 impl Entity {
+    /// Creates a new entity with the given kind.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_semantic::Entity;
+    /// let player = Entity::new("player");
+    /// ```
     pub fn new(kind: impl Into<String>) -> Self {
         Self {
             kind: kind.into(),
@@ -84,33 +114,71 @@ impl Entity {
         }
     }
 
+    /// Assigns a unique ID to the entity.
+    ///
+    /// The ID is crucial for object permanence. Without it, the LLM might see a "particle" in
+    /// frame 1 and a "particle" in frame 2 but not know they are the same object.
     pub fn with_id(mut self, id: impl Into<String>) -> Self {
         self.id = Some(id.into());
         self
     }
 
+    /// Sets the entity's position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_semantic::Entity;
+    /// let e = Entity::new("ball").at(5.0, 5.0);
+    /// ```
     pub fn at(mut self, x: f64, y: f64) -> Self {
         self.position = Some(Vec2::new(x, y));
         self
     }
 
+    /// Sets the entity's velocity.
+    ///
+    /// This helps the LLM predict future states.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_semantic::Entity;
+    /// let e = Entity::new("bullet")
+    ///     .at(10.0, 10.0)
+    ///     .moving(1.0, 0.0);
+    /// ```
     pub fn moving(mut self, vx: f64, vy: f64) -> Self {
         self.velocity = Some(Vec2::new(vx, vy));
         self
     }
 
+    /// Sets the character(s) used to display the entity.
     pub fn display(mut self, c: impl Into<String>) -> Self {
         self.display = Some(c.into());
         self
     }
 
+    /// Adds a property to the entity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_semantic::Entity;
+    /// let enemy = Entity::new("orc")
+    ///     .with_prop("health", 100)
+    ///     .with_prop("elite", true);
+    /// ```
     pub fn with_prop(mut self, key: impl Into<String>, value: impl Into<PropValue>) -> Self {
         self.props.insert(key.into(), value.into());
         self
     }
 }
 
-/// Property values that can be attached to entities
+/// Property values that can be attached to entities.
+///
+/// This enum allows attaching arbitrary data to entities, which is crucial for
+/// giving the LLM context about the entity's state (e.g., health, ammo, selected status).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PropValue {
@@ -161,7 +229,18 @@ impl From<String> for PropValue {
     }
 }
 
-/// A rectangular region of interest
+/// A rectangular region of interest in the UI.
+///
+/// Regions help the LLM understand the layout of the screen by defining semantic zones
+/// (e.g., "inventory panel", "chat window", "map").
+///
+/// # Examples
+///
+/// ```
+/// use tui_semantic::Region;
+/// let chat = Region::new("chat_box", 0, 20, 80, 5)
+///     .describe("Area where messages appear");
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Region {
     pub name: String,
@@ -174,6 +253,7 @@ pub struct Region {
 }
 
 impl Region {
+    /// Creates a new region with the specified dimensions.
     pub fn new(name: impl Into<String>, x: u16, y: u16, width: u16, height: u16) -> Self {
         Self {
             name: name.into(),
@@ -185,13 +265,27 @@ impl Region {
         }
     }
 
+    /// Adds a human-readable description to the region.
     pub fn describe(mut self, desc: impl Into<String>) -> Self {
         self.description = Some(desc.into());
         self
     }
 }
 
-/// Complete semantic snapshot of the TUI state
+/// Complete semantic snapshot of the TUI state.
+///
+/// This is the "screenshot" of your application's logic. Instead of pixels, it captures
+/// the meaning of what's on screen. The LLM uses this to decide what to do next.
+///
+/// # Examples
+///
+/// ```
+/// use tui_semantic::{Snapshot, Entity, Action};
+///
+/// let snap = Snapshot::new("space-invaders")
+///     .with_entity(Entity::new("player").at(10.0, 10.0))
+///     .with_action(Action::new("fire").key("space"));
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Snapshot {
     /// Application identifier
@@ -220,6 +314,14 @@ pub struct Snapshot {
 }
 
 impl Snapshot {
+    /// Creates a new empty snapshot for the given app.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_semantic::Snapshot;
+    /// let snap = Snapshot::new("my-game");
+    /// ```
     pub fn new(app: impl Into<String>) -> Self {
         Self {
             app: app.into(),
@@ -233,41 +335,52 @@ impl Snapshot {
         }
     }
 
+    /// Sets the current frame number.
     pub fn with_frame(mut self, frame: u64) -> Self {
         self.frame = Some(frame);
         self
     }
 
+    /// Sets the viewport dimensions.
     pub fn with_viewport(mut self, width: u16, height: u16) -> Self {
         self.viewport = Some((width, height));
         self
     }
 
+    /// Adds a single entity to the snapshot.
     pub fn with_entity(mut self, entity: Entity) -> Self {
         self.entities.push(entity);
         self
     }
 
+    /// Adds multiple entities to the snapshot.
+    ///
+    /// Useful when you have a collection of entities (like a `Vec<Player>`) that you want to
+    /// dump into the snapshot at once.
     pub fn with_entities(mut self, entities: impl IntoIterator<Item = Entity>) -> Self {
         self.entities.extend(entities);
         self
     }
 
+    /// Adds a region of interest to the snapshot.
     pub fn with_region(mut self, region: Region) -> Self {
         self.regions.push(region);
         self
     }
 
+    /// Adds a top-level metric (score, time, etc.).
     pub fn with_metric(mut self, key: impl Into<String>, value: impl Into<PropValue>) -> Self {
         self.metrics.insert(key.into(), value.into());
         self
     }
 
+    /// Sets the application state (e.g., "menu", "playing", "game_over").
     pub fn with_state(mut self, state: impl Into<String>) -> Self {
         self.state = Some(state.into());
         self
     }
 
+    /// Adds an available action.
     pub fn with_action(mut self, action: Action) -> Self {
         self.actions.push(action);
         self
@@ -284,7 +397,19 @@ impl Snapshot {
     }
 }
 
-/// An action the LLM can request
+/// An action the LLM can request.
+///
+/// Actions are the verbs of your TUI. They define the affordances available to the user
+/// (and thus the LLM) at the current moment.
+///
+/// # Examples
+///
+/// ```
+/// use tui_semantic::Action;
+/// let jump = Action::new("jump")
+///     .key("space")
+///     .describe("Make the character jump");
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Action {
     /// Action identifier (e.g., "quit", "reset", "move_left")
@@ -298,6 +423,14 @@ pub struct Action {
 }
 
 impl Action {
+    /// Creates a new action with the given name.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_semantic::Action;
+    /// let quit = Action::new("quit");
+    /// ```
     pub fn new(name: impl Into<String>) -> Self {
         Self {
             name: name.into(),
@@ -306,11 +439,13 @@ impl Action {
         }
     }
 
+    /// Adds a human-readable description to the action.
     pub fn describe(mut self, desc: impl Into<String>) -> Self {
         self.description = Some(desc.into());
         self
     }
 
+    /// Sets the key binding for this action.
     pub fn key(mut self, key: impl Into<String>) -> Self {
         self.key = Some(key.into());
         self
