@@ -23,3 +23,8 @@
 **Concept:** A TUI explorer and launcher for the Cargo workspace. It visualizes the dependency graph (list view) and allows running experiments directly from the interface.
 **Fate:** Merged
 **Lesson:** `cargo_metadata` + `ratatui` + `tui-shared` creates a powerful "Dashboard" pattern. Suspending the TUI to run a subprocess (`cargo run`) works seamlessly if raw mode is handled correctly.
+
+## [Log Landscape]
+**Concept:** A frequency domain visualizer for text streams. It reads from stdin and renders a scrolling 3D wireframe terrain where height matches line intensity/keywords and X-axis is a hash of the content.
+**Fate:** Merged
+**Lesson:** Transforming textual entropy into physical geometry (terrain) allows for rapid visual pattern recognition in otherwise opaque log streams. `ratatui`'s Canvas lines can effectively create 2.5D wireframe effects.
