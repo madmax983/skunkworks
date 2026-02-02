@@ -1,10 +1,10 @@
 pub struct PhysicsGrid {
     pub width: usize,
     pub height: usize,
-    pub u: Vec<f32>,       // Current state
-    pub u_prev: Vec<f32>,  // Previous state
-    pub u_next: Vec<f32>,  // Next state (scratch buffer)
-    pub walls: Vec<bool>,  // Wall mask
+    pub u: Vec<f32>,      // Current state
+    pub u_prev: Vec<f32>, // Previous state
+    pub u_next: Vec<f32>, // Next state (scratch buffer)
+    pub walls: Vec<bool>, // Wall mask
     pub damping: f32,
 }
 
@@ -47,7 +47,8 @@ impl PhysicsGrid {
                 // If neighbor is wall, its value is 0.
                 // Since we enforce 0 for walls, we don't need explicit check here,
                 // provided we zeroed them out.
-                let laplacian = self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
+                let laplacian =
+                    self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
 
                 let mut val = 2.0 * u_curr - u_prev + c2 * laplacian;
                 val *= self.damping;
@@ -105,8 +106,14 @@ mod tests {
         grid.step();
 
         // After one step, the wave should propagate to neighbors
-        assert!(grid.get(5, 6).abs() > 0.001, "Wave did not propagate to (5,6)");
-        assert!(grid.get(4, 5).abs() > 0.001, "Wave did not propagate to (4,5)");
+        assert!(
+            grid.get(5, 6).abs() > 0.001,
+            "Wave did not propagate to (5,6)"
+        );
+        assert!(
+            grid.get(4, 5).abs() > 0.001,
+            "Wave did not propagate to (4,5)"
+        );
     }
 
     #[test]

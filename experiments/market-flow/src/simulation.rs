@@ -3,8 +3,8 @@ use rand::Rng;
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Particle {
     Empty,
-    Bid, // Green, moves Up
-    Ask, // Red, moves Down
+    Bid,               // Green, moves Up
+    Ask,               // Red, moves Down
     Trade { age: u8 }, // White flash, decays
 }
 
@@ -61,19 +61,24 @@ impl Grid {
         self.updated.fill(false);
         // Randomize scan direction
         if rng.gen_bool(0.5) {
-             self.scan_x.iter_mut().enumerate().for_each(|(i, v)| *v = i);
+            self.scan_x.iter_mut().enumerate().for_each(|(i, v)| *v = i);
         } else {
-             self.scan_x.iter_mut().enumerate().for_each(|(i, v)| *v = self.width - 1 - i);
+            self.scan_x
+                .iter_mut()
+                .enumerate()
+                .for_each(|(i, v)| *v = self.width - 1 - i);
         }
 
         // Pass 1: Handle Bids (Up).
         for y in 0..self.height {
             for &x in &self.scan_x {
                 let idx = y * self.width + x;
-                if self.updated[idx] { continue; }
+                if self.updated[idx] {
+                    continue;
+                }
 
                 if let Particle::Bid = self.cells[idx] {
-                     // Try Move Up (y-1)
+                    // Try Move Up (y-1)
                     if y > 0 {
                         let target_idx = (y - 1) * self.width + x;
                         match self.cells[target_idx] {
@@ -81,14 +86,14 @@ impl Grid {
                                 self.cells[target_idx] = Particle::Bid;
                                 self.cells[idx] = Particle::Empty;
                                 self.updated[target_idx] = true;
-                            },
+                            }
                             Particle::Ask => {
                                 // Annihilate!
                                 self.cells[target_idx] = Particle::Trade { age: 5 };
                                 self.cells[idx] = Particle::Empty;
                                 self.updated[target_idx] = true;
                                 trades += 1;
-                            },
+                            }
                             _ => {
                                 // Blocked. Try sideways?
                                 // Randomly left or right.
@@ -98,7 +103,9 @@ impl Grid {
                                     if nx >= 0 && nx < self.width as isize {
                                         let nx = nx as usize;
                                         let n_idx = y * self.width + nx;
-                                        if !self.updated[n_idx] && matches!(self.cells[n_idx], Particle::Empty) {
+                                        if !self.updated[n_idx]
+                                            && matches!(self.cells[n_idx], Particle::Empty)
+                                        {
                                             self.cells[n_idx] = Particle::Bid;
                                             self.cells[idx] = Particle::Empty;
                                             self.updated[n_idx] = true;
@@ -115,9 +122,11 @@ impl Grid {
 
         // Pass 2: Handle Asks (Down).
         for y in (0..self.height).rev() {
-             for &x in &self.scan_x {
+            for &x in &self.scan_x {
                 let idx = y * self.width + x;
-                if self.updated[idx] { continue; }
+                if self.updated[idx] {
+                    continue;
+                }
 
                 if let Particle::Ask = self.cells[idx] {
                     // Try Move Down (y+1)
@@ -128,14 +137,14 @@ impl Grid {
                                 self.cells[target_idx] = Particle::Ask;
                                 self.cells[idx] = Particle::Empty;
                                 self.updated[target_idx] = true;
-                            },
+                            }
                             Particle::Bid => {
                                 // Annihilate!
                                 self.cells[target_idx] = Particle::Trade { age: 5 };
                                 self.cells[idx] = Particle::Empty;
                                 self.updated[target_idx] = true;
                                 trades += 1;
-                            },
+                            }
                             _ => {
                                 // Blocked. Try sideways.
                                 let dxs = if rng.gen_bool(0.5) { [-1, 1] } else { [1, -1] };
@@ -144,7 +153,9 @@ impl Grid {
                                     if nx >= 0 && nx < self.width as isize {
                                         let nx = nx as usize;
                                         let n_idx = y * self.width + nx;
-                                        if !self.updated[n_idx] && matches!(self.cells[n_idx], Particle::Empty) {
+                                        if !self.updated[n_idx]
+                                            && matches!(self.cells[n_idx], Particle::Empty)
+                                        {
                                             self.cells[n_idx] = Particle::Ask;
                                             self.cells[idx] = Particle::Empty;
                                             self.updated[n_idx] = true;
@@ -170,17 +181,17 @@ impl Grid {
                         } else {
                             self.cells[idx] = Particle::Empty;
                         }
-                    },
+                    }
                     Particle::Bid => {
                         bids += 1;
                         weighted_y_sum += y as f32;
                         mass_sum += 1.0;
-                    },
+                    }
                     Particle::Ask => {
                         asks += 1;
                         weighted_y_sum += y as f32;
                         mass_sum += 1.0;
-                    },
+                    }
                     _ => {}
                 }
             }
@@ -230,7 +241,7 @@ mod tests {
 
         grid.update();
         match grid.get(1, 1) {
-            Particle::Trade { .. } => {},
+            Particle::Trade { .. } => {}
             _ => panic!("Expected Trade at (1,1), found {:?}", grid.get(1, 1)),
         }
         assert_eq!(grid.trade_count, 1);

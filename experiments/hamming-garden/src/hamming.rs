@@ -91,8 +91,8 @@ pub fn decode(mut byte: u8) -> (u8, HammingStatus) {
             // Since syndrome is 0, the error is at position 0.
             // Correct p0.
             // Data is fine.
-             let data = (d4 << 3) | (d3 << 2) | (d2 << 1) | d1;
-             return (data, HammingStatus::Corrected(0));
+            let data = (d4 << 3) | (d3 << 2) | (d2 << 1) | d1;
+            return (data, HammingStatus::Corrected(0));
         }
     } else {
         // Syndrome != 0
@@ -150,7 +150,9 @@ mod tests {
 
             assert_eq!(decoded, original, "Failed to correct error at pos {}", pos);
             match status {
-                HammingStatus::Corrected(p) => assert_eq!(p, pos, "Incorrect error position identified"),
+                HammingStatus::Corrected(p) => {
+                    assert_eq!(p, pos, "Incorrect error position identified")
+                }
                 _ => panic!("Expected Corrected status for pos {}", pos),
             }
         }

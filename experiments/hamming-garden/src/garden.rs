@@ -5,7 +5,7 @@ use rand::prelude::*;
 pub struct Cell {
     #[allow(dead_code)]
     pub original_nibble: u8, // The original 4 bits (0-15)
-    pub encoded_byte: u8,    // The current 8 bits (potentially corrupted)
+    pub encoded_byte: u8, // The current 8 bits (potentially corrupted)
     pub status: HammingStatus,
 }
 
@@ -24,7 +24,7 @@ pub struct Garden {
     pub cells: Vec<Cell>,
     pub width: usize,
     pub height: usize,
-    pub entropy_rate: f64, // Probability of a bit flip per tick per cell
+    pub entropy_rate: f64,  // Probability of a bit flip per tick per cell
     pub repair_rate: usize, // Number of cells visited by gardener per tick
     pub total_flips: u64,
     pub total_repairs: u64,

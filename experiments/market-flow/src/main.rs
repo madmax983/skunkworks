@@ -1,22 +1,21 @@
 mod simulation;
 mod synth;
 
-use simulation::{Grid, Particle};
-use synth::SynthState;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{
-        Block, Borders, Paragraph,
-        canvas::{Canvas, Points},
-        Sparkline,
-    },
     symbols::Marker,
+    widgets::{
+        Block, Borders, Paragraph, Sparkline,
+        canvas::{Canvas, Points},
+    },
 };
+use simulation::{Grid, Particle};
 use std::time::Duration;
+use synth::SynthState;
 use tui_shared::Tui;
-use rand::Rng;
 
 struct App {
     grid: Grid,
@@ -72,7 +71,7 @@ impl App {
             let ask_y = (self.market_price - offset) as isize;
             let x = rng.gen_range(0..self.grid.width);
             if ask_y >= 0 {
-                 self.grid.set(x, ask_y as usize, Particle::Ask);
+                self.grid.set(x, ask_y as usize, Particle::Ask);
             }
         }
 
@@ -80,7 +79,7 @@ impl App {
         if rng.gen_bool(0.02) {
             // Drop a block
             let is_bid = rng.gen_bool(0.5);
-            let cx = rng.gen_range(10..self.grid.width-10);
+            let cx = rng.gen_range(10..self.grid.width - 10);
             // Bid whale at bottom, Ask whale at top
             let cy = if is_bid { self.grid.height - 8 } else { 5 };
             let p = if is_bid { Particle::Bid } else { Particle::Ask };
@@ -92,7 +91,8 @@ impl App {
         }
 
         self.grid.update();
-        self.synth.update(self.grid.center_of_mass, self.grid.trade_count);
+        self.synth
+            .update(self.grid.center_of_mass, self.grid.trade_count);
     }
 }
 
@@ -105,7 +105,7 @@ fn main() -> anyhow::Result<()> {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([
-                    Constraint::Min(0), // Market Grid
+                    Constraint::Min(0),    // Market Grid
                     Constraint::Length(8), // Waveform
                     Constraint::Length(1), // Status
                 ])
@@ -121,14 +121,17 @@ fn main() -> anyhow::Result<()> {
                 for x in 0..app.grid.width {
                     match app.grid.get(x, y) {
                         Particle::Bid => {
-                            app.bids_buf.push((x as f64, (app.grid.height - y - 1) as f64));
-                        },
+                            app.bids_buf
+                                .push((x as f64, (app.grid.height - y - 1) as f64));
+                        }
                         Particle::Ask => {
-                            app.asks_buf.push((x as f64, (app.grid.height - y - 1) as f64));
-                        },
+                            app.asks_buf
+                                .push((x as f64, (app.grid.height - y - 1) as f64));
+                        }
                         Particle::Trade { .. } => {
-                             app.trades_buf.push((x as f64, (app.grid.height - y - 1) as f64));
-                        },
+                            app.trades_buf
+                                .push((x as f64, (app.grid.height - y - 1) as f64));
+                        }
                         Particle::Empty => {}
                     }
                 }
@@ -144,15 +147,31 @@ fn main() -> anyhow::Result<()> {
 
             // Render Grid
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Market Liquidity Flow (Green=Bid, Red=Ask) "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Market Liquidity Flow (Green=Bid, Red=Ask) "),
+                )
                 .x_bounds([0.0, app.grid.width as f64])
                 .y_bounds([0.0, app.grid.height as f64])
                 .marker(Marker::Block)
                 .paint(|ctx| {
-                    ctx.draw(&Points { coords: &app.bids_buf, color: Color::Green });
-                    ctx.draw(&Points { coords: &app.asks_buf, color: Color::Red });
-                    ctx.draw(&Points { coords: &app.trades_buf, color: Color::White });
-                    ctx.draw(&Points { coords: &app.price_line_buf, color: Color::Blue });
+                    ctx.draw(&Points {
+                        coords: &app.bids_buf,
+                        color: Color::Green,
+                    });
+                    ctx.draw(&Points {
+                        coords: &app.asks_buf,
+                        color: Color::Red,
+                    });
+                    ctx.draw(&Points {
+                        coords: &app.trades_buf,
+                        color: Color::White,
+                    });
+                    ctx.draw(&Points {
+                        coords: &app.price_line_buf,
+                        color: Color::Blue,
+                    });
                 });
             f.render_widget(canvas, chunks[0]);
 
@@ -163,7 +182,11 @@ fn main() -> anyhow::Result<()> {
                 let spark_data: Vec<u64> = data.iter().map(|v| ((v + 1.0) * 10.0) as u64).collect();
 
                 let sparkline = Sparkline::default()
-                    .block(Block::default().borders(Borders::ALL).title(" Market Synth Output "))
+                    .block(
+                        Block::default()
+                            .borders(Borders::ALL)
+                            .title(" Market Synth Output "),
+                    )
                     .data(&spark_data)
                     .style(Style::default().fg(Color::Cyan));
                 f.render_widget(sparkline, chunks[1]);
@@ -172,11 +195,13 @@ fn main() -> anyhow::Result<()> {
             // Status
             let status = Paragraph::new(format!(
                 "Freq: {:.1}Hz | Noise: {:.2} | Trades: {} | Orders: {}",
-                app.synth.price_frequency, app.synth.trade_intensity,
-                app.grid.trade_count, app.grid.total_bids + app.grid.total_asks
-            )).style(Style::default().bg(Color::DarkGray));
+                app.synth.price_frequency,
+                app.synth.trade_intensity,
+                app.grid.trade_count,
+                app.grid.total_bids + app.grid.total_asks
+            ))
+            .style(Style::default().bg(Color::DarkGray));
             f.render_widget(status, chunks[2]);
-
         })?;
 
         // Handle Events
@@ -189,7 +214,7 @@ fn main() -> anyhow::Result<()> {
                             // Reset grid but keep buffers
                             app.grid = Grid::new(60, 40);
                             app.synth = SynthState::new();
-                        },
+                        }
                         _ => {}
                     }
                 }

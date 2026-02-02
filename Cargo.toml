@@ -40,6 +40,7 @@ members = [
     "experiments/sonic-scribbler",
     "experiments/stego-spectral",
     "experiments/stigmergy-hub",
+    "experiments/strange-loops",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",

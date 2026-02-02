@@ -106,3 +106,8 @@
 **Concept:** A fully functional simulation of the WWII Enigma Machine with Rotor (I-III), Reflector, and Plugboard logic, visualized in a TUI with interactive rotors and lampboard.
 **Fate:** Merged
 **Lesson:** Complex mechanical logic (double stepping) requires careful state management. TUI visualization of internal state (rotors) helps demystify encryption processes.
+
+## [Strange Loops]
+**Concept:** A TUI visualization of Strange Attractors (Lorenz, Rossler, Aizawa) in 3D phase space using `ratatui` Canvas. Features real-time rotation and chaotic system switching.
+**Fate:** Merged
+**Lesson:** Rust's `let chains` (Edition 2024) significantly clean up nested event handling logic in TUI loops. 3D projection on a 2D terminal canvas is surprisingly effective for visualizing chaos.

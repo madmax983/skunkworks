@@ -1,9 +1,9 @@
-pub mod hyperbolic;
 pub mod fs;
+pub mod hyperbolic;
 pub mod layout;
 
-use std::time::{Duration, Instant};
 use crossterm::event::{self, Event, KeyCode};
+use num_complex::Complex;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -14,10 +14,10 @@ use ratatui::{
     },
     Frame,
 };
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use num_complex::Complex;
 
-use hyperbolic::{Point, mobius_transform};
+use hyperbolic::{mobius_transform, Point};
 use layout::LayoutNode;
 
 struct App {
@@ -137,7 +137,9 @@ fn main() -> anyhow::Result<()> {
                     KeyCode::Left | KeyCode::Char('a') => app.move_selection(-1),
                     KeyCode::Right | KeyCode::Char('d') => app.move_selection(1),
                     KeyCode::Enter | KeyCode::Down | KeyCode::Char('s') => app.enter_child(),
-                    KeyCode::Backspace | KeyCode::Up | KeyCode::Char('w') | KeyCode::Esc => app.go_up(),
+                    KeyCode::Backspace | KeyCode::Up | KeyCode::Char('w') | KeyCode::Esc => {
+                        app.go_up()
+                    }
                     _ => {}
                 }
             }
@@ -156,10 +158,7 @@ fn main() -> anyhow::Result<()> {
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(f.area());
 
     let canvas_area = chunks[0];
@@ -185,7 +184,11 @@ fn ui(f: &mut Frame, app: &App) {
     // Draw Canvas
     // We map the unit disk (-1..1) to the canvas.
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Poincaré Disk"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Poincaré Disk"),
+        )
         .x_bounds([-1.1, 1.1])
         .y_bounds([-1.1, 1.1])
         .paint(|ctx| {
@@ -198,7 +201,14 @@ fn ui(f: &mut Frame, app: &App) {
             });
 
             // Recursive draw
-            draw_node(ctx, &app.layout_root, app.view_center, &app.path_stack, &[], app.selected_child_idx);
+            draw_node(
+                ctx,
+                &app.layout_root,
+                app.view_center,
+                &app.path_stack,
+                &[],
+                app.selected_child_idx,
+            );
         });
 
     f.render_widget(canvas, canvas_area);
@@ -208,7 +218,7 @@ fn draw_node(
     ctx: &mut ratatui::widgets::canvas::Context,
     node: &LayoutNode,
     view_center: Point,
-    target_path: &[usize], // The path to the currently focused node
+    target_path: &[usize],  // The path to the currently focused node
     current_path: &[usize], // The path to *this* node
     selected_child_idx: usize,
 ) {
@@ -222,7 +232,8 @@ fn draw_node(
 
     // Determine if this node is the focused one, or a child of focused, etc.
     let is_focused = target_path == current_path;
-    let is_ancestor = target_path.starts_with(current_path) && target_path.len() > current_path.len();
+    let is_ancestor =
+        target_path.starts_with(current_path) && target_path.len() > current_path.len();
 
     // Color logic
     let color = if is_focused {
@@ -230,7 +241,11 @@ fn draw_node(
     } else if is_ancestor {
         Color::Blue
     } else {
-        if node.fs.is_dir { Color::Green } else { Color::Gray }
+        if node.fs.is_dir {
+            Color::Green
+        } else {
+            Color::Gray
+        }
     };
 
     // Highlight selected child
@@ -255,7 +270,11 @@ fn draw_node(
     // Draw Label if close to center
     if screen_pos.norm() < 0.8 {
         let label = node.fs.name();
-        ctx.print(screen_pos.re, screen_pos.im + radius + 0.02, Span::styled(label, Style::default().fg(draw_color)));
+        ctx.print(
+            screen_pos.re,
+            screen_pos.im + radius + 0.02,
+            Span::styled(label, Style::default().fg(draw_color)),
+        );
     }
 
     // Draw Lines to children
@@ -274,6 +293,13 @@ fn draw_node(
         // Construct new path
         let mut new_path = Vec::from(current_path);
         new_path.push(i);
-        draw_node(ctx, child, view_center, target_path, &new_path, selected_child_idx);
+        draw_node(
+            ctx,
+            child,
+            view_center,
+            target_path,
+            &new_path,
+            selected_child_idx,
+        );
     }
 }

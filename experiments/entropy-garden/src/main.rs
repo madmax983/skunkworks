@@ -111,7 +111,11 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Entropy Garden"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Entropy Garden"),
+        )
         .marker(Marker::Braille)
         .x_bounds([0.0, SIM_WIDTH as f64])
         .y_bounds([0.0, SIM_HEIGHT as f64])
@@ -121,7 +125,9 @@ fn ui(f: &mut Frame, app: &App) {
     f.render_widget(canvas, chunks[0]);
 
     // Info Panel
-    let info_block = Block::default().borders(Borders::ALL).title("System Status");
+    let info_block = Block::default()
+        .borders(Borders::ALL)
+        .title("System Status");
     let info_text = vec![
         Line::from(Span::styled(
             "Reaction-Diffusion Monitor",
@@ -131,7 +137,10 @@ fn ui(f: &mut Frame, app: &App) {
         Line::from(format!("CPU Load: {:.1}%", app.cpu)),
         Line::from(format!("Memory:   {:.1}%", app.mem)),
         Line::from(""),
-        Line::from(Span::styled("Parameters:", Style::default().fg(Color::Cyan))),
+        Line::from(Span::styled(
+            "Parameters:",
+            Style::default().fg(Color::Cyan),
+        )),
         Line::from(format!("Feed (F): {:.5}", app.f)),
         Line::from(format!("Kill (k): {:.5}", app.k)),
         Line::from(""),

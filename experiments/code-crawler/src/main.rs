@@ -1,25 +1,25 @@
+mod creature;
 mod ik;
 mod world;
-mod creature;
 
-use std::io;
-use std::time::{Duration, Instant};
 use crossterm::event::{self, Event, KeyCode};
+use glam::Vec2;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    text::{Span, Line as TextLine},
+    text::{Line as TextLine, Span},
     widgets::{
-        canvas::{Canvas, Line, Circle},
+        canvas::{Canvas, Circle, Line},
         Block, Borders, Paragraph,
     },
     Frame,
 };
+use std::io;
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use glam::Vec2;
 
-use world::World;
 use creature::Creature;
+use world::World;
 
 struct App {
     world: World,
@@ -38,12 +38,12 @@ impl App {
 
     fn on_tick(&mut self, dt: f32) {
         if !self.world.nodes.is_empty() {
-             if self.world.selected_index >= self.world.nodes.len() {
-                 self.world.selected_index = 0;
-             }
-             // Target is slightly offset so we don't sit *on* the text
-             let target_node = &self.world.nodes[self.world.selected_index];
-             self.creature.target_pos = target_node.position;
+            if self.world.selected_index >= self.world.nodes.len() {
+                self.world.selected_index = 0;
+            }
+            // Target is slightly offset so we don't sit *on* the text
+            let target_node = &self.world.nodes[self.world.selected_index];
+            self.creature.target_pos = target_node.position;
         }
 
         self.creature.update(&self.world, dt);
@@ -79,27 +79,27 @@ fn main() -> io::Result<()> {
                     }
                     KeyCode::Enter => {
                         if !app.world.nodes.is_empty() {
-                             let node = &app.world.nodes[app.world.selected_index];
-                             if node.is_dir {
-                                 let path = node.path.clone();
-                                 app.world.scan(&path);
-                                 // Teleport creature for now, or let it walk?
-                                 // Teleporting is less confusing for a complete context switch
-                                 app.creature.body_pos = Vec2::ZERO;
-                                 app.creature.target_pos = Vec2::ZERO;
-                                 // Reset legs
-                                 app.creature = Creature::new(Vec2::ZERO);
-                             }
+                            let node = &app.world.nodes[app.world.selected_index];
+                            if node.is_dir {
+                                let path = node.path.clone();
+                                app.world.scan(&path);
+                                // Teleport creature for now, or let it walk?
+                                // Teleporting is less confusing for a complete context switch
+                                app.creature.body_pos = Vec2::ZERO;
+                                app.creature.target_pos = Vec2::ZERO;
+                                // Reset legs
+                                app.creature = Creature::new(Vec2::ZERO);
+                            }
                         }
                     }
                     KeyCode::Backspace => {
-                         if let Some(parent) = app.world.current_path.parent() {
-                             let p = parent.to_path_buf();
-                             if p.exists() {
-                                 app.world.scan(&p);
-                                 app.creature = Creature::new(Vec2::ZERO);
-                             }
-                         }
+                        if let Some(parent) = app.world.current_path.parent() {
+                            let p = parent.to_path_buf();
+                            if p.exists() {
+                                app.world.scan(&p);
+                                app.creature = Creature::new(Vec2::ZERO);
+                            }
+                        }
                     }
                     _ => {}
                 }
@@ -119,10 +119,7 @@ fn main() -> io::Result<()> {
 fn ui(f: &mut Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(1),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(1)])
         .split(f.area());
 
     // Camera window
@@ -132,9 +129,13 @@ fn ui(f: &mut Frame, app: &mut App) {
     let view_height = 80.0;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Code Crawler 🕷️"))
-        .x_bounds([cam_x - view_width/2.0, cam_x + view_width/2.0])
-        .y_bounds([cam_y - view_height/2.0, cam_y + view_height/2.0])
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Code Crawler 🕷️"),
+        )
+        .x_bounds([cam_x - view_width / 2.0, cam_x + view_width / 2.0])
+        .y_bounds([cam_y - view_height / 2.0, cam_y + view_height / 2.0])
         .paint(|ctx| {
             // Draw Nodes
             for (i, node) in app.world.nodes.iter().enumerate() {
@@ -156,17 +157,17 @@ fn ui(f: &mut Frame, app: &mut App) {
 
                 // Label (simplified, only selected or nearby)
                 if i == app.world.selected_index {
-                     ctx.print(
+                    ctx.print(
                         node.position.x as f64,
                         node.position.y as f64 + node.size as f64 + 2.0,
-                        Span::styled(node.name.clone(), Style::default().fg(Color::Yellow))
+                        Span::styled(node.name.clone(), Style::default().fg(Color::Yellow)),
                     );
                 } else if node.position.distance(app.creature.body_pos) < 30.0 {
                     // Only show nearby labels to reduce clutter
                     ctx.print(
                         node.position.x as f64,
                         node.position.y as f64 + node.size as f64 + 2.0,
-                        Span::styled(node.name.clone(), Style::default().fg(Color::DarkGray))
+                        Span::styled(node.name.clone(), Style::default().fg(Color::DarkGray)),
                     );
                 }
             }
@@ -210,7 +211,10 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     let info = TextLine::from(vec![
         Span::raw(" Path: "),
-        Span::styled(app.world.current_path.to_string_lossy(), Style::default().fg(Color::Cyan)),
+        Span::styled(
+            app.world.current_path.to_string_lossy(),
+            Style::default().fg(Color::Cyan),
+        ),
         Span::raw(" | Selected: "),
         Span::styled(current_node_name, Style::default().fg(Color::Yellow)),
         Span::raw(" | Controls: Arrows/Vim to move, Enter to open, Backspace to go up, Q to quit"),

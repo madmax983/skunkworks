@@ -154,7 +154,11 @@ impl Simulation {
                 let iy = next_pos.y.floor() as isize;
 
                 // Bounds check
-                if ix < 0 || iy < 0 || ix >= self.grid.width as isize || iy >= self.grid.height as isize {
+                if ix < 0
+                    || iy < 0
+                    || ix >= self.grid.width as isize
+                    || iy >= self.grid.height as isize
+                {
                     ray.active = false;
                     ray.pos = next_pos;
                     ray.path.push(next_pos);
@@ -191,7 +195,7 @@ impl Simulation {
                         }
                         'x' => {
                             // Splitter? For now just absorb/stop to show hit
-                             ray.active = false;
+                            ray.active = false;
                         }
                         _ => {}
                     }

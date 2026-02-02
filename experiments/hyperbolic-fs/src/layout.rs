@@ -17,7 +17,13 @@ pub fn build_layout(fs_node: FsNode) -> LayoutNode {
     place_node(fs_node, Complex::new(0.0, 0.0), 0.0, 2.0 * PI, 0)
 }
 
-fn place_node(fs: FsNode, pos: Point, angle_start: f64, angle_end: f64, depth: usize) -> LayoutNode {
+fn place_node(
+    fs: FsNode,
+    pos: Point,
+    angle_start: f64,
+    angle_end: f64,
+    depth: usize,
+) -> LayoutNode {
     let mut children_layout = Vec::new();
     let count = fs.children.len();
 
@@ -26,8 +32,16 @@ fn place_node(fs: FsNode, pos: Point, angle_start: f64, angle_end: f64, depth: u
     // FsNode owns its children.
     // So we reconstruct the LayoutNode.
 
-    let FsNode { path, is_dir, children } = fs;
-    let fs_info = FsNode { path, is_dir, children: vec![] }; // Stripped version for storage
+    let FsNode {
+        path,
+        is_dir,
+        children,
+    } = fs;
+    let fs_info = FsNode {
+        path,
+        is_dir,
+        children: vec![],
+    }; // Stripped version for storage
 
     if count > 0 {
         let total_angle = angle_end - angle_start;
@@ -55,7 +69,7 @@ fn place_node(fs: FsNode, pos: Point, angle_start: f64, angle_end: f64, depth: u
                 child_pos,
                 child_angle_start,
                 child_angle_end,
-                next_depth
+                next_depth,
             ));
         }
     }
@@ -74,7 +88,11 @@ mod tests {
 
     fn mock_fs(depth: usize) -> FsNode {
         if depth == 0 {
-            return FsNode { path: PathBuf::from("leaf"), is_dir: false, children: vec![] };
+            return FsNode {
+                path: PathBuf::from("leaf"),
+                is_dir: false,
+                children: vec![],
+            };
         }
         FsNode {
             path: PathBuf::from("node"),

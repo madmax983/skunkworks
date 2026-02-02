@@ -35,7 +35,7 @@ impl World {
         if let Some(parent) = path.parent() {
             // Check if we can actually go up
             if parent.exists() {
-                 self.nodes.push(Node {
+                self.nodes.push(Node {
                     path: parent.to_path_buf(),
                     name: "..".to_string(),
                     is_dir: true,
@@ -47,9 +47,7 @@ impl World {
 
         // Read dir
         if let Ok(entries) = std::fs::read_dir(path) {
-            let mut entries: Vec<_> = entries
-                .flatten()
-                .collect();
+            let mut entries: Vec<_> = entries.flatten().collect();
 
             // Sort: directories first, then alphabetical
             entries.sort_by(|a, b| {
