@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/crate-universe
+- **Scent Origin:** Genesis (The Astronomer)
+- **Status:** Gravitational constant calibrated. Dependencies coalescing into star systems. The workspace is heavy with potential energy.
+
 ### [Concentration Level: HIGH] - Location: experiments/neuro-beat
 - **Scent Origin:** Genesis (The Neurologist)
 - **Status:** Neurons are spiking. Rhythmic patterns emerging from the Izhikevich dynamics. Audio synthesis feature-gated.
