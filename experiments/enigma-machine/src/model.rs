@@ -264,4 +264,73 @@ mod tests {
         let out = enigma.encrypt_string("AAAAA");
         assert_eq!(out, "BDZGO");
     }
+
+    #[test]
+    fn test_plugboard_swap() {
+        let mut enigma = EnigmaMachine::new();
+        enigma.plugboard.add_cable('A', 'C'); // Swap A and C (A->B is tricky if A maps to B naturally)
+
+        // Verify the mapping directly
+        assert_eq!(enigma.plugboard.process(0), 2); // A -> C
+        assert_eq!(enigma.plugboard.process(2), 0); // C -> A
+        assert_eq!(enigma.plugboard.process(1), 1); // B -> B
+
+        // Verify encryption effect
+        let clean_machine = EnigmaMachine::new();
+        let mut swapped_machine = EnigmaMachine::new();
+        swapped_machine.plugboard.add_cable('A', 'C');
+
+        let out_clean = clean_machine.clone().encrypt_char('A');
+        let out_swapped = swapped_machine.encrypt_char('A');
+
+        assert_ne!(out_clean, out_swapped);
+    }
+
+    #[test]
+    fn test_double_stepping() {
+        let mut enigma = EnigmaMachine::new();
+        // Setup:
+        // Right (III): Notch V (21). Set to U (20).
+        // Middle (II): Notch E (4). Set to D (3).
+        // Left (I): Notch Q (16). Set to A (0).
+
+        enigma.right.position = 20; // 'U'
+        enigma.middle.position = 3; // 'D'
+        enigma.left.position = 0;   // 'A'
+
+        // Step 1: Right U->V. Middle stays D.
+        enigma.step_rotors();
+        assert_eq!(enigma.right.position, 21); // V
+        assert_eq!(enigma.middle.position, 3); // D
+        assert_eq!(enigma.left.position, 0);   // A
+
+        // Step 2: Right V->W. Middle pushed D->E.
+        enigma.step_rotors();
+        assert_eq!(enigma.right.position, 22); // W
+        assert_eq!(enigma.middle.position, 4); // E
+        assert_eq!(enigma.left.position, 0);   // A
+
+        // Step 3: Right W->X. Middle (at Notch E) steps E->F. Left steps A->B.
+        // This is the "Double Step" - Middle stepped in Step 2 AND Step 3.
+        enigma.step_rotors();
+        assert_eq!(enigma.right.position, 23); // X
+        assert_eq!(enigma.middle.position, 5); // F
+        assert_eq!(enigma.left.position, 1);   // B
+    }
+
+    #[test]
+    fn test_ring_settings() {
+        let mut enigma1 = EnigmaMachine::new();
+        let mut enigma2 = EnigmaMachine::new();
+
+        // Change ring settings on enigma2
+        enigma2.right.ring_setting = 1;
+        enigma2.middle.ring_setting = 5;
+        enigma2.left.ring_setting = 10;
+
+        let out1 = enigma1.encrypt_string("AAAAA");
+        let out2 = enigma2.encrypt_string("AAAAA");
+
+        assert_ne!(out1, out2);
+    }
 }
