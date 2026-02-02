@@ -49,7 +49,7 @@ members = [
     "experiments/text-sand",
     "experiments/voronoi-relaxation", "experiments/myco-transit", "experiments/clockwork-cpu", "experiments/git-harmony",
     "experiments/cargo-jenga",
-    "experiments/quantum-tarot",
+    "experiments/quantum-tarot", "experiments/thermo-tarmites",
 ]
 resolver = "2"
 
