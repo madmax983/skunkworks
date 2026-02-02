@@ -32,6 +32,7 @@ members = [
     "experiments/origami-singularity",
     "experiments/particle-life",
     "experiments/phonetic-decay",
+    "experiments/quipu-renderer",
     "experiments/ram-bazaar",
     "experiments/resonance-chamber",
     "experiments/rhizome-seeker",
