@@ -16,6 +16,7 @@ struct App {
     state: MarketState,
     agents: Vec<Agent>,
     running: bool,
+    tick_count: u64,
 }
 
 impl App {
@@ -42,10 +43,12 @@ impl App {
             state: MarketState::new(width, height),
             agents,
             running: true,
+            tick_count: 0,
         }
     }
 
     fn update(&mut self) {
+        self.tick_count += 1;
         // 1. Agents decide bids
         let mut all_bids = Vec::new();
         let current_price = self.state.current_price;
@@ -70,7 +73,7 @@ fn main() -> Result<()> {
     let mut last_tick = Instant::now();
 
     while app.running {
-        tui.terminal.draw(|f| draw_ui(f, &app.state, &app.agents))?;
+        tui.terminal.draw(|f| draw_ui(f, &app.state, &app.agents, app.tick_count))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
