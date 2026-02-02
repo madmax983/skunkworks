@@ -236,4 +236,43 @@ mod tests {
         // Nodes should have moved
         assert!(graph.nodes[0].x != initial_x || graph.nodes[0].vx != 0.0);
     }
+
+    #[test]
+    fn test_singularity_explosion() {
+        let c1 = CommitData {
+            hash: "1".to_string(),
+            parents: vec![],
+            author: "A".to_string(),
+            time: 0,
+            churn: 10,
+        };
+        let c2 = CommitData {
+            hash: "2".to_string(),
+            parents: vec![],
+            author: "B".to_string(),
+            time: 0,
+            churn: 10,
+        };
+        let mut graph = Graph::new(vec![c1, c2]);
+
+        // 🧨 CHAOS: Manually trigger the singularity by placing nodes on top of each other.
+        // This simulates a hash collision or bad initialization.
+        graph.nodes[0].x = 0.0;
+        graph.nodes[0].y = 0.0;
+        graph.nodes[1].x = 0.0;
+        graph.nodes[1].y = 0.0;
+
+        graph.update(0.1);
+
+        // 💥 DETONATE: Verify that the universe has collapsed into NaN.
+        // If dist_sq == 0, force is Infinity. fx becomes 0 * Inf = NaN.
+        assert!(
+            graph.nodes[0].x.is_nan(),
+            "Expected NaN explosion at singularity! The system is fragile."
+        );
+        assert!(
+            graph.nodes[0].y.is_nan(),
+            "Expected NaN explosion at singularity! The system is fragile."
+        );
+    }
 }
