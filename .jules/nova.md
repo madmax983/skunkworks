@@ -96,3 +96,8 @@
 **Concept:** Identify and visualize "constellations" (patterns) in the Git Galaxy force-directed graph, such as chains, supernovas (massive commits), and clusters (author nebulas).
 **Fate:** Merged
 **Lesson:** Graph algorithms (chain detection) can add a narrative layer to raw data visualizations. Gating experimental features with `#[cfg(feature = "nova")]` allows for safe additive innovation.
+
+## [Gossamer]
+**Concept:** A "silk trail" for the Code Crawler that visualizes the path taken through the file system. It uses `ratatui` Canvas lines to connect visited points, creating a persistent map of exploration.
+**Fate:** Merged
+**Lesson:** Simple vector paths (lines between points) can effectively visualize traversal history without complex physics.

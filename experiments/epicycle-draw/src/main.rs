@@ -12,11 +12,14 @@ use ratatui::{
     },
     Frame, Terminal,
 };
-use std::{f64::consts::PI, time::{Duration, Instant}};
+use std::{
+    f64::consts::PI,
+    time::{Duration, Instant},
+};
 use tui_shared::Tui;
 
 mod math;
-use math::{Complex, Epicycle, dft};
+use math::{dft, Complex, Epicycle};
 
 #[derive(Debug, PartialEq)]
 enum AppState {
@@ -143,7 +146,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> Result<()> {
                     KeyCode::Char('q') => app.running = false,
                     KeyCode::Char('r') => app.reset(),
                     KeyCode::Up => {
-                        if app.state == AppState::Playing && app.num_epicycles < app.epicycles.len() {
+                        if app.state == AppState::Playing && app.num_epicycles < app.epicycles.len()
+                        {
                             app.num_epicycles += 1;
                         }
                     }
@@ -156,12 +160,14 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> Result<()> {
                 },
                 Event::Mouse(mouse) => {
                     match mouse.kind {
-                        MouseEventKind::Down(MouseButton::Left) | MouseEventKind::Drag(MouseButton::Left) => {
+                        MouseEventKind::Down(MouseButton::Left)
+                        | MouseEventKind::Drag(MouseButton::Left) => {
                             if app.state == AppState::Drawing {
                                 // Invert Y because terminal 0,0 is top-left but canvas usually 0,0 is bottom-left
                                 // However, we will set canvas y_bounds to [height, 0] to match screen coords?
                                 // Let's just store raw screen coords and configure canvas to match.
-                                app.points.push(Complex::new(mouse.column as f64, mouse.row as f64));
+                                app.points
+                                    .push(Complex::new(mouse.column as f64, mouse.row as f64));
                             }
                         }
                         MouseEventKind::Up(MouseButton::Left) => {
@@ -199,17 +205,25 @@ fn ui(f: &mut Frame, app: &mut App) {
     // So we set y_bounds to [height, 0] to flip Y axis.
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Epicycle Draw"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Epicycle Draw"),
+        )
         .x_bounds([0.0, width])
         .y_bounds([height, 0.0])
         .paint(|ctx| {
             match app.state {
                 AppState::Drawing => {
-                    ctx.print(width / 2.0 - 10.0, height / 2.0, "Draw something with Mouse!");
+                    ctx.print(
+                        width / 2.0 - 10.0,
+                        height / 2.0,
+                        "Draw something with Mouse!",
+                    );
 
                     for i in 0..app.points.len().saturating_sub(1) {
                         let p1 = app.points[i];
-                        let p2 = app.points[i+1];
+                        let p2 = app.points[i + 1];
                         ctx.draw(&Line {
                             x1: p1.re,
                             y1: p1.im,
@@ -223,7 +237,7 @@ fn ui(f: &mut Frame, app: &mut App) {
                     // Draw trace
                     for i in 0..app.trace.len().saturating_sub(1) {
                         let p1 = app.trace[i];
-                        let p2 = app.trace[i+1];
+                        let p2 = app.trace[i + 1];
                         ctx.draw(&Line {
                             x1: p1.re,
                             y1: p1.im,
@@ -243,10 +257,7 @@ fn ui(f: &mut Frame, app: &mut App) {
 
                         let prev_center = center;
 
-                        let offset = Complex::new(
-                             epi.amp * angle.cos(),
-                             epi.amp * angle.sin()
-                        );
+                        let offset = Complex::new(epi.amp * angle.cos(), epi.amp * angle.sin());
                         center = center.add(offset);
 
                         // Draw Circle (Radius)
@@ -265,8 +276,8 @@ fn ui(f: &mut Frame, app: &mut App) {
 
                     // Highlight the tip
                     if !app.trace.is_empty() {
-                         let tip = app.trace.last().unwrap();
-                         ctx.print(tip.re, tip.im, "o");
+                        let tip = app.trace.last().unwrap();
+                        ctx.print(tip.re, tip.im, "o");
                     }
                 }
             }
@@ -275,10 +286,13 @@ fn ui(f: &mut Frame, app: &mut App) {
     f.render_widget(canvas, chunks[0]);
 
     let status_text = match app.state {
-        AppState::Drawing => "DRAWING MODE | Hold Left Click to Draw | Release to Calculate".to_string(),
+        AppState::Drawing => {
+            "DRAWING MODE | Hold Left Click to Draw | Release to Calculate".to_string()
+        }
         AppState::Playing => format!(
             "PLAYING | Epicycles: {}/{} | UP/DOWN: Adjust Precision | R: Reset | Q: Quit",
-            app.num_epicycles, app.epicycles.len()
+            app.num_epicycles,
+            app.epicycles.len()
         ),
     };
 

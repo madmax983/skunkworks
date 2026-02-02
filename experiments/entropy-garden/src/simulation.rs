@@ -1,4 +1,3 @@
-
 #[allow(dead_code)]
 pub struct GrayScott {
     width: usize,
@@ -114,6 +113,9 @@ mod tests {
 
         // u should decrease because it is consumed by the reaction (uv^2 term)
         // v might stay at 1.0 if it clamps
-        assert!(new_u < initial_u, "Concentration u should decrease (consumed)");
+        assert!(
+            new_u < initial_u,
+            "Concentration u should decrease (consumed)"
+        );
     }
 }

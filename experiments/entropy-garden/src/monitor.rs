@@ -1,4 +1,4 @@
-use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 pub struct SystemMonitor {
     sys: System,
@@ -10,7 +10,7 @@ impl SystemMonitor {
             sys: System::new_with_specifics(
                 RefreshKind::nothing()
                     .with_cpu(CpuRefreshKind::everything())
-                    .with_memory(MemoryRefreshKind::everything())
+                    .with_memory(MemoryRefreshKind::everything()),
             ),
         }
     }
