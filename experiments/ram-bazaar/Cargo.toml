@@ -9,3 +9,6 @@ crossterm = "0.28.1"
 rand = "0.9.0" # Using 0.9.0 for Rust 2024 compatibility (gen -> random)
 anyhow = "1.0"
 tui-shared = { path = "../../crates/tui-shared" }
+
+[dev-dependencies]
+proptest = "1.0"
