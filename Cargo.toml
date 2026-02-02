@@ -34,6 +34,7 @@ members = [
     "experiments/text-sand",
     "experiments/voronoi-relaxation",
     "experiments/entropy-garden", "experiments/code-crawler",
+    "experiments/epicycle-draw",
 ]
 resolver = "2"
 
