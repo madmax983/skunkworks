@@ -1,0 +1,13 @@
+[package]
+name = "crate-universe"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+cargo_metadata = "0.18"
+petgraph = "0.6"
+glam = "0.31.0"
