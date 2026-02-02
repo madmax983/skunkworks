@@ -3,6 +3,7 @@ use rand::Rng;
 use std::collections::HashMap;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+/// A simple 2D vector for physics calculations.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec2 {
     pub x: f64,
