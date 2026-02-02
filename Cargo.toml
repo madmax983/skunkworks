@@ -4,9 +4,13 @@ members = [
     "crates/tui-shared",
     "experiments/automata-warfare",
     "experiments/cellular-beats",
+    "experiments/code-crawler",
+    "experiments/code-erosion",
     "experiments/code-metropolis",
     "experiments/crystal-structure",
     "experiments/echo-chamber",
+    "experiments/entropy-garden",
+    "experiments/epicycle-draw"
     "experiments/euclidean-pulse",
     "experiments/firefly-synapse",
     "experiments/fugue-state",
@@ -33,8 +37,6 @@ members = [
     "experiments/text-hydro", 
     "experiments/text-sand",
     "experiments/voronoi-relaxation",
-    "experiments/entropy-garden", "experiments/code-crawler",
-    "experiments/epicycle-draw",
 ]
 resolver = "2"
 
