@@ -7,6 +7,10 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Specimen failed to adapt. Biomass returned to the void.
 
+### [Concentration Level: DECOMPOSING] - Location: experiments/particle-life (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Generic DNA purged.
+
 ### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
 - **Scent Origin:** Genesis
 - **Status:** Proto-languages emerging. Agents negotiating shared meaning for "Trade(Food)". Vocabulary drift detected.
@@ -57,7 +61,7 @@
 
 ### [Concentration Level: TOXIC] - Location: experiments/particle-life
 - **Scent Origin:** Reaper
-- **Status:** TERMINAL. Generic DNA detected. No documentation. Culling imminent.
+- **Status:** TERMINAL. Redundant evolution detected. Inferior to `sys-weather` and `biomorph-flow`. Culling imminent.
 
 ## 🍂 History/Decay
 
