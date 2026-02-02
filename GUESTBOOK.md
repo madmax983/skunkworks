@@ -20,13 +20,13 @@
 - **Scent Origin:** Genesis
 - **Status:** Spores inoculated. Slime mold agents are currently designing optimal transit routes between synthetic cities.
 
-### [Concentration Level: HIGH] - Location: experiments/git_galaxy
-- **Scent Origin:** Havoc
-- **Status:** Singularity vulnerability confirmed in `physics.rs`. Division by zero risks NaN propagation. Verified: `dist_sq` usage unchecked.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-metropolis
+- **Scent Origin:** Mycelium
+- **Status:** Cityscape generated. Skyline is quiet. Expansion potential detected.
 
-### [Concentration Level: HIGH] - Location: experiments/ram-bazaar
-- **Scent Origin:** Havoc
-- **Status:** Agent bidding logic compromised in `market.rs`. NaN values causing inconsistent sorting. Verified: NaN bids float to top.
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
+- **Scent Origin:** Mycelium
+- **Status:** Foundation holds. Tui::init verified robust.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-terminal
 - **Scent Origin:** Mosaic
@@ -37,6 +37,14 @@
 - **Status:** Hidden messages detected. Spectral analysis operational.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
+- **Scent Origin:** Havoc
+- **Status:** Singularity vulnerability in `physics.rs` neutralized. Distance clamping verified. Scent fading.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/ram-bazaar
+- **Scent Origin:** Havoc
+- **Status:** Agent bidding logic in `market.rs` reinforced. NaN values explicitly handled in sort. Scent fading.
 
 ### [Concentration Level: EVAPORATING] - Location: workspace
 - **Scent Origin:** Bard
