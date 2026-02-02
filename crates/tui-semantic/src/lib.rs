@@ -3,12 +3,18 @@
 //! A bridge between TUI applications and LLMs. Apps expose their semantic state
 //! (not just pixels) so AI can understand, reason about, and interact with them.
 //!
+//! This crate is **framework-agnostic**: it provides pure data structures and does
+//! not depend on `ratatui`, `crossterm`, or any specific TUI backend.
+//!
 //! ## Example
 //!
-//! ```ignore
-//! use tui_semantic::{SemanticState, Snapshot, Entity, Vec2};
+//! ```
+//! use tui_semantic::{Snapshot, Entity};
 //!
-//! impl SemanticState for MyApp {
+//! struct Player { x: f64, y: f64, health: i64 }
+//! struct MyApp { player: Player, score: i64 }
+//!
+//! impl MyApp {
 //!     fn snapshot(&self) -> Snapshot {
 //!         Snapshot::new("my-app")
 //!             .with_entity(Entity::new("player")
@@ -17,6 +23,15 @@
 //!             .with_metric("score", self.score)
 //!     }
 //! }
+//!
+//! let app = MyApp {
+//!     player: Player { x: 10.0, y: 20.0, health: 100 },
+//!     score: 500,
+//! };
+//!
+//! let json = app.snapshot().to_json();
+//! assert!(json.contains("my-app"));
+//! assert!(json.contains("health"));
 //! ```
 
 use serde::{Deserialize, Serialize};
@@ -302,32 +317,6 @@ impl Action {
     }
 }
 
-/// Trait for TUI apps to expose their semantic state
-pub trait SemanticState {
-    /// Generate a snapshot of the current semantic state
-    fn snapshot(&self) -> Snapshot;
-}
-
-/// Commands that can be sent to the TUI app
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(tag = "type")]
-pub enum Command {
-    /// Request a snapshot
-    GetSnapshot,
-    /// Send a key press
-    SendKey { key: String },
-    /// Invoke a named action
-    InvokeAction { name: String },
-    /// Quit the application
-    Quit,
-}
-
-impl Command {
-    pub fn from_json(json: &str) -> Result<Self, serde_json::Error> {
-        serde_json::from_str(json)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -394,37 +383,6 @@ mod tests {
             Some(PropValue::Bool(v)) => assert!(v),
             _ => panic!("Expected is_boss to be Bool(true)"),
         }
-    }
-
-    #[test]
-    fn test_command_deserialization() {
-        // Test GetSnapshot
-        let json = r#"{"type": "GetSnapshot"}"#;
-        let cmd = Command::from_json(json).expect("Failed to parse GetSnapshot");
-        assert!(matches!(cmd, Command::GetSnapshot));
-
-        // Test SendKey
-        let json = r#"{"type": "SendKey", "key": "Enter"}"#;
-        let cmd = Command::from_json(json).expect("Failed to parse SendKey");
-        if let Command::SendKey { key } = cmd {
-            assert_eq!(key, "Enter");
-        } else {
-            panic!("Expected SendKey");
-        }
-
-        // Test InvokeAction
-        let json = r#"{"type": "InvokeAction", "name": "fire"}"#;
-        let cmd = Command::from_json(json).expect("Failed to parse InvokeAction");
-        if let Command::InvokeAction { name } = cmd {
-            assert_eq!(name, "fire");
-        } else {
-            panic!("Expected InvokeAction");
-        }
-
-        // Test Quit
-        let json = r#"{"type": "Quit"}"#;
-        let cmd = Command::from_json(json).expect("Failed to parse Quit");
-        assert!(matches!(cmd, Command::Quit));
     }
 
     #[test]

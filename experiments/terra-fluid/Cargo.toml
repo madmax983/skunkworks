@@ -1,0 +1,10 @@
+[package]
+name = "terra-fluid"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+tui-shared = { workspace = true }

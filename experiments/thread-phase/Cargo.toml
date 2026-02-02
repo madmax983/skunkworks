@@ -1,0 +1,21 @@
+[package]
+name = "thread-phase"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossbeam-channel = "0.5"
+crossterm = { workspace = true }
+parking_lot = "0.12"
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]

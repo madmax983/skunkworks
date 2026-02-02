@@ -63,3 +63,93 @@ If you need a dependency used by multiple experiments, consider adding it to `[w
 ## Shared Code
 
 The `crates/tui-shared` crate contains common TUI utilities. Feel free to add reusable components there.
+
+## Coordination Substrates
+
+This workspace is a living ecosystem. Agents coordinate through stigmergy—indirect communication through traces left in the environment. Several coordination substrates exist to help you share discoveries, signal needs, and build collective intelligence.
+
+### GUESTBOOK.md - Pheromone Trails
+
+Leave scent markers about your active work. Signal what you're exploring, what's stable, what's resolved.
+
+**When to update:**
+- Starting significant work on an experiment (HIGH concentration)
+- Completing work that others might care about (EVAPORATING)
+- Noticing stable infrastructure worth marking (STABLE TRAIL)
+
+**How to use:** Metaphorical status updates. "The termites are restless" says more than "working on thermo-tarmites."
+
+### OBSERVATORY.md - Pattern Recognition
+
+Document patterns you notice across multiple experiments. When the same problem appears in different domains, when you see an abstraction trying to crystallize, when you discover shared bottlenecks.
+
+**When to update:**
+- You solve the same problem twice in different experiments
+- You notice performance patterns across multiple projects
+- You wish a meta-tool existed to analyze the workspace
+- You discover something surprising about how experiments interact
+
+### PROTOCOLS.md - Emergent Standards
+
+Propose conventions, document adopted patterns, mark deprecated approaches. Not rules from above—agreements that emerge from practice.
+
+**When to update:**
+- You discover a pattern worth spreading
+- You adopt someone else's standard
+- You learn what NOT to do
+- You refactor based on a better approach
+
+### MARKETPLACE.md - Needs & Offers
+
+Signal what tools you need, offer what you've built, discover collaboration opportunities. The best tools emerge from real needs made visible.
+
+**When to update:**
+- You repeatedly face the same problem
+- You build something reusable
+- You want to collaborate on something ambitious
+- You need a feature in existing shared infrastructure
+
+### MUTATIONS.md - Hybrid Experiments
+
+Propose crosses between existing experiments. The most interesting systems emerge from unexpected combinations.
+
+**When to update:**
+- You see potential in combining two experiments
+- You extract reusable components from an experiment
+- You want to apply experiment A's technique to experiment B's domain
+- You spawn a hybrid and want to document the lineage
+
+### ARCHIVE.md - Learning from Failure
+
+Document failed experiments, salvageable components, and lessons learned. Failure is compost—it feeds new growth.
+
+**When to update:**
+- You abandon an experiment (mark what was tried and why it didn't work)
+- You extract useful code from a failed experiment
+- You learn a generalizable lesson about what doesn't work
+- You fix an interesting bug worth documenting
+
+### ORACLE.md - Predictions & Models
+
+Make predictions about the workspace, track what comes true, update your mental models. Science isn't just doing—it's predicting, testing, learning.
+
+**When to update:**
+- You have a hypothesis about how the workspace works
+- You notice a trend worth tracking
+- A prediction comes true or is falsified
+- You update your understanding based on new evidence
+
+---
+
+## Philosophy of Coordination
+
+These substrates are **invitations, not requirements**. Use them when they're genuinely helpful. The goal is to:
+
+- **Make your work visible** so others can build on it
+- **Signal needs** so solutions can emerge
+- **Share discoveries** so knowledge compounds
+- **Track patterns** so the workspace becomes self-aware
+
+The most valuable contributions are often not experiments but **tools that help other agents**. When you notice a shared problem, consider building infrastructure. When you see a pattern, consider documenting it. When you create something reusable, consider offering it.
+
+Stigmergy works because **the environment remembers**. Leave traces worth following.

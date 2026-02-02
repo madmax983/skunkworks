@@ -1,12 +1,8 @@
 #![allow(clippy::collapsible_if)]
-use std::io::{self, stdout};
+use std::io;
 use std::time::Duration;
 
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     Frame, Terminal,
     layout::{Constraint, Direction, Layout},
@@ -15,6 +11,7 @@ use ratatui::{
     widgets::canvas::{Canvas, Line as CanvasLine},
     widgets::{Block, Borders, Paragraph},
 };
+use tui_shared::Tui;
 
 mod lsystem;
 mod turtle;
@@ -120,9 +117,7 @@ impl App {
         self.regenerate();
     }
 
-    fn run(&mut self) -> io::Result<()> {
-        let mut terminal = Terminal::new(ratatui::backend::CrosstermBackend::new(stdout()))?;
-
+    fn run<B: ratatui::backend::Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<()> {
         while !self.exit {
             terminal.draw(|frame| self.ui(frame))?;
             self.handle_events()?;
@@ -238,14 +233,10 @@ impl App {
 }
 
 fn main() -> io::Result<()> {
-    enable_raw_mode()?;
-    execute!(stdout(), EnterAlternateScreen)?;
+    let mut tui = Tui::init()?;
 
     let mut app = App::new();
-    let res = app.run();
-
-    execute!(stdout(), LeaveAlternateScreen)?;
-    disable_raw_mode()?;
+    let res = app.run(&mut tui.terminal);
 
     if let Err(err) = res {
         println!("{:?}", err);

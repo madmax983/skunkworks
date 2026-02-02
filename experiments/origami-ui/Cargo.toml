@@ -1,0 +1,11 @@
+[package]
+name = "origami-ui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
+nalgebra = "0.33"
+ratatui.workspace = true
+tui-shared.workspace = true
