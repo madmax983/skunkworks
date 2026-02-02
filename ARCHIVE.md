@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **echo-chamber**: Undocumented and trivial typing visualizer. Lacks evolutionary depth. Grace period ends in 24h.
-- **entropy-garden**: Redundant (inferior to `sys-weather`/`biomorph-flow`), undocumented, and generic. Grace period ends in 24h.
+- **text-sand**: Generic falling sand simulation with no documentation or unique traits. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **echo-chamber**: Undocumented and trivial typing visualizer. Failed to improve during grace period.
+- **entropy-garden**: Redundant (inferior to `sys-weather`/`biomorph-flow`), undocumented, and generic. Failed to improve during grace period.
 - **particle-life**: Generic O(N^2) simulation. Failed to improve during grace period. No documentation or unique traits.
 - **epicycle-draw**: Failed to improve during grace period. Implementation remained a generic DFT visualization with no unique evolutionary traits or documentation.
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
