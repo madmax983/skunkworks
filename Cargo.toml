@@ -4,6 +4,7 @@ members = [
     "crates/tui-shared",
     "experiments/ascii-optics",
     "experiments/automata-warfare",
+    "experiments/biomorph-flow",
     "experiments/cellular-beats",
     "experiments/code-crawler",
     "experiments/code-erosion",
