@@ -1,12 +1,12 @@
+use num_complex::Complex;
 use ratatui::{
     style::Color,
     widgets::canvas::{Context, Line},
 };
-use num_complex::Complex;
 use std::f64::consts::PI;
 
-use crate::geometry::{Point, Mobius, TilingConsts, neighbor_transform_a};
 use crate::dungeon::{Dungeon, TileType};
+use crate::geometry::{neighbor_transform_a, Mobius, Point, TilingConsts};
 
 pub fn draw_dungeon(
     ctx: &mut Context,
@@ -23,7 +23,15 @@ pub fn draw_dungeon(
 
     // So 'transform' passed to draw_tile is view_transform.
 
-    draw_tile_recursive(ctx, dungeon, player_path.to_vec(), *view_transform, consts, 0, None);
+    draw_tile_recursive(
+        ctx,
+        dungeon,
+        player_path.to_vec(),
+        *view_transform,
+        consts,
+        0,
+        None,
+    );
 }
 
 fn draw_tile_recursive(
@@ -43,7 +51,7 @@ fn draw_tile_recursive(
     // In Poincare disk, everything is inside unit circle.
     // We stop if the "size" of the tile is too small.
     // Approximate size: map a vertex and check distance to center.
-    let v0_local = Complex::from_polar(consts.vertex_offset, PI/4.0);
+    let v0_local = Complex::from_polar(consts.vertex_offset, PI / 4.0);
     let v0_screen = transform.apply(v0_local);
     let size = (v0_screen - screen_center).norm();
 
@@ -102,14 +110,14 @@ fn draw_tile_recursive(
 
     // If Wall, maybe draw an 'X' or fill (can't fill in Canvas easily)
     if is_wall {
-         ctx.draw(&Line {
+        ctx.draw(&Line {
             x1: screen_verts[0].re,
             y1: screen_verts[0].im,
             x2: screen_verts[2].re,
             y2: screen_verts[2].im,
             color,
         });
-         ctx.draw(&Line {
+        ctx.draw(&Line {
             x1: screen_verts[1].re,
             y1: screen_verts[1].im,
             x2: screen_verts[3].re,
@@ -144,6 +152,14 @@ fn draw_tile_recursive(
         // So when recursing, the new 'from_dir' is (i + 2) % 4.
         let next_from_dir = (i + 2) % 4;
 
-        draw_tile_recursive(ctx, dungeon, next_path, child_transform, consts, depth + 1, Some(next_from_dir));
+        draw_tile_recursive(
+            ctx,
+            dungeon,
+            next_path,
+            child_transform,
+            consts,
+            depth + 1,
+            Some(next_from_dir),
+        );
     }
 }

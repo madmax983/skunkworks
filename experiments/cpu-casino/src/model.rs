@@ -2,10 +2,10 @@ use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Strategy {
-    HighFreq, // Bids slightly above market, frequent
-    Sniper,   // Bids high when deadline is near
+    HighFreq,  // Bids slightly above market, frequent
+    Sniper,    // Bids high when deadline is near
     Desperate, // Bids exponentially based on urgency
-    Value,    // Bids based on remaining budget vs work
+    Value,     // Bids based on remaining budget vs work
 }
 
 impl fmt::Display for Strategy {

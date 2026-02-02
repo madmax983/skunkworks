@@ -2,23 +2,23 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color},
-    widgets::{canvas::{Canvas, Points}, Block, Borders, Paragraph},
+    style::Color,
+    widgets::{
+        canvas::{Canvas, Points},
+        Block, Borders, Paragraph,
+    },
 };
-use std::{
-    collections::VecDeque,
-    time::Duration,
-};
+use std::{collections::VecDeque, time::Duration};
 use tui_shared::Tui;
 
 pub mod audio;
 pub mod network;
 pub mod neuron;
 
-use network::Network;
-use neuron::Neuron;
 #[cfg(feature = "audio")]
 use audio::AudioEvent;
+use network::Network;
+use neuron::Neuron;
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
@@ -99,14 +99,15 @@ fn main() -> Result<()> {
         tui.terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(0),
-                    Constraint::Length(3),
-                ])
+                .constraints([Constraint::Min(0), Constraint::Length(3)])
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Spike Raster (Genesis Neuro-Beat)"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Spike Raster (Genesis Neuro-Beat)"),
+                )
                 .x_bounds([time - 200.0, time]) // Show last 200ms
                 .y_bounds([-0.5, 3.5]) // 4 neurons
                 .marker(ratatui::symbols::Marker::Block)

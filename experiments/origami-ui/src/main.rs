@@ -36,7 +36,10 @@ impl App {
         let panels = (0..20)
             .map(|i| Panel {
                 title: format!("Panel {:02}", i),
-                content: format!("This is the content for panel {}.\nIt contains important data.", i),
+                content: format!(
+                    "This is the content for panel {}.\nIt contains important data.",
+                    i
+                ),
             })
             .collect();
 
@@ -138,7 +141,11 @@ impl App {
                                 let (x2, y2) = projected[idx_right];
                                 let color = if r % 2 == 0 { Color::Cyan } else { Color::Blue };
                                 ctx.draw(&CanvasLine {
-                                    x1, y1, x2, y2, color,
+                                    x1,
+                                    y1,
+                                    x2,
+                                    y2,
+                                    color,
                                 });
                             }
 
@@ -146,9 +153,17 @@ impl App {
                             if r + 1 < rows {
                                 let idx_down = (r + 1) * cols + c;
                                 let (x2, y2) = projected[idx_down];
-                                let color = if c % 2 == 0 { Color::Magenta } else { Color::Red };
+                                let color = if c % 2 == 0 {
+                                    Color::Magenta
+                                } else {
+                                    Color::Red
+                                };
                                 ctx.draw(&CanvasLine {
-                                    x1, y1, x2, y2, color,
+                                    x1,
+                                    y1,
+                                    x2,
+                                    y2,
+                                    color,
                                 });
                             }
                         }
@@ -165,17 +180,17 @@ impl App {
         // Note: Canvas Y is up, Screen Y is down.
 
         let map_to_screen = |x: f64, y: f64| -> Option<(u16, u16)> {
-             let nx = (x - x_bounds[0]) / (x_bounds[1] - x_bounds[0]);
-             let ny = (y - y_bounds[0]) / (y_bounds[1] - y_bounds[0]);
+            let nx = (x - x_bounds[0]) / (x_bounds[1] - x_bounds[0]);
+            let ny = (y - y_bounds[0]) / (y_bounds[1] - y_bounds[0]);
 
-             if nx < 0.0 || nx > 1.0 || ny < 0.0 || ny > 1.0 {
-                 return None;
-             }
+            if nx < 0.0 || nx > 1.0 || ny < 0.0 || ny > 1.0 {
+                return None;
+            }
 
-             let sx = area.x as f64 + nx * (area.width as f64 - 1.0);
-             let sy = (area.y as f64 + area.height as f64 - 1.0) - ny * (area.height as f64 - 1.0);
+            let sx = area.x as f64 + nx * (area.width as f64 - 1.0);
+            let sy = (area.y as f64 + area.height as f64 - 1.0) - ny * (area.height as f64 - 1.0);
 
-             Some((sx as u16, sy as u16))
+            Some((sx as u16, sy as u16))
         };
 
         // Draw panels on faces
@@ -185,7 +200,9 @@ impl App {
 
         for r in 0..rows - 1 {
             for c in 0..cols - 1 {
-                if panel_idx >= self.panels.len() { break; }
+                if panel_idx >= self.panels.len() {
+                    break;
+                }
                 let panel = &self.panels[panel_idx];
 
                 // Get face vertices
@@ -208,38 +225,38 @@ impl App {
 
                         // Roughly...
                         let dx = (p0.0 - p1.0).hypot(p0.1 - p1.1);
-                         // Convert model length to screen length
+                        // Convert model length to screen length
                         let screen_len_x = dx / (x_bounds[1] - x_bounds[0]) * area.width as f64;
 
                         // If it's big enough, show content
                         if screen_len_x > 10.0 {
-                             let rect_width = (screen_len_x * 0.8) as u16;
-                             let rect_height = 3; // minimal height
+                            let rect_width = (screen_len_x * 0.8) as u16;
+                            let rect_height = 3; // minimal height
 
-                             let rect_x = sx.saturating_sub(rect_width / 2);
-                             let rect_y = sy.saturating_sub(rect_height / 2);
+                            let rect_x = sx.saturating_sub(rect_width / 2);
+                            let rect_y = sy.saturating_sub(rect_height / 2);
 
-                             let rect = Rect::new(rect_x, rect_y, rect_width, rect_height);
+                            let rect = Rect::new(rect_x, rect_y, rect_width, rect_height);
 
-                             // Clip to screen
-                             let rect = rect.intersection(area);
+                            // Clip to screen
+                            let rect = rect.intersection(area);
 
-                             // Only draw if we have space
-                             if rect.width > 4 && rect.height > 1 {
-                                 // If t is high (folded), just show title
-                                 let text = if t > 0.5 {
-                                     vec![Line::from(panel.title.as_str()).bold()]
-                                 } else {
-                                     vec![
+                            // Only draw if we have space
+                            if rect.width > 4 && rect.height > 1 {
+                                // If t is high (folded), just show title
+                                let text = if t > 0.5 {
+                                    vec![Line::from(panel.title.as_str()).bold()]
+                                } else {
+                                    vec![
                                         Line::from(panel.title.as_str()).bold().bg(Color::Blue),
                                         Line::from(panel.content.as_str()),
-                                     ]
-                                 };
+                                    ]
+                                };
 
-                                 let p = Paragraph::new(text)
-                                    .style(Style::default().fg(Color::White));
-                                 frame.render_widget(p, rect);
-                             }
+                                let p =
+                                    Paragraph::new(text).style(Style::default().fg(Color::White));
+                                frame.render_widget(p, rect);
+                            }
                         }
                     }
                 }

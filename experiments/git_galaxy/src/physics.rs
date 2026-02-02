@@ -1,15 +1,98 @@
 use crate::harvester::CommitData;
 use rand::Rng;
 use std::collections::HashMap;
+use std::ops::{Add, Div, Mul, Neg, Sub};
+
+/// A simple 2D vector for physics calculations.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Vec2 {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl Vec2 {
+    pub fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+
+    pub fn zero() -> Self {
+        Self { x: 0.0, y: 0.0 }
+    }
+
+    pub fn mag_sq(&self) -> f64 {
+        self.x * self.x + self.y * self.y
+    }
+
+    pub fn mag(&self) -> f64 {
+        self.mag_sq().sqrt()
+    }
+
+    pub fn normalize(&self) -> Self {
+        let m = self.mag();
+        if m > 0.0 {
+            *self / m
+        } else {
+            *self
+        }
+    }
+}
+
+impl Add for Vec2 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+impl Sub for Vec2 {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
+impl Mul<f64> for Vec2 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+
+impl Div<f64> for Vec2 {
+    type Output = Self;
+    fn div(self, rhs: f64) -> Self {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
+    }
+}
+
+impl Neg for Vec2 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct Node {
     pub id: String,
     pub author: String,
-    pub x: f64,
-    pub y: f64,
-    pub vx: f64,
-    pub vy: f64,
+    pub pos: Vec2,
+    pub vel: Vec2,
     pub mass: f64,
     pub color: (u8, u8, u8), // RGB
 }
@@ -49,10 +132,8 @@ impl Graph {
             nodes.push(Node {
                 id: commit.hash.clone(),
                 author: commit.author.clone(),
-                x,
-                y,
-                vx: 0.0,
-                vy: 0.0,
+                pos: Vec2::new(x, y),
+                vel: Vec2::zero(),
                 mass,
                 color,
             });
@@ -79,80 +160,76 @@ impl Graph {
     }
 
     pub fn update(&mut self, dt: f64) {
-        let repulsion_constant = 1000.0;
-        let spring_constant = 0.05;
-        let rest_length = 10.0;
-        let damping = 0.90;
-        let center_attraction = 0.01;
-
         let node_count = self.nodes.len();
-        let mut forces = vec![(0.0, 0.0); node_count];
+        let mut forces = vec![Vec2::zero(); node_count];
 
-        // 1. Repulsion (All vs All) - optimized slightly
-        // Naive O(N^2) - okay for < 500 nodes
+        self.apply_repulsion(&mut forces);
+        self.apply_springs(&mut forces);
+        self.apply_center_gravity(&mut forces);
+        self.integrate(dt, &forces);
+    }
+
+    fn apply_repulsion(&self, forces: &mut [Vec2]) {
+        const REPULSION_CONSTANT: f64 = 1000.0;
+        let node_count = self.nodes.len();
+
         for i in 0..node_count {
             for j in (i + 1)..node_count {
-                let dx = self.nodes[i].x - self.nodes[j].x;
-                let dy = self.nodes[i].y - self.nodes[j].y;
-                let dist_sq = dx * dx + dy * dy;
-
+                let delta = self.nodes[i].pos - self.nodes[j].pos;
+                let dist_sq = delta.mag_sq();
+                // Avoid division by zero and extreme forces
                 let dist = dist_sq.sqrt().max(0.1);
 
                 // F = k / d^2
-                let force = repulsion_constant / dist_sq;
-                let fx = (dx / dist) * force;
-                let fy = (dy / dist) * force;
+                let force_mag = REPULSION_CONSTANT / (dist * dist); // dist_sq matches original logic? Original was dist_sq
+                let force = delta / dist * force_mag;
 
-                forces[i].0 += fx;
-                forces[i].1 += fy;
-                forces[j].0 -= fx;
-                forces[j].1 -= fy;
+                forces[i] = forces[i] + force;
+                forces[j] = forces[j] - force;
             }
         }
+    }
 
-        // 2. Spring Attraction (Edges)
+    fn apply_springs(&self, forces: &mut [Vec2]) {
+        const SPRING_CONSTANT: f64 = 0.05;
+        const REST_LENGTH: f64 = 10.0;
+
         for edge in &self.edges {
             let u = edge.source;
             let v = edge.target;
 
-            let dx = self.nodes[v].x - self.nodes[u].x;
-            let dy = self.nodes[v].y - self.nodes[u].y;
-            let dist = (dx * dx + dy * dy).sqrt().max(0.1);
+            let delta = self.nodes[v].pos - self.nodes[u].pos;
+            let dist = delta.mag().max(0.1);
 
             // F = k * (d - rest)
-            let force = spring_constant * (dist - rest_length);
-            let fx = (dx / dist) * force;
-            let fy = (dy / dist) * force;
+            let force_mag = SPRING_CONSTANT * (dist - REST_LENGTH);
+            let force = delta / dist * force_mag;
 
             // Pull u towards v
-            forces[u].0 += fx;
-            forces[u].1 += fy;
+            forces[u] = forces[u] + force;
             // Pull v towards u
-            forces[v].0 -= fx;
-            forces[v].1 -= fy;
+            forces[v] = forces[v] - force;
         }
+    }
 
-        // 3. Center Attraction (Gravity towards 0,0)
+    fn apply_center_gravity(&self, forces: &mut [Vec2]) {
+        const CENTER_ATTRACTION: f64 = 0.01;
+
         for (i, force) in forces.iter_mut().enumerate() {
-            let dx = 0.0 - self.nodes[i].x;
-            let dy = 0.0 - self.nodes[i].y;
-            force.0 += dx * center_attraction;
-            force.1 += dy * center_attraction;
+            let delta = Vec2::zero() - self.nodes[i].pos;
+            *force = *force + delta * CENTER_ATTRACTION;
         }
+    }
 
-        // 4. Update Position
+    fn integrate(&mut self, dt: f64, forces: &[Vec2]) {
+        const DAMPING: f64 = 0.90;
+
         for (i, node) in self.nodes.iter_mut().enumerate() {
             // F = ma -> a = F/m
-            // Simplified: ignore mass for acceleration or use it?
-            // Heavier nodes move slower?
-            let ax = forces[i].0 / node.mass.sqrt(); // Square root damping for mass
-            let ay = forces[i].1 / node.mass.sqrt();
+            let accel = forces[i] / node.mass.sqrt();
 
-            node.vx = (node.vx + ax * dt) * damping;
-            node.vy = (node.vy + ay * dt) * damping;
-
-            node.x += node.vx * dt;
-            node.y += node.vy * dt;
+            node.vel = (node.vel + accel * dt) * DAMPING;
+            node.pos = node.pos + node.vel * dt;
         }
     }
 }
@@ -228,12 +305,12 @@ mod tests {
         assert_eq!(graph.nodes.len(), 2);
         assert_eq!(graph.edges.len(), 1);
 
-        let initial_x = graph.nodes[0].x;
+        let initial_x = graph.nodes[0].pos.x;
 
         // Run physics
         graph.update(0.1);
 
         // Nodes should have moved
-        assert!(graph.nodes[0].x != initial_x || graph.nodes[0].vx != 0.0);
+        assert!(graph.nodes[0].pos.x != initial_x || graph.nodes[0].vel.x != 0.0);
     }
 }

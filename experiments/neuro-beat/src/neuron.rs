@@ -71,8 +71,8 @@ impl Neuron {
                 self.v = self.c;
                 self.u += self.d;
                 self.spiked = true; // Spike event happened in this frame
-                // In a strictly discrete system we might clamp to 30 for visualization
-                // but resetting to c is the rule.
+                                    // In a strictly discrete system we might clamp to 30 for visualization
+                                    // but resetting to c is the rule.
             }
         }
     }
