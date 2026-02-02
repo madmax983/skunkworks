@@ -21,6 +21,7 @@ members = [
     "experiments/origami-singularity",
     "experiments/orbital-decay",
     "experiments/orbital-harmonics",
+    "experiments/particle-life",
     "experiments/phonetic-decay",
     "experiments/ram-bazaar", 
     "experiments/rhizome-seeker",
