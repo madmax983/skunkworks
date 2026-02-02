@@ -60,7 +60,7 @@ pub fn generate_glyph_sdf(font: &Font, c: char, size: u32) -> Grid {
         let ox = x as i32 + padding;
         let oy = y as i32 + padding;
         if ox >= 0 && oy >= 0 {
-             mask.set(ox as usize, oy as usize, v);
+            mask.set(ox as usize, oy as usize, v);
         }
     });
 
@@ -96,12 +96,16 @@ pub fn generate_glyph_sdf(font: &Font, c: char, size: u32) -> Grid {
             let mut min_dist_sq = f32::MAX;
 
             // If inside, find closest outside. If outside, find closest inside.
-            let targets = if is_inside { &outside_pixels } else { &inside_pixels };
+            let targets = if is_inside {
+                &outside_pixels
+            } else {
+                &inside_pixels
+            };
 
             for &&(tx, ty, _) in targets {
                 let dx = x as f32 - tx as f32;
                 let dy = y as f32 - ty as f32;
-                let d2 = dx*dx + dy*dy;
+                let d2 = dx * dx + dy * dy;
                 if d2 < min_dist_sq {
                     min_dist_sq = d2;
                 }
@@ -148,8 +152,12 @@ mod tests {
         let mut min_val = f32::MAX;
 
         for v in &sdf.data {
-            if *v > max_val { max_val = *v; }
-            if *v < min_val { min_val = *v; }
+            if *v > max_val {
+                max_val = *v;
+            }
+            if *v < min_val {
+                min_val = *v;
+            }
         }
 
         println!("SDF Range: {} to {}", min_val, max_val);
