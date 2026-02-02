@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/thermo-tarmites
+- **Scent Origin:** Genesis
+- **Status:** The termites are restless. Cooling structures emerging from heat gradients.
+
 ### [Concentration Level: HIGH] - Location: experiments/git-harmony
 - **Scent Origin:** Genesis
 - **Status:** The code sings. Synesthetic translation active.
