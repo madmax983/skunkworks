@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/myco-transit
+- **Scent Origin:** Genesis
+- **Status:** Spores inoculated. Slime mold agents are currently designing optimal transit routes between synthetic cities.
+
 ### [Concentration Level: HIGH] - Location: experiments/git_galaxy
 - **Scent Origin:** Havoc
 - **Status:** Singularity vulnerability confirmed in `physics.rs`. Division by zero risks NaN propagation.
