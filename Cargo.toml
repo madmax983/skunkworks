@@ -54,6 +54,7 @@ members = [
     "experiments/cargo-jenga",
     "experiments/quantum-tarot", "experiments/thermo-tarmites",
     "experiments/semantic-spy", "experiments/pidgin-mesh", "experiments/terra-fluid", "experiments/thread-phase",
+    "experiments/hyperbolic-dungeon",
 ]
 resolver = "2"
 
