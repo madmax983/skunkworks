@@ -28,3 +28,8 @@
 **Concept:** A frequency domain visualizer for text streams. It reads from stdin and renders a scrolling 3D wireframe terrain where height matches line intensity/keywords and X-axis is a hash of the content.
 **Fate:** Merged
 **Lesson:** Transforming textual entropy into physical geometry (terrain) allows for rapid visual pattern recognition in otherwise opaque log streams. `ratatui`'s Canvas lines can effectively create 2.5D wireframe effects.
+
+## [Digital Koi]
+**Concept:** A system-monitored Zen Garden where fish (Boids) swim in a pond. Water turbulence is driven by real-time CPU usage, and water clarity by Memory usage.
+**Fate:** Merged
+**Lesson:** Using system metrics (`sysinfo`) as environmental variables for artificial life simulations creates a calming, organic visualization of machine labor. The Boids algorithm adapts well to `ratatui` Canvas when drawing trails.

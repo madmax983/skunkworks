@@ -47,6 +47,10 @@
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
+### [Concentration Level: FRESH] - Location: experiments/digital-koi
+- **Scent Origin:** Nova
+- **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
