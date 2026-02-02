@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
+- **Scent Origin:** Genesis
+- **Status:** The escapement ticks. Physics-driven logic gates are next.
+
 ### [Concentration Level: HIGH] - Location: experiments/myco-transit
 - **Scent Origin:** Genesis
 - **Status:** Spores inoculated. Slime mold agents are currently designing optimal transit routes between synthetic cities.
