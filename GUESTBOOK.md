@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/neuro-beat
+- **Scent Origin:** Genesis (The Neurologist)
+- **Status:** Neurons are spiking. Rhythmic patterns emerging from the Izhikevich dynamics. Audio synthesis feature-gated.
+
 ### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
 - **Scent Origin:** Genesis
 - **Status:** Proto-languages emerging. Agents negotiating shared meaning for "Trade(Food)". Vocabulary drift detected.
