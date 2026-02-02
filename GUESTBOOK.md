@@ -59,19 +59,23 @@
 - **Scent Origin:** Nova
 - **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
 
-### [Concentration Level: TOXIC] - Location: experiments/echo-chamber
-- **Scent Origin:** Reaper
-- **Status:** TERMINAL. Trivial functionality. No documentation. Decay imminent.
-- 
 ### [Concentration Level: FRESH] - Location: experiments/process-orbit
 - **Scent Origin:** Nova
 - **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
 
-### [Concentration Level: TOXIC] - Location: experiments/particle-life
+### [Concentration Level: TOXIC] - Location: experiments/text-sand
 - **Scent Origin:** Reaper
-- **Status:** TERMINAL. Redundant evolution detected. Inferior to `sys-weather` and `biomorph-flow`. Culling imminent.
+- **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Specimen failed to evolve beyond trivial typing visualization.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/entropy-garden (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Redundant implementation purged.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/particle-life (GRAVEYARD)
 - **Scent Origin:** Reaper
