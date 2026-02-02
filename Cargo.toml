@@ -50,6 +50,7 @@ members = [
     "experiments/voronoi-relaxation", "experiments/myco-transit", "experiments/clockwork-cpu", "experiments/git-harmony",
     "experiments/cargo-jenga",
     "experiments/quantum-tarot", "experiments/thermo-tarmites",
+    "experiments/semantic-spy",
 ]
 resolver = "2"
 
