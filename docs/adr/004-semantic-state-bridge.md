@@ -1,7 +1,7 @@
 # 004. Semantic State Bridge for TUI Applications
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 Terminal User Interfaces (TUIs) render visual information as a grid of characters and escape codes. While efficient for humans, this representation is opaque and brittle for automated agents, particularly Large Language Models (LLMs).
@@ -14,13 +14,13 @@ We need a mechanism to expose the *internal* state of the application—entities
 We decided to introduce a new workspace crate, `crates/tui-semantic`, which provides a standardized "Semantic Bridge".
 
 Key components:
-*   **`SemanticState` Trait:** An interface that TUI applications implement to export their state.
-*   **`Snapshot` Struct:** A serializable (JSON) data structure representing a single frame of the application's semantic state. It includes:
+*   **Pure Data Structures:** The crate defines serializable (JSON) structs representing the application's semantic state, with no runtime dependencies on `ratatui` or `crossterm`.
+*   **`Snapshot` Struct:** Represents a single frame of the application's semantic state. It includes:
     *   **Entities:** Typed objects with positions, velocities, and arbitrary properties.
     *   **Regions:** Named areas of the screen (e.g., "Inventory", "Log").
     *   **Metrics:** Global counters (Score, FPS, Turn Count).
     *   **Actions:** Available interactions (e.g., "move_north", "quit").
-*   **`Command` Enum:** A standard set of instructions that the agent can send back to the application (e.g., `GetSnapshot`, `SendKey`, `InvokeAction`).
+*   **Inherent Implementation:** Instead of enforcing a trait, applications are encouraged to implement an inherent `snapshot()` method that returns a `tui_semantic::Snapshot`. This allows for greater flexibility and avoids strict interface coupling.
 
 ## Consequences
 
@@ -30,5 +30,5 @@ Key components:
 *   **Testability:** Allows for integration tests that assert against the logical state (e.g., "Player should have 5 items") rather than screen content.
 
 ### Negative
-*   **Implementation Overhead:** Developers must explicitly implement the `SemanticState` trait and map their internal structures to the `Snapshot` format.
+*   **Implementation Overhead:** Developers must explicitly implement the mapping from their internal structures to the `Snapshot` format.
 *   **Data Duplication:** There is a slight memory and CPU cost to generating the snapshot, as it duplicates the live state into a serializable form.
