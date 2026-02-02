@@ -47,6 +47,10 @@
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
+### [Concentration Level: FRESH] - Location: experiments/digital-koi
+- **Scent Origin:** Nova
+- **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
+- 
 ### [Concentration Level: TOXIC] - Location: experiments/particle-life
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Generic DNA detected. No documentation. Culling imminent.
