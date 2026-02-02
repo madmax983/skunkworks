@@ -91,3 +91,8 @@
 **Concept:** Interactive visualization of Discrete Fourier Transform. Users draw a path, and the system reconstructs it using rotating epicycles.
 **Fate:** Merged
 **Lesson:** Visualizing math concepts like DFT in a TUI is powerful when paired with interactive input. Mouse coordinate mapping between terminal cells and canvas requires careful handling of Y-axis inversion.
+
+## [Git Constellations]
+**Concept:** Identify and visualize "constellations" (patterns) in the Git Galaxy force-directed graph, such as chains, supernovas (massive commits), and clusters (author nebulas).
+**Fate:** Merged
+**Lesson:** Graph algorithms (chain detection) can add a narrative layer to raw data visualizations. Gating experimental features with `#[cfg(feature = "nova")]` allows for safe additive innovation.

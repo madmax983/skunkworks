@@ -13,6 +13,9 @@ use std::collections::HashMap;
 
 use crate::physics::Graph;
 
+#[cfg(feature = "nova")]
+use crate::constellations::Constellation;
+
 fn get_top_authors(graph: &Graph) -> Vec<(String, usize, (u8, u8, u8))> {
     let mut counts: HashMap<String, usize> = HashMap::new();
     let mut colors: HashMap<String, (u8, u8, u8)> = HashMap::new();
@@ -51,7 +54,7 @@ impl Default for ViewState {
     }
 }
 
-pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
+pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState, #[cfg(feature = "nova")] constellations: &[Constellation]) {
     let main_chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
@@ -118,7 +121,7 @@ pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
         .x_bounds([final_min_x, final_max_x])
         .y_bounds([final_min_y, final_max_y])
         .marker(Marker::Braille)
-        .paint(|ctx| {
+        .paint(move |ctx| {
             // Draw Edges
             for edge in &graph.edges {
                 let u = &graph.nodes[edge.source];
@@ -130,6 +133,41 @@ pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
                     y2: v.y,
                     color: Color::DarkGray,
                 });
+            }
+
+            // Draw Constellations (Nova)
+            #[cfg(feature = "nova")]
+            {
+                for constellation in constellations {
+                     if constellation.nodes.len() > 1 {
+                        for i in 0..constellation.nodes.len() - 1 {
+                             let idx1 = constellation.nodes[i];
+                             let idx2 = constellation.nodes[i+1];
+                             let u = &graph.nodes[idx1];
+                             let v = &graph.nodes[idx2];
+                             ctx.draw(&Line {
+                                x1: u.x,
+                                y1: u.y,
+                                x2: v.x,
+                                y2: v.y,
+                                color: constellation.color,
+                             });
+                        }
+                    } else if constellation.nodes.len() == 1 {
+                        let u = &graph.nodes[constellation.nodes[0]];
+                        // Cross
+                        ctx.draw(&Line {
+                                x1: u.x - 2.0, y1: u.y,
+                                x2: u.x + 2.0, y2: u.y,
+                                color: constellation.color,
+                        });
+                        ctx.draw(&Line {
+                                x1: u.x, y1: u.y - 2.0,
+                                x2: u.x, y2: u.y + 2.0,
+                                color: constellation.color,
+                        });
+                    }
+                }
             }
 
             // Draw Nodes
@@ -156,6 +194,13 @@ pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
     f.render_widget(info, left_chunks[1]);
 
     // Sidebar
+    #[cfg(feature = "nova")]
+    let sidebar_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(10), Constraint::Length(15), Constraint::Min(0)])
+        .split(main_chunks[1]);
+
+    #[cfg(not(feature = "nova"))]
     let sidebar_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Length(10), Constraint::Min(0)])
@@ -176,6 +221,21 @@ pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
         Paragraph::new(stats_text).block(Block::default().borders(Borders::ALL).title("Stats"));
     f.render_widget(stats, sidebar_chunks[0]);
 
+    // Constellations (Nova)
+    #[cfg(feature = "nova")]
+    {
+        let const_text: Vec<TextLine> = constellations.iter().map(|c| {
+             TextLine::from(vec![
+                Span::styled("★ ", Style::default().fg(c.color)),
+                Span::raw(format!("{}", c.name)),
+             ])
+        }).collect();
+
+        let const_block = Paragraph::new(const_text)
+            .block(Block::default().borders(Borders::ALL).title("Constellations"));
+        f.render_widget(const_block, sidebar_chunks[1]);
+    }
+
     // Legend
     let top_authors = get_top_authors(graph);
     let mut legend_lines = Vec::new();
@@ -190,5 +250,11 @@ pub fn ui(f: &mut Frame, graph: &Graph, view_state: &ViewState) {
     }
     let legend = Paragraph::new(legend_lines)
         .block(Block::default().borders(Borders::ALL).title("Top Authors"));
+
+    // Render legend at correct index
+    #[cfg(feature = "nova")]
+    f.render_widget(legend, sidebar_chunks[2]);
+
+    #[cfg(not(feature = "nova"))]
     f.render_widget(legend, sidebar_chunks[1]);
 }
