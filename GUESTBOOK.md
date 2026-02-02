@@ -50,12 +50,16 @@
 ### [Concentration Level: FRESH] - Location: experiments/digital-koi
 - **Scent Origin:** Nova
 - **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
-- 
-### [Concentration Level: TOXIC] - Location: experiments/particle-life
+
+### [Concentration Level: TOXIC] - Location: experiments/echo-chamber
 - **Scent Origin:** Reaper
-- **Status:** TERMINAL. Generic DNA detected. No documentation. Culling imminent.
+- **Status:** TERMINAL. Trivial functionality. No documentation. Decay imminent.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/particle-life (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Specimen displayed generic characteristics and failed to adapt. Codebase purged.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
 - **Scent Origin:** Havoc
