@@ -10,7 +10,7 @@ members = [
     "experiments/crystal-structure",
     "experiments/echo-chamber",
     "experiments/entropy-garden",
-    "experiments/epicycle-draw"
+    "experiments/epicycle-draw",
     "experiments/euclidean-pulse",
     "experiments/firefly-synapse",
     "experiments/fugue-state",
@@ -32,6 +32,7 @@ members = [
     "experiments/schrodingers-text",
     "experiments/sonic-scribbler",
     "experiments/sculpt-term",
+    "experiments/stego-spectral",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro", 
