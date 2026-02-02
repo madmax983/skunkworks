@@ -60,7 +60,8 @@ impl IKChain {
                     if dist_curr_next > 1e-5 {
                         let lambda = self.lengths[i] / dist_curr_next;
                         // Find position of i based on i+1
-                        self.joints[i] = (1.0 - lambda) * self.joints[i + 1] + lambda * self.joints[i];
+                        self.joints[i] =
+                            (1.0 - lambda) * self.joints[i + 1] + lambda * self.joints[i];
                     }
                 }
 
@@ -73,7 +74,8 @@ impl IKChain {
                     if dist_curr_next > 1e-5 {
                         let lambda = self.lengths[i] / dist_curr_next;
                         // Find position of i+1 based on i
-                        self.joints[i + 1] = (1.0 - lambda) * self.joints[i] + lambda * self.joints[i + 1];
+                        self.joints[i + 1] =
+                            (1.0 - lambda) * self.joints[i] + lambda * self.joints[i + 1];
                     }
                 }
 
@@ -96,12 +98,22 @@ mod tests {
         chain.solve_fabrik(Vec2::ZERO, target);
 
         let end_effector = *chain.joints.last().unwrap();
-        assert!(end_effector.distance(target) < 0.1, "End effector {:.?} should be close to target {:.?}", end_effector, target);
+        assert!(
+            end_effector.distance(target) < 0.1,
+            "End effector {:.?} should be close to target {:.?}",
+            end_effector,
+            target
+        );
 
         // Check lengths preserved
         for i in 0..chain.lengths.len() {
-            let dist = chain.joints[i].distance(chain.joints[i+1]);
-            assert!((dist - 10.0).abs() < 0.1, "Segment {} length {} changed", i, dist);
+            let dist = chain.joints[i].distance(chain.joints[i + 1]);
+            assert!(
+                (dist - 10.0).abs() < 0.1,
+                "Segment {} length {} changed",
+                i,
+                dist
+            );
         }
     }
 

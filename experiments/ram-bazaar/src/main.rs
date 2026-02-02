@@ -73,7 +73,8 @@ fn main() -> Result<()> {
     let mut last_tick = Instant::now();
 
     while app.running {
-        tui.terminal.draw(|f| draw_ui(f, &app.state, &app.agents, app.tick_count))?;
+        tui.terminal
+            .draw(|f| draw_ui(f, &app.state, &app.agents, app.tick_count))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())

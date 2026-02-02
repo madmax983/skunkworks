@@ -1,5 +1,5 @@
 use crate::physics::PhysicsGrid;
-use crossbeam_channel::{Sender, Receiver};
+use crossbeam_channel::{Receiver, Sender};
 
 pub enum AudioCommand {
     Pluck { x: usize, y: usize, strength: f32 },
@@ -17,7 +17,12 @@ pub struct AudioModel {
 }
 
 impl AudioModel {
-    pub fn new(width: usize, height: usize, command_rx: Receiver<AudioCommand>, snapshot_tx: Sender<Vec<f32>>) -> Self {
+    pub fn new(
+        width: usize,
+        height: usize,
+        command_rx: Receiver<AudioCommand>,
+        snapshot_tx: Sender<Vec<f32>>,
+    ) -> Self {
         Self {
             grid: PhysicsGrid::new(width, height),
             listener_x: width / 2,
@@ -80,7 +85,13 @@ mod tests {
         let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx);
 
         // Pluck via command
-        cmd_tx.send(AudioCommand::Pluck { x: 5, y: 5, strength: 1.0 }).unwrap();
+        cmd_tx
+            .send(AudioCommand::Pluck {
+                x: 5,
+                y: 5,
+                strength: 1.0,
+            })
+            .unwrap();
 
         let mut buffer = vec![0.0; 100];
         model.process(&mut buffer);

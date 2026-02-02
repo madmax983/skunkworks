@@ -51,14 +51,13 @@ impl App {
         let mut last_tick = Instant::now();
 
         while self.running {
-            tui.terminal
-                .draw(|f| {
-                    #[cfg(feature = "nova")]
-                    ui(f, &self.graph, &self.view_state, &self.constellations);
+            tui.terminal.draw(|f| {
+                #[cfg(feature = "nova")]
+                ui(f, &self.graph, &self.view_state, &self.constellations);
 
-                    #[cfg(not(feature = "nova"))]
-                    ui(f, &self.graph, &self.view_state);
-                })?;
+                #[cfg(not(feature = "nova"))]
+                ui(f, &self.graph, &self.view_state);
+            })?;
 
             let timeout = tick_rate
                 .checked_sub(last_tick.elapsed())

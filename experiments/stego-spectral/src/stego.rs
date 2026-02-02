@@ -1,4 +1,4 @@
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 
 /// Represents a 2D buffer of intensity values (grayscale)
 pub struct StegoBuffer {
@@ -45,7 +45,11 @@ impl StegoBuffer {
         let bits_needed = 32 + (len as usize * 8);
 
         if bits_needed > self.data.len() {
-            bail!("Payload too large for buffer: needed {} pixels, have {}", bits_needed, self.data.len());
+            bail!(
+                "Payload too large for buffer: needed {} pixels, have {}",
+                bits_needed,
+                self.data.len()
+            );
         }
 
         // 1. Embed Length (32 bits)
@@ -81,7 +85,11 @@ impl StegoBuffer {
 
         let bits_needed = 32 + (len as usize * 8);
         if bits_needed > self.data.len() {
-            bail!("Corrupt header or insufficient buffer size: claimed length {} requires {} pixels", len, bits_needed);
+            bail!(
+                "Corrupt header or insufficient buffer size: claimed length {} requires {} pixels",
+                len,
+                bits_needed
+            );
         }
 
         // 2. Extract Payload

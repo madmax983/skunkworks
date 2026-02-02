@@ -14,9 +14,7 @@ use ratatui::{
     },
     Frame,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 struct App {
@@ -98,9 +96,13 @@ fn run_app(tui: &mut Tui, app: &mut App) -> Result<()> {
                     match key.code {
                         KeyCode::Char('q') => app.should_quit = true,
                         KeyCode::Left => app.cursor_x = app.cursor_x.saturating_sub(1),
-                        KeyCode::Right => app.cursor_x = (app.cursor_x + 1).min(app.sim.grid.width - 1),
+                        KeyCode::Right => {
+                            app.cursor_x = (app.cursor_x + 1).min(app.sim.grid.width - 1)
+                        }
                         KeyCode::Up => app.cursor_y = app.cursor_y.saturating_sub(1),
-                        KeyCode::Down => app.cursor_y = (app.cursor_y + 1).min(app.sim.grid.height - 1),
+                        KeyCode::Down => {
+                            app.cursor_y = (app.cursor_y + 1).min(app.sim.grid.height - 1)
+                        }
 
                         KeyCode::Tab => {
                             app.current_tool_idx = (app.current_tool_idx + 1) % app.tools.len();
@@ -170,7 +172,11 @@ fn ui(f: &mut Frame, app: &App) {
     let h = app.sim.grid.height as f64;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" ASCII Optics "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" ASCII Optics "),
+        )
         .marker(Marker::Braille)
         .x_bounds([0.0, w])
         .y_bounds([0.0, h])
@@ -206,11 +212,13 @@ fn ui(f: &mut Frame, app: &App) {
 
             // Draw Rays
             for ray in &app.sim.rays {
-                if ray.path.len() < 2 { continue; }
+                if ray.path.len() < 2 {
+                    continue;
+                }
 
                 for i in 0..ray.path.len() - 1 {
                     let p1 = ray.path[i];
-                    let p2 = ray.path[i+1];
+                    let p2 = ray.path[i + 1];
 
                     // Invert Y
                     // Actually our ray positions are in grid coordinates [0, w].
@@ -229,31 +237,41 @@ fn ui(f: &mut Frame, app: &App) {
             }
 
             // Draw Source
-             ctx.print(app.source_pos.x, h - app.source_pos.y, "S".to_string().fg(Color::Yellow).bold());
+            ctx.print(
+                app.source_pos.x,
+                h - app.source_pos.y,
+                "S".to_string().fg(Color::Yellow).bold(),
+            );
         });
 
     f.render_widget(canvas, canvas_area);
 
     // Info
-    let tool_spans: Vec<Span> = app.tools.iter().enumerate().map(|(i, t)| {
-        let label = if *t == ' ' { "Clr".to_string() } else { t.to_string() };
-        let s = format!(" {} ", label);
-        if i == app.current_tool_idx {
-            Span::styled(s, Style::default().fg(Color::Black).bg(Color::Cyan))
-        } else {
-            Span::raw(s)
-        }
-    }).collect();
+    let tool_spans: Vec<Span> = app
+        .tools
+        .iter()
+        .enumerate()
+        .map(|(i, t)| {
+            let label = if *t == ' ' {
+                "Clr".to_string()
+            } else {
+                t.to_string()
+            };
+            let s = format!(" {} ", label);
+            if i == app.current_tool_idx {
+                Span::styled(s, Style::default().fg(Color::Black).bg(Color::Cyan))
+            } else {
+                Span::raw(s)
+            }
+        })
+        .collect();
 
-    let mut info_text = vec![
-        Span::raw("Tool: [Tab] "),
-    ];
+    let mut info_text = vec![Span::raw("Tool: [Tab] ")];
     info_text.extend(tool_spans);
-    info_text.extend(vec![
-        Span::raw(" | Place: [Space] | Move Src: [WASD] | Rot Src: [Z/X] | Quit: [Q]"),
-    ]);
+    info_text.extend(vec![Span::raw(
+        " | Place: [Space] | Move Src: [WASD] | Rot Src: [Z/X] | Quit: [Q]",
+    )]);
 
-    let info = Paragraph::new(Line::from(info_text))
-        .block(Block::default().borders(Borders::ALL));
+    let info = Paragraph::new(Line::from(info_text)).block(Block::default().borders(Borders::ALL));
     f.render_widget(info, info_area);
 }

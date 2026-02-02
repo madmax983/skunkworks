@@ -5,7 +5,7 @@ use ratatui::{
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{
-        Block, Borders, Paragraph, Sparkline, Table, Row, Cell,
+        Block, Borders, Cell, Paragraph, Row, Sparkline, Table,
         canvas::{Canvas, Rectangle},
     },
 };
@@ -35,13 +35,31 @@ fn draw_status_bar(f: &mut Frame, area: Rect, state: &MarketState, agents: &[Age
     let text = vec![
         Line::from(vec![
             Span::styled(" Tick: ", Style::default().fg(Color::DarkGray)),
-            Span::styled(format!("{:<6} ", tick), Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                format!("{:<6} ", tick),
+                Style::default()
+                    .fg(Color::White)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::styled(" Price: ", Style::default().fg(Color::DarkGray)),
-            Span::styled(format!("${:<6.2} ", state.current_price), Style::default().fg(Color::Cyan)),
+            Span::styled(
+                format!("${:<6.2} ", state.current_price),
+                Style::default().fg(Color::Cyan),
+            ),
             Span::styled(" Wealth: ", Style::default().fg(Color::DarkGray)),
-            Span::styled(format!("${:<8.0} ", total_wealth), Style::default().fg(Color::Green)),
+            Span::styled(
+                format!("${:<8.0} ", total_wealth),
+                Style::default().fg(Color::Green),
+            ),
             Span::styled(" Usage: ", Style::default().fg(Color::DarkGray)),
-            Span::styled(format!("{:.1}% ", occupancy_pct), Style::default().fg(if occupancy_pct > 90.0 { Color::Red } else { Color::Blue })),
+            Span::styled(
+                format!("{:.1}% ", occupancy_pct),
+                Style::default().fg(if occupancy_pct > 90.0 {
+                    Color::Red
+                } else {
+                    Color::Blue
+                }),
+            ),
         ]),
         Line::from(vec![
             Span::styled(" Controls: ", Style::default().fg(Color::Yellow)),
@@ -126,17 +144,27 @@ fn draw_sidebar(f: &mut Frame, area: Rect, state: &MarketState, agents: &[Agent]
         Cell::from("Strat"),
         Cell::from("Pages"),
         Cell::from("Budget"),
-    ]).style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD));
+    ])
+    .style(
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD),
+    );
 
-    let rows: Vec<Row> = sorted_agents.iter().take(20).map(|agent| {
-        let style = Style::default().fg(agent.strategy.color());
-        Row::new(vec![
-            Cell::from(format!("{:02}", agent.id)),
-            Cell::from(format!("{:?}", agent.strategy)),
-            Cell::from(format!("{}", agent.owned_pages)),
-            Cell::from(format!("{:.1}", agent.budget)),
-        ]).style(style)
-    }).collect();
+    let rows: Vec<Row> = sorted_agents
+        .iter()
+        .take(20)
+        .map(|agent| {
+            let style = Style::default().fg(agent.strategy.color());
+            Row::new(vec![
+                Cell::from(format!("{:02}", agent.id)),
+                Cell::from(format!("{:?}", agent.strategy)),
+                Cell::from(format!("{}", agent.owned_pages)),
+                Cell::from(format!("{:.1}", agent.budget)),
+            ])
+            .style(style)
+        })
+        .collect();
 
     let widths = [
         Constraint::Length(4),

@@ -27,7 +27,7 @@ impl SynthState {
         // Trades add noise/intensity.
         // Decay existing intensity.
         if trades > 0 {
-             self.trade_intensity += (trades as f32) * 0.2;
+            self.trade_intensity += (trades as f32) * 0.2;
         }
         self.trade_intensity *= 0.9; // Decay
         self.trade_intensity = self.trade_intensity.min(1.0);

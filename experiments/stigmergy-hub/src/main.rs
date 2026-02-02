@@ -1,11 +1,11 @@
 use anyhow::{Context, Result};
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
-    Frame,
 };
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -113,13 +113,12 @@ fn parse_guestbook(path: &Path) -> Result<Vec<GuestbookEntry>> {
 
             if let Some(start_level) = line.find("Level: ") {
                 if let Some(end_level) = line.find("]") {
-                   current_level = line[start_level + 7..end_level].to_string();
+                    current_level = line[start_level + 7..end_level].to_string();
                 }
             }
             if let Some(start_loc) = line.find("Location: ") {
                 current_location = line[start_loc + 10..].to_string();
             }
-
         } else if line.starts_with("- **Scent Origin:**") {
             current_origin = line["- **Scent Origin:**".len()..].trim().to_string();
         } else if line.starts_with("- **Status:**") {
@@ -143,7 +142,10 @@ fn scan_experiments(root: &Path) -> Result<Vec<String>> {
     let experiments_dir = if root.join("experiments").exists() {
         root.join("experiments")
     } else {
-        anyhow::bail!("Could not find experiments directory at {:?}", root.join("experiments"));
+        anyhow::bail!(
+            "Could not find experiments directory at {:?}",
+            root.join("experiments")
+        );
     };
 
     let mut names = Vec::new();
@@ -153,7 +155,7 @@ fn scan_experiments(root: &Path) -> Result<Vec<String>> {
         if path.is_dir() && path.join("Cargo.toml").exists() {
             if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
                 if name != "stigmergy-hub" {
-                     names.push(name.to_string());
+                    names.push(name.to_string());
                 }
             }
         }
@@ -178,10 +180,10 @@ fn run_tui(app: &mut App) -> Result<()> {
                     KeyCode::Down | KeyCode::Char('j') => app.select_next(),
                     KeyCode::Up | KeyCode::Char('k') => app.select_previous(),
                     KeyCode::Enter => {
-                         if let Some(i) = app.list_state.selected() {
-                             app.launch_target = Some(app.experiments[i].clone());
-                         }
-                         break;
+                        if let Some(i) = app.list_state.selected() {
+                            app.launch_target = Some(app.experiments[i].clone());
+                        }
+                        break;
                     }
                     _ => {}
                 }
@@ -194,19 +196,17 @@ fn run_tui(app: &mut App) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ratatui::{backend::TestBackend, Terminal};
+    use ratatui::{Terminal, backend::TestBackend};
 
     #[test]
     fn test_ui_render() {
         let experiments = vec!["exp1".to_string(), "exp2".to_string()];
-        let guestbook = vec![
-            GuestbookEntry {
-                location: "exp1".to_string(),
-                level: "HIGH".to_string(),
-                origin: "Tester".to_string(),
-                status: "Testing".to_string(),
-            }
-        ];
+        let guestbook = vec![GuestbookEntry {
+            location: "exp1".to_string(),
+            level: "HIGH".to_string(),
+            origin: "Tester".to_string(),
+            status: "Testing".to_string(),
+        }];
         let mut app = App::new(experiments, guestbook);
 
         let backend = TestBackend::new(100, 20);
@@ -255,7 +255,11 @@ fn ui(f: &mut Frame, app: &mut App) {
         .collect();
 
     let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title("Experiments (Stigmergy Hub)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Experiments (Stigmergy Hub)"),
+        )
         .highlight_style(Style::default().add_modifier(Modifier::REVERSED))
         .highlight_symbol("> ");
 
@@ -269,28 +273,41 @@ fn ui(f: &mut Frame, app: &mut App) {
         let text = if let Some(e) = entry {
             vec![
                 Line::from(vec![
-                    Span::styled("Concentration Level: ", Style::default().add_modifier(Modifier::BOLD)),
+                    Span::styled(
+                        "Concentration Level: ",
+                        Style::default().add_modifier(Modifier::BOLD),
+                    ),
                     Span::styled(e.level.clone(), Style::default().fg(Color::Yellow)),
                 ]),
                 Line::from(""),
                 Line::from(vec![
-                    Span::styled("Scent Origin: ", Style::default().add_modifier(Modifier::BOLD)),
+                    Span::styled(
+                        "Scent Origin: ",
+                        Style::default().add_modifier(Modifier::BOLD),
+                    ),
                     Span::from(e.origin.clone()),
                 ]),
                 Line::from(""),
-                Line::from(vec![
-                    Span::styled("Status: ", Style::default().add_modifier(Modifier::BOLD)),
-                ]),
+                Line::from(vec![Span::styled(
+                    "Status: ",
+                    Style::default().add_modifier(Modifier::BOLD),
+                )]),
                 Line::from(e.status.clone()),
                 Line::from(""),
-                Line::from(Span::styled("Press <Enter> to launch", Style::default().fg(Color::Gray))),
+                Line::from(Span::styled(
+                    "Press <Enter> to launch",
+                    Style::default().fg(Color::Gray),
+                )),
             ]
         } else {
-             vec![
-                 Line::from("No Guestbook entry found for this experiment."),
-                 Line::from(""),
-                 Line::from(Span::styled("Press <Enter> to launch", Style::default().fg(Color::Gray))),
-             ]
+            vec![
+                Line::from("No Guestbook entry found for this experiment."),
+                Line::from(""),
+                Line::from(Span::styled(
+                    "Press <Enter> to launch",
+                    Style::default().fg(Color::Gray),
+                )),
+            ]
         };
 
         let paragraph = Paragraph::new(text)
@@ -321,13 +338,11 @@ fn main() -> Result<()> {
             let mut args = vec!["run", "-p", &target];
             // Fix for neuro-terminal
             if target == "neuro-terminal" {
-                 args.push("--bin");
-                 args.push("neuro-terminal");
+                args.push("--bin");
+                args.push("neuro-terminal");
             }
 
-            let status = Command::new("cargo")
-                .args(&args)
-                .status();
+            let status = Command::new("cargo").args(&args).status();
 
             match status {
                 Ok(s) => {

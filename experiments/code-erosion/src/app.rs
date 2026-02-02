@@ -1,15 +1,18 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     widgets::{
-        canvas::{Canvas, Rectangle},
         Block, Borders, Paragraph,
+        canvas::{Canvas, Rectangle},
     },
-    Frame,
 };
-use std::{path::Path, time::{Duration, Instant}};
+use std::{
+    path::Path,
+    time::{Duration, Instant},
+};
 
 use crate::{erosion::Droplet, terrain::TerrainMap};
 
@@ -34,7 +37,10 @@ impl App {
         })
     }
 
-    pub fn run<B: ratatui::backend::Backend>(&mut self, terminal: &mut ratatui::Terminal<B>) -> Result<()> {
+    pub fn run<B: ratatui::backend::Backend>(
+        &mut self,
+        terminal: &mut ratatui::Terminal<B>,
+    ) -> Result<()> {
         let mut last_tick = Instant::now();
         let tick_rate = Duration::from_millis(16); // ~60 fps
 
@@ -102,10 +108,7 @@ impl App {
     fn ui(&self, f: &mut Frame) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([
-                Constraint::Min(0),
-                Constraint::Length(1),
-            ])
+            .constraints([Constraint::Min(0), Constraint::Length(1)])
             .split(f.area());
 
         let main_area = chunks[0];
@@ -172,8 +175,16 @@ impl App {
         f.render_widget(canvas, main_area);
 
         // Status
-        let status = format!("Iter: {} | Droplets: {} | Size: {}x{}",
-            self.iterations, self.droplets.len(), self.terrain.width, self.terrain.height);
-        f.render_widget(Paragraph::new(status).style(Style::default().bg(Color::Blue)), status_area);
+        let status = format!(
+            "Iter: {} | Droplets: {} | Size: {}x{}",
+            self.iterations,
+            self.droplets.len(),
+            self.terrain.width,
+            self.terrain.height
+        );
+        f.render_widget(
+            Paragraph::new(status).style(Style::default().bg(Color::Blue)),
+            status_area,
+        );
     }
 }

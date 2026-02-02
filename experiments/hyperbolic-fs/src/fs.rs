@@ -1,6 +1,6 @@
-use std::path::{Path, PathBuf};
-use std::fs;
 use anyhow::Result;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone)]
 pub struct FsNode {
@@ -49,8 +49,8 @@ pub fn scan_depth(path: &Path, depth: usize) -> Result<FsNode> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::fs::{self, File};
     use std::env;
+    use std::fs::{self, File};
 
     #[test]
     fn test_scan_depth() -> Result<()> {
@@ -75,7 +75,11 @@ mod tests {
         assert!(root.is_dir);
         assert_eq!(root.children.len(), 2); // file1.txt, sub
 
-        let sub_node = root.children.iter().find(|n| n.is_dir).expect("Sub dir not found");
+        let sub_node = root
+            .children
+            .iter()
+            .find(|n| n.is_dir)
+            .expect("Sub dir not found");
         assert_eq!(sub_node.children.len(), 1); // file2.txt
 
         // Cleanup

@@ -64,7 +64,8 @@ fn run_app(tui: &mut Tui, app: &mut App) -> Result<()> {
     loop {
         tui.terminal.draw(|f| ui(f, app))?;
 
-        let timeout = app.tick_rate
+        let timeout = app
+            .tick_rate
             .checked_sub(app.last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
@@ -81,18 +82,24 @@ fn run_app(tui: &mut Tui, app: &mut App) -> Result<()> {
                     }
                     KeyCode::Up => {
                         app.garden.entropy_rate *= 1.5;
-                        if app.garden.entropy_rate > 1.0 { app.garden.entropy_rate = 1.0; }
+                        if app.garden.entropy_rate > 1.0 {
+                            app.garden.entropy_rate = 1.0;
+                        }
                     }
                     KeyCode::Down => {
                         app.garden.entropy_rate /= 1.5;
-                        if app.garden.entropy_rate < 0.000001 { app.garden.entropy_rate = 0.000001; }
+                        if app.garden.entropy_rate < 0.000001 {
+                            app.garden.entropy_rate = 0.000001;
+                        }
                     }
                     KeyCode::Right => {
                         app.garden.repair_rate = (app.garden.repair_rate as f64 * 1.5) as usize;
                     }
                     KeyCode::Left => {
                         app.garden.repair_rate = (app.garden.repair_rate as f64 / 1.5) as usize;
-                        if app.garden.repair_rate < 1 { app.garden.repair_rate = 1; }
+                        if app.garden.repair_rate < 1 {
+                            app.garden.repair_rate = 1;
+                        }
                     }
                     _ => {}
                 }
@@ -109,14 +116,13 @@ fn run_app(tui: &mut Tui, app: &mut App) -> Result<()> {
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(8),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(8)])
         .split(f.area());
 
     // Render Grid
-    let grid_block = Block::default().borders(Borders::ALL).title("Hamming Garden");
+    let grid_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Hamming Garden");
 
     // We render the garden as a paragraph of text
     // Each cell is a nibble.
@@ -135,8 +141,8 @@ fn ui(f: &mut Frame, app: &App) {
         let mut spans = Vec::new();
         for x in 0..visible_width {
             let idx = y * app.garden.width + x; // This mapping might be wrong if garden width != visible width
-            // Let's assume garden width is large enough, or wrap.
-            // Actually garden is 1D vector logically, wrapped at width.
+                                                // Let's assume garden width is large enough, or wrap.
+                                                // Actually garden is 1D vector logically, wrapped at width.
 
             if idx < app.garden.cells.len() {
                 let cell = &app.garden.cells[idx];
@@ -151,8 +157,13 @@ fn ui(f: &mut Frame, app: &App) {
 
                 let style = match cell.status {
                     HammingStatus::Clean => Style::default().fg(Color::DarkGray),
-                    HammingStatus::Corrected(_) => Style::default().fg(Color::Green).add_modifier(Modifier::BOLD),
-                    HammingStatus::DoubleError => Style::default().fg(Color::Red).bg(Color::Black).add_modifier(Modifier::BOLD),
+                    HammingStatus::Corrected(_) => Style::default()
+                        .fg(Color::Green)
+                        .add_modifier(Modifier::BOLD),
+                    HammingStatus::DoubleError => Style::default()
+                        .fg(Color::Red)
+                        .bg(Color::Black)
+                        .add_modifier(Modifier::BOLD),
                 };
 
                 spans.push(Span::styled(char_val, style));
@@ -177,7 +188,10 @@ fn ui(f: &mut Frame, app: &App) {
             Span::raw(format!("{:.6}%", entropy_percent)),
         ]),
         Line::from(vec![
-            Span::styled("Repair Rate (Left/Right): ", Style::default().fg(Color::Cyan)),
+            Span::styled(
+                "Repair Rate (Left/Right): ",
+                Style::default().fg(Color::Cyan),
+            ),
             Span::raw(format!("{} cells/tick", app.garden.repair_rate)),
         ]),
         Line::from(""),
@@ -190,11 +204,17 @@ fn ui(f: &mut Frame, app: &App) {
             Span::raw(format!("{}", app.garden.total_repairs)),
         ]),
         Line::from(vec![
-            Span::styled("Total Deaths (Unrecoverable): ", Style::default().fg(Color::Red)),
+            Span::styled(
+                "Total Deaths (Unrecoverable): ",
+                Style::default().fg(Color::Red),
+            ),
             Span::raw(format!("{}", app.garden.total_deaths)),
         ]),
         Line::from(""),
-        Line::from(Span::styled("Press 'r' to Reset, 'q' to Quit", Style::default().add_modifier(Modifier::ITALIC))),
+        Line::from(Span::styled(
+            "Press 'r' to Reset, 'q' to Quit",
+            Style::default().add_modifier(Modifier::ITALIC),
+        )),
     ];
 
     f.render_widget(Paragraph::new(stats_text).block(stats_block), chunks[1]);

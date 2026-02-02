@@ -9,10 +9,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Frame, Terminal,
 };
 use std::{
@@ -101,8 +98,8 @@ struct Particle {
     vy: f64,
     char: char,
     color: Color,
-    life: f64,     // 0.0 to 1.0
-    decay: f64,    // per second
+    life: f64,  // 0.0 to 1.0
+    decay: f64, // per second
 }
 
 struct ParticleSystem {
@@ -292,7 +289,11 @@ fn ui(f: &mut Frame, app: &App) {
     // We wrap the text to fit the area
     let text_block = Paragraph::new(app.text.as_str())
         .wrap(ratatui::widgets::Wrap { trim: false })
-        .block(Block::default().borders(Borders::ALL).title(" Echo Chamber "));
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Echo Chamber "),
+        );
     f.render_widget(text_block, main_area);
 
     // 2. Render Particle Layer (Foreground)
@@ -301,7 +302,10 @@ fn ui(f: &mut Frame, app: &App) {
     // Text Paragraph wraps at width.
     // Canvas coords are arbitrary float.
 
-    let canvas_area = main_area.inner(ratatui::layout::Margin { horizontal: 1, vertical: 1 });
+    let canvas_area = main_area.inner(ratatui::layout::Margin {
+        horizontal: 1,
+        vertical: 1,
+    });
     // Adjust bounds to inner area
     let inner_width = canvas_area.width as f64;
     let inner_height = canvas_area.height as f64;
@@ -311,10 +315,16 @@ fn ui(f: &mut Frame, app: &App) {
         .x_bounds([0.0, inner_width])
         .y_bounds([-inner_height, 0.0]) // Text grows down
         .paint(|ctx| {
-             for p in &app.particles.particles {
-                let symbol = if p.life > 0.7 { p.char.to_string() } // Show the actual char first
-                             else if p.life > 0.5 { "*".to_string() }
-                             else { ".".to_string() };
+            for p in &app.particles.particles {
+                let symbol = if p.life > 0.7 {
+                    p.char.to_string()
+                }
+                // Show the actual char first
+                else if p.life > 0.5 {
+                    "*".to_string()
+                } else {
+                    ".".to_string()
+                };
 
                 ctx.print(p.x, p.y, Span::styled(symbol, Style::default().fg(p.color)));
             }
