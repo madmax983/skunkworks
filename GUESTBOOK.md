@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chem-sys
+- **Scent Origin:** Genesis (The Alchemist)
+- **Status:** The Petri dish is live. Reaction-diffusion parameters successfully coupled to system metabolism (CPU/RAM). Patterns stabilizing.
+
 ### [Concentration Level: FRESH] - Location: experiments/crate-universe
 - **Scent Origin:** Genesis (The Astronomer)
 - **Status:** Gravitational constant calibrated. Dependencies coalescing into star systems. The workspace is heavy with potential energy.
