@@ -2,18 +2,18 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
     widgets::{
-        canvas::{Canvas, Circle, Context},
         Block, Borders, Paragraph,
+        canvas::{Canvas, Circle, Context},
     },
-    Terminal,
 };
 use std::io;
 
@@ -40,10 +40,7 @@ fn main() -> Result<()> {
 
     // Teardown
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -53,20 +50,24 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, synth: &mut Synthesizer) -> Result<()> {
+fn run_app(
+    terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
+    synth: &mut Synthesizer,
+) -> Result<()> {
     loop {
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Percentage(80),
-                    Constraint::Percentage(20),
-                ])
+                .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
                 .split(f.area());
 
             // Canvas for visual notes
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" ⚛️ Git Harmony ⚛️ "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" ⚛️ Git Harmony ⚛️ "),
+                )
                 .x_bounds([0.0, 100.0])
                 .y_bounds([0.0, 100.0])
                 .paint(|ctx: &mut Context| {
@@ -95,29 +96,36 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, synth: &mut Sy
                             note.text.clone()
                         };
 
-                        ctx.print(
-                            x,
-                            y,
-                            Span::styled(display_text, Style::default().fg(color))
-                        );
+                        ctx.print(x, y, Span::styled(display_text, Style::default().fg(color)));
 
                         // Draw circle
-                         ctx.draw(&Circle {
-                             x,
-                             y,
-                             radius: 1.0 + (note.life * 2.0) as f64,
-                             color,
-                         });
+                        ctx.draw(&Circle {
+                            x,
+                            y,
+                            radius: 1.0 + (note.life * 2.0) as f64,
+                            color,
+                        });
                     }
                 });
             f.render_widget(canvas, chunks[0]);
 
             // Status bar
-            let last_note_text = synth.active_notes.last().map(|n| n.text.clone()).unwrap_or_else(|| "Waiting for git diff...".to_string());
+            let last_note_text = synth
+                .active_notes
+                .last()
+                .map(|n| n.text.clone())
+                .unwrap_or_else(|| "Waiting for git diff...".to_string());
             let count = synth.active_notes.len();
 
-            let p = Paragraph::new(format!("Active Notes: {} | Current: {}", count, last_note_text))
-                .block(Block::default().borders(Borders::ALL).title("Status (Press 'q' to quit)"));
+            let p = Paragraph::new(format!(
+                "Active Notes: {} | Current: {}",
+                count, last_note_text
+            ))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Status (Press 'q' to quit)"),
+            );
             f.render_widget(p, chunks[1]);
         })?;
 

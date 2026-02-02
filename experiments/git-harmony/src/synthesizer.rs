@@ -1,8 +1,8 @@
 use crate::parser::{DiffState, LineChange};
 use rodio::{OutputStream, Sink, Source};
-use std::time::{Duration, Instant};
-use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+use std::time::{Duration, Instant};
 
 pub struct Synthesizer {
     // Audio stuff
@@ -23,7 +23,7 @@ pub struct Synthesizer {
 
 #[derive(Debug, Clone)]
 pub struct VisualNote {
-    pub pitch: f32, // Normalized 0.0 to 1.0 (relative to some max freq)
+    pub pitch: f32,     // Normalized 0.0 to 1.0 (relative to some max freq)
     pub color_hue: f32, // 0.0 to 360.0
     pub text: String,
     pub life: f32, // 1.0 to 0.0
@@ -65,7 +65,7 @@ impl Synthesizer {
 
         // Play next line
         if let Some(event) = self.next_event() {
-             self.play_event(event);
+            self.play_event(event);
         }
     }
 
@@ -83,10 +83,10 @@ impl Synthesizer {
 
         let file = &self.diff.files[self.current_file_idx];
         if self.current_hunk_idx >= file.hunks.len() {
-             self.current_file_idx += 1;
-             self.current_hunk_idx = 0;
-             self.current_line_idx = 0;
-             return self.next_event(); // Recurse
+            self.current_file_idx += 1;
+            self.current_hunk_idx = 0;
+            self.current_line_idx = 0;
+            return self.next_event(); // Recurse
         }
 
         let hunk = &file.hunks[self.current_hunk_idx];
@@ -127,20 +127,20 @@ impl Synthesizer {
 
         // Play audio if available
         if let Some(handle) = &self._stream_handle {
-             let duration = if is_add || is_remove {
-                 Duration::from_millis(150)
-             } else {
-                 Duration::from_millis(50)
-             };
+            let duration = if is_add || is_remove {
+                Duration::from_millis(150)
+            } else {
+                Duration::from_millis(50)
+            };
 
-             let source = rodio::source::SineWave::new(freq)
+            let source = rodio::source::SineWave::new(freq)
                 .take_duration(duration)
                 .amplify(0.1);
 
-             if let Ok(sink) = Sink::try_new(handle) {
-                 sink.append(source);
-                 sink.detach();
-             }
+            if let Ok(sink) = Sink::try_new(handle) {
+                sink.append(source);
+                sink.detach();
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
-use rapier2d::prelude::*;
 use nalgebra::vector;
+use rapier2d::prelude::*;
 
 pub struct PhysicsWorld {
     pub rigid_body_set: RigidBodySet,
@@ -67,9 +67,7 @@ impl PhysicsWorld {
             &(),
         );
 
-        self.query_pipeline.update(
-            &self.collider_set,
-        );
+        self.query_pipeline.update(&self.collider_set);
     }
 }
 
@@ -86,11 +84,11 @@ impl PhysicsWorld {
         for (_, collider) in self.collider_set.iter() {
             if let Some(parent_handle) = collider.parent() {
                 if let Some(body) = self.rigid_body_set.get(parent_handle) {
-                     let position = body.position() * collider.position();
-                     bodies.push(RenderBody {
-                         position: position.clone(),
-                         shape: collider.shared_shape().clone(),
-                     });
+                    let position = body.position() * collider.position();
+                    bodies.push(RenderBody {
+                        position: position.clone(),
+                        shape: collider.shared_shape().clone(),
+                    });
                 }
             }
         }

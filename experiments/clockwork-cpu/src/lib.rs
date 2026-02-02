@@ -1,2 +1,2 @@
-pub mod physics;
 pub mod mechanism;
+pub mod physics;

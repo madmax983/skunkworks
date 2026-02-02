@@ -1,6 +1,6 @@
 use crate::physics::PhysicsWorld;
-use rapier2d::prelude::*;
 use nalgebra::{point, vector};
+use rapier2d::prelude::*;
 use std::f32::consts::PI;
 
 pub struct Clockwork {
@@ -48,15 +48,25 @@ impl Clockwork {
             .density(1.0)
             .build();
 
-        world.collider_set.insert_with_parent(wheel_collider, wheel_handle, &mut world.rigid_body_set);
+        world.collider_set.insert_with_parent(
+            wheel_collider,
+            wheel_handle,
+            &mut world.rigid_body_set,
+        );
 
         // Fix wheel to center with hinge
         let wheel_joint = RevoluteJointBuilder::new()
             .local_anchor1(point![0.0, 0.0])
             .local_anchor2(point![0.0, 0.0])
             .build();
-        world.impulse_joint_set.insert(wheel_handle, world.rigid_body_set.insert(RigidBodyBuilder::fixed().build()), wheel_joint, true);
-
+        world.impulse_joint_set.insert(
+            wheel_handle,
+            world
+                .rigid_body_set
+                .insert(RigidBodyBuilder::fixed().build()),
+            wheel_joint,
+            true,
+        );
 
         // 2. Create Anchor + Pendulum
         let anchor_pivot_y = wheel_radius + 1.5;
@@ -79,23 +89,36 @@ impl Clockwork {
 
         // Pallet 1 (Left)
         // Positioned relative to pivot (0,0 in local space)
-        anchor_shapes.push((Isometry::new(vector![-1.5, -1.5], -0.5), pallet_shape.clone()));
+        anchor_shapes.push((
+            Isometry::new(vector![-1.5, -1.5], -0.5),
+            pallet_shape.clone(),
+        ));
         // Pallet 2 (Right)
         anchor_shapes.push((Isometry::new(vector![1.5, -1.5], 0.5), pallet_shape.clone()));
 
         // Pendulum Rod (Visual mainly, but mass matters)
         let rod_len = 6.0;
-        anchor_shapes.push((Isometry::new(vector![0.0, -rod_len/2.0], 0.0), SharedShape::cuboid(0.1, rod_len/2.0)));
+        anchor_shapes.push((
+            Isometry::new(vector![0.0, -rod_len / 2.0], 0.0),
+            SharedShape::cuboid(0.1, rod_len / 2.0),
+        ));
 
         // Pendulum Bob
-        anchor_shapes.push((Isometry::new(vector![0.0, -rod_len], 0.0), SharedShape::ball(0.5)));
+        anchor_shapes.push((
+            Isometry::new(vector![0.0, -rod_len], 0.0),
+            SharedShape::ball(0.5),
+        ));
 
         let anchor_collider = ColliderBuilder::compound(anchor_shapes)
             .collision_groups(InteractionGroups::new(Group::GROUP_2, Group::GROUP_1)) // Group 2, interacts with 1
             .density(2.0) // Heavier
             .build();
 
-        world.collider_set.insert_with_parent(anchor_collider, anchor_handle, &mut world.rigid_body_set);
+        world.collider_set.insert_with_parent(
+            anchor_collider,
+            anchor_handle,
+            &mut world.rigid_body_set,
+        );
 
         // Hinge for Anchor at its origin
         let anchor_joint = RevoluteJointBuilder::new()
@@ -104,10 +127,14 @@ impl Clockwork {
             .build();
 
         // We need a fixed body at the pivot point
-        let pivot_body = RigidBodyBuilder::fixed().translation(vector![0.0, anchor_pivot_y]).build();
+        let pivot_body = RigidBodyBuilder::fixed()
+            .translation(vector![0.0, anchor_pivot_y])
+            .build();
         let pivot_handle = world.rigid_body_set.insert(pivot_body);
 
-        world.impulse_joint_set.insert(anchor_handle, pivot_handle, anchor_joint, true);
+        world
+            .impulse_joint_set
+            .insert(anchor_handle, pivot_handle, anchor_joint, true);
 
         Self {
             wheel_handle,
