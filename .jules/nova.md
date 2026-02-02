@@ -81,3 +81,8 @@
 **Concept:** An audiovisual typing experience where keystrokes trigger generative soundscapes and particle physics. "Typing as performance."
 **Fate:** Merged
 **Lesson:** TUI Canvas widgets are great for particle systems but coordinate mapping with text widgets requires manual synchronization.
+
+## [Particle Life]
+**Concept:** A simulation of artificial life using particles with pairwise attraction/repulsion rules based on species, creating emergent cell-like structures.
+**Fate:** Merged
+**Lesson:** Splitting the physics logic into a separate `world` module and using `ratatui`'s `Canvas` with `Points` allows for clean separation of concerns and performant rendering of hundreds of particles.
