@@ -26,6 +26,29 @@
 //!     Ok(())
 //! }
 //! ```
+//!
+//! ## Testing
+//!
+//! Because `Tui::init` modifies the global terminal state, it is not suitable for unit tests.
+//! Instead, use `ratatui::backend::TestBackend` to test your drawing logic without a real terminal:
+//!
+//! ```rust
+//! use ratatui::{backend::TestBackend, Terminal, widgets::{Paragraph, Block, Borders}};
+//!
+//! #[test]
+//! fn test_ui() {
+//!     let backend = TestBackend::new(20, 10);
+//!     let mut terminal = Terminal::new(backend).unwrap();
+//!
+//!     terminal.draw(|f| {
+//!         let p = Paragraph::new("Hello").block(Block::default().borders(Borders::ALL));
+//!         f.render_widget(p, f.area());
+//!     }).unwrap();
+//!
+//!     let buffer = terminal.backend().buffer();
+//!     assert_eq!(buffer.get(1, 1).symbol, "H");
+//! }
+//! ```
 
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
@@ -61,6 +84,11 @@ impl Tui {
     /// # Errors
     ///
     /// Returns an `io::Error` if any of the terminal setup operations fail.
+    ///
+    /// # Panics
+    ///
+    /// This function may panic if the `crossterm` execution macro fails in an unrecoverable way,
+    /// though most errors are propagated as `io::Error`.
     pub fn init() -> io::Result<Self> {
         enable_raw_mode()?;
         let mut stdout = io::stdout();
