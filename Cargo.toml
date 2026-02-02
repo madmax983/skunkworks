@@ -39,7 +39,7 @@ members = [
     "experiments/term-fluids",
     "experiments/text-hydro", 
     "experiments/text-sand",
-    "experiments/voronoi-relaxation", "experiments/hamming-garden",
+    "experiments/voronoi-relaxation", "experiments/hamming-garden", "experiments/resonance-chamber",
 ]
 resolver = "2"
 
