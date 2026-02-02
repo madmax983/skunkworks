@@ -1,12 +1,7 @@
-use std::io::stdout;
 use std::time::{Duration, Instant};
 
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     Terminal,
     backend::CrosstermBackend,
@@ -16,21 +11,17 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, canvas::Canvas},
 };
 
+use tui_shared::Tui;
+
 mod firefly;
 use firefly::Swarm;
 
 fn main() -> Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
-    let res = run_app(&mut terminal);
+    let res = run_app(&mut tui.terminal);
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    drop(tui);
 
     if let Err(err) = res {
         println!("{:?}", err);
