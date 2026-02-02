@@ -1,0 +1,11 @@
+[package]
+name = "market-flow"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ratatui.workspace = true
+crossterm.workspace = true
+rand.workspace = true
+anyhow.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }
