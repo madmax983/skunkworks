@@ -46,30 +46,13 @@ pub fn resolve_market(agents: &mut [Agent], state: &mut MarketState, mut bids: V
 
     // First pass: Keep existing pages if possible
     for (page_idx, page) in state.pages.iter_mut().enumerate() {
-        if let Some(owner_id) = page.owner {
-            if let Some(count) = demand.get_mut(&owner_id) {
-                if *count > 0 {
-                    // Agent keeps this page
-                    *count -= 1;
-                    claimed_pages[page_idx] = true;
-                    // Update rent based on their *current* bid?
-                    // Simplifying: Set rent to the lowest winning bid for that agent?
-                    // Or just find *one* of their bids?
-                    // Let's just set it to the average of their winning bids or just the marginal price.
-                    // For now: Set it to the bid price. But which one?
-                    // We'll simplisticly set it to the price of the *last* winning bid globally (Uniform Price Auction)
-                    // or just 0 for now and fix later?
-                    // Let's iterate bids again to assign prices? Too complex.
-                    // Let's just set rent to the price of the bid that "secured" this spot.
-                    // That's hard to track.
-
-                    // Simple hack: Just set rent to the price of the lowest winning bid in the market (Market Clearing Price).
-                    // This is standard single-price auction.
-                    // If no bids, 0.
-                } else {
-                    // Agent has no more demand (lost some share), this page will be freed.
-                }
-            }
+        if let Some(owner_id) = page.owner
+            && let Some(count) = demand.get_mut(&owner_id)
+            && *count > 0
+        {
+            // Agent keeps this page
+            *count -= 1;
+            claimed_pages[page_idx] = true;
         }
     }
 
@@ -132,8 +115,8 @@ mod tests {
     #[test]
     fn test_highest_bidder_wins() {
         let mut state = MarketState::new(1, 1); // 1x1 grid = 1 page
-        let mut agent1 = Agent::new(0, Strategy::Greedy, 100.0, 1);
-        let mut agent2 = Agent::new(1, Strategy::Greedy, 100.0, 1);
+        let agent1 = Agent::new(0, Strategy::Greedy, 100.0, 1);
+        let agent2 = Agent::new(1, Strategy::Greedy, 100.0, 1);
 
         // Agent 2 bids higher
         let bids = vec![

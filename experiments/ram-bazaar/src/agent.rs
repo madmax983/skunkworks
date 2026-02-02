@@ -1,14 +1,9 @@
 use crate::model::{Agent, Bid, Strategy};
 use rand::Rng;
 
-pub trait AgentLogic {
-    fn decide_bids(&self, current_market_price: f64) -> Vec<Bid>;
-    fn update_budget(&mut self);
-}
-
-impl AgentLogic for Agent {
+impl Agent {
     /// Generates a list of bids based on the agent's strategy and budget.
-    fn decide_bids(&self, current_market_price: f64) -> Vec<Bid> {
+    pub fn decide_bids(&self, current_market_price: f64) -> Vec<Bid> {
         let mut bids = Vec::new();
         let mut rng = rand::rng();
 
@@ -70,7 +65,7 @@ impl AgentLogic for Agent {
         bids
     }
 
-    fn update_budget(&mut self) {
+    pub fn update_budget(&mut self) {
         // Income logic
         let income = match self.strategy {
             Strategy::Greedy => 50.0,
@@ -86,5 +81,24 @@ impl AgentLogic for Agent {
 
         self.budget += income;
         self.budget = self.budget.min(self.max_budget); // Cap wealth
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::Strategy;
+
+    #[test]
+    fn test_decide_bids() {
+        let agent = Agent::new(0, Strategy::Greedy, 1000.0, 5);
+        let market_price = 10.0;
+        let bids = agent.decide_bids(market_price);
+
+        assert!(!bids.is_empty());
+        for bid in bids {
+            assert_eq!(bid.agent_id, 0);
+            assert!(bid.price > 0.0);
+        }
     }
 }
