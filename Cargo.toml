@@ -48,6 +48,7 @@ members = [
     "experiments/text-hydro",
     "experiments/text-sand",
     "experiments/voronoi-relaxation", "experiments/myco-transit",
+    "experiments/semantic-spy",
 ]
 resolver = "2"
 
