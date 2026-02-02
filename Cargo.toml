@@ -6,6 +6,7 @@ members = [
     "experiments/automata-warfare",
     "experiments/biomorph-flow",
     "experiments/cellular-beats",
+    "experiments/code-bio-dome",
     "experiments/code-crawler",
     "experiments/code-erosion",
     "experiments/code-metropolis",
