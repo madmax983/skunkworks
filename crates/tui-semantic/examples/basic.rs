@@ -1,5 +1,5 @@
 
-use tui_semantic::{SemanticState, Snapshot, Entity};
+use tui_semantic::{Snapshot, Entity};
 
 struct MyApp {
     player: Player,
@@ -12,7 +12,7 @@ struct Player {
     health: i64,
 }
 
-impl SemanticState for MyApp {
+impl MyApp {
     fn snapshot(&self) -> Snapshot {
         Snapshot::new("my-app")
             .with_entity(Entity::new("player")

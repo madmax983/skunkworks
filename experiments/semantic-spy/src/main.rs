@@ -1,9 +1,5 @@
 use anyhow::{Context, Result};
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -101,22 +97,16 @@ fn main() -> Result<()> {
     let snapshot = read_snapshot()?;
 
     // 2. Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = tui_shared::Tui::init()?;
 
     // 3. Run App
     let app = App::new(snapshot);
-    let res = run_app(&mut terminal, app);
+    let res = run_app(&mut tui.terminal, app);
 
-    // 4. Restore Terminal
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    // 4. Restore Terminal (handled by Drop)
 
     if let Err(err) = res {
+        tui.exit()?;
         eprintln!("{:?}", err);
     }
 
@@ -219,22 +209,6 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
                     let color = if is_selected { Color::Cyan } else { Color::White };
 
                     // Invert Y because TUI (0,0) is top-left but Cartesian is bottom-left usually?
-                    // Wait, ratatui Canvas 0,0 is bottom-left.
-                    // TUI chars are top-left.
-                    // Let's assume standard Cartesian for Canvas.
-                    // But if the app uses screen coords (0,0 top-left), we might need to flip.
-                    // Usually simulations use Cartesian. orbital-decay uses (0,0) top-left for TUI.
-                    // But wait, orbital-decay's TUI drawing:
-                    // cell.set_char('·')...
-                    // It uses row/col.
-
-                    // If I use Canvas, I need to map it correctly.
-                    // Let's assume the snapshot positions are consistent with the viewport.
-                    // If I draw it upside down, so be it for now.
-
-                    // Actually, let's flip Y if it looks wrong.
-                    // For now, raw coords.
-
                     let y = vp_h as f64 - pos.y; // Flip Y to match screen coords (0 at top)
 
                     ctx.print(pos.x, y, Span::styled(
@@ -265,18 +239,6 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
 
     f.render_widget(details, details_area);
 }
-
-// Minimal atty check since we don't want to add a dependency just for this if we can avoid it.
-// Actually, `crossterm` might have `is_tty`? No.
-// I'll add `atty` to Cargo.toml or just rely on failing to read stdin.
-// Actually, `std::io::stdin().read_to_string` will hang if it's a TTY.
-// I'll add `is-terminal` or `atty`.
-// Wait, "Nova avoids massive dependencies". `is-terminal` is small.
-// But I can't add dependencies without updating Cargo.toml.
-// Let's just try to read. If it hangs, user knows they messed up.
-// Or I can use `std::io::IsTerminal` if on Rust 1.70+.
-// Let's check rust version.
-// "edition = 2021" is set.
 
 mod atty {
     pub enum Stream {

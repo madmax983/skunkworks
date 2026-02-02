@@ -1,12 +1,9 @@
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
     Terminal,
-    backend::CrosstermBackend,
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
@@ -14,10 +11,8 @@ use ratatui::{
 };
 use std::{
     env,
-    io::{self, Write as _},
     time::{Duration, Instant},
 };
-use tui_semantic::SemanticState;
 
 mod physics;
 use physics::Universe;
@@ -33,19 +28,15 @@ fn main() -> Result<()> {
     }
 
     // Normal TUI mode
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = tui_shared::Tui::init()?;
 
-    let res = run(&mut terminal);
+    let res = run(&mut tui.terminal);
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
-
+    // Tui is dropped here, restoring terminal
+    // check for errors
     if let Err(err) = res {
+        // We might want to print error after cleanup
+        tui.exit()?; // Ensure cleanup before printing error
         println!("Error: {:?}", err);
     }
 

@@ -7,3 +7,13 @@
 **Bloat:** `AgentLogic` trait in `experiments/ram-bazaar` was a "One-Time Trait" implemented only by `Agent`.
 **Cut:** Deleted the trait, moved `decide_bids` and `update_budget` to `impl Agent`.
 **Saved:** 5 lines of boilerplate, removed unnecessary abstraction layer.
+
+## [Reduction]
+**Bloat:** `SemanticState` trait in `tui-semantic` was a "One-Time Trait" enforcing a contract for a data structure already defined by `Snapshot`. Unused `Command` enum.
+**Cut:** Deleted the trait and enum. Implemented `snapshot()` directly on structs.
+**Saved:** Removed unnecessary abstraction layer, simplified library API.
+
+## [Reduction]
+**Bloat:** Duplicated TUI setup/teardown boilerplate in `orbital-decay` and `semantic-spy`.
+**Cut:** Replaced with `tui_shared::Tui` RAII wrapper.
+**Saved:** ~20 lines of boilerplate, enforced consistent terminal handling.
