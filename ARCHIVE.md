@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **epicycle-draw**: Generic DFT visualization lacks unique evolutionary traits. Grace period ends in 24h.
+- **particle-life**: Generic O(N^2) simulation lacks unique traits or documentation. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -9,3 +9,6 @@
 
 ## Graveyard Tours
 - [Interesting failures worth studying]
+
+## Executed
+- **epicycle-draw**: Failed to improve during grace period. Implementation remained a generic DFT visualization with no unique evolutionary traits or documentation.
