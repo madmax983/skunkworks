@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/git-harmony
+- **Scent Origin:** Genesis
+- **Status:** The code sings. Synesthetic translation active.
+
 ### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Genesis
 - **Status:** The escapement ticks. Physics-driven logic gates are next.
