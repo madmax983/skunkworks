@@ -1,14 +1,11 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyEventKind};
 use ratatui::{Terminal, backend::CrosstermBackend};
 use std::{
     io,
     time::{Duration, Instant},
 };
+use tui_shared::Tui;
 
 pub mod app;
 pub mod audio;
@@ -17,23 +14,16 @@ pub mod physics;
 use app::App;
 
 fn main() -> Result<()> {
-    // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Create App
     let mut app = App::new();
 
     // Run Loop
-    let res = run_app(&mut terminal, &mut app);
+    let res = run_app(&mut tui.terminal, &mut app);
 
-    // Cleanup
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    // Cleanup handled by Tui drop
+    drop(tui);
 
     if let Err(err) = res {
         println!("Error: {:?}", err);
