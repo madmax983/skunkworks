@@ -1,0 +1,9 @@
+[package]
+name = "dx-audit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tui-shared = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true } # implied by tui-shared, but good to have if we use its types
