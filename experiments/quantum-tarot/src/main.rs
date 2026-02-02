@@ -89,9 +89,27 @@ fn ui(f: &mut Frame, app: &mut App) {
         ])
         .split(chunks[1]);
 
-    render_card(f, card_chunks[0], "PAST (Git History)", &app.reading.past, app.revealed_count >= 1);
-    render_card(f, card_chunks[1], "PRESENT (Filesystem)", &app.reading.present, app.revealed_count >= 2);
-    render_card(f, card_chunks[2], "FUTURE (Entropy)", &app.reading.future, app.revealed_count >= 3);
+    render_card(
+        f,
+        card_chunks[0],
+        "PAST (Git History)",
+        &app.reading.past,
+        app.revealed_count >= 1,
+    );
+    render_card(
+        f,
+        card_chunks[1],
+        "PRESENT (Filesystem)",
+        &app.reading.present,
+        app.revealed_count >= 2,
+    );
+    render_card(
+        f,
+        card_chunks[2],
+        "FUTURE (Entropy)",
+        &app.reading.future,
+        app.revealed_count >= 3,
+    );
 
     // Footer
     let footer_text = if app.revealed_count < 3 {
@@ -110,7 +128,11 @@ fn render_card(f: &mut Frame, area: Rect, label: &str, card: &Card, revealed: bo
     let block = Block::default()
         .title(label)
         .borders(Borders::ALL)
-        .style(if revealed { Style::default().fg(Color::Yellow) } else { Style::default().fg(Color::DarkGray) });
+        .style(if revealed {
+            Style::default().fg(Color::Yellow)
+        } else {
+            Style::default().fg(Color::DarkGray)
+        });
 
     let inner_area = block.inner(area);
     f.render_widget(block, area);
@@ -122,10 +144,7 @@ fn render_card(f: &mut Frame, area: Rect, label: &str, card: &Card, revealed: bo
 
         let content_layout = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([
-                Constraint::Length(art_height + 2),
-                Constraint::Min(1),
-            ])
+            .constraints([Constraint::Length(art_height + 2), Constraint::Min(1)])
             .split(inner_area);
 
         let art_paragraph = Paragraph::new(card.art)
@@ -134,7 +153,10 @@ fn render_card(f: &mut Frame, area: Rect, label: &str, card: &Card, revealed: bo
         f.render_widget(art_paragraph, content_layout[0]);
 
         let text = vec![
-            Line::from(Span::styled(card.name, Style::default().fg(Color::Magenta).bold().underlined())),
+            Line::from(Span::styled(
+                card.name,
+                Style::default().fg(Color::Magenta).bold().underlined(),
+            )),
             Line::from(""),
             Line::from(card.description),
         ];
@@ -143,16 +165,13 @@ fn render_card(f: &mut Frame, area: Rect, label: &str, card: &Card, revealed: bo
             .alignment(Alignment::Center)
             .wrap(Wrap { trim: true });
         f.render_widget(desc_paragraph, content_layout[1]);
-
     } else {
         // Render Quantum Noise
         let mut rng = rand::thread_rng();
         let noise: String = (0..inner_area.height)
             .map(|_| {
                 (0..inner_area.width)
-                    .map(|_| {
-                        rng.gen_range(33..126) as u8 as char
-                    })
+                    .map(|_| rng.gen_range(33..126) as u8 as char)
                     .collect::<String>()
             })
             .collect::<Vec<String>>()

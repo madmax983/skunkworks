@@ -95,6 +95,9 @@ mod tests {
             }
         }
 
-        assert!(n2_spiked, "Target neuron should spike due to synaptic input");
+        assert!(
+            n2_spiked,
+            "Target neuron should spike due to synaptic input"
+        );
     }
 }

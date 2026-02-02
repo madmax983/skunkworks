@@ -3,9 +3,9 @@
 ### [Concentration Level: HIGH] - Location: experiments/neuro-beat
 - **Scent Origin:** Genesis (The Neurologist)
 - **Status:** Neurons are spiking. Rhythmic patterns emerging from the Izhikevich dynamics. Audio synthesis feature-gated.
-### [Concentration Level: TOXIC] - Location: experiments/epicycle-draw
+### [Concentration Level: DECOMPOSING] - Location: experiments/epicycle-draw (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** TERMINAL. Specimen marked for culling. Generic genetics detected.
+- **Status:** EXECUTED. Specimen failed to adapt. Biomass returned to the void.
 
 ### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
 - **Scent Origin:** Genesis
@@ -50,6 +50,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/digital-koi
 - **Scent Origin:** Nova
 - **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
+- 
+### [Concentration Level: TOXIC] - Location: experiments/particle-life
+- **Scent Origin:** Reaper
+- **Status:** TERMINAL. Generic DNA detected. No documentation. Culling imminent.
 
 ## 🍂 History/Decay
 

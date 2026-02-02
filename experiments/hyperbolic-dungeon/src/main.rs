@@ -1,5 +1,5 @@
-pub mod geometry;
 pub mod dungeon;
+pub mod geometry;
 pub mod render;
 
 use anyhow::Result;
@@ -17,8 +17,8 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use geometry::{Point, Mobius, TilingConsts, neighbor_transform_a};
 use dungeon::Dungeon;
+use geometry::{neighbor_transform_a, Mobius, Point, TilingConsts};
 use render::draw_dungeon;
 
 struct App {
@@ -56,7 +56,9 @@ impl App {
         // Yes, if we consider input as "Move in direction delta".
         let delta = Point::new(dx, dy);
         // Limit speed to avoid jumping too far
-        if delta.norm() > 0.2 { return; }
+        if delta.norm() > 0.2 {
+            return;
+        }
 
         let candidate_offset = geometry::mobius_add(self.player_offset, delta);
 
@@ -148,11 +150,12 @@ fn ui(f: &mut Frame, app: &mut App) {
     let info = Paragraph::new(vec![
         Line::from(vec![
             Span::styled("Hyperbolic Dungeon", Style::default().fg(Color::Cyan)),
-            Span::raw(format!(" | Path: {:?} | Pos: {:.2}, {:.2}", app.player_path, app.player_offset.re, app.player_offset.im)),
+            Span::raw(format!(
+                " | Path: {:?} | Pos: {:.2}, {:.2}",
+                app.player_path, app.player_offset.re, app.player_offset.im
+            )),
         ]),
-        Line::from(vec![
-            Span::raw(format!("Message: {}", app.message)),
-        ]),
+        Line::from(vec![Span::raw(format!("Message: {}", app.message))]),
     ])
     .block(Block::default().borders(Borders::ALL));
 
@@ -160,7 +163,11 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     // Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Poincaré Disk"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Poincaré Disk"),
+        )
         .x_bounds([-1.05, 1.05])
         .y_bounds([-1.05, 1.05])
         .paint(|ctx| {
@@ -185,7 +192,7 @@ fn ui(f: &mut Frame, app: &mut App) {
                 &app.dungeon,
                 &app.player_path,
                 &view_transform,
-                &app.tiling_consts
+                &app.tiling_consts,
             );
 
             // Draw Player (at center)

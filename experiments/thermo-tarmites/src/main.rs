@@ -1,7 +1,7 @@
 pub mod world;
 
-use std::{error::Error, time::Duration};
 use crossterm::event::{self, Event, KeyCode};
+use rand::Rng;
 use ratatui::{
     style::{Color, Style},
     widgets::{
@@ -9,10 +9,10 @@ use ratatui::{
         Block, Borders,
     },
 };
-use tui_shared::Tui;
-use world::{World, Material};
-use rand::Rng;
 use std::collections::HashMap;
+use std::{error::Error, time::Duration};
+use tui_shared::Tui;
+use world::{Material, World};
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut tui = Tui::init()?;
@@ -24,9 +24,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Initialize scenario
     // Central server block
-    for y in height/2 - 5 .. height/2 + 5 {
-        for x in width/2 - 5 .. width/2 + 5 {
-             world.add_server(x, y);
+    for y in height / 2 - 5..height / 2 + 5 {
+        for x in width / 2 - 5..width / 2 + 5 {
+            world.add_server(x, y);
         }
     }
 
@@ -43,9 +43,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Termites
     for _ in 0..1000 {
-         let x = rng.gen_range(0..width);
-         let y = rng.gen_range(0..height);
-         world.add_termite(x, y);
+        let x = rng.gen_range(0..width);
+        let y = rng.gen_range(0..height);
+        world.add_termite(x, y);
     }
 
     loop {
@@ -66,7 +66,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             let size = f.area();
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Thermo-Termites (Press 'q' to quit)"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Thermo-Termites (Press 'q' to quit)"),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -95,7 +99,10 @@ fn main() -> Result<(), Box<dyn Error>> {
                                 }
                             };
 
-                            points_by_color.entry(color).or_default().push((x as f64, height as f64 - y as f64 - 1.0));
+                            points_by_color
+                                .entry(color)
+                                .or_default()
+                                .push((x as f64, height as f64 - y as f64 - 1.0));
                         }
                     }
 
@@ -108,11 +115,15 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                     // Draw termites
                     for termite in &world.termites {
-                        let color = if termite.carrying { Color::Green } else { Color::Blue };
+                        let color = if termite.carrying {
+                            Color::Green
+                        } else {
+                            Color::Blue
+                        };
                         ctx.print(
                             termite.x as f64,
                             height as f64 - termite.y as f64 - 1.0,
-                            ratatui::text::Span::styled("t", Style::default().fg(color))
+                            ratatui::text::Span::styled("t", Style::default().fg(color)),
                         );
                     }
                 });

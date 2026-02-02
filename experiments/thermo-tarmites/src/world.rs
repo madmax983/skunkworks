@@ -49,7 +49,11 @@ impl World {
     }
 
     pub fn add_termite(&mut self, x: usize, y: usize) {
-        self.termites.push(Termite { x, y, carrying: false });
+        self.termites.push(Termite {
+            x,
+            y,
+            carrying: false,
+        });
     }
 
     pub fn get_index(&self, x: usize, y: usize) -> usize {
@@ -168,13 +172,13 @@ impl World {
             // 2. Action (Pick/Drop)
             // Count neighbors
             let mut wall_neighbors = 0;
-            for (dx, dy) in [(-1,0), (1,0), (0,-1), (0,1)] {
-                let nx = tx as i32 + dx ;
-                let ny = ty as i32 + dy ;
+            for (dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                let nx = tx as i32 + dx;
+                let ny = ty as i32 + dy;
                 if nx >= 0 && nx < width as i32 && ny >= 0 && ny < height as i32 {
-                     if self.grid[ny as usize * width + nx as usize].material == Material::Wall {
-                         wall_neighbors += 1;
-                     }
+                    if self.grid[ny as usize * width + nx as usize].material == Material::Wall {
+                        wall_neighbors += 1;
+                    }
                 }
             }
 
@@ -186,14 +190,14 @@ impl World {
                     let should_drop = if cell_heat > 50.0 {
                         rng.gen_bool(0.1)
                     } else if wall_neighbors > 0 && wall_neighbors < 4 {
-                         rng.gen_bool(0.05)
+                        rng.gen_bool(0.05)
                     } else {
                         false
                     };
 
                     if should_drop {
-                         self.grid[idx].material = Material::Wall;
-                         self.termites[i].carrying = false;
+                        self.grid[idx].material = Material::Wall;
+                        self.termites[i].carrying = false;
                     }
                 }
             } else {

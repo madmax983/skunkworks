@@ -109,7 +109,12 @@ mod tests {
         let audio = AudioEngine::new().unwrap();
         let mut engine = Engine::new(&audio);
 
-        engine.spawn_drummer("Test", Duration::from_millis(100), AudioEvent::Kick, Color::Red);
+        engine.spawn_drummer(
+            "Test",
+            Duration::from_millis(100),
+            AudioEvent::Kick,
+            Color::Red,
+        );
         assert_eq!(engine.states.len(), 1);
 
         let state = engine.states[0].lock().unwrap();
@@ -123,9 +128,24 @@ mod tests {
         let audio = AudioEngine::new().unwrap();
         let mut engine = Engine::new(&audio);
 
-        engine.spawn_drummer("D1", Duration::from_millis(100), AudioEvent::Kick, Color::Red);
-        engine.spawn_drummer("D2", Duration::from_millis(100), AudioEvent::Kick, Color::Red);
-        engine.spawn_drummer("D3", Duration::from_millis(100), AudioEvent::Kick, Color::Red);
+        engine.spawn_drummer(
+            "D1",
+            Duration::from_millis(100),
+            AudioEvent::Kick,
+            Color::Red,
+        );
+        engine.spawn_drummer(
+            "D2",
+            Duration::from_millis(100),
+            AudioEvent::Kick,
+            Color::Red,
+        );
+        engine.spawn_drummer(
+            "D3",
+            Duration::from_millis(100),
+            AudioEvent::Kick,
+            Color::Red,
+        );
 
         engine.set_global_drift(0.1);
 

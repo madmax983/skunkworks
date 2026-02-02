@@ -1,4 +1,4 @@
-use crate::model::{ThreadAgent, Strategy};
+use crate::model::{Strategy, ThreadAgent};
 use rand::Rng;
 
 impl ThreadAgent {
@@ -37,7 +37,7 @@ impl ThreadAgent {
                 // HFTs just want to run, they don't care much about price optimization
                 let noise = rng.gen_range(0.0..1.0);
                 current_market_price + noise
-            },
+            }
             Strategy::Sniper => {
                 // Wait until the last possible moment
                 // If we MUST run every tick from now on (urgency >= 1.0), bid high.
@@ -49,13 +49,13 @@ impl ThreadAgent {
                     // Lowball
                     rng.gen_range(0.1..0.5)
                 }
-            },
+            }
             Strategy::Desperate => {
                 // Bid grows exponentially with urgency
                 // If urgency is low, bid low. If high, bid insane.
                 let factor = urgency.powf(4.0);
                 current_market_price * (0.5 + factor)
-            },
+            }
             Strategy::Value => {
                 // Calculate "fair value" per unit of work
                 // Budget / Remaining Work
@@ -70,7 +70,7 @@ impl ThreadAgent {
                 } else {
                     fair_value * 0.8 // Lowball
                 }
-            },
+            }
         };
 
         // Ensure bid is at least minimal
