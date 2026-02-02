@@ -1,8 +1,11 @@
-  ## Abandoned Work
-  - [Experiment name]: [What was tried] → [Why it failed]
+## ☠️ Condemned (Awaiting Execution)
+- **epicycle-draw**: Generic DFT visualization lacks unique evolutionary traits. Grace period ends in 24h.
 
-  ## Salvageable Components
-  - [Code/ideas worth recycling]
+## Abandoned Work
+- [Experiment name]: [What was tried] → [Why it failed]
 
-  ## Graveyard Tours
-  - [Interesting failures worth studying]
+## Salvageable Components
+- [Code/ideas worth recycling]
+
+## Graveyard Tours
+- [Interesting failures worth studying]

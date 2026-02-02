@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/epicycle-draw
+- **Scent Origin:** Reaper
+- **Status:** TERMINAL. Specimen marked for culling. Generic genetics detected.
+
 ### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
 - **Scent Origin:** Genesis
 - **Status:** Proto-languages emerging. Agents negotiating shared meaning for "Trade(Food)". Vocabulary drift detected.
