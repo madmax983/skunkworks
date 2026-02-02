@@ -169,13 +169,13 @@ impl Simulation {
                     match cell {
                         '/' => {
                             // Mirror / (bottom-left to top-right)
-                            // Normal is (-1, 1) or (1, -1)
-                            ray.dir = ray.dir.reflect(Vec2::new(-1.0, 1.0));
+                            // Normal for UP-reflection from LEFT is (1, 1)
+                            ray.dir = ray.dir.reflect(Vec2::new(1.0, 1.0));
                         }
                         '\\' => {
                             // Mirror \ (top-left to bottom-right)
-                            // Normal is (1, 1) or (-1, -1)
-                            ray.dir = ray.dir.reflect(Vec2::new(1.0, 1.0));
+                            // Normal for DOWN-reflection from LEFT is (-1, 1)
+                            ray.dir = ray.dir.reflect(Vec2::new(-1.0, 1.0));
                         }
                         '|' => {
                             // Vertical Mirror
@@ -235,5 +235,24 @@ mod tests {
         assert_eq!(grid.get(5, 5), '#');
         assert_eq!(grid.get(0, 0), ' ');
         assert_eq!(grid.get(20, 20), ' '); // Out of bounds
+    }
+
+    #[test]
+    fn test_mirror_reflection_directions() {
+        // Test /
+        // Ray moving Right (1, 0) hits / -> Should go Up (0, -1)
+        let dir = Vec2::new(1.0, 0.0);
+        let normal_slash = Vec2::new(1.0, 1.0);
+        let r = dir.reflect(normal_slash);
+        assert!((r.x - 0.0).abs() < 1e-6);
+        assert!((r.y - -1.0).abs() < 1e-6);
+
+        // Test \
+        // Ray moving Right (1, 0) hits \ -> Should go Down (0, 1)
+        let dir = Vec2::new(1.0, 0.0);
+        let normal_backslash = Vec2::new(-1.0, 1.0);
+        let r = dir.reflect(normal_backslash);
+        assert!((r.x - 0.0).abs() < 1e-6);
+        assert!((r.y - 1.0).abs() < 1e-6);
     }
 }
