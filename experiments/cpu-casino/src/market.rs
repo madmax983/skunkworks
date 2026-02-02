@@ -1,4 +1,4 @@
-use crate::model::{Core, ThreadAgent, MarketState, AgentState};
+use crate::model::{AgentState, Core, MarketState, ThreadAgent};
 use std::cmp::Ordering;
 
 #[derive(Debug, Clone)]
@@ -20,8 +20,18 @@ pub fn resolve_auction(
         }
     }
 
-    // Sort bids descending
-    bids.sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap_or(Ordering::Equal));
+    // Sort bids descending, treating NaN as -infinity (push to end)
+    bids.sort_by(|a, b| {
+        if a.price.is_nan() && b.price.is_nan() {
+            Ordering::Equal
+        } else if a.price.is_nan() {
+            Ordering::Greater
+        } else if b.price.is_nan() {
+            Ordering::Less
+        } else {
+            b.price.partial_cmp(&a.price).unwrap_or(Ordering::Equal)
+        }
+    });
 
     // Reset cores
     for core in cores.iter_mut() {
@@ -92,13 +102,26 @@ mod tests {
             ThreadAgent::new(1, Strategy::Value, 100.0, 10.0, 100),
             ThreadAgent::new(2, Strategy::Value, 100.0, 10.0, 100),
         ];
-        let mut cores = vec![Core { id: 0, current_agent_id: None, utilization: 0.0 }];
+        let mut cores = vec![Core {
+            id: 0,
+            current_agent_id: None,
+            utilization: 0.0,
+        }];
         let mut state = MarketState::new();
 
         let bids = vec![
-            Bid { agent_id: 0, price: 10.0 },
-            Bid { agent_id: 1, price: 5.0 },
-            Bid { agent_id: 2, price: 1.0 },
+            Bid {
+                agent_id: 0,
+                price: 10.0,
+            },
+            Bid {
+                agent_id: 1,
+                price: 5.0,
+            },
+            Bid {
+                agent_id: 2,
+                price: 1.0,
+            },
         ];
 
         resolve_auction(&mut agents, &mut cores, &mut state, bids);
@@ -111,5 +134,80 @@ mod tests {
         assert_eq!(agents[0].executed_ticks, 1);
         // Credits should decrease by clearing price (5.0)
         assert!((agents[0].credits - 95.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_nan_bids_handling() {
+        let mut agents = vec![
+            ThreadAgent::new(0, Strategy::Value, 100.0, 10.0, 100),
+            ThreadAgent::new(1, Strategy::Value, 100.0, 10.0, 100),
+        ];
+        let mut cores = vec![Core {
+            id: 0,
+            current_agent_id: None,
+            utilization: 0.0,
+        }];
+        let mut state = MarketState::new();
+
+        // Inject NaN bid
+        // Case 1: NaN first
+        let bids = vec![
+            Bid {
+                agent_id: 0,
+                price: f64::NAN,
+            },
+            Bid {
+                agent_id: 1,
+                price: 10.0,
+            },
+        ];
+
+        resolve_auction(&mut agents, &mut cores, &mut state, bids);
+
+        // Verify that state is not corrupted
+        assert!(!state.current_price.is_nan(), "Price became NaN in Case 1");
+
+        // Assert that the NaN bidder (agent 0) did NOT win.
+        // Currently, because NaN is "Equal" to 10.0, and it appeared first, it stays first and wins.
+        // This assertion should FAIL, proving the vulnerability (NaN wins unfairly).
+        assert_eq!(
+            cores[0].current_agent_id,
+            Some(1),
+            "NaN bidder won over valid bidder!"
+        );
+
+        // Case 2: NaN second (this triggers clearing_price = NaN if sorted as Equal)
+        // Reset state
+        let mut agents = vec![
+            ThreadAgent::new(0, Strategy::Value, 100.0, 10.0, 100),
+            ThreadAgent::new(1, Strategy::Value, 100.0, 10.0, 100),
+        ];
+        let mut cores = vec![Core {
+            id: 0,
+            current_agent_id: None,
+            utilization: 0.0,
+        }];
+        let mut state = MarketState::new();
+
+        let bids = vec![
+            Bid {
+                agent_id: 1,
+                price: 10.0,
+            },
+            Bid {
+                agent_id: 0,
+                price: f64::NAN,
+            },
+        ];
+
+        resolve_auction(&mut agents, &mut cores, &mut state, bids);
+
+        assert!(!state.current_price.is_nan(), "Price became NaN in Case 2");
+        assert!(
+            !agents[1].credits.is_nan(),
+            "Agent 1 credits became NaN in Case 2"
+        );
+
+        // Ideally, the NaN bidder should effectively lose or be last.
     }
 }

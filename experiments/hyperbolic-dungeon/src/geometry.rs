@@ -133,7 +133,10 @@ impl TilingConsts {
         let radius = cosh_radius.acosh();
         let vertex_offset = radius.tanh();
 
-        Self { neighbor_offset, vertex_offset }
+        Self {
+            neighbor_offset,
+            vertex_offset,
+        }
     }
 }
 

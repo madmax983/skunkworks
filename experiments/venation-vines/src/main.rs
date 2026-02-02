@@ -68,7 +68,8 @@ fn main() -> Result<()> {
     while app.running {
         tui.terminal.draw(|f| ui(f, &app))?;
 
-        let timeout = app.tick_rate
+        let timeout = app
+            .tick_rate
             .checked_sub(app.last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
@@ -99,15 +100,16 @@ fn ui(frame: &mut Frame, app: &App) {
 
     let main_layout = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(1),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(1)])
         .split(area);
 
     // Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Venation Vines 🌿"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Venation Vines 🌿"),
+        )
         .x_bounds([0.0, 100.0])
         .y_bounds([0.0, 100.0])
         .paint(|ctx| {
@@ -154,6 +156,6 @@ fn ui(frame: &mut Frame, app: &App) {
     );
     frame.render_widget(
         Paragraph::new(status_text).style(Style::default().fg(Color::Black).bg(Color::White)),
-        main_layout[1]
+        main_layout[1],
     );
 }

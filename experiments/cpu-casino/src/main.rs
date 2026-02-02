@@ -78,15 +78,18 @@ impl App {
         self.state.current_tick += 1;
 
         // 1. Spawn new agents periodically
+        #[allow(clippy::manual_is_multiple_of)]
         if self.state.current_tick % 5 == 0 {
-             self.spawn_agents();
+            self.spawn_agents();
         }
 
         // 2. Collect bids
         let mut bids = Vec::new();
         for agent in &self.agents {
             if agent.state != AgentState::Finished && agent.state != AgentState::Killed {
-                if let Some(price) = agent.decide_bid(self.state.current_price, self.state.current_tick) {
+                if let Some(price) =
+                    agent.decide_bid(self.state.current_price, self.state.current_tick)
+                {
                     bids.push(Bid {
                         agent_id: agent.id,
                         price,
@@ -112,24 +115,24 @@ impl App {
                 agent.state = AgentState::Killed;
                 self.state.killed_count += 1;
             } else if agent.credits <= 0.0 {
-                 // Bankrupt but maybe still alive? Let's kill them for now to save simulation slots.
-                 agent.state = AgentState::Killed;
-                 self.state.killed_count += 1;
+                // Bankrupt but maybe still alive? Let's kill them for now to save simulation slots.
+                agent.state = AgentState::Killed;
+                self.state.killed_count += 1;
             }
         }
 
         // 5. Cleanup old agents to keep memory low
         // Only remove finished/killed agents if we have too many
         if self.agents.len() > 1000 {
-            self.agents.retain(|a| {
-                 match a.state {
-                     AgentState::Finished | AgentState::Killed => false,
-                     _ => true,
-                 }
-            });
+            self.agents
+                .retain(|a| !matches!(a.state, AgentState::Finished | AgentState::Killed));
         }
 
-        self.state.active_thread_count = self.agents.iter().filter(|a| a.state == AgentState::Active || a.state == AgentState::Running).count();
+        self.state.active_thread_count = self
+            .agents
+            .iter()
+            .filter(|a| a.state == AgentState::Active || a.state == AgentState::Running)
+            .count();
     }
 }
 
@@ -139,13 +142,16 @@ fn main() -> Result<()> {
 
     // Seed initial agents
     app.spawn_agents();
-    for _ in 0..10 { app.spawn_agents(); }
+    for _ in 0..10 {
+        app.spawn_agents();
+    }
 
     let tick_rate = Duration::from_millis(100);
     let mut last_tick = Instant::now();
 
     while app.running {
-        tui.terminal.draw(|f| draw_ui(f, &app.state, &app.agents, &app.cores))?;
+        tui.terminal
+            .draw(|f| draw_ui(f, &app.state, &app.agents, &app.cores))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())

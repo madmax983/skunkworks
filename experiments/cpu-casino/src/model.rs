@@ -2,10 +2,10 @@ use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Strategy {
-    HighFreq, // Bids slightly above market, frequent
-    Sniper,   // Bids high when deadline is near
+    HighFreq,  // Bids slightly above market, frequent
+    Sniper,    // Bids high when deadline is near
     Desperate, // Bids exponentially based on urgency
-    Value,    // Bids based on remaining budget vs work
+    Value,     // Bids based on remaining budget vs work
 }
 
 impl fmt::Display for Strategy {
@@ -49,6 +49,12 @@ pub struct MarketState {
     pub active_thread_count: usize,
     pub killed_count: usize,
     pub finished_count: usize,
+}
+
+impl Default for MarketState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl MarketState {
