@@ -1,4 +1,5 @@
 use anyhow::Result;
+use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -19,6 +20,29 @@ impl FsNode {
 }
 
 pub fn scan_depth(path: &Path, depth: usize) -> Result<FsNode> {
+    let mut ancestors = HashSet::new();
+    scan_recursive(path, depth, &mut ancestors)
+}
+
+fn scan_recursive(
+    path: &Path,
+    depth: usize,
+    ancestors: &mut HashSet<PathBuf>,
+) -> Result<FsNode> {
+    // Canonicalize to detect loops
+    let canonical = path.canonicalize().unwrap_or(path.to_path_buf());
+
+    // Check cycle
+    if ancestors.contains(&canonical) {
+        return Ok(FsNode {
+            path: path.to_path_buf(),
+            is_dir: path.is_dir(),
+            children: Vec::new(),
+        });
+    }
+
+    ancestors.insert(canonical.clone());
+
     let is_dir = path.is_dir();
     let mut children = Vec::new();
 
@@ -26,11 +50,7 @@ pub fn scan_depth(path: &Path, depth: usize) -> Result<FsNode> {
         if let Ok(entries) = fs::read_dir(path) {
             for entry in entries.flatten() {
                 let entry_path = entry.path();
-                // Basic symlink loop protection: don't follow if we've seen it?
-                // For MVP, just don't worry about cycles yet.
-
-                // Recursively scan
-                if let Ok(node) = scan_depth(&entry_path, depth - 1) {
+                if let Ok(node) = scan_recursive(&entry_path, depth - 1, ancestors) {
                     children.push(node);
                 }
             }
@@ -38,6 +58,8 @@ pub fn scan_depth(path: &Path, depth: usize) -> Result<FsNode> {
         // Sort children for consistent layout
         children.sort_by(|a, b| a.path.cmp(&b.path));
     }
+
+    ancestors.remove(&canonical);
 
     Ok(FsNode {
         path: path.to_path_buf(),
@@ -83,6 +105,49 @@ mod tests {
         assert_eq!(sub_node.children.len(), 1); // file2.txt
 
         // Cleanup
+        let _ = fs::remove_dir_all(&temp_path);
+        Ok(())
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn test_symlink_cycle_detection() -> Result<()> {
+        let mut temp_path = env::temp_dir();
+        temp_path.push("hyperbolic_test_cycle");
+        let _ = fs::remove_dir_all(&temp_path);
+        fs::create_dir_all(&temp_path)?;
+
+        let dir_a = temp_path.join("a");
+        fs::create_dir(&dir_a)?;
+
+        // Create symlink: temp_path/a/link -> temp_path
+        std::os::unix::fs::symlink(&temp_path, dir_a.join("link"))?;
+
+        // Scan depth 3
+        // root -> a -> link (points to root)
+        // If cycle detection works, 'link' should be visited but its children should NOT be scanned
+        // because scanning them would mean re-scanning 'root', which is already in the stack/visited.
+
+        let root = scan_depth(&temp_path, 3)?;
+
+        let node_a = root
+            .children
+            .iter()
+            .find(|n| n.name() == "a")
+            .expect("a not found");
+        let node_link = node_a
+            .children
+            .iter()
+            .find(|n| n.name() == "link")
+            .expect("link not found");
+
+        // Assert that the link node has no children (recursion stopped)
+        // Current implementation will fail this because it will find 'a' inside 'link'
+        assert!(
+            node_link.children.is_empty(),
+            "Cycle not detected: link node has children"
+        );
+
         let _ = fs::remove_dir_all(&temp_path);
         Ok(())
     }
