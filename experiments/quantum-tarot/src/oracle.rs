@@ -1,7 +1,7 @@
 use crate::cards::{Card, CARDS};
 use rand::seq::SliceRandom;
-use std::process::Command;
 use std::fs;
+use std::process::Command;
 
 pub struct Reading {
     pub past: Card,
@@ -45,9 +45,9 @@ impl Oracle {
         if let Ok(entries) = fs::read_dir("src") {
             let count = entries.count();
             if count > 20 {
-                 return Self::find_card("The Architect");
+                return Self::find_card("The Architect");
             } else if count < 3 {
-                 return Self::find_card("The Green Build");
+                return Self::find_card("The Green Build");
             }
         }
 
@@ -60,7 +60,11 @@ impl Oracle {
     }
 
     fn find_card(name: &str) -> Card {
-        CARDS.iter().find(|c| c.name == name).unwrap_or(&CARDS[0]).clone()
+        CARDS
+            .iter()
+            .find(|c| c.name == name)
+            .unwrap_or(&CARDS[0])
+            .clone()
     }
 }
 

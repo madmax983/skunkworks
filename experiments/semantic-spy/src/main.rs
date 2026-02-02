@@ -5,10 +5,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, List, ListItem, ListState, Paragraph, Wrap,
-    },
+    widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Terminal,
 };
 use std::{
@@ -133,7 +130,8 @@ fn read_snapshot() -> Result<Snapshot> {
             .context("Failed to read stdin")?;
     }
 
-    let snapshot: Snapshot = serde_json::from_str(&json).context("Failed to parse JSON snapshot")?;
+    let snapshot: Snapshot =
+        serde_json::from_str(&json).context("Failed to parse JSON snapshot")?;
     Ok(snapshot)
 }
 
@@ -180,7 +178,11 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
 
     let list = List::new(items)
         .block(Block::default().borders(Borders::ALL).title(" Entities "))
-        .highlight_style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Cyan))
+        .highlight_style(
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Cyan),
+        )
         .highlight_symbol("> ");
 
     f.render_stateful_widget(list, left_pane, &mut app.list_state);
@@ -206,15 +208,23 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
             for (i, entity) in app.snapshot.entities.iter().enumerate() {
                 if let Some(pos) = entity.position {
                     let is_selected = Some(i) == app.list_state.selected();
-                    let color = if is_selected { Color::Cyan } else { Color::White };
+                    let color = if is_selected {
+                        Color::Cyan
+                    } else {
+                        Color::White
+                    };
 
                     // Invert Y because TUI (0,0) is top-left but Cartesian is bottom-left usually?
                     let y = vp_h as f64 - pos.y; // Flip Y to match screen coords (0 at top)
 
-                    ctx.print(pos.x, y, Span::styled(
-                        entity.display.clone().unwrap_or_else(|| "?".to_string()),
-                        Style::default().fg(color),
-                    ));
+                    ctx.print(
+                        pos.x,
+                        y,
+                        Span::styled(
+                            entity.display.clone().unwrap_or_else(|| "?".to_string()),
+                            Style::default().fg(color),
+                        ),
+                    );
                 }
             }
         });

@@ -72,33 +72,33 @@ impl ShallowWater {
         let dt = self.dt;
         let dx = 1.0;
 
-        for y in 1..h-1 {
-            for x in 1..w-1 {
+        for y in 1..h - 1 {
+            for x in 1..w - 1 {
                 let h_c = self.h.get(x, y);
                 let u_c = self.u.get(x, y);
                 let v_c = self.v.get(x, y);
                 // let b_c = self.b.get(x, y);
 
                 // Central differences
-                let h_px = self.h.get(x+1, y);
-                let h_mx = self.h.get(x-1, y);
-                let h_py = self.h.get(x, y+1);
-                let h_my = self.h.get(x, y-1);
+                let h_px = self.h.get(x + 1, y);
+                let h_mx = self.h.get(x - 1, y);
+                let h_py = self.h.get(x, y + 1);
+                let h_my = self.h.get(x, y - 1);
 
-                let b_px = self.b.get(x+1, y);
-                let b_mx = self.b.get(x-1, y);
-                let b_py = self.b.get(x, y+1);
-                let b_my = self.b.get(x, y-1);
+                let b_px = self.b.get(x + 1, y);
+                let b_mx = self.b.get(x - 1, y);
+                let b_py = self.b.get(x, y + 1);
+                let b_my = self.b.get(x, y - 1);
 
-                let u_px = self.u.get(x+1, y);
-                let u_mx = self.u.get(x-1, y);
-                let u_py = self.u.get(x, y+1);
-                let u_my = self.u.get(x, y-1);
+                let u_px = self.u.get(x + 1, y);
+                let u_mx = self.u.get(x - 1, y);
+                let u_py = self.u.get(x, y + 1);
+                let u_my = self.u.get(x, y - 1);
 
-                let v_px = self.v.get(x+1, y);
-                let v_mx = self.v.get(x-1, y);
-                let v_py = self.v.get(x, y+1);
-                let v_my = self.v.get(x, y-1);
+                let v_px = self.v.get(x + 1, y);
+                let v_mx = self.v.get(x - 1, y);
+                let v_py = self.v.get(x, y + 1);
+                let v_my = self.v.get(x, y - 1);
 
                 // Gradients
                 let dh_dx = (h_px - h_mx) / (2.0 * dx);
@@ -117,14 +117,16 @@ impl ShallowWater {
                 let dhu_dx = h_c * du_dx + u_c * dh_dx;
                 let dhv_dy = h_c * dv_dy + v_c * dh_dy;
 
-                let dh = - (dhu_dx + dhv_dy) * dt;
+                let dh = -(dhu_dx + dhv_dy) * dt;
 
                 // Momentum
-                let du = - (u_c * du_dx + v_c * du_dy + self.g * (dh_dx + db_dx)) * dt;
-                let dv = - (u_c * dv_dx + v_c * dv_dy + self.g * (dh_dy + db_dy)) * dt;
+                let du = -(u_c * du_dx + v_c * du_dy + self.g * (dh_dx + db_dx)) * dt;
+                let dv = -(u_c * dv_dx + v_c * dv_dy + self.g * (dh_dy + db_dy)) * dt;
 
                 let mut new_h = h_c + dh;
-                if new_h < 0.0 { new_h = 0.0; }
+                if new_h < 0.0 {
+                    new_h = 0.0;
+                }
 
                 self.h_next.set(x, y, new_h);
                 self.u_next.set(x, y, (u_c + du) * self.damping);
