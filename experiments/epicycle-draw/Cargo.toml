@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ratatui = { version = "0.29", features = ["all-widgets"] }
-crossterm = "0.28"
-anyhow = "1.0"
-tui-shared = { path = "../../crates/tui-shared" }
+ratatui = { workspace = true, features = ["all-widgets"] }
+crossterm.workspace = true
+anyhow.workspace = true
+tui-shared.workspace = true

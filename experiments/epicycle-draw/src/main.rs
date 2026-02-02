@@ -1,7 +1,5 @@
 use anyhow::Result;
-use crossterm::event::{
-    self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseButton, MouseEventKind,
-};
+use crossterm::event::{self, Event, KeyCode, MouseButton, MouseEventKind};
 use ratatui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout},
@@ -113,13 +111,7 @@ impl App {
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
 
-    // Enable mouse capture specifically
-    crossterm::execute!(tui.terminal.backend_mut(), EnableMouseCapture)?;
-
     let res = run_app(&mut tui.terminal);
-
-    // Disable mouse capture
-    crossterm::execute!(tui.terminal.backend_mut(), DisableMouseCapture)?;
 
     if let Err(err) = res {
         println!("{:?}", err);

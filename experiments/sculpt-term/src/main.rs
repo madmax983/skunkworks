@@ -3,20 +3,16 @@ mod math;
 mod render;
 mod sdf;
 
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     Terminal,
-    backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph},
 };
 use std::{io, time::Duration};
+use tui_shared::Tui;
 
 use app::App;
 use math::Vec3;
@@ -25,21 +21,12 @@ use sdf::{op_smooth_union, sd_sphere};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Create App
     let mut app = App::new();
 
-    let res = run_app(&mut terminal, &mut app);
-
-    // Restore terminal
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    let res = run_app(&mut tui.terminal, &mut app);
 
     if let Err(err) = res {
         println!("{:?}", err);
