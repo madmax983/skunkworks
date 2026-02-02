@@ -8,7 +8,6 @@ use crossterm::event::{self, Event, KeyCode};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use crate::agent::AgentLogic;
 use crate::market::resolve_market;
 use crate::model::{Agent, MarketState, Strategy};
 use crate::ui::draw_ui;
@@ -77,12 +76,11 @@ fn main() -> Result<()> {
             .checked_sub(last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
-        if crossterm::event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if let KeyCode::Char('q') = key.code {
-                    app.running = false;
-                }
-            }
+        if crossterm::event::poll(timeout)?
+            && let Event::Key(key) = event::read()?
+            && let KeyCode::Char('q') = key.code
+        {
+            app.running = false;
         }
 
         if last_tick.elapsed() >= tick_rate {
