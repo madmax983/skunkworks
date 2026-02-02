@@ -18,3 +18,8 @@
 **Concept:** A text-based roguelike where the map is the Git commit history. Commits are rooms, parents/children are exits, and bugs/features are encounters determined by commit messages.
 **Fate:** Merged
 **Lesson:** Interpreting version control graphs as physical spaces (dungeons) creates a natural exploration mechanic. Bidirectional graph traversal requires pre-processing or double-linking logic since Git is natively directed acyclic (backwards).
+
+## [Cargo Compass]
+**Concept:** A TUI explorer and launcher for the Cargo workspace. It visualizes the dependency graph (list view) and allows running experiments directly from the interface.
+**Fate:** Merged
+**Lesson:** `cargo_metadata` + `ratatui` + `tui-shared` creates a powerful "Dashboard" pattern. Suspending the TUI to run a subprocess (`cargo run`) works seamlessly if raw mode is handled correctly.
