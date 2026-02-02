@@ -24,6 +24,7 @@ members = [
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/literary-boids",
+    "experiments/market-flow",
     "experiments/neuro-puppet",
     "experiments/neuro-terminal",
     "experiments/orbital-decay",
