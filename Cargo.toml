@@ -35,6 +35,7 @@ members = [
     "experiments/sonic-scribbler",
     "experiments/sculpt-term",
     "experiments/stego-spectral",
+    "experiments/stigmergy-hub",
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro", 
