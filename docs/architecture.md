@@ -50,10 +50,6 @@ The `tui-semantic` crate enables applications to expose their internal state as 
 ```mermaid
 classDiagram
     direction LR
-    class SemanticState {
-        <<trait>>
-        +snapshot() Snapshot
-    }
 
     class Snapshot {
         +String app
@@ -77,7 +73,6 @@ classDiagram
         +String key
     }
 
-    SemanticState ..> Snapshot : Produces
     Snapshot *-- Entity : Contains
     Snapshot *-- Action : Contains
 ```
