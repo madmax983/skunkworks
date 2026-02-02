@@ -20,6 +20,7 @@ members = [
     "experiments/euclidean-pulse",
     "experiments/firefly-synapse",
     "experiments/fugue-state",
+    "experiments/git-rogue",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
     "experiments/hamming-garden",
