@@ -43,6 +43,45 @@ classDiagram
     note for Tui "Handles raw mode, alternate screen,\nand mouse capture automatically."
 ```
 
+### Semantic Bridge (crates/tui-semantic)
+
+The `tui-semantic` crate enables applications to expose their internal state as structured data for LLM agents.
+
+```mermaid
+classDiagram
+    direction LR
+    class SemanticState {
+        <<trait>>
+        +snapshot() Snapshot
+    }
+
+    class Snapshot {
+        +String app
+        +u64 frame
+        +Vec~Entity~ entities
+        +Vec~Region~ regions
+        +Vec~Action~ actions
+        +to_json() String
+    }
+
+    class Entity {
+        +String kind
+        +String id
+        +Vec2 position
+        +HashMap~String, PropValue~ props
+    }
+
+    class Action {
+        +String name
+        +String description
+        +String key
+    }
+
+    SemanticState ..> Snapshot : Produces
+    Snapshot *-- Entity : Contains
+    Snapshot *-- Action : Contains
+```
+
 ## Experiment: Git Rhythm
 
 **Git Rhythm** sonifies and visualizes the history of a git repository.
