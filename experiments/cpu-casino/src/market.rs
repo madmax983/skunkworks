@@ -20,8 +20,31 @@ pub fn resolve_auction(
         }
     }
 
-    // Sort bids descending
-    bids.sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap_or(Ordering::Equal));
+    // Sort bids descending, handling NaN by pushing them to the end (treated as -Infinity)
+    bids.sort_by(|a, b| {
+        let price_a = a.price;
+        let price_b = b.price;
+
+        if price_a.is_nan() && price_b.is_nan() {
+            Ordering::Equal
+        } else if price_a.is_nan() {
+            Ordering::Greater // a is NaN, so it comes after b (descending)
+        } else if price_b.is_nan() {
+            Ordering::Less // b is NaN, so a comes before b
+        } else {
+            price_b.partial_cmp(&price_a).unwrap_or(Ordering::Equal)
+        }
+    });
+
+    // Deduplicate bids: Keep only the highest bid per agent
+    let mut unique_bids = Vec::with_capacity(bids.len());
+    let mut seen_agents = std::collections::HashSet::new();
+    for bid in bids {
+        if seen_agents.insert(bid.agent_id) {
+            unique_bids.push(bid);
+        }
+    }
+    let bids = unique_bids;
 
     // Reset cores
     for core in cores.iter_mut() {
@@ -111,5 +134,57 @@ mod tests {
         assert_eq!(agents[0].executed_ticks, 1);
         // Credits should decrease by clearing price (5.0)
         assert!((agents[0].credits - 95.0).abs() < 0.001);
+    }
+
+    #[test]
+    fn test_duplicate_agent_assignment() {
+        let mut agents = vec![
+            ThreadAgent::new(0, Strategy::Value, 100.0, 10.0, 100),
+            ThreadAgent::new(1, Strategy::Value, 100.0, 10.0, 100),
+        ];
+        let mut cores = vec![
+            Core { id: 0, current_agent_id: None, utilization: 0.0 },
+            Core { id: 1, current_agent_id: None, utilization: 0.0 },
+        ];
+        let mut state = MarketState::new();
+
+        // Agent 0 bids twice with high prices
+        let bids = vec![
+            Bid { agent_id: 0, price: 50.0 },
+            Bid { agent_id: 0, price: 40.0 },
+            Bid { agent_id: 1, price: 10.0 },
+        ];
+
+        resolve_auction(&mut agents, &mut cores, &mut state, bids);
+
+        // Expectation: Agent 0 should only win ONE core.
+        // The second core should go to Agent 1.
+        let assigned_agents: Vec<_> = cores.iter().filter_map(|c| c.current_agent_id).collect();
+        assert!(assigned_agents.contains(&0));
+        assert!(assigned_agents.contains(&1));
+        assert_eq!(assigned_agents.len(), 2);
+
+        assert_eq!(agents[0].executed_ticks, 1, "Agent 0 executed twice in one tick!");
+        assert_eq!(agents[1].executed_ticks, 1, "Agent 1 should have executed!");
+    }
+
+    #[test]
+    fn test_nan_bid_sorting() {
+        let mut agents = vec![
+            ThreadAgent::new(0, Strategy::Value, 100.0, 10.0, 100),
+            ThreadAgent::new(1, Strategy::Value, 100.0, 10.0, 100),
+        ];
+        let mut cores = vec![Core { id: 0, current_agent_id: None, utilization: 0.0 }];
+        let mut state = MarketState::new();
+
+        let bids = vec![
+            Bid { agent_id: 0, price: f64::NAN },
+            Bid { agent_id: 1, price: 10.0 },
+        ];
+
+        resolve_auction(&mut agents, &mut cores, &mut state, bids);
+
+        // NaN bid should lose.
+        assert_eq!(cores[0].current_agent_id, Some(1));
     }
 }
