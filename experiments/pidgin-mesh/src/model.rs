@@ -1,6 +1,6 @@
+use rand::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use rand::prelude::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Resource {
@@ -30,7 +30,8 @@ impl Meaning {
             Accept,
             Reject,
             Bye,
-        ].into_iter()
+        ]
+        .into_iter()
     }
 
     pub fn random(rng: &mut impl Rng) -> Self {
@@ -45,23 +46,62 @@ impl Meaning {
         ];
         *choices.choose(rng).unwrap()
     }
+
+    pub fn to_index(&self) -> usize {
+        match self {
+            Meaning::Hello => 0,
+            Meaning::Trade(Resource::Food) => 1,
+            Meaning::Trade(Resource::Water) => 2,
+            Meaning::Trade(Resource::Data) => 3,
+            Meaning::Accept => 4,
+            Meaning::Reject => 5,
+            Meaning::Bye => 6,
+        }
+    }
+
+    pub fn from_index(idx: usize) -> Option<Self> {
+        match idx {
+            0 => Some(Meaning::Hello),
+            1 => Some(Meaning::Trade(Resource::Food)),
+            2 => Some(Meaning::Trade(Resource::Water)),
+            3 => Some(Meaning::Trade(Resource::Data)),
+            4 => Some(Meaning::Accept),
+            5 => Some(Meaning::Reject),
+            6 => Some(Meaning::Bye),
+            _ => None,
+        }
+    }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub const MEANING_COUNT: usize = 7;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(into = "Vec<(Meaning, String)>", from = "Vec<(Meaning, String)>")]
+#[derive(Default)]
 pub struct Lexicon {
-    pub map: HashMap<Meaning, String>,
+    pub words: [Option<String>; MEANING_COUNT],
 }
 
 impl From<Lexicon> for Vec<(Meaning, String)> {
     fn from(val: Lexicon) -> Self {
-        val.map.into_iter().collect()
+        val.words
+            .iter()
+            .enumerate()
+            .filter_map(|(i, w)| {
+                w.as_ref()
+                    .and_then(|word| Meaning::from_index(i).map(|m| (m, word.clone())))
+            })
+            .collect()
     }
 }
 
 impl From<Vec<(Meaning, String)>> for Lexicon {
     fn from(val: Vec<(Meaning, String)>) -> Self {
-        Lexicon { map: val.into_iter().collect() }
+        let mut words: [Option<String>; MEANING_COUNT] = Default::default();
+        for (m, w) in val {
+            words[m.to_index()] = Some(w);
+        }
+        Lexicon { words }
     }
 }
 
@@ -83,45 +123,59 @@ impl Agent {
 
         for meaning in Meaning::iter() {
             let word = Self::generate_word(&mut rng);
-            lexicon.map.insert(meaning, word.clone());
+            lexicon.words[meaning.to_index()] = Some(word.clone());
             vocabulary.insert(word, meaning);
         }
 
         Self {
-            id, x, y, lexicon, vocabulary, score: 0.0
+            id,
+            x,
+            y,
+            lexicon,
+            vocabulary,
+            score: 0.0,
         }
     }
 
     fn generate_word(rng: &mut impl Rng) -> String {
         let len = rng.gen_range(3..=5);
-        (0..len).map(|_| (b'a' + rng.gen_range(0..26)) as char).collect()
+        (0..len)
+            .map(|_| (b'a' + rng.gen_range(0..26)) as char)
+            .collect()
     }
 
     pub fn speak(&self, meaning: Meaning) -> String {
-        let mut word = self.lexicon.map.get(&meaning).cloned().unwrap_or_else(|| "???".to_string());
+        let mut word = self.lexicon.words[meaning.to_index()]
+            .clone()
+            .unwrap_or_else(|| "???".to_string());
 
         let mut rng = thread_rng();
         if rng.gen_bool(0.01) {
-             word = Self::mutate(&word, &mut rng);
+            word = Self::mutate(&word, &mut rng);
         }
         word
     }
 
     fn mutate(word: &str, rng: &mut impl Rng) -> String {
         let mut chars: Vec<char> = word.chars().collect();
-        if chars.is_empty() { return "a".to_string(); }
+        if chars.is_empty() {
+            return "a".to_string();
+        }
 
         match rng.gen_range(0..3) {
-            0 => { // Change
+            0 => {
+                // Change
                 let idx = rng.gen_range(0..chars.len());
                 chars[idx] = (b'a' + rng.gen_range(0..26)) as char;
-            },
-            1 => { // Add
+            }
+            1 => {
+                // Add
                 let idx = rng.gen_range(0..=chars.len());
                 let c = (b'a' + rng.gen_range(0..26)) as char;
                 chars.insert(idx, c);
-            },
-            2 => { // Remove
+            }
+            2 => {
+                // Remove
                 if chars.len() > 1 {
                     let idx = rng.gen_range(0..chars.len());
                     chars.remove(idx);
@@ -137,7 +191,7 @@ impl Agent {
     }
 
     pub fn learn(&mut self, word: String, meaning: Meaning) {
-        self.lexicon.map.insert(meaning, word.clone());
+        self.lexicon.words[meaning.to_index()] = Some(word.clone());
         self.vocabulary.insert(word, meaning);
     }
 }
@@ -152,10 +206,20 @@ pub struct Network {
 impl Network {
     pub fn new(count: usize) -> Self {
         let mut rng = thread_rng();
-        let agents = (0..count).map(|i| {
-            Agent::new_random(i, rng.gen::<f64>() * 200.0 - 100.0, rng.gen::<f64>() * 200.0 - 100.0)
-        }).collect();
-        Self { agents, active_links: vec![], epoch: 0 }
+        let agents = (0..count)
+            .map(|i| {
+                Agent::new_random(
+                    i,
+                    rng.gen::<f64>() * 200.0 - 100.0,
+                    rng.gen::<f64>() * 200.0 - 100.0,
+                )
+            })
+            .collect();
+        Self {
+            agents,
+            active_links: vec![],
+            epoch: 0,
+        }
     }
 
     pub fn step(&mut self) {
@@ -163,7 +227,9 @@ impl Network {
         self.active_links.clear();
         let mut rng = thread_rng();
         let count = self.agents.len();
-        if count < 2 { return; }
+        if count < 2 {
+            return;
+        }
 
         let interactions = count / 2;
 
@@ -174,7 +240,9 @@ impl Network {
         for _ in 0..interactions {
             let idx_a = rng.gen_range(0..count);
             let mut idx_b = rng.gen_range(0..count);
-            while idx_a == idx_b { idx_b = rng.gen_range(0..count); }
+            while idx_a == idx_b {
+                idx_b = rng.gen_range(0..count);
+            }
 
             // A speaks
             let meaning = Meaning::random(&mut rng);
@@ -229,15 +297,23 @@ mod tests {
         }
 
         // Now check if they agree on words
-        let w1_final = net.agents[0].lexicon.map.get(&m).unwrap();
-        let w2_final = net.agents[1].lexicon.map.get(&m).unwrap();
+        // Access array directly via index
+        let w1_final = net.agents[0].lexicon.words[m.to_index()].as_ref().unwrap();
+        let w2_final = net.agents[1].lexicon.words[m.to_index()].as_ref().unwrap();
 
         // Check if Agent 1 understands Agent 0
         let guess = net.agents[1].listen(w1_final);
-        assert_eq!(guess, Some(m), "Agent 1 should understand Agent 0 after training");
+        assert_eq!(
+            guess,
+            Some(m),
+            "Agent 1 should understand Agent 0 after training"
+        );
 
         // They might not speak the SAME word (synonyms), but they should understand.
         // But with our logic: learn() sets the word in Lexicon too. So they should converge to same word.
-         assert_eq!(w1_final, w2_final, "Agents should converge to the same word for Hello");
+        assert_eq!(
+            w1_final, w2_final,
+            "Agents should converge to the same word for Hello"
+        );
     }
 }
