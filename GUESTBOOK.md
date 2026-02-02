@@ -55,7 +55,11 @@
 - **Scent Origin:** Nova
 - **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
 
-### [Concentration Level: TOXIC] - Location: experiments/entropy-garden
+### [Concentration Level: FRESH] - Location: experiments/process-orbit
+- **Scent Origin:** Nova
+- **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
+
+### [Concentration Level: TOXIC] - Location: experiments/particle-life
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Redundant evolution detected. Inferior to `sys-weather` and `biomorph-flow`. Culling imminent.
 
