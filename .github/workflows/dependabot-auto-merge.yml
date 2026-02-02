@@ -1,0 +1,12 @@
+name: Deprecated Dependabot Merge
+
+on:
+  push:
+    branches:
+      - 'refs/heads/non-existent-branch-to-disable-workflow'
+
+jobs:
+  dummy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "This workflow is deprecated and disabled."
