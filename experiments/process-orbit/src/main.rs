@@ -143,7 +143,11 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Solar System Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Process Orbit "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Process Orbit "),
+        )
         .x_bounds([-120.0, 120.0])
         .y_bounds([-120.0, 120.0]) // Adjusted for standard aspect
         .paint(|ctx| {
@@ -159,15 +163,32 @@ fn ui(f: &mut Frame, app: &App) {
 
     let status = Line::from(vec![
         Span::raw(" CPU: "),
-        Span::styled(format!("{:.1}%", global_cpu), Style::default().fg(if global_cpu > 80.0 { Color::Red } else { Color::Green })),
+        Span::styled(
+            format!("{:.1}%", global_cpu),
+            Style::default().fg(if global_cpu > 80.0 {
+                Color::Red
+            } else {
+                Color::Green
+            }),
+        ),
         Span::raw(" | MEM: "),
-        Span::styled(format!("{}/{} MB", used_memory / 1024 / 1024, total_memory / 1024 / 1024), Style::default().fg(Color::Cyan)),
+        Span::styled(
+            format!(
+                "{}/{} MB",
+                used_memory / 1024 / 1024,
+                total_memory / 1024 / 1024
+            ),
+            Style::default().fg(Color::Cyan),
+        ),
         Span::raw(" | Processes: "),
         Span::raw(app.bodies.len().to_string()),
         Span::raw(" | 'q' to Quit"),
     ]);
 
-    f.render_widget(Block::default().borders(Borders::TOP).title(status), chunks[1]);
+    f.render_widget(
+        Block::default().borders(Borders::TOP).title(status),
+        chunks[1],
+    );
 }
 
 fn draw_system(ctx: &mut Context, app: &App) {
@@ -213,7 +234,11 @@ fn draw_system(ctx: &mut Context, app: &App) {
 
         // If it's a big process, label it?
         if body.cpu_usage > 5.0 || mem_mb > 500.0 {
-             ctx.print(x + size, y + size, Span::styled(body.name.clone(), Style::default().fg(body.color)));
+            ctx.print(
+                x + size,
+                y + size,
+                Span::styled(body.name.clone(), Style::default().fg(body.color)),
+            );
         }
     }
 }

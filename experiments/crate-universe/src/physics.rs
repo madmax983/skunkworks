@@ -67,7 +67,9 @@ impl System {
                 let dist_sq = delta.length_squared();
 
                 // Avoid singularity and very close interactions
-                if dist_sq < 0.1 { continue; }
+                if dist_sq < 0.1 {
+                    continue;
+                }
 
                 let dist = dist_sq.sqrt();
 
@@ -96,14 +98,18 @@ impl System {
         // Velocity Verlet
         // 1. First half-kick: v(t + dt/2) = v(t) + 0.5 * a(t) * dt
         for body in &mut self.bodies {
-            if body.is_fixed { continue; }
+            if body.is_fixed {
+                continue;
+            }
             let accel = body.force / body.mass;
             body.vel += accel * dt * 0.5;
         }
 
         // 2. Drift: r(t + dt) = r(t) + v(t + dt/2) * dt
         for body in &mut self.bodies {
-            if body.is_fixed { continue; }
+            if body.is_fixed {
+                continue;
+            }
             body.pos += body.vel * dt;
         }
 
@@ -112,7 +118,9 @@ impl System {
 
         // 4. Second half-kick: v(t + dt) = v(t + dt/2) + 0.5 * a(t + dt) * dt
         for body in &mut self.bodies {
-            if body.is_fixed { continue; }
+            if body.is_fixed {
+                continue;
+            }
             let accel = body.force / body.mass;
             body.vel += accel * dt * 0.5;
         }
@@ -173,11 +181,18 @@ mod tests {
         println!("Final Pos: {:?}", final_pos);
 
         // Check that it moved
-        assert!(final_pos.distance(initial_pos) > 1.0, "Planet did not move!");
+        assert!(
+            final_pos.distance(initial_pos) > 1.0,
+            "Planet did not move!"
+        );
 
         // Check that it stayed in orbit (1% tolerance)
         let drift = (final_radius - orbit_radius).abs();
-        assert!(drift < orbit_radius * 0.01,
-            "Orbit drifted too much! Final radius: {}, Drift: {}", final_radius, drift);
+        assert!(
+            drift < orbit_radius * 0.01,
+            "Orbit drifted too much! Final radius: {}, Drift: {}",
+            final_radius,
+            drift
+        );
     }
 }

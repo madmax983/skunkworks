@@ -1,10 +1,10 @@
+use crate::sdf::Grid;
 use glam::{Mat4, Vec3, Vec4, Vec4Swizzles};
 use noise::{NoiseFn, Perlin};
 use ratatui::{
     style::Color,
     widgets::canvas::{Context, Line},
 };
-use crate::sdf::Grid;
 
 pub struct Camera {
     pub pos: Vec3,
@@ -46,8 +46,8 @@ impl Camera {
 
 pub struct Terrain {
     pub sdf: Grid,
-    pub scale: f32,      // World units per grid unit
-    pub height_mult: f32,// Vertical scaling
+    pub scale: f32,       // World units per grid unit
+    pub height_mult: f32, // Vertical scaling
     perlin: Perlin,
 }
 
@@ -87,7 +87,12 @@ impl Terrain {
     }
 }
 
-pub fn draw_terrain(ctx: &mut Context, terrain: &Terrain, camera: &Camera, screen_size: (f32, f32)) {
+pub fn draw_terrain(
+    ctx: &mut Context,
+    terrain: &Terrain,
+    camera: &Camera,
+    screen_size: (f32, f32),
+) {
     let aspect = screen_size.0 / screen_size.1;
     // TUI chars are roughly 1:2 aspect ratio, so we adjust aspect ratio passed to projection
     // Actually screen_size is in "points" of the canvas. If canvas is 100x100, aspect is 1.
@@ -121,7 +126,9 @@ pub fn draw_terrain(ctx: &mut Context, terrain: &Terrain, camera: &Camera, scree
 
         let clip = vp * p;
 
-        if clip.w <= 0.0 { return None; } // Behind camera
+        if clip.w <= 0.0 {
+            return None;
+        } // Behind camera
 
         // NDC
         let ndc = clip.xyz() / clip.w;
@@ -142,17 +149,23 @@ pub fn draw_terrain(ctx: &mut Context, terrain: &Terrain, camera: &Camera, scree
     for z in (0..height).step_by(step) {
         for x in (0..width - step).step_by(step) {
             if let (Some(p1), Some(p2)) = (project(x, z), project(x + step, z)) {
-                 // Color based on height?
-                 let h = terrain.get_height(x, z);
-                 let color = if h > 2.0 { Color::White }
-                             else if h > 0.5 { Color::Red }
-                             else { Color::DarkGray };
+                // Color based on height?
+                let h = terrain.get_height(x, z);
+                let color = if h > 2.0 {
+                    Color::White
+                } else if h > 0.5 {
+                    Color::Red
+                } else {
+                    Color::DarkGray
+                };
 
-                 ctx.draw(&Line {
-                     x1: p1.0, y1: p1.1,
-                     x2: p2.0, y2: p2.1,
-                     color,
-                 });
+                ctx.draw(&Line {
+                    x1: p1.0,
+                    y1: p1.1,
+                    x2: p2.0,
+                    y2: p2.1,
+                    color,
+                });
             }
         }
     }
@@ -161,16 +174,22 @@ pub fn draw_terrain(ctx: &mut Context, terrain: &Terrain, camera: &Camera, scree
     for x in (0..width).step_by(step) {
         for z in (0..height - step).step_by(step) {
             if let (Some(p1), Some(p2)) = (project(x, z), project(x, z + step)) {
-                 let h = terrain.get_height(x, z);
-                 let color = if h > 2.0 { Color::White }
-                             else if h > 0.5 { Color::Red }
-                             else { Color::DarkGray };
+                let h = terrain.get_height(x, z);
+                let color = if h > 2.0 {
+                    Color::White
+                } else if h > 0.5 {
+                    Color::Red
+                } else {
+                    Color::DarkGray
+                };
 
-                 ctx.draw(&Line {
-                     x1: p1.0, y1: p1.1,
-                     x2: p2.0, y2: p2.1,
-                     color,
-                 });
+                ctx.draw(&Line {
+                    x1: p1.0,
+                    y1: p1.1,
+                    x2: p2.0,
+                    y2: p2.1,
+                    color,
+                });
             }
         }
     }

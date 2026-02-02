@@ -1,8 +1,8 @@
+use crate::physics::{Body, System, G};
 use anyhow::Result;
 use cargo_metadata::{MetadataCommand, PackageId};
 use glam::DVec2;
 use std::collections::HashMap;
-use crate::physics::{Body, System, G};
 
 pub fn load_workspace() -> Result<System> {
     let metadata = MetadataCommand::new().exec()?;
@@ -12,7 +12,10 @@ pub fn load_workspace() -> Result<System> {
     let mut reverse_deps: HashMap<PackageId, usize> = HashMap::new();
 
     // Better approach: Use the resolve graph
-    let resolve = metadata.resolve.as_ref().ok_or_else(|| anyhow::anyhow!("No resolve graph found"))?;
+    let resolve = metadata
+        .resolve
+        .as_ref()
+        .ok_or_else(|| anyhow::anyhow!("No resolve graph found"))?;
 
     // Count incoming edges
     for node in &resolve.nodes {
@@ -56,16 +59,16 @@ pub fn load_workspace() -> Result<System> {
             // Supermassive black hole / Central Star
             pos = DVec2::ZERO;
             vel = DVec2::ZERO; // Fixed? Or just heavy?
-            // Let's make it fixed if it's really huge, or just heavy.
-            // Let's make the center fixed to anchor the simulation?
-            // "Forbidden: Euler integration (energy will drift!)" -> implies we want a stable system.
-            // A fixed center helps stability.
+                               // Let's make it fixed if it's really huge, or just heavy.
+                               // Let's make the center fixed to anchor the simulation?
+                               // "Forbidden: Euler integration (energy will drift!)" -> implies we want a stable system.
+                               // A fixed center helps stability.
         } else {
             // Spiral distribution
             // Angle
             let angle = i as f64 * 0.5; // Radians
-            // Radius: spread out based on index (rank)
-            // r = c * sqrt(i) is good for uniform density
+                                        // Radius: spread out based on index (rank)
+                                        // r = c * sqrt(i) is good for uniform density
             let r = 50.0 + (i as f64).sqrt() * 30.0;
 
             pos = DVec2::new(r * angle.cos(), r * angle.sin());

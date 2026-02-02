@@ -46,6 +46,7 @@ members = [
     "experiments/schrodingers-text",
     "experiments/sculpt-term",
     "experiments/sonic-scribbler",
+    "experiments/source-rain",
     "experiments/stego-spectral",
     "experiments/stigmergy-hub",
     "experiments/strange-loops",

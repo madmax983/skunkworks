@@ -139,7 +139,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     let view_height = view_width / aspect * 2.0; // Char height is ~2x width
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Crate Universe"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Crate Universe"),
+        )
         .x_bounds([cx - view_width / 2.0, cx + view_width / 2.0])
         .y_bounds([cy - view_height / 2.0, cy + view_height / 2.0])
         .paint(|ctx| {
@@ -150,9 +154,16 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     let status = format!(
         "Pos: ({:.1}, {:.1}) | Zoom: {:.2} | Bodies: {} | Paused: {} (Space) | Quit: q",
-        cx, cy, app.zoom, app.system.bodies.len(), app.paused
+        cx,
+        cy,
+        app.zoom,
+        app.system.bodies.len(),
+        app.paused
     );
-    f.render_widget(Paragraph::new(status).style(Style::default().bg(Color::Blue)), chunks[1]);
+    f.render_widget(
+        Paragraph::new(status).style(Style::default().bg(Color::Blue)),
+        chunks[1],
+    );
 }
 
 fn draw_system(ctx: &mut Context, app: &App) {
@@ -182,7 +193,11 @@ fn draw_system(ctx: &mut Context, app: &App) {
         });
 
         if app.show_names && (body.mass > 50.0 || app.zoom > 2.0) {
-            ctx.print(body.pos.x + radius, body.pos.y, Span::raw(body.name.clone()));
+            ctx.print(
+                body.pos.x + radius,
+                body.pos.y,
+                Span::raw(body.name.clone()),
+            );
         }
     }
 }

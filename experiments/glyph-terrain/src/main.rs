@@ -6,10 +6,7 @@ use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use glam::Vec3;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Frame,
 };
 use rusttype::Font;
@@ -32,8 +29,10 @@ impl App {
     fn new() -> Result<Self> {
         let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         d.push("assets/Roboto-Regular.ttf");
-        let font_data = std::fs::read(&d).map_err(|e| anyhow::anyhow!("Failed to read font from {:?}: {}", d, e))?;
-        let font = Font::try_from_vec(font_data).ok_or_else(|| anyhow::anyhow!("Error constructing Font"))?;
+        let font_data = std::fs::read(&d)
+            .map_err(|e| anyhow::anyhow!("Failed to read font from {:?}: {}", d, e))?;
+        let font = Font::try_from_vec(font_data)
+            .ok_or_else(|| anyhow::anyhow!("Error constructing Font"))?;
 
         // Generate SDF for 'G' (Genesis)
         // High resolution for better terrain
