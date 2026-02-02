@@ -1,5 +1,6 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use quipu_renderer::quipu::Cord;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -7,7 +8,6 @@ use ratatui::{
 };
 use std::time::Duration;
 use tui_shared::Tui;
-use quipu_renderer::quipu::Cord;
 
 struct App {
     cords: Vec<Cord>,
@@ -114,14 +114,15 @@ fn main() -> Result<()> {
                             let sum = c1.add(&c2);
                             let val = sum.value();
                             app.cords.push(sum);
-                            app.message = format!("Added {} + {} = {}", c1.value(), c2.value(), val);
+                            app.message =
+                                format!("Added {} + {} = {}", c1.value(), c2.value(), val);
                         } else {
                             app.message = "Need at least 2 cords to add".to_string();
                         }
                     }
                     KeyCode::Char('d') => {
                         if app.cords.pop().is_some() {
-                             app.message = "Dropped last cord".to_string();
+                            app.message = "Dropped last cord".to_string();
                         }
                     }
                     _ => {}

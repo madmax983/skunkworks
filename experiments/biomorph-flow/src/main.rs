@@ -1,7 +1,5 @@
 use anyhow::Result;
-use crossterm::event::{
-    self, Event, KeyCode, KeyEventKind, MouseButton, MouseEventKind,
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind, MouseButton, MouseEventKind};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize},
@@ -12,9 +10,7 @@ use ratatui::{
     },
     Frame,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 mod presets;
@@ -63,12 +59,12 @@ impl App {
     }
 
     fn prev_preset(&mut self) {
-         if self.current_preset_idx == 0 {
-             self.current_preset_idx = PRESETS.len() - 1;
-         } else {
-             self.current_preset_idx -= 1;
-         }
-         self.apply_preset();
+        if self.current_preset_idx == 0 {
+            self.current_preset_idx = PRESETS.len() - 1;
+        } else {
+            self.current_preset_idx -= 1;
+        }
+        self.apply_preset();
     }
 
     fn apply_preset(&mut self) {
@@ -112,28 +108,30 @@ fn main() -> Result<()> {
                             KeyCode::PageUp => app.sim.k += 0.001,
                             KeyCode::PageDown => app.sim.k -= 0.001,
                             KeyCode::Char('+') => app.steps_per_frame += 1,
-                            KeyCode::Char('-') => if app.steps_per_frame > 1 { app.steps_per_frame -= 1 },
+                            KeyCode::Char('-') => {
+                                if app.steps_per_frame > 1 {
+                                    app.steps_per_frame -= 1
+                                }
+                            }
                             _ => {}
                         }
                     }
                 }
-                Event::Mouse(mouse) => {
-                    match mouse.kind {
-                        MouseEventKind::Down(MouseButton::Left) => {
-                            app.mouse_pressed = true;
+                Event::Mouse(mouse) => match mouse.kind {
+                    MouseEventKind::Down(MouseButton::Left) => {
+                        app.mouse_pressed = true;
+                        handle_mouse(&mut app, mouse.column, mouse.row);
+                    }
+                    MouseEventKind::Up(MouseButton::Left) => {
+                        app.mouse_pressed = false;
+                    }
+                    MouseEventKind::Drag(MouseButton::Left) => {
+                        if app.mouse_pressed {
                             handle_mouse(&mut app, mouse.column, mouse.row);
                         }
-                        MouseEventKind::Up(MouseButton::Left) => {
-                            app.mouse_pressed = false;
-                        }
-                        MouseEventKind::Drag(MouseButton::Left) => {
-                            if app.mouse_pressed {
-                                handle_mouse(&mut app, mouse.column, mouse.row);
-                            }
-                        }
-                        _ => {}
                     }
-                }
+                    _ => {}
+                },
                 _ => {}
             }
         }
@@ -190,7 +188,11 @@ fn ui(f: &mut Frame, app: &mut App) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Biomorph Flow"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Biomorph Flow"),
+        )
         .x_bounds([0.0, app.sim.width as f64])
         .y_bounds([0.0, app.sim.height as f64])
         .marker(ratatui::symbols::Marker::Block)
@@ -205,13 +207,21 @@ fn ui(f: &mut Frame, app: &mut App) {
                     let v = app.sim.v[idx];
 
                     if v > 0.1 {
-                        let bucket_idx = if v < 0.2 { 0 }
-                        else if v < 0.3 { 1 }
-                        else if v < 0.4 { 2 }
-                        else if v < 0.5 { 3 }
-                        else if v < 0.6 { 4 }
-                        else if v < 0.8 { 5 }
-                        else { 6 };
+                        let bucket_idx = if v < 0.2 {
+                            0
+                        } else if v < 0.3 {
+                            1
+                        } else if v < 0.4 {
+                            2
+                        } else if v < 0.5 {
+                            3
+                        } else if v < 0.6 {
+                            4
+                        } else if v < 0.8 {
+                            5
+                        } else {
+                            6
+                        };
 
                         // Invert Y for canvas
                         buckets[bucket_idx].push((x as f64, (app.sim.height - 1 - y) as f64));
@@ -226,7 +236,7 @@ fn ui(f: &mut Frame, app: &mut App) {
                 Color::Green,
                 Color::Yellow,
                 Color::Red,
-                Color::White
+                Color::White,
             ];
 
             for (i, points) in buckets.iter().enumerate() {
@@ -251,12 +261,11 @@ fn ui(f: &mut Frame, app: &mut App) {
             Span::raw(format!(" | F: {:.4} | K: {:.4} | ", app.sim.f, app.sim.k)),
             Span::raw(format!("Speed: {}x", app.steps_per_frame)),
         ]),
-        Line::from(vec![
-            Span::raw("[Arrows] Preset/Tweak | [Space] Pause | [R]eset | [Mouse] Draw | [Q]uit"),
-        ]),
+        Line::from(vec![Span::raw(
+            "[Arrows] Preset/Tweak | [Space] Pause | [R]eset | [Mouse] Draw | [Q]uit",
+        )]),
     ];
 
-    let status = Paragraph::new(status_text)
-        .block(Block::default().borders(Borders::ALL));
+    let status = Paragraph::new(status_text).block(Block::default().borders(Borders::ALL));
     f.render_widget(status, chunks[1]);
 }

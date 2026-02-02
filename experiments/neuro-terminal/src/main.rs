@@ -219,8 +219,7 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                         // weights matrix is [next_layer_size, current_layer_size]
                         // value is weights[i][j] (row i, col j)
 
-                        let idx = i * weights.cols + j;
-                        let w = weights.data[idx];
+                        let w = weights.get(i, j);
 
                         // Color based on weight sign
                         let color = if w > 0.0 { Color::Green } else { Color::Red };

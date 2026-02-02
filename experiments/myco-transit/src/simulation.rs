@@ -90,7 +90,11 @@ impl World {
         }
     }
 
-    pub fn with_cities_and_agents(width: usize, height: usize, num_cities: usize) -> (Self, Vec<Agent>) {
+    pub fn with_cities_and_agents(
+        width: usize,
+        height: usize,
+        num_cities: usize,
+    ) -> (Self, Vec<Agent>) {
         let mut rng = rand::thread_rng();
         let mut cities = Vec::new();
         for _ in 0..num_cities {
@@ -105,11 +109,7 @@ impl World {
 
         for (cx, cy) in &cities {
             for _ in 0..agents_per_city {
-                agents.push(Agent::new(
-                    *cx,
-                    *cy,
-                    rng.gen_range(0.0..2.0 * PI),
-                ));
+                agents.push(Agent::new(*cx, *cy, rng.gen_range(0.0..2.0 * PI)));
             }
         }
 
@@ -191,7 +191,12 @@ mod tests {
 
         // Check if angle changed towards 0 (right)
         // Since it starts at -PI/2 (-1.57), turning right means increasing angle (e.g. -1.17).
-        assert!(agent.angle > initial_angle, "Agent should turn towards higher concentration (Right). Init: {}, New: {}", initial_angle, agent.angle);
+        assert!(
+            agent.angle > initial_angle,
+            "Agent should turn towards higher concentration (Right). Init: {}, New: {}",
+            initial_angle,
+            agent.angle
+        );
     }
 
     #[test]
@@ -203,11 +208,19 @@ mod tests {
         world.diffuse_and_decay();
 
         let value = world.get_trail(5, 5);
-        assert!(value < 100.0, "Pheromone should decay. Was 100, now {}", value);
+        assert!(
+            value < 100.0,
+            "Pheromone should decay. Was 100, now {}",
+            value
+        );
 
         // Also check diffusion happened (neighbor should be > 0)
         let neighbor = world.get_trail(5, 6);
         // 100/9 * 0.9 = 10
-        assert!(neighbor > 0.0, "Pheromone should diffuse to neighbors. Got {}", neighbor);
+        assert!(
+            neighbor > 0.0,
+            "Pheromone should diffuse to neighbors. Got {}",
+            neighbor
+        );
     }
 }

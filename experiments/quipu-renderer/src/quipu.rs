@@ -104,7 +104,9 @@ impl Cord {
             carry /= 10;
         }
 
-        Cord { clusters: new_clusters }
+        Cord {
+            clusters: new_clusters,
+        }
     }
 }
 
@@ -189,7 +191,9 @@ impl FromStr for Cord {
             let mut knots = Vec::new();
             for line in part.lines() {
                 let trimmed = line.trim();
-                if trimmed.is_empty() { continue; }
+                if trimmed.is_empty() {
+                    continue;
+                }
 
                 if trimmed == "s" {
                     knots.push(Knot::Simple);
@@ -197,7 +201,9 @@ impl FromStr for Cord {
                     knots.push(Knot::FigureEight);
                 } else if trimmed.starts_with("L") {
                     let val_str = &trimmed[1..];
-                    let val = val_str.parse::<u8>().map_err(|_| "Invalid Long knot value")?;
+                    let val = val_str
+                        .parse::<u8>()
+                        .map_err(|_| "Invalid Long knot value")?;
                     knots.push(Knot::Long(val));
                 } else {
                     return Err(format!("Unknown knot: {}", trimmed));

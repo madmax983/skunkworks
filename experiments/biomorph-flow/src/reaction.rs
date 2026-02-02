@@ -1,4 +1,3 @@
-
 pub struct GrayScott {
     pub width: usize,
     pub height: usize,
@@ -94,13 +93,13 @@ impl GrayScott {
                 let adj_w = 0.2;
                 let diag_w = 0.05;
 
-                let sum_u = self.u[idx] * center_w +
-                           (self.u[n_top] + self.u[n_bot] + self.u[n_left] + self.u[n_right]) * adj_w +
-                           (self.u[n_tl] + self.u[n_tr] + self.u[n_bl] + self.u[n_br]) * diag_w;
+                let sum_u = self.u[idx] * center_w
+                    + (self.u[n_top] + self.u[n_bot] + self.u[n_left] + self.u[n_right]) * adj_w
+                    + (self.u[n_tl] + self.u[n_tr] + self.u[n_bl] + self.u[n_br]) * diag_w;
 
-                let sum_v = self.v[idx] * center_w +
-                           (self.v[n_top] + self.v[n_bot] + self.v[n_left] + self.v[n_right]) * adj_w +
-                           (self.v[n_tl] + self.v[n_tr] + self.v[n_bl] + self.v[n_br]) * diag_w;
+                let sum_v = self.v[idx] * center_w
+                    + (self.v[n_top] + self.v[n_bot] + self.v[n_left] + self.v[n_right]) * adj_w
+                    + (self.v[n_tl] + self.v[n_tr] + self.v[n_bl] + self.v[n_br]) * diag_w;
 
                 let lap_u = sum_u;
                 let lap_v = sum_v;
