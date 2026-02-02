@@ -24,11 +24,7 @@ pub fn scan_depth(path: &Path, depth: usize) -> Result<FsNode> {
     scan_recursive(path, depth, &mut ancestors)
 }
 
-fn scan_recursive(
-    path: &Path,
-    depth: usize,
-    ancestors: &mut HashSet<PathBuf>,
-) -> Result<FsNode> {
+fn scan_recursive(path: &Path, depth: usize, ancestors: &mut HashSet<PathBuf>) -> Result<FsNode> {
     // Canonicalize to detect loops
     let canonical = path.canonicalize().unwrap_or(path.to_path_buf());
 

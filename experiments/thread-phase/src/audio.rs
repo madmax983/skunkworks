@@ -1,5 +1,5 @@
 use anyhow::Result;
-use crossbeam_channel::{Sender, bounded};
+use crossbeam_channel::{bounded, Sender};
 use std::any::Any;
 
 #[derive(Debug, Clone, Copy)]
@@ -108,10 +108,26 @@ fn process_audio(
     // 1. Process new events
     while let Ok(event) = rx.try_recv() {
         match event {
-            AudioEvent::Kick => active_sounds.push(ActiveSound { kind: SoundKind::Kick, t: 0.0, amp: 1.0 }),
-            AudioEvent::Snare => active_sounds.push(ActiveSound { kind: SoundKind::Snare, t: 0.0, amp: 0.8 }),
-            AudioEvent::HiHat => active_sounds.push(ActiveSound { kind: SoundKind::HiHat, t: 0.0, amp: 0.5 }),
-            AudioEvent::Pulse(f) => active_sounds.push(ActiveSound { kind: SoundKind::Pulse(f), t: 0.0, amp: 0.5 }),
+            AudioEvent::Kick => active_sounds.push(ActiveSound {
+                kind: SoundKind::Kick,
+                t: 0.0,
+                amp: 1.0,
+            }),
+            AudioEvent::Snare => active_sounds.push(ActiveSound {
+                kind: SoundKind::Snare,
+                t: 0.0,
+                amp: 0.8,
+            }),
+            AudioEvent::HiHat => active_sounds.push(ActiveSound {
+                kind: SoundKind::HiHat,
+                t: 0.0,
+                amp: 0.5,
+            }),
+            AudioEvent::Pulse(f) => active_sounds.push(ActiveSound {
+                kind: SoundKind::Pulse(f),
+                t: 0.0,
+                amp: 0.5,
+            }),
         }
     }
 
@@ -129,29 +145,39 @@ fn process_audio(
                     // Sine sweep 150 -> 50 Hz
                     let freq = 150.0 - (100.0 * (sound.t * 5.0).min(1.0));
                     let env = (1.0 - sound.t * 4.0).max(0.0);
-                    if env <= 0.0 { return false; }
+                    if env <= 0.0 {
+                        return false;
+                    }
                     (sound.t * freq * 2.0 * std::f32::consts::PI).sin() * env * sound.amp
-                },
+                }
                 SoundKind::Snare => {
                     // Noise + Tone
-                    let noise = (rand::random::<f32>() * 2.0 - 1.0) * (1.0 - sound.t * 8.0).max(0.0);
-                    let tone = (sound.t * 200.0 * 2.0 * std::f32::consts::PI).sin() * (1.0 - sound.t * 5.0).max(0.0);
+                    let noise =
+                        (rand::random::<f32>() * 2.0 - 1.0) * (1.0 - sound.t * 8.0).max(0.0);
+                    let tone = (sound.t * 200.0 * 2.0 * std::f32::consts::PI).sin()
+                        * (1.0 - sound.t * 5.0).max(0.0);
                     let val = noise * 0.7 + tone * 0.3;
-                    if sound.t > 0.2 { return false; }
+                    if sound.t > 0.2 {
+                        return false;
+                    }
                     val * sound.amp
-                },
+                }
                 SoundKind::HiHat => {
                     // High freq noise
                     let noise = (rand::random::<f32>() * 2.0 - 1.0);
                     let env = (1.0 - sound.t * 20.0).max(0.0);
-                    if env <= 0.0 { return false; }
+                    if env <= 0.0 {
+                        return false;
+                    }
                     noise * env * sound.amp
-                },
+                }
                 SoundKind::Pulse(freq) => {
                     // Simple sine with decay
                     let val = (sound.t * freq * 2.0 * std::f32::consts::PI).sin();
                     let env = (1.0 - sound.t * 2.0).max(0.0);
-                    if env <= 0.0 { return false; }
+                    if env <= 0.0 {
+                        return false;
+                    }
                     val * env * sound.amp
                 }
             };

@@ -13,8 +13,8 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-mod physics;
 mod game;
+mod physics;
 
 use game::Game;
 
@@ -133,8 +133,8 @@ fn main() -> Result<()> {
                     }
                 }
                 Event::Mouse(mouse) => {
-                     app.mouse_pos = (mouse.column, mouse.row);
-                     match mouse.kind {
+                    app.mouse_pos = (mouse.column, mouse.row);
+                    match mouse.kind {
                         MouseEventKind::Down(MouseButton::Left) => {
                             app.mouse_pressed = true;
                             app.apply_tool();
@@ -194,7 +194,7 @@ fn ui(f: &mut Frame, app: &mut App) {
                 (Color::Green, vec![]),
                 (Color::Yellow, vec![]),
                 (Color::White, vec![]), // High peaks
-                (Color::Red, vec![]), // Negative/Low
+                (Color::Red, vec![]),   // Negative/Low
             ];
 
             let height = app.game.sim.height;
@@ -223,11 +223,11 @@ fn ui(f: &mut Frame, app: &mut App) {
                         if b < 0.0 {
                             terrain_colors[3].1.push((draw_x, draw_y));
                         } else if b < 2.0 {
-                             terrain_colors[0].1.push((draw_x, draw_y));
+                            terrain_colors[0].1.push((draw_x, draw_y));
                         } else if b < 5.0 {
-                             terrain_colors[1].1.push((draw_x, draw_y));
+                            terrain_colors[1].1.push((draw_x, draw_y));
                         } else {
-                             terrain_colors[2].1.push((draw_x, draw_y));
+                            terrain_colors[2].1.push((draw_x, draw_y));
                         }
                     }
                 }
@@ -235,20 +235,34 @@ fn ui(f: &mut Frame, app: &mut App) {
 
             // Draw Terrain first
             for (color, points) in terrain_colors {
-                ctx.draw(&Points { coords: &points, color });
+                ctx.draw(&Points {
+                    coords: &points,
+                    color,
+                });
             }
 
             // Draw Water
             for (color, points) in water_colors {
-                ctx.draw(&Points { coords: &points, color });
+                ctx.draw(&Points {
+                    coords: &points,
+                    color,
+                });
             }
 
             // Draw Units
             for unit in &app.game.units {
                 if unit.alive {
-                    ctx.print(unit.x as f64, (height as f32 - 1.0 - unit.y) as f64, unit.symbol.to_string());
+                    ctx.print(
+                        unit.x as f64,
+                        (height as f32 - 1.0 - unit.y) as f64,
+                        unit.symbol.to_string(),
+                    );
                 } else {
-                    ctx.print(unit.x as f64, (height as f32 - 1.0 - unit.y) as f64, String::from("†"));
+                    ctx.print(
+                        unit.x as f64,
+                        (height as f32 - 1.0 - unit.y) as f64,
+                        String::from("†"),
+                    );
                 }
             }
         });
@@ -266,7 +280,8 @@ fn ui(f: &mut Frame, app: &mut App) {
         Span::raw("Tool: "),
         Span::styled(tool_str, Style::default().fg(Color::Yellow).bold()),
         Span::raw(" | [1] Rain [2] Raise [3] Lower [4] Unit | [Q]uit"),
-    ])).block(Block::default().borders(Borders::ALL));
+    ]))
+    .block(Block::default().borders(Borders::ALL));
 
     f.render_widget(status, chunks[1]);
 }

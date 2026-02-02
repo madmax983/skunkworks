@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-use std::cell::{RefCell, Ref};
-use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
-use std::hash::{Hash, Hasher};
+use rand::{Rng, SeedableRng};
+use std::cell::{Ref, RefCell};
 use std::collections::hash_map::DefaultHasher;
+use std::collections::HashMap;
+use std::hash::{Hash, Hasher};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TileType {
@@ -30,11 +30,14 @@ impl Dungeon {
     pub fn new(seed: u64) -> Self {
         let mut tiles = HashMap::new();
         // Ensure root exists and is floor
-        tiles.insert(vec![], Tile {
-            tile_type: TileType::Floor,
-            visited: true,
-            color_seed: 0,
-        });
+        tiles.insert(
+            vec![],
+            Tile {
+                tile_type: TileType::Floor,
+                visited: true,
+                color_seed: 0,
+            },
+        );
 
         Self {
             tiles: RefCell::new(tiles),
@@ -94,7 +97,11 @@ impl Dungeon {
         // Root is always floor (handled in new)
 
         Tile {
-            tile_type: if is_wall { TileType::Wall } else { TileType::Floor },
+            tile_type: if is_wall {
+                TileType::Wall
+            } else {
+                TileType::Floor
+            },
             visited: false,
             color_seed: rng.gen(),
         }

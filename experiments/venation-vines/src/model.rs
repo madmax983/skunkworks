@@ -90,9 +90,7 @@ impl Leaf {
                     let node = &self.veins[idx];
                     let dir = (attractor.pos - node.pos).normalize();
 
-                    forces.entry(idx)
-                        .and_modify(|f| *f += dir)
-                        .or_insert(dir);
+                    forces.entry(idx).and_modify(|f| *f += dir).or_insert(dir);
                 }
             }
         }
@@ -140,7 +138,10 @@ mod tests {
     fn test_vein_growth() {
         let mut leaf = Leaf::new();
         // Setup attractor nearby (distance 5, detection 10, kill 2)
-        leaf.attractors.push(Attractor { pos: Vec2::new(0.0, 5.0), active: true });
+        leaf.attractors.push(Attractor {
+            pos: Vec2::new(0.0, 5.0),
+            active: true,
+        });
 
         // Setup initial vein
         leaf.init_vein(0.0, 0.0);
@@ -150,10 +151,16 @@ mod tests {
         // Grow
         leaf.grow();
 
-        assert!(leaf.veins.len() > initial_count, "Veins should have grown towards attractor");
+        assert!(
+            leaf.veins.len() > initial_count,
+            "Veins should have grown towards attractor"
+        );
 
         // Check position of new vein
         let new_vein = leaf.veins.last().unwrap();
-        assert!(new_vein.pos.y > 0.0, "New vein should have moved in Y direction");
+        assert!(
+            new_vein.pos.y > 0.0,
+            "New vein should have moved in Y direction"
+        );
     }
 }

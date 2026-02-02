@@ -216,13 +216,18 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         ],
         InputMode::Typing => vec![
             Span::raw("Typing: "),
-            Span::styled(&app.input_buffer, Style::default().fg(Color::Yellow).add_modifier(ratatui::style::Modifier::BOLD)),
+            Span::styled(
+                &app.input_buffer,
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(ratatui::style::Modifier::BOLD),
+            ),
             Span::raw("_"),
             Span::raw(" (Enter to spawn, Esc to cancel)"),
         ],
     };
 
-    let status = Paragraph::new(Line::from(status_text))
-        .block(Block::default().borders(Borders::ALL));
+    let status =
+        Paragraph::new(Line::from(status_text)).block(Block::default().borders(Borders::ALL));
     f.render_widget(status, chunks[1]);
 }
