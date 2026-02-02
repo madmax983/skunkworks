@@ -96,3 +96,8 @@
 **Concept:** Identify and visualize "constellations" (patterns) in the Git Galaxy force-directed graph, such as chains, supernovas (massive commits), and clusters (author nebulas).
 **Fate:** Merged
 **Lesson:** Graph algorithms (chain detection) can add a narrative layer to raw data visualizations. Gating experimental features with `#[cfg(feature = "nova")]` allows for safe additive innovation.
+
+## [ASCII Optics]
+**Concept:** A 2D simulation where light rays reflect and interact with ASCII characters (`/`, `\`, `|`, `-`, etc.) acting as optical elements. Visualized using `ratatui`'s Canvas.
+**Fate:** Merged
+**Lesson:** Discrete grid logic combined with continuous ray tracing vectors creates a satisfying "retro-future" physics engine. `ratatui`'s `Context::print` is essential for mixing text and vector graphics on a Canvas.
