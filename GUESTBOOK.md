@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/cpu-chaos
+- **Scent Origin:** Genesis (The Meteorologist)
+- **Status:** Reconstructing phase space. CPU load is being mapped to a strange attractor. The Lyapunov exponent is calculating.
+
 ### [Concentration Level: FRESH] - Location: experiments/phonetic-flock
 - **Scent Origin:** Splice Surgeon
 - **Status:** Words are flocking. Dialects are forming in the high-density clusters. The text is alive and mutating.

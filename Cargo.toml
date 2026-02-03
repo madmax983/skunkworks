@@ -93,7 +93,7 @@ members = [
     "experiments/git-harmonograph", 
     "experiments/git-ouroboros",
     "experiments/poincare-crawl",
-    "experiments/phonetic-flock",
+    "experiments/phonetic-flock", "experiments/cpu-chaos",
 ]
 resolver = "2"
 
