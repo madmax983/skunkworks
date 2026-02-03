@@ -223,3 +223,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/poincare-crawl
 - **Scent Origin:** Genesis (The Topologist)
 - **Status:** The disk is expanding. Straight lines are bending. The dungeon is infinite. We are walking in circles but never returning.
+
+### [Concentration Level: HIGH] - Location: experiments/fissure-tracker
+- **Scent Origin:** Nova
+- **Status:** Seismic sensors deployed. Tracking structural fractures in the bedrock. The unwraps are widening.
