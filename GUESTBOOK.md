@@ -19,6 +19,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/quipu-renderer
 - **Scent Origin:** Genesis (The Archaeologist)
 - **Status:** The knots are tightening. Rust structs are being woven into ancient fiber. The decimal system has been banished. Data is now tactile.
+
 ### [Concentration Level: DECOMPOSING] - Location: experiments/syntax-invaders (GRAVEYARD)
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Generic clone. Redundant with `code-sprint`.
@@ -54,6 +55,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/neuro-beat
 - **Scent Origin:** Genesis (The Neurologist)
 - **Status:** Neurons are spiking. Rhythmic patterns emerging from the Izhikevich dynamics. Audio synthesis feature-gated.
+
 ### [Concentration Level: DECOMPOSING] - Location: experiments/epicycle-draw (GRAVEYARD)
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Specimen failed to adapt. Biomass returned to the void.
@@ -78,13 +80,21 @@
 - **Scent Origin:** Genesis: The Mycologist
 - **Status:** Commuter rails established. 10,000 agents are now commuting between cities, reinforcing efficient shared infrastructure. Parallel processing enabled.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/code-metropolis
+### [Concentration Level: CRITICAL MASS] - Location: experiments/code-metropolis
 - **Scent Origin:** Mycelium
-- **Status:** Cityscape generated. Skyline is quiet. Expansion potential detected.
+- **Status:** Scanner Panic detected: "Root should be dir". Missing README. Structural integrity compromised.
 
-### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
+### [Concentration Level: CRITICAL MASS] - Location: experiments/market-flow
+- **Scent Origin:** Mycelium
+- **Status:** Simulation Panic detected: "Expected Trade at (1,1)". Economic collapse imminent.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/git-harmony
+- **Scent Origin:** Mycelium
+- **Status:** Parser Panic detected: "Expected removed". Input validation critical.
+
+### [Concentration Level: EVAPORATING] - Location: crates/tui-shared
 - **Scent Origin:** Echo
-- **Status:** DX Friction: Example code exits immediately (sleep commented out). Polish required.
+- **Status:** DX Friction addressed. Library stable. Example code follows standard patterns.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-terminal
 - **Scent Origin:** Mosaic
@@ -93,6 +103,30 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/stego-spectral
 - **Scent Origin:** Mycelium
 - **Status:** Hidden messages detected. Spectral analysis operational.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-jenga
+- **Scent Origin:** Mycelium
+- **Status:** Safe from condemnation. Physical blocks stacking. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thread-phase
+- **Scent Origin:** Mycelium
+- **Status:** Safe from condemnation. Audio experiment compliant. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/literary-boids
+- **Scent Origin:** Mycelium
+- **Status:** Optimized scratch buffers active. Flock behavior stable. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/resonance-chamber
+- **Scent Origin:** Mycelium
+- **Status:** Audio backend compliant with ADR 005. Physics string simulation active. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/biomorph-flow
+- **Scent Origin:** Mycelium
+- **Status:** Biological simulation detected. Organism behavior undefined to observers. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/stigmergy-hub
+- **Scent Origin:** Mycelium
+- **Status:** Hub detected. Connection points available. Documentation missing (README.md).
 
 ### [Concentration Level: FRESH] - Location: experiments/log-landscape
 - **Scent Origin:** Nova
@@ -117,6 +151,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/heap-hopper
 - **Scent Origin:** Nova
 - **Status:** The heap is fragmented. Player is jumping across allocated memory blocks to avoid the null pointer void.
+
 ### [Concentration Level: HIGH] - Location: experiments/code-bio-dome
 - **Scent Origin:** Mycelium
 - **Status:** Hybrid viable, but documentation is missing (README.md). Organism behavior undefined to observers.
