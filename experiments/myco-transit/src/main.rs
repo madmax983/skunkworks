@@ -38,10 +38,21 @@ fn main() -> Result<()> {
         Color::LightRed,
     ];
 
+    // Bolt Optimization: Hoist vector allocations out of the loop to reuse memory.
+    // Reduces ~11 vector allocations/deallocations per frame (10,000+ items).
+    let mut agent_groups: Vec<Vec<(f64, f64)>> = (0..num_cities)
+        .map(|_| Vec::with_capacity(1500))
+        .collect();
+    let mut trails_low = Vec::with_capacity(2048);
+    let mut trails_med = Vec::with_capacity(2048);
+    let mut trails_high = Vec::with_capacity(2048);
+
     loop {
         // Pre-process render data to avoid cloning inside closure or lifetime issues
         // 1. Agents grouped by target city (for color)
-        let mut agent_groups: Vec<Vec<(f64, f64)>> = vec![Vec::new(); num_cities];
+        for group in &mut agent_groups {
+            group.clear();
+        }
         for agent in &agents {
             if agent.target_city < num_cities {
                 agent_groups[agent.target_city].push((agent.x, agent.y));
@@ -49,9 +60,9 @@ fn main() -> Result<()> {
         }
 
         // 2. Trails grouped by intensity (Low, Med, High)
-        let mut trails_low = Vec::new();
-        let mut trails_med = Vec::new();
-        let mut trails_high = Vec::new();
+        trails_low.clear();
+        trails_med.clear();
+        trails_high.clear();
 
         for y in 0..world.height {
             for x in 0..world.width {

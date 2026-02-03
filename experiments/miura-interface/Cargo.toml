@@ -1,0 +1,11 @@
+[package]
+name = "miura-interface"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+tui-shared.workspace = true
+nalgebra = "0.33"
