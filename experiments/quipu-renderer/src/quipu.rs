@@ -259,11 +259,8 @@ impl FromStr for Cord {
                 // Format: ≡3
                 if let Some(idx) = part_trim.find('≡') {
                     if let Ok(val) = part_trim[idx + 3..].parse::<u8>() {
-                        // ≡ is 3 bytes? No, wait.
                         // '≡' is U+2261. 3 bytes in UTF-8.
-                        knots.push(Knot::Long(val));
-                    } else if let Ok(val) = part_trim[idx + 1..].parse::<u8>() {
-                        // Maybe just chars scan
+                        // Safe because we skip the 3 bytes of the character.
                         knots.push(Knot::Long(val));
                     } else {
                         // Try finding digit
@@ -280,5 +277,24 @@ impl FromStr for Cord {
         }
 
         Ok(Cord { clusters })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_from_str_panic_repro() {
+        // This test reproduces the panic caused by unsafe slicing of '≡'
+        // '≡' is 3 bytes. The original code tried to slice at index 1.
+        // This should no longer panic.
+        let _ = Cord::from_str("≡");
+    }
+
+    #[test]
+    fn test_from_str_basic() {
+        let cord = Cord::from_str("∞").unwrap();
+        assert_eq!(cord.value(), 1);
     }
 }
