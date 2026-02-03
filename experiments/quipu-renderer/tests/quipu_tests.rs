@@ -67,9 +67,10 @@ fn test_ascii_serialization_simple() {
     let c = Cord::from(val);
     let ascii = c.to_string();
 
-    assert!(ascii.contains("s"));
+    // Check for new symbols
+    assert!(ascii.contains("●"));
     assert!(ascii.contains("|"));
-    assert!(ascii.contains("L2"));
+    assert!(ascii.contains("≡2"));
 
     let parsed = Cord::from_str(&ascii).expect("Failed to parse");
     assert_eq!(parsed.value(), val);
