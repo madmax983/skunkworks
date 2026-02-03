@@ -82,6 +82,7 @@ members = [
     "experiments/routing-market",
     "experiments/git-invaders",
     "experiments/tectonic-git",
+    "experiments/type-oscillator",
     "experiments/retinal-glitch",
     "experiments/struct-harmonics",
     "experiments/cargo-rocket",
