@@ -21,16 +21,21 @@ use ratatui::{
 
 mod algorithms;
 mod model;
+mod wind;
 
 use algorithms::run_fib;
 use model::{Event, Node, Plant};
 use tui_shared::math::Vec2;
+use wind::Wind;
 
 struct App {
     plant: Plant,
     rx: Receiver<Event>,
     // Store the last received event for debug/status
     last_event: String,
+    start_time: Instant,
+    wind_enabled: bool,
+    wind: Wind,
 }
 
 impl App {
@@ -39,6 +44,9 @@ impl App {
             plant: Plant::new(),
             rx,
             last_event: String::new(),
+            start_time: Instant::now(),
+            wind_enabled: false,
+            wind: Wind::default(),
         }
     }
 
@@ -133,7 +141,13 @@ fn run_loop(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App
                 .block(Block::default().borders(Borders::ALL).title("Garden"))
                 .paint(|ctx| {
                     if let Some(root) = &app.plant.root {
-                        draw_node(ctx, root, &app.plant.cursor_path, 0);
+                        let time = app.start_time.elapsed().as_secs_f64();
+                        let wind = if app.wind_enabled {
+                            Some(&app.wind)
+                        } else {
+                            None
+                        };
+                        draw_node(ctx, root, root.pos, 0.0, 0, time, wind);
                     }
                 })
                 .x_bounds([-150.0, 150.0])
@@ -142,8 +156,12 @@ fn run_loop(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App
             f.render_widget(canvas, chunks[0]);
 
             // Status Bar
-            let status = Paragraph::new(format!("Status: {}", app.last_event))
-                .block(Block::default().borders(Borders::ALL));
+            let status = Paragraph::new(format!(
+                "Status: {} | Wind (w): {}",
+                app.last_event,
+                if app.wind_enabled { "ON" } else { "OFF" }
+            ))
+            .block(Block::default().borders(Borders::ALL));
             f.render_widget(status, chunks[1]);
         })?;
 
@@ -156,6 +174,9 @@ fn run_loop(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App
             if let CEvent::Key(key) = event::read()? {
                 match key.code {
                     KeyCode::Char('q') | KeyCode::Esc => return Ok(()),
+                    KeyCode::Char('w') => {
+                        app.wind_enabled = !app.wind_enabled;
+                    }
                     _ => {}
                 }
             }
@@ -171,11 +192,24 @@ fn run_loop(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App
 fn draw_node(
     ctx: &mut ratatui::widgets::canvas::Context,
     node: &Node,
-    _cursor_path: &[usize],
-    _current_depth: usize,
+    start_pos: Vec2,
+    accumulated_sway: f64,
+    depth: usize,
+    time: f64,
+    wind: Option<&Wind>,
 ) {
-    let start = node.pos;
-    let end = node.end_pos();
+    let local_sway = if let Some(w) = wind {
+        w.calculate_sway(time, depth)
+    } else {
+        0.0
+    };
+
+    let total_sway = accumulated_sway + local_sway;
+    let effective_angle = node.angle + total_sway;
+
+    let dx = effective_angle.cos() * node.length;
+    let dy = effective_angle.sin() * node.length;
+    let end_pos = start_pos + Vec2::new(dx, dy);
 
     let color = if node.return_value.is_some() {
         Color::Yellow
@@ -184,19 +218,19 @@ fn draw_node(
     };
 
     ctx.draw(&Line {
-        x1: start.x,
-        y1: start.y,
-        x2: end.x,
-        y2: end.y,
+        x1: start_pos.x,
+        y1: start_pos.y,
+        x2: end_pos.x,
+        y2: end_pos.y,
         color,
     });
 
     // Draw Leaf/Value if returned
     if let Some(val) = &node.return_value {
-        ctx.print(end.x, end.y, val.clone());
+        ctx.print(end_pos.x, end_pos.y, val.clone());
     }
 
     for child in node.children.iter() {
-        draw_node(ctx, child, _cursor_path, _current_depth + 1);
+        draw_node(ctx, child, end_pos, total_sway, depth + 1, time, wind);
     }
 }
