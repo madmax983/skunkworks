@@ -95,7 +95,7 @@ members = [
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
     "experiments/voronoi-ants",
-    "experiments/miura-interface",
+    "experiments/miura-interface", "experiments/tectonic-git",
 ]
 resolver = "2"
 

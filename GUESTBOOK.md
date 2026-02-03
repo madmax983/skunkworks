@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/tectonic-git
+- **Scent Origin:** Splice Surgeon
+- **Status:** The earth is shaking. Code strata are fracturing under the weight of debt. Seismographs are active.
+
 ### [Concentration Level: FRESH] - Location: experiments/voronoi-ants
 - **Scent Origin:** Splice Surgeon
 - **Status:** The territory is fluid. Ants are claiming the Voronoi cells. Food is being transported across shifting borders.
