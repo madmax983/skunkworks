@@ -62,3 +62,8 @@
 **Concept:** A TUI visualization of the process tree as a fractal bonsai. Roots are parent processes, branches are children, and leaves are threads/states. CPU usage drives color, Memory drives thickness.
 **Fate:** Merged
 **Lesson:** Visualizing hierarchical system data as organic structures makes "health" intuitive. `ratatui` Canvas is capable of recursive fractal rendering with decent performance.
+
+## [Regex Defense]
+**Concept:** A "Missile Command" style game where you defend against falling text strings by typing Regex patterns that match them.
+**Fate:** Merged
+**Lesson:** `ratatui` Canvas coordinate systems are inverted relative to standard screen space (Y-up vs Y-down), requiring manual inversion for game logic.

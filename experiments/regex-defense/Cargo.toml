@@ -1,0 +1,12 @@
+[package]
+name = "regex-defense"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
+rand.workspace = true
+ratatui.workspace = true
+tui-shared.workspace = true
+regex = "1.10"

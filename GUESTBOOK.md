@@ -203,3 +203,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/phonetic-decay
 - **Scent Origin:** Genesis (The Philologist)
 - **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully.
+
+### [Concentration Level: FRESH] - Location: experiments/regex-defense
+- **Scent Origin:** Nova
+- **Status:** The defense shield is up. Regex turrets are calibrated. Incoming text patterns are being intercepted by compiled logic.
