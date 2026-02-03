@@ -35,9 +35,17 @@ impl Retina {
             // Check neighbors (Left, Right, Up, Down)
             let neighbors = [
                 if x > 0 { Some(i - 1) } else { None }, // Left
-                if x < self.width - 1 { Some(i + 1) } else { None }, // Right
+                if x < self.width - 1 {
+                    Some(i + 1)
+                } else {
+                    None
+                }, // Right
                 if y > 0 { Some(i - self.width) } else { None }, // Up
-                if y < self.height - 1 { Some(i + self.width) } else { None }, // Down
+                if y < self.height - 1 {
+                    Some(i + self.width)
+                } else {
+                    None
+                }, // Down
             ];
 
             for n_idx in neighbors.iter().flatten() {
@@ -70,7 +78,9 @@ mod tests {
         let mut n = Neuron::regular_spiking();
         for _ in 0..100 {
             n.update(10.0, 1.0);
-            if n.spiked { control_spikes += 1; }
+            if n.spiked {
+                control_spikes += 1;
+            }
         }
 
         // Experiment: Run neuron 0 (high input) and neuron 1 (moderate input)
@@ -88,7 +98,13 @@ mod tests {
             }
         }
 
-        println!("Control: {}, Experiment: {}", control_spikes, experiment_spikes);
-        assert!(experiment_spikes < control_spikes, "Lateral inhibition should reduce spike count of neighbor");
+        println!(
+            "Control: {}, Experiment: {}",
+            control_spikes, experiment_spikes
+        );
+        assert!(
+            experiment_spikes < control_spikes,
+            "Lateral inhibition should reduce spike count of neighbor"
+        );
     }
 }

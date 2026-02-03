@@ -8,6 +8,7 @@ members = [
     "experiments/cellular-beats",
     "experiments/clockwork-cpu",
     "experiments/code-bio-dome",
+    "experiments/code-radio",
     "experiments/code-sprint",
     "experiments/crystal-structure",
     "experiments/crate-universe",
@@ -77,9 +78,14 @@ members = [
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
     "experiments/voronoi-ants",
+    "experiments/miura-interface",
+    "experiments/routing-market",
+    "experiments/git-invaders",
     "experiments/tectonic-git",
-    "experiments/miura-interface", "experiments/routing-market", "experiments/retinal-glitch",
     "experiments/type-oscillator",
+    "experiments/retinal-glitch",
+    "experiments/struct-harmonics",
+    "experiments/cargo-rocket",
 ]
 resolver = "2"
 

@@ -4,32 +4,32 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use num_complex::Complex;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::Color,
     widgets::{
-        canvas::{Canvas, Line, Context},
+        canvas::{Canvas, Context, Line},
         Block, Borders, Paragraph,
     },
     Frame, Terminal,
 };
+use std::f64::consts::PI;
 use std::io::{self, Stdout};
 use std::time::{Duration, Instant};
-use num_complex::Complex;
-use std::f64::consts::PI;
 
 mod math;
 mod tiling;
 
-use math::{Mobius, Geodesic};
+use math::{Geodesic, Mobius};
 use tiling::Tiling;
 
 struct App {
     tiling: Tiling,
     player_pos: Mobius, // Transformation from World to Player View?
-                        // Actually better: Transformation from Player Frame to World Frame (isometry).
-                        // View transform is inverse.
+    // Actually better: Transformation from Player Frame to World Frame (isometry).
+    // View transform is inverse.
     running: bool,
 }
 
@@ -99,12 +99,12 @@ impl App {
             }
             // Rotation:
             KeyCode::Char('e') => {
-                 let m = Mobius::rotation(-rot_step);
-                 self.player_pos = self.player_pos.compose(&m);
+                let m = Mobius::rotation(-rot_step);
+                self.player_pos = self.player_pos.compose(&m);
             }
-             KeyCode::Char('r') => {
-                 let m = Mobius::rotation(rot_step);
-                 self.player_pos = self.player_pos.compose(&m);
+            KeyCode::Char('r') => {
+                let m = Mobius::rotation(rot_step);
+                self.player_pos = self.player_pos.compose(&m);
             }
 
             _ => {}
@@ -122,7 +122,11 @@ impl App {
         let view_transform = self.player_pos.inverse();
 
         let canvas = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title("Poincaré Crawl"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Poincaré Crawl"),
+            )
             .x_bounds([-1.1, 1.1])
             .y_bounds([-1.1, 1.1])
             .paint(move |ctx| {
@@ -153,7 +157,8 @@ impl App {
         f.render_widget(canvas, chunks[0]);
 
         f.render_widget(
-            Paragraph::new("WASD to move (hyperbolic), Q/R to rotate. Esc to quit.").block(Block::default().borders(Borders::ALL)),
+            Paragraph::new("WASD to move (hyperbolic), Q/R to rotate. Esc to quit.")
+                .block(Block::default().borders(Borders::ALL)),
             chunks[1],
         );
     }
@@ -170,11 +175,14 @@ fn draw_circle(ctx: &mut Context, cx: f64, cy: f64, r: f64, color: Color) {
         let x2 = cx + r * t2.cos();
         let y2 = cy + r * t2.sin();
         ctx.draw(&Line {
-            x1, y1, x2, y2, color
+            x1,
+            y1,
+            x2,
+            y2,
+            color,
         });
     }
 }
-
 
 fn draw_hyperbolic_segment(ctx: &mut Context, p1: Complex<f64>, p2: Complex<f64>, color: Color) {
     let geo = Geodesic::new(p1, p2);
@@ -196,8 +204,12 @@ fn draw_hyperbolic_segment(ctx: &mut Context, p1: Complex<f64>, p2: Complex<f64>
         // The arc must be within the unit disk.
 
         let mut diff = ang2 - ang1;
-        while diff > PI { diff -= 2.0 * PI; }
-        while diff < -PI { diff += 2.0 * PI; }
+        while diff > PI {
+            diff -= 2.0 * PI;
+        }
+        while diff < -PI {
+            diff += 2.0 * PI;
+        }
 
         let steps = 10;
         for i in 0..steps {
@@ -210,7 +222,13 @@ fn draw_hyperbolic_segment(ctx: &mut Context, p1: Complex<f64>, p2: Complex<f64>
             let y2 = center.im + radius * t2.sin();
 
             // Clip to unit disk? (Should be inside by definition)
-            ctx.draw(&Line { x1, y1, x2, y2, color });
+            ctx.draw(&Line {
+                x1,
+                y1,
+                x2,
+                y2,
+                color,
+            });
         }
     } else {
         // Straight line

@@ -73,7 +73,16 @@
 **Fate:** Merged
 **Lesson:** Visual metaphors for code quality (Stress = Force) are intuitive and instantly readable. `walkdir` + simple string matching is sufficient for powerful MVP visualizations.
 
+## [Git Invaders]
+**Concept:** A Space Invaders clone where you battle `git diff` lines. Each added line is an enemy, deletions are red ghosts.
+**Fate:** Merged
+**Lesson:** Gamifying code review makes the pain of large diffs manageable (or at least destructible). TUI Canvas works well for simple arcade physics.
 ## [Input Ghost]
 **Concept:** An Event Recorder/Replayer system for TUI applications. It intercepts `crossterm` events, stores them with relative timestamps, and can inject them back into the event loop.
 **Fate:** Merged
 **Lesson:** Decoupling "Input Source" from "Event Loop" enables powerful features like deterministic replay, scripted demos (Attract Mode), and headless TUI testing.
+
+## [Code Radio]
+**Concept:** A frequency scanner for the codebase. Files are radio stations on an FM dial (88-108 MHz). Tuning matches path hashes; signal strength matches file size.
+**Fate:** Merged
+**Lesson:** Mapping discrete file systems to continuous frequency space creates a unique "exploration" modality. Adding noise/interference based on "tuning" makes the digital feel analog.

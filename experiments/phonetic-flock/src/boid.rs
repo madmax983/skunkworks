@@ -1,8 +1,8 @@
+use crate::phonology::{Evolver, SoundLaw};
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
 pub use tui_shared::math::Vec2;
-use crate::phonology::{Evolver, SoundLaw};
 
 #[derive(Clone, Debug)]
 pub struct DNA {

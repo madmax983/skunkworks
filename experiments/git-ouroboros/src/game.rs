@@ -1,6 +1,6 @@
-use std::collections::VecDeque;
 use crate::git::{Commit, GitHistory};
 use rand::Rng;
+use std::collections::VecDeque;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Point {
@@ -74,21 +74,29 @@ impl Snake {
         // Wrap around logic (optional) or Wall collision?
         // Let's implement Wall Collision as Game Over first, or Wrap.
         // Wrap is more fun.
-        if new_head.x < 0 { new_head.x = width - 1; }
-        if new_head.x >= width { new_head.x = 0; }
-        if new_head.y < 0 { new_head.y = height - 1; }
-        if new_head.y >= height { new_head.y = 0; }
+        if new_head.x < 0 {
+            new_head.x = width - 1;
+        }
+        if new_head.x >= width {
+            new_head.x = 0;
+        }
+        if new_head.y < 0 {
+            new_head.y = height - 1;
+        }
+        if new_head.y >= height {
+            new_head.y = 0;
+        }
 
         // Self collision check
         if self.body.contains(&new_head) {
-             // Exception: if we are moving, the tail will move, so if new_head == tail, it's fine UNLESS we are growing.
-             // But simpler to just say if it's in the body (excluding tail if we are not growing), it's a hit.
-             // If grow_pending > 0, tail doesn't move.
-             // If grow_pending == 0, tail moves.
-             let tail = self.body.back().unwrap();
-             if &new_head != tail || self.grow_pending > 0 {
-                 return false; // Collision
-             }
+            // Exception: if we are moving, the tail will move, so if new_head == tail, it's fine UNLESS we are growing.
+            // But simpler to just say if it's in the body (excluding tail if we are not growing), it's a hit.
+            // If grow_pending > 0, tail doesn't move.
+            // If grow_pending == 0, tail moves.
+            let tail = self.body.back().unwrap();
+            if &new_head != tail || self.grow_pending > 0 {
+                return false; // Collision
+            }
         }
 
         self.body.push_front(new_head);
@@ -184,10 +192,7 @@ impl World {
         let mut rng = rand::thread_rng();
         let mut position;
         loop {
-            position = Point::new(
-                rng.gen_range(0..self.width),
-                rng.gen_range(0..self.height),
-            );
+            position = Point::new(rng.gen_range(0..self.width), rng.gen_range(0..self.height));
             if !self.snake.body.contains(&position) {
                 break;
             }
@@ -229,7 +234,7 @@ mod tests {
 
     #[test]
     fn test_world_update() {
-         let history = GitHistory {
+        let history = GitHistory {
             commits: vec![Commit {
                 hash: "123".into(),
                 author: "A".into(),

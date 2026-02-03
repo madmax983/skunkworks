@@ -80,10 +80,10 @@ impl Plant {
         if self.root.is_none() {
             self.root = Some(node);
             self.cursor_path.clear(); // pointing to root (which is depth 0, so path is empty? or path is empty means we are AT root?
-            // Let's say: path empty = "holding the root handle"? No.
-            // Let's say: path is indices to reach the CURRENT node.
-            // If we are at root, path is empty.
-            // But we just added root. So we are AT root.
+                                      // Let's say: path empty = "holding the root handle"? No.
+                                      // Let's say: path is indices to reach the CURRENT node.
+                                      // If we are at root, path is empty.
+                                      // But we just added root. So we are AT root.
             return;
         }
 
@@ -136,8 +136,13 @@ impl Plant {
 
 #[derive(Debug)]
 pub enum Event {
-    Call { name: String, args: String },
-    Return { value: String },
+    Call {
+        name: String,
+        args: String,
+    },
+    Return {
+        value: String,
+    },
     #[allow(dead_code)]
     Sleep(Duration),
 }
@@ -155,12 +160,26 @@ mod tests {
         assert_eq!(plant.cursor_path.len(), 0); // At root
 
         // Call Child 1
-        plant.push_call(Vec2::new(0.0, 0.0), 0.0, 10.0, 1, "child1".into(), "".into());
+        plant.push_call(
+            Vec2::new(0.0, 0.0),
+            0.0,
+            10.0,
+            1,
+            "child1".into(),
+            "".into(),
+        );
         assert_eq!(plant.cursor_path.len(), 1);
         assert_eq!(plant.cursor_path[0], 0);
 
         // Call Child 1.1
-        plant.push_call(Vec2::new(0.0, 0.0), 0.0, 10.0, 2, "child1.1".into(), "".into());
+        plant.push_call(
+            Vec2::new(0.0, 0.0),
+            0.0,
+            10.0,
+            2,
+            "child1.1".into(),
+            "".into(),
+        );
         assert_eq!(plant.cursor_path.len(), 2);
 
         // Return from 1.1

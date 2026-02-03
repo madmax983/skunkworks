@@ -72,10 +72,12 @@ impl App {
             // For input: only capture on the last step to save perf
             if step == self.steps_per_frame - 1 {
                 for (i, &val) in self.input_buffer.iter().enumerate() {
-                    if val > 5.0 { // Threshold for visualization
+                    if val > 5.0 {
+                        // Threshold for visualization
                         let y = (i / self.width) as f64;
                         let x = (i % self.width) as f64;
-                        self.display_input_points.push((x, (self.height as f64 - 1.0) - y));
+                        self.display_input_points
+                            .push((x, (self.height as f64 - 1.0) - y));
                     }
                 }
             }
@@ -85,7 +87,8 @@ impl App {
                 if neuron.spiked {
                     let y = (i / self.width) as f64;
                     let x = (i % self.width) as f64;
-                    self.display_spike_points.push((x, (self.height as f64 - 1.0) - y));
+                    self.display_spike_points
+                        .push((x, (self.height as f64 - 1.0) - y));
                 }
             }
         }
@@ -102,7 +105,7 @@ impl App {
         }
         // Occasional reset
         if rng.gen_bool(0.001) {
-             self.retina.neurons[idx] = neuron::Neuron::regular_spiking();
+            self.retina.neurons[idx] = neuron::Neuron::regular_spiking();
         }
     }
 
@@ -152,7 +155,11 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Draw Input
     let input_canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Input Signal (Retina Layer)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Input Signal (Retina Layer)"),
+        )
         .x_bounds([0.0, app.width as f64])
         .y_bounds([0.0, app.height as f64])
         .marker(ratatui::symbols::Marker::Block)
@@ -167,7 +174,11 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Draw Output (Spikes)
     let output_canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Visual Cortex (Spikes)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Visual Cortex (Spikes)"),
+        )
         .x_bounds([0.0, app.width as f64])
         .y_bounds([0.0, app.height as f64])
         .marker(ratatui::symbols::Marker::Block)
@@ -188,7 +199,10 @@ fn ui(f: &mut Frame, app: &App) {
         if app.glitch_mode { "ON" } else { "OFF" }
     );
 
-    let info = Paragraph::new(Span::styled(status_text, Style::default().fg(Color::Yellow)))
-        .block(Block::default().borders(Borders::ALL));
+    let info = Paragraph::new(Span::styled(
+        status_text,
+        Style::default().fg(Color::Yellow),
+    ))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(info, chunks[1]);
 }

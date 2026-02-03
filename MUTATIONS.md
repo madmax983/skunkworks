@@ -100,7 +100,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Git history visualized as geological strata where "vulnerable" code (TODO, unwrap) creates seismic fissures.
 - **Novel trait**: Visualizing technical debt as structural fractures that propagate through historical layers.
 - **Status**: experiments/tectonic-git
-- **Evaluation**: Freshly created. Compiles.
+- **Evaluation**: Compiles. Verified.
+
+### struct-harmonics
+- **Parents**: experiments/struct-soup + experiments/orbital-harmonics
+- **Concept**: Code structure defining a gravitational field and soundscape. Structs are planets, dependencies are gravity.
+- **Novel trait**: Sonification of static analysis metrics via orbital mechanics.
+- **Status**: experiments/struct-harmonics
+- **Evaluation**: In progress.
 
 <!-- Example:
 ### semantic-spy

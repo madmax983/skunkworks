@@ -41,7 +41,9 @@ impl InputGenerator {
         for y in 0..self.height {
             for x in 0..self.width {
                 let i = y * self.width + x;
-                if i >= buffer.len() { break; }
+                if i >= buffer.len() {
+                    break;
+                }
 
                 let val = match self.pattern {
                     InputPattern::MovingBar => {
@@ -53,24 +55,37 @@ impl InputGenerator {
                         } else {
                             0.0
                         }
-                    },
+                    }
                     InputPattern::Noise => {
-                        if rng.gen::<f32>() > 0.90 { 40.0 } else { 0.0 }
-                    },
+                        if rng.gen::<f32>() > 0.90 {
+                            40.0
+                        } else {
+                            0.0
+                        }
+                    }
                     InputPattern::Circle => {
                         let cx = self.width as f32 / 2.0;
                         let cy = self.height as f32 / 2.0;
                         let r = ((x as f32 - cx).powi(2) + (y as f32 - cy).powi(2)).sqrt();
                         // Pulsing radius
-                        let radius = 5.0 + (self.time * 0.2).sin().abs() * (self.width as f32 / 4.0);
+                        let radius =
+                            5.0 + (self.time * 0.2).sin().abs() * (self.width as f32 / 4.0);
 
-                        if (r - radius).abs() < 2.0 { 30.0 } else { 0.0 }
-                    },
+                        if (r - radius).abs() < 2.0 {
+                            30.0
+                        } else {
+                            0.0
+                        }
+                    }
                     InputPattern::Gabor => {
-                         // A moving sine wave grating
-                         let k = 0.5; // Frequency
-                         let v = (x as f32 * k + self.time * 0.2).sin();
-                         if v > 0.5 { 30.0 } else { 0.0 }
+                        // A moving sine wave grating
+                        let k = 0.5; // Frequency
+                        let v = (x as f32 * k + self.time * 0.2).sin();
+                        if v > 0.5 {
+                            30.0
+                        } else {
+                            0.0
+                        }
                     }
                 };
                 buffer[i] = val;
@@ -91,6 +106,9 @@ mod tests {
 
         // Moving bar starts near 0.
         // check if some data is non-zero
-        assert!(buffer.iter().any(|&x| x > 0.0), "Should generate some input");
+        assert!(
+            buffer.iter().any(|&x| x > 0.0),
+            "Should generate some input"
+        );
     }
 }

@@ -11,3 +11,7 @@
 **2026-02-03 - Quipu-Renderer UTF-8 Panic**
 **Threat:** DoS via panic in `quipu-renderer` when parsing strings containing '≡'. Code attempted to slice at byte index 1 of a 3-byte character.
 **Defense:** Removed unsafe slicing logic and ensured all string operations respect UTF-8 boundaries.
+
+**2025-05-27 - Routing-Market Packet Panic**
+**Threat:** DoS via panic in `experiments/routing-market` when `Network::tick` processes a packet with an invalid destination `NodeIndex`.
+**Defense:** Added `self.graph.node_weight(p.dest).is_none()` check in `tick` to drop invalid packets, and fixed `burst` to generate valid indices.

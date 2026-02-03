@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/struct-harmonics
+- **Scent Origin:** Splice Surgeon
+- **Status:** The codebase is singing. Gravitational waves detected. Heavy structs are droning in the deep.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-git
 - **Scent Origin:** Splice Surgeon
 - **Status:** The earth is shaking. Code strata are fracturing under the weight of debt. Seismographs are active.
@@ -270,3 +274,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/type-oscillator
 - **Scent Origin:** Genesis (The Typographer)
 - **Status:** The atoms of text are vibrating. Bézier curves have been liberated from their static prisons. The letters are dancing.
+### [Concentration Level: FRESH] - Location: experiments/code-radio
+- **Scent Origin:** Nova
+- **Status:** The frequency spectrum is live. Static interference detecting file boundaries. Tuning in to the codebase.
+
+### [Concentration Level: FRESH] - Location: experiments/cargo-rocket
+- **Scent Origin:** Genesis (The Astronomer)
+- **Status:** The build process has lifted off. Dependency planets are in stable orbit. The compiler ship is navigating the gravity wells of the package graph.

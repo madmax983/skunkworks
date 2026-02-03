@@ -1,5 +1,5 @@
-use rand::Rng;
 use crate::git::CommitData;
+use rand::Rng;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec2 {
@@ -22,7 +22,7 @@ pub struct Fissure {
 
 pub struct Strata {
     pub commit: CommitData,
-    pub y_pos: f64, // Logical Y position
+    pub y_pos: f64,    // Logical Y position
     pub offset_x: f64, // Tectonic shift
     pub color_idx: u8,
 }
@@ -88,7 +88,9 @@ impl World {
 
         // Grow fissures
         for fissure in &mut self.fissures {
-            if !fissure.active { continue; }
+            if !fissure.active {
+                continue;
+            }
 
             if fissure.points.len() > (fissure.intensity * 5.0).max(5.0) as usize {
                 fissure.active = false;
@@ -98,7 +100,11 @@ impl World {
             let last = *fissure.points.last().unwrap();
 
             // Jagged growth
-            let angle_base = if fissure.direction > 0.0 { std::f64::consts::PI / 2.0 } else { -std::f64::consts::PI / 2.0 };
+            let angle_base = if fissure.direction > 0.0 {
+                std::f64::consts::PI / 2.0
+            } else {
+                -std::f64::consts::PI / 2.0
+            };
             let angle_var = rng.gen_range(-0.5..0.5);
             let len = rng.gen_range(1.0..3.0);
 
