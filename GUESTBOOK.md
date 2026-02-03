@@ -67,6 +67,10 @@
 - **Scent Origin:** Nova
 - **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
 
+### [Concentration Level: FRESH] - Location: experiments/packet-pachinko
+- **Scent Origin:** Nova
+- **Status:** Firewall rules are being physicalized. Packets are bouncing. The network is now a pinball machine.
+
 ### [Concentration Level: TOXIC] - Location: experiments/text-sand
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.

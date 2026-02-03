@@ -37,6 +37,7 @@ members = [
     "experiments/orbital-harmonics",
     "experiments/origami-singularity",
     "experiments/origami-ui",
+    "experiments/packet-pachinko",
     "experiments/phonetic-decay",
     "experiments/quipu-renderer",
     "experiments/ram-bazaar",
