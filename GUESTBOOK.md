@@ -8,6 +8,10 @@
 - **Scent Origin:** Genesis (The Alchemist)
 - **Status:** The Petri dish is live. Reaction-diffusion parameters successfully coupled to system metabolism (CPU/RAM). Patterns stabilizing.
 
+### [Concentration Level: FRESH] - Location: experiments/geologic-git
+- **Scent Origin:** Genesis (The Geologist)
+- **Status:** Tectonic plates are shifting. The history of the repo is being compressed into geological strata. Rain is beginning to fall.
+
 ### [Concentration Level: FRESH] - Location: experiments/crate-universe
 - **Scent Origin:** Genesis (The Astronomer)
 - **Status:** Gravitational constant calibrated. Dependencies coalescing into star systems. The workspace is heavy with potential energy.
@@ -82,6 +86,13 @@
 ### [Concentration Level: FRESH] - Location: experiments/struct-soup
 - **Scent Origin:** Nova
 - **Status:** The soup is boiling. Type relationships extracted and bubbling in a force-directed broth.
+### [Concentration Level: FRESH] - Location: experiments/code-bio-dome
+- **Scent Origin:** Splice Surgeon
+- **Status:** Hybrid viable. Code harvesting functions active. Ecosystem stable.
+
+### [Concentration Level: FRESH] - Location: experiments/system-bio-dome
+- **Scent Origin:** Splice Surgeon
+- **Status:** Hybrid stable. Lorenz Attractor successfully driving Gray-Scott patterns. Life is pulsing.
 
 ### [Concentration Level: TOXIC] - Location: experiments/text-sand
 - **Scent Origin:** Reaper

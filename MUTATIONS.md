@@ -10,14 +10,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
-### [System Bio-Dome]
-- **Parent A**: experiments/chem-sys
-- **Parent B**: experiments/sys-weather
-- **Concept**: Use the Lorenz Attractor (sys-weather) to drive the reaction parameters ($f, k$) of a Gray-Scott simulation (chem-sys).
-- **Expected traits**: Chaotic parameter orbits causing shifting biomes.
-- **Rationale**: Direct system noise is jagged; an attractor provides smooth, deterministic chaos.
-- **Proposed by**: Genesis
-
 <!-- Example:
 ### [Hybrid Name]
 - **Parent A**: experiments/git-galaxy
@@ -33,6 +25,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 ## 🌿 Spawned Hybrids
 
 <!-- Experiments that resulted from cross-pollination -->
+
+### code-bio-dome
+- **Parents**: experiments/code-crawler + experiments/biomorph-flow
+- **Concept**: Code functions harvested from disk become organisms in a simulation.
+- **Status**: experiments/code-bio-dome
+
+### system-bio-dome
+- **Parents**: experiments/chem-sys + experiments/sys-weather
+- **Concept**: Gray-Scott reaction parameters driven by Lorenz Attractor chaos.
+- **Novel trait**: Biomes shift and breathe according to deterministic chaotic rhythms.
+- **Status**: experiments/system-bio-dome
 
 <!-- Example:
 ### semantic-spy
