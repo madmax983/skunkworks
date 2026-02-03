@@ -77,45 +77,65 @@ classDiagram
     Snapshot *-- Action : Contains
 ```
 
-## Experiment: Git Rhythm
+### Optional Audio Backend (ADR 005)
 
-**Git Rhythm** sonifies and visualizes the history of a git repository.
+To support CI environments without audio drivers, all audio functionality is gated behind a `feature = "audio"` flag.
+
+```mermaid
+classDiagram
+    direction TB
+    class AudioFeature {
+        <<Feature Flag>>
+        +Enabled: bool
+    }
+
+    class Experiment {
+        +run()
+    }
+
+    class AudioEngine {
+        +play_sound()
+    }
+
+    Experiment ..> AudioEngine : Calls (if audio enabled)
+    Experiment ..> AudioFeature : Checks
+```
+
+## Experiment: Git Harmony
+
+**Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
 
 ### Component Structure
 
 ```mermaid
 classDiagram
     direction LR
-    class MusicalCommit {
-        +String hash
-        +String author
-        +i64 timestamp
-        +usize churn
+    class DiffState {
+        +Vec~FileDiff~ files
     }
 
-    class Harvester {
-        +harvest_repo(path: &str) Result~Vec~MusicalCommit~~
+    class VisualNote {
+        +f32 pitch
+        +f32 color_hue
+        +String text
     }
 
     class Synthesizer {
-        -f32 phase
-        -f32 mod_phase
-        -u32 sample_rate
-        +new(sample_rate: u32) Self
-        +hash_to_freq(hash: &str) f32
-        +generate_next_sample(commit: &MusicalCommit) f32
+        -DiffState diff
+        -Vec~VisualNote~ active_notes
+        +new(diff: DiffState)
+        +tick()
+        +play_event(event: LineChange)
     }
 
-    class VisualState {
-        +Option~MusicalCommit~ current_commit
-        +Vec~f32~ waveform_buffer
-        +update(commit: MusicalCommit, sample: f32)
+    class RodioSink {
+        <<Optional Audio>>
+        +append(source)
     }
 
-    Harvester ..> MusicalCommit : Creates
-    Synthesizer ..> MusicalCommit : Consumes (Modulates Sound)
-    VisualState ..> MusicalCommit : Consumes (Updates Metadata)
+    Synthesizer *-- DiffState : Iterates
+    Synthesizer *-- VisualNote : Generates
+    Synthesizer ..> RodioSink : Uses (if feature=audio)
 
-    note for Synthesizer "FM Synthesis: Churn -> Modulation Index"
-    note for VisualState "Renders TUI using Ratatui"
+    note for Synthesizer "Maps file hash -> Frequency\nMaps DiffType -> Color"
 ```
