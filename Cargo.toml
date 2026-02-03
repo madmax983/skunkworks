@@ -24,6 +24,7 @@ members = [
     "experiments/euclidean-pulse",
     "experiments/fabric-limb",
     "experiments/firefly-synapse",
+    "experiments/fissure-tracker",
     "experiments/fluid-rain",
     "experiments/fugue-state",
     "experiments/genetic-canvas",

@@ -67,3 +67,8 @@
 **Concept:** A generative art experiment that visualizes git commits as parametric Harmonograph drawings. Frequencies, phases, and damping are derived from commit hashes.
 **Fate:** Merged
 **Lesson:** Mapping SHA-1 entropy to continuous physical parameters creates unique, deterministic "signatures" for metadata. High-resolution curves (2000+ points) look surprisingly good with `Braille` markers.
+
+## [Fissure Tracker]
+**Concept:** A geological simulation of the codebase where dangerous keywords (`unwrap`, `panic`) create physical "stress" in a force-directed graph. High stress causes "fissures" (jagged lines) to crack the bedrock.
+**Fate:** Merged
+**Lesson:** Visual metaphors for code quality (Stress = Force) are intuitive and instantly readable. `walkdir` + simple string matching is sufficient for powerful MVP visualizations.
