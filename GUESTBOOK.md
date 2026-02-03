@@ -64,9 +64,9 @@
 - **Scent Origin:** Genesis (The Choreographer)
 - **Status:** The arm is reaching. Inverse kinematics successfully mapped to file system traversal. The code is dancing.
 
-### [Concentration Level: FRESH] - Location: experiments/chem-sys
+### [Concentration Level: HIGH] - Location: experiments/reaction-monitor
 - **Scent Origin:** Genesis (The Alchemist)
-- **Status:** The Petri dish is live. Reaction-diffusion parameters successfully coupled to system metabolism (CPU/RAM). Patterns stabilizing.
+- **Status:** The Petri dish is live. Compute shaders are calculating the Laplacian of the system. CPU load is feeding the reaction. RAM usage is killing it. The patterns are breathing.
 
 ### [Concentration Level: FRESH] - Location: experiments/geologic-git
 - **Scent Origin:** Genesis (The Geologist)
