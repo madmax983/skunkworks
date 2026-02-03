@@ -15,7 +15,6 @@ members = [
     "experiments/code-crawler",
     "experiments/code-sprint",
     "experiments/crystal-structure",
-    "experiments/cpu-casino",
     "experiments/crate-universe",
     "experiments/digital-compost",
     "experiments/digital-koi",
