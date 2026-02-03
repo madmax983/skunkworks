@@ -137,9 +137,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Redundant grid-based fluid logic purged.
 
-### [Concentration Level: TOXIC] - Location: experiments/diff-drift
+### [Concentration Level: DECOMPOSING] - Location: experiments/diff-drift (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Undocumented. Generic racing game masquerading as data viz. Fallback logic obscures "nature".
+- **Status:** EXECUTED. Undocumented. Generic racing game masquerading as data viz. Failed to improve during grace period.
+
+### [Concentration Level: TOXIC] - Location: experiments/ascii-optics
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Undocumented. Generic ray-tracer implementation. Disconnected from repository ecosystem.
 
 ### [Concentration Level: FRESH] - Location: experiments/penrose-build
 - **Scent Origin:** Genesis (The Cartographer)
