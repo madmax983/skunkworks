@@ -1,42 +1,5 @@
 use ratatui::style::Color;
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Vec2 {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl Vec2 {
-    pub fn new(x: f64, y: f64) -> Self {
-        Self { x, y }
-    }
-
-    pub fn dot(&self, other: Vec2) -> f64 {
-        self.x * other.x + self.y * other.y
-    }
-
-    pub fn normalize(&self) -> Self {
-        let len = (self.x * self.x + self.y * self.y).sqrt();
-        if len == 0.0 {
-            *self
-        } else {
-            Self {
-                x: self.x / len,
-                y: self.y / len,
-            }
-        }
-    }
-
-    pub fn reflect(&self, normal: Vec2) -> Self {
-        let n = normal.normalize();
-        let d = *self;
-        let dot = d.dot(n);
-        Self {
-            x: d.x - 2.0 * dot * n.x,
-            y: d.y - 2.0 * dot * n.y,
-        }
-    }
-}
+pub use tui_shared::math::Vec2;
 
 #[derive(Debug, Clone)]
 pub struct Ray {

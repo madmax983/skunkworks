@@ -1,70 +1,4 @@
-use std::ops::{Add, Mul, Sub};
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec2 {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl Vec2 {
-    pub fn new(x: f64, y: f64) -> Self {
-        Self { x, y }
-    }
-
-    pub fn length_squared(&self) -> f64 {
-        self.x * self.x + self.y * self.y
-    }
-
-    pub fn length(&self) -> f64 {
-        self.length_squared().sqrt()
-    }
-
-    pub fn normalize(&self) -> Self {
-        let len = self.length();
-        if len == 0.0 {
-            Self { x: 0.0, y: 0.0 }
-        } else {
-            Self {
-                x: self.x / len,
-                y: self.y / len,
-            }
-        }
-    }
-
-    pub fn dot(&self, other: Vec2) -> f64 {
-        self.x * other.x + self.y * other.y
-    }
-}
-
-impl Add for Vec2 {
-    type Output = Self;
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
-    }
-}
-
-impl Sub for Vec2 {
-    type Output = Self;
-    fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
-    }
-}
-
-impl Mul<f64> for Vec2 {
-    type Output = Self;
-    fn mul(self, scalar: f64) -> Self {
-        Self {
-            x: self.x * scalar,
-            y: self.y * scalar,
-        }
-    }
-}
+pub use tui_shared::math::Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum PacketKind {
@@ -133,7 +67,7 @@ impl Pin {
 /// Returns true if collision occurred.
 pub fn resolve_collision(particle: &mut Particle, pin: &Pin) -> bool {
     let diff = particle.pos - pin.pos;
-    let dist_sq = diff.length_squared();
+    let dist_sq = diff.magnitude_squared();
     let min_dist = particle.radius + pin.radius;
 
     if dist_sq < min_dist * min_dist {

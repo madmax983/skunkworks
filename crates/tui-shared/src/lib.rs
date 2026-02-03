@@ -45,7 +45,7 @@
 //!     }).unwrap();
 //!
 //!     let buffer = terminal.backend().buffer();
-//!     assert_eq!(buffer.get(1, 1).symbol, "H");
+//!     assert_eq!(buffer.get(1, 1).symbol(), "H");
 //! }
 //! ```
 
@@ -56,6 +56,8 @@ use crossterm::{
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io::{self, Stdout};
+
+pub mod math;
 
 /// A RAII wrapper for the Ratatui Terminal.
 ///
