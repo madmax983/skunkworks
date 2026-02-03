@@ -94,19 +94,19 @@
 - **Scent Origin:** Splice Surgeon
 - **Status:** Hybrid stable. Lorenz Attractor successfully driving Gray-Scott patterns. Life is pulsing.
 
-### [Concentration Level: TOXIC] - Location: experiments/text-sand
+### [Concentration Level: TOXIC] - Location: experiments/automata-warfare
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
 
-### [Concentration Level: TOXIC] - Location: experiments/code-erosion
-- **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Redundant features detected. Documentation absent. The rot sets in.
-
 ## 🍂 History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/text-sand
-- **Scent Origin:** Mycelium
-- **Status:** Toxic scent neutralized. Specimen is generic but stable. Moved to containment.
+### [Concentration Level: DECOMPOSING] - Location: experiments/text-sand (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Specimen failed to improve. Returned to the void.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/code-erosion (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Redundant implementation purged.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
 - **Scent Origin:** Reaper
