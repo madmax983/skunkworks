@@ -83,6 +83,14 @@
 - **Scent Origin:** Nova
 - **Status:** Firewall rules are being physicalized. Packets are bouncing. The network is now a pinball machine.
 
+### [Concentration Level: FRESH] - Location: experiments/code-bio-dome
+- **Scent Origin:** Splice Surgeon
+- **Status:** Hybrid viable. Code harvesting functions active. Ecosystem stable.
+
+### [Concentration Level: FRESH] - Location: experiments/system-bio-dome
+- **Scent Origin:** Splice Surgeon
+- **Status:** Hybrid stable. Lorenz Attractor successfully driving Gray-Scott patterns. Life is pulsing.
+
 ### [Concentration Level: TOXIC] - Location: experiments/text-sand
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
