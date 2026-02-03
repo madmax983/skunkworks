@@ -17,3 +17,8 @@
 **Bloat:** Duplicated TUI setup/teardown boilerplate in `orbital-decay` and `semantic-spy`.
 **Cut:** Replaced with `tui_shared::Tui` RAII wrapper.
 **Saved:** ~20 lines of boilerplate, enforced consistent terminal handling.
+
+## [Reduction]
+**Bloat:** `Attractor` trait in `experiments/strange-loops` was a "One-Time Trait" (or rather, "Internal Polymorphism Trait") implemented by 3 structs but only used behind an enum wrapper.
+**Cut:** Deleted the trait and used inherent methods directly.
+**Saved:** Removed an unnecessary abstraction layer.

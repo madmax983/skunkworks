@@ -11,11 +11,6 @@ impl Vector3 {
     }
 }
 
-pub trait Attractor {
-    fn update(&self, p: Vector3, dt: f64) -> Vector3;
-    fn name(&self) -> &'static str;
-}
-
 pub struct LorenzAttractor {
     pub sigma: f64,
     pub rho: f64,
@@ -32,15 +27,15 @@ impl Default for LorenzAttractor {
     }
 }
 
-impl Attractor for LorenzAttractor {
-    fn update(&self, p: Vector3, dt: f64) -> Vector3 {
+impl LorenzAttractor {
+    pub fn update(&self, p: Vector3, dt: f64) -> Vector3 {
         let dx = self.sigma * (p.y - p.x);
         let dy = p.x * (self.rho - p.z) - p.y;
         let dz = p.x * p.y - self.beta * p.z;
 
         Vector3::new(p.x + dx * dt, p.y + dy * dt, p.z + dz * dt)
     }
-    fn name(&self) -> &'static str {
+    pub fn name(&self) -> &'static str {
         "Lorenz"
     }
 }
@@ -61,15 +56,15 @@ impl Default for RosslerAttractor {
     }
 }
 
-impl Attractor for RosslerAttractor {
-    fn update(&self, p: Vector3, dt: f64) -> Vector3 {
+impl RosslerAttractor {
+    pub fn update(&self, p: Vector3, dt: f64) -> Vector3 {
         let dx = -p.y - p.z;
         let dy = p.x + self.a * p.y;
         let dz = self.b + p.z * (p.x - self.c);
 
         Vector3::new(p.x + dx * dt, p.y + dy * dt, p.z + dz * dt)
     }
-    fn name(&self) -> &'static str {
+    pub fn name(&self) -> &'static str {
         "Rossler"
     }
 }
@@ -96,8 +91,8 @@ impl Default for AizawaAttractor {
     }
 }
 
-impl Attractor for AizawaAttractor {
-    fn update(&self, p: Vector3, dt: f64) -> Vector3 {
+impl AizawaAttractor {
+    pub fn update(&self, p: Vector3, dt: f64) -> Vector3 {
         let dx = (p.z - self.b) * p.x - self.d * p.y;
         let dy = self.d * p.x + (p.z - self.b) * p.y;
         let dz = self.c + self.a * p.z
@@ -107,7 +102,7 @@ impl Attractor for AizawaAttractor {
 
         Vector3::new(p.x + dx * dt, p.y + dy * dt, p.z + dz * dt)
     }
-    fn name(&self) -> &'static str {
+    pub fn name(&self) -> &'static str {
         "Aizawa"
     }
 }
