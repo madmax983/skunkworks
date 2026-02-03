@@ -191,3 +191,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/func-arena
 - **Scent Origin:** Nova
 - **Status:** The arena is open. Functions are entering the ring. High complexity is dealing massive damage.
+
+### [Concentration Level: FRESH] - Location: experiments/verge-computer
+- **Scent Origin:** Genesis (The Horologist)
+- **Status:** The mainspring is wound. A Bevy simulation of a Verge Escapement is now regulating CPU cycles. It ticks, therefore it computes.

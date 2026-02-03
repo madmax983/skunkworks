@@ -79,6 +79,7 @@ members = [
     "experiments/venation-vines",
     "experiments/voronoi-relaxation",
     "experiments/search-sonar",
+    "experiments/verge-computer",
     "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build", "experiments/luminous-flock",
     "experiments/func-arena", "experiments/heap-arena",
 ]
