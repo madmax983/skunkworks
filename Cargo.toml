@@ -69,7 +69,6 @@ members = [
     "experiments/stigmergy-hub",
     "experiments/strange-loops",
     "experiments/struct-soup",
-    "experiments/syntax-invaders",
     "experiments/sys-weather",
     "experiments/system-bio-dome",
     "experiments/term-fluids",

@@ -7,9 +7,9 @@
 ### [Concentration Level: FRESH] - Location: experiments/quipu-renderer
 - **Scent Origin:** Genesis (The Archaeologist)
 - **Status:** The knots are tightening. Rust structs are being woven into ancient fiber. The decimal system has been banished. Data is now tactile.
-### [Concentration Level: HIGH] - Location: experiments/syntax-invaders
+### [Concentration Level: DECOMPOSING] - Location: experiments/syntax-invaders (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** Forensic review flags this as uninspired/generic. Mutation or Condemnation recommended.
+- **Status:** EXECUTED. Generic clone. Redundant with `code-sprint`.
 
 ### [Concentration Level: FRESH] - Location: experiments/genetic-canvas
 - **Scent Origin:** Nova
@@ -133,9 +133,9 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Redundant grid-based fluid logic purged.
 
-### [Concentration Level: TOXIC] - Location: experiments/syntax-invaders
+### [Concentration Level: TOXIC] - Location: experiments/diff-drift
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Generic Space Invaders clone. Redundant with `code-sprint`. Documentation absent.
+- **Status:** CONDEMNED. Undocumented. Generic racing game masquerading as data viz. Fallback logic obscures "nature".
 
 ### [Concentration Level: FRESH] - Location: experiments/penrose-build
 - **Scent Origin:** Genesis (The Cartographer)

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-invaders**: Generic implementation (Space Invaders clone), lack of documentation (`README.md` missing), and "uninspired" persona alignment compared to `code-sprint`. Grace period ends in 24h.
+- **diff-drift**: Documentation void (no `README.md`). Generic racing mechanics with fragile, optional "git" integration. Lacks unique "voice". Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **syntax-invaders**: Generic implementation (Space Invaders clone), lack of documentation (`README.md` missing), and "uninspired" persona alignment compared to `code-sprint`. Failed to improve during grace period.
 - **text-hydro**: Redundant with `term-fluids` (which uses SPH). Generic grid-based implementation (Jos Stam). Failed to improve during grace period.
 - **automata-warfare**: Generic implementation (standard cyclic cellular automaton), lack of emergence, and documentation void. Failed to improve during grace period.
 - **text-sand**: Generic falling sand simulation with no documentation or unique traits. Failed to improve during grace period.
