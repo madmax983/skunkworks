@@ -1,18 +1,12 @@
 #![allow(clippy::collapsible_if)]
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    Terminal,
-    backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     widgets::{Block, Borders, Gauge, Paragraph, Sparkline},
 };
-use std::io::{self};
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 use git_rhythm::harvester::harvest_repo;
 use git_rhythm::synth::Synthesizer;
@@ -39,11 +33,7 @@ fn main() -> Result<()> {
     let mut wav_writer = hound::WavWriter::create("skunkworks_symphony.wav", spec)?;
 
     // 3. Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // 4. State
     let mut synth = Synthesizer::new(44100);
@@ -93,7 +83,7 @@ fn main() -> Result<()> {
         }
 
         // Draw
-        terminal.draw(|f| {
+        tui.terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .margin(1)
@@ -159,10 +149,13 @@ fn main() -> Result<()> {
         last_tick = Instant::now();
     }
 
-    // Cleanup
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    // Cleanup happens automatically via Drop
+    // However, I need to make sure the wav_writer is flushed or handled if needed?
+    // The original code printed "Done! Written to..." after cleanup.
+    // The `tui` will drop when `main` returns or we can drop it manually if we want to print to stdout.
+
+    // To print to stdout after TUI exit, we must drop `tui` first.
+    tui.exit()?;
 
     println!("Done! Written to skunkworks_symphony.wav");
 

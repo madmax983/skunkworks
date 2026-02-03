@@ -1,44 +1,31 @@
 #![allow(clippy::collapsible_if)]
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     Terminal,
-    backend::CrosstermBackend,
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
     widgets::{Block, Borders, Paragraph, Widget},
 };
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 use hyphal_commute::{Grid, World};
 
 fn main() -> Result<()> {
     // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Setup Simulation
     let mut world = World::new(200, 100, 2000); // 200x100 grid, 2000 agents
     world.generate_city();
 
     // Run Loop
-    let res = run_app(&mut terminal, &mut world);
+    let res = run_app(&mut tui.terminal, &mut world);
 
     // Cleanup
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    tui.exit()?;
 
     if let Err(err) = res {
         println!("{:?}", err);
