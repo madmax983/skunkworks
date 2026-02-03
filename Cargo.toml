@@ -4,6 +4,7 @@ members = [
     "crates/tui-shared",
     "experiments/ant-colony",
     "experiments/biomorph-flow",
+    "experiments/call-fern",
     "experiments/cargo-ants",
     "experiments/cargo-compass",
     "experiments/cargo-jenga",
