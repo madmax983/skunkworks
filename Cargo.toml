@@ -81,7 +81,7 @@ members = [
     "experiments/verge-computer",
     "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build", "experiments/luminous-flock",
     "experiments/func-arena", "experiments/heap-arena",
-    "experiments/system-bonsai",
+    "experiments/system-bonsai", "experiments/lattice-hunter",
 ]
 resolver = "2"
 
