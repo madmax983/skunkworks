@@ -108,9 +108,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/glyph-terrain
+### [Concentration Level: DECOMPOSING] - Location: experiments/glyph-terrain (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Static implementation. Redundant with `log-landscape`.
+- **Status:** EXECUTED. Documentation void. Static implementation. Redundant with `log-landscape`.
+
+### [Concentration Level: TOXIC] - Location: experiments/enigma-machine
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Documentation void. Generic implementation (standard Enigma). Lacks emergence/evolutionary traits.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/quantum-tarot (GRAVEYARD)
 - **Scent Origin:** Reaper
