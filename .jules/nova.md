@@ -52,3 +52,8 @@
 **Concept:** A "TypeRacer" style game for the codebase. It scans `.rs` files, presents a random snippet, and challenges the user to type it accurately and quickly. Features WPM/Accuracy tracking and real-time diff highlighting.
 **Fate:** Merged
 **Lesson:** Gamifying "reading the code" forces you to pay attention to syntax and style. `ratatui` is great for overlay-based text interfaces.
+
+## [Genetic Canvas]
+**Concept:** An interactive genetic algorithm where the user acts as the fitness function to evolve abstract TUI art (Rects, Lines, Circles).
+**Fate:** Merged
+**Lesson:** Interactive Evolutionary Computation is a powerful mechanic for exploration-based tools. Users enjoy being the "selector" rather than just a passive observer. `ratatui` Canvas handles dynamic shapes well.
