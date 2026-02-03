@@ -44,12 +44,21 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Source code melts into fluid particles upon impact.
 - **Novel trait**: State transition from discrete text to continuous fluid.
 - **Status**: experiments/fluid-rain
+- **Evaluation**: Compiles. Documented. Successful hybrid.
 
 ### digital-compost
 - **Parents**: Bit Rot Simulation + Git History Reconstruction
 - **Concept**: Visualizing code decay over time using git timestamps as the entropy variable.
 - **Novel trait**: TUI that intentionally corrupts its own display based on file age.
 - **Status**: experiments/digital-compost
+- **Evaluation**: Compiles. Documented. Successful hybrid.
+
+### luminous-flock
+- **Parents**: experiments/literary-boids + experiments/firefly-synapse
+- **Concept**: Boids that flock spatially while trying to synchronize their flashing temporally.
+- **Novel trait**: Spatio-temporal synchronization waves in a moving medium.
+- **Status**: experiments/luminous-flock
+- **Evaluation**: Freshly created.
 
 <!-- Example:
 ### semantic-spy
