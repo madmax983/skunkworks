@@ -1,91 +1,7 @@
 use crate::harvester::CommitData;
 use rand::Rng;
 use std::collections::HashMap;
-use std::ops::{Add, Div, Mul, Neg, Sub};
-
-/// A simple 2D vector for physics calculations.
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Vec2 {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl Vec2 {
-    pub fn new(x: f64, y: f64) -> Self {
-        Self { x, y }
-    }
-
-    pub fn zero() -> Self {
-        Self { x: 0.0, y: 0.0 }
-    }
-
-    pub fn mag_sq(&self) -> f64 {
-        self.x * self.x + self.y * self.y
-    }
-
-    pub fn mag(&self) -> f64 {
-        self.mag_sq().sqrt()
-    }
-
-    pub fn normalize(&self) -> Self {
-        let m = self.mag();
-        if m > 0.0 {
-            *self / m
-        } else {
-            *self
-        }
-    }
-}
-
-impl Add for Vec2 {
-    type Output = Self;
-    fn add(self, other: Self) -> Self {
-        Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-        }
-    }
-}
-
-impl Sub for Vec2 {
-    type Output = Self;
-    fn sub(self, other: Self) -> Self {
-        Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-        }
-    }
-}
-
-impl Mul<f64> for Vec2 {
-    type Output = Self;
-    fn mul(self, rhs: f64) -> Self {
-        Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-        }
-    }
-}
-
-impl Div<f64> for Vec2 {
-    type Output = Self;
-    fn div(self, rhs: f64) -> Self {
-        Self {
-            x: self.x / rhs,
-            y: self.y / rhs,
-        }
-    }
-}
-
-impl Neg for Vec2 {
-    type Output = Self;
-    fn neg(self) -> Self {
-        Self {
-            x: -self.x,
-            y: -self.y,
-        }
-    }
-}
+use tui_shared::math::Vec2;
 
 #[derive(Debug, Clone)]
 pub struct Node {
@@ -176,12 +92,12 @@ impl Graph {
         for i in 0..node_count {
             for j in (i + 1)..node_count {
                 let delta = self.nodes[i].pos - self.nodes[j].pos;
-                let dist_sq = delta.mag_sq();
+                let dist_sq = delta.magnitude_squared();
                 // Avoid division by zero and extreme forces
                 let dist = dist_sq.sqrt().max(0.1);
 
                 // F = k / d^2
-                let force_mag = REPULSION_CONSTANT / (dist * dist); // dist_sq matches original logic? Original was dist_sq
+                let force_mag = REPULSION_CONSTANT / (dist * dist);
                 let force = delta / dist * force_mag;
 
                 forces[i] = forces[i] + force;
@@ -199,7 +115,7 @@ impl Graph {
             let v = edge.target;
 
             let delta = self.nodes[v].pos - self.nodes[u].pos;
-            let dist = delta.mag().max(0.1);
+            let dist = delta.magnitude().max(0.1);
 
             // F = k * (d - rest)
             let force_mag = SPRING_CONSTANT * (dist - REST_LENGTH);

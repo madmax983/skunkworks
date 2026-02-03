@@ -157,7 +157,7 @@ impl GameState {
         if let Some(idx) = self
             .pins
             .iter()
-            .position(|p| (p.pos - self.cursor_pos).length() < (p.radius + cursor_pin.radius))
+            .position(|p| (p.pos - self.cursor_pos).magnitude() < (p.radius + cursor_pin.radius))
         {
             self.pins.remove(idx);
         } else {
