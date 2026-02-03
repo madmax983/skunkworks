@@ -91,6 +91,7 @@ members = [
     "experiments/crate-radar",
     "experiments/quipu-symphony",
     "experiments/git-harmonograph", 
+    "experiments/git-ouroboros",
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
 ]
