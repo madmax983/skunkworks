@@ -45,6 +45,12 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: State transition from discrete text to continuous fluid.
 - **Status**: experiments/fluid-rain
 
+### digital-compost
+- **Parents**: Bit Rot Simulation + Git History Reconstruction
+- **Concept**: Visualizing code decay over time using git timestamps as the entropy variable.
+- **Novel trait**: TUI that intentionally corrupts its own display based on file age.
+- **Status**: experiments/digital-compost
+
 <!-- Example:
 ### semantic-spy
 - **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)

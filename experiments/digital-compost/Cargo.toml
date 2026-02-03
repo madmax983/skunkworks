@@ -1,0 +1,13 @@
+[package]
+name = "digital-compost"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+tui-shared = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+walkdir = "2.3"
+chrono = "0.4"
