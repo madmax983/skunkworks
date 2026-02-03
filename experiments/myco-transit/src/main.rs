@@ -27,7 +27,48 @@ fn main() -> Result<()> {
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
 
+    let city_colors = [
+        Color::Red,
+        Color::Blue,
+        Color::Yellow,
+        Color::Magenta,
+        Color::Cyan,
+        Color::Green,
+        Color::White,
+        Color::LightRed,
+    ];
+
     loop {
+        // Pre-process render data to avoid cloning inside closure or lifetime issues
+        // 1. Agents grouped by target city (for color)
+        let mut agent_groups: Vec<Vec<(f64, f64)>> = vec![Vec::new(); num_cities];
+        for agent in &agents {
+            if agent.target_city < num_cities {
+                agent_groups[agent.target_city].push((agent.x, agent.y));
+            }
+        }
+
+        // 2. Trails grouped by intensity (Low, Med, High)
+        let mut trails_low = Vec::new();
+        let mut trails_med = Vec::new();
+        let mut trails_high = Vec::new();
+
+        for y in 0..world.height {
+            for x in 0..world.width {
+                let val = world.get_trail(x, y);
+                if val > 50.0 {
+                    trails_high.push((x as f64, y as f64));
+                } else if val > 20.0 {
+                    trails_med.push((x as f64, y as f64));
+                } else if val > 5.0 {
+                    trails_low.push((x as f64, y as f64));
+                }
+            }
+        }
+
+        let total_commutes: u32 = agents.iter().map(|a| a.commuted_count).sum();
+        let agent_count = agents.len();
+
         tui.terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
@@ -43,47 +84,53 @@ fn main() -> Result<()> {
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
-                    // Draw cities
-                    for (cx, cy) in &world.cities {
+                    // Draw Trails
+                    ctx.draw(&Points {
+                        coords: &trails_low,
+                        color: Color::DarkGray,
+                    });
+                    ctx.draw(&Points {
+                        coords: &trails_med,
+                        color: Color::Gray,
+                    });
+                    ctx.draw(&Points {
+                        coords: &trails_high,
+                        color: Color::White, // Strong paths are white
+                    });
+
+                    // Draw Cities
+                    for (i, (cx, cy)) in world.cities.iter().enumerate() {
+                        let color = city_colors[i % city_colors.len()];
+                        // City Center
                         ctx.draw(&Points {
                             coords: &[(*cx, *cy)],
-                            color: Color::Red,
+                            color,
                         });
-                        // Make cities bigger
+                        // City Marker (Square)
                         ctx.draw(&Points {
                             coords: &[
                                 (*cx + 1.0, *cy),
                                 (*cx - 1.0, *cy),
                                 (*cx, *cy + 1.0),
                                 (*cx, *cy - 1.0),
+                                (*cx + 1.0, *cy + 1.0),
+                                (*cx - 1.0, *cy - 1.0),
+                                (*cx + 1.0, *cy - 1.0),
+                                (*cx - 1.0, *cy + 1.0),
                             ],
-                            color: Color::Red,
+                            color,
                         });
                     }
 
-                    // Draw agents (white)
-                    // Collecting coords to avoid multiple draw calls
-                    let agent_coords: Vec<(f64, f64)> = agents.iter().map(|a| (a.x, a.y)).collect();
-                    ctx.draw(&Points {
-                        coords: &agent_coords,
-                        color: Color::White,
-                    });
-
-                    // Draw trails (green) - optimized
-                    // Only draw points with significant trail value
-                    let mut trail_coords = Vec::new();
-                    for y in 0..world.height {
-                        for x in 0..world.width {
-                            let val = world.get_trail(x, y);
-                            if val > 10.0 {
-                                trail_coords.push((x as f64, y as f64));
-                            }
+                    // Draw Agents
+                    for (i, group) in agent_groups.iter().enumerate() {
+                        if !group.is_empty() {
+                            ctx.draw(&Points {
+                                coords: group,
+                                color: city_colors[i % city_colors.len()],
+                            });
                         }
                     }
-                    ctx.draw(&Points {
-                        coords: &trail_coords,
-                        color: Color::Green,
-                    });
                 });
 
             f.render_widget(canvas, chunks[0]);
@@ -93,8 +140,13 @@ fn main() -> Result<()> {
                 Span::styled("q", Style::default().fg(Color::Yellow)),
                 Span::raw(" to quit. Agents: "),
                 Span::styled(
-                    format!("{}", agents.len()),
+                    format!("{}", agent_count),
                     Style::default().fg(Color::Cyan),
+                ),
+                Span::raw(" | Commutes: "),
+                Span::styled(
+                    format!("{}", total_commutes),
+                    Style::default().fg(Color::Green),
                 ),
             ]);
             f.render_widget(status, chunks[1]);
@@ -114,9 +166,7 @@ fn main() -> Result<()> {
 
         if last_tick.elapsed() >= tick_rate {
             // Update simulation
-            for agent in &mut agents {
-                agent.update(&mut world);
-            }
+            world.update_agents_parallel(&mut agents);
             world.diffuse_and_decay();
             last_tick = Instant::now();
         }
