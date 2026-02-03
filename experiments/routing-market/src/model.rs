@@ -318,3 +318,68 @@ impl Network {
          }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_packet_routing_success() {
+        let mut network = Network::new();
+        let n0 = network.graph.add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
+        let n1 = network.graph.add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
+
+        // Correctly set IDs
+        network.graph[n0].id = n0;
+        network.graph[n1].id = n1;
+
+        let e = network.graph.add_edge(n0, n1, Link::new(1.0));
+
+        let p = Packet::new(1, n0, n1, 1000.0);
+        network.graph[n0].queue.push_back(p);
+
+        network.tick();
+
+        // Packet should move to link
+        assert_eq!(network.graph[e].packets.len(), 1, "Packet should be in link");
+        assert!(network.graph[n0].queue.is_empty(), "Queue should be empty");
+
+        network.tick();
+
+        // Packet should arrive (speed 1.0 -> progress 1.0 -> arrival)
+        assert!(network.graph[e].packets.is_empty(), "Packet should leave link");
+        assert_eq!(network.dropped_packets, 0, "Packet should not be dropped");
+    }
+
+    #[test]
+    fn test_packet_bankruptcy() {
+        let mut network = Network::new();
+        let n0 = network.graph.add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
+        let n1 = network.graph.add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
+        network.graph[n0].id = n0;
+        network.graph[n1].id = n1;
+
+        network.graph[n1].base_price = 100.0;
+
+        let e = network.graph.add_edge(n0, n1, Link::new(1.0));
+
+        let p = Packet::new(1, n0, n1, 10.0); // Budget 10 < Price 100
+        network.graph[n0].queue.push_back(p);
+
+        network.tick();
+
+        assert_eq!(network.dropped_packets, 1, "Packet should be dropped due to bankruptcy");
+        assert!(network.graph[e].packets.is_empty(), "Packet should not enter link");
+    }
+
+    #[test]
+    fn test_generate_mesh_topology() {
+        let mut network = Network::new();
+        network.generate_mesh(5, 5);
+
+        assert_eq!(network.graph.node_count(), 25);
+        // Grid edges: (5-1)*5 + (5-1)*5 = 20 + 20 = 40.
+        // Plus potential random cross-links.
+        assert!(network.graph.edge_count() >= 40);
+    }
+}
