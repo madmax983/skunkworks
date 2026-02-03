@@ -24,23 +24,31 @@ impl World {
         // Find leaf nodes (no outgoing edges = no dependencies)
         // In our graph A->B means A depends on B.
         // So B is a leaf dependency if it has no outgoing edges (it depends on nothing).
-        let leaves: Vec<NodeIndex> = dep_graph.graph.node_indices()
-            .filter(|&idx| dep_graph.graph.neighbors_directed(idx, Direction::Outgoing).count() == 0)
+        let leaves: Vec<NodeIndex> = dep_graph
+            .graph
+            .node_indices()
+            .filter(|&idx| {
+                dep_graph
+                    .graph
+                    .neighbors_directed(idx, Direction::Outgoing)
+                    .count()
+                    == 0
+            })
             .collect();
 
         if leaves.is_empty() {
-             // Fallback if circular or something weird: just pick random nodes
-             let all_nodes: Vec<NodeIndex> = dep_graph.graph.node_indices().collect();
-             for _ in 0..ant_count {
-                 if let Some(&node) = all_nodes.get(rng.gen_range(0..all_nodes.len())) {
-                     ants.push(Ant {
-                         current_node: node,
-                         target_edge: None,
-                         progress: 0.0,
-                         speed: rng.gen_range(0.5..1.5),
-                     });
-                 }
-             }
+            // Fallback if circular or something weird: just pick random nodes
+            let all_nodes: Vec<NodeIndex> = dep_graph.graph.node_indices().collect();
+            for _ in 0..ant_count {
+                if let Some(&node) = all_nodes.get(rng.gen_range(0..all_nodes.len())) {
+                    ants.push(Ant {
+                        current_node: node,
+                        target_edge: None,
+                        progress: 0.0,
+                        speed: rng.gen_range(0.5..1.5),
+                    });
+                }
+            }
         } else {
             for _ in 0..ant_count {
                 let node = leaves[rng.gen_range(0..leaves.len())];
@@ -53,10 +61,7 @@ impl World {
             }
         }
 
-        Self {
-            dep_graph,
-            ants,
-        }
+        Self { dep_graph, ants }
     }
 
     pub fn tick(&mut self, dt: f64) {
@@ -111,10 +116,17 @@ impl World {
                     // If A has Incomming edges (C->A), then C depends on A. Ant continues to C.
                     // If A has NO Incoming edges, nobody depends on A. A is a final artifact.
 
-                    if graph.neighbors_directed(ant.current_node, Direction::Incoming).count() == 0 {
+                    if graph
+                        .neighbors_directed(ant.current_node, Direction::Incoming)
+                        .count()
+                        == 0
+                    {
                         // Respawn at a leaf
-                        let leaves: Vec<NodeIndex> = graph.node_indices()
-                            .filter(|&idx| graph.neighbors_directed(idx, Direction::Outgoing).count() == 0)
+                        let leaves: Vec<NodeIndex> = graph
+                            .node_indices()
+                            .filter(|&idx| {
+                                graph.neighbors_directed(idx, Direction::Outgoing).count() == 0
+                            })
                             .collect();
                         if !leaves.is_empty() {
                             ant.current_node = leaves[rng.gen_range(0..leaves.len())];
@@ -136,8 +148,11 @@ impl World {
                 if incoming_edges.is_empty() {
                     // Dead end (should be a root, but maybe handled above).
                     // Respawn
-                    let leaves: Vec<NodeIndex> = graph.node_indices()
-                        .filter(|&idx| graph.neighbors_directed(idx, Direction::Outgoing).count() == 0)
+                    let leaves: Vec<NodeIndex> = graph
+                        .node_indices()
+                        .filter(|&idx| {
+                            graph.neighbors_directed(idx, Direction::Outgoing).count() == 0
+                        })
                         .collect();
                     if !leaves.is_empty() {
                         ant.current_node = leaves[rng.gen_range(0..leaves.len())];
@@ -153,14 +168,14 @@ impl World {
         // Apply pheromones for active trails
         // We can do this by iterating ants again and seeing which edge they are on.
         // This avoids the borrow conflict.
-        let active_edges: Vec<EdgeIndex> = self.ants.iter()
-            .filter_map(|a| a.target_edge)
-            .collect();
+        let active_edges: Vec<EdgeIndex> = self.ants.iter().filter_map(|a| a.target_edge).collect();
 
         for edge_idx in active_edges {
-             if let Some(edge) = self.dep_graph.graph.edge_weight_mut(edge_idx) {
+            if let Some(edge) = self.dep_graph.graph.edge_weight_mut(edge_idx) {
                 edge.pheromone += 0.5; // Deposit
-                if edge.pheromone > 10.0 { edge.pheromone = 10.0; } // Cap
+                if edge.pheromone > 10.0 {
+                    edge.pheromone = 10.0;
+                } // Cap
             }
         }
     }

@@ -62,10 +62,15 @@ impl DepGraph {
                     // Find the package that matches this dependency
                     // This is a bit heuristic since `dependencies` only has name/versionreq
                     // We need to look up in `resolve` ideally, but simple name matching works for basic viz
-                    if let Some(target_pkg) = metadata.packages.iter().find(|p| p.name == dep.name) {
+                    if let Some(target_pkg) = metadata.packages.iter().find(|p| p.name == dep.name)
+                    {
                         if let Some(target_idx) = pkg_map.get(&target_pkg.id) {
                             if !graph.contains_edge(*source_idx, *target_idx) {
-                                graph.add_edge(*source_idx, *target_idx, EdgeData { pheromone: 0.0 });
+                                graph.add_edge(
+                                    *source_idx,
+                                    *target_idx,
+                                    EdgeData { pheromone: 0.0 },
+                                );
                             }
                         }
                     }
@@ -82,7 +87,7 @@ impl DepGraph {
 
             // Re-add nodes based on packages present in resolve
             for node in &resolve.nodes {
-                 if let Some(package) = metadata.packages.iter().find(|p| p.id == node.id) {
+                if let Some(package) = metadata.packages.iter().find(|p| p.id == node.id) {
                     let x = rng.gen_range(0.0..width);
                     let y = rng.gen_range(0.0..height);
                     let is_root = metadata.workspace_members.contains(&package.id);
@@ -98,15 +103,19 @@ impl DepGraph {
                     };
                     let idx = graph.add_node(node_data);
                     pkg_map.insert(package.id.clone(), idx);
-                 }
+                }
             }
 
             for node in &resolve.nodes {
                 if let Some(source_idx) = pkg_map.get(&node.id) {
                     for dep in &node.dependencies {
                         if let Some(target_idx) = pkg_map.get(dep) {
-                             if !graph.contains_edge(*source_idx, *target_idx) {
-                                graph.add_edge(*source_idx, *target_idx, EdgeData { pheromone: 0.0 });
+                            if !graph.contains_edge(*source_idx, *target_idx) {
+                                graph.add_edge(
+                                    *source_idx,
+                                    *target_idx,
+                                    EdgeData { pheromone: 0.0 },
+                                );
                             }
                         }
                     }
@@ -162,7 +171,9 @@ impl DepGraph {
 
         // Attraction (Edges)
         // Clone edges to iterate to avoid borrow checker issues
-        let edges: Vec<(NodeIndex, NodeIndex)> = self.graph.edge_indices()
+        let edges: Vec<(NodeIndex, NodeIndex)> = self
+            .graph
+            .edge_indices()
             .map(|e| self.graph.edge_endpoints(e).unwrap())
             .collect();
 
@@ -191,11 +202,11 @@ impl DepGraph {
         let center_y = self.height / 2.0;
 
         for idx in &node_indices {
-             let node = &mut self.graph[*idx];
-             let dx = center_x - node.x;
-             let dy = center_y - node.y;
-             node.vx += dx * 0.01 * dt;
-             node.vy += dy * 0.01 * dt;
+            let node = &mut self.graph[*idx];
+            let dx = center_x - node.x;
+            let dy = center_y - node.y;
+            node.vx += dx * 0.01 * dt;
+            node.vy += dy * 0.01 * dt;
         }
 
         // Update Position & Bounds Check
@@ -209,10 +220,22 @@ impl DepGraph {
             node.y += node.vy * dt;
 
             // Simple bounce off walls
-            if node.x < 0.0 { node.x = 0.0; node.vx *= -1.0; }
-            if node.x > self.width { node.x = self.width; node.vx *= -1.0; }
-            if node.y < 0.0 { node.y = 0.0; node.vy *= -1.0; }
-            if node.y > self.height { node.y = self.height; node.vy *= -1.0; }
+            if node.x < 0.0 {
+                node.x = 0.0;
+                node.vx *= -1.0;
+            }
+            if node.x > self.width {
+                node.x = self.width;
+                node.vx *= -1.0;
+            }
+            if node.y < 0.0 {
+                node.y = 0.0;
+                node.vy *= -1.0;
+            }
+            if node.y > self.height {
+                node.y = self.height;
+                node.vy *= -1.0;
+            }
         }
     }
 }

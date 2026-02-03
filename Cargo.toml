@@ -76,6 +76,7 @@ members = [
     "experiments/terra-fluid",
     "experiments/thermo-tarmites",
     "experiments/thread-phase",
+    "experiments/typo-rain",
     "experiments/venation-vines",
     "experiments/voronoi-relaxation",
     "experiments/search-sonar",
