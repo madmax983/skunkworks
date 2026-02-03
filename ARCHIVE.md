@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **automata-warfare**: Generic cyclic cellular automaton with no unique mechanics or documentation. Grace period ends in 24h.
+- **automata-warfare**: Generic implementation (standard cyclic cellular automaton), lack of emergence, and documentation void. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
