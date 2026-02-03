@@ -73,6 +73,10 @@
 **Fate:** Merged
 **Lesson:** Visual metaphors for code quality (Stress = Force) are intuitive and instantly readable. `walkdir` + simple string matching is sufficient for powerful MVP visualizations.
 
+## [Git Invaders]
+**Concept:** A Space Invaders clone where you battle `git diff` lines. Each added line is an enemy, deletions are red ghosts.
+**Fate:** Merged
+**Lesson:** Gamifying code review makes the pain of large diffs manageable (or at least destructible). TUI Canvas works well for simple arcade physics.
 ## [Input Ghost]
 **Concept:** An Event Recorder/Replayer system for TUI applications. It intercepts `crossterm` events, stores them with relative timestamps, and can inject them back into the event loop.
 **Fate:** Merged

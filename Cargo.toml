@@ -78,8 +78,11 @@ members = [
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
     "experiments/voronoi-ants",
+    "experiments/miura-interface",
+    "experiments/routing-market",
+    "experiments/git-invaders",
     "experiments/tectonic-git",
-    "experiments/miura-interface", "experiments/routing-market", "experiments/retinal-glitch",
+    "experiments/retinal-glitch",
     "experiments/struct-harmonics",
     "experiments/cargo-rocket",
 ]
