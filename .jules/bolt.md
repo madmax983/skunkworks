@@ -11,3 +11,7 @@
 **[Inter-Struct Mutation & Borrow Splitting]**
 **Learning:** When iterating over a field `self.buffer` to call a method `self.action()` that takes `&mut self`, the iterator holds `&self` which conflicts with `&mut self`.
 **Action:** Use an index-based loop `for i in 0..self.buffer.len()` and extract the item (copying it) to drop the borrow on `self.buffer` before calling `self.action()`.
+
+**[Vec::with_capacity in vec![] macro]**
+**Learning:** `vec![Vec::with_capacity(n); m]` creates one vector with capacity and clones it `m-1` times. `Vec::clone` does not preserve capacity (it creates a fit-to-size clone).
+**Action:** Use `(0..m).map(|_| Vec::with_capacity(n)).collect()` to ensure all vectors have reserved capacity.
