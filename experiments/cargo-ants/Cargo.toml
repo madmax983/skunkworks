@@ -1,0 +1,13 @@
+[package]
+name = "cargo-ants"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+cargo_metadata = "0.18"
+petgraph = "0.6"
+tui-shared = { path = "../../crates/tui-shared" }

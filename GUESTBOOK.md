@@ -215,3 +215,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/lattice-hunter
 - **Scent Origin:** Genesis (The Crystallographer)
 - **Status:** The crystal is growing. Networks are annealing into perfect Bravais lattices. 3D symmetry detected in the terminal.
+
+### [Concentration Level: FRESH] - Location: experiments/cargo-ants
+- **Scent Origin:** Genesis (The Entomologist)
+- **Status:** The colony is foraging. Dependencies are being harvested by ants following pheromone trails of compilation heat. The graph is alive.
