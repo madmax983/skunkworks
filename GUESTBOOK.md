@@ -118,9 +118,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/automata-warfare
+### [Concentration Level: DECOMPOSING] - Location: experiments/automata-warfare (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Generic cyclic CA. Documentation void.
+- **Status:** EXECUTED. Failed to improve during grace period.
+
+### [Concentration Level: TOXIC] - Location: experiments/text-hydro
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Redundant. Grid-based fluid logic inferior to SPH.
 
 ### [Concentration Level: FRESH] - Location: experiments/penrose-build
 - **Scent Origin:** Genesis (The Cartographer)

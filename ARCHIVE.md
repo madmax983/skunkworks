@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **automata-warfare**: Generic implementation (standard cyclic cellular automaton), lack of emergence, and documentation void. Grace period ends in 24h.
+- **text-hydro**: Redundant with `term-fluids` (which uses SPH). Generic grid-based implementation (Jos Stam). Documentation absent. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **automata-warfare**: Generic implementation (standard cyclic cellular automaton), lack of emergence, and documentation void. Failed to improve during grace period.
 - **text-sand**: Generic falling sand simulation with no documentation or unique traits. Failed to improve during grace period.
 - **code-erosion**: Redundant "data-to-terrain" visualizer with no documentation. Failed to improve during grace period.
 - **echo-chamber**: Undocumented and trivial typing visualizer. Failed to improve during grace period.
