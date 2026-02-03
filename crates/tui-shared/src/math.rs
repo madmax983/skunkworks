@@ -28,6 +28,11 @@ impl Vec2 {
         let mag = self.magnitude();
         if mag == 0.0 {
             Self::zero()
+        } else if mag.is_infinite() {
+            // If magnitude is infinite, scale components down to be finite
+            let max_comp = self.x.abs().max(self.y.abs());
+            let scaled = Vec2::new(self.x / max_comp, self.y / max_comp);
+            scaled.normalize()
         } else {
             *self / mag
         }

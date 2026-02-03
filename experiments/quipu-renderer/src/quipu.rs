@@ -128,18 +128,35 @@ impl Cord {
 
     /// Helper to convert to modern u32 (for verification/interaction)
     pub fn value(&self) -> u32 {
-        let mut total = 0;
-        let mut multiplier = 1;
+        let mut total: u64 = 0;
+        let mut multiplier: u64 = 1;
 
         for cluster in &self.clusters {
             let mut cluster_val = 0;
             for knot in cluster {
                 cluster_val += knot.value() as u32;
             }
-            total += cluster_val * multiplier;
-            multiplier *= 10;
+
+            // Safe accumulation using u64 to prevent panic on overflow
+            if let Some(term) = (cluster_val as u64).checked_mul(multiplier) {
+                total = total.saturating_add(term);
+            } else {
+                // If the term itself overflows u64 (huge multiplier * huge val), saturate total
+                total = u64::MAX;
+            }
+
+            if let Some(m) = multiplier.checked_mul(10) {
+                multiplier = m;
+            } else {
+                multiplier = u64::MAX; // Stop growing
+            }
         }
-        total
+
+        if total > u32::MAX as u64 {
+            u32::MAX
+        } else {
+            total as u32
+        }
     }
 }
 

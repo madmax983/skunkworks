@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 ratatui.workspace = true
 crossterm.workspace = true
+[dev-dependencies]
+proptest = "1.4"
