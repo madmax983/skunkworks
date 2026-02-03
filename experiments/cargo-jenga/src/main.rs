@@ -1,3 +1,23 @@
+//! # Cargo Jenga 🏗️
+//!
+//! A TUI-based physics simulation where Rust crates are represented as Jenga blocks.
+//!
+//! ## Overview
+//!
+//! This experiment visualizes the weight of dependencies in a cargo workspace.
+//! It uses:
+//! *   [`rapier2d`] for rigid body physics (gravity, collisions, friction).
+//! *   [`ratatui`] for rendering the state to the terminal using a canvas.
+//! *   [`cargo_metadata`] to fetch the actual crates in the workspace.
+//!
+//! ## Interactions
+//!
+//! *   **Left Click:** Remove a block (simulating `cargo remove`... potentially causing a crash).
+//! *   **Space:** Pause/Resume simulation.
+//! *   **Up/Down:** Move camera vertically.
+//! *   **R:** Reset the simulation.
+//! *   **Q:** Quit.
+
 mod deps;
 mod physics;
 
@@ -22,6 +42,9 @@ use std::{
 };
 use tui_shared::Tui;
 
+/// Entry point.
+///
+/// Initializes the terminal, creates the app state, and starts the event loop.
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
 
@@ -36,14 +59,22 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Application state.
 struct App {
+    /// The physics world containing the tower and ground.
     world: PhysicsWorld,
+    /// Vertical camera offset (physics Y coordinate).
     camera_y: f64,
+    /// Whether the physics simulation is currently running.
     paused: bool,
+    /// Current mouse position (column, row).
     mouse_pos: (u16, u16),
 }
 
 impl App {
+    /// Creates a new application instance.
+    ///
+    /// Spawns the ground and the initial tower of crates.
     fn new() -> Self {
         let mut world = PhysicsWorld::new();
         world.spawn_ground();
@@ -59,12 +90,17 @@ impl App {
         }
     }
 
+    /// Advances the application state by one tick.
     fn update(&mut self) {
         if !self.paused {
             self.world.step();
         }
     }
 
+    /// Handles mouse clicks on the canvas.
+    ///
+    /// Converts screen coordinates (TUI rows/cols) to physics coordinates
+    /// to determine which block was clicked.
     fn handle_click(&mut self, area: Rect) {
         let canvas_width = 40.0;
         let canvas_height = 40.0;
@@ -100,6 +136,9 @@ impl App {
     }
 }
 
+/// Runs the main event loop.
+///
+/// Handles drawing and input events until the user quits.
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()> {
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
@@ -150,6 +189,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
     }
 }
 
+/// Renders the user interface.
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -193,6 +233,7 @@ fn ui(f: &mut Frame, app: &App) {
     f.render_widget(help, chunks[1]);
 }
 
+/// Helper to draw a single physics body onto the canvas context.
 fn draw_body(ctx: &mut ratatui::widgets::canvas::Context, body: &RenderBody) {
     let pos = body.position;
     let shape = &body.shape;

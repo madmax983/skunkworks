@@ -1,7 +1,35 @@
+//! # Physics Engine
+//!
+//! This module handles the physical simulation of the Jenga tower using `rapier2d`.
+//!
+//! It manages the lifecycle of rigid bodies (blocks), colliders, and the physics pipeline.
+//! The simulation is 2D, with gravity acting downwards.
+//!
+//! ## Coordinate System
+//!
+//! *   **Physics World:** Standard Cartesian coordinates. `+Y` is up. `(0,0)` is the center of the base.
+//! *   **Render World:** TUI coordinates. `+Y` is down (row index).
+//!
+//! The translation between these two systems happens in `main.rs` during rendering and input handling.
+//!
+//! ## Key Components
+//!
+//! *   [`PhysicsWorld`]: The main container for all simulation state.
+//! *   [`RenderBody`]: A snapshot of a body's position and shape, optimized for the renderer.
+
 use crate::deps::CrateBlock;
 use rapier2d::prelude::*;
 use std::collections::HashMap;
 
+/// The main simulation container.
+///
+/// Holds all the `rapier2d` structures required to step the simulation.
+///
+/// # Fields
+///
+/// *   `rigid_body_set`: Stores dynamic bodies (the blocks).
+/// *   `collider_set`: Stores shapes attached to bodies.
+/// *   `body_info`: Metadata (name, color) linked to physics handles.
 pub struct PhysicsWorld {
     pub rigid_body_set: RigidBodySet,
     pub collider_set: ColliderSet,
@@ -16,24 +44,37 @@ pub struct PhysicsWorld {
     pub query_pipeline: QueryPipeline,
     pub gravity: Vector<Real>,
 
-    // Metadata mapping
+    /// Maps physics handles to game-specific data (name, color).
     pub body_info: HashMap<RigidBodyHandle, BodyInfo>,
 }
 
+/// Metadata for a physics body.
+///
+/// This is used to render the block correctly (color) and display its name.
 #[derive(Clone, Debug)]
 pub struct BodyInfo {
     pub name: String,
     pub color: (u8, u8, u8),
 }
 
+/// A decoupled representation of a body for rendering.
+///
+/// This struct allows the rendering thread to draw the scene without holding
+/// locks on the physics world or knowing about Rapier internals.
 #[derive(Clone)]
 pub struct RenderBody {
+    /// The absolute position (translation + rotation) of the body.
     pub position: Isometry<Real>,
+    /// The geometric shape of the body (usually a Cuboid).
     pub shape: SharedShape,
+    /// Visual metadata (color, label), if available.
     pub info: Option<BodyInfo>,
 }
 
 impl PhysicsWorld {
+    /// Creates a new, empty physics world.
+    ///
+    /// Initializes all Rapier pipelines and sets gravity to -9.81 on the Y axis.
     pub fn new() -> Self {
         Self {
             rigid_body_set: RigidBodySet::new(),
@@ -52,6 +93,9 @@ impl PhysicsWorld {
         }
     }
 
+    /// Spawns a static ground plane.
+    ///
+    /// The ground is a large cuboid positioned just below `y=0`.
     pub fn spawn_ground(&mut self) {
         let collider = ColliderBuilder::cuboid(100.0, 1.0)
             .translation(vector![0.0, -1.0]) // Top at 0.0
@@ -59,6 +103,14 @@ impl PhysicsWorld {
         self.collider_set.insert(collider);
     }
 
+    /// Spawns the Jenga tower from a list of crates.
+    ///
+    /// Blocks are stacked vertically starting from `y=0`.
+    ///
+    /// # Jitter
+    ///
+    /// A small random X-offset is applied to each block to simulate imperfection
+    /// and make the tower mechanically interesting (unstable).
     pub fn spawn_tower(&mut self, crates: &[CrateBlock]) {
         let mut y_offset = 0.5; // First block center height (0.0 + 0.5)
 
@@ -97,6 +149,10 @@ impl PhysicsWorld {
         }
     }
 
+    /// Advances the simulation by one timestep.
+    ///
+    /// This should be called once per frame (or at a fixed timestep).
+    /// It updates positions, velocities, and resolves collisions.
     pub fn step(&mut self) {
         self.physics_pipeline.step(
             &self.gravity,
@@ -117,6 +173,9 @@ impl PhysicsWorld {
         self.query_pipeline.update(&self.collider_set);
     }
 
+    /// Extracts a list of bodies for rendering.
+    ///
+    /// This flattens the physics hierarchy into a simple list of shapes and positions.
     pub fn get_render_bodies(&self) -> Vec<RenderBody> {
         let mut bodies = Vec::new();
         for (handle, body) in self.rigid_body_set.iter() {
@@ -140,6 +199,10 @@ impl PhysicsWorld {
         bodies
     }
 
+    /// Removes a physics body at the given coordinates (world space).
+    ///
+    /// Used for mouse interaction (clicking to remove a block).
+    /// It queries the physics world to find if a collider exists at `(x, y)`.
     pub fn remove_body_at(&mut self, x: f32, y: f32) {
         let point = point![x, y];
         let mut handle_to_remove = None;
