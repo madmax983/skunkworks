@@ -25,6 +25,7 @@ members = [
     "experiments/fabric-limb",
     "experiments/firefly-synapse",
     "experiments/fugue-state",
+    "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-rogue",
     "experiments/git_galaxy",
