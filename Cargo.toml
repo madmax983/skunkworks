@@ -83,6 +83,7 @@ members = [
     "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build", "experiments/luminous-flock",
     "experiments/func-arena", "experiments/heap-arena",
     "experiments/system-bonsai",
+    "experiments/git-gotchi",
 ]
 resolver = "2"
 

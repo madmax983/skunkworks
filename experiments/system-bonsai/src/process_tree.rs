@@ -1,5 +1,5 @@
-use sysinfo::{Pid, Process, System};
 use std::collections::{HashMap, HashSet};
+use sysinfo::{Pid, Process, System};
 
 #[derive(Debug, Clone)]
 pub struct ProcessNode {
@@ -71,7 +71,8 @@ impl ProcessTree {
 
         // Sort children by CPU usage (descending), then Memory
         children.sort_by(|a, b| {
-            b.cpu_usage.partial_cmp(&a.cpu_usage)
+            b.cpu_usage
+                .partial_cmp(&a.cpu_usage)
                 .unwrap_or(std::cmp::Ordering::Equal)
                 .then_with(|| b.memory.cmp(&a.memory))
         });

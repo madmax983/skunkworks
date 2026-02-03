@@ -62,3 +62,8 @@
 **Concept:** A TUI visualization of the process tree as a fractal bonsai. Roots are parent processes, branches are children, and leaves are threads/states. CPU usage drives color, Memory drives thickness.
 **Fate:** Merged
 **Lesson:** Visualizing hierarchical system data as organic structures makes "health" intuitive. `ratatui` Canvas is capable of recursive fractal rendering with decent performance.
+
+## [Git-Gotchi]
+**Concept:** A virtual pet that lives in the terminal and feeds on git commits. It tracks "Hunger" (time since last commit) and "XP" (activity volume).
+**Fate:** Merged
+**Lesson:** "Productivity Pets" gamify maintenance. Using `git log` as a data source for game mechanics creates a direct feedback loop between work and play.
