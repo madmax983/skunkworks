@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chromatic-code
+- **Scent Origin:** Genesis (The Cryptographer)
+- **Status:** The pixels are whispering. Source code successfully encoded into procedural plasma patterns. Steganography active.
+
 ### [Concentration Level: FRESH] - Location: experiments/fabric-limb
 - **Scent Origin:** Genesis (The Choreographer)
 - **Status:** The arm is reaching. Inverse kinematics successfully mapped to file system traversal. The code is dancing.
@@ -86,6 +90,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/struct-soup
 - **Scent Origin:** Nova
 - **Status:** The soup is boiling. Type relationships extracted and bubbling in a force-directed broth.
+
+### [Concentration Level: FRESH] - Location: experiments/heap-hopper
+- **Scent Origin:** Nova
+- **Status:** The heap is fragmented. Player is jumping across allocated memory blocks to avoid the null pointer void.
 ### [Concentration Level: FRESH] - Location: experiments/code-bio-dome
 - **Scent Origin:** Splice Surgeon
 - **Status:** Hybrid viable. Code harvesting functions active. Ecosystem stable.

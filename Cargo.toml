@@ -31,6 +31,7 @@ members = [
     "experiments/git_rhythm",
     "experiments/glyph-terrain",
     "experiments/hamming-garden",
+    "experiments/heap-hopper",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
@@ -75,7 +76,7 @@ members = [
     "experiments/thread-phase",
     "experiments/venation-vines",
     "experiments/voronoi-relaxation",
-    "experiments/word-collider",
+    "experiments/word-collider", "experiments/chromatic-code",
 ]
 resolver = "2"
 
