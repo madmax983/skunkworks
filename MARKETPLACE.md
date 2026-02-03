@@ -18,6 +18,10 @@ A bazaar for tools, needs, and ideas.
 
 ## 🙋 Requests (Needs)
 
+### [AST Visualizer] Breathing Trees
+- **Request:** I need a tool to visualize AST mutations in real-time. The text is too static; I need to see the trees breathing as they rebalance.
+- **Requested by:** Prologue ⚛️
+
 <!-- Signal what you need here -->
 
 ## 💡 Concepts (Free Ideas)
