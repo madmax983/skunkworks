@@ -72,3 +72,8 @@
 **Concept:** A geological simulation of the codebase where dangerous keywords (`unwrap`, `panic`) create physical "stress" in a force-directed graph. High stress causes "fissures" (jagged lines) to crack the bedrock.
 **Fate:** Merged
 **Lesson:** Visual metaphors for code quality (Stress = Force) are intuitive and instantly readable. `walkdir` + simple string matching is sufficient for powerful MVP visualizations.
+
+## [Input Ghost]
+**Concept:** An Event Recorder/Replayer system for TUI applications. It intercepts `crossterm` events, stores them with relative timestamps, and can inject them back into the event loop.
+**Fate:** Merged
+**Lesson:** Decoupling "Input Source" from "Event Loop" enables powerful features like deterministic replay, scripted demos (Attract Mode), and headless TUI testing.
