@@ -10,9 +10,9 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, Widget},
     Frame,
 };
+use scan::FileNode;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use scan::FileNode;
 
 // --- Physics & Simulation Types ---
 
@@ -36,7 +36,10 @@ impl Vec2 {
         if l == 0.0 {
             Self { x: 0.0, y: 0.0 }
         } else {
-            Self { x: self.x / l, y: self.y / l }
+            Self {
+                x: self.x / l,
+                y: self.y / l,
+            }
         }
     }
 }
@@ -74,10 +77,14 @@ impl PheromoneGrid {
     }
 
     fn get_index(&self, x: f64, y: f64) -> Option<usize> {
-        if x < 0.0 || y < 0.0 { return None; }
+        if x < 0.0 || y < 0.0 {
+            return None;
+        }
         let ix = x as usize;
         let iy = y as usize;
-        if ix >= self.width || iy >= self.height { return None; }
+        if ix >= self.width || iy >= self.height {
+            return None;
+        }
         Some(iy * self.width + ix)
     }
 
@@ -93,24 +100,49 @@ impl PheromoneGrid {
 
     fn sample_gradient(&self, x: f64, y: f64, food_scent: bool) -> Vec2 {
         let mut grad = Vec2::new(0.0, 0.0);
-        let idx_c = match self.get_index(x, y) { Some(i) => i, None => return grad };
+        let idx_c = match self.get_index(x, y) {
+            Some(i) => i,
+            None => return grad,
+        };
 
-        let grid = if food_scent { &self.food_scent } else { &self.home_scent };
+        let grid = if food_scent {
+            &self.food_scent
+        } else {
+            &self.home_scent
+        };
 
         // Simple 4-neighbor gradient
         let c_val = grid[idx_c];
 
-        if let Some(idx_r) = self.get_index(x + 1.0, y) { grad.x += grid[idx_r] as f64 - c_val as f64; }
-        if let Some(idx_l) = self.get_index(x - 1.0, y) { grad.x -= grid[idx_l] as f64 - c_val as f64; }
-        if let Some(idx_d) = self.get_index(x, y + 1.0) { grad.y += grid[idx_d] as f64 - c_val as f64; }
-        if let Some(idx_u) = self.get_index(x, y - 1.0) { grad.y -= grid[idx_u] as f64 - c_val as f64; }
+        if let Some(idx_r) = self.get_index(x + 1.0, y) {
+            grad.x += grid[idx_r] as f64 - c_val as f64;
+        }
+        if let Some(idx_l) = self.get_index(x - 1.0, y) {
+            grad.x -= grid[idx_l] as f64 - c_val as f64;
+        }
+        if let Some(idx_d) = self.get_index(x, y + 1.0) {
+            grad.y += grid[idx_d] as f64 - c_val as f64;
+        }
+        if let Some(idx_u) = self.get_index(x, y - 1.0) {
+            grad.y -= grid[idx_u] as f64 - c_val as f64;
+        }
 
         grad
     }
 
     fn evaporate(&mut self) {
-        for v in &mut self.food_scent { *v *= 0.98; if *v < 0.1 { *v = 0.0; } }
-        for v in &mut self.home_scent { *v *= 0.98; if *v < 0.1 { *v = 0.0; } }
+        for v in &mut self.food_scent {
+            *v *= 0.98;
+            if *v < 0.1 {
+                *v = 0.0;
+            }
+        }
+        for v in &mut self.home_scent {
+            *v *= 0.98;
+            if *v < 0.1 {
+                *v = 0.0;
+            }
+        }
     }
 }
 
@@ -133,8 +165,8 @@ impl World {
             if file.todo_count > 0 {
                 foods.push(FoodSource {
                     pos: Vec2::new(
-                        rng.gen_range(5.0..width-5.0),
-                        rng.gen_range(5.0..height-5.0),
+                        rng.gen_range(5.0..width - 5.0),
+                        rng.gen_range(5.0..height - 5.0),
                     ),
                     amount: file.todo_count * 10, // amplify for gameplay
                     max_amount: file.todo_count * 10,
@@ -147,8 +179,8 @@ impl World {
             for _ in 0..5 {
                 foods.push(FoodSource {
                     pos: Vec2::new(
-                        rng.gen_range(5.0..width-5.0),
-                        rng.gen_range(5.0..height-5.0),
+                        rng.gen_range(5.0..width - 5.0),
+                        rng.gen_range(5.0..height - 5.0),
                     ),
                     amount: 50,
                     max_amount: 50,
@@ -156,15 +188,17 @@ impl World {
             }
         }
 
-        let ants = (0..60).map(|_| {
-            let angle = rng.gen_range(0.0..std::f64::consts::TAU);
-            Ant {
-                pos: Vec2::new(width/2.0, height/2.0),
-                vel: Vec2::new(angle.cos(), angle.sin()),
-                has_food: false,
-                color: Color::White,
-            }
-        }).collect();
+        let ants = (0..60)
+            .map(|_| {
+                let angle = rng.gen_range(0.0..std::f64::consts::TAU);
+                Ant {
+                    pos: Vec2::new(width / 2.0, height / 2.0),
+                    vel: Vec2::new(angle.cos(), angle.sin()),
+                    has_food: false,
+                    color: Color::White,
+                }
+            })
+            .collect();
 
         Self {
             width,
@@ -180,7 +214,8 @@ impl World {
         let home_pos = Vec2::new(self.width / 2.0, self.height / 2.0);
 
         // Update Grid (add constant home scent at center)
-        self.pheromones.add_scent(home_pos.x, home_pos.y, false, 50.0);
+        self.pheromones
+            .add_scent(home_pos.x, home_pos.y, false, 50.0);
 
         // Update Ants
         let mut rng = rand::thread_rng();
@@ -196,14 +231,14 @@ impl World {
                 // Pheromone steering (Home Scent)
                 let grad = self.pheromones.sample_gradient(ant.pos.x, ant.pos.y, false);
                 if grad.length() > 0.1 {
-                     desired_vel.x += grad.x * 2.0;
-                     desired_vel.y += grad.y * 2.0;
+                    desired_vel.x += grad.x * 2.0;
+                    desired_vel.y += grad.y * 2.0;
                 } else {
-                     // Approximate direction to center if no scent
-                     let dx = home_pos.x - ant.pos.x;
-                     let dy = home_pos.y - ant.pos.y;
-                     desired_vel.x += dx * 0.05;
-                     desired_vel.y += dy * 0.05;
+                    // Approximate direction to center if no scent
+                    let dx = home_pos.x - ant.pos.x;
+                    let dy = home_pos.y - ant.pos.y;
+                    desired_vel.x += dx * 0.05;
+                    desired_vel.y += dy * 0.05;
                 }
 
                 // Drop Food Pheromone
@@ -217,16 +252,15 @@ impl World {
                     ant.vel.x *= -1.0;
                     ant.vel.y *= -1.0;
                 }
-
             } else {
                 // Seek Food
                 ant.color = Color::Blue; // Scouting
 
                 // Pheromone steering (Food Scent)
                 let grad = self.pheromones.sample_gradient(ant.pos.x, ant.pos.y, true);
-                 if grad.length() > 0.1 {
-                     desired_vel.x += grad.x * 2.0;
-                     desired_vel.y += grad.y * 2.0;
+                if grad.length() > 0.1 {
+                    desired_vel.x += grad.x * 2.0;
+                    desired_vel.y += grad.y * 2.0;
                 }
 
                 // Drop Home Pheromone
@@ -340,19 +374,19 @@ fn ui(f: &mut Frame, app: &mut App) {
     // Update World Size to match View
     let area = chunks[0];
     if area.width as f64 != app.world.width || area.height as f64 != app.world.height {
-         // Resizing grid is expensive, so we just clamp boundaries or re-init?
-         // For now, let's just update the bounds variables so ants bounce correctly.
-         // (A real implementation would resize the grid vectors too)
-         if area.width as usize != app.world.pheromones.width || area.height as usize != app.world.pheromones.height {
-             app.world.pheromones = PheromoneGrid::new(area.width as usize, area.height as usize);
-         }
-         app.world.width = area.width as f64;
-         app.world.height = area.height as f64;
+        // Resizing grid is expensive, so we just clamp boundaries or re-init?
+        // For now, let's just update the bounds variables so ants bounce correctly.
+        // (A real implementation would resize the grid vectors too)
+        if area.width as usize != app.world.pheromones.width
+            || area.height as usize != app.world.pheromones.height
+        {
+            app.world.pheromones = PheromoneGrid::new(area.width as usize, area.height as usize);
+        }
+        app.world.width = area.width as f64;
+        app.world.height = area.height as f64;
     }
 
-    let voronoi_widget = VoronoiWidget {
-        world: &app.world,
-    };
+    let voronoi_widget = VoronoiWidget { world: &app.world };
     f.render_widget(voronoi_widget, area);
 
     let status_text = vec![Line::from(vec![
@@ -412,7 +446,7 @@ impl<'a> Widget for VoronoiWidget<'a> {
                         if food.amount > 0 {
                             let fx = food.pos.x.round() as u16;
                             let fy = food.pos.y.round() as u16;
-                             if x == fx && y == fy {
+                            if x == fx && y == fy {
                                 cell.set_fg(Color::Green);
                                 cell.set_char('☘');
                             }
@@ -420,8 +454,8 @@ impl<'a> Widget for VoronoiWidget<'a> {
                     }
 
                     // Check for Home
-                    let hx = (self.world.width/2.0).round() as u16;
-                    let hy = (self.world.height/2.0).round() as u16;
+                    let hx = (self.world.width / 2.0).round() as u16;
+                    let hy = (self.world.height / 2.0).round() as u16;
                     if x == hx && y == hy {
                         cell.set_fg(Color::Yellow);
                         cell.set_char('⌂');
@@ -438,7 +472,7 @@ impl<'a> Widget for VoronoiWidget<'a> {
             let ax = ant.pos.x.round() as u16;
             let ay = ant.pos.y.round() as u16;
             if ax < area.width && ay < area.height {
-                 if let Some(cell) = buf.cell_mut((area.x + ax, area.y + ay)) {
+                if let Some(cell) = buf.cell_mut((area.x + ax, area.y + ay)) {
                     cell.set_fg(Color::Black); // Contrast against BG
                     cell.set_char('●');
                 }

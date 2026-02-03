@@ -30,16 +30,18 @@ fn draw_network(f: &mut Frame, area: Rect, network: &Network) {
     let mut max_y = 100.0;
 
     if network.graph.node_count() > 0 {
-        let positions: Vec<(f64, f64)> = network
-            .graph
-            .node_weights()
-            .map(|n| n.pos)
-            .collect();
+        let positions: Vec<(f64, f64)> = network.graph.node_weights().map(|n| n.pos).collect();
 
         min_x = positions.iter().map(|p| p.0).fold(f64::INFINITY, f64::min);
-        max_x = positions.iter().map(|p| p.0).fold(f64::NEG_INFINITY, f64::max);
+        max_x = positions
+            .iter()
+            .map(|p| p.0)
+            .fold(f64::NEG_INFINITY, f64::max);
         min_y = positions.iter().map(|p| p.1).fold(f64::INFINITY, f64::min);
-        max_y = positions.iter().map(|p| p.1).fold(f64::NEG_INFINITY, f64::max);
+        max_y = positions
+            .iter()
+            .map(|p| p.1)
+            .fold(f64::NEG_INFINITY, f64::max);
     }
 
     // Padding
@@ -49,7 +51,11 @@ fn draw_network(f: &mut Frame, area: Rect, network: &Network) {
     max_y += 10.0;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Network Topology "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Network Topology "),
+        )
         .marker(symbols::Marker::Braille)
         .x_bounds([min_x, max_x])
         .y_bounds([min_y, max_y])
@@ -107,13 +113,23 @@ fn draw_network(f: &mut Frame, area: Rect, network: &Network) {
 
                 // Draw as a point (or small circle logic if we had it)
                 // Just use 'O' or similar
-                ctx.print(node.pos.0, node.pos.1, Span::styled("O", Style::default().fg(color)));
+                ctx.print(
+                    node.pos.0,
+                    node.pos.1,
+                    Span::styled("O", Style::default().fg(color)),
+                );
 
                 // Draw Price label if high
                 let price = node.current_price();
                 if price > 5.0 {
-                    ctx.print(node.pos.0 + 1.0, node.pos.1 + 1.0,
-                        Span::styled(format!("{:.1}", price), Style::default().fg(Color::Gray).add_modifier(Modifier::DIM)));
+                    ctx.print(
+                        node.pos.0 + 1.0,
+                        node.pos.1 + 1.0,
+                        Span::styled(
+                            format!("{:.1}", price),
+                            Style::default().fg(Color::Gray).add_modifier(Modifier::DIM),
+                        ),
+                    );
                 }
             }
         });
@@ -129,20 +145,54 @@ fn draw_sidebar(f: &mut Frame, area: Rect, network: &Network) {
 
     // Stats
     let total_q: usize = network.graph.node_weights().map(|n| n.queue.len()).sum();
-    let max_price: f64 = network.graph.node_weights().map(|n| n.current_price()).fold(0.0, f64::max);
+    let max_price: f64 = network
+        .graph
+        .node_weights()
+        .map(|n| n.current_price())
+        .fold(0.0, f64::max);
 
     let stats_text = vec![
-        Line::from(vec![Span::raw("Ticks: "), Span::styled(format!("{}", network.tick_count), Style::default().fg(Color::Cyan))]),
-        Line::from(vec![Span::raw("Total Packets: "), Span::styled(format!("{}", network.total_packets), Style::default().fg(Color::Green))]),
-        Line::from(vec![Span::raw("Dropped: "), Span::styled(format!("{}", network.dropped_packets), Style::default().fg(Color::Red))]),
+        Line::from(vec![
+            Span::raw("Ticks: "),
+            Span::styled(
+                format!("{}", network.tick_count),
+                Style::default().fg(Color::Cyan),
+            ),
+        ]),
+        Line::from(vec![
+            Span::raw("Total Packets: "),
+            Span::styled(
+                format!("{}", network.total_packets),
+                Style::default().fg(Color::Green),
+            ),
+        ]),
+        Line::from(vec![
+            Span::raw("Dropped: "),
+            Span::styled(
+                format!("{}", network.dropped_packets),
+                Style::default().fg(Color::Red),
+            ),
+        ]),
         Line::from(""),
-        Line::from(vec![Span::raw("Queued: "), Span::styled(format!("{}", total_q), Style::default().fg(Color::Yellow))]),
-        Line::from(vec![Span::raw("Max Price: "), Span::styled(format!("{:.2}", max_price), Style::default().fg(Color::Magenta))]),
+        Line::from(vec![
+            Span::raw("Queued: "),
+            Span::styled(format!("{}", total_q), Style::default().fg(Color::Yellow)),
+        ]),
+        Line::from(vec![
+            Span::raw("Max Price: "),
+            Span::styled(
+                format!("{:.2}", max_price),
+                Style::default().fg(Color::Magenta),
+            ),
+        ]),
     ];
 
     f.render_widget(
-        Paragraph::new(stats_text)
-            .block(Block::default().borders(Borders::ALL).title(" Market Data ")),
+        Paragraph::new(stats_text).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Market Data "),
+        ),
         chunks[0],
     );
 
@@ -155,8 +205,7 @@ fn draw_sidebar(f: &mut Frame, area: Rect, network: &Network) {
     ];
 
     f.render_widget(
-        Paragraph::new(help_text)
-            .block(Block::default().borders(Borders::ALL).title(" Help ")),
+        Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title(" Help ")),
         chunks[1],
     );
 }

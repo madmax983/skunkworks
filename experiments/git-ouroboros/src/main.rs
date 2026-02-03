@@ -9,15 +9,10 @@ use ratatui::{
     layout::{Constraint, Direction as LayoutDirection, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, List, ListItem, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 fn main() -> Result<()> {
@@ -62,10 +57,16 @@ fn main() -> Result<()> {
                 if key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => break,
-                        KeyCode::Char('h') | KeyCode::Left => world.change_direction(Direction::Left),
-                        KeyCode::Char('l') | KeyCode::Right => world.change_direction(Direction::Right),
+                        KeyCode::Char('h') | KeyCode::Left => {
+                            world.change_direction(Direction::Left)
+                        }
+                        KeyCode::Char('l') | KeyCode::Right => {
+                            world.change_direction(Direction::Right)
+                        }
                         KeyCode::Char('k') | KeyCode::Up => world.change_direction(Direction::Up),
-                        KeyCode::Char('j') | KeyCode::Down => world.change_direction(Direction::Down),
+                        KeyCode::Char('j') | KeyCode::Down => {
+                            world.change_direction(Direction::Down)
+                        }
                         _ => {}
                     }
                 }
@@ -99,17 +100,29 @@ fn ui(f: &mut Frame, world: &World) {
 
     // --- Game Board ---
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Git-Ouroboros "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Git-Ouroboros "),
+        )
         .x_bounds([0.0, world.width as f64])
         .y_bounds([0.0, world.height as f64])
         .paint(|ctx| {
             // Draw Snake
             for (i, segment) in world.snake.body.iter().enumerate() {
-                let color = if i == 0 { Color::Green } else { Color::LightGreen };
+                let color = if i == 0 {
+                    Color::Green
+                } else {
+                    Color::LightGreen
+                };
                 // Invert Y: draw_y = height - 1 - y
                 let draw_y = (world.height - 1 - segment.y) as f64;
 
-                ctx.print(segment.x as f64, draw_y, Span::styled("█", Style::default().fg(color)));
+                ctx.print(
+                    segment.x as f64,
+                    draw_y,
+                    Span::styled("█", Style::default().fg(color)),
+                );
             }
 
             // Draw Food
@@ -117,7 +130,14 @@ fn ui(f: &mut Frame, world: &World) {
                 let draw_y = (world.height - 1 - food.position.y) as f64;
                 // Use the first char of hash as the symbol? Or just a special char.
                 let symbol = &food.commit.hash[0..1];
-                ctx.print(food.position.x as f64, draw_y, Span::styled(symbol.to_string(), Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)));
+                ctx.print(
+                    food.position.x as f64,
+                    draw_y,
+                    Span::styled(
+                        symbol.to_string(),
+                        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                    ),
+                );
             }
         });
 
@@ -144,21 +164,40 @@ fn ui(f: &mut Frame, world: &World) {
     let mut log_items = Vec::new();
     if let Some(ref food) = world.food {
         log_items.push(ListItem::new(Line::from(vec![
-            Span::styled("TARGET: ", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)),
-            Span::raw(format!("{} - {}", &food.commit.hash[0..7], food.commit.author)),
+            Span::styled(
+                "TARGET: ",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            ),
+            Span::raw(format!(
+                "{} - {}",
+                &food.commit.hash[0..7],
+                food.commit.author
+            )),
         ])));
-        log_items.push(ListItem::new(Line::from(Span::styled(format!("\"{}\"", food.commit.message), Style::default().fg(Color::White)))));
+        log_items.push(ListItem::new(Line::from(Span::styled(
+            format!("\"{}\"", food.commit.message),
+            Style::default().fg(Color::White),
+        ))));
         log_items.push(ListItem::new(Line::from(" ")));
     }
 
-    log_items.push(ListItem::new(Line::from(Span::styled("--- DIGESTED HISTORY ---", Style::default().fg(Color::Gray)))));
+    log_items.push(ListItem::new(Line::from(Span::styled(
+        "--- DIGESTED HISTORY ---",
+        Style::default().fg(Color::Gray),
+    ))));
 
     for commit in &world.last_eaten_commits {
-         log_items.push(ListItem::new(Line::from(vec![
-            Span::styled(format!("{} ", &commit.hash[0..7]), Style::default().fg(Color::Green)),
+        log_items.push(ListItem::new(Line::from(vec![
+            Span::styled(
+                format!("{} ", &commit.hash[0..7]),
+                Style::default().fg(Color::Green),
+            ),
             Span::raw(format!("by {}", commit.author)),
         ])));
-        log_items.push(ListItem::new(Line::from(Span::styled(format!("   {}", commit.message), Style::default().fg(Color::DarkGray)))));
+        log_items.push(ListItem::new(Line::from(Span::styled(
+            format!("   {}", commit.message),
+            Style::default().fg(Color::DarkGray),
+        ))));
     }
 
     let log_list = List::new(log_items)
@@ -174,7 +213,9 @@ fn ui(f: &mut Frame, world: &World) {
     };
 
     let status_style = if world.game_over {
-        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
+        Style::default()
+            .fg(Color::Red)
+            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
     } else {
         Style::default().fg(Color::Cyan)
     };

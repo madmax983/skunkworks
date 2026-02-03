@@ -7,7 +7,7 @@ pub struct CommitData {
     pub hash: String,
     pub timestamp: i64,
     pub stress_level: f64, // Normalized stress score
-    pub details: String, // Description of what caused stress
+    pub details: String,   // Description of what caused stress
 }
 
 pub struct GitScanner;
@@ -62,11 +62,21 @@ impl GitScanner {
                 if line.starts_with('+') && !line.starts_with("+++") {
                     // Check for stress keywords
                     let content = &line[1..];
-                    if content.contains("TODO") { current_stress += 1.0; }
-                    if content.contains("FIXME") { current_stress += 2.0; }
-                    if content.contains("unwrap()") { current_stress += 1.5; }
-                    if content.contains("panic!") { current_stress += 5.0; }
-                    if content.contains("unsafe") { current_stress += 3.0; }
+                    if content.contains("TODO") {
+                        current_stress += 1.0;
+                    }
+                    if content.contains("FIXME") {
+                        current_stress += 2.0;
+                    }
+                    if content.contains("unwrap()") {
+                        current_stress += 1.5;
+                    }
+                    if content.contains("panic!") {
+                        current_stress += 5.0;
+                    }
+                    if content.contains("unsafe") {
+                        current_stress += 3.0;
+                    }
                 }
             }
         }
