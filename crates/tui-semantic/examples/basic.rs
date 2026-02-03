@@ -1,5 +1,4 @@
-
-use tui_semantic::{Snapshot, Entity};
+use tui_semantic::{Entity, Snapshot};
 
 struct MyApp {
     player: Player,
@@ -15,16 +14,22 @@ struct Player {
 impl MyApp {
     fn snapshot(&self) -> Snapshot {
         Snapshot::new("my-app")
-            .with_entity(Entity::new("player")
-                .at(self.player.x, self.player.y)
-                .with_prop("health", self.player.health))
+            .with_entity(
+                Entity::new("player")
+                    .at(self.player.x, self.player.y)
+                    .with_prop("health", self.player.health),
+            )
             .with_metric("score", self.score)
     }
 }
 
 fn main() {
     let app = MyApp {
-        player: Player { x: 10.0, y: 20.0, health: 100 },
+        player: Player {
+            x: 10.0,
+            y: 20.0,
+            health: 100,
+        },
         score: 500,
     };
     let snap = app.snapshot();

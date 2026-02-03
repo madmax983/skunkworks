@@ -1,15 +1,9 @@
 #![allow(clippy::collapsible_if)]
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{prelude::*, widgets::Widget};
-use std::{
-    io,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 pub mod model;
 pub mod root;
@@ -93,17 +87,11 @@ impl App {
 }
 
 fn main() -> Result<()> {
-    // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
+    let mut tui = Tui::init()?;
     let mut app = App::new();
 
     loop {
-        terminal.draw(|f| ui(f, &app))?;
+        tui.terminal.draw(|f| ui(f, &app))?;
 
         let timeout = app
             .tick_rate
@@ -131,11 +119,6 @@ fn main() -> Result<()> {
             break;
         }
     }
-
-    // Restore terminal
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
 
     Ok(())
 }

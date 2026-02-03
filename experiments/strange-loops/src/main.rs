@@ -1,7 +1,7 @@
 pub mod attractors;
 
 use anyhow::Result;
-use attractors::{AizawaAttractor, Attractor, LorenzAttractor, RosslerAttractor, Vector3};
+use attractors::{AizawaAttractor, LorenzAttractor, RosslerAttractor, Vector3};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     Frame,

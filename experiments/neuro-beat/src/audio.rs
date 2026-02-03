@@ -8,8 +8,8 @@ pub mod engine {
     use super::*;
     use anyhow::anyhow;
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-    use std::sync::mpsc::{self, Sender};
     use std::f32::consts::PI;
+    use std::sync::mpsc::{self, Sender};
 
     pub struct AudioHandle {
         // We must keep the stream alive
@@ -66,7 +66,8 @@ pub mod engine {
 
     pub fn init() -> anyhow::Result<AudioHandle> {
         let host = cpal::default_host();
-        let device = host.default_output_device()
+        let device = host
+            .default_output_device()
             .ok_or_else(|| anyhow!("No output device available"))?;
         let config = device.default_output_config()?;
 
@@ -77,7 +78,7 @@ pub mod engine {
 
         // Fixed set of voices mapped to neuron IDs
         let mut voices = vec![
-            Voice::new(110.0, 5.0), // Neuron 0: Kick-ish
+            Voice::new(110.0, 5.0),  // Neuron 0: Kick-ish
             Voice::new(220.0, 10.0), // Neuron 1
             Voice::new(440.0, 10.0), // Neuron 2
             Voice::new(880.0, 20.0), // Neuron 3: Ping
@@ -122,9 +123,6 @@ pub mod engine {
 
         stream.play()?;
 
-        Ok(AudioHandle {
-            stream,
-            sender,
-        })
+        Ok(AudioHandle { stream, sender })
     }
 }

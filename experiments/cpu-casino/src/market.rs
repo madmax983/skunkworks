@@ -1,4 +1,4 @@
-use crate::model::{Core, ThreadAgent, MarketState, AgentState};
+use crate::model::{AgentState, Core, MarketState, ThreadAgent};
 use std::cmp::Ordering;
 
 #[derive(Debug, Clone)]
@@ -92,13 +92,26 @@ mod tests {
             ThreadAgent::new(1, Strategy::Value, 100.0, 10.0, 100),
             ThreadAgent::new(2, Strategy::Value, 100.0, 10.0, 100),
         ];
-        let mut cores = vec![Core { id: 0, current_agent_id: None, utilization: 0.0 }];
+        let mut cores = vec![Core {
+            id: 0,
+            current_agent_id: None,
+            utilization: 0.0,
+        }];
         let mut state = MarketState::new();
 
         let bids = vec![
-            Bid { agent_id: 0, price: 10.0 },
-            Bid { agent_id: 1, price: 5.0 },
-            Bid { agent_id: 2, price: 1.0 },
+            Bid {
+                agent_id: 0,
+                price: 10.0,
+            },
+            Bid {
+                agent_id: 1,
+                price: 5.0,
+            },
+            Bid {
+                agent_id: 2,
+                price: 1.0,
+            },
         ];
 
         resolve_auction(&mut agents, &mut cores, &mut state, bids);

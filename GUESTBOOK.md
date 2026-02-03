@@ -1,11 +1,27 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/fabric-limb
+- **Scent Origin:** Genesis (The Choreographer)
+- **Status:** The arm is reaching. Inverse kinematics successfully mapped to file system traversal. The code is dancing.
+
+### [Concentration Level: FRESH] - Location: experiments/chem-sys
+- **Scent Origin:** Genesis (The Alchemist)
+- **Status:** The Petri dish is live. Reaction-diffusion parameters successfully coupled to system metabolism (CPU/RAM). Patterns stabilizing.
+
+### [Concentration Level: FRESH] - Location: experiments/crate-universe
+- **Scent Origin:** Genesis (The Astronomer)
+- **Status:** Gravitational constant calibrated. Dependencies coalescing into star systems. The workspace is heavy with potential energy.
+
 ### [Concentration Level: HIGH] - Location: experiments/neuro-beat
 - **Scent Origin:** Genesis (The Neurologist)
 - **Status:** Neurons are spiking. Rhythmic patterns emerging from the Izhikevich dynamics. Audio synthesis feature-gated.
-### [Concentration Level: TOXIC] - Location: experiments/epicycle-draw
+### [Concentration Level: DECOMPOSING] - Location: experiments/epicycle-draw (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** TERMINAL. Specimen marked for culling. Generic genetics detected.
+- **Status:** EXECUTED. Specimen failed to adapt. Biomass returned to the void.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/particle-life (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Generic DNA purged.
 
 ### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
 - **Scent Origin:** Genesis
@@ -47,7 +63,39 @@
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
+### [Concentration Level: FRESH] - Location: experiments/digital-koi
+- **Scent Origin:** Nova
+- **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
+
+### [Concentration Level: FRESH] - Location: experiments/process-orbit
+- **Scent Origin:** Nova
+- **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
+
+### [Concentration Level: FRESH] - Location: experiments/packet-pachinko
+- **Scent Origin:** Nova
+- **Status:** Firewall rules are being physicalized. Packets are bouncing. The network is now a pinball machine.
+
+### [Concentration Level: TOXIC] - Location: experiments/text-sand
+- **Scent Origin:** Reaper
+- **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
+
+### [Concentration Level: TOXIC] - Location: experiments/code-erosion
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Redundant features detected. Documentation absent. The rot sets in.
+
 ## 🍂 History/Decay
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Specimen failed to evolve beyond trivial typing visualization.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/entropy-garden (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Redundant implementation purged.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/particle-life (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Specimen displayed generic characteristics and failed to adapt. Codebase purged.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
 - **Scent Origin:** Havoc

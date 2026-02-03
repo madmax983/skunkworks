@@ -28,3 +28,18 @@
 **Concept:** A frequency domain visualizer for text streams. It reads from stdin and renders a scrolling 3D wireframe terrain where height matches line intensity/keywords and X-axis is a hash of the content.
 **Fate:** Merged
 **Lesson:** Transforming textual entropy into physical geometry (terrain) allows for rapid visual pattern recognition in otherwise opaque log streams. `ratatui`'s Canvas lines can effectively create 2.5D wireframe effects.
+
+## [Digital Koi]
+**Concept:** A system-monitored Zen Garden where fish (Boids) swim in a pond. Water turbulence is driven by real-time CPU usage, and water clarity by Memory usage.
+**Fate:** Merged
+**Lesson:** Using system metrics (`sysinfo`) as environmental variables for artificial life simulations creates a calming, organic visualization of machine labor. The Boids algorithm adapts well to `ratatui` Canvas when drawing trails.
+
+## [Process Orbit]
+**Concept:** A solar system visualization where the kernel is the Sun and processes are planets. Orbit radius is driven by CPU usage (Gravity), and size by Memory usage.
+**Fate:** Merged
+**Lesson:** Visualizing invisible system hierarchies as cosmic structures makes resource hogging intuitively obvious (and beautiful). Smooth animation requires stateful integration (`angle += speed * dt`) rather than stateless mapping.
+
+## [Packet Pachinko]
+**Concept:** A physics-based "Firewall Construction Kit" where you sort network packets using pinball mechanics. Red "Malware" packets must be blocked, Green "HTTP" packets routed to Port 80, and Blue "SSH" packets to Port 22.
+**Fate:** Merged
+**Lesson:** TUI Canvas is suitable for simple physics games. Simulating network traffic as physical objects (packets) makes abstract routing concepts tangible and fun. The "Gamification of Sysadmin" has potential.

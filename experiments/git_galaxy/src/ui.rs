@@ -78,23 +78,23 @@ pub fn ui(
     let mut max_y = 100.0;
 
     if !graph.nodes.is_empty() {
-        min_x = graph.nodes[0].x;
-        max_x = graph.nodes[0].x;
-        min_y = graph.nodes[0].y;
-        max_y = graph.nodes[0].y;
+        min_x = graph.nodes[0].pos.x;
+        max_x = graph.nodes[0].pos.x;
+        min_y = graph.nodes[0].pos.y;
+        max_y = graph.nodes[0].pos.y;
 
         for node in &graph.nodes {
-            if node.x < min_x {
-                min_x = node.x;
+            if node.pos.x < min_x {
+                min_x = node.pos.x;
             }
-            if node.x > max_x {
-                max_x = node.x;
+            if node.pos.x > max_x {
+                max_x = node.pos.x;
             }
-            if node.y < min_y {
-                min_y = node.y;
+            if node.pos.y < min_y {
+                min_y = node.pos.y;
             }
-            if node.y > max_y {
-                max_y = node.y;
+            if node.pos.y > max_y {
+                max_y = node.pos.y;
             }
         }
     }
@@ -132,10 +132,10 @@ pub fn ui(
                 let u = &graph.nodes[edge.source];
                 let v = &graph.nodes[edge.target];
                 ctx.draw(&Line {
-                    x1: u.x,
-                    y1: u.y,
-                    x2: v.x,
-                    y2: v.y,
+                    x1: u.pos.x,
+                    y1: u.pos.y,
+                    x2: v.pos.x,
+                    y2: v.pos.y,
                     color: Color::DarkGray,
                 });
             }
@@ -151,10 +151,10 @@ pub fn ui(
                             let u = &graph.nodes[idx1];
                             let v = &graph.nodes[idx2];
                             ctx.draw(&Line {
-                                x1: u.x,
-                                y1: u.y,
-                                x2: v.x,
-                                y2: v.y,
+                                x1: u.pos.x,
+                                y1: u.pos.y,
+                                x2: v.pos.x,
+                                y2: v.pos.y,
                                 color: constellation.color,
                             });
                         }
@@ -162,17 +162,17 @@ pub fn ui(
                         let u = &graph.nodes[constellation.nodes[0]];
                         // Cross
                         ctx.draw(&Line {
-                            x1: u.x - 2.0,
-                            y1: u.y,
-                            x2: u.x + 2.0,
-                            y2: u.y,
+                            x1: u.pos.x - 2.0,
+                            y1: u.pos.y,
+                            x2: u.pos.x + 2.0,
+                            y2: u.pos.y,
                             color: constellation.color,
                         });
                         ctx.draw(&Line {
-                            x1: u.x,
-                            y1: u.y - 2.0,
-                            x2: u.x,
-                            y2: u.y + 2.0,
+                            x1: u.pos.x,
+                            y1: u.pos.y - 2.0,
+                            x2: u.pos.x,
+                            y2: u.pos.y + 2.0,
                             color: constellation.color,
                         });
                     }
@@ -184,7 +184,7 @@ pub fn ui(
                 // Determine color
                 let color = Color::Rgb(node.color.0, node.color.1, node.color.2);
                 ctx.draw(&Points {
-                    coords: &[(node.x, node.y)],
+                    coords: &[(node.pos.x, node.pos.y)],
                     color,
                 });
             }

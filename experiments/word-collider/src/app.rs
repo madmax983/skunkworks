@@ -1,5 +1,5 @@
-use glam::Vec2;
 use crate::physics::World;
+use glam::Vec2;
 
 pub enum InputMode {
     Normal,
@@ -98,7 +98,8 @@ impl App {
         let vel_x = (fastrand::f32() - 0.5) * 20.0;
         let vel_y = 10.0; // Downwards
 
-        self.world.add_word(&self.input_buffer, Vec2::new(x, y), Vec2::new(vel_x, vel_y));
+        self.world
+            .add_word(&self.input_buffer, Vec2::new(x, y), Vec2::new(vel_x, vel_y));
         self.input_buffer.clear();
         self.input_mode = InputMode::Normal;
     }

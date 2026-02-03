@@ -133,16 +133,14 @@ impl ConstellationFinder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::physics::{Edge, Graph, Node};
+    use crate::physics::{Edge, Graph, Node, Vec2};
 
     fn make_node(id: &str, author: &str, mass: f64) -> Node {
         Node {
             id: id.to_string(),
             author: author.to_string(),
-            x: 0.0,
-            y: 0.0,
-            vx: 0.0,
-            vy: 0.0,
+            pos: Vec2::zero(),
+            vel: Vec2::zero(),
             mass,
             color: (0, 0, 0),
         }

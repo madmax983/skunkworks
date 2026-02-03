@@ -181,7 +181,7 @@ impl World {
         for (i, c) in text.chars().enumerate() {
             let mut p = Particle::new(pos.x + i as f32 * char_spacing, pos.y, c);
             p.prev_pos = p.pos - vel * 0.016; // Set initial velocity
-            // Color based on index
+                                              // Color based on index
             p.color = match i % 6 {
                 0 => ratatui::style::Color::Red,
                 1 => ratatui::style::Color::Yellow,
