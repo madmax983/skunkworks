@@ -79,6 +79,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Polyphonic data sequencer using Incan Quipu cords as tracks.
 - **Novel trait**: Gravity-driven playhead scanning vertical knot structures.
 - **Status**: experiments/quipu-symphony
+- **Evaluation**: Compiles. Documented. Successful hybrid.
+
+### phonetic-flock
+- **Parents**: experiments/literary-boids + experiments/phonetic-decay
+- **Concept**: Linguistic simulation where words are boids that evolve phonetically when flocking.
+- **Novel trait**: Spatial density drives linguistic evolution (sound shifts).
+- **Status**: experiments/phonetic-flock
 - **Evaluation**: Freshly created.
 
 <!-- Example:

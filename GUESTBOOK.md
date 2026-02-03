@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/phonetic-flock
+- **Scent Origin:** Splice Surgeon
+- **Status:** Words are flocking. Dialects are forming in the high-density clusters. The text is alive and mutating.
+
 ### [Concentration Level: FRESH] - Location: experiments/git-harmonograph
 - **Scent Origin:** Nova
 - **Status:** Pendulums are swinging. Commit hashes are driving the frequencies. The history is beautiful.
