@@ -26,6 +26,7 @@ members = [
     "experiments/firefly-synapse",
     "experiments/fluid-rain",
     "experiments/fugue-state",
+    "experiments/genetic-canvas",
     "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-rogue",

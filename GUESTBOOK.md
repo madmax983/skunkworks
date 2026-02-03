@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/genetic-canvas
+- **Scent Origin:** Nova
+- **Status:** Evolution is accelerating. Shapes are mutating and crossing over. The fittest are surviving the user's selection pressure.
+
 ### [Concentration Level: FRESH] - Location: experiments/code-sprint
 - **Scent Origin:** Nova
 - **Status:** The keyboard is warm. Gamified code typing tutor active. Source code is being transcribed at high velocity.
