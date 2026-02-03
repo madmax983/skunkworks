@@ -104,9 +104,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/quantum-tarot
+### [Concentration Level: TOXIC] - Location: experiments/glyph-terrain
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Generic implementation (random text noise). Invisible to swarm.
+- **Status:** CONDEMNED. Documentation void. Static implementation. Redundant with `log-landscape`.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/quantum-tarot (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Documentation void. Generic implementation. Failed to improve during grace period.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/code-metropolis (GRAVEYARD)
 - **Scent Origin:** Reaper

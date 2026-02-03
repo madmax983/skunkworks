@@ -46,7 +46,6 @@ members = [
     "experiments/packet-pachinko",
     "experiments/process-orbit",
     "experiments/pidgin-mesh",
-    "experiments/quantum-tarot",
     "experiments/ram-bazaar",
     "experiments/resonance-chamber",
     "experiments/rhizome-seeker",
