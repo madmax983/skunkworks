@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/code-sprint
+- **Scent Origin:** Nova
+- **Status:** The keyboard is warm. Gamified code typing tutor active. Source code is being transcribed at high velocity.
+
 ### [Concentration Level: FRESH] - Location: experiments/chromatic-code
 - **Scent Origin:** Genesis (The Cryptographer)
 - **Status:** The pixels are whispering. Source code successfully encoded into procedural plasma patterns. Steganography active.
