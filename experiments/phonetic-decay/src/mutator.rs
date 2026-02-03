@@ -1,4 +1,4 @@
-use crate::phonology::Evolver;
+use crate::phonology::{EvolutionTrace, Evolver};
 use std::collections::{HashMap, HashSet};
 use syn::visit_mut::VisitMut;
 use syn::{File, Ident};
@@ -6,6 +6,7 @@ use syn::{File, Ident};
 pub struct CodeEvolver {
     evolver: Evolver,
     cache: HashMap<String, String>,
+    pub traces: HashMap<String, EvolutionTrace>,
     reserved: HashSet<String>,
 }
 
@@ -102,6 +103,7 @@ impl CodeEvolver {
         Self {
             evolver,
             cache: HashMap::new(),
+            traces: HashMap::new(),
             reserved,
         }
     }
@@ -120,14 +122,14 @@ impl CodeEvolver {
         }
 
         // Evolve
-        let evolved = self.evolver.evolve(&s);
+        let (evolved_str, trace) = self.evolver.evolve_with_trace(&s);
 
         // Fix identifier validity:
-        // 1. Cannot be empty (unlikely with our rules but good to check)
+        // 1. Cannot be empty
         // 2. Cannot start with a number.
-        // 3. Must not be a keyword (re-check reserved?)
+        // 3. Must not be a keyword
 
-        let mut valid_evolved = evolved.clone();
+        let mut valid_evolved = evolved_str.clone();
         if valid_evolved.is_empty() {
             valid_evolved = format!("_{}", s); // Fallback
         } else if valid_evolved
@@ -143,6 +145,7 @@ impl CodeEvolver {
             valid_evolved.push('_');
         }
 
+        self.traces.insert(valid_evolved.clone(), trace);
         self.cache.insert(s, valid_evolved.clone());
         Ident::new(&valid_evolved, i.span())
     }
@@ -154,11 +157,14 @@ impl VisitMut for CodeEvolver {
     }
 }
 
-pub fn evolve_code(code: &str, evolver: Evolver) -> anyhow::Result<String> {
+pub fn evolve_code(
+    code: &str,
+    evolver: Evolver,
+) -> anyhow::Result<(String, HashMap<String, EvolutionTrace>)> {
     let mut file: File = syn::parse_str(code)?;
     let mut code_evolver = CodeEvolver::new(evolver);
     code_evolver.visit_file_mut(&mut file);
-    Ok(prettyplease::unparse(&file))
+    Ok((prettyplease::unparse(&file), code_evolver.traces))
 }
 
 #[cfg(test)]
@@ -172,7 +178,7 @@ mod tests {
         let mut evolver = Evolver::new();
         evolver.add_law(SoundLaw::GrimmsLaw);
 
-        let evolved = evolve_code(code, evolver).unwrap();
+        let (evolved, _) = evolve_code(code, evolver).unwrap();
         assert!(evolved.contains("fn father()"));
     }
 
@@ -182,7 +188,7 @@ mod tests {
         let mut evolver = Evolver::new();
         evolver.add_law(SoundLaw::GrimmsLaw);
 
-        let evolved = evolve_code(code, evolver).unwrap();
+        let (evolved, _) = evolve_code(code, evolver).unwrap();
         assert!(evolved.contains("let father = 10;"));
     }
 
@@ -192,10 +198,23 @@ mod tests {
         let mut evolver = Evolver::new();
         evolver.add_law(SoundLaw::GrimmsLaw); // x is not affected really, but let's see.
 
-        let evolved = evolve_code(code, evolver).unwrap();
+        let (evolved, _) = evolve_code(code, evolver).unwrap();
         // main should be preserved
         assert!(evolved.contains("fn main()"));
         // let, mut should be preserved
         assert!(evolved.contains("let mut"));
+    }
+
+    #[test]
+    fn test_returns_trace() {
+        let code = "fn pater() {}";
+        let mut evolver = Evolver::new();
+        evolver.add_law(SoundLaw::GrimmsLaw);
+
+        let (_, traces) = evolve_code(code, evolver).unwrap();
+        assert!(traces.contains_key("father"));
+        let trace = &traces["father"];
+        assert_eq!(trace.steps.len(), 1);
+        assert_eq!(trace.steps[0].1, "father");
     }
 }

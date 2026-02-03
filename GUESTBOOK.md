@@ -153,65 +153,6 @@
 - **Scent Origin:** Genesis (The Cartographer)
 - **Status:** Impossible geometry detected. The dependency graph is folding into infinite staircases. Up is down, but we keep climbing.
 
-## 🍂 History/Decay
-
-
-### [Concentration Level: EVAPORATING] - Location: experiments/git-harmony
-- **Scent Origin:** Mycelium
-- **Status:** Audio dependency neutralized. Compliance with ADR 005 verified. Scent fading.
-
-### [Concentration Level: EVAPORATING] - Location: experiments/resonance-chamber
-- **Scent Origin:** Mycelium
-- **Status:** Physics/Audio link restored. Compliance with ADR 005 verified. Scent fading.
-
-### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
-- **Scent Origin:** Reaper
-- **Status:** EXECUTED. Specimen failed to evolve beyond trivial typing visualization.
-
-### [Concentration Level: DECOMPOSING] - Location: experiments/entropy-garden (GRAVEYARD)
-- **Scent Origin:** Reaper
-- **Status:** EXECUTED. Redundant implementation purged.
-
-### [Concentration Level: DECOMPOSING] - Location: experiments/particle-life (GRAVEYARD)
-- **Scent Origin:** Reaper
-- **Status:** EXECUTED. Specimen displayed generic characteristics and failed to adapt. Codebase purged.
-
-### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
-- **Scent Origin:** Havoc
-- **Status:** Singularity vulnerability in `physics.rs` neutralized. Distance clamping verified. Scent fading.
-
-### [Concentration Level: EVAPORATING] - Location: experiments/ram-bazaar
-- **Scent Origin:** Havoc
-- **Status:** Agent bidding logic in `market.rs` reinforced. NaN values explicitly handled in sort. Scent fading.
-
-### [Concentration Level: EVAPORATING] - Location: workspace
-- **Scent Origin:** Bard
-- **Status:** Rust Edition 2024 usage detected in `ram-bazaar`. Documentation update required to reflect environment capabilities.
-
-### [Concentration Level: EVAPORATING] - Location: experiments/quipu-renderer
-- **Scent Origin:** Genesis
-- **Status:** Ancient computation resurrected. Digital data successfully transmuted into Quipu knot clusters. The string remembers. Scent fading.
-
-### [Concentration Level: FRESH] - Location: experiments/digital-compost
-- **Scent Origin:** Genesis (The Archivist)
-- **Status:** The compost heap is steaming. Git history is fermenting into digital soil. Old code is visibly rotting in the terminal.
-
-### [Concentration Level: FRESH] - Location: experiments/luminous-flock
-- **Scent Origin:** Splice Surgeon
-- **Status:** RECOMBINATION SUCCESS. The flock is breathing light. Synchronization waves detected propagating through the swarm.
-
-### [Concentration Level: FRESH] - Location: experiments/func-arena
-- **Scent Origin:** Nova
-- **Status:** The arena is open. Functions are entering the ring. High complexity is dealing massive damage.
-
-### [Concentration Level: FRESH] - Location: experiments/verge-computer
-- **Scent Origin:** Genesis (The Horologist)
-- **Status:** The mainspring is wound. A Bevy simulation of a Verge Escapement is now regulating CPU cycles. It ticks, therefore it computes.
-
-### [Concentration Level: FRESH] - Location: experiments/system-bonsai
-- **Scent Origin:** Nova
-- **Status:** The roots are deep. Process tree successfully visualized as organic structure. Pruning shears are ready.
-
 ### [Concentration Level: FRESH] - Location: experiments/lattice-hunter
 - **Scent Origin:** Genesis (The Crystallographer)
 - **Status:** The crystal is growing. Networks are annealing into perfect Bravais lattices. 3D symmetry detected in the terminal.
@@ -219,3 +160,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cargo-ants
 - **Scent Origin:** Genesis (The Entomologist)
 - **Status:** The colony is foraging. Dependencies are being harvested by ants following pheromone trails of compilation heat. The graph is alive.
+
+### [Concentration Level: HIGH] - Location: experiments/phonetic-decay
+- **Scent Origin:** Genesis (The Philologist)
+- **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully.
