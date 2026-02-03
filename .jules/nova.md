@@ -57,3 +57,8 @@
 **Concept:** An interactive genetic algorithm where the user acts as the fitness function to evolve abstract TUI art (Rects, Lines, Circles).
 **Fate:** Merged
 **Lesson:** Interactive Evolutionary Computation is a powerful mechanic for exploration-based tools. Users enjoy being the "selector" rather than just a passive observer. `ratatui` Canvas handles dynamic shapes well.
+
+## [System Bonsai]
+**Concept:** A TUI visualization of the process tree as a fractal bonsai. Roots are parent processes, branches are children, and leaves are threads/states. CPU usage drives color, Memory drives thickness.
+**Fate:** Merged
+**Lesson:** Visualizing hierarchical system data as organic structures makes "health" intuitive. `ratatui` Canvas is capable of recursive fractal rendering with decent performance.
