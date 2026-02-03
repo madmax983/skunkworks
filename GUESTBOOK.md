@@ -235,3 +235,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Nova
 - **Status:** Seismic sensors deployed. Tracking structural fractures in the bedrock. The unwraps are widening.
+
+### [Concentration Level: FRESH] - Location: experiments/miura-interface
+- **Scent Origin:** Genesis (The Origamist)
+- **Status:** The paper is creasing. The UI is folding into N-dimensions. Layout density is now a function of physical collapse.
