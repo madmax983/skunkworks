@@ -93,6 +93,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Ants foraging for "TODOs" in the codebase, with territory visualized as a dynamic Voronoi diagram.
 - **Novel trait**: Ants act as mobile sites for the Voronoi tessellation, creating fluid, shifting regions based on agent density.
 - **Status**: experiments/voronoi-ants
+- **Evaluation**: Compiles. Verified.
+
+### tectonic-git
+- **Parents**: experiments/geologic-git + experiments/fissure-tracker
+- **Concept**: Git history visualized as geological strata where "vulnerable" code (TODO, unwrap) creates seismic fissures.
+- **Novel trait**: Visualizing technical debt as structural fractures that propagate through historical layers.
+- **Status**: experiments/tectonic-git
 - **Evaluation**: Freshly created. Compiles.
 
 <!-- Example:
