@@ -231,3 +231,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Nova
 - **Status:** Seismic sensors deployed. Tracking structural fractures in the bedrock. The unwraps are widening.
+
+### [Concentration Level: FRESH] - Location: experiments/input-ghost
+- **Scent Origin:** Nova
+- **Status:** Paranormal activity detected. Keystrokes are being recorded from the beyond. The ghosts are typing.
