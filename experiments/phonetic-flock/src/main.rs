@@ -5,15 +5,15 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{
-    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
-    widgets::{Block, Borders, Paragraph, canvas::Canvas},
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
+    Terminal,
 };
 
 pub mod boid;
@@ -128,10 +128,7 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                 ctx.print(
                     boid.position.x,
                     boid.position.y,
-                    Span::styled(
-                        boid.dna.word.clone(),
-                        Style::default().fg(boid.dna.color),
-                    ),
+                    Span::styled(boid.dna.word.clone(), Style::default().fg(boid.dna.color)),
                 );
             }
         });

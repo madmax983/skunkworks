@@ -1,11 +1,12 @@
 [package]
-name = "quantum-tarot"
+name = "cargo-rocket"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 crossterm = { workspace = true }
-ratatui = { workspace = true }
 rand = { workspace = true }
-tui-shared = { path = "../../crates/tui-shared" }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+cargo_metadata = "0.18"

@@ -93,7 +93,21 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Ants foraging for "TODOs" in the codebase, with territory visualized as a dynamic Voronoi diagram.
 - **Novel trait**: Ants act as mobile sites for the Voronoi tessellation, creating fluid, shifting regions based on agent density.
 - **Status**: experiments/voronoi-ants
-- **Evaluation**: Freshly created. Compiles.
+- **Evaluation**: Compiles. Verified.
+
+### tectonic-git
+- **Parents**: experiments/geologic-git + experiments/fissure-tracker
+- **Concept**: Git history visualized as geological strata where "vulnerable" code (TODO, unwrap) creates seismic fissures.
+- **Novel trait**: Visualizing technical debt as structural fractures that propagate through historical layers.
+- **Status**: experiments/tectonic-git
+- **Evaluation**: Compiles. Verified.
+
+### struct-harmonics
+- **Parents**: experiments/struct-soup + experiments/orbital-harmonics
+- **Concept**: Code structure defining a gravitational field and soundscape. Structs are planets, dependencies are gravity.
+- **Novel trait**: Sonification of static analysis metrics via orbital mechanics.
+- **Status**: experiments/struct-harmonics
+- **Evaluation**: In progress.
 
 <!-- Example:
 ### semantic-spy

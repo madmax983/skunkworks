@@ -50,7 +50,7 @@ pub fn scan_workspace(root: PathBuf) -> Vec<ScanResult> {
 
         let path = entry.path();
         // Only scan Rust files for now
-        if path.extension().map_or(false, |ext| ext == "rs") {
+        if path.extension().is_some_and(|ext| ext == "rs") {
             if let Ok(result) = scan_file(path.to_path_buf()) {
                 if result.total_stress() > 0 {
                     results.push(result);

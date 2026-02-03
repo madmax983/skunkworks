@@ -38,11 +38,41 @@ pub struct Fissure {
     pub age: usize,
 }
 
+#[derive(Debug, Clone)]
+pub struct SimulationConfig {
+    pub damping: f64,
+    pub repulsion: f64,
+    pub center_attraction: f64,
+    pub max_force: f64,
+    pub crack_probability: f64,
+    pub growth_rate: f64,
+    pub min_fissure_length: f64,
+    pub segment_min_len: f64,
+    pub segment_max_len: f64,
+}
+
+impl Default for SimulationConfig {
+    fn default() -> Self {
+        Self {
+            damping: 0.9,
+            repulsion: 500.0,
+            center_attraction: 0.01,
+            max_force: 10.0,
+            crack_probability: 0.01,
+            growth_rate: 2.0,
+            min_fissure_length: 5.0,
+            segment_min_len: 2.0,
+            segment_max_len: 5.0,
+        }
+    }
+}
+
 pub struct World {
     pub nodes: Vec<Node>,
     pub fissures: Vec<Fissure>,
     pub width: f64,
     pub height: f64,
+    pub config: SimulationConfig,
 }
 
 impl World {
@@ -53,10 +83,7 @@ impl World {
         for (i, res) in scan_results.into_iter().enumerate() {
             let stress = res.total_stress() as f64;
             // Initialize random position
-            let pos = Vec2::new(
-                rng.gen_range(-50.0..50.0),
-                rng.gen_range(-50.0..50.0),
-            );
+            let pos = Vec2::new(rng.gen_range(-50.0..50.0), rng.gen_range(-50.0..50.0));
 
             nodes.push(Node {
                 id: i,
@@ -72,37 +99,33 @@ impl World {
             fissures: Vec::new(),
             width: 200.0,
             height: 200.0,
+            config: SimulationConfig::default(),
         }
     }
 
-    pub fn step(&mut self) {
-        // 1. Force Directed Layout
-        let damping = 0.9;
-        let repulsion = 500.0;
-        let center_attraction = 0.01;
-
+    fn apply_forces(&mut self) {
         // Clone positions for calculation to avoid borrow checker issues
         let positions: Vec<Vec2> = self.nodes.iter().map(|n| n.pos).collect();
-        let count = self.nodes.len();
 
-        for i in 0..count {
+        for (i, node) in self.nodes.iter_mut().enumerate() {
             let mut force = Vec2::new(0.0, 0.0);
             let p1 = positions[i];
 
             // Attract to center
-            force.x -= p1.x * center_attraction;
-            force.y -= p1.y * center_attraction;
+            force.x -= p1.x * self.config.center_attraction;
+            force.y -= p1.y * self.config.center_attraction;
 
             // Repel from others
-            for j in 0..count {
-                if i == j { continue; }
-                let p2 = positions[j];
+            for (j, p2) in positions.iter().enumerate() {
+                if i == j {
+                    continue;
+                }
                 let dx = p1.x - p2.x;
                 let dy = p1.y - p2.y;
-                let dist_sq = dx*dx + dy*dy;
+                let dist_sq = dx * dx + dy * dy;
 
                 if dist_sq > 0.01 {
-                    let f = repulsion / dist_sq.max(1.0);
+                    let f = self.config.repulsion / dist_sq.max(1.0);
                     let dist = dist_sq.sqrt();
                     force.x += (dx / dist) * f;
                     force.y += (dy / dist) * f;
@@ -110,61 +133,65 @@ impl World {
             }
 
             // Limit max force
-             let f_len = (force.x.powi(2) + force.y.powi(2)).sqrt();
-             if f_len > 10.0 {
-                 force.x = (force.x / f_len) * 10.0;
-                 force.y = (force.y / f_len) * 10.0;
-             }
+            let f_len = (force.x.powi(2) + force.y.powi(2)).sqrt();
+            if f_len > self.config.max_force {
+                force.x = (force.x / f_len) * self.config.max_force;
+                force.y = (force.y / f_len) * self.config.max_force;
+            }
 
-            let node = &mut self.nodes[i];
-            node.vel.x = (node.vel.x + force.x) * damping;
-            node.vel.y = (node.vel.y + force.y) * damping;
+            node.vel.x = (node.vel.x + force.x) * self.config.damping;
+            node.vel.y = (node.vel.y + force.y) * self.config.damping;
             node.pos.x += node.vel.x;
             node.pos.y += node.vel.y;
         }
+    }
 
-        // 2. Generate Fissures
+    fn generate_fissures(&mut self) {
         // Only generate if no fissure exists for this node yet
+        let existing_origins: HashMap<usize, bool> =
+            self.fissures.iter().map(|f| (f.origin_id, true)).collect();
         let mut new_fissures = Vec::new();
-        let existing_origins: HashMap<usize, bool> = self.fissures.iter().map(|f| (f.origin_id, true)).collect();
-
         let mut rng = rand::thread_rng();
 
         for node in &self.nodes {
             if node.stress > 0.0 && !existing_origins.contains_key(&node.id) {
                 // Chance to crack based on stress
-                // 1% chance per frame per stress unit?
-                if rng.gen_bool(0.01) {
+                if rng.gen_bool(self.config.crack_probability) {
                     new_fissures.push(Fissure {
                         origin_id: node.id,
-                        points: vec![node.pos], // Start at node
+                        points: vec![node.pos],
                         age: 0,
                     });
                 }
             }
         }
         self.fissures.extend(new_fissures);
+    }
 
-        // 3. Grow Fissures
+    fn grow_fissures(&mut self) {
+        let mut rng = rand::thread_rng();
         for fissure in &mut self.fissures {
             fissure.age += 1;
             // Grow until length corresponds to stress
             let node = &self.nodes[fissure.origin_id];
-            let target_length = node.stress * 2.0; // 2 units per stress
+            let target_length = node.stress * self.config.growth_rate;
 
-            if (fissure.points.len() as f64) < target_length.max(5.0) {
-                 let last = *fissure.points.last().unwrap();
-                 // Random walk
-                 let angle = rng.gen_range(0.0..std::f64::consts::PI * 2.0);
-                 let len = rng.gen_range(2.0..5.0);
+            if (fissure.points.len() as f64) < target_length.max(self.config.min_fissure_length) {
+                let last = *fissure.points.last().unwrap();
+                // Random walk
+                let angle = rng.gen_range(0.0..std::f64::consts::PI * 2.0);
+                let len = rng.gen_range(self.config.segment_min_len..self.config.segment_max_len);
 
-                 let next = Vec2::new(
-                     last.x + angle.cos() * len,
-                     last.y + angle.sin() * len,
-                 );
-                 fissure.points.push(next);
+                let next = Vec2::new(last.x + angle.cos() * len, last.y + angle.sin() * len);
+                fissure.points.push(next);
             }
         }
+    }
+
+    pub fn step(&mut self) {
+        self.apply_forces();
+        self.generate_fissures();
+        self.grow_fissures();
     }
 }
 

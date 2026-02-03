@@ -168,7 +168,12 @@ fn run_loop(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App
     }
 }
 
-fn draw_node(ctx: &mut ratatui::widgets::canvas::Context, node: &Node, _cursor_path: &[usize], _current_depth: usize) {
+fn draw_node(
+    ctx: &mut ratatui::widgets::canvas::Context,
+    node: &Node,
+    _cursor_path: &[usize],
+    _current_depth: usize,
+) {
     let start = node.pos;
     let end = node.end_pos();
 
