@@ -44,8 +44,8 @@ pub fn spawn_search_thread(query: String, root: PathBuf) -> Receiver<SearchResul
             let path = entry.path();
             // Simple check to avoid binary files (not perfect, but MVP)
              if let Some(ext) = path.extension() {
-                let ext_str = ext.to_string_lossy();
-                if matches!(ext_str.as_ref(), "png" | "jpg" | "jpeg" | "gif" | "ico" | "pdf" | "bin" | "exe" | "lock") {
+                let ext_str = ext.to_string_lossy().to_lowercase();
+                if matches!(ext_str.as_str(), "png" | "jpg" | "jpeg" | "gif" | "ico" | "pdf" | "bin" | "exe" | "lock") {
                     continue;
                 }
             }
@@ -98,5 +98,107 @@ mod tests {
         assert_eq!(results.len(), 1);
         assert_eq!(results[0].line_num, 2);
         assert!(results[0].content.contains("test"));
+    }
+
+    #[test]
+    fn test_ignores_hidden_files() {
+        let dir = tempdir().unwrap();
+
+        // Hidden file
+        let hidden_file_path = dir.path().join(".hidden.txt");
+        {
+            let mut file = File::create(&hidden_file_path).unwrap();
+            writeln!(file, "secret match").unwrap();
+        }
+
+        // File in hidden directory
+        let hidden_dir = dir.path().join(".hidden_dir");
+        std::fs::create_dir(&hidden_dir).unwrap();
+        let file_in_hidden_dir = hidden_dir.join("visible.txt");
+        {
+            let mut file = File::create(&file_in_hidden_dir).unwrap();
+            writeln!(file, "secret match").unwrap();
+        }
+
+        let rx = spawn_search_thread("secret".to_string(), dir.path().to_path_buf());
+        let results: Vec<SearchResult> = rx.iter().collect();
+        assert!(results.is_empty(), "Should ignore hidden files and directories");
+    }
+
+    #[test]
+    fn test_ignores_infrastructure_dirs() {
+        let dir = tempdir().unwrap();
+
+        for folder in &["target", ".git", "node_modules"] {
+            let infra_dir = dir.path().join(folder);
+            std::fs::create_dir(&infra_dir).unwrap();
+            let file_path = infra_dir.join("source.rs");
+            {
+                let mut file = File::create(&file_path).unwrap();
+                writeln!(file, "infra match").unwrap();
+            }
+        }
+
+        let rx = spawn_search_thread("infra".to_string(), dir.path().to_path_buf());
+        let results: Vec<SearchResult> = rx.iter().collect();
+        assert!(results.is_empty(), "Should ignore infrastructure directories");
+    }
+
+    #[test]
+    fn test_ignores_binary_extensions() {
+        let dir = tempdir().unwrap();
+
+        // Standard binary extensions
+        for ext in &["png", "exe", "pdf"] {
+            let file_path = dir.path().join(format!("image.{}", ext));
+            {
+                let mut file = File::create(&file_path).unwrap();
+                writeln!(file, "binary match").unwrap();
+            }
+        }
+
+        let rx = spawn_search_thread("binary".to_string(), dir.path().to_path_buf());
+        let results: Vec<SearchResult> = rx.iter().collect();
+        assert!(results.is_empty(), "Should ignore binary extensions");
+    }
+
+    #[test]
+    fn test_ignores_binary_extensions_case_insensitive() {
+        let dir = tempdir().unwrap();
+
+        // Uppercase extension - should be ignored if logic is case insensitive
+        let file_path = dir.path().join("IMAGE.PNG");
+        {
+            let mut file = File::create(&file_path).unwrap();
+            writeln!(file, "case match").unwrap();
+        }
+
+        let rx = spawn_search_thread("case".to_string(), dir.path().to_path_buf());
+        let results: Vec<SearchResult> = rx.iter().collect();
+        assert!(results.is_empty(), "Should ignore uppercase binary extensions");
+    }
+
+    #[test]
+    fn test_multiple_matches() {
+        let dir = tempdir().unwrap();
+        let file_path = dir.path().join("multi.txt");
+        {
+            let mut file = File::create(&file_path).unwrap();
+            writeln!(file, "match one").unwrap();
+            writeln!(file, "no hit").unwrap();
+            writeln!(file, "match two").unwrap();
+        }
+
+        let rx = spawn_search_thread("match".to_string(), dir.path().to_path_buf());
+        let mut results: Vec<SearchResult> = rx.iter().collect();
+
+        // Sort by line number to ensure deterministic order check
+        results.sort_by_key(|r| r.line_num);
+
+        assert_eq!(results.len(), 2);
+        assert_eq!(results[0].line_num, 1);
+        assert_eq!(results[0].content, "match one");
+        assert_eq!(results[1].line_num, 3);
+        assert_eq!(results[1].content, "match two");
     }
 }
