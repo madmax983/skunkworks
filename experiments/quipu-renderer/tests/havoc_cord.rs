@@ -15,8 +15,9 @@ fn arb_knot() -> impl Strategy<Value = Knot> {
 fn arb_cord() -> impl Strategy<Value = Cord> {
     prop::collection::vec(
         prop::collection::vec(arb_knot(), 0..20), // Up to 20 knots per cluster
-        0..20 // Up to 20 clusters (powers of 10)
-    ).prop_map(|clusters| Cord { clusters })
+        0..20,                                    // Up to 20 clusters (powers of 10)
+    )
+    .prop_map(|clusters| Cord { clusters })
 }
 
 proptest! {

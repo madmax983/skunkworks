@@ -189,9 +189,15 @@ impl App {
 
         // Header
         let title_text = if self.show_genealogy {
-             format!("PHONETIC DECAY | Year: {} | MODE: GENEALOGY (Press 'g' to close)", self.year)
+            format!(
+                "PHONETIC DECAY | Year: {} | MODE: GENEALOGY (Press 'g' to close)",
+                self.year
+            )
         } else {
-             format!("PHONETIC DECAY | Year: {} | Press 'g' for Genealogy, 'Space' to Evolve, 'r' Reset", self.year)
+            format!(
+                "PHONETIC DECAY | Year: {} | Press 'g' for Genealogy, 'Space' to Evolve, 'r' Reset",
+                self.year
+            )
         };
 
         let title = Paragraph::new(title_text)
@@ -219,7 +225,7 @@ impl App {
     }
 
     fn draw_code_comparison(&self, frame: &mut Frame, area: ratatui::layout::Rect) {
-         let content_chunks = Layout::default()
+        let content_chunks = Layout::default()
             .direction(Direction::Horizontal)
             .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(area);
@@ -246,25 +252,31 @@ impl App {
     }
 
     fn draw_genealogy(&self, frame: &mut Frame, area: ratatui::layout::Rect) {
-         // Show a list of all words that changed in the last step
-         let mut raw_items = Vec::new();
-         for (word, trace) in &self.traces {
-             if trace.steps.is_empty() { continue; }
+        // Show a list of all words that changed in the last step
+        let mut raw_items = Vec::new();
+        for (word, trace) in &self.traces {
+            if trace.steps.is_empty() {
+                continue;
+            }
 
-             let last_rule = &trace.steps.last().unwrap().0;
-             let text = format!("{} <== {}", word, last_rule);
-             raw_items.push(text);
-         }
+            let last_rule = &trace.steps.last().unwrap().0;
+            let text = format!("{} <== {}", word, last_rule);
+            raw_items.push(text);
+        }
 
-         // Sort items for stability
-         raw_items.sort();
+        // Sort items for stability
+        raw_items.sort();
 
-         let items: Vec<ListItem> = raw_items.into_iter().map(ListItem::new).collect();
+        let items: Vec<ListItem> = raw_items.into_iter().map(ListItem::new).collect();
 
-         let list = List::new(items)
-            .block(Block::default().borders(Borders::ALL).title("Recent Mutations (Genealogy)"))
+        let list = List::new(items)
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Recent Mutations (Genealogy)"),
+            )
             .style(Style::default().fg(Color::Magenta));
 
-         frame.render_widget(list, area);
+        frame.render_widget(list, area);
     }
 }

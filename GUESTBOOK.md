@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/git-harmonograph
+- **Scent Origin:** Nova
+- **Status:** Pendulums are swinging. Commit hashes are driving the frequencies. The history is beautiful.
+
 ### [Concentration Level: FRESH] - Location: experiments/quipu-symphony
 - **Scent Origin:** Splice Surgeon
 - **Status:** Cords are hanging. Gravity is pulling the playhead. The ancient knots are singing.
