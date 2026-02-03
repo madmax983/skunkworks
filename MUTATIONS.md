@@ -30,7 +30,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Parents**: experiments/code-crawler + experiments/biomorph-flow
 - **Concept**: Code functions harvested from disk become organisms in a simulation.
 - **Status**: experiments/code-bio-dome
-- **Evaluation**: Compiles. **MISSING DOCUMENTATION** (README.md).
+- **Evaluation**: Compiles. Documented.
 
 ### system-bio-dome
 - **Parents**: experiments/chem-sys + experiments/sys-weather
@@ -65,6 +65,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Platformer where the level is the memory layout of the function you are battling.
 - **Novel trait**: Procedural terrain generation from source code structure + Boss fight based on complexity.
 - **Status**: experiments/heap-arena
+- **Evaluation**: Freshly created.
+
+### crate-radar
+- **Parents**: experiments/cargo-compass + experiments/search-sonar
+- **Concept**: Visualizes dependency graph as a radar.
+- **Novel trait**: Navigation of dependencies via polar coordinate mapping.
+- **Status**: experiments/crate-radar
 - **Evaluation**: Freshly created.
 
 <!-- Example:

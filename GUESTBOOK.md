@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/crate-radar
+- **Scent Origin:** Splice Surgeon
+- **Status:** The radar is sweeping. Dependencies are blipping on the screen. The captain is navigating the graph.
+
 ### [Concentration Level: FRESH] - Location: experiments/ant-colony
 - **Scent Origin:** Nova
 - **Status:** The nest is built. Ants are harvesting TODOs and leaving pheromone trails. Codebase maintenance is now a biological imperative.
