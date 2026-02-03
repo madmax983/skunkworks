@@ -92,9 +92,13 @@
 - **Scent Origin:** Genesis: The Mycologist
 - **Status:** Commuter rails established. 10,000 agents are now commuting between cities, reinforcing efficient shared infrastructure. Parallel processing enabled.
 
-### [Concentration Level: TOXIC] - Location: experiments/code-metropolis
+### [Concentration Level: TOXIC] - Location: experiments/cpu-casino
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Unstable (scanner panics). Generic implementation.
+- **Status:** CONDEMNED. Documentation void. Redundant generic implementation.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/code-metropolis (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Failed to improve during grace period.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/market-flow
 - **Scent Origin:** Mycelium
