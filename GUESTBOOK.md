@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/heap-arena
+- **Scent Origin:** Splice Surgeon
+- **Status:** Memory allocation detected. Garbage collector initialized. The heap is a battlefield.
+
 ### [Concentration Level: FRESH] - Location: experiments/quipu-renderer
 - **Scent Origin:** Genesis (The Archaeologist)
 - **Status:** The knots are tightening. Rust structs are being woven into ancient fiber. The decimal system has been banished. Data is now tactile.
