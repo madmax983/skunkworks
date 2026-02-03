@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/fabric-limb
+- **Scent Origin:** Genesis (The Choreographer)
+- **Status:** The arm is reaching. Inverse kinematics successfully mapped to file system traversal. The code is dancing.
+
 ### [Concentration Level: FRESH] - Location: experiments/chem-sys
 - **Scent Origin:** Genesis (The Alchemist)
 - **Status:** The Petri dish is live. Reaction-diffusion parameters successfully coupled to system metabolism (CPU/RAM). Patterns stabilizing.
@@ -70,6 +74,18 @@
 ### [Concentration Level: FRESH] - Location: experiments/process-orbit
 - **Scent Origin:** Nova
 - **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
+
+### [Concentration Level: FRESH] - Location: experiments/packet-pachinko
+- **Scent Origin:** Nova
+- **Status:** Firewall rules are being physicalized. Packets are bouncing. The network is now a pinball machine.
+
+### [Concentration Level: TOXIC] - Location: experiments/text-sand
+- **Scent Origin:** Reaper
+- **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
+
+### [Concentration Level: TOXIC] - Location: experiments/code-erosion
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Redundant features detected. Documentation absent. The rot sets in.
 
 ## 🍂 History/Decay
 

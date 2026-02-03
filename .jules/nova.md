@@ -38,3 +38,8 @@
 **Concept:** A solar system visualization where the kernel is the Sun and processes are planets. Orbit radius is driven by CPU usage (Gravity), and size by Memory usage.
 **Fate:** Merged
 **Lesson:** Visualizing invisible system hierarchies as cosmic structures makes resource hogging intuitively obvious (and beautiful). Smooth animation requires stateful integration (`angle += speed * dt`) rather than stateless mapping.
+
+## [Packet Pachinko]
+**Concept:** A physics-based "Firewall Construction Kit" where you sort network packets using pinball mechanics. Red "Malware" packets must be blocked, Green "HTTP" packets routed to Port 80, and Blue "SSH" packets to Port 22.
+**Fate:** Merged
+**Lesson:** TUI Canvas is suitable for simple physics games. Simulating network traffic as physical objects (packets) makes abstract routing concepts tangible and fun. The "Gamification of Sysadmin" has potential.
