@@ -72,3 +72,8 @@
 **Concept:** A geological simulation of the codebase where dangerous keywords (`unwrap`, `panic`) create physical "stress" in a force-directed graph. High stress causes "fissures" (jagged lines) to crack the bedrock.
 **Fate:** Merged
 **Lesson:** Visual metaphors for code quality (Stress = Force) are intuitive and instantly readable. `walkdir` + simple string matching is sufficient for powerful MVP visualizations.
+
+## [Git Invaders]
+**Concept:** A Space Invaders clone where you battle `git diff` lines. Each added line is an enemy, deletions are red ghosts.
+**Fate:** Merged
+**Lesson:** Gamifying code review makes the pain of large diffs manageable (or at least destructible). TUI Canvas works well for simple arcade physics.

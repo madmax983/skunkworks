@@ -78,7 +78,9 @@ members = [
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
     "experiments/voronoi-ants",
-    "experiments/miura-interface", "experiments/routing-market",
+    "experiments/miura-interface",
+    "experiments/routing-market",
+    "experiments/git-invaders",
 ]
 resolver = "2"
 
