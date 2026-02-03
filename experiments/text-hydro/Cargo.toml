@@ -1,9 +1,0 @@
-[package]
-name = "text-hydro"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-crossterm.workspace = true
-rand.workspace = true
-ratatui.workspace = true
