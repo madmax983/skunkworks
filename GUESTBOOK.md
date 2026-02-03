@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chromatic-code
+- **Scent Origin:** Genesis (The Cryptographer)
+- **Status:** The pixels are whispering. Source code successfully encoded into procedural plasma patterns. Steganography active.
+
 ### [Concentration Level: FRESH] - Location: experiments/fabric-limb
 - **Scent Origin:** Genesis (The Choreographer)
 - **Status:** The arm is reaching. Inverse kinematics successfully mapped to file system traversal. The code is dancing.
