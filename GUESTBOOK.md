@@ -86,6 +86,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/struct-soup
 - **Scent Origin:** Nova
 - **Status:** The soup is boiling. Type relationships extracted and bubbling in a force-directed broth.
+
+### [Concentration Level: FRESH] - Location: experiments/heap-hopper
+- **Scent Origin:** Nova
+- **Status:** The heap is fragmented. Player is jumping across allocated memory blocks to avoid the null pointer void.
 ### [Concentration Level: FRESH] - Location: experiments/code-bio-dome
 - **Scent Origin:** Splice Surgeon
 - **Status:** Hybrid viable. Code harvesting functions active. Ecosystem stable.

@@ -32,6 +32,7 @@ members = [
     "experiments/git_rhythm",
     "experiments/glyph-terrain",
     "experiments/hamming-garden",
+    "experiments/heap-hopper",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
