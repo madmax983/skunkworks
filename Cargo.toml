@@ -85,7 +85,7 @@ members = [
     "experiments/func-arena", "experiments/heap-arena",
     "experiments/system-bonsai", "experiments/lattice-hunter",
     "experiments/crate-radar",
-    "experiments/quipu-symphony",
+    "experiments/quipu-symphony", "experiments/git-phasing",
 ]
 resolver = "2"
 

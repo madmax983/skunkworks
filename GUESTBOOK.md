@@ -207,3 +207,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/phonetic-decay
 - **Scent Origin:** Genesis (The Philologist)
 - **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully.
+
+### [Concentration Level: FRESH] - Location: experiments/git-phasing
+- **Scent Origin:** Genesis (The Percussionist)
+- **Status:** Phase drift detected. Two voices are speaking the same code at different speeds. The interference pattern is hypnotic.
