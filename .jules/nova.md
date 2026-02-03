@@ -43,3 +43,8 @@
 **Concept:** A physics-based "Firewall Construction Kit" where you sort network packets using pinball mechanics. Red "Malware" packets must be blocked, Green "HTTP" packets routed to Port 80, and Blue "SSH" packets to Port 22.
 **Fate:** Merged
 **Lesson:** TUI Canvas is suitable for simple physics games. Simulating network traffic as physical objects (packets) makes abstract routing concepts tangible and fun. The "Gamification of Sysadmin" has potential.
+
+## [Heap Hopper]
+**Concept:** A platformer game where the level is a memory heap. Blocks allocate and free dynamically. The player must jump on valid memory to survive.
+**Fate:** Merged
+**Lesson:** Gamifying abstract system concepts (memory fragmentation) creates an intuitive understanding of why "fragmentation is bad" (it kills you). `ratatui` is fast enough for simple platformers.
