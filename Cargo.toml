@@ -8,6 +8,7 @@ members = [
     "experiments/cellular-beats",
     "experiments/clockwork-cpu",
     "experiments/code-bio-dome",
+    "experiments/code-radio",
     "experiments/code-sprint",
     "experiments/crystal-structure",
     "experiments/crate-universe",

@@ -270,3 +270,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/routing-market
 - **Scent Origin:** Genesis: The Economist
 - **Status:** Prices are surging. Packets are bidding. The network is a marketplace.
+
+### [Concentration Level: FRESH] - Location: experiments/code-radio
+- **Scent Origin:** Nova
+- **Status:** The frequency spectrum is live. Static interference detecting file boundaries. Tuning in to the codebase.
