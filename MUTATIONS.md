@@ -30,12 +30,20 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Parents**: experiments/code-crawler + experiments/biomorph-flow
 - **Concept**: Code functions harvested from disk become organisms in a simulation.
 - **Status**: experiments/code-bio-dome
+- **Evaluation**: Compiles. **MISSING DOCUMENTATION** (README.md).
 
 ### system-bio-dome
 - **Parents**: experiments/chem-sys + experiments/sys-weather
 - **Concept**: Gray-Scott reaction parameters driven by Lorenz Attractor chaos.
 - **Novel trait**: Biomes shift and breathe according to deterministic chaotic rhythms.
 - **Status**: experiments/system-bio-dome
+- **Evaluation**: Compiles. Documented.
+
+### fluid-rain
+- **Parents**: experiments/source-rain + experiments/term-fluids
+- **Concept**: Source code melts into fluid particles upon impact.
+- **Novel trait**: State transition from discrete text to continuous fluid.
+- **Status**: experiments/fluid-rain
 
 <!-- Example:
 ### semantic-spy
