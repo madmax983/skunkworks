@@ -72,3 +72,8 @@
 **Concept:** A geological simulation of the codebase where dangerous keywords (`unwrap`, `panic`) create physical "stress" in a force-directed graph. High stress causes "fissures" (jagged lines) to crack the bedrock.
 **Fate:** Merged
 **Lesson:** Visual metaphors for code quality (Stress = Force) are intuitive and instantly readable. `walkdir` + simple string matching is sufficient for powerful MVP visualizations.
+
+## [Git Cellular Automata]
+**Concept:** Conway's Game of Life seeded by `git diff` hashes.
+**Fate:** Merged
+**Lesson:** Simple hashing of existing metadata allows for infinite procedural generation without complex parsers.

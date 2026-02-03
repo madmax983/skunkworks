@@ -53,10 +53,7 @@ impl World {
         for (i, res) in scan_results.into_iter().enumerate() {
             let stress = res.total_stress() as f64;
             // Initialize random position
-            let pos = Vec2::new(
-                rng.gen_range(-50.0..50.0),
-                rng.gen_range(-50.0..50.0),
-            );
+            let pos = Vec2::new(rng.gen_range(-50.0..50.0), rng.gen_range(-50.0..50.0));
 
             nodes.push(Node {
                 id: i,
@@ -95,11 +92,13 @@ impl World {
 
             // Repel from others
             for j in 0..count {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let p2 = positions[j];
                 let dx = p1.x - p2.x;
                 let dy = p1.y - p2.y;
-                let dist_sq = dx*dx + dy*dy;
+                let dist_sq = dx * dx + dy * dy;
 
                 if dist_sq > 0.01 {
                     let f = repulsion / dist_sq.max(1.0);
@@ -110,11 +109,11 @@ impl World {
             }
 
             // Limit max force
-             let f_len = (force.x.powi(2) + force.y.powi(2)).sqrt();
-             if f_len > 10.0 {
-                 force.x = (force.x / f_len) * 10.0;
-                 force.y = (force.y / f_len) * 10.0;
-             }
+            let f_len = (force.x.powi(2) + force.y.powi(2)).sqrt();
+            if f_len > 10.0 {
+                force.x = (force.x / f_len) * 10.0;
+                force.y = (force.y / f_len) * 10.0;
+            }
 
             let node = &mut self.nodes[i];
             node.vel.x = (node.vel.x + force.x) * damping;
@@ -126,7 +125,8 @@ impl World {
         // 2. Generate Fissures
         // Only generate if no fissure exists for this node yet
         let mut new_fissures = Vec::new();
-        let existing_origins: HashMap<usize, bool> = self.fissures.iter().map(|f| (f.origin_id, true)).collect();
+        let existing_origins: HashMap<usize, bool> =
+            self.fissures.iter().map(|f| (f.origin_id, true)).collect();
 
         let mut rng = rand::thread_rng();
 
@@ -153,16 +153,13 @@ impl World {
             let target_length = node.stress * 2.0; // 2 units per stress
 
             if (fissure.points.len() as f64) < target_length.max(5.0) {
-                 let last = *fissure.points.last().unwrap();
-                 // Random walk
-                 let angle = rng.gen_range(0.0..std::f64::consts::PI * 2.0);
-                 let len = rng.gen_range(2.0..5.0);
+                let last = *fissure.points.last().unwrap();
+                // Random walk
+                let angle = rng.gen_range(0.0..std::f64::consts::PI * 2.0);
+                let len = rng.gen_range(2.0..5.0);
 
-                 let next = Vec2::new(
-                     last.x + angle.cos() * len,
-                     last.y + angle.sin() * len,
-                 );
-                 fissure.points.push(next);
+                let next = Vec2::new(last.x + angle.cos() * len, last.y + angle.sin() * len);
+                fissure.points.push(next);
             }
         }
     }

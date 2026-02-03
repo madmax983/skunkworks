@@ -95,6 +95,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/voronoi-ants
 - **Evaluation**: Freshly created. Compiles.
 
+### git-ca
+- **Parents**: experiments/git-rhythm + experiments/cellular-beats
+- **Concept**: Git diffs as seeds for Cellular Automata.
+- **Novel trait**: Temporal visualization of commit entropy.
+- **Status**: experiments/git-ca
+- **Evaluation**: Compiles. Freshly implemented.
+
 <!-- Example:
 ### semantic-spy
 - **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)

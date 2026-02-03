@@ -4,7 +4,7 @@ use neuro_terminal::nn::Network;
 use rand::Rng;
 use ratatui::{
     backend::Backend,
-    layout::{Constraint, Direction, Layout, Rect, Alignment},
+    layout::{Alignment, Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     symbols::Marker,
     text::Span,
@@ -142,12 +142,25 @@ fn ui(f: &mut Frame, app: &App) {
 
 fn draw_header(f: &mut Frame, app: &App, area: Rect) {
     let status_text = if app.paused {
-        Span::styled(" PAUSED ", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))
+        Span::styled(
+            " PAUSED ",
+            Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+        )
     } else {
-        Span::styled(" RUNNING ", Style::default().fg(Color::Green).add_modifier(Modifier::BOLD))
+        Span::styled(
+            " RUNNING ",
+            Style::default()
+                .fg(Color::Green)
+                .add_modifier(Modifier::BOLD),
+        )
     };
 
-    let title_text = Span::styled(" NEURO-TERMINAL ", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD));
+    let title_text = Span::styled(
+        " NEURO-TERMINAL ",
+        Style::default()
+            .fg(Color::Cyan)
+            .add_modifier(Modifier::BOLD),
+    );
 
     let steps_text = Span::raw(format!(" Steps: {} ", app.steps));
 
@@ -171,8 +184,7 @@ fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
         " [P]ause | [R]eset | [Q]uit ",
         Style::default().fg(Color::DarkGray),
     );
-    let paragraph = Paragraph::new(keys)
-        .alignment(Alignment::Center);
+    let paragraph = Paragraph::new(keys).alignment(Alignment::Center);
     f.render_widget(paragraph, area);
 }
 
@@ -201,7 +213,7 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                             color: Color::Rgb(20, 40, 40), // Dark Cyan background
                         });
                     } else {
-                         ctx.draw(&Points {
+                        ctx.draw(&Points {
                             coords: &[(x, y)],
                             color: Color::Rgb(40, 20, 40), // Dark Magenta background
                         });

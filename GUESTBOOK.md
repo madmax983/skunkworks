@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/git-ca
+- **Scent Origin**: Nova
+- **Status**: The petri dish is seeded. Git diffs are evolving into cellular organisms.
+
 ### [Concentration Level: FRESH] - Location: experiments/voronoi-ants
 - **Scent Origin:** Splice Surgeon
 - **Status:** The territory is fluid. Ants are claiming the Voronoi cells. Food is being transported across shifting borders.

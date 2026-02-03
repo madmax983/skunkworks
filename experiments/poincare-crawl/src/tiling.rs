@@ -61,81 +61,86 @@ impl Tiling {
         centers.push(Complex::new(0.0, 0.0));
 
         let mut head = 0;
-        while head < polygons.len() && head < 1000 { // Safety break
-             let current_poly = polygons[head].clone();
-             let current_depth = if head == 0 { 0 } else { 1 }; // Simplified depth logic for now
+        while head < polygons.len() && head < 1000 {
+            // Safety break
+            let current_poly = polygons[head].clone();
+            let current_depth = if head == 0 { 0 } else { 1 }; // Simplified depth logic for now
 
-             if current_depth >= depth {
-                 head += 1;
-                 continue;
-             }
+            if current_depth >= depth {
+                head += 1;
+                continue;
+            }
 
-             // For each edge, find the reflected polygon
-             let n = current_poly.vertices.len();
-             for i in 0..n {
-                 let v1 = current_poly.vertices[i];
-                 let v2 = current_poly.vertices[(i + 1) % n];
+            // For each edge, find the reflected polygon
+            let n = current_poly.vertices.len();
+            for i in 0..n {
+                let v1 = current_poly.vertices[i];
+                let v2 = current_poly.vertices[(i + 1) % n];
 
-                 // Reflect across geodesic passing through v1, v2
-                 // To reflect point z across geodesic defined by v1, v2:
-                 // 1. Map geodesic to real axis using Mobius M
-                 // 2. Conjugate (reflection across real axis)
-                 // 3. Map back M^-1
+                // Reflect across geodesic passing through v1, v2
+                // To reflect point z across geodesic defined by v1, v2:
+                // 1. Map geodesic to real axis using Mobius M
+                // 2. Conjugate (reflection across real axis)
+                // 3. Map back M^-1
 
-                 // Construct M that maps v1 -> -1, v2 -> 1?
-                 // Or map geodesic to real axis.
-                 // Actually, simpler: circle inversion.
-                 // If geodesic is a line through origin: reflection is just conjugation (rotated).
-                 // If geodesic is a circle |z - c|^2 = R^2: inversion is c + R^2 / conj(z - c).
+                // Construct M that maps v1 -> -1, v2 -> 1?
+                // Or map geodesic to real axis.
+                // Actually, simpler: circle inversion.
+                // If geodesic is a line through origin: reflection is just conjugation (rotated).
+                // If geodesic is a circle |z - c|^2 = R^2: inversion is c + R^2 / conj(z - c).
 
-                 // We need the circle of the geodesic v1-v2.
-                 // We can reuse Geodesic::euclidean_circle
+                // We need the circle of the geodesic v1-v2.
+                // We can reuse Geodesic::euclidean_circle
 
-                 let geo = crate::math::Geodesic::new(v1, v2);
-                 let reflected_verts: Vec<Complex<f64>> = current_poly.vertices.iter().map(|&v| {
-                     if let Some((c, r)) = geo.euclidean_circle() {
-                         // Inversion in circle
-                         c + (r * r) / (v - c).conj()
-                     } else {
-                         // Line through origin (should not happen for {5,4} sides except if centered?)
-                         // Actually {5,4} centered at origin has no edges passing through origin.
-                         // But for completeness:
-                         // The line passes through 0, v1.
-                         // Reflection is simple geometry.
-                         // Not needed here for {5,4} standard orientation.
-                         v
-                     }
-                 }).collect();
+                let geo = crate::math::Geodesic::new(v1, v2);
+                let reflected_verts: Vec<Complex<f64>> = current_poly
+                    .vertices
+                    .iter()
+                    .map(|&v| {
+                        if let Some((c, r)) = geo.euclidean_circle() {
+                            // Inversion in circle
+                            c + (r * r) / (v - c).conj()
+                        } else {
+                            // Line through origin (should not happen for {5,4} sides except if centered?)
+                            // Actually {5,4} centered at origin has no edges passing through origin.
+                            // But for completeness:
+                            // The line passes through 0, v1.
+                            // Reflection is simple geometry.
+                            // Not needed here for {5,4} standard orientation.
+                            v
+                        }
+                    })
+                    .collect();
 
-                 // Compute new center
-                 let mut new_center = Complex::new(0.0, 0.0);
-                 for v in &reflected_verts {
-                     new_center += v;
-                 }
-                 new_center /= reflected_verts.len() as f64;
+                // Compute new center
+                let mut new_center = Complex::new(0.0, 0.0);
+                for v in &reflected_verts {
+                    new_center += v;
+                }
+                new_center /= reflected_verts.len() as f64;
 
-                 // Check if we already have this polygon (by center proximity)
-                 let mut exists = false;
-                 for c in &centers {
-                     if (c - new_center).norm() < 1e-4 {
-                         exists = true;
-                         break;
-                     }
-                 }
+                // Check if we already have this polygon (by center proximity)
+                let mut exists = false;
+                for c in &centers {
+                    if (c - new_center).norm() < 1e-4 {
+                        exists = true;
+                        break;
+                    }
+                }
 
-                 if !exists {
-                     centers.push(new_center);
-                     polygons.push(Polygon {
-                         vertices: reflected_verts.clone(),
-                         center: new_center,
-                     });
+                if !exists {
+                    centers.push(new_center);
+                    polygons.push(Polygon {
+                        vertices: reflected_verts.clone(),
+                        center: new_center,
+                    });
 
-                     // In a real BFS we need proper depth tracking.
-                     // Here we just expand.
-                 }
-             }
+                    // In a real BFS we need proper depth tracking.
+                    // Here we just expand.
+                }
+            }
 
-             head += 1;
+            head += 1;
         }
 
         Self { polygons }
