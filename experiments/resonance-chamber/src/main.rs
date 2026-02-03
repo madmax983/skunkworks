@@ -31,7 +31,9 @@ fn main() -> Result<()> {
         let device = match host.default_output_device() {
             Some(d) => d,
             None => {
-                eprintln!("No audio device found. Running in visual-only mode (mocking audio thread).");
+                eprintln!(
+                    "No audio device found. Running in visual-only mode (mocking audio thread)."
+                );
                 return run_visual_only();
             }
         };
@@ -39,8 +41,11 @@ fn main() -> Result<()> {
         let config = match device.default_output_config() {
             Ok(c) => c,
             Err(e) => {
-                 eprintln!("Failed to get default output config: {}. Running in visual-only mode.", e);
-                 return run_visual_only();
+                eprintln!(
+                    "Failed to get default output config: {}. Running in visual-only mode.",
+                    e
+                );
+                return run_visual_only();
             }
         };
 
@@ -64,22 +69,27 @@ fn main() -> Result<()> {
                 None,
             ),
             _ => {
-                 eprintln!("Only F32 sample format supported for this demo. Running in visual-only mode.");
-                 return run_visual_only();
+                eprintln!(
+                    "Only F32 sample format supported for this demo. Running in visual-only mode."
+                );
+                return run_visual_only();
             }
         };
 
         let stream = match stream_result {
             Ok(s) => s,
             Err(e) => {
-                eprintln!("Failed to build output stream: {}. Running in visual-only mode.", e);
+                eprintln!(
+                    "Failed to build output stream: {}. Running in visual-only mode.",
+                    e
+                );
                 return run_visual_only();
             }
         };
 
         if let Err(e) = stream.play() {
-             eprintln!("Failed to play stream: {}. Running in visual-only mode.", e);
-             return run_visual_only();
+            eprintln!("Failed to play stream: {}. Running in visual-only mode.", e);
+            return run_visual_only();
         }
 
         // TUI Setup

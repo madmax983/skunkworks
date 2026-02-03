@@ -139,10 +139,7 @@ fn main() -> Result<()> {
                 Span::raw("Press "),
                 Span::styled("q", Style::default().fg(Color::Yellow)),
                 Span::raw(" to quit. Agents: "),
-                Span::styled(
-                    format!("{}", agent_count),
-                    Style::default().fg(Color::Cyan),
-                ),
+                Span::styled(format!("{}", agent_count), Style::default().fg(Color::Cyan)),
                 Span::raw(" | Commutes: "),
                 Span::styled(
                     format!("{}", total_commutes),

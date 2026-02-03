@@ -106,7 +106,7 @@ impl FluidSolver {
                 }
             }
             self.particles[i].rho = rho.max(0.0001); // Avoid div by zero
-            // P = k * (rho - rho0)
+                                                     // P = k * (rho - rho0)
             self.particles[i].pressure = self.k * (self.particles[i].rho - self.rest_density);
         }
     }

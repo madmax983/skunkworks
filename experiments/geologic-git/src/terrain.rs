@@ -103,7 +103,11 @@ impl Terrain {
             let nx = x + dir_x;
             let ny = y + dir_y;
 
-            if nx < 0.0 || ny < 0.0 || nx >= (self.width - 1) as f64 || ny >= (self.height - 1) as f64 {
+            if nx < 0.0
+                || ny < 0.0
+                || nx >= (self.width - 1) as f64
+                || ny >= (self.height - 1) as f64
+            {
                 break;
             }
 
@@ -184,7 +188,7 @@ impl Terrain {
     }
 
     fn erode(&mut self, x: f64, y: f64, amount: f64) {
-         let ix = x as usize;
+        let ix = x as usize;
         let iy = y as usize;
         let fx = x - ix as f64;
         let fy = y - iy as f64;
@@ -196,8 +200,10 @@ impl Terrain {
     }
 
     fn add_height(&mut self, x: usize, y: usize, amount: f64) {
-         if x >= self.width || y >= self.height { return; }
-         self.height_map[y * self.width + x] += amount;
+        if x >= self.width || y >= self.height {
+            return;
+        }
+        self.height_map[y * self.width + x] += amount;
     }
 }
 

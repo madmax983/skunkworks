@@ -1,6 +1,6 @@
-use std::process::Command;
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use std::io::{BufRead, BufReader};
+use std::process::Command;
 
 #[derive(Debug, Clone)]
 pub struct CommitEvent {
@@ -16,7 +16,12 @@ pub struct GitHistory {
 impl GitHistory {
     pub fn load() -> Result<Self> {
         let output = Command::new("git")
-            .args(["log", "--name-only", "--pretty=format:COMMIT %H %at", "--reverse"])
+            .args([
+                "log",
+                "--name-only",
+                "--pretty=format:COMMIT %H %at",
+                "--reverse",
+            ])
             .stdout(std::process::Stdio::piped())
             .spawn()
             .context("Failed to spawn git command")?

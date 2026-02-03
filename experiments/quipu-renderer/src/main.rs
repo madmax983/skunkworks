@@ -2,12 +2,12 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use quipu_renderer::quipu::Cord;
 use quipu_renderer::serializer::to_khipu;
-use serde::Serialize;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     widgets::{Block, Borders, Paragraph},
 };
+use serde::Serialize;
 use std::time::Duration;
 use tui_shared::Tui;
 
@@ -67,7 +67,11 @@ fn main() -> Result<()> {
             };
 
             let title = Paragraph::new(title_text)
-                .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+                .style(
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD),
+                )
                 .block(Block::default().borders(Borders::ALL));
             f.render_widget(title, chunks[0]);
 
@@ -79,13 +83,13 @@ fn main() -> Result<()> {
 
             // Draw the main horizontal cord
             let main_cord_str = "=".repeat(inner_area.width as usize);
-            let main_cord_widget = Paragraph::new(main_cord_str)
-                .style(Style::default().fg(Color::Red));
+            let main_cord_widget =
+                Paragraph::new(main_cord_str).style(Style::default().fg(Color::Red));
             // We want this at the top of inner_area
             let cord_layout = Layout::default()
-                 .direction(Direction::Vertical)
-                 .constraints([Constraint::Length(1), Constraint::Min(0)])
-                 .split(inner_area);
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Length(1), Constraint::Min(0)])
+                .split(inner_area);
             f.render_widget(main_cord_widget, cord_layout[0]);
 
             // Draw Pendant Cords
@@ -106,15 +110,14 @@ fn main() -> Result<()> {
                     // Need to add the top connection line `|` to connect to main cord
                     let display_str = format!("|\n{}", cord_str);
 
-                    let p = Paragraph::new(display_str)
-                        .style(Style::default().fg(Color::Cyan));
-                        // .alignment(Alignment::Center) // Maybe center if possible
+                    let p = Paragraph::new(display_str).style(Style::default().fg(Color::Cyan));
+                    // .alignment(Alignment::Center) // Maybe center if possible
                     f.render_widget(p, pendant_chunks[i]);
                 }
             } else {
-                 let p = Paragraph::new("No cords hanging.")
-                    .style(Style::default().fg(Color::DarkGray));
-                 f.render_widget(p, cord_layout[1]);
+                let p =
+                    Paragraph::new("No cords hanging.").style(Style::default().fg(Color::DarkGray));
+                f.render_widget(p, cord_layout[1]);
             }
 
             // Footer
@@ -122,7 +125,10 @@ fn main() -> Result<()> {
                 Mode::Calculator => "[0-9] Input, [Enter] Push, [a] Add Last 2, [d] Drop",
                 Mode::Serializer => "[s] Serialize Demo Struct (Corn=100, Gold=50, Llamas=12)",
             };
-            let status = format!("Input: {} | {} | [m] Mode, [q] Quit", app.input, app.message);
+            let status = format!(
+                "Input: {} | {} | [m] Mode, [q] Quit",
+                app.input, app.message
+            );
 
             let footer_text = format!("{}\n{}", status, help);
             let footer = Paragraph::new(footer_text)
@@ -144,15 +150,15 @@ fn main() -> Result<()> {
                         app.input.clear();
                     }
                     KeyCode::Char(c) if c.is_digit(10) => {
-                         if let Mode::Calculator = app.mode {
-                             app.input.push(c);
-                         }
+                        if let Mode::Calculator = app.mode {
+                            app.input.push(c);
+                        }
                     }
                     KeyCode::Backspace => {
                         app.input.pop();
                     }
                     KeyCode::Enter => {
-                         if let Mode::Calculator = app.mode {
+                        if let Mode::Calculator = app.mode {
                             if let Ok(val) = app.input.parse::<u32>() {
                                 app.cords.push(Cord::from(val));
                                 app.input.clear();
@@ -181,7 +187,7 @@ fn main() -> Result<()> {
                                 corn: 100,
                                 gold: 50,
                                 llamas: 12,
-                                is_valid: true
+                                is_valid: true,
                             };
                             if let Ok(khipu) = to_khipu(&demo) {
                                 app.cords = khipu.cords;

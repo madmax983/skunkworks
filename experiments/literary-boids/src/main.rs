@@ -158,8 +158,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             // Draw Food
             for food in &app.world.food {
                 ctx.print(
-                    food.position.0,
-                    food.position.1,
+                    food.position.x,
+                    food.position.y,
                     Span::styled(food.content.to_string(), Style::default().fg(Color::Green)),
                 );
             }
@@ -167,8 +167,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             // Draw Boids
             for boid in &app.world.boids {
                 ctx.print(
-                    boid.position.0,
-                    boid.position.1,
+                    boid.position.x,
+                    boid.position.y,
                     Span::styled(
                         boid.dna.char_representation.to_string(),
                         Style::default().fg(boid.dna.color),
@@ -179,8 +179,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             #[cfg(feature = "nova")]
             for critic in &app.world.critics {
                 ctx.print(
-                    critic.position.0,
-                    critic.position.1,
+                    critic.position.x,
+                    critic.position.y,
                     Span::styled(
                         critic.symbol.to_string(),
                         Style::default()

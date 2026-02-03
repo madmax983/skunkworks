@@ -22,11 +22,7 @@ pub fn spawn_gear(
 
     // Main disk (rim)
     // Reduce radius slightly to allow teeth to sit on it
-    shapes.push((
-        Vect::ZERO,
-        0.0,
-        Collider::ball(radius - 0.5),
-    ));
+    shapes.push((Vect::ZERO, 0.0, Collider::ball(radius - 0.5)));
 
     // Teeth
     // Calculate tooth dimensions based on circumference
@@ -52,23 +48,25 @@ pub fn spawn_gear(
         ));
     }
 
-    commands.spawn((
-        SpatialBundle::from_transform(Transform::from_translation(position.extend(0.0))),
-        RigidBody::Dynamic,
-        Collider::compound(shapes),
-        ColliderMassProperties::Density(mass_density),
-        Damping { linear_damping: 0.1, angular_damping: 0.5 },
-        // Axis lock to z-rotation only (2D physics handles this naturally but we want to pin it)
-        // Wait, if we pin translation, it rotates around its center. Correct.
-        LockedAxes::TRANSLATION_LOCKED,
-    )).id()
+    commands
+        .spawn((
+            SpatialBundle::from_transform(Transform::from_translation(position.extend(0.0))),
+            RigidBody::Dynamic,
+            Collider::compound(shapes),
+            ColliderMassProperties::Density(mass_density),
+            Damping {
+                linear_damping: 0.1,
+                angular_damping: 0.5,
+            },
+            // Axis lock to z-rotation only (2D physics handles this naturally but we want to pin it)
+            // Wait, if we pin translation, it rotates around its center. Correct.
+            LockedAxes::TRANSLATION_LOCKED,
+        ))
+        .id()
 }
 
 /// Spawns an Anchor (for the escapement)
-pub fn spawn_anchor(
-    commands: &mut Commands,
-    position: Vec2,
-) -> Entity {
+pub fn spawn_anchor(commands: &mut Commands, position: Vec2) -> Entity {
     let mut shapes = Vec::new();
 
     // Anchor geometry is specific to the escape wheel size.
@@ -89,37 +87,26 @@ pub fn spawn_anchor(
     ));
 
     // Arms connecting to pivot
-    shapes.push((
-        Vect::new(-1.5, -1.5),
-        0.7,
-        Collider::cuboid(0.2, 2.5),
-    ));
-    shapes.push((
-        Vect::new(1.5, -1.5),
-        -0.7,
-        Collider::cuboid(0.2, 2.5),
-    ));
+    shapes.push((Vect::new(-1.5, -1.5), 0.7, Collider::cuboid(0.2, 2.5)));
+    shapes.push((Vect::new(1.5, -1.5), -0.7, Collider::cuboid(0.2, 2.5)));
 
     // Pendulum Rod (upwards or downwards) - let's make it a pendulum swinging below
-    shapes.push((
-        Vect::new(0.0, -8.0),
-        0.0,
-        Collider::cuboid(0.2, 8.0),
-    ));
+    shapes.push((Vect::new(0.0, -8.0), 0.0, Collider::cuboid(0.2, 8.0)));
 
     // Bob
-    shapes.push((
-        Vect::new(0.0, -16.0),
-        0.0,
-        Collider::ball(2.0),
-    ));
+    shapes.push((Vect::new(0.0, -16.0), 0.0, Collider::ball(2.0)));
 
-    commands.spawn((
-        SpatialBundle::from_transform(Transform::from_translation(position.extend(0.0))),
-        RigidBody::Dynamic,
-        Collider::compound(shapes),
-        ColliderMassProperties::Density(2.0),
-        Damping { linear_damping: 0.1, angular_damping: 0.1 }, // Low damping for pendulum
-        LockedAxes::TRANSLATION_LOCKED,
-    )).id()
+    commands
+        .spawn((
+            SpatialBundle::from_transform(Transform::from_translation(position.extend(0.0))),
+            RigidBody::Dynamic,
+            Collider::compound(shapes),
+            ColliderMassProperties::Density(2.0),
+            Damping {
+                linear_damping: 0.1,
+                angular_damping: 0.1,
+            }, // Low damping for pendulum
+            LockedAxes::TRANSLATION_LOCKED,
+        ))
+        .id()
 }

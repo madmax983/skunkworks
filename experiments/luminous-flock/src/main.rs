@@ -120,7 +120,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                     (base_char, color)
                 };
 
-                ctx.print(boid.position.0, boid.position.1, Span::styled(char_str, Style::default().fg(color)));
+                ctx.print(
+                    boid.position.0,
+                    boid.position.1,
+                    Span::styled(char_str, Style::default().fg(color)),
+                );
             }
         });
 
@@ -128,7 +132,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     let status = format!(
         "Sync Index: {:.3} | Population: {} | 'r': Reset | 'q': Quit",
-        sync_index, app.world.boids.len()
+        sync_index,
+        app.world.boids.len()
     );
     let p = Paragraph::new(status).style(Style::default().fg(Color::Black).bg(Color::Blue));
     f.render_widget(p, chunks[1]);

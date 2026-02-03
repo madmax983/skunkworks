@@ -159,7 +159,11 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     let list = List::new(items)
         .block(Block::default().borders(Borders::ALL).title("Files"))
-        .highlight_style(Style::default().bg(Color::DarkGray).add_modifier(ratatui::style::Modifier::BOLD))
+        .highlight_style(
+            Style::default()
+                .bg(Color::DarkGray)
+                .add_modifier(ratatui::style::Modifier::BOLD),
+        )
         .highlight_symbol(">> ");
 
     f.render_stateful_widget(list, chunks[0], &mut app.state);
@@ -182,7 +186,7 @@ fn ui(f: &mut Frame, app: &mut App) {
             // Draw bones
             for i in 0..app.arm.joints.len() - 1 {
                 let p1 = app.arm.joints[i];
-                let p2 = app.arm.joints[i+1];
+                let p2 = app.arm.joints[i + 1];
                 ctx.draw(&CanvasLine {
                     x1: p1.0,
                     y1: p1.1,

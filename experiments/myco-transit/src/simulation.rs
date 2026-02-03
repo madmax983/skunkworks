@@ -77,20 +77,21 @@ impl Agent {
         let (tx, ty) = world.cities[self.target_city];
         let dx = tx - self.x;
         let dy = ty - self.y;
-        let dist_sq = dx*dx + dy*dy;
+        let dist_sq = dx * dx + dy * dy;
 
-        if dist_sq < 25.0 { // Radius 5
-             // Arrived!
-             std::mem::swap(&mut self.home_city, &mut self.target_city);
-             self.angle += PI; // Turn around
-             self.commuted_count += 1;
+        if dist_sq < 25.0 {
+            // Radius 5
+            // Arrived!
+            std::mem::swap(&mut self.home_city, &mut self.target_city);
+            self.angle += PI; // Turn around
+            self.commuted_count += 1;
 
-             // No deposit on this frame, just turn
-             return AgentUpdateResult {
-                 deposit_x: self.x as usize,
-                 deposit_y: self.y as usize,
-                 deposit_amount: 0.0,
-             };
+            // No deposit on this frame, just turn
+            return AgentUpdateResult {
+                deposit_x: self.x as usize,
+                deposit_y: self.y as usize,
+                deposit_amount: 0.0,
+            };
         }
 
         let sensor_angle = PI / 4.0;
@@ -194,7 +195,7 @@ impl World {
                     *cy,
                     rng.gen_range(0.0..2.0 * PI),
                     i,
-                    target
+                    target,
                 ));
             }
         }
@@ -218,7 +219,8 @@ impl World {
     }
 
     pub fn update_agents_parallel(&mut self, agents: &mut [Agent]) {
-        let deposits: Vec<AgentUpdateResult> = agents.par_iter_mut()
+        let deposits: Vec<AgentUpdateResult> = agents
+            .par_iter_mut()
             .map(|agent| agent.update(self))
             .collect();
 
@@ -237,20 +239,23 @@ impl World {
 
         let trails_ref = &self.trails;
 
-        self.next_trails.par_chunks_mut(width).enumerate().for_each(|(y, row)| {
-             for (x, pixel) in row.iter_mut().enumerate() {
-                let mut sum = 0.0;
-                for dy in -1..=1 {
-                    for dx in -1..=1 {
-                        let nx = (x as isize + dx).rem_euclid(width as isize) as usize;
-                        let ny = (y as isize + dy).rem_euclid(height as isize) as usize;
-                        sum += trails_ref[ny * width + nx];
+        self.next_trails
+            .par_chunks_mut(width)
+            .enumerate()
+            .for_each(|(y, row)| {
+                for (x, pixel) in row.iter_mut().enumerate() {
+                    let mut sum = 0.0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            let nx = (x as isize + dx).rem_euclid(width as isize) as usize;
+                            let ny = (y as isize + dy).rem_euclid(height as isize) as usize;
+                            sum += trails_ref[ny * width + nx];
+                        }
                     }
+                    let avg = sum / 9.0;
+                    *pixel = avg * decay_factor;
                 }
-                let avg = sum / 9.0;
-                *pixel = avg * decay_factor;
-             }
-        });
+            });
 
         std::mem::swap(&mut self.trails, &mut self.next_trails);
     }
@@ -287,7 +292,10 @@ mod tests {
 
         // Check if it turned around (angle changed by PI approx)
         // Init angle 0.0 -> PI
-        assert!((agent.angle - PI).abs() < 0.001 || (agent.angle + PI).abs() < 0.001, "Angle should flip");
+        assert!(
+            (agent.angle - PI).abs() < 0.001 || (agent.angle + PI).abs() < 0.001,
+            "Angle should flip"
+        );
     }
 
     #[test]

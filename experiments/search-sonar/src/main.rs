@@ -1,18 +1,19 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{canvas::{Canvas, Line as CanvasLine, Points}, Block, Borders, Paragraph},
+    widgets::{
+        canvas::{Canvas, Line as CanvasLine, Points},
+        Block, Borders, Paragraph,
+    },
     Frame,
 };
 use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 use std::sync::mpsc::Receiver;
-use std::time::{Duration};
+use std::time::Duration;
 use tui_shared::Tui;
 
 use crate::search::{spawn_search_thread, SearchResult};
@@ -55,13 +56,18 @@ impl App {
         if let Some(rx) = &self.rx {
             // Try to read all available messages
             loop {
-                 match rx.try_recv() {
+                match rx.try_recv() {
                     Ok(res) => {
                         let (x, y, angle) = Self::map_to_coords(&res.path);
-                        self.results.push(Blip { x, y, angle, result: res });
-                    },
+                        self.results.push(Blip {
+                            x,
+                            y,
+                            angle,
+                            result: res,
+                        });
+                    }
                     Err(_) => break, // Empty or disconnected
-                 }
+                }
             }
         }
     }
@@ -108,7 +114,9 @@ fn main() -> Result<()> {
                         KeyCode::Esc => app.exit = true,
                         KeyCode::Enter => app.start_search(),
                         KeyCode::Char(c) => app.query.push(c),
-                        KeyCode::Backspace => { app.query.pop(); },
+                        KeyCode::Backspace => {
+                            app.query.pop();
+                        }
                         _ => {}
                     }
                 }
@@ -127,18 +135,12 @@ fn main() -> Result<()> {
 fn ui(f: &mut Frame, app: &App) {
     let main_layout = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(f.area());
 
     let top_layout = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(70),
-            Constraint::Percentage(30),
-        ])
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
         .split(main_layout[0]);
 
     // Calculate active blip (closest to sweep)
@@ -159,7 +161,11 @@ fn ui(f: &mut Frame, app: &App) {
     }
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Search Sonar "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Search Sonar "),
+        )
         .x_bounds([-100.0, 100.0])
         .y_bounds([-100.0, 100.0])
         .paint(|ctx| {
@@ -170,7 +176,7 @@ fn ui(f: &mut Frame, app: &App) {
                 radius: 90.0,
                 color: Color::DarkGray,
             });
-             ctx.draw(&ratatui::widgets::canvas::Circle {
+            ctx.draw(&ratatui::widgets::canvas::Circle {
                 x: 0.0,
                 y: 0.0,
                 radius: 50.0,
@@ -218,7 +224,7 @@ fn ui(f: &mut Frame, app: &App) {
 
             // Highlight best blip
             if let Some(blip) = best_blip {
-                 ctx.draw(&ratatui::widgets::canvas::Circle {
+                ctx.draw(&ratatui::widgets::canvas::Circle {
                     x: blip.x,
                     y: blip.y,
                     radius: 3.0,
@@ -232,17 +238,30 @@ fn ui(f: &mut Frame, app: &App) {
     // Details Panel
     let details_text = if let Some(blip) = best_blip {
         vec![
-            Line::from(vec![Span::raw("File: "), Span::styled(blip.result.path.to_string_lossy(), Style::default().fg(Color::Cyan))]),
+            Line::from(vec![
+                Span::raw("File: "),
+                Span::styled(
+                    blip.result.path.to_string_lossy(),
+                    Style::default().fg(Color::Cyan),
+                ),
+            ]),
             Line::from(vec![Span::raw(format!("Line: {}", blip.result.line_num))]),
             Line::from(Span::raw("")),
-            Line::from(vec![Span::styled(format!("> {}", blip.result.content.trim()), Style::default().fg(Color::Green))]),
+            Line::from(vec![Span::styled(
+                format!("> {}", blip.result.content.trim()),
+                Style::default().fg(Color::Green),
+            )]),
         ]
     } else {
         vec![Line::from("Scanning...")]
     };
 
     let details = Paragraph::new(details_text)
-        .block(Block::default().borders(Borders::ALL).title(" Target Info "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Target Info "),
+        )
         .wrap(ratatui::widgets::Wrap { trim: true });
 
     f.render_widget(details, top_layout[1]);

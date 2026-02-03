@@ -8,7 +8,9 @@ pub struct CombatLog {
 
 impl CombatLog {
     pub fn new() -> Self {
-        Self { messages: Vec::new() }
+        Self {
+            messages: Vec::new(),
+        }
     }
 
     pub fn add(&mut self, msg: String) {
@@ -90,7 +92,10 @@ impl BattleState {
             if defender.hp <= 0 {
                 defender.hp = 0;
                 self.winner = Some(attacker_name.clone());
-                self.log.add(format!("Segfault! {} has crashed. {} Wins!", defender_name, attacker_name));
+                self.log.add(format!(
+                    "Segfault! {} has crashed. {} Wins!",
+                    defender_name, attacker_name
+                ));
             }
         } else {
             self.log.add(format!(

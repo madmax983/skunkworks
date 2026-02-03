@@ -1,16 +1,16 @@
 use bevy::prelude::*;
 
-pub mod mechanism;
 pub mod cpu;
+pub mod mechanism;
 
-use cpu::{TickEvent, cpu_tick_system};
+use cpu::{cpu_tick_system, TickEvent};
 
 pub struct VergeComputerPlugin;
 
 impl Plugin for VergeComputerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TickEvent>()
-           .add_systems(Update, (cpu_tick_system, detect_tick_system));
+            .add_systems(Update, (cpu_tick_system, detect_tick_system));
     }
 }
 
@@ -53,14 +53,14 @@ fn detect_tick_system(
 
         // Assuming we are moving in negative Z (clockwise) direction
         if wheel.cumulative_angle.abs() >= tooth_angle {
-             // Reset by one tooth worth (keeping the remainder)
-             if wheel.cumulative_angle < 0.0 {
-                 wheel.cumulative_angle += tooth_angle;
-             } else {
-                 wheel.cumulative_angle -= tooth_angle;
-             }
-             events.send(TickEvent);
-             // info!("Tick!");
+            // Reset by one tooth worth (keeping the remainder)
+            if wheel.cumulative_angle < 0.0 {
+                wheel.cumulative_angle += tooth_angle;
+            } else {
+                wheel.cumulative_angle -= tooth_angle;
+            }
+            events.send(TickEvent);
+            // info!("Tick!");
         }
     }
 }

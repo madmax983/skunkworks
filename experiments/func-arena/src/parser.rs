@@ -1,8 +1,8 @@
 use anyhow::Result;
-use syn::{visit::Visit, ItemFn, spanned::Spanned};
-use walkdir::WalkDir;
-use std::path::Path;
 use std::fs;
+use std::path::Path;
+use syn::{spanned::Spanned, visit::Visit, ItemFn};
+use walkdir::WalkDir;
 
 #[derive(Debug, Clone)]
 pub struct Fighter {

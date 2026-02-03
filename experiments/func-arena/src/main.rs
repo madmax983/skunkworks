@@ -1,5 +1,5 @@
-mod parser;
 mod game;
+mod parser;
 mod ui;
 
 use anyhow::Result;
@@ -7,7 +7,11 @@ use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use game::BattleState;
 use parser::{scan_files, Fighter};
 use rand::seq::SliceRandom;
-use std::{env, path::Path, time::{Duration, Instant}};
+use std::{
+    env,
+    path::Path,
+    time::{Duration, Instant},
+};
 use tui_shared::Tui;
 
 struct App {
@@ -27,7 +31,11 @@ impl App {
         // Scan
         let fighters = scan_files(path)?;
         if fighters.len() < 2 {
-            anyhow::bail!("Need at least 2 functions to fight! Found {} in {:?}", fighters.len(), path);
+            anyhow::bail!(
+                "Need at least 2 functions to fight! Found {} in {:?}",
+                fighters.len(),
+                path
+            );
         }
 
         let mut rng = rand::thread_rng();

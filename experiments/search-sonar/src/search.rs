@@ -13,17 +13,19 @@ pub struct SearchResult {
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {
-    entry.file_name()
-         .to_str()
-         .map(|s| s.starts_with('.') && s != "." && s != "..")
-         .unwrap_or(false)
+    entry
+        .file_name()
+        .to_str()
+        .map(|s| s.starts_with('.') && s != "." && s != "..")
+        .unwrap_or(false)
 }
 
 fn is_target_dir(entry: &DirEntry) -> bool {
-    entry.file_name()
-         .to_str()
-         .map(|s| s == "target" || s == ".git" || s == "node_modules")
-         .unwrap_or(false)
+    entry
+        .file_name()
+        .to_str()
+        .map(|s| s == "target" || s == ".git" || s == "node_modules")
+        .unwrap_or(false)
 }
 
 pub fn spawn_search_thread(query: String, root: PathBuf) -> Receiver<SearchResult> {
@@ -31,7 +33,8 @@ pub fn spawn_search_thread(query: String, root: PathBuf) -> Receiver<SearchResul
 
     thread::spawn(move || {
         let walker = WalkDir::new(root).into_iter();
-        for entry in walker.filter_entry(|e| (!is_hidden(e) || e.depth() == 0) && !is_target_dir(e)) {
+        for entry in walker.filter_entry(|e| (!is_hidden(e) || e.depth() == 0) && !is_target_dir(e))
+        {
             let entry = match entry {
                 Ok(e) => e,
                 Err(_) => continue,
@@ -43,9 +46,12 @@ pub fn spawn_search_thread(query: String, root: PathBuf) -> Receiver<SearchResul
 
             let path = entry.path();
             // Simple check to avoid binary files (not perfect, but MVP)
-             if let Some(ext) = path.extension() {
+            if let Some(ext) = path.extension() {
                 let ext_str = ext.to_string_lossy().to_lowercase();
-                if matches!(ext_str.as_str(), "png" | "jpg" | "jpeg" | "gif" | "ico" | "pdf" | "bin" | "exe" | "lock") {
+                if matches!(
+                    ext_str.as_str(),
+                    "png" | "jpg" | "jpeg" | "gif" | "ico" | "pdf" | "bin" | "exe" | "lock"
+                ) {
                     continue;
                 }
             }
@@ -122,7 +128,10 @@ mod tests {
 
         let rx = spawn_search_thread("secret".to_string(), dir.path().to_path_buf());
         let results: Vec<SearchResult> = rx.iter().collect();
-        assert!(results.is_empty(), "Should ignore hidden files and directories");
+        assert!(
+            results.is_empty(),
+            "Should ignore hidden files and directories"
+        );
     }
 
     #[test]
@@ -141,7 +150,10 @@ mod tests {
 
         let rx = spawn_search_thread("infra".to_string(), dir.path().to_path_buf());
         let results: Vec<SearchResult> = rx.iter().collect();
-        assert!(results.is_empty(), "Should ignore infrastructure directories");
+        assert!(
+            results.is_empty(),
+            "Should ignore infrastructure directories"
+        );
     }
 
     #[test]
@@ -175,7 +187,10 @@ mod tests {
 
         let rx = spawn_search_thread("case".to_string(), dir.path().to_path_buf());
         let results: Vec<SearchResult> = rx.iter().collect();
-        assert!(results.is_empty(), "Should ignore uppercase binary extensions");
+        assert!(
+            results.is_empty(),
+            "Should ignore uppercase binary extensions"
+        );
     }
 
     #[test]

@@ -1,7 +1,6 @@
-pub mod physics;
 pub mod game;
+pub mod physics;
 
-use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind, MouseButton, MouseEventKind};
 use ratatui::{
@@ -14,6 +13,7 @@ use ratatui::{
     },
     Frame,
 };
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 use crate::game::GameState;
@@ -98,7 +98,7 @@ fn main() -> Result<()> {
                     // Or implement it if we have time.
                     match mouse.kind {
                         MouseEventKind::Down(MouseButton::Left) => {
-                             // Not implemented mapping yet
+                            // Not implemented mapping yet
                         }
                         _ => {}
                     }
@@ -123,17 +123,18 @@ fn main() -> Result<()> {
 fn ui(f: &mut Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(f.area());
 
     // Calculate aspect ratio correction if possible?
     // For now just stretch.
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Packet Pachinko "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Packet Pachinko "),
+        )
         .marker(ratatui::symbols::Marker::Braille)
         .x_bounds([0.0, app.game.width])
         .y_bounds([0.0, app.game.height])
@@ -147,13 +148,25 @@ fn ui(f: &mut Frame, app: &mut App) {
             ctx.layer();
             // We can't draw filled rects easily in Canvas without many lines
             // Just draw labels
-            ctx.print(bin_w * 0.5 - 2.0, bin_y + 2.0, Span::styled("DROP", Style::default().fg(Color::Red)));
+            ctx.print(
+                bin_w * 0.5 - 2.0,
+                bin_y + 2.0,
+                Span::styled("DROP", Style::default().fg(Color::Red)),
+            );
 
             // Bin 2: SSH (Blue)
-            ctx.print(bin_w * 1.5 - 2.0, bin_y + 2.0, Span::styled("SSH", Style::default().fg(Color::Blue)));
+            ctx.print(
+                bin_w * 1.5 - 2.0,
+                bin_y + 2.0,
+                Span::styled("SSH", Style::default().fg(Color::Blue)),
+            );
 
             // Bin 3: HTTP (Green)
-            ctx.print(bin_w * 2.5 - 2.0, bin_y + 2.0, Span::styled("HTTP", Style::default().fg(Color::Green)));
+            ctx.print(
+                bin_w * 2.5 - 2.0,
+                bin_y + 2.0,
+                Span::styled("HTTP", Style::default().fg(Color::Green)),
+            );
 
             // Draw Pins
             for pin in &app.game.pins {
@@ -169,7 +182,11 @@ fn ui(f: &mut Frame, app: &mut App) {
                 // So I need to invert Y when drawing: canvas_y = height - game_y
                 let render_y = app.game.height - pin.pos.y;
 
-                ctx.print(pin.pos.x, render_y, Span::styled("O", Style::default().fg(color)));
+                ctx.print(
+                    pin.pos.x,
+                    render_y,
+                    Span::styled("O", Style::default().fg(color)),
+                );
             }
 
             // Draw Particles
@@ -195,7 +212,11 @@ fn ui(f: &mut Frame, app: &mut App) {
                 PinKind::Blocker => Color::Gray,
                 _ => Color::Yellow,
             };
-            ctx.print(app.game.cursor_pos.x, render_cursor_y, Span::styled("+", Style::default().fg(cursor_color)));
+            ctx.print(
+                app.game.cursor_pos.x,
+                render_cursor_y,
+                Span::styled("+", Style::default().fg(cursor_color)),
+            );
         });
 
     f.render_widget(canvas, chunks[0]);
@@ -207,19 +228,20 @@ fn ui(f: &mut Frame, app: &mut App) {
         _ => "Unknown",
     };
 
-    let status = vec![
-        Line::from(vec![
-            Span::raw("Score: "),
-            Span::styled(format!("{}", app.game.score), Style::default().fg(Color::Cyan).bold()),
-            Span::raw(" | Tool: "),
-            Span::styled(tool_name, Style::default().fg(Color::Yellow)),
-            Span::raw(" | "),
-            Span::raw("Arrows: Move | Space: Place/Remove | Tab: Switch Tool | Q: Quit"),
-        ])
-    ];
+    let status = vec![Line::from(vec![
+        Span::raw("Score: "),
+        Span::styled(
+            format!("{}", app.game.score),
+            Style::default().fg(Color::Cyan).bold(),
+        ),
+        Span::raw(" | Tool: "),
+        Span::styled(tool_name, Style::default().fg(Color::Yellow)),
+        Span::raw(" | "),
+        Span::raw("Arrows: Move | Space: Place/Remove | Tab: Switch Tool | Q: Quit"),
+    ])];
 
     f.render_widget(
         Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
-        chunks[1]
+        chunks[1],
     );
 }

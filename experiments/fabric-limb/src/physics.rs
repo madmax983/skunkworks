@@ -35,7 +35,7 @@ impl Arm {
             for i in 0..self.lengths.len() {
                 let r = dist(target, self.joints[i]);
                 let lambda = self.lengths[i] / r;
-                self.joints[i+1] = (
+                self.joints[i + 1] = (
                     (1.0 - lambda) * self.joints[i].0 + lambda * target.0,
                     (1.0 - lambda) * self.joints[i].1 + lambda * target.1,
                 );
@@ -51,22 +51,22 @@ impl Arm {
                 let last_idx = self.joints.len() - 1;
                 self.joints[last_idx] = target;
                 for i in (0..last_idx).rev() {
-                    let r = dist(self.joints[i+1], self.joints[i]);
+                    let r = dist(self.joints[i + 1], self.joints[i]);
                     let lambda = self.lengths[i] / r;
                     self.joints[i] = (
-                        (1.0 - lambda) * self.joints[i+1].0 + lambda * self.joints[i].0,
-                        (1.0 - lambda) * self.joints[i+1].1 + lambda * self.joints[i].1,
+                        (1.0 - lambda) * self.joints[i + 1].0 + lambda * self.joints[i].0,
+                        (1.0 - lambda) * self.joints[i + 1].1 + lambda * self.joints[i].1,
                     );
                 }
 
                 // Forward Reaching
                 self.joints[0] = base;
                 for i in 0..self.lengths.len() {
-                    let r = dist(self.joints[i+1], self.joints[i]);
+                    let r = dist(self.joints[i + 1], self.joints[i]);
                     let lambda = self.lengths[i] / r;
-                    self.joints[i+1] = (
-                        (1.0 - lambda) * self.joints[i].0 + lambda * self.joints[i+1].0,
-                        (1.0 - lambda) * self.joints[i].1 + lambda * self.joints[i+1].1,
+                    self.joints[i + 1] = (
+                        (1.0 - lambda) * self.joints[i].0 + lambda * self.joints[i + 1].0,
+                        (1.0 - lambda) * self.joints[i].1 + lambda * self.joints[i + 1].1,
                     );
                 }
 
@@ -102,7 +102,12 @@ mod tests {
         let dist = ((end.0 - target.0).powi(2) + (end.1 - target.1).powi(2)).sqrt();
 
         // We use a slightly looser check in case iteration limit hit, but FABRIK is robust
-        assert!(dist < arm.tolerance, "Arm did not reach target. Dist: {}, Tolerance: {}", dist, arm.tolerance);
+        assert!(
+            dist < arm.tolerance,
+            "Arm did not reach target. Dist: {}, Tolerance: {}",
+            dist,
+            arm.tolerance
+        );
     }
 
     #[test]
@@ -117,6 +122,10 @@ mod tests {
         let end = arm.end_effector();
         let d = dist((0.0, 0.0), end);
         // It should be stretched to max length (20.0)
-        assert!((d - 20.0).abs() < 0.1, "Arm did not stretch fully. Length: {}", d);
+        assert!(
+            (d - 20.0).abs() < 0.1,
+            "Arm did not stretch fully. Length: {}",
+            d
+        );
     }
 }

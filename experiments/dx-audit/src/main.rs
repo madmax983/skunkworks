@@ -1,6 +1,9 @@
-use tui_shared::Tui;
+use ratatui::{
+    layout::Alignment,
+    widgets::{Block, Borders, Paragraph},
+};
 use std::io;
-use ratatui::{widgets::{Block, Borders, Paragraph}, layout::Alignment};
+use tui_shared::Tui;
 
 fn main() -> io::Result<()> {
     // 1. Initialize the terminal
@@ -10,9 +13,7 @@ fn main() -> io::Result<()> {
     // 2. Draw something to the terminal
     tui.terminal.draw(|f| {
         let size = f.area();
-        let block = Block::default()
-            .title(" My TUI App ")
-            .borders(Borders::ALL);
+        let block = Block::default().title(" My TUI App ").borders(Borders::ALL);
         let p = Paragraph::new("Hello, World!")
             .block(block)
             .alignment(Alignment::Center);

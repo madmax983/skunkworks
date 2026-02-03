@@ -10,7 +10,7 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
     prelude::*,
@@ -176,10 +176,7 @@ fn ui(f: &mut Frame, app: &App) {
 
     let main_layout = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(size);
 
     // Render Terrain
@@ -204,21 +201,24 @@ fn ui(f: &mut Frame, app: &App) {
             let water = app.terrain.water_map[y * app.terrain.width + x];
 
             if water > 0.1 {
-                 // Water char
-                 canvas_str.push('~');
+                // Water char
+                canvas_str.push('~');
             } else {
-                 // Map height to char
-                 // Height range? Initial 5-10. Erosion can go lower, deposition higher.
-                 // Let's assume range 0-20
-                 let idx = (height.max(0.0) as usize).min(chars.len() - 1);
-                 canvas_str.push(chars[idx]);
+                // Map height to char
+                // Height range? Initial 5-10. Erosion can go lower, deposition higher.
+                // Let's assume range 0-20
+                let idx = (height.max(0.0) as usize).min(chars.len() - 1);
+                canvas_str.push(chars[idx]);
             }
         }
         canvas_str.push('\n');
     }
 
-    let terrain_widget = Paragraph::new(canvas_str)
-        .block(Block::default().borders(Borders::ALL).title("Geologic Git Terrain"));
+    let terrain_widget = Paragraph::new(canvas_str).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Geologic Git Terrain"),
+    );
 
     f.render_widget(terrain_widget, main_layout[0]);
 
@@ -242,8 +242,7 @@ fn ui(f: &mut Frame, app: &App) {
         current_commit.files.len()
     );
 
-    let status_bar = Paragraph::new(status_text)
-        .block(Block::default().borders(Borders::ALL));
+    let status_bar = Paragraph::new(status_text).block(Block::default().borders(Borders::ALL));
 
     f.render_widget(status_bar, main_layout[1]);
 }

@@ -155,18 +155,32 @@ fn ui(f: &mut Frame, chem: &ChemicalSystem, lorenz: &LorenzState) {
 
     // Render Sidebar Info
     let stats = vec![
-        Line::from(Span::styled("🧬 System Bio-Dome", Style::default().add_modifier(Modifier::BOLD).fg(Color::Magenta))),
+        Line::from(Span::styled(
+            "🧬 System Bio-Dome",
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Magenta),
+        )),
         Line::from(""),
-        Line::from(Span::styled("Driver (Lorenz):", Style::default().fg(Color::Cyan))),
+        Line::from(Span::styled(
+            "Driver (Lorenz):",
+            Style::default().fg(Color::Cyan),
+        )),
         Line::from(format!("X: {:.2}", lorenz.x)),
         Line::from(format!("Y: {:.2}", lorenz.y)),
         Line::from(format!("Z: {:.2}", lorenz.z)),
         Line::from(""),
-        Line::from(Span::styled("Expression (Gray-Scott):", Style::default().fg(Color::Green))),
+        Line::from(Span::styled(
+            "Expression (Gray-Scott):",
+            Style::default().fg(Color::Green),
+        )),
         Line::from(format!("Feed (f): {:.5}", chem.f)),
         Line::from(format!("Kill (k): {:.5}", chem.k)),
         Line::from(""),
-        Line::from(Span::styled("Controls:", Style::default().fg(Color::Yellow))),
+        Line::from(Span::styled(
+            "Controls:",
+            Style::default().fg(Color::Yellow),
+        )),
         Line::from("Click: Seeding"),
         Line::from("Q: Quit"),
     ];
