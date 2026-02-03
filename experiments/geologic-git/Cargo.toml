@@ -1,0 +1,11 @@
+[package]
+name = "geologic-git"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+crossterm.workspace = true
+ratatui.workspace = true
+rand.workspace = true
+anyhow.workspace = true
+chrono = "0.4.43"
