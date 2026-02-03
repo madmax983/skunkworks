@@ -10,10 +10,17 @@ pub struct Scanner {
     pub structs: Vec<StructInfo>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ItemType {
+    Struct,
+    Enum,
+}
+
 #[derive(Debug, Clone)]
 pub struct StructInfo {
     pub name: String,
     pub fields: Vec<String>, // List of types this struct depends on
+    pub kind: ItemType,
 }
 
 impl<'ast> Visit<'ast> for Scanner {
@@ -27,7 +34,11 @@ impl<'ast> Visit<'ast> for Scanner {
             }
         }
 
-        self.structs.push(StructInfo { name, fields });
+        self.structs.push(StructInfo {
+            name,
+            fields,
+            kind: ItemType::Struct,
+        });
 
         syn::visit::visit_item_struct(self, i);
     }
@@ -43,7 +54,11 @@ impl<'ast> Visit<'ast> for Scanner {
                 }
             }
         }
-        self.structs.push(StructInfo { name, fields });
+        self.structs.push(StructInfo {
+            name,
+            fields,
+            kind: ItemType::Enum,
+        });
     }
 }
 

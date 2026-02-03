@@ -7,17 +7,19 @@ pub struct Node {
     pub force: DVec2,
     pub mass: f64,
     pub name: String,
+    pub kind: usize,
     pub is_fixed: bool,
 }
 
 impl Node {
-    pub fn new(pos: DVec2, name: String) -> Self {
+    pub fn new(pos: DVec2, name: String, kind: usize) -> Self {
         Self {
             pos,
             vel: DVec2::ZERO,
             force: DVec2::ZERO,
             mass: 1.0,
             name,
+            kind,
             is_fixed: false,
         }
     }
@@ -184,8 +186,8 @@ mod tests {
     #[test]
     fn test_physics_stability() {
         let mut sys = System::new();
-        let n1 = sys.add_node(Node::new(DVec2::new(-10.0, 0.0), "A".into()));
-        let n2 = sys.add_node(Node::new(DVec2::new(10.0, 0.0), "B".into()));
+        let n1 = sys.add_node(Node::new(DVec2::new(-10.0, 0.0), "A".into(), 0));
+        let n2 = sys.add_node(Node::new(DVec2::new(10.0, 0.0), "B".into(), 0));
         sys.add_edge(n1, n2);
 
         // Run for a bit
