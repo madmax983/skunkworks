@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **text-sand**: Generic falling sand simulation with no documentation or unique traits. Grace period ends in 24h.
+- **code-erosion**: Redundant "data-to-terrain" visualizer with no documentation. Simplistic file-size mapping inferior to `log-landscape`. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
