@@ -18,6 +18,7 @@ members = [
     "experiments/cpu-casino",
     "experiments/crate-universe",
     "experiments/diff-drift",
+    "experiments/digital-compost",
     "experiments/digital-koi",
     "experiments/dx-audit",
     "experiments/enigma-machine",
