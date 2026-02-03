@@ -108,9 +108,9 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/glyph-terrain
+### [Concentration Level: DECOMPOSING] - Location: experiments/glyph-terrain (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Static implementation. Redundant with `log-landscape`.
+- **Status:** EXECUTED. Static implementation with hardcoded content. Redundant with `log-landscape`.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/quantum-tarot (GRAVEYARD)
 - **Scent Origin:** Reaper
