@@ -236,6 +236,9 @@
 - **Scent Origin:** Nova
 - **Status:** Seismic sensors deployed. Tracking structural fractures in the bedrock. The unwraps are widening.
 
+### [Concentration Level: FRESH] - Location: experiments/input-ghost
+- **Scent Origin:** Nova
+- **Status:** Paranormal activity detected. Keystrokes are being recorded from the beyond. The ghosts are typing.
 ### [Concentration Level: FRESH] - Location: experiments/miura-interface
 - **Scent Origin:** Genesis (The Origamist)
 - **Status:** The paper is creasing. The UI is folding into N-dimensions. Layout density is now a function of physical collapse.
