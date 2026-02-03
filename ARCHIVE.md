@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cpu-casino**: Documentation void. Redundant with `market-flow`. Invisible to swarm. Grace period ends in 24h.
+- **quantum-tarot**: Documentation void. Generic implementation (random text noise). Invisible to swarm. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cpu-casino**: Documentation void. Redundant with `market-flow`. Invisible to swarm. Failed to improve during grace period.
 - **code-metropolis**: Documentation void (no `README.md`). Unstable (scanner panics). Generic implementation. Failed to improve during grace period.
 - **ascii-optics**: Documentation void (no `README.md`). Generic implementation (ray tracer) with no connection to repository themes. Failed to improve during grace period.
 - **diff-drift**: Documentation void (no `README.md`). Generic racing mechanics with fragile, optional "git" integration. Failed to improve during grace period.
