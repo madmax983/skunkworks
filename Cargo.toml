@@ -12,7 +12,6 @@ members = [
     "experiments/clockwork-cpu",
     "experiments/code-bio-dome",
     "experiments/code-crawler",
-    "experiments/code-metropolis",
     "experiments/code-sprint",
     "experiments/crystal-structure",
     "experiments/cpu-casino",
