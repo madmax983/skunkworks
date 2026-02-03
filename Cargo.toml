@@ -5,6 +5,7 @@ members = [
     "experiments/ant-colony",
     "experiments/ascii-optics",
     "experiments/biomorph-flow",
+    "experiments/cargo-ants",
     "experiments/cargo-compass",
     "experiments/cargo-jenga",
     "experiments/cellular-beats",
