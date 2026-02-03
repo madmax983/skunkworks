@@ -20,7 +20,7 @@ impl Body {
             vel,
             force: DVec2::ZERO,
             mass,
-            radius: mass.sqrt(), // Heuristic radius
+            radius: mass.max(0.0).sqrt(), // Heuristic radius
             name,
             is_fixed: false,
         }
@@ -79,11 +79,13 @@ impl System {
 
                 let force = delta / dist * force_mag;
 
-                if !body_i.is_fixed {
-                    body_i.force += force;
-                }
-                if !body_j.is_fixed {
-                    body_j.force -= force;
+                if force.is_finite() {
+                    if !body_i.is_fixed {
+                        body_i.force += force;
+                    }
+                    if !body_j.is_fixed {
+                        body_j.force -= force;
+                    }
                 }
             }
         }
@@ -98,11 +100,13 @@ impl System {
         // Velocity Verlet
         // 1. First half-kick: v(t + dt/2) = v(t) + 0.5 * a(t) * dt
         for body in &mut self.bodies {
-            if body.is_fixed {
+            if body.is_fixed || body.mass.abs() < 1e-6 {
                 continue;
             }
             let accel = body.force / body.mass;
-            body.vel += accel * dt * 0.5;
+            if accel.is_finite() {
+                body.vel += accel * dt * 0.5;
+            }
         }
 
         // 2. Drift: r(t + dt) = r(t) + v(t + dt/2) * dt
@@ -110,7 +114,9 @@ impl System {
             if body.is_fixed {
                 continue;
             }
-            body.pos += body.vel * dt;
+            if body.pos.is_finite() && body.vel.is_finite() {
+                body.pos += body.vel * dt;
+            }
         }
 
         // 3. Update forces: a(t + dt)
@@ -118,11 +124,13 @@ impl System {
 
         // 4. Second half-kick: v(t + dt) = v(t + dt/2) + 0.5 * a(t + dt) * dt
         for body in &mut self.bodies {
-            if body.is_fixed {
+            if body.is_fixed || body.mass.abs() < 1e-6 {
                 continue;
             }
             let accel = body.force / body.mass;
-            body.vel += accel * dt * 0.5;
+            if accel.is_finite() {
+                body.vel += accel * dt * 0.5;
+            }
         }
     }
 }
@@ -194,5 +202,51 @@ mod tests {
             final_radius,
             drift
         );
+    }
+}
+
+#[cfg(test)]
+mod havoc_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn test_system_stability_random_bodies(
+            bodies in prop::collection::vec(
+                (
+                    (any::<f64>(), any::<f64>()), // pos
+                    any::<f64>(),                 // mass
+                    (any::<f64>(), any::<f64>())  // vel
+                ),
+                1..10
+            )
+        ) {
+            // Filter out NaNs from inputs, as we want to test if the system *produces* NaNs
+            // from valid (even if extreme) inputs.
+            prop_assume!(bodies.iter().all(|((px, py), m, (vx, vy))|
+                !px.is_nan() && !py.is_nan() && !m.is_nan() && !vx.is_nan() && !vy.is_nan()
+            ));
+            let mut system = System::new();
+            for (i, ((px, py), mass, (vx, vy))) in bodies.into_iter().enumerate() {
+                let pos = DVec2::new(px, py);
+                let vel = DVec2::new(vx, vy);
+
+                system.add_body(Body::new(pos, vel, mass, format!("Body {}", i)));
+            }
+
+            // Run for a few steps
+            for _ in 0..10 {
+                system.update(0.1);
+            }
+
+            // Check for NaNs
+            for body in &system.bodies {
+                prop_assert!(!body.pos.x.is_nan(), "Pos X is NaN");
+                prop_assert!(!body.pos.y.is_nan(), "Pos Y is NaN");
+                prop_assert!(!body.vel.x.is_nan(), "Vel X is NaN");
+                prop_assert!(!body.vel.y.is_nan(), "Vel Y is NaN");
+            }
+        }
     }
 }
