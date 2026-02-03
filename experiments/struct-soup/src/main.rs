@@ -4,7 +4,7 @@ pub mod physics;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use glam::DVec2;
-use physics::{Node, System};
+use physics::{Node, NodeKind, System};
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
@@ -45,12 +45,12 @@ impl App {
             // Random start position
             let pos = DVec2::new(rng.gen_range(-100.0..100.0), rng.gen_range(-100.0..100.0));
 
-            let kind_idx = match s.kind {
-                parser::ItemType::Struct => 0,
-                parser::ItemType::Enum => 1,
+            let kind = match s.kind {
+                parser::ItemType::Struct => NodeKind::Struct,
+                parser::ItemType::Enum => NodeKind::Enum,
             };
 
-            let idx = system.add_node(Node::new(pos, s.name.clone(), kind_idx));
+            let idx = system.add_node(Node::new(pos, s.name.clone(), kind));
             name_to_idx.insert(s.name.clone(), idx);
         }
 
@@ -218,7 +218,7 @@ fn ui(f: &mut Frame, app: &App) {
 
                 // Highlight edge if connected to nearest node
                 let is_connected =
-                    nearest_node_idx.map_or(false, |idx| edge.source == idx || edge.target == idx);
+                    nearest_node_idx.is_some_and(|idx| edge.source == idx || edge.target == idx);
 
                 let color = if is_connected {
                     Color::White
@@ -240,12 +240,10 @@ fn ui(f: &mut Frame, app: &App) {
                 let is_nearest = nearest_node_idx == Some(i);
 
                 let color = match (node.kind, is_nearest) {
-                    (0, true) => Color::LightCyan,
-                    (0, false) => Color::Cyan,
-                    (1, true) => Color::LightMagenta,
-                    (1, false) => Color::Magenta,
-                    (_, true) => Color::White,
-                    (_, false) => Color::Gray,
+                    (NodeKind::Struct, true) => Color::LightCyan,
+                    (NodeKind::Struct, false) => Color::Cyan,
+                    (NodeKind::Enum, true) => Color::LightMagenta,
+                    (NodeKind::Enum, false) => Color::Magenta,
                 };
 
                 let radius = if is_nearest { 4.0 } else { 2.0 };
@@ -302,9 +300,8 @@ fn ui(f: &mut Frame, app: &App) {
     if let Some(idx) = nearest_node_idx {
         let node = &app.system.nodes[idx];
         let kind_str = match node.kind {
-            0 => "Struct",
-            1 => "Enum",
-            _ => "Unknown",
+            NodeKind::Struct => "Struct",
+            NodeKind::Enum => "Enum",
         };
 
         let connections = app
