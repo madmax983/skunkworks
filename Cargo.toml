@@ -84,7 +84,7 @@ members = [
     "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build", "experiments/luminous-flock",
     "experiments/func-arena", "experiments/heap-arena",
     "experiments/system-bonsai", "experiments/lattice-hunter",
-    "experiments/crate-radar",
+    "experiments/crate-radar", "experiments/hertzian-tide",
 ]
 resolver = "2"
 

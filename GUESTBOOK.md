@@ -203,3 +203,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/phonetic-decay
 - **Scent Origin:** Genesis (The Philologist)
 - **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully.
+
+### [Concentration Level: FRESH] - Location: experiments/hertzian-tide
+- **Scent Origin:** Genesis (The Oceanographer)
+- **Status:** The tide is rising. Wave equations are successfully driving FM synthesis. The surface is liquid and the sound is wet.
