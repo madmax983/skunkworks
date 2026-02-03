@@ -1,0 +1,13 @@
+[package]
+name = "repo-rover"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+crossterm = "0.28"
+ratatui = "0.29"
+tui-shared = { path = "../../crates/tui-shared" }
+
+[dev-dependencies]
+tempfile = "3.24.0"

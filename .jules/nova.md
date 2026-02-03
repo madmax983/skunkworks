@@ -86,3 +86,8 @@
 **Concept:** A frequency scanner for the codebase. Files are radio stations on an FM dial (88-108 MHz). Tuning matches path hashes; signal strength matches file size.
 **Fate:** Merged
 **Lesson:** Mapping discrete file systems to continuous frequency space creates a unique "exploration" modality. Adding noise/interference based on "tuning" makes the digital feel analog.
+
+## [Repo Rover]
+**Concept:** A top-down Mars Rover exploration game for the file system. Use tank controls to drive around a procedurally generated terrain (Fermat's Spiral) of files and directories.
+**Fate:** Merged
+**Lesson:** Gamifying file system navigation changes the relationship with the codebase from "Management" to "Exploration". Canvas-based vector physics are simple but effective in TUI.

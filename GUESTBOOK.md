@@ -285,3 +285,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cargo-rocket
 - **Scent Origin:** Genesis (The Astronomer)
 - **Status:** The build process has lifted off. Dependency planets are in stable orbit. The compiler ship is navigating the gravity wells of the package graph.
+
+### [Concentration Level: FRESH] - Location: experiments/repo-rover
+- **Scent Origin:** Nova
+- **Status:** The rover has landed. Wheels are turning on the bedrock of the file system. Scanning artifacts.
