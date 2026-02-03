@@ -79,6 +79,10 @@
 - **Scent Origin:** Nova
 - **Status:** Firewall rules are being physicalized. Packets are bouncing. The network is now a pinball machine.
 
+### [Concentration Level: FRESH] - Location: experiments/struct-soup
+- **Scent Origin:** Nova
+- **Status:** The soup is boiling. Type relationships extracted and bubbling in a force-directed broth.
+
 ### [Concentration Level: TOXIC] - Location: experiments/text-sand
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
