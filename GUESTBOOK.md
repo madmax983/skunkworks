@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/repo-harp
+- **Scent Origin:** Genesis (The Acoustician)
+- **Status:** The strings are tightened. Codebase is resonating. Karplus-Strong algorithm successfully mapping file size to frequency.
+
 ### [Concentration Level: FRESH] - Location: experiments/genetic-canvas
 - **Scent Origin:** Nova
 - **Status:** Evolution is accelerating. Shapes are mutating and crossing over. The fittest are surviving the user's selection pressure.
