@@ -1,3 +1,20 @@
+//! # Semantic Spy
+//!
+//! `semantic-spy` is a TUI visualizer for **Semantic Bridge** snapshots.
+//!
+//! It reads a JSON snapshot (conforming to the `tui_semantic` protocol) from either
+//! a file or `stdin` and renders an interactive interface to explore it.
+//!
+//! ## Usage
+//!
+//! ```bash
+//! # From file
+//! cargo run --bin semantic-spy snapshot.json
+//!
+//! # From pipe
+//! other-app --semantic | cargo run --bin semantic-spy
+//! ```
+
 use anyhow::{Context, Result};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
@@ -14,12 +31,20 @@ use std::{
 };
 use tui_semantic::Snapshot;
 
+/// Application state for the TUI.
+///
+/// Holds the loaded snapshot and the UI state (e.g., currently selected entity).
 struct App {
+    /// The semantic snapshot being visualized.
     snapshot: Snapshot,
+    /// State of the entity list widget (selection, scroll).
     list_state: ListState,
 }
 
 impl App {
+    /// Creates a new `App` with the given snapshot.
+    ///
+    /// Selects the first entity by default if any exist.
     fn new(snapshot: Snapshot) -> Self {
         let mut list_state = ListState::default();
         if !snapshot.entities.is_empty() {
@@ -31,6 +56,9 @@ impl App {
         }
     }
 
+    /// Selects the next entity in the list.
+    ///
+    /// Loops back to the beginning if the end is reached.
     fn next(&mut self) {
         let i = match self.list_state.selected() {
             Some(i) => {
@@ -45,6 +73,9 @@ impl App {
         self.list_state.select(Some(i));
     }
 
+    /// Selects the previous entity in the list.
+    ///
+    /// Loops back to the end if the beginning is reached.
     fn previous(&mut self) {
         let i = match self.list_state.selected() {
             Some(i) => {
@@ -89,6 +120,12 @@ mod tests {
     }
 }
 
+/// Entry point for the application.
+///
+/// 1. Reads the snapshot from input.
+/// 2. Initializes the terminal.
+/// 3. Runs the main event loop.
+/// 4. Restores the terminal on exit.
 fn main() -> Result<()> {
     // 1. Read input
     let snapshot = read_snapshot()?;
@@ -110,6 +147,12 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Reads a `Snapshot` from command-line arguments (file) or stdin.
+///
+/// # Returns
+///
+/// * `Ok(Snapshot)` - The parsed snapshot.
+/// * `Err` - If reading fails or JSON is invalid.
 fn read_snapshot() -> Result<Snapshot> {
     let args: Vec<String> = env::args().collect();
     let mut json = String::new();
@@ -135,6 +178,13 @@ fn read_snapshot() -> Result<Snapshot> {
     Ok(snapshot)
 }
 
+/// Runs the main event loop.
+///
+/// Handles drawing the UI and processing key events.
+///
+/// * `q` - Quit the application.
+/// * `Down` - Select next entity.
+/// * `Up` - Select previous entity.
 fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>, mut app: App) -> Result<()> {
     loop {
         terminal.draw(|f| ui(f, &mut app))?;
@@ -152,6 +202,13 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>, mut app: 
     }
 }
 
+/// Renders the user interface.
+///
+/// Layout:
+/// - **Left Pane (30%)**: List of entities.
+/// - **Right Pane (70%)**: Split vertically.
+///     - **Top (70%)**: Canvas visualizer showing entity positions.
+///     - **Bottom (30%)**: JSON details of the selected entity.
 fn ui(f: &mut ratatui::Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
