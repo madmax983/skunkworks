@@ -3,17 +3,14 @@ mod render;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
-use petgraph::graph::NodeIndex;
 use petgraph::Direction;
+use petgraph::graph::NodeIndex;
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction as LayoutDirection, Layout},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
-    Frame,
+    widgets::{Block, Borders, Paragraph, canvas::Canvas},
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
@@ -57,7 +54,9 @@ impl App {
     }
 
     fn climb(&mut self, direction: Direction) {
-        let neighbors: Vec<_> = self.graph_data.graph
+        let neighbors: Vec<_> = self
+            .graph_data
+            .graph
             .neighbors_directed(self.current_node, direction)
             .collect();
 
@@ -76,7 +75,10 @@ fn main() -> Result<()> {
 
     // Check if graph can be built
     if let Err(e) = graph::build_graph() {
-        eprintln!("Failed to build dependency graph: {}. Make sure you are in a cargo workspace.", e);
+        eprintln!(
+            "Failed to build dependency graph: {}. Make sure you are in a cargo workspace.",
+            e
+        );
         return Ok(());
     }
 
@@ -121,24 +123,37 @@ fn ui(f: &mut Frame, app: &App) {
     let current_label = &app.graph_data.graph[app.current_node];
 
     // Info
-    let deps_count = app.graph_data.graph.neighbors_directed(app.current_node, Direction::Outgoing).count();
-    let rev_deps_count = app.graph_data.graph.neighbors_directed(app.current_node, Direction::Incoming).count();
+    let deps_count = app
+        .graph_data
+        .graph
+        .neighbors_directed(app.current_node, Direction::Outgoing)
+        .count();
+    let rev_deps_count = app
+        .graph_data
+        .graph
+        .neighbors_directed(app.current_node, Direction::Incoming)
+        .count();
 
     let info = Paragraph::new(vec![
         Line::from(vec![
             Span::styled("Penrose Build", Style::default().fg(Color::Cyan)),
             Span::raw(" | "),
-            Span::styled(format!("Current: {}", current_label), Style::default().fg(Color::Yellow)),
+            Span::styled(
+                format!("Current: {}", current_label),
+                Style::default().fg(Color::Yellow),
+            ),
         ]),
-        Line::from(vec![
-            Span::raw(format!("Dependencies (Up): {} | Dependents (Down): {}", deps_count, rev_deps_count)),
-        ]),
-        Line::from(vec![
-            Span::raw(format!("Selection Index: {}", app.selected_idx)),
-        ]),
-        Line::from(vec![
-            Span::raw("WASD / Arrows: Up/Down to climb, Left/Right to select branch. 'q' to quit."),
-        ]),
+        Line::from(vec![Span::raw(format!(
+            "Dependencies (Up): {} | Dependents (Down): {}",
+            deps_count, rev_deps_count
+        ))]),
+        Line::from(vec![Span::raw(format!(
+            "Selection Index: {}",
+            app.selected_idx
+        ))]),
+        Line::from(vec![Span::raw(
+            "WASD / Arrows: Up/Down to climb, Left/Right to select branch. 'q' to quit.",
+        )]),
     ])
     .block(Block::default().borders(Borders::ALL));
 

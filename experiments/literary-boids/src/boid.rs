@@ -1,6 +1,126 @@
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Vec2 {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl Vec2 {
+    pub fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+
+    pub fn zero() -> Self {
+        Self { x: 0.0, y: 0.0 }
+    }
+
+    pub fn magnitude_squared(&self) -> f64 {
+        self.x * self.x + self.y * self.y
+    }
+
+    pub fn magnitude(&self) -> f64 {
+        self.magnitude_squared().sqrt()
+    }
+
+    pub fn normalize(&self) -> Self {
+        let mag = self.magnitude();
+        if mag == 0.0 {
+            Self::zero()
+        } else {
+            *self / mag
+        }
+    }
+
+    pub fn limit(&self, max: f64) -> Self {
+        if self.magnitude_squared() > max * max {
+            self.normalize() * max
+        } else {
+            *self
+        }
+    }
+
+    pub fn distance_squared(&self, other: Vec2) -> f64 {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        dx * dx + dy * dy
+    }
+
+    pub fn distance(&self, other: Vec2) -> f64 {
+        self.distance_squared(other).sqrt()
+    }
+}
+
+impl Add for Vec2 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
+    }
+}
+
+impl AddAssign for Vec2 {
+    fn add_assign(&mut self, other: Self) {
+        self.x += other.x;
+        self.y += other.y;
+    }
+}
+
+impl Sub for Vec2 {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
+impl SubAssign for Vec2 {
+    fn sub_assign(&mut self, other: Self) {
+        self.x -= other.x;
+        self.y -= other.y;
+    }
+}
+
+impl Mul<f64> for Vec2 {
+    type Output = Self;
+    fn mul(self, scalar: f64) -> Self {
+        Self {
+            x: self.x * scalar,
+            y: self.y * scalar,
+        }
+    }
+}
+
+impl MulAssign<f64> for Vec2 {
+    fn mul_assign(&mut self, scalar: f64) {
+        self.x *= scalar;
+        self.y *= scalar;
+    }
+}
+
+impl Div<f64> for Vec2 {
+    type Output = Self;
+    fn div(self, scalar: f64) -> Self {
+        Self {
+            x: self.x / scalar,
+            y: self.y / scalar,
+        }
+    }
+}
+
+impl DivAssign<f64> for Vec2 {
+    fn div_assign(&mut self, scalar: f64) {
+        self.x /= scalar;
+        self.y /= scalar;
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct DNA {
@@ -32,9 +152,9 @@ impl DNA {
 
 #[derive(Clone, Debug)]
 pub struct Boid {
-    pub position: (f64, f64),
-    pub velocity: (f64, f64),
-    pub acceleration: (f64, f64),
+    pub position: Vec2,
+    pub velocity: Vec2,
+    pub acceleration: Vec2,
     pub dna: DNA,
     pub energy: f64,
 }
@@ -46,173 +166,150 @@ impl Boid {
         let dna = DNA::random();
 
         Self {
-            position: (x, y),
-            velocity: (angle.cos() * dna.max_speed, angle.sin() * dna.max_speed),
-            acceleration: (0.0, 0.0),
+            position: Vec2::new(x, y),
+            velocity: Vec2::new(angle.cos() * dna.max_speed, angle.sin() * dna.max_speed),
+            acceleration: Vec2::zero(),
             dna,
             energy: 100.0,
         }
     }
 
     pub fn update(&mut self, width: f64, height: f64) {
-        self.velocity.0 += self.acceleration.0;
-        self.velocity.1 += self.acceleration.1;
+        self.velocity += self.acceleration;
+        self.velocity = self.velocity.limit(self.dna.max_speed);
 
-        // Limit speed
-        let speed = (self.velocity.0.powi(2) + self.velocity.1.powi(2)).sqrt();
-        if speed > self.dna.max_speed {
-            self.velocity.0 = (self.velocity.0 / speed) * self.dna.max_speed;
-            self.velocity.1 = (self.velocity.1 / speed) * self.dna.max_speed;
-        }
-
-        self.position.0 += self.velocity.0;
-        self.position.1 += self.velocity.1;
+        self.position += self.velocity;
 
         // Reset acceleration
-        self.acceleration = (0.0, 0.0);
+        self.acceleration = Vec2::zero();
 
         // Wrap around edges
-        if self.position.0 < 0.0 {
-            self.position.0 += width;
+        if self.position.x < 0.0 {
+            self.position.x += width;
         }
-        if self.position.0 >= width {
-            self.position.0 -= width;
+        if self.position.x >= width {
+            self.position.x -= width;
         }
-        if self.position.1 < 0.0 {
-            self.position.1 += height;
+        if self.position.y < 0.0 {
+            self.position.y += height;
         }
-        if self.position.1 >= height {
-            self.position.1 -= height;
+        if self.position.y >= height {
+            self.position.y -= height;
         }
 
         // Decay energy
         self.energy -= 0.05;
     }
 
-    pub fn apply_force(&mut self, force: (f64, f64)) {
-        self.acceleration.0 += force.0;
-        self.acceleration.1 += force.1;
+    pub fn apply_force(&mut self, force: Vec2) {
+        self.acceleration += force;
     }
 
     // Returns the force vector to be applied
-    pub fn calculate_flocking_force(&self, boids: &[Boid]) -> (f64, f64) {
-        let mut separation = (0.0, 0.0);
-        let mut alignment = (0.0, 0.0);
-        let mut cohesion = (0.0, 0.0);
+    pub fn calculate_flocking_force(&self, boids: &[Boid]) -> Vec2 {
+        let separation = self.calculate_separation(boids);
+        let alignment = self.calculate_alignment(boids);
+        let cohesion = self.calculate_cohesion(boids);
 
-        let mut sep_count = 0;
-        let mut ali_count = 0;
-        let mut coh_count = 0;
+        separation * self.dna.separation_weight
+            + alignment * self.dna.alignment_weight
+            + cohesion * self.dna.cohesion_weight
+    }
 
-        let view_radius_sq = self.dna.view_radius.powi(2);
+    fn calculate_separation(&self, boids: &[Boid]) -> Vec2 {
+        let mut steer = Vec2::zero();
+        let mut count = 0;
         let separation_radius_sq = (self.dna.view_radius / 2.0).powi(2);
 
         for other in boids {
-            let d_sq = distance_squared(self.position, other.position);
-
-            // Avoid self (and exact overlaps, unlikely but possible)
-            if d_sq == 0.0 {
-                continue;
-            }
-
-            if d_sq < view_radius_sq {
-                // Separation
-                if d_sq < separation_radius_sq {
-                    let diff = (
-                        self.position.0 - other.position.0,
-                        self.position.1 - other.position.1,
-                    );
-                    // Weight by distance squared inversely
-                    separation.0 += diff.0 / d_sq;
-                    separation.1 += diff.1 / d_sq;
-                    sep_count += 1;
-                }
-
-                // Alignment
-                alignment.0 += other.velocity.0;
-                alignment.1 += other.velocity.1;
-                ali_count += 1;
-
-                // Cohesion
-                cohesion.0 += other.position.0;
-                cohesion.1 += other.position.1;
-                coh_count += 1;
+            let d_sq = self.position.distance_squared(other.position);
+            if d_sq > 0.0 && d_sq < separation_radius_sq {
+                let diff = self.position - other.position;
+                steer += diff / d_sq;
+                count += 1;
             }
         }
 
-        let mut total_force = (0.0, 0.0);
+        if count > 0 && steer.magnitude_squared() > 0.0 {
+            steer = steer.normalize() * self.dna.max_speed;
+            steer -= self.velocity;
+            steer = steer.limit(self.dna.max_force);
+            steer
+        } else {
+            Vec2::zero()
+        }
+    }
 
-        if sep_count > 0 {
-            // Steering for separation
-            let len = (separation.0.powi(2) + separation.1.powi(2)).sqrt();
-            if len > 0.0 {
-                separation.0 = (separation.0 / len) * self.dna.max_speed;
-                separation.1 = (separation.1 / len) * self.dna.max_speed;
-                separation.0 -= self.velocity.0;
-                separation.1 -= self.velocity.1;
-                separation = limit(separation, self.dna.max_force);
+    fn calculate_alignment(&self, boids: &[Boid]) -> Vec2 {
+        let mut sum = Vec2::zero();
+        let mut count = 0;
+        let view_radius_sq = self.dna.view_radius.powi(2);
 
-                total_force.0 += separation.0 * self.dna.separation_weight;
-                total_force.1 += separation.1 * self.dna.separation_weight;
+        for other in boids {
+            let d_sq = self.position.distance_squared(other.position);
+            if d_sq > 0.0 && d_sq < view_radius_sq {
+                sum += other.velocity;
+                count += 1;
             }
         }
 
-        if ali_count > 0 {
-            alignment.0 /= ali_count as f64;
-            alignment.1 /= ali_count as f64;
-            let len = (alignment.0.powi(2) + alignment.1.powi(2)).sqrt();
-            if len > 0.0 {
-                alignment.0 = (alignment.0 / len) * self.dna.max_speed;
-                alignment.1 = (alignment.1 / len) * self.dna.max_speed;
-                alignment.0 -= self.velocity.0;
-                alignment.1 -= self.velocity.1;
-                alignment = limit(alignment, self.dna.max_force);
+        if count > 0 {
+            sum /= count as f64;
+            if sum.magnitude_squared() > 0.0 {
+                sum = sum.normalize() * self.dna.max_speed;
+                sum -= self.velocity;
+                sum = sum.limit(self.dna.max_force);
+                return sum;
+            }
+        }
+        Vec2::zero()
+    }
 
-                total_force.0 += alignment.0 * self.dna.alignment_weight;
-                total_force.1 += alignment.1 * self.dna.alignment_weight;
+    fn calculate_cohesion(&self, boids: &[Boid]) -> Vec2 {
+        let mut sum = Vec2::zero();
+        let mut count = 0;
+        let view_radius_sq = self.dna.view_radius.powi(2);
+
+        for other in boids {
+            let d_sq = self.position.distance_squared(other.position);
+            if d_sq > 0.0 && d_sq < view_radius_sq {
+                sum += other.position;
+                count += 1;
             }
         }
 
-        if coh_count > 0 {
-            cohesion.0 /= coh_count as f64;
-            cohesion.1 /= coh_count as f64;
-
-            // Cohesion is steering towards the target position
-            let mut desired = (cohesion.0 - self.position.0, cohesion.1 - self.position.1);
-            let len = (desired.0.powi(2) + desired.1.powi(2)).sqrt();
-            if len > 0.0 {
-                desired.0 = (desired.0 / len) * self.dna.max_speed;
-                desired.1 = (desired.1 / len) * self.dna.max_speed;
-
-                desired.0 -= self.velocity.0;
-                desired.1 -= self.velocity.1;
-                desired = limit(desired, self.dna.max_force);
-
-                total_force.0 += desired.0 * self.dna.cohesion_weight;
-                total_force.1 += desired.1 * self.dna.cohesion_weight;
-            }
+        if count > 0 {
+            sum /= count as f64;
+            return self.seek(sum);
         }
+        Vec2::zero()
+    }
 
-        total_force
+    fn seek(&self, target: Vec2) -> Vec2 {
+        let mut desired = target - self.position;
+        if desired.magnitude_squared() > 0.0 {
+            desired = desired.normalize() * self.dna.max_speed;
+            desired -= self.velocity;
+            desired = desired.limit(self.dna.max_force);
+            desired
+        } else {
+            Vec2::zero()
+        }
     }
 }
 
-pub fn distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
-    distance_squared(p1, p2).sqrt()
+// Deprecated or wrappers
+pub fn distance(p1: Vec2, p2: Vec2) -> f64 {
+    p1.distance(p2)
 }
 
-pub fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
-    (p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)
+pub fn distance_squared(p1: Vec2, p2: Vec2) -> f64 {
+    p1.distance_squared(p2)
 }
 
-pub fn limit(vector: (f64, f64), max: f64) -> (f64, f64) {
-    let len_sq = vector.0.powi(2) + vector.1.powi(2);
-    if len_sq > max.powi(2) {
-        let len = len_sq.sqrt();
-        ((vector.0 / len) * max, (vector.1 / len) * max)
-    } else {
-        vector
-    }
+// limit is no longer needed as standalone, but if we keep it for backward compat it needs Vec2
+pub fn limit(vector: Vec2, max: f64) -> Vec2 {
+    vector.limit(max)
 }
 
 #[cfg(test)]
@@ -223,29 +320,29 @@ mod tests {
     fn test_boid_movement() {
         let mut boid = Boid::new(0.0, 0.0);
         boid.dna.max_speed = 2.0; // Ensure speed isn't capped
-        boid.velocity = (1.0, 0.0);
-        boid.acceleration = (0.0, 0.0);
+        boid.velocity = Vec2::new(1.0, 0.0);
+        boid.acceleration = Vec2::zero();
         boid.update(100.0, 100.0);
 
-        assert!((boid.position.0 - 1.0).abs() < 1e-6);
-        assert!((boid.position.1 - 0.0).abs() < 1e-6);
+        assert!((boid.position.x - 1.0).abs() < 1e-6);
+        assert!((boid.position.y - 0.0).abs() < 1e-6);
     }
 
     #[test]
     fn test_boundary_wrapping() {
         let mut boid = Boid::new(99.5, 50.0);
         boid.dna.max_speed = 2.0; // Ensure speed isn't capped
-        boid.velocity = (1.0, 0.0);
+        boid.velocity = Vec2::new(1.0, 0.0);
         boid.update(100.0, 100.0);
 
         // Should wrap to 0.5
-        assert!((boid.position.0 - 0.5).abs() < 1e-6);
+        assert!((boid.position.x - 0.5).abs() < 1e-6);
     }
 
     #[test]
     fn test_distance_squared() {
-        let p1 = (0.0, 0.0);
-        let p2 = (3.0, 4.0);
+        let p1 = Vec2::new(0.0, 0.0);
+        let p2 = Vec2::new(3.0, 4.0);
         assert!((distance_squared(p1, p2) - 25.0).abs() < 1e-6);
         assert!((distance(p1, p2) - 5.0).abs() < 1e-6);
     }
@@ -255,14 +352,14 @@ mod tests {
         let boid = Boid::new(50.0, 50.0);
         let flock = vec![];
         let force = boid.calculate_flocking_force(&flock);
-        assert_eq!(force, (0.0, 0.0));
+        assert_eq!(force, Vec2::zero());
     }
 
     #[test]
     fn test_flocking_force_separation() {
         // Create a boid at (50, 50)
         let mut boid1 = Boid::new(50.0, 50.0);
-        boid1.velocity = (0.0, 0.0);
+        boid1.velocity = Vec2::zero();
         boid1.dna.view_radius = 10.0;
         boid1.dna.max_speed = 2.0;
         boid1.dna.max_force = 0.1;
@@ -278,10 +375,10 @@ mod tests {
         let force = boid1.calculate_flocking_force(&[boid2]);
 
         assert!(
-            force.0 < 0.0,
+            force.x < 0.0,
             "Force X should be negative (separation), got {}",
-            force.0
+            force.x
         );
-        assert_eq!(force.1, 0.0, "Force Y should be zero");
+        assert_eq!(force.y, 0.0, "Force Y should be zero");
     }
 }

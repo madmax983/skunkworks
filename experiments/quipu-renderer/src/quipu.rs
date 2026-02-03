@@ -103,7 +103,7 @@ impl Cord {
 
         // Handle remaining carry
         while !carry_knots.is_empty() {
-             let mut position_total: u32 = 0;
+            let mut position_total: u32 = 0;
             for k in &carry_knots {
                 position_total += k.value() as u32;
             }
@@ -113,12 +113,12 @@ impl Cord {
 
             carry_knots = vec![Knot::Simple; carry_count as usize];
 
-             let new_level_knots = if remainder == 0 {
+            let new_level_knots = if remainder == 0 {
                 Vec::new()
             } else {
                 vec![Knot::Simple; remainder as usize]
             };
-             new_clusters.push(new_level_knots);
+            new_clusters.push(new_level_knots);
         }
 
         Cord {
@@ -181,8 +181,8 @@ impl From<u32> for Cord {
 impl fmt::Display for Cord {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.clusters.is_empty() {
-             write!(f, "Empty")?;
-             return Ok(());
+            write!(f, "Empty")?;
+            return Ok(());
         }
 
         // Display from top (highest power) to bottom (units)
@@ -190,8 +190,8 @@ impl fmt::Display for Cord {
         for (i, cluster) in self.clusters.iter().enumerate().rev() {
             // Print knots
             if cluster.is_empty() {
-                 // Empty space on the cord
-                 write!(f, "     ")?;
+                // Empty space on the cord
+                write!(f, "     ")?;
             } else {
                 for (j, knot) in cluster.iter().enumerate() {
                     match knot {
@@ -221,7 +221,7 @@ impl FromStr for Cord {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // Simplified parser for now
         // Assuming format like "●●\n|\n∞"
-         let parts: Vec<&str> = s.split('|').collect();
+        let parts: Vec<&str> = s.split('|').collect();
         // parts are high to low.
         // We want low to high for clusters.
 
@@ -230,49 +230,51 @@ impl FromStr for Cord {
         for part in parts.iter().rev() {
             let mut knots = Vec::new();
             // Split by whitespace or just scan chars
-             for c in part.chars() {
-                 match c {
-                     '●' => knots.push(Knot::Simple),
-                     '∞' => knots.push(Knot::FigureEight),
-                     '≡' => {
-                         // We will rely on 'L' parsing below or specialized parsing
-                         // But for now, let's handle the symbol itself if followed by number?
-                         // It's hard in a simple char loop.
-                     },
-                     's' => knots.push(Knot::Simple),
-                     'E' => knots.push(Knot::FigureEight),
-                      _ => {}
-                 }
-             }
+            for c in part.chars() {
+                match c {
+                    '●' => knots.push(Knot::Simple),
+                    '∞' => knots.push(Knot::FigureEight),
+                    '≡' => {
+                        // We will rely on 'L' parsing below or specialized parsing
+                        // But for now, let's handle the symbol itself if followed by number?
+                        // It's hard in a simple char loop.
+                    }
+                    's' => knots.push(Knot::Simple),
+                    'E' => knots.push(Knot::FigureEight),
+                    _ => {}
+                }
+            }
 
-             // Handle Long knots if formatted as L3 or ≡3
-             // Simple scan for numbers in the string
-             let part_trim = part.trim();
-             if part_trim.contains('L') {
-                 for word in part_trim.split_whitespace() {
-                     if word.starts_with('L') {
-                          let val = word[1..].parse::<u8>().unwrap_or(0);
-                          knots.push(Knot::Long(val));
-                     }
-                 }
-             } else if part_trim.contains('≡') {
-                 // Format: ≡3
-                 if let Some(idx) = part_trim.find('≡') {
-                     if let Ok(val) = part_trim[idx+3..].parse::<u8>() { // ≡ is 3 bytes? No, wait.
-                         // '≡' is U+2261. 3 bytes in UTF-8.
-                         knots.push(Knot::Long(val));
-                     } else if let Ok(val) = part_trim[idx+1..].parse::<u8>() { // Maybe just chars scan
-                         knots.push(Knot::Long(val));
-                     } else {
-                         // Try finding digit
-                         if let Some(digit_idx) = part_trim.find(|c: char| c.is_digit(10)) {
-                              if let Ok(val) = part_trim[digit_idx..].parse::<u8>() {
-                                  knots.push(Knot::Long(val));
-                              }
-                         }
-                     }
-                 }
-             }
+            // Handle Long knots if formatted as L3 or ≡3
+            // Simple scan for numbers in the string
+            let part_trim = part.trim();
+            if part_trim.contains('L') {
+                for word in part_trim.split_whitespace() {
+                    if word.starts_with('L') {
+                        let val = word[1..].parse::<u8>().unwrap_or(0);
+                        knots.push(Knot::Long(val));
+                    }
+                }
+            } else if part_trim.contains('≡') {
+                // Format: ≡3
+                if let Some(idx) = part_trim.find('≡') {
+                    if let Ok(val) = part_trim[idx + 3..].parse::<u8>() {
+                        // ≡ is 3 bytes? No, wait.
+                        // '≡' is U+2261. 3 bytes in UTF-8.
+                        knots.push(Knot::Long(val));
+                    } else if let Ok(val) = part_trim[idx + 1..].parse::<u8>() {
+                        // Maybe just chars scan
+                        knots.push(Knot::Long(val));
+                    } else {
+                        // Try finding digit
+                        if let Some(digit_idx) = part_trim.find(|c: char| c.is_digit(10)) {
+                            if let Ok(val) = part_trim[digit_idx..].parse::<u8>() {
+                                knots.push(Knot::Long(val));
+                            }
+                        }
+                    }
+                }
+            }
 
             clusters.push(knots);
         }

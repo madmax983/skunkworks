@@ -40,7 +40,9 @@ pub fn draw(f: &mut Frame, app: &Game) {
         let draw_end = b_end.min(end_x);
         let width = (draw_end - draw_start).max(0.0) as u16;
 
-        if width == 0 { continue; }
+        if width == 0 {
+            continue;
+        }
 
         let screen_x = (game_area.x as f64 + (draw_start - start_x)) as u16;
 
@@ -52,17 +54,17 @@ pub fn draw(f: &mut Frame, app: &Game) {
         };
 
         if block.is_solid {
-             f.render_widget(
+            f.render_widget(
                 Block::default().style(style),
-                Rect::new(screen_x, ground_y, width, 1)
+                Rect::new(screen_x, ground_y, width, 1),
             );
 
             // Draw code snippet below/inside?
             // If hazard, show warnings
             if matches!(block.block_type, BlockType::Hazard) {
-                 f.render_widget(
+                f.render_widget(
                     Paragraph::new("!").style(Style::default().fg(Color::Yellow)),
-                    Rect::new(screen_x, ground_y, width.min(1), 1)
+                    Rect::new(screen_x, ground_y, width.min(1), 1),
                 );
             }
         }
@@ -74,12 +76,14 @@ pub fn draw(f: &mut Frame, app: &Game) {
         let p_screen_y = (ground_y as f64 - app.player.y) as u16;
 
         // Ensure within bounds
-        if p_screen_x >= game_area.x && p_screen_x < (game_area.x + game_area.width) &&
-           p_screen_y >= game_area.y && p_screen_y < (game_area.y + game_area.height) {
-
+        if p_screen_x >= game_area.x
+            && p_screen_x < (game_area.x + game_area.width)
+            && p_screen_y >= game_area.y
+            && p_screen_y < (game_area.y + game_area.height)
+        {
             f.render_widget(
                 Paragraph::new("P").style(Style::default().fg(Color::Cyan).bold()),
-                Rect::new(p_screen_x, p_screen_y, 1, 1)
+                Rect::new(p_screen_x, p_screen_y, 1, 1),
             );
         }
     }
@@ -88,13 +92,15 @@ pub fn draw(f: &mut Frame, app: &Game) {
     let b_screen_x = (game_area.x as f64 + (app.boss.x - start_x)) as u16;
     let b_screen_y = (ground_y as f64 - app.boss.y) as u16;
 
-    if b_screen_x >= game_area.x && b_screen_x < (game_area.x + game_area.width) &&
-       b_screen_y >= game_area.y && b_screen_y < (game_area.y + game_area.height) {
-
+    if b_screen_x >= game_area.x
+        && b_screen_x < (game_area.x + game_area.width)
+        && b_screen_y >= game_area.y
+        && b_screen_y < (game_area.y + game_area.height)
+    {
         let boss_char = if app.boss.cooldown < 10 { 'O' } else { '@' };
         f.render_widget(
             Paragraph::new(boss_char.to_string()).style(Style::default().fg(Color::Magenta).bold()),
-            Rect::new(b_screen_x, b_screen_y, 1, 1)
+            Rect::new(b_screen_x, b_screen_y, 1, 1),
         );
 
         // Boss Name floating above
@@ -102,8 +108,9 @@ pub fn draw(f: &mut Frame, app: &Game) {
         let name_x = b_screen_x.saturating_sub(name_len / 2);
         if b_screen_y > 1 {
             f.render_widget(
-                Paragraph::new(app.boss.stats.name.clone()).style(Style::default().fg(Color::Magenta)),
-                Rect::new(name_x, b_screen_y - 1, name_len, 1)
+                Paragraph::new(app.boss.stats.name.clone())
+                    .style(Style::default().fg(Color::Magenta)),
+                Rect::new(name_x, b_screen_y - 1, name_len, 1),
             );
         }
     }
@@ -113,26 +120,41 @@ pub fn draw(f: &mut Frame, app: &Game) {
         let pj_screen_x = (game_area.x as f64 + (proj.x - start_x)) as u16;
         let pj_screen_y = (ground_y as f64 - proj.y) as u16;
 
-        if pj_screen_x >= game_area.x && pj_screen_x < (game_area.x + game_area.width) &&
-           pj_screen_y >= game_area.y && pj_screen_y < (game_area.y + game_area.height) {
-
+        if pj_screen_x >= game_area.x
+            && pj_screen_x < (game_area.x + game_area.width)
+            && pj_screen_y >= game_area.y
+            && pj_screen_y < (game_area.y + game_area.height)
+        {
             f.render_widget(
                 Paragraph::new(proj.symbol.to_string()).style(Style::default().fg(Color::Red)),
-                Rect::new(pj_screen_x, pj_screen_y, 1, 1)
+                Rect::new(pj_screen_x, pj_screen_y, 1, 1),
             );
         }
     }
 
     // --- Draw HUD ---
-    let hp_color = if app.player.hp < 30 { Color::Red } else { Color::Green };
+    let hp_color = if app.player.hp < 30 {
+        Color::Red
+    } else {
+        Color::Green
+    };
 
     let stats_line = Line::from(vec![
         Span::raw("HP: "),
-        Span::styled(format!("{} / {}", app.player.hp, app.player.max_hp), Style::default().fg(hp_color)),
+        Span::styled(
+            format!("{} / {}", app.player.hp, app.player.max_hp),
+            Style::default().fg(hp_color),
+        ),
         Span::raw(" | Score: "),
         Span::styled(format!("{}", app.score), Style::default().fg(Color::Yellow)),
         Span::raw(" | Boss: "),
-        Span::styled(format!("{} (ATK: {}, DEF: {})", app.boss.stats.name, app.boss.stats.attack, app.boss.stats.defense), Style::default().fg(Color::Magenta)),
+        Span::styled(
+            format!(
+                "{} (ATK: {}, DEF: {})",
+                app.boss.stats.name, app.boss.stats.attack, app.boss.stats.defense
+            ),
+            Style::default().fg(Color::Magenta),
+        ),
     ]);
 
     // Get current code line based on player position
@@ -147,11 +169,20 @@ pub fn draw(f: &mut Frame, app: &Game) {
 
     let code_line = Line::from(vec![
         Span::raw("Current Instruction: "),
-        Span::styled(current_code, Style::default().fg(Color::White).bg(Color::DarkGray)),
+        Span::styled(
+            current_code,
+            Style::default().fg(Color::White).bg(Color::DarkGray),
+        ),
     ]);
 
     // Messages (Logs)
-    let logs: Vec<Span> = app.messages.iter().rev().take(3).map(|s| Span::raw(format!(" > {}", s))).collect();
+    let logs: Vec<Span> = app
+        .messages
+        .iter()
+        .rev()
+        .take(3)
+        .map(|s| Span::raw(format!(" > {}", s)))
+        .collect();
     let log_line = Line::from(logs).style(Style::default().dim());
 
     let controls = Line::from(" [WASD/Arrows] Move/Jump | [q] Quit").style(Style::default().dim());
@@ -159,13 +190,21 @@ pub fn draw(f: &mut Frame, app: &Game) {
     let hud_text = vec![stats_line, code_line, log_line, controls];
 
     f.render_widget(
-        Paragraph::new(hud_text).block(Block::default().borders(Borders::TOP).title(" Heap Arena 🏟️ ")),
-        hud_area
+        Paragraph::new(hud_text).block(
+            Block::default()
+                .borders(Borders::TOP)
+                .title(" Heap Arena 🏟️ "),
+        ),
+        hud_area,
     );
 
     // Win/Loss Overlay
     if app.game_over {
-        let msg = if app.player.is_dead { "SEGMENTATION FAULT" } else { "GAME OVER" };
+        let msg = if app.player.is_dead {
+            "SEGMENTATION FAULT"
+        } else {
+            "GAME OVER"
+        };
         let color = Color::Red;
         draw_centered_msg(f, game_area, msg, color);
     } else if app.win {

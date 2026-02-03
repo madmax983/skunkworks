@@ -1,16 +1,16 @@
 use anyhow::Result;
-use syn::{visit::Visit, ItemFn, spanned::Spanned};
-use walkdir::WalkDir;
-use std::path::Path;
-use std::fs;
 use rand::Rng;
+use std::fs;
+use std::path::Path;
+use syn::{spanned::Spanned, visit::Visit, ItemFn};
+use walkdir::WalkDir;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum BlockType {
-    Solid,   // Normal ground (let, fn calls)
-    Hazard,  // Spikes (unsafe, panic)
-    Gap,     // Empty lines
-    Bouncy,  // Loops?
+    Solid,  // Normal ground (let, fn calls)
+    Hazard, // Spikes (unsafe, panic)
+    Gap,    // Empty lines
+    Bouncy, // Loops?
 }
 
 #[derive(Debug, Clone)]
@@ -86,8 +86,12 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
     // But we need to find *one* function to be the level.
 
     // Let's filter for .rs files
-    let rs_files: Vec<_> = entries.iter()
-        .filter(|e| e.path().extension().map_or(false, |ext| ext == "rs") && !e.path().to_string_lossy().contains("target"))
+    let rs_files: Vec<_> = entries
+        .iter()
+        .filter(|e| {
+            e.path().extension().map_or(false, |ext| ext == "rs")
+                && !e.path().to_string_lossy().contains("target")
+        })
         .collect();
 
     if rs_files.is_empty() {
@@ -101,7 +105,6 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
         let content = fs::read_to_string(file_entry.path())?;
 
         if let Ok(ast) = syn::parse_file(&content) {
-
             struct FnCollector<'a> {
                 funcs: Vec<&'a ItemFn>,
             }
@@ -123,7 +126,9 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
                 let end = func.span().end().line;
 
                 let file_lines: Vec<&str> = content.lines().collect();
-                if start >= file_lines.len() { continue; }
+                if start >= file_lines.len() {
+                    continue;
+                }
 
                 // Extract lines for level generation
                 let body_lines = &file_lines[start..end.min(file_lines.len())];
@@ -168,8 +173,11 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
                     let block_type = if trim.starts_with("unsafe") || trim.contains("panic!") {
                         BlockType::Hazard
                     } else if trim.starts_with("if") || trim.starts_with("match") {
-                         BlockType::Solid // Normal
-                    } else if trim.starts_with("loop") || trim.starts_with("for") || trim.starts_with("while") {
+                        BlockType::Solid // Normal
+                    } else if trim.starts_with("loop")
+                        || trim.starts_with("for")
+                        || trim.starts_with("while")
+                    {
                         BlockType::Bouncy
                     } else {
                         BlockType::Solid
@@ -184,13 +192,14 @@ pub fn generate_level(path: &Path) -> Result<Option<LevelProfile>> {
 
                 // Ensure there's a start and end platform
                 if segments.is_empty() {
-                     segments.push(LevelSegment { width: 20, block_type: BlockType::Solid, code: "// Empty function".to_string() });
+                    segments.push(LevelSegment {
+                        width: 20,
+                        block_type: BlockType::Solid,
+                        code: "// Empty function".to_string(),
+                    });
                 }
 
-                return Ok(Some(LevelProfile {
-                    segments,
-                    boss,
-                }));
+                return Ok(Some(LevelProfile { segments, boss }));
             }
         }
     }

@@ -14,9 +14,7 @@ use ratatui::{
     },
     Frame,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 struct App {
@@ -77,19 +75,15 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     app.width = chunks[0].width as f64;
     app.height = chunks[0].height as f64 * 2.0; // *2 because characters are tall, or just use raw cells?
-    // Let's use raw width/height for now, maybe *2 for block characters if we used half-blocks.
-    // But Canvas usually maps X/Y to resolution.
-    // Let's stick to 1:1 mapping for simplicity.
+                                                // Let's use raw width/height for now, maybe *2 for block characters if we used half-blocks.
+                                                // But Canvas usually maps X/Y to resolution.
+                                                // Let's stick to 1:1 mapping for simplicity.
     app.width = 100.0;
     app.height = 100.0;
     // Actually, let's keep it fixed so resizing window doesn't reset physics boundaries wildly.
 
     let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title(" Fluid Rain "),
-        )
+        .block(Block::default().borders(Borders::ALL).title(" Fluid Rain "))
         .x_bounds([0.0, app.width])
         .y_bounds([app.height, 0.0]) // Invert Y so 0 is top
         .paint(|ctx| {

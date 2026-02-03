@@ -1,5 +1,5 @@
+use crate::physics::{resolve_collision, PacketKind, Particle, Pin, PinKind, Vec2};
 use rand::Rng;
-use crate::physics::{Particle, Pin, PinKind, PacketKind, Vec2, resolve_collision};
 
 pub struct GameState {
     pub particles: Vec<Particle>,
@@ -33,7 +33,7 @@ impl GameState {
 
                 // Keep pins somewhat centered
                 if x > 5.0 && x < width - 5.0 {
-                     pins.push(Pin::new(x, y, PinKind::Bumper));
+                    pins.push(Pin::new(x, y, PinKind::Bumper));
                 }
             }
         }
@@ -61,7 +61,8 @@ impl GameState {
         // Every 60 ticks approx (assuming 60fps) -> 1 sec
         // Let's use random chance
         let mut rng = rand::thread_rng();
-        if rng.gen_bool(0.05) { // 5% chance per tick
+        if rng.gen_bool(0.05) {
+            // 5% chance per tick
             self.spawn_packet();
         }
 
@@ -72,7 +73,9 @@ impl GameState {
 
         // Collisions
         for p in &mut self.particles {
-            if !p.active { continue; }
+            if !p.active {
+                continue;
+            }
 
             for pin in &self.pins {
                 resolve_collision(p, pin);
@@ -117,7 +120,9 @@ impl GameState {
         let bin_width = self.width / 3.0;
 
         for p in &mut self.particles {
-            if !p.active { continue; }
+            if !p.active {
+                continue;
+            }
 
             if p.pos.y > bin_y {
                 p.active = false; // It landed
@@ -127,16 +132,16 @@ impl GameState {
                 let bin_idx = (p.pos.x / bin_width).floor() as i32;
 
                 let points = match (p.kind, bin_idx) {
-                    (PacketKind::Malware, 0) => 50,  // Malware caught in Drop
+                    (PacketKind::Malware, 0) => 50,   // Malware caught in Drop
                     (PacketKind::Malware, _) => -100, // Malware leaked!
 
-                    (PacketKind::Ssh, 1) => 20,     // SSH in SSH bin
-                    (PacketKind::Ssh, 0) => -5,     // SSH dropped
-                    (PacketKind::Ssh, _) => -10,    // SSH wrong port
+                    (PacketKind::Ssh, 1) => 20,  // SSH in SSH bin
+                    (PacketKind::Ssh, 0) => -5,  // SSH dropped
+                    (PacketKind::Ssh, _) => -10, // SSH wrong port
 
-                    (PacketKind::Http, 2) => 10,    // HTTP in HTTP bin
-                    (PacketKind::Http, 0) => -2,    // HTTP dropped (minor loss)
-                    (PacketKind::Http, _) => -5,    // HTTP wrong port
+                    (PacketKind::Http, 2) => 10, // HTTP in HTTP bin
+                    (PacketKind::Http, 0) => -2, // HTTP dropped (minor loss)
+                    (PacketKind::Http, _) => -5, // HTTP wrong port
                 };
 
                 self.score += points;
@@ -149,9 +154,11 @@ impl GameState {
         let cursor_pin = Pin::new(self.cursor_pos.x, self.cursor_pos.y, self.tool_kind);
 
         // Remove existing pin if close
-        if let Some(idx) = self.pins.iter().position(|p| {
-            (p.pos - self.cursor_pos).length() < (p.radius + cursor_pin.radius)
-        }) {
+        if let Some(idx) = self
+            .pins
+            .iter()
+            .position(|p| (p.pos - self.cursor_pos).length() < (p.radius + cursor_pin.radius))
+        {
             self.pins.remove(idx);
         } else {
             // Add new pin

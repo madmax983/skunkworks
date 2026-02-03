@@ -1,15 +1,15 @@
+pub mod allocator;
 pub mod game;
 pub mod level_gen;
-pub mod allocator;
 pub mod ui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use game::Game;
-use std::time::{Duration, Instant};
-use tui_shared::Tui;
 use std::env;
 use std::path::Path;
+use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 fn main() -> Result<()> {
     // 1. Generate Level
@@ -22,12 +22,18 @@ fn main() -> Result<()> {
     let level_profile = match level_gen::generate_level(path)? {
         Some(p) => p,
         None => {
-            eprintln!("No suitable Rust functions found to battle in {}.", path.display());
+            eprintln!(
+                "No suitable Rust functions found to battle in {}.",
+                path.display()
+            );
             return Ok(());
         }
     };
 
-    println!("Challenger Found: {} (HP: {}, ATK: {})", level_profile.boss.name, level_profile.boss.max_hp, level_profile.boss.attack);
+    println!(
+        "Challenger Found: {} (HP: {}, ATK: {})",
+        level_profile.boss.name, level_profile.boss.max_hp, level_profile.boss.attack
+    );
     println!("Entering Arena...");
     std::thread::sleep(Duration::from_secs(1));
 

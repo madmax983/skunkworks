@@ -1,9 +1,10 @@
+use crate::boid::Vec2;
 use ratatui::style::Color;
 use ratatui::widgets::canvas::Context;
 
 #[derive(Clone, Debug)]
 pub struct Trace {
-    pub position: (f64, f64),
+    pub position: Vec2,
     pub content: char,
     pub color: Color,
     pub lifetime: f64,
@@ -49,8 +50,8 @@ impl TraceLayer {
             };
 
             ctx.print(
-                trace.position.0,
-                trace.position.1,
+                trace.position.x,
+                trace.position.y,
                 ratatui::text::Span::styled(
                     trace.content.to_string(),
                     ratatui::style::Style::default().fg(color),
@@ -68,13 +69,13 @@ mod tests {
     fn test_trace_layer_add() {
         let mut layer = TraceLayer::new(2);
         layer.add(Trace {
-            position: (0.0, 0.0),
+            position: Vec2::new(0.0, 0.0),
             content: 'a',
             color: Color::White,
             lifetime: 10.0,
         });
         layer.add(Trace {
-            position: (1.0, 1.0),
+            position: Vec2::new(1.0, 1.0),
             content: 'b',
             color: Color::White,
             lifetime: 10.0,
@@ -83,7 +84,7 @@ mod tests {
 
         // Add one more, should replace first
         layer.add(Trace {
-            position: (2.0, 2.0),
+            position: Vec2::new(2.0, 2.0),
             content: 'c',
             color: Color::White,
             lifetime: 10.0,
@@ -97,7 +98,7 @@ mod tests {
     fn test_trace_layer_update() {
         let mut layer = TraceLayer::new(10);
         layer.add(Trace {
-            position: (0.0, 0.0),
+            position: Vec2::new(0.0, 0.0),
             content: 'a',
             color: Color::White,
             lifetime: 1.0,

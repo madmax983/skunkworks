@@ -1,5 +1,5 @@
-use petgraph::visit::EdgeRef;
 use petgraph::Direction;
+use petgraph::visit::EdgeRef;
 use ratatui::style::Color;
 use ratatui::widgets::canvas::{Context, Line};
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -124,7 +124,7 @@ pub fn build_scene(
                 z: pos.z + offset.2,
             };
 
-             if !visited_pos.contains(&new_pos) {
+            if !visited_pos.contains(&new_pos) {
                 visited_pos.insert(new_pos);
                 scene.push(RenderNode {
                     index: rev,
@@ -145,7 +145,11 @@ pub fn draw_scene(ctx: &mut Context<'_>, scene: &[RenderNode], graph: &Dependenc
         let (u, v) = project(node.pos);
 
         // Draw Node (Block)
-        let color = if node.is_focused { Color::Yellow } else { Color::Blue };
+        let color = if node.is_focused {
+            Color::Yellow
+        } else {
+            Color::Blue
+        };
 
         ctx.draw(&ratatui::widgets::canvas::Circle {
             x: u,

@@ -14,7 +14,11 @@ impl World {
         for _ in 0..150 {
             boids.push(Boid::new(width / 2.0, height / 2.0));
         }
-        Self { boids, width, height }
+        Self {
+            boids,
+            width,
+            height,
+        }
     }
 
     pub fn update(&mut self) {
@@ -45,12 +49,16 @@ impl World {
             let separation_radius_sq = (dna.view_radius / 2.0).powi(2);
 
             for j in 0..count {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let b2 = &self.boids[j];
                 let d_sq = distance_squared(p1, b2.position);
 
-                if d_sq == 0.0 { continue; }
+                if d_sq == 0.0 {
+                    continue;
+                }
 
                 // --- Flocking Logic ---
                 if d_sq < view_radius_sq {

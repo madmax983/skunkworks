@@ -1,4 +1,4 @@
-use crate::level_gen::{LevelProfile, BlockType};
+use crate::level_gen::{BlockType, LevelProfile};
 
 #[derive(Debug, Clone)]
 pub struct Block {
@@ -79,7 +79,7 @@ impl Heap {
     /// "Allocates" a block (makes it solid)
     pub fn allocate_at(&mut self, index: usize) {
         if index < self.blocks.len() {
-             self.blocks[index].is_solid = true;
+            self.blocks[index].is_solid = true;
         }
     }
 }

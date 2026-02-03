@@ -217,9 +217,8 @@ fn ui(f: &mut Frame, app: &App) {
                 let p2 = app.system.nodes[edge.target].pos;
 
                 // Highlight edge if connected to nearest node
-                let is_connected = nearest_node_idx.map_or(false, |idx| {
-                    edge.source == idx || edge.target == idx
-                });
+                let is_connected =
+                    nearest_node_idx.map_or(false, |idx| edge.source == idx || edge.target == idx);
 
                 let color = if is_connected {
                     Color::White
@@ -260,7 +259,11 @@ fn ui(f: &mut Frame, app: &App) {
 
                 // Draw Label
                 if is_nearest || app.zoom > 0.8 {
-                    let label_color = if is_nearest { Color::Yellow } else { Color::DarkGray };
+                    let label_color = if is_nearest {
+                        Color::Yellow
+                    } else {
+                        Color::DarkGray
+                    };
                     ctx.print(
                         node.pos.x + radius + 1.0,
                         node.pos.y,
@@ -284,17 +287,15 @@ fn ui(f: &mut Frame, app: &App) {
         .split(sidebar_area);
 
     // Stats
-    let stats_text = vec![
-        Line::from(vec![
-            Span::styled("Nodes: ", Style::default().fg(Color::Gray)),
-            Span::raw(app.node_count.to_string()),
-            Span::raw(" | "),
-            Span::styled("Edges: ", Style::default().fg(Color::Gray)),
-            Span::raw(app.edge_count.to_string()),
-        ]),
-    ];
-    let stats = Paragraph::new(stats_text)
-        .block(Block::default().borders(Borders::ALL).title(" Stats "));
+    let stats_text = vec![Line::from(vec![
+        Span::styled("Nodes: ", Style::default().fg(Color::Gray)),
+        Span::raw(app.node_count.to_string()),
+        Span::raw(" | "),
+        Span::styled("Edges: ", Style::default().fg(Color::Gray)),
+        Span::raw(app.edge_count.to_string()),
+    ])];
+    let stats =
+        Paragraph::new(stats_text).block(Block::default().borders(Borders::ALL).title(" Stats "));
     f.render_widget(stats, sidebar_chunks[0]);
 
     // Selection Details
@@ -306,13 +307,33 @@ fn ui(f: &mut Frame, app: &App) {
             _ => "Unknown",
         };
 
-        let connections = app.system.edges.iter().filter(|e| e.source == idx || e.target == idx).count();
+        let connections = app
+            .system
+            .edges
+            .iter()
+            .filter(|e| e.source == idx || e.target == idx)
+            .count();
 
         let details = vec![
-            Line::from(vec![Span::styled("Name: ", Style::default().fg(Color::Gray)), Span::styled(node.name.clone(), Style::default().add_modifier(Modifier::BOLD))]),
-            Line::from(vec![Span::styled("Type: ", Style::default().fg(Color::Gray)), Span::raw(kind_str)]),
-            Line::from(vec![Span::styled("Links: ", Style::default().fg(Color::Gray)), Span::raw(connections.to_string())]),
-            Line::from(vec![Span::styled("Pos: ", Style::default().fg(Color::Gray)), Span::raw(format!("({:.1}, {:.1})", node.pos.x, node.pos.y))]),
+            Line::from(vec![
+                Span::styled("Name: ", Style::default().fg(Color::Gray)),
+                Span::styled(
+                    node.name.clone(),
+                    Style::default().add_modifier(Modifier::BOLD),
+                ),
+            ]),
+            Line::from(vec![
+                Span::styled("Type: ", Style::default().fg(Color::Gray)),
+                Span::raw(kind_str),
+            ]),
+            Line::from(vec![
+                Span::styled("Links: ", Style::default().fg(Color::Gray)),
+                Span::raw(connections.to_string()),
+            ]),
+            Line::from(vec![
+                Span::styled("Pos: ", Style::default().fg(Color::Gray)),
+                Span::raw(format!("({:.1}, {:.1})", node.pos.x, node.pos.y)),
+            ]),
         ];
         let p = Paragraph::new(details)
             .block(Block::default().borders(Borders::ALL).title(" Selection "))
@@ -326,12 +347,21 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Legend
     let legend_items = vec![
-        ListItem::new(Line::from(vec![Span::styled("●", Style::default().fg(Color::Cyan)), Span::raw(" Struct")])),
-        ListItem::new(Line::from(vec![Span::styled("●", Style::default().fg(Color::Magenta)), Span::raw(" Enum")])),
-        ListItem::new(Line::from(vec![Span::styled("─", Style::default().fg(Color::White)), Span::raw(" Connected")])),
+        ListItem::new(Line::from(vec![
+            Span::styled("●", Style::default().fg(Color::Cyan)),
+            Span::raw(" Struct"),
+        ])),
+        ListItem::new(Line::from(vec![
+            Span::styled("●", Style::default().fg(Color::Magenta)),
+            Span::raw(" Enum"),
+        ])),
+        ListItem::new(Line::from(vec![
+            Span::styled("─", Style::default().fg(Color::White)),
+            Span::raw(" Connected"),
+        ])),
     ];
-    let legend = List::new(legend_items)
-        .block(Block::default().borders(Borders::ALL).title(" Legend "));
+    let legend =
+        List::new(legend_items).block(Block::default().borders(Borders::ALL).title(" Legend "));
     f.render_widget(legend, sidebar_chunks[2]);
 
     // Controls Help Prompt

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use verge_computer::{VergeComputerPlugin, EscapeWheel, mechanism, cpu};
+use verge_computer::{cpu, mechanism, EscapeWheel, VergeComputerPlugin};
 
 fn main() {
     App::new()
@@ -20,10 +20,9 @@ fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 
     // Ground (Fixed point for joints)
-    let ground = commands.spawn((
-        TransformBundle::default(),
-        RigidBody::Fixed,
-    )).id();
+    let ground = commands
+        .spawn((TransformBundle::default(), RigidBody::Fixed))
+        .id();
 
     // 1. Escape Wheel
     let wheel_pos = Vec2::new(0.0, 0.0);
@@ -33,7 +32,8 @@ fn setup(mut commands: Commands) {
     let wheel = mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
 
     // Add components
-    commands.entity(wheel)
+    commands
+        .entity(wheel)
         .insert(EscapeWheel {
             last_angle: 0.0,
             teeth,
@@ -45,7 +45,7 @@ fn setup(mut commands: Commands) {
             ground,
             RevoluteJointBuilder::new()
                 .local_anchor1(wheel_pos)
-                .local_anchor2(Vec2::ZERO) // Joint relative to body 2 (wheel) center
+                .local_anchor2(Vec2::ZERO), // Joint relative to body 2 (wheel) center
         ));
 
     // 2. Anchor (Escapement)
@@ -62,7 +62,7 @@ fn setup(mut commands: Commands) {
         ground,
         RevoluteJointBuilder::new()
             .local_anchor1(anchor_pos)
-            .local_anchor2(Vec2::ZERO)
+            .local_anchor2(Vec2::ZERO),
     ));
 
     // 3. CPU Visualization

@@ -1,5 +1,5 @@
-use serde::{ser, Serialize};
 use crate::quipu::Cord;
+use serde::{Serialize, ser};
 use std::fmt;
 
 #[derive(Debug, Default)]

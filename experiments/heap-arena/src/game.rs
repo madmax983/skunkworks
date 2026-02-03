@@ -97,7 +97,10 @@ impl Game {
             win: false,
             time: 0,
             scroll_offset: 0.0,
-            messages: vec!["WELCOME TO THE HEAP ARENA".to_string(), "Collect the function!".to_string()],
+            messages: vec![
+                "WELCOME TO THE HEAP ARENA".to_string(),
+                "Collect the function!".to_string(),
+            ],
         }
     }
 
@@ -115,10 +118,15 @@ impl Game {
 
         // Friction
         self.player.vx *= FRICTION;
-        if self.player.vx.abs() < 0.01 { self.player.vx = 0.0; }
+        if self.player.vx.abs() < 0.01 {
+            self.player.vx = 0.0;
+        }
 
         // Bounds
-        if self.player.x < 0.0 { self.player.x = 0.0; self.player.vx = 0.0; }
+        if self.player.x < 0.0 {
+            self.player.x = 0.0;
+            self.player.vx = 0.0;
+        }
 
         // --- Collision ---
         // Floor Check
@@ -213,7 +221,7 @@ impl Game {
                     x: self.boss.x,
                     y: self.boss.y,
                     vx: angle.cos() * speed * -1.0, // Left
-                    vy: angle.sin() * speed, // Up/Down
+                    vy: angle.sin() * speed,        // Up/Down
                     symbol: if rng.gen_bool(0.5) { 'E' } else { '!' }, // E for Error/Exception
                 });
             }

@@ -28,12 +28,24 @@ fn test_gear_rotation() {
 
     // Since we apply torque, it should have rotated (negative Z usually)
     // -1000 torque -> negative angle.
-    assert!(angle.abs() > 0.001, "Wheel should have rotated. Angle: {}", angle);
+    assert!(
+        angle.abs() > 0.001,
+        "Wheel should have rotated. Angle: {}",
+        angle
+    );
 }
 
 fn setup_test_scene(mut commands: Commands) {
     let wheel = mechanism::spawn_gear(&mut commands, Vec2::ZERO, 12, 3.0, 1.0);
-    commands.entity(wheel)
-        .insert(ExternalForce { torque: -1000.0, ..default() })
-        .insert(EscapeWheel { last_angle: 0.0, teeth: 12, cumulative_angle: 0.0 });
+    commands
+        .entity(wheel)
+        .insert(ExternalForce {
+            torque: -1000.0,
+            ..default()
+        })
+        .insert(EscapeWheel {
+            last_angle: 0.0,
+            teeth: 12,
+            cumulative_angle: 0.0,
+        });
 }

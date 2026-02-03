@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
 use cargo_metadata::{Metadata, MetadataCommand};
-use petgraph::graph::NodeIndex;
 use petgraph::Graph;
+use petgraph::graph::NodeIndex;
 use std::collections::HashMap;
 
 pub type DependencyGraph = Graph<String, ()>;
@@ -60,14 +60,14 @@ fn find_root(metadata: &Metadata, node_map: &HashMap<String, NodeIndex>) -> Opti
     if let Some(first_member) = metadata.workspace_members.first() {
         // Find the package with this ID
         if let Some(pkg) = metadata.packages.iter().find(|p| &p.id == first_member) {
-             return node_map.get(&pkg.name.to_string()).cloned();
+            return node_map.get(&pkg.name.to_string()).cloned();
         }
     }
 
     // Fallback: pick the first node in the graph
     if !node_map.is_empty() {
         // Just pick one
-         return node_map.values().next().cloned();
+        return node_map.values().next().cloned();
     }
 
     None

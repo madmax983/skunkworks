@@ -1,4 +1,4 @@
-use crate::boid::{Boid, DNA, distance};
+use crate::boid::{Boid, DNA, Vec2, distance};
 #[cfg(feature = "nova")]
 use crate::critic::Critic;
 #[cfg(feature = "nova")]
@@ -8,7 +8,7 @@ use ratatui::style::Color;
 
 #[derive(Clone, Debug)]
 pub struct Food {
-    pub position: (f64, f64),
+    pub position: Vec2,
     pub content: char,
 }
 
@@ -23,13 +23,13 @@ pub struct World {
     pub text_index: usize,
 
     // Scratch buffers to avoid allocations
-    forces_buffer: Vec<(f64, f64)>,
+    forces_buffer: Vec<Vec2>,
     eaten_indices_buffer: Vec<usize>,
     new_boids_buffer: Vec<Boid>,
     #[cfg(feature = "nova")]
     eaten_boid_indices_buffer: Vec<usize>,
     #[cfg(feature = "nova")]
-    critic_forces_buffer: Vec<(f64, f64)>,
+    critic_forces_buffer: Vec<Vec2>,
 }
 
 impl World {
@@ -87,7 +87,7 @@ impl World {
         let y = rng.gen_range(0.0..self.height);
 
         self.food.push(Food {
-            position: (x, y),
+            position: Vec2::new(x, y),
             content: char_to_spawn,
         });
     }
@@ -113,8 +113,7 @@ impl World {
                         boid.dna.max_speed,
                         boid.dna.max_force,
                     );
-                    force.0 += flee_force.0;
-                    force.1 += flee_force.1;
+                    force += flee_force;
                 }
             }
             self.forces_buffer.push(force);
@@ -138,7 +137,8 @@ impl World {
             }
 
             for (i, critic) in self.critics.iter_mut().enumerate() {
-                critic.apply_force(self.critic_forces_buffer[i]);
+                let f = self.critic_forces_buffer[i];
+                critic.apply_force(f);
                 critic.update(self.width, self.height);
 
                 // Eat boids
