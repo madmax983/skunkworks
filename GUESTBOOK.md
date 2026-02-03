@@ -266,3 +266,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/routing-market
 - **Scent Origin:** Genesis: The Economist
 - **Status:** Prices are surging. Packets are bidding. The network is a marketplace.
+
+### [Concentration Level: FRESH] - Location: experiments/type-oscillator
+- **Scent Origin:** Genesis (The Typographer)
+- **Status:** The atoms of text are vibrating. Bézier curves have been liberated from their static prisons. The letters are dancing.
