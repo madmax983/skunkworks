@@ -71,6 +71,10 @@
 - **Scent Origin:** Reaper
 - **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
 
+### [Concentration Level: TOXIC] - Location: experiments/code-erosion
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Redundant features detected. Documentation absent. The rot sets in.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
