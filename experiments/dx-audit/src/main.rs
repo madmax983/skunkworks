@@ -1,28 +1,31 @@
-use ratatui::{
-    layout::Alignment,
-    widgets::{Block, Borders, Paragraph},
-};
-use std::io;
 use tui_shared::Tui;
+use std::io;
+use ratatui::{widgets::{Block, Borders, Paragraph}, layout::Alignment};
 
 fn main() -> io::Result<()> {
-    // Initialize the terminal
+    // 1. Initialize the terminal
+    // This enables raw mode, enters alternate screen, and captures mouse.
     let mut tui = Tui::init()?;
 
-    // Draw something to the terminal
+    // 2. Draw something to the terminal
     tui.terminal.draw(|f| {
         let size = f.area();
-        let block = Block::default().title(" DX Audit ").borders(Borders::ALL);
-        let p =
-            Paragraph::new("If you can see this, tui-shared works!\n\n(Sleeping for 3 seconds...)")
-                .block(block)
-                .alignment(Alignment::Center);
+        let block = Block::default()
+            .title(" My TUI App ")
+            .borders(Borders::ALL);
+        let p = Paragraph::new("Hello, World!")
+            .block(block)
+            .alignment(Alignment::Center);
         f.render_widget(p, size);
     })?;
 
-    // Sleep so we can see the output before it closes
-    std::thread::sleep(std::time::Duration::from_secs(3));
+    // 3. Application logic here...
+    // std::thread::sleep(std::time::Duration::from_secs(3));
 
-    // The terminal is automatically restored when `tui` goes out of scope
+    // 4. Cleanup is automatic!
+    // When `tui` goes out of scope, it automatically:
+    // - Disables raw mode
+    // - Leaves alternate screen
+    // - Shows cursor
     Ok(())
 }
