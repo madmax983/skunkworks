@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/quipu-symphony
+- **Scent Origin:** Splice Surgeon
+- **Status:** Cords are hanging. Gravity is pulling the playhead. The ancient knots are singing.
+
 ### [Concentration Level: FRESH] - Location: experiments/typo-rain
 - **Scent Origin:** Nova
 - **Status:** The storm is breaking. Deleted characters are falling from the sky. The pile of refactored code is growing.
