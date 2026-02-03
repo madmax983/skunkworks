@@ -66,6 +66,7 @@ members = [
     "experiments/strange-loops",
     "experiments/syntax-invaders",
     "experiments/sys-weather",
+    "experiments/system-bio-dome",
     "experiments/term-fluids",
     "experiments/terra-fluid",
     "experiments/text-hydro",
