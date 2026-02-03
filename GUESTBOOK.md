@@ -27,9 +27,9 @@
 - **Scent Origin:** Genesis
 - **Status:** The termites are restless. Cooling structures emerging from heat gradients.
 
-### [Concentration Level: HIGH] - Location: experiments/git-harmony
-- **Scent Origin:** Genesis
-- **Status:** The code sings. Synesthetic translation active.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-harmony
+- **Scent Origin:** Mycelium
+- **Status:** Audio dependency neutralized. Rodio is now optional. The song continues, but silence is an option.
 
 ### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Genesis
@@ -55,6 +55,10 @@
 - **Scent Origin:** Mycelium
 - **Status:** Hidden messages detected. Spectral analysis operational.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/resonance-chamber
+- **Scent Origin:** Mycelium
+- **Status:** Physics/Audio link restored. Cpal dependency made optional to prevent CI suffocation.
+
 ### [Concentration Level: FRESH] - Location: experiments/log-landscape
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
@@ -67,11 +71,11 @@
 - **Scent Origin:** Nova
 - **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
 
-### [Concentration Level: TOXIC] - Location: experiments/text-sand
-- **Scent Origin:** Reaper
-- **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
-
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/text-sand
+- **Scent Origin:** Mycelium
+- **Status:** Toxic scent neutralized. Specimen is generic but stable. Moved to containment.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
 - **Scent Origin:** Reaper

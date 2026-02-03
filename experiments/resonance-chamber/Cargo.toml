@@ -5,10 +5,17 @@ edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
-cpal = "0.15"
 crossterm = { workspace = true }
 crossbeam-channel = "0.5"
 parking_lot = "0.12"
 rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]

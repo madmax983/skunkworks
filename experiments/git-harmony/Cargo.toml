@@ -8,4 +8,11 @@ anyhow = { workspace = true }
 crossterm = { workspace = true }
 rand = { workspace = true }
 ratatui = { workspace = true }
-rodio = "0.17"
+
+[dependencies.rodio]
+version = "0.17"
+optional = true
+
+[features]
+default = []
+audio = ["rodio"]

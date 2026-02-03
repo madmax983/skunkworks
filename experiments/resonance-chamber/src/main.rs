@@ -1,4 +1,5 @@
 use anyhow::Result;
+#[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_channel::{bounded, Sender};
 use crossterm::{
@@ -22,72 +23,90 @@ pub mod audio;
 pub mod physics;
 
 fn main() -> Result<()> {
-    // Audio Setup
-    let host = cpal::default_host();
-    // Use default device or fail gracefully if none (e.g. CI)
-    // If we fail here, we might want to run without audio?
-    // But the prompt says "Preferred Stack: cpal".
-    // I'll assume audio is available or fail.
-    let device = match host.default_output_device() {
-        Some(d) => d,
-        None => {
-            eprintln!("No audio device found. Running in visual-only mode (mocking audio thread).");
-            // For visual only, we need to spawn a thread that simulates the audio callback loop.
-            // This is good for CI/Cloud too.
-            return run_visual_only();
+    #[cfg(feature = "audio")]
+    {
+        // Audio Setup
+        let host = cpal::default_host();
+        // Use default device or fail gracefully if none (e.g. CI)
+        let device = match host.default_output_device() {
+            Some(d) => d,
+            None => {
+                eprintln!("No audio device found. Running in visual-only mode (mocking audio thread).");
+                return run_visual_only();
+            }
+        };
+
+        let config = match device.default_output_config() {
+            Ok(c) => c,
+            Err(e) => {
+                 eprintln!("Failed to get default output config: {}. Running in visual-only mode.", e);
+                 return run_visual_only();
+            }
+        };
+
+        let (cmd_tx, cmd_rx) = bounded(100);
+        let (snap_tx, snap_rx) = bounded(2);
+
+        let width = 60;
+        let height = 30;
+
+        let mut model = AudioModel::new(width, height, cmd_rx, snap_tx);
+
+        let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
+
+        let stream_result = match config.sample_format() {
+            cpal::SampleFormat::F32 => device.build_output_stream(
+                &config.into(),
+                move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                    model.process(data);
+                },
+                err_fn,
+                None,
+            ),
+            _ => {
+                 eprintln!("Only F32 sample format supported for this demo. Running in visual-only mode.");
+                 return run_visual_only();
+            }
+        };
+
+        let stream = match stream_result {
+            Ok(s) => s,
+            Err(e) => {
+                eprintln!("Failed to build output stream: {}. Running in visual-only mode.", e);
+                return run_visual_only();
+            }
+        };
+
+        if let Err(e) = stream.play() {
+             eprintln!("Failed to play stream: {}. Running in visual-only mode.", e);
+             return run_visual_only();
         }
-    };
 
-    let config = device.default_output_config()?;
+        // TUI Setup
+        enable_raw_mode()?;
+        let mut stdout = io::stdout();
+        execute!(stdout, EnterAlternateScreen)?;
+        let backend = CrosstermBackend::new(stdout);
+        let mut terminal = Terminal::new(backend)?;
 
-    let (cmd_tx, cmd_rx) = bounded(100);
-    let (snap_tx, snap_rx) = bounded(2);
+        let res = run_app(&mut terminal, width, height, cmd_tx, snap_rx);
 
-    let width = 60;
-    let height = 30;
+        // Restore
+        disable_raw_mode()?;
+        execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+        terminal.show_cursor()?;
 
-    let mut model = AudioModel::new(width, height, cmd_rx, snap_tx);
-
-    let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
-
-    let stream_result = match config.sample_format() {
-        cpal::SampleFormat::F32 => device.build_output_stream(
-            &config.into(),
-            move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                model.process(data);
-            },
-            err_fn,
-            None,
-        ),
-        _ => {
-            return Err(anyhow::anyhow!(
-                "Only F32 sample format supported for this demo"
-            ))
+        if let Err(err) = res {
+            println!("{:?}", err);
         }
-    };
 
-    let stream = stream_result?;
-    stream.play()?;
-
-    // TUI Setup
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    let res = run_app(&mut terminal, width, height, cmd_tx, snap_rx);
-
-    // Restore
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
-
-    if let Err(err) = res {
-        println!("{:?}", err);
+        Ok(())
     }
 
-    Ok(())
+    #[cfg(not(feature = "audio"))]
+    {
+        run_visual_only()
+    }
 }
 
 // Fallback for no audio device

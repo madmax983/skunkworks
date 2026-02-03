@@ -1,4 +1,5 @@
 use crate::parser::{DiffState, LineChange};
+#[cfg(feature = "audio")]
 use rodio::{OutputStream, Sink, Source};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
@@ -6,7 +7,9 @@ use std::time::{Duration, Instant};
 
 pub struct Synthesizer {
     // Audio stuff
+    #[cfg(feature = "audio")]
     _stream: Option<OutputStream>,
+    #[cfg(feature = "audio")]
     _stream_handle: Option<rodio::OutputStreamHandle>,
 
     // State
@@ -33,13 +36,16 @@ pub struct VisualNote {
 
 impl Synthesizer {
     pub fn new(diff: DiffState) -> Self {
+        #[cfg(feature = "audio")]
         let (stream, stream_handle) = match OutputStream::try_default() {
             Ok((s, h)) => (Some(s), Some(h)),
             Err(_) => (None, None),
         };
 
         Self {
+            #[cfg(feature = "audio")]
             _stream: stream,
+            #[cfg(feature = "audio")]
             _stream_handle: stream_handle,
             diff,
             current_file_idx: 0,
@@ -126,6 +132,7 @@ impl Synthesizer {
         });
 
         // Play audio if available
+        #[cfg(feature = "audio")]
         if let Some(handle) = &self._stream_handle {
             let duration = if is_add || is_remove {
                 Duration::from_millis(150)
