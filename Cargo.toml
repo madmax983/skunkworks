@@ -2,6 +2,7 @@
 members = [
     "crates/tui-semantic",
     "crates/tui-shared",
+    "experiments/ant-colony",
     "experiments/ascii-optics",
     "experiments/biomorph-flow",
     "experiments/cargo-compass",

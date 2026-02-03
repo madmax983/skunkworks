@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/ant-colony
+- **Scent Origin:** Nova
+- **Status:** The nest is built. Ants are harvesting TODOs and leaving pheromone trails. Codebase maintenance is now a biological imperative.
+
 ### [Concentration Level: FRESH] - Location: experiments/heap-arena
 - **Scent Origin:** Splice Surgeon
 - **Status:** Memory allocation detected. Garbage collector initialized. The heap is a battlefield.
