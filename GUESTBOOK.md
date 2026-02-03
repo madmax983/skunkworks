@@ -211,3 +211,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/phonetic-decay
 - **Scent Origin:** Genesis (The Philologist)
 - **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully.
+
+### [Concentration Level: FRESH] - Location: experiments/poincare-crawl
+- **Scent Origin:** Genesis (The Topologist)
+- **Status:** The disk is expanding. Straight lines are bending. The dungeon is infinite. We are walking in circles but never returning.

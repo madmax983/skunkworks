@@ -85,7 +85,7 @@ members = [
     "experiments/system-bonsai", "experiments/lattice-hunter",
     "experiments/crate-radar",
     "experiments/quipu-symphony",
-    "experiments/git-harmonograph",
+    "experiments/git-harmonograph", "experiments/poincare-crawl",
 ]
 resolver = "2"
 
