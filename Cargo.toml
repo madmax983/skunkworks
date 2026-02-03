@@ -74,13 +74,13 @@ members = [
     "experiments/system-bio-dome",
     "experiments/term-fluids",
     "experiments/terra-fluid",
-    "experiments/text-hydro",
     "experiments/thermo-tarmites",
     "experiments/thread-phase",
     "experiments/venation-vines",
     "experiments/voronoi-relaxation",
     "experiments/search-sonar",
     "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build", "experiments/luminous-flock",
+    "experiments/func-arena",
 ]
 resolver = "2"
 
