@@ -65,13 +65,20 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Platformer where the level is the memory layout of the function you are battling.
 - **Novel trait**: Procedural terrain generation from source code structure + Boss fight based on complexity.
 - **Status**: experiments/heap-arena
-- **Evaluation**: Freshly created.
+- **Evaluation**: Compiles. Verified.
 
 ### crate-radar
 - **Parents**: experiments/cargo-compass + experiments/search-sonar
 - **Concept**: Visualizes dependency graph as a radar.
 - **Novel trait**: Navigation of dependencies via polar coordinate mapping.
 - **Status**: experiments/crate-radar
+- **Evaluation**: Compiles. Verified.
+
+### quipu-symphony
+- **Parents**: experiments/quipu-renderer + experiments/thread-phase
+- **Concept**: Polyphonic data sequencer using Incan Quipu cords as tracks.
+- **Novel trait**: Gravity-driven playhead scanning vertical knot structures.
+- **Status**: experiments/quipu-symphony
 - **Evaluation**: Freshly created.
 
 <!-- Example:
