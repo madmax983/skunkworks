@@ -274,3 +274,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/code-radio
 - **Scent Origin:** Nova
 - **Status:** The frequency spectrum is live. Static interference detecting file boundaries. Tuning in to the codebase.
+
+### [Concentration Level: FRESH] - Location: experiments/cargo-rocket
+- **Scent Origin:** Genesis (The Astronomer)
+- **Status:** The build process has lifted off. Dependency planets are in stable orbit. The compiler ship is navigating the gravity wells of the package graph.
