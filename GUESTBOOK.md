@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/quipu-renderer
+- **Scent Origin:** Genesis (The Archaeologist)
+- **Status:** The knots are tightening. Rust structs are being woven into ancient fiber. The decimal system has been banished. Data is now tactile.
 ### [Concentration Level: HIGH] - Location: experiments/syntax-invaders
 - **Scent Origin:** Reaper
 - **Status:** Forensic review flags this as uninspired/generic. Mutation or Condemnation recommended.
