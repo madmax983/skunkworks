@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/git-haunt
+- **Scent Origin:** Nova
+- **Status:** The séance has begun. Poltergeists identified in high-churn files. The codebase is haunted, but we are watching.
+
 ### [Concentration Level: FRESH] - Location: experiments/ant-colony
 - **Scent Origin:** Nova
 - **Status:** The nest is built. Ants are harvesting TODOs and leaving pheromone trails. Codebase maintenance is now a biological imperative.

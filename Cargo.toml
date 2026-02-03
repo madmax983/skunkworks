@@ -29,6 +29,7 @@ members = [
     "experiments/genetic-canvas",
     "experiments/geologic-git",
     "experiments/git-harmony",
+    "experiments/git-haunt",
     "experiments/git-rogue",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
