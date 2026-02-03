@@ -21,6 +21,15 @@ pub struct World {
     pub height: f64,
     pub text_source: Vec<char>,
     pub text_index: usize,
+
+    // Scratch buffers to avoid allocations
+    forces_buffer: Vec<(f64, f64)>,
+    eaten_indices_buffer: Vec<usize>,
+    new_boids_buffer: Vec<Boid>,
+    #[cfg(feature = "nova")]
+    eaten_boid_indices_buffer: Vec<usize>,
+    #[cfg(feature = "nova")]
+    critic_forces_buffer: Vec<(f64, f64)>,
 }
 
 impl World {
@@ -42,6 +51,13 @@ impl World {
             height,
             text_source,
             text_index: 0,
+            forces_buffer: Vec::new(),
+            eaten_indices_buffer: Vec::new(),
+            new_boids_buffer: Vec::new(),
+            #[cfg(feature = "nova")]
+            eaten_boid_indices_buffer: Vec::new(),
+            #[cfg(feature = "nova")]
+            critic_forces_buffer: Vec::new(),
         };
 
         #[cfg(feature = "nova")]
@@ -78,10 +94,9 @@ impl World {
 
     pub fn update(&mut self) {
         // 1. Calculate flocking forces
-        // We need to clone boids or use a way to access them immutably while modifying others.
-        // Since Boid struct is small enough, cloning the vector for read-access is acceptable for performance in this context (~100s of boids).
-        // For millions, we'd use a spatial grid or separate arrays.
-        let mut forces = Vec::with_capacity(self.boids.len());
+        // We use a persistent buffer to avoid allocation
+        self.forces_buffer.clear();
+        self.forces_buffer.reserve(self.boids.len());
 
         for boid in &self.boids {
             #[allow(unused_mut)]
@@ -102,42 +117,42 @@ impl World {
                     force.1 += flee_force.1;
                 }
             }
-            forces.push(force);
+            self.forces_buffer.push(force);
         }
 
         // 2. Apply forces and update physics
         for (i, boid) in self.boids.iter_mut().enumerate() {
-            boid.apply_force(forces[i]);
+            boid.apply_force(self.forces_buffer[i]);
             boid.update(self.width, self.height);
         }
 
         #[cfg(feature = "nova")]
         {
             // Update critics
-            let mut eaten_boid_indices = Vec::new();
+            self.eaten_boid_indices_buffer.clear();
 
             // Calculate forces for critics
-            let mut critic_forces = Vec::new();
+            self.critic_forces_buffer.clear();
             for critic in &self.critics {
-                critic_forces.push(critic.hunt(&self.boids));
+                self.critic_forces_buffer.push(critic.hunt(&self.boids));
             }
 
             for (i, critic) in self.critics.iter_mut().enumerate() {
-                critic.apply_force(critic_forces[i]);
+                critic.apply_force(self.critic_forces_buffer[i]);
                 critic.update(self.width, self.height);
 
                 // Eat boids
                 for (b_idx, boid) in self.boids.iter().enumerate() {
                     if distance(critic.position, boid.position) < critic.kill_radius {
-                        eaten_boid_indices.push(b_idx);
+                        self.eaten_boid_indices_buffer.push(b_idx);
                     }
                 }
             }
 
             // Remove eaten boids
-            eaten_boid_indices.sort_unstable();
-            eaten_boid_indices.dedup();
-            for &index in eaten_boid_indices.iter().rev() {
+            self.eaten_boid_indices_buffer.sort_unstable();
+            self.eaten_boid_indices_buffer.dedup();
+            for &index in self.eaten_boid_indices_buffer.iter().rev() {
                 if index < self.boids.len() {
                     self.boids.swap_remove(index);
                 }
@@ -145,7 +160,7 @@ impl World {
         }
 
         // 3. Interactions (Eating)
-        let mut eaten_indices = Vec::new();
+        self.eaten_indices_buffer.clear();
 
         for boid in self.boids.iter_mut() {
             for (food_idx, food) in self.food.iter().enumerate() {
@@ -158,16 +173,17 @@ impl World {
                     #[cfg(feature = "nova")]
                     syntax_physics::apply_syntax_mutation(&mut boid.dna, food.content);
 
-                    eaten_indices.push(food_idx);
+                    self.eaten_indices_buffer.push(food_idx);
                     break; // One food per frame per boid? Or greedy? Let's say one.
                 }
             }
         }
 
         // Remove eaten food (in reverse order to keep indices valid)
-        eaten_indices.sort_unstable();
-        eaten_indices.dedup();
-        for &index in eaten_indices.iter().rev() {
+        self.eaten_indices_buffer.sort_unstable();
+        self.eaten_indices_buffer.dedup();
+        for i in (0..self.eaten_indices_buffer.len()).rev() {
+            let index = self.eaten_indices_buffer[i];
             if index < self.food.len() {
                 self.food.swap_remove(index);
                 // Respawn food to keep the ecosystem going
@@ -176,7 +192,7 @@ impl World {
         }
 
         // 4. Reproduction
-        let mut new_boids = Vec::new();
+        self.new_boids_buffer.clear();
         for boid in &mut self.boids {
             if boid.energy > 150.0 {
                 boid.energy -= 80.0; // Cost of reproduction
@@ -184,10 +200,10 @@ impl World {
                 child.energy = 80.0;
                 // Mutate DNA
                 mutate_dna(&mut child.dna);
-                new_boids.push(child);
+                self.new_boids_buffer.push(child);
             }
         }
-        self.boids.append(&mut new_boids);
+        self.boids.append(&mut self.new_boids_buffer);
 
         // 5. Death
         self.boids.retain(|b| b.energy > 0.0);
