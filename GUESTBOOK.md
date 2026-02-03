@@ -122,9 +122,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/text-hydro
+### [Concentration Level: DECOMPOSING] - Location: experiments/text-hydro (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Redundant. Grid-based fluid logic inferior to SPH.
+- **Status:** EXECUTED. Redundant grid-based fluid logic purged.
+
+### [Concentration Level: TOXIC] - Location: experiments/syntax-invaders
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Generic Space Invaders clone. Redundant with `code-sprint`. Documentation absent.
 
 ### [Concentration Level: FRESH] - Location: experiments/penrose-build
 - **Scent Origin:** Genesis (The Cartographer)
