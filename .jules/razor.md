@@ -22,3 +22,8 @@
 **Bloat:** `Attractor` trait in `experiments/strange-loops` was a "One-Time Trait" (or rather, "Internal Polymorphism Trait") implemented by 3 structs but only used behind an enum wrapper.
 **Cut:** Deleted the trait and used inherent methods directly.
 **Saved:** Removed an unnecessary abstraction layer.
+
+## [Reduction]
+**Bloat:** `kind: usize` magic numbers and unused `mass`, `is_fixed` fields in `struct-soup/physics.rs`.
+**Cut:** Replaced with explicit `NodeKind` enum and removed unused fields.
+**Saved:** Removed dead code paths and enforced type safety.

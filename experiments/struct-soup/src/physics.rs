@@ -1,26 +1,28 @@
 use glam::DVec2;
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum NodeKind {
+    Struct,
+    Enum,
+}
+
 #[derive(Debug, Clone)]
 pub struct Node {
     pub pos: DVec2,
     pub vel: DVec2,
     pub force: DVec2,
-    pub mass: f64,
     pub name: String,
-    pub kind: usize,
-    pub is_fixed: bool,
+    pub kind: NodeKind,
 }
 
 impl Node {
-    pub fn new(pos: DVec2, name: String, kind: usize) -> Self {
+    pub fn new(pos: DVec2, name: String, kind: NodeKind) -> Self {
         Self {
             pos,
             vel: DVec2::ZERO,
             force: DVec2::ZERO,
-            mass: 1.0,
             name,
             kind,
-            is_fixed: false,
         }
     }
 }
@@ -97,12 +99,8 @@ impl System {
                 let force_mag = self.repulsion_strength / dist_sq;
                 let force = (delta / dist) * force_mag;
 
-                if !self.nodes[i].is_fixed {
-                    self.nodes[i].force -= force;
-                }
-                if !self.nodes[j].is_fixed {
-                    self.nodes[j].force += force;
-                }
+                self.nodes[i].force -= force;
+                self.nodes[j].force += force;
             }
         }
 
@@ -122,22 +120,16 @@ impl System {
             let force_mag = self.spring_strength * displacement;
             let force = (delta / dist) * force_mag;
 
-            if !self.nodes[edge.source].is_fixed {
-                self.nodes[edge.source].force += force;
-            }
-            if !self.nodes[edge.target].is_fixed {
-                self.nodes[edge.target].force -= force;
-            }
+            self.nodes[edge.source].force += force;
+            self.nodes[edge.target].force -= force;
         }
 
         // 3. Center Gravity (keep everything somewhat centered)
         // Weak force pulling towards (0,0) to prevent drifting to infinity
         for node in &mut self.nodes {
-            if !node.is_fixed {
-                let dist = node.pos.length();
-                if dist > 1.0 {
-                    node.force -= node.pos.normalize() * (dist * 0.01);
-                }
+            let dist = node.pos.length();
+            if dist > 1.0 {
+                node.force -= node.pos.normalize() * (dist * 0.01);
             }
         }
     }
@@ -147,18 +139,12 @@ impl System {
 
         // First half-kick
         for node in &mut self.nodes {
-            if node.is_fixed {
-                continue;
-            }
-            let accel = node.force / node.mass;
+            let accel = node.force;
             node.vel += accel * dt * 0.5;
         }
 
         // Full drift
         for node in &mut self.nodes {
-            if node.is_fixed {
-                continue;
-            }
             node.pos += node.vel * dt;
         }
 
@@ -167,10 +153,7 @@ impl System {
 
         // Second half-kick
         for node in &mut self.nodes {
-            if node.is_fixed {
-                continue;
-            }
-            let accel = node.force / node.mass;
+            let accel = node.force;
             node.vel += accel * dt * 0.5;
 
             // Damping (Drag) applied to velocity directly
@@ -186,8 +169,8 @@ mod tests {
     #[test]
     fn test_physics_stability() {
         let mut sys = System::new();
-        let n1 = sys.add_node(Node::new(DVec2::new(-10.0, 0.0), "A".into(), 0));
-        let n2 = sys.add_node(Node::new(DVec2::new(10.0, 0.0), "B".into(), 0));
+        let n1 = sys.add_node(Node::new(DVec2::new(-10.0, 0.0), "A".into(), NodeKind::Struct));
+        let n2 = sys.add_node(Node::new(DVec2::new(10.0, 0.0), "B".into(), NodeKind::Struct));
         sys.add_edge(n1, n2);
 
         // Run for a bit
