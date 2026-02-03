@@ -26,7 +26,7 @@
 ## [Log Landscape]
 **Concept:** A frequency domain visualizer for text streams. It reads from stdin and renders a scrolling 3D wireframe terrain where height matches line intensity/keywords and X-axis is a hash of the content.
 **Fate:** Merged
-**Lesson:** Transforming textual entropy into physical geometry (terrain) allows for rapid visual pattern recognition in otherwise opaque log streams. `ratatui`'s Canvas lines can effectively create 2.5D wireframe effects.
+**Lesson:** Transforming textual entropy into physical geometry (terrain) allows for rapid visual pattern recognition in otherwise opaque log streams. `ratatui` Canvas lines can effectively create 2.5D wireframe effects.
 
 ## [Digital Koi]
 **Concept:** A system-monitored Zen Garden where fish (Boids) swim in a pond. Water turbulence is driven by real-time CPU usage, and water clarity by Memory usage.
@@ -62,3 +62,8 @@
 **Concept:** A TUI visualization of the process tree as a fractal bonsai. Roots are parent processes, branches are children, and leaves are threads/states. CPU usage drives color, Memory drives thickness.
 **Fate:** Merged
 **Lesson:** Visualizing hierarchical system data as organic structures makes "health" intuitive. `ratatui` Canvas is capable of recursive fractal rendering with decent performance.
+
+## [Git Harmonograph]
+**Concept:** A generative art experiment that visualizes git commits as parametric Harmonograph drawings. Frequencies, phases, and damping are derived from commit hashes.
+**Fate:** Merged
+**Lesson:** Mapping SHA-1 entropy to continuous physical parameters creates unique, deterministic "signatures" for metadata. High-resolution curves (2000+ points) look surprisingly good with `Braille` markers.

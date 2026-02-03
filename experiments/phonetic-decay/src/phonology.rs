@@ -193,20 +193,20 @@ fn apply_palatalization(input: &str) -> String {
         if next_is_front {
             match c {
                 'k' | 'K' => {
-                     out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
-                     i += 1;
-                     continue;
-                },
+                    out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
+                    i += 1;
+                    continue;
+                }
                 'g' | 'G' => {
                     out.push(if c.is_uppercase() { 'J' } else { 'j' });
                     i += 1;
                     continue;
-                },
+                }
                 't' | 'T' => {
-                     out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
-                     i += 1;
-                     continue;
-                },
+                    out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
+                    i += 1;
+                    continue;
+                }
                 'd' | 'D' => {
                     out.push(if c.is_uppercase() { 'J' } else { 'j' });
                     i += 1;
@@ -237,7 +237,7 @@ fn apply_metathesis(input: &str) -> String {
     while i < chars.len() {
         let c = chars[i];
         if i + 1 < chars.len() {
-            let next = chars[i+1];
+            let next = chars[i + 1];
             // Swap 'r' + vowel -> vowel + 'r' (brid -> bird style)
             // But let's check for Vowel + r -> r + Vowel (burn -> brun)
             if is_vowel(c) && (next == 'r' || next == 'l') {
@@ -285,7 +285,7 @@ fn apply_cluster_simplification(input: &str) -> String {
 
     // mb at end requires checking
     if s.ends_with("mb") {
-        return s[..s.len()-1].to_string();
+        return s[..s.len() - 1].to_string();
     }
     s
 }
@@ -296,7 +296,7 @@ fn apply_h_dropping(input: &str) -> String {
         return input[1..].to_string();
     }
     if input.starts_with('H') {
-         return input[1..].to_string();
+        return input[1..].to_string();
     }
     input.to_string()
 }
@@ -350,35 +350,45 @@ mod tests {
 
     #[test]
     fn test_palatalization() {
-        let evolver = Evolver { laws: vec![SoundLaw::Palatalization] };
+        let evolver = Evolver {
+            laws: vec![SoundLaw::Palatalization],
+        };
         assert_eq!(evolver.evolve("kiri"), "chiri");
         assert_eq!(evolver.evolve("get"), "jet");
     }
 
     #[test]
     fn test_metathesis() {
-        let evolver = Evolver { laws: vec![SoundLaw::Metathesis] };
+        let evolver = Evolver {
+            laws: vec![SoundLaw::Metathesis],
+        };
         // burn -> brun
         assert_eq!(evolver.evolve("burn"), "brun");
     }
 
     #[test]
     fn test_rhotacism() {
-         let evolver = Evolver { laws: vec![SoundLaw::Rhotacism] };
-         // vasa -> vara
-         assert_eq!(evolver.evolve("vasa"), "vara");
+        let evolver = Evolver {
+            laws: vec![SoundLaw::Rhotacism],
+        };
+        // vasa -> vara
+        assert_eq!(evolver.evolve("vasa"), "vara");
     }
 
     #[test]
     fn test_cluster() {
-         let evolver = Evolver { laws: vec![SoundLaw::ClusterSimplification] };
-         assert_eq!(evolver.evolve("knight"), "night");
+        let evolver = Evolver {
+            laws: vec![SoundLaw::ClusterSimplification],
+        };
+        assert_eq!(evolver.evolve("knight"), "night");
     }
 
-     #[test]
+    #[test]
     fn test_h_dropping() {
-         let evolver = Evolver { laws: vec![SoundLaw::HDropping] };
-         assert_eq!(evolver.evolve("house"), "ouse");
+        let evolver = Evolver {
+            laws: vec![SoundLaw::HDropping],
+        };
+        assert_eq!(evolver.evolve("house"), "ouse");
     }
 
     #[test]
@@ -392,7 +402,7 @@ mod tests {
         assert_eq!(trace.steps.len(), 1);
         assert_eq!(trace.steps[0].1, "father");
 
-         let mut evolver2 = Evolver::new();
+        let mut evolver2 = Evolver::new();
         evolver2.add_law(SoundLaw::GrimmsLaw); // house -> house (h unchanged)
         evolver2.add_law(SoundLaw::HDropping); // house -> ouse
 

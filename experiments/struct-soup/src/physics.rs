@@ -169,8 +169,16 @@ mod tests {
     #[test]
     fn test_physics_stability() {
         let mut sys = System::new();
-        let n1 = sys.add_node(Node::new(DVec2::new(-10.0, 0.0), "A".into(), NodeKind::Struct));
-        let n2 = sys.add_node(Node::new(DVec2::new(10.0, 0.0), "B".into(), NodeKind::Struct));
+        let n1 = sys.add_node(Node::new(
+            DVec2::new(-10.0, 0.0),
+            "A".into(),
+            NodeKind::Struct,
+        ));
+        let n2 = sys.add_node(Node::new(
+            DVec2::new(10.0, 0.0),
+            "B".into(),
+            NodeKind::Struct,
+        ));
         sys.add_edge(n1, n2);
 
         // Run for a bit
