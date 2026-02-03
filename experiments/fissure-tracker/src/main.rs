@@ -14,7 +14,10 @@ use ratatui::{
     Frame,
 };
 use simulation::{Vec2, World};
-use std::{env, time::{Duration, Instant}};
+use std::{
+    env,
+    time::{Duration, Instant},
+};
 use tui_shared::Tui;
 
 struct App {
@@ -119,11 +122,14 @@ fn ui(f: &mut Frame, app: &App) {
     let y_max = app.camera_pos.y + view_height / 2.0;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Fissure Tracker 🌋 "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Fissure Tracker 🌋 "),
+        )
         .x_bounds([x_min, x_max])
         .y_bounds([y_min, y_max])
         .paint(move |ctx| {
-
             // Draw Fissures (Jagged Lines)
             for fissure in &app.world.fissures {
                 // Color gets redder with age? Or just White?
@@ -132,7 +138,7 @@ fn ui(f: &mut Frame, app: &App) {
 
                 for i in 0..fissure.points.len().saturating_sub(1) {
                     let p1 = fissure.points[i];
-                    let p2 = fissure.points[i+1];
+                    let p2 = fissure.points[i + 1];
 
                     ctx.draw(&CanvasLine {
                         x1: p1.x,
@@ -165,7 +171,14 @@ fn ui(f: &mut Frame, app: &App) {
 
                 // Draw Label if zoomed in
                 if app.zoom > 1.5 || node.stress > 10.0 {
-                    let name = node.data.path.file_name().unwrap().to_str().unwrap().to_string();
+                    let name = node
+                        .data
+                        .path
+                        .file_name()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_string();
                     ctx.print(
                         node.pos.x + radius,
                         node.pos.y + radius,
@@ -184,5 +197,8 @@ fn ui(f: &mut Frame, app: &App) {
         app.world.fissures.len(),
         app.zoom
     );
-    f.render_widget(Paragraph::new(status_text).style(Style::default().fg(Color::Black).bg(Color::White)), status_area);
+    f.render_widget(
+        Paragraph::new(status_text).style(Style::default().fg(Color::Black).bg(Color::White)),
+        status_area,
+    );
 }
