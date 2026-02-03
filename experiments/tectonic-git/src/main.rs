@@ -14,7 +14,10 @@ use ratatui::{
         Block, Borders, Paragraph,
     },
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 use git::GitScanner;
 use simulation::World;
@@ -51,11 +54,11 @@ impl App {
             // Let's just add 1 per update for now, speed controls update freq maybe?
             // Actually let's use speed as commits per frame.
             for _ in 0..self.speed {
-                 if self.queue_idx < self.commits_queue.len() {
-                     let commit = self.commits_queue[self.queue_idx].clone();
-                     self.world.add_commit(commit);
-                     self.queue_idx += 1;
-                 }
+                if self.queue_idx < self.commits_queue.len() {
+                    let commit = self.commits_queue[self.queue_idx].clone();
+                    self.world.add_commit(commit);
+                    self.queue_idx += 1;
+                }
             }
 
             // Auto scroll to follow top
@@ -81,7 +84,8 @@ fn main() -> Result<()> {
     // Load Git History
     // Show loading?
     terminal.draw(|f| {
-        let p = Paragraph::new("Scanning Tectonic History... (git log -p)").block(Block::default().borders(Borders::ALL));
+        let p = Paragraph::new("Scanning Tectonic History... (git log -p)")
+            .block(Block::default().borders(Borders::ALL));
         f.render_widget(p, f.area());
     })?;
 
@@ -112,8 +116,12 @@ fn main() -> Result<()> {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
                         KeyCode::Char(' ') => app.is_paused = !app.is_paused,
-                        KeyCode::Char('+') | KeyCode::Char('=') => app.speed = (app.speed + 1).min(10),
-                        KeyCode::Char('-') | KeyCode::Char('_') => app.speed = (app.speed.saturating_sub(1)).max(1),
+                        KeyCode::Char('+') | KeyCode::Char('=') => {
+                            app.speed = (app.speed + 1).min(10)
+                        }
+                        KeyCode::Char('-') | KeyCode::Char('_') => {
+                            app.speed = (app.speed.saturating_sub(1)).max(1)
+                        }
                         KeyCode::Char('z') => app.zoom *= 1.1,
                         KeyCode::Char('x') => app.zoom /= 1.1,
                         KeyCode::Up => app.world.scroll_y += 5.0,
@@ -165,7 +173,11 @@ fn ui(f: &mut Frame, app: &App) {
     let y_max = center_y + view_height / 2.0;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Tectonic Git History "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Tectonic Git History "),
+        )
         .x_bounds([x_min, x_max])
         .y_bounds([y_min, y_max])
         .paint(move |ctx| {
@@ -199,7 +211,7 @@ fn ui(f: &mut Frame, app: &App) {
 
                 // If stressed, draw "Magma" core or indicator?
                 if strata.commit.stress_level > 0.0 {
-                     ctx.draw(&Rectangle {
+                    ctx.draw(&Rectangle {
                         x: x + width * 0.45,
                         y: strata.y_pos + 1.0,
                         width: width * 0.1,
@@ -211,21 +223,21 @@ fn ui(f: &mut Frame, app: &App) {
 
             // Draw Fissures
             for fissure in &app.world.fissures {
-                 // Optimization check
-                 // ...
+                // Optimization check
+                // ...
 
-                 for i in 0..fissure.points.len().saturating_sub(1) {
-                     let p1 = fissure.points[i];
-                     let p2 = fissure.points[i+1];
+                for i in 0..fissure.points.len().saturating_sub(1) {
+                    let p1 = fissure.points[i];
+                    let p2 = fissure.points[i + 1];
 
-                     ctx.draw(&CanvasLine {
-                         x1: p1.x,
-                         y1: p1.y,
-                         x2: p2.x,
-                         y2: p2.y,
-                         color: Color::Yellow,
-                     });
-                 }
+                    ctx.draw(&CanvasLine {
+                        x1: p1.x,
+                        y1: p1.y,
+                        x2: p2.x,
+                        y2: p2.y,
+                        color: Color::Yellow,
+                    });
+                }
             }
         });
 
@@ -248,5 +260,8 @@ fn ui(f: &mut Frame, app: &App) {
         app.zoom
     );
 
-    f.render_widget(Paragraph::new(status).block(Block::default().borders(Borders::ALL)), main_layout[1]);
+    f.render_widget(
+        Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
+        main_layout[1],
+    );
 }

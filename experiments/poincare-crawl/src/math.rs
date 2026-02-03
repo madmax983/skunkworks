@@ -119,8 +119,8 @@ impl Geodesic {
         let x2 = self.p2.re;
         let y2 = self.p2.im;
 
-        let d1 = 1.0 + x1*x1 + y1*y1;
-        let d2 = 1.0 + x2*x2 + y2*y2;
+        let d1 = 1.0 + x1 * x1 + y1 * y1;
+        let d2 = 1.0 + x2 * x2 + y2 * y2;
 
         // 2*x*x1 + 2*y*y1 = d1
         // 2*x*x2 + 2*y*y2 = d2

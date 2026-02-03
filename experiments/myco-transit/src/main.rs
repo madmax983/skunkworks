@@ -40,9 +40,8 @@ fn main() -> Result<()> {
 
     // Bolt Optimization: Hoist vector allocations out of the loop to reuse memory.
     // Reduces ~11 vector allocations/deallocations per frame (10,000+ items).
-    let mut agent_groups: Vec<Vec<(f64, f64)>> = (0..num_cities)
-        .map(|_| Vec::with_capacity(1500))
-        .collect();
+    let mut agent_groups: Vec<Vec<(f64, f64)>> =
+        (0..num_cities).map(|_| Vec::with_capacity(1500)).collect();
     let mut trails_low = Vec::with_capacity(2048);
     let mut trails_med = Vec::with_capacity(2048);
     let mut trails_high = Vec::with_capacity(2048);

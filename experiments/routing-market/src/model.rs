@@ -110,7 +110,9 @@ impl Network {
                 let jy = y as f64 * 10.0 + rng.gen_range(-2.0..2.0);
 
                 // Add dummy node first to get index
-                let idx = self.graph.add_node(Router::new(NodeIndex::new(0), (jx, jy)));
+                let idx = self
+                    .graph
+                    .add_node(Router::new(NodeIndex::new(0), (jx, jy)));
                 // Update ID
                 self.graph[idx].id = idx;
                 indices.push(idx);
@@ -135,10 +137,10 @@ impl Network {
                 }
                 // Random cross-links
                 if rng.gen_bool(0.1) {
-                     let random_idx = indices[rng.gen_range(0..indices.len())];
-                     if random_idx != curr_idx {
-                         self.add_bidirectional_link(curr_idx, random_idx);
-                     }
+                    let random_idx = indices[rng.gen_range(0..indices.len())];
+                    if random_idx != curr_idx {
+                        self.add_bidirectional_link(curr_idx, random_idx);
+                    }
                 }
             }
         }
@@ -159,19 +161,19 @@ impl Network {
         // 1. Move packets on links
         let mut arrival_events = Vec::new();
         for edge_idx in self.graph.edge_indices() {
-             let (_source, target) = self.graph.edge_endpoints(edge_idx).unwrap();
-             let link = &mut self.graph[edge_idx];
+            let (_source, target) = self.graph.edge_endpoints(edge_idx).unwrap();
+            let link = &mut self.graph[edge_idx];
 
-             let mut remaining = Vec::new();
-             for (packet, mut progress) in link.packets.drain(..) {
-                 progress += link.speed;
-                 if progress >= 1.0 {
-                     arrival_events.push((target, packet));
-                 } else {
-                     remaining.push((packet, progress));
-                 }
-             }
-             link.packets = remaining;
+            let mut remaining = Vec::new();
+            for (packet, mut progress) in link.packets.drain(..) {
+                progress += link.speed;
+                if progress >= 1.0 {
+                    arrival_events.push((target, packet));
+                } else {
+                    remaining.push((packet, progress));
+                }
+            }
+            link.packets = remaining;
         }
 
         // Place arrived packets into queues
@@ -202,7 +204,9 @@ impl Network {
 
         // 3. Router Decision Phase (The Market)
         // Snapshot prices first to ensure synchronous decisions
-        let prices: Vec<(NodeId, f64)> = self.graph.node_indices()
+        let prices: Vec<(NodeId, f64)> = self
+            .graph
+            .node_indices()
             .map(|idx| (idx, self.graph[idx].current_price()))
             .collect();
         // Map for quick lookup
@@ -229,8 +233,16 @@ impl Network {
 
             // Route them
             for mut p in packets_to_route {
+                // Check if destination exists
+                if self.graph.node_weight(p.dest).is_none() {
+                    self.dropped_packets += 1;
+                    continue;
+                }
+
                 // Find neighbors
-                let neighbors: Vec<(NodeId, EdgeId)> = self.graph.neighbors(node_idx)
+                let neighbors: Vec<(NodeId, EdgeId)> = self
+                    .graph
+                    .neighbors(node_idx)
                     .map(|n| {
                         let e = self.graph.find_edge(node_idx, n).unwrap();
                         (n, e)
@@ -261,7 +273,7 @@ impl Network {
                     // Dist heuristic
                     let dx = n_pos.0 - dest_pos.0;
                     let dy = n_pos.1 - dest_pos.1;
-                    let dist = (dx*dx + dy*dy).sqrt();
+                    let dist = (dx * dx + dy * dy).sqrt();
 
                     // Total perceived cost
                     let total_cost = n_price + (dist * 0.1); // Weight distance less than price?
@@ -284,7 +296,7 @@ impl Network {
                     }
                 } else {
                     // trapped
-                     self.dropped_packets += 1;
+                    self.dropped_packets += 1;
                 }
             }
         }
@@ -302,20 +314,22 @@ impl Network {
     }
 
     pub fn burst(&mut self, amount: usize) {
-         let mut rng = rand::thread_rng();
-         let node_count = self.graph.node_count();
-         if node_count < 2 { return; }
+        let mut rng = rand::thread_rng();
+        let node_indices: Vec<NodeId> = self.graph.node_indices().collect();
+        if node_indices.len() < 2 {
+            return;
+        }
 
-         for _ in 0..amount {
-            let src = NodeIndex::new(rng.gen_range(0..node_count));
-            let dst = NodeIndex::new(rng.gen_range(0..node_count));
+        for _ in 0..amount {
+            let src = node_indices[rng.gen_range(0..node_indices.len())];
+            let dst = node_indices[rng.gen_range(0..node_indices.len())];
             if src != dst {
-                 let budget = rng.gen_range(100.0..500.0); // Richer packets for burst
-                 self.total_packets += 1;
-                 let p = Packet::new(self.total_packets, src, dst, budget);
-                 self.graph[src].queue.push_back(p);
+                let budget = rng.gen_range(100.0..500.0); // Richer packets for burst
+                self.total_packets += 1;
+                let p = Packet::new(self.total_packets, src, dst, budget);
+                self.graph[src].queue.push_back(p);
             }
-         }
+        }
     }
 }
 
@@ -326,8 +340,12 @@ mod tests {
     #[test]
     fn test_packet_routing_success() {
         let mut network = Network::new();
-        let n0 = network.graph.add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
-        let n1 = network.graph.add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
+        let n0 = network
+            .graph
+            .add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
+        let n1 = network
+            .graph
+            .add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
 
         // Correctly set IDs
         network.graph[n0].id = n0;
@@ -341,21 +359,32 @@ mod tests {
         network.tick();
 
         // Packet should move to link
-        assert_eq!(network.graph[e].packets.len(), 1, "Packet should be in link");
+        assert_eq!(
+            network.graph[e].packets.len(),
+            1,
+            "Packet should be in link"
+        );
         assert!(network.graph[n0].queue.is_empty(), "Queue should be empty");
 
         network.tick();
 
         // Packet should arrive (speed 1.0 -> progress 1.0 -> arrival)
-        assert!(network.graph[e].packets.is_empty(), "Packet should leave link");
+        assert!(
+            network.graph[e].packets.is_empty(),
+            "Packet should leave link"
+        );
         assert_eq!(network.dropped_packets, 0, "Packet should not be dropped");
     }
 
     #[test]
     fn test_packet_bankruptcy() {
         let mut network = Network::new();
-        let n0 = network.graph.add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
-        let n1 = network.graph.add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
+        let n0 = network
+            .graph
+            .add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
+        let n1 = network
+            .graph
+            .add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
         network.graph[n0].id = n0;
         network.graph[n1].id = n1;
 
@@ -368,8 +397,14 @@ mod tests {
 
         network.tick();
 
-        assert_eq!(network.dropped_packets, 1, "Packet should be dropped due to bankruptcy");
-        assert!(network.graph[e].packets.is_empty(), "Packet should not enter link");
+        assert_eq!(
+            network.dropped_packets, 1,
+            "Packet should be dropped due to bankruptcy"
+        );
+        assert!(
+            network.graph[e].packets.is_empty(),
+            "Packet should not enter link"
+        );
     }
 
     #[test]
@@ -381,5 +416,31 @@ mod tests {
         // Grid edges: (5-1)*5 + (5-1)*5 = 20 + 20 = 40.
         // Plus potential random cross-links.
         assert!(network.graph.edge_count() >= 40);
+    }
+
+    #[test]
+    fn test_packet_invalid_dest_safe() {
+        let mut network = Network::new();
+        let n0 = network
+            .graph
+            .add_node(Router::new(NodeIndex::new(0), (0.0, 0.0)));
+        let n1 = network
+            .graph
+            .add_node(Router::new(NodeIndex::new(1), (10.0, 0.0)));
+        network.graph[n0].id = n0;
+        network.graph[n1].id = n1;
+
+        // Add edge so n0 has neighbors and attempts to route
+        network.graph.add_edge(n0, n1, Link::new(1.0));
+
+        // Packet with invalid destination (NodeIndex 999)
+        let p = Packet::new(1, n0, NodeIndex::new(999), 100.0);
+        network.graph[n0].queue.push_back(p);
+
+        // This should NOT panic, but currently will (if not fixed)
+        network.tick();
+
+        assert_eq!(network.dropped_packets, 1);
+        assert!(network.graph[n0].queue.is_empty());
     }
 }
