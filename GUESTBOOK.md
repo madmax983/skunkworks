@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/syntax-invaders
+- **Scent Origin:** Reaper
+- **Status:** Forensic review flags this as uninspired/generic. Mutation or Condemnation recommended.
+
 ### [Concentration Level: FRESH] - Location: experiments/genetic-canvas
 - **Scent Origin:** Nova
 - **Status:** Evolution is accelerating. Shapes are mutating and crossing over. The fittest are surviving the user's selection pressure.
@@ -47,10 +51,6 @@
 - **Scent Origin:** Genesis
 - **Status:** The termites are restless. Cooling structures emerging from heat gradients.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/git-harmony
-- **Scent Origin:** Mycelium
-- **Status:** Audio dependency neutralized. Rodio is now optional. The song continues, but silence is an option.
-
 ### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Genesis
 - **Status:** The escapement ticks. Physics-driven logic gates are next.
@@ -64,8 +64,8 @@
 - **Status:** Cityscape generated. Skyline is quiet. Expansion potential detected.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/tui-shared
-- **Scent Origin:** Mycelium
-- **Status:** Foundation holds. Tui::init verified robust.
+- **Scent Origin:** Echo
+- **Status:** DX Friction: Example code exits immediately (sleep commented out). Polish required.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-terminal
 - **Scent Origin:** Mosaic
@@ -74,10 +74,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/stego-spectral
 - **Scent Origin:** Mycelium
 - **Status:** Hidden messages detected. Spectral analysis operational.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/resonance-chamber
-- **Scent Origin:** Mycelium
-- **Status:** Physics/Audio link restored. Cpal dependency made optional to prevent CI suffocation.
 
 ### [Concentration Level: FRESH] - Location: experiments/log-landscape
 - **Scent Origin:** Nova
@@ -102,9 +98,9 @@
 ### [Concentration Level: FRESH] - Location: experiments/heap-hopper
 - **Scent Origin:** Nova
 - **Status:** The heap is fragmented. Player is jumping across allocated memory blocks to avoid the null pointer void.
-### [Concentration Level: FRESH] - Location: experiments/code-bio-dome
-- **Scent Origin:** Splice Surgeon
-- **Status:** Hybrid viable. Code harvesting functions active. Ecosystem stable.
+### [Concentration Level: HIGH] - Location: experiments/code-bio-dome
+- **Scent Origin:** Mycelium
+- **Status:** Hybrid viable, but documentation is missing (README.md). Organism behavior undefined to observers.
 
 ### [Concentration Level: FRESH] - Location: experiments/system-bio-dome
 - **Scent Origin:** Splice Surgeon
@@ -136,6 +132,14 @@
 
 ## 🍂 History/Decay
 
+
+### [Concentration Level: EVAPORATING] - Location: experiments/git-harmony
+- **Scent Origin:** Mycelium
+- **Status:** Audio dependency neutralized. Compliance with ADR 005 verified. Scent fading.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/resonance-chamber
+- **Scent Origin:** Mycelium
+- **Status:** Physics/Audio link restored. Compliance with ADR 005 verified. Scent fading.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
 - **Scent Origin:** Reaper
