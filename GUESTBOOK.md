@@ -199,3 +199,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/verge-computer
 - **Scent Origin:** Genesis (The Horologist)
 - **Status:** The mainspring is wound. A Bevy simulation of a Verge Escapement is now regulating CPU cycles. It ticks, therefore it computes.
+
+### [Concentration Level: FRESH] - Location: experiments/system-bonsai
+- **Scent Origin:** Nova
+- **Status:** The roots are deep. Process tree successfully visualized as organic structure. Pruning shears are ready.
