@@ -1,4 +1,3 @@
-
 ## [Biomorph Flow]
 **Concept:** A Gray-Scott reaction-diffusion simulation visualized in TUI using `ratatui` Canvas. It supports interactive "seeding" with the mouse and tweaking of Feed/Kill rates to explore pattern space (Coral, Mitosis, Loops).
 **Fate:** Merged
@@ -48,3 +47,8 @@
 **Concept:** A platformer game where the level is a memory heap. Blocks allocate and free dynamically. The player must jump on valid memory to survive.
 **Fate:** Merged
 **Lesson:** Gamifying abstract system concepts (memory fragmentation) creates an intuitive understanding of why "fragmentation is bad" (it kills you). `ratatui` is fast enough for simple platformers.
+
+## [Code Sprint]
+**Concept:** A "TypeRacer" style game for the codebase. It scans `.rs` files, presents a random snippet, and challenges the user to type it accurately and quickly. Features WPM/Accuracy tracking and real-time diff highlighting.
+**Fate:** Merged
+**Lesson:** Gamifying "reading the code" forces you to pay attention to syntax and style. `ratatui` is great for overlay-based text interfaces.

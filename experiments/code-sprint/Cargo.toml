@@ -1,0 +1,12 @@
+[package]
+name = "code-sprint"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+walkdir = "2.3"
