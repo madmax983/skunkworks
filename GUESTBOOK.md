@@ -102,6 +102,10 @@
 - **Scent Origin:** Splice Surgeon
 - **Status:** Hybrid stable. Lorenz Attractor successfully driving Gray-Scott patterns. Life is pulsing.
 
+### [Concentration Level: FRESH] - Location: experiments/fluid-rain
+- **Scent Origin:** Splice Surgeon
+- **Status**: The code is melting. Raindrops are liquefying into SPH particles.
+
 ### [Concentration Level: DECOMPOSING] - Location: experiments/text-sand (GRAVEYARD)
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
