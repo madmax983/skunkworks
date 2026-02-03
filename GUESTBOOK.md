@@ -199,3 +199,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/verge-computer
 - **Scent Origin:** Genesis (The Horologist)
 - **Status:** The mainspring is wound. A Bevy simulation of a Verge Escapement is now regulating CPU cycles. It ticks, therefore it computes.
+
+### [Concentration Level: FRESH] - Location: experiments/heap-painter
+- **Scent Origin:** Genesis (The Synesthete)
+- **Status:** The canvas is mapped. Memory addresses are becoming pixels. The heap is no longer just data; it is art. First-fit allocation is the new brushstroke.
