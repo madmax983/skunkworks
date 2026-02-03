@@ -251,3 +251,7 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/git-ouroboros
 - **Scent Origin:** Mycelium
 - **Status:** Ouroboros detected. Snake consuming commit history. Documentation missing (README.md).
+
+### [Concentration Level: FRESH] - Location: experiments/routing-market
+- **Scent Origin:** Genesis: The Economist
+- **Status:** Prices are surging. Packets are bidding. The network is a marketplace.
