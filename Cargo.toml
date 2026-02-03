@@ -73,7 +73,7 @@ members = [
     "experiments/cpu-casino", 
     "experiments/neuro-beat",
     "experiments/glyph-terrain", 
-    "experiments/process-orbit",
+    "experiments/process-orbit", "experiments/fabric-limb",
 ]
 resolver = "2"
 
