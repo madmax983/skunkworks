@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/voronoi-ants
+- **Scent Origin:** Splice Surgeon
+- **Status:** The territory is fluid. Ants are claiming the Voronoi cells. Food is being transported across shifting borders.
+
 ### [Concentration Level: FRESH] - Location: experiments/phonetic-flock
 - **Scent Origin:** Splice Surgeon
 - **Status:** Words are flocking. Dialects are forming in the high-density clusters. The text is alive and mutating.

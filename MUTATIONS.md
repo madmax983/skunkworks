@@ -86,7 +86,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Linguistic simulation where words are boids that evolve phonetically when flocking.
 - **Novel trait**: Spatial density drives linguistic evolution (sound shifts).
 - **Status**: experiments/phonetic-flock
-- **Evaluation**: Freshly created.
+- **Evaluation**: Compiles. Verified.
+
+### voronoi-ants
+- **Parents**: experiments/ant-colony + experiments/voronoi-relaxation
+- **Concept**: Ants foraging for "TODOs" in the codebase, with territory visualized as a dynamic Voronoi diagram.
+- **Novel trait**: Ants act as mobile sites for the Voronoi tessellation, creating fluid, shifting regions based on agent density.
+- **Status**: experiments/voronoi-ants
+- **Evaluation**: Freshly created. Compiles.
 
 <!-- Example:
 ### semantic-spy

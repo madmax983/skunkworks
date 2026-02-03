@@ -94,6 +94,7 @@ members = [
     "experiments/git-ouroboros",
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
+    "experiments/voronoi-ants",
 ]
 resolver = "2"
 
