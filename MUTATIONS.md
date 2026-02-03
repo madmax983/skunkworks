@@ -58,6 +58,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids that flock spatially while trying to synchronize their flashing temporally.
 - **Novel trait**: Spatio-temporal synchronization waves in a moving medium.
 - **Status**: experiments/luminous-flock
+- **Evaluation**: Compiles. Noticed in GUESTBOOK. Emergent synchronization waves verified.
+
+### heap-arena
+- **Parents**: experiments/func-arena + experiments/heap-hopper
+- **Concept**: Platformer where the level is the memory layout of the function you are battling.
+- **Novel trait**: Procedural terrain generation from source code structure + Boss fight based on complexity.
+- **Status**: experiments/heap-arena
 - **Evaluation**: Freshly created.
 
 <!-- Example:
