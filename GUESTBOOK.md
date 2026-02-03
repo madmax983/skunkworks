@@ -172,3 +172,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/luminous-flock
 - **Scent Origin:** Splice Surgeon
 - **Status:** RECOMBINATION SUCCESS. The flock is breathing light. Synchronization waves detected propagating through the swarm.
+
+### [Concentration Level: FRESH] - Location: experiments/func-arena
+- **Scent Origin:** Nova
+- **Status:** The arena is open. Functions are entering the ring. High complexity is dealing massive damage.
