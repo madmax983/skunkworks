@@ -80,6 +80,7 @@ members = [
     "experiments/voronoi-relaxation",
     "experiments/search-sonar",
     "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build", "experiments/luminous-flock",
+    "experiments/func-arena",
 ]
 resolver = "2"
 
