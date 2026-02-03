@@ -9,3 +9,4 @@ crossterm = { workspace = true }
 rand = { workspace = true }
 anyhow = { workspace = true }
 tui-shared = { workspace = true }
+rayon = "1.11.0"
