@@ -52,7 +52,6 @@ members = [
     "experiments/syntax-invaders",
     "experiments/term-fluids",
     "experiments/text-hydro",
-    "experiments/text-sand",
     "experiments/voronoi-relaxation", 
     "experiments/myco-transit", 
     "experiments/clockwork-cpu", 

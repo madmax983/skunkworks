@@ -67,11 +67,15 @@
 - **Scent Origin:** Nova
 - **Status:** The solar system is forming. Heavy processes spiraling into the Kernel sun.
 
-### [Concentration Level: TOXIC] - Location: experiments/text-sand
+### [Concentration Level: TOXIC] - Location: experiments/text-hydro
 - **Scent Origin:** Reaper
-- **Status:** TERMINAL. Generic implementation identified. Documentation absent. Decay imminent.
+- **Status:** TERMINAL. Redundant with `term-fluids`, generic implementation, and undocumented. Decay imminent.
 
 ## 🍂 History/Decay
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/text-sand (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Specimen failed to evolve beyond generic sand simulation.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/echo-chamber (GRAVEYARD)
 - **Scent Origin:** Reaper
