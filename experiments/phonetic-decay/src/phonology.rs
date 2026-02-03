@@ -4,6 +4,11 @@ pub enum SoundLaw {
     GreatVowelShift,
     Lenition,
     LossOfEndings,
+    Palatalization,
+    Metathesis,
+    Rhotacism,
+    ClusterSimplification,
+    HDropping,
 }
 
 impl SoundLaw {
@@ -13,6 +18,11 @@ impl SoundLaw {
             SoundLaw::GreatVowelShift => apply_vowel_shift(input),
             SoundLaw::Lenition => apply_lenition(input),
             SoundLaw::LossOfEndings => apply_loss_of_endings(input),
+            SoundLaw::Palatalization => apply_palatalization(input),
+            SoundLaw::Metathesis => apply_metathesis(input),
+            SoundLaw::Rhotacism => apply_rhotacism(input),
+            SoundLaw::ClusterSimplification => apply_cluster_simplification(input),
+            SoundLaw::HDropping => apply_h_dropping(input),
         }
     }
 
@@ -22,8 +32,18 @@ impl SoundLaw {
             SoundLaw::GreatVowelShift => "Great Vowel Shift",
             SoundLaw::Lenition => "Intervocalic Lenition",
             SoundLaw::LossOfEndings => "Loss of Unstressed Endings",
+            SoundLaw::Palatalization => "Palatalization (Softening)",
+            SoundLaw::Metathesis => "Metathesis (Sound Swap)",
+            SoundLaw::Rhotacism => "Rhotacism (s -> r)",
+            SoundLaw::ClusterSimplification => "Cluster Simplification",
+            SoundLaw::HDropping => "H-Dropping",
         }
     }
+}
+
+#[derive(Debug, Clone)]
+pub struct EvolutionTrace {
+    pub steps: Vec<(String, String)>, // (Rule applied, Resulting word)
 }
 
 pub struct Evolver {
@@ -39,12 +59,22 @@ impl Evolver {
         self.laws.push(law);
     }
 
-    pub fn evolve(&self, word: &str) -> String {
+    pub fn evolve_with_trace(&self, word: &str) -> (String, EvolutionTrace) {
         let mut current = word.to_string();
+        let mut steps = vec![];
+
         for law in &self.laws {
-            current = law.apply(&current);
+            let next = law.apply(&current);
+            if next != current {
+                steps.push((law.description().to_string(), next.clone()));
+                current = next;
+            }
         }
-        current
+        (current, EvolutionTrace { steps })
+    }
+
+    pub fn evolve(&self, word: &str) -> String {
+        self.evolve_with_trace(word).0
     }
 }
 
@@ -103,8 +133,6 @@ fn apply_vowel_shift(input: &str) -> String {
 fn apply_lenition(input: &str) -> String {
     // VcV -> VzV (Voicing of intervocalic consonants)
     // Simplified: s -> z, t -> d between vowels
-    // This requires context.
-
     let chars: Vec<char> = input.chars().collect();
     if chars.is_empty() {
         return String::new();
@@ -145,6 +173,130 @@ fn apply_loss_of_endings(input: &str) -> String {
                 return chars[0..chars.len() - 1].iter().collect();
             }
         }
+    }
+    input.to_string()
+}
+
+fn apply_palatalization(input: &str) -> String {
+    // k, g, t, d -> ch, j, ch, j before front vowels (i, e, y)
+    let chars: Vec<char> = input.chars().collect();
+    let mut out = String::new();
+    let mut i = 0;
+    while i < chars.len() {
+        let c = chars[i];
+        let next_is_front = if i + 1 < chars.len() {
+            matches!(chars[i + 1], 'i' | 'e' | 'y' | 'I' | 'E' | 'Y')
+        } else {
+            false
+        };
+
+        if next_is_front {
+            match c {
+                'k' | 'K' => {
+                     out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
+                     i += 1;
+                     continue;
+                },
+                'g' | 'G' => {
+                    out.push(if c.is_uppercase() { 'J' } else { 'j' });
+                    i += 1;
+                    continue;
+                },
+                't' | 'T' => {
+                     out.push_str(if c.is_uppercase() { "Ch" } else { "ch" });
+                     i += 1;
+                     continue;
+                },
+                'd' | 'D' => {
+                    out.push(if c.is_uppercase() { 'J' } else { 'j' });
+                    i += 1;
+                    continue;
+                }
+                _ => out.push(c),
+            }
+        } else {
+            out.push(c);
+        }
+        i += 1;
+    }
+    out
+}
+
+fn apply_metathesis(input: &str) -> String {
+    // Swap r/l with adjacent vowel: bird -> brid, ask -> aks
+    // Focusing on r-metathesis: V + r -> r + V (burn -> brun) or r + V -> V + r
+    // Let's do a simple one: if we find 'r' followed by a vowel, 50% chance to swap,
+    // or if we find vowel followed by 'r', swap.
+    // To be deterministic (since we don't pass RNG here), let's just do it for specific patterns.
+    // Let's swap 'r' + vowel if the vowel is 'i' or 'u'.  "run" -> "urn". "ring" -> "irng" (weird but okay).
+    // Or Vowel + r -> r + Vowel. "burn" -> "brun".
+
+    let chars: Vec<char> = input.chars().collect();
+    let mut out = String::new();
+    let mut i = 0;
+    while i < chars.len() {
+        let c = chars[i];
+        if i + 1 < chars.len() {
+            let next = chars[i+1];
+            // Swap 'r' + vowel -> vowel + 'r' (brid -> bird style)
+            // But let's check for Vowel + r -> r + Vowel (burn -> brun)
+            if is_vowel(c) && (next == 'r' || next == 'l') {
+                out.push(next);
+                out.push(c);
+                i += 2;
+                continue;
+            }
+        }
+        out.push(c);
+        i += 1;
+    }
+    out
+}
+
+fn apply_rhotacism(input: &str) -> String {
+    // s/z -> r between vowels
+    let chars: Vec<char> = input.chars().collect();
+    let mut out = String::new();
+    for i in 0..chars.len() {
+        let c = chars[i];
+        let is_intervocalic = if i > 0 && i < chars.len() - 1 {
+            is_vowel(chars[i - 1]) && is_vowel(chars[i + 1])
+        } else {
+            false
+        };
+
+        if is_intervocalic && (c == 's' || c == 'z') {
+            out.push('r');
+        } else if is_intervocalic && (c == 'S' || c == 'Z') {
+            out.push('R');
+        } else {
+            out.push(c);
+        }
+    }
+    out
+}
+
+fn apply_cluster_simplification(input: &str) -> String {
+    // kn -> n, gn -> n, wr -> r, mb -> m (at end)
+    let s = input.to_string();
+    let s = s.replace("kn", "n").replace("Kn", "N");
+    let s = s.replace("gn", "n").replace("Gn", "N");
+    let s = s.replace("wr", "r").replace("Wr", "R");
+
+    // mb at end requires checking
+    if s.ends_with("mb") {
+        return s[..s.len()-1].to_string();
+    }
+    s
+}
+
+fn apply_h_dropping(input: &str) -> String {
+    // Drop 'h' at start of word
+    if input.starts_with('h') {
+        return input[1..].to_string();
+    }
+    if input.starts_with('H') {
+         return input[1..].to_string();
     }
     input.to_string()
 }
@@ -194,5 +346,58 @@ mod tests {
         // p->f, a->a, t->th, e->e, r->r  == father
         // f->f, a->ei, t->t, h->h, e->i, r->r == feithir
         assert_eq!(evolver.evolve("pater"), "feithir");
+    }
+
+    #[test]
+    fn test_palatalization() {
+        let evolver = Evolver { laws: vec![SoundLaw::Palatalization] };
+        assert_eq!(evolver.evolve("kiri"), "chiri");
+        assert_eq!(evolver.evolve("get"), "jet");
+    }
+
+    #[test]
+    fn test_metathesis() {
+        let evolver = Evolver { laws: vec![SoundLaw::Metathesis] };
+        // burn -> brun
+        assert_eq!(evolver.evolve("burn"), "brun");
+    }
+
+    #[test]
+    fn test_rhotacism() {
+         let evolver = Evolver { laws: vec![SoundLaw::Rhotacism] };
+         // vasa -> vara
+         assert_eq!(evolver.evolve("vasa"), "vara");
+    }
+
+    #[test]
+    fn test_cluster() {
+         let evolver = Evolver { laws: vec![SoundLaw::ClusterSimplification] };
+         assert_eq!(evolver.evolve("knight"), "night");
+    }
+
+     #[test]
+    fn test_h_dropping() {
+         let evolver = Evolver { laws: vec![SoundLaw::HDropping] };
+         assert_eq!(evolver.evolve("house"), "ouse");
+    }
+
+    #[test]
+    fn test_trace() {
+        let mut evolver = Evolver::new();
+        evolver.add_law(SoundLaw::GrimmsLaw); // pater -> father
+        evolver.add_law(SoundLaw::HDropping); // father -> ather (starts with f, no change)
+
+        let (res, trace) = evolver.evolve_with_trace("pater");
+        assert_eq!(res, "father");
+        assert_eq!(trace.steps.len(), 1);
+        assert_eq!(trace.steps[0].1, "father");
+
+         let mut evolver2 = Evolver::new();
+        evolver2.add_law(SoundLaw::GrimmsLaw); // house -> house (h unchanged)
+        evolver2.add_law(SoundLaw::HDropping); // house -> ouse
+
+        let (res2, trace2) = evolver2.evolve_with_trace("house");
+        assert_eq!(res2, "ouse");
+        assert_eq!(trace2.steps.len(), 1); // Grimms law didn't change 'house' (h is not stop)
     }
 }
