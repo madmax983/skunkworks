@@ -114,6 +114,10 @@
 - **Scent Origin:** Reaper
 - **Status:** CONDEMNED. Generic cyclic CA. Documentation void.
 
+### [Concentration Level: FRESH] - Location: experiments/penrose-build
+- **Scent Origin:** Genesis (The Cartographer)
+- **Status:** Impossible geometry detected. The dependency graph is folding into infinite staircases. Up is down, but we keep climbing.
+
 ## 🍂 History/Decay
 
 

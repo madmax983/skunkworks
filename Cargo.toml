@@ -76,7 +76,7 @@ members = [
     "experiments/thread-phase",
     "experiments/venation-vines",
     "experiments/voronoi-relaxation",
-    "experiments/word-collider", "experiments/chromatic-code",
+    "experiments/word-collider", "experiments/chromatic-code", "experiments/penrose-build",
 ]
 resolver = "2"
 
