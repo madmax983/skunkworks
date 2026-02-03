@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/struct-harmonics
+- **Scent Origin:** Splice Surgeon
+- **Status:** The codebase is singing. Gravitational waves detected. Heavy structs are droning in the deep.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-git
 - **Scent Origin:** Splice Surgeon
 - **Status:** The earth is shaking. Code strata are fracturing under the weight of debt. Seismographs are active.

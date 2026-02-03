@@ -79,6 +79,7 @@ members = [
     "experiments/voronoi-ants",
     "experiments/tectonic-git",
     "experiments/miura-interface", "experiments/routing-market", "experiments/retinal-glitch",
+    "experiments/struct-harmonics",
 ]
 resolver = "2"
 
