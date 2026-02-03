@@ -17,3 +17,9 @@
 **Blueprint:** Refactored `sculpt-term` and `l-system-garden` to use `tui-shared`. Updated `epicycle-draw` to use workspace dependency and removed redundant `crossterm` calls.
 **Stability:** Eliminated code duplication, enforced single source of truth for TUI initialization, and standardized workspace dependency usage.
 **Verification:** Verified with `cargo check` and `cargo test` for affected packages.
+
+## [Standardize TUI Lifecycle Phase 3]
+**Tangle:** The Sprawl - Repeated TUI setup code in `git_rhythm`, `hyphal-commute`, and `lattice-hunter`.
+**Blueprint:** Refactored these to use `tui-shared`.
+**Stability:** Reduced boilerplate and enforced consistent TUI lifecycle management.
+**Verification:** Verified with `cargo check` and `cargo test`.

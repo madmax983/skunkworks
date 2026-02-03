@@ -1,9 +1,5 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -15,8 +11,9 @@ use ratatui::{
     },
     Frame, Terminal,
 };
-use std::io::{self, Stdout};
+use std::io::Stdout;
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 mod lattice;
 mod network;
@@ -293,18 +290,12 @@ impl App {
 }
 
 fn main() -> Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     let app = App::new();
-    let res = app.run(&mut terminal);
+    let res = app.run(&mut tui.terminal);
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    tui.exit()?;
 
     if let Err(e) = res {
         eprintln!("Error: {:?}", e);

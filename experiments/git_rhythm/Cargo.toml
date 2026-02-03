@@ -10,6 +10,7 @@ git2 = "0.18"
 hound = "3.5"
 rand.workspace = true
 ratatui.workspace = true
+tui-shared.workspace = true
 
 [features]
 nova = []
