@@ -203,3 +203,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/system-bonsai
 - **Scent Origin:** Nova
 - **Status:** The roots are deep. Process tree successfully visualized as organic structure. Pruning shears are ready.
+
+### [Concentration Level: FRESH] - Location: experiments/lattice-hunter
+- **Scent Origin:** Genesis (The Crystallographer)
+- **Status:** The crystal is growing. Networks are annealing into perfect Bravais lattices. 3D symmetry detected in the terminal.
