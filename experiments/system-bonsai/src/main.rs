@@ -1,12 +1,12 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    Frame,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Paragraph},
     widgets::canvas::Canvas,
+    widgets::{Block, Borders, Paragraph},
+    Frame,
 };
 use std::time::{Duration, Instant};
 use sysinfo::System;
@@ -64,8 +64,8 @@ impl App {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => self.exit = true,
                         KeyCode::Char('r') => {
-                             self.system.refresh_all();
-                             self.tree = ProcessTree::new(&self.system);
+                            self.system.refresh_all();
+                            self.tree = ProcessTree::new(&self.system);
                         }
                         KeyCode::Char('+') | KeyCode::Char('=') => self.renderer.zoom *= 1.1,
                         KeyCode::Char('-') | KeyCode::Char('_') => self.renderer.zoom /= 1.1,
@@ -73,7 +73,7 @@ impl App {
                         KeyCode::Right => self.renderer.pan_x += 10.0 / self.renderer.zoom,
                         KeyCode::Up => self.renderer.pan_y += 10.0 / self.renderer.zoom,
                         KeyCode::Down => self.renderer.pan_y -= 10.0 / self.renderer.zoom,
-                         _ => {}
+                        _ => {}
                     }
                 }
             }
@@ -83,15 +83,25 @@ impl App {
 
     fn ui(&self, frame: &mut Frame) {
         let chunks = Layout::default()
-             .direction(Direction::Vertical)
-             .constraints([Constraint::Min(0), Constraint::Length(3)])
-             .split(frame.area());
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Min(0), Constraint::Length(3)])
+            .split(frame.area());
 
         // Canvas
         let canvas = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title("System Bonsai"))
-            .x_bounds([-100.0 / self.renderer.zoom + self.renderer.pan_x, 100.0 / self.renderer.zoom + self.renderer.pan_x])
-            .y_bounds([-20.0 / self.renderer.zoom + self.renderer.pan_y, 180.0 / self.renderer.zoom + self.renderer.pan_y]) // Shifted y-bounds
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("System Bonsai"),
+            )
+            .x_bounds([
+                -100.0 / self.renderer.zoom + self.renderer.pan_x,
+                100.0 / self.renderer.zoom + self.renderer.pan_x,
+            ])
+            .y_bounds([
+                -20.0 / self.renderer.zoom + self.renderer.pan_y,
+                180.0 / self.renderer.zoom + self.renderer.pan_y,
+            ]) // Shifted y-bounds
             .paint(|ctx| {
                 self.renderer.render(ctx, &self.tree);
             });
@@ -101,13 +111,19 @@ impl App {
         // Info
         let info_text = vec![
             Span::raw("System Bonsai 🌳 | "),
-            Span::styled(format!("Processes: {}", self.tree.total_processes), Style::default().fg(Color::Cyan)),
+            Span::styled(
+                format!("Processes: {}", self.tree.total_processes),
+                Style::default().fg(Color::Cyan),
+            ),
             Span::raw(" | "),
-            Span::styled("Controls: [q] Quit, [r] Refresh, [+/-] Zoom, [Arrows] Pan", Style::default().fg(Color::Yellow)),
+            Span::styled(
+                "Controls: [q] Quit, [r] Refresh, [+/-] Zoom, [Arrows] Pan",
+                Style::default().fg(Color::Yellow),
+            ),
         ];
 
-        let info = Paragraph::new(Line::from(info_text))
-            .block(Block::default().borders(Borders::ALL));
+        let info =
+            Paragraph::new(Line::from(info_text)).block(Block::default().borders(Borders::ALL));
 
         frame.render_widget(info, chunks[1]);
     }

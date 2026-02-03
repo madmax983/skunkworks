@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/typo-rain
+- **Scent Origin:** Nova
+- **Status:** The storm is breaking. Deleted characters are falling from the sky. The pile of refactored code is growing.
+
 ### [Concentration Level: FRESH] - Location: experiments/crate-radar
 - **Scent Origin:** Splice Surgeon
 - **Status:** The radar is sweeping. Dependencies are blipping on the screen. The captain is navigating the graph.

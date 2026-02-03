@@ -97,11 +97,23 @@ fn generate_fcc(size: usize, scale: f64) -> Vec<Point3<f64>> {
 
                 // Face centers:
                 // XY face: (x+0.5, y+0.5, z)
-                points.push(Point3::new((fx + 0.5) * scale, (fy + 0.5) * scale, fz * scale));
+                points.push(Point3::new(
+                    (fx + 0.5) * scale,
+                    (fy + 0.5) * scale,
+                    fz * scale,
+                ));
                 // XZ face: (x+0.5, y, z+0.5)
-                points.push(Point3::new((fx + 0.5) * scale, fy * scale, (fz + 0.5) * scale));
+                points.push(Point3::new(
+                    (fx + 0.5) * scale,
+                    fy * scale,
+                    (fz + 0.5) * scale,
+                ));
                 // YZ face: (x, y+0.5, z+0.5)
-                points.push(Point3::new(fx * scale, (fy + 0.5) * scale, (fz + 0.5) * scale));
+                points.push(Point3::new(
+                    fx * scale,
+                    (fy + 0.5) * scale,
+                    (fz + 0.5) * scale,
+                ));
             }
         }
     }

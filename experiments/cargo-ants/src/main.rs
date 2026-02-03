@@ -1,21 +1,21 @@
 mod graph;
 mod sim;
 
+use crate::graph::DepGraph;
+use crate::sim::World;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::Color,
     widgets::{
-        canvas::{Canvas, Line, Points, Circle},
+        canvas::{Canvas, Circle, Line, Points},
         Block, Borders, Paragraph,
     },
     Frame,
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use crate::graph::DepGraph;
-use crate::sim::World;
 
 fn main() -> Result<()> {
     // 1. Setup World
@@ -81,52 +81,62 @@ fn prepare_render_data(world: &World) -> RenderData {
     let graph = &world.dep_graph.graph;
 
     // Nodes
-    let nodes: Vec<_> = graph.node_weights().map(|n| {
-        let color = if n.is_root { Color::Red } else { Color::Blue };
-        (n.x, n.y, color, n.name.clone())
-    }).collect();
+    let nodes: Vec<_> = graph
+        .node_weights()
+        .map(|n| {
+            let color = if n.is_root { Color::Red } else { Color::Blue };
+            (n.x, n.y, color, n.name.clone())
+        })
+        .collect();
 
     // Edges
-    let edges: Vec<_> = graph.edge_indices().map(|e_idx| {
-        let (n1, n2) = graph.edge_endpoints(e_idx).unwrap();
-        let node1 = &graph[n1];
-        let node2 = &graph[n2];
-        let edge = &graph[e_idx];
+    let edges: Vec<_> = graph
+        .edge_indices()
+        .map(|e_idx| {
+            let (n1, n2) = graph.edge_endpoints(e_idx).unwrap();
+            let node1 = &graph[n1];
+            let node2 = &graph[n2];
+            let edge = &graph[e_idx];
 
-        let intensity = (edge.pheromone * 20.0).clamp(50.0, 255.0) as u8;
-        let color = Color::Rgb(intensity, intensity, intensity);
+            let intensity = (edge.pheromone * 20.0).clamp(50.0, 255.0) as u8;
+            let color = Color::Rgb(intensity, intensity, intensity);
 
-        (node1.x, node1.y, node2.x, node2.y, color)
-    }).collect();
+            (node1.x, node1.y, node2.x, node2.y, color)
+        })
+        .collect();
 
     // Ants
-    let ants: Vec<_> = world.ants.iter().map(|ant| {
-        let x: f64;
-        let y: f64;
+    let ants: Vec<_> = world
+        .ants
+        .iter()
+        .map(|ant| {
+            let x: f64;
+            let y: f64;
 
-        if let Some(edge_idx) = ant.target_edge {
-            // Moving along edge
-            // Edge is Source -> Target (A -> B, A depends on B)
-            // Ant moves Target -> Source (B -> A)
-            if let Some((source, target)) = graph.edge_endpoints(edge_idx) {
-                 let s_node = &graph[source];
-                 let t_node = &graph[target];
-                 // Ant moves from Target (B) to Source (A)
-                 // Lerp(Target, Source, progress)
-                 x = t_node.x + (s_node.x - t_node.x) * ant.progress;
-                 y = t_node.y + (s_node.y - t_node.y) * ant.progress;
+            if let Some(edge_idx) = ant.target_edge {
+                // Moving along edge
+                // Edge is Source -> Target (A -> B, A depends on B)
+                // Ant moves Target -> Source (B -> A)
+                if let Some((source, target)) = graph.edge_endpoints(edge_idx) {
+                    let s_node = &graph[source];
+                    let t_node = &graph[target];
+                    // Ant moves from Target (B) to Source (A)
+                    // Lerp(Target, Source, progress)
+                    x = t_node.x + (s_node.x - t_node.x) * ant.progress;
+                    y = t_node.y + (s_node.y - t_node.y) * ant.progress;
+                } else {
+                    let n = &graph[ant.current_node];
+                    x = n.x;
+                    y = n.y;
+                }
             } else {
                 let n = &graph[ant.current_node];
                 x = n.x;
                 y = n.y;
             }
-        } else {
-            let n = &graph[ant.current_node];
-            x = n.x;
-            y = n.y;
-        }
-        (x, y, Color::Yellow)
-    }).collect();
+            (x, y, Color::Yellow)
+        })
+        .collect();
 
     RenderData { nodes, edges, ants }
 }
@@ -171,10 +181,10 @@ fn ui(f: &mut Frame, world: &World, data: &RenderData, _paused: bool) {
 
             // Draw Ants
             for (x, y, color) in &data.ants {
-                 ctx.draw(&Points {
+                ctx.draw(&Points {
                     coords: &[(*x, *y)],
                     color: *color,
-                 });
+                });
             }
         });
 

@@ -44,7 +44,9 @@ impl Camera {
         // z_camera = v.z + dist
         let z_cam = v.z + dist;
 
-        if z_cam <= 1.0 { return None; } // Near clip
+        if z_cam <= 1.0 {
+            return None;
+        } // Near clip
 
         let scale = self.zoom * 100.0;
         let x = v.x / z_cam * scale * self.aspect;
@@ -57,12 +59,12 @@ impl Camera {
     }
 
     pub fn rotate_x(&mut self, angle: f64) {
-         let rot = Rotation3::from_axis_angle(&Vector3::x_axis(), angle);
-         self.rotation = rot * self.rotation;
+        let rot = Rotation3::from_axis_angle(&Vector3::x_axis(), angle);
+        self.rotation = rot * self.rotation;
     }
 
     pub fn rotate_y(&mut self, angle: f64) {
-         let rot = Rotation3::from_axis_angle(&Vector3::y_axis(), angle);
-         self.rotation = rot * self.rotation;
+        let rot = Rotation3::from_axis_angle(&Vector3::y_axis(), angle);
+        self.rotation = rot * self.rotation;
     }
 }

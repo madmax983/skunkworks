@@ -1,11 +1,11 @@
+use crate::process_tree::{ProcessNode, ProcessTree};
 use ratatui::{
     style::{Color, Style},
-    widgets::canvas::{Context, Line},
     text::Span,
+    widgets::canvas::{Context, Line},
 };
-use crate::process_tree::{ProcessNode, ProcessTree};
-use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
 pub struct BonsaiRenderer {
     pub max_depth: usize,
@@ -55,7 +55,7 @@ impl BonsaiRenderer {
     ) {
         if depth >= self.max_depth {
             // Draw leaf
-             ctx.print(x, y, Span::styled("🌿", Style::default().fg(Color::Green)));
+            ctx.print(x, y, Span::styled("🌿", Style::default().fg(Color::Green)));
             return;
         }
 
@@ -83,8 +83,12 @@ impl BonsaiRenderer {
 
         // Children
         if node.children.is_empty() {
-             ctx.print(x2, y2, Span::styled("🍃", Style::default().fg(Color::Green)));
-             return;
+            ctx.print(
+                x2,
+                y2,
+                Span::styled("🍃", Style::default().fg(Color::Green)),
+            );
+            return;
         }
 
         // Limit children to prevent mess
@@ -102,7 +106,7 @@ impl BonsaiRenderer {
             let hash = hasher.finish();
             let jitter = ((hash % 100) as f64 - 50.0) / 100.0 * 0.2;
 
-             self.draw_node(
+            self.draw_node(
                 ctx,
                 children[0],
                 x2,

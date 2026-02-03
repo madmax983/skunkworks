@@ -42,7 +42,9 @@ impl App {
         let metadata = MetadataCommand::new().exec()?;
 
         // Find the root package (or the one in current dir)
-        let root = metadata.root_package().ok_or_else(|| anyhow::anyhow!("No root package found in current directory"))?;
+        let root = metadata
+            .root_package()
+            .ok_or_else(|| anyhow::anyhow!("No root package found in current directory"))?;
 
         let mut blips = Vec::new();
 
@@ -177,7 +179,7 @@ fn ui(f: &mut Frame, app: &App) {
                 radius: 50.0,
                 color: Color::DarkGray,
             });
-             ctx.draw(&ratatui::widgets::canvas::Circle {
+            ctx.draw(&ratatui::widgets::canvas::Circle {
                 x: 0.0,
                 y: 0.0,
                 radius: 20.0,
@@ -253,14 +255,16 @@ fn ui(f: &mut Frame, app: &App) {
                 Span::styled("Dependency: ", Style::default().fg(Color::Gray)),
                 Span::styled(
                     &blip.name,
-                    Style::default().fg(Color::Cyan).add_modifier(ratatui::style::Modifier::BOLD),
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(ratatui::style::Modifier::BOLD),
                 ),
             ]),
             Line::from(vec![
                 Span::styled("Version: ", Style::default().fg(Color::Gray)),
                 Span::raw(&blip.version),
             ]),
-             Line::from(vec![
+            Line::from(vec![
                 Span::styled("Kind: ", Style::default().fg(Color::Gray)),
                 Span::raw(&blip.kind),
             ]),
@@ -287,7 +291,6 @@ fn ui(f: &mut Frame, app: &App) {
     f.render_widget(details, top_layout[1]);
 
     let help_text = "ESC/q: Quit";
-    let status_bar = Paragraph::new(help_text)
-        .block(Block::default().borders(Borders::ALL));
+    let status_bar = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL));
     f.render_widget(status_bar, main_layout[1]);
 }

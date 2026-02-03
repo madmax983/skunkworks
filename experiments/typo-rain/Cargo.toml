@@ -1,0 +1,11 @@
+[package]
+name = "typo-rain"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
+ratatui.workspace = true
+rand.workspace = true
+tui-shared.workspace = true

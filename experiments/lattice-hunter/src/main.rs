@@ -103,7 +103,10 @@ impl App {
 
             if self.optimizing {
                 for _ in 0..10 {
-                    if self.network.optimize_step(&self.lattice, self.temp, &mut rng) {
+                    if self
+                        .network
+                        .optimize_step(&self.lattice, self.temp, &mut rng)
+                    {
                         // Accepted
                     }
                     self.iteration += 1;
@@ -137,8 +140,10 @@ impl App {
             KeyCode::Char('r') => self.reset_network(),
             KeyCode::Char('o') => {
                 self.optimizing = !self.optimizing;
-                if self.optimizing { self.temp = 10.0; } // Reset temp on start
-            },
+                if self.optimizing {
+                    self.temp = 10.0;
+                } // Reset temp on start
+            }
             _ => {}
         }
     }
@@ -155,9 +160,25 @@ impl App {
 
         // Render Lists
         enum Item {
-            LatticePoint { x: f64, y: f64, z: f64 },
-            Node { x: f64, y: f64, z: f64, color: Color },
-            Edge { x1: f64, y1: f64, x2: f64, y2: f64, z: f64, color: Color },
+            LatticePoint {
+                x: f64,
+                y: f64,
+                z: f64,
+            },
+            Node {
+                x: f64,
+                y: f64,
+                z: f64,
+                color: Color,
+            },
+            Edge {
+                x1: f64,
+                y1: f64,
+                x2: f64,
+                y2: f64,
+                z: f64,
+                color: Color,
+            },
         }
 
         let mut items = Vec::new();
@@ -174,8 +195,16 @@ impl App {
         for &idx in &self.network.node_positions {
             let p = &self.lattice.points[idx];
             if let Some((x, y, z)) = self.camera.project(p, width, height) {
-                 // Z-bias slightly towards camera to draw on top of lattice points
-                items.push((z + 0.1, Item::Node { x, y, z: z+0.1, color: Color::Cyan }));
+                // Z-bias slightly towards camera to draw on top of lattice points
+                items.push((
+                    z + 0.1,
+                    Item::Node {
+                        x,
+                        y,
+                        z: z + 0.1,
+                        color: Color::Cyan,
+                    },
+                ));
             }
         }
 
@@ -188,7 +217,17 @@ impl App {
                         let v_pos = &self.lattice.points[self.network.node_positions[v]];
                         if let Some((x2, y2, z2)) = self.camera.project(v_pos, width, height) {
                             let avg_z = (z1 + z2) / 2.0;
-                            items.push((avg_z, Item::Edge { x1, y1, x2, y2, z: avg_z, color: Color::Yellow }));
+                            items.push((
+                                avg_z,
+                                Item::Edge {
+                                    x1,
+                                    y1,
+                                    x2,
+                                    y2,
+                                    z: avg_z,
+                                    color: Color::Yellow,
+                                },
+                            ));
                         }
                     }
                 }
@@ -199,21 +238,40 @@ impl App {
         items.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap());
 
         let canvas = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title("Lattice Hunter"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Lattice Hunter"),
+            )
             .x_bounds([0.0, width])
             .y_bounds([0.0, height])
             .paint(move |ctx| {
                 for (_, item) in &items {
                     match item {
                         Item::LatticePoint { x, y, .. } => {
-                            ctx.print(*x, *y, Span::styled("·", Style::default().fg(Color::DarkGray)));
+                            ctx.print(
+                                *x,
+                                *y,
+                                Span::styled("·", Style::default().fg(Color::DarkGray)),
+                            );
                         }
                         Item::Node { x, y, color, .. } => {
-                             ctx.print(*x, *y, Span::styled("●", Style::default().fg(*color)));
+                            ctx.print(*x, *y, Span::styled("●", Style::default().fg(*color)));
                         }
-                        Item::Edge { x1, y1, x2, y2, color, .. } => {
+                        Item::Edge {
+                            x1,
+                            y1,
+                            x2,
+                            y2,
+                            color,
+                            ..
+                        } => {
                             ctx.draw(&Line {
-                                x1: *x1, y1: *y1, x2: *x2, y2: *y2, color: *color,
+                                x1: *x1,
+                                y1: *y1,
+                                x2: *x2,
+                                y2: *y2,
+                                color: *color,
                             });
                         }
                     }
@@ -229,7 +287,7 @@ impl App {
 
         f.render_widget(
             Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
-            chunks[1]
+            chunks[1],
         );
     }
 }

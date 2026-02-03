@@ -4,7 +4,7 @@ use rand::prelude::*;
 
 #[derive(Clone)]
 pub struct Network {
-    pub adj: Vec<Vec<usize>>,      // Adjacency list: adj[i] = [j, k, ...]
+    pub adj: Vec<Vec<usize>>,       // Adjacency list: adj[i] = [j, k, ...]
     pub node_positions: Vec<usize>, // node_positions[i] = index in lattice.points
 }
 
@@ -32,7 +32,11 @@ impl Network {
         indices.shuffle(rng);
 
         if indices.len() < self.adj.len() {
-            panic!("Lattice is too small for network! Nodes: {}, Lattice Points: {}", self.adj.len(), indices.len());
+            panic!(
+                "Lattice is too small for network! Nodes: {}, Lattice Points: {}",
+                self.adj.len(),
+                indices.len()
+            );
         }
 
         self.node_positions = indices.into_iter().take(self.adj.len()).collect();
@@ -44,7 +48,8 @@ impl Network {
         for (u, neighbors) in self.adj.iter().enumerate() {
             let u_pos = lattice.points[self.node_positions[u]];
             for &v in neighbors {
-                if u < v { // Count each edge once
+                if u < v {
+                    // Count each edge once
                     let v_pos = lattice.points[self.node_positions[v]];
                     total_dist += distance(&u_pos, &v_pos);
                 }
@@ -145,7 +150,7 @@ mod tests {
         assert!(current_energy <= initial_energy);
         // It likely improved
         if initial_energy > 0.0 {
-             // Ideally we want assert!(improved), but randomness makes it flaky if init was already optimal (rare).
+            // Ideally we want assert!(improved), but randomness makes it flaky if init was already optimal (rare).
         }
     }
 }
