@@ -86,6 +86,7 @@ members = [
     "experiments/crate-radar",
     "experiments/quipu-symphony",
     "experiments/git-harmonograph",
+    "experiments/phonetic-flock",
 ]
 resolver = "2"
 
