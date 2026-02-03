@@ -139,3 +139,28 @@ classDiagram
 
     note for Synthesizer "Maps file hash -> Frequency\nMaps DiffType -> Color"
 ```
+
+## Core Architecture Changes
+
+Refactoring to decouple storage from core logic.
+
+### Core vs Storage
+
+```mermaid
+classDiagram
+  class Core
+  class Storage
+  Core --> Storage : Uses (Trait Bound)
+  %% Removed the circular dependency arrow
+```
+
+### Storage Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Core
+    participant S as Storage
+
+    C->>S: save_state(data)
+    S-->>C: Result<Ok>
+```
