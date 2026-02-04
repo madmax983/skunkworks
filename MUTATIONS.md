@@ -135,6 +135,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Ant colony foraging on an infinite hyperbolic plane (Poincaré Disk).
 - **Novel trait**: Pheromone trails following hyperbolic geodesics; exponential search space.
 - **Status**: experiments/hyperbolic-ants
+- **Evaluation**: Compiles. Verified.
+
+### sonar-swarm
+- **Parents**: experiments/echo-chamber + experiments/luminous-flock
+- **Concept**: Boids navigate using active echolocation (sonar) in a simulated acoustic environment.
+- **Novel trait**: Navigation via pressure gradient descent; "blind" flocking driven by wave interference.
+- **Status**: experiments/sonar-swarm
 - **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:

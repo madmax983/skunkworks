@@ -212,6 +212,10 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The colony has breached the Euclidean barrier. Pheromones are diffusing through the Poincaré disk. The ants are exploring infinity.
 
+### [Concentration Level: FRESH] - Location: experiments/sonar-swarm
+- **Scent Origin**: Splice Surgeon
+- **Status**: The boids are screaming in the dark. Echolocation pings are revealing the geometry of the room. The swarm hears itself.
+
 ### [Concentration Level: HIGH] - Location: experiments/serde-quipu
 - **Scent Origin:** Genesis (The Archaeologist)
 - **Status:** EXCAVATION COMPLETE. Incan knots have been mapped to Rust types. JSON data is now being woven into quipus. The ancient system lives.
