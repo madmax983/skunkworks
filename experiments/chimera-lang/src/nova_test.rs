@@ -20,10 +20,22 @@ mod tests {
         // 2: methylate()
         // 3: push(100) - this should be skipped
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(3)] },
-            Gene { name: "methylate".to_string(), args: vec![] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(3)],
+            },
+            Gene {
+                name: "methylate".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(100)],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -43,7 +55,11 @@ mod tests {
 
         // Stack should NOT contain 100.
         // Stack should be empty (0 and 3 were popped by methylate).
-        assert!(vm.stack.is_empty(), "Stack should be empty, but has {:?}", vm.stack);
+        assert!(
+            vm.stack.is_empty(),
+            "Stack should be empty, but has {:?}",
+            vm.stack
+        );
 
         // Test Demethylate
         // [ push(0) push(3) demethylate() ]
@@ -58,9 +74,18 @@ mod tests {
         // Let's make a new DNA for demethylation test.
 
         let genes2 = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "demethylate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "demethylate".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm2 = ChimeraVM::new(make_dna(genes2));
 
@@ -80,5 +105,361 @@ mod tests {
         vm2.step(); // demethylate removes (0, 5)
 
         assert!(!vm2.epigenome.contains(&(0, 5)));
+    }
+
+    #[test]
+    fn test_recombination() {
+        // Strand 0: [ push(100), push(101), push(102) ]
+        // Strand 1: [ push(200), push(201), push(202) ]
+        // We want to recombine at index 1.
+        // Result Strand 0: [ push(100), push(201), push(202) ]
+        // Result Strand 1: [ push(200), push(101), push(102) ]
+
+        let strand0 = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(100)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(101)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(102)],
+                },
+            ],
+        };
+
+        let strand1 = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(200)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(201)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(202)],
+                },
+            ],
+        };
+
+        let controller = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // strand_a
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                }, // strand_b
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                }, // split point
+                Gene {
+                    name: "recombine".to_string(),
+                    args: vec![],
+                },
+            ],
+        };
+
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1, controller],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        // Move IP to controller strand (idx 2)
+        vm.ip = (2, 0);
+
+        vm.step(); // push(0)
+        vm.step(); // push(1)
+        vm.step(); // push(1)
+        vm.step(); // recombine
+
+        // Check strands
+        // Strand 0 should be 100, 201, 202
+        let s0 = &vm.dna.helix.strands[0];
+        if let Nucleotide::Number(n) = s0.genes[1].args[0] {
+            assert_eq!(n, 201);
+        } else {
+            panic!("Wrong arg type for s0[1]");
+        }
+
+        if let Nucleotide::Number(n) = s0.genes[2].args[0] {
+            assert_eq!(n, 202);
+        } else {
+            panic!("Wrong arg type for s0[2]");
+        }
+
+        // Strand 1 should be 200, 101, 102
+        let s1 = &vm.dna.helix.strands[1];
+        if let Nucleotide::Number(n) = s1.genes[1].args[0] {
+            assert_eq!(n, 101);
+        } else {
+            panic!("Wrong arg type for s1[1]");
+        }
+
+        if let Nucleotide::Number(n) = s1.genes[2].args[0] {
+            assert_eq!(n, 102);
+        } else {
+            panic!("Wrong arg type for s1[2]");
+        }
+    }
+
+    #[test]
+    fn test_telomere_decay() {
+        // [ photosynthesize() jump(0) ]
+        // Strand should run 50 times then decay.
+        // We use photosynthesize to avoid starvation.
+        let genes = vec![
+            Gene {
+                name: "photosynthesize".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "jump".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Initial telomere length is 50.
+        // Each loop enters the strand once.
+        // Step 1: photosynthesize
+        // Step 2: jump(0) -> moves IP to (0, 0)
+        // Next Step 1: Entering strand again.
+
+        // We run enough steps to exceed 50 loops.
+        // 50 loops * 2 steps = 100 steps.
+        // Let's run 120 steps.
+        for _ in 0..120 {
+            vm.step();
+            if vm.halted {
+                break;
+            }
+        }
+
+        // It should have moved to the next strand (which doesn't exist, so halted)
+        // Or if next strand doesn't exist, it sets halted = true in main loop.
+        // vm.ip should be (1, 0) if it decayed and moved on.
+        assert_eq!(vm.ip.0, 1);
+
+        // Check output for senescence message
+        assert!(
+            vm.output.iter().any(|s| s.contains("SENESCENCE")),
+            "Expected SENESCENCE message, got {:?}",
+            vm.output
+        );
+    }
+
+    #[test]
+    fn test_telomerase() {
+        // [ push(50) telomerase() photosynthesize() jump(0) ]
+        // Should extend life by 50. Total 100 loops.
+        // Cost of telomerase is 25. Photosynthesis gives 5.
+        // We need more energy to sustain this loop.
+        // Let's add more photosynthesis.
+        // [ push(50) telomerase() photosynthesize() photosynthesize() photosynthesize() photosynthesize() photosynthesize() jump(0) ]
+        // Wait, telomerase only needs to run ONCE to extend it.
+        // So we can have two strands.
+        // Strand 0: [ push(50) telomerase() jump(1) ]
+        // Strand 1: [ photosynthesize() jump(1) ]
+        // But we want to test extending the CURRENT strand or TARGET strand?
+        // Telomerase extends CURRENT strand (ip.0).
+        // So let's extend, then loop.
+
+        // Strand 0: [ push(50) telomerase() jump(0) ]
+        // This will extend it every time? That's expensive.
+        // But if we have enough energy...
+        // Let's just give it a ton of energy initially to avoid starvation logic complications.
+
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(50)],
+            },
+            Gene {
+                name: "telomerase".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "photosynthesize".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "jump".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.energy = 10000; // Cheat code
+
+        // Initial 50 + 50 (first pass) = 100?
+        // Actually, every pass it adds 50. So it should never die from senescence, only starvation or boredom.
+        // Let's run it for 200 loops (800 steps).
+        // If it was decaying, it would die at 50.
+
+        for _ in 0..800 {
+            vm.step();
+            if vm.halted {
+                break;
+            }
+        }
+
+        // Should NOT be halted or senescent
+        assert!(!vm.halted, "VM halted unexpectedly: {:?}", vm.output);
+        assert!(!vm.output.iter().any(|s| s.contains("SENESCENCE")));
+
+        // Check telomere length
+        // It's growing every loop.
+        assert!(vm.telomeres[0] > 50);
+    }
+
+    #[test]
+    fn test_s_index() {
+        // [ s_index() ]
+        let genes = vec![Gene {
+            name: "s_index".to_string(),
+            args: vec![],
+        }];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.step();
+        assert_eq!(vm.stack.pop(), Some(crate::vm::Value::Int(0)));
+    }
+
+    #[test]
+    fn test_mitosis() {
+        // [ push(0) mitosis() ]
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "mitosis".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Setup some epigenetics to test inheritance
+        // Methylate a future gene (5) so it doesn't affect execution of push(0)
+        vm.epigenome.insert((0, 5));
+
+        vm.step(); // push(0)
+        vm.step(); // mitosis()
+
+        assert_eq!(
+            vm.dna.helix.strands.len(),
+            2,
+            "Strand count mismatch. Output: {:?}",
+            vm.output
+        );
+        assert_eq!(vm.telomeres.len(), 2);
+
+        // Check epigenetics inheritance
+        // Original was (0,5). New should be (1,5).
+        assert!(vm.epigenome.contains(&(1, 5)));
+
+        // Check content equality
+        let s0_len = vm.dna.helix.strands[0].genes.len();
+        let s1_len = vm.dna.helix.strands[1].genes.len();
+        assert_eq!(s0_len, s1_len);
+    }
+
+    #[test]
+    fn test_apoptosis() {
+        // [ push(0) apoptosis() ]
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "apoptosis".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        // Methylate a future gene so push(0) runs
+        vm.epigenome.insert((0, 5));
+
+        vm.step(); // push(0)
+        vm.step(); // apoptosis()
+
+        // Strand should still exist but have 0 genes
+        assert_eq!(vm.dna.helix.strands.len(), 1);
+        assert!(
+            vm.dna.helix.strands[0].genes.is_empty(),
+            "Strand should be empty. Output: {:?}",
+            vm.output
+        );
+
+        // Epigenetics should be gone
+        assert!(vm.epigenome.is_empty());
+    }
+
+    #[test]
+    fn test_incubate() {
+        // [ push(10) push(5) push(5) g_write()
+        //   push("add") push(5) push(6) g_write()
+        //   push(2) push(5) push(5) incubate() ]
+
+        // Writes 10 to (5,5).
+        // Writes "add" to (5,6).
+        // Incubate(len=2, y=5, x=5).
+
+        let genes = vec![
+            // Write 10 to (5,5)
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "g_write".to_string(), args: vec![] },
+
+            // Write "add" to (5,6)
+            Gene { name: "push".to_string(), args: vec![Nucleotide::String("add".to_string())] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
+            Gene { name: "g_write".to_string(), args: vec![] },
+
+            // Incubate
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] }, // len
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // y
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // x
+            Gene { name: "incubate".to_string(), args: vec![] },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        while !vm.halted {
+            vm.step();
+        }
+
+        // Should have created a second strand (index 1)
+        assert_eq!(vm.dna.helix.strands.len(), 2);
+
+        let new_strand = &vm.dna.helix.strands[1];
+        assert_eq!(new_strand.genes.len(), 2);
+
+        // Check gene 0: push(10)
+        assert_eq!(new_strand.genes[0].name, "push");
+        if let Nucleotide::Number(n) = new_strand.genes[0].args[0] {
+            assert_eq!(n, 10);
+        } else {
+            panic!("Expected Number(10)");
+        }
+
+        // Check gene 1: add()
+        assert_eq!(new_strand.genes[1].name, "add");
+        assert!(new_strand.genes[1].args.is_empty());
     }
 }

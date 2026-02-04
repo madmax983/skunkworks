@@ -1,0 +1,12 @@
+[package]
+name = "cymatic-lure"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+hound = "3.5"
+tui-shared = { workspace = true }

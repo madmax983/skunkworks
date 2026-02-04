@@ -39,18 +39,45 @@ impl RainDrop {
     }
 }
 
-pub struct RainManager {
+pub struct Rain {
     pub drops: Vec<RainDrop>,
     pub source_lines: Vec<String>,
 }
 
-impl RainManager {
+impl Rain {
     pub fn new() -> Self {
-        let source_lines = scan_files(".");
+        let source_lines = Self::scan_source_code(".");
         Self {
             drops: Vec::new(),
             source_lines,
         }
+    }
+
+    fn scan_source_code(root: &str) -> Vec<String> {
+        let mut lines = Vec::new();
+        for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
+            if entry.file_type().is_file() {
+                if let Some(ext) = entry.path().extension() {
+                    if ext == "rs" {
+                        if let Ok(file) = File::open(entry.path()) {
+                            let reader = BufReader::new(file);
+                            for line in reader.lines().map_while(Result::ok) {
+                                let trimmed = line.trim();
+                                if !trimmed.is_empty() {
+                                    lines.push(trimmed.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if lines.is_empty() {
+            lines.push("let x = 42;".to_string());
+            lines.push("fn main() {}".to_string());
+            lines.push("println!(\"Hello World\");".to_string());
+        }
+        lines
     }
 
     pub fn update(&mut self, width: f64, height: f64) -> Vec<(f64, f64)> {
@@ -59,11 +86,9 @@ impl RainManager {
 
         // Spawn
         let target_drops = (width / 2.0) as usize;
-        if self.drops.len() < target_drops {
-            if rng.gen_bool(0.1) {
-                let x = rng.gen_range(0.0..width);
-                self.drops.push(RainDrop::new(x, width, &self.source_lines));
-            }
+        if self.drops.len() < target_drops && rng.gen_bool(0.1) {
+            let x = rng.gen_range(0.0..width);
+            self.drops.push(RainDrop::new(x, width, &self.source_lines));
         }
 
         // Update
@@ -95,29 +120,45 @@ impl RainManager {
     }
 }
 
-fn scan_files(root: &str) -> Vec<String> {
-    let mut lines = Vec::new();
-    for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
-        if entry.file_type().is_file() {
-            if let Some(ext) = entry.path().extension() {
-                if ext == "rs" {
-                    if let Ok(file) = File::open(entry.path()) {
-                        let reader = BufReader::new(file);
-                        for line in reader.lines().filter_map(|l| l.ok()) {
-                            let trimmed = line.trim();
-                            if !trimmed.is_empty() {
-                                lines.push(trimmed.to_string());
-                            }
-                        }
-                    }
-                }
+impl Default for Rain {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_rain_initialization() {
+        let rain = Rain::new();
+        assert!(rain.drops.is_empty());
+        assert!(!rain.source_lines.is_empty());
+    }
+
+    #[test]
+    fn test_rain_update() {
+        let mut rain = Rain::new();
+        let width = 100.0;
+        let height = 100.0;
+
+        // Force spawn or loop until drops appear
+        let mut spawned = false;
+        for _ in 0..100 {
+            let _ = rain.update(width, height);
+            if !rain.drops.is_empty() {
+                spawned = true;
+                break;
             }
         }
+        assert!(spawned, "Should eventually spawn drops");
+
+        // Drops start at negative Y. Let's force one to be at the bottom to test splash.
+        if let Some(drop) = rain.drops.first_mut() {
+            drop.y = height + 1.0;
+        }
+        let splashes = rain.update(width, height);
+        assert!(!splashes.is_empty());
     }
-    if lines.is_empty() {
-        lines.push("let x = 42;".to_string());
-        lines.push("fn main() {}".to_string());
-        lines.push("println!(\"Hello World\");".to_string());
-    }
-    lines
 }

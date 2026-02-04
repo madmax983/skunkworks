@@ -9,7 +9,8 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    widgets::{Block, Borders, List, ListItem},
+    text::{Line, Span},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Terminal,
 };
 use std::io;
@@ -40,15 +41,20 @@ fn run_app<B: ratatui::backend::Backend>(
 ) -> Result<()> {
     loop {
         terminal.draw(|f| {
-            let chunks = Layout::default()
+            let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                .split(f.area()); // Changed f.size() to f.area() for newer ratatui
+                .split(f.area());
+
+            let left_chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+                .split(main_chunks[0]);
 
             let right_chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                .split(chunks[1]);
+                .split(main_chunks[1]);
 
             // Genome View
             let helix = &vm.dna.helix;
@@ -72,10 +78,10 @@ fn run_app<B: ratatui::backend::Backend>(
                             style = style.bg(Color::Blue);
                         }
                         prefix = "> ";
-                    } else if s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1) {
-                        if style.fg != Some(Color::Blue) {
-                            style = style.fg(Color::DarkGray);
-                        }
+                    } else if (s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1))
+                        && style.fg != Some(Color::Blue)
+                    {
+                        style = style.fg(Color::DarkGray);
                     }
 
                     strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
@@ -83,12 +89,63 @@ fn run_app<B: ratatui::backend::Backend>(
                 strand_items.push(ListItem::new("-------------------"));
             }
 
+            let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
             let genome_list = List::new(strand_items).block(
+                Block::default().borders(Borders::ALL).title(format!(
+                    "Genome (Space: Step, M: Mutate, C: Chaos[{}], Q: Quit)",
+                    chaos_status
+                )),
+            );
+            f.render_widget(genome_list, left_chunks[0]);
+
+            // Petri Dish (Grid)
+            let mut grid_lines = Vec::new();
+            for y in 0..16 {
+                let mut line_spans = Vec::new();
+                for x in 0..16 {
+                    let val = &vm.grid[y][x];
+
+                    let (char_rep, style) = match val {
+                        crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
+                        crate::vm::Value::Int(n) => (
+                            format!("{}", (n.abs() % 10)),
+                            Style::default().fg(Color::Green)
+                        ),
+                        crate::vm::Value::Str(s) => {
+                            let symbol = match s.as_str() {
+                                "virus" => "V",
+                                "incubate" => "I",
+                                "push" => "^",
+                                "add" => "+",
+                                "sub" => "-",
+                                "mul" => "*",
+                                "div" => "/",
+                                "jump" | "jump_s" => "J",
+                                "brz" | "brz_s" => "?",
+                                "photosynthesize" => "P",
+                                "consume" => "C",
+                                "g_read" => "R",
+                                "g_write" => "W",
+                                "mitosis" => "M",
+                                "apoptosis" => "X",
+                                _ => &s[0..1],
+                            };
+                            (symbol.to_string(), Style::default().fg(Color::Cyan))
+                        }
+                    };
+
+                    line_spans.push(Span::styled(char_rep, style));
+                    line_spans.push(Span::raw(" ")); // Spacing
+                }
+                grid_lines.push(Line::from(line_spans));
+            }
+
+            let grid_paragraph = Paragraph::new(grid_lines).block(
                 Block::default()
                     .borders(Borders::ALL)
-                    .title("Genome (Space: Step, M: Mutate, Q: Quit)"),
+                    .title("Petri Dish (16x16)"),
             );
-            f.render_widget(genome_list, chunks[0]);
+            f.render_widget(grid_paragraph, left_chunks[1]);
 
             // Cytoplasm (Stack)
             let stack_items: Vec<ListItem> = vm
@@ -124,6 +181,7 @@ fn run_app<B: ratatui::backend::Backend>(
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
+                    KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
                     _ => {}
                 }
             }

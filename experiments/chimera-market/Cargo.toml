@@ -1,0 +1,16 @@
+[package]
+name = "chimera-market"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+nova = []
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+pest = "2.7"
+pest_derive = "2.7"
+tui-shared = { path = "../../crates/tui-shared" }

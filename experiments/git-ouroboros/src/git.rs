@@ -15,7 +15,7 @@ pub struct GitHistory {
 impl GitHistory {
     pub fn load() -> Result<Self> {
         let output = Command::new("git")
-            .args(&[
+            .args([
                 "log",
                 "--pretty=format:%H|%an|%s",
                 "--reverse",

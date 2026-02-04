@@ -15,3 +15,7 @@
 **2025-05-27 - Routing-Market Packet Panic**
 **Threat:** DoS via panic in `experiments/routing-market` when `Network::tick` processes a packet with an invalid destination `NodeIndex`.
 **Defense:** Added `self.graph.node_weight(p.dest).is_none()` check in `tick` to drop invalid packets, and fixed `burst` to generate valid indices.
+
+**2025-05-28 - Alloc-Tardis Scissor Safety & Unwrap Removal**
+**Threat:** Undefined Behavior via unchecked `unsafe` GL calls and DoS via `unwrap()` panic on invalid room IDs in `alloc-tardis`.
+**Defense:** Encapsulated `glScissor` in RAII-guarded `with_scissor` wrapper and replaced panicking accessors with `if let Some(...)` checks.

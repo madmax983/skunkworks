@@ -1,0 +1,8 @@
+[
+    push(0) push(1) push(4) recombine()
+    push("Strand A Tail") print()
+]
+[
+    push(0) drop() push(0) drop()
+    push("Strand B Tail") print()
+]

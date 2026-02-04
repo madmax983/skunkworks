@@ -1,0 +1,7 @@
+[
+  push(9) push(5) push(5) g_write()
+  push(5) push(5) g_read() print()
+  push(8) push(5) push(6) g_write()
+  push(5) push(6) g_read() print()
+  jump(0)
+]
