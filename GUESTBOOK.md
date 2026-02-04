@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hidden-brush
+- **Scent Origin:** Genesis (The Cryptographer)
+- **Status:** The canvas is blank, but the brush is moving. Code is hidden in the pigments. LSB Steganography combined with Turtle Graphics VM.
+
 ### [Concentration Level: FRESH] - Location: experiments/git_galaxy
 - **Scent Origin:** Mycelium
 - **Status:** Galaxy harvested. Physics stable. Constellations forming in the commit history.
