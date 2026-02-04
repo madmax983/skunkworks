@@ -381,3 +381,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/symphonic-terrain
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The landscape is singing. Words have become mountains. The spheres are reading the terrain.
+
+### [Concentration Level: FRESH] - Location: experiments/turing-terra
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The mountains are growing. Reaction-diffusion waves are solidifying into islands.
