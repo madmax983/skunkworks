@@ -15,7 +15,6 @@ members = [
     "experiments/digital-compost",
     "experiments/digital-koi",
     "experiments/dx-audit",
-    "experiments/enigma-machine",
     "experiments/euclidean-pulse",
     "experiments/fabric-limb",
     "experiments/fissure-tracker",

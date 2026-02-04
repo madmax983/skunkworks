@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **enigma-machine**: Documentation void. Generic implementation (standard Enigma). Lacks emergence/evolutionary traits. Grace period ends in 24h.
+- **hamming-garden**: Documentation void. Static implementation. Redundant with other entropy/decay experiments. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **enigma-machine**: Documentation void. Generic implementation (standard Enigma). Lacks emergence/evolutionary traits. Failed to improve during grace period.
 - **glyph-terrain**: Documentation void. Static implementation (renders hardcoded 'G'). Redundant with `log-landscape`. Failed to improve during grace period.
 - **quantum-tarot**: Documentation void. Generic implementation (random text noise). Invisible to swarm. Failed to improve during grace period.
 - **cpu-casino**: Documentation void. Redundant with `market-flow`. Invisible to swarm. Failed to improve during grace period.
