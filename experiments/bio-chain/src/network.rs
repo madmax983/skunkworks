@@ -117,10 +117,19 @@ impl Network {
                     continue;
                 }
 
-                // Validate block (simplified for now)
-                let is_valid = !block.transactions.is_empty();
+                let is_malicious = self.validators[i].is_malicious;
 
-                if is_valid {
+                // Validate block (simplified for now)
+                let actual_validity = !block.transactions.is_empty();
+
+                // Malicious validators vote OPPOSITE of validity
+                let vote_valid = if is_malicious {
+                    !actual_validity
+                } else {
+                    actual_validity
+                };
+
+                if vote_valid {
                     let vote_strength = self.validators[i].energy;
 
                     // Vote by secreting hormone
@@ -135,9 +144,12 @@ impl Network {
 
                     self.validators[i].total_votes += 1;
 
+                    let marker = if is_malicious { "🔴" } else { "✅" };
                     println!(
-                        "  ✅ Validator {} votes YES (strength: {}, total: {})",
+                        "  {} Validator {} votes {} (strength: {}, total: {})",
+                        marker,
                         i,
+                        if is_malicious { "INVALID" } else { "YES" },
                         vote_strength,
                         self.hormone_levels[&channel]
                     );
@@ -205,15 +217,23 @@ impl Network {
     /// Reward validators who voted for finalized block
     fn reward_validators(&mut self, block: &Block) {
         let total_fees = block.total_fees();
-        let voter_count = block.hormone_proof.voters.len();
 
-        if voter_count == 0 {
+        // Only reward HONEST voters (malicious validators wasted their vote)
+        let honest_voters: Vec<_> = block
+            .hormone_proof
+            .voters
+            .iter()
+            .filter(|&&id| !self.validators.get(id).map(|v| v.is_malicious).unwrap_or(false))
+            .cloned()
+            .collect();
+
+        if honest_voters.is_empty() {
             return;
         }
 
-        let reward_per_voter = total_fees / voter_count as u64;
+        let reward_per_voter = total_fees / honest_voters.len() as u64;
 
-        for voter_id in &block.hormone_proof.voters {
+        for voter_id in &honest_voters {
             if let Some(validator) = self.validators.get_mut(*voter_id) {
                 validator.earn_fees(reward_per_voter);
                 println!(
@@ -221,6 +241,19 @@ impl Network {
                     voter_id, reward_per_voter, validator.energy
                 );
             }
+        }
+
+        // Malicious voters get nothing (wasted energy on invalid vote)
+        let malicious_voters: Vec<_> = block
+            .hormone_proof
+            .voters
+            .iter()
+            .filter(|&&id| self.validators.get(id).map(|v| v.is_malicious).unwrap_or(false))
+            .cloned()
+            .collect();
+
+        for voter_id in malicious_voters {
+            println!("  ⚠️  Validator {} (malicious) earns nothing", voter_id);
         }
     }
 
@@ -279,9 +312,10 @@ impl Network {
 
         self.validators.retain(|v| {
             if v.is_dead() {
+                let marker = if v.is_malicious { "🔴💀" } else { "💀" };
                 println!(
-                    "💀 APOPTOSIS! Validator {} died (fitness: {:.2})",
-                    v.id, v.fitness
+                    "{} APOPTOSIS! Validator {} died (malicious: {}, fitness: {:.2})",
+                    marker, v.id, v.is_malicious, v.fitness
                 );
                 self.deaths += 1;
                 false

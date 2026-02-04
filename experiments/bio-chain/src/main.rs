@@ -1,7 +1,9 @@
+mod byzantine_test;
 mod network;
 mod types;
 mod validator;
 
+use byzantine_test::run_byzantine_test;
 use network::Network;
 use types::*;
 use validator::Validator;
@@ -9,6 +11,12 @@ use validator::Validator;
 fn main() -> anyhow::Result<()> {
     println!("🧬 BioCoin: Living Blockchain");
     println!("================================\n");
+
+    // Check if user wants Byzantine test
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 && args[1] == "--byzantine" {
+        return run_byzantine_test();
+    }
 
     // Create network
     let mut network = Network::new();

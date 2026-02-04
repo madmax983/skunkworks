@@ -14,6 +14,7 @@ pub struct Validator {
     pub blocks_validated: usize,
     pub correct_votes: usize,
     pub total_votes: usize,
+    pub is_malicious: bool, // Byzantine validator
 }
 
 impl Validator {
@@ -31,6 +32,25 @@ impl Validator {
             blocks_validated: 0,
             correct_votes: 0,
             total_votes: 0,
+            is_malicious: false,
+        }
+    }
+
+    /// Create a malicious (Byzantine) validator
+    pub fn malicious(id: ValidatorId, initial_energy: i64) -> Self {
+        let dna = Self::default_validator_dna();
+        let vm = ChimeraVM::new(dna);
+
+        Validator {
+            id,
+            vm,
+            energy: initial_energy,
+            lineage: vec![],
+            fitness: 1.0,
+            blocks_validated: 0,
+            correct_votes: 0,
+            total_votes: 0,
+            is_malicious: true,
         }
     }
 
@@ -50,6 +70,7 @@ impl Validator {
             blocks_validated: 0,
             correct_votes: 0,
             total_votes: 0,
+            is_malicious: parent.is_malicious, // Children inherit behavior
         }
     }
 
