@@ -18,6 +18,7 @@ members = [
     "experiments/fabric-limb",
     "experiments/fissure-tracker",
     "experiments/fluid-rain",
+    "experiments/fractal-stack",
     "experiments/fugue-state",
     "experiments/genetic-canvas",
     "experiments/geologic-git",
