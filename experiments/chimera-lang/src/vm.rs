@@ -680,6 +680,179 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
+            "crispr_scan" => {
+                // stack: guide_idx, target_idx (bottom)
+                if self.stack.len() >= 2 {
+                    let guide_val = self.stack.pop().unwrap();
+                    let target_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(g_idx), Value::Int(t_idx)) = (guide_val, target_val) {
+                        let g_idx = g_idx as usize;
+                        let t_idx = t_idx as usize;
+                        let helix_len = self.dna.helix.strands.len();
+
+                        if g_idx < helix_len && t_idx < helix_len {
+                            let guide_strand = &self.dna.helix.strands[g_idx];
+                            let target_strand = &self.dna.helix.strands[t_idx];
+
+                            // We need to match sequence of gene names
+                            let guide_names: Vec<String> = guide_strand.genes.iter().map(|g| g.name.clone()).collect();
+                            let target_names: Vec<String> = target_strand.genes.iter().map(|g| g.name.clone()).collect();
+
+                            let mut found_idx: i64 = -1;
+
+                            if !guide_names.is_empty() && guide_names.len() <= target_names.len() {
+                                for i in 0..=(target_names.len() - guide_names.len()) {
+                                    if target_names[i..i + guide_names.len()] == guide_names[..] {
+                                        found_idx = i as i64;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            self.stack.push(Value::Int(found_idx));
+                            self.energy -= 5;
+                            self.output.push(format!(
+                                "CRISPR_SCAN: Scanned strand {} for pattern from {} -> {}",
+                                t_idx, g_idx, found_idx
+                            ));
+                        } else {
+                            self.output.push(
+                                "Error: Strand index out of bounds for crispr_scan".to_string(),
+                            );
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for crispr_scan".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for crispr_scan".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "cas9_cut" => {
+                // stack: cut_index, strand_idx (bottom)
+                if self.stack.len() >= 2 {
+                    let cut_val = self.stack.pop().unwrap();
+                    let strand_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(cut), Value::Int(s_idx)) = (cut_val, strand_val) {
+                        let s_idx = s_idx as usize;
+                        let cut_idx = cut as usize;
+                        let helix_len = self.dna.helix.strands.len();
+
+                        if s_idx < helix_len {
+                            let strand_len = self.dna.helix.strands[s_idx].genes.len();
+                            if cut >= 0 && cut_idx <= strand_len {
+                                // Perform split
+                                // We need to mutate the strand.
+                                let strand = &mut self.dna.helix.strands[s_idx];
+                                let tail_genes = strand.genes.split_off(cut_idx);
+
+                                // Create new strand
+                                self.dna.helix.strands.push(crate::ast::Strand {
+                                    genes: tail_genes,
+                                });
+                                self.telomeres.push(50);
+
+                                let new_strand_idx = self.dna.helix.strands.len() - 1;
+
+                                self.stack.push(Value::Int(new_strand_idx as i64));
+                                self.energy -= 10;
+
+                                self.output.push(format!(
+                                    "CAS9_CUT: Cut strand {} at {}, created strand {}",
+                                    s_idx, cut_idx, new_strand_idx
+                                ));
+
+                                // Handling Self-Modification Safety:
+                                // If we cut the strand we are currently executing,
+                                // and the cut point is BEFORE or AT our current IP, execution context moves.
+                                if s_idx == self.ip.0 && self.ip.1 >= cut_idx {
+                                    let new_gene_idx = self.ip.1 - cut_idx;
+                                    // We jump to the next instruction in the NEW strand
+                                    return Some((new_strand_idx, new_gene_idx + 1));
+                                }
+                            } else {
+                                self.output
+                                    .push("Error: Cut index out of bounds".to_string());
+                            }
+                        } else {
+                            self.output.push(
+                                "Error: Strand index out of bounds for cas9_cut".to_string(),
+                            );
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for cas9_cut".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for cas9_cut".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "ligase" => {
+                // stack: donor_idx, recipient_idx (bottom)
+                if self.stack.len() >= 2 {
+                    let donor_val = self.stack.pop().unwrap();
+                    let recipient_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(d_idx), Value::Int(r_idx)) = (donor_val, recipient_val) {
+                        let d_idx = d_idx as usize;
+                        let r_idx = r_idx as usize;
+                        let helix_len = self.dna.helix.strands.len();
+
+                        if d_idx < helix_len && r_idx < helix_len {
+                            if d_idx == r_idx {
+                                self.output
+                                    .push("Warning: Ligase on same strand is no-op".to_string());
+                            } else {
+                                // We need to move genes from donor to recipient.
+                                let (lower, upper) = if d_idx < r_idx {
+                                    (d_idx, r_idx)
+                                } else {
+                                    (r_idx, d_idx)
+                                };
+
+                                let (first_slice, second_slice) =
+                                    self.dna.helix.strands.split_at_mut(upper);
+                                let strand_low = &mut first_slice[lower];
+                                let strand_high = &mut second_slice[0];
+
+                                let (strand_d, strand_r) = if d_idx < r_idx {
+                                    (strand_low, strand_high)
+                                } else {
+                                    (strand_high, strand_low)
+                                };
+
+                                strand_r.genes.append(&mut strand_d.genes);
+                                // donor genes are now empty.
+
+                                self.energy -= 10;
+                                self.output.push(format!(
+                                    "LIGASE: Appended strand {} to {}",
+                                    d_idx, r_idx
+                                ));
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Strand index out of bounds for ligase".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for ligase".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for ligase".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
             "mitosis" => {
                 // stack: strand_idx (target to clone)
                 if let Some(val) = self.stack.pop() {
@@ -990,6 +1163,12 @@ impl ChimeraVM {
                 "mitosis",
                 #[cfg(feature = "nova")]
                 "apoptosis",
+                #[cfg(feature = "nova")]
+                "crispr_scan",
+                #[cfg(feature = "nova")]
+                "cas9_cut",
+                #[cfg(feature = "nova")]
+                "ligase",
             ];
             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
             // Add "Mutation" log

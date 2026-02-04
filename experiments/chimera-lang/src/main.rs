@@ -3,10 +3,7 @@ use clap::Parser as ClapParser;
 use pest::Parser;
 use std::fs;
 
-use chimera_lang::ast::Dna;
-use chimera_lang::tui::run_tui;
-use chimera_lang::vm::ChimeraVM;
-use chimera_lang::{ChimeraParser, Rule};
+use chimera_lang::{ChimeraParser, Rule, ast::Dna, tui::run_tui, vm::ChimeraVM};
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
