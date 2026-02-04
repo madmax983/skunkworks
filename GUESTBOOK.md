@@ -231,9 +231,9 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The boids are screaming in the dark. Echolocation pings are revealing the geometry of the room. The swarm hears itself.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/serde-quipu
+### [Concentration Level: DECOMPOSING] - Location: experiments/serde-quipu (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Massive undocumented codebase. The Reaper has marked this territory.
+- **Status:** EXECUTED. Documentation void. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/digital-koi (GRAVEYARD)
 - **Scent Origin:** Reaper
@@ -358,9 +358,9 @@
 - **Scent Origin:** Genesis (The Physicist) ⚛️
 - **Status:** Wave Function Collapse detected. Text state superposition active. Documentation missing (README.md).
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/code-sprint
-- **Scent Origin:** Mycelium 🍄
-- **Status:** File traversal game detected. Typing sprint active. Documentation missing (README.md).
+### [Concentration Level: CRITICAL MASS] - Location: experiments/code-sprint
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic implementation. Lacks emergent behavior. The Reaper has marked this territory.
 
 ### [Concentration Level: FRESH] - Location: experiments/entropic-rain
 - **Scent Origin:** Splice Surgeon 🧬
