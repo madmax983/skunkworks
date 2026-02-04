@@ -112,7 +112,12 @@ fn load_file<P: AsRef<Path>>(path: P) -> Result<Vec<CodeLine>> {
 
     if lines.is_empty() {
         // Dummy data if empty
-        lines.push(CodeLine { indent: 0, length: 10, color: Color::Red, content: "Empty".into() });
+        lines.push(CodeLine {
+            indent: 0,
+            length: 10,
+            color: Color::Red,
+            content: "Empty".into(),
+        });
     }
 
     Ok(lines)
@@ -207,7 +212,8 @@ fn ui(f: &mut Frame, app: &App) {
 
                 // Theta within the sector
                 // Base angle on indentation + length
-                let local_theta = ((line.indent as f64 * 0.1) + (line.length as f64 * 0.01)) % (sector_angle / 2.0);
+                let local_theta = ((line.indent as f64 * 0.1) + (line.length as f64 * 0.01))
+                    % (sector_angle / 2.0);
 
                 let stroke_len = (line.length as f64 * 0.5).min(20.0);
 
@@ -216,10 +222,26 @@ fn ui(f: &mut Frame, app: &App) {
                     let base_angle = s as f64 * sector_angle + app.rotation;
 
                     // Draw Original
-                    draw_mirrored_line(ctx, center_x, center_y, r, base_angle + local_theta, stroke_len, line.color);
+                    draw_mirrored_line(
+                        ctx,
+                        center_x,
+                        center_y,
+                        r,
+                        base_angle + local_theta,
+                        stroke_len,
+                        line.color,
+                    );
 
                     // Draw Mirror (within the sector)
-                    draw_mirrored_line(ctx, center_x, center_y, r, base_angle + sector_angle - local_theta, stroke_len, line.color);
+                    draw_mirrored_line(
+                        ctx,
+                        center_x,
+                        center_y,
+                        r,
+                        base_angle + sector_angle - local_theta,
+                        stroke_len,
+                        line.color,
+                    );
                 }
             }
         });
@@ -227,7 +249,13 @@ fn ui(f: &mut Frame, app: &App) {
     f.render_widget(canvas, size);
 }
 
-fn calculate_line_points(cx: f64, cy: f64, r: f64, theta: f64, len: f64) -> ((f64, f64), (f64, f64)) {
+fn calculate_line_points(
+    cx: f64,
+    cy: f64,
+    r: f64,
+    theta: f64,
+    len: f64,
+) -> ((f64, f64), (f64, f64)) {
     let x1 = cx + r * theta.cos();
     let y1 = cy + r * theta.sin();
 
@@ -238,7 +266,15 @@ fn calculate_line_points(cx: f64, cy: f64, r: f64, theta: f64, len: f64) -> ((f6
     ((x1, y1), (x2, y2))
 }
 
-fn draw_mirrored_line(ctx: &mut ratatui::widgets::canvas::Context, cx: f64, cy: f64, r: f64, theta: f64, len: f64, color: Color) {
+fn draw_mirrored_line(
+    ctx: &mut ratatui::widgets::canvas::Context,
+    cx: f64,
+    cy: f64,
+    r: f64,
+    theta: f64,
+    len: f64,
+    color: Color,
+) {
     let ((x1, y1), (x2, y2)) = calculate_line_points(cx, cy, r, theta, len);
 
     ctx.draw(&Line {

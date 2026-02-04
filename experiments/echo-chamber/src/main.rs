@@ -4,12 +4,12 @@ pub mod ui;
 
 use anyhow::Result;
 use audio::{run_audio, AudioCommand};
+use crossbeam_channel::{bounded, Sender};
 use crossterm::{
     event::{self, Event, KeyCode, MouseButton, MouseEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use crossbeam_channel::{bounded, Sender};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::{io, time::Duration};
 
@@ -119,7 +119,7 @@ fn run_app(
                             // For now, iterate.
                             for y in 0..height {
                                 for x in 0..width {
-                                     let _ = cmd_tx.send(AudioCommand::RemoveWall(x, y));
+                                    let _ = cmd_tx.send(AudioCommand::RemoveWall(x, y));
                                 }
                             }
                         }
@@ -128,7 +128,7 @@ fn run_app(
                             walls.fill(false);
                             for y in 0..height {
                                 for x in 0..width {
-                                     let _ = cmd_tx.send(AudioCommand::RemoveWall(x, y));
+                                    let _ = cmd_tx.send(AudioCommand::RemoveWall(x, y));
                                 }
                             }
                             // Add walls at border
@@ -146,14 +146,14 @@ fn run_app(
                             }
                         }
                         KeyCode::Char('3') => {
-                             // "Chamber" - Box with a baffle
-                             // Reuse Box logic first?
-                             // Just draw baffle
-                             let center_x = width / 2;
-                             for y in 5..height-5 {
-                                 let _ = cmd_tx.send(AudioCommand::AddWall(center_x, y));
-                                 walls[y * width + center_x] = true;
-                             }
+                            // "Chamber" - Box with a baffle
+                            // Reuse Box logic first?
+                            // Just draw baffle
+                            let center_x = width / 2;
+                            for y in 5..height - 5 {
+                                let _ = cmd_tx.send(AudioCommand::AddWall(center_x, y));
+                                walls[y * width + center_x] = true;
+                            }
                         }
                         _ => {}
                     }

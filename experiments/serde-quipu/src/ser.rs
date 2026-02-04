@@ -1,6 +1,6 @@
-use serde::{ser, Serialize};
-use crate::quipu::{Cord, Quipu};
 use crate::error::Error;
+use crate::quipu::{Cord, Quipu};
+use serde::{ser, Serialize};
 
 pub struct Serializer;
 
@@ -351,7 +351,10 @@ mod tests {
 
     #[test]
     fn test_serialize_struct() {
-        let u = User { id: 123, active: true };
+        let u = User {
+            id: 123,
+            active: true,
+        };
         let s = to_string(&u).unwrap();
         println!("{}", s);
         // User -> Root

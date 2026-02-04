@@ -3,13 +3,13 @@ use anyhow::{anyhow, Result};
 #[derive(Debug, Clone, PartialEq)]
 pub enum Instruction {
     End,
-    Fwd,            // Moves by current step_size
-    Rot(i8),        // Rotates by N degrees
-    Pen(bool),      // true = down, false = up
+    Fwd,       // Moves by current step_size
+    Rot(i8),   // Rotates by N degrees
+    Pen(bool), // true = down, false = up
     Color(u8, u8, u8),
     SetStep(u8),
     AddStep(i8),
-    Rep(u8, u8),    // count, instruction_count
+    Rep(u8, u8), // count, instruction_count
 }
 
 impl Instruction {
@@ -58,63 +58,75 @@ impl Assembler {
                 "END" => bytecode.push(0x00),
                 "FWD" => bytecode.push(0x01),
                 "ROT" => {
-                    if i >= tokens.len() { return Err(anyhow!("Missing arg for ROT")); }
+                    if i >= tokens.len() {
+                        return Err(anyhow!("Missing arg for ROT"));
+                    }
                     let val = tokens[i].parse::<i8>()?;
                     bytecode.push(0x02);
                     bytecode.push(val as u8);
                     i += 1;
-                },
+                }
                 "PEN" => {
-                    if i >= tokens.len() { return Err(anyhow!("Missing arg for PEN")); }
+                    if i >= tokens.len() {
+                        return Err(anyhow!("Missing arg for PEN"));
+                    }
                     let val = tokens[i].parse::<u8>()?;
                     bytecode.push(0x03);
                     bytecode.push(val);
                     i += 1;
-                },
+                }
                 "COL" => {
-                    if i + 2 >= tokens.len() { return Err(anyhow!("Missing args for COL")); }
+                    if i + 2 >= tokens.len() {
+                        return Err(anyhow!("Missing args for COL"));
+                    }
                     let r = tokens[i].parse::<u8>()?;
-                    let g = tokens[i+1].parse::<u8>()?;
-                    let b = tokens[i+2].parse::<u8>()?;
+                    let g = tokens[i + 1].parse::<u8>()?;
+                    let b = tokens[i + 2].parse::<u8>()?;
                     bytecode.push(0x04);
                     bytecode.push(r);
                     bytecode.push(g);
                     bytecode.push(b);
                     i += 3;
-                },
+                }
                 "SET_STEP" => {
-                    if i >= tokens.len() { return Err(anyhow!("Missing arg for SET_STEP")); }
+                    if i >= tokens.len() {
+                        return Err(anyhow!("Missing arg for SET_STEP"));
+                    }
                     let val = tokens[i].parse::<u8>()?;
                     bytecode.push(0x05);
                     bytecode.push(val);
                     i += 1;
-                },
+                }
                 "ADD_STEP" => {
-                    if i >= tokens.len() { return Err(anyhow!("Missing arg for ADD_STEP")); }
+                    if i >= tokens.len() {
+                        return Err(anyhow!("Missing arg for ADD_STEP"));
+                    }
                     let val = tokens[i].parse::<i8>()?;
                     bytecode.push(0x06);
                     bytecode.push(val as u8);
                     i += 1;
-                },
+                }
                 "REP" => {
-                    if i + 1 >= tokens.len() { return Err(anyhow!("Missing args for REP")); }
+                    if i + 1 >= tokens.len() {
+                        return Err(anyhow!("Missing args for REP"));
+                    }
                     let count = tokens[i].parse::<u8>()?;
-                    let len = tokens[i+1].parse::<u8>()?;
+                    let len = tokens[i + 1].parse::<u8>()?;
                     bytecode.push(0x07);
                     bytecode.push(count);
                     bytecode.push(len);
                     i += 2;
-                },
+                }
                 // Comments
                 s if s.starts_with('#') || s.starts_with("//") => {
-                   // Skip comments
-                   // Since we parse token by token, we might be inside a line comment.
-                   // But split_whitespace breaks lines.
-                   // This simple parser only handles comments if the token itself starts with #.
-                   // It won't skip the rest of the line.
-                   // For a robust comment system, we need line-based parsing.
-                   // For now, let's just ignore tokens starting with #
-                   continue;
+                    // Skip comments
+                    // Since we parse token by token, we might be inside a line comment.
+                    // But split_whitespace breaks lines.
+                    // This simple parser only handles comments if the token itself starts with #.
+                    // It won't skip the rest of the line.
+                    // For a robust comment system, we need line-based parsing.
+                    // For now, let's just ignore tokens starting with #
+                    continue;
                 }
                 _ => return Err(anyhow!("Unknown token: {}", token)),
             }
@@ -133,35 +145,47 @@ impl Assembler {
                 0x00 => instructions.push(Instruction::End),
                 0x01 => instructions.push(Instruction::Fwd),
                 0x02 => {
-                    if i >= bytes.len() { break; }
+                    if i >= bytes.len() {
+                        break;
+                    }
                     instructions.push(Instruction::Rot(bytes[i] as i8));
                     i += 1;
-                },
+                }
                 0x03 => {
-                    if i >= bytes.len() { break; }
+                    if i >= bytes.len() {
+                        break;
+                    }
                     instructions.push(Instruction::Pen(bytes[i] != 0));
                     i += 1;
-                },
+                }
                 0x04 => {
-                    if i + 2 >= bytes.len() { break; }
-                    instructions.push(Instruction::Color(bytes[i], bytes[i+1], bytes[i+2]));
+                    if i + 2 >= bytes.len() {
+                        break;
+                    }
+                    instructions.push(Instruction::Color(bytes[i], bytes[i + 1], bytes[i + 2]));
                     i += 3;
-                },
+                }
                 0x05 => {
-                    if i >= bytes.len() { break; }
+                    if i >= bytes.len() {
+                        break;
+                    }
                     instructions.push(Instruction::SetStep(bytes[i]));
                     i += 1;
-                },
+                }
                 0x06 => {
-                    if i >= bytes.len() { break; }
+                    if i >= bytes.len() {
+                        break;
+                    }
                     instructions.push(Instruction::AddStep(bytes[i] as i8));
                     i += 1;
-                },
+                }
                 0x07 => {
-                    if i + 1 >= bytes.len() { break; }
-                    instructions.push(Instruction::Rep(bytes[i], bytes[i+1]));
+                    if i + 1 >= bytes.len() {
+                        break;
+                    }
+                    instructions.push(Instruction::Rep(bytes[i], bytes[i + 1]));
                     i += 2;
-                },
+                }
                 _ => return Err(anyhow!("Unknown opcode: {}", op)),
             }
         }

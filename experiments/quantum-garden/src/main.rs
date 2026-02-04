@@ -2,18 +2,18 @@ use anyhow::Result;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{
-    Terminal,
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::Line,
     widgets::{
-        Block, Borders, Paragraph,
         canvas::{Canvas, Line as CanvasLine, Rectangle},
+        Block, Borders, Paragraph,
     },
+    Terminal,
 };
 use std::{io, time::Duration};
 

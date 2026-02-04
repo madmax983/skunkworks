@@ -1,5 +1,5 @@
-use serde::de::{self, Deserialize, Visitor, MapAccess, SeqAccess};
-use crate::quipu::{Cord, Knot, Cluster, Quipu};
+use crate::error::Error;
+use crate::quipu::{Cluster, Cord, Knot, Quipu};
 use nom::{
     bytes::complete::{tag, take_until, take_while1},
     character::complete::{multispace0, newline, space0},
@@ -8,7 +8,7 @@ use nom::{
     sequence::delimited,
     IResult,
 };
-use crate::error::Error;
+use serde::de::{self, Deserialize, MapAccess, SeqAccess, Visitor};
 
 pub fn from_str<'a, T: Deserialize<'a>>(s: &'a str) -> Result<T, Error> {
     let (_, quipu) = parse_quipu(s).map_err(|e| Error::Parse(e.to_string()))?;
@@ -80,11 +80,14 @@ fn parse_line(input: &str) -> IResult<&str, LineData> {
     // Parse knot_str into clusters
     let clusters = parse_knot_string(knot_str);
 
-    Ok((input, LineData {
-        indent,
-        color: color.to_string(),
-        clusters,
-    }))
+    Ok((
+        input,
+        LineData {
+            indent,
+            color: color.to_string(),
+            clusters,
+        },
+    ))
 }
 
 fn parse_knot_string(s: &str) -> Vec<Cluster> {
@@ -159,12 +162,12 @@ fn reconstruct_tree(lines: Vec<LineData>) -> Vec<Cord> {
 
         while let Some((last_indent, _)) = stack.last() {
             if *last_indent >= line.indent {
-                 let (_, popped_cord) = stack.pop().unwrap();
-                 if let Some((_, parent)) = stack.last_mut() {
-                     parent.add_subsidiary(popped_cord);
-                 } else {
-                     roots.push(popped_cord);
-                 }
+                let (_, popped_cord) = stack.pop().unwrap();
+                if let Some((_, parent)) = stack.last_mut() {
+                    parent.add_subsidiary(popped_cord);
+                } else {
+                    roots.push(popped_cord);
+                }
             } else {
                 break;
             }
@@ -175,11 +178,11 @@ fn reconstruct_tree(lines: Vec<LineData>) -> Vec<Cord> {
 
     // Flush stack
     while let Some((_, popped_cord)) = stack.pop() {
-         if let Some((_, parent)) = stack.last_mut() {
-             parent.add_subsidiary(popped_cord);
-         } else {
-             roots.push(popped_cord);
-         }
+        if let Some((_, parent)) = stack.last_mut() {
+            parent.add_subsidiary(popped_cord);
+        } else {
+            roots.push(popped_cord);
+        }
     }
 
     roots
@@ -202,7 +205,7 @@ impl<'de> de::Deserializer<'de> for CordDeserializer {
         // If subsidiaries exist -> Map/Struct
         // If clusters exist -> Int/String
         if !self.cord.subsidiaries.is_empty() {
-             self.deserialize_map(visitor)
+            self.deserialize_map(visitor)
         } else {
             self.deserialize_u64(visitor)
         }
@@ -216,49 +219,103 @@ impl<'de> de::Deserializer<'de> for CordDeserializer {
     }
 
     fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where V: Visitor<'de> {
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_bool(self.cord.to_u64() != 0)
     }
 
     fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where V: Visitor<'de> {
-         // Assuming u64
-         if let Some(c) = std::char::from_u32(self.cord.to_u64() as u32) {
-             visitor.visit_char(c)
-         } else {
-             Err(Error::Message("Invalid char".to_string()))
-         }
+    where
+        V: Visitor<'de>,
+    {
+        // Assuming u64
+        if let Some(c) = std::char::from_u32(self.cord.to_u64() as u32) {
+            visitor.visit_char(c)
+        } else {
+            Err(Error::Message("Invalid char".to_string()))
+        }
     }
 
     fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where V: Visitor<'de> {
+    where
+        V: Visitor<'de>,
+    {
         if !self.cord.subsidiaries.is_empty() {
             let mut s = String::new();
             for sub in &self.cord.subsidiaries {
-                let c = std::char::from_u32(sub.to_u64() as u32).ok_or(Error::Message("Invalid char".to_string()))?;
+                let c = std::char::from_u32(sub.to_u64() as u32)
+                    .ok_or(Error::Message("Invalid char".to_string()))?;
                 s.push(c);
             }
             visitor.visit_string(s)
         } else {
-             visitor.visit_string(self.cord.color)
+            visitor.visit_string(self.cord.color)
         }
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where V: Visitor<'de> {
+    where
+        V: Visitor<'de>,
+    {
         self.deserialize_str(visitor)
     }
 
     // Forward integers
-    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_i8(self.cord.to_u64() as i8) }
-    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_i16(self.cord.to_u64() as i16) }
-    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_i32(self.cord.to_u64() as i32) }
-    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_i64(self.cord.to_u64() as i64) }
-    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_u8(self.cord.to_u64() as u8) }
-    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_u16(self.cord.to_u64() as u16) }
-    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_u32(self.cord.to_u64() as u32) }
-    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_f32(self.cord.to_u64() as f32) }
-    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> { visitor.visit_f64(self.cord.to_u64() as f64) }
+    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_i8(self.cord.to_u64() as i8)
+    }
+    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_i16(self.cord.to_u64() as i16)
+    }
+    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_i32(self.cord.to_u64() as i32)
+    }
+    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_i64(self.cord.to_u64() as i64)
+    }
+    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_u8(self.cord.to_u64() as u8)
+    }
+    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_u16(self.cord.to_u64() as u16)
+    }
+    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_u32(self.cord.to_u64() as u32)
+    }
+    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_f32(self.cord.to_u64() as f32)
+    }
+    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_f64(self.cord.to_u64() as f64)
+    }
 
     fn deserialize_struct<V>(
         self,
@@ -273,17 +330,24 @@ impl<'de> de::Deserializer<'de> for CordDeserializer {
     }
 
     fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where V: Visitor<'de> {
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_map(CordMapAccess::new(self.cord.subsidiaries))
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where V: Visitor<'de> {
-         visitor.visit_seq(CordSeqAccess::new(self.cord.subsidiaries))
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_seq(CordSeqAccess::new(self.cord.subsidiaries))
     }
 
     // Boilerplate for others
-    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         if self.cord.color == "None" {
             visitor.visit_none()
         } else {
@@ -291,53 +355,101 @@ impl<'de> de::Deserializer<'de> for CordDeserializer {
         }
     }
 
-    fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_unit()
     }
 
-    fn deserialize_unit_struct<V>(self, _name: &'static str, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_unit_struct<V>(
+        self,
+        _name: &'static str,
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_unit()
     }
 
-    fn deserialize_newtype_struct<V>(self, _name: &'static str, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_newtype_struct<V>(
+        self,
+        _name: &'static str,
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_newtype_struct(self)
     }
 
-    fn deserialize_tuple<V>(self, _len: usize, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_tuple<V>(self, _len: usize, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         self.deserialize_seq(visitor)
     }
 
-    fn deserialize_tuple_struct<V>(self, _name: &'static str, _len: usize, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_tuple_struct<V>(
+        self,
+        _name: &'static str,
+        _len: usize,
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         self.deserialize_seq(visitor)
     }
 
-    fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_string(self.cord.color)
     }
 
-    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         visitor.visit_unit()
     }
 
-    fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         // Not implemented really
-         visitor.visit_bytes(&[])
+        visitor.visit_bytes(&[])
     }
 
-    fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
-         visitor.visit_byte_buf(vec![])
+    fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_byte_buf(vec![])
     }
 
-    fn deserialize_enum<V>(self, _name: &'static str, _variants: &'static [&'static str], visitor: V) -> Result<V::Value, Self::Error> where V: Visitor<'de> {
+    fn deserialize_enum<V>(
+        self,
+        _name: &'static str,
+        _variants: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
         // Enums?
         // Usually represented as map { Variant: Content } or just String "Variant"
         // If content is empty (Unit variant), maybe just string?
 
         if self.cord.subsidiaries.is_empty() {
-             visitor.visit_enum(de::value::StringDeserializer::<Error>::new(self.cord.color))
+            visitor.visit_enum(de::value::StringDeserializer::<Error>::new(self.cord.color))
         } else {
-             // Variant struct/tuple
-             visitor.visit_enum(CordEnumAccess { cord: self.cord })
+            // Variant struct/tuple
+            visitor.visit_enum(CordEnumAccess { cord: self.cord })
         }
     }
 }
@@ -367,7 +479,8 @@ impl<'de> MapAccess<'de> for CordMapAccess {
             // The "Key" is the color of the cord.
             // We must clone because we move cord into self.next_value
             let color = cord.color.clone();
-            let key_deserializer: de::value::StringDeserializer<Error> = de::value::StringDeserializer::new(color);
+            let key_deserializer: de::value::StringDeserializer<Error> =
+                de::value::StringDeserializer::new(color);
             self.next_value = Some(cord);
             seed.deserialize(key_deserializer).map(Some)
         } else {
@@ -394,7 +507,9 @@ struct CordSeqAccess {
 
 impl CordSeqAccess {
     fn new(subsidiaries: Vec<Cord>) -> Self {
-        Self { iter: subsidiaries.into_iter() }
+        Self {
+            iter: subsidiaries.into_iter(),
+        }
     }
 }
 
@@ -426,7 +541,8 @@ impl<'de> de::EnumAccess<'de> for CordEnumAccess {
     where
         V: de::DeserializeSeed<'de>,
     {
-        let variant_deserializer: de::value::StringDeserializer<Error> = de::value::StringDeserializer::new(self.cord.color.clone());
+        let variant_deserializer: de::value::StringDeserializer<Error> =
+            de::value::StringDeserializer::new(self.cord.color.clone());
         let val = seed.deserialize(variant_deserializer)?;
         Ok((val, CordVariantAccess { cord: self.cord }))
     }

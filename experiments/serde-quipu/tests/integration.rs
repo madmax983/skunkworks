@@ -43,8 +43,16 @@ fn test_roundtrip_nested() {
     let group = Group {
         name: "Admins".to_string(),
         users: vec![
-            User { id: 1, active: true, score: 100 },
-            User { id: 2, active: false, score: 50 },
+            User {
+                id: 1,
+                active: true,
+                score: 100,
+            },
+            User {
+                id: 2,
+                active: false,
+                score: 50,
+            },
         ],
     };
 

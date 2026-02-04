@@ -1,11 +1,11 @@
 use crate::physics::{Body, System, Vec2};
 use anyhow::{Context, Result};
 use cargo_metadata::MetadataCommand;
-use rand::Rng;
+use rand::{rngs::StdRng, Rng, SeedableRng};
 use ratatui::style::Color;
 use std::collections::{HashMap, HashSet, VecDeque};
 
-pub fn load_system() -> Result<System> {
+pub fn load_system(seed: Option<u64>) -> Result<System> {
     let metadata = MetadataCommand::new()
         .exec()
         .context("Failed to run cargo metadata")?;
@@ -28,7 +28,10 @@ pub fn load_system() -> Result<System> {
         .context("No root package found. Tried: resolved root, 'cargo-rocket', and first workspace member.")?;
 
     let mut system = System::new();
-    let mut rng = rand::thread_rng();
+    let mut rng = match seed {
+        Some(s) => StdRng::seed_from_u64(s),
+        None => StdRng::from_entropy(),
+    };
 
     // BFS to determine shells (distance from root)
     let mut depth_map = HashMap::new();

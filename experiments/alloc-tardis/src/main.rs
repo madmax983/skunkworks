@@ -21,55 +21,67 @@ async fn main() {
     loop {
         // Handle input
         let move_speed = 5.0 / cam_zoom;
-        if is_key_down(KeyCode::Minus) || is_key_down(KeyCode::Q) { cam_zoom *= 0.98; }
-        if is_key_down(KeyCode::Equal) || is_key_down(KeyCode::E) { cam_zoom *= 1.02; }
-        if is_key_down(KeyCode::Left) || is_key_down(KeyCode::A) { cam_pos.x -= move_speed; }
-        if is_key_down(KeyCode::Right) || is_key_down(KeyCode::D) { cam_pos.x += move_speed; }
-        if is_key_down(KeyCode::Up) || is_key_down(KeyCode::W) { cam_pos.y -= move_speed; }
-        if is_key_down(KeyCode::Down) || is_key_down(KeyCode::S) { cam_pos.y += move_speed; }
+        if is_key_down(KeyCode::Minus) || is_key_down(KeyCode::Q) {
+            cam_zoom *= 0.98;
+        }
+        if is_key_down(KeyCode::Equal) || is_key_down(KeyCode::E) {
+            cam_zoom *= 1.02;
+        }
+        if is_key_down(KeyCode::Left) || is_key_down(KeyCode::A) {
+            cam_pos.x -= move_speed;
+        }
+        if is_key_down(KeyCode::Right) || is_key_down(KeyCode::D) {
+            cam_pos.x += move_speed;
+        }
+        if is_key_down(KeyCode::Up) || is_key_down(KeyCode::W) {
+            cam_pos.y -= move_speed;
+        }
+        if is_key_down(KeyCode::Down) || is_key_down(KeyCode::S) {
+            cam_pos.y += move_speed;
+        }
 
         // Check for Portal Crossing
         // If we are zoomed in enough that a portal dominates the view, switch to it.
         // Threshold: 3.0 (Arbitrary, feels like "Close Enough")
         if cam_zoom > 3.0 {
-             let room = world.rooms.get(&current_room_id).unwrap();
-             for portal in &room.portals {
-                 if portal.rect.contains(cam_pos) {
-                     let target_room = world.rooms.get(&portal.target_room_id).unwrap();
+            let room = world.rooms.get(&current_room_id).unwrap();
+            for portal in &room.portals {
+                if portal.rect.contains(cam_pos) {
+                    let target_room = world.rooms.get(&portal.target_room_id).unwrap();
 
-                     // Calculate Scale Factor (Child -> Parent)
-                     // Scale = Portal / Target
-                     let scale_x = portal.rect.w / target_room.rect.w;
-                     // let scale_y = portal.rect.h / target_room.rect.h;
+                    // Calculate Scale Factor (Child -> Parent)
+                    // Scale = Portal / Target
+                    let scale_x = portal.rect.w / target_room.rect.w;
+                    // let scale_y = portal.rect.h / target_room.rect.h;
 
-                     // New Zoom
-                     // We want visual continuity.
-                     // Current View Width = ScreenWidth / Zoom.
-                     // Effectively, we are multiplying our coordinate system by (1/Scale).
-                     // So Zoom should be multiplied by Scale?
-                     // Wait. If we switch to Child, Child is huge (Target Room).
-                     // We were looking at Portal (Small).
-                     // To make Child look Small (like Portal), we need Low Zoom?
-                     // No, `cam_zoom` = 1.0 means "Fits Screen".
-                     // If we are at `cam_zoom` = 10.0 (Looking closely at Portal).
-                     // And Portal is 0.1 of Child.
-                     // Then Child should be rendered at Zoom 1.0 to match?
-                     // new_zoom = old_zoom * scale.
-                     // 10.0 * 0.1 = 1.0. Correct.
+                    // New Zoom
+                    // We want visual continuity.
+                    // Current View Width = ScreenWidth / Zoom.
+                    // Effectively, we are multiplying our coordinate system by (1/Scale).
+                    // So Zoom should be multiplied by Scale?
+                    // Wait. If we switch to Child, Child is huge (Target Room).
+                    // We were looking at Portal (Small).
+                    // To make Child look Small (like Portal), we need Low Zoom?
+                    // No, `cam_zoom` = 1.0 means "Fits Screen".
+                    // If we are at `cam_zoom` = 10.0 (Looking closely at Portal).
+                    // And Portal is 0.1 of Child.
+                    // Then Child should be rendered at Zoom 1.0 to match?
+                    // new_zoom = old_zoom * scale.
+                    // 10.0 * 0.1 = 1.0. Correct.
 
-                     let new_zoom = cam_zoom * scale_x;
+                    let new_zoom = cam_zoom * scale_x;
 
-                     // New Pos
-                     // P_c = TargetX + (P_p - PortalX) / S
-                     let new_pos_x = target_room.rect.x + (cam_pos.x - portal.rect.x) / scale_x;
-                     let new_pos_y = target_room.rect.y + (cam_pos.y - portal.rect.y) / scale_x;
+                    // New Pos
+                    // P_c = TargetX + (P_p - PortalX) / S
+                    let new_pos_x = target_room.rect.x + (cam_pos.x - portal.rect.x) / scale_x;
+                    let new_pos_y = target_room.rect.y + (cam_pos.y - portal.rect.y) / scale_x;
 
-                     current_room_id = portal.target_room_id;
-                     cam_pos = vec2(new_pos_x, new_pos_y);
-                     cam_zoom = new_zoom;
-                     break;
-                 }
-             }
+                    current_room_id = portal.target_room_id;
+                    cam_pos = vec2(new_pos_x, new_pos_y);
+                    cam_zoom = new_zoom;
+                    break;
+                }
+            }
         }
 
         clear_background(BLACK);
@@ -100,15 +112,29 @@ async fn main() {
 
         // Draw HUD
         set_default_camera();
-        draw_text(format!("Zoom: {:.2}", cam_zoom).as_str(), 20.0, 20.0, 30.0, WHITE);
-        draw_text("WASD/Arrows to move, +/- to zoom", 20.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(
+            format!("Zoom: {:.2}", cam_zoom).as_str(),
+            20.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "WASD/Arrows to move, +/- to zoom",
+            20.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }
 }
 
 fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
-    if depth <= 0 { return; }
+    if depth <= 0 {
+        return;
+    }
 
     let room = match world.rooms.get(&room_id) {
         Some(r) => r,
@@ -119,24 +145,59 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
     set_camera(&cam);
 
     // 2. Draw Room Floor
-    draw_rectangle(room.rect.x, room.rect.y, room.rect.w, room.rect.h, room.color);
-    draw_rectangle_lines(room.rect.x, room.rect.y, room.rect.w, room.rect.h, 5.0, WHITE);
+    draw_rectangle(
+        room.rect.x,
+        room.rect.y,
+        room.rect.w,
+        room.rect.h,
+        room.color,
+    );
+    draw_rectangle_lines(
+        room.rect.x,
+        room.rect.y,
+        room.rect.w,
+        room.rect.h,
+        5.0,
+        WHITE,
+    );
 
     // Draw Label (centered)
-    let center = vec2(room.rect.x + room.rect.w/2.0, room.rect.y + room.rect.h/2.0);
+    let center = vec2(
+        room.rect.x + room.rect.w / 2.0,
+        room.rect.y + room.rect.h / 2.0,
+    );
     // draw_text is screen space? No, World space if camera is set.
     // But text size is also world space?
     // In Macroquad, `draw_text` behaves weirdly with Camera2D (font size scales).
     // Let's try `draw_text_ex` with world-space size.
     // A safe size is 10% of room width.
     let font_size = room.rect.w * 0.1;
-    draw_text(room.label.as_str(), room.rect.x + 10.0, center.y, font_size, WHITE);
+    draw_text(
+        room.label.as_str(),
+        room.rect.x + 10.0,
+        center.y,
+        font_size,
+        WHITE,
+    );
 
     // 3. Draw Portals
     for portal in &room.portals {
         // Draw Portal Frame
-        draw_rectangle(portal.rect.x, portal.rect.y, portal.rect.w, portal.rect.h, portal.color);
-        draw_rectangle_lines(portal.rect.x, portal.rect.y, portal.rect.w, portal.rect.h, 2.0, BLACK);
+        draw_rectangle(
+            portal.rect.x,
+            portal.rect.y,
+            portal.rect.w,
+            portal.rect.h,
+            portal.color,
+        );
+        draw_rectangle_lines(
+            portal.rect.x,
+            portal.rect.y,
+            portal.rect.w,
+            portal.rect.h,
+            2.0,
+            BLACK,
+        );
 
         // 4. Calculate Child Camera
         // We need to map the Target Room to fit inside Portal Rect.
@@ -185,7 +246,8 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
         // If we want to use `gl_scissor` (Screen Rect), we need to know where the portal is on screen.
 
         let portal_top_left = vec2(portal.rect.x, portal.rect.y);
-        let portal_bottom_right = vec2(portal.rect.x + portal.rect.w, portal.rect.y + portal.rect.h);
+        let portal_bottom_right =
+            vec2(portal.rect.x + portal.rect.w, portal.rect.y + portal.rect.h);
 
         let screen_tl = cam.world_to_screen(portal_top_left);
         let screen_br = cam.world_to_screen(portal_bottom_right);
@@ -208,7 +270,9 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
         let gl_y = screen_height() as i32 - sy_top;
 
         // Skip if too small
-        if sw < 1 || sh < 1 { continue; }
+        if sw < 1 || sh < 1 {
+            continue;
+        }
 
         // Apply Scissor
         unsafe {
@@ -311,7 +375,7 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
         draw_recursive(world, portal.target_room_id, child_cam, depth - 1);
 
         unsafe {
-             macroquad::miniquad::gl::glDisable(macroquad::miniquad::gl::GL_SCISSOR_TEST);
+            macroquad::miniquad::gl::glDisable(macroquad::miniquad::gl::GL_SCISSOR_TEST);
         }
     }
 }
