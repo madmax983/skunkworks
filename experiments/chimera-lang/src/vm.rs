@@ -22,16 +22,19 @@ pub struct ChimeraVM {
     pub ip: (usize, usize), // (strand_idx, gene_idx)
     pub output: Vec<String>,
     pub halted: bool,
+    pub grid: Vec<Vec<Value>>,
 }
 
 impl ChimeraVM {
     pub fn new(dna: Dna) -> Self {
+        let grid = vec![vec![Value::Int(0); 16]; 16];
         Self {
             dna,
             stack: Vec::new(),
             ip: (0, 0),
             output: Vec::new(),
             halted: false,
+            grid,
         }
     }
 
@@ -246,6 +249,68 @@ impl ChimeraVM {
                 }
                 None
             }
+            // --- GRID ENZYMES ---
+            "g_rows" => {
+                self.stack.push(Value::Int(self.grid.len() as i64));
+                None
+            }
+            "g_cols" => {
+                if let Some(row) = self.grid.first() {
+                    self.stack.push(Value::Int(row.len() as i64));
+                } else {
+                    self.stack.push(Value::Int(0));
+                }
+                None
+            }
+            "g_read" => {
+                if self.stack.len() < 2 {
+                    self.output.push("Error: Stack underflow for g_read".to_string());
+                    return None;
+                }
+                let x_val = self.stack.pop().unwrap();
+                let y_val = self.stack.pop().unwrap();
+
+                match (y_val, x_val) {
+                    (Value::Int(y), Value::Int(x)) => {
+                        if y >= 0
+                            && (y as usize) < self.grid.len()
+                            && x >= 0
+                            && (x as usize) < self.grid[y as usize].len()
+                        {
+                            self.stack.push(self.grid[y as usize][x as usize].clone());
+                        } else {
+                            self.output.push(format!("Error: Grid coords out of bounds ({}, {})", x, y));
+                        }
+                    }
+                    _ => self.output.push("Error: Type mismatch for g_read coords".to_string()),
+                }
+                None
+            }
+            "g_write" => {
+                if self.stack.len() < 3 {
+                    self.output.push("Error: Stack underflow for g_write".to_string());
+                    return None;
+                }
+                let x_val = self.stack.pop().unwrap();
+                let y_val = self.stack.pop().unwrap();
+                let val = self.stack.pop().unwrap();
+
+                match (y_val, x_val) {
+                    (Value::Int(y), Value::Int(x)) => {
+                         if y >= 0
+                            && (y as usize) < self.grid.len()
+                            && x >= 0
+                            && (x as usize) < self.grid[y as usize].len()
+                        {
+                            self.grid[y as usize][x as usize] = val;
+                        } else {
+                             self.output.push(format!("Error: Grid coords out of bounds ({}, {})", x, y));
+                        }
+                    }
+                    _ => self.output.push("Error: Type mismatch for g_write coords".to_string()),
+                }
+                None
+            }
             _ => {
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None
@@ -318,6 +383,61 @@ impl ChimeraVM {
                     .push(format!("MUTATION: arg {} -> {}", old_n, *n));
             }
         }
+    }
+
+    pub fn recombine(&mut self) {
+        let mut rng = rand::thread_rng();
+        let helix = &mut self.dna.helix;
+
+        if helix.strands.len() < 2 {
+            self.output.push("Recombination failed: Need >1 strand".to_string());
+            return;
+        }
+
+        // Pick two distinct strands
+        let idx_a = rng.gen_range(0..helix.strands.len());
+        let mut idx_b = rng.gen_range(0..helix.strands.len());
+        while idx_b == idx_a {
+            idx_b = rng.gen_range(0..helix.strands.len());
+        }
+
+        let len_a = helix.strands[idx_a].genes.len();
+        let len_b = helix.strands[idx_b].genes.len();
+
+        if len_a == 0 || len_b == 0 {
+             self.output.push("Recombination failed: Empty strand".to_string());
+             return;
+        }
+
+        // Determine split point (min length to avoid out of bounds initially,
+        // but we can just swap tails)
+        let split_point = rng.gen_range(0..len_a.min(len_b));
+
+        // We need to work around the borrow checker to swap elements between two vector elements
+        // Splitting the mutable borrow of strands
+        if idx_a < idx_b {
+            let (left, right) = helix.strands.split_at_mut(idx_b);
+            let strand_a = &mut left[idx_a];
+            let strand_b = &mut right[0];
+
+            let tail_a = strand_a.genes.split_off(split_point);
+            let tail_b = strand_b.genes.split_off(split_point);
+
+            strand_a.genes.extend(tail_b);
+            strand_b.genes.extend(tail_a);
+        } else {
+             let (left, right) = helix.strands.split_at_mut(idx_a);
+            let strand_b = &mut left[idx_b];
+            let strand_a = &mut right[0];
+
+            let tail_a = strand_a.genes.split_off(split_point);
+            let tail_b = strand_b.genes.split_off(split_point);
+
+            strand_a.genes.extend(tail_b);
+            strand_b.genes.extend(tail_a);
+        }
+
+        self.output.push(format!("RECOMBINATION: Strands {} and {} swapped at index {}", idx_a, idx_b, split_point));
     }
 }
 
@@ -612,5 +732,46 @@ mod tests {
             "Expected 'Type mismatch' error, got: {:?}",
             vm.output
         );
+    }
+
+    #[test]
+    fn test_recombination() {
+        let strand1 = Strand {
+            genes: vec![
+                Gene { name: "A".to_string(), args: vec![] },
+                Gene { name: "A".to_string(), args: vec![] },
+                Gene { name: "A".to_string(), args: vec![] },
+                Gene { name: "A".to_string(), args: vec![] },
+            ]
+        };
+        let strand2 = Strand {
+            genes: vec![
+                Gene { name: "B".to_string(), args: vec![] },
+                Gene { name: "B".to_string(), args: vec![] },
+                Gene { name: "B".to_string(), args: vec![] },
+                Gene { name: "B".to_string(), args: vec![] },
+            ]
+        };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand1, strand2],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        // Force recombination
+        vm.recombine();
+
+        // Check output log
+        assert!(vm.output.iter().any(|s| s.contains("RECOMBINATION")));
+
+        // Verify genes are mixed (this is probabilistic but with AAAA and BBBB and split point,
+        // if split > 0 and < 4, we will have mixing).
+        // Since we can't easily control RNG in this test without dependency injection,
+        // we mainly check that the function runs and produces the log.
+        // However, we can check that total number of genes is preserved (4+4=8)
+
+        let count = vm.dna.helix.strands[0].genes.len() + vm.dna.helix.strands[1].genes.len();
+        assert_eq!(count, 8);
     }
 }

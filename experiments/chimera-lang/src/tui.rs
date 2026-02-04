@@ -9,7 +9,7 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    widgets::{Block, Borders, List, ListItem},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Terminal,
 };
 use std::io;
@@ -47,7 +47,11 @@ fn run_app<B: ratatui::backend::Backend>(
 
             let right_chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                .constraints([
+                    Constraint::Percentage(30), // Stack
+                    Constraint::Percentage(40), // Petri Dish
+                    Constraint::Percentage(30), // Output
+                ].as_ref())
                 .split(chunks[1]);
 
             // Genome View
@@ -75,7 +79,7 @@ fn run_app<B: ratatui::backend::Backend>(
             let genome_list = List::new(strand_items).block(
                 Block::default()
                     .borders(Borders::ALL)
-                    .title("Genome (Space: Step, M: Mutate, Q: Quit)"),
+                    .title("Genome (Space: Step, M: Mutate, X: Recombine, Q: Quit)"),
             );
             f.render_widget(genome_list, chunks[0]);
 
@@ -94,6 +98,30 @@ fn run_app<B: ratatui::backend::Backend>(
             );
             f.render_widget(stack_list, right_chunks[0]);
 
+            // Petri Dish (Grid)
+            let mut grid_str = String::new();
+            for row in &vm.grid {
+                for cell in row {
+                    let char_rep = match cell {
+                        crate::vm::Value::Int(0) => '.',
+                        crate::vm::Value::Int(n) => {
+                             if *n > 0 && *n < 10 {
+                                 char::from_digit(*n as u32, 10).unwrap()
+                             } else {
+                                 '#'
+                             }
+                        },
+                        _ => '?',
+                    };
+                    grid_str.push(char_rep);
+                    grid_str.push(' ');
+                }
+                grid_str.push('\n');
+            }
+            let petri_dish = Paragraph::new(grid_str)
+                .block(Block::default().borders(Borders::ALL).title("Petri Dish"));
+             f.render_widget(petri_dish, right_chunks[1]);
+
             // Output
             let output_items: Vec<ListItem> = vm
                 .output
@@ -104,7 +132,7 @@ fn run_app<B: ratatui::backend::Backend>(
 
             let output_list = List::new(output_items)
                 .block(Block::default().borders(Borders::ALL).title("Output"));
-            f.render_widget(output_list, right_chunks[1]);
+            f.render_widget(output_list, right_chunks[2]);
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
@@ -113,6 +141,7 @@ fn run_app<B: ratatui::backend::Backend>(
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
+                    KeyCode::Char('x') => vm.recombine(),
                     _ => {}
                 }
             }
