@@ -39,6 +39,7 @@ pub struct Spore {
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
+    pub entangled_pairs: HashMap<usize, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -72,6 +73,8 @@ pub struct ChimeraVM {
     pub input_buffer: VecDeque<char>,
     #[cfg(feature = "nova")]
     pub receptors: HashMap<char, usize>,
+    #[cfg(feature = "nova")]
+    pub entangled_pairs: HashMap<usize, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -120,6 +123,8 @@ impl ChimeraVM {
             input_buffer: VecDeque::new(),
             #[cfg(feature = "nova")]
             receptors: HashMap::new(),
+            #[cfg(feature = "nova")]
+            entangled_pairs: HashMap::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -406,6 +411,7 @@ impl ChimeraVM {
                     call_stack: self.call_stack.clone(),
                     input_buffer: self.input_buffer.clone(),
                     receptors: self.receptors.clone(),
+                    entangled_pairs: self.entangled_pairs.clone(),
                     #[cfg(feature = "cortex")]
                     synapse_map: self.synapse_map.clone(),
                     #[cfg(feature = "cortex")]
@@ -445,6 +451,7 @@ impl ChimeraVM {
                             self.call_stack = spore.call_stack.clone();
                             self.input_buffer = spore.input_buffer.clone();
                             self.receptors = spore.receptors.clone();
+                            self.entangled_pairs = spore.entangled_pairs.clone();
                             #[cfg(feature = "cortex")]
                             {
                                 self.synapse_map = spore.synapse_map.clone();
@@ -805,8 +812,10 @@ impl ChimeraVM {
 
                 match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
                     (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {
-                        if si >= 0 && (si as usize) < self.dna.helix.strands.len() {
-                            let strand = &mut self.dna.helix.strands[si as usize];
+                        let si_idx = si as usize;
+                        let mut success = false;
+                        if si >= 0 && si_idx < self.dna.helix.strands.len() {
+                            let strand = &mut self.dna.helix.strands[si_idx];
                             if gi >= 0 && (gi as usize) < strand.genes.len() {
                                 let gene = &mut strand.genes[gi as usize];
                                 if ai >= 0 && (ai as usize) < gene.args.len() {
@@ -815,6 +824,7 @@ impl ChimeraVM {
                                         "TRANSCRIBE: strand {} gene {} arg {} -> {}",
                                         si, gi, ai, v
                                     ));
+                                    success = true;
                                 } else {
                                     self.output
                                         .push("Error: Arg index out of bounds".to_string());
@@ -826,6 +836,25 @@ impl ChimeraVM {
                         } else {
                             self.output
                                 .push("Error: Strand index out of bounds".to_string());
+                        }
+
+                        #[cfg(feature = "nova")]
+                        if success {
+                            if let Some(&partner_idx) = self.entangled_pairs.get(&si_idx) {
+                                if partner_idx < self.dna.helix.strands.len() {
+                                    let p_strand = &mut self.dna.helix.strands[partner_idx];
+                                    if (gi as usize) < p_strand.genes.len() {
+                                        let p_gene = &mut p_strand.genes[gi as usize];
+                                        if (ai as usize) < p_gene.args.len() {
+                                            p_gene.args[ai as usize] = Nucleotide::Number(v);
+                                            self.output.push(format!(
+                                                "ENTANGLEMENT: Transcribed partner {} gene {} arg {}",
+                                                partner_idx, gi, ai
+                                            ));
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     _ => self
@@ -1717,6 +1746,71 @@ impl ChimeraVM {
                 }
                 None
             }
+            #[cfg(feature = "nova")]
+            OpCode::Entangle => {
+                if self.stack.len() >= 2 {
+                    let s_val2 = self.stack.pop().unwrap();
+                    let s_val1 = self.stack.pop().unwrap();
+                    if let (Value::Int(s1), Value::Int(s2)) = (s_val1, s_val2) {
+                        let idx1 = s1 as usize;
+                        let idx2 = s2 as usize;
+                        let len = self.dna.helix.strands.len();
+                        if idx1 < len && idx2 < len {
+                            if idx1 != idx2 {
+                                // Remove existing links
+                                if let Some(old) = self.entangled_pairs.remove(&idx1) {
+                                    self.entangled_pairs.remove(&old);
+                                }
+                                if let Some(old) = self.entangled_pairs.remove(&idx2) {
+                                    self.entangled_pairs.remove(&old);
+                                }
+
+                                // Add new links
+                                self.entangled_pairs.insert(idx1, idx2);
+                                self.entangled_pairs.insert(idx2, idx1);
+                                self.output.push(format!("ENTANGLE: {} <-> {}", idx1, idx2));
+                            } else {
+                                self.output.push(
+                                    "Warning: Cannot entangle strand with itself".to_string(),
+                                );
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Strand index out of bounds for entangle".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for entangle".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for entangle".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Decohere => {
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(s) = val {
+                        let idx = s as usize;
+                        if let Some(partner) = self.entangled_pairs.remove(&idx) {
+                            self.entangled_pairs.remove(&partner);
+                            self.output
+                                .push(format!("DECOHERE: Broken link {} <-> {}", idx, partner));
+                        } else {
+                            self.output
+                                .push(format!("DECOHERE: No link found for {}", idx));
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for decohere".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for decohere".to_string());
+                }
+                None
+            }
             #[cfg(feature = "cortex")]
             OpCode::Link => {
                 if let Some(val) = self.stack.pop() {
@@ -1860,19 +1954,18 @@ impl ChimeraVM {
 
     pub fn mutate(&mut self) {
         let mut rng = rand::thread_rng();
-        let helix = &mut self.dna.helix;
-        if helix.strands.is_empty() {
+        let helix_len = self.dna.helix.strands.len();
+        if helix_len == 0 {
             return;
         }
 
-        let strand_idx = rng.gen_range(0..helix.strands.len());
-        let strand = &mut helix.strands[strand_idx];
-        if strand.genes.is_empty() {
+        let strand_idx = rng.gen_range(0..helix_len);
+        let gene_count = self.dna.helix.strands[strand_idx].genes.len();
+        if gene_count == 0 {
             return;
         }
 
-        let gene_idx = rng.gen_range(0..strand.genes.len());
-        let gene = &mut strand.genes[gene_idx];
+        let gene_idx = rng.gen_range(0..gene_count);
 
         // 50% chance to change name, 50% to change arg
         if rng.gen_bool(0.5) {
@@ -1915,18 +2008,66 @@ impl ChimeraVM {
                 OpCode::Cas9Cut,
                 #[cfg(feature = "nova")]
                 OpCode::Ligase,
+                #[cfg(feature = "nova")]
+                OpCode::Entangle,
+                #[cfg(feature = "nova")]
+                OpCode::Decohere,
             ];
             let new_op = enzymes[rng.gen_range(0..enzymes.len())].clone();
-            // Add "Mutation" log
+
+            // Apply to primary
+            let old_op = self.dna.helix.strands[strand_idx].genes[gene_idx]
+                .op
+                .clone();
+            self.dna.helix.strands[strand_idx].genes[gene_idx].op = new_op.clone();
             self.output
-                .push(format!("MUTATION: {} -> {}", gene.op, new_op));
-            gene.op = new_op;
-        } else if !gene.args.is_empty() {
-            if let Some(Nucleotide::Number(n)) = gene.args.first_mut() {
-                let old_n = *n;
-                *n = rng.gen_range(0..100); // Random number
+                .push(format!("MUTATION: {} -> {}", old_op, new_op));
+
+            #[cfg(feature = "nova")]
+            if let Some(&partner_idx) = self.entangled_pairs.get(&strand_idx) {
+                if partner_idx < self.dna.helix.strands.len()
+                    && gene_idx < self.dna.helix.strands[partner_idx].genes.len()
+                {
+                    self.dna.helix.strands[partner_idx].genes[gene_idx].op = new_op;
+                    self.output.push(format!(
+                        "ENTANGLEMENT: Mutated partner {} gene {} op",
+                        partner_idx, gene_idx
+                    ));
+                }
+            }
+        } else {
+            let has_args = !self.dna.helix.strands[strand_idx].genes[gene_idx]
+                .args
+                .is_empty();
+            if has_args {
+                let old_n = match &self.dna.helix.strands[strand_idx].genes[gene_idx].args[0] {
+                    Nucleotide::Number(n) => *n,
+                    _ => return, // Skip non-number args for simplicity
+                };
+                let new_n = rng.gen_range(0..100);
+
+                // Apply
+                self.dna.helix.strands[strand_idx].genes[gene_idx].args[0] =
+                    Nucleotide::Number(new_n);
                 self.output
-                    .push(format!("MUTATION: arg {} -> {}", old_n, *n));
+                    .push(format!("MUTATION: arg {} -> {}", old_n, new_n));
+
+                #[cfg(feature = "nova")]
+                if let Some(&partner_idx) = self.entangled_pairs.get(&strand_idx) {
+                    if partner_idx < self.dna.helix.strands.len()
+                        && gene_idx < self.dna.helix.strands[partner_idx].genes.len()
+                        && !self.dna.helix.strands[partner_idx].genes[gene_idx]
+                            .args
+                            .is_empty()
+                    {
+                        self.dna.helix.strands[partner_idx].genes[gene_idx].args[0] =
+                            Nucleotide::Number(new_n);
+                        self.output.push(format!(
+                            "ENTANGLEMENT: Mutated partner {} gene {} arg",
+                            partner_idx, gene_idx
+                        ));
+                    }
+                }
             }
         }
     }
