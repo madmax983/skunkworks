@@ -29,6 +29,7 @@ members = [
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
+    "experiments/input-ghost",
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/log-landscape",

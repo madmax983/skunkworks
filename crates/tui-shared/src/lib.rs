@@ -57,6 +57,8 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io::{self, Stdout};
 
+#[cfg(feature = "ghost")]
+pub mod event;
 pub mod math;
 
 /// A RAII wrapper for the Ratatui Terminal.
