@@ -149,7 +149,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI simulation where trading algorithms are Chimera VM instances that evolve via natural selection.
 - **Novel trait**: Evolving limit order book strategies driven by genetic code.
 - **Status**: experiments/chimera-market
-- **Evaluation**: Compiles. Documentation present. Traders are mutating.
+- **Evaluation**: Compiles. Verified by Splice Surgeon. Documentation present. Traders are mutating.
 
 ### penrose-genes
 - **Parents**: experiments/aperiodic-citadel + experiments/chimera-lang
@@ -163,14 +163,21 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A visualization where the structural instability of the codebase (fissures/stress) acts as a physical exciter for a wave simulation, creating a "soundscape of technical debt".
 - **Novel trait**: Geological Sonification: Visualizing and hearing code quality as a physical interaction between structure (files) and medium (waves).
 - **Status**: experiments/seismic-lure
-- **Evaluation**: Compiles. Verified. TUI and Audio operational.
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI and Audio operational.
 
 ### syntax-garden
 - **Parents**: experiments/ast-respiration + experiments/fractal-stack
 - **Concept**: A TUI that maps the AST structure of a Rust codebase onto a procedurally generated plant using L-Systems.
 - **Novel trait**: Architecture-to-Morphology mapping. Monolithic files become tall stalks; modular code becomes bushy.
 - **Status**: experiments/syntax-garden
-- **Evaluation**: Compiles. Verified. TUI operational.
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational.
+
+### entropic-rain
+- **Parents**: experiments/code-erosion + experiments/typo-rain
+- **Concept**: The topography of the codebase (Mountain height = File size) is eroded by the rain of deleted lines (Particles = Deletions).
+- **Novel trait**: Dynamic visualization where "Creation" (git additions) fights against "Entropy" (git deletions) in a physics simulation.
+- **Status**: experiments/entropic-rain
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
 
 <!-- Example:
 ### semantic-spy

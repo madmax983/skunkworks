@@ -1,0 +1,11 @@
+[package]
+name = "entropic-rain"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
+chrono = "0.4"
