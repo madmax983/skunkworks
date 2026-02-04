@@ -84,6 +84,7 @@ members = [
     "experiments/retinal-glitch",
     "experiments/struct-harmonics",
     "experiments/cargo-rocket",
+    "experiments/chimera-lang",
     "experiments/repo-rover", 
     "experiments/reaction-monitor", 
     "experiments/syntax-spider", 
