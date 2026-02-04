@@ -378,6 +378,87 @@ impl ChimeraVM {
         args: &[Nucleotide],
     ) -> Option<(usize, usize)> {
         match op {
+            OpCode::Push => self.exec_stack_op(op, args),
+            OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div => {
+                self.exec_math_op(op);
+                None
+            }
+            OpCode::Dup | OpCode::Swap | OpCode::Drop => self.exec_stack_op(op, args),
+            OpCode::Print => {
+                self.exec_io_op(op);
+                None
+            }
+            OpCode::Jump | OpCode::Brz => self.exec_flow_op(op, args),
+            OpCode::Photosynthesize | OpCode::Consume => self.exec_bio_op(op, args),
+            OpCode::GRead | OpCode::GWrite | OpCode::Radiate | OpCode::Siphon => {
+                self.exec_grid_op(op)
+            }
+            OpCode::Genome | OpCode::Transcribe => self.exec_bio_op(op, args),
+            OpCode::Virus => self.exec_grid_op(op),
+            OpCode::JumpS | OpCode::BrzS => self.exec_flow_op(op, args),
+            OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => self.exec_stack_op(op, args),
+            #[cfg(feature = "cortex")]
+            OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
+                self.exec_cortex_op(op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Sporulate
+            | OpCode::Germinate
+            | OpCode::Incubate
+            | OpCode::Methylate
+            | OpCode::Demethylate
+            | OpCode::Telomerase
+            | OpCode::TLen
+            | OpCode::Recombine
+            | OpCode::SIndex
+            | OpCode::CrisprScan
+            | OpCode::Cas9Cut
+            | OpCode::Ligase
+            | OpCode::Mitosis
+            | OpCode::Apoptosis
+            | OpCode::Integrase
+            | OpCode::Excision
+            | OpCode::Secrete
+            | OpCode::Detect
+            | OpCode::Absorb
+            | OpCode::Migrate
+            | OpCode::Detox
+            | OpCode::WRead
+            | OpCode::Call
+            | OpCode::Ret
+            | OpCode::Bind
+            | OpCode::Unbind
+            | OpCode::Entangle
+            | OpCode::Decohere => self.exec_nova_op(op, args),
+
+            OpCode::Unknown(name) => {
+                self.output.push(format!("Unknown enzyme: {}", name));
+                None
+            }
+        }
+    }
+
+    fn binary_op<F>(stack: &mut Vec<Value>, output: &mut Vec<String>, op: F)
+    where
+        F: Fn(i64, i64) -> i64,
+    {
+        if stack.len() < 2 {
+            output.push("Error: Stack underflow".to_string());
+            return;
+        }
+        let b = stack.pop().unwrap();
+        let a = stack.pop().unwrap();
+
+        match (a, b) {
+            (Value::Int(ia), Value::Int(ib)) => stack.push(Value::Int(op(ia, ib))),
+            _ => output.push("Error: Type mismatch".to_string()),
+        }
+    }
+
+    fn exec_stack_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match op {
             OpCode::Push => {
                 if let Some(arg) = args.first() {
                     match arg {
@@ -388,8 +469,529 @@ impl ChimeraVM {
                             .push(format!("Error: Invalid arg for push: {:?}", arg)),
                     }
                 }
+            }
+            OpCode::Dup => {
+                if let Some(val) = self.stack.last() {
+                    self.stack.push(val.clone());
+                }
+            }
+            OpCode::Swap => {
+                let len = self.stack.len();
+                if len >= 2 {
+                    self.stack.swap(len - 1, len - 2);
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for swap".to_string());
+                }
+            }
+            OpCode::Drop => {
+                self.stack.pop();
+            }
+            OpCode::SLen => {
+                self.stack.push(Value::Int(self.stack.len() as i64));
+            }
+            OpCode::HelixLen => {
+                self.stack
+                    .push(Value::Int(self.dna.helix.strands.len() as i64));
+            }
+            OpCode::GeneLen => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(idx) => {
+                            if idx >= 0 && (idx as usize) < self.dna.helix.strands.len() {
+                                let len = self.dna.helix.strands[idx as usize].genes.len();
+                                self.stack.push(Value::Int(len as i64));
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for gene_len".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for gene_len".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for gene_len".to_string());
+                }
+            }
+            _ => {}
+        }
+        None
+    }
+
+    fn exec_math_op(&mut self, op: OpCode) {
+        match op {
+            OpCode::Add => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
+            }
+            OpCode::Sub => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a - b);
+            }
+            OpCode::Mul => {
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a * b);
+            }
+            OpCode::Div => {
+                if self.stack.len() < 2 {
+                    self.output.push("Error: Stack underflow".to_string());
+                } else {
+                    let b_val = self.stack.pop().unwrap();
+                    let a_val = self.stack.pop().unwrap();
+                    match (a_val, b_val) {
+                        (Value::Int(a), Value::Int(b)) => {
+                            if b == 0 {
+                                self.output.push("Error: Division by zero".to_string());
+                            } else if a == i64::MIN && b == -1 {
+                                self.output.push("Error: Division overflow".to_string());
+                            } else {
+                                self.stack.push(Value::Int(a / b));
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn exec_io_op(&mut self, op: OpCode) {
+        if let OpCode::Print = op {
+            if let Some(val) = self.stack.pop() {
+                self.output.push(format!("{}", val));
+            }
+        }
+    }
+
+    fn exec_flow_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match op {
+            OpCode::Jump => {
+                if let Some(Nucleotide::Number(n)) = args.first() {
+                    Some((*n as usize, 0))
+                } else {
+                    self.output.push("Error: Invalid arg for jump".to_string());
+                    None
+                }
+            }
+            OpCode::Brz => {
+                if let Some(Nucleotide::Number(n)) = args.first() {
+                    if let Some(val) = self.stack.pop() {
+                        if let Value::Int(i) = val {
+                            if i == 0 {
+                                return Some((*n as usize, 0));
+                            }
+                        } else {
+                            self.output.push("Error: Type mismatch for brz".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Stack underflow for brz".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Invalid arg for brz".to_string());
+                }
                 None
             }
+            OpCode::JumpS => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            if target >= 0 {
+                                return Some((target as usize, 0));
+                            } else {
+                                self.output.push("Error: Negative jump target".to_string());
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for jump_s".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for jump_s".to_string());
+                }
+                None
+            }
+            OpCode::BrzS => {
+                if self.stack.len() >= 2 {
+                    let target_val = self.stack.pop().unwrap();
+                    let cond_val = self.stack.pop().unwrap();
+
+                    match (target_val, cond_val) {
+                        (Value::Int(target), Value::Int(cond)) => {
+                            if cond == 0 {
+                                if target >= 0 {
+                                    return Some((target as usize, 0));
+                                } else {
+                                    self.output.push("Error: Negative jump target".to_string());
+                                }
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for brz_s".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for brz_s".to_string());
+                }
+                None
+            }
+            _ => None,
+        }
+    }
+
+    fn exec_grid_op(&mut self, op: OpCode) -> Option<(usize, usize)> {
+        match op {
+            OpCode::GRead => {
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                        if (0..16).contains(&y) && (0..16).contains(&x) {
+                            self.stack.push(self.grid[y as usize][x as usize].clone());
+                        } else {
+                            self.output
+                                .push("Error: Grid index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for g_read".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for g_read".to_string());
+                }
+            }
+            OpCode::GWrite => {
+                if self.stack.len() >= 3 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let val = self.stack.pop().unwrap();
+                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                        if (0..16).contains(&y) && (0..16).contains(&x) {
+                            self.grid[y as usize][x as usize] = val;
+                        } else {
+                            self.output
+                                .push("Error: Grid index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for g_write".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for g_write".to_string());
+                }
+            }
+            OpCode::Radiate => {
+                if self.stack.len() >= 4 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let r_val = self.stack.pop().unwrap();
+                    let val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                        let coords = self.get_circular_coords(x, y, r);
+                        let count = coords.len();
+                        for (cx, cy) in coords {
+                            self.grid[cy][cx] = val.clone();
+                        }
+                        self.energy -= (count / 2) as i64;
+                        self.output.push(format!(
+                            "RADIATE: Affected {} cells at {},{} r={}",
+                            count, x, y, r
+                        ));
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for radiate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for radiate".to_string());
+                }
+            }
+            OpCode::Siphon => {
+                if self.stack.len() >= 3 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let r_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                        let coords = self.get_circular_coords(x, y, r);
+                        let count = coords.len();
+                        let mut sum = 0;
+                        for (cx, cy) in coords {
+                            if let Value::Int(n) = self.grid[cy][cx] {
+                                sum += n;
+                            }
+                            self.grid[cy][cx] = Value::Int(0);
+                        }
+                        self.stack.push(Value::Int(sum));
+                        self.energy -= 5;
+                        self.output
+                            .push(format!("SIPHON: Absorbed {} from {} cells", sum, count));
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for siphon".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for siphon".to_string());
+                }
+            }
+            OpCode::Virus => {
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+
+                    let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
+                        if (0..16).contains(y) && (0..16).contains(x) {
+                            Some((*y, *x))
+                        } else {
+                            self.output
+                                .push("Error: Grid index out of bounds".to_string());
+                            None
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for virus".to_string());
+                        None
+                    };
+
+                    if let Some((y, x)) = coords {
+                        let val = self.grid[y as usize][x as usize].clone();
+                        match val {
+                            Value::Int(n) => self.stack.push(Value::Int(n)),
+                            Value::Str(s) => {
+                                let old_loc = self.context_loc;
+                                self.context_loc = (y as usize, x as usize);
+                                let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                                let result = self.execute_gene(op, &[]);
+                                self.context_loc = old_loc;
+                                return result;
+                            }
+                        }
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for virus".to_string());
+                }
+            }
+            _ => {}
+        }
+        None
+    }
+
+    fn exec_bio_op(&mut self, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match op {
+            OpCode::Photosynthesize => {
+                self.energy += 5;
+            }
+            OpCode::Consume => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.energy += n,
+                        Value::Str(s) => self.energy += s.len() as i64,
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for consume".to_string());
+                }
+            }
+            OpCode::Genome => {
+                if self.ip.0 < self.dna.helix.strands.len() {
+                    let strand = &self.dna.helix.strands[self.ip.0];
+                    self.stack.push(Value::Int(strand.genes.len() as i64));
+                    for gene in &strand.genes {
+                        self.stack.push(Value::Str(gene.op.to_string()));
+                    }
+                }
+            }
+            OpCode::Transcribe => {
+                if self.stack.len() < 4 {
+                    self.output
+                        .push("Error: Stack underflow for transcribe".to_string());
+                    return None;
+                }
+                let val = self.stack.pop().unwrap();
+                let arg_idx_val = self.stack.pop().unwrap();
+                let gene_idx_val = self.stack.pop().unwrap();
+                let strand_idx_val = self.stack.pop().unwrap();
+
+                match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
+                    (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {
+                        let si_idx = si as usize;
+                        #[allow(unused_mut, unused_variables, unused_assignments)]
+                        let mut success = false;
+                        if si >= 0 && si_idx < self.dna.helix.strands.len() {
+                            let strand = &mut self.dna.helix.strands[si_idx];
+                            if gi >= 0 && (gi as usize) < strand.genes.len() {
+                                let gene = &mut strand.genes[gi as usize];
+                                if ai >= 0 && (ai as usize) < gene.args.len() {
+                                    gene.args[ai as usize] = Nucleotide::Number(v);
+                                    self.output.push(format!(
+                                        "TRANSCRIBE: strand {} gene {} arg {} -> {}",
+                                        si, gi, ai, v
+                                    ));
+                                    success = true;
+                                } else {
+                                    self.output
+                                        .push("Error: Arg index out of bounds".to_string());
+                                }
+                            } else {
+                                self.output
+                                    .push("Error: Gene index out of bounds".to_string());
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Strand index out of bounds".to_string());
+                        }
+
+                        #[cfg(feature = "nova")]
+                        if success {
+                            if let Some(&partner_idx) = self.entangled_pairs.get(&si_idx) {
+                                if partner_idx < self.dna.helix.strands.len() {
+                                    let p_strand = &mut self.dna.helix.strands[partner_idx];
+                                    if (gi as usize) < p_strand.genes.len() {
+                                        let p_gene = &mut p_strand.genes[gi as usize];
+                                        if (ai as usize) < p_gene.args.len() {
+                                            p_gene.args[ai as usize] = Nucleotide::Number(v);
+                                            self.output.push(format!(
+                                                "ENTANGLEMENT: Transcribed partner {} gene {} arg {}",
+                                                partner_idx, gi, ai
+                                            ));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    _ => self
+                        .output
+                        .push("Error: Type mismatch for transcribe args".to_string()),
+                }
+            }
+            _ => {}
+        }
+        None
+    }
+
+    #[cfg(feature = "cortex")]
+    fn exec_cortex_op(&mut self, op: OpCode, args: &[Nucleotide]) {
+        match op {
+            OpCode::Link => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            let target_idx = target as usize;
+                            let s_idx = self.ip.0;
+                            // Check bounds using activation_levels as proxy for strand count
+                            if target_idx < self.activation_levels.len()
+                                && s_idx < self.synapse_map.len()
+                            {
+                                if !self.synapse_map[s_idx].contains(&target_idx) {
+                                    self.synapse_map[s_idx].push(target_idx);
+                                    self.output
+                                        .push(format!("LINK: {} -> {}", s_idx, target_idx));
+                                }
+                            } else {
+                                self.output
+                                    .push("Error: Invalid strand index for link".to_string());
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for link".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for link".to_string());
+                }
+            }
+            OpCode::Sever => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            let target_idx = target as usize;
+                            let s_idx = self.ip.0;
+                            if s_idx < self.synapse_map.len() {
+                                if let Some(pos) = self.synapse_map[s_idx]
+                                    .iter()
+                                    .position(|&x| x == target_idx)
+                                {
+                                    self.synapse_map[s_idx].remove(pos);
+                                    self.output
+                                        .push(format!("SEVER: {} -x {}", s_idx, target_idx));
+                                }
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for sever".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for sever".to_string());
+                }
+            }
+            OpCode::Spark => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(amount) => {
+                            let s_idx = self.ip.0;
+                            if s_idx < self.synapse_map.len() {
+                                let targets = self.synapse_map[s_idx].clone();
+                                let count = targets.len();
+                                for target_idx in targets {
+                                    if target_idx < self.activation_levels.len() {
+                                        self.activation_levels[target_idx] += amount;
+                                    }
+                                }
+                                self.energy -= (count as i64) + 1;
+                                self.output
+                                    .push(format!("SPARK: Fired {} to {} targets", amount, count));
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for spark".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for spark".to_string());
+                }
+            }
+            OpCode::Sense => {
+                let s_idx = self.ip.0;
+                if s_idx < self.activation_levels.len() {
+                    let level = self.activation_levels[s_idx];
+                    self.stack.push(Value::Int(level));
+                } else {
+                    self.stack.push(Value::Int(0));
+                }
+            }
+            OpCode::Gate => {
+                if let Some(Nucleotide::Number(threshold)) = args.first() {
+                    let s_idx = self.ip.0;
+                    if s_idx < self.activation_levels.len()
+                        && self.activation_levels[s_idx] < *threshold
+                    {
+                        // Skip next instruction
+                        self.ip.1 += 1;
+                    }
+                } else {
+                    self.output.push("Error: Invalid arg for gate".to_string());
+                }
+            }
+            _ => {}
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_nova_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match op {
             #[cfg(feature = "nova")]
             OpCode::Sporulate => {
                 // Create snapshot
@@ -537,406 +1139,6 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for incubate".to_string());
-                }
-                None
-            }
-            OpCode::Add => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
-                None
-            }
-            OpCode::Sub => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a - b);
-                None
-            }
-            OpCode::Mul => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a * b);
-                None
-            }
-            OpCode::Div => {
-                if self.stack.len() < 2 {
-                    self.output.push("Error: Stack underflow".to_string());
-                } else {
-                    let b_val = self.stack.pop().unwrap();
-                    let a_val = self.stack.pop().unwrap();
-                    match (a_val, b_val) {
-                        (Value::Int(a), Value::Int(b)) => {
-                            if b == 0 {
-                                self.output.push("Error: Division by zero".to_string());
-                            } else if a == i64::MIN && b == -1 {
-                                self.output.push("Error: Division overflow".to_string());
-                            } else {
-                                self.stack.push(Value::Int(a / b));
-                            }
-                        }
-                        _ => self.output.push("Error: Type mismatch".to_string()),
-                    }
-                }
-                None
-            }
-            OpCode::Dup => {
-                if let Some(val) = self.stack.last() {
-                    self.stack.push(val.clone());
-                }
-                None
-            }
-            OpCode::Swap => {
-                let len = self.stack.len();
-                if len >= 2 {
-                    self.stack.swap(len - 1, len - 2);
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for swap".to_string());
-                }
-                None
-            }
-            OpCode::Drop => {
-                self.stack.pop();
-                None
-            }
-            OpCode::Print => {
-                if let Some(val) = self.stack.pop() {
-                    self.output.push(format!("{}", val));
-                }
-                None
-            }
-            OpCode::Jump => {
-                if let Some(Nucleotide::Number(n)) = args.first() {
-                    Some((*n as usize, 0))
-                } else {
-                    self.output.push("Error: Invalid arg for jump".to_string());
-                    None
-                }
-            }
-            OpCode::Brz => {
-                if let Some(Nucleotide::Number(n)) = args.first() {
-                    if let Some(val) = self.stack.pop() {
-                        if let Value::Int(i) = val {
-                            if i == 0 {
-                                return Some((*n as usize, 0));
-                            }
-                        } else {
-                            self.output.push("Error: Type mismatch for brz".to_string());
-                        }
-                    } else {
-                        self.output
-                            .push("Error: Stack underflow for brz".to_string());
-                    }
-                } else {
-                    self.output.push("Error: Invalid arg for brz".to_string());
-                }
-                None
-            }
-            OpCode::Photosynthesize => {
-                self.energy += 5;
-                None
-            }
-            OpCode::Consume => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(n) => self.energy += n,
-                        Value::Str(s) => self.energy += s.len() as i64,
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for consume".to_string());
-                }
-                None
-            }
-            OpCode::GRead => {
-                if self.stack.len() >= 2 {
-                    let x_val = self.stack.pop().unwrap();
-                    let y_val = self.stack.pop().unwrap();
-                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if (0..16).contains(&y) && (0..16).contains(&x) {
-                            self.stack.push(self.grid[y as usize][x as usize].clone());
-                        } else {
-                            self.output
-                                .push("Error: Grid index out of bounds".to_string());
-                        }
-                    } else {
-                        self.output
-                            .push("Error: Type mismatch for g_read".to_string());
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for g_read".to_string());
-                }
-                None
-            }
-            OpCode::GWrite => {
-                if self.stack.len() >= 3 {
-                    let x_val = self.stack.pop().unwrap();
-                    let y_val = self.stack.pop().unwrap();
-                    let val = self.stack.pop().unwrap();
-                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if (0..16).contains(&y) && (0..16).contains(&x) {
-                            self.grid[y as usize][x as usize] = val;
-                        } else {
-                            self.output
-                                .push("Error: Grid index out of bounds".to_string());
-                        }
-                    } else {
-                        self.output
-                            .push("Error: Type mismatch for g_write".to_string());
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for g_write".to_string());
-                }
-                None
-            }
-            OpCode::Radiate => {
-                // stack: val, radius, y, x (top)
-                if self.stack.len() >= 4 {
-                    let x_val = self.stack.pop().unwrap();
-                    let y_val = self.stack.pop().unwrap();
-                    let r_val = self.stack.pop().unwrap();
-                    let val = self.stack.pop().unwrap();
-
-                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
-                        let coords = self.get_circular_coords(x, y, r);
-                        let count = coords.len();
-                        for (cx, cy) in coords {
-                            self.grid[cy][cx] = val.clone();
-                        }
-                        self.energy -= (count / 2) as i64; // Cost based on area
-                        self.output.push(format!(
-                            "RADIATE: Affected {} cells at {},{} r={}",
-                            count, x, y, r
-                        ));
-                    } else {
-                        self.output
-                            .push("Error: Type mismatch for radiate".to_string());
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for radiate".to_string());
-                }
-                None
-            }
-            OpCode::Siphon => {
-                // stack: radius, y, x (top)
-                if self.stack.len() >= 3 {
-                    let x_val = self.stack.pop().unwrap();
-                    let y_val = self.stack.pop().unwrap();
-                    let r_val = self.stack.pop().unwrap();
-
-                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
-                        let coords = self.get_circular_coords(x, y, r);
-                        let count = coords.len();
-                        let mut sum = 0;
-                        for (cx, cy) in coords {
-                            if let Value::Int(n) = self.grid[cy][cx] {
-                                sum += n;
-                            }
-                            self.grid[cy][cx] = Value::Int(0);
-                        }
-                        self.stack.push(Value::Int(sum));
-                        self.energy -= 5;
-                        self.output
-                            .push(format!("SIPHON: Absorbed {} from {} cells", sum, count));
-                    } else {
-                        self.output
-                            .push("Error: Type mismatch for siphon".to_string());
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for siphon".to_string());
-                }
-                None
-            }
-            OpCode::Genome => {
-                // Pushes genes of current strand to stack
-                if self.ip.0 < self.dna.helix.strands.len() {
-                    let strand = &self.dna.helix.strands[self.ip.0];
-                    self.stack.push(Value::Int(strand.genes.len() as i64));
-                    for gene in &strand.genes {
-                        self.stack.push(Value::Str(gene.op.to_string()));
-                    }
-                }
-                None
-            }
-            OpCode::Virus => {
-                if self.stack.len() >= 2 {
-                    let x_val = self.stack.pop().unwrap();
-                    let y_val = self.stack.pop().unwrap();
-
-                    let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
-                        if (0..16).contains(y) && (0..16).contains(x) {
-                            Some((*y, *x))
-                        } else {
-                            self.output
-                                .push("Error: Grid index out of bounds".to_string());
-                            None
-                        }
-                    } else {
-                        self.output
-                            .push("Error: Type mismatch for virus".to_string());
-                        None
-                    };
-
-                    if let Some((y, x)) = coords {
-                        let val = self.grid[y as usize][x as usize].clone();
-                        match val {
-                            Value::Int(n) => self.stack.push(Value::Int(n)),
-                            Value::Str(s) => {
-                                // Execute enzyme recursively
-                                // We pass empty args because grid enzymes don't carry args
-                                let old_loc = self.context_loc;
-                                self.context_loc = (y as usize, x as usize);
-                                let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
-                                let result = self.execute_gene(op, &[]);
-                                self.context_loc = old_loc;
-                                return result;
-                            }
-                        }
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for virus".to_string());
-                }
-                None
-            }
-            // --- EVOLUTION ---
-            OpCode::Transcribe => {
-                // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
-                if self.stack.len() < 4 {
-                    self.output
-                        .push("Error: Stack underflow for transcribe".to_string());
-                    return None;
-                }
-                let val = self.stack.pop().unwrap();
-                let arg_idx_val = self.stack.pop().unwrap();
-                let gene_idx_val = self.stack.pop().unwrap();
-                let strand_idx_val = self.stack.pop().unwrap();
-
-                match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
-                    (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {
-                        let si_idx = si as usize;
-                        let mut success = false;
-                        if si >= 0 && si_idx < self.dna.helix.strands.len() {
-                            let strand = &mut self.dna.helix.strands[si_idx];
-                            if gi >= 0 && (gi as usize) < strand.genes.len() {
-                                let gene = &mut strand.genes[gi as usize];
-                                if ai >= 0 && (ai as usize) < gene.args.len() {
-                                    gene.args[ai as usize] = Nucleotide::Number(v);
-                                    self.output.push(format!(
-                                        "TRANSCRIBE: strand {} gene {} arg {} -> {}",
-                                        si, gi, ai, v
-                                    ));
-                                    success = true;
-                                } else {
-                                    self.output
-                                        .push("Error: Arg index out of bounds".to_string());
-                                }
-                            } else {
-                                self.output
-                                    .push("Error: Gene index out of bounds".to_string());
-                            }
-                        } else {
-                            self.output
-                                .push("Error: Strand index out of bounds".to_string());
-                        }
-
-                        #[cfg(feature = "nova")]
-                        if success {
-                            if let Some(&partner_idx) = self.entangled_pairs.get(&si_idx) {
-                                if partner_idx < self.dna.helix.strands.len() {
-                                    let p_strand = &mut self.dna.helix.strands[partner_idx];
-                                    if (gi as usize) < p_strand.genes.len() {
-                                        let p_gene = &mut p_strand.genes[gi as usize];
-                                        if (ai as usize) < p_gene.args.len() {
-                                            p_gene.args[ai as usize] = Nucleotide::Number(v);
-                                            self.output.push(format!(
-                                                "ENTANGLEMENT: Transcribed partner {} gene {} arg {}",
-                                                partner_idx, gi, ai
-                                            ));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    _ => self
-                        .output
-                        .push("Error: Type mismatch for transcribe args".to_string()),
-                }
-                None
-            }
-            OpCode::JumpS => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(target) => {
-                            if target >= 0 {
-                                return Some((target as usize, 0));
-                            } else {
-                                self.output.push("Error: Negative jump target".to_string());
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for jump_s".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for jump_s".to_string());
-                }
-                None
-            }
-            OpCode::BrzS => {
-                if self.stack.len() >= 2 {
-                    let target_val = self.stack.pop().unwrap();
-                    let cond_val = self.stack.pop().unwrap();
-
-                    match (target_val, cond_val) {
-                        (Value::Int(target), Value::Int(cond)) => {
-                            if cond == 0 {
-                                if target >= 0 {
-                                    return Some((target as usize, 0));
-                                } else {
-                                    self.output.push("Error: Negative jump target".to_string());
-                                }
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for brz_s".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for brz_s".to_string());
-                }
-                None
-            }
-            OpCode::SLen => {
-                self.stack.push(Value::Int(self.stack.len() as i64));
-                None
-            }
-            OpCode::HelixLen => {
-                self.stack
-                    .push(Value::Int(self.dna.helix.strands.len() as i64));
-                None
-            }
-            OpCode::GeneLen => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(idx) => {
-                            if idx >= 0 && (idx as usize) < self.dna.helix.strands.len() {
-                                let len = self.dna.helix.strands[idx as usize].genes.len();
-                                self.stack.push(Value::Int(len as i64));
-                            } else {
-                                self.output.push(
-                                    "Error: Strand index out of bounds for gene_len".to_string(),
-                                );
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for gene_len".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for gene_len".to_string());
                 }
                 None
             }
@@ -1811,144 +2013,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            #[cfg(feature = "cortex")]
-            OpCode::Link => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(target) => {
-                            let target_idx = target as usize;
-                            let s_idx = self.ip.0;
-                            // Check bounds using activation_levels as proxy for strand count
-                            if target_idx < self.activation_levels.len()
-                                && s_idx < self.synapse_map.len()
-                            {
-                                if !self.synapse_map[s_idx].contains(&target_idx) {
-                                    self.synapse_map[s_idx].push(target_idx);
-                                    self.output
-                                        .push(format!("LINK: {} -> {}", s_idx, target_idx));
-                                }
-                            } else {
-                                self.output
-                                    .push("Error: Invalid strand index for link".to_string());
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for link".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for link".to_string());
-                }
-                None
-            }
-            #[cfg(feature = "cortex")]
-            OpCode::Sever => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(target) => {
-                            let target_idx = target as usize;
-                            let s_idx = self.ip.0;
-                            if s_idx < self.synapse_map.len() {
-                                if let Some(pos) = self.synapse_map[s_idx]
-                                    .iter()
-                                    .position(|&x| x == target_idx)
-                                {
-                                    self.synapse_map[s_idx].remove(pos);
-                                    self.output
-                                        .push(format!("SEVER: {} -x {}", s_idx, target_idx));
-                                }
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for sever".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for sever".to_string());
-                }
-                None
-            }
-            #[cfg(feature = "cortex")]
-            OpCode::Spark => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(amount) => {
-                            let s_idx = self.ip.0;
-                            if s_idx < self.synapse_map.len() {
-                                let targets = self.synapse_map[s_idx].clone();
-                                let count = targets.len();
-                                for target_idx in targets {
-                                    if target_idx < self.activation_levels.len() {
-                                        self.activation_levels[target_idx] += amount;
-                                    }
-                                }
-                                self.energy -= (count as i64) + 1;
-                                self.output
-                                    .push(format!("SPARK: Fired {} to {} targets", amount, count));
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Type mismatch for spark".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for spark".to_string());
-                }
-                None
-            }
-            #[cfg(feature = "cortex")]
-            OpCode::Sense => {
-                let s_idx = self.ip.0;
-                if s_idx < self.activation_levels.len() {
-                    let level = self.activation_levels[s_idx];
-                    self.stack.push(Value::Int(level));
-                } else {
-                    self.stack.push(Value::Int(0));
-                }
-                None
-            }
-            #[cfg(feature = "cortex")]
-            OpCode::Gate => {
-                if let Some(Nucleotide::Number(threshold)) = args.first() {
-                    let s_idx = self.ip.0;
-                    if s_idx < self.activation_levels.len() {
-                        if self.activation_levels[s_idx] < *threshold {
-                            // Skip next instruction
-                            // VM increments ip.1 by 1 by default after execute_gene returns None.
-                            // So we need to increment it by 1 here to make it skip one more.
-                            self.ip.1 += 1;
-                        }
-                    }
-                } else {
-                    self.output.push("Error: Invalid arg for gate".to_string());
-                }
-                None
-            }
-
-            OpCode::Unknown(name) => {
-                self.output.push(format!("Unknown enzyme: {}", name));
-                None
-            }
-        }
-    }
-
-    fn binary_op<F>(stack: &mut Vec<Value>, output: &mut Vec<String>, op: F)
-    where
-        F: Fn(i64, i64) -> i64,
-    {
-        if stack.len() < 2 {
-            output.push("Error: Stack underflow".to_string());
-            return;
-        }
-        let b = stack.pop().unwrap();
-        let a = stack.pop().unwrap();
-
-        match (a, b) {
-            (Value::Int(ia), Value::Int(ib)) => stack.push(Value::Int(op(ia, ib))),
-            _ => output.push("Error: Type mismatch".to_string()),
+            _ => None,
         }
     }
 

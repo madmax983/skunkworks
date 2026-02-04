@@ -122,6 +122,7 @@ fn run_app<B: ratatui::backend::Backend>(
                 for x in 0..16 {
                     let val = &vm.grid[y][x];
 
+                    #[allow(unused_mut)]
                     let (char_rep, mut style) = match val {
                         crate::vm::Value::Int(0) => {
                             (".".to_string(), Style::default().fg(Color::DarkGray))
