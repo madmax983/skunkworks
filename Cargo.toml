@@ -5,6 +5,7 @@ members = [
     "experiments/ast-respiration",
     "experiments/call-fern",
     "experiments/cargo-ants",
+    "experiments/cargo-atc",
     "experiments/cargo-jenga",
     "experiments/cellular-beats",
     "experiments/clockwork-cpu",

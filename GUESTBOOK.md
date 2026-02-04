@@ -325,3 +325,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hive-synth
 - **Scent Origin:** Splice Surgeon
 - **Status**: The hive is buzzing. Termites are building harmonies to cool the servers. The song is evolving.
+
+### [Concentration Level: FRESH] - Location: experiments/cargo-atc
+- **Scent Origin:** Nova 🌟
+- **Status:** The tower is active. Dependency flights are holding in the pattern. Runways are clear for compilation.

@@ -1,12 +1,12 @@
-mod ik;
 mod graph;
+mod ik;
 
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
 use graph::CodeGraph;
-use std::f32::consts::PI;
 use rand::Rng;
+use std::f32::consts::PI;
 
 fn main() {
     App::new()
@@ -23,7 +23,10 @@ fn main() {
         .add_plugins(RapierDebugRenderPlugin::default())
         .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
         .add_systems(Startup, (setup_world, spawn_spider))
-        .add_systems(Update, (camera_follow, move_spider, update_legs, handle_collisions))
+        .add_systems(
+            Update,
+            (camera_follow, move_spider, update_legs, handle_collisions),
+        )
         .run();
 }
 
@@ -100,27 +103,32 @@ fn spawn_spider(mut commands: Commands) {
     let body_radius = 15.0;
 
     // Body
-    let body_entity = commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shapes::Circle {
-                radius: body_radius,
-                center: Vec2::ZERO,
-            }),
-            spatial: SpatialBundle {
-                transform: Transform::from_xyz(0.0, 0.0, 10.0), // Z=10 to be on top
+    let body_entity = commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shapes::Circle {
+                    radius: body_radius,
+                    center: Vec2::ZERO,
+                }),
+                spatial: SpatialBundle {
+                    transform: Transform::from_xyz(0.0, 0.0, 10.0), // Z=10 to be on top
+                    ..default()
+                },
                 ..default()
             },
-            ..default()
-        },
-        Fill::color(Color::rgb(1.0, 0.3, 0.3)),
-        Stroke::new(Color::BLACK, 2.0),
-        RigidBody::Dynamic,
-        Collider::ball(body_radius),
-        ActiveEvents::COLLISION_EVENTS, // Enable collision events
-        Damping { linear_damping: 2.0, angular_damping: 1.0 },
-        ExternalForce::default(),
-        SpiderBody { speed: 1000.0 },
-    )).id();
+            Fill::color(Color::rgb(1.0, 0.3, 0.3)),
+            Stroke::new(Color::BLACK, 2.0),
+            RigidBody::Dynamic,
+            Collider::ball(body_radius),
+            ActiveEvents::COLLISION_EVENTS, // Enable collision events
+            Damping {
+                linear_damping: 2.0,
+                angular_damping: 1.0,
+            },
+            ExternalForce::default(),
+            SpiderBody { speed: 1000.0 },
+        ))
+        .id();
 
     // Legs
     let num_legs = 8;
@@ -131,29 +139,31 @@ fn spawn_spider(mut commands: Commands) {
         let reach = 60.0;
         let foot_pos = Vec2::new(angle.cos() * reach, angle.sin() * reach);
 
-        commands.spawn((
-            ShapeBundle {
-                path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, foot_pos)),
-                spatial: SpatialBundle {
-                    transform: Transform::from_xyz(0.0, 0.0, 9.0),
+        commands
+            .spawn((
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Line(Vec2::ZERO, foot_pos)),
+                    spatial: SpatialBundle {
+                        transform: Transform::from_xyz(0.0, 0.0, 9.0),
+                        ..default()
+                    },
                     ..default()
                 },
-                ..default()
-            },
-            Stroke::new(Color::rgb(0.8, 0.8, 0.8), 2.0),
-            SpiderLeg {
-                index: i,
-                offset_angle: angle,
-                reach_dist: reach,
-                segment_len: 35.0,
-                current_foot_pos: foot_pos,
-                target_foot_pos: foot_pos,
-                step_progress: 1.0,
-                step_start_pos: foot_pos,
-                step_duration: 0.15,
-                cooldown: 0.0, // Randomize start cooldown?
-            },
-        )).set_parent(body_entity);
+                Stroke::new(Color::rgb(0.8, 0.8, 0.8), 2.0),
+                SpiderLeg {
+                    index: i,
+                    offset_angle: angle,
+                    reach_dist: reach,
+                    segment_len: 35.0,
+                    current_foot_pos: foot_pos,
+                    target_foot_pos: foot_pos,
+                    step_progress: 1.0,
+                    step_start_pos: foot_pos,
+                    step_duration: 0.15,
+                    cooldown: 0.0, // Randomize start cooldown?
+                },
+            ))
+            .set_parent(body_entity);
     }
 }
 
@@ -164,10 +174,18 @@ fn move_spider(
     for (spider, mut force) in query.iter_mut() {
         let mut move_dir = Vec2::ZERO;
 
-        if keys.pressed(KeyCode::KeyW) { move_dir.y += 1.0; }
-        if keys.pressed(KeyCode::KeyS) { move_dir.y -= 1.0; }
-        if keys.pressed(KeyCode::KeyA) { move_dir.x -= 1.0; }
-        if keys.pressed(KeyCode::KeyD) { move_dir.x += 1.0; }
+        if keys.pressed(KeyCode::KeyW) {
+            move_dir.y += 1.0;
+        }
+        if keys.pressed(KeyCode::KeyS) {
+            move_dir.y -= 1.0;
+        }
+        if keys.pressed(KeyCode::KeyA) {
+            move_dir.x -= 1.0;
+        }
+        if keys.pressed(KeyCode::KeyD) {
+            move_dir.x += 1.0;
+        }
 
         if move_dir != Vec2::ZERO {
             move_dir = move_dir.normalize();
@@ -236,7 +254,7 @@ fn update_legs(
             let sin = (-body_angle).sin();
             let local_target = Vec2::new(
                 rel_pos.x * cos - rel_pos.y * sin,
-                rel_pos.x * sin + rel_pos.y * cos
+                rel_pos.x * sin + rel_pos.y * cos,
             );
 
             let elbow_dir = Vec2::new(-local_target.y, local_target.x).normalize_or_zero();
@@ -246,7 +264,7 @@ fn update_legs(
                 local_target,
                 leg.segment_len,
                 leg.segment_len,
-                elbow_dir
+                elbow_dir,
             );
 
             let line = shapes::Polygon {
@@ -263,11 +281,21 @@ fn handle_collisions(
     spider_q: Query<Entity, With<SpiderBody>>,
     node_q: Query<&GraphNode>,
 ) {
-    let spider_entity = if let Ok(e) = spider_q.get_single() { e } else { return };
+    let spider_entity = if let Ok(e) = spider_q.get_single() {
+        e
+    } else {
+        return;
+    };
 
     for event in collision_events.read() {
         if let CollisionEvent::Started(e1, e2, _) = event {
-            let other = if *e1 == spider_entity { *e2 } else if *e2 == spider_entity { *e1 } else { continue };
+            let other = if *e1 == spider_entity {
+                *e2
+            } else if *e2 == spider_entity {
+                *e1
+            } else {
+                continue;
+            };
 
             if let Ok(node) = node_q.get(other) {
                 // Log the file path
@@ -288,7 +316,9 @@ fn camera_follow(
     if let Ok(spider_transform) = spider_q.get_single() {
         let target = spider_transform.translation;
         let speed = 5.0;
-        cam_transform.translation.x += (target.x - cam_transform.translation.x) * speed * time.delta_seconds();
-        cam_transform.translation.y += (target.y - cam_transform.translation.y) * speed * time.delta_seconds();
+        cam_transform.translation.x +=
+            (target.x - cam_transform.translation.x) * speed * time.delta_seconds();
+        cam_transform.translation.y +=
+            (target.y - cam_transform.translation.y) * speed * time.delta_seconds();
     }
 }

@@ -96,3 +96,8 @@
 **Concept:** A "Breathing" force-directed graph of the Rust AST. Nodes (Functions, Mods) are connected by springs whose resting lengths oscillate rhythmically, simulating respiration.
 **Fate:** Merged
 **Lesson:** Visualizing code as a biological, living entity (expanding/contracting) provides a visceral sense of structure and liveliness that static graphs lack. Simple sinusoidal modulation of physics parameters creates a compelling "life" effect.
+
+## [Cargo ATC]
+**Concept:** A TUI game where the user plays Air Traffic Controller for the Rust compiler. Dependencies are incoming flights, threads are runways.
+**Fate:** Merged
+**Lesson:** Gamifying the build process (Dependency Resolution) makes the topological sort intuitive. The "Mashup" of Simulation + Dev Tool works well for visualizing complex graphs.

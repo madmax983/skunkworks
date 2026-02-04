@@ -1,4 +1,5 @@
 use crate::vm::ChimeraVM;
+use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
@@ -7,12 +8,11 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Modifier},
+    style::{Color, Modifier, Style},
     widgets::{Block, Borders, List, ListItem},
     Terminal,
 };
 use std::io;
-use anyhow::Result;
 
 pub fn run_tui(mut vm: ChimeraVM) -> Result<()> {
     enable_raw_mode()?;
@@ -63,8 +63,8 @@ fn run_app<B: ratatui::backend::Backend>(
                         style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
                         strand_items.push(ListItem::new(format!("> {}", content)).style(style));
                     } else if s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1) {
-                         style = style.fg(Color::DarkGray); // Changed Gray to DarkGray
-                         strand_items.push(ListItem::new(format!("  {}", content)).style(style));
+                        style = style.fg(Color::DarkGray); // Changed Gray to DarkGray
+                        strand_items.push(ListItem::new(format!("  {}", content)).style(style));
                     } else {
                         strand_items.push(ListItem::new(format!("  {}", content)).style(style));
                     }
@@ -77,27 +77,31 @@ fn run_app<B: ratatui::backend::Backend>(
             f.render_widget(genome_list, chunks[0]);
 
             // Cytoplasm (Stack)
-            let stack_items: Vec<ListItem> = vm.stack
+            let stack_items: Vec<ListItem> = vm
+                .stack
                 .iter()
                 .rev()
                 .map(|val| ListItem::new(format!("{}", val)))
                 .collect();
 
-            let stack_list = List::new(stack_items)
-                .block(Block::default().borders(Borders::ALL).title("Cytoplasm (Stack)"));
+            let stack_list = List::new(stack_items).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Cytoplasm (Stack)"),
+            );
             f.render_widget(stack_list, right_chunks[0]);
 
             // Output
-            let output_items: Vec<ListItem> = vm.output
+            let output_items: Vec<ListItem> = vm
+                .output
                 .iter()
                 .rev()
                 .map(|val| ListItem::new(val.clone()))
                 .collect();
 
             let output_list = List::new(output_items)
-                 .block(Block::default().borders(Borders::ALL).title("Output"));
+                .block(Block::default().borders(Borders::ALL).title("Output"));
             f.render_widget(output_list, right_chunks[1]);
-
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {

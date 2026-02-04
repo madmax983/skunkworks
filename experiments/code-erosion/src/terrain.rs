@@ -172,10 +172,10 @@ impl Terrain {
         self.add_height(x_i + 1, y_i + 1, amount * u * v);
 
         // Track sediment
-         let idx = y_i * self.width + x_i;
-         if idx < self.sediment_map.len() {
+        let idx = y_i * self.width + x_i;
+        if idx < self.sediment_map.len() {
             self.sediment_map[idx] += amount;
-         }
+        }
     }
 
     fn erode_point(&mut self, x: f64, y: f64, amount: f64) {
@@ -227,10 +227,10 @@ mod tests {
         // It should have eroded the top or deposited on sides
         let mut changed = false;
         for h in &terrain.heightmap {
-             if *h != 0.0 && *h != 10.0 {
-                 changed = true;
-                 break;
-             }
+            if *h != 0.0 && *h != 10.0 {
+                changed = true;
+                break;
+            }
         }
         // It might be subtle, but let's assume one run changes something.
         assert!(changed, "Erosion should modify terrain");

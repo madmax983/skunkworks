@@ -62,7 +62,12 @@ impl ChimeraVM {
         self.ip.1 += 1;
     }
 
-    fn execute_gene(stack: &mut Vec<Value>, output: &mut Vec<String>, name: &str, args: &[Nucleotide]) {
+    fn execute_gene(
+        stack: &mut Vec<Value>,
+        output: &mut Vec<String>,
+        name: &str,
+        args: &[Nucleotide],
+    ) {
         match name {
             "push" => {
                 if let Some(arg) = args.first() {
@@ -112,7 +117,7 @@ impl ChimeraVM {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -125,9 +130,18 @@ mod tests {
     #[test]
     fn test_add() {
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(20)] },
-            Gene { name: "add".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                name: "add".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {

@@ -8,13 +8,23 @@ use bevy::prelude::*;
 /// `len1`: Length of the first segment (root -> elbow).
 /// `len2`: Length of the second segment (elbow -> end).
 /// `elbow_dir`: A hint vector to determine which way the joint bends.
-pub fn solve_2_bone(root: Vec2, target: Vec2, len1: f32, len2: f32, elbow_dir: Vec2) -> (Vec2, Vec2) {
+pub fn solve_2_bone(
+    root: Vec2,
+    target: Vec2,
+    len1: f32,
+    len2: f32,
+    elbow_dir: Vec2,
+) -> (Vec2, Vec2) {
     let to_target = target - root;
     let dist = to_target.length();
 
     // Unreachable: Too far
     if dist >= len1 + len2 {
-        let dir = if dist > 0.0 { to_target / dist } else { Vec2::X };
+        let dir = if dist > 0.0 {
+            to_target / dist
+        } else {
+            Vec2::X
+        };
         let elbow = root + dir * len1;
         let end = root + dir * (len1 + len2);
         return (elbow, end);
@@ -26,7 +36,11 @@ pub fn solve_2_bone(root: Vec2, target: Vec2, len1: f32, len2: f32, elbow_dir: V
     // But if dist < |len1 - len2|, circles don't intersect.
     if dist < (len1 - len2).abs() {
         // Just extend towards target
-        let dir = if dist > 0.0 { to_target / dist } else { Vec2::X };
+        let dir = if dist > 0.0 {
+            to_target / dist
+        } else {
+            Vec2::X
+        };
         let elbow = root + dir * len1;
         // End is clamped?
         // Let's just return fully extended or folded.
@@ -100,13 +114,28 @@ mod tests {
         let (elbow, end) = solve_2_bone(root, target, len1, len2, elbow_dir);
 
         // Verify end is at target
-        assert!((end - target).length() < 0.001, "End effector should reach target. Got {:?} expected {:?}", end, target);
+        assert!(
+            (end - target).length() < 0.001,
+            "End effector should reach target. Got {:?} expected {:?}",
+            end,
+            target
+        );
 
         // Verify lengths
         let l1 = (elbow - root).length();
         let l2 = (end - elbow).length();
-        assert!((l1 - len1).abs() < 0.001, "Segment 1 length incorrect: {} != {}", l1, len1);
-        assert!((l2 - len2).abs() < 0.001, "Segment 2 length incorrect: {} != {}", l2, len2);
+        assert!(
+            (l1 - len1).abs() < 0.001,
+            "Segment 1 length incorrect: {} != {}",
+            l1,
+            len1
+        );
+        assert!(
+            (l2 - len2).abs() < 0.001,
+            "Segment 2 length incorrect: {} != {}",
+            l2,
+            len2
+        );
 
         // Verify elbow is "up" (positive Y)
         assert!(elbow.y > 0.0, "Elbow should bend up. Got {:?}", elbow);
