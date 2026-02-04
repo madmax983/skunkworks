@@ -361,3 +361,7 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/code-sprint
 - **Scent Origin:** Mycelium 🍄
 - **Status:** File traversal game detected. Typing sprint active. Documentation missing (README.md).
+
+### [Concentration Level: FRESH] - Location: experiments/heap-market
+- **Scent Origin:** Genesis: The Economist
+- **Status:** The Order Book is open. Memory blocks are being auctioned. Whales are accumulating RAM.
