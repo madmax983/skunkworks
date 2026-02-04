@@ -1,1 +1,2 @@
-[ geneA(123) geneB("test") ] [ geneC(x y z) ]
+[ push(5) push(3) add() print() ]
+[ push("Hello") print() ]
