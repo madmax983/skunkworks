@@ -1,5 +1,7 @@
 use crate::ast::{Dna, Nucleotide};
 use rand::Rng;
+#[cfg(feature = "nova")]
+use std::collections::HashSet;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
@@ -23,6 +25,8 @@ pub struct ChimeraVM {
     pub output: Vec<String>,
     pub halted: bool,
     pub energy: i64,
+    #[cfg(feature = "nova")]
+    pub epigenome: HashSet<(usize, usize)>,
 }
 
 impl ChimeraVM {
@@ -34,6 +38,8 @@ impl ChimeraVM {
             output: Vec::new(),
             halted: false,
             energy: 50,
+            #[cfg(feature = "nova")]
+            epigenome: HashSet::new(),
         }
     }
 
@@ -60,6 +66,12 @@ impl ChimeraVM {
             // End of strand, move to next strand
             self.ip.0 += 1;
             self.ip.1 = 0;
+            return;
+        }
+
+        #[cfg(feature = "nova")]
+        if self.epigenome.contains(&self.ip) {
+            self.ip.1 += 1;
             return;
         }
 
@@ -268,6 +280,44 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for gene_len".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "methylate" => {
+                if self.stack.len() >= 2 {
+                    let gene_val = self.stack.pop().unwrap();
+                    let strand_val = self.stack.pop().unwrap();
+                    if let (Value::Int(g_idx), Value::Int(s_idx)) = (gene_val, strand_val) {
+                        self.epigenome.insert((s_idx as usize, g_idx as usize));
+                        self.output
+                            .push(format!("METHYLATED: {}:{}", s_idx, g_idx));
+                    } else {
+                        self.output
+                            .push("Error: Invalid args for methylate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for methylate".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "demethylate" => {
+                if self.stack.len() >= 2 {
+                    let gene_val = self.stack.pop().unwrap();
+                    let strand_val = self.stack.pop().unwrap();
+                    if let (Value::Int(g_idx), Value::Int(s_idx)) = (gene_val, strand_val) {
+                        self.epigenome.remove(&(s_idx as usize, g_idx as usize));
+                        self.output
+                            .push(format!("DEMETHYLATED: {}:{}", s_idx, g_idx));
+                    } else {
+                        self.output
+                            .push("Error: Invalid args for demethylate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for demethylate".to_string());
                 }
                 None
             }

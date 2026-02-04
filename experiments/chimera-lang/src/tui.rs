@@ -58,16 +58,27 @@ fn run_app<B: ratatui::backend::Backend>(
                 for (g_idx, gene) in strand.genes.iter().enumerate() {
                     let content = format!("{}({:?})", gene.name, gene.args);
                     let mut style = Style::default();
+                    let mut prefix = "  ";
+
+                    #[cfg(feature = "nova")]
+                    if vm.epigenome.contains(&(s_idx, g_idx)) {
+                        style = style.fg(Color::Blue);
+                    }
 
                     if s_idx == vm.ip.0 && g_idx == vm.ip.1 {
                         style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
-                        strand_items.push(ListItem::new(format!("> {}", content)).style(style));
+                        #[cfg(feature = "nova")]
+                        if vm.epigenome.contains(&(s_idx, g_idx)) {
+                            style = style.bg(Color::Blue);
+                        }
+                        prefix = "> ";
                     } else if s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1) {
-                        style = style.fg(Color::DarkGray); // Changed Gray to DarkGray
-                        strand_items.push(ListItem::new(format!("  {}", content)).style(style));
-                    } else {
-                        strand_items.push(ListItem::new(format!("  {}", content)).style(style));
+                        if style.fg != Some(Color::Blue) {
+                            style = style.fg(Color::DarkGray);
+                        }
                     }
+
+                    strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
                 }
                 strand_items.push(ListItem::new("-------------------"));
             }

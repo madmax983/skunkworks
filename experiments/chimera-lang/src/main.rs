@@ -8,6 +8,9 @@ mod ast;
 mod tui;
 mod vm;
 
+#[cfg(test)]
+mod nova_test;
+
 use crate::ast::Dna;
 use crate::tui::run_tui;
 use crate::vm::ChimeraVM;
