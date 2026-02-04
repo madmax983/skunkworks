@@ -321,6 +321,81 @@ impl ChimeraVM {
                 }
                 None
             }
+            #[cfg(feature = "nova")]
+            "recombine" => {
+                // stack: split_point, strand_b, strand_a (bottom)
+                if self.stack.len() >= 3 {
+                    let split_val = self.stack.pop().unwrap();
+                    let strand_b_val = self.stack.pop().unwrap();
+                    let strand_a_val = self.stack.pop().unwrap();
+
+                    match (strand_a_val, strand_b_val, split_val) {
+                        (Value::Int(sa), Value::Int(sb), Value::Int(split)) => {
+                            let helix_len = self.dna.helix.strands.len();
+                            let sa_idx = sa as usize;
+                            let sb_idx = sb as usize;
+                            let split_idx = split as usize;
+
+                            if sa >= 0 && sb >= 0 && split >= 0 && sa_idx < helix_len && sb_idx < helix_len {
+                                // We need to check split bounds for both strands
+                                let len_a = self.dna.helix.strands[sa_idx].genes.len();
+                                let len_b = self.dna.helix.strands[sb_idx].genes.len();
+
+                                if split_idx <= len_a && split_idx <= len_b {
+                                    // Perform recombination
+                                    // We need to borrow strands mutably.
+                                    // Since they are in the same Vec, we need split_at_mut or similar trickery,
+                                    // or just use indices if we can modify the Vec safely.
+                                    // We can't get two mutable references to the same Vec at different indices directly.
+                                    // So we'll use `split_at_mut` if they are different indices, or just do nothing if same.
+
+                                    if sa_idx == sb_idx {
+                                        // Recombining same strand with itself at same point is a no-op.
+                                        self.output.push("Warning: Recombining strand with itself".to_string());
+                                    } else {
+                                        // Ensure ordered access to avoid panic
+                                        let (lower, upper) = if sa_idx < sb_idx {
+                                            (sa_idx, sb_idx)
+                                        } else {
+                                            (sb_idx, sa_idx)
+                                        };
+
+                                        let (first_slice, second_slice) = self.dna.helix.strands.split_at_mut(upper);
+                                        let strand_low = &mut first_slice[lower];
+                                        let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
+
+                                        // Identify which is A and B
+                                        let (strand_a, strand_b) = if sa_idx < sb_idx {
+                                            (strand_low, strand_high)
+                                        } else {
+                                            (strand_high, strand_low)
+                                        };
+
+                                        let mut tail_a = strand_a.genes.split_off(split_idx);
+                                        let mut tail_b = strand_b.genes.split_off(split_idx);
+
+                                        strand_a.genes.append(&mut tail_b);
+                                        strand_b.genes.append(&mut tail_a);
+
+                                        self.output.push(format!(
+                                            "RECOMBINATION: Swapped tails of strand {} and {} at {}",
+                                            sa, sb, split
+                                        ));
+                                    }
+                                } else {
+                                    self.output.push("Error: Split point out of bounds".to_string());
+                                }
+                            } else {
+                                self.output.push("Error: Strand index out of bounds".to_string());
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for recombine".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for recombine".to_string());
+                }
+                None
+            }
             _ => {
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None

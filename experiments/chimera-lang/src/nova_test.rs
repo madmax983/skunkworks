@@ -81,4 +81,74 @@ mod tests {
 
         assert!(!vm2.epigenome.contains(&(0, 5)));
     }
+
+    #[test]
+    fn test_recombination() {
+        // Strand 0: [ push(100), push(101), push(102) ]
+        // Strand 1: [ push(200), push(201), push(202) ]
+        // We want to recombine at index 1.
+        // Result Strand 0: [ push(100), push(201), push(202) ]
+        // Result Strand 1: [ push(200), push(101), push(102) ]
+
+        let strand0 = Strand {
+            genes: vec![
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(101)] },
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(102)] },
+            ],
+        };
+
+        let strand1 = Strand {
+            genes: vec![
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(200)] },
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(201)] },
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(202)] },
+            ],
+        };
+
+        let controller = Strand {
+            genes: vec![
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // strand_a
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] }, // strand_b
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] }, // split point
+                Gene { name: "recombine".to_string(), args: vec![] },
+            ],
+        };
+
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1, controller],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        // Move IP to controller strand (idx 2)
+        vm.ip = (2, 0);
+
+        vm.step(); // push(0)
+        vm.step(); // push(1)
+        vm.step(); // push(1)
+        vm.step(); // recombine
+
+        // Check strands
+        // Strand 0 should be 100, 201, 202
+        let s0 = &vm.dna.helix.strands[0];
+        if let Nucleotide::Number(n) = s0.genes[1].args[0] {
+             assert_eq!(n, 201);
+        } else { panic!("Wrong arg type for s0[1]"); }
+
+        if let Nucleotide::Number(n) = s0.genes[2].args[0] {
+             assert_eq!(n, 202);
+        } else { panic!("Wrong arg type for s0[2]"); }
+
+        // Strand 1 should be 200, 101, 102
+        let s1 = &vm.dna.helix.strands[1];
+        if let Nucleotide::Number(n) = s1.genes[1].args[0] {
+             assert_eq!(n, 101);
+        } else { panic!("Wrong arg type for s1[1]"); }
+
+         if let Nucleotide::Number(n) = s1.genes[2].args[0] {
+             assert_eq!(n, 102);
+        } else { panic!("Wrong arg type for s1[2]"); }
+    }
 }
