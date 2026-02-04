@@ -84,7 +84,7 @@ members = [
     "experiments/retinal-glitch",
     "experiments/struct-harmonics",
     "experiments/cargo-rocket",
-    "experiments/repo-rover", "experiments/reaction-monitor",
+    "experiments/repo-rover", "experiments/reaction-monitor", "experiments/syntax-spider",
 ]
 resolver = "2"
 
