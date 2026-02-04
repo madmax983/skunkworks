@@ -141,50 +141,74 @@ fn ui(f: &mut Frame, app: &App) {
 }
 
 fn draw_header(f: &mut Frame, app: &App, area: Rect) {
-    let status_text = if app.paused {
-        Span::styled(
-            " PAUSED ",
-            Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-        )
-    } else {
-        Span::styled(
-            " RUNNING ",
-            Style::default()
-                .fg(Color::Green)
-                .add_modifier(Modifier::BOLD),
-        )
-    };
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage(33),
+            Constraint::Percentage(33),
+            Constraint::Percentage(33),
+        ])
+        .split(area);
 
-    let title_text = Span::styled(
-        " NEURO-TERMINAL ",
+    let title_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(Color::Cyan));
+    let title = Paragraph::new(Span::styled(
+        " NEURO-TERMINAL 🧠 ",
         Style::default()
             .fg(Color::Cyan)
             .add_modifier(Modifier::BOLD),
-    );
+    ))
+    .block(title_block)
+    .alignment(Alignment::Center);
+    f.render_widget(title, chunks[0]);
 
-    let steps_text = Span::raw(format!(" Steps: {} ", app.steps));
+    let stats_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(Color::Yellow));
+    let stats = Paragraph::new(Span::styled(
+        format!("Steps: {}", app.steps),
+        Style::default().fg(Color::Yellow),
+    ))
+    .block(stats_block)
+    .alignment(Alignment::Center);
+    f.render_widget(stats, chunks[1]);
 
-    let line = ratatui::text::Line::from(vec![
-        title_text,
-        Span::raw(" | "),
-        status_text,
-        Span::raw(" | "),
-        steps_text,
-    ]);
-
-    let paragraph = Paragraph::new(line)
-        .block(Block::default().borders(Borders::ALL))
+    let status_style = if app.paused {
+        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default()
+            .fg(Color::Green)
+            .add_modifier(Modifier::BOLD)
+    };
+    let status_block = Block::default()
+        .borders(Borders::ALL)
+        .border_style(status_style);
+    let status_text = if app.paused {
+        "PAUSED ⏸"
+    } else {
+        "RUNNING ▶"
+    };
+    let status = Paragraph::new(Span::styled(status_text, status_style))
+        .block(status_block)
         .alignment(Alignment::Center);
-
-    f.render_widget(paragraph, area);
+    f.render_widget(status, chunks[2]);
 }
 
 fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
-    let keys = Span::styled(
-        " [P]ause | [R]eset | [Q]uit ",
-        Style::default().fg(Color::DarkGray),
-    );
-    let paragraph = Paragraph::new(keys).alignment(Alignment::Center);
+    let keys = vec![
+        Span::raw(" "),
+        Span::styled("Q", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::raw(" Quit | "),
+        Span::styled("P", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::raw(" Pause/Resume | "),
+        Span::styled("R", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::raw(" Reset "),
+    ];
+    let line = ratatui::text::Line::from(keys);
+    let paragraph = Paragraph::new(line)
+        .alignment(Alignment::Center)
+        .style(Style::default().bg(Color::Rgb(20, 20, 20)).fg(Color::White));
     f.render_widget(paragraph, area);
 }
 
@@ -193,14 +217,13 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title(" Decision Boundary "),
+                .title(" Decision Boundary 📊 "),
         )
         .marker(Marker::Block)
         .x_bounds([-1.0, 1.0])
         .y_bounds([-1.0, 1.0])
         .paint(|ctx| {
             // Sample grid for decision boundary background
-            // Draw background first so data points are on top
             for x_i in 0..60 {
                 for y_i in 0..30 {
                     let x = -1.0 + x_i as f64 * 2.0 / 59.0;
@@ -210,12 +233,12 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                     if out[0] > 0.5 {
                         ctx.draw(&Points {
                             coords: &[(x, y)],
-                            color: Color::Rgb(20, 40, 40), // Dark Cyan background
+                            color: Color::Rgb(0, 40, 40), // Darker Cyan background
                         });
                     } else {
                         ctx.draw(&Points {
                             coords: &[(x, y)],
-                            color: Color::Rgb(40, 20, 40), // Dark Magenta background
+                            color: Color::Rgb(40, 0, 40), // Darker Magenta background
                         });
                     }
                 }
@@ -242,7 +265,7 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title(" Network Graph "),
+                .title(" Network Graph 🕸️ "),
         )
         .marker(Marker::Braille)
         .x_bounds([0.0, 100.0])
@@ -263,10 +286,23 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                     let y = y_step * (n as f64 + 1.0);
                     layer_nodes.push((x, y));
 
-                    // Draw node
+                    // Color neuron based on activation if available
+                    let color = if let Some(layer_data) = app.network.data.get(l) {
+                        let activation = layer_data.get(n, 0);
+                        let a = activation.clamp(0.0, 1.0);
+                        // Gradient: Magenta (0.0) -> Cyan (1.0)
+                        // Magenta: 255, 0, 255
+                        // Cyan: 0, 255, 255
+                        let r = (255.0 * (1.0 - a)) as u8;
+                        let g = (255.0 * a) as u8;
+                        Color::Rgb(r, g, 255)
+                    } else {
+                        Color::White
+                    };
+
                     ctx.draw(&Points {
                         coords: &[(x, y)],
-                        color: Color::White,
+                        color,
                     });
                 }
                 node_positions.push(layer_nodes);
@@ -282,10 +318,8 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                     for (j, from_pos) in current_layer_nodes.iter().enumerate() {
                         let w = weights.get(i, j);
 
-                        // Cyberpunk colors: Cyan (+) / Magenta (-)
                         let color = if w > 0.0 { Color::Cyan } else { Color::Magenta };
 
-                        // Lower threshold to see more structure
                         if w.abs() > 0.2 {
                             ctx.draw(&Line {
                                 x1: from_pos.0,
