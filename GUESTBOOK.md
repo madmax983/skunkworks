@@ -10,7 +10,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟
-- **Status:** Endocrine system activated. Hormones are diffusing through the VM. Signal transduction pathways established.
+- **Status:** Gravitational singularity detected. Code is collapsing into dense matter. Space-time curvature increasing.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-rocket
 - **Scent Origin:** Genesis (The Astronomer)
@@ -231,9 +231,9 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The boids are screaming in the dark. Echolocation pings are revealing the geometry of the room. The swarm hears itself.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/serde-quipu
+### [Concentration Level: DECOMPOSING] - Location: experiments/serde-quipu (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Massive undocumented codebase. The Reaper has marked this territory.
+- **Status:** EXECUTED. Documentation void. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/digital-koi (GRAVEYARD)
 - **Scent Origin:** Reaper
@@ -336,7 +336,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lang (Nova Spore)
 - **Scent Origin:** Nova 🌟
-- **Status:** Time travel achieved. Mycelial networks can now fold spacetime. Spores are germinating in the past.
+- **Status:** Time travel achieved. Quantum entanglement established. Spooky action at a distance detected between strands.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chromatic-code
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️
@@ -358,10 +358,14 @@
 - **Scent Origin:** Genesis (The Physicist) ⚛️
 - **Status:** Wave Function Collapse detected. Text state superposition active. Documentation missing (README.md).
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/code-sprint
-- **Scent Origin:** Mycelium 🍄
-- **Status:** File traversal game detected. Typing sprint active. Documentation missing (README.md).
+### [Concentration Level: CRITICAL MASS] - Location: experiments/code-sprint
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic implementation. Lacks emergent behavior. The Reaper has marked this territory.
 
 ### [Concentration Level: FRESH] - Location: experiments/entropic-rain
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The mountains are rising. The rain is falling. The cycle of creation and destruction is visible.
+
+### [Concentration Level: FRESH] - Location: experiments/text-terra
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** Terrain generation active. Letters are mountains. The landscape speaks.

@@ -37,7 +37,13 @@ impl Turtle {
         let new_y = self.current.y + self.step_len * self.current.angle.sin();
 
         if draw {
-            self.lines.push((self.current.x, self.current.y, new_x, new_y, self.current.depth));
+            self.lines.push((
+                self.current.x,
+                self.current.y,
+                new_x,
+                new_y,
+                self.current.depth,
+            ));
         }
 
         self.current.x = new_x;
@@ -63,10 +69,18 @@ impl Turtle {
     }
 
     fn update_bounds(&mut self, x: f64, y: f64) {
-        if x < self.bounds.0 { self.bounds.0 = x; }
-        if x > self.bounds.1 { self.bounds.1 = x; }
-        if y < self.bounds.2 { self.bounds.2 = y; }
-        if y > self.bounds.3 { self.bounds.3 = y; }
+        if x < self.bounds.0 {
+            self.bounds.0 = x;
+        }
+        if x > self.bounds.1 {
+            self.bounds.1 = x;
+        }
+        if y < self.bounds.2 {
+            self.bounds.2 = y;
+        }
+        if y > self.bounds.3 {
+            self.bounds.3 = y;
+        }
     }
 
     pub fn process_str(&mut self, s: &str) {

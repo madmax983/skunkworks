@@ -72,7 +72,9 @@ fn run_app<B: ratatui::backend::Backend>(
                     }
                     strand_items.push(ListItem::new(Span::styled(
                         header,
-                        Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                        Style::default()
+                            .fg(Color::Magenta)
+                            .add_modifier(Modifier::BOLD),
                     )));
                 }
 
@@ -120,6 +122,7 @@ fn run_app<B: ratatui::backend::Backend>(
                 for x in 0..16 {
                     let val = &vm.grid[y][x];
 
+                    #[allow(unused_mut)]
                     let (char_rep, mut style) = match val {
                         crate::vm::Value::Int(0) => {
                             (".".to_string(), Style::default().fg(Color::DarkGray))
@@ -217,6 +220,13 @@ fn run_app<B: ratatui::backend::Backend>(
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
+                #[cfg(feature = "nova")]
+                if let KeyCode::Char(c) = key.code {
+                    if vm.handle_input(c) {
+                        continue;
+                    }
+                }
+
                 match key.code {
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),

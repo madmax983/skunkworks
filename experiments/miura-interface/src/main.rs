@@ -14,15 +14,15 @@ use ratatui::{
     },
     Frame, Terminal,
 };
-use std::io;
 use std::fs;
+use std::io;
 use std::time::{Duration, Instant};
 
 mod geo;
 use geo::MiuraPattern;
 
 mod guestbook;
-use guestbook::{GuestbookEntry, parse_guestbook};
+use guestbook::{parse_guestbook, GuestbookEntry};
 
 // 3D Math helpers
 use nalgebra::{Rotation3, Vector3};
@@ -49,9 +49,8 @@ impl App {
 
         // Load Guestbook
         let guestbook_path = "../../GUESTBOOK.md";
-        let content = fs::read_to_string(guestbook_path).unwrap_or_else(|_| {
-            "Could not read GUESTBOOK.md".to_string()
-        });
+        let content = fs::read_to_string(guestbook_path)
+            .unwrap_or_else(|_| "Could not read GUESTBOOK.md".to_string());
 
         let entries = parse_guestbook(&content);
         let mut entry_iter = entries.into_iter();
@@ -278,7 +277,7 @@ fn draw_ui(f: &mut Frame, app: &App) {
                     // Check if face is big enough to draw
                     let p0 = projected[indices[0]];
                     let p1 = projected[indices[1]]; // Horizontal neighbor
-                    // dist in world
+                                                    // dist in world
                     let dist = (p0.0 - p1.0).hypot(p0.1 - p1.1);
                     // dist in screen pixels
                     let screen_width =
@@ -307,7 +306,11 @@ fn draw_ui(f: &mut Frame, app: &App) {
                                 } else if screen_width < 25.0 {
                                     // LOD 1: Experiment Name
                                     // Extract just the name from "experiments/name"
-                                    let name = entry.location.split('/').next_back().unwrap_or(&entry.location);
+                                    let name = entry
+                                        .location
+                                        .split('/')
+                                        .next_back()
+                                        .unwrap_or(&entry.location);
                                     let p = Paragraph::new(name)
                                         .style(Style::default().fg(Color::Black).bg(panel.color));
                                     f.render_widget(p, visible_rect);

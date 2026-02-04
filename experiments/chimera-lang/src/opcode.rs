@@ -86,6 +86,22 @@ pub enum OpCode {
     Detox,
     #[cfg(feature = "nova")]
     WRead,
+    #[cfg(feature = "nova")]
+    Call,
+    #[cfg(feature = "nova")]
+    Ret,
+    #[cfg(feature = "nova")]
+    Bind,
+    #[cfg(feature = "nova")]
+    Unbind,
+    #[cfg(feature = "nova")]
+    Entangle,
+    #[cfg(feature = "nova")]
+    Decohere,
+    #[cfg(feature = "nova")]
+    Conjugate,
+    #[cfg(feature = "nova")]
+    Gravitate,
 
     Unknown(String),
 }
@@ -176,6 +192,22 @@ impl FromStr for OpCode {
             "detox" => Ok(OpCode::Detox),
             #[cfg(feature = "nova")]
             "w_read" => Ok(OpCode::WRead),
+            #[cfg(feature = "nova")]
+            "call" => Ok(OpCode::Call),
+            #[cfg(feature = "nova")]
+            "ret" => Ok(OpCode::Ret),
+            #[cfg(feature = "nova")]
+            "bind" => Ok(OpCode::Bind),
+            #[cfg(feature = "nova")]
+            "unbind" => Ok(OpCode::Unbind),
+            #[cfg(feature = "nova")]
+            "entangle" => Ok(OpCode::Entangle),
+            #[cfg(feature = "nova")]
+            "decohere" => Ok(OpCode::Decohere),
+            #[cfg(feature = "nova")]
+            "conjugate" => Ok(OpCode::Conjugate),
+            #[cfg(feature = "nova")]
+            "gravitate" => Ok(OpCode::Gravitate),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -266,6 +298,22 @@ impl fmt::Display for OpCode {
             OpCode::Detox => write!(f, "detox"),
             #[cfg(feature = "nova")]
             OpCode::WRead => write!(f, "w_read"),
+            #[cfg(feature = "nova")]
+            OpCode::Call => write!(f, "call"),
+            #[cfg(feature = "nova")]
+            OpCode::Ret => write!(f, "ret"),
+            #[cfg(feature = "nova")]
+            OpCode::Bind => write!(f, "bind"),
+            #[cfg(feature = "nova")]
+            OpCode::Unbind => write!(f, "unbind"),
+            #[cfg(feature = "nova")]
+            OpCode::Entangle => write!(f, "entangle"),
+            #[cfg(feature = "nova")]
+            OpCode::Decohere => write!(f, "decohere"),
+            #[cfg(feature = "nova")]
+            OpCode::Conjugate => write!(f, "conjugate"),
+            #[cfg(feature = "nova")]
+            OpCode::Gravitate => write!(f, "gravitate"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

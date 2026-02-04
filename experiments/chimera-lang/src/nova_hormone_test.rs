@@ -142,7 +142,11 @@ mod tests {
                 make_gene("jump", vec![3]),
             ],
         };
-        let dna = Dna { helix: Helix { strands: vec![strand0] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Secrete
@@ -160,5 +164,29 @@ mod tests {
         assert!(vm.hormone_grid[8][8][1] < 100);
         // Neighbor should gain
         assert!(vm.hormone_grid[8][9][1] > 0);
+    }
+
+    #[test]
+    fn test_secrete_overflow() {
+        // [ push(1) push(i64::MAX) secrete() ]
+        let strand0 = Strand {
+            genes: vec![
+                make_gene("push", vec![1]),
+                make_gene("push", vec![i64::MAX]),
+                make_gene("secrete", vec![]),
+            ],
+        };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        vm.step(); // push(1)
+        vm.step(); // push(MAX)
+        vm.step(); // secrete
+
+        assert_eq!(vm.hormone_grid[8][8][1], i64::MAX);
     }
 }

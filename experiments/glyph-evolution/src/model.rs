@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Glyph(pub u8);
@@ -88,7 +88,9 @@ impl Glyph {
         // Flip a random bit with low probability, or just unset a set bit?
         // Erosion usually means loss. So unset.
         let mut byte = self.0;
-        if byte == 0 { return *self; }
+        if byte == 0 {
+            return *self;
+        }
 
         // Pick a bit to unset
         let bit = rng.gen_range(0..8);
@@ -99,7 +101,7 @@ impl Glyph {
 
 pub struct Script {
     pub tokens: Vec<Glyph>,
-    pub corpus: Vec<usize>, // Indices into tokens
+    pub corpus: Vec<usize>,       // Indices into tokens
     pub active_tokens: Vec<bool>, // To track if a token is still used (optional)
 }
 
@@ -143,7 +145,9 @@ impl Script {
 
     pub fn evolve(&mut self) -> Option<(usize, usize, usize)> {
         // 1. Count pairs
-        if self.corpus.len() < 2 { return None; }
+        if self.corpus.len() < 2 {
+            return None;
+        }
 
         let mut counts = HashMap::new();
         for window in self.corpus.windows(2) {
@@ -155,7 +159,9 @@ impl Script {
         // 2. Find max
         let ((a, b), count) = counts.into_iter().max_by_key(|&(_, c)| c)?;
 
-        if count < 2 { return None; } // Don't merge if it only happens once
+        if count < 2 {
+            return None;
+        } // Don't merge if it only happens once
 
         // 3. Create new token
         let glyph_a = self.tokens[a];
@@ -168,7 +174,7 @@ impl Script {
         let mut new_corpus = Vec::with_capacity(self.corpus.len());
         let mut i = 0;
         while i < self.corpus.len() {
-            if i + 1 < self.corpus.len() && self.corpus[i] == a && self.corpus[i+1] == b {
+            if i + 1 < self.corpus.len() && self.corpus[i] == a && self.corpus[i + 1] == b {
                 new_corpus.push(new_id);
                 i += 2;
             } else {

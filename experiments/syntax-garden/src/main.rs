@@ -35,9 +35,9 @@ struct App {
 impl App {
     fn new(path: &str) -> Result<Self> {
         let mut parser = GardenParser::new();
-        let genome = parser.parse_directory(path).unwrap_or_else(|e| {
-            format!("Error: {}", e)
-        });
+        let genome = parser
+            .parse_directory(path)
+            .unwrap_or_else(|e| format!("Error: {}", e));
 
         // Initialize turtle
         // Start facing UP (90 degrees in Cartesian coords)
@@ -77,10 +77,7 @@ fn main() -> Result<()> {
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {

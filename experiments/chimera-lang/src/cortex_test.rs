@@ -6,10 +6,7 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_dna(strands: Vec<Vec<Gene>>) -> Dna {
-        let strands = strands
-            .into_iter()
-            .map(|genes| Strand { genes })
-            .collect();
+        let strands = strands.into_iter().map(|genes| Strand { genes }).collect();
         Dna {
             helix: Helix { strands },
         }
@@ -21,15 +18,28 @@ mod tests {
         // Strand 1: [ sense() ]
 
         let s0 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Link, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Spark, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Link,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Spark,
+                args: vec![],
+            },
         ];
 
-        let s1 = vec![
-            Gene { op: OpCode::Sense, args: vec![] },
-        ];
+        let s1 = vec![Gene {
+            op: OpCode::Sense,
+            args: vec![],
+        }];
 
         let mut vm = ChimeraVM::new(make_dna(vec![s0, s1]));
 
@@ -65,8 +75,14 @@ mod tests {
         // once with activation 10 (gate should allow push).
 
         let s0 = vec![
-            Gene { op: OpCode::Gate, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
+            Gene {
+                op: OpCode::Gate,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
         ];
 
         // Scenario A: Low activation
@@ -74,7 +90,7 @@ mod tests {
         vm.activation_levels[0] = 0;
 
         vm.step(); // gate(5). 0 < 5, so skip next.
-        // IP should be at (0, 2) (end of strand)
+                   // IP should be at (0, 2) (end of strand)
         assert_eq!(vm.ip, (0, 2));
         // Run again to trigger end of strand logic
         vm.step(); // Moves to next strand (1, 0)
@@ -87,7 +103,7 @@ mod tests {
         vm.activation_levels[0] = 10;
 
         vm.step(); // gate(5). 10 >= 5, proceed.
-        // IP should be at (0, 1) -> push(100)
+                   // IP should be at (0, 1) -> push(100)
         assert_eq!(vm.ip, (0, 1));
 
         vm.step(); // push(100)

@@ -1,10 +1,13 @@
+use crate::app::App;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color},
-    widgets::{Block, Borders, List, ListItem, canvas::{Canvas, Line, Context}},
+    style::Color,
+    widgets::{
+        canvas::{Canvas, Context, Line},
+        Block, Borders, List, ListItem,
+    },
     Frame,
 };
-use crate::app::App;
 
 pub fn draw(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
@@ -27,7 +30,12 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
     let pad_y = height * 0.1 + 5.0;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(format!("Growth (Gen {}, Step {}/{})", app.generation, app.pc, app.expanded_string.len())))
+        .block(Block::default().borders(Borders::ALL).title(format!(
+            "Growth (Gen {}, Step {}/{})",
+            app.generation,
+            app.pc,
+            app.expanded_string.len()
+        )))
         .x_bounds([app.turtle.bounds.0 - pad_x, app.turtle.bounds.1 + pad_x])
         .y_bounds([app.turtle.bounds.2 - pad_y, app.turtle.bounds.3 + pad_y])
         .paint(|ctx: &mut Context| {
@@ -50,13 +58,23 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
 }
 
 fn draw_stack(f: &mut Frame, app: &App, area: Rect) {
-    let items: Vec<ListItem> = app.turtle.stack.iter().rev().enumerate().map(|(i, state)| {
-        let depth = app.turtle.stack.len() - i;
-        ListItem::new(format!("[{:02}] X:{:.1}, Y:{:.1}", depth, state.x, state.y))
-    }).collect();
+    let items: Vec<ListItem> = app
+        .turtle
+        .stack
+        .iter()
+        .rev()
+        .enumerate()
+        .map(|(i, state)| {
+            let depth = app.turtle.stack.len() - i;
+            ListItem::new(format!("[{:02}] X:{:.1}, Y:{:.1}", depth, state.x, state.y))
+        })
+        .collect();
 
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title(format!("Call Stack (Depth: {})", app.turtle.stack.len())));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Call Stack (Depth: {})", app.turtle.stack.len())),
+    );
 
     f.render_widget(list, area);
 }

@@ -48,6 +48,10 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 *   `telomerase(amount)`: Extends the current strand's telomere by `amount`. Costs 25 Energy.
 *   `t_len()`: Pushes the current strand's telomere length to the stack.
 
+### Quantum Entanglement (Nova Feature)
+*   `entangle(strand_a, strand_b)`: Creates a quantum link between two strands. Any mutation (random or via `transcribe`) to one strand is instantly propagated to the other.
+*   `decohere(strand_idx)`: Breaks the quantum link for the target strand and its partner.
+
 ### Petri Dish (New!)
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
 *   `g_write()`: Pop `val`, `y`, `x`. Write `val` to `grid[y][x]`.

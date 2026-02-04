@@ -85,7 +85,7 @@ impl App {
                     // Simple: Random jitter
                     let jitter = rand::random::<f32>() * 2.0 - 1.0;
                     if jitter > 0.0 {
-                         self.tank.disturb(ix, iy, amount as f32 * jitter);
+                        self.tank.disturb(ix, iy, amount as f32 * jitter);
                     }
                 }
             }
@@ -155,13 +155,13 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
             // Pre-calculate node positions on screen
             let mut node_map = vec![vec![None; w]; h];
             for node in &app.graph.nodes {
-                 let x = (node.pos.x - app.center_x) * app.scale + cx;
-                 let y = (node.pos.y - app.center_y) * app.scale + cy;
-                 let ix = x as usize;
-                 let iy = y as usize;
-                 if ix < w && iy < h {
-                     node_map[iy][ix] = Some(node);
-                 }
+                let x = (node.pos.x - app.center_x) * app.scale + cx;
+                let y = (node.pos.y - app.center_y) * app.scale + cy;
+                let ix = x as usize;
+                let iy = y as usize;
+                if ix < w && iy < h {
+                    node_map[iy][ix] = Some(node);
+                }
             }
 
             for y in 0..h {
@@ -181,7 +181,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                     } else {
                         // Draw Wave
                         let height_val = app.tank.get_height(x, y);
-                        let idx = ((height_val + 0.5).clamp(0.0, 1.0) * (chars.len() - 1) as f32) as usize;
+                        let idx = ((height_val + 0.5).clamp(0.0, 1.0) * (chars.len() - 1) as f32)
+                            as usize;
                         let c = chars[idx];
                         // Color based on height
                         let color = if height_val > 0.2 {
@@ -218,20 +219,18 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
 
         if event::poll(timeout)? {
             match event::read()? {
-                Event::Key(key) => {
-                    match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => app.running = false,
-                        KeyCode::Char('w') => app.center_y -= 1.0 / app.scale,
-                        KeyCode::Char('s') => app.center_y += 1.0 / app.scale,
-                        KeyCode::Char('a') => app.center_x -= 1.0 / app.scale,
-                        KeyCode::Char('d') => app.center_x += 1.0 / app.scale,
-                        KeyCode::Char('=') | KeyCode::Char('+') => app.scale *= 1.1,
-                        KeyCode::Char('-') => app.scale *= 0.9,
-                        KeyCode::Up => app.freq += 10.0,
-                        KeyCode::Down => app.freq -= 10.0,
-                        _ => {}
-                    }
-                }
+                Event::Key(key) => match key.code {
+                    KeyCode::Char('q') | KeyCode::Esc => app.running = false,
+                    KeyCode::Char('w') => app.center_y -= 1.0 / app.scale,
+                    KeyCode::Char('s') => app.center_y += 1.0 / app.scale,
+                    KeyCode::Char('a') => app.center_x -= 1.0 / app.scale,
+                    KeyCode::Char('d') => app.center_x += 1.0 / app.scale,
+                    KeyCode::Char('=') | KeyCode::Char('+') => app.scale *= 1.1,
+                    KeyCode::Char('-') => app.scale *= 0.9,
+                    KeyCode::Up => app.freq += 10.0,
+                    KeyCode::Down => app.freq -= 10.0,
+                    _ => {}
+                },
                 _ => {}
             }
         }

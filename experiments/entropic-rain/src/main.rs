@@ -37,22 +37,32 @@ fn main() -> Result<()> {
     };
 
     if commits.is_empty() {
-         // Create dummy data for demo if no git history found
-         commits.push(git::Commit {
-             hash: "DEMO01".into(),
-             timestamp: 0,
-             changes: vec![
-                 git::FileChange { path: "mountain.rs".into(), added: 50, deleted: 0 },
-                 git::FileChange { path: "valley.rs".into(), added: 20, deleted: 0 },
-             ],
-         });
-         commits.push(git::Commit {
-             hash: "DEMO02".into(),
-             timestamp: 1,
-             changes: vec![
-                 git::FileChange { path: "mountain.rs".into(), added: 0, deleted: 20 },
-             ],
-         });
+        // Create dummy data for demo if no git history found
+        commits.push(git::Commit {
+            hash: "DEMO01".into(),
+            timestamp: 0,
+            changes: vec![
+                git::FileChange {
+                    path: "mountain.rs".into(),
+                    added: 50,
+                    deleted: 0,
+                },
+                git::FileChange {
+                    path: "valley.rs".into(),
+                    added: 20,
+                    deleted: 0,
+                },
+            ],
+        });
+        commits.push(git::Commit {
+            hash: "DEMO02".into(),
+            timestamp: 1,
+            changes: vec![git::FileChange {
+                path: "mountain.rs".into(),
+                added: 0,
+                deleted: 20,
+            }],
+        });
     }
 
     let size = terminal.size()?;
@@ -109,17 +119,28 @@ fn main() -> Result<()> {
             // Info
             let info_text = if commit_idx < commits.len() {
                 let c = &commits[commit_idx.saturating_sub(1)];
-                format!("Commit: {} | Rain: {} | Speed: {} | [SPACE] Pause [+/-] Speed [q] Quit",
-                    &c.hash[0..7.min(c.hash.len())], sim.particles.len(), speed)
+                format!(
+                    "Commit: {} | Rain: {} | Speed: {} | [SPACE] Pause [+/-] Speed [q] Quit",
+                    &c.hash[0..7.min(c.hash.len())],
+                    sim.particles.len(),
+                    speed
+                )
             } else {
                 format!("DONE | Final Particles: {} | [q] Quit", sim.particles.len())
             };
 
-            f.render_widget(Paragraph::new(info_text).block(Block::default().borders(Borders::ALL)), chunks[1]);
+            f.render_widget(
+                Paragraph::new(info_text).block(Block::default().borders(Borders::ALL)),
+                chunks[1],
+            );
 
             // Canvas
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Entropic Rain "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Entropic Rain "),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -141,7 +162,7 @@ fn main() -> Result<()> {
                     for p in &sim.particles {
                         let cy = height as f64 - p.y;
                         if cy >= 0.0 && cy <= height as f64 {
-                             ctx.draw(&Rectangle {
+                            ctx.draw(&Rectangle {
                                 x: p.x,
                                 y: cy,
                                 width: 1.0,

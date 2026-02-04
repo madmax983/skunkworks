@@ -4,16 +4,16 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use pest_derive::Parser;
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::{io, time::Duration};
-use pest_derive::Parser;
 
 mod ast;
 mod penrose;
 mod tui;
 mod vm;
 
-use ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use vm::ChimeraVM;
 
 #[derive(Parser)]
@@ -39,23 +39,62 @@ fn main() -> Result<()> {
     // Genes: A simple "Painter" that colors tiles around the center
     // It writes 1 (Red), 2 (Green), 3 (Yellow) to (0,0), (10,10), (-10,-10)
     let genes = vec![
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] }, // Color Red
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-        Gene { name: "g_write".to_string(), args: vec![] },
-
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] }, // Color Green
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-        Gene { name: "g_write".to_string(), args: vec![] },
-
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(3)] }, // Color Yellow
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(-10)] },
-        Gene { name: "push".to_string(), args: vec![Nucleotide::Number(-10)] },
-        Gene { name: "g_write".to_string(), args: vec![] },
-
-        Gene { name: "photosynthesize".to_string(), args: vec![] },
-        Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(12)] }, // Loop
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(1)],
+        }, // Color Red
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            name: "g_write".to_string(),
+            args: vec![],
+        },
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(2)],
+        }, // Color Green
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            name: "g_write".to_string(),
+            args: vec![],
+        },
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(3)],
+        }, // Color Yellow
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(-10)],
+        },
+        Gene {
+            name: "push".to_string(),
+            args: vec![Nucleotide::Number(-10)],
+        },
+        Gene {
+            name: "g_write".to_string(),
+            args: vec![],
+        },
+        Gene {
+            name: "photosynthesize".to_string(),
+            args: vec![],
+        },
+        Gene {
+            name: "jump".to_string(),
+            args: vec![Nucleotide::Number(12)],
+        }, // Loop
     ];
 
     let dna = Dna {

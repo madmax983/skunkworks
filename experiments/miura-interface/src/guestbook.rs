@@ -35,8 +35,10 @@ pub fn parse_guestbook(content: &str) -> Vec<GuestbookEntry> {
             // Assuming they follow immediately or close by
             // Only look a few lines ahead to avoid skipping too far
             for j in 1..4 {
-                if i + j >= lines.len() { break; }
-                let next_line = lines[i+j];
+                if i + j >= lines.len() {
+                    break;
+                }
+                let next_line = lines[i + j];
 
                 if let Some(scent_caps) = scent_re.captures(next_line) {
                     scent_origin = scent_caps.get(1).map_or("", |m| m.as_str()).to_string();
