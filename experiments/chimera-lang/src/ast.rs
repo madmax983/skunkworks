@@ -26,6 +26,7 @@ pub struct Gene {
 pub enum Nucleotide {
     Number(i64),
     String(String),
+    #[allow(dead_code)]
     Identifier(String),
 }
 
