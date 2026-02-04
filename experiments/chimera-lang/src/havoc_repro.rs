@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Strand};
+    use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 
     fn make_bomb_dna() -> Dna {
@@ -10,7 +11,7 @@ mod tests {
         // We can manually fill the stack in the test setup.
 
         let genes = vec![Gene {
-            name: "virus".to_string(),
+            op: OpCode::Virus,
             args: vec![],
         }];
 

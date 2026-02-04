@@ -1,4 +1,8 @@
+#[cfg(feature = "nova")]
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+#[cfg(feature = "nova")]
+use chimera_lang::opcode::OpCode;
+#[cfg(feature = "nova")]
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn main() {
@@ -44,19 +48,19 @@ fn run_demo() {
     let reader_strand = Strand {
         genes: vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(3)],
             }, // len
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             }, // y
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             }, // x
             Gene {
-                name: "incubate".to_string(),
+                op: OpCode::Incubate,
                 args: vec![],
             },
         ],
