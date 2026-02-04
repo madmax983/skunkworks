@@ -14,7 +14,6 @@ members = [
     "experiments/crystal-structure",
     "experiments/crate-universe",
     "experiments/digital-compost",
-    "experiments/digital-koi",
     "experiments/dx-audit",
     "experiments/euclidean-pulse",
     "experiments/fabric-limb",
@@ -30,6 +29,7 @@ members = [
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
+    "experiments/input-ghost",
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/log-landscape",
@@ -88,8 +88,12 @@ members = [
     "experiments/syntax-spider", 
     "experiments/code-erosion",
     "experiments/hive-synth",
-    "experiments/code-kaleidoscope", "experiments/hidden-brush",
     "experiments/market-rogue",
+    "experiments/code-kaleidoscope", 
+    "experiments/hidden-brush", 
+    "experiments/alloc-tardis", 
+    "experiments/magnetron-decay", 
+    "experiments/echo-chamber",
 ]
 resolver = "2"
 

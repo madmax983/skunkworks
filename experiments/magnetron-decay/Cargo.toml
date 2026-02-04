@@ -1,5 +1,5 @@
 [package]
-name = "digital-koi"
+name = "magnetron-decay"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,4 +9,3 @@ crossterm = { workspace = true }
 rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
-sysinfo = "0.30"

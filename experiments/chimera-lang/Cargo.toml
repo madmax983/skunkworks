@@ -10,3 +10,4 @@ clap = { version = "4.4", features = ["derive"] }
 anyhow = { workspace = true }
 ratatui = { workspace = true }
 crossterm = { workspace = true }
+rand = "0.8"

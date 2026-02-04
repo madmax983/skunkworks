@@ -2,11 +2,11 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{
         canvas::{Canvas, Circle, Context, Line as CanvasLine},
-        Block, Borders, Paragraph,
+        Block, Borders, Gauge, Paragraph,
     },
     Frame,
 };
@@ -124,7 +124,7 @@ fn main() -> Result<()> {
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Min(0), Constraint::Length(3)])
+        .constraints([Constraint::Min(0), Constraint::Length(7)])
         .split(f.area());
 
     // Main Canvas
@@ -146,36 +146,90 @@ fn ui(f: &mut Frame, app: &App) {
 
     f.render_widget(canvas, chunks[0]);
 
-    // HUD
+    // HUD Calculation
     let ship = &app.system.ship;
     let vel_mag = ship.vel.magnitude();
-    let status_color = if ship.fuel < 100.0 {
-        Color::Red
+
+    let visited_count = app.system.bodies.iter().filter(|b| b.color == Color::Green).count();
+    let total_count = app.system.bodies.iter().filter(|b| !b.is_fixed).count();
+    let progress_ratio = if total_count > 0 {
+        visited_count as f64 / total_count as f64
     } else {
-        Color::Green
+        0.0
     };
 
-    let info = Paragraph::new(vec![
-        Line::from(vec![
-            Span::styled(
-                format!("FUEL: {:.1} ", ship.fuel),
-                Style::default().fg(status_color),
-            ),
-            Span::raw(format!(
-                "| VEL: {:.2} | POS: {:.0},{:.0} ",
-                vel_mag, ship.pos.x, ship.pos.y
-            )),
-            Span::raw(if ship.thrusting {
-                "🔥 ENGINE ON"
-            } else {
-                "   ENGINE OFF"
-            }),
-        ]),
-        Line::from("Controls: Left/Right to Rotate | Space to Toggle Thrust | +/- Zoom | Q Quit"),
-    ])
-    .block(Block::default().borders(Borders::ALL));
+    let fuel_ratio = (ship.fuel / ship.max_fuel).clamp(0.0, 1.0);
 
-    f.render_widget(info, chunks[1]);
+    // HUD Layout
+    let hud_chunks = Layout::horizontal([
+        Constraint::Percentage(30),
+        Constraint::Percentage(40),
+        Constraint::Percentage(30),
+    ])
+    .split(chunks[1]);
+
+    // 1. Fuel Gauge
+    let fuel_color = if fuel_ratio > 0.5 {
+        Color::Green
+    } else if fuel_ratio > 0.2 {
+        Color::Yellow
+    } else {
+        Color::Red
+    };
+
+    let fuel_gauge = Gauge::default()
+        .block(Block::bordered().title(" Fuel "))
+        .gauge_style(Style::default().fg(fuel_color))
+        .ratio(fuel_ratio)
+        .label(format!("{:.1}/{:.1}", ship.fuel, ship.max_fuel));
+
+    f.render_widget(fuel_gauge, hud_chunks[0]);
+
+    // 2. Telemetry & Controls
+    let telemetry_text = vec![
+        Line::from(vec![
+            Span::raw("VEL: "),
+            Span::styled(
+                format!("{:.2}", vel_mag),
+                Style::default().add_modifier(Modifier::BOLD),
+            ),
+            Span::raw(" | POS: "),
+            Span::styled(
+                format!("{:.0},{:.0}", ship.pos.x, ship.pos.y),
+                Style::default().add_modifier(Modifier::BOLD),
+            ),
+        ]),
+        Line::from(if ship.thrusting {
+            Span::styled(
+                "🔥 ENGINE ON",
+                Style::default()
+                    .fg(Color::Red)
+                    .add_modifier(Modifier::BOLD),
+            )
+        } else {
+            Span::raw("   ENGINE OFF")
+        }),
+        Line::from(""),
+        Line::from(Span::styled(
+            "Controls: ←/→ Rotate | Space Thrust | +/- Zoom | Q Quit",
+            Style::default().fg(Color::DarkGray),
+        )),
+    ];
+
+    let telemetry = Paragraph::new(telemetry_text)
+        .block(Block::bordered().title(" Navigation "))
+        .alignment(ratatui::layout::Alignment::Center);
+
+    f.render_widget(telemetry, hud_chunks[1]);
+
+    // 3. Mission Progress
+    let progress_gauge = Gauge::default()
+        .block(Block::bordered().title(" Mission Progress "))
+        .gauge_style(Style::default().fg(Color::Blue))
+        .ratio(progress_ratio)
+        .label(format!("{} / {}", visited_count, total_count));
+
+    f.render_widget(progress_gauge, hud_chunks[2]);
 }
 
 fn draw_system(ctx: &mut Context, app: &App) {

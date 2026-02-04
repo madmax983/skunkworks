@@ -1,10 +1,12 @@
 mod game;
 mod git;
+mod semantic;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use game::{Direction, World};
 use git::GitHistory;
+use semantic::ToSnapshot;
 use ratatui::{
     layout::{Constraint, Direction as LayoutDirection, Layout},
     style::{Color, Modifier, Style},
@@ -44,9 +46,15 @@ fn main() -> Result<()> {
     // Game loop
     let tick_rate = Duration::from_millis(100);
     let mut last_tick = Instant::now();
+    let mut status_message: Option<String> = None;
+    let mut status_timer = Instant::now();
 
     loop {
-        tui.terminal.draw(|f| ui(f, &world))?;
+        if status_message.is_some() && status_timer.elapsed() > Duration::from_secs(2) {
+            status_message = None;
+        }
+
+        tui.terminal.draw(|f| ui(f, &world, status_message.as_deref()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
@@ -57,6 +65,16 @@ fn main() -> Result<()> {
                 if key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => break,
+                        KeyCode::Char('s') => {
+                            let snapshot = world.to_snapshot();
+                            if let Ok(json) = serde_json::to_string_pretty(&snapshot) {
+                                if std::fs::write("snapshot.json", json).is_ok() {
+                                    status_message =
+                                        Some("Snapshot saved to snapshot.json".to_string());
+                                    status_timer = Instant::now();
+                                }
+                            }
+                        }
                         KeyCode::Char('h') | KeyCode::Left => {
                             world.change_direction(Direction::Left)
                         }
@@ -89,7 +107,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn ui(f: &mut Frame, world: &World) {
+fn ui(f: &mut Frame, world: &World, status_override: Option<&str>) {
     let chunks = Layout::default()
         .direction(LayoutDirection::Horizontal)
         .constraints([
@@ -206,18 +224,25 @@ fn ui(f: &mut Frame, world: &World) {
     f.render_widget(log_list, info_chunks[1]);
 
     // Controls or Game Over
-    let status_text = if world.game_over {
-        "GAME OVER! Press 'q' to quit."
+    let (status_text, status_style) = if let Some(msg) = status_override {
+        (
+            msg.to_string(),
+            Style::default()
+                .fg(Color::Green)
+                .add_modifier(Modifier::BOLD),
+        )
+    } else if world.game_over {
+        (
+            "GAME OVER! Press 'q' to quit.".to_string(),
+            Style::default()
+                .fg(Color::Red)
+                .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+        )
     } else {
-        "WASD/Arrows to move. Q to quit."
-    };
-
-    let status_style = if world.game_over {
-        Style::default()
-            .fg(Color::Red)
-            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK)
-    } else {
-        Style::default().fg(Color::Cyan)
+        (
+            "WASD/Move. Q/Quit. S/Snapshot.".to_string(),
+            Style::default().fg(Color::Cyan),
+        )
     };
 
     let status_block = Paragraph::new(status_text)
