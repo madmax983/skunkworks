@@ -25,12 +25,16 @@ pub struct ChimeraVM {
     pub output: Vec<String>,
     pub halted: bool,
     pub energy: i64,
+    pub grid: Vec<Vec<Value>>,
+    pub chaos_mode: bool,
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
 }
 
 impl ChimeraVM {
     pub fn new(dna: Dna) -> Self {
+        // Initialize 16x16 grid with 0s
+        let grid = vec![vec![Value::Int(0); 16]; 16];
         Self {
             dna,
             stack: Vec::new(),
@@ -38,6 +42,8 @@ impl ChimeraVM {
             output: Vec::new(),
             halted: false,
             energy: 50,
+            grid,
+            chaos_mode: false,
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
         }
@@ -49,6 +55,15 @@ impl ChimeraVM {
         }
 
         self.energy -= 1;
+
+        if self.chaos_mode {
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(0.1) {
+                // 10% chance per step
+                self.mutate();
+            }
+        }
+
         if self.energy <= 0 {
             self.halted = true;
             self.output.push("DEATH: STARVATION".to_string());
@@ -207,6 +222,49 @@ impl ChimeraVM {
                 }
                 None
             }
+            "g_read" => {
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                        if y >= 0 && y < 16 && x >= 0 && x < 16 {
+                            self.stack.push(self.grid[y as usize][x as usize].clone());
+                        } else {
+                            self.output
+                                .push("Error: Grid index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for g_read".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for g_read".to_string());
+                }
+                None
+            }
+            "g_write" => {
+                if self.stack.len() >= 3 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let val = self.stack.pop().unwrap();
+                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                        if y >= 0 && y < 16 && x >= 0 && x < 16 {
+                            self.grid[y as usize][x as usize] = val;
+                        } else {
+                            self.output
+                                .push("Error: Grid index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for g_write".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for g_write".to_string());
+                }
+                None
+            }
             // --- EVOLUTION ---
             "transcribe" => {
                 // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
@@ -290,8 +348,7 @@ impl ChimeraVM {
                     let strand_val = self.stack.pop().unwrap();
                     if let (Value::Int(g_idx), Value::Int(s_idx)) = (gene_val, strand_val) {
                         self.epigenome.insert((s_idx as usize, g_idx as usize));
-                        self.output
-                            .push(format!("METHYLATED: {}:{}", s_idx, g_idx));
+                        self.output.push(format!("METHYLATED: {}:{}", s_idx, g_idx));
                     } else {
                         self.output
                             .push("Error: Invalid args for methylate".to_string());
@@ -336,7 +393,12 @@ impl ChimeraVM {
                             let sb_idx = sb as usize;
                             let split_idx = split as usize;
 
-                            if sa >= 0 && sb >= 0 && split >= 0 && sa_idx < helix_len && sb_idx < helix_len {
+                            if sa >= 0
+                                && sb >= 0
+                                && split >= 0
+                                && sa_idx < helix_len
+                                && sb_idx < helix_len
+                            {
                                 // We need to check split bounds for both strands
                                 let len_a = self.dna.helix.strands[sa_idx].genes.len();
                                 let len_b = self.dna.helix.strands[sb_idx].genes.len();
@@ -351,7 +413,9 @@ impl ChimeraVM {
 
                                     if sa_idx == sb_idx {
                                         // Recombining same strand with itself at same point is a no-op.
-                                        self.output.push("Warning: Recombining strand with itself".to_string());
+                                        self.output.push(
+                                            "Warning: Recombining strand with itself".to_string(),
+                                        );
                                     } else {
                                         // Ensure ordered access to avoid panic
                                         let (lower, upper) = if sa_idx < sb_idx {
@@ -360,7 +424,8 @@ impl ChimeraVM {
                                             (sb_idx, sa_idx)
                                         };
 
-                                        let (first_slice, second_slice) = self.dna.helix.strands.split_at_mut(upper);
+                                        let (first_slice, second_slice) =
+                                            self.dna.helix.strands.split_at_mut(upper);
                                         let strand_low = &mut first_slice[lower];
                                         let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
 
@@ -383,16 +448,21 @@ impl ChimeraVM {
                                         ));
                                     }
                                 } else {
-                                    self.output.push("Error: Split point out of bounds".to_string());
+                                    self.output
+                                        .push("Error: Split point out of bounds".to_string());
                                 }
                             } else {
-                                self.output.push("Error: Strand index out of bounds".to_string());
+                                self.output
+                                    .push("Error: Strand index out of bounds".to_string());
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for recombine".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for recombine".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for recombine".to_string());
+                    self.output
+                        .push("Error: Stack underflow for recombine".to_string());
                 }
                 None
             }
@@ -456,6 +526,8 @@ impl ChimeraVM {
                 "s_len",
                 "helix_len",
                 "gene_len",
+                "g_read",
+                "g_write",
             ];
             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
             // Add "Mutation" log
@@ -769,9 +841,10 @@ mod tests {
     #[test]
     fn test_starvation() {
         // [ jump(0) ] - infinite loop, no food
-        let genes = vec![
-            Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(0)] },
-        ];
+        let genes = vec![Gene {
+            name: "jump".to_string(),
+            args: vec![Nucleotide::Number(0)],
+        }];
         let mut vm = ChimeraVM::new(make_dna(genes));
         // Start energy is 50. Should die after 50 steps.
         for _ in 0..60 {
@@ -786,8 +859,14 @@ mod tests {
         // [ photosynthesize() jump(0) ]
         // Cost: 2 per loop. Gain: 5 per loop. Net +3.
         let genes = vec![
-            Gene { name: "photosynthesize".to_string(), args: vec![] },
-            Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(0)] },
+            Gene {
+                name: "photosynthesize".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "jump".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -803,9 +882,18 @@ mod tests {
         // [ push(10) consume() jump(0) ]
         // Cost: 3 per loop. Gain: 10 per loop. Net +7.
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "consume".to_string(), args: vec![] },
-            Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(0)] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "consume".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "jump".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -814,5 +902,55 @@ mod tests {
         }
         assert!(!vm.halted);
         assert!(vm.energy > 50);
+    }
+
+    #[test]
+    fn test_grid_ops() {
+        // [ push(42) push(10) push(10) g_write() push(10) push(10) g_read() ]
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(42)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            }, // y
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            }, // x
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            }, // y
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            }, // x
+            Gene {
+                name: "g_read".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+        assert_eq!(vm.stack.len(), 1);
+        match vm.stack[0] {
+            Value::Int(42) => (),
+            _ => panic!("Expected 42"),
+        }
+
+        // Verify grid state directly
+        match vm.grid[10][10] {
+            Value::Int(42) => (),
+            _ => panic!("Grid not updated"),
+        }
     }
 }

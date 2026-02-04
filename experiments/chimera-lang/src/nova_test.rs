@@ -20,10 +20,22 @@ mod tests {
         // 2: methylate()
         // 3: push(100) - this should be skipped
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(3)] },
-            Gene { name: "methylate".to_string(), args: vec![] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(3)],
+            },
+            Gene {
+                name: "methylate".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(100)],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -43,7 +55,11 @@ mod tests {
 
         // Stack should NOT contain 100.
         // Stack should be empty (0 and 3 were popped by methylate).
-        assert!(vm.stack.is_empty(), "Stack should be empty, but has {:?}", vm.stack);
+        assert!(
+            vm.stack.is_empty(),
+            "Stack should be empty, but has {:?}",
+            vm.stack
+        );
 
         // Test Demethylate
         // [ push(0) push(3) demethylate() ]
@@ -58,9 +74,18 @@ mod tests {
         // Let's make a new DNA for demethylation test.
 
         let genes2 = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "demethylate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "demethylate".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm2 = ChimeraVM::new(make_dna(genes2));
 
@@ -92,26 +117,56 @@ mod tests {
 
         let strand0 = Strand {
             genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(101)] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(102)] },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(100)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(101)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(102)],
+                },
             ],
         };
 
         let strand1 = Strand {
             genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(200)] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(201)] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(202)] },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(200)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(201)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(202)],
+                },
             ],
         };
 
         let controller = Strand {
             genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // strand_a
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] }, // strand_b
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] }, // split point
-                Gene { name: "recombine".to_string(), args: vec![] },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // strand_a
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                }, // strand_b
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                }, // split point
+                Gene {
+                    name: "recombine".to_string(),
+                    args: vec![],
+                },
             ],
         };
 
@@ -134,21 +189,29 @@ mod tests {
         // Strand 0 should be 100, 201, 202
         let s0 = &vm.dna.helix.strands[0];
         if let Nucleotide::Number(n) = s0.genes[1].args[0] {
-             assert_eq!(n, 201);
-        } else { panic!("Wrong arg type for s0[1]"); }
+            assert_eq!(n, 201);
+        } else {
+            panic!("Wrong arg type for s0[1]");
+        }
 
         if let Nucleotide::Number(n) = s0.genes[2].args[0] {
-             assert_eq!(n, 202);
-        } else { panic!("Wrong arg type for s0[2]"); }
+            assert_eq!(n, 202);
+        } else {
+            panic!("Wrong arg type for s0[2]");
+        }
 
         // Strand 1 should be 200, 101, 102
         let s1 = &vm.dna.helix.strands[1];
         if let Nucleotide::Number(n) = s1.genes[1].args[0] {
-             assert_eq!(n, 101);
-        } else { panic!("Wrong arg type for s1[1]"); }
+            assert_eq!(n, 101);
+        } else {
+            panic!("Wrong arg type for s1[1]");
+        }
 
-         if let Nucleotide::Number(n) = s1.genes[2].args[0] {
-             assert_eq!(n, 102);
-        } else { panic!("Wrong arg type for s1[2]"); }
+        if let Nucleotide::Number(n) = s1.genes[2].args[0] {
+            assert_eq!(n, 102);
+        } else {
+            panic!("Wrong arg type for s1[2]");
+        }
     }
 }
