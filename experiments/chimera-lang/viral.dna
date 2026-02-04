@@ -1,0 +1,7 @@
+[
+    push("VIRUS ACTIVATED")
+    print()
+    push(666)
+    consume()
+    mitosis(0)
+]

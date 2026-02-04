@@ -102,6 +102,8 @@ pub enum OpCode {
     Conjugate,
     #[cfg(feature = "nova")]
     Gravitate,
+    #[cfg(feature = "nova")]
+    Inject,
 
     Unknown(String),
 }
@@ -208,6 +210,8 @@ impl FromStr for OpCode {
             "conjugate" => Ok(OpCode::Conjugate),
             #[cfg(feature = "nova")]
             "gravitate" => Ok(OpCode::Gravitate),
+            #[cfg(feature = "nova")]
+            "inject" => Ok(OpCode::Inject),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -314,6 +318,8 @@ impl fmt::Display for OpCode {
             OpCode::Conjugate => write!(f, "conjugate"),
             #[cfg(feature = "nova")]
             OpCode::Gravitate => write!(f, "gravitate"),
+            #[cfg(feature = "nova")]
+            OpCode::Inject => write!(f, "inject"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

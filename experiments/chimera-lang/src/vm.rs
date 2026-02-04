@@ -1,5 +1,9 @@
-use crate::ast::{Dna, Nucleotide};
+use crate::ast::{Dna, Nucleotide, Strand};
 use crate::opcode::OpCode;
+#[cfg(feature = "nova")]
+use crate::{ChimeraParser, Rule};
+#[cfg(feature = "nova")]
+use pest::Parser;
 use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -206,6 +210,17 @@ impl ChimeraVM {
             }
         }
         self.waste_grid = new_grid;
+    }
+
+    #[cfg(feature = "nova")]
+    fn add_strand(&mut self, strand: Strand) {
+        self.dna.helix.strands.push(strand);
+        self.telomeres.push(50);
+        #[cfg(feature = "cortex")]
+        {
+            self.activation_levels.push(0);
+            self.synapse_map.push(Vec::new());
+        }
     }
 
     pub fn step(&mut self) {
@@ -433,7 +448,8 @@ impl ChimeraVM {
             | OpCode::Entangle
             | OpCode::Decohere
             | OpCode::Conjugate
-            | OpCode::Gravitate => self.exec_nova_op(op, args),
+            | OpCode::Gravitate
+            | OpCode::Inject => self.exec_nova_op(op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
@@ -1274,13 +1290,7 @@ impl ChimeraVM {
                                     }
                                 }
 
-                                self.dna.helix.strands.push(crate::ast::Strand { genes });
-                                self.telomeres.push(50);
-                                #[cfg(feature = "cortex")]
-                                {
-                                    self.activation_levels.push(0);
-                                    self.synapse_map.push(Vec::new());
-                                }
+                                self.add_strand(crate::ast::Strand { genes });
                                 self.energy = self.energy.saturating_sub(20); // Cost
                                 self.output.push(format!(
                                     "INCUBATE: Created new strand {} from grid",
@@ -1551,17 +1561,7 @@ impl ChimeraVM {
                                 let tail_genes = strand.genes.split_off(cut_idx);
 
                                 // Create new strand
-                                self.dna
-                                    .helix
-                                    .strands
-                                    .push(crate::ast::Strand { genes: tail_genes });
-                                self.telomeres.push(50);
-
-                                #[cfg(feature = "cortex")]
-                                {
-                                    self.activation_levels.push(0);
-                                    self.synapse_map.push(Vec::new());
-                                }
+                                self.add_strand(crate::ast::Strand { genes: tail_genes });
 
                                 let new_strand_idx = self.dna.helix.strands.len() - 1;
 
@@ -1667,14 +1667,7 @@ impl ChimeraVM {
                             if s_idx < self.dna.helix.strands.len() {
                                 // Clone the strand
                                 let new_strand = self.dna.helix.strands[s_idx].clone();
-                                self.dna.helix.strands.push(new_strand);
-                                self.telomeres.push(50); // Default life
-
-                                #[cfg(feature = "cortex")]
-                                {
-                                    self.activation_levels.push(0);
-                                    self.synapse_map.push(Vec::new());
-                                }
+                                self.add_strand(new_strand);
 
                                 // Inherit epigenetics
                                 // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
@@ -2329,6 +2322,50 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for gravitate".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Inject => {
+                // stack: filename (top)
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Str(filename) = val {
+                        match std::fs::read_to_string(&filename) {
+                            Ok(contents) => match ChimeraParser::parse(Rule::dna, &contents) {
+                                Ok(mut pairs) => {
+                                    if let Some(dna_pair) = pairs.next() {
+                                        let new_dna = Dna::from_pair(dna_pair);
+                                        let count = new_dna.helix.strands.len();
+                                        for strand in new_dna.helix.strands {
+                                            self.add_strand(strand);
+                                        }
+                                        self.stack.push(Value::Int(count as i64));
+                                        self.output.push(format!(
+                                            "INJECT: Loaded {} strands from '{}'",
+                                            count, filename
+                                        ));
+                                    } else {
+                                        self.output.push("Error: Parsed DNA is empty".to_string());
+                                        self.stack.push(Value::Int(0));
+                                    }
+                                }
+                                Err(e) => {
+                                    self.output.push(format!("Error: Parse failed: {}", e));
+                                    self.stack.push(Value::Int(0));
+                                }
+                            },
+                            Err(e) => {
+                                self.output.push(format!("Error: File read failed: {}", e));
+                                self.stack.push(Value::Int(0));
+                            }
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for inject".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for inject".to_string());
                 }
                 None
             }
