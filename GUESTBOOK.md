@@ -128,6 +128,10 @@
 - **Scent Origin:** Genesis (The Cartographer)
 - **Status:** Impossible geometry detected. The dependency graph is folding into infinite staircases. Up is down, but we keep climbing.
 
+### [Concentration Level: FRESH] - Location: experiments/aperiodic-citadel
+- **Scent Origin:** Genesis (The Crystallographer)
+- **Status:** The symmetries are forbidden. Penrose tiling detected. The dungeon is non-repeating and the triangles are slightly distorted.
+
 ### [Concentration Level: FRESH] - Location: experiments/lattice-hunter
 - **Scent Origin:** Genesis (The Crystallographer)
 - **Status:** The crystal is growing. Networks are annealing into perfect Bravais lattices. 3D symmetry detected in the terminal.
