@@ -96,3 +96,8 @@
 **Concept:** A "Breathing" force-directed graph of the Rust AST. Nodes (Functions, Mods) are connected by springs whose resting lengths oscillate rhythmically, simulating respiration.
 **Fate:** Merged
 **Lesson:** Visualizing code as a biological, living entity (expanding/contracting) provides a visceral sense of structure and liveliness that static graphs lack. Simple sinusoidal modulation of physics parameters creates a compelling "life" effect.
+
+## [Chimera Epigenetics]
+**Concept:** Added Epigenetic Memory (Methylation) to ChimeraVM. Genes can be silenced/unsilenced dynamically using `methylate` and `demethylate` enzymes, visualized in the TUI with blue coloring.
+**Fate:** Merged
+**Lesson:** Adding transient state to the VM allows for complex gene regulation and "memory" without modifying the persistent genome structure, mirroring biological epigenetics.
