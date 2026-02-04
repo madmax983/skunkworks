@@ -142,7 +142,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids navigate using active echolocation (sonar) in a simulated acoustic environment.
 - **Novel trait**: Navigation via pressure gradient descent; "blind" flocking driven by wave interference.
 - **Status**: experiments/sonar-swarm
-- **Evaluation**: Compiles (requires ALSA - skipped in sandbox). Verified concept.
+- **Evaluation**: Build fails in sandbox due to missing ALSA system dependencies. Concept verified locally.
 
 ### chimera-market
 - **Parents**: experiments/chimera-lang + experiments/market-flow
@@ -178,6 +178,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Dynamic visualization where "Creation" (git additions) fights against "Entropy" (git deletions) in a physics simulation.
 - **Status**: experiments/entropic-rain
 - **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### symphonic-terrain
+- **Parents**: experiments/text-terra + experiments/harmony-of-spheres
+- **Concept**: A 3D terrain generated from text where orbiting spheres generate music based on the landscape height below them.
+- **Novel trait**: Topographic Sonification. The "meaning" (text) becomes the "melody" (height-modulated frequency).
+- **Status**: experiments/symphonic-terrain
+- **Evaluation**: Compiles. Verified by Splice Surgeon. Audio feature-gated.
 
 <!-- Example:
 ### semantic-spy

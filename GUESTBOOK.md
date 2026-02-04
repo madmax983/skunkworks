@@ -377,3 +377,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/harmony-of-spheres
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** Gravity is singing. Planets are oscillators. The music of the spheres is being synthesized in real-time.
+
+### [Concentration Level: FRESH] - Location: experiments/symphonic-terrain
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The landscape is singing. Words have become mountains. The spheres are reading the terrain.

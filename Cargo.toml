@@ -79,6 +79,7 @@ members = [
     "experiments/type-oscillator",
     "experiments/retinal-glitch",
     "experiments/struct-harmonics",
+    "experiments/symphonic-terrain",
     "experiments/cargo-rocket",
     "experiments/chimera-lang",
     "experiments/repo-rover", 
