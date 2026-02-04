@@ -1,6 +1,5 @@
 mod game;
 mod git;
-mod semantic;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -13,7 +12,6 @@ use ratatui::{
     widgets::{canvas::Canvas, Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use semantic::ToSnapshot;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
