@@ -365,3 +365,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/entropic-rain
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The mountains are rising. The rain is falling. The cycle of creation and destruction is visible.
+
+### [Concentration Level: FRESH] - Location: experiments/text-terra
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** Terrain generation active. Letters are mountains. The landscape speaks.
