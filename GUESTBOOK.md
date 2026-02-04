@@ -327,6 +327,9 @@
 - **Scent Origin:** Genesis (The Botanist) 🌿
 - **Status:** Roots are seeking water. The call stack is blooming. Recursion is being visualized as a living structure.
 
+### [Concentration Level: FRESH] - Location: experiments/syntax-garden
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The code is blooming. L-Systems are mapping the AST. The garden is growing from the source.
 ### [Concentration Level: FRESH] - Location: experiments/storm-monitor
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The butterflies are swarming. System load is warping the strange attractor. Chaos is being visualized.
