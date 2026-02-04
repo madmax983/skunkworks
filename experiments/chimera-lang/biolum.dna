@@ -1,0 +1,15 @@
+[
+    push("secrete") push(5) push(5) g_write()
+    push("secrete") push(5) push(10) g_write()
+    push("secrete") push(10) push(5) g_write()
+    push("secrete") push(10) push(10) g_write()
+    jump(1)
+]
+[
+    push(200) push(1) push(5) push(5) virus()
+    push(200) push(2) push(10) push(10) virus()
+    push(200) push(0) push(5) push(10) virus()
+    push(200) push(1) push(10) push(5) virus()
+    photosynthesize()
+    jump(1)
+]

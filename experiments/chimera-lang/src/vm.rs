@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Nucleotide};
 use rand::Rng;
 #[cfg(feature = "nova")]
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
@@ -28,12 +28,13 @@ pub struct ChimeraVM {
     pub grid: Vec<Vec<Value>>,
     pub chaos_mode: bool,
     pub recursion_depth: usize,
+    pub context_loc: (usize, usize),
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub telomeres: Vec<i64>,
     #[cfg(feature = "nova")]
-    pub hormones: HashMap<i64, i64>,
+    pub hormone_grid: Vec<Vec<[i64; 3]>>,
 }
 
 impl ChimeraVM {
@@ -42,6 +43,8 @@ impl ChimeraVM {
         let grid = vec![vec![Value::Int(0); 16]; 16];
         #[cfg(feature = "nova")]
         let strand_count = dna.helix.strands.len();
+        #[cfg(feature = "nova")]
+        let hormone_grid = vec![vec![[0, 0, 0]; 16]; 16];
 
         Self {
             dna,
@@ -53,13 +56,47 @@ impl ChimeraVM {
             grid,
             chaos_mode: false,
             recursion_depth: 0,
+            context_loc: (8, 8),
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
             #[cfg(feature = "nova")]
             telomeres: vec![50; strand_count],
             #[cfg(feature = "nova")]
-            hormones: HashMap::new(),
+            hormone_grid,
         }
+    }
+
+    #[cfg(feature = "nova")]
+    fn diffuse_hormones(&mut self) {
+        let mut new_grid = self.hormone_grid.clone();
+        for y in 0..16 {
+            for x in 0..16 {
+                for c in 0..3 {
+                    let mut sum = self.hormone_grid[y][x][c] * 4;
+                    let mut count = 4;
+
+                    if y > 0 {
+                        sum += self.hormone_grid[y - 1][x][c];
+                        count += 1;
+                    }
+                    if y < 15 {
+                        sum += self.hormone_grid[y + 1][x][c];
+                        count += 1;
+                    }
+                    if x > 0 {
+                        sum += self.hormone_grid[y][x - 1][c];
+                        count += 1;
+                    }
+                    if x < 15 {
+                        sum += self.hormone_grid[y][x + 1][c];
+                        count += 1;
+                    }
+
+                    new_grid[y][x][c] = sum / count;
+                }
+            }
+        }
+        self.hormone_grid = new_grid;
     }
 
     pub fn step(&mut self) {
@@ -71,11 +108,17 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
+            self.diffuse_hormones();
             // Decay hormones: reduce intensity by 1 per step
-            self.hormones.retain(|_, v| {
-                *v -= 1;
-                *v > 0
-            });
+            for row in self.hormone_grid.iter_mut() {
+                for cell in row.iter_mut() {
+                    for c in 0..3 {
+                        if cell[c] > 0 {
+                            cell[c] -= 1;
+                        }
+                    }
+                }
+            }
         }
 
         if self.chaos_mode {
@@ -472,9 +515,9 @@ impl ChimeraVM {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
 
-                    let cell_value = if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if (0..16).contains(&y) && (0..16).contains(&x) {
-                            Some(self.grid[y as usize][x as usize].clone())
+                    let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
+                        if (0..16).contains(y) && (0..16).contains(x) {
+                            Some((*y, *x))
                         } else {
                             self.output
                                 .push("Error: Grid index out of bounds".to_string());
@@ -486,13 +529,18 @@ impl ChimeraVM {
                         None
                     };
 
-                    if let Some(val) = cell_value {
+                    if let Some((y, x)) = coords {
+                        let val = self.grid[y as usize][x as usize].clone();
                         match val {
                             Value::Int(n) => self.stack.push(Value::Int(n)),
                             Value::Str(s) => {
                                 // Execute enzyme recursively
                                 // We pass empty args because grid enzymes don't carry args
-                                return self.execute_gene(&s, &[]);
+                                let old_loc = self.context_loc;
+                                self.context_loc = (y as usize, x as usize);
+                                let result = self.execute_gene(&s, &[]);
+                                self.context_loc = old_loc;
+                                return result;
                             }
                         }
                     }
@@ -1212,10 +1260,13 @@ impl ChimeraVM {
                     let channel_val = self.stack.pop().unwrap();
                     if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
                         if a > 0 {
-                            let entry = self.hormones.entry(c).or_insert(0);
-                            *entry += a;
-                            self.output
-                                .push(format!("SECRETE: Added {} to channel {}", a, c));
+                            let (cy, cx) = self.context_loc;
+                            let channel_idx = (c.abs() as usize) % 3;
+                            self.hormone_grid[cy][cx][channel_idx] += a;
+                            self.output.push(format!(
+                                "SECRETE: Added {} to channel {} at {},{}",
+                                a, c, cx, cy
+                            ));
                         }
                     } else {
                         self.output
@@ -1232,7 +1283,9 @@ impl ChimeraVM {
                 // stack: channel
                 if let Some(val) = self.stack.pop() {
                     if let Value::Int(c) = val {
-                        let intensity = self.hormones.get(&c).copied().unwrap_or(0);
+                        let (cy, cx) = self.context_loc;
+                        let channel_idx = (c.abs() as usize) % 3;
+                        let intensity = self.hormone_grid[cy][cx][channel_idx];
                         self.stack.push(Value::Int(intensity));
                     } else {
                         self.output
@@ -1251,7 +1304,9 @@ impl ChimeraVM {
                     let amount_val = self.stack.pop().unwrap();
                     let channel_val = self.stack.pop().unwrap();
                     if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
-                        let intensity = self.hormones.entry(c).or_insert(0);
+                        let (cy, cx) = self.context_loc;
+                        let channel_idx = (c.abs() as usize) % 3;
+                        let intensity = &mut self.hormone_grid[cy][cx][channel_idx];
                         let absorbed = if *intensity >= a {
                             *intensity -= a;
                             a
@@ -1261,8 +1316,10 @@ impl ChimeraVM {
                             v
                         };
                         self.stack.push(Value::Int(absorbed));
-                        self.output
-                            .push(format!("ABSORB: Consumed {} from channel {}", absorbed, c));
+                        self.output.push(format!(
+                            "ABSORB: Consumed {} from channel {} at {},{}",
+                            absorbed, c, cx, cy
+                        ));
                     } else {
                         self.output
                             .push("Error: Type mismatch for absorb".to_string());
