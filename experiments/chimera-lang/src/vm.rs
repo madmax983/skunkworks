@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Nucleotide};
 use rand::Rng;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Int(i64),
     Str(String),
@@ -40,24 +40,27 @@ impl ChimeraVM {
             return;
         }
 
-        let helix = &self.dna.helix;
-        if self.ip.0 >= helix.strands.len() {
+        let helix_len = self.dna.helix.strands.len();
+        if self.ip.0 >= helix_len {
             self.halted = true;
             return;
         }
 
-        let strand = &helix.strands[self.ip.0];
-        if self.ip.1 >= strand.genes.len() {
+        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+        if self.ip.1 >= strand_len {
             // End of strand, move to next strand
             self.ip.0 += 1;
             self.ip.1 = 0;
-            // Recursively call step to execute first gene of next strand immediately?
-            // Or wait for next cycle? Let's wait.
             return;
         }
 
-        let gene = &strand.genes[self.ip.1];
-        let jump_target = Self::execute_gene(&mut self.stack, &mut self.output, &gene.name, &gene.args);
+        // Clone gene info to release borrow on self.dna
+        let (gene_name, gene_args) = {
+            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+            (gene.name.clone(), gene.args.clone())
+        };
+
+        let jump_target = self.execute_gene(&gene_name, &gene_args);
 
         if let Some(target) = jump_target {
             self.ip = target;
@@ -67,56 +70,56 @@ impl ChimeraVM {
         }
     }
 
-    fn execute_gene(stack: &mut Vec<Value>, output: &mut Vec<String>, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    fn execute_gene(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match name {
             "push" => {
                 if let Some(arg) = args.first() {
                     match arg {
-                        Nucleotide::Number(n) => stack.push(Value::Int(*n)),
-                        Nucleotide::String(s) => stack.push(Value::Str(s.clone())),
-                        _ => output.push(format!("Error: Invalid arg for push: {:?}", arg)),
+                        Nucleotide::Number(n) => self.stack.push(Value::Int(*n)),
+                        Nucleotide::String(s) => self.stack.push(Value::Str(s.clone())),
+                        _ => self.output.push(format!("Error: Invalid arg for push: {:?}", arg)),
                     }
                 }
                 None
             }
             "add" => {
-                Self::binary_op(stack, output, |a, b| a + b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
                 None
             }
             "sub" => {
-                Self::binary_op(stack, output, |a, b| a - b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a - b);
                 None
             }
             "mul" => {
-                Self::binary_op(stack, output, |a, b| a * b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a * b);
                 None
             }
             "div" => {
-                Self::binary_op(stack, output, |a, b| a / b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a / b);
                 None
             }
             "dup" => {
-                if let Some(val) = stack.last() {
-                    stack.push(val.clone());
+                if let Some(val) = self.stack.last() {
+                    self.stack.push(val.clone());
                 }
                 None
             }
             "swap" => {
-                let len = stack.len();
+                let len = self.stack.len();
                 if len >= 2 {
-                    stack.swap(len - 1, len - 2);
+                    self.stack.swap(len - 1, len - 2);
                 } else {
-                    output.push("Error: Stack underflow for swap".to_string());
+                    self.output.push("Error: Stack underflow for swap".to_string());
                 }
                 None
             }
             "drop" => {
-                stack.pop();
+                self.stack.pop();
                 None
             }
             "print" => {
-                if let Some(val) = stack.pop() {
-                    output.push(format!("{}", val));
+                if let Some(val) = self.stack.pop() {
+                    self.output.push(format!("{}", val));
                 }
                 None
             }
@@ -124,31 +127,92 @@ impl ChimeraVM {
                 if let Some(Nucleotide::Number(n)) = args.first() {
                     Some((*n as usize, 0))
                 } else {
-                    output.push("Error: Invalid arg for jump".to_string());
+                    self.output.push("Error: Invalid arg for jump".to_string());
                     None
                 }
             }
             "brz" => {
                 if let Some(Nucleotide::Number(n)) = args.first() {
-                    // Peek or pop? Branch if top is zero usually pops.
-                    if let Some(val) = stack.pop() {
+                    if let Some(val) = self.stack.pop() {
                         if let Value::Int(i) = val {
                             if i == 0 {
                                 return Some((*n as usize, 0));
                             }
                         } else {
-                             output.push("Error: Type mismatch for brz".to_string());
+                             self.output.push("Error: Type mismatch for brz".to_string());
                         }
                     } else {
-                         output.push("Error: Stack underflow for brz".to_string());
+                         self.output.push("Error: Stack underflow for brz".to_string());
                     }
                 } else {
-                    output.push("Error: Invalid arg for brz".to_string());
+                    self.output.push("Error: Invalid arg for brz".to_string());
+                }
+                None
+            }
+            // --- EVOLUTION ---
+            "transcribe" => {
+                // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
+                if self.stack.len() < 4 {
+                    self.output.push("Error: Stack underflow for transcribe".to_string());
+                    return None;
+                }
+                let val = self.stack.pop().unwrap();
+                let arg_idx_val = self.stack.pop().unwrap();
+                let gene_idx_val = self.stack.pop().unwrap();
+                let strand_idx_val = self.stack.pop().unwrap();
+
+                match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
+                    (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {
+                        if si >= 0 && (si as usize) < self.dna.helix.strands.len() {
+                            let strand = &mut self.dna.helix.strands[si as usize];
+                            if gi >= 0 && (gi as usize) < strand.genes.len() {
+                                let gene = &mut strand.genes[gi as usize];
+                                if ai >= 0 && (ai as usize) < gene.args.len() {
+                                    let old_arg = gene.args[ai as usize].clone();
+                                    gene.args[ai as usize] = Nucleotide::Number(v);
+                                    self.output.push(format!("TRANSCRIBE: strand {} gene {} arg {} -> {}", si, gi, ai, v));
+                                } else {
+                                    self.output.push("Error: Arg index out of bounds".to_string());
+                                }
+                            } else {
+                                self.output.push("Error: Gene index out of bounds".to_string());
+                            }
+                        } else {
+                            self.output.push("Error: Strand index out of bounds".to_string());
+                        }
+                    },
+                    _ => self.output.push("Error: Type mismatch for transcribe args".to_string()),
+                }
+                None
+            }
+            "s_len" => {
+                self.stack.push(Value::Int(self.stack.len() as i64));
+                None
+            }
+            "helix_len" => {
+                self.stack.push(Value::Int(self.dna.helix.strands.len() as i64));
+                None
+            }
+            "gene_len" => {
+                if let Some(val) = self.stack.pop() {
+                     match val {
+                         Value::Int(idx) => {
+                             if idx >= 0 && (idx as usize) < self.dna.helix.strands.len() {
+                                 let len = self.dna.helix.strands[idx as usize].genes.len();
+                                 self.stack.push(Value::Int(len as i64));
+                             } else {
+                                 self.output.push("Error: Strand index out of bounds for gene_len".to_string());
+                             }
+                         }
+                         _ => self.output.push("Error: Type mismatch for gene_len".to_string()),
+                     }
+                } else {
+                    self.output.push("Error: Stack underflow for gene_len".to_string());
                 }
                 None
             }
             _ => {
-                output.push(format!("Unknown enzyme: {}", name));
+                self.output.push(format!("Unknown enzyme: {}", name));
                 None
             }
         }
@@ -185,7 +249,7 @@ impl ChimeraVM {
 
         // 50% chance to change name, 50% to change arg
         if rng.gen_bool(0.5) {
-             let enzymes = ["push", "add", "sub", "mul", "div", "dup", "print", "swap", "drop", "jump", "brz"];
+             let enzymes = ["push", "add", "sub", "mul", "div", "dup", "print", "swap", "drop", "jump", "brz", "transcribe", "s_len", "helix_len", "gene_len"];
              let new_name = enzymes[rng.gen_range(0..enzymes.len())];
              // Add "Mutation" log
              self.output.push(format!("MUTATION: {} -> {}", gene.name, new_name));
@@ -297,5 +361,40 @@ mod tests {
         } else {
             panic!("Expected 200");
         }
+    }
+
+    #[test]
+    fn test_transcribe() {
+        // [ push(0) push(0) push(0) push(99) transcribe() push(0) ]
+        // The last push(0) should be modified to push(99)
+        // stack order: strand, gene, arg, value
+        // strand 0, gene 5 (the last push), arg 0 -> 99
+        let strand0 = Strand {
+            genes: vec![
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // 0: strand idx
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // 1: gene idx
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // 2: arg idx
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(99)] }, // 3: value
+                Gene { name: "transcribe".to_string(), args: vec![] },                 // 4: transcribe
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },  // 5: target to be modified
+            ]
+        };
+        let dna = Dna { helix: Helix { strands: vec![strand0] } };
+        let mut vm = ChimeraVM::new(dna);
+
+        for _ in 0..5 {
+            vm.step();
+        }
+
+        // After transcribe, check if the last gene is modified
+        if let Nucleotide::Number(n) = vm.dna.helix.strands[0].genes[5].args[0] {
+            assert_eq!(n, 99);
+        } else {
+            panic!("Gene not modified");
+        }
+
+        // Execute the modified gene
+        vm.step();
+        assert_eq!(vm.stack.last().unwrap(), &Value::Int(99));
     }
 }

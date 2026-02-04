@@ -1,0 +1,20 @@
+[
+    push(0)
+    jump(1)
+]
+[
+    dup()
+    print()
+    push(1)
+    add()
+    dup()
+    push(1)
+    swap()
+    push(8)
+    swap()
+    push(0)
+    swap()
+    transcribe()
+    jump(1)
+    push(999)
+]
