@@ -52,6 +52,8 @@ pub struct Snake {
 impl Snake {
     pub fn new(start: Point, length: usize) -> Self {
         let mut body = VecDeque::new();
+        // Havoc Fix: Ensure minimum length of 1 to prevent head() panic
+        let length = length.max(1);
         for i in 0..length {
             body.push_back(Point::new(start.x - i as i32, start.y));
         }
@@ -256,5 +258,13 @@ mod tests {
 
         world.update(); // Move again to realize growth
         assert_eq!(world.snake.body.len(), 4);
+    }
+
+    #[test]
+    fn test_havoc_zero_length_snake_safe() {
+        // Havoc: Injecting 0-length snake should now be safe (clamped to 1)
+        let snake = Snake::new(Point::new(0, 0), 0);
+        let _ = snake.head(); // Should not panic
+        assert_eq!(snake.body.len(), 1);
     }
 }
