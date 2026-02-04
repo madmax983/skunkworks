@@ -73,7 +73,7 @@ fn run_app<B: ratatui::backend::Backend>(
             }
 
             let genome_list = List::new(strand_items)
-                .block(Block::default().borders(Borders::ALL).title("Genome"));
+                .block(Block::default().borders(Borders::ALL).title("Genome (Space: Step, M: Mutate, Q: Quit)"));
             f.render_widget(genome_list, chunks[0]);
 
             // Cytoplasm (Stack)
@@ -105,6 +105,7 @@ fn run_app<B: ratatui::backend::Backend>(
                 match key.code {
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
+                    KeyCode::Char('m') => vm.mutate(),
                     _ => {}
                 }
             }
