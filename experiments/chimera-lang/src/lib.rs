@@ -28,4 +28,10 @@ mod nova_quantum_test;
 mod nova_spore_test;
 mod nova_test;
 #[cfg(test)]
+<<<<<<< sentry-chimera-nova-tests-12531520350046153491
+mod cortex_test;
+#[cfg(test)]
+mod sentry_nova_test;
+=======
 mod nova_waste_test;
+>>>>>>> trunk
