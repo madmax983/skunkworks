@@ -407,4 +407,59 @@ mod tests {
         // Epigenetics should be gone
         assert!(vm.epigenome.is_empty());
     }
+
+    #[test]
+    fn test_incubate() {
+        // [ push(10) push(5) push(5) g_write()
+        //   push("add") push(5) push(6) g_write()
+        //   push(2) push(5) push(5) incubate() ]
+
+        // Writes 10 to (5,5).
+        // Writes "add" to (5,6).
+        // Incubate(len=2, y=5, x=5).
+
+        let genes = vec![
+            // Write 10 to (5,5)
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "g_write".to_string(), args: vec![] },
+
+            // Write "add" to (5,6)
+            Gene { name: "push".to_string(), args: vec![Nucleotide::String("add".to_string())] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
+            Gene { name: "g_write".to_string(), args: vec![] },
+
+            // Incubate
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] }, // len
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // y
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // x
+            Gene { name: "incubate".to_string(), args: vec![] },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        while !vm.halted {
+            vm.step();
+        }
+
+        // Should have created a second strand (index 1)
+        assert_eq!(vm.dna.helix.strands.len(), 2);
+
+        let new_strand = &vm.dna.helix.strands[1];
+        assert_eq!(new_strand.genes.len(), 2);
+
+        // Check gene 0: push(10)
+        assert_eq!(new_strand.genes[0].name, "push");
+        if let Nucleotide::Number(n) = new_strand.genes[0].args[0] {
+            assert_eq!(n, 10);
+        } else {
+            panic!("Expected Number(10)");
+        }
+
+        // Check gene 1: add()
+        assert_eq!(new_strand.genes[1].name, "add");
+        assert!(new_strand.genes[1].args.is_empty());
+    }
 }

@@ -52,6 +52,18 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
 *   `g_write()`: Pop `val`, `y`, `x`. Write `val` to `grid[y][x]`.
 
+### Virology (Grid Execution)
+*   `virus()`: Pop `y`, `x`. Executes the value at `grid[y][x]` as an enzyme.
+    *   If `Int(n)`, it behaves like `push(n)`.
+    *   If `Str(s)`, it executes the enzyme named `s`.
+*   `incubate()`: (Nova Feature) Pop `len`, `y`, `x`. Reads `len` cells horizontally from grid starting at `(y, x)` and creates a new Strand (Horizontal Gene Transfer).
+    *   `Int(n)` becomes `push(n)`.
+    *   `Str(s)` becomes `s()`.
+
+### Advanced Control Flow
+*   `jump_s()`: Pop target index from stack and jump to that strand.
+*   `brz_s()`: Pop target index and condition. If condition is 0, jump to target strand.
+
 ## Controls (TUI)
 *   `Space`: Step execution.
 *   `M`: Manually mutate a random gene.
