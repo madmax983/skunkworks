@@ -32,7 +32,9 @@ mod tests {
         // However, we can at least compile it.
         // To test the logic without GL, we would need to mock GL, which is overkill.
         // But we can check if the function signature is correct.
-        let f = || { executed = true; };
+        let f = || {
+            executed = true;
+        };
 
         // This would crash: with_scissor(0,0,10,10, f);
         // So we can't fully unit test the side effects without a context.

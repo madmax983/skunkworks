@@ -100,7 +100,8 @@ impl ChimeraVM {
                 }
 
                 if self.telomeres[self.ip.0] <= 0 {
-                    self.output.push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                    self.output
+                        .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
                     self.ip.0 += 1;
                     self.ip.1 = 0;
                     return;
@@ -418,7 +419,9 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Invalid arg for telomerase".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Invalid arg for telomerase".to_string()),
                     }
                 } else {
                     self.output

@@ -77,7 +77,9 @@ impl Grid {
         for y in 0..self.height {
             for &x in &self.scan_x {
                 let idx = y * self.width + x;
-                if self.updated[idx] { continue; }
+                if self.updated[idx] {
+                    continue;
+                }
 
                 if let Particle::Bid(owner) = self.cells[idx] {
                     if y > 0 {
@@ -107,7 +109,9 @@ impl Grid {
                                     if nx >= 0 && nx < self.width as isize {
                                         let nx = nx as usize;
                                         let n_idx = y * self.width + nx;
-                                        if !self.updated[n_idx] && matches!(self.cells[n_idx], Particle::Empty) {
+                                        if !self.updated[n_idx]
+                                            && matches!(self.cells[n_idx], Particle::Empty)
+                                        {
                                             self.cells[n_idx] = Particle::Bid(owner);
                                             self.cells[idx] = Particle::Empty;
                                             self.updated[n_idx] = true;
@@ -119,7 +123,7 @@ impl Grid {
                         }
                     } else {
                         // Reached top, remove? Or stay? Let's remove for now (expired order)
-                         self.cells[idx] = Particle::Empty;
+                        self.cells[idx] = Particle::Empty;
                     }
                 }
             }
@@ -129,7 +133,9 @@ impl Grid {
         for y in (0..self.height).rev() {
             for &x in &self.scan_x {
                 let idx = y * self.width + x;
-                if self.updated[idx] { continue; }
+                if self.updated[idx] {
+                    continue;
+                }
 
                 if let Particle::Ask(owner) = self.cells[idx] {
                     if y < self.height - 1 {
@@ -158,7 +164,9 @@ impl Grid {
                                     if nx >= 0 && nx < self.width as isize {
                                         let nx = nx as usize;
                                         let n_idx = y * self.width + nx;
-                                        if !self.updated[n_idx] && matches!(self.cells[n_idx], Particle::Empty) {
+                                        if !self.updated[n_idx]
+                                            && matches!(self.cells[n_idx], Particle::Empty)
+                                        {
                                             self.cells[n_idx] = Particle::Ask(owner);
                                             self.cells[idx] = Particle::Empty;
                                             self.updated[n_idx] = true;

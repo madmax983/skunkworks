@@ -1,7 +1,7 @@
+use crate::Anchor;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use std::f32::consts::PI;
-use crate::Anchor;
 
 pub struct MechanismPlugin;
 

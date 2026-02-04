@@ -46,10 +46,26 @@ impl AcousticGrid {
                 let idx_left = y * w + (x - 1);
                 let idx_right = y * w + (x + 1);
 
-                let p_up = if self.walls[idx_up] { p_curr } else { self.pressure[idx_up] };
-                let p_down = if self.walls[idx_down] { p_curr } else { self.pressure[idx_down] };
-                let p_left = if self.walls[idx_left] { p_curr } else { self.pressure[idx_left] };
-                let p_right = if self.walls[idx_right] { p_curr } else { self.pressure[idx_right] };
+                let p_up = if self.walls[idx_up] {
+                    p_curr
+                } else {
+                    self.pressure[idx_up]
+                };
+                let p_down = if self.walls[idx_down] {
+                    p_curr
+                } else {
+                    self.pressure[idx_down]
+                };
+                let p_left = if self.walls[idx_left] {
+                    p_curr
+                } else {
+                    self.pressure[idx_left]
+                };
+                let p_right = if self.walls[idx_right] {
+                    p_curr
+                } else {
+                    self.pressure[idx_right]
+                };
 
                 let laplacian = p_up + p_down + p_left + p_right - 4.0 * p_curr;
 

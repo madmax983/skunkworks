@@ -1,6 +1,6 @@
+use crate::{Anchor, EscapeWheel};
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use crate::{EscapeWheel, Anchor};
 use std::f32::consts::PI;
 
 pub struct ViewPlugin;
@@ -8,7 +8,7 @@ pub struct ViewPlugin;
 impl Plugin for ViewPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(ShapePlugin)
-           .add_systems(Update, (spawn_gear_visuals, spawn_anchor_visuals));
+            .add_systems(Update, (spawn_gear_visuals, spawn_anchor_visuals));
     }
 }
 
@@ -55,8 +55,12 @@ fn spawn_gear_visuals(
                     ShapeBundle {
                         path: GeometryBuilder::build_as(&tooth_shape),
                         spatial: SpatialBundle::from_transform(
-                            Transform::from_translation(Vec3::new(dist * angle.cos(), dist * angle.sin(), 0.1))
-                            .with_rotation(Quat::from_rotation_z(angle))
+                            Transform::from_translation(Vec3::new(
+                                dist * angle.cos(),
+                                dist * angle.sin(),
+                                0.1,
+                            ))
+                            .with_rotation(Quat::from_rotation_z(angle)),
                         ),
                         ..default()
                     },
@@ -68,31 +72,63 @@ fn spawn_gear_visuals(
     }
 }
 
-fn spawn_anchor_visuals(
-    mut commands: Commands,
-    query: Query<Entity, Added<Anchor>>,
-) {
+fn spawn_anchor_visuals(mut commands: Commands, query: Query<Entity, Added<Anchor>>) {
     for entity in &query {
         let color = Color::srgba(0.7, 0.7, 0.8, 1.0); // Steel
 
         commands.entity(entity).with_children(|parent| {
             // Left Pallet
-            draw_rect(parent, Vec2::new(-1.5, -2.0), 0.5, Vec2::new(0.4, 0.4), color);
+            draw_rect(
+                parent,
+                Vec2::new(-1.5, -2.0),
+                0.5,
+                Vec2::new(0.4, 0.4),
+                color,
+            );
             // Right Pallet
-            draw_rect(parent, Vec2::new(1.5, -2.0), -0.5, Vec2::new(0.4, 0.4), color);
+            draw_rect(
+                parent,
+                Vec2::new(1.5, -2.0),
+                -0.5,
+                Vec2::new(0.4, 0.4),
+                color,
+            );
 
             // Arms
-            draw_rect(parent, Vec2::new(-2.5, -1.5), 0.5, Vec2::new(0.4, 4.0), color);
-            draw_rect(parent, Vec2::new(2.5, -1.5), -0.5, Vec2::new(0.4, 4.0), color);
+            draw_rect(
+                parent,
+                Vec2::new(-2.5, -1.5),
+                0.5,
+                Vec2::new(0.4, 4.0),
+                color,
+            );
+            draw_rect(
+                parent,
+                Vec2::new(2.5, -1.5),
+                -0.5,
+                Vec2::new(0.4, 4.0),
+                color,
+            );
 
             // Rod
-            draw_rect(parent, Vec2::new(0.0, -8.0), 0.0, Vec2::new(0.4, 16.0), color);
+            draw_rect(
+                parent,
+                Vec2::new(0.0, -8.0),
+                0.0,
+                Vec2::new(0.4, 16.0),
+                color,
+            );
 
             // Bob
             parent.spawn((
                 ShapeBundle {
-                    path: GeometryBuilder::build_as(&shapes::Circle { radius: 2.0, ..default() }),
-                    spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(0.0, -16.0, 0.1))),
+                    path: GeometryBuilder::build_as(&shapes::Circle {
+                        radius: 2.0,
+                        ..default()
+                    }),
+                    spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
+                        0.0, -16.0, 0.1,
+                    ))),
                     ..default()
                 },
                 Fill::color(color),
@@ -112,7 +148,7 @@ fn draw_rect(parent: &mut ChildBuilder, pos: Vec2, angle: f32, size: Vec2, color
             path: GeometryBuilder::build_as(&rect),
             spatial: SpatialBundle::from_transform(
                 Transform::from_translation(pos.extend(0.1))
-                .with_rotation(Quat::from_rotation_z(angle))
+                    .with_rotation(Quat::from_rotation_z(angle)),
             ),
             ..default()
         },

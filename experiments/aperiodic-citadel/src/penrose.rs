@@ -16,15 +16,24 @@ impl Point {
     }
 
     pub fn add(&self, other: &Point) -> Self {
-        Self { x: self.x + other.x, y: self.y + other.y }
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
     }
 
     pub fn sub(&self, other: &Point) -> Self {
-        Self { x: self.x - other.x, y: self.y - other.y }
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
     }
 
     pub fn scale(&self, s: f64) -> Self {
-        Self { x: self.x * s, y: self.y * s }
+        Self {
+            x: self.x * s,
+            y: self.y * s,
+        }
     }
 }
 
@@ -85,7 +94,10 @@ impl PenroseTiling {
             }
         }
 
-        Self { triangles, adjacency: Vec::new() }
+        Self {
+            triangles,
+            adjacency: Vec::new(),
+        }
     }
 
     pub fn build_adjacency(&mut self) {
@@ -122,10 +134,14 @@ impl PenroseTiling {
     }
 
     pub fn get_closest_neighbor(&self, current: usize, dir: Point) -> Option<usize> {
-        if current >= self.adjacency.len() { return None; }
+        if current >= self.adjacency.len() {
+            return None;
+        }
 
         let neighbors = &self.adjacency[current];
-        if neighbors.is_empty() { return None; }
+        if neighbors.is_empty() {
+            return None;
+        }
 
         let current_center = self.triangles[current].center();
 
@@ -338,7 +354,11 @@ mod tests {
 
         // Check that every tile has neighbors
         for i in 0..tiling.triangles.len() {
-            assert!(!tiling.adjacency[i].is_empty(), "Tile {} has no neighbors", i);
+            assert!(
+                !tiling.adjacency[i].is_empty(),
+                "Tile {} has no neighbors",
+                i
+            );
         }
 
         let start = 0;

@@ -45,8 +45,20 @@ async fn main() {
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", world.agents.len()), 10.0, 60.0, 30.0, WHITE);
-        draw_text("Firefly Synapse: Emergent Synchronization", 10.0, screen_height() - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Agents: {}", world.agents.len()),
+            10.0,
+            60.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Firefly Synapse: Emergent Synchronization",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

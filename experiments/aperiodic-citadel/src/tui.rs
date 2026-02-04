@@ -1,3 +1,4 @@
+use crate::penrose::{PenroseTiling, Point, TriangleType};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -8,7 +9,6 @@ use ratatui::{
     },
     Frame,
 };
-use crate::penrose::{PenroseTiling, Point, TriangleType};
 
 pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Point, zoom: f64) {
     let chunks = Layout::default()
@@ -26,16 +26,16 @@ pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Poin
         Line::from(vec![
             Span::styled("Aperiodic Citadel", Style::default().fg(Color::Cyan)),
             Span::raw(" | "),
-            Span::styled(format!("Pos: {:.2}, {:.2}", center.x, center.y), Style::default().fg(Color::Yellow)),
+            Span::styled(
+                format!("Pos: {:.2}, {:.2}", center.x, center.y),
+                Style::default().fg(Color::Yellow),
+            ),
             Span::raw(format!(" | Zoom: {:.2}", zoom)),
         ]),
-        Line::from(vec![
-            Span::raw("WASD: Move | +/-: Zoom | Q: Quit"),
-        ]),
+        Line::from(vec![Span::raw("WASD: Move | +/-: Zoom | Q: Quit")]),
     ];
 
-    let info = Paragraph::new(info_text)
-        .block(Block::default().borders(Borders::ALL));
+    let info = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL));
 
     f.render_widget(info, info_area);
 
@@ -52,7 +52,11 @@ pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Poin
     let y_bounds = [offset.y - height, offset.y + height];
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Penrose Projection"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Penrose Projection"),
+        )
         .x_bounds(x_bounds)
         .y_bounds(y_bounds)
         .paint(move |ctx| {
@@ -60,8 +64,11 @@ pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Poin
             for (i, t) in tiling.triangles.iter().enumerate() {
                 // Optimization: Only draw if visible?
                 // Simple bounding box check
-                if t.a.x < x_bounds[0] - 10.0 || t.a.x > x_bounds[1] + 10.0 ||
-                   t.a.y < y_bounds[0] - 10.0 || t.a.y > y_bounds[1] + 10.0 {
+                if t.a.x < x_bounds[0] - 10.0
+                    || t.a.x > x_bounds[1] + 10.0
+                    || t.a.y < y_bounds[0] - 10.0
+                    || t.a.y > y_bounds[1] + 10.0
+                {
                     continue;
                 }
 
@@ -73,20 +80,26 @@ pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Poin
                 // Draw edges
                 // A-B
                 ctx.draw(&CanvasLine {
-                    x1: t.a.x, y1: t.a.y,
-                    x2: t.b.x, y2: t.b.y,
+                    x1: t.a.x,
+                    y1: t.a.y,
+                    x2: t.b.x,
+                    y2: t.b.y,
                     color,
                 });
                 // B-C
                 ctx.draw(&CanvasLine {
-                    x1: t.b.x, y1: t.b.y,
-                    x2: t.c.x, y2: t.c.y,
+                    x1: t.b.x,
+                    y1: t.b.y,
+                    x2: t.c.x,
+                    y2: t.c.y,
                     color,
                 });
                 // C-A
                 ctx.draw(&CanvasLine {
-                    x1: t.c.x, y1: t.c.y,
-                    x2: t.a.x, y2: t.a.y,
+                    x1: t.c.x,
+                    y1: t.c.y,
+                    x2: t.a.x,
+                    y2: t.a.y,
                     color,
                 });
 
@@ -96,13 +109,17 @@ pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Poin
                     // Draw a small cross or box
                     let size = 1.0;
                     ctx.draw(&CanvasLine {
-                        x1: c.x - size, y1: c.y - size,
-                        x2: c.x + size, y2: c.y + size,
+                        x1: c.x - size,
+                        y1: c.y - size,
+                        x2: c.x + size,
+                        y2: c.y + size,
                         color: Color::White,
                     });
                     ctx.draw(&CanvasLine {
-                        x1: c.x - size, y1: c.y + size,
-                        x2: c.x + size, y2: c.y - size,
+                        x1: c.x - size,
+                        y1: c.y + size,
+                        x2: c.x + size,
+                        y2: c.y - size,
                         color: Color::White,
                     });
                 }
@@ -115,9 +132,9 @@ pub fn ui(f: &mut Frame, tiling: &PenroseTiling, player_idx: usize, offset: Poin
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::penrose::PenroseTiling;
     use ratatui::backend::TestBackend;
     use ratatui::Terminal;
-    use crate::penrose::PenroseTiling;
 
     #[test]
     fn test_ui_render() {
@@ -127,8 +144,10 @@ mod tests {
         let tiling = PenroseTiling::generate_sun(100.0);
         // No subdivision for speed
 
-        terminal.draw(|f| {
-            ui(f, &tiling, 0, Point::new(0.0, 0.0), 1.0);
-        }).unwrap();
+        terminal
+            .draw(|f| {
+                ui(f, &tiling, 0, Point::new(0.0, 0.0), 1.0);
+            })
+            .unwrap();
     }
 }

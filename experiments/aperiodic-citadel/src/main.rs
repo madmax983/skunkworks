@@ -3,10 +3,10 @@ mod tui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
-use std::time::Duration;
-use tui_shared::Tui;
 use penrose::{PenroseTiling, Point};
+use std::time::Duration;
 use tui::ui;
+use tui_shared::Tui;
 
 struct App {
     tiling: PenroseTiling,
@@ -40,7 +40,13 @@ impl App {
     fn run(&mut self, tui: &mut Tui) -> Result<()> {
         while !self.exit {
             tui.terminal.draw(|f| {
-                 ui(f, &self.tiling, self.player_idx, self.camera_offset, self.zoom);
+                ui(
+                    f,
+                    &self.tiling,
+                    self.player_idx,
+                    self.camera_offset,
+                    self.zoom,
+                );
             })?;
 
             if event::poll(Duration::from_millis(16))? {
@@ -48,9 +54,15 @@ impl App {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => self.exit = true,
                         KeyCode::Char('w') | KeyCode::Up => self.move_player(Point::new(0.0, 1.0)),
-                        KeyCode::Char('s') | KeyCode::Down => self.move_player(Point::new(0.0, -1.0)),
-                        KeyCode::Char('a') | KeyCode::Left => self.move_player(Point::new(-1.0, 0.0)),
-                        KeyCode::Char('d') | KeyCode::Right => self.move_player(Point::new(1.0, 0.0)),
+                        KeyCode::Char('s') | KeyCode::Down => {
+                            self.move_player(Point::new(0.0, -1.0))
+                        }
+                        KeyCode::Char('a') | KeyCode::Left => {
+                            self.move_player(Point::new(-1.0, 0.0))
+                        }
+                        KeyCode::Char('d') | KeyCode::Right => {
+                            self.move_player(Point::new(1.0, 0.0))
+                        }
                         KeyCode::Char('+') | KeyCode::Char('=') => self.zoom *= 1.1,
                         KeyCode::Char('-') => self.zoom /= 1.1,
                         _ => {}

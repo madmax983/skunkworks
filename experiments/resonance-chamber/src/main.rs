@@ -3,7 +3,6 @@ use anyhow::Result;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_channel::{bounded, Sender};
 use crossterm::event::{self, Event, KeyCode};
-use tui_shared::Tui;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -13,6 +12,7 @@ use ratatui::{
     Terminal,
 };
 use std::{io, time::Duration};
+use tui_shared::Tui;
 
 use crate::audio::{AudioCommand, AudioModel};
 
