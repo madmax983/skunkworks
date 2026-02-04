@@ -1,29 +1,109 @@
+//! # Math
+//!
+//! A collection of simple mathematical structures and utilities, primarily focused on
+//! 2D vector arithmetic for physics and rendering.
+//!
+//! This module intentionally avoids complex dependencies (like `glam` or `nalgebra`)
+//! to keep compile times fast and the API surface small for simple TUI games.
+
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
-/// A simple 2D vector for physics calculations.
+/// A simple 2D vector with `f64` components.
+///
+/// This struct is the workhorse of position, velocity, and force calculations.
+/// It supports standard arithmetic operations (+, -, *, /) and common vector
+/// operations (magnitude, normalize, dot, reflect).
+///
+/// # Examples
+///
+/// ```
+/// use tui_shared::math::Vec2;
+///
+/// let v1 = Vec2::new(3.0, 4.0);
+/// let v2 = Vec2::new(1.0, 2.0);
+///
+/// let sum = v1 + v2;
+/// assert_eq!(sum, Vec2::new(4.0, 6.0));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Vec2 {
+    /// The X component (horizontal).
     pub x: f64,
+    /// The Y component (vertical).
     pub y: f64,
 }
 
 impl Vec2 {
+    /// Creates a new vector with the given coordinates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::new(10.5, -5.2);
+    /// ```
     pub fn new(x: f64, y: f64) -> Self {
         Self { x, y }
     }
 
+    /// Creates a vector with all components set to zero.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::zero();
+    /// assert_eq!(v.x, 0.0);
+    /// assert_eq!(v.y, 0.0);
+    /// ```
     pub fn zero() -> Self {
         Self { x: 0.0, y: 0.0 }
     }
 
+    /// Calculates the squared magnitude (length) of the vector.
+    ///
+    /// This is faster than `magnitude()` because it avoids a square root calculation.
+    /// Use this when you only need to compare lengths (e.g., checking if distance < radius).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::new(3.0, 4.0);
+    /// assert_eq!(v.magnitude_squared(), 25.0);
+    /// ```
     pub fn magnitude_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y
     }
 
+    /// Calculates the magnitude (length) of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::new(3.0, 4.0);
+    /// assert_eq!(v.magnitude(), 5.0);
+    /// ```
     pub fn magnitude(&self) -> f64 {
         self.magnitude_squared().sqrt()
     }
 
+    /// Returns a normalized version of the vector (length of 1.0).
+    ///
+    /// If the vector is zero, it returns the zero vector.
+    /// If the vector has infinite components, it attempts to handle them gracefully.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::new(10.0, 0.0);
+    /// assert_eq!(v.normalize(), Vec2::new(1.0, 0.0));
+    ///
+    /// let zero = Vec2::zero();
+    /// assert_eq!(zero.normalize(), Vec2::zero());
+    /// ```
     pub fn normalize(&self) -> Self {
         let mag = self.magnitude();
         if mag == 0.0 {
@@ -38,6 +118,21 @@ impl Vec2 {
         }
     }
 
+    /// Limits the vector's magnitude to a maximum value.
+    ///
+    /// If the vector's length is greater than `max`, it is scaled down to `max`.
+    /// Otherwise, it is returned unchanged.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::new(10.0, 0.0);
+    /// assert_eq!(v.limit(5.0), Vec2::new(5.0, 0.0));
+    ///
+    /// let v2 = Vec2::new(3.0, 0.0);
+    /// assert_eq!(v2.limit(5.0), Vec2::new(3.0, 0.0));
+    /// ```
     pub fn limit(&self, max: f64) -> Self {
         if self.magnitude_squared() > max * max {
             self.normalize() * max
@@ -46,20 +141,71 @@ impl Vec2 {
         }
     }
 
+    /// Calculates the squared Euclidean distance between two vectors.
+    ///
+    /// Faster than `distance()` as it avoids the square root.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v1 = Vec2::zero();
+    /// let v2 = Vec2::new(3.0, 4.0);
+    /// assert_eq!(v1.distance_squared(v2), 25.0);
+    /// ```
     pub fn distance_squared(&self, other: Vec2) -> f64 {
         let dx = self.x - other.x;
         let dy = self.y - other.y;
         dx * dx + dy * dy
     }
 
+    /// Calculates the Euclidean distance between two vectors.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v1 = Vec2::zero();
+    /// let v2 = Vec2::new(3.0, 4.0);
+    /// assert_eq!(v1.distance(v2), 5.0);
+    /// ```
     pub fn distance(&self, other: Vec2) -> f64 {
         self.distance_squared(other).sqrt()
     }
 
+    /// Calculates the dot product of two vectors.
+    ///
+    /// The dot product is the sum of the products of the corresponding components.
+    /// It can be used to find the angle between two vectors or to project one vector onto another.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v1 = Vec2::new(1.0, 0.0);
+    /// let v2 = Vec2::new(0.0, 1.0);
+    /// assert_eq!(v1.dot(v2), 0.0); // Perpendicular
+    ///
+    /// let v3 = Vec2::new(2.0, 0.0);
+    /// assert_eq!(v1.dot(v3), 2.0); // Parallel
+    /// ```
     pub fn dot(&self, other: Vec2) -> f64 {
         self.x * other.x + self.y * other.y
     }
 
+    /// Reflects the vector off a surface with the given normal.
+    ///
+    /// The normal vector does not need to be normalized, as the function will normalize it internally.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// let v = Vec2::new(1.0, -1.0);
+    /// let normal = Vec2::new(0.0, 1.0);
+    /// let reflected = v.reflect(normal);
+    /// assert_eq!(reflected, Vec2::new(1.0, 1.0));
+    /// ```
     pub fn reflect(&self, normal: Vec2) -> Self {
         let n = normal.normalize();
         let d = *self;
@@ -71,6 +217,19 @@ impl Vec2 {
         }
     }
 
+    /// Rotates the vector by the given angle (in radians).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_shared::math::Vec2;
+    /// use std::f64::consts::PI;
+    ///
+    /// let v = Vec2::new(1.0, 0.0);
+    /// let rotated = v.rotate(PI / 2.0);
+    /// assert!((rotated.x - 0.0).abs() < 1e-10);
+    /// assert!((rotated.y - 1.0).abs() < 1e-10);
+    /// ```
     pub fn rotate(self, angle: f64) -> Self {
         let (sin, cos) = angle.sin_cos();
         Self {
