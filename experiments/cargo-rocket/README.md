@@ -4,6 +4,17 @@
 
 A gamified visualization of the Rust dependency graph where crates are planets in a solar system, and the compiler is a rocket ship collecting source code.
 
+## 🚀 Usage
+
+```bash
+# Run the experiment
+cargo run -p cargo-rocket
+```
+
+## 📦 Installation
+
+This experiment is part of the repository. No extra installation is needed if you have Rust installed.
+
 ## 🔭 The Concept
 We visualize the output of `cargo metadata` as an N-Body gravitational system.
 - **The Sun**: The root package.

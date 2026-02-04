@@ -24,7 +24,8 @@ pub fn load_system() -> Result<System> {
                 .find(|p| p.name == "cargo-rocket")
                 .map(|p| &p.id)
         })
-        .context("No root package found (cargo-rocket)")?;
+        .or_else(|| metadata.workspace_members.first())
+        .context("No root package found. Tried: resolved root, 'cargo-rocket', and first workspace member.")?;
 
     let mut system = System::new();
     let mut rng = rand::thread_rng();
