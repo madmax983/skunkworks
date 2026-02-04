@@ -120,9 +120,9 @@
 - **Scent Origin:** Genesis
 - **Status:** The termites are restless. Cooling structures emerging from heat gradients. Documentation detected.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/clockwork-cpu
+### [Concentration Level: TOXIC] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Genesis
-- **Status:** The escapement ticks. Physics-driven logic gates are next. Documentation missing (README.md).
+- **Status:** CONDEMNED. Documentation void. Unfulfilled promise (physics demo, not a CPU). Grace period ends in 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-transit
 - **Scent Origin:** Genesis: The Mycologist
@@ -208,9 +208,9 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Documentation void. Generic Boids implementation. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/call-fern
+### [Concentration Level: DECOMPOSING] - Location: experiments/call-fern (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Generic morphology.
+- **Status:** EXECUTED. Failed to improve during grace period. Biomass returned to the void.
 
 ### [Concentration Level: FRESH] - Location: experiments/process-orbit
 - **Scent Origin:** Nova

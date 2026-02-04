@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **call-fern**: Documentation void. Generic recursive visualization. Grace period ends in 24h.
+- **clockwork-cpu**: Documentation void. Unfulfilled promise (physics demo, not a CPU). Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **call-fern**: Documentation void. Generic recursive visualization. Failed to improve during grace period.
 - **digital-koi**: Documentation void. Generic Boids implementation. Weak system integration. Failed to improve during grace period.
 - **word-collider**: Documentation void. Generic physics demo. Lacks connection to repository themes. Failed to improve during grace period.
 - **git-invaders**: Documentation void. Generic Space Invaders clone. Lacks emergent behavior. Failed to improve during grace period.
