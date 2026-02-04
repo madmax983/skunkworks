@@ -194,3 +194,66 @@ sequenceDiagram
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```
+
+## Experiment: Chimera Lang (ADR 008)
+
+**Chimera Lang** is a bio-inspired, stack-based esoteric programming language with an optional "Nova" expansion for advanced biological simulation.
+
+### Lib/Bin Split
+
+The project exposes its core modules to allow embedding in other experiments.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +Dna dna
+        +PetriDish grid
+        +Vec~Deque~ stack
+        +step()
+        +execute_gene()
+    }
+
+    class Dna {
+        +Helix helix
+    }
+
+    class PetriDish {
+        +[[Val; 16]; 16] cells
+    }
+
+    class ExternalApp {
+        <<Consumer>>
+    }
+
+    ChimeraVM *-- Dna : Owns
+    ChimeraVM *-- PetriDish : Owns
+    ExternalApp ..> ChimeraVM : Embeds
+```
+
+### Nova Feature: Endocrine Cycle
+
+When `feature = "nova"` is enabled, the VM simulates a hormone diffusion cycle.
+
+```mermaid
+sequenceDiagram
+    participant App
+    participant VM as ChimeraVM
+    participant Endocrine as HormoneGrid
+    participant Enzyme
+
+    App->>VM: step()
+    VM->>VM: process_metabolism()
+
+    opt Nova Feature
+        VM->>Endocrine: diffuse()
+        VM->>Endocrine: decay()
+    end
+
+    VM->>Enzyme: execute(gene)
+
+    opt Nova Feature
+        Enzyme->>Endocrine: secrete(hormone)
+        Enzyme->>Endocrine: detect(hormone)
+    end
+```

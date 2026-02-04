@@ -62,7 +62,7 @@ fn run_app<B: ratatui::backend::Backend>(
 
             for (s_idx, strand) in helix.strands.iter().enumerate() {
                 for (g_idx, gene) in strand.genes.iter().enumerate() {
-                    let content = format!("{}({:?})", gene.name, gene.args);
+                    let content = format!("{}({:?})", gene.op, gene.args);
                     let mut style = Style::default();
                     let mut prefix = "  ";
 
@@ -105,7 +105,7 @@ fn run_app<B: ratatui::backend::Backend>(
                 for x in 0..16 {
                     let val = &vm.grid[y][x];
 
-                    let (char_rep, style) = match val {
+                    let (char_rep, mut style) = match val {
                         crate::vm::Value::Int(0) => {
                             (".".to_string(), Style::default().fg(Color::DarkGray))
                         }
@@ -135,6 +135,29 @@ fn run_app<B: ratatui::backend::Backend>(
                             (symbol.to_string(), Style::default().fg(Color::Cyan))
                         }
                     };
+
+                    #[cfg(feature = "nova")]
+                    {
+                        let h = vm.hormone_grid[y][x];
+                        let r = h[0].clamp(0, 255) as u8;
+                        let g = h[1].clamp(0, 255) as u8;
+                        let b = h[2].clamp(0, 255) as u8;
+                        if r > 0 || g > 0 || b > 0 {
+                            style = style.bg(Color::Rgb(r, g, b));
+                            // Ensure foreground is visible if background is bright
+                            // Simple heuristic: if sum > 300, use black fg
+                            if (r as u16 + g as u16 + b as u16) > 300 {
+                                style = style.fg(Color::Black);
+                            }
+                        }
+
+                        if vm.waste_grid[y][x] > 50 {
+                            style = style.add_modifier(Modifier::CROSSED_OUT);
+                            if vm.waste_grid[y][x] > 100 {
+                                style = style.fg(Color::Red);
+                            }
+                        }
+                    }
 
                     line_spans.push(Span::styled(char_rep, style));
                     line_spans.push(Span::raw(" ")); // Spacing

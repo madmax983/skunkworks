@@ -1,7 +1,8 @@
 use crate::ast::{Dna, Nucleotide};
+use crate::opcode::OpCode;
 use rand::Rng;
 #[cfg(feature = "nova")]
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
@@ -18,6 +19,25 @@ impl std::fmt::Display for Value {
     }
 }
 
+#[cfg(feature = "nova")]
+#[derive(Clone)]
+pub struct Spore {
+    pub dna: Dna,
+    pub stack: Vec<Value>,
+    pub ip: (usize, usize),
+    pub output: Vec<String>,
+    pub halted: bool,
+    pub energy: i64,
+    pub grid: Vec<Vec<Value>>,
+    pub chaos_mode: bool,
+    pub recursion_depth: usize,
+    pub context_loc: (usize, usize),
+    pub epigenome: HashSet<(usize, usize)>,
+    pub telomeres: Vec<i64>,
+    pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    pub waste_grid: Vec<Vec<i64>>,
+}
+
 pub struct ChimeraVM {
     pub dna: Dna,
     pub stack: Vec<Value>,
@@ -28,12 +48,17 @@ pub struct ChimeraVM {
     pub grid: Vec<Vec<Value>>,
     pub chaos_mode: bool,
     pub recursion_depth: usize,
+    pub context_loc: (usize, usize),
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub telomeres: Vec<i64>,
     #[cfg(feature = "nova")]
-    pub hormones: HashMap<i64, i64>,
+    pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    #[cfg(feature = "nova")]
+    pub waste_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
+    pub spores: Vec<Spore>,
 }
 
 impl ChimeraVM {
@@ -42,6 +67,10 @@ impl ChimeraVM {
         let grid = vec![vec![Value::Int(0); 16]; 16];
         #[cfg(feature = "nova")]
         let strand_count = dna.helix.strands.len();
+        #[cfg(feature = "nova")]
+        let hormone_grid = vec![vec![[0, 0, 0]; 16]; 16];
+        #[cfg(feature = "nova")]
+        let waste_grid = vec![vec![0; 16]; 16];
 
         Self {
             dna,
@@ -53,13 +82,84 @@ impl ChimeraVM {
             grid,
             chaos_mode: false,
             recursion_depth: 0,
+            context_loc: (8, 8),
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
             #[cfg(feature = "nova")]
             telomeres: vec![50; strand_count],
             #[cfg(feature = "nova")]
-            hormones: HashMap::new(),
+            hormone_grid,
+            #[cfg(feature = "nova")]
+            waste_grid,
+            #[cfg(feature = "nova")]
+            spores: Vec::new(),
         }
+    }
+
+    #[cfg(feature = "nova")]
+    #[allow(clippy::needless_range_loop)]
+    fn diffuse_hormones(&mut self) {
+        let mut new_grid = self.hormone_grid.clone();
+        for y in 0..16 {
+            for x in 0..16 {
+                for c in 0..3 {
+                    let mut sum = self.hormone_grid[y][x][c] * 4;
+                    let mut count = 4;
+
+                    if y > 0 {
+                        sum += self.hormone_grid[y - 1][x][c];
+                        count += 1;
+                    }
+                    if y < 15 {
+                        sum += self.hormone_grid[y + 1][x][c];
+                        count += 1;
+                    }
+                    if x > 0 {
+                        sum += self.hormone_grid[y][x - 1][c];
+                        count += 1;
+                    }
+                    if x < 15 {
+                        sum += self.hormone_grid[y][x + 1][c];
+                        count += 1;
+                    }
+
+                    new_grid[y][x][c] = sum / count;
+                }
+            }
+        }
+        self.hormone_grid = new_grid;
+    }
+
+    #[cfg(feature = "nova")]
+    #[allow(clippy::needless_range_loop)]
+    fn diffuse_waste(&mut self) {
+        let mut new_grid = self.waste_grid.clone();
+        for y in 0..16 {
+            for x in 0..16 {
+                let mut sum = self.waste_grid[y][x] * 4;
+                let mut count = 4;
+
+                if y > 0 {
+                    sum += self.waste_grid[y - 1][x];
+                    count += 1;
+                }
+                if y < 15 {
+                    sum += self.waste_grid[y + 1][x];
+                    count += 1;
+                }
+                if x > 0 {
+                    sum += self.waste_grid[y][x - 1];
+                    count += 1;
+                }
+                if x < 15 {
+                    sum += self.waste_grid[y][x + 1];
+                    count += 1;
+                }
+
+                new_grid[y][x] = sum / count;
+            }
+        }
+        self.waste_grid = new_grid;
     }
 
     pub fn step(&mut self) {
@@ -71,11 +171,32 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
+            // Metabolic Waste Production
+            let (cy, cx) = self.context_loc;
+            self.waste_grid[cy][cx] += 10;
+
+            self.diffuse_hormones();
+            self.diffuse_waste();
+
             // Decay hormones: reduce intensity by 1 per step
-            self.hormones.retain(|_, v| {
-                *v -= 1;
-                *v > 0
-            });
+            for row in self.hormone_grid.iter_mut() {
+                for cell in row.iter_mut() {
+                    for val in cell.iter_mut() {
+                        if *val > 0 {
+                            *val -= 1;
+                        }
+                    }
+                }
+            }
+
+            // Toxicity check
+            if self.waste_grid[cy][cx] > 100 {
+                let mut rng = rand::thread_rng();
+                if rng.gen_bool(0.05) {
+                    self.output.push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
+                    self.mutate();
+                }
+            }
         }
 
         if self.chaos_mode {
@@ -130,12 +251,12 @@ impl ChimeraVM {
         }
 
         // Clone gene info to release borrow on self.dna
-        let (gene_name, gene_args) = {
+        let (gene_op, gene_args) = {
             let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-            (gene.name.clone(), gene.args.clone())
+            (gene.op.clone(), gene.args.clone())
         };
 
-        let jump_target = self.execute_gene(&gene_name, &gene_args);
+        let jump_target = self.execute_gene(gene_op, &gene_args);
 
         if let Some(target) = jump_target {
             self.ip = target;
@@ -145,14 +266,14 @@ impl ChimeraVM {
         }
     }
 
-    fn execute_gene(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         if self.recursion_depth > 100 {
             self.output
                 .push("Error: Recursion limit exceeded".to_string());
             return None;
         }
         self.recursion_depth += 1;
-        let result = self.execute_gene_inner(name, args);
+        let result = self.execute_gene_inner(op, args);
         self.recursion_depth -= 1;
         result
     }
@@ -172,9 +293,9 @@ impl ChimeraVM {
         coords
     }
 
-    fn execute_gene_inner(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
-        match name {
-            "push" => {
+    pub(crate) fn execute_gene_inner(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match op {
+            OpCode::Push => {
                 if let Some(arg) = args.first() {
                     match arg {
                         Nucleotide::Number(n) => self.stack.push(Value::Int(*n)),
@@ -187,7 +308,70 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "incubate" => {
+            OpCode::Sporulate => {
+                // Create snapshot
+                let spore = Spore {
+                    dna: self.dna.clone(),
+                    stack: self.stack.clone(),
+                    ip: self.ip,
+                    output: self.output.clone(),
+                    halted: self.halted,
+                    energy: self.energy,
+                    grid: self.grid.clone(),
+                    chaos_mode: self.chaos_mode,
+                    recursion_depth: self.recursion_depth,
+                    context_loc: self.context_loc,
+                    epigenome: self.epigenome.clone(),
+                    telomeres: self.telomeres.clone(),
+                    hormone_grid: self.hormone_grid.clone(),
+                    waste_grid: self.waste_grid.clone(),
+                };
+
+                let id = self.spores.len();
+                self.spores.push(spore);
+                self.stack.push(Value::Int(id as i64));
+                self.energy -= 50; // High cost for time travel
+                self.output.push(format!("SPORULATE: Created Spore {}", id));
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Germinate => {
+                // stack: spore_id
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(id) = val {
+                        let idx = id as usize;
+                        if idx < self.spores.len() {
+                            let spore = &self.spores[idx];
+                            // Restore state
+                            self.dna = spore.dna.clone();
+                            self.stack = spore.stack.clone();
+                            self.ip = spore.ip;
+                            self.output = spore.output.clone();
+                            self.halted = spore.halted;
+                            self.energy = spore.energy;
+                            self.grid = spore.grid.clone();
+                            self.chaos_mode = spore.chaos_mode;
+                            self.recursion_depth = spore.recursion_depth;
+                            self.context_loc = spore.context_loc;
+                            self.epigenome = spore.epigenome.clone();
+                            self.telomeres = spore.telomeres.clone();
+                            self.hormone_grid = spore.hormone_grid.clone();
+                            self.waste_grid = spore.waste_grid.clone();
+
+                            self.output.push(format!("GERMINATE: Restored Spore {}", idx));
+                        } else {
+                            self.output.push("Error: Spore index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output.push("Error: Type mismatch for germinate".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for germinate".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Incubate => {
                 // stack: len, y, x (top)
                 if self.stack.len() >= 3 {
                     let x_val = self.stack.pop().unwrap();
@@ -206,13 +390,14 @@ impl ChimeraVM {
                                     match val {
                                         Value::Int(n) => {
                                             genes.push(crate::ast::Gene {
-                                                name: "push".to_string(),
+                                                op: OpCode::Push,
                                                 args: vec![crate::ast::Nucleotide::Number(*n)],
                                             });
                                         }
                                         Value::Str(s) => {
+                                            let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
                                             genes.push(crate::ast::Gene {
-                                                name: s.clone(),
+                                                op,
                                                 args: vec![],
                                             });
                                         }
@@ -248,19 +433,19 @@ impl ChimeraVM {
                 }
                 None
             }
-            "add" => {
+            OpCode::Add => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
                 None
             }
-            "sub" => {
+            OpCode::Sub => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a - b);
                 None
             }
-            "mul" => {
+            OpCode::Mul => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a * b);
                 None
             }
-            "div" => {
+            OpCode::Div => {
                 if self.stack.len() < 2 {
                     self.output.push("Error: Stack underflow".to_string());
                 } else {
@@ -281,13 +466,13 @@ impl ChimeraVM {
                 }
                 None
             }
-            "dup" => {
+            OpCode::Dup => {
                 if let Some(val) = self.stack.last() {
                     self.stack.push(val.clone());
                 }
                 None
             }
-            "swap" => {
+            OpCode::Swap => {
                 let len = self.stack.len();
                 if len >= 2 {
                     self.stack.swap(len - 1, len - 2);
@@ -297,17 +482,17 @@ impl ChimeraVM {
                 }
                 None
             }
-            "drop" => {
+            OpCode::Drop => {
                 self.stack.pop();
                 None
             }
-            "print" => {
+            OpCode::Print => {
                 if let Some(val) = self.stack.pop() {
                     self.output.push(format!("{}", val));
                 }
                 None
             }
-            "jump" => {
+            OpCode::Jump => {
                 if let Some(Nucleotide::Number(n)) = args.first() {
                     Some((*n as usize, 0))
                 } else {
@@ -315,7 +500,7 @@ impl ChimeraVM {
                     None
                 }
             }
-            "brz" => {
+            OpCode::Brz => {
                 if let Some(Nucleotide::Number(n)) = args.first() {
                     if let Some(val) = self.stack.pop() {
                         if let Value::Int(i) = val {
@@ -334,11 +519,11 @@ impl ChimeraVM {
                 }
                 None
             }
-            "photosynthesize" => {
+            OpCode::Photosynthesize => {
                 self.energy += 5;
                 None
             }
-            "consume" => {
+            OpCode::Consume => {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(n) => self.energy += n,
@@ -350,7 +535,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            "g_read" => {
+            OpCode::GRead => {
                 if self.stack.len() >= 2 {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
@@ -371,7 +556,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            "g_write" => {
+            OpCode::GWrite => {
                 if self.stack.len() >= 3 {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
@@ -393,7 +578,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            "radiate" => {
+            OpCode::Radiate => {
                 // stack: val, radius, y, x (top)
                 if self.stack.len() >= 4 {
                     let x_val = self.stack.pop().unwrap();
@@ -422,7 +607,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            "siphon" => {
+            OpCode::Siphon => {
                 // stack: radius, y, x (top)
                 if self.stack.len() >= 3 {
                     let x_val = self.stack.pop().unwrap();
@@ -456,25 +641,25 @@ impl ChimeraVM {
                 }
                 None
             }
-            "genome" => {
+            OpCode::Genome => {
                 // Pushes genes of current strand to stack
                 if self.ip.0 < self.dna.helix.strands.len() {
                     let strand = &self.dna.helix.strands[self.ip.0];
                     self.stack.push(Value::Int(strand.genes.len() as i64));
                     for gene in &strand.genes {
-                        self.stack.push(Value::Str(gene.name.clone()));
+                        self.stack.push(Value::Str(gene.op.to_string()));
                     }
                 }
                 None
             }
-            "virus" => {
+            OpCode::Virus => {
                 if self.stack.len() >= 2 {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
 
-                    let cell_value = if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if (0..16).contains(&y) && (0..16).contains(&x) {
-                            Some(self.grid[y as usize][x as usize].clone())
+                    let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
+                        if (0..16).contains(y) && (0..16).contains(x) {
+                            Some((*y, *x))
                         } else {
                             self.output
                                 .push("Error: Grid index out of bounds".to_string());
@@ -486,13 +671,19 @@ impl ChimeraVM {
                         None
                     };
 
-                    if let Some(val) = cell_value {
+                    if let Some((y, x)) = coords {
+                        let val = self.grid[y as usize][x as usize].clone();
                         match val {
                             Value::Int(n) => self.stack.push(Value::Int(n)),
                             Value::Str(s) => {
                                 // Execute enzyme recursively
                                 // We pass empty args because grid enzymes don't carry args
-                                return self.execute_gene(&s, &[]);
+                                let old_loc = self.context_loc;
+                                self.context_loc = (y as usize, x as usize);
+                                let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                                let result = self.execute_gene(op, &[]);
+                                self.context_loc = old_loc;
+                                return result;
                             }
                         }
                     }
@@ -503,7 +694,7 @@ impl ChimeraVM {
                 None
             }
             // --- EVOLUTION ---
-            "transcribe" => {
+            OpCode::Transcribe => {
                 // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
                 if self.stack.len() < 4 {
                     self.output
@@ -546,7 +737,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            "jump_s" => {
+            OpCode::JumpS => {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(target) => {
@@ -566,7 +757,7 @@ impl ChimeraVM {
                 }
                 None
             }
-            "brz_s" => {
+            OpCode::BrzS => {
                 if self.stack.len() >= 2 {
                     let target_val = self.stack.pop().unwrap();
                     let cond_val = self.stack.pop().unwrap();
@@ -591,16 +782,16 @@ impl ChimeraVM {
                 }
                 None
             }
-            "s_len" => {
+            OpCode::SLen => {
                 self.stack.push(Value::Int(self.stack.len() as i64));
                 None
             }
-            "helix_len" => {
+            OpCode::HelixLen => {
                 self.stack
                     .push(Value::Int(self.dna.helix.strands.len() as i64));
                 None
             }
-            "gene_len" => {
+            OpCode::GeneLen => {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(idx) => {
@@ -624,7 +815,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "methylate" => {
+            OpCode::Methylate => {
                 if self.stack.len() >= 2 {
                     let gene_val = self.stack.pop().unwrap();
                     let strand_val = self.stack.pop().unwrap();
@@ -642,7 +833,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "demethylate" => {
+            OpCode::Demethylate => {
                 if self.stack.len() >= 2 {
                     let gene_val = self.stack.pop().unwrap();
                     let strand_val = self.stack.pop().unwrap();
@@ -661,7 +852,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "telomerase" => {
+            OpCode::Telomerase => {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(amount) => {
@@ -688,7 +879,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "t_len" => {
+            OpCode::TLen => {
                 let idx = self.ip.0;
                 if idx < self.telomeres.len() {
                     self.stack.push(Value::Int(self.telomeres[idx]));
@@ -698,7 +889,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "recombine" => {
+            OpCode::Recombine => {
                 // stack: split_point, strand_b, strand_a (bottom)
                 if self.stack.len() >= 3 {
                     let split_val = self.stack.pop().unwrap();
@@ -786,12 +977,12 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "s_index" => {
+            OpCode::SIndex => {
                 self.stack.push(Value::Int(self.ip.0 as i64));
                 None
             }
             #[cfg(feature = "nova")]
-            "crispr_scan" => {
+            OpCode::CrisprScan => {
                 // stack: guide_idx, target_idx (bottom)
                 if self.stack.len() >= 2 {
                     let guide_val = self.stack.pop().unwrap();
@@ -807,10 +998,11 @@ impl ChimeraVM {
                             let target_strand = &self.dna.helix.strands[t_idx];
 
                             // We need to match sequence of gene names
+                            // Use op.to_string() for comparison
                             let guide_names: Vec<String> =
-                                guide_strand.genes.iter().map(|g| g.name.clone()).collect();
+                                guide_strand.genes.iter().map(|g| g.op.to_string()).collect();
                             let target_names: Vec<String> =
-                                target_strand.genes.iter().map(|g| g.name.clone()).collect();
+                                target_strand.genes.iter().map(|g| g.op.to_string()).collect();
 
                             let mut found_idx: i64 = -1;
 
@@ -845,7 +1037,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "cas9_cut" => {
+            OpCode::Cas9Cut => {
                 // stack: cut_index, strand_idx (bottom)
                 if self.stack.len() >= 2 {
                     let cut_val = self.stack.pop().unwrap();
@@ -908,7 +1100,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "ligase" => {
+            OpCode::Ligase => {
                 // stack: donor_idx, recipient_idx (bottom)
                 if self.stack.len() >= 2 {
                     let donor_val = self.stack.pop().unwrap();
@@ -966,7 +1158,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "mitosis" => {
+            OpCode::Mitosis => {
                 // stack: strand_idx (target to clone)
                 if let Some(val) = self.stack.pop() {
                     match val {
@@ -1014,7 +1206,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "apoptosis" => {
+            OpCode::Apoptosis => {
                 // stack: strand_idx
                 if let Some(val) = self.stack.pop() {
                     match val {
@@ -1046,7 +1238,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "integrase" => {
+            OpCode::Integrase => {
                 // stack: arg, name, gene_idx, strand_idx (bottom)
                 if self.stack.len() >= 4 {
                     let arg_val = self.stack.pop().unwrap();
@@ -1065,7 +1257,7 @@ impl ChimeraVM {
                                 if g >= 0 && g_idx <= strand_len {
                                     // Create Gene
                                     let new_gene = crate::ast::Gene {
-                                        name: name.clone(),
+                                        op: name.parse().unwrap_or(OpCode::Unknown(name.clone())),
                                         args: match arg {
                                             Value::Int(n) => {
                                                 vec![crate::ast::Nucleotide::Number(n)]
@@ -1131,7 +1323,7 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "excision" => {
+            OpCode::Excision => {
                 // stack: gene_idx, strand_idx (bottom)
                 if self.stack.len() >= 2 {
                     let gene_idx_val = self.stack.pop().unwrap();
@@ -1205,17 +1397,20 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "secrete" => {
+            OpCode::Secrete => {
                 // stack: channel, amount (top)
                 if self.stack.len() >= 2 {
                     let amount_val = self.stack.pop().unwrap();
                     let channel_val = self.stack.pop().unwrap();
                     if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
                         if a > 0 {
-                            let entry = self.hormones.entry(c).or_insert(0);
-                            *entry += a;
-                            self.output
-                                .push(format!("SECRETE: Added {} to channel {}", a, c));
+                            let (cy, cx) = self.context_loc;
+                            let channel_idx = (c.unsigned_abs() as usize) % 3;
+                            self.hormone_grid[cy][cx][channel_idx] += a;
+                            self.output.push(format!(
+                                "SECRETE: Added {} to channel {} at {},{}",
+                                a, c, cx, cy
+                            ));
                         }
                     } else {
                         self.output
@@ -1228,11 +1423,13 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "detect" => {
+            OpCode::Detect => {
                 // stack: channel
                 if let Some(val) = self.stack.pop() {
                     if let Value::Int(c) = val {
-                        let intensity = self.hormones.get(&c).copied().unwrap_or(0);
+                        let (cy, cx) = self.context_loc;
+                        let channel_idx = (c.unsigned_abs() as usize) % 3;
+                        let intensity = self.hormone_grid[cy][cx][channel_idx];
                         self.stack.push(Value::Int(intensity));
                     } else {
                         self.output
@@ -1245,13 +1442,15 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
-            "absorb" => {
+            OpCode::Absorb => {
                 // stack: channel, amount (top)
                 if self.stack.len() >= 2 {
                     let amount_val = self.stack.pop().unwrap();
                     let channel_val = self.stack.pop().unwrap();
                     if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
-                        let intensity = self.hormones.entry(c).or_insert(0);
+                        let (cy, cx) = self.context_loc;
+                        let channel_idx = (c.unsigned_abs() as usize) % 3;
+                        let intensity = &mut self.hormone_grid[cy][cx][channel_idx];
                         let absorbed = if *intensity >= a {
                             *intensity -= a;
                             a
@@ -1261,8 +1460,10 @@ impl ChimeraVM {
                             v
                         };
                         self.stack.push(Value::Int(absorbed));
-                        self.output
-                            .push(format!("ABSORB: Consumed {} from channel {}", absorbed, c));
+                        self.output.push(format!(
+                            "ABSORB: Consumed {} from channel {} at {},{}",
+                            absorbed, c, cx, cy
+                        ));
                     } else {
                         self.output
                             .push("Error: Type mismatch for absorb".to_string());
@@ -1273,7 +1474,55 @@ impl ChimeraVM {
                 }
                 None
             }
-            _ => {
+            #[cfg(feature = "nova")]
+            OpCode::Migrate => {
+                // stack: dy, dx (top)
+                if self.stack.len() >= 2 {
+                    let dx_val = self.stack.pop().unwrap();
+                    let dy_val = self.stack.pop().unwrap();
+                    if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                        let (cy, cx) = self.context_loc;
+                        let new_y = (cy as i64 + dy).rem_euclid(16) as usize;
+                        let new_x = (cx as i64 + dx).rem_euclid(16) as usize;
+                        self.context_loc = (new_y, new_x);
+                        self.energy -= 5;
+                        self.output.push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+                    } else {
+                        self.output.push("Error: Type mismatch for migrate".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for migrate".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Detox => {
+                // stack: radius (top)
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(r) = val {
+                        let (cy, cx) = self.context_loc;
+                        let coords = self.get_circular_coords(cx as i64, cy as i64, r);
+                        for (tx, ty) in coords {
+                            self.waste_grid[ty][tx] = 0;
+                        }
+                        self.energy -= (r * r + 1).clamp(5, 50); // Cost proportional to area
+                        self.output.push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
+                    } else {
+                        self.output.push("Error: Type mismatch for detox".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for detox".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::WRead => {
+                let (cy, cx) = self.context_loc;
+                let waste = self.waste_grid[cy][cx];
+                self.stack.push(Value::Int(waste));
+                None
+            }
+            OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None
             }
@@ -1316,50 +1565,50 @@ impl ChimeraVM {
         // 50% chance to change name, 50% to change arg
         if rng.gen_bool(0.5) {
             let enzymes = [
-                "push",
-                "add",
-                "sub",
-                "mul",
-                "div",
-                "dup",
-                "print",
-                "swap",
-                "drop",
-                "jump",
-                "brz",
-                "photosynthesize",
-                "consume",
-                "transcribe",
-                "s_len",
-                "helix_len",
-                "gene_len",
-                "g_read",
-                "g_write",
-                "radiate",
-                "siphon",
-                "genome",
+                OpCode::Push,
+                OpCode::Add,
+                OpCode::Sub,
+                OpCode::Mul,
+                OpCode::Div,
+                OpCode::Dup,
+                OpCode::Print,
+                OpCode::Swap,
+                OpCode::Drop,
+                OpCode::Jump,
+                OpCode::Brz,
+                OpCode::Photosynthesize,
+                OpCode::Consume,
+                OpCode::Transcribe,
+                OpCode::SLen,
+                OpCode::HelixLen,
+                OpCode::GeneLen,
+                OpCode::GRead,
+                OpCode::GWrite,
+                OpCode::Radiate,
+                OpCode::Siphon,
+                OpCode::Genome,
                 #[cfg(feature = "nova")]
-                "telomerase",
+                OpCode::Telomerase,
                 #[cfg(feature = "nova")]
-                "t_len",
+                OpCode::TLen,
                 #[cfg(feature = "nova")]
-                "s_index",
+                OpCode::SIndex,
                 #[cfg(feature = "nova")]
-                "mitosis",
+                OpCode::Mitosis,
                 #[cfg(feature = "nova")]
-                "apoptosis",
+                OpCode::Apoptosis,
                 #[cfg(feature = "nova")]
-                "crispr_scan",
+                OpCode::CrisprScan,
                 #[cfg(feature = "nova")]
-                "cas9_cut",
+                OpCode::Cas9Cut,
                 #[cfg(feature = "nova")]
-                "ligase",
+                OpCode::Ligase,
             ];
-            let new_name = enzymes[rng.gen_range(0..enzymes.len())];
+            let new_op = enzymes[rng.gen_range(0..enzymes.len())].clone();
             // Add "Mutation" log
             self.output
-                .push(format!("MUTATION: {} -> {}", gene.name, new_name));
-            gene.name = new_name.to_string();
+                .push(format!("MUTATION: {} -> {}", gene.op, new_op));
+            gene.op = new_op;
         } else if !gene.args.is_empty() {
             if let Some(Nucleotide::Number(n)) = gene.args.first_mut() {
                 let old_n = *n;
@@ -1388,15 +1637,15 @@ mod tests {
     fn test_add() {
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(20)],
             },
             Gene {
-                name: "add".to_string(),
+                op: OpCode::Add,
                 args: vec![],
             },
         ];
@@ -1417,18 +1666,18 @@ mod tests {
         let strand0 = Strand {
             genes: vec![
                 Gene {
-                    name: "jump".to_string(),
+                    op: OpCode::Jump,
                     args: vec![Nucleotide::Number(1)],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(100)],
                 },
             ],
         };
         let strand1 = Strand {
             genes: vec![Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(200)],
             }],
         };
@@ -1460,22 +1709,22 @@ mod tests {
         let strand0 = Strand {
             genes: vec![
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(0)],
                 },
                 Gene {
-                    name: "brz".to_string(),
+                    op: OpCode::Brz,
                     args: vec![Nucleotide::Number(1)],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(100)],
                 },
             ],
         };
         let strand1 = Strand {
             genes: vec![Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(200)],
             }],
         };
@@ -1513,27 +1762,27 @@ mod tests {
         let strand0 = Strand {
             genes: vec![
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(0)],
                 }, // 0: strand idx
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(5)],
                 }, // 1: gene idx
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(0)],
                 }, // 2: arg idx
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(99)],
                 }, // 3: value
                 Gene {
-                    name: "transcribe".to_string(),
+                    op: OpCode::Transcribe,
                     args: vec![],
                 }, // 4: transcribe
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(0)],
                 }, // 5: target to be modified
             ],
@@ -1565,15 +1814,15 @@ mod tests {
     fn test_div_by_zero() {
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             },
             Gene {
-                name: "div".to_string(),
+                op: OpCode::Div,
                 args: vec![],
             },
         ];
@@ -1594,15 +1843,15 @@ mod tests {
     fn test_div_overflow() {
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(i64::MIN)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(-1)],
             },
             Gene {
-                name: "div".to_string(),
+                op: OpCode::Div,
                 args: vec![],
             },
         ];
@@ -1621,7 +1870,7 @@ mod tests {
     #[test]
     fn test_stack_underflow() {
         let genes = vec![Gene {
-            name: "add".to_string(), // Requires 2 args, stack has 0
+            op: OpCode::Add, // Requires 2 args, stack has 0
             args: vec![],
         }];
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -1640,15 +1889,15 @@ mod tests {
     fn test_type_mismatch() {
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::String("foo".to_string())],
             },
             Gene {
-                name: "add".to_string(),
+                op: OpCode::Add,
                 args: vec![],
             },
         ];
@@ -1668,7 +1917,7 @@ mod tests {
     fn test_starvation() {
         // [ jump(0) ] - infinite loop, no food
         let genes = vec![Gene {
-            name: "jump".to_string(),
+            op: OpCode::Jump,
             args: vec![Nucleotide::Number(0)],
         }];
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -1686,11 +1935,11 @@ mod tests {
         // Cost: 2 per loop. Gain: 5 per loop. Net +3.
         let genes = vec![
             Gene {
-                name: "photosynthesize".to_string(),
+                op: OpCode::Photosynthesize,
                 args: vec![],
             },
             Gene {
-                name: "jump".to_string(),
+                op: OpCode::Jump,
                 args: vec![Nucleotide::Number(0)],
             },
         ];
@@ -1715,15 +1964,15 @@ mod tests {
         // Cost: 3 per loop. Gain: 10 per loop. Net +7.
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             },
             Gene {
-                name: "consume".to_string(),
+                op: OpCode::Consume,
                 args: vec![],
             },
             Gene {
-                name: "jump".to_string(),
+                op: OpCode::Jump,
                 args: vec![Nucleotide::Number(0)],
             },
         ];
@@ -1741,31 +1990,31 @@ mod tests {
         // [ push(42) push(10) push(10) g_write() push(10) push(10) g_read() ]
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(42)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             }, // y
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             }, // x
             Gene {
-                name: "g_write".to_string(),
+                op: OpCode::GWrite,
                 args: vec![],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             }, // y
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             }, // x
             Gene {
-                name: "g_read".to_string(),
+                op: OpCode::GRead,
                 args: vec![],
             },
         ];
@@ -1791,31 +2040,31 @@ mod tests {
         // [ push(42) push(5) push(5) g_write() push(5) push(5) virus() ]
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(42)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "g_write".to_string(),
+                op: OpCode::GWrite,
                 args: vec![],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "virus".to_string(),
+                op: OpCode::Virus,
                 args: vec![],
             },
         ];
@@ -1831,39 +2080,39 @@ mod tests {
         // [ push("add") push(6) push(6) g_write() push(10) push(20) push(6) push(6) virus() ]
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::String("add".to_string())],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(6)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(6)],
             },
             Gene {
-                name: "g_write".to_string(),
+                op: OpCode::GWrite,
                 args: vec![],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(20)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(6)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(6)],
             },
             Gene {
-                name: "virus".to_string(),
+                op: OpCode::Virus,
                 args: vec![],
             },
         ];
@@ -1881,22 +2130,22 @@ mod tests {
         let strand0 = Strand {
             genes: vec![
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(1)],
                 },
                 Gene {
-                    name: "jump_s".to_string(),
+                    op: OpCode::JumpS,
                     args: vec![],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(100)],
                 },
             ],
         };
         let strand1 = Strand {
             genes: vec![Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(200)],
             }],
         };
@@ -1920,11 +2169,11 @@ mod tests {
         // [ push(100) push(2) push(8) push(8) radiate() ]
         // Writes 100 to circle radius 2 at 8,8
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(8)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(8)] },
-            Gene { name: "radiate".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
+            Gene { op: OpCode::Radiate, args: vec![] },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -1944,16 +2193,16 @@ mod tests {
         // First radiate 10s
         // [ push(10) push(1) push(5) push(5) radiate() push(1) push(5) push(5) siphon() ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "radiate".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+            Gene { op: OpCode::Radiate, args: vec![] },
             // Siphon same area
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "siphon".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+            Gene { op: OpCode::Siphon, args: vec![] },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -1976,8 +2225,8 @@ mod tests {
     fn test_genome() {
         // [ genome() ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "genome".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Genome, args: vec![] },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
