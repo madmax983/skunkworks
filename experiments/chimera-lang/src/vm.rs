@@ -102,7 +102,8 @@ impl ChimeraVM {
                 }
 
                 if self.telomeres[self.ip.0] <= 0 {
-                    self.output.push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                    self.output
+                        .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
                     self.ip.0 += 1;
                     self.ip.1 = 0;
                     return;
@@ -165,8 +166,7 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
                     let len_val = self.stack.pop().unwrap();
 
-                    if let (Value::Int(x), Value::Int(y), Value::Int(len)) =
-                        (x_val, y_val, len_val)
+                    if let (Value::Int(x), Value::Int(y), Value::Int(len)) = (x_val, y_val, len_val)
                     {
                         if len > 0 {
                             let mut genes = Vec::new();
@@ -207,7 +207,8 @@ impl ChimeraVM {
                                 ));
                             }
                         } else {
-                            self.output.push("Error: Invalid length for incubate".to_string());
+                            self.output
+                                .push("Error: Invalid length for incubate".to_string());
                         }
                     } else {
                         self.output
@@ -373,11 +374,13 @@ impl ChimeraVM {
                         if (0..16).contains(&y) && (0..16).contains(&x) {
                             Some(self.grid[y as usize][x as usize].clone())
                         } else {
-                            self.output.push("Error: Grid index out of bounds".to_string());
+                            self.output
+                                .push("Error: Grid index out of bounds".to_string());
                             None
                         }
                     } else {
-                        self.output.push("Error: Type mismatch for virus".to_string());
+                        self.output
+                            .push("Error: Type mismatch for virus".to_string());
                         None
                     };
 
@@ -392,7 +395,8 @@ impl ChimeraVM {
                         }
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for virus".to_string());
+                    self.output
+                        .push("Error: Stack underflow for virus".to_string());
                 }
                 None
             }
@@ -450,10 +454,13 @@ impl ChimeraVM {
                                 self.output.push("Error: Negative jump target".to_string());
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for jump_s".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for jump_s".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for jump_s".to_string());
+                    self.output
+                        .push("Error: Stack underflow for jump_s".to_string());
                 }
                 None
             }
@@ -472,10 +479,13 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for brz_s".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for brz_s".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for brz_s".to_string());
+                    self.output
+                        .push("Error: Stack underflow for brz_s".to_string());
                 }
                 None
             }
@@ -565,7 +575,9 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Invalid arg for telomerase".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Invalid arg for telomerase".to_string()),
                     }
                 } else {
                     self.output
@@ -738,7 +750,8 @@ impl ChimeraVM {
                                 self.epigenome.retain(|(s, _)| *s != s_idx);
 
                                 self.energy -= 10;
-                                self.output.push(format!("APOPTOSIS: Cleared strand {}", s_idx));
+                                self.output
+                                    .push(format!("APOPTOSIS: Cleared strand {}", s_idx));
                             } else {
                                 self.output.push(
                                     "Error: Strand index out of bounds for apoptosis".to_string(),
@@ -752,6 +765,164 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for apoptosis".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "crispr_scan" => {
+                // stack: len, p_start, p_strand, t_strand (Top -> Bottom)
+                if self.stack.len() >= 4 {
+                    let len_val = self.stack.pop().unwrap();
+                    let p_start_val = self.stack.pop().unwrap();
+                    let p_strand_val = self.stack.pop().unwrap();
+                    let t_strand_val = self.stack.pop().unwrap();
+
+                    if let (
+                        Value::Int(len),
+                        Value::Int(p_start),
+                        Value::Int(p_s_idx),
+                        Value::Int(t_s_idx),
+                    ) = (len_val, p_start_val, p_strand_val, t_strand_val)
+                    {
+                        let p_idx = p_s_idx as usize;
+                        let t_idx = t_s_idx as usize;
+                        let start = p_start as usize;
+                        let length = len as usize;
+                        let helix_len = self.dna.helix.strands.len();
+
+                        if p_idx < helix_len && t_idx < helix_len {
+                            let p_strand = &self.dna.helix.strands[p_idx];
+                            if start + length <= p_strand.genes.len() {
+                                let pattern = &p_strand.genes[start..start + length];
+                                let t_strand = &self.dna.helix.strands[t_idx];
+
+                                // Simple search
+                                let mut found_idx = -1;
+                                if t_strand.genes.len() >= length {
+                                    for i in 0..=(t_strand.genes.len() - length) {
+                                        if &t_strand.genes[i..i + length] == pattern {
+                                            found_idx = i as i64;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                self.stack.push(Value::Int(found_idx));
+                                self.energy -= 5;
+                            } else {
+                                self.output.push("Error: Pattern out of bounds".to_string());
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Strand index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for crispr_scan".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for crispr_scan".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "cas9_cut" => {
+                // stack: index, strand_idx
+                if self.stack.len() >= 2 {
+                    let idx_val = self.stack.pop().unwrap();
+                    let s_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(cut_idx), Value::Int(s_idx)) = (idx_val, s_val) {
+                        let idx = s_idx as usize;
+                        let cut = cut_idx as usize;
+
+                        if idx < self.dna.helix.strands.len() {
+                            if cut <= self.dna.helix.strands[idx].genes.len() {
+                                // Split off
+                                let tail = self.dna.helix.strands[idx].genes.split_off(cut);
+                                let new_strand = crate::ast::Strand { genes: tail };
+                                self.dna.helix.strands.push(new_strand);
+                                self.telomeres.push(50);
+
+                                let new_idx = self.dna.helix.strands.len() - 1;
+                                self.stack.push(Value::Int(new_idx as i64));
+                                self.energy -= 20;
+                                self.output.push(format!(
+                                    "CAS9: Cut strand {} at {}, created {}",
+                                    idx, cut, new_idx
+                                ));
+                            } else {
+                                self.output
+                                    .push("Error: Cut index out of bounds".to_string());
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Strand index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for cas9_cut".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for cas9_cut".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "ligase" => {
+                // stack: source_strand, target_strand (Top -> Bottom)
+                if self.stack.len() >= 2 {
+                    let source_val = self.stack.pop().unwrap();
+                    let target_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(src_idx), Value::Int(tgt_idx)) = (source_val, target_val) {
+                        let s = src_idx as usize;
+                        let t = tgt_idx as usize;
+                        let helix_len = self.dna.helix.strands.len();
+
+                        if s < helix_len && t < helix_len {
+                            if s == t {
+                                self.output
+                                    .push("Error: Cannot ligate strand to itself".to_string());
+                            } else {
+                                // We need to move genes from S to T, then remove S?
+                                // Removing S shifts indices, which is bad for existing references.
+                                // Instead of removing S, we clear it (apoptosis).
+                                // BUT ligase typically joins them.
+                                // If we remove S, subsequent indices shift.
+                                // If we assume strands are immutable references (indices), shifting is dangerous.
+                                // However, `apoptosis` just clears genes, keeping the empty shell.
+                                // Let's do that: Append S to T, clear S.
+
+                                // We need mutable access to two strands.
+                                let (lower, upper) = if s < t { (s, t) } else { (t, s) };
+                                let (first, second) = self.dna.helix.strands.split_at_mut(upper);
+
+                                let (s_strand, t_strand) = if s < t {
+                                    (&mut first[lower], &mut second[0])
+                                } else {
+                                    (&mut second[0], &mut first[lower])
+                                };
+
+                                let mut genes_to_move = std::mem::take(&mut s_strand.genes);
+                                t_strand.genes.append(&mut genes_to_move);
+
+                                self.energy -= 15;
+                                self.output.push(format!("LIGASE: Joined {} into {}", s, t));
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Strand index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for ligase".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for ligase".to_string());
                 }
                 None
             }
@@ -1263,13 +1434,34 @@ mod tests {
     fn test_virus_int() {
         // [ push(42) push(5) push(5) g_write() push(5) push(5) virus() ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(42)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "g_write".to_string(), args: vec![] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "virus".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(42)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "virus".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -1282,15 +1474,42 @@ mod tests {
     fn test_virus_enzyme() {
         // [ push("add") push(6) push(6) g_write() push(10) push(20) push(6) push(6) virus() ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::String("add".to_string())] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
-            Gene { name: "g_write".to_string(), args: vec![] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(20)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
-            Gene { name: "virus".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::String("add".to_string())],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(6)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(6)],
+            },
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(6)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(6)],
+            },
+            Gene {
+                name: "virus".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -1305,17 +1524,31 @@ mod tests {
         // [ push(1) jump_s() push(100) ] [ push(200) ]
         let strand0 = Strand {
             genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-                Gene { name: "jump_s".to_string(), args: vec![] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    name: "jump_s".to_string(),
+                    args: vec![],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(100)],
+                },
             ],
         };
         let strand1 = Strand {
-            genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(200)] },
-            ],
+            genes: vec![Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(200)],
+            }],
         };
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         vm.step(); // push(1)

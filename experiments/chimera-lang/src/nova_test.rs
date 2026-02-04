@@ -420,22 +420,56 @@ mod tests {
 
         let genes = vec![
             // Write 10 to (5,5)
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "g_write".to_string(), args: vec![] },
-
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
             // Write "add" to (5,6)
-            Gene { name: "push".to_string(), args: vec![Nucleotide::String("add".to_string())] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
-            Gene { name: "g_write".to_string(), args: vec![] },
-
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::String("add".to_string())],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(6)],
+            },
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
             // Incubate
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] }, // len
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // y
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // x
-            Gene { name: "incubate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(2)],
+            }, // len
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            }, // y
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            }, // x
+            Gene {
+                name: "incubate".to_string(),
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -461,5 +495,219 @@ mod tests {
         // Check gene 1: add()
         assert_eq!(new_strand.genes[1].name, "add");
         assert!(new_strand.genes[1].args.is_empty());
+    }
+
+    #[test]
+    fn test_crispr_scan() {
+        // Strand 0: [ push(1), push(2), push(3), push(4) ]
+        // Strand 1: [ push(2), push(3) ] - pattern
+        // Strand 2: [ push(2), push(3), push(1), push(0) crispr_scan() ]
+
+        let target = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(3)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(4)],
+                },
+            ],
+        };
+
+        let pattern = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(3)],
+                },
+            ],
+        };
+
+        let controller = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // target_s
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                }, // pattern_s
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // pattern_start
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(2)],
+                }, // pattern_len
+                Gene {
+                    name: "crispr_scan".to_string(),
+                    args: vec![],
+                },
+            ],
+        };
+
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![target, pattern, controller],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        vm.ip = (2, 0); // Start on controller
+
+        while !vm.halted {
+            vm.step();
+        }
+
+        assert_eq!(vm.stack.pop(), Some(crate::vm::Value::Int(1))); // Found at index 1
+    }
+
+    #[test]
+    fn test_cas9_cut() {
+        // Strand 0: [ push(1), push(2), push(3), push(4) ]
+        // Strand 1: [ push(0), push(2), cas9_cut() ]
+
+        let target = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(3)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(4)],
+                },
+            ],
+        };
+
+        let controller = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // target_s
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(2)],
+                }, // cut index (at push(3))
+                Gene {
+                    name: "cas9_cut".to_string(),
+                    args: vec![],
+                },
+            ],
+        };
+
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![target, controller],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+
+        vm.ip = (1, 0);
+
+        // push(0), push(2), cas9_cut
+        vm.step();
+        vm.step();
+        vm.step();
+
+        // Should create Strand 2 with [push(3), push(4)]
+        // Strand 0 should remain [push(1), push(2)]
+
+        assert_eq!(vm.dna.helix.strands.len(), 3);
+        assert_eq!(vm.dna.helix.strands[0].genes.len(), 2);
+        assert_eq!(vm.dna.helix.strands[2].genes.len(), 2);
+
+        // Check content
+        if let Nucleotide::Number(n) = vm.dna.helix.strands[2].genes[0].args[0] {
+            assert_eq!(n, 3);
+        } else {
+            panic!("Wrong gene");
+        }
+    }
+
+    #[test]
+    fn test_ligase() {
+        // Strand 0: [ push(1) ]
+        // Strand 1: [ push(2) ]
+        // Strand 2: [ push(0), push(1), ligase() ]
+
+        let s0 = Strand {
+            genes: vec![Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(1)],
+            }],
+        };
+        let s1 = Strand {
+            genes: vec![Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(2)],
+            }],
+        };
+
+        let controller = Strand {
+            genes: vec![
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // target
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                }, // source
+                Gene {
+                    name: "ligase".to_string(),
+                    args: vec![],
+                },
+            ],
+        };
+
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![s0, s1, controller],
+            },
+        };
+        let mut vm = ChimeraVM::new(dna);
+        vm.ip = (2, 0);
+
+        vm.step(); // push(0)
+        vm.step(); // push(1)
+        vm.step(); // ligase
+
+        // S0 should have 2 genes: push(1), push(2)
+        // S1 should have 0 genes (cleared)
+
+        assert_eq!(vm.dna.helix.strands[0].genes.len(), 2);
+        assert_eq!(vm.dna.helix.strands[1].genes.len(), 0);
+
+        if let Nucleotide::Number(n) = vm.dna.helix.strands[0].genes[1].args[0] {
+            assert_eq!(n, 2);
+        } else {
+            panic!("Wrong gene");
+        }
     }
 }
