@@ -21,3 +21,5 @@ mod nova_waste_test;
 mod nova_test;
 #[cfg(test)]
 mod cortex_test;
+#[cfg(test)]
+mod sentry_nova_test;
