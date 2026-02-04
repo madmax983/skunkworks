@@ -36,6 +36,7 @@ pub struct Spore {
     pub telomeres: Vec<i64>,
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
     pub waste_grid: Vec<Vec<i64>>,
+    pub light_grid: Vec<Vec<i64>>,
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
@@ -66,6 +67,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub waste_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub light_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -91,6 +94,8 @@ impl ChimeraVM {
         let hormone_grid = vec![vec![[0, 0, 0]; 16]; 16];
         #[cfg(feature = "nova")]
         let waste_grid = vec![vec![0; 16]; 16];
+        #[cfg(feature = "nova")]
+        let light_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -115,6 +120,8 @@ impl ChimeraVM {
             hormone_grid,
             #[cfg(feature = "nova")]
             waste_grid,
+            #[cfg(feature = "nova")]
+            light_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -208,6 +215,39 @@ impl ChimeraVM {
         self.waste_grid = new_grid;
     }
 
+    #[cfg(feature = "nova")]
+    #[allow(clippy::needless_range_loop)]
+    fn diffuse_light(&mut self) {
+        let mut new_grid = self.light_grid.clone();
+        for y in 0..16 {
+            for x in 0..16 {
+                let mut sum = self.light_grid[y][x] * 4;
+                let mut count = 4;
+
+                if y > 0 {
+                    sum += self.light_grid[y - 1][x];
+                    count += 1;
+                }
+                if y < 15 {
+                    sum += self.light_grid[y + 1][x];
+                    count += 1;
+                }
+                if x > 0 {
+                    sum += self.light_grid[y][x - 1];
+                    count += 1;
+                }
+                if x < 15 {
+                    sum += self.light_grid[y][x + 1];
+                    count += 1;
+                }
+
+                // Blur and strong decay (50%)
+                new_grid[y][x] = (sum / count) / 2;
+            }
+        }
+        self.light_grid = new_grid;
+    }
+
     pub fn step(&mut self) {
         if self.halted {
             return;
@@ -255,6 +295,7 @@ impl ChimeraVM {
 
             self.diffuse_hormones();
             self.diffuse_waste();
+            self.diffuse_light();
 
             // Decay hormones: reduce intensity by 1 per step
             for row in self.hormone_grid.iter_mut() {
@@ -433,7 +474,9 @@ impl ChimeraVM {
             | OpCode::Entangle
             | OpCode::Decohere
             | OpCode::Conjugate
-            | OpCode::Gravitate => self.exec_nova_op(op, args),
+            | OpCode::Gravitate
+            | OpCode::Lumine
+            | OpCode::SenseLight => self.exec_nova_op(op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
@@ -1099,6 +1142,7 @@ impl ChimeraVM {
                     telomeres: self.telomeres.clone(),
                     hormone_grid: self.hormone_grid.clone(),
                     waste_grid: self.waste_grid.clone(),
+                    light_grid: self.light_grid.clone(),
                     call_stack: self.call_stack.clone(),
                     input_buffer: self.input_buffer.clone(),
                     receptors: self.receptors.clone(),
@@ -1139,6 +1183,7 @@ impl ChimeraVM {
                             self.telomeres = spore.telomeres.clone();
                             self.hormone_grid = spore.hormone_grid.clone();
                             self.waste_grid = spore.waste_grid.clone();
+                            self.light_grid = spore.light_grid.clone();
                             self.call_stack = spore.call_stack.clone();
                             self.input_buffer = spore.input_buffer.clone();
                             self.receptors = spore.receptors.clone();
@@ -2330,6 +2375,44 @@ impl ChimeraVM {
                     self.output
                         .push("Error: Stack underflow for gravitate".to_string());
                 }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Lumine => {
+                // stack: intensity, radius (bottom)
+                if self.stack.len() >= 2 {
+                    let intensity_val = self.stack.pop().unwrap();
+                    let radius_val = self.stack.pop().unwrap();
+                    if let (Value::Int(r), Value::Int(intensity)) = (radius_val, intensity_val) {
+                        if r > 0 && intensity > 0 {
+                            let (cy, cx) = self.context_loc;
+                            let coords = self.get_circular_coords(cx as i64, cy as i64, r);
+                            let count = coords.len();
+                            for (tx, ty) in coords {
+                                self.light_grid[ty][tx] =
+                                    self.light_grid[ty][tx].saturating_add(intensity);
+                            }
+                            self.energy = self.energy.saturating_sub((count / 2) as i64);
+                            self.output.push(format!(
+                                "LUMINE: Emitted {} light at {},{} r={}",
+                                intensity, cx, cy, r
+                            ));
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for lumine".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for lumine".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::SenseLight => {
+                let (cy, cx) = self.context_loc;
+                let intensity = self.light_grid[cy][cx];
+                self.stack.push(Value::Int(intensity));
                 None
             }
             _ => None,
