@@ -1,0 +1,16 @@
+[package]
+name = "hive-synth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm.workspace = true
+ratatui.workspace = true
+rodio = { version = "0.17", optional = true }
+rand.workspace = true
+anyhow.workspace = true
+tui-shared.workspace = true
+
+[features]
+default = []
+audio = ["rodio"]

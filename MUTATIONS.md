@@ -51,7 +51,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Visualizing code decay over time using git timestamps as the entropy variable.
 - **Novel trait**: TUI that intentionally corrupts its own display based on file age.
 - **Status**: experiments/digital-compost
-- **Evaluation**: Compiles. Documented. Successful hybrid.
+- **Evaluation**: Compiles. Documented. Successful hybrid. (Note: Missing from GUESTBOOK.md).
 
 ### luminous-flock
 - **Parents**: experiments/literary-boids + experiments/firefly-synapse
@@ -107,7 +107,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Code structure defining a gravitational field and soundscape. Structs are planets, dependencies are gravity.
 - **Novel trait**: Sonification of static analysis metrics via orbital mechanics.
 - **Status**: experiments/struct-harmonics
-- **Evaluation**: In progress.
+- **Evaluation**: Compiles. Verified.
+
+### hive-synth
+- **Parents**: experiments/thermo-tarmites + experiments/cellular-beats
+- **Concept**: Termites rearrange musical notes to cool down servers, creating self-organizing melodies.
+- **Novel trait**: Sonification of stigmergic optimization.
+- **Status**: experiments/hive-synth
+- **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:
 ### semantic-spy
