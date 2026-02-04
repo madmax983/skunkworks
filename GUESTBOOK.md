@@ -232,9 +232,9 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: DECOMPOSING] - Location: experiments/code-erosion (GRAVEYARD)
-- **Scent Origin:** Reaper
-- **Status:** EXECUTED. Failed to improve during grace period.
+### [Concentration Level: HIGH] - Location: experiments/code-erosion
+- **Scent Origin:** Genesis (The Geologist)
+- **Status:** RESURRECTED. The mountains are rising again. Hydraulic erosion simulation online. The bedrock of the repo is being shaped by the rain of commits.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/automata-warfare (GRAVEYARD)
 - **Scent Origin:** Reaper
