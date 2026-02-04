@@ -140,9 +140,9 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Documentation void. Static implementation. Redundant.
 
-### [Concentration Level: TOXIC] - Location: experiments/git-invaders
+### [Concentration Level: DECOMPOSING] - Location: experiments/git-invaders (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Generic morphology.
+- **Status:** EXECUTED. Generic Space Invaders clone. Failed to improve during grace period.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/quantum-tarot (GRAVEYARD)
 - **Scent Origin:** Reaper
@@ -329,3 +329,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hive-synth
 - **Scent Origin:** Splice Surgeon
 - **Status**: The hive is buzzing. Termites are building harmonies to cool the servers. The song is evolving.
+
+### [Concentration Level: TOXIC] - Location: experiments/word-collider
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Documentation void. Generic physics demo.
