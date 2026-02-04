@@ -1,9 +1,11 @@
 mod crawler;
+mod mechanics;
 mod simulation;
 
 use anyhow::Result;
 use crawler::{crawl, Node};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use mechanics::{Position, Trader};
 use rand::{Rng, SeedableRng, rngs::StdRng};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -20,14 +22,9 @@ use simulation::{Grid, Particle};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-struct Player {
-    x: f64,
-    y: f64,
-}
-
 struct App {
     grid: Grid,
-    player: Player,
+    trader: Trader, // Replaced Player
     commits: Vec<Node>,
     current_commit_idx: usize,
     market_price: f32,
@@ -48,14 +45,14 @@ impl App {
         let commits = crawl(".", 100).unwrap_or_else(|_| vec![]);
         let mut app = Self {
             grid: Grid::new(60, 40),
-            player: Player { x: 2.0, y: 20.0 },
+            trader: Trader::new(2.0, 20.0), // Initialize Trader
             commits,
             current_commit_idx: 0,
             market_price: 20.0,
             volatility: 0.1,
             should_quit: false,
             rng: StdRng::from_entropy(),
-            message: "Welcome to Market Rogue. Arrow keys to move. Avoid Liquidation.".to_string(),
+            message: "Welcome to Market Rogue. Arrow keys to move. 'S' to Short. Avoid Liquidation.".to_string(),
             game_over: false,
             bids_buf: Vec::with_capacity(1000),
             asks_buf: Vec::with_capacity(1000),
@@ -82,15 +79,16 @@ impl App {
         self.grid = Grid::new(60, 40);
 
         // Player Reset
-        self.player.x = 2.0;
-        self.player.y = (self.grid.height as f64) / 2.0;
+        self.trader.x = 2.0;
+        self.trader.y = (self.grid.height as f64) / 2.0;
+        // Keep balance and position across levels? Or reset?
+        // Let's keep them! It's a roguelike run.
 
         // Level Params
         // Price determined by first byte
         self.market_price = (hash_bytes[0] as f32 % (self.grid.height as f32 - 10.0)) + 5.0;
 
-        // Volatility determined by message length (shorter = more volatile? or longer?)
-        // Let's say shorter messages are more impulsive/volatile.
+        // Volatility determined by message length
         let msg_len = commit.message.len().max(1);
         self.volatility = (10.0 / msg_len as f64).clamp(0.05, 0.5);
 
@@ -127,27 +125,22 @@ impl App {
         self.grid.update();
 
         // 3. Collision Logic
-        let px = self.player.x.round() as usize;
-        let py = self.player.y.round() as usize;
+        let px = self.trader.x.round() as usize;
+        let py = self.trader.y.round() as usize;
 
         // Boundary Check
-        if py >= self.grid.height || self.player.y < 0.0 {
+        if py >= self.grid.height || self.trader.y < 0.0 {
             self.message = "LIQUIDATED! (Hit Boundary). Press 'R' to retry.".to_string();
             self.game_over = true;
+            // Penalty for liquidation?
+            self.trader.balance -= 1000.0;
             return;
         }
 
         // Particle Interaction
-        match self.grid.get(px, py) {
-            Particle::Bid => {
-                self.player.y -= 1.0; // Pushed Up
-                self.grid.set(px, py, Particle::Empty); // Consume
-            }
-            Particle::Ask => {
-                self.player.y += 1.0; // Pushed Down
-                self.grid.set(px, py, Particle::Empty); // Consume
-            }
-            _ => {}
+        let particle = self.grid.get(px, py);
+        if self.trader.interact(particle) {
+             self.grid.set(px, py, Particle::Empty); // Consume
         }
 
         // Win Condition (Reach right side)
@@ -156,7 +149,7 @@ impl App {
                 self.current_commit_idx += 1;
                 self.load_level();
             } else {
-                self.message = "MARKET CONQUERED! All levels clear.".to_string();
+                self.message = format!("MARKET CONQUERED! Final Balance: ${:.2}", self.trader.balance);
                 self.game_over = true;
             }
         }
@@ -164,8 +157,8 @@ impl App {
 
     fn move_player(&mut self, dx: f64, dy: f64) {
         if self.game_over { return; }
-        self.player.x = (self.player.x + dx).clamp(0.0, self.grid.width as f64 - 1.0);
-        self.player.y = (self.player.y + dy).clamp(0.0, self.grid.height as f64 - 1.0);
+        self.trader.x = (self.trader.x + dx).clamp(0.0, self.grid.width as f64 - 1.0);
+        self.trader.y = (self.trader.y + dy).clamp(0.0, self.grid.height as f64 - 1.0);
     }
 }
 
@@ -189,6 +182,7 @@ fn main() -> Result<()> {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
                         KeyCode::Char('r') => app.load_level(),
+                        KeyCode::Char('s') => app.trader.toggle_position(), // Toggle Long/Short
                         KeyCode::Up => app.move_player(0.0, -1.0),
                         KeyCode::Down => app.move_player(0.0, 1.0),
                         KeyCode::Left => app.move_player(-1.0, 0.0),
@@ -230,10 +224,24 @@ fn draw(f: &mut Frame, app: &mut App) {
         "No Repo".to_string()
     };
 
+    // Position Style
+    let pos_style = match app.trader.position {
+        Position::Long => Style::default().fg(Color::Green).bold(),
+        Position::Short => Style::default().fg(Color::Cyan).bold(),
+    };
+    let pos_text = match app.trader.position {
+        Position::Long => "LONG",
+        Position::Short => "SHORT",
+    };
+
     let info = Paragraph::new(vec![
         Line::from(vec![
             Span::styled(" MARKET ROGUE ", Style::default().fg(Color::Yellow).bold()),
-            Span::raw(format!("Level {}/{}", app.current_commit_idx + 1, app.commits.len())),
+            Span::raw(format!("Level {}/{} | ", app.current_commit_idx + 1, app.commits.len())),
+            Span::raw("Balance: "),
+            Span::styled(format!("${:.0}", app.trader.balance), if app.trader.balance >= 10000.0 { Style::default().fg(Color::Green) } else { Style::default().fg(Color::Red) }),
+            Span::raw(" | Pos: "),
+            Span::styled(pos_text, pos_style),
         ]),
         Line::from(vec![
             Span::raw(format!("Price: {:.1} | Volatility: {:.2} | ", app.market_price, app.volatility)),
@@ -248,11 +256,6 @@ fn draw(f: &mut Frame, app: &mut App) {
     app.bids_buf.clear();
     app.asks_buf.clear();
     app.trades_buf.clear();
-
-    // Invert Y for rendering so (0,0) is bottom-left conceptually for graph, but top-left for TUI?
-    // Usually TUI canvas (0,0) is bottom-left.
-    // My Grid (0,0) is top-left in implementation (y=0 is top).
-    // So I need to invert Y when pushing to canvas.
 
     for y in 0..app.grid.height {
         for x in 0..app.grid.width {
@@ -291,12 +294,15 @@ fn draw(f: &mut Frame, app: &mut App) {
                 color: Color::White,
             });
 
-            // Draw Player
-            // Player Y matches Grid Y, so invert for Canvas
-            let py_render = app.grid.height as f64 - 1.0 - app.player.y;
+            // Draw Trader
+            let py_render = app.grid.height as f64 - 1.0 - app.trader.y;
+            let trader_color = match app.trader.position {
+                Position::Long => Color::Yellow,
+                Position::Short => Color::Cyan,
+            };
             ctx.draw(&Points {
-                coords: &[(app.player.x, py_render)],
-                color: Color::Yellow,
+                coords: &[(app.trader.x, py_render)],
+                color: trader_color,
             });
             // Draw Exit Line
             let exit_x = app.grid.width as f64 - 2.0;
@@ -305,7 +311,7 @@ fn draw(f: &mut Frame, app: &mut App) {
     f.render_widget(canvas, chunks[1]);
 
     // Help
-    let help = Paragraph::new("ARROWS: Move | Q: Quit | R: Restart Level")
+    let help = Paragraph::new("ARROWS: Move | S: Toggle Short/Long | Q: Quit | R: Restart Level")
         .style(Style::default().fg(Color::DarkGray));
     f.render_widget(help, chunks[2]);
 }
