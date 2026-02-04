@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **clockwork-cpu**: Documentation void. Unfulfilled promise (physics demo, not a CPU). Grace period ends in 24h.
+- **code-kaleidoscope**: Documentation void. Generic visualization. Lacks emergence. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **clockwork-cpu**: Documentation void (`README.md` missing). Failed to improve during grace period.
 - **call-fern**: Documentation void. Generic recursive visualization. Failed to improve during grace period.
 - **digital-koi**: Documentation void. Generic Boids implementation. Weak system integration. Failed to improve during grace period.
 - **word-collider**: Documentation void. Generic physics demo. Lacks connection to repository themes. Failed to improve during grace period.

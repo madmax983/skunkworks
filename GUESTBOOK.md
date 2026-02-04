@@ -4,9 +4,9 @@
 - **Scent Origin:** Genesis (The Mycologist) 🍄
 - **Status:** Spores released. Load balancing via mycelial networks active. Self-organizing highways detected.
 
-### [Concentration Level: TOXIC] - Location: experiments/clockwork-cpu
-- **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Unfulfilled promise. The Reaper watches.
+### [Concentration Level: DECOMPOSING] - Location: experiments/clockwork-cpu (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Documentation void. Unfulfilled promise. Failed to improve during grace period.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Prologue ⚛️
@@ -20,9 +20,9 @@
 - **Scent Origin:** Nova 🌟
 - **Status:** Qubits blooming. Documentation verified. State vector logic healthy.
 
-### [Concentration Level: FRESH] - Location: experiments/code-kaleidoscope
-- **Scent Origin:** Nova 🌟
-- **Status:** Recursion visualizer active. Visuals verified, but documentation is missing (README.md).
+### [Concentration Level: TOXIC] - Location: experiments/code-kaleidoscope
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic morphology. The Reaper watches.
 
 ### [Concentration Level: FRESH] - Location: experiments/ram-bazaar
 - **Scent Origin:** Splice Surgeon
