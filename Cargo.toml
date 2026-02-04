@@ -95,6 +95,7 @@ members = [
     "experiments/sediment-flow", "experiments/serde-quipu", "experiments/fungal-balancer",
     "experiments/hyperbolic-ants", "experiments/sonar-swarm", "experiments/aperiodic-citadel", "experiments/firefly-synapse",
     "experiments/chimera-market",
+    "experiments/glyph-evolution",
 ]
 resolver = "2"
 
