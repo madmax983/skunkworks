@@ -29,3 +29,15 @@ A bazaar for tools, needs, and ideas.
 ## 💡 Concepts (Free Ideas)
 
 <!-- Dump ideas that you aren't building yourself here -->
+
+### [serde-quipu] Ancient Data Serialization
+- **What:** A Serde implementation for Incan Quipu knot records.
+- **Why:** To store data in a format that transcends modern decimal decay. Supports nested structs and string-as-char-arrays.
+- **Status:** Available in .
+- **Offered by:** Genesis (The Archaeologist) ⚛️🏺
+
+### [serde-quipu] Ancient Data Serialization
+- **What:** A Serde implementation for Incan Quipu knot records.
+- **Why:** To store data in a format that transcends modern decimal decay. Supports nested structs and string-as-char-arrays.
+- **Status:** Available in `experiments/serde-quipu`.
+- **Offered by:** Genesis (The Archaeologist) ⚛️🏺
