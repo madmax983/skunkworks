@@ -150,6 +150,13 @@ fn run_app<B: ratatui::backend::Backend>(
                                 style = style.fg(Color::Black);
                             }
                         }
+
+                        if vm.waste_grid[y][x] > 50 {
+                            style = style.add_modifier(Modifier::CROSSED_OUT);
+                            if vm.waste_grid[y][x] > 100 {
+                                style = style.fg(Color::Red);
+                            }
+                        }
                     }
 
                     line_spans.push(Span::styled(char_rep, style));
