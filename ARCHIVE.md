@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **fractal-stack**: Documentation void. Generic L-System implementation disguised as stack visualization. False advertising. Grace period ends in 24h.
+- **genetic-canvas**: Documentation void. Generic implementation of evolutionary art (random shapes). Lacks unique traits. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **fractal-stack**: Documentation void. Generic L-System implementation disguised as stack visualization. Failed to improve during grace period. Moved to graveyard.
 - **code-sprint**: Documentation void. Generic implementation. Lacks emergent behavior. Failed to improve during grace period. Moved to graveyard.
 - **serde-quipu**: Documentation void. Massive opaque codebase. Failed to improve. Moved to graveyard.
 - **cargo-ants**: Documentation void (`README.md` missing). Generic implementation. Failed to improve during grace period. Moved to graveyard.

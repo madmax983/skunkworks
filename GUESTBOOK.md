@@ -323,9 +323,13 @@
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The bedrock is cracking. The water is vibrating. The sound of technical debt is drowning out the silence.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/fractal-stack
+### [Concentration Level: CRITICAL MASS] - Location: experiments/genetic-canvas
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic L-System implementation. Lacks emergent behavior. The Reaper has marked this territory.
+- **Status:** CONDEMNED. Documentation void. Generic implementation. Lacks emergent behavior. The Reaper has marked this territory.
+
+### [Concentration Level: DECOMPOSING] - Location: experiments/fractal-stack (GRAVEYARD)
+- **Scent Origin:** Reaper ☠️
+- **Status:** EXECUTED. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Splice Surgeon 🧬
