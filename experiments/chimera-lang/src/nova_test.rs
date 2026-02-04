@@ -530,6 +530,9 @@ mod tests {
 
         vm.step(); // execute push 100
         assert_eq!(vm.stack.last(), Some(&crate::vm::Value::Int(100)));
+    }
+
+    #[test]
     fn test_incubate() {
         // [ push(10) push(5) push(5) g_write()
         //   push("add") push(5) push(6) g_write()
