@@ -63,10 +63,7 @@ pub mod presets {
         // X -> F[+X]F[-X]+X
         LSystem::new(
             "X",
-            vec![
-                Rule::new('X', "F[+X]F[-X]+X"),
-                Rule::new('F', "FF"),
-            ],
+            vec![Rule::new('X', "F[+X]F[-X]+X"), Rule::new('F', "FF")],
         )
     }
 
@@ -74,13 +71,7 @@ pub mod presets {
         // A -> B-A-B
         // B -> A+B+A
         // Angle 60
-        LSystem::new(
-            "A",
-            vec![
-                Rule::new('A', "B-A-B"),
-                Rule::new('B', "A+B+A"),
-            ],
-        )
+        LSystem::new("A", vec![Rule::new('A', "B-A-B"), Rule::new('B', "A+B+A")])
     }
 
     pub fn fractal_plant() -> LSystem {
@@ -88,10 +79,7 @@ pub mod presets {
         // Or generic: X -> F[+X]F[-X]+X
         LSystem::new(
             "X",
-            vec![
-                Rule::new('X', "F+[[X]-X]-F[-FX]+X"),
-                Rule::new('F', "FF"),
-            ]
+            vec![Rule::new('X', "F+[[X]-X]-F[-FX]+X"), Rule::new('F', "FF")],
         )
     }
 
@@ -106,13 +94,7 @@ pub mod presets {
     // L-system: A -> B[+A]A (Asymmetric?)
     // Let's try: A -> B[+A][-A]
     pub fn recursive_tree() -> LSystem {
-        LSystem::new(
-            "A",
-            vec![
-                Rule::new('A', "F[+A][-A]"),
-                Rule::new('F', "FF"),
-            ]
-        )
+        LSystem::new("A", vec![Rule::new('A', "F[+A][-A]"), Rule::new('F', "FF")])
     }
 }
 

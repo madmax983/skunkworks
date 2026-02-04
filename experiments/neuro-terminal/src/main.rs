@@ -198,11 +198,26 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
 fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
     let keys = vec![
         Span::raw(" "),
-        Span::styled("Q", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            "Q",
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw(" Quit | "),
-        Span::styled("P", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            "P",
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw(" Pause/Resume | "),
-        Span::styled("R", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+        Span::styled(
+            "R",
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        ),
         Span::raw(" Reset "),
     ];
     let line = ratatui::text::Line::from(keys);

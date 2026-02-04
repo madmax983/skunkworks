@@ -52,7 +52,7 @@ impl SystemMonitor {
     // Driven by Memory. Range [28.0, 78.0]
     pub fn get_rho(&self) -> f64 {
         let mem = self.get_memory_usage(); // 0-1.0
-        // Convert to percentage for mapping consistency if needed, but here it's 0-1
+                                           // Convert to percentage for mapping consistency if needed, but here it's 0-1
         28.0 + (mem * 50.0)
     }
 
@@ -61,9 +61,13 @@ impl SystemMonitor {
     // Let's use Swap usage if available, else a sine wave of time?
     // Let's stick to system stats. Maybe "used swap / total swap".
     pub fn get_beta(&self) -> f64 {
-         let total = self.sys.total_swap();
-         let used = self.sys.used_swap();
-         let ratio = if total == 0 { 0.0 } else { used as f64 / total as f64 };
-         2.666 + (ratio * 5.0)
+        let total = self.sys.total_swap();
+        let used = self.sys.used_swap();
+        let ratio = if total == 0 {
+            0.0
+        } else {
+            used as f64 / total as f64
+        };
+        2.666 + (ratio * 5.0)
     }
 }

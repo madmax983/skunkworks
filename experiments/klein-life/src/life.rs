@@ -29,11 +29,11 @@ impl LifeGrid {
         // Handle Y-axis (Möbius twist)
         if target_y < 0 {
             target_y = self.height as isize - 1; // Map to bottom
-            // Twist X
+                                                 // Twist X
             target_x = self.width as isize - 1 - target_x;
         } else if target_y >= self.height as isize {
             target_y = 0; // Map to top
-            // Twist X
+                          // Twist X
             target_x = self.width as isize - 1 - target_x;
         }
 

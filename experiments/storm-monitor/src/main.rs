@@ -47,10 +47,7 @@ impl App {
             });
         }
 
-        Self {
-            monitor,
-            particles,
-        }
+        Self { monitor, particles }
     }
 
     fn on_tick(&mut self) {
@@ -105,7 +102,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
             // Canvas
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Storm Monitor: Lorenz Attractor"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Storm Monitor: Lorenz Attractor"),
+                )
                 .x_bounds([-30.0, 30.0])
                 .y_bounds([0.0, 60.0])
                 .paint(|ctx| {
@@ -114,9 +115,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                     // Let's iterate and draw points.
                     // Ratatui Points widget takes slice of (f64, f64).
 
-                    let points: Vec<(f64, f64)> = app.particles.iter()
-                        .map(|p| (p.x, p.z))
-                        .collect();
+                    let points: Vec<(f64, f64)> =
+                        app.particles.iter().map(|p| (p.x, p.z)).collect();
 
                     ctx.draw(&Points {
                         coords: &points,
@@ -133,17 +133,16 @@ fn main() -> Result<(), Box<dyn Error>> {
                     Span::raw(format!("{:.1}% ", cpu)),
                     Span::styled("σ (Sigma): ", Style::default().fg(Color::Red)),
                     Span::raw(format!("{:.2} | ", sigma)),
-
                     Span::styled("MEM: ", Style::default().fg(Color::Green)),
                     Span::raw(format!("{:.1}% ", mem * 100.0)),
                     Span::styled("ρ (Rho): ", Style::default().fg(Color::Green)),
                     Span::raw(format!("{:.2} | ", rho)),
-
                     Span::styled("β (Beta): ", Style::default().fg(Color::Blue)),
                     Span::raw(format!("{:.2}", beta)),
                 ]),
                 Line::from("Press 'q' to quit"),
-            ]).block(Block::default().borders(Borders::ALL));
+            ])
+            .block(Block::default().borders(Borders::ALL));
 
             f.render_widget(status, chunks[1]);
         })?;

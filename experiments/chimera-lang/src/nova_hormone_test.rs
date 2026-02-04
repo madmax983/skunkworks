@@ -142,7 +142,11 @@ mod tests {
                 make_gene("jump", vec![3]),
             ],
         };
-        let dna = Dna { helix: Helix { strands: vec![strand0] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Secrete

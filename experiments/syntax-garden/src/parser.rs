@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::fs;
-use walkdir::WalkDir;
 use syn::Item;
+use walkdir::WalkDir;
 
 pub struct GardenParser {
     pub axiom: String,
@@ -50,34 +50,34 @@ impl GardenParser {
                 Item::Struct(_) => {
                     // Structs branch right
                     dna.push_str("[+F]");
-                },
+                }
                 Item::Enum(_) => {
                     // Enums branch left
                     dna.push_str("[-F]");
-                },
+                }
                 Item::Fn(_) => {
                     // Functions are leaves/flowers
                     dna.push_str("F[L]");
-                },
+                }
                 Item::Impl(_) => {
                     // Impls extend the branch
                     dna.push_str("F");
-                },
+                }
                 Item::Mod(m) => {
-                     // Modules branch and recurse if inline
-                     dna.push_str("[");
-                     if let Some((_, items)) = &m.content {
-                         for sub_item in items {
-                             // Simplified recursion for inline mods
-                             match sub_item {
-                                 Item::Fn(_) => dna.push_str("F[L]"),
-                                 Item::Struct(_) => dna.push_str("[+F]"),
-                                 _ => dna.push_str("F"),
-                             }
-                         }
-                     }
-                     dna.push_str("]");
-                },
+                    // Modules branch and recurse if inline
+                    dna.push_str("[");
+                    if let Some((_, items)) = &m.content {
+                        for sub_item in items {
+                            // Simplified recursion for inline mods
+                            match sub_item {
+                                Item::Fn(_) => dna.push_str("F[L]"),
+                                Item::Struct(_) => dna.push_str("[+F]"),
+                                _ => dna.push_str("F"),
+                            }
+                        }
+                    }
+                    dna.push_str("]");
+                }
                 _ => {
                     // Other items just add length
                     dna.push_str("f"); // f = move without drawing (gap?) or just F

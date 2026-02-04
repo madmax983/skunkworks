@@ -1,4 +1,4 @@
-use crate::l_system::{LSystem, presets};
+use crate::l_system::{presets, LSystem};
 use crate::turtle::Turtle;
 
 pub struct App {

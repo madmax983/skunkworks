@@ -8,8 +8,8 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use std::{env, fs, io, time::Duration};
 use ratatui::{backend::CrosstermBackend, Terminal};
+use std::{env, fs, io, time::Duration};
 
 fn main() -> anyhow::Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -28,17 +28,17 @@ fn main() -> anyhow::Result<()> {
         Err(_) => {
             // Try relative to crate root if likely running from repo root
             let fallback = format!("experiments/code-concerto/{}", filepath);
-             match fs::read_to_string(&fallback) {
-                 Ok(c) => c,
-                 Err(_) => {
-                      // Try just the filename if it was "src/main.rs" and we are inside the crate
-                      if filepath == "experiments/code-concerto/src/main.rs" {
-                          fs::read_to_string("src/main.rs").context("Could not find source file")?
-                      } else {
-                          return Err(anyhow::anyhow!("Could not open file: {}", filepath));
-                      }
-                 }
-             }
+            match fs::read_to_string(&fallback) {
+                Ok(c) => c,
+                Err(_) => {
+                    // Try just the filename if it was "src/main.rs" and we are inside the crate
+                    if filepath == "experiments/code-concerto/src/main.rs" {
+                        fs::read_to_string("src/main.rs").context("Could not find source file")?
+                    } else {
+                        return Err(anyhow::anyhow!("Could not open file: {}", filepath));
+                    }
+                }
+            }
         }
     };
 
@@ -48,7 +48,9 @@ fn main() -> anyhow::Result<()> {
 
     println!("Synthesizing audio to 'concerto.wav'...");
     let synth = synth::Synthesizer::new();
-    synth.write_wav(&events, "concerto.wav").context("Failed to write WAV file")?;
+    synth
+        .write_wav(&events, "concerto.wav")
+        .context("Failed to write WAV file")?;
     println!("WAV file generated successfully!");
 
     println!("Starting TUI visualization in 2 seconds...");

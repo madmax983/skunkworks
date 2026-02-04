@@ -1,5 +1,5 @@
-use hound;
 use crate::mapping::MusicalEvent;
+use hound;
 use std::f32::consts::PI;
 
 pub struct Synthesizer {
@@ -29,7 +29,11 @@ impl Synthesizer {
         Ok(())
     }
 
-    fn synthesize_event<W>(&self, writer: &mut hound::WavWriter<W>, event: &MusicalEvent) -> anyhow::Result<()>
+    fn synthesize_event<W>(
+        &self,
+        writer: &mut hound::WavWriter<W>,
+        event: &MusicalEvent,
+    ) -> anyhow::Result<()>
     where
         W: std::io::Write + std::io::Seek,
     {
@@ -50,7 +54,12 @@ impl Synthesizer {
         Ok(())
     }
 
-    fn write_tone<W>(&self, writer: &mut hound::WavWriter<W>, freqs: Vec<f32>, duration: f32) -> anyhow::Result<()>
+    fn write_tone<W>(
+        &self,
+        writer: &mut hound::WavWriter<W>,
+        freqs: Vec<f32>,
+        duration: f32,
+    ) -> anyhow::Result<()>
     where
         W: std::io::Write + std::io::Seek,
     {

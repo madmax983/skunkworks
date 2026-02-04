@@ -1,5 +1,5 @@
-mod sim;
 mod audio;
+mod sim;
 
 use std::{
     error::Error,
@@ -18,8 +18,8 @@ use ratatui::{
 };
 use tui_shared::Tui;
 
-use sim::WaveTank;
 use audio::ScannedSynth;
+use sim::WaveTank;
 
 struct App {
     tank: WaveTank,
@@ -116,14 +116,20 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                 }
 
                 // For speed, just cyan for now.
-                lines.push(Line::from(Span::styled(current_string, Style::default().fg(Color::Cyan))));
+                lines.push(Line::from(Span::styled(
+                    current_string,
+                    Style::default().fg(Color::Cyan),
+                )));
             }
 
             let tank_widget = Paragraph::new(lines);
             f.render_widget(tank_widget, chunks[0]);
 
             // Status
-            let status = format!("Freq: {:.1}Hz | Click/Drag to Ripple | 'r' Rain | 'q' Quit", app.freq);
+            let status = format!(
+                "Freq: {:.1}Hz | Click/Drag to Ripple | 'r' Rain | 'q' Quit",
+                app.freq
+            );
             f.render_widget(
                 Paragraph::new(status).block(Block::default().borders(Borders::TOP)),
                 chunks[1],
@@ -152,7 +158,8 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                 }
                 Event::Mouse(mouse) => {
                     if mouse.kind == MouseEventKind::Down(crossterm::event::MouseButton::Left)
-                       || mouse.kind == MouseEventKind::Drag(crossterm::event::MouseButton::Left) {
+                        || mouse.kind == MouseEventKind::Drag(crossterm::event::MouseButton::Left)
+                    {
                         let x = mouse.column as usize;
                         let y = mouse.row as usize;
                         app.tank.disturb(x, y, 2.0);
