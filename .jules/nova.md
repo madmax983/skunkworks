@@ -101,3 +101,8 @@
 **Concept:** Added Epigenetic Memory (Methylation) to ChimeraVM. Genes can be silenced/unsilenced dynamically using `methylate` and `demethylate` enzymes, visualized in the TUI with blue coloring.
 **Fate:** Merged
 **Lesson:** Adding transient state to the VM allows for complex gene regulation and "memory" without modifying the persistent genome structure, mirroring biological epigenetics.
+
+## [Chimera Cell Cycle]
+**Concept:** Added `mitosis` (strand cloning) and `apoptosis` (strand clearing) enzymes to ChimeraVM. Allows the code to grow and shrink dynamically, simulating biological growth and cell death. Also added `s_index` for self-reference.
+**Fate:** Merged
+**Lesson:** Implementing "deletion" in a list of strands referenced by absolute index is dangerous. A "Soft Delete" (clearing content but keeping the index) is a robust solution that preserves jump targets (NOP slide).

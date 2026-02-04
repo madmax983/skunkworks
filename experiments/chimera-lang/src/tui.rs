@@ -78,10 +78,10 @@ fn run_app<B: ratatui::backend::Backend>(
                             style = style.bg(Color::Blue);
                         }
                         prefix = "> ";
-                    } else if s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1) {
-                        if style.fg != Some(Color::Blue) {
-                            style = style.fg(Color::DarkGray);
-                        }
+                    } else if (s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1))
+                        && style.fg != Some(Color::Blue)
+                    {
+                        style = style.fg(Color::DarkGray);
                     }
 
                     strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
