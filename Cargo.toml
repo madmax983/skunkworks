@@ -90,7 +90,7 @@ members = [
     "experiments/syntax-spider", 
     "experiments/code-erosion",
     "experiments/hive-synth",
-    "experiments/code-kaleidoscope",
+    "experiments/code-kaleidoscope", "experiments/hidden-brush",
 ]
 resolver = "2"
 
