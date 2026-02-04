@@ -205,7 +205,8 @@ impl World {
                 let dy = agent.y - node.y as f64;
                 let dist_sq = dx * dx + dy * dy;
 
-                if dist_sq < 2.0 { // Radius ~1.4
+                if dist_sq < 2.0 {
+                    // Radius ~1.4
                     // Check if node can accept payload
                     // Only deposit if node is not the one we just spawned from (implied by distance usually, but also capacity)
                     // If node has capacity, deposit
@@ -248,10 +249,16 @@ mod tests {
 
         // Run update once - should spawn agent
         world.update();
-        assert!(!world.agents.is_empty(), "Should have spawned an agent from overloaded node");
+        assert!(
+            !world.agents.is_empty(),
+            "Should have spawned an agent from overloaded node"
+        );
 
         // Check that load decreased on source
-        assert!(world.nodes[0].load < 100.0, "Source node load should decrease when agent spawns");
+        assert!(
+            world.nodes[0].load < 100.0,
+            "Source node load should decrease when agent spawns"
+        );
 
         // Run many updates to allow travel
         // Distance is ~14 units. Speed 0.8. ~18 ticks minimum if straight line.
@@ -267,6 +274,9 @@ mod tests {
             }
         }
 
-        assert!(transferred, "Load should eventually transfer to the underloaded node");
+        assert!(
+            transferred,
+            "Load should eventually transfer to the underloaded node"
+        );
     }
 }

@@ -1,13 +1,13 @@
 use num_complex::Complex;
 use ratatui::{
     style::Color,
-    widgets::canvas::{Context, Line, Circle},
+    widgets::canvas::{Circle, Context, Line},
 };
 use std::f64::consts::PI;
 
+use crate::ant::Ant;
 use crate::dungeon::{Dungeon, TileType};
 use crate::geometry::{neighbor_transform_a, Mobius, Point, TilingConsts};
-use crate::ant::Ant;
 
 pub fn draw_dungeon(
     ctx: &mut Context,
@@ -65,7 +65,11 @@ fn draw_tile_recursive(
     }
 
     // Draw edges (Wireframe)
-    let edge_color = if is_wall { Color::White } else { Color::DarkGray };
+    let edge_color = if is_wall {
+        Color::White
+    } else {
+        Color::DarkGray
+    };
 
     for i in 0..4 {
         let p1 = screen_verts[i];
@@ -82,13 +86,17 @@ fn draw_tile_recursive(
     // Fill hint? (Cross for wall, Dot for food)
     if is_wall {
         ctx.draw(&Line {
-            x1: screen_verts[0].re, y1: screen_verts[0].im,
-            x2: screen_verts[2].re, y2: screen_verts[2].im,
+            x1: screen_verts[0].re,
+            y1: screen_verts[0].im,
+            x2: screen_verts[2].re,
+            y2: screen_verts[2].im,
             color: edge_color,
         });
         ctx.draw(&Line {
-            x1: screen_verts[1].re, y1: screen_verts[1].im,
-            x2: screen_verts[3].re, y2: screen_verts[3].im,
+            x1: screen_verts[1].re,
+            y1: screen_verts[1].im,
+            x2: screen_verts[3].re,
+            y2: screen_verts[3].im,
             color: edge_color,
         });
     } else if tile_data.has_food {
@@ -99,7 +107,7 @@ fn draw_tile_recursive(
             color: Color::Red,
         });
     } else if tile_data.pheromone_food > 0.1 {
-         ctx.draw(&Circle {
+        ctx.draw(&Circle {
             x: screen_center.re,
             y: screen_center.im,
             radius: size * 0.1 * tile_data.pheromone_food.min(5.0),
@@ -112,7 +120,11 @@ fn draw_tile_recursive(
         if ant.path == path {
             // Map ant offset (local) to screen
             let ant_screen = transform.apply(ant.offset);
-            let ant_color = if ant.carrying_food { Color::Magenta } else { Color::Yellow };
+            let ant_color = if ant.carrying_food {
+                Color::Magenta
+            } else {
+                Color::Yellow
+            };
             ctx.draw(&Circle {
                 x: ant_screen.re,
                 y: ant_screen.im,
@@ -129,7 +141,9 @@ fn draw_tile_recursive(
 
     for i in 0..4 {
         if let Some(from) = from_dir {
-            if i == from { continue; }
+            if i == from {
+                continue;
+            }
         }
 
         let step_a = neighbor_transform_a(i, consts);

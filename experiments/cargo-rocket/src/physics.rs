@@ -27,6 +27,8 @@ pub struct System {
     pub bodies: Vec<Body>,
     pub ship: Ship,
     pub g: f64,
+    /// Pre-allocated buffer for force calculations to avoid allocation in the loop.
+    pub forces: Vec<Vec2>,
 }
 
 impl Default for System {
@@ -50,51 +52,60 @@ impl System {
                 thrusting: false,
             },
             g: 100.0, // High gravity for fun
+            forces: Vec::new(),
         }
     }
 
-    pub fn update(&mut self, dt: f64) {
-        // 1. Calculate Acceleration (Gravity) for Bodies
-        // We use Symplectic Euler for N-Body:
-        // v += a * dt
-        // x += v * dt
-        // But for better stability, maybe Verlet.
-        // Let's stick to Semi-Implicit Euler (Symplectic Euler) as it's simple and energy conserving-ish.
+    fn calculate_n_body_forces(&mut self) {
+        if self.forces.len() != self.bodies.len() {
+            self.forces.resize(self.bodies.len(), Vec2::zero());
+        }
 
-        let mut forces = vec![Vec2::zero(); self.bodies.len()];
+        // Reset forces
+        for force in &mut self.forces {
+            *force = Vec2::zero();
+        }
 
-        for (i, force) in forces.iter_mut().enumerate() {
+        for i in 0..self.bodies.len() {
             if self.bodies[i].is_fixed {
                 continue;
             }
+
+            let mut total_force = Vec2::zero();
+
             for j in 0..self.bodies.len() {
                 if i == j {
                     continue;
                 }
+
                 let r = self.bodies[j].pos - self.bodies[i].pos;
                 let dist_sq = r.magnitude_squared();
+
                 if dist_sq < 0.1 {
                     continue;
-                } // Softening
-                let dist = dist_sq.sqrt();
-                let f = r / dist * (self.g * self.bodies[j].mass / dist_sq); // F/m = a. We just want 'a' from other body.
-                                                                             // Wait, F = G m1 m2 / r^2. a1 = F / m1 = G m2 / r^2.
-                *force += f;
-            }
-        }
+                }
 
-        // Update Bodies
+                let dist = dist_sq.sqrt();
+                let f = r / dist * (self.g * self.bodies[j].mass / dist_sq);
+                total_force += f;
+            }
+
+            self.forces[i] = total_force;
+        }
+    }
+
+    fn update_bodies(&mut self, dt: f64) {
         for (i, body) in self.bodies.iter_mut().enumerate() {
             if body.is_fixed {
                 continue;
             }
-            body.vel += forces[i] * dt;
+            body.vel += self.forces[i] * dt;
             body.pos += body.vel * dt;
-            body.acc = forces[i];
+            body.acc = self.forces[i];
         }
+    }
 
-        // 2. Ship Physics
-        // Ship is affected by all bodies.
+    fn calculate_ship_forces(&self) -> Vec2 {
         let mut ship_acc = Vec2::zero();
         for body in &self.bodies {
             let r = body.pos - self.ship.pos;
@@ -106,6 +117,11 @@ impl System {
             let a = r / dist * (self.g * body.mass / dist_sq);
             ship_acc += a;
         }
+        ship_acc
+    }
+
+    fn update_ship(&mut self, dt: f64) {
+        let mut ship_acc = self.calculate_ship_forces();
 
         // Add Thrust
         if self.ship.thrusting && self.ship.fuel > 0.0 {
@@ -118,6 +134,18 @@ impl System {
         self.ship.vel += ship_acc * dt;
         self.ship.pos += self.ship.vel * dt;
         self.ship.acc = ship_acc;
+    }
+
+    pub fn update(&mut self, dt: f64) {
+        // 1. Calculate Acceleration (Gravity) for Bodies
+        // We use Symplectic Euler for N-Body:
+        // v += a * dt
+        // x += v * dt
+        self.calculate_n_body_forces();
+        self.update_bodies(dt);
+
+        // 2. Ship Physics
+        self.update_ship(dt);
     }
 }
 
