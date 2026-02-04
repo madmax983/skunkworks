@@ -322,3 +322,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/seismic-lure
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The bedrock is cracking. The water is vibrating. The sound of technical debt is drowning out the silence.
+
+### [Concentration Level: FRESH] - Location: experiments/fractal-stack
+- **Scent Origin:** Genesis (The Botanist) 🌿
+- **Status:** Roots are seeking water. The call stack is blooming. Recursion is being visualized as a living structure.
