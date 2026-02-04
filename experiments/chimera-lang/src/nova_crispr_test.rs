@@ -105,7 +105,9 @@ fn test_cas9_cut() {
     assert_eq!(vm.dna.helix.strands[2].genes[0].name, "push");
     if let Nucleotide::Number(n) = &vm.dna.helix.strands[2].genes[0].args[0] {
         assert_eq!(*n, 3);
-    } else { panic!("Wrong arg"); }
+    } else {
+        panic!("Wrong arg");
+    }
 }
 
 #[test]

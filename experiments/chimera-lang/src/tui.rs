@@ -106,10 +106,12 @@ fn run_app<B: ratatui::backend::Backend>(
                     let val = &vm.grid[y][x];
 
                     let (char_rep, style) = match val {
-                        crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
+                        crate::vm::Value::Int(0) => {
+                            (".".to_string(), Style::default().fg(Color::DarkGray))
+                        }
                         crate::vm::Value::Int(n) => (
                             format!("{}", (n.abs() % 10)),
-                            Style::default().fg(Color::Green)
+                            Style::default().fg(Color::Green),
                         ),
                         crate::vm::Value::Str(s) => {
                             let symbol = match s.as_str() {

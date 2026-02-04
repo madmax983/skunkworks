@@ -1,4 +1,4 @@
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn main() {
@@ -43,11 +43,23 @@ fn run_demo() {
     // So we push len, then y, then x.
     let reader_strand = Strand {
         genes: vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(3)] }, // len
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // y
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // x
-            Gene { name: "incubate".to_string(), args: vec![] },
-        ]
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(3)],
+            }, // len
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // y
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // x
+            Gene {
+                name: "incubate".to_string(),
+                args: vec![],
+            },
+        ],
     };
 
     vm.dna.helix.strands.push(reader_strand);

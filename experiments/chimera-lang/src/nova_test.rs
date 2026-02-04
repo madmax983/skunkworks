@@ -544,22 +544,56 @@ mod tests {
 
         let genes = vec![
             // Write 10 to (5,5)
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "g_write".to_string(), args: vec![] },
-
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
             // Write "add" to (5,6)
-            Gene { name: "push".to_string(), args: vec![Nucleotide::String("add".to_string())] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
-            Gene { name: "g_write".to_string(), args: vec![] },
-
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::String("add".to_string())],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(6)],
+            },
+            Gene {
+                name: "g_write".to_string(),
+                args: vec![],
+            },
             // Incubate
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] }, // len
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // y
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // x
-            Gene { name: "incubate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(2)],
+            }, // len
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            }, // y
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            }, // x
+            Gene {
+                name: "incubate".to_string(),
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

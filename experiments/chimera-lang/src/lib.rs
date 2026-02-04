@@ -8,7 +8,9 @@ pub mod ast;
 pub mod tui;
 pub mod vm;
 
+mod havoc_repro;
 #[cfg(test)]
 mod nova_crispr_test;
-mod havoc_repro;
+#[cfg(test)]
+mod nova_hormone_test;
 mod nova_test;
