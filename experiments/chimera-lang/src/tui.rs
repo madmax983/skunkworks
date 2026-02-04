@@ -104,15 +104,34 @@ fn run_app<B: ratatui::backend::Backend>(
                 let mut line_spans = Vec::new();
                 for x in 0..16 {
                     let val = &vm.grid[y][x];
-                    let char_rep = match val {
-                        crate::vm::Value::Int(n) => format!("{}", (n.abs() % 10)),
-                        crate::vm::Value::Str(s) => format!("{}", s.chars().next().unwrap_or('.')),
-                    };
 
-                    let style = if let crate::vm::Value::Int(0) = val {
-                        Style::default().fg(Color::DarkGray)
-                    } else {
-                        Style::default().fg(Color::Green)
+                    let (char_rep, style) = match val {
+                        crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
+                        crate::vm::Value::Int(n) => (
+                            format!("{}", (n.abs() % 10)),
+                            Style::default().fg(Color::Green)
+                        ),
+                        crate::vm::Value::Str(s) => {
+                            let symbol = match s.as_str() {
+                                "virus" => "V",
+                                "incubate" => "I",
+                                "push" => "^",
+                                "add" => "+",
+                                "sub" => "-",
+                                "mul" => "*",
+                                "div" => "/",
+                                "jump" | "jump_s" => "J",
+                                "brz" | "brz_s" => "?",
+                                "photosynthesize" => "P",
+                                "consume" => "C",
+                                "g_read" => "R",
+                                "g_write" => "W",
+                                "mitosis" => "M",
+                                "apoptosis" => "X",
+                                _ => &s[0..1],
+                            };
+                            (symbol.to_string(), Style::default().fg(Color::Cyan))
+                        }
                     };
 
                     line_spans.push(Span::styled(char_rep, style));

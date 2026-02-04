@@ -143,6 +143,68 @@ impl ChimeraVM {
                 }
                 None
             }
+            #[cfg(feature = "nova")]
+            "incubate" => {
+                // stack: len, y, x (top)
+                if self.stack.len() >= 3 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let len_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x), Value::Int(y), Value::Int(len)) =
+                        (x_val, y_val, len_val)
+                    {
+                        if len > 0 {
+                            let mut genes = Vec::new();
+                            let mut valid = true;
+                            for i in 0..len {
+                                let curr_x = x + i;
+                                if (0..16).contains(&y) && (0..16).contains(&curr_x) {
+                                    let val = &self.grid[y as usize][curr_x as usize];
+                                    match val {
+                                        Value::Int(n) => {
+                                            genes.push(crate::ast::Gene {
+                                                name: "push".to_string(),
+                                                args: vec![crate::ast::Nucleotide::Number(*n)],
+                                            });
+                                        }
+                                        Value::Str(s) => {
+                                            genes.push(crate::ast::Gene {
+                                                name: s.clone(),
+                                                args: vec![],
+                                            });
+                                        }
+                                    }
+                                } else {
+                                    valid = false;
+                                    self.output
+                                        .push("Error: Incubate range out of bounds".to_string());
+                                    break;
+                                }
+                            }
+
+                            if valid {
+                                self.dna.helix.strands.push(crate::ast::Strand { genes });
+                                self.telomeres.push(50);
+                                self.energy -= 20; // Cost
+                                self.output.push(format!(
+                                    "INCUBATE: Created new strand {} from grid",
+                                    self.dna.helix.strands.len() - 1
+                                ));
+                            }
+                        } else {
+                            self.output.push("Error: Invalid length for incubate".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for incubate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for incubate".to_string());
+                }
+                None
+            }
             "add" => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
                 None
@@ -288,6 +350,38 @@ impl ChimeraVM {
                 }
                 None
             }
+            "virus" => {
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+
+                    let cell_value = if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                        if (0..16).contains(&y) && (0..16).contains(&x) {
+                            Some(self.grid[y as usize][x as usize].clone())
+                        } else {
+                            self.output.push("Error: Grid index out of bounds".to_string());
+                            None
+                        }
+                    } else {
+                        self.output.push("Error: Type mismatch for virus".to_string());
+                        None
+                    };
+
+                    if let Some(val) = cell_value {
+                        match val {
+                            Value::Int(n) => self.stack.push(Value::Int(n)),
+                            Value::Str(s) => {
+                                // Execute enzyme recursively
+                                // We pass empty args because grid enzymes don't carry args
+                                return self.execute_gene(&s, &[]);
+                            }
+                        }
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for virus".to_string());
+                }
+                None
+            }
             // --- EVOLUTION ---
             "transcribe" => {
                 // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
@@ -329,6 +423,45 @@ impl ChimeraVM {
                     _ => self
                         .output
                         .push("Error: Type mismatch for transcribe args".to_string()),
+                }
+                None
+            }
+            "jump_s" => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            if target >= 0 {
+                                return Some((target as usize, 0));
+                            } else {
+                                self.output.push("Error: Negative jump target".to_string());
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for jump_s".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for jump_s".to_string());
+                }
+                None
+            }
+            "brz_s" => {
+                if self.stack.len() >= 2 {
+                    let target_val = self.stack.pop().unwrap();
+                    let cond_val = self.stack.pop().unwrap();
+
+                    match (target_val, cond_val) {
+                        (Value::Int(target), Value::Int(cond)) => {
+                            if cond == 0 {
+                                if target >= 0 {
+                                    return Some((target as usize, 0));
+                                } else {
+                                    self.output.push("Error: Negative jump target".to_string());
+                                }
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for brz_s".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for brz_s".to_string());
                 }
                 None
             }
@@ -1110,5 +1243,72 @@ mod tests {
             Value::Int(42) => (),
             _ => panic!("Grid not updated"),
         }
+    }
+
+    #[test]
+    fn test_virus_int() {
+        // [ push(42) push(5) push(5) g_write() push(5) push(5) virus() ]
+        let genes = vec![
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(42)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "g_write".to_string(), args: vec![] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "virus".to_string(), args: vec![] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+        assert_eq!(vm.stack.last().unwrap(), &Value::Int(42));
+    }
+
+    #[test]
+    fn test_virus_enzyme() {
+        // [ push("add") push(6) push(6) g_write() push(10) push(20) push(6) push(6) virus() ]
+        let genes = vec![
+            Gene { name: "push".to_string(), args: vec![Nucleotide::String("add".to_string())] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
+            Gene { name: "g_write".to_string(), args: vec![] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(20)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(6)] },
+            Gene { name: "virus".to_string(), args: vec![] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+        assert_eq!(vm.stack.len(), 1);
+        assert_eq!(vm.stack[0], Value::Int(30));
+    }
+
+    #[test]
+    fn test_jump_s() {
+        // [ push(1) jump_s() push(100) ] [ push(200) ]
+        let strand0 = Strand {
+            genes: vec![
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
+                Gene { name: "jump_s".to_string(), args: vec![] },
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
+            ],
+        };
+        let strand1 = Strand {
+            genes: vec![
+                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(200)] },
+            ],
+        };
+        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let mut vm = ChimeraVM::new(dna);
+
+        vm.step(); // push(1)
+        vm.step(); // jump_s
+        assert_eq!(vm.ip, (1, 0));
+
+        vm.step(); // push(200)
+        assert_eq!(vm.stack.pop(), Some(Value::Int(200)));
     }
 }
