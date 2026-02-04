@@ -214,4 +214,113 @@ mod tests {
             panic!("Wrong arg type for s1[2]");
         }
     }
+
+    #[test]
+    fn test_telomere_decay() {
+        // [ photosynthesize() jump(0) ]
+        // Strand should run 50 times then decay.
+        // We use photosynthesize to avoid starvation.
+        let genes = vec![
+            Gene {
+                name: "photosynthesize".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "jump".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Initial telomere length is 50.
+        // Each loop enters the strand once.
+        // Step 1: photosynthesize
+        // Step 2: jump(0) -> moves IP to (0, 0)
+        // Next Step 1: Entering strand again.
+
+        // We run enough steps to exceed 50 loops.
+        // 50 loops * 2 steps = 100 steps.
+        // Let's run 120 steps.
+        for _ in 0..120 {
+            vm.step();
+            if vm.halted {
+                break;
+            }
+        }
+
+        // It should have moved to the next strand (which doesn't exist, so halted)
+        // Or if next strand doesn't exist, it sets halted = true in main loop.
+        // vm.ip should be (1, 0) if it decayed and moved on.
+        assert_eq!(vm.ip.0, 1);
+
+        // Check output for senescence message
+        assert!(
+            vm.output.iter().any(|s| s.contains("SENESCENCE")),
+            "Expected SENESCENCE message, got {:?}",
+            vm.output
+        );
+    }
+
+    #[test]
+    fn test_telomerase() {
+        // [ push(50) telomerase() photosynthesize() jump(0) ]
+        // Should extend life by 50. Total 100 loops.
+        // Cost of telomerase is 25. Photosynthesis gives 5.
+        // We need more energy to sustain this loop.
+        // Let's add more photosynthesis.
+        // [ push(50) telomerase() photosynthesize() photosynthesize() photosynthesize() photosynthesize() photosynthesize() jump(0) ]
+        // Wait, telomerase only needs to run ONCE to extend it.
+        // So we can have two strands.
+        // Strand 0: [ push(50) telomerase() jump(1) ]
+        // Strand 1: [ photosynthesize() jump(1) ]
+        // But we want to test extending the CURRENT strand or TARGET strand?
+        // Telomerase extends CURRENT strand (ip.0).
+        // So let's extend, then loop.
+
+        // Strand 0: [ push(50) telomerase() jump(0) ]
+        // This will extend it every time? That's expensive.
+        // But if we have enough energy...
+        // Let's just give it a ton of energy initially to avoid starvation logic complications.
+
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(50)],
+            },
+            Gene {
+                name: "telomerase".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "photosynthesize".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "jump".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.energy = 10000; // Cheat code
+
+        // Initial 50 + 50 (first pass) = 100?
+        // Actually, every pass it adds 50. So it should never die from senescence, only starvation or boredom.
+        // Let's run it for 200 loops (800 steps).
+        // If it was decaying, it would die at 50.
+
+        for _ in 0..800 {
+            vm.step();
+            if vm.halted {
+                break;
+            }
+        }
+
+        // Should NOT be halted or senescent
+        assert!(!vm.halted, "VM halted unexpectedly: {:?}", vm.output);
+        assert!(!vm.output.iter().any(|s| s.contains("SENESCENCE")));
+
+        // Check telomere length
+        // It's growing every loop.
+        assert!(vm.telomeres[0] > 50);
+    }
 }
