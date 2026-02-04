@@ -39,6 +39,7 @@ pub struct Spore {
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
+    pub quantum_links: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -72,6 +73,8 @@ pub struct ChimeraVM {
     pub input_buffer: VecDeque<char>,
     #[cfg(feature = "nova")]
     pub receptors: HashMap<char, usize>,
+    #[cfg(feature = "nova")]
+    pub quantum_links: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -120,6 +123,8 @@ impl ChimeraVM {
             input_buffer: VecDeque::new(),
             #[cfg(feature = "nova")]
             receptors: HashMap::new(),
+            #[cfg(feature = "nova")]
+            quantum_links: HashMap::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -201,6 +206,40 @@ impl ChimeraVM {
             }
         }
         self.waste_grid = new_grid;
+    }
+
+    pub fn write_grid(&mut self, y: usize, x: usize, val: Value) {
+        if y >= 16 || x >= 16 {
+            return;
+        }
+
+        #[cfg(not(feature = "nova"))]
+        {
+            self.grid[y][x] = val;
+        }
+
+        #[cfg(feature = "nova")]
+        {
+            let mut queue = VecDeque::new();
+            queue.push_back((y, x));
+            let mut visited = HashSet::new();
+            visited.insert((y, x));
+
+            // Set initial value
+            self.grid[y][x] = val.clone();
+
+            while let Some((cy, cx)) = queue.pop_front() {
+                if let Some(links) = self.quantum_links.get(&(cy, cx)) {
+                    for &(ny, nx) in links {
+                        if !visited.contains(&(ny, nx)) && ny < 16 && nx < 16 {
+                            self.grid[ny][nx] = val.clone();
+                            visited.insert((ny, nx));
+                            queue.push_back((ny, nx));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     pub fn step(&mut self) {
@@ -406,6 +445,7 @@ impl ChimeraVM {
                     call_stack: self.call_stack.clone(),
                     input_buffer: self.input_buffer.clone(),
                     receptors: self.receptors.clone(),
+                    quantum_links: self.quantum_links.clone(),
                     #[cfg(feature = "cortex")]
                     synapse_map: self.synapse_map.clone(),
                     #[cfg(feature = "cortex")]
@@ -445,6 +485,7 @@ impl ChimeraVM {
                             self.call_stack = spore.call_stack.clone();
                             self.input_buffer = spore.input_buffer.clone();
                             self.receptors = spore.receptors.clone();
+                            self.quantum_links = spore.quantum_links.clone();
                             #[cfg(feature = "cortex")]
                             {
                                 self.synapse_map = spore.synapse_map.clone();
@@ -663,7 +704,7 @@ impl ChimeraVM {
                     let val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                         if (0..16).contains(&y) && (0..16).contains(&x) {
-                            self.grid[y as usize][x as usize] = val;
+                            self.write_grid(y as usize, x as usize, val);
                         } else {
                             self.output
                                 .push("Error: Grid index out of bounds".to_string());
@@ -690,7 +731,7 @@ impl ChimeraVM {
                         let coords = self.get_circular_coords(x, y, r);
                         let count = coords.len();
                         for (cx, cy) in coords {
-                            self.grid[cy][cx] = val.clone();
+                            self.write_grid(cy, cx, val.clone());
                         }
                         self.energy -= (count / 2) as i64; // Cost based on area
                         self.output.push(format!(
@@ -722,7 +763,7 @@ impl ChimeraVM {
                             if let Value::Int(n) = self.grid[cy][cx] {
                                 sum += n;
                             }
-                            self.grid[cy][cx] = Value::Int(0);
+                            self.write_grid(cy, cx, Value::Int(0));
                         }
                         self.stack.push(Value::Int(sum));
                         self.energy -= 5;
@@ -1714,6 +1755,67 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for unbind".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Entangle => {
+                // stack: y2, x2, y1, x1 (top)
+                if self.stack.len() >= 4 {
+                    let x1_val = self.stack.pop().unwrap();
+                    let y1_val = self.stack.pop().unwrap();
+                    let x2_val = self.stack.pop().unwrap();
+                    let y2_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x1), Value::Int(y1), Value::Int(x2), Value::Int(y2)) =
+                        (x1_val, y1_val, x2_val, y2_val)
+                    {
+                        if (0..16).contains(&x1)
+                            && (0..16).contains(&y1)
+                            && (0..16).contains(&x2)
+                            && (0..16).contains(&y2)
+                        {
+                            self.quantum_links
+                                .entry((y1 as usize, x1 as usize))
+                                .or_default()
+                                .push((y2 as usize, x2 as usize));
+                            self.output
+                                .push(format!("ENTANGLE: {},{} -> {},{}", x1, y1, x2, y2));
+                        } else {
+                            self.output
+                                .push("Error: Coordinates out of bounds for entangle".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for entangle".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for entangle".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Decohere => {
+                // stack: y, x (top)
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
+                        if (0..16).contains(&x) && (0..16).contains(&y) {
+                            self.quantum_links.remove(&(y as usize, x as usize));
+                            self.output.push(format!("DECOHERE: {},{}", x, y));
+                        } else {
+                            self.output
+                                .push("Error: Coordinates out of bounds for decohere".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for decohere".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for decohere".to_string());
                 }
                 None
             }

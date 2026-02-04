@@ -94,6 +94,10 @@ pub enum OpCode {
     Bind,
     #[cfg(feature = "nova")]
     Unbind,
+    #[cfg(feature = "nova")]
+    Entangle,
+    #[cfg(feature = "nova")]
+    Decohere,
 
     Unknown(String),
 }
@@ -192,6 +196,10 @@ impl FromStr for OpCode {
             "bind" => Ok(OpCode::Bind),
             #[cfg(feature = "nova")]
             "unbind" => Ok(OpCode::Unbind),
+            #[cfg(feature = "nova")]
+            "entangle" => Ok(OpCode::Entangle),
+            #[cfg(feature = "nova")]
+            "decohere" => Ok(OpCode::Decohere),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -290,6 +298,10 @@ impl fmt::Display for OpCode {
             OpCode::Bind => write!(f, "bind"),
             #[cfg(feature = "nova")]
             OpCode::Unbind => write!(f, "unbind"),
+            #[cfg(feature = "nova")]
+            OpCode::Entangle => write!(f, "entangle"),
+            #[cfg(feature = "nova")]
+            OpCode::Decohere => write!(f, "decohere"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
