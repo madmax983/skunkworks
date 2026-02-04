@@ -25,3 +25,5 @@ mod nova_spore_test;
 mod nova_test;
 #[cfg(test)]
 mod nova_waste_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_conjugation_test;

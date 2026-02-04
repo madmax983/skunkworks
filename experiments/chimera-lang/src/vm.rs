@@ -431,7 +431,8 @@ impl ChimeraVM {
             | OpCode::Bind
             | OpCode::Unbind
             | OpCode::Entangle
-            | OpCode::Decohere => self.exec_nova_op(op, args),
+            | OpCode::Decohere
+            | OpCode::Conjugate => self.exec_nova_op(op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
@@ -1089,32 +1090,103 @@ impl ChimeraVM {
                         if len > 0 {
                             let mut genes = Vec::new();
                             let mut valid = true;
-                            for i in 0..len {
-                                let curr_x = x + i;
-                                if (0..16).contains(&y) && (0..16).contains(&curr_x) {
-                                    let val = &self.grid[y as usize][curr_x as usize];
-                                    match val {
-                                        Value::Int(n) => {
-                                            genes.push(crate::ast::Gene {
-                                                op: OpCode::Push,
-                                                args: vec![crate::ast::Nucleotide::Number(*n)],
-                                            });
-                                        }
-                                        Value::Str(s) => {
-                                            let op =
-                                                s.parse().unwrap_or(OpCode::Unknown(s.clone()));
-                                            genes.push(crate::ast::Gene { op, args: vec![] });
-                                        }
-                                    }
+                            let max_len = len as usize;
+
+                            // Read sequence from grid
+                            let mut sequence = Vec::new();
+                            for k in 0..max_len {
+                                let curr_x = x as usize + k;
+                                if (0..16).contains(&y) && curr_x < 16 {
+                                    sequence.push(self.grid[y as usize][curr_x].clone());
                                 } else {
                                     valid = false;
-                                    self.output
-                                        .push("Error: Incubate range out of bounds".to_string());
+                                    self.output.push(
+                                        "Error: Incubate range out of bounds".to_string(),
+                                    );
                                     break;
                                 }
                             }
 
                             if valid {
+                                let mut k = 0;
+                                while k < sequence.len() {
+                                    match &sequence[k] {
+                                        Value::Int(n) => {
+                                            // Treated as push(n)
+                                            genes.push(crate::ast::Gene {
+                                                op: OpCode::Push,
+                                                args: vec![crate::ast::Nucleotide::Number(*n)],
+                                            });
+                                            k += 1;
+                                        }
+                                        Value::Str(s) => {
+                                            let op =
+                                                s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                                            let mut args = Vec::new();
+                                            match op {
+                                                OpCode::Push
+                                                | OpCode::Jump
+                                                | OpCode::Brz
+                                                | OpCode::Call
+                                                | OpCode::Bind
+                                                | OpCode::Unbind
+                                                | OpCode::Decohere
+                                                | OpCode::Telomerase
+                                                | OpCode::Mitosis
+                                                | OpCode::Apoptosis
+                                                | OpCode::Cas9Cut
+                                                | OpCode::Ligase
+                                                | OpCode::Entangle => {
+                                                    #[cfg(feature = "cortex")]
+                                                    {
+                                                        // Gate is handled by cortex feature, but we can't easily conditionally match inside match arm list
+                                                        // So we'll just check if it's one of these.
+                                                        // Actually, this match arm structure is tricky with cfg flags.
+                                                        // Let's use if statements or just be permissive.
+                                                    }
+                                                    // 1 Arg
+                                                    if k + 1 < sequence.len() {
+                                                        match &sequence[k + 1] {
+                                                            Value::Int(n) => args.push(
+                                                                crate::ast::Nucleotide::Number(*n),
+                                                            ),
+                                                            Value::Str(ss) => args.push(
+                                                                crate::ast::Nucleotide::String(
+                                                                    ss.clone(),
+                                                                ),
+                                                            ),
+                                                        }
+                                                        k += 1; // Consume arg
+                                                    }
+                                                }
+                                                #[cfg(feature = "cortex")]
+                                                OpCode::Gate
+                                                | OpCode::Link
+                                                | OpCode::Sever
+                                                | OpCode::Spark => {
+                                                     if k + 1 < sequence.len() {
+                                                        match &sequence[k + 1] {
+                                                            Value::Int(n) => args.push(
+                                                                crate::ast::Nucleotide::Number(*n),
+                                                            ),
+                                                            Value::Str(ss) => args.push(
+                                                                crate::ast::Nucleotide::String(
+                                                                    ss.clone(),
+                                                                ),
+                                                            ),
+                                                        }
+                                                        k += 1; // Consume arg
+                                                     }
+                                                }
+                                                _ => {}
+                                            }
+
+                                            genes.push(crate::ast::Gene { op, args });
+                                            k += 1;
+                                        }
+                                    }
+                                }
+
                                 self.dna.helix.strands.push(crate::ast::Strand { genes });
                                 self.telomeres.push(50);
                                 #[cfg(feature = "cortex")]
@@ -2010,6 +2082,80 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for decohere".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Conjugate => {
+                // stack: direction (0=R, 1=D, 2=L, 3=U), y, x, strand_idx (bottom)
+                if self.stack.len() >= 4 {
+                    let dir_val = self.stack.pop().unwrap();
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let s_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(s), Value::Int(y), Value::Int(x), Value::Int(dir)) =
+                        (s_val, y_val, x_val, dir_val)
+                    {
+                        let s_idx = s as usize;
+                        if s_idx < self.dna.helix.strands.len() {
+                            let strand = &self.dna.helix.strands[s_idx];
+                            let mut curr_x = x as i64;
+                            let mut curr_y = y as i64;
+                            let (dx, dy) = match dir.rem_euclid(4) {
+                                0 => (1, 0),
+                                1 => (0, 1),
+                                2 => (-1, 0),
+                                3 => (0, -1),
+                                _ => (0, 0),
+                            };
+
+                            let mut success_count = 0;
+                            let mut cells_to_write = Vec::new();
+
+                            for gene in &strand.genes {
+                                cells_to_write.push(Value::Str(gene.op.to_string()));
+                                for arg in &gene.args {
+                                    match arg {
+                                        crate::ast::Nucleotide::Number(n) => {
+                                            cells_to_write.push(Value::Int(*n));
+                                        }
+                                        crate::ast::Nucleotide::String(s) => {
+                                            cells_to_write.push(Value::Str(s.clone()));
+                                        }
+                                        _ => {}
+                                    }
+                                }
+                            }
+
+                            for val in cells_to_write {
+                                if curr_x >= 0 && curr_x < 16 && curr_y >= 0 && curr_y < 16 {
+                                    self.grid[curr_y as usize][curr_x as usize] = val;
+                                    success_count += 1;
+                                    curr_x += dx;
+                                    curr_y += dy;
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            self.energy -= success_count; // Cost 1 per cell
+                            self.output.push(format!(
+                                "CONJUGATE: Wrote {} cells from strand {} at {},{}",
+                                success_count, s_idx, x, y
+                            ));
+                        } else {
+                            self.output.push(
+                                "Error: Invalid strand index for conjugate".to_string(),
+                            );
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for conjugate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for conjugate".to_string());
                 }
                 None
             }
