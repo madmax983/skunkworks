@@ -1,5 +1,5 @@
 use noise::{NoiseFn, Perlin};
-use rusttype::{point, Font, Scale, PositionedGlyph};
+use rusttype::{point, Font, PositionedGlyph, Scale};
 
 pub struct HeightMap {
     pub width: u32,
@@ -31,12 +31,7 @@ impl HeightMap {
     }
 }
 
-pub fn generate_text_heightmap(
-    text: &str,
-    font_data: &[u8],
-    width: u32,
-    height: u32,
-) -> HeightMap {
+pub fn generate_text_heightmap(text: &str, font_data: &[u8], width: u32, height: u32) -> HeightMap {
     let mut map = HeightMap::new(width, height);
 
     // 1. Generate Noise Terrain
@@ -63,7 +58,10 @@ pub fn generate_text_heightmap(
     let scale = Scale::uniform(font_scale_val);
     let v_metrics = font.v_metrics(scale);
 
-    let offset = point(width as f32 * 0.1, height as f32 / 2.0 + v_metrics.ascent / 2.0);
+    let offset = point(
+        width as f32 * 0.1,
+        height as f32 / 2.0 + v_metrics.ascent / 2.0,
+    );
 
     let glyphs: Vec<PositionedGlyph> = font.layout(text, scale, offset).collect();
 
@@ -109,9 +107,15 @@ mod tests {
         let mut has_high_peak = false; // Text should create a high peak
 
         for val in &map.data {
-            if *val < min { min = *val; }
-            if *val > max { max = *val; }
-            if *val > 10.0 { has_high_peak = true; }
+            if *val < min {
+                min = *val;
+            }
+            if *val > max {
+                max = *val;
+            }
+            if *val > 10.0 {
+                has_high_peak = true;
+            }
         }
 
         assert!(max > min, "Map should have variation");

@@ -432,7 +432,8 @@ impl ChimeraVM {
             | OpCode::Unbind
             | OpCode::Entangle
             | OpCode::Decohere
-            | OpCode::Conjugate => self.exec_nova_op(op, args),
+            | OpCode::Conjugate
+            | OpCode::Gravitate => self.exec_nova_op(op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
@@ -591,6 +592,91 @@ impl ChimeraVM {
                     }
                 } else {
                     self.output.push("Error: Invalid arg for brz".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Gravitate => {
+                // stack: radius
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(r) = val {
+                        if r > 0 {
+                            let (cy, cx) = self.context_loc;
+                            // Get coordinates within radius
+                            let coords = self.get_circular_coords(cx as i64, cy as i64, r);
+
+                            // Calculate distances and sort
+                            let mut coords_with_dist: Vec<((usize, usize), i64)> = coords
+                                .into_iter()
+                                .map(|(x, y)| {
+                                    let dx = x as i64 - cx as i64;
+                                    let dy = y as i64 - cy as i64;
+                                    // Squared distance is sufficient for sorting
+                                    ((x, y), dx * dx + dy * dy)
+                                })
+                                .collect();
+
+                            // Sort by distance (ascending)
+                            coords_with_dist.sort_by_key(|&(_, d)| d);
+
+                            let mut moved_count = 0;
+
+                            for ((tx, ty), dist_sq) in coords_with_dist {
+                                if dist_sq == 0 {
+                                    continue; // Skip center
+                                }
+
+                                // If empty, skip
+                                if matches!(self.grid[ty][tx], Value::Int(0)) {
+                                    continue;
+                                }
+
+                                // Calculate target (one step closer to center)
+                                let dx = cx as i64 - tx as i64;
+                                let dy = cy as i64 - ty as i64;
+
+                                let sx = if dx > 0 {
+                                    1
+                                } else if dx < 0 {
+                                    -1
+                                } else {
+                                    0
+                                };
+                                let sy = if dy > 0 {
+                                    1
+                                } else if dy < 0 {
+                                    -1
+                                } else {
+                                    0
+                                };
+
+                                let target_x = (tx as i64 + sx) as usize;
+                                let target_y = (ty as i64 + sy) as usize;
+
+                                // Check if target is empty
+                                if matches!(self.grid[target_y][target_x], Value::Int(0)) {
+                                    // Move
+                                    self.grid[target_y][target_x] = self.grid[ty][tx].clone();
+                                    self.grid[ty][tx] = Value::Int(0);
+                                    moved_count += 1;
+                                }
+                            }
+
+                            self.energy = self.energy.saturating_sub(moved_count + 5); // Base cost + variable
+                            self.output.push(format!(
+                                "GRAVITATE: Pulled {} items towards {},{}",
+                                moved_count, cx, cy
+                            ));
+                        } else {
+                            // Negative or zero radius is no-op
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for gravitate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for gravitate".to_string());
                 }
                 None
             }
@@ -947,8 +1033,9 @@ impl ChimeraVM {
                                 let count = targets.len();
                                 for target_idx in targets {
                                     if target_idx < self.activation_levels.len() {
-                                        self.activation_levels[target_idx] =
-                                            self.activation_levels[target_idx].saturating_add(amount);
+                                        self.activation_levels[target_idx] = self.activation_levels
+                                            [target_idx]
+                                            .saturating_add(amount);
                                     }
                                 }
                                 self.energy = self.energy.saturating_sub((count as i64) + 1);
@@ -1101,9 +1188,8 @@ impl ChimeraVM {
                                     sequence.push(self.grid[y as usize][curr_x].clone());
                                 } else {
                                     valid = false;
-                                    self.output.push(
-                                        "Error: Incubate range out of bounds".to_string(),
-                                    );
+                                    self.output
+                                        .push("Error: Incubate range out of bounds".to_string());
                                     break;
                                 }
                             }
@@ -1165,7 +1251,7 @@ impl ChimeraVM {
                                                 | OpCode::Link
                                                 | OpCode::Sever
                                                 | OpCode::Spark => {
-                                                     if k + 1 < sequence.len() {
+                                                    if k + 1 < sequence.len() {
                                                         match &sequence[k + 1] {
                                                             Value::Int(n) => args.push(
                                                                 crate::ast::Nucleotide::Number(*n),
@@ -1177,7 +1263,7 @@ impl ChimeraVM {
                                                             ),
                                                         }
                                                         k += 1; // Consume arg
-                                                     }
+                                                    }
                                                 }
                                                 _ => {}
                                             }
@@ -1260,7 +1346,8 @@ impl ChimeraVM {
                             if amount > 0 {
                                 let idx = self.ip.0;
                                 if idx < self.telomeres.len() {
-                                    self.telomeres[idx] = self.telomeres[idx].saturating_add(amount);
+                                    self.telomeres[idx] =
+                                        self.telomeres[idx].saturating_add(amount);
                                     self.energy = self.energy.saturating_sub(25); // High cost
                                     self.output.push(format!(
                                         "TELOMERASE: Extended strand {} by {}",
@@ -2102,8 +2189,8 @@ impl ChimeraVM {
                         let s_idx = s as usize;
                         if s_idx < self.dna.helix.strands.len() {
                             let strand = &self.dna.helix.strands[s_idx];
-                            let mut curr_x = x as i64;
-                            let mut curr_y = y as i64;
+                            let mut curr_x = x;
+                            let mut curr_y = y;
                             let (dx, dy) = match dir.rem_euclid(4) {
                                 0 => (1, 0),
                                 1 => (0, 1),
@@ -2131,7 +2218,7 @@ impl ChimeraVM {
                             }
 
                             for val in cells_to_write {
-                                if curr_x >= 0 && curr_x < 16 && curr_y >= 0 && curr_y < 16 {
+                                if (0..16).contains(&curr_x) && (0..16).contains(&curr_y) {
                                     self.grid[curr_y as usize][curr_x as usize] = val;
                                     success_count += 1;
                                     curr_x += dx;
@@ -2147,9 +2234,8 @@ impl ChimeraVM {
                                 success_count, s_idx, x, y
                             ));
                         } else {
-                            self.output.push(
-                                "Error: Invalid strand index for conjugate".to_string(),
-                            );
+                            self.output
+                                .push("Error: Invalid strand index for conjugate".to_string());
                         }
                     } else {
                         self.output
@@ -2158,6 +2244,91 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for conjugate".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Gravitate => {
+                // stack: radius
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(r) = val {
+                        if r > 0 {
+                            let (cy, cx) = self.context_loc;
+                            // Get coordinates within radius
+                            let coords = self.get_circular_coords(cx as i64, cy as i64, r);
+
+                            // Calculate distances and sort
+                            let mut coords_with_dist: Vec<((usize, usize), i64)> = coords
+                                .into_iter()
+                                .map(|(x, y)| {
+                                    let dx = x as i64 - cx as i64;
+                                    let dy = y as i64 - cy as i64;
+                                    // Squared distance is sufficient for sorting
+                                    ((x, y), dx * dx + dy * dy)
+                                })
+                                .collect();
+
+                            // Sort by distance (ascending)
+                            coords_with_dist.sort_by_key(|&(_, d)| d);
+
+                            let mut moved_count = 0;
+
+                            for ((tx, ty), dist_sq) in coords_with_dist {
+                                if dist_sq == 0 {
+                                    continue; // Skip center
+                                }
+
+                                // If empty, skip
+                                if matches!(self.grid[ty][tx], Value::Int(0)) {
+                                    continue;
+                                }
+
+                                // Calculate target (one step closer to center)
+                                let dx = cx as i64 - tx as i64;
+                                let dy = cy as i64 - ty as i64;
+
+                                let sx = if dx > 0 {
+                                    1
+                                } else if dx < 0 {
+                                    -1
+                                } else {
+                                    0
+                                };
+                                let sy = if dy > 0 {
+                                    1
+                                } else if dy < 0 {
+                                    -1
+                                } else {
+                                    0
+                                };
+
+                                let target_x = (tx as i64 + sx) as usize;
+                                let target_y = (ty as i64 + sy) as usize;
+
+                                // Check if target is empty
+                                if matches!(self.grid[target_y][target_x], Value::Int(0)) {
+                                    // Move
+                                    self.grid[target_y][target_x] = self.grid[ty][tx].clone();
+                                    self.grid[ty][tx] = Value::Int(0);
+                                    moved_count += 1;
+                                }
+                            }
+
+                            self.energy = self.energy.saturating_sub(moved_count + 5); // Base cost + variable
+                            self.output.push(format!(
+                                "GRAVITATE: Pulled {} items towards {},{}",
+                                moved_count, cx, cy
+                            ));
+                        } else {
+                            // Negative or zero radius is no-op
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for gravitate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for gravitate".to_string());
                 }
                 None
             }

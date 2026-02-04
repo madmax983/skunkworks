@@ -14,8 +14,12 @@ mod cortex_test;
 mod havoc_repro;
 #[cfg(test)]
 mod nova_cerebellum_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_conjugation_test;
 #[cfg(test)]
 mod nova_crispr_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_gravity_test;
 #[cfg(test)]
 mod nova_hormone_test;
 #[cfg(test)]
@@ -25,5 +29,3 @@ mod nova_spore_test;
 mod nova_test;
 #[cfg(test)]
 mod nova_waste_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_conjugation_test;

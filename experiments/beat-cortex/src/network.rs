@@ -1,6 +1,6 @@
-use ndarray::{Array1, Array2, azip};
-use rand::Rng;
 use crate::neuron::IzhikevichPopulation;
+use ndarray::{azip, Array1, Array2};
+use rand::Rng;
 
 pub struct Reservoir {
     pub neurons: IzhikevichPopulation,
@@ -19,9 +19,13 @@ impl Reservoir {
 
         let exc_cutoff = (size as f32 * 0.8) as usize;
 
-        for i in 0..size { // Pre
-            for j in 0..size { // Post
-                if i == j { continue; }
+        for i in 0..size {
+            // Pre
+            for j in 0..size {
+                // Post
+                if i == j {
+                    continue;
+                }
                 if rng.gen::<f32>() < density {
                     let w = if i < exc_cutoff {
                         10.0 * rng.gen::<f32>() // Excitatory weights
@@ -94,7 +98,9 @@ mod tests {
         for _ in 0..100 {
             let spikes = net.step(0.5, &input);
             for &s in &spikes {
-                if s { spike_count += 1; }
+                if s {
+                    spike_count += 1;
+                }
             }
         }
         // Just check it doesn't crash. Spike count might be 0 or >0 depending on RNG.

@@ -28,7 +28,11 @@ impl AudioEngine {
             // Fail gracefully if no device
             let device = match host.default_output_device() {
                 Some(d) => d,
-                None => return Ok(Self { _stream: stream_dummy(rx)? }), // Should probably error or return dummy
+                None => {
+                    return Ok(Self {
+                        _stream: stream_dummy(rx)?,
+                    })
+                } // Should probably error or return dummy
             };
 
             let config = device.default_output_config()?;
@@ -51,7 +55,11 @@ impl AudioEngine {
 // If feature is off, struct has no stream.
 
 #[cfg(feature = "audio")]
-fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig, rx: Receiver<AudioEvent>) -> Result<cpal::Stream>
+fn run<T>(
+    device: &cpal::Device,
+    config: &cpal::StreamConfig,
+    rx: Receiver<AudioEvent>,
+) -> Result<cpal::Stream>
 where
     T: cpal::Sample + cpal::FromSample<f32>,
 {
@@ -143,7 +151,10 @@ impl PolySynth {
                 decay: 0.999, // Determines length of "ping"
             });
         }
-        Self { voices, sample_rate }
+        Self {
+            voices,
+            sample_rate,
+        }
     }
 
     fn trigger(&mut self, freq: f32) {
@@ -200,5 +211,5 @@ impl PolySynth {
 // No, relying on anyhow error bubbling.
 #[cfg(feature = "audio")]
 fn stream_dummy(_rx: Receiver<AudioEvent>) -> Result<cpal::Stream> {
-   Err(anyhow::anyhow!("No audio device found"))
+    Err(anyhow::anyhow!("No audio device found"))
 }

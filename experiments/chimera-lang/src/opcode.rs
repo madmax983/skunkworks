@@ -100,6 +100,8 @@ pub enum OpCode {
     Decohere,
     #[cfg(feature = "nova")]
     Conjugate,
+    #[cfg(feature = "nova")]
+    Gravitate,
 
     Unknown(String),
 }
@@ -204,6 +206,8 @@ impl FromStr for OpCode {
             "decohere" => Ok(OpCode::Decohere),
             #[cfg(feature = "nova")]
             "conjugate" => Ok(OpCode::Conjugate),
+            #[cfg(feature = "nova")]
+            "gravitate" => Ok(OpCode::Gravitate),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -308,6 +312,8 @@ impl fmt::Display for OpCode {
             OpCode::Decohere => write!(f, "decohere"),
             #[cfg(feature = "nova")]
             OpCode::Conjugate => write!(f, "conjugate"),
+            #[cfg(feature = "nova")]
+            OpCode::Gravitate => write!(f, "gravitate"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
