@@ -62,7 +62,7 @@ impl App {
                 continue;
             }
             // Simple circle collision
-            let dist = (body.pos - self.system.ship.pos).length();
+            let dist = (body.pos - self.system.ship.pos).magnitude();
             if dist < body.radius + 2.0 {
                 // Mark as "Visited"
                 // If it wasn't green, give fuel bonus?
@@ -148,7 +148,7 @@ fn ui(f: &mut Frame, app: &App) {
 
     // HUD
     let ship = &app.system.ship;
-    let vel_mag = ship.vel.length();
+    let vel_mag = ship.vel.magnitude();
     let status_color = if ship.fuel < 100.0 {
         Color::Red
     } else {

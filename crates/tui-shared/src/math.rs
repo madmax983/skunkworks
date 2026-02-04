@@ -70,6 +70,14 @@ impl Vec2 {
             y: d.y - 2.0 * dot * n.y,
         }
     }
+
+    pub fn rotate(self, angle: f64) -> Self {
+        let (sin, cos) = angle.sin_cos();
+        Self {
+            x: self.x * cos - self.y * sin,
+            y: self.x * sin + self.y * cos,
+        }
+    }
 }
 
 impl Add for Vec2 {

@@ -1,96 +1,5 @@
 use ratatui::style::Color;
-use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Sub, SubAssign};
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Vec2 {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl Vec2 {
-    pub fn new(x: f64, y: f64) -> Self {
-        Self { x, y }
-    }
-    pub fn zero() -> Self {
-        Self { x: 0.0, y: 0.0 }
-    }
-    pub fn length_squared(self) -> f64 {
-        self.x * self.x + self.y * self.y
-    }
-    pub fn length(self) -> f64 {
-        self.length_squared().sqrt()
-    }
-    pub fn normalize(self) -> Self {
-        let l = self.length();
-        if l > 0.0 {
-            self / l
-        } else {
-            Self::zero()
-        }
-    }
-    pub fn rotate(self, angle: f64) -> Self {
-        let (sin, cos) = angle.sin_cos();
-        Self {
-            x: self.x * cos - self.y * sin,
-            y: self.x * sin + self.y * cos,
-        }
-    }
-}
-
-impl Add for Vec2 {
-    type Output = Self;
-    fn add(self, rhs: Self) -> Self {
-        Self {
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-        }
-    }
-}
-impl AddAssign for Vec2 {
-    fn add_assign(&mut self, rhs: Self) {
-        self.x += rhs.x;
-        self.y += rhs.y;
-    }
-}
-impl Sub for Vec2 {
-    type Output = Self;
-    fn sub(self, rhs: Self) -> Self {
-        Self {
-            x: self.x - rhs.x,
-            y: self.y - rhs.y,
-        }
-    }
-}
-impl SubAssign for Vec2 {
-    fn sub_assign(&mut self, rhs: Self) {
-        self.x -= rhs.x;
-        self.y -= rhs.y;
-    }
-}
-impl Mul<f64> for Vec2 {
-    type Output = Self;
-    fn mul(self, rhs: f64) -> Self {
-        Self {
-            x: self.x * rhs,
-            y: self.y * rhs,
-        }
-    }
-}
-impl MulAssign<f64> for Vec2 {
-    fn mul_assign(&mut self, rhs: f64) {
-        self.x *= rhs;
-        self.y *= rhs;
-    }
-}
-impl Div<f64> for Vec2 {
-    type Output = Self;
-    fn div(self, rhs: f64) -> Self {
-        Self {
-            x: self.x / rhs,
-            y: self.y / rhs,
-        }
-    }
-}
+pub use tui_shared::math::Vec2;
 
 pub struct Body {
     pub pos: Vec2,
@@ -157,7 +66,7 @@ impl System {
                     continue;
                 }
                 let r = self.bodies[j].pos - self.bodies[i].pos;
-                let dist_sq = r.length_squared();
+                let dist_sq = r.magnitude_squared();
                 if dist_sq < 0.1 {
                     continue;
                 } // Softening
@@ -183,7 +92,7 @@ impl System {
         let mut ship_acc = Vec2::zero();
         for body in &self.bodies {
             let r = body.pos - self.ship.pos;
-            let dist_sq = r.length_squared();
+            let dist_sq = r.magnitude_squared();
             if dist_sq < 1.0 {
                 continue;
             }
@@ -255,7 +164,7 @@ mod tests {
         }
 
         let earth = &sys.bodies[1];
-        let dist = earth.pos.length();
+        let dist = earth.pos.magnitude();
 
         // Should be close to 100.0
         // Symplectic Euler is stable but not exact.

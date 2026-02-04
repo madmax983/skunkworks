@@ -27,3 +27,8 @@
 **Bloat:** `kind: usize` magic numbers and unused `mass`, `is_fixed` fields in `struct-soup/physics.rs`.
 **Cut:** Replaced with explicit `NodeKind` enum and removed unused fields.
 **Saved:** Removed dead code paths and enforced type safety.
+
+## [Reduction]
+**Bloat:** Re-implementation of `Vec2` in `experiments/cargo-rocket/src/physics.rs` while `tui-shared` provides it.
+**Cut:** Replaced with `tui_shared::math::Vec2` and added `rotate` to the shared library.
+**Saved:** ~100 lines of duplicate vector math code.
