@@ -1,3 +1,16 @@
+//! # Event
+//!
+//! A system for recording, serializing, and replaying terminal input events.
+//!
+//! This module provides a "Ghost" layer over `crossterm::event::Event`.
+//! Standard `crossterm` events cannot be easily serialized (they don't implement `Serde`).
+//! `GhostEvent` mirrors the structure of `crossterm` events but derives `Serialize` and `Deserialize`.
+//!
+//! This enables:
+//! - **Session Recording:** Save a user's input session to a file.
+//! - **Deterministic Replay:** Replay a recorded session exactly as it happened.
+//! - **Automated Testing:** Feed recorded events into an application to test behavior.
+
 use crossterm::event::{
     Event, KeyCode, KeyEvent, KeyEventKind, KeyEventState, KeyModifiers, MediaKeyCode,
     ModifierKeyCode, MouseButton, MouseEvent, MouseEventKind,
@@ -5,6 +18,10 @@ use crossterm::event::{
 use serde::{Deserialize, Serialize};
 use std::time::{Duration, Instant};
 
+/// A serializable mirror of `crossterm::event::Event`.
+///
+/// This enum allows input events to be saved to disk (JSON, binary, etc.) and
+/// loaded back later. It can be converted to and from `crossterm::event::Event` losslessly.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum GhostEvent {
     Key(GhostKeyEvent),
@@ -413,19 +430,45 @@ impl From<GhostMouseButton> for MouseButton {
     }
 }
 
+/// A single event stamped with the relative time since recording started.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RecordedEvent {
+    /// Time elapsed since the start of recording.
     pub time: Duration,
+    /// The event that occurred.
     pub event: GhostEvent,
 }
 
+/// Records a sequence of input events with timestamps.
+///
+/// Use this to capture a user's session.
+///
+/// # Examples
+///
+/// ```
+/// use tui_shared::event::GhostRecorder;
+/// use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
+///
+/// let mut recorder = GhostRecorder::new();
+/// recorder.start();
+///
+/// // ... user presses 'a' ...
+/// let event = Event::Key(KeyEvent::new(KeyCode::Char('a'), KeyModifiers::NONE));
+/// recorder.record(event);
+///
+/// // ... later ...
+/// let json = recorder.to_json().unwrap();
+/// assert!(json.contains("Char"));
+/// ```
 #[derive(Default)]
 pub struct GhostRecorder {
     start_time: Option<Instant>,
+    /// The list of recorded events.
     pub events: Vec<RecordedEvent>,
 }
 
 impl GhostRecorder {
+    /// Creates a new, empty recorder.
     pub fn new() -> Self {
         Self {
             start_time: None,
@@ -433,11 +476,15 @@ impl GhostRecorder {
         }
     }
 
+    /// Starts the recording timer and clears any previous events.
     pub fn start(&mut self) {
         self.start_time = Some(Instant::now());
         self.events.clear();
     }
 
+    /// Records an event with the current timestamp relative to start time.
+    ///
+    /// If `start()` has not been called, this does nothing.
     pub fn record(&mut self, event: Event) {
         if let Some(start) = self.start_time {
             let elapsed = start.elapsed();
@@ -448,11 +495,41 @@ impl GhostRecorder {
         }
     }
 
+    /// Serializes the recorded events to a JSON string.
     pub fn to_json(&self) -> serde_json::Result<String> {
         serde_json::to_string(&self.events)
     }
 }
 
+/// Replays a sequence of recorded events with correct timing.
+///
+/// Use this to feed recorded inputs back into an application.
+///
+/// # Examples
+///
+/// ```
+/// use tui_shared::event::{GhostRecorder, GhostReplayer};
+/// use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
+///
+/// // Assume we have a JSON string from a previous recording
+/// let mut recorder = GhostRecorder::new();
+/// recorder.start();
+/// recorder.record(Event::Key(KeyEvent::new(KeyCode::Char('a'), KeyModifiers::NONE)));
+/// let json = recorder.to_json().unwrap();
+///
+/// // Create a replayer
+/// let mut replayer = GhostReplayer::from_json(&json).unwrap();
+/// replayer.start();
+///
+/// // In your game loop:
+/// if let Some(event) = replayer.poll() {
+///     // Handle the replayed event
+///     match event {
+///         Event::Key(k) => println!("Replayed key: {:?}", k),
+///         _ => {}
+///     }
+/// }
+/// ```
 pub struct GhostReplayer {
     start_time: Option<Instant>,
     events: Vec<RecordedEvent>,
@@ -460,6 +537,7 @@ pub struct GhostReplayer {
 }
 
 impl GhostReplayer {
+    /// Creates a replayer from a list of recorded events.
     pub fn new(events: Vec<RecordedEvent>) -> Self {
         Self {
             start_time: None,
@@ -468,16 +546,25 @@ impl GhostReplayer {
         }
     }
 
+    /// Creates a replayer by parsing a JSON string of events.
     pub fn from_json(json: &str) -> serde_json::Result<Self> {
         let events: Vec<RecordedEvent> = serde_json::from_str(json)?;
         Ok(Self::new(events))
     }
 
+    /// Starts the replay timer.
+    ///
+    /// This resets the cursor to the beginning.
     pub fn start(&mut self) {
         self.start_time = Some(Instant::now());
         self.cursor = 0;
     }
 
+    /// Checks if the next event is ready to be fired.
+    ///
+    /// Returns `Some(Event)` if the time elapsed since `start()` is greater than or equal to
+    /// the timestamp of the next event in the queue. Returns `None` if it's not time yet,
+    /// or if all events have been replayed.
     pub fn poll(&mut self) -> Option<Event> {
         let start = self.start_time?;
 
