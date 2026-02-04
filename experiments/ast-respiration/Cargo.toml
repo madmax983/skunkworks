@@ -1,0 +1,19 @@
+[package]
+name = "ast-respiration"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+crossterm.workspace = true
+rand.workspace = true
+ratatui.workspace = true
+tui-shared.workspace = true
+glam = "0.27"
+
+[dependencies.syn]
+version = "2.0"
+features = ["full", "visit", "extra-traits"]
+
+[dependencies.quote]
+version = "1.0"

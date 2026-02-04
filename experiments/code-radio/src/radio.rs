@@ -1,5 +1,5 @@
-use rand::Rng;
 use crate::scanner::Station;
+use rand::Rng;
 
 pub struct Tuner {
     pub freq: f64,

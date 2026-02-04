@@ -43,7 +43,7 @@ pub fn scan_workspace(root: &Path) -> Result<Vec<Station>> {
             // Try to read as string
             if let Ok(content) = fs::read_to_string(path) {
                 if !content.is_empty() {
-                     stations.push(Station {
+                    stations.push(Station {
                         path: path.to_path_buf(),
                         freq,
                         size: content.len(),

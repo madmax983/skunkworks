@@ -58,7 +58,9 @@ impl App {
 
         // Collision Check - Collect Cargo
         for body in &mut self.system.bodies {
-            if body.is_fixed { continue; }
+            if body.is_fixed {
+                continue;
+            }
             // Simple circle collision
             let dist = (body.pos - self.system.ship.pos).length();
             if dist < body.radius + 2.0 {
@@ -66,7 +68,8 @@ impl App {
                 // If it wasn't green, give fuel bonus?
                 if body.color != Color::Green {
                     body.color = Color::Green; // Visited
-                    self.system.ship.fuel = (self.system.ship.fuel + 100.0).min(self.system.ship.max_fuel);
+                    self.system.ship.fuel =
+                        (self.system.ship.fuel + 100.0).min(self.system.ship.max_fuel);
                 }
             }
         }
@@ -97,7 +100,9 @@ fn main() -> Result<()> {
                         KeyCode::Char('q') | KeyCode::Esc => app.running = false,
                         KeyCode::Left | KeyCode::Char('a') => app.system.ship.angle += 0.2,
                         KeyCode::Right | KeyCode::Char('d') => app.system.ship.angle -= 0.2,
-                        KeyCode::Char(' ') => app.system.ship.thrusting = !app.system.ship.thrusting,
+                        KeyCode::Char(' ') => {
+                            app.system.ship.thrusting = !app.system.ship.thrusting
+                        }
                         KeyCode::Char('+') | KeyCode::Char('=') => app.zoom *= 1.1,
                         KeyCode::Char('-') | KeyCode::Char('_') => app.zoom /= 1.1,
                         _ => {}
@@ -128,7 +133,11 @@ fn ui(f: &mut Frame, app: &App) {
     let view_h = view_w * (chunks[0].height as f64 / chunks[0].width as f64) * 2.0;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Cargo Rocket 🚀 "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Cargo Rocket 🚀 "),
+        )
         .x_bounds([cx - view_w / 2.0, cx + view_w / 2.0])
         .y_bounds([cy - view_h / 2.0, cy + view_h / 2.0])
         .paint(|ctx| {
@@ -140,13 +149,27 @@ fn ui(f: &mut Frame, app: &App) {
     // HUD
     let ship = &app.system.ship;
     let vel_mag = ship.vel.length();
-    let status_color = if ship.fuel < 100.0 { Color::Red } else { Color::Green };
+    let status_color = if ship.fuel < 100.0 {
+        Color::Red
+    } else {
+        Color::Green
+    };
 
     let info = Paragraph::new(vec![
         Line::from(vec![
-            Span::styled(format!("FUEL: {:.1} ", ship.fuel), Style::default().fg(status_color)),
-            Span::raw(format!("| VEL: {:.2} | POS: {:.0},{:.0} ", vel_mag, ship.pos.x, ship.pos.y)),
-            Span::raw(if ship.thrusting { "🔥 ENGINE ON" } else { "   ENGINE OFF" }),
+            Span::styled(
+                format!("FUEL: {:.1} ", ship.fuel),
+                Style::default().fg(status_color),
+            ),
+            Span::raw(format!(
+                "| VEL: {:.2} | POS: {:.0},{:.0} ",
+                vel_mag, ship.pos.x, ship.pos.y
+            )),
+            Span::raw(if ship.thrusting {
+                "🔥 ENGINE ON"
+            } else {
+                "   ENGINE OFF"
+            }),
         ]),
         Line::from("Controls: Left/Right to Rotate | Space to Toggle Thrust | +/- Zoom | Q Quit"),
     ])
@@ -167,7 +190,11 @@ fn draw_system(ctx: &mut Context, app: &App) {
         });
 
         if body.radius > 2.0 || app.zoom > 1.0 {
-             ctx.print(body.pos.x + body.radius, body.pos.y, Span::raw(body.name.clone()));
+            ctx.print(
+                body.pos.x + body.radius,
+                body.pos.y,
+                Span::raw(body.name.clone()),
+            );
         }
     }
 
@@ -178,27 +205,35 @@ fn draw_system(ctx: &mut Context, app: &App) {
     let right = ship.pos + Vec2::new((ship.angle - 2.5).cos(), (ship.angle - 2.5).sin()) * 3.0;
 
     ctx.draw(&CanvasLine {
-        x1: tip.x, y1: tip.y,
-        x2: left.x, y2: left.y,
+        x1: tip.x,
+        y1: tip.y,
+        x2: left.x,
+        y2: left.y,
         color: Color::White,
     });
     ctx.draw(&CanvasLine {
-        x1: left.x, y1: left.y,
-        x2: right.x, y2: right.y,
+        x1: left.x,
+        y1: left.y,
+        x2: right.x,
+        y2: right.y,
         color: Color::White,
     });
     ctx.draw(&CanvasLine {
-        x1: right.x, y1: right.y,
-        x2: tip.x, y2: tip.y,
+        x1: right.x,
+        y1: right.y,
+        x2: tip.x,
+        y2: tip.y,
         color: Color::White,
     });
 
     // Exhaust
     if ship.thrusting {
         let back = ship.pos - Vec2::new(ship.angle.cos(), ship.angle.sin()) * 4.0;
-         ctx.draw(&CanvasLine {
-            x1: (left.x + right.x)/2.0, y1: (left.y + right.y)/2.0,
-            x2: back.x, y2: back.y,
+        ctx.draw(&CanvasLine {
+            x1: (left.x + right.x) / 2.0,
+            y1: (left.y + right.y) / 2.0,
+            x2: back.x,
+            y2: back.y,
             color: Color::Red,
         });
     }

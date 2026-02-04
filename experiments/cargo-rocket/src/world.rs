@@ -1,21 +1,30 @@
+use crate::physics::{Body, System, Vec2};
 use anyhow::{Context, Result};
 use cargo_metadata::MetadataCommand;
-use crate::physics::{Body, System, Vec2};
+use rand::Rng;
 use ratatui::style::Color;
 use std::collections::{HashMap, HashSet, VecDeque};
-use rand::Rng;
 
 pub fn load_system() -> Result<System> {
     let metadata = MetadataCommand::new()
         .exec()
         .context("Failed to run cargo metadata")?;
 
-    let resolve = metadata.resolve.as_ref().context("No resolve graph found")?;
-    let root_id = resolve.root.as_ref().or_else(|| {
-        metadata.packages.iter()
-            .find(|p| p.name == "cargo-rocket")
-            .map(|p| &p.id)
-    }).context("No root package found (cargo-rocket)")?;
+    let resolve = metadata
+        .resolve
+        .as_ref()
+        .context("No resolve graph found")?;
+    let root_id = resolve
+        .root
+        .as_ref()
+        .or_else(|| {
+            metadata
+                .packages
+                .iter()
+                .find(|p| p.name == "cargo-rocket")
+                .map(|p| &p.id)
+        })
+        .context("No root package found (cargo-rocket)")?;
 
     let mut system = System::new();
     let mut rng = rand::thread_rng();
@@ -62,7 +71,14 @@ pub fn load_system() -> Result<System> {
 
         let (pos, vel, mass, radius, color, is_fixed) = if depth == 0 {
             // Sun
-            (Vec2::zero(), Vec2::zero(), 5000.0, 15.0, Color::Yellow, true)
+            (
+                Vec2::zero(),
+                Vec2::zero(),
+                5000.0,
+                15.0,
+                Color::Yellow,
+                true,
+            )
         } else {
             // Planet
             // Radius of orbit based on depth

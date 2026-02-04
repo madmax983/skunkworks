@@ -59,8 +59,17 @@ impl App {
     }
 
     fn scan_action(&mut self) {
-        let target = self.world.entities.iter()
-            .map(|e| (e.name.clone(), e.kind.clone(), e.pos.distance(self.rover.pos)))
+        let target = self
+            .world
+            .entities
+            .iter()
+            .map(|e| {
+                (
+                    e.name.clone(),
+                    e.kind.clone(),
+                    e.pos.distance(self.rover.pos),
+                )
+            })
             .min_by(|a, b| a.2.partial_cmp(&b.2).unwrap_or(std::cmp::Ordering::Equal));
 
         if let Some((name, kind, dist)) = target {
@@ -68,7 +77,7 @@ impl App {
                 match kind {
                     EntityType::File { size } => {
                         self.set_message(format!("File: {} | Size: {} bytes", name, size));
-                    },
+                    }
                     EntityType::Directory => {
                         self.set_message(format!("Directory: {} | Use ENTER to enter", name));
                     }
@@ -80,8 +89,18 @@ impl App {
     }
 
     fn enter_action(&mut self) -> Result<()> {
-        let target = self.world.entities.iter()
-            .map(|e| (e.path.clone(), e.name.clone(), e.kind.clone(), e.pos.distance(self.rover.pos)))
+        let target = self
+            .world
+            .entities
+            .iter()
+            .map(|e| {
+                (
+                    e.path.clone(),
+                    e.name.clone(),
+                    e.kind.clone(),
+                    e.pos.distance(self.rover.pos),
+                )
+            })
             .min_by(|a, b| a.3.partial_cmp(&b.3).unwrap_or(std::cmp::Ordering::Equal));
 
         if let Some((path, name, kind, dist)) = target {
@@ -111,7 +130,9 @@ impl App {
                     KeyCode::Down | KeyCode::Char('s') => self.rover.thrust(-0.05),
                     KeyCode::Left | KeyCode::Char('a') => self.rover.rotate(0.1),
                     KeyCode::Right | KeyCode::Char('d') => self.rover.rotate(-0.1),
-                    KeyCode::Char('+') | KeyCode::Char('=') => self.view_radius = (self.view_radius - 5.0).max(10.0),
+                    KeyCode::Char('+') | KeyCode::Char('=') => {
+                        self.view_radius = (self.view_radius - 5.0).max(10.0)
+                    }
                     KeyCode::Char('-') => self.view_radius = (self.view_radius + 5.0).min(200.0),
                     KeyCode::Enter => self.enter_action()?,
                     KeyCode::Char(' ') => self.scan_action(),
@@ -183,21 +204,31 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
                 };
 
                 // Culling for performance (simple box check)
-                if (entity.pos.x - view_x).abs() > r * 2.0 || (entity.pos.y - view_y).abs() > r * 2.0 {
+                if (entity.pos.x - view_x).abs() > r * 2.0
+                    || (entity.pos.y - view_y).abs() > r * 2.0
+                {
                     continue;
                 }
 
-                ctx.print(entity.pos.x, entity.pos.y, Span::styled(
-                    match entity.kind {
-                        EntityType::Directory => "📂",
-                        EntityType::File { .. } => "·",
-                    },
-                    Style::default().fg(color)
-                ));
+                ctx.print(
+                    entity.pos.x,
+                    entity.pos.y,
+                    Span::styled(
+                        match entity.kind {
+                            EntityType::Directory => "📂",
+                            EntityType::File { .. } => "·",
+                        },
+                        Style::default().fg(color),
+                    ),
+                );
 
                 // If close, draw label
                 if entity.pos.distance(app.rover.pos) < 5.0 {
-                     ctx.print(entity.pos.x, entity.pos.y + 1.0, Span::raw(entity.name.clone()));
+                    ctx.print(
+                        entity.pos.x,
+                        entity.pos.y + 1.0,
+                        Span::raw(entity.name.clone()),
+                    );
                 }
             }
 
@@ -217,18 +248,24 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
             let p3 = pos + right;
 
             ctx.draw(&CanvasLine {
-                x1: p1.x, y1: p1.y,
-                x2: p2.x, y2: p2.y,
+                x1: p1.x,
+                y1: p1.y,
+                x2: p2.x,
+                y2: p2.y,
                 color: Color::Red,
             });
             ctx.draw(&CanvasLine {
-                x1: p2.x, y1: p2.y,
-                x2: p3.x, y2: p3.y,
+                x1: p2.x,
+                y1: p2.y,
+                x2: p3.x,
+                y2: p3.y,
                 color: Color::Red,
             });
             ctx.draw(&CanvasLine {
-                x1: p3.x, y1: p3.y,
-                x2: p1.x, y2: p1.y,
+                x1: p3.x,
+                y1: p3.y,
+                x2: p1.x,
+                y2: p1.y,
                 color: Color::Red,
             });
         });
@@ -242,8 +279,15 @@ fn draw_hud(f: &mut Frame, app: &App, area: Rect) {
         app.rover.pos.x,
         app.rover.pos.y,
         app.rover.vel.magnitude(),
-        app.world.current_path.file_name().unwrap_or_default().to_string_lossy(),
+        app.world
+            .current_path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy(),
         app.message
     );
-    f.render_widget(Paragraph::new(hud_text).style(Style::default().fg(Color::Green)), area);
+    f.render_widget(
+        Paragraph::new(hud_text).style(Style::default().fg(Color::Green)),
+        area,
+    );
 }

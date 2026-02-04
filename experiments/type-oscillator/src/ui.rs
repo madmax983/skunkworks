@@ -9,7 +9,12 @@ pub fn draw(f: &mut Frame, points: &[(f64, f64)]) {
 
     // Calculate bounds
     let (min_x, max_x, min_y, max_y) = points.iter().fold(
-        (f64::INFINITY, f64::NEG_INFINITY, f64::INFINITY, f64::NEG_INFINITY),
+        (
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+            f64::INFINITY,
+            f64::NEG_INFINITY,
+        ),
         |(min_x, max_x, min_y, max_y), (x, y)| {
             (min_x.min(*x), max_x.max(*x), min_y.min(*y), max_y.max(*y))
         },
@@ -30,7 +35,11 @@ pub fn draw(f: &mut Frame, points: &[(f64, f64)]) {
     let y_bounds = [min_y - padding_y, max_y + padding_y];
 
     let canvas = Canvas::default()
-        .block(ratatui::widgets::Block::default().borders(ratatui::widgets::Borders::ALL).title("Type Oscillator"))
+        .block(
+            ratatui::widgets::Block::default()
+                .borders(ratatui::widgets::Borders::ALL)
+                .title("Type Oscillator"),
+        )
         .x_bounds(x_bounds)
         .y_bounds(y_bounds)
         .paint(|ctx| {

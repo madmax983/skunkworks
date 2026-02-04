@@ -149,22 +149,30 @@ impl System {
         let mut forces = vec![Vec2::zero(); self.bodies.len()];
 
         for i in 0..self.bodies.len() {
-            if self.bodies[i].is_fixed { continue; }
+            if self.bodies[i].is_fixed {
+                continue;
+            }
             for j in 0..self.bodies.len() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let r = self.bodies[j].pos - self.bodies[i].pos;
                 let dist_sq = r.length_squared();
-                if dist_sq < 0.1 { continue; } // Softening
+                if dist_sq < 0.1 {
+                    continue;
+                } // Softening
                 let dist = dist_sq.sqrt();
                 let f = r / dist * (self.g * self.bodies[j].mass / dist_sq); // F/m = a. We just want 'a' from other body.
-                // Wait, F = G m1 m2 / r^2. a1 = F / m1 = G m2 / r^2.
+                                                                             // Wait, F = G m1 m2 / r^2. a1 = F / m1 = G m2 / r^2.
                 forces[i] += f;
             }
         }
 
         // Update Bodies
         for (i, body) in self.bodies.iter_mut().enumerate() {
-            if body.is_fixed { continue; }
+            if body.is_fixed {
+                continue;
+            }
             body.vel += forces[i] * dt;
             body.pos += body.vel * dt;
             body.acc = forces[i];
@@ -176,7 +184,9 @@ impl System {
         for body in &self.bodies {
             let r = body.pos - self.ship.pos;
             let dist_sq = r.length_squared();
-            if dist_sq < 1.0 { continue; }
+            if dist_sq < 1.0 {
+                continue;
+            }
             let dist = dist_sq.sqrt();
             let a = r / dist * (self.g * body.mass / dist_sq);
             ship_acc += a;
@@ -249,6 +259,10 @@ mod tests {
 
         // Should be close to 100.0
         // Symplectic Euler is stable but not exact.
-        assert!((dist - 100.0).abs() < 5.0, "Orbit drifted too much: {}", dist);
+        assert!(
+            (dist - 100.0).abs() < 5.0,
+            "Orbit drifted too much: {}",
+            dist
+        );
     }
 }

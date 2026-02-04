@@ -1,13 +1,10 @@
-use crate::game::Game;
 use crate::diff::LineType;
+use crate::game::Game;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
     text::Span,
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Frame,
 };
 
@@ -27,10 +24,13 @@ pub fn draw(f: &mut Frame, game: &Game) {
     let footer_area = chunks[1];
 
     if game.game_over {
-        let p = Paragraph::new(format!("GAME OVER\nScore: {}\nPress 'q' to quit.", game.score))
-            .style(Style::default().fg(Color::Red).bg(Color::Black))
-            .alignment(ratatui::layout::Alignment::Center)
-            .block(Block::default().borders(Borders::ALL));
+        let p = Paragraph::new(format!(
+            "GAME OVER\nScore: {}\nPress 'q' to quit.",
+            game.score
+        ))
+        .style(Style::default().fg(Color::Red).bg(Color::Black))
+        .alignment(ratatui::layout::Alignment::Center)
+        .block(Block::default().borders(Borders::ALL));
 
         let center = centered_rect(60, 20, main_area);
         f.render_widget(p, center);
@@ -38,7 +38,11 @@ pub fn draw(f: &mut Frame, game: &Game) {
     }
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Git Invaders "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Git Invaders "),
+        )
         .marker(ratatui::symbols::Marker::Braille) // Braille allows finer resolution if used for shapes, but we use print
         .x_bounds([0.0, game.width])
         .y_bounds([game.height, 0.0]) // Inverted Y: 0 is Top, Height is Bottom
@@ -46,11 +50,19 @@ pub fn draw(f: &mut Frame, game: &Game) {
             // Draw Player
             let px = game.player_x;
             let py = game.height - 3.0; // Slightly above bottom
-            ctx.print(px, py, Span::styled("/^\\", Style::default().fg(Color::Cyan)));
+            ctx.print(
+                px,
+                py,
+                Span::styled("/^\\", Style::default().fg(Color::Cyan)),
+            );
 
             // Draw Bullets
             for b in &game.bullets {
-                ctx.print(b.x, b.y, Span::styled("|", Style::default().fg(Color::Yellow)));
+                ctx.print(
+                    b.x,
+                    b.y,
+                    Span::styled("|", Style::default().fg(Color::Yellow)),
+                );
             }
 
             // Draw Enemies
@@ -68,12 +80,30 @@ pub fn draw(f: &mut Frame, game: &Game) {
                     &e.line.content
                 };
 
-                ctx.print(e.x, e.y, Span::styled(content.to_string(), Style::default().fg(color)));
+                ctx.print(
+                    e.x,
+                    e.y,
+                    Span::styled(content.to_string(), Style::default().fg(color)),
+                );
             }
 
             // Draw Score
-            ctx.print(1.0, 1.0, Span::styled(format!("Score: {}", game.score), Style::default().fg(Color::White)));
-            ctx.print(1.0, 2.0, Span::styled(format!("Wave: {}", game.pending_lines.len()), Style::default().fg(Color::Gray)));
+            ctx.print(
+                1.0,
+                1.0,
+                Span::styled(
+                    format!("Score: {}", game.score),
+                    Style::default().fg(Color::White),
+                ),
+            );
+            ctx.print(
+                1.0,
+                2.0,
+                Span::styled(
+                    format!("Wave: {}", game.pending_lines.len()),
+                    Style::default().fg(Color::Gray),
+                ),
+            );
         });
 
     f.render_widget(canvas, main_area);

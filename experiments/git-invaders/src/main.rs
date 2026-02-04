@@ -4,9 +4,9 @@ mod ui;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use game::Game;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use game::Game;
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
@@ -54,14 +54,14 @@ fn main() -> Result<()> {
         if last_tick.elapsed() >= tick_rate {
             // Check resize
             if let Ok(size) = tui.terminal.size() {
-                 let w = size.width as f64;
-                 let h = size.height.saturating_sub(1) as f64;
-                 // Only update if significantly changed to avoid jitter?
-                 if (w - game.width).abs() > 0.1 || (h - game.height).abs() > 0.1 {
-                     game.width = w;
-                     game.height = h;
-                     game.player_x = game.player_x.clamp(0.0, w - 3.0);
-                 }
+                let w = size.width as f64;
+                let h = size.height.saturating_sub(1) as f64;
+                // Only update if significantly changed to avoid jitter?
+                if (w - game.width).abs() > 0.1 || (h - game.height).abs() > 0.1 {
+                    game.width = w;
+                    game.height = h;
+                    game.player_x = game.player_x.clamp(0.0, w - 3.0);
+                }
             }
 
             game.tick();

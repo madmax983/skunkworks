@@ -62,14 +62,14 @@ impl OutlineBuilder for PointCollector {
             let t2 = t * t;
 
             let bx = mt * mt2 * x0
-                   + 3.0 * mt2 * t * (x1 as f64)
-                   + 3.0 * mt * t2 * (x2 as f64)
-                   + t * t2 * (x as f64);
+                + 3.0 * mt2 * t * (x1 as f64)
+                + 3.0 * mt * t2 * (x2 as f64)
+                + t * t2 * (x as f64);
 
             let by = mt * mt2 * y0
-                   + 3.0 * mt2 * t * (y1 as f64)
-                   + 3.0 * mt * t2 * (y2 as f64)
-                   + t * t2 * (y as f64);
+                + 3.0 * mt2 * t * (y1 as f64)
+                + 3.0 * mt * t2 * (y2 as f64)
+                + t * t2 * (y as f64);
 
             self.points.push((bx, by));
         }

@@ -109,7 +109,11 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
 fn ui(f: &mut ratatui::Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(30), Constraint::Percentage(50), Constraint::Percentage(20)])
+        .constraints([
+            Constraint::Percentage(30),
+            Constraint::Percentage(50),
+            Constraint::Percentage(20),
+        ])
         .split(f.area());
 
     // Spectrum Analyzer
@@ -129,7 +133,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     }
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Spectrum Analyzer"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Spectrum Analyzer"),
+        )
         .x_bounds([88.0, 108.0])
         .y_bounds([0.0, 10.0])
         .paint(|ctx| {
@@ -170,9 +178,9 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     // Monitor (Demodulated Text)
     let content = if let Some(station) = nearest_station {
         if min_dist < bandwidth * 2.0 {
-             demodulate(station, tuned_freq, bandwidth)
+            demodulate(station, tuned_freq, bandwidth)
         } else {
-             demodulate(station, tuned_freq + 100.0, bandwidth) // Force static
+            demodulate(station, tuned_freq + 100.0, bandwidth) // Force static
         }
     } else {
         "NO SIGNAL".to_string()
