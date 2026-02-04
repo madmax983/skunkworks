@@ -15,22 +15,28 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::io;
+use std::fs;
 use std::time::{Duration, Instant};
 
 mod geo;
 use geo::MiuraPattern;
 
+mod guestbook;
+use guestbook::{GuestbookEntry, parse_guestbook};
+
 // 3D Math helpers
 use nalgebra::{Rotation3, Vector3};
 
 struct Panel {
-    content: String,
+    entry: Option<GuestbookEntry>,
     color: Color,
 }
 
 struct App {
     pattern: MiuraPattern,
-    rho: f64, // 0.0 (Folded) to 1.0 (Flat)
+    rho: f64,        // Current fold state
+    target_rho: f64, // Target fold state
+    velocity: f64,   // Velocity of folding
     should_quit: bool,
     auto_responsive: bool,
     rotation: (f64, f64), // (pitch, yaw)
@@ -40,25 +46,48 @@ struct App {
 impl App {
     fn new() -> Self {
         let mut panels = Vec::new();
-        // Create some data
-        let colors = [
-            Color::Red,
-            Color::Green,
-            Color::Yellow,
-            Color::Blue,
-            Color::Magenta,
-            Color::Cyan,
-        ];
-        for i in 0..100 {
-            panels.push(Panel {
-                content: format!("ID:{:02}", i),
-                color: colors[i % colors.len()],
-            });
+
+        // Load Guestbook
+        let guestbook_path = "../../GUESTBOOK.md";
+        let content = fs::read_to_string(guestbook_path).unwrap_or_else(|_| {
+            "Could not read GUESTBOOK.md".to_string()
+        });
+
+        let entries = parse_guestbook(&content);
+        let mut entry_iter = entries.into_iter();
+
+        // Create grid
+        let rows = 8;
+        let cols = 8;
+
+        for _ in 0..(rows * cols) {
+            if let Some(entry) = entry_iter.next() {
+                let color = match entry.concentration.as_str() {
+                    "HIGH" | "CRITICAL MASS" => Color::Red,
+                    "STABLE TRAIL" => Color::Green,
+                    "FRESH" => Color::Blue,
+                    "DECOMPOSING" => Color::DarkGray,
+                    _ => Color::Yellow,
+                };
+
+                panels.push(Panel {
+                    entry: Some(entry),
+                    color,
+                });
+            } else {
+                // Filler panels
+                panels.push(Panel {
+                    entry: None,
+                    color: Color::Gray,
+                });
+            }
         }
 
         Self {
-            pattern: MiuraPattern::new(8, 8),
+            pattern: MiuraPattern::new(rows, cols),
             rho: 0.8,
+            target_rho: 0.8,
+            velocity: 0.0,
             should_quit: false,
             auto_responsive: true,
             rotation: (0.5, 0.5),
@@ -69,12 +98,30 @@ impl App {
     fn update(&mut self, area: Rect) {
         if self.auto_responsive {
             // Map width to rho
-            // Let's say max width 120 -> rho 1.0
-            // min width 40 -> rho 0.0
             let w = area.width as f64;
             let min_w = 40.0;
             let max_w = 120.0;
-            self.rho = ((w - min_w) / (max_w - min_w)).clamp(0.0, 1.0);
+            self.target_rho = ((w - min_w) / (max_w - min_w)).clamp(0.0, 1.0);
+        }
+
+        // Spring Physics
+        // F = -k * x - c * v
+        let k = 0.08; // Spring constant
+        let c = 0.15; // Damping
+        let diff = self.target_rho - self.rho;
+        let force = diff * k;
+
+        self.velocity += force;
+        self.velocity *= 1.0 - c;
+        self.rho += self.velocity;
+
+        // Hard stops (elastic)
+        if self.rho < 0.0 {
+            self.rho = 0.0;
+            self.velocity *= -0.5;
+        } else if self.rho > 1.0 {
+            self.rho = 1.0;
+            self.velocity *= -0.5;
         }
     }
 
@@ -85,11 +132,11 @@ impl App {
                 KeyCode::Char(' ') => self.auto_responsive = !self.auto_responsive,
                 KeyCode::Left => {
                     self.auto_responsive = false;
-                    self.rho = (self.rho - 0.05).clamp(0.0, 1.0)
+                    self.target_rho = (self.target_rho - 0.1).clamp(0.0, 1.0)
                 }
                 KeyCode::Right => {
                     self.auto_responsive = false;
-                    self.rho = (self.rho + 0.05).clamp(0.0, 1.0)
+                    self.target_rho = (self.target_rho + 0.1).clamp(0.0, 1.0)
                 }
                 KeyCode::Char('w') => self.rotation.0 -= 0.1,
                 KeyCode::Char('s') => self.rotation.0 += 0.1,
@@ -121,7 +168,6 @@ fn draw_ui(f: &mut Frame, app: &App) {
         .iter()
         .map(|v| {
             let rv = rot * v;
-            // Simple orthographic for now, scale fits to canvas
             (rv.x, rv.y) // In Ratatui Canvas, Y is up
         })
         .collect();
@@ -146,7 +192,7 @@ fn draw_ui(f: &mut Frame, app: &App) {
         let nx = (x - x_bounds[0]) / (x_bounds[1] - x_bounds[0]);
         let ny = (y - y_bounds[0]) / (y_bounds[1] - y_bounds[0]);
 
-        if nx < 0.0 || nx > 1.0 || ny < 0.0 || ny > 1.0 {
+        if !(0.0..=1.0).contains(&nx) || !(0.0..=1.0).contains(&ny) {
             return None;
         }
 
@@ -163,7 +209,7 @@ fn draw_ui(f: &mut Frame, app: &App) {
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title(" Origami Layout Engine "),
+                .title(" Origami Layout Engine: GUESTBOOK.md "),
         )
         .x_bounds(x_bounds)
         .y_bounds(y_bounds)
@@ -232,14 +278,14 @@ fn draw_ui(f: &mut Frame, app: &App) {
                     // Check if face is big enough to draw
                     let p0 = projected[indices[0]];
                     let p1 = projected[indices[1]]; // Horizontal neighbor
-                                                    // dist in world
+                    // dist in world
                     let dist = (p0.0 - p1.0).hypot(p0.1 - p1.1);
                     // dist in screen pixels
                     let screen_width =
                         dist / (x_bounds[1] - x_bounds[0]) * canvas_area.width as f64;
 
                     if screen_width > 4.0 {
-                        let rect_w = (screen_width * 0.8) as u16;
+                        let rect_w = (screen_width * 0.9) as u16;
                         let rect_h = 1;
 
                         let rx = sx.saturating_sub(rect_w / 2);
@@ -251,15 +297,32 @@ fn draw_ui(f: &mut Frame, app: &App) {
 
                         if visible_rect.width > 0 && visible_rect.height > 0 {
                             let panel = &app.panels[panel_idx];
-                            // If folded tight, just show color block
-                            if screen_width < 8.0 {
-                                let b = Block::default().bg(panel.color);
-                                f.render_widget(b, visible_rect);
+
+                            if let Some(entry) = &panel.entry {
+                                // LOD Logic
+                                if screen_width < 10.0 {
+                                    // LOD 0: Color Block
+                                    let b = Block::default().bg(panel.color);
+                                    f.render_widget(b, visible_rect);
+                                } else if screen_width < 25.0 {
+                                    // LOD 1: Experiment Name
+                                    // Extract just the name from "experiments/name"
+                                    let name = entry.location.split('/').next_back().unwrap_or(&entry.location);
+                                    let p = Paragraph::new(name)
+                                        .style(Style::default().fg(Color::Black).bg(panel.color));
+                                    f.render_widget(p, visible_rect);
+                                } else {
+                                    // LOD 2: Status (Truncated)
+                                    // Or Scent + Status
+                                    let text = format!("{} - {}", entry.scent_origin, entry.status);
+                                    let p = Paragraph::new(text)
+                                        .style(Style::default().fg(Color::Black).bg(panel.color));
+                                    f.render_widget(p, visible_rect);
+                                }
                             } else {
-                                // Show text
-                                let p = Paragraph::new(panel.content.as_str())
-                                    .style(Style::default().fg(Color::Black).bg(panel.color));
-                                f.render_widget(p, visible_rect);
+                                // Empty Panel
+                                let b = Block::default().bg(Color::DarkGray);
+                                f.render_widget(b, visible_rect);
                             }
                         }
                     }
@@ -270,8 +333,8 @@ fn draw_ui(f: &mut Frame, app: &App) {
     }
 
     let status_text = format!(
-        "Rho: {:.2} | Auto: {} | WASD Rotate, Arrows Fold",
-        app.rho, app.auto_responsive
+        "Rho: {:.2} (Target: {:.2}) | Auto: {} | WASD Rotate, Arrows Fold",
+        app.rho, app.target_rho, app.auto_responsive
     );
     f.render_widget(
         Paragraph::new(status_text).block(Block::default().borders(Borders::ALL)),
@@ -288,7 +351,7 @@ fn main() -> Result<()> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut app = App::new();
-    let tick_rate = Duration::from_millis(30);
+    let tick_rate = Duration::from_millis(16); // 60 FPS for smooth physics
     let mut last_tick = Instant::now();
 
     loop {
