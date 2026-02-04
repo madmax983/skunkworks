@@ -15,4 +15,6 @@ mod nova_crispr_test;
 mod nova_hormone_test;
 #[cfg(test)]
 mod nova_spore_test;
+#[cfg(test)]
+mod nova_waste_test;
 mod nova_test;

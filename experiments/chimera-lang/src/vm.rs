@@ -34,6 +34,7 @@ pub struct Spore {
     pub epigenome: HashSet<(usize, usize)>,
     pub telomeres: Vec<i64>,
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    pub waste_grid: Vec<Vec<i64>>,
 }
 
 pub struct ChimeraVM {
@@ -54,6 +55,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
     #[cfg(feature = "nova")]
+    pub waste_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
 }
 
@@ -65,6 +68,8 @@ impl ChimeraVM {
         let strand_count = dna.helix.strands.len();
         #[cfg(feature = "nova")]
         let hormone_grid = vec![vec![[0, 0, 0]; 16]; 16];
+        #[cfg(feature = "nova")]
+        let waste_grid = vec![vec![0; 16]; 16];
 
         Self {
             dna,
@@ -83,6 +88,8 @@ impl ChimeraVM {
             telomeres: vec![50; strand_count],
             #[cfg(feature = "nova")]
             hormone_grid,
+            #[cfg(feature = "nova")]
+            waste_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
         }
@@ -122,6 +129,38 @@ impl ChimeraVM {
         self.hormone_grid = new_grid;
     }
 
+    #[cfg(feature = "nova")]
+    #[allow(clippy::needless_range_loop)]
+    fn diffuse_waste(&mut self) {
+        let mut new_grid = self.waste_grid.clone();
+        for y in 0..16 {
+            for x in 0..16 {
+                let mut sum = self.waste_grid[y][x] * 4;
+                let mut count = 4;
+
+                if y > 0 {
+                    sum += self.waste_grid[y - 1][x];
+                    count += 1;
+                }
+                if y < 15 {
+                    sum += self.waste_grid[y + 1][x];
+                    count += 1;
+                }
+                if x > 0 {
+                    sum += self.waste_grid[y][x - 1];
+                    count += 1;
+                }
+                if x < 15 {
+                    sum += self.waste_grid[y][x + 1];
+                    count += 1;
+                }
+
+                new_grid[y][x] = sum / count;
+            }
+        }
+        self.waste_grid = new_grid;
+    }
+
     pub fn step(&mut self) {
         if self.halted {
             return;
@@ -131,7 +170,13 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
+            // Metabolic Waste Production
+            let (cy, cx) = self.context_loc;
+            self.waste_grid[cy][cx] += 10;
+
             self.diffuse_hormones();
+            self.diffuse_waste();
+
             // Decay hormones: reduce intensity by 1 per step
             for row in self.hormone_grid.iter_mut() {
                 for cell in row.iter_mut() {
@@ -140,6 +185,15 @@ impl ChimeraVM {
                             *val -= 1;
                         }
                     }
+                }
+            }
+
+            // Toxicity check
+            if self.waste_grid[cy][cx] > 100 {
+                let mut rng = rand::thread_rng();
+                if rng.gen_bool(0.05) {
+                    self.output.push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
+                    self.mutate();
                 }
             }
         }
@@ -269,6 +323,7 @@ impl ChimeraVM {
                     epigenome: self.epigenome.clone(),
                     telomeres: self.telomeres.clone(),
                     hormone_grid: self.hormone_grid.clone(),
+                    waste_grid: self.waste_grid.clone(),
                 };
 
                 let id = self.spores.len();
@@ -300,6 +355,7 @@ impl ChimeraVM {
                             self.epigenome = spore.epigenome.clone();
                             self.telomeres = spore.telomeres.clone();
                             self.hormone_grid = spore.hormone_grid.clone();
+                            self.waste_grid = spore.waste_grid.clone();
 
                             self.output.push(format!("GERMINATE: Restored Spore {}", idx));
                         } else {
@@ -1412,6 +1468,54 @@ impl ChimeraVM {
                     self.output
                         .push("Error: Stack underflow for absorb".to_string());
                 }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "migrate" => {
+                // stack: dy, dx (top)
+                if self.stack.len() >= 2 {
+                    let dx_val = self.stack.pop().unwrap();
+                    let dy_val = self.stack.pop().unwrap();
+                    if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                        let (cy, cx) = self.context_loc;
+                        let new_y = (cy as i64 + dy).rem_euclid(16) as usize;
+                        let new_x = (cx as i64 + dx).rem_euclid(16) as usize;
+                        self.context_loc = (new_y, new_x);
+                        self.energy -= 5;
+                        self.output.push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+                    } else {
+                        self.output.push("Error: Type mismatch for migrate".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for migrate".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "detox" => {
+                // stack: radius (top)
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(r) = val {
+                        let (cy, cx) = self.context_loc;
+                        let coords = self.get_circular_coords(cx as i64, cy as i64, r);
+                        for (tx, ty) in coords {
+                            self.waste_grid[ty][tx] = 0;
+                        }
+                        self.energy -= (r * r + 1).clamp(5, 50); // Cost proportional to area
+                        self.output.push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
+                    } else {
+                        self.output.push("Error: Type mismatch for detox".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for detox".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "w_read" => {
+                let (cy, cx) = self.context_loc;
+                let waste = self.waste_grid[cy][cx];
+                self.stack.push(Value::Int(waste));
                 None
             }
             _ => {
