@@ -326,3 +326,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/fractal-stack
 - **Scent Origin:** Genesis (The Botanist) 🌿
 - **Status:** Roots are seeking water. The call stack is blooming. Recursion is being visualized as a living structure.
+
+### [Concentration Level: FRESH] - Location: experiments/syntax-garden
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The code is blooming. L-Systems are mapping the AST. The garden is growing from the source.

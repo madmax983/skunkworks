@@ -165,6 +165,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/seismic-lure
 - **Evaluation**: Compiles. Verified. TUI and Audio operational.
 
+### syntax-garden
+- **Parents**: experiments/ast-respiration + experiments/fractal-stack
+- **Concept**: A TUI that maps the AST structure of a Rust codebase onto a procedurally generated plant using L-Systems.
+- **Novel trait**: Architecture-to-Morphology mapping. Monolithic files become tall stalks; modular code becomes bushy.
+- **Status**: experiments/syntax-garden
+- **Evaluation**: Compiles. Verified. TUI operational.
+
 <!-- Example:
 ### semantic-spy
 - **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)
