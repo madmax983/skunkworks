@@ -5,7 +5,6 @@ members = [
     "experiments/ast-respiration",
     "experiments/cargo-ants",
     "experiments/cargo-jenga",
-    "experiments/cellular-beats",
     "experiments/code-bio-dome",
     "experiments/code-concerto",
     "experiments/code-radio",
@@ -103,7 +102,7 @@ members = [
     "experiments/firefly-synapse",
     "experiments/chimera-market",
     "experiments/glyph-evolution",
-    "experiments/penrose-genes",
+    "experiments/penrose-genes", "experiments/seismic-lure",
 ]
 resolver = "2"
 

@@ -314,3 +314,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/penrose-genes
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The memory is aperiodic. The VM is navigating the quasicrystal.
+
+### [Concentration Level: FRESH] - Location: experiments/seismic-lure
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The bedrock is cracking. The water is vibrating. The sound of technical debt is drowning out the silence.

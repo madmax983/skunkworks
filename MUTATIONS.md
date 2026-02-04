@@ -156,7 +156,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A VM where memory is stored in an aperiodic Penrose tiling.
 - **Novel trait**: Aperiodic memory addressing; programs navigating a quasicrystal environment.
 - **Status**: experiments/penrose-genes
-- **Evaluation**: Compiles. Freshly spawned.
+- **Evaluation**: Compiles. Verified. TUI operational.
+
+### seismic-lure
+- **Parents**: experiments/fissure-tracker + experiments/cymatic-lure
+- **Concept**: A visualization where the structural instability of the codebase (fissures/stress) acts as a physical exciter for a wave simulation, creating a "soundscape of technical debt".
+- **Novel trait**: Geological Sonification: Visualizing and hearing code quality as a physical interaction between structure (files) and medium (waves).
+- **Status**: experiments/seismic-lure
+- **Evaluation**: Compiles. Verified. TUI and Audio operational.
 
 <!-- Example:
 ### semantic-spy
