@@ -2,9 +2,9 @@ use std::fmt;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Knot {
-    Single,        // 's' - Used for powers >= 10
-    Long(u8),      // 'L' - Used for 2-9 in units position
-    FigureEight,   // 'E' - Used for 1 in units position
+    Single,      // 's' - Used for powers >= 10
+    Long(u8),    // 'L' - Used for 2-9 in units position
+    FigureEight, // 'E' - Used for 1 in units position
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -34,7 +34,11 @@ impl Cord {
     pub fn from_u64(mut n: u64, color: impl Into<String>) -> Self {
         if n == 0 {
             return Self {
-                clusters: vec![Cluster { knots: vec![], value: 0, position_power: 0 }],
+                clusters: vec![Cluster {
+                    knots: vec![],
+                    value: 0,
+                    position_power: 0,
+                }],
                 color: color.into(),
                 subsidiaries: Vec::new(),
             };
@@ -103,20 +107,28 @@ impl fmt::Display for Cord {
         write!(f, "[{}] ", self.color)?;
 
         if self.clusters.is_empty() {
-             write!(f, "(empty)")?;
+            write!(f, "(empty)")?;
         } else {
-            let parts: Vec<String> = self.clusters.iter().map(|c| {
-                if c.knots.is_empty() {
-                    "_".to_string()
-                } else {
-                    let k_str: Vec<String> = c.knots.iter().map(|k| match k {
-                        Knot::Single => "s".to_string(),
-                        Knot::Long(v) => format!("L{}", v),
-                        Knot::FigureEight => "E".to_string(),
-                    }).collect();
-                    k_str.join("")
-                }
-            }).collect();
+            let parts: Vec<String> = self
+                .clusters
+                .iter()
+                .map(|c| {
+                    if c.knots.is_empty() {
+                        "_".to_string()
+                    } else {
+                        let k_str: Vec<String> = c
+                            .knots
+                            .iter()
+                            .map(|k| match k {
+                                Knot::Single => "s".to_string(),
+                                Knot::Long(v) => format!("L{}", v),
+                                Knot::FigureEight => "E".to_string(),
+                            })
+                            .collect();
+                        k_str.join("")
+                    }
+                })
+                .collect();
             write!(f, "{}", parts.join("-"))?;
         }
         Ok(())

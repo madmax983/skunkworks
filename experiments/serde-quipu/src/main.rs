@@ -44,7 +44,7 @@ fn main() -> anyhow::Result<()> {
                     for p in parts.iter().skip(1) {
                         if let Some(end) = p.find(']') {
                             let color_name = &p[..end];
-                            let rest = &p[end+1..];
+                            let rest = &p[end + 1..];
                             print!("[{}]", color_name.yellow().bold());
                             print!("{}", rest.cyan());
                         } else {

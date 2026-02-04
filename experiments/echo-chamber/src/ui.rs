@@ -79,13 +79,15 @@ pub fn draw(
         lines.push(Line::from(spans));
     }
 
-    let grid_widget = Paragraph::new(lines)
-        .block(Block::default().borders(Borders::ALL).title("Echo Chamber (FDTD Acoustic Simulation)"));
+    let grid_widget = Paragraph::new(lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Echo Chamber (FDTD Acoustic Simulation)"),
+    );
 
     f.render_widget(grid_widget, grid_area);
 
     // Info Bar
-    let info_widget = Paragraph::new(info_text)
-        .block(Block::default().borders(Borders::ALL));
+    let info_widget = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL));
     f.render_widget(info_widget, chunks[1]);
 }

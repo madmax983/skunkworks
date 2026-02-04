@@ -48,7 +48,7 @@ impl World {
                     target_room_id: 2,
                     rect: Rect::new(10.0, -50.0, 40.0, 40.0),
                     color: BLUE,
-                }
+                },
             ],
             label: "Stack Frame (Root)".to_string(),
         };
@@ -59,13 +59,11 @@ impl World {
             id: 1,
             rect: Rect::new(-200.0, -200.0, 400.0, 400.0), // Bigger internally
             color: RED,
-            portals: vec![
-                Portal {
-                    target_room_id: 2, // Points to B
-                    rect: Rect::new(50.0, 50.0, 100.0, 100.0),
-                    color: BLUE,
-                }
-            ],
+            portals: vec![Portal {
+                target_room_id: 2, // Points to B
+                rect: Rect::new(50.0, 50.0, 100.0, 100.0),
+                color: BLUE,
+            }],
             label: "Heap Object A".to_string(),
         };
         world.rooms.insert(1, room_a);
@@ -82,10 +80,10 @@ impl World {
                     color: RED,
                 },
                 Portal {
-                     target_room_id: 0, // Points back to Stack (Root)
-                     rect: Rect::new(50.0, 50.0, 50.0, 50.0),
-                     color: DARKGRAY,
-                }
+                    target_room_id: 0, // Points back to Stack (Root)
+                    rect: Rect::new(50.0, 50.0, 50.0, 50.0),
+                    color: DARKGRAY,
+                },
             ],
             label: "Heap Object B".to_string(),
         };

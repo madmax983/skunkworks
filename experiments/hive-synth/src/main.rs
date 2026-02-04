@@ -120,14 +120,14 @@ impl App {
         for _ in 0..1000 {
             let x = rng.gen_range(0..width);
             let y = rng.gen_range(0..height);
-             if matches!(world.get_cell(x, y).material, Material::Empty) {
+            if matches!(world.get_cell(x, y).material, Material::Empty) {
                 world.add_note(x, y);
             }
         }
 
         // Termites
         for _ in 0..500 {
-             let x = rng.gen_range(0..width);
+            let x = rng.gen_range(0..width);
             let y = rng.gen_range(0..height);
             world.add_termite(x, y);
         }
@@ -247,13 +247,17 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     let height = app.world.height as f64;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Hive Synth (Thermo-Tarmites x Cellular-Beats)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Hive Synth (Thermo-Tarmites x Cellular-Beats)"),
+        )
         .x_bounds([0.0, width])
         .y_bounds([0.0, height])
         .paint(|ctx| {
             let mut points_by_color: HashMap<Color, Vec<(f64, f64)>> = HashMap::new();
 
-             for y in 0..app.world.height {
+            for y in 0..app.world.height {
                 for x in 0..app.world.width {
                     let cell = app.world.get_cell(x, y);
                     let color = match cell.material {
@@ -270,7 +274,7 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                         }
                     };
 
-                     points_by_color
+                    points_by_color
                         .entry(color)
                         .or_default()
                         .push((x as f64, y as f64));
@@ -285,8 +289,16 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             }
 
             for termite in &app.world.termites {
-                let color = if termite.carrying { Color::Green } else { Color::Blue };
-                ctx.print(termite.x as f64, termite.y as f64, Span::styled("t", Style::default().fg(color)));
+                let color = if termite.carrying {
+                    Color::Green
+                } else {
+                    Color::Blue
+                };
+                ctx.print(
+                    termite.x as f64,
+                    termite.y as f64,
+                    Span::styled("t", Style::default().fg(color)),
+                );
             }
 
             let scan_x = app.scan_pos as f64;
@@ -301,15 +313,14 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
 
     f.render_widget(canvas, chunks[0]);
 
-    let info = Paragraph::new(vec![
-        Line::from(vec![
-            Span::raw(" [Space] Play/Pause "),
-            Span::raw(" [Enter] Sim On/Off "),
-            Span::raw(" [+/-] Tempo "),
-            Span::raw(" [q] Quit "),
-            Span::raw(format!(" Tempo: {}ms ", app.tempo_ms)),
-            Span::raw(format!(" Termites: {} ", app.world.termites.len())),
-        ])
-    ]).block(Block::default().borders(Borders::ALL));
+    let info = Paragraph::new(vec![Line::from(vec![
+        Span::raw(" [Space] Play/Pause "),
+        Span::raw(" [Enter] Sim On/Off "),
+        Span::raw(" [+/-] Tempo "),
+        Span::raw(" [q] Quit "),
+        Span::raw(format!(" Tempo: {}ms ", app.tempo_ms)),
+        Span::raw(format!(" Termites: {} ", app.world.termites.len())),
+    ])])
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(info, chunks[1]);
 }

@@ -1,13 +1,13 @@
 mod git;
 mod terrain;
 
-use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use git::GitScanner;
 use ratatui::{
     prelude::*,
     widgets::{
@@ -15,7 +15,7 @@ use ratatui::{
         Block, Borders, Paragraph,
     },
 };
-use git::GitScanner;
+use std::time::{Duration, Instant};
 use terrain::Terrain;
 
 struct App {
@@ -53,7 +53,8 @@ impl App {
             let commit = &self.commits[i];
             for file in &commit.files {
                 let path_str = file.to_string_lossy();
-                let (x, y) = GitScanner::map_path(&path_str, self.terrain.width, self.terrain.height);
+                let (x, y) =
+                    GitScanner::map_path(&path_str, self.terrain.width, self.terrain.height);
 
                 // Uplift (Magma/Growth)
                 self.terrain.uplift(x, y, 5.0);
@@ -148,7 +149,11 @@ fn ui(f: &mut Frame, app: &App) {
     let h = app.terrain.height as f64;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Code Erosion "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Code Erosion "),
+        )
         .x_bounds([0.0, w])
         .y_bounds([0.0, h])
         .paint(|ctx| {
@@ -178,13 +183,13 @@ fn ui(f: &mut Frame, app: &App) {
                     let color = if water > 0.5 {
                         Color::Blue
                     } else if height < 5.0 {
-                         Color::Rgb(34, 139, 34) // Forest Green
+                        Color::Rgb(34, 139, 34) // Forest Green
                     } else if height < 20.0 {
-                         Color::DarkGray
+                        Color::DarkGray
                     } else if height < 50.0 {
-                         Color::Gray
+                        Color::Gray
                     } else {
-                         Color::White
+                        Color::White
                     };
 
                     // Draw a 1x1 rect at x, y
@@ -214,7 +219,8 @@ fn ui(f: &mut Frame, app: &App) {
         0.0
     };
 
-    let (current_hash, current_date) = if app.commit_idx > 0 && app.commit_idx <= app.commits.len() {
+    let (current_hash, current_date) = if app.commit_idx > 0 && app.commit_idx <= app.commits.len()
+    {
         let c = &app.commits[app.commit_idx - 1];
         let date = chrono::DateTime::from_timestamp(c.timestamp, 0)
             .unwrap_or_default()
@@ -235,6 +241,6 @@ fn ui(f: &mut Frame, app: &App) {
 
     f.render_widget(
         Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
-        chunks[1]
+        chunks[1],
     );
 }

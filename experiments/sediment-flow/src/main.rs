@@ -2,13 +2,14 @@ mod git;
 mod lbm;
 mod terrain;
 
-use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use git::GitScanner;
+use lbm::Fluid;
 use ratatui::{
     prelude::*,
     widgets::{
@@ -16,9 +17,8 @@ use ratatui::{
         Block, Borders, Paragraph,
     },
 };
-use git::GitScanner;
+use std::time::{Duration, Instant};
 use terrain::Terrain;
-use lbm::Fluid;
 
 struct App {
     terrain: Terrain,
@@ -34,8 +34,8 @@ impl App {
     fn new() -> Result<Self> {
         // Handle git scanner failure gracefully
         let commits = match GitScanner::load_history() {
-             Ok(c) => c,
-             Err(_) => vec![], // Empty if no git repo or error
+            Ok(c) => c,
+            Err(_) => vec![], // Empty if no git repo or error
         };
         let width = 120;
         let height = 60;
@@ -58,7 +58,8 @@ impl App {
                 let commit = &self.commits[i];
                 for file in &commit.files {
                     let path_str = file.to_string_lossy();
-                    let (x, y) = GitScanner::map_path(&path_str, self.terrain.width, self.terrain.height);
+                    let (x, y) =
+                        GitScanner::map_path(&path_str, self.terrain.width, self.terrain.height);
 
                     // Uplift (Magma/Growth)
                     self.terrain.uplift(x, y, 5.0);
@@ -160,7 +161,11 @@ fn ui(f: &mut Frame, app: &App) {
     let h = app.terrain.height as f64;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Sediment Flow: Fluid Dynamics on Code Terrain "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Sediment Flow: Fluid Dynamics on Code Terrain "),
+        )
         .x_bounds([0.0, w])
         .y_bounds([0.0, h])
         .paint(|ctx| {
@@ -179,30 +184,36 @@ fn ui(f: &mut Frame, app: &App) {
                     // Fluid properties
                     // Safety check for bounds
                     let idx = y * app.fluid.width + x;
-                    if idx >= app.fluid.rho.len() { continue; }
+                    if idx >= app.fluid.rho.len() {
+                        continue;
+                    }
 
                     let _rho = app.fluid.rho[idx];
                     let ux = app.fluid.u_x[idx];
                     let uy = app.fluid.u_y[idx];
-                    let velocity = (ux*ux + uy*uy).sqrt();
+                    let velocity = (ux * ux + uy * uy).sqrt();
 
                     let color = if is_obstacle {
                         // Terrain
-                        if height < 20.0 { Color::DarkGray }
-                        else if height < 50.0 { Color::Gray }
-                        else { Color::White }
+                        if height < 20.0 {
+                            Color::DarkGray
+                        } else if height < 50.0 {
+                            Color::Gray
+                        } else {
+                            Color::White
+                        }
                     } else {
                         // Fluid
                         // Visualize curl or velocity?
                         // Simple velocity:
                         if velocity > 0.1 {
-                             // Cyan for fast fluid
-                             Color::Cyan
+                            // Cyan for fast fluid
+                            Color::Cyan
                         } else if velocity > 0.05 {
-                             Color::Blue
+                            Color::Blue
                         } else {
-                             // Empty space / calm fluid
-                             Color::Reset
+                            // Empty space / calm fluid
+                            Color::Reset
                         }
                     };
 
@@ -238,6 +249,6 @@ fn ui(f: &mut Frame, app: &App) {
 
     f.render_widget(
         Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
-        chunks[1]
+        chunks[1],
     );
 }

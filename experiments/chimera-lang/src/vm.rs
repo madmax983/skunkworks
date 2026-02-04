@@ -77,7 +77,9 @@ impl ChimeraVM {
                     match arg {
                         Nucleotide::Number(n) => self.stack.push(Value::Int(*n)),
                         Nucleotide::String(s) => self.stack.push(Value::Str(s.clone())),
-                        _ => self.output.push(format!("Error: Invalid arg for push: {:?}", arg)),
+                        _ => self
+                            .output
+                            .push(format!("Error: Invalid arg for push: {:?}", arg)),
                     }
                 }
                 None
@@ -109,7 +111,8 @@ impl ChimeraVM {
                 if len >= 2 {
                     self.stack.swap(len - 1, len - 2);
                 } else {
-                    self.output.push("Error: Stack underflow for swap".to_string());
+                    self.output
+                        .push("Error: Stack underflow for swap".to_string());
                 }
                 None
             }
@@ -139,10 +142,11 @@ impl ChimeraVM {
                                 return Some((*n as usize, 0));
                             }
                         } else {
-                             self.output.push("Error: Type mismatch for brz".to_string());
+                            self.output.push("Error: Type mismatch for brz".to_string());
                         }
                     } else {
-                         self.output.push("Error: Stack underflow for brz".to_string());
+                        self.output
+                            .push("Error: Stack underflow for brz".to_string());
                     }
                 } else {
                     self.output.push("Error: Invalid arg for brz".to_string());
@@ -153,7 +157,8 @@ impl ChimeraVM {
             "transcribe" => {
                 // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
                 if self.stack.len() < 4 {
-                    self.output.push("Error: Stack underflow for transcribe".to_string());
+                    self.output
+                        .push("Error: Stack underflow for transcribe".to_string());
                     return None;
                 }
                 let val = self.stack.pop().unwrap();
@@ -170,18 +175,26 @@ impl ChimeraVM {
                                 if ai >= 0 && (ai as usize) < gene.args.len() {
                                     let old_arg = gene.args[ai as usize].clone();
                                     gene.args[ai as usize] = Nucleotide::Number(v);
-                                    self.output.push(format!("TRANSCRIBE: strand {} gene {} arg {} -> {}", si, gi, ai, v));
+                                    self.output.push(format!(
+                                        "TRANSCRIBE: strand {} gene {} arg {} -> {}",
+                                        si, gi, ai, v
+                                    ));
                                 } else {
-                                    self.output.push("Error: Arg index out of bounds".to_string());
+                                    self.output
+                                        .push("Error: Arg index out of bounds".to_string());
                                 }
                             } else {
-                                self.output.push("Error: Gene index out of bounds".to_string());
+                                self.output
+                                    .push("Error: Gene index out of bounds".to_string());
                             }
                         } else {
-                            self.output.push("Error: Strand index out of bounds".to_string());
+                            self.output
+                                .push("Error: Strand index out of bounds".to_string());
                         }
-                    },
-                    _ => self.output.push("Error: Type mismatch for transcribe args".to_string()),
+                    }
+                    _ => self
+                        .output
+                        .push("Error: Type mismatch for transcribe args".to_string()),
                 }
                 None
             }
@@ -190,24 +203,30 @@ impl ChimeraVM {
                 None
             }
             "helix_len" => {
-                self.stack.push(Value::Int(self.dna.helix.strands.len() as i64));
+                self.stack
+                    .push(Value::Int(self.dna.helix.strands.len() as i64));
                 None
             }
             "gene_len" => {
                 if let Some(val) = self.stack.pop() {
-                     match val {
-                         Value::Int(idx) => {
-                             if idx >= 0 && (idx as usize) < self.dna.helix.strands.len() {
-                                 let len = self.dna.helix.strands[idx as usize].genes.len();
-                                 self.stack.push(Value::Int(len as i64));
-                             } else {
-                                 self.output.push("Error: Strand index out of bounds for gene_len".to_string());
-                             }
-                         }
-                         _ => self.output.push("Error: Type mismatch for gene_len".to_string()),
-                     }
+                    match val {
+                        Value::Int(idx) => {
+                            if idx >= 0 && (idx as usize) < self.dna.helix.strands.len() {
+                                let len = self.dna.helix.strands[idx as usize].genes.len();
+                                self.stack.push(Value::Int(len as i64));
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for gene_len".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for gene_len".to_string()),
+                    }
                 } else {
-                    self.output.push("Error: Stack underflow for gene_len".to_string());
+                    self.output
+                        .push("Error: Stack underflow for gene_len".to_string());
                 }
                 None
             }
@@ -238,28 +257,50 @@ impl ChimeraVM {
     pub fn mutate(&mut self) {
         let mut rng = rand::thread_rng();
         let helix = &mut self.dna.helix;
-        if helix.strands.is_empty() { return; }
+        if helix.strands.is_empty() {
+            return;
+        }
 
         let strand_idx = rng.gen_range(0..helix.strands.len());
         let strand = &mut helix.strands[strand_idx];
-        if strand.genes.is_empty() { return; }
+        if strand.genes.is_empty() {
+            return;
+        }
 
         let gene_idx = rng.gen_range(0..strand.genes.len());
         let gene = &mut strand.genes[gene_idx];
 
         // 50% chance to change name, 50% to change arg
         if rng.gen_bool(0.5) {
-             let enzymes = ["push", "add", "sub", "mul", "div", "dup", "print", "swap", "drop", "jump", "brz", "transcribe", "s_len", "helix_len", "gene_len"];
-             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
-             // Add "Mutation" log
-             self.output.push(format!("MUTATION: {} -> {}", gene.name, new_name));
-             gene.name = new_name.to_string();
+            let enzymes = [
+                "push",
+                "add",
+                "sub",
+                "mul",
+                "div",
+                "dup",
+                "print",
+                "swap",
+                "drop",
+                "jump",
+                "brz",
+                "transcribe",
+                "s_len",
+                "helix_len",
+                "gene_len",
+            ];
+            let new_name = enzymes[rng.gen_range(0..enzymes.len())];
+            // Add "Mutation" log
+            self.output
+                .push(format!("MUTATION: {} -> {}", gene.name, new_name));
+            gene.name = new_name.to_string();
         } else if !gene.args.is_empty() {
-             if let Some(Nucleotide::Number(n)) = gene.args.first_mut() {
-                 let old_n = *n;
-                 *n = rng.gen_range(0..100); // Random number
-                 self.output.push(format!("MUTATION: arg {} -> {}", old_n, *n));
-             }
+            if let Some(Nucleotide::Number(n)) = gene.args.first_mut() {
+                let old_n = *n;
+                *n = rng.gen_range(0..100); // Random number
+                self.output
+                    .push(format!("MUTATION: arg {} -> {}", old_n, *n));
+            }
         }
     }
 }
@@ -267,7 +308,7 @@ impl ChimeraVM {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -280,9 +321,18 @@ mod tests {
     #[test]
     fn test_add() {
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(20)] },
-            Gene { name: "add".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                name: "add".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -300,17 +350,28 @@ mod tests {
         // [ jump(1) push(100) ] [ push(200) ]
         let strand0 = Strand {
             genes: vec![
-                Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(1)] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
-            ]
+                Gene {
+                    name: "jump".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(100)],
+                },
+            ],
         };
         let strand1 = Strand {
-            genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(200)] }
-            ]
+            genes: vec![Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(200)],
+            }],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Step 1: jump(1)
@@ -332,18 +393,32 @@ mod tests {
         // [ push(0) brz(1) push(100) ] [ push(200) ]
         let strand0 = Strand {
             genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },
-                Gene { name: "brz".to_string(), args: vec![Nucleotide::Number(1)] },
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
-            ]
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    name: "brz".to_string(),
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(100)],
+                },
+            ],
         };
         let strand1 = Strand {
-            genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(200)] }
-            ]
+            genes: vec![Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(200)],
+            }],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Step 1: push(0)
@@ -371,15 +446,37 @@ mod tests {
         // strand 0, gene 5 (the last push), arg 0 -> 99
         let strand0 = Strand {
             genes: vec![
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // 0: strand idx
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] }, // 1: gene idx
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // 2: arg idx
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(99)] }, // 3: value
-                Gene { name: "transcribe".to_string(), args: vec![] },                 // 4: transcribe
-                Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] },  // 5: target to be modified
-            ]
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // 0: strand idx
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(5)],
+                }, // 1: gene idx
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // 2: arg idx
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(99)],
+                }, // 3: value
+                Gene {
+                    name: "transcribe".to_string(),
+                    args: vec![],
+                }, // 4: transcribe
+                Gene {
+                    name: "push".to_string(),
+                    args: vec![Nucleotide::Number(0)],
+                }, // 5: target to be modified
+            ],
         };
-        let dna = Dna { helix: Helix { strands: vec![strand0] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         for _ in 0..5 {

@@ -8,12 +8,18 @@ use crossterm::{
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    style::{Color},
+    style::Color,
     symbols,
-    widgets::{canvas::{Canvas, Line}, Block, Borders, Paragraph},
+    widgets::{
+        canvas::{Canvas, Line},
+        Block, Borders, Paragraph,
+    },
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 pub fn run(turtle: Turtle) -> Result<()> {
     // Setup terminal
@@ -140,7 +146,9 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, turtle: Turtle
         if last_tick.elapsed() >= tick_rate {
             if visible_count < total_segments {
                 visible_count += speed;
-                if visible_count > total_segments { visible_count = total_segments; }
+                if visible_count > total_segments {
+                    visible_count = total_segments;
+                }
             }
             last_tick = Instant::now();
         }

@@ -11,9 +11,13 @@ use ratatui::{
     Frame,
 };
 use std::time::{Duration, Instant};
-use tui_shared::Tui;
+use tui_shared::{
+    event::{GhostRecorder, GhostReplayer},
+    Tui,
+};
 
 pub mod physics;
+pub mod recorder;
 pub mod world;
 
 use physics::{System, Vec2};
@@ -79,9 +83,35 @@ impl App {
 }
 
 fn main() -> Result<()> {
-    let system = world::load_system()?;
+    let args: Vec<String> = std::env::args().collect();
+    let replay_file = args
+        .iter()
+        .position(|r| r == "--replay")
+        .and_then(|i| args.get(i + 1));
+
+    let (system, replay_data, seed) = if let Some(file) = replay_file {
+        let data = recorder::FlightData::load(file)?;
+        let seed = data.seed;
+        (world::load_system(Some(seed))?, Some(data), seed)
+    } else {
+        let seed = rand::random();
+        (world::load_system(Some(seed))?, None, seed)
+    };
+
     let mut app = App::new(system);
     let mut tui = Tui::init()?;
+
+    let mut recorder = GhostRecorder::new();
+    let mut replayer = if let Some(data) = replay_data {
+        Some(GhostReplayer::new(data.events))
+    } else {
+        recorder.start();
+        None
+    };
+
+    if let Some(r) = &mut replayer {
+        r.start();
+    }
 
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
@@ -93,20 +123,48 @@ fn main() -> Result<()> {
             .checked_sub(last_tick.elapsed())
             .unwrap_or_else(|| Duration::from_secs(0));
 
-        if event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => app.running = false,
-                        KeyCode::Left | KeyCode::Char('a') => app.system.ship.angle += 0.2,
-                        KeyCode::Right | KeyCode::Char('d') => app.system.ship.angle -= 0.2,
-                        KeyCode::Char(' ') => {
-                            app.system.ship.thrusting = !app.system.ship.thrusting
-                        }
-                        KeyCode::Char('+') | KeyCode::Char('=') => app.zoom *= 1.1,
-                        KeyCode::Char('-') | KeyCode::Char('_') => app.zoom /= 1.1,
-                        _ => {}
+        let mut event = None;
+
+        if let Some(replayer) = &mut replayer {
+            // Check for manual exit during replay
+            if event::poll(Duration::ZERO)? {
+                if let Event::Key(key) = event::read()? {
+                    if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
+                        app.running = false;
                     }
+                }
+            }
+            if let Some(e) = replayer.poll() {
+                event = Some(e);
+            }
+        } else if event::poll(timeout)? {
+            let e = event::read()?;
+            recorder.record(e.clone());
+            event = Some(e);
+        }
+
+        if let Some(Event::Key(key)) = event {
+            if key.kind == KeyEventKind::Press {
+                match key.code {
+                    KeyCode::Char('q') | KeyCode::Esc => app.running = false,
+                    KeyCode::Left | KeyCode::Char('a') => app.system.ship.angle += 0.2,
+                    KeyCode::Right | KeyCode::Char('d') => app.system.ship.angle -= 0.2,
+                    KeyCode::Char(' ') => app.system.ship.thrusting = !app.system.ship.thrusting,
+                    KeyCode::Char('+') | KeyCode::Char('=') => app.zoom *= 1.1,
+                    KeyCode::Char('-') | KeyCode::Char('_') => app.zoom /= 1.1,
+                    KeyCode::Char('s') => {
+                        if replayer.is_none() {
+                            let data = recorder::FlightData {
+                                seed,
+                                events: recorder.events.clone(),
+                            };
+                            if let Err(e) = data.save("flight_record.json") {
+                                // In a real app we might show an error dialog
+                                eprintln!("Failed to save flight record: {}", e);
+                            }
+                        }
+                    }
+                    _ => {}
                 }
             }
         }
@@ -150,7 +208,12 @@ fn ui(f: &mut Frame, app: &App) {
     let ship = &app.system.ship;
     let vel_mag = ship.vel.magnitude();
 
-    let visited_count = app.system.bodies.iter().filter(|b| b.color == Color::Green).count();
+    let visited_count = app
+        .system
+        .bodies
+        .iter()
+        .filter(|b| b.color == Color::Green)
+        .count();
     let total_count = app.system.bodies.iter().filter(|b| !b.is_fixed).count();
     let progress_ratio = if total_count > 0 {
         visited_count as f64 / total_count as f64
@@ -202,9 +265,7 @@ fn ui(f: &mut Frame, app: &App) {
         Line::from(if ship.thrusting {
             Span::styled(
                 "🔥 ENGINE ON",
-                Style::default()
-                    .fg(Color::Red)
-                    .add_modifier(Modifier::BOLD),
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
             )
         } else {
             Span::raw("   ENGINE OFF")

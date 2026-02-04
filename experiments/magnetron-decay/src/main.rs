@@ -4,13 +4,10 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Frame,
 };
-use std::{time::{Duration, Instant}};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 mod model;
@@ -46,36 +43,50 @@ impl App {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => self.running = false,
                         KeyCode::Left => {
-                            if self.head_pos.0 > 0 { self.head_pos.0 -= 1; }
+                            if self.head_pos.0 > 0 {
+                                self.head_pos.0 -= 1;
+                            }
                         }
                         KeyCode::Right => {
-                            if self.head_pos.0 < self.platter.width - 1 { self.head_pos.0 += 1; }
+                            if self.head_pos.0 < self.platter.width - 1 {
+                                self.head_pos.0 += 1;
+                            }
                         }
                         KeyCode::Up => {
-                            if self.head_pos.1 > 0 { self.head_pos.1 -= 1; }
+                            if self.head_pos.1 > 0 {
+                                self.head_pos.1 -= 1;
+                            }
                         }
                         KeyCode::Down => {
-                            if self.head_pos.1 < self.platter.height - 1 { self.head_pos.1 += 1; }
+                            if self.head_pos.1 < self.platter.height - 1 {
+                                self.head_pos.1 += 1;
+                            }
                         }
                         KeyCode::Char(' ') => {
-                            if let Some(sector) = self.platter.get_sector_mut(self.head_pos.0, self.head_pos.1) {
+                            if let Some(sector) = self
+                                .platter
+                                .get_sector_mut(self.head_pos.0, self.head_pos.1)
+                            {
                                 sector.scrub();
                             }
                         }
-                         KeyCode::Char('w') => {
-                            if let Some(sector) = self.platter.get_sector_mut(self.head_pos.0, self.head_pos.1) {
+                        KeyCode::Char('w') => {
+                            if let Some(sector) = self
+                                .platter
+                                .get_sector_mut(self.head_pos.0, self.head_pos.1)
+                            {
                                 let mut rng = rand::thread_rng();
                                 let mut data = [0u8; 64];
                                 rand::Rng::fill(&mut rng, &mut data);
                                 sector.write(data);
                             }
                         }
-                         KeyCode::Char('+') => {
-                             self.time_scale *= 2.0;
-                         }
-                         KeyCode::Char('-') => {
-                             self.time_scale *= 0.5;
-                         }
+                        KeyCode::Char('+') => {
+                            self.time_scale *= 2.0;
+                        }
+                        KeyCode::Char('-') => {
+                            self.time_scale *= 0.5;
+                        }
                         _ => {}
                     }
                 }
@@ -149,7 +160,11 @@ impl App {
 
                             // Draw using print for character-based grid
                             // Canvas Y is 0 at bottom
-                            ctx.print(x as f64, (31 - y) as f64, Span::styled(ch, Style::default().fg(color)));
+                            ctx.print(
+                                x as f64,
+                                (31 - y) as f64,
+                                Span::styled(ch, Style::default().fg(color)),
+                            );
                         }
                     }
                 }
@@ -160,45 +175,86 @@ impl App {
         // Inspector
         let mut lines = vec![];
         if let Some(sector) = self.platter.get_sector(self.head_pos.0, self.head_pos.1) {
-             lines.push(Line::from(vec![
-                 Span::raw("Address: "),
-                 Span::styled(format!("0x{:04X}", sector.address), Style::default().fg(Color::Yellow)),
-             ]));
-             lines.push(Line::from(vec![
-                 Span::raw("Magnetization: "),
-                 Span::styled(format!("{:.1}%", sector.magnetization * 100.0), Style::default().fg(if sector.magnetization < 0.5 { Color::Red } else { Color::Green })),
-             ]));
-             lines.push(Line::from(vec![
-                 Span::raw("Coercivity: "),
-                 Span::styled(format!("{:.1}%", sector.coercivity * 100.0), Style::default().fg(Color::Blue)),
-             ]));
-             lines.push(Line::from(""));
+            lines.push(Line::from(vec![
+                Span::raw("Address: "),
+                Span::styled(
+                    format!("0x{:04X}", sector.address),
+                    Style::default().fg(Color::Yellow),
+                ),
+            ]));
+            lines.push(Line::from(vec![
+                Span::raw("Magnetization: "),
+                Span::styled(
+                    format!("{:.1}%", sector.magnetization * 100.0),
+                    Style::default().fg(if sector.magnetization < 0.5 {
+                        Color::Red
+                    } else {
+                        Color::Green
+                    }),
+                ),
+            ]));
+            lines.push(Line::from(vec![
+                Span::raw("Coercivity: "),
+                Span::styled(
+                    format!("{:.1}%", sector.coercivity * 100.0),
+                    Style::default().fg(Color::Blue),
+                ),
+            ]));
+            lines.push(Line::from(""));
 
-             // Hex Dump
-             for chunk in sector.data.chunks(8) {
-                 let hex: String = chunk.iter().map(|b| format!("{:02X} ", b)).collect();
-                 let ascii: String = chunk.iter().map(|b| if *b >= 32 && *b <= 126 { *b as char } else { '.' }).collect();
-                 lines.push(Line::from(format!("{:24} | {}", hex, ascii)));
-             }
+            // Hex Dump
+            for chunk in sector.data.chunks(8) {
+                let hex: String = chunk.iter().map(|b| format!("{:02X} ", b)).collect();
+                let ascii: String = chunk
+                    .iter()
+                    .map(|b| {
+                        if *b >= 32 && *b <= 126 {
+                            *b as char
+                        } else {
+                            '.'
+                        }
+                    })
+                    .collect();
+                lines.push(Line::from(format!("{:24} | {}", hex, ascii)));
+            }
 
-             lines.push(Line::from(""));
-             lines.push(Line::from(Span::styled("Original vs Corrupt:", Style::default().fg(Color::Gray))));
-             // Show Diff count
-             let diff_count = sector.data.iter().zip(sector.original_data.iter()).filter(|(a, b)| a != b).count();
-             if diff_count > 0 {
-                  lines.push(Line::from(Span::styled(format!("{} bytes corrupted", diff_count), Style::default().fg(Color::Red))));
-             } else {
-                  lines.push(Line::from(Span::styled("Integrity Verified", Style::default().fg(Color::Green))));
-             }
+            lines.push(Line::from(""));
+            lines.push(Line::from(Span::styled(
+                "Original vs Corrupt:",
+                Style::default().fg(Color::Gray),
+            )));
+            // Show Diff count
+            let diff_count = sector
+                .data
+                .iter()
+                .zip(sector.original_data.iter())
+                .filter(|(a, b)| a != b)
+                .count();
+            if diff_count > 0 {
+                lines.push(Line::from(Span::styled(
+                    format!("{} bytes corrupted", diff_count),
+                    Style::default().fg(Color::Red),
+                )));
+            } else {
+                lines.push(Line::from(Span::styled(
+                    "Integrity Verified",
+                    Style::default().fg(Color::Green),
+                )));
+            }
         }
 
-        let inspector = Paragraph::new(lines)
-            .block(Block::default().borders(Borders::ALL).title("Sector Inspector"));
+        let inspector = Paragraph::new(lines).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Sector Inspector"),
+        );
         f.render_widget(inspector, content_layout[1]);
 
         // Help
-        let help = Paragraph::new("Arrows: Move | Space: Scrub/Refresh | W: Write Noise | +/-: Time Scale | Q: Quit")
-            .block(Block::default().borders(Borders::ALL));
+        let help = Paragraph::new(
+            "Arrows: Move | Space: Scrub/Refresh | W: Write Noise | +/-: Time Scale | Q: Quit",
+        )
+        .block(Block::default().borders(Borders::ALL));
         f.render_widget(help, main_layout[2]);
     }
 }

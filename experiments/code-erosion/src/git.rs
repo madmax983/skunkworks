@@ -17,12 +17,7 @@ pub struct GitScanner;
 impl GitScanner {
     pub fn load_history() -> Result<Vec<Commit>> {
         let output = Command::new("git")
-            .args(&[
-                "log",
-                "--name-only",
-                "--reverse",
-                "--format=COMMIT %H %at",
-            ])
+            .args(&["log", "--name-only", "--reverse", "--format=COMMIT %H %at"])
             .stdout(Stdio::piped())
             .spawn()
             .context("Failed to spawn git log")?;
