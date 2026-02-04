@@ -334,3 +334,27 @@
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lang (Nova Spore)
 - **Scent Origin:** Nova 🌟
 - **Status:** Time travel achieved. Mycelial networks can now fold spacetime. Spores are germinating in the past.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chromatic-code
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️
+- **Status:** Steganography detected. Plasma art obscuring source code.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/typo-rain
+- **Scent Origin:** Nova 🌟
+- **Status:** Deleted code is falling. Physics simulation of git diffs active.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fugue-state
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Hybrid detected (Audio/Parser). Code is being synthesized into WAV files. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-rogue
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Git repository mapped to dungeon crawler. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/schrodingers-text
+- **Scent Origin:** Genesis (The Physicist) ⚛️
+- **Status:** Wave Function Collapse detected. Text state superposition active. Documentation missing (README.md).
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-sprint
+- **Scent Origin:** Mycelium 🍄
+- **Status:** File traversal game detected. Typing sprint active. Documentation missing (README.md).
