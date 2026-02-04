@@ -38,6 +38,11 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 *   `demethylate(strand, gene)`: Activate a gene.
 *   `recombine(strand_a, strand_b, split)`: Swap tails of two strands.
 
+### Telomeres (Nova Feature)
+Strands have a limited lifespan (default: 50 executions). When a strand's telomere count reaches 0, it becomes senescent and is skipped by the VM.
+*   `telomerase(amount)`: Extends the current strand's telomere by `amount`. Costs 25 Energy.
+*   `t_len()`: Pushes the current strand's telomere length to the stack.
+
 ### Petri Dish (New!)
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
 *   `g_write()`: Pop `val`, `y`, `x`. Write `val` to `grid[y][x]`.

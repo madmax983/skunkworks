@@ -29,12 +29,17 @@ pub struct ChimeraVM {
     pub chaos_mode: bool,
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
+    #[cfg(feature = "nova")]
+    pub telomeres: Vec<i64>,
 }
 
 impl ChimeraVM {
     pub fn new(dna: Dna) -> Self {
         // Initialize 16x16 grid with 0s
         let grid = vec![vec![Value::Int(0); 16]; 16];
+        #[cfg(feature = "nova")]
+        let strand_count = dna.helix.strands.len();
+
         Self {
             dna,
             stack: Vec::new(),
@@ -46,6 +51,8 @@ impl ChimeraVM {
             chaos_mode: false,
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
+            #[cfg(feature = "nova")]
+            telomeres: vec![50; strand_count],
         }
     }
 
@@ -85,9 +92,25 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
-        if self.epigenome.contains(&self.ip) {
-            self.ip.1 += 1;
-            return;
+        {
+            // Telomere check at start of strand
+            if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
+                if self.telomeres[self.ip.0] > 0 {
+                    self.telomeres[self.ip.0] -= 1;
+                }
+
+                if self.telomeres[self.ip.0] <= 0 {
+                    self.output.push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                    self.ip.0 += 1;
+                    self.ip.1 = 0;
+                    return;
+                }
+            }
+
+            if self.epigenome.contains(&self.ip) {
+                self.ip.1 += 1;
+                return;
+            }
         }
 
         // Clone gene info to release borrow on self.dna
@@ -379,6 +402,41 @@ impl ChimeraVM {
                 None
             }
             #[cfg(feature = "nova")]
+            "telomerase" => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(amount) => {
+                            if amount > 0 {
+                                let idx = self.ip.0;
+                                if idx < self.telomeres.len() {
+                                    self.telomeres[idx] += amount;
+                                    self.energy -= 25; // High cost
+                                    self.output.push(format!(
+                                        "TELOMERASE: Extended strand {} by {}",
+                                        idx, amount
+                                    ));
+                                }
+                            }
+                        }
+                        _ => self.output.push("Error: Invalid arg for telomerase".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for telomerase".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "t_len" => {
+                let idx = self.ip.0;
+                if idx < self.telomeres.len() {
+                    self.stack.push(Value::Int(self.telomeres[idx]));
+                } else {
+                    self.stack.push(Value::Int(0));
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
             "recombine" => {
                 // stack: split_point, strand_b, strand_a (bottom)
                 if self.stack.len() >= 3 {
@@ -528,6 +586,10 @@ impl ChimeraVM {
                 "gene_len",
                 "g_read",
                 "g_write",
+                #[cfg(feature = "nova")]
+                "telomerase",
+                #[cfg(feature = "nova")]
+                "t_len",
             ];
             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
             // Add "Mutation" log
@@ -869,6 +931,12 @@ mod tests {
             },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
+
+        #[cfg(feature = "nova")]
+        {
+            // Give enough telomeres for the test
+            vm.telomeres[0] = 1000;
+        }
 
         for _ in 0..100 {
             vm.step();
