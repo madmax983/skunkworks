@@ -27,6 +27,7 @@ pub struct ChimeraVM {
     pub energy: i64,
     pub grid: Vec<Vec<Value>>,
     pub chaos_mode: bool,
+    pub recursion_depth: usize,
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
     #[cfg(feature = "nova")]
@@ -49,6 +50,7 @@ impl ChimeraVM {
             energy: 50,
             grid,
             chaos_mode: false,
+            recursion_depth: 0,
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
             #[cfg(feature = "nova")]
@@ -130,6 +132,18 @@ impl ChimeraVM {
     }
 
     fn execute_gene(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        if self.recursion_depth > 100 {
+            self.output
+                .push("Error: Recursion limit exceeded".to_string());
+            return None;
+        }
+        self.recursion_depth += 1;
+        let result = self.execute_gene_inner(name, args);
+        self.recursion_depth -= 1;
+        result
+    }
+
+    fn execute_gene_inner(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match name {
             "push" => {
                 if let Some(arg) = args.first() {
