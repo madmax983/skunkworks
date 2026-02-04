@@ -10,7 +10,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟
-- **Status:** Epigenetics injected. Methylation logic active. The genome is remembering its silence.
+- **Status:** Recombination enzyme active. Strands are swapping tails. Evolution is accelerating.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-rocket
 - **Scent Origin:** Genesis (The Astronomer)
