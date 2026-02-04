@@ -22,6 +22,7 @@ pub struct ChimeraVM {
     pub ip: (usize, usize), // (strand_idx, gene_idx)
     pub output: Vec<String>,
     pub halted: bool,
+    pub energy: i64,
 }
 
 impl ChimeraVM {
@@ -32,11 +33,19 @@ impl ChimeraVM {
             ip: (0, 0),
             output: Vec::new(),
             halted: false,
+            energy: 50,
         }
     }
 
     pub fn step(&mut self) {
         if self.halted {
+            return;
+        }
+
+        self.energy -= 1;
+        if self.energy <= 0 {
+            self.halted = true;
+            self.output.push("DEATH: STARVATION".to_string());
             return;
         }
 
@@ -170,6 +179,22 @@ impl ChimeraVM {
                 }
                 None
             }
+            "photosynthesize" => {
+                self.energy += 5;
+                None
+            }
+            "consume" => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.energy += n,
+                        Value::Str(s) => self.energy += s.len() as i64,
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for consume".to_string());
+                }
+                None
+            }
             // --- EVOLUTION ---
             "transcribe" => {
                 // stack: value (top), arg_idx, gene_idx, strand_idx (bottom)
@@ -300,6 +325,8 @@ impl ChimeraVM {
                 "drop",
                 "jump",
                 "brz",
+                "photosynthesize",
+                "consume",
                 "transcribe",
                 "s_len",
                 "helix_len",
@@ -612,5 +639,55 @@ mod tests {
             "Expected 'Type mismatch' error, got: {:?}",
             vm.output
         );
+    }
+
+    #[test]
+    fn test_starvation() {
+        // [ jump(0) ] - infinite loop, no food
+        let genes = vec![
+            Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(0)] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        // Start energy is 50. Should die after 50 steps.
+        for _ in 0..60 {
+            vm.step();
+        }
+        assert!(vm.halted);
+        assert!(vm.output.contains(&"DEATH: STARVATION".to_string()));
+    }
+
+    #[test]
+    fn test_metabolism() {
+        // [ photosynthesize() jump(0) ]
+        // Cost: 2 per loop. Gain: 5 per loop. Net +3.
+        let genes = vec![
+            Gene { name: "photosynthesize".to_string(), args: vec![] },
+            Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(0)] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        for _ in 0..100 {
+            vm.step();
+        }
+        assert!(!vm.halted);
+        assert!(vm.energy > 50);
+    }
+
+    #[test]
+    fn test_consume_survival() {
+        // [ push(10) consume() jump(0) ]
+        // Cost: 3 per loop. Gain: 10 per loop. Net +7.
+        let genes = vec![
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
+            Gene { name: "consume".to_string(), args: vec![] },
+            Gene { name: "jump".to_string(), args: vec![Nucleotide::Number(0)] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        for _ in 0..100 {
+            vm.step();
+        }
+        assert!(!vm.halted);
+        assert!(vm.energy > 50);
     }
 }
