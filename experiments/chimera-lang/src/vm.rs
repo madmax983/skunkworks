@@ -97,7 +97,24 @@ impl ChimeraVM {
                 None
             }
             "div" => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a / b);
+                if self.stack.len() < 2 {
+                    self.output.push("Error: Stack underflow".to_string());
+                } else {
+                    let b_val = self.stack.pop().unwrap();
+                    let a_val = self.stack.pop().unwrap();
+                    match (a_val, b_val) {
+                        (Value::Int(a), Value::Int(b)) => {
+                            if b == 0 {
+                                self.output.push("Error: Division by zero".to_string());
+                            } else if a == i64::MIN && b == -1 {
+                                self.output.push("Error: Division overflow".to_string());
+                            } else {
+                                self.stack.push(Value::Int(a / b));
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch".to_string()),
+                    }
+                }
                 None
             }
             "dup" => {
@@ -173,7 +190,6 @@ impl ChimeraVM {
                             if gi >= 0 && (gi as usize) < strand.genes.len() {
                                 let gene = &mut strand.genes[gi as usize];
                                 if ai >= 0 && (ai as usize) < gene.args.len() {
-                                    let old_arg = gene.args[ai as usize].clone();
                                     gene.args[ai as usize] = Nucleotide::Number(v);
                                     self.output.push(format!(
                                         "TRANSCRIBE: strand {} gene {} arg {} -> {}",
@@ -493,5 +509,108 @@ mod tests {
         // Execute the modified gene
         vm.step();
         assert_eq!(vm.stack.last().unwrap(), &Value::Int(99));
+    }
+
+    #[test]
+    fn test_div_by_zero() {
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "div".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        // We expect an error message instead of a panic
+        assert!(
+            vm.output.iter().any(|s| s.contains("Division by zero")),
+            "Expected 'Division by zero' error, got: {:?}",
+            vm.output
+        );
+    }
+
+    #[test]
+    fn test_div_overflow() {
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(i64::MIN)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(-1)],
+            },
+            Gene {
+                name: "div".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        assert!(
+            vm.output.iter().any(|s| s.contains("Division overflow")),
+            "Expected 'Division overflow' error, got: {:?}",
+            vm.output
+        );
+    }
+
+    #[test]
+    fn test_stack_underflow() {
+        let genes = vec![Gene {
+            name: "add".to_string(), // Requires 2 args, stack has 0
+            args: vec![],
+        }];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        assert!(
+            vm.output.iter().any(|s| s.contains("Stack underflow")),
+            "Expected 'Stack underflow' error, got: {:?}",
+            vm.output
+        );
+    }
+
+    #[test]
+    fn test_type_mismatch() {
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::String("foo".to_string())],
+            },
+            Gene {
+                name: "add".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        assert!(
+            vm.output.iter().any(|s| s.contains("Type mismatch")),
+            "Expected 'Type mismatch' error, got: {:?}",
+            vm.output
+        );
     }
 }
