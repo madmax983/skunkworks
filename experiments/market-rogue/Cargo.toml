@@ -1,0 +1,12 @@
+[package]
+name = "market-rogue"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui.workspace = true
+crossterm.workspace = true
+rand.workspace = true
+anyhow.workspace = true
+git2 = "0.18"
+tui-shared = { path = "../../crates/tui-shared" }

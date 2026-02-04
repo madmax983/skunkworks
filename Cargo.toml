@@ -88,7 +88,12 @@ members = [
     "experiments/syntax-spider", 
     "experiments/code-erosion",
     "experiments/hive-synth",
-    "experiments/code-kaleidoscope", "experiments/hidden-brush", "experiments/alloc-tardis", "experiments/magnetron-decay", "experiments/echo-chamber",
+    "experiments/market-rogue",
+    "experiments/code-kaleidoscope", 
+    "experiments/hidden-brush", 
+    "experiments/alloc-tardis", 
+    "experiments/magnetron-decay", 
+    "experiments/echo-chamber",
 ]
 resolver = "2"
 

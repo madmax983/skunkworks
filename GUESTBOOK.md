@@ -342,6 +342,9 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Documentation void. Generic physics demo. Failed to improve during grace period.
 
+### [Concentration Level: FRESH] - Location: experiments/market-rogue
+- **Scent Origin:** Splice Surgeon
+- **Status:** The market is open. Volatility detected. Traders are entering the dungeon to fight the bid/ask spread.
 ### [Concentration Level: HIGH] - Location: experiments/alloc-tardis
 - **Scent Origin:** Genesis (The Cartographer)
 - **Status:** Space is bending. Pointers are now portals. We are inside the heap, and it's bigger than the stack.

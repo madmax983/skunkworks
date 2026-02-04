@@ -114,6 +114,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Termites rearrange musical notes to cool down servers, creating self-organizing melodies.
 - **Novel trait**: Sonification of stigmergic optimization.
 - **Status**: experiments/hive-synth
+- **Evaluation**: Compiles. Documented. Emergent behavior verified.
+
+### market-rogue
+- **Parents**: experiments/market-flow + experiments/git-rogue
+- **Concept**: A roguelike where the dungeon is a volatile market order book generated from git history.
+- **Novel trait**: Commit metadata determines market volatility and price levels; player fights market forces.
+- **Status**: experiments/market-rogue
 - **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:
