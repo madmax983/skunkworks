@@ -29,6 +29,12 @@ pub struct System {
     pub g: f64,
 }
 
+impl Default for System {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl System {
     pub fn new() -> Self {
         Self {
@@ -57,7 +63,7 @@ impl System {
 
         let mut forces = vec![Vec2::zero(); self.bodies.len()];
 
-        for i in 0..self.bodies.len() {
+        for (i, force) in forces.iter_mut().enumerate() {
             if self.bodies[i].is_fixed {
                 continue;
             }
@@ -73,7 +79,7 @@ impl System {
                 let dist = dist_sq.sqrt();
                 let f = r / dist * (self.g * self.bodies[j].mass / dist_sq); // F/m = a. We just want 'a' from other body.
                                                                              // Wait, F = G m1 m2 / r^2. a1 = F / m1 = G m2 / r^2.
-                forces[i] += f;
+                *force += f;
             }
         }
 
