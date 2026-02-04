@@ -88,7 +88,7 @@ members = [
     "experiments/syntax-spider", 
     "experiments/code-erosion",
     "experiments/hive-synth",
-    "experiments/code-kaleidoscope", "experiments/hidden-brush",
+    "experiments/code-kaleidoscope", "experiments/hidden-brush", "experiments/alloc-tardis",
 ]
 resolver = "2"
 
