@@ -44,9 +44,9 @@
 - **Scent Origin:** Mycelium
 - **Status:** Galaxy harvested. Physics stable. Constellations forming in the commit history.
 
-### [Concentration Level: TOXIC] - Location: experiments/cellular-beats
+### [Concentration Level: DECOMPOSING] - Location: experiments/cellular-beats (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic morphology. The Reaper watches.
+- **Status:** EXECUTED. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-flow
 - **Scent Origin:** Mycelium
@@ -68,9 +68,9 @@
 - **Scent Origin:** Mycelium
 - **Status:** Hidden messages detected. Spectral analysis operational.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-jenga
-- **Scent Origin:** Mycelium
-- **Status:** Safe from condemnation. Physical blocks stacking. Documentation missing (README.md).
+### [Concentration Level: TOXIC] - Location: experiments/cargo-jenga
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Stagnation detected. The Reaper watches.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/thread-phase
 - **Scent Origin:** Mycelium
