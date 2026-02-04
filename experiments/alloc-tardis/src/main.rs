@@ -1,3 +1,4 @@
+mod safe_gl;
 mod world;
 
 use macroquad::prelude::*;
@@ -44,42 +45,45 @@ async fn main() {
         // If we are zoomed in enough that a portal dominates the view, switch to it.
         // Threshold: 3.0 (Arbitrary, feels like "Close Enough")
         if cam_zoom > 3.0 {
-            let room = world.rooms.get(&current_room_id).unwrap();
-            for portal in &room.portals {
-                if portal.rect.contains(cam_pos) {
-                    let target_room = world.rooms.get(&portal.target_room_id).unwrap();
+            if let Some(room) = world.rooms.get(&current_room_id) {
+                for portal in &room.portals {
+                    if portal.rect.contains(cam_pos) {
+                        if let Some(target_room) = world.rooms.get(&portal.target_room_id) {
+                            // Calculate Scale Factor (Child -> Parent)
+                            // Scale = Portal / Target
+                            let scale_x = portal.rect.w / target_room.rect.w;
+                            // let scale_y = portal.rect.h / target_room.rect.h;
 
-                    // Calculate Scale Factor (Child -> Parent)
-                    // Scale = Portal / Target
-                    let scale_x = portal.rect.w / target_room.rect.w;
-                    // let scale_y = portal.rect.h / target_room.rect.h;
+                            // New Zoom
+                            // We want visual continuity.
+                            // Current View Width = ScreenWidth / Zoom.
+                            // Effectively, we are multiplying our coordinate system by (1/Scale).
+                            // So Zoom should be multiplied by Scale?
+                            // Wait. If we switch to Child, Child is huge (Target Room).
+                            // We were looking at Portal (Small).
+                            // To make Child look Small (like Portal), we need Low Zoom?
+                            // No, `cam_zoom` = 1.0 means "Fits Screen".
+                            // If we are at `cam_zoom` = 10.0 (Looking closely at Portal).
+                            // And Portal is 0.1 of Child.
+                            // Then Child should be rendered at Zoom 1.0 to match?
+                            // new_zoom = old_zoom * scale.
+                            // 10.0 * 0.1 = 1.0. Correct.
 
-                    // New Zoom
-                    // We want visual continuity.
-                    // Current View Width = ScreenWidth / Zoom.
-                    // Effectively, we are multiplying our coordinate system by (1/Scale).
-                    // So Zoom should be multiplied by Scale?
-                    // Wait. If we switch to Child, Child is huge (Target Room).
-                    // We were looking at Portal (Small).
-                    // To make Child look Small (like Portal), we need Low Zoom?
-                    // No, `cam_zoom` = 1.0 means "Fits Screen".
-                    // If we are at `cam_zoom` = 10.0 (Looking closely at Portal).
-                    // And Portal is 0.1 of Child.
-                    // Then Child should be rendered at Zoom 1.0 to match?
-                    // new_zoom = old_zoom * scale.
-                    // 10.0 * 0.1 = 1.0. Correct.
+                            let new_zoom = cam_zoom * scale_x;
 
-                    let new_zoom = cam_zoom * scale_x;
+                            // New Pos
+                            // P_c = TargetX + (P_p - PortalX) / S
+                            let new_pos_x =
+                                target_room.rect.x + (cam_pos.x - portal.rect.x) / scale_x;
+                            let new_pos_y =
+                                target_room.rect.y + (cam_pos.y - portal.rect.y) / scale_x;
 
-                    // New Pos
-                    // P_c = TargetX + (P_p - PortalX) / S
-                    let new_pos_x = target_room.rect.x + (cam_pos.x - portal.rect.x) / scale_x;
-                    let new_pos_y = target_room.rect.y + (cam_pos.y - portal.rect.y) / scale_x;
-
-                    current_room_id = portal.target_room_id;
-                    cam_pos = vec2(new_pos_x, new_pos_y);
-                    cam_zoom = new_zoom;
-                    break;
+                            current_room_id = portal.target_room_id;
+                            cam_pos = vec2(new_pos_x, new_pos_y);
+                            cam_zoom = new_zoom;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -275,107 +279,100 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
         }
 
         // Apply Scissor
-        unsafe {
-            macroquad::miniquad::gl::glEnable(macroquad::miniquad::gl::GL_SCISSOR_TEST);
-            macroquad::miniquad::gl::glScissor(sx, gl_y, sw, sh);
-        }
+        safe_gl::with_scissor(sx, gl_y, sw, sh, || {
+            // Calculate new Camera Target
+            // We need (Target_Center_World) to map to (Portal_Center_Screen).
+            // Since we are setting `zoom` to align the scales, we just need to align the centers.
+            // Wait, `Camera2D.target` is the point in World Space that maps to the center of the Screen (or viewport).
+            // We don't want to center the Target Room on Screen.
+            // We want to center it on the *Portal's* Screen position.
 
-        // Calculate new Camera Target
-        // We need (Target_Center_World) to map to (Portal_Center_Screen).
-        // Since we are setting `zoom` to align the scales, we just need to align the centers.
-        // Wait, `Camera2D.target` is the point in World Space that maps to the center of the Screen (or viewport).
-        // We don't want to center the Target Room on Screen.
-        // We want to center it on the *Portal's* Screen position.
+            // This suggests we need `offset`.
+            // Camera2D.offset is added after scaling?
+            // Proj = Scale * (Pos - Target) + Offset?
+            // Docs: "offset: camera position in screen space (0.0 - 1.0)"
 
-        // This suggests we need `offset`.
-        // Camera2D.offset is added after scaling?
-        // Proj = Scale * (Pos - Target) + Offset?
-        // Docs: "offset: camera position in screen space (0.0 - 1.0)"
+            // Let's derive it.
+            // We know M_m (Model Matrix) maps Child -> Parent.
+            // Child(0,0) (TopLeft) -> Portal(x,y).
+            // Child(w,h) -> Portal(x+w, y+h).
+            // So P_parent = P_child * Scale + Portal_Pos - Target_Pos * Scale.
+            // (Assuming P_child and P_parent are absolute coords in their respective rooms, but here rooms are separate spaces).
 
-        // Let's derive it.
-        // We know M_m (Model Matrix) maps Child -> Parent.
-        // Child(0,0) (TopLeft) -> Portal(x,y).
-        // Child(w,h) -> Portal(x+w, y+h).
-        // So P_parent = P_child * Scale + Portal_Pos - Target_Pos * Scale.
-        // (Assuming P_child and P_parent are absolute coords in their respective rooms, but here rooms are separate spaces).
+            // Let's treat P_child as local to Target Room. P_parent as local to Parent Room.
+            // P_parent = (P_child - Target.Rect.TopLeft) * Scale + Portal.Rect.TopLeft.
+            // Wait, rooms are positioned in their own world space.
+            // Let's assume Room Rect defines its boundaries in its own space.
 
-        // Let's treat P_child as local to Target Room. P_parent as local to Parent Room.
-        // P_parent = (P_child - Target.Rect.TopLeft) * Scale + Portal.Rect.TopLeft.
-        // Wait, rooms are positioned in their own world space.
-        // Let's assume Room Rect defines its boundaries in its own space.
+            // So:
+            // P_parent = (P_child - Target.Rect.x) * ScaleX + Portal.Rect.x
 
-        // So:
-        // P_parent = (P_child - Target.Rect.x) * ScaleX + Portal.Rect.x
+            // We want to create a Camera C_child such that C_child(P_child) = C_parent(P_parent).
+            // C_parent(P) = (P - T_p) * Z_p
+            // C_child(P) = (P - T_c) * Z_c
 
-        // We want to create a Camera C_child such that C_child(P_child) = C_parent(P_parent).
-        // C_parent(P) = (P - T_p) * Z_p
-        // C_child(P) = (P - T_c) * Z_c
+            // Substitute P_parent:
+            // (P_parent - T_p) * Z_p
+            // = ( ((P_child - TargetX) * S + PortalX) - T_p ) * Z_p
+            // = ( (P_child * S - TargetX * S + PortalX) - T_p ) * Z_p
+            // = ( P_child * S - (TargetX * S - PortalX + T_p) ) * Z_p
+            // = P_child * (S * Z_p) - (TargetX * S - PortalX + T_p) * Z_p
 
-        // Substitute P_parent:
-        // (P_parent - T_p) * Z_p
-        // = ( ((P_child - TargetX) * S + PortalX) - T_p ) * Z_p
-        // = ( (P_child * S - TargetX * S + PortalX) - T_p ) * Z_p
-        // = ( P_child * S - (TargetX * S - PortalX + T_p) ) * Z_p
-        // = P_child * (S * Z_p) - (TargetX * S - PortalX + T_p) * Z_p
+            // We want this to match (P_child - T_c) * Z_c = P_child * Z_c - T_c * Z_c.
 
-        // We want this to match (P_child - T_c) * Z_c = P_child * Z_c - T_c * Z_c.
+            // So:
+            // 1. Z_c = S * Z_p (We already guessed this! `new_zoom`).
+            // 2. T_c * Z_c = (TargetX * S - PortalX + T_p) * Z_p
+            //    T_c * (S * Z_p) = (TargetX * S - PortalX + T_p) * Z_p
+            //    T_c * S = TargetX * S - PortalX + T_p
+            //    T_c = TargetX - PortalX / S + T_p / S
 
-        // So:
-        // 1. Z_c = S * Z_p (We already guessed this! `new_zoom`).
-        // 2. T_c * Z_c = (TargetX * S - PortalX + T_p) * Z_p
-        //    T_c * (S * Z_p) = (TargetX * S - PortalX + T_p) * Z_p
-        //    T_c * S = TargetX * S - PortalX + T_p
-        //    T_c = TargetX - PortalX / S + T_p / S
+            // Let's verify dimensions.
+            // T_c (New Target) = TargetX (Child Base) - (PortalX (Parent Base) - T_p (Parent Target)) / S
+            // Note: PortalX is in Parent Space. T_p is in Parent Space.
+            // (PortalX - T_p) is the vector from Parent Camera Target to Portal Position.
+            // We divide by S to map it to Child Space scale.
+            // Then we subtract it from Child Base.
+            // Seems correct. If Portal is to the right of Parent Target, New Target should be to the left of Child Base?
+            // Wait.
+            // If Portal is at 10, Target at 0. T_p at 0.
+            // Camera looks at 0. Portal is at 10 (Right).
+            // Through the portal, we should see Child.
+            // The Child's Center (let's say 50) should be at Portal Center (10).
+            // So the Camera needs to look at...
+            // Actually, T_c is the point in Child Space that maps to screen center.
+            // If Screen Center maps to T_p (0), and Portal is at 10.
+            // The Portal is shifted +10 relative to center.
+            // In Child Space (scaled down), that shift corresponds to +10/S.
+            // So the point in Child Space that maps to Screen Center should be "Child Point corresponding to Portal" - 10/S?
+            // No.
+            // Center of Screen -> T_p.
+            // T_p corresponds to some point P_c in Child Space?
+            // P_parent = T_p.
+            // T_p = (P_c - TargetX) * S + PortalX
+            // T_p - PortalX = (P_c - TargetX) * S
+            // (T_p - PortalX) / S = P_c - TargetX
+            // P_c = TargetX + (T_p - PortalX) / S
 
-        // Let's verify dimensions.
-        // T_c (New Target) = TargetX (Child Base) - (PortalX (Parent Base) - T_p (Parent Target)) / S
-        // Note: PortalX is in Parent Space. T_p is in Parent Space.
-        // (PortalX - T_p) is the vector from Parent Camera Target to Portal Position.
-        // We divide by S to map it to Child Space scale.
-        // Then we subtract it from Child Base.
-        // Seems correct. If Portal is to the right of Parent Target, New Target should be to the left of Child Base?
-        // Wait.
-        // If Portal is at 10, Target at 0. T_p at 0.
-        // Camera looks at 0. Portal is at 10 (Right).
-        // Through the portal, we should see Child.
-        // The Child's Center (let's say 50) should be at Portal Center (10).
-        // So the Camera needs to look at...
-        // Actually, T_c is the point in Child Space that maps to screen center.
-        // If Screen Center maps to T_p (0), and Portal is at 10.
-        // The Portal is shifted +10 relative to center.
-        // In Child Space (scaled down), that shift corresponds to +10/S.
-        // So the point in Child Space that maps to Screen Center should be "Child Point corresponding to Portal" - 10/S?
-        // No.
-        // Center of Screen -> T_p.
-        // T_p corresponds to some point P_c in Child Space?
-        // P_parent = T_p.
-        // T_p = (P_c - TargetX) * S + PortalX
-        // T_p - PortalX = (P_c - TargetX) * S
-        // (T_p - PortalX) / S = P_c - TargetX
-        // P_c = TargetX + (T_p - PortalX) / S
+            // So T_c = TargetX + (T_p - PortalX) / S.
 
-        // So T_c = TargetX + (T_p - PortalX) / S.
+            // This `P_c` is the point in Child Space that corresponds to `T_p` (Screen Center).
+            // So `T_c` (New Camera Target) = `P_c`.
 
-        // This `P_c` is the point in Child Space that corresponds to `T_p` (Screen Center).
-        // So `T_c` (New Camera Target) = `P_c`.
+            let new_target_x = target_room.rect.x + (cam.target.x - portal.rect.x) / scale_x;
+            let new_target_y = target_room.rect.y + (cam.target.y - portal.rect.y) / scale_y;
 
-        let new_target_x = target_room.rect.x + (cam.target.x - portal.rect.x) / scale_x;
-        let new_target_y = target_room.rect.y + (cam.target.y - portal.rect.y) / scale_y;
+            let child_cam = Camera2D {
+                target: vec2(new_target_x, new_target_y),
+                zoom: new_zoom,
+                rotation: cam.rotation,
+                render_target: None,
+                offset: cam.offset,
+                viewport: None,
+            };
 
-        let child_cam = Camera2D {
-            target: vec2(new_target_x, new_target_y),
-            zoom: new_zoom,
-            rotation: cam.rotation,
-            render_target: None,
-            offset: cam.offset,
-            viewport: None,
-        };
-
-        // Recurse
-        draw_recursive(world, portal.target_room_id, child_cam, depth - 1);
-
-        unsafe {
-            macroquad::miniquad::gl::glDisable(macroquad::miniquad::gl::GL_SCISSOR_TEST);
-        }
+            // Recurse
+            draw_recursive(world, portal.target_room_id, child_cam, depth - 1);
+        });
     }
 }
