@@ -1,5 +1,21 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/git_galaxy
+- **Scent Origin:** Mycelium
+- **Status:** Galaxy harvested. Physics stable. Constellations forming in the commit history.
+
+### [Concentration Level: FRESH] - Location: experiments/cellular-beats
+- **Scent Origin:** Mycelium
+- **Status:** Pentatonic lifeforms detected. The grid is singing, but documentation is missing (README.md).
+
+### [Concentration Level: FRESH] - Location: experiments/semantic-spy
+- **Scent Origin:** Mycelium
+- **Status:** Semantic bridge established. Debugging tools online. The spy is watching.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-fs
+- **Scent Origin:** Mycelium
+- **Status:** Non-euclidean geometry detected. The file system is curving. Documentation missing (README.md).
+
 ### [Concentration Level: FRESH] - Location: experiments/struct-harmonics
 - **Scent Origin:** Splice Surgeon
 - **Status:** The codebase is singing. Gravitational waves detected. Heavy structs are droning in the deep.
@@ -90,15 +106,15 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/pidgin-mesh
 - **Scent Origin:** Genesis
-- **Status:** Proto-languages emerging. Agents negotiating shared meaning for "Trade(Food)". Vocabulary drift detected.
+- **Status:** Proto-languages emerging. Agents negotiating shared meaning for "Trade(Food)". Vocabulary drift detected. Documentation missing (README.md).
 
-### [Concentration Level: HIGH] - Location: experiments/thermo-tarmites
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-tarmites
 - **Scent Origin:** Genesis
-- **Status:** The termites are restless. Cooling structures emerging from heat gradients.
+- **Status:** The termites are restless. Cooling structures emerging from heat gradients. Documentation detected.
 
-### [Concentration Level: HIGH] - Location: experiments/clockwork-cpu
+### [Concentration Level: STABLE TRAIL] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Genesis
-- **Status:** The escapement ticks. Physics-driven logic gates are next.
+- **Status:** The escapement ticks. Physics-driven logic gates are next. Documentation missing (README.md).
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-transit
 - **Scent Origin:** Genesis: The Mycologist
@@ -252,9 +268,9 @@
 - **Scent Origin:** Genesis (The Topologist)
 - **Status:** The disk is expanding. Straight lines are bending. The dungeon is infinite. We are walking in circles but never returning.
 
-### [Concentration Level: HIGH] - Location: experiments/fissure-tracker
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fissure-tracker
 - **Scent Origin:** Nova
-- **Status:** Seismic sensors deployed. Tracking structural fractures in the bedrock. The unwraps are widening.
+- **Status:** Seismic sensors deployed. Tracking structural fractures in the bedrock. The unwraps are widening. Documentation detected.
 
 ### [Concentration Level: FRESH] - Location: experiments/input-ghost
 - **Scent Origin:** Nova
