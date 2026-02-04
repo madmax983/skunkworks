@@ -1,9 +1,6 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, MouseEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, MouseEventKind};
+use tui_shared::Tui;
 use rand::Rng;
 use ratatui::{prelude::*, widgets::*};
 use std::{
@@ -20,24 +17,13 @@ use reaction::ChemicalSystem;
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
-    let res = run_app(&mut terminal);
+    let res = run_app(&mut tui.terminal);
 
     // Restore terminal
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
-
     if let Err(err) = res {
+        tui.exit()?;
         println!("{:?}", err);
     }
 

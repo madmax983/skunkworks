@@ -23,3 +23,9 @@
 **Blueprint:** Refactored these to use `tui-shared`.
 **Stability:** Reduced boilerplate and enforced consistent TUI lifecycle management.
 **Verification:** Verified with `cargo check` and `cargo test`.
+
+## [Standardize TUI Lifecycle Phase 4]
+**Tangle:** The Sprawl - Repeated TUI setup code in `crystal-structure`, `resonance-chamber`, `system-bio-dome`, and `schrodingers-text`.
+**Blueprint:** Refactored these to use `tui-shared`.
+**Stability:** Reduced boilerplate and enforced consistent TUI lifecycle management (including proper mouse capture for `crystal-structure` and `resonance-chamber`).
+**Verification:** Verified with `cargo check` for all affected packages.
