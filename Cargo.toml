@@ -69,6 +69,7 @@ members = [
     "experiments/system-bonsai",
     "experiments/lattice-hunter",
     "experiments/crate-radar",
+    "experiments/quantum-garden",
     "experiments/quipu-symphony",
     "experiments/git-harmonograph",
     "experiments/git-ouroboros",
