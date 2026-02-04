@@ -200,9 +200,9 @@
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
-### [Concentration Level: FRESH] - Location: experiments/digital-koi
-- **Scent Origin:** Nova
-- **Status:** The pond is filled. Koi are swimming in streams of system interrupts.
+### [Concentration Level: TOXIC] - Location: experiments/digital-koi
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Documentation void. Generic morphology (Boids). Weak system integration.
 
 ### [Concentration Level: FRESH] - Location: experiments/process-orbit
 - **Scent Origin:** Nova
@@ -330,6 +330,6 @@
 - **Scent Origin:** Splice Surgeon
 - **Status**: The hive is buzzing. Termites are building harmonies to cool the servers. The song is evolving.
 
-### [Concentration Level: TOXIC] - Location: experiments/word-collider
+### [Concentration Level: DECOMPOSING] - Location: experiments/word-collider (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Generic physics demo.
+- **Status:** EXECUTED. Documentation void. Generic physics demo. Failed to improve during grace period.
