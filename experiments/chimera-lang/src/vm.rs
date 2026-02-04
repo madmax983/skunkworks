@@ -75,6 +75,18 @@ pub struct Spore {
     pub activation_levels: Vec<i64>,
 }
 
+/// An independent execution unit spawned by the main strand.
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone)]
+pub struct Organelle {
+    pub stack: Vec<Value>,
+    pub ip: (usize, usize),
+    pub context_loc: (usize, usize),
+    pub call_stack: Vec<(usize, usize)>,
+    pub recursion_depth: usize,
+    pub halted: bool,
+}
+
 /// The execution engine for the Chimera language.
 ///
 /// Holds the entire state of a simulation instance.
@@ -147,6 +159,8 @@ pub struct ChimeraVM {
     pub receptors: HashMap<char, usize>,
     #[cfg(feature = "nova")]
     pub entangled_pairs: HashMap<usize, usize>,
+    #[cfg(feature = "nova")]
+    pub organelles: Vec<Organelle>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -204,6 +218,8 @@ impl ChimeraVM {
             receptors: HashMap::new(),
             #[cfg(feature = "nova")]
             entangled_pairs: HashMap::new(),
+            #[cfg(feature = "nova")]
+            organelles: Vec::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -467,6 +483,65 @@ impl ChimeraVM {
             // Move to next gene
             self.ip.1 += 1;
         }
+
+        #[cfg(feature = "nova")]
+        {
+            // Execute Organelles
+            let active_organelles = std::mem::take(&mut self.organelles);
+            let mut next_organelles = Vec::new();
+
+            for mut organelle in active_organelles {
+                if organelle.halted {
+                    continue;
+                }
+
+                // Swap state
+                std::mem::swap(&mut self.stack, &mut organelle.stack);
+                std::mem::swap(&mut self.ip, &mut organelle.ip);
+                std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
+                std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
+                std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+
+                // Reduce energy for organelle metabolism
+                self.energy = self.energy.saturating_sub(1);
+
+                if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
+                    let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                    if self.ip.1 < strand_len {
+                        let (gene_op, gene_args) = {
+                            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                            (gene.op.clone(), gene.args.clone())
+                        };
+
+                        let jump_target = self.execute_gene(gene_op, &gene_args);
+
+                        if let Some(target) = jump_target {
+                            self.ip = target;
+                        } else {
+                            self.ip.1 += 1;
+                        }
+                    } else {
+                        organelle.halted = true;
+                    }
+                } else {
+                    organelle.halted = true;
+                }
+
+                // Swap back
+                std::mem::swap(&mut self.stack, &mut organelle.stack);
+                std::mem::swap(&mut self.ip, &mut organelle.ip);
+                std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
+                std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
+                std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+
+                if !organelle.halted {
+                    next_organelles.push(organelle);
+                }
+            }
+
+            // Append surviving organelles back (new ones might have been added by Spawn)
+            self.organelles.extend(next_organelles);
+        }
     }
 
     /// Executes a single gene operation.
@@ -538,6 +613,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Sporulate
             | OpCode::Germinate
+            | OpCode::Spawn
             | OpCode::Incubate
             | OpCode::Methylate
             | OpCode::Demethylate
@@ -1215,6 +1291,42 @@ impl ChimeraVM {
     #[cfg(feature = "nova")]
     fn exec_nova_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match op {
+            #[cfg(feature = "nova")]
+            OpCode::Spawn => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(idx) => {
+                            let s_idx = idx as usize;
+                            if s_idx < self.dna.helix.strands.len() {
+                                let organelle = Organelle {
+                                    stack: Vec::new(),
+                                    ip: (s_idx, 0),
+                                    context_loc: self.context_loc,
+                                    call_stack: Vec::new(),
+                                    recursion_depth: 0,
+                                    halted: false,
+                                };
+                                self.organelles.push(organelle);
+                                self.energy = self.energy.saturating_sub(20);
+                                self.output.push(format!(
+                                    "SPAWN: Created Organelle executing strand {}",
+                                    s_idx
+                                ));
+                            } else {
+                                self.output
+                                    .push("Error: Strand index out of bounds for spawn".to_string());
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for spawn".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for spawn".to_string());
+                }
+                None
+            }
             #[cfg(feature = "nova")]
             OpCode::Sporulate => {
                 // Create snapshot

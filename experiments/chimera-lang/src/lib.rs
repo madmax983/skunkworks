@@ -55,3 +55,5 @@ mod nova_test;
 mod sentry_nova_test;
 #[cfg(test)]
 mod nova_waste_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_organelle_test;
