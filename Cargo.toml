@@ -6,7 +6,6 @@ members = [
     "experiments/cargo-ants",
     "experiments/cargo-jenga",
     "experiments/cellular-beats",
-    "experiments/clockwork-cpu",
     "experiments/code-bio-dome",
     "experiments/code-radio",
     "experiments/code-sprint",
@@ -95,7 +94,7 @@ members = [
     "experiments/magnetron-decay", 
     "experiments/echo-chamber",
     "experiments/sediment-flow", "experiments/serde-quipu", "experiments/fungal-balancer",
-    "experiments/hyperbolic-ants",
+    "experiments/hyperbolic-ants", "experiments/sonar-swarm",
 ]
 resolver = "2"
 
