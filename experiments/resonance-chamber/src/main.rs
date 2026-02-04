@@ -2,11 +2,8 @@ use anyhow::Result;
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use crossbeam_channel::{bounded, Sender};
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode};
+use tui_shared::Tui;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -93,20 +90,13 @@ fn main() -> Result<()> {
         }
 
         // TUI Setup
-        enable_raw_mode()?;
-        let mut stdout = io::stdout();
-        execute!(stdout, EnterAlternateScreen)?;
-        let backend = CrosstermBackend::new(stdout);
-        let mut terminal = Terminal::new(backend)?;
+        let mut tui = Tui::init()?;
 
-        let res = run_app(&mut terminal, width, height, cmd_tx, snap_rx);
+        let res = run_app(&mut tui.terminal, width, height, cmd_tx, snap_rx);
 
         // Restore
-        disable_raw_mode()?;
-        execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-        terminal.show_cursor()?;
-
-        if let Err(err) = res {
+        if let Err(err) = &res {
+            tui.exit()?;
             println!("{:?}", err);
         }
 
@@ -137,17 +127,13 @@ fn run_visual_only() -> Result<()> {
     });
 
     // TUI
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
-    let res = run_app(&mut terminal, width, height, cmd_tx, snap_rx);
+    let res = run_app(&mut tui.terminal, width, height, cmd_tx, snap_rx);
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    if res.is_err() {
+        tui.exit()?;
+    }
 
     res.map_err(|e| anyhow::anyhow!(e))
 }
