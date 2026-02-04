@@ -144,6 +144,21 @@ impl ChimeraVM {
         result
     }
 
+    fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
+        let mut coords = Vec::new();
+        let r_sq = r * r;
+        for y in 0..16 {
+            for x in 0..16 {
+                let dx = x as i64 - cx;
+                let dy = y as i64 - cy;
+                if dx * dx + dy * dy <= r_sq {
+                    coords.push((x, y));
+                }
+            }
+        }
+        coords
+    }
+
     fn execute_gene_inner(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match name {
             "push" => {
@@ -362,6 +377,80 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for g_write".to_string());
+                }
+                None
+            }
+            "radiate" => {
+                // stack: val, radius, y, x (top)
+                if self.stack.len() >= 4 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let r_val = self.stack.pop().unwrap();
+                    let val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                        let coords = self.get_circular_coords(x, y, r);
+                        let count = coords.len();
+                        for (cx, cy) in coords {
+                            self.grid[cy][cx] = val.clone();
+                        }
+                        self.energy -= (count / 2) as i64; // Cost based on area
+                        self.output.push(format!(
+                            "RADIATE: Affected {} cells at {},{} r={}",
+                            count, x, y, r
+                        ));
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for radiate".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for radiate".to_string());
+                }
+                None
+            }
+            "siphon" => {
+                // stack: radius, y, x (top)
+                if self.stack.len() >= 3 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+                    let r_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                        let coords = self.get_circular_coords(x, y, r);
+                        let count = coords.len();
+                        let mut sum = 0;
+                        for (cx, cy) in coords {
+                            if let Value::Int(n) = self.grid[cy][cx] {
+                                sum += n;
+                            }
+                            self.grid[cy][cx] = Value::Int(0);
+                        }
+                        self.stack.push(Value::Int(sum));
+                        self.energy -= 5;
+                        self.output.push(format!(
+                            "SIPHON: Absorbed {} from {} cells",
+                            sum,
+                            count
+                        ));
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for siphon".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for siphon".to_string());
+                }
+                None
+            }
+            "genome" => {
+                // Pushes genes of current strand to stack
+                if self.ip.0 < self.dna.helix.strands.len() {
+                    let strand = &self.dna.helix.strands[self.ip.0];
+                    self.stack.push(Value::Int(strand.genes.len() as i64));
+                    for gene in &strand.genes {
+                        self.stack.push(Value::Str(gene.name.clone()));
+                    }
                 }
                 None
             }
@@ -1153,6 +1242,9 @@ impl ChimeraVM {
                 "gene_len",
                 "g_read",
                 "g_write",
+                "radiate",
+                "siphon",
+                "genome",
                 #[cfg(feature = "nova")]
                 "telomerase",
                 #[cfg(feature = "nova")]
@@ -1666,5 +1758,88 @@ mod tests {
 
         vm.step(); // push(200)
         assert_eq!(vm.stack.pop(), Some(Value::Int(200)));
+    }
+
+    #[test]
+    fn test_radiate() {
+        // [ push(100) push(2) push(8) push(8) radiate() ]
+        // Writes 100 to circle radius 2 at 8,8
+        let genes = vec![
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(8)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(8)] },
+            Gene { name: "radiate".to_string(), args: vec![] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        // Center should be 100
+        assert_eq!(vm.grid[8][8], Value::Int(100));
+        // (8+1, 8) should be 100
+        assert_eq!(vm.grid[8][9], Value::Int(100));
+        // (8+3, 8) should be 0 (out of radius 2)
+        assert_eq!(vm.grid[8][11], Value::Int(0));
+    }
+
+    #[test]
+    fn test_siphon() {
+        // First radiate 10s
+        // [ push(10) push(1) push(5) push(5) radiate() push(1) push(5) push(5) siphon() ]
+        let genes = vec![
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "radiate".to_string(), args: vec![] },
+            // Siphon same area
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
+            Gene { name: "siphon".to_string(), args: vec![] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        // Center (5,5), (5,4), (5,6), (4,5), (6,5) = 5 cells. 5 * 10 = 50.
+
+        if let Some(Value::Int(sum)) = vm.stack.pop() {
+            assert_eq!(sum, 50);
+        } else {
+            panic!("Expected sum on stack");
+        }
+
+        // Grid should be cleared
+        assert_eq!(vm.grid[5][5], Value::Int(0));
+    }
+
+    #[test]
+    fn test_genome() {
+        // [ genome() ]
+        let genes = vec![
+            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
+            Gene { name: "genome".to_string(), args: vec![] },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted {
+            vm.step();
+        }
+
+        // Stack should contain:
+        // 1 (from push)
+        // 2 (length)
+        // "push"
+        // "genome"
+
+        let last = vm.stack.pop().unwrap();
+        assert_eq!(last, Value::Str("genome".to_string()));
+        let second = vm.stack.pop().unwrap();
+        assert_eq!(second, Value::Str("push".to_string()));
+        let len = vm.stack.pop().unwrap();
+        assert_eq!(len, Value::Int(2));
     }
 }
