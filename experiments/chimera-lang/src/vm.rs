@@ -524,13 +524,13 @@ impl ChimeraVM {
     fn exec_math_op(&mut self, op: OpCode) {
         match op {
             OpCode::Add => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a.wrapping_add(b));
             }
             OpCode::Sub => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a - b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a.wrapping_sub(b));
             }
             OpCode::Mul => {
-                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a * b);
+                Self::binary_op(&mut self.stack, &mut self.output, |a, b| a.wrapping_mul(b));
             }
             OpCode::Div => {
                 if self.stack.len() < 2 {
@@ -698,7 +698,7 @@ impl ChimeraVM {
                         for (cx, cy) in coords {
                             self.grid[cy][cx] = val.clone();
                         }
-                        self.energy -= (count / 2) as i64;
+                        self.energy = self.energy.saturating_sub((count / 2) as i64);
                         self.output.push(format!(
                             "RADIATE: Affected {} cells at {},{} r={}",
                             count, x, y, r
@@ -721,15 +721,15 @@ impl ChimeraVM {
                     if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
                         let coords = self.get_circular_coords(x, y, r);
                         let count = coords.len();
-                        let mut sum = 0;
+                        let mut sum: i64 = 0;
                         for (cx, cy) in coords {
                             if let Value::Int(n) = self.grid[cy][cx] {
-                                sum += n;
+                                sum = sum.saturating_add(n);
                             }
                             self.grid[cy][cx] = Value::Int(0);
                         }
                         self.stack.push(Value::Int(sum));
-                        self.energy -= 5;
+                        self.energy = self.energy.saturating_sub(5);
                         self.output
                             .push(format!("SIPHON: Absorbed {} from {} cells", sum, count));
                     } else {
@@ -787,13 +787,13 @@ impl ChimeraVM {
     fn exec_bio_op(&mut self, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
         match op {
             OpCode::Photosynthesize => {
-                self.energy += 5;
+                self.energy = self.energy.saturating_add(5);
             }
             OpCode::Consume => {
                 if let Some(val) = self.stack.pop() {
                     match val {
-                        Value::Int(n) => self.energy += n,
-                        Value::Str(s) => self.energy += s.len() as i64,
+                        Value::Int(n) => self.energy = self.energy.saturating_add(n),
+                        Value::Str(s) => self.energy = self.energy.saturating_add(s.len() as i64),
                     }
                 } else {
                     self.output
@@ -946,10 +946,11 @@ impl ChimeraVM {
                                 let count = targets.len();
                                 for target_idx in targets {
                                     if target_idx < self.activation_levels.len() {
-                                        self.activation_levels[target_idx] += amount;
+                                        self.activation_levels[target_idx] =
+                                            self.activation_levels[target_idx].saturating_add(amount);
                                     }
                                 }
-                                self.energy -= (count as i64) + 1;
+                                self.energy = self.energy.saturating_sub((count as i64) + 1);
                                 self.output
                                     .push(format!("SPARK: Fired {} to {} targets", amount, count));
                             }
@@ -1023,7 +1024,7 @@ impl ChimeraVM {
                 let id = self.spores.len();
                 self.spores.push(spore);
                 self.stack.push(Value::Int(id as i64));
-                self.energy -= 50; // High cost for time travel
+                self.energy = self.energy.saturating_sub(50); // High cost for time travel
                 self.output.push(format!("SPORULATE: Created Spore {}", id));
                 None
             }
@@ -1122,7 +1123,7 @@ impl ChimeraVM {
                                     self.activation_levels.push(0);
                                     self.synapse_map.push(Vec::new());
                                 }
-                                self.energy -= 20; // Cost
+                                self.energy = self.energy.saturating_sub(20); // Cost
                                 self.output.push(format!(
                                     "INCUBATE: Created new strand {} from grid",
                                     self.dna.helix.strands.len() - 1
@@ -1187,8 +1188,8 @@ impl ChimeraVM {
                             if amount > 0 {
                                 let idx = self.ip.0;
                                 if idx < self.telomeres.len() {
-                                    self.telomeres[idx] += amount;
-                                    self.energy -= 25; // High cost
+                                    self.telomeres[idx] = self.telomeres[idx].saturating_add(amount);
+                                    self.energy = self.energy.saturating_sub(25); // High cost
                                     self.output.push(format!(
                                         "TELOMERASE: Extended strand {} by {}",
                                         idx, amount
@@ -1350,7 +1351,7 @@ impl ChimeraVM {
                             }
 
                             self.stack.push(Value::Int(found_idx));
-                            self.energy -= 5;
+                            self.energy = self.energy.saturating_sub(5);
                             self.output.push(format!(
                                 "CRISPR_SCAN: Scanned strand {} for pattern from {} -> {}",
                                 t_idx, g_idx, found_idx
@@ -1406,7 +1407,7 @@ impl ChimeraVM {
                                 let new_strand_idx = self.dna.helix.strands.len() - 1;
 
                                 self.stack.push(Value::Int(new_strand_idx as i64));
-                                self.energy -= 10;
+                                self.energy = self.energy.saturating_sub(10);
 
                                 self.output.push(format!(
                                     "CAS9_CUT: Cut strand {} at {}, created strand {}",
@@ -1477,7 +1478,7 @@ impl ChimeraVM {
                                 strand_r.genes.append(&mut strand_d.genes);
                                 // donor genes are now empty.
 
-                                self.energy -= 10;
+                                self.energy = self.energy.saturating_sub(10);
                                 self.output.push(format!(
                                     "LIGASE: Appended strand {} to {}",
                                     d_idx, r_idx
@@ -1530,7 +1531,7 @@ impl ChimeraVM {
                                     self.epigenome.insert((new_s_idx, g_idx));
                                 }
 
-                                self.energy -= 30; // Cost
+                                self.energy = self.energy.saturating_sub(30); // Cost
                                 self.output.push(format!(
                                     "MITOSIS: Cloned strand {} to {}",
                                     s_idx, new_s_idx
@@ -1564,7 +1565,7 @@ impl ChimeraVM {
                                 // Remove associated epigenetics
                                 self.epigenome.retain(|(s, _)| *s != s_idx);
 
-                                self.energy -= 10;
+                                self.energy = self.energy.saturating_sub(10);
                                 self.output
                                     .push(format!("APOPTOSIS: Cleared strand {}", s_idx));
                             } else {
@@ -1633,7 +1634,7 @@ impl ChimeraVM {
                                         self.epigenome.insert(marker);
                                     }
 
-                                    self.energy -= 20;
+                                    self.energy = self.energy.saturating_sub(20);
                                     self.output.push(format!(
                                         "INTEGRASE: Inserted {} at {}:{}",
                                         name, s, g
@@ -1704,7 +1705,7 @@ impl ChimeraVM {
                                         self.epigenome.insert(marker);
                                     }
 
-                                    self.energy -= 15;
+                                    self.energy = self.energy.saturating_sub(15);
                                     self.output.push(format!("EXCISION: Removed {}:{}", s, g));
 
                                     // Update IP
@@ -1752,7 +1753,8 @@ impl ChimeraVM {
                         if a > 0 {
                             let (cy, cx) = self.context_loc;
                             let channel_idx = (c.unsigned_abs() as usize) % 3;
-                            self.hormone_grid[cy][cx][channel_idx] += a;
+                            self.hormone_grid[cy][cx][channel_idx] =
+                                self.hormone_grid[cy][cx][channel_idx].saturating_add(a);
                             self.output.push(format!(
                                 "SECRETE: Added {} to channel {} at {},{}",
                                 a, c, cx, cy
@@ -1798,7 +1800,7 @@ impl ChimeraVM {
                         let channel_idx = (c.unsigned_abs() as usize) % 3;
                         let intensity = &mut self.hormone_grid[cy][cx][channel_idx];
                         let absorbed = if *intensity >= a {
-                            *intensity -= a;
+                            *intensity = intensity.saturating_sub(a);
                             a
                         } else {
                             let v = *intensity;
@@ -1831,7 +1833,7 @@ impl ChimeraVM {
                         let new_y = (cy as i64 + dy).rem_euclid(16) as usize;
                         let new_x = (cx as i64 + dx).rem_euclid(16) as usize;
                         self.context_loc = (new_y, new_x);
-                        self.energy -= 5;
+                        self.energy = self.energy.saturating_sub(5);
                         self.output
                             .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
                     } else {
@@ -1854,7 +1856,7 @@ impl ChimeraVM {
                         for (tx, ty) in coords {
                             self.waste_grid[ty][tx] = 0;
                         }
-                        self.energy -= (r * r + 1).clamp(5, 50); // Cost proportional to area
+                        self.energy = self.energy.saturating_sub((r * r + 1).clamp(5, 50)); // Cost proportional to area
                         self.output
                             .push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
                     } else {
@@ -2811,5 +2813,25 @@ mod tests {
         assert_eq!(second, Value::Str("push".to_string()));
         let len = vm.stack.pop().unwrap();
         assert_eq!(len, Value::Int(2));
+    }
+
+    #[test]
+    fn test_consume_overflow() {
+        // [ push(i64::MAX) consume() ]
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(i64::MAX)],
+            },
+            Gene {
+                op: OpCode::Consume,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        // Initial energy is 50. Adding MAX should saturate.
+        vm.step(); // push
+        vm.step(); // consume
+        assert_eq!(vm.energy, i64::MAX);
     }
 }
