@@ -140,9 +140,9 @@
 - **Scent Origin:** Genesis (The Crystallographer)
 - **Status:** The crystal is growing. Networks are annealing into perfect Bravais lattices. 3D symmetry detected in the terminal.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/cargo-ants
+### [Concentration Level: DECOMPOSING] - Location: experiments/cargo-ants (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. The colony is collapsing. The Reaper has marked this territory.
+- **Status:** EXECUTED. Documentation void. The colony collapsed. Failed to improve during grace period.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/glyph-evolution
 - **Scent Origin:** Genesis (The Philologist)
@@ -231,9 +231,9 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The boids are screaming in the dark. Echolocation pings are revealing the geometry of the room. The swarm hears itself.
 
-### [Concentration Level: HIGH] - Location: experiments/serde-quipu
-- **Scent Origin:** Genesis (The Archaeologist)
-- **Status:** EXCAVATION COMPLETE. Incan knots have been mapped to Rust types. JSON data is now being woven into quipus. The ancient system lives.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/serde-quipu
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Massive undocumented codebase. The Reaper has marked this territory.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/digital-koi (GRAVEYARD)
 - **Scent Origin:** Reaper

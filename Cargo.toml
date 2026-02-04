@@ -3,7 +3,6 @@ members = [
     "crates/tui-semantic",
     "crates/tui-shared",
     "experiments/ast-respiration",
-    "experiments/cargo-ants",
     "experiments/code-bio-dome",
     "experiments/code-concerto",
     "experiments/code-radio",
