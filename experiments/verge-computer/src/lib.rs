@@ -4,7 +4,7 @@ pub mod cpu;
 pub mod mechanism;
 pub mod view;
 
-use cpu::{cpu_tick_system, TickEvent, Program};
+use cpu::{cpu_tick_system, Program, TickEvent};
 
 pub struct VergeComputerPlugin;
 

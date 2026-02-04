@@ -100,7 +100,8 @@ impl ChimeraVM {
                 }
 
                 if self.telomeres[self.ip.0] <= 0 {
-                    self.output.push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                    self.output
+                        .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
                     self.ip.0 += 1;
                     self.ip.1 = 0;
                     return;
@@ -418,7 +419,9 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Invalid arg for telomerase".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Invalid arg for telomerase".to_string()),
                     }
                 } else {
                     self.output
@@ -591,7 +594,8 @@ impl ChimeraVM {
                                 self.epigenome.retain(|(s, _)| *s != s_idx);
 
                                 self.energy -= 10;
-                                self.output.push(format!("APOPTOSIS: Cleared strand {}", s_idx));
+                                self.output
+                                    .push(format!("APOPTOSIS: Cleared strand {}", s_idx));
                             } else {
                                 self.output.push(
                                     "Error: Strand index out of bounds for apoptosis".to_string(),
@@ -605,6 +609,165 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for apoptosis".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "integrase" => {
+                // stack: arg, name, gene_idx, strand_idx (bottom)
+                if self.stack.len() >= 4 {
+                    let arg_val = self.stack.pop().unwrap();
+                    let name_val = self.stack.pop().unwrap();
+                    let gene_idx_val = self.stack.pop().unwrap();
+                    let strand_idx_val = self.stack.pop().unwrap();
+
+                    match (strand_idx_val, gene_idx_val, name_val, arg_val) {
+                        (Value::Int(s), Value::Int(g), Value::Str(name), arg) => {
+                            let s_idx = s as usize;
+                            let g_idx = g as usize;
+                            let helix_len = self.dna.helix.strands.len();
+
+                            if s >= 0 && s_idx < helix_len {
+                                let strand_len = self.dna.helix.strands[s_idx].genes.len();
+                                if g >= 0 && g_idx <= strand_len {
+                                    // Create Gene
+                                    let new_gene = crate::ast::Gene {
+                                        name: name.clone(),
+                                        args: match arg {
+                                            Value::Int(n) => {
+                                                vec![crate::ast::Nucleotide::Number(n)]
+                                            }
+                                            Value::Str(s) => {
+                                                vec![crate::ast::Nucleotide::String(s)]
+                                            }
+                                        },
+                                    };
+
+                                    // Insert
+                                    self.dna.helix.strands[s_idx].genes.insert(g_idx, new_gene);
+
+                                    // Update Epigenome: Shift all markers at (s_idx, k >= g_idx) to k+1
+                                    let mut new_markers = Vec::new();
+                                    let mut to_remove = Vec::new();
+                                    for &(ms, mg) in self.epigenome.iter() {
+                                        if ms == s_idx && mg >= g_idx {
+                                            to_remove.push((ms, mg));
+                                            new_markers.push((ms, mg + 1));
+                                        }
+                                    }
+                                    for marker in to_remove {
+                                        self.epigenome.remove(&marker);
+                                    }
+                                    for marker in new_markers {
+                                        self.epigenome.insert(marker);
+                                    }
+
+                                    self.energy -= 20;
+                                    self.output.push(format!(
+                                        "INTEGRASE: Inserted {} at {}:{}",
+                                        name, s, g
+                                    ));
+
+                                    // Update IP if we inserted before or at current execution
+                                    if self.ip.0 == s_idx && self.ip.1 >= g_idx {
+                                        self.ip.1 += 1;
+                                    }
+                                    // Default None means step() will increment IP +1.
+                                    // If we shifted IP +1 here, total is +2.
+                                    // This skips the inserted gene (if at g_idx) and the current gene (now at g_idx+1).
+                                    // Correct.
+                                } else {
+                                    self.output.push(
+                                        "Error: Gene index out of bounds for integrase".to_string(),
+                                    );
+                                }
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for integrase".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for integrase".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for integrase".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "excision" => {
+                // stack: gene_idx, strand_idx (bottom)
+                if self.stack.len() >= 2 {
+                    let gene_idx_val = self.stack.pop().unwrap();
+                    let strand_idx_val = self.stack.pop().unwrap();
+
+                    match (strand_idx_val, gene_idx_val) {
+                        (Value::Int(s), Value::Int(g)) => {
+                            let s_idx = s as usize;
+                            let g_idx = g as usize;
+                            let helix_len = self.dna.helix.strands.len();
+
+                            if s >= 0 && s_idx < helix_len {
+                                let strand_len = self.dna.helix.strands[s_idx].genes.len();
+                                if g >= 0 && g_idx < strand_len {
+                                    // Remove
+                                    self.dna.helix.strands[s_idx].genes.remove(g_idx);
+
+                                    // Update Epigenome: Remove marker at g_idx, shift k > g_idx to k-1
+                                    self.epigenome.remove(&(s_idx, g_idx));
+                                    let mut new_markers = Vec::new();
+                                    let mut to_remove = Vec::new();
+                                    for &(ms, mg) in self.epigenome.iter() {
+                                        if ms == s_idx && mg > g_idx {
+                                            to_remove.push((ms, mg));
+                                            new_markers.push((ms, mg - 1));
+                                        }
+                                    }
+                                    for marker in to_remove {
+                                        self.epigenome.remove(&marker);
+                                    }
+                                    for marker in new_markers {
+                                        self.epigenome.insert(marker);
+                                    }
+
+                                    self.energy -= 15;
+                                    self.output.push(format!("EXCISION: Removed {}:{}", s, g));
+
+                                    // Update IP
+                                    if self.ip.0 == s_idx {
+                                        if g_idx < self.ip.1 {
+                                            // Removed before current. Shift IP left.
+                                            self.ip.1 -= 1;
+                                            return None; // step() increments +1. Net 0 change (but content moved left, so we execute next).
+                                        } else if g_idx == self.ip.1 {
+                                            // Removed current.
+                                            // Next gene slid into current slot.
+                                            // We want to execute it.
+                                            // So return IP as is, prevent step() increment.
+                                            return Some(self.ip);
+                                        }
+                                    }
+                                } else {
+                                    self.output.push(
+                                        "Error: Gene index out of bounds for excision".to_string(),
+                                    );
+                                }
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for excision".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for excision".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for excision".to_string());
                 }
                 None
             }

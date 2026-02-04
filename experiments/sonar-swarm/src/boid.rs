@@ -80,10 +80,14 @@ impl Boid {
         let next_y = self.position.1 + self.velocity.1;
 
         // Boundary Check (Outer walls)
-        if next_x < 1.0 || next_x >= (width as f64 - 1.0) || next_y < 1.0 || next_y >= (height as f64 - 1.0) {
-             self.velocity.0 *= -1.0;
-             self.velocity.1 *= -1.0;
-             return;
+        if next_x < 1.0
+            || next_x >= (width as f64 - 1.0)
+            || next_y < 1.0
+            || next_y >= (height as f64 - 1.0)
+        {
+            self.velocity.0 *= -1.0;
+            self.velocity.1 *= -1.0;
+            return;
         }
 
         // Inner Wall Check
@@ -92,11 +96,11 @@ impl Boid {
         let idx = gy * width + gx;
 
         if idx < walls.len() && walls[idx] {
-             self.velocity.0 *= -1.0;
-             self.velocity.1 *= -1.0;
+            self.velocity.0 *= -1.0;
+            self.velocity.1 *= -1.0;
         } else {
-             self.position.0 = next_x;
-             self.position.1 = next_y;
+            self.position.0 = next_x;
+            self.position.1 = next_y;
         }
 
         self.acceleration = (0.0, 0.0);

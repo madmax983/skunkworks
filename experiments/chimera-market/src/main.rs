@@ -5,11 +5,11 @@ use pest_derive::Parser;
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color},
+    style::Color,
     text::Line,
     widgets::{
-        Block, Borders, Paragraph,
         canvas::{Canvas, Points},
+        Block, Borders, Paragraph,
     },
 };
 use std::time::Duration;
@@ -63,7 +63,9 @@ impl Trader {
 
 fn generate_random_dna() -> Dna {
     let mut rng = rand::thread_rng();
-    let enzymes = ["push", "add", "sub", "mul", "div", "dup", "swap", "brz", "jump", "drop"];
+    let enzymes = [
+        "push", "add", "sub", "mul", "div", "dup", "swap", "brz", "jump", "drop",
+    ];
     let mut genes = Vec::new();
     for _ in 0..rng.gen_range(5..20) {
         let name = enzymes[rng.gen_range(0..enzymes.len())];
@@ -122,51 +124,61 @@ fn main() -> Result<()> {
             trader.reset_vm(last_price, 0.0);
             for _ in 0..50 {
                 trader.vm.step();
-                if trader.vm.halted { break; }
+                if trader.vm.halted {
+                    break;
+                }
             }
 
             // Output: [Offset, Action] (Top is Action)
             // Or [Action, Offset] if we pushed Offset first.
             // Let's assume Top is Action.
             if let Some(Value::Int(action)) = trader.vm.stack.pop() {
-                 let offset = if let Some(Value::Int(o)) = trader.vm.stack.pop() {
-                     o.clamp(0, 10) as f32
-                 } else { 0.0 };
+                let offset = if let Some(Value::Int(o)) = trader.vm.stack.pop() {
+                    o.clamp(0, 10) as f32
+                } else {
+                    0.0
+                };
 
-                 match action {
-                     1 => { // Buy
+                match action {
+                    1 => {
+                        // Buy
                         let price = (last_price - offset).clamp(0.0, grid.height as f32 - 1.0);
                         let y = (grid.height as f32 - 1.0 - price) as usize;
                         let x = rand::thread_rng().gen_range(0..grid.width);
                         grid.set(x, y, Particle::Bid(trader.id));
-                     }
-                     2 => { // Sell
+                    }
+                    2 => {
+                        // Sell
                         let price = (last_price + offset).clamp(0.0, grid.height as f32 - 1.0);
                         let y = (grid.height as f32 - 1.0 - price) as usize;
                         let x = rand::thread_rng().gen_range(0..grid.width);
                         grid.set(x, y, Particle::Ask(trader.id));
-                     }
-                     _ => {}
-                 }
+                    }
+                    _ => {}
+                }
             }
         }
 
         // 4. Evolution
         if tick % 200 == 0 && tick > 0 {
-             traders.sort_by(|a, b| b.balance.partial_cmp(&a.balance).unwrap());
-             let elite_count = traders.len() / 5;
-             let elite_dna: Vec<Dna> = traders.iter().take(elite_count).map(|t| t.dna.clone()).collect();
+            traders.sort_by(|a, b| b.balance.partial_cmp(&a.balance).unwrap());
+            let elite_count = traders.len() / 5;
+            let elite_dna: Vec<Dna> = traders
+                .iter()
+                .take(elite_count)
+                .map(|t| t.dna.clone())
+                .collect();
 
-             let len = traders.len();
-             for i in (len - elite_count)..len {
-                 let parent_dna = &elite_dna[i % elite_count];
-                 let mut temp_vm = ChimeraVM::new(parent_dna.clone());
-                 temp_vm.mutate(); // Mutate once
-                 temp_vm.mutate(); // Mutate twice
-                 traders[i] = Trader::new(i, temp_vm.dna);
-                 traders[i].balance = 1000.0;
-                 traders[i].inventory = 0;
-             }
+            let len = traders.len();
+            for i in (len - elite_count)..len {
+                let parent_dna = &elite_dna[i % elite_count];
+                let mut temp_vm = ChimeraVM::new(parent_dna.clone());
+                temp_vm.mutate(); // Mutate once
+                temp_vm.mutate(); // Mutate twice
+                traders[i] = Trader::new(i, temp_vm.dna);
+                traders[i].balance = 1000.0;
+                traders[i].inventory = 0;
+            }
         }
 
         tick += 1;
@@ -188,20 +200,35 @@ fn main() -> Result<()> {
                     match grid.get(x, y) {
                         Particle::Bid(_) => bids_buf.push((x as f64, (grid.height - 1 - y) as f64)),
                         Particle::Ask(_) => asks_buf.push((x as f64, (grid.height - 1 - y) as f64)),
-                        Particle::Trade { .. } => trades_buf.push((x as f64, (grid.height - 1 - y) as f64)),
+                        Particle::Trade { .. } => {
+                            trades_buf.push((x as f64, (grid.height - 1 - y) as f64))
+                        }
                         _ => {}
                     }
                 }
             }
 
             let market_canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Chimera Market "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Chimera Market "),
+                )
                 .x_bounds([0.0, grid.width as f64])
                 .y_bounds([0.0, grid.height as f64])
                 .paint(|ctx| {
-                     ctx.draw(&Points { coords: &bids_buf, color: Color::Green });
-                     ctx.draw(&Points { coords: &asks_buf, color: Color::Red });
-                     ctx.draw(&Points { coords: &trades_buf, color: Color::White });
+                    ctx.draw(&Points {
+                        coords: &bids_buf,
+                        color: Color::Green,
+                    });
+                    ctx.draw(&Points {
+                        coords: &asks_buf,
+                        color: Color::Red,
+                    });
+                    ctx.draw(&Points {
+                        coords: &trades_buf,
+                        color: Color::White,
+                    });
                 });
             f.render_widget(market_canvas, chunks[0]);
 
@@ -213,22 +240,25 @@ fn main() -> Result<()> {
             for (i, t) in sorted_traders.iter().take(15).enumerate() {
                 lines.push(Line::from(format!(
                     "{}. ID:{} Bal:{:.0}",
-                    i+1, t.id, t.balance
+                    i + 1,
+                    t.id,
+                    t.balance
                 )));
             }
-             lines.push(Line::from(""));
-             lines.push(Line::from(format!("Price: {:.2}", last_price)));
-             lines.push(Line::from(format!("Tick: {}", tick)));
+            lines.push(Line::from(""));
+            lines.push(Line::from(format!("Price: {:.2}", last_price)));
+            lines.push(Line::from(format!("Tick: {}", tick)));
 
             let stats_block = Paragraph::new(lines)
                 .block(Block::default().borders(Borders::ALL).title(" Stats "));
             f.render_widget(stats_block, chunks[1]);
-
         })?;
 
         if event::poll(Duration::from_millis(16))? {
             if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press && (key.code == KeyCode::Esc || key.code == KeyCode::Char('q')) {
+                if key.kind == KeyEventKind::Press
+                    && (key.code == KeyCode::Esc || key.code == KeyCode::Char('q'))
+                {
                     break;
                 }
             }

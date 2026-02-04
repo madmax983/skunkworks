@@ -9,10 +9,10 @@ pub enum CpuPhase {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Instruction {
-    Load(usize, i32), // Reg, Value
+    Load(usize, i32),  // Reg, Value
     Add(usize, usize), // Dest, Src (Dest += Src)
     Mov(usize, usize), // Dest, Src (Dest = Src)
-    Jmp(usize),       // Target PC
+    Jmp(usize),        // Target PC
     Halt,
 }
 
@@ -90,10 +90,7 @@ pub fn cpu_tick_system(
                             }
                         }
                         state.instructions += 1;
-                        info!(
-                            "CPU Executed {:?}. Registers: {:?}",
-                            instr, state.registers
-                        );
+                        info!("CPU Executed {:?}. Registers: {:?}", instr, state.registers);
                     }
                     state.phase = CpuPhase::Fetch;
                 }

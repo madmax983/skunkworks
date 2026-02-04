@@ -407,4 +407,128 @@ mod tests {
         // Epigenetics should be gone
         assert!(vm.epigenome.is_empty());
     }
+
+    #[test]
+    fn test_integrase_append() {
+        // [ push(0) push(5) push("push") push(999) integrase() ]
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // strand
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            }, // gene_idx (append, len is 5)
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::String("push".to_string())],
+            }, // name
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(999)],
+            }, // arg
+            Gene {
+                name: "integrase".to_string(),
+                args: vec![],
+            }, // 4
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        for _ in 0..4 {
+            vm.step(); // Execute setup pushes
+        }
+        vm.step(); // execute integrase
+
+        // Should have inserted push(999) at end.
+        // Next step should execute it.
+        vm.step();
+
+        assert_eq!(vm.stack.last(), Some(&crate::vm::Value::Int(999)));
+    }
+
+    #[test]
+    fn test_integrase_shift() {
+        // [ push(0) push(0) push("push") push(200) integrase() push(100) ]
+        // Insert "push(200)" at 0.
+        // Original: 0,1,2,3: pushes, 4: integrase, 5: push(100).
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // strand
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // gene_idx 0
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::String("push".to_string())],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(200)],
+            },
+            Gene {
+                name: "integrase".to_string(),
+                args: vec![],
+            }, // 4: integrase
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(100)],
+            }, // 5: target
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        for _ in 0..4 {
+            vm.step();
+        } // pushes
+        vm.step(); // integrase
+
+        // Integrase was at 4. Inserted at 0.
+        // Shift +1. IP should be 5 (pointing to old 4).
+        // Step return None -> IP 6.
+        // Next gene is at 6 (old 5).
+        assert_eq!(vm.ip.1, 6); // Should point to next instruction
+
+        vm.step(); // execute push(100)
+        assert_eq!(vm.stack.last(), Some(&crate::vm::Value::Int(100)));
+    }
+
+    #[test]
+    fn test_excision() {
+        // [ push(0) push(2) excision() push(100) ]
+        // 0: push(0) (strand)
+        // 1: push(2) (gene_idx of excision itself)
+        // 2: excision()
+        // 3: push(100)
+        // Remove at 2.
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                name: "excision".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(100)],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.step(); // push 0
+        vm.step(); // push 2
+        vm.step(); // excision
+
+        assert_eq!(vm.ip.1, 2); // Should point to 2 (push 100)
+
+        vm.step(); // execute push 100
+        assert_eq!(vm.stack.last(), Some(&crate::vm::Value::Int(100)));
+    }
 }

@@ -1,6 +1,5 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use tui_shared::Tui;
 use nalgebra::{Point3, Rotation3, Vector3};
 use ratatui::{
     backend::CrosstermBackend,
@@ -17,6 +16,7 @@ use std::fs;
 use std::io::Stdout;
 use std::path::Path;
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 // --- Data Structures ---
 

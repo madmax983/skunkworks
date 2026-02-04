@@ -1,6 +1,11 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use verge_computer::{cpu::{self, Instruction, Program}, mechanism, view::ViewPlugin, EscapeWheel, VergeComputerPlugin};
+use verge_computer::{
+    cpu::{self, Instruction, Program},
+    mechanism,
+    view::ViewPlugin,
+    EscapeWheel, VergeComputerPlugin,
+};
 
 fn main() {
     App::new()
