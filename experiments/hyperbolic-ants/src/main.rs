@@ -68,7 +68,9 @@ impl App {
 
     fn move_camera(&mut self, dx: f64, dy: f64) {
         let delta = Point::new(dx, dy);
-        if delta.norm() > 0.2 { return; }
+        if delta.norm() > 0.2 {
+            return;
+        }
 
         let candidate_offset = mobius_add(self.camera_offset, delta);
 
@@ -143,10 +145,15 @@ fn ui(f: &mut Frame, app: &mut App) {
             Span::styled("Hyperbolic Ants", Style::default().fg(Color::Green)),
             Span::raw(format!(
                 " | Ants: {} | Path: {:?} | Pos: {:.2}, {:.2}",
-                app.ants.len(), app.camera_path, app.camera_offset.re, app.camera_offset.im
+                app.ants.len(),
+                app.camera_path,
+                app.camera_offset.re,
+                app.camera_offset.im
             )),
         ]),
-        Line::from(vec![Span::raw("WASD/Arrows to move camera. Green=Pheromone, Red=Food.")]),
+        Line::from(vec![Span::raw(
+            "WASD/Arrows to move camera. Green=Pheromone, Red=Food.",
+        )]),
     ])
     .block(Block::default().borders(Borders::ALL));
 
@@ -164,7 +171,10 @@ fn ui(f: &mut Frame, app: &mut App) {
         .paint(|ctx| {
             // Boundary
             ctx.draw(&Circle {
-                x: 0.0, y: 0.0, radius: 1.0, color: Color::White,
+                x: 0.0,
+                y: 0.0,
+                radius: 1.0,
+                color: Color::White,
             });
 
             let view_transform = Mobius::inverse_translation(app.camera_offset);
@@ -175,12 +185,15 @@ fn ui(f: &mut Frame, app: &mut App) {
                 &app.camera_path,
                 &view_transform,
                 &app.tiling_consts,
-                &app.ants
+                &app.ants,
             );
 
             // Draw Camera/Player indicator (center)
             ctx.draw(&Circle {
-                x: 0.0, y: 0.0, radius: 0.02, color: Color::Cyan,
+                x: 0.0,
+                y: 0.0,
+                radius: 0.02,
+                color: Color::Cyan,
             });
         });
 

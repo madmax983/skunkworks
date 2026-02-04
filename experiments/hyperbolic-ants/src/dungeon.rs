@@ -84,11 +84,11 @@ impl Dungeon {
     pub fn deposit_pheromone(&self, path: &Path, amount: f64) {
         // Ensure tile exists
         {
-             let mut tiles = self.tiles.borrow_mut();
-             if !tiles.contains_key(path) {
-                 let tile = self.generate_tile(path);
-                 tiles.insert(path.clone(), tile);
-             }
+            let mut tiles = self.tiles.borrow_mut();
+            if !tiles.contains_key(path) {
+                let tile = self.generate_tile(path);
+                tiles.insert(path.clone(), tile);
+            }
         }
 
         let mut tiles = self.tiles.borrow_mut();

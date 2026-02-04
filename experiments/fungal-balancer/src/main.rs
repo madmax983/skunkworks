@@ -2,6 +2,8 @@ mod simulation;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use rand::prelude::SliceRandom;
+use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -14,8 +16,6 @@ use ratatui::{
 use simulation::World;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
-use rand::Rng;
-use rand::prelude::SliceRandom;
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
@@ -68,7 +68,11 @@ fn main() -> Result<()> {
             let agent_points: Vec<(f64, f64)> = world.agents.iter().map(|a| (a.x, a.y)).collect();
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Fungal Balancer: Load Distribution"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Fungal Balancer: Load Distribution"),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -124,9 +128,15 @@ fn main() -> Result<()> {
             let total_agents = world.agents.len();
             let status = Line::from(vec![
                 Span::raw(" [q] Quit | [r] Reset | [s] Spike Load | "),
-                Span::styled(format!("Agents: {}", total_agents), Style::default().fg(Color::Cyan)),
+                Span::styled(
+                    format!("Agents: {}", total_agents),
+                    Style::default().fg(Color::Cyan),
+                ),
                 Span::raw(" | "),
-                Span::styled(format!("Total Load: {:.0}", total_load), Style::default().fg(Color::Green)),
+                Span::styled(
+                    format!("Total Load: {:.0}", total_load),
+                    Style::default().fg(Color::Green),
+                ),
             ]);
             f.render_widget(status, chunks[1]);
         })?;
@@ -142,12 +152,12 @@ fn main() -> Result<()> {
                     match key.code {
                         KeyCode::Char('q') => break,
                         KeyCode::Char('r') => {
-                             world = World::new(width, height);
-                             for _ in 0..10 {
+                            world = World::new(width, height);
+                            for _ in 0..10 {
                                 let x = rng.gen_range(5..width - 5);
                                 let y = rng.gen_range(5..height - 5);
                                 world.add_node(x, y, 100.0, rng.gen_range(0.0..150.0));
-                             }
+                            }
                         }
                         KeyCode::Char('s') => {
                             // Spike load on random node

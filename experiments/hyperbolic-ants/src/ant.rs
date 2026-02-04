@@ -7,7 +7,7 @@ pub struct Ant {
     pub offset: Point,
     pub carrying_food: bool,
     // Movement state
-    target_dir: usize,   // Direction index we are currently moving towards
+    target_dir: usize, // Direction index we are currently moving towards
 }
 
 impl Ant {
@@ -96,8 +96,8 @@ impl Ant {
             if matches!(tile.tile_type, TileType::Wall) {
                 // Bounce
                 self.target_dir = (self.target_dir + 2) % 4; // Turn back
-                // Or random turn
-                // self.target_dir = rng.gen_range(0..4);
+                                                             // Or random turn
+                                                             // self.target_dir = rng.gen_range(0..4);
             } else {
                 // Transition
                 self.path = next_path;
