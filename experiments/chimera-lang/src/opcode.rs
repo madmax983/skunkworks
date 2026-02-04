@@ -106,6 +106,8 @@ pub enum OpCode {
     Lumine,
     #[cfg(feature = "nova")]
     SenseLight,
+    #[cfg(feature = "nova")]
+    Spawn,
 
     Unknown(String),
 }
@@ -216,6 +218,8 @@ impl FromStr for OpCode {
             "lumine" => Ok(OpCode::Lumine),
             #[cfg(feature = "nova")]
             "sense_light" => Ok(OpCode::SenseLight),
+            #[cfg(feature = "nova")]
+            "spawn" => Ok(OpCode::Spawn),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -326,6 +330,8 @@ impl fmt::Display for OpCode {
             OpCode::Lumine => write!(f, "lumine"),
             #[cfg(feature = "nova")]
             OpCode::SenseLight => write!(f, "sense_light"),
+            #[cfg(feature = "nova")]
+            OpCode::Spawn => write!(f, "spawn"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

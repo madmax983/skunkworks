@@ -117,13 +117,16 @@ fn run_app<B: ratatui::backend::Backend>(
 
             // Petri Dish (Grid)
             let mut grid_lines = Vec::new();
+            #[cfg(feature = "nova")]
+            let organelle_locs: Vec<(usize, usize)> = vm.organelles.iter().map(|o| o.context_loc).collect();
+
             for y in 0..16 {
                 let mut line_spans = Vec::new();
                 for x in 0..16 {
                     let val = &vm.grid[y][x];
 
                     #[allow(unused_mut)]
-                    let (char_rep, mut style) = match val {
+                    let (mut char_rep, mut style) = match val {
                         crate::vm::Value::Int(0) => {
                             (".".to_string(), Style::default().fg(Color::DarkGray))
                         }
@@ -173,6 +176,13 @@ fn run_app<B: ratatui::backend::Backend>(
                             style = style.add_modifier(Modifier::CROSSED_OUT);
                             if vm.waste_grid[y][x] > 100 {
                                 style = style.fg(Color::Red);
+                            }
+                        }
+
+                        if organelle_locs.contains(&(y, x)) {
+                            style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                            if char_rep == "." {
+                                char_rep = "O".to_string();
                             }
                         }
                     }
