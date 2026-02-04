@@ -101,6 +101,36 @@ classDiagram
     Experiment ..> AudioFeature : Checks
 ```
 
+### Ghost Input Replay (crates/tui-shared)
+
+The `tui-shared` crate includes a `ghost` feature for recording and replaying user input sessions, facilitating deterministic testing and demos.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class GhostRecorder {
+        +start()
+        +record(event: Event)
+        +to_json() String
+    }
+
+    class GhostReplayer {
+        +start()
+        +poll() Option~Event~
+        +from_json(json: String) GhostReplayer
+    }
+
+    class GhostEvent {
+        <<Serializable>>
+        +Key(GhostKeyEvent)
+        +Mouse(GhostMouseEvent)
+    }
+
+    GhostRecorder ..> GhostEvent : Serializes
+    GhostReplayer ..> GhostEvent : Deserializes
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
