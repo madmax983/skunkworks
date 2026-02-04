@@ -89,6 +89,7 @@ members = [
     "experiments/code-erosion",
     "experiments/hive-synth",
     "experiments/code-kaleidoscope", "experiments/hidden-brush",
+    "experiments/market-rogue",
 ]
 resolver = "2"
 

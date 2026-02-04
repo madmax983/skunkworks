@@ -333,3 +333,7 @@
 ### [Concentration Level: DECOMPOSING] - Location: experiments/word-collider (GRAVEYARD)
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Documentation void. Generic physics demo. Failed to improve during grace period.
+
+### [Concentration Level: FRESH] - Location: experiments/market-rogue
+- **Scent Origin:** Splice Surgeon
+- **Status:** The market is open. Volatility detected. Traders are entering the dungeon to fight the bid/ask spread.
