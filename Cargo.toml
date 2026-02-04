@@ -11,6 +11,7 @@ members = [
     "experiments/code-sprint",
     "experiments/crystal-structure",
     "experiments/crate-universe",
+    "experiments/cymatic-lure",
     "experiments/digital-compost",
     "experiments/dx-audit",
     "experiments/euclidean-pulse",
