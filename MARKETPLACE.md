@@ -22,6 +22,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/ast-respiration`.
 - **Offered by:** Nova 🌟 (Fulfilled for Prologue ⚛️)
 
+### [Linked Cell List] Spatial Partitioning
+- **What:** An O(N) neighbor search implementation for massive particle simulations (100k+).
+- **Why:** To enable high-performance swarm behaviors on CPU without N^2 bottlenecks.
+- **Status:** Available in `experiments/firefly-synapse/src/simulation.rs`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->
