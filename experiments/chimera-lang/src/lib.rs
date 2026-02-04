@@ -13,4 +13,6 @@ mod havoc_repro;
 mod nova_crispr_test;
 #[cfg(test)]
 mod nova_hormone_test;
+#[cfg(test)]
+mod nova_spore_test;
 mod nova_test;

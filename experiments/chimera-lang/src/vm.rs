@@ -18,6 +18,24 @@ impl std::fmt::Display for Value {
     }
 }
 
+#[cfg(feature = "nova")]
+#[derive(Clone)]
+pub struct Spore {
+    pub dna: Dna,
+    pub stack: Vec<Value>,
+    pub ip: (usize, usize),
+    pub output: Vec<String>,
+    pub halted: bool,
+    pub energy: i64,
+    pub grid: Vec<Vec<Value>>,
+    pub chaos_mode: bool,
+    pub recursion_depth: usize,
+    pub context_loc: (usize, usize),
+    pub epigenome: HashSet<(usize, usize)>,
+    pub telomeres: Vec<i64>,
+    pub hormone_grid: Vec<Vec<[i64; 3]>>,
+}
+
 pub struct ChimeraVM {
     pub dna: Dna,
     pub stack: Vec<Value>,
@@ -35,6 +53,8 @@ pub struct ChimeraVM {
     pub telomeres: Vec<i64>,
     #[cfg(feature = "nova")]
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    #[cfg(feature = "nova")]
+    pub spores: Vec<Spore>,
 }
 
 impl ChimeraVM {
@@ -63,10 +83,13 @@ impl ChimeraVM {
             telomeres: vec![50; strand_count],
             #[cfg(feature = "nova")]
             hormone_grid,
+            #[cfg(feature = "nova")]
+            spores: Vec::new(),
         }
     }
 
     #[cfg(feature = "nova")]
+    #[allow(clippy::needless_range_loop)]
     fn diffuse_hormones(&mut self) {
         let mut new_grid = self.hormone_grid.clone();
         for y in 0..16 {
@@ -112,9 +135,9 @@ impl ChimeraVM {
             // Decay hormones: reduce intensity by 1 per step
             for row in self.hormone_grid.iter_mut() {
                 for cell in row.iter_mut() {
-                    for c in 0..3 {
-                        if cell[c] > 0 {
-                            cell[c] -= 1;
+                    for val in cell.iter_mut() {
+                        if *val > 0 {
+                            *val -= 1;
                         }
                     }
                 }
@@ -215,7 +238,7 @@ impl ChimeraVM {
         coords
     }
 
-    fn execute_gene_inner(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn execute_gene_inner(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
         match name {
             "push" => {
                 if let Some(arg) = args.first() {
@@ -226,6 +249,67 @@ impl ChimeraVM {
                             .output
                             .push(format!("Error: Invalid arg for push: {:?}", arg)),
                     }
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "sporulate" => {
+                // Create snapshot
+                let spore = Spore {
+                    dna: self.dna.clone(),
+                    stack: self.stack.clone(),
+                    ip: self.ip,
+                    output: self.output.clone(),
+                    halted: self.halted,
+                    energy: self.energy,
+                    grid: self.grid.clone(),
+                    chaos_mode: self.chaos_mode,
+                    recursion_depth: self.recursion_depth,
+                    context_loc: self.context_loc,
+                    epigenome: self.epigenome.clone(),
+                    telomeres: self.telomeres.clone(),
+                    hormone_grid: self.hormone_grid.clone(),
+                };
+
+                let id = self.spores.len();
+                self.spores.push(spore);
+                self.stack.push(Value::Int(id as i64));
+                self.energy -= 50; // High cost for time travel
+                self.output.push(format!("SPORULATE: Created Spore {}", id));
+                None
+            }
+            #[cfg(feature = "nova")]
+            "germinate" => {
+                // stack: spore_id
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(id) = val {
+                        let idx = id as usize;
+                        if idx < self.spores.len() {
+                            let spore = &self.spores[idx];
+                            // Restore state
+                            self.dna = spore.dna.clone();
+                            self.stack = spore.stack.clone();
+                            self.ip = spore.ip;
+                            self.output = spore.output.clone();
+                            self.halted = spore.halted;
+                            self.energy = spore.energy;
+                            self.grid = spore.grid.clone();
+                            self.chaos_mode = spore.chaos_mode;
+                            self.recursion_depth = spore.recursion_depth;
+                            self.context_loc = spore.context_loc;
+                            self.epigenome = spore.epigenome.clone();
+                            self.telomeres = spore.telomeres.clone();
+                            self.hormone_grid = spore.hormone_grid.clone();
+
+                            self.output.push(format!("GERMINATE: Restored Spore {}", idx));
+                        } else {
+                            self.output.push("Error: Spore index out of bounds".to_string());
+                        }
+                    } else {
+                        self.output.push("Error: Type mismatch for germinate".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for germinate".to_string());
                 }
                 None
             }
@@ -1261,7 +1345,7 @@ impl ChimeraVM {
                     if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
                         if a > 0 {
                             let (cy, cx) = self.context_loc;
-                            let channel_idx = (c.abs() as usize) % 3;
+                            let channel_idx = (c.unsigned_abs() as usize) % 3;
                             self.hormone_grid[cy][cx][channel_idx] += a;
                             self.output.push(format!(
                                 "SECRETE: Added {} to channel {} at {},{}",
@@ -1284,7 +1368,7 @@ impl ChimeraVM {
                 if let Some(val) = self.stack.pop() {
                     if let Value::Int(c) = val {
                         let (cy, cx) = self.context_loc;
-                        let channel_idx = (c.abs() as usize) % 3;
+                        let channel_idx = (c.unsigned_abs() as usize) % 3;
                         let intensity = self.hormone_grid[cy][cx][channel_idx];
                         self.stack.push(Value::Int(intensity));
                     } else {
@@ -1305,7 +1389,7 @@ impl ChimeraVM {
                     let channel_val = self.stack.pop().unwrap();
                     if let (Value::Int(c), Value::Int(a)) = (channel_val, amount_val) {
                         let (cy, cx) = self.context_loc;
-                        let channel_idx = (c.abs() as usize) % 3;
+                        let channel_idx = (c.unsigned_abs() as usize) % 3;
                         let intensity = &mut self.hormone_grid[cy][cx][channel_idx];
                         let absorbed = if *intensity >= a {
                             *intensity -= a;
