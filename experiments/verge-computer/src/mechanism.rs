@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use std::f32::consts::PI;
+use crate::Anchor;
 
 pub struct MechanismPlugin;
 
@@ -74,21 +75,21 @@ pub fn spawn_anchor(commands: &mut Commands, position: Vec2) -> Entity {
 
     // Left pallet
     shapes.push((
-        Vect::new(-3.0, -3.0),
+        Vect::new(-1.5, -2.0),
         0.5, // Tilted
-        Collider::cuboid(0.4, 1.0),
+        Collider::cuboid(0.2, 0.2),
     ));
 
     // Right pallet
     shapes.push((
-        Vect::new(3.0, -3.0),
+        Vect::new(1.5, -2.0),
         -0.5, // Tilted opposite
-        Collider::cuboid(0.4, 1.0),
+        Collider::cuboid(0.2, 0.2),
     ));
 
     // Arms connecting to pivot
-    shapes.push((Vect::new(-1.5, -1.5), 0.7, Collider::cuboid(0.2, 2.5)));
-    shapes.push((Vect::new(1.5, -1.5), -0.7, Collider::cuboid(0.2, 2.5)));
+    shapes.push((Vect::new(-2.5, -1.5), 0.5, Collider::cuboid(0.2, 2.0)));
+    shapes.push((Vect::new(2.5, -1.5), -0.5, Collider::cuboid(0.2, 2.0)));
 
     // Pendulum Rod (upwards or downwards) - let's make it a pendulum swinging below
     shapes.push((Vect::new(0.0, -8.0), 0.0, Collider::cuboid(0.2, 8.0)));
@@ -107,6 +108,7 @@ pub fn spawn_anchor(commands: &mut Commands, position: Vec2) -> Entity {
                 angular_damping: 0.1,
             }, // Low damping for pendulum
             LockedAxes::TRANSLATION_LOCKED,
+            Anchor,
         ))
         .id()
 }

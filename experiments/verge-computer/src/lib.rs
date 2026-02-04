@@ -2,14 +2,16 @@ use bevy::prelude::*;
 
 pub mod cpu;
 pub mod mechanism;
+pub mod view;
 
-use cpu::{cpu_tick_system, TickEvent};
+use cpu::{cpu_tick_system, TickEvent, Program};
 
 pub struct VergeComputerPlugin;
 
 impl Plugin for VergeComputerPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<TickEvent>()
+            .init_resource::<Program>()
             .add_systems(Update, (cpu_tick_system, detect_tick_system));
     }
 }
@@ -20,6 +22,9 @@ pub struct EscapeWheel {
     pub teeth: usize,
     pub cumulative_angle: f32,
 }
+
+#[derive(Component)]
+pub struct Anchor;
 
 fn detect_tick_system(
     mut events: EventWriter<TickEvent>,
