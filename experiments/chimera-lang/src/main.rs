@@ -10,6 +10,8 @@ mod vm;
 
 #[cfg(test)]
 mod nova_test;
+#[cfg(test)]
+mod havoc_repro;
 
 use crate::ast::Dna;
 use crate::tui::run_tui;
