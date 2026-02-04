@@ -4,7 +4,6 @@ members = [
     "crates/tui-shared",
     "experiments/ast-respiration",
     "experiments/cargo-ants",
-    "experiments/cargo-jenga",
     "experiments/code-bio-dome",
     "experiments/code-concerto",
     "experiments/code-radio",
