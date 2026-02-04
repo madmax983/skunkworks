@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
+    use crate::ast::{Dna, Gene, Helix, Strand};
     use crate::vm::{ChimeraVM, Value};
-    use crate::ast::{Dna, Helix, Strand, Gene};
 
     fn make_bomb_dna() -> Dna {
         // Construct a strand that pushes coordinates and then calls virus
@@ -9,12 +9,10 @@ mod tests {
         // But doing it via DNA genes is slow (one step per push).
         // We can manually fill the stack in the test setup.
 
-        let genes = vec![
-            Gene {
-                name: "virus".to_string(),
-                args: vec![],
-            }
-        ];
+        let genes = vec![Gene {
+            name: "virus".to_string(),
+            args: vec![],
+        }];
 
         Dna {
             helix: Helix {
