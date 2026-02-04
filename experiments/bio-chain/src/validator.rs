@@ -56,10 +56,10 @@ impl Validator {
 
     /// Create validator from parent via mitosis
     pub fn from_parent(parent: &Validator, new_id: ValidatorId) -> Self {
-        // Clone parent's DNA and create new VM
-        let child_dna = parent.vm.dna.clone();
+        // Clone parent's DNA and apply mutations
+        let mut child_dna = parent.vm.dna.clone();
+        Self::mutate_dna(&mut child_dna, 0.05); // 5% mutation rate
         let child_vm = ChimeraVM::new(child_dna);
-        // TODO: Apply small mutations to child DNA
 
         Validator {
             id: new_id,
@@ -71,6 +71,43 @@ impl Validator {
             correct_votes: 0,
             total_votes: 0,
             is_malicious: parent.is_malicious, // Children inherit behavior
+        }
+    }
+
+    /// Apply random mutations to DNA (genetic variation)
+    fn mutate_dna(dna: &mut Dna, mutation_rate: f64) {
+        use chimera_lang::opcode::OpCode;
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+
+        for strand in &mut dna.helix.strands {
+            for gene in &mut strand.genes {
+                // Randomly mutate gene arguments
+                if rng.r#gen::<f64>() < mutation_rate {
+                    // Mutate nucleotide values
+                    for arg in &mut gene.args {
+                        if let Nucleotide::Number(n) = arg {
+                            // Add small random variation (-10% to +10%)
+                            let variation = (*n as f64 * 0.1) as i64;
+                            let delta = rng.gen_range(-variation.max(1)..=variation.max(1));
+                            *n = (*n + delta).max(0); // Keep non-negative
+                        }
+                    }
+                }
+
+                // Very rarely, mutate the opcode itself
+                if rng.r#gen::<f64>() < mutation_rate * 0.1 {
+                    // For now, just toggle between similar opcodes
+                    // In a full implementation, we'd have a more sophisticated mutation strategy
+                    gene.op = match &gene.op {
+                        OpCode::Push => OpCode::Dup,
+                        OpCode::Dup => OpCode::Push,
+                        OpCode::Add => OpCode::Sub,
+                        OpCode::Sub => OpCode::Add,
+                        _ => gene.op.clone(), // Keep others unchanged
+                    };
+                }
+            }
         }
     }
 
@@ -110,17 +147,26 @@ impl Validator {
         true // Simplified
     }
 
-    /// Vote on a block by secreting hormones
+    /// Vote on a block (hormone secretion handled by network layer)
+    ///
+    /// Note: Actual hormone aggregation happens in Network::vote_on_blocks()
+    /// which collects votes from all validators and updates the shared hormone_pool.
+    /// This method just validates and tracks voting statistics.
     pub fn vote_on_block(&mut self, block: &Block, is_valid: bool) {
-        let channel = block.hash_as_channel();
-        let vote_strength = self.energy.min(100); // Vote proportional to stake
+        let _channel = block.hash_as_channel();
+        let _vote_strength = self.energy; // Vote proportional to stake
 
-        if is_valid {
-            // TODO: Call vm.secrete(channel, vote_strength)
+        // Malicious validators vote randomly or opposite
+        let actual_vote = if self.is_malicious {
+            !is_valid // Byzantine behavior: vote opposite
+        } else {
+            is_valid
+        };
+
+        // Track voting statistics
+        if actual_vote {
             self.total_votes += 1;
         } else {
-            // Secrete on INVALID channel
-            // TODO: vm.secrete(INVALID_CHANNEL, vote_strength)
             self.total_votes += 1;
         }
     }
