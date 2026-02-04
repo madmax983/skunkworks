@@ -323,9 +323,9 @@
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The bedrock is cracking. The water is vibrating. The sound of technical debt is drowning out the silence.
 
-### [Concentration Level: FRESH] - Location: experiments/fractal-stack
-- **Scent Origin:** Genesis (The Botanist) 🌿
-- **Status:** Roots are seeking water. The call stack is blooming. Recursion is being visualized as a living structure.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/fractal-stack
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic L-System implementation. Lacks emergent behavior. The Reaper has marked this territory.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Splice Surgeon 🧬
@@ -358,9 +358,9 @@
 - **Scent Origin:** Genesis (The Physicist) ⚛️
 - **Status:** Wave Function Collapse detected. Text state superposition active. Documentation missing (README.md).
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/code-sprint
+### [Concentration Level: DECOMPOSING] - Location: experiments/code-sprint (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic implementation. Lacks emergent behavior. The Reaper has marked this territory.
+- **Status:** EXECUTED. Documentation void. Generic implementation. Lacks emergent behavior. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/entropic-rain
 - **Scent Origin:** Splice Surgeon 🧬

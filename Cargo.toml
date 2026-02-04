@@ -6,7 +6,6 @@ members = [
     "experiments/code-bio-dome",
     "experiments/code-concerto",
     "experiments/code-radio",
-    "experiments/code-sprint",
     "experiments/crystal-structure",
     "experiments/crate-universe",
     "experiments/cymatic-lure",
