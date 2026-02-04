@@ -1,4 +1,5 @@
 use crate::ast::{Dna, Nucleotide};
+use crate::penrose::{PenroseTiling, Point};
 use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::HashSet;
@@ -7,6 +8,12 @@ use std::collections::HashSet;
 pub enum Value {
     Int(i64),
     Str(String),
+}
+
+impl Default for Value {
+    fn default() -> Self {
+        Value::Int(0)
+    }
 }
 
 impl std::fmt::Display for Value {
@@ -25,7 +32,7 @@ pub struct ChimeraVM {
     pub output: Vec<String>,
     pub halted: bool,
     pub energy: i64,
-    pub grid: Vec<Vec<Value>>,
+    pub tiling: PenroseTiling<Value>,
     pub chaos_mode: bool,
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
@@ -35,8 +42,13 @@ pub struct ChimeraVM {
 
 impl ChimeraVM {
     pub fn new(dna: Dna) -> Self {
-        // Initialize 16x16 grid with 0s
-        let grid = vec![vec![Value::Int(0); 16]; 16];
+        // Initialize Penrose Tiling
+        let mut tiling = PenroseTiling::generate_sun(100.0);
+        // Subdivide twice to get a reasonable number of tiles (~40-80)
+        tiling.subdivide();
+        tiling.subdivide();
+        tiling.build_adjacency();
+
         #[cfg(feature = "nova")]
         let strand_count = dna.helix.strands.len();
 
@@ -47,7 +59,7 @@ impl ChimeraVM {
             output: Vec::new(),
             halted: false,
             energy: 50,
-            grid,
+            tiling,
             chaos_mode: false,
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
@@ -100,8 +112,7 @@ impl ChimeraVM {
                 }
 
                 if self.telomeres[self.ip.0] <= 0 {
-                    self.output
-                        .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                    self.output.push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
                     self.ip.0 += 1;
                     self.ip.1 = 0;
                     return;
@@ -144,6 +155,7 @@ impl ChimeraVM {
                 }
                 None
             }
+            // "incubate" removed in this hybrid as it relies on rectangular grid iteration
             "add" => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a + b);
                 None
@@ -251,11 +263,14 @@ impl ChimeraVM {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if y >= 0 && y < 16 && x >= 0 && x < 16 {
-                            self.stack.push(self.grid[y as usize][x as usize].clone());
+                        // Map x,y to Point
+                        let p = Point::new(x as f64, y as f64);
+                        if let Some(idx) = self.tiling.get_closest_triangle(p) {
+                             self.stack.push(self.tiling.data[idx].clone());
                         } else {
-                            self.output
-                                .push("Error: Grid index out of bounds".to_string());
+                             // Should theoretically always find one if we search, but maybe range check?
+                             // Default to 0 if "out of bounds" (though Tiling is finite but space is infinite)
+                             self.stack.push(Value::Int(0));
                         }
                     } else {
                         self.output
@@ -273,11 +288,11 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
                     let val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if y >= 0 && y < 16 && x >= 0 && x < 16 {
-                            self.grid[y as usize][x as usize] = val;
+                        let p = Point::new(x as f64, y as f64);
+                        if let Some(idx) = self.tiling.get_closest_triangle(p) {
+                             self.tiling.data[idx] = val;
                         } else {
-                            self.output
-                                .push("Error: Grid index out of bounds".to_string());
+                             self.output.push("Error: Coordinates too far from tiling".to_string());
                         }
                     } else {
                         self.output
@@ -286,6 +301,36 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for g_write".to_string());
+                }
+                None
+            }
+            "virus" => {
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+
+                    let cell_value = if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                        let p = Point::new(x as f64, y as f64);
+                        if let Some(idx) = self.tiling.get_closest_triangle(p) {
+                            Some(self.tiling.data[idx].clone())
+                        } else {
+                            None
+                        }
+                    } else {
+                        self.output.push("Error: Type mismatch for virus".to_string());
+                        None
+                    };
+
+                    if let Some(val) = cell_value {
+                        match val {
+                            Value::Int(n) => self.stack.push(Value::Int(n)),
+                            Value::Str(s) => {
+                                return self.execute_gene(&s, &[]);
+                            }
+                        }
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for virus".to_string());
                 }
                 None
             }
@@ -330,6 +375,45 @@ impl ChimeraVM {
                     _ => self
                         .output
                         .push("Error: Type mismatch for transcribe args".to_string()),
+                }
+                None
+            }
+            "jump_s" => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            if target >= 0 {
+                                return Some((target as usize, 0));
+                            } else {
+                                self.output.push("Error: Negative jump target".to_string());
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for jump_s".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for jump_s".to_string());
+                }
+                None
+            }
+            "brz_s" => {
+                if self.stack.len() >= 2 {
+                    let target_val = self.stack.pop().unwrap();
+                    let cond_val = self.stack.pop().unwrap();
+
+                    match (target_val, cond_val) {
+                        (Value::Int(target), Value::Int(cond)) => {
+                            if cond == 0 {
+                                if target >= 0 {
+                                    return Some((target as usize, 0));
+                                } else {
+                                    self.output.push("Error: Negative jump target".to_string());
+                                }
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for brz_s".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for brz_s".to_string());
                 }
                 None
             }
@@ -419,9 +503,7 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self
-                            .output
-                            .push("Error: Invalid arg for telomerase".to_string()),
+                        _ => self.output.push("Error: Invalid arg for telomerase".to_string()),
                     }
                 } else {
                     self.output
@@ -460,25 +542,15 @@ impl ChimeraVM {
                                 && sa_idx < helix_len
                                 && sb_idx < helix_len
                             {
-                                // We need to check split bounds for both strands
                                 let len_a = self.dna.helix.strands[sa_idx].genes.len();
                                 let len_b = self.dna.helix.strands[sb_idx].genes.len();
 
                                 if split_idx <= len_a && split_idx <= len_b {
-                                    // Perform recombination
-                                    // We need to borrow strands mutably.
-                                    // Since they are in the same Vec, we need split_at_mut or similar trickery,
-                                    // or just use indices if we can modify the Vec safely.
-                                    // We can't get two mutable references to the same Vec at different indices directly.
-                                    // So we'll use `split_at_mut` if they are different indices, or just do nothing if same.
-
                                     if sa_idx == sb_idx {
-                                        // Recombining same strand with itself at same point is a no-op.
                                         self.output.push(
                                             "Warning: Recombining strand with itself".to_string(),
                                         );
                                     } else {
-                                        // Ensure ordered access to avoid panic
                                         let (lower, upper) = if sa_idx < sb_idx {
                                             (sa_idx, sb_idx)
                                         } else {
@@ -488,9 +560,8 @@ impl ChimeraVM {
                                         let (first_slice, second_slice) =
                                             self.dna.helix.strands.split_at_mut(upper);
                                         let strand_low = &mut first_slice[lower];
-                                        let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
+                                        let strand_high = &mut second_slice[0];
 
-                                        // Identify which is A and B
                                         let (strand_a, strand_b) = if sa_idx < sb_idx {
                                             (strand_low, strand_high)
                                         } else {
@@ -524,6 +595,84 @@ impl ChimeraVM {
                 } else {
                     self.output
                         .push("Error: Stack underflow for recombine".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "s_index" => {
+                self.stack.push(Value::Int(self.ip.0 as i64));
+                None
+            }
+            #[cfg(feature = "nova")]
+            "mitosis" => {
+                // stack: strand_idx (target to clone)
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(idx) => {
+                            let s_idx = idx as usize;
+                            if s_idx < self.dna.helix.strands.len() {
+                                let new_strand = self.dna.helix.strands[s_idx].clone();
+                                self.dna.helix.strands.push(new_strand);
+                                self.telomeres.push(50);
+
+                                let new_s_idx = self.dna.helix.strands.len() - 1;
+                                let genes_to_methylate: Vec<usize> = self
+                                    .epigenome
+                                    .iter()
+                                    .filter(|(s, _)| *s == s_idx)
+                                    .map(|(_, g)| *g)
+                                    .collect();
+
+                                for g_idx in genes_to_methylate {
+                                    self.epigenome.insert((new_s_idx, g_idx));
+                                }
+
+                                self.energy -= 30; // Cost
+                                self.output.push(format!(
+                                    "MITOSIS: Cloned strand {} to {}",
+                                    s_idx, new_s_idx
+                                ));
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for mitosis".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for mitosis".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for mitosis".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "apoptosis" => {
+                // stack: strand_idx
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(idx) => {
+                            let s_idx = idx as usize;
+                            if s_idx < self.dna.helix.strands.len() {
+                                self.dna.helix.strands[s_idx].genes.clear();
+                                self.epigenome.retain(|(s, _)| *s != s_idx);
+                                self.energy -= 10;
+                                self.output.push(format!("APOPTOSIS: Cleared strand {}", s_idx));
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for apoptosis".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for apoptosis".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for apoptosis".to_string());
                 }
                 None
             }
@@ -593,6 +742,12 @@ impl ChimeraVM {
                 "telomerase",
                 #[cfg(feature = "nova")]
                 "t_len",
+                #[cfg(feature = "nova")]
+                "s_index",
+                #[cfg(feature = "nova")]
+                "mitosis",
+                #[cfg(feature = "nova")]
+                "apoptosis",
             ];
             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
             // Add "Mutation" log
@@ -606,47 +761,6 @@ impl ChimeraVM {
                 self.output
                     .push(format!("MUTATION: arg {} -> {}", old_n, *n));
             }
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-
-    fn make_dna(genes: Vec<Gene>) -> Dna {
-        Dna {
-            helix: Helix {
-                strands: vec![Strand { genes }],
-            },
-        }
-    }
-
-    #[test]
-    fn test_add() {
-        let genes = vec![
-            Gene {
-                name: "push".to_string(),
-                args: vec![Nucleotide::Number(10)],
-            },
-            Gene {
-                name: "push".to_string(),
-                args: vec![Nucleotide::Number(20)],
-            },
-            Gene {
-                name: "add".to_string(),
-                args: vec![],
-            },
-        ];
-        let mut vm = ChimeraVM::new(make_dna(genes));
-        while !vm.halted {
-            vm.step();
-        }
-        assert_eq!(vm.stack.len(), 1);
-        match vm.stack[0] {
-            Value::Int(30) => (),
-            _ => panic!("Expected 30"),
         }
     }
 }

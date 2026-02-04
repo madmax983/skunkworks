@@ -1,0 +1,9 @@
+dna = { SOI ~ helix ~ EOI }
+helix = { strand+ }
+strand = { "[" ~ gene* ~ "]" }
+gene = { identifier ~ "(" ~ nucleotides ~ ")" }
+nucleotides = { (number | string | identifier)* }
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+number = @{ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }

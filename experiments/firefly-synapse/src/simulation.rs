@@ -1,5 +1,5 @@
-use rayon::prelude::*;
 use rand::prelude::*;
+use rayon::prelude::*;
 use std::f32::consts::PI;
 
 pub const AGENT_COUNT: usize = 100_000;
@@ -13,7 +13,7 @@ pub const NOISE: f32 = 0.05;
 pub struct Firefly {
     pub x: f32,
     pub y: f32,
-    pub phase: f32,       // 0 to 2PI
+    pub phase: f32, // 0 to 2PI
     pub natural_freq: f32,
 }
 
@@ -105,84 +105,111 @@ impl World {
         let height = self.height;
 
         // Calculate phase updates
-        let updates: Vec<(f32, f32, f32)> = agents.par_iter().enumerate().map(|(i, agent)| {
-            let cx = (agent.x / cell_size).floor() as isize;
-            let cy = (agent.y / cell_size).floor() as isize;
+        let updates: Vec<(f32, f32, f32)> = agents
+            .par_iter()
+            .enumerate()
+            .map(|(i, agent)| {
+                let cx = (agent.x / cell_size).floor() as isize;
+                let cy = (agent.y / cell_size).floor() as isize;
 
-            let mut interaction_sum = 0.0;
-            let mut count = 0;
+                let mut interaction_sum = 0.0;
+                let mut count = 0;
 
-            // Check 3x3 neighbors
-            for dy in -1..=1 {
-                for dx in -1..=1 {
-                    let nx = cx + dx;
-                    let ny = cy + dy;
+                // Check 3x3 neighbors
+                for dy in -1..=1 {
+                    for dx in -1..=1 {
+                        let nx = cx + dx;
+                        let ny = cy + dy;
 
-                    // Wrap grid coordinates
-                    let wrapped_nx = (nx + grid_cols as isize).rem_euclid(grid_cols as isize) as usize;
-                    let wrapped_ny = (ny + grid_rows as isize).rem_euclid(grid_rows as isize) as usize;
+                        // Wrap grid coordinates
+                        let wrapped_nx =
+                            (nx + grid_cols as isize).rem_euclid(grid_cols as isize) as usize;
+                        let wrapped_ny =
+                            (ny + grid_rows as isize).rem_euclid(grid_rows as isize) as usize;
 
-                    let cell_idx = wrapped_ny * grid_cols + wrapped_nx;
+                        let cell_idx = wrapped_ny * grid_cols + wrapped_nx;
 
-                    // Iterate linked list for this cell
-                    let mut current_node = grid_head[cell_idx];
-                    while let Some(neighbor_idx) = current_node {
-                        if neighbor_idx != i {
-                            let neighbor = &agents[neighbor_idx];
-                            // Distance check (squared)
-                            let dx_pos = (neighbor.x - agent.x).abs();
-                            let dy_pos = (neighbor.y - agent.y).abs();
-                            // Handle toroidal wrapping for distance
-                            let dx_pos = if dx_pos > width / 2.0 { width - dx_pos } else { dx_pos };
-                            let dy_pos = if dy_pos > height / 2.0 { height - dy_pos } else { dy_pos };
+                        // Iterate linked list for this cell
+                        let mut current_node = grid_head[cell_idx];
+                        while let Some(neighbor_idx) = current_node {
+                            if neighbor_idx != i {
+                                let neighbor = &agents[neighbor_idx];
+                                // Distance check (squared)
+                                let dx_pos = (neighbor.x - agent.x).abs();
+                                let dy_pos = (neighbor.y - agent.y).abs();
+                                // Handle toroidal wrapping for distance
+                                let dx_pos = if dx_pos > width / 2.0 {
+                                    width - dx_pos
+                                } else {
+                                    dx_pos
+                                };
+                                let dy_pos = if dy_pos > height / 2.0 {
+                                    height - dy_pos
+                                } else {
+                                    dy_pos
+                                };
 
-                            if dx_pos*dx_pos + dy_pos*dy_pos < INTERACTION_RADIUS * INTERACTION_RADIUS {
-                                interaction_sum += (neighbor.phase - agent.phase).sin();
-                                count += 1;
+                                if dx_pos * dx_pos + dy_pos * dy_pos
+                                    < INTERACTION_RADIUS * INTERACTION_RADIUS
+                                {
+                                    interaction_sum += (neighbor.phase - agent.phase).sin();
+                                    count += 1;
+                                }
                             }
+                            current_node = next_node[neighbor_idx];
                         }
-                        current_node = next_node[neighbor_idx];
                     }
                 }
-            }
 
-            let coupling = if count > 0 {
-                (COUPLING_STRENGTH / (count as f32)) * interaction_sum
-            } else {
-                0.0
-            };
+                let coupling = if count > 0 {
+                    (COUPLING_STRENGTH / (count as f32)) * interaction_sum
+                } else {
+                    0.0
+                };
 
-            let d_theta = agent.natural_freq + coupling;
-            let mut new_phase = agent.phase + d_theta * DT;
+                let d_theta = agent.natural_freq + coupling;
+                let mut new_phase = agent.phase + d_theta * DT;
 
-            // Wrap phase
-            if new_phase > 2.0 * PI {
-                new_phase -= 2.0 * PI;
-            }
+                // Wrap phase
+                if new_phase > 2.0 * PI {
+                    new_phase -= 2.0 * PI;
+                }
 
-            // Move randomly
-            let mut rng = rand::thread_rng();
-            let move_x = (rng.gen::<f32>() - 0.5) * NOISE;
-            let move_y = (rng.gen::<f32>() - 0.5) * NOISE;
+                // Move randomly
+                let mut rng = rand::thread_rng();
+                let move_x = (rng.gen::<f32>() - 0.5) * NOISE;
+                let move_y = (rng.gen::<f32>() - 0.5) * NOISE;
 
-            let mut new_x = agent.x + move_x;
-            let mut new_y = agent.y + move_y;
+                let mut new_x = agent.x + move_x;
+                let mut new_y = agent.y + move_y;
 
-            // Wrap position
-            if new_x < 0.0 { new_x += width; }
-            if new_x >= width { new_x -= width; }
-            if new_y < 0.0 { new_y += height; }
-            if new_y >= height { new_y -= height; }
+                // Wrap position
+                if new_x < 0.0 {
+                    new_x += width;
+                }
+                if new_x >= width {
+                    new_x -= width;
+                }
+                if new_y < 0.0 {
+                    new_y += height;
+                }
+                if new_y >= height {
+                    new_y -= height;
+                }
 
-            (new_phase, new_x, new_y)
-        }).collect();
+                (new_phase, new_x, new_y)
+            })
+            .collect();
 
         // Apply updates
-        self.agents.par_iter_mut().zip(updates).for_each(|(agent, (p, x, y))| {
-            agent.phase = p;
-            agent.x = x;
-            agent.y = y;
-        });
+        self.agents
+            .par_iter_mut()
+            .zip(updates)
+            .for_each(|(agent, (p, x, y))| {
+                agent.phase = p;
+                agent.x = x;
+                agent.y = y;
+            });
     }
 
     pub fn render_to_buffer(&self, buffer: &mut [u8], width: usize, height: usize) {
@@ -214,8 +241,8 @@ impl World {
 
                 // "Max" blending to preserve brightest pulses
                 if val > buffer[idx] {
-                    buffer[idx] = val;       // R
-                    buffer[idx + 1] = val;   // G (Yellow/White)
+                    buffer[idx] = val; // R
+                    buffer[idx + 1] = val; // G (Yellow/White)
                     buffer[idx + 2] = val / 4; // B (Slightly warm)
                 }
             }
@@ -251,6 +278,11 @@ mod tests {
 
         let diff_after = (world.agents[0].phase - world.agents[1].phase).abs();
 
-        assert!(diff_after < diff_initial, "Phases should converge. Initial: {}, After: {}", diff_initial, diff_after);
+        assert!(
+            diff_after < diff_initial,
+            "Phases should converge. Initial: {}, After: {}",
+            diff_initial,
+            diff_after
+        );
     }
 }

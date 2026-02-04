@@ -1,0 +1,16 @@
+[package]
+name = "penrose-genes"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+nova = []
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+pest = "2.7"
+pest_derive = "2.7"
+rand = "0.8"

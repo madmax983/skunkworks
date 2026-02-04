@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use verge_computer::{cpu, mechanism, EscapeWheel, VergeComputerPlugin, cpu::{TickEvent, Instruction, Program}};
+use verge_computer::{
+    cpu,
+    cpu::{Instruction, Program, TickEvent},
+    mechanism, EscapeWheel, VergeComputerPlugin,
+};
 
 #[test]
 fn test_tick_mechanism_and_cpu() {
@@ -22,8 +26,8 @@ fn test_tick_mechanism_and_cpu() {
     for i in 0..500 {
         app.update();
         if i % 100 == 0 {
-             let ticks = app.world().resource::<TickCounter>().0;
-             println!("Frame {}: Ticks: {}", i, ticks);
+            let ticks = app.world().resource::<TickCounter>().0;
+            println!("Frame {}: Ticks: {}", i, ticks);
         }
     }
 
@@ -43,8 +47,14 @@ fn test_tick_mechanism_and_cpu() {
     // Verify Fibonacci sequence execution
     // Registers[1] should hold a Fibonacci number (1, 1, 2, 3, 5, 8...)
     // It starts at 0.
-    assert!(cpu_state.registers[1] >= 1, "R1 should be at least 1 after execution");
-    assert!(cpu_state.instructions > 0, "CPU should have executed instructions");
+    assert!(
+        cpu_state.registers[1] >= 1,
+        "R1 should be at least 1 after execution"
+    );
+    assert!(
+        cpu_state.instructions > 0,
+        "CPU should have executed instructions"
+    );
 }
 
 #[derive(Resource)]
@@ -68,7 +78,8 @@ fn setup_test_scene(mut commands: Commands) {
     let radius = 3.0;
     let wheel = mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
 
-    commands.entity(wheel)
+    commands
+        .entity(wheel)
         .insert(EscapeWheel {
             last_angle: 0.0,
             teeth,
@@ -78,7 +89,9 @@ fn setup_test_scene(mut commands: Commands) {
         .insert(ExternalForce::default())
         .insert(ImpulseJoint::new(
             ground,
-            RevoluteJointBuilder::new().local_anchor1(wheel_pos).local_anchor2(Vec2::ZERO),
+            RevoluteJointBuilder::new()
+                .local_anchor1(wheel_pos)
+                .local_anchor2(Vec2::ZERO),
         ));
 
     // 2. Anchor
@@ -87,7 +100,9 @@ fn setup_test_scene(mut commands: Commands) {
 
     commands.entity(anchor).insert(ImpulseJoint::new(
         ground,
-        RevoluteJointBuilder::new().local_anchor1(anchor_pos).local_anchor2(Vec2::ZERO),
+        RevoluteJointBuilder::new()
+            .local_anchor1(anchor_pos)
+            .local_anchor2(Vec2::ZERO),
     ));
 
     // CPU State

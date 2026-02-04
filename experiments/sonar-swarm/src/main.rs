@@ -1,21 +1,27 @@
 use anyhow::Result;
+use crossbeam_channel::bounded;
 use crossterm::event::{self, Event, KeyCode, MouseButton, MouseEventKind};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
-    widgets::{Block, Borders, Paragraph, canvas::{Canvas, Rectangle}},
+    widgets::{
+        canvas::{Canvas, Rectangle},
+        Block, Borders, Paragraph,
+    },
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
-use crossbeam_channel::bounded;
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 use tui_shared::Tui;
 
 mod audio;
-mod physics;
 mod boid;
+mod physics;
 mod world;
 
 use audio::{run_audio, AudioCommand};
@@ -81,7 +87,11 @@ fn run_app(
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Sonar Swarm (Echo Chamber x Luminous Flock)"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Sonar Swarm (Echo Chamber x Luminous Flock)"),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -102,7 +112,11 @@ fn run_app(
                                 if intensity > 0.1 {
                                     let color = if p > 0.0 { Color::Cyan } else { Color::Blue };
                                     ctx.layer();
-                                    ctx.print(x as f64, y as f64, Span::styled(".", Style::default().fg(color)));
+                                    ctx.print(
+                                        x as f64,
+                                        y as f64,
+                                        Span::styled(".", Style::default().fg(color)),
+                                    );
                                 }
                             }
                         }
@@ -114,13 +128,18 @@ fn run_app(
                         } else {
                             (boid.dna.char_representation.to_string(), boid.dna.color)
                         };
-                        ctx.print(boid.position.0, boid.position.1, Span::styled(char_str, Style::default().fg(color)));
+                        ctx.print(
+                            boid.position.0,
+                            boid.position.1,
+                            Span::styled(char_str, Style::default().fg(color)),
+                        );
                     }
                 });
 
             f.render_widget(canvas, chunks[0]);
 
-            let info = Paragraph::new("Q: Quit | R: Reset Walls").style(Style::default().fg(Color::White).bg(Color::Black));
+            let info = Paragraph::new("Q: Quit | R: Reset Walls")
+                .style(Style::default().fg(Color::White).bg(Color::Black));
             f.render_widget(info, chunks[1]);
         })?;
 
@@ -130,18 +149,16 @@ fn run_app(
 
         if event::poll(timeout)? {
             match event::read()? {
-                Event::Key(key) => {
-                    match key.code {
-                        KeyCode::Char('q') => running = false,
-                        KeyCode::Char('r') => {
-                            world.walls.fill(false);
-                            let _ = cmd_tx.send(AudioCommand::ClearWalls);
-                        }
-                        _ => {}
+                Event::Key(key) => match key.code {
+                    KeyCode::Char('q') => running = false,
+                    KeyCode::Char('r') => {
+                        world.walls.fill(false);
+                        let _ = cmd_tx.send(AudioCommand::ClearWalls);
                     }
+                    _ => {}
                 },
                 Event::Mouse(mouse) => {
-                     match mouse.kind {
+                    match mouse.kind {
                         MouseEventKind::Down(MouseButton::Left) => {
                             let x = mouse.column as usize;
                             let y = mouse.row as usize;
@@ -160,7 +177,7 @@ fn run_app(
                             }
                         }
                         _ => {}
-                     }
+                    }
                 }
                 _ => {}
             }

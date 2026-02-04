@@ -7,6 +7,7 @@ members = [
     "experiments/cargo-jenga",
     "experiments/cellular-beats",
     "experiments/code-bio-dome",
+    "experiments/code-concerto",
     "experiments/code-radio",
     "experiments/code-sprint",
     "experiments/crystal-structure",
@@ -93,10 +94,16 @@ members = [
     "experiments/alloc-tardis", 
     "experiments/magnetron-decay", 
     "experiments/echo-chamber",
-    "experiments/sediment-flow", "experiments/serde-quipu", "experiments/fungal-balancer",
-    "experiments/hyperbolic-ants", "experiments/sonar-swarm", "experiments/aperiodic-citadel", "experiments/firefly-synapse",
+    "experiments/sediment-flow", 
+    "experiments/serde-quipu", 
+    "experiments/fungal-balancer",
+    "experiments/hyperbolic-ants", 
+    "experiments/sonar-swarm", 
+    "experiments/aperiodic-citadel", 
+    "experiments/firefly-synapse",
     "experiments/chimera-market",
     "experiments/glyph-evolution",
+    "experiments/penrose-genes",
 ]
 resolver = "2"
 

@@ -1,7 +1,7 @@
-use crate::boid::{Boid, distance_squared, limit};
 use crate::audio::AudioCommand;
-use rand::Rng;
+use crate::boid::{distance_squared, limit, Boid};
 use crossbeam_channel::Sender;
+use rand::Rng;
 
 pub struct World {
     pub width: usize,
@@ -18,8 +18,8 @@ impl World {
         let mut rng = rand::thread_rng();
         for _ in 0..40 {
             // Spawn in middle area
-            let x = rng.gen_range((width/4) as f64 .. (width*3/4) as f64);
-            let y = rng.gen_range((height/4) as f64 .. (height*3/4) as f64);
+            let x = rng.gen_range((width / 4) as f64..(width * 3 / 4) as f64);
+            let y = rng.gen_range((height / 4) as f64..(height * 3 / 4) as f64);
             boids.push(Boid::new(x, y));
         }
 
@@ -57,7 +57,10 @@ impl World {
 
                 if d2 > 0.0 && d2 < boid.dna.view_radius.powi(2) {
                     // Separation
-                    let diff = (boid.position.0 - other.position.0, boid.position.1 - other.position.1);
+                    let diff = (
+                        boid.position.0 - other.position.0,
+                        boid.position.1 - other.position.1,
+                    );
                     let d = d2.sqrt();
                     force_sep.0 += diff.0 / d; // Weight by distance? Usually 1/d or 1/d^2
                     force_sep.1 += diff.1 / d;
@@ -90,7 +93,10 @@ impl World {
             if count_coh > 0 {
                 center_of_mass.0 /= count_coh as f64;
                 center_of_mass.1 /= count_coh as f64;
-                let dir = (center_of_mass.0 - boid.position.0, center_of_mass.1 - boid.position.1);
+                let dir = (
+                    center_of_mass.0 - boid.position.0,
+                    center_of_mass.1 - boid.position.1,
+                );
                 force_coh = limit(dir, boid.dna.max_force);
             }
 
@@ -132,7 +138,9 @@ impl World {
                 let by = boid.position.1 as usize;
                 // Clamp to safe area
                 if bx > 1 && bx < self.width - 1 && by > 1 && by < self.height - 1 {
-                    let _ = self.audio_tx.send(AudioCommand::Pluck(bx, by, boid.dna.ping_strength));
+                    let _ = self
+                        .audio_tx
+                        .send(AudioCommand::Pluck(bx, by, boid.dna.ping_strength));
                     boid.ping_timer = 5;
                 }
             }

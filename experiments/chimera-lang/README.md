@@ -75,3 +75,36 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 ```bash
 cargo run --release -- --input sample.dna
 ```
+
+## Nova Features
+
+Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "Nova" expansion and are gated behind a feature flag. To use them, you must enable the `nova` feature:
+
+```bash
+cargo run --release --features nova -- --input sample.dna
+```
+
+## Library Usage
+
+Chimera can be used as a Rust library to embed the VM in other applications.
+
+Add to your `Cargo.toml`:
+```toml
+[dependencies]
+chimera-lang = { path = "experiments/chimera-lang", features = ["nova"] }
+```
+
+Example `main.rs`:
+```rust
+use chimera_lang::ast::{Dna, Helix};
+use chimera_lang::vm::ChimeraVM;
+
+fn main() {
+    let dna = Dna { helix: Helix { strands: vec![] } };
+    let mut vm = ChimeraVM::new(dna);
+    // ... configure VM ...
+    vm.step();
+}
+```
+
+See `examples/story_demo.rs` for a full example of programmatic usage.

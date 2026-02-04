@@ -1,5 +1,4 @@
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use tui_shared::Tui;
 use ratatui::{
     Terminal,
     backend::Backend,
@@ -10,6 +9,7 @@ use ratatui::{
 };
 use schrodingers_text::{PatternExtractor, WaveFunction};
 use std::{error::Error, io};
+use tui_shared::Tui;
 
 #[derive(Debug, PartialEq)]
 enum AppState {

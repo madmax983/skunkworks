@@ -5,10 +5,10 @@ use pest_derive::Parser;
 pub struct ChimeraParser;
 
 pub mod ast;
-pub mod vm;
 pub mod tui;
+pub mod vm;
 
 #[cfg(test)]
-mod nova_test;
-#[cfg(test)]
 mod nova_crispr_test;
+mod havoc_repro;
+mod nova_test;

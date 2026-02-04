@@ -1,6 +1,5 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, MouseEventKind};
-use tui_shared::Tui;
 use rand::Rng;
 use ratatui::{prelude::*, widgets::*};
 use std::{
@@ -8,6 +7,7 @@ use std::{
     io,
     time::{Duration, Instant},
 };
+use tui_shared::Tui;
 
 mod lorenz;
 mod reaction;
