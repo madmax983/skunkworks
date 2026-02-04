@@ -21,7 +21,8 @@ Traditional blockchains use Proof-of-Work or Proof-of-Stake. BioCoin uses **Proo
 ### Natural Selection
 - Successful validators earn fees → gain energy → reproduce (mitosis)
 - Failed validators lose energy → starve → die (apoptosis)
-- Network evolves toward optimal validation strategies
+- DNA mutations during reproduction create genetic variation (5% rate)
+- Network evolves toward optimal validation strategies through genetic drift
 
 ### Byzantine Fault Tolerance via Evolution
 - Malicious validators waste energy on invalid votes
@@ -65,15 +66,16 @@ See `ARCHITECTURE.md` for detailed design.
 
 ## Status
 
-**Prototype in development.**
+**Working prototype with proven Byzantine fault tolerance.**
 
-Current progress:
-- [x] Architecture design
-- [ ] Validator organism
-- [ ] Chemical voting
-- [ ] Natural selection
-- [ ] Byzantine tests
-- [ ] TUI visualization
+Implemented features:
+- [x] Architecture design (ARCHITECTURE.md)
+- [x] Validator organisms (ChimeraVM with DNA)
+- [x] Chemical voting (hormone-based consensus)
+- [x] Natural selection (mitosis/apoptosis)
+- [x] DNA mutations (genetic variation during reproduction)
+- [x] Byzantine fault tolerance (proven via evolution)
+- [x] TUI visualization (real-time population tracking)
 
 ## Research Goals
 
