@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cellular-beats**: Documentation void (`README.md` missing). Generic Game of Life implementation. Grace period ends in 24h.
+- **cargo-jenga**: Documentation void (`README.md` missing). Stagnant despite "Safe" status. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cellular-beats**: Documentation void. Generic Game of Life implementation. Failed to improve during grace period. Moved to graveyard.
 - **code-kaleidoscope**: Documentation void. Generic visualization. Failed to improve during grace period. Biomass returned to the void.
 - **clockwork-cpu**: Documentation void (`README.md` missing). Failed to improve during grace period.
 - **call-fern**: Documentation void. Generic recursive visualization. Failed to improve during grace period.

@@ -32,3 +32,12 @@
 **Bloat:** Re-implementation of `Vec2` in `experiments/cargo-rocket/src/physics.rs` while `tui-shared` provides it.
 **Cut:** Replaced with `tui_shared::math::Vec2` and added `rotate` to the shared library.
 **Saved:** ~100 lines of duplicate vector math code.
+## [Reduction]
+**Bloat:** `ToSnapshot` trait in `git-ouroboros` (implemented only by `World`).
+**Cut:** Moved logic to inherent `impl World`. Deleted `semantic.rs`.
+**Saved:** 1 File, 1 Trait lookup.
+
+## [Reduction]
+**Bloat:** `RainManager` in `fluid-rain`.
+**Cut:** Renamed to `Rain`. Inlined `scan_files`.
+**Saved:** "Manager" cognitive overhead.

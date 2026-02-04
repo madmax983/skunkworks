@@ -52,6 +52,18 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
 *   `g_write()`: Pop `val`, `y`, `x`. Write `val` to `grid[y][x]`.
 
+### Virology (Grid Execution)
+*   `virus()`: Pop `y`, `x`. Executes the value at `grid[y][x]` as an enzyme.
+    *   If `Int(n)`, it behaves like `push(n)`.
+    *   If `Str(s)`, it executes the enzyme named `s`.
+*   `incubate()`: (Nova Feature) Pop `len`, `y`, `x`. Reads `len` cells horizontally from grid starting at `(y, x)` and creates a new Strand (Horizontal Gene Transfer).
+    *   `Int(n)` becomes `push(n)`.
+    *   `Str(s)` becomes `s()`.
+
+### Advanced Control Flow
+*   `jump_s()`: Pop target index from stack and jump to that strand.
+*   `brz_s()`: Pop target index and condition. If condition is 0, jump to target strand.
+
 ## Controls (TUI)
 *   `Space`: Step execution.
 *   `M`: Manually mutate a random gene.
@@ -63,3 +75,36 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 ```bash
 cargo run --release -- --input sample.dna
 ```
+
+## Nova Features
+
+Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "Nova" expansion and are gated behind a feature flag. To use them, you must enable the `nova` feature:
+
+```bash
+cargo run --release --features nova -- --input sample.dna
+```
+
+## Library Usage
+
+Chimera can be used as a Rust library to embed the VM in other applications.
+
+Add to your `Cargo.toml`:
+```toml
+[dependencies]
+chimera-lang = { path = "experiments/chimera-lang", features = ["nova"] }
+```
+
+Example `main.rs`:
+```rust
+use chimera_lang::ast::{Dna, Helix};
+use chimera_lang::vm::ChimeraVM;
+
+fn main() {
+    let dna = Dna { helix: Helix { strands: vec![] } };
+    let mut vm = ChimeraVM::new(dna);
+    // ... configure VM ...
+    vm.step();
+}
+```
+
+See `examples/story_demo.rs` for a full example of programmatic usage.

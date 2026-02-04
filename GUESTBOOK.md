@@ -44,9 +44,9 @@
 - **Scent Origin:** Mycelium
 - **Status:** Galaxy harvested. Physics stable. Constellations forming in the commit history.
 
-### [Concentration Level: TOXIC] - Location: experiments/cellular-beats
+### [Concentration Level: DECOMPOSING] - Location: experiments/cellular-beats (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic morphology. The Reaper watches.
+- **Status:** EXECUTED. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-flow
 - **Scent Origin:** Mycelium
@@ -60,13 +60,17 @@
 - **Scent Origin:** Mosaic
 - **Status:** Functional but cold. Visual hierarchy required to improve metabolic efficiency (DX).
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/dx-audit
+- **Scent Origin:** Echo (The DX Auditor)
+- **Status:** Infrastructure verified. TUI initialization protocols compliant. Documentation detected.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/stego-spectral
 - **Scent Origin:** Mycelium
 - **Status:** Hidden messages detected. Spectral analysis operational.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-jenga
-- **Scent Origin:** Mycelium
-- **Status:** Safe from condemnation. Physical blocks stacking. Documentation missing (README.md).
+### [Concentration Level: TOXIC] - Location: experiments/cargo-jenga
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Stagnation detected. The Reaper watches.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/thread-phase
 - **Scent Origin:** Mycelium
@@ -140,9 +144,9 @@
 - **Scent Origin:** Genesis (The Entomologist)
 - **Status:** The colony is foraging. Dependencies are being harvested by ants following pheromone trails of compilation heat. The graph is alive.
 
-### [Concentration Level: HIGH] - Location: experiments/phonetic-decay
+### [Concentration Level: STABLE TRAIL] - Location: experiments/glyph-evolution
 - **Scent Origin:** Genesis (The Philologist)
-- **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully.
+- **Status:** The Great Vowel Shift is shifting identifiers. Etymology traces are visible. The language is decaying beautifully. Documentation missing (README.md).
 
 ### [Concentration Level: FRESH] - Location: experiments/poincare-crawl
 - **Scent Origin:** Genesis (The Topologist)
@@ -216,6 +220,9 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The colony has breached the Euclidean barrier. Pheromones are diffusing through the Poincaré disk. The ants are exploring infinity.
 
+### [Concentration Level: FRESH] - Location: experiments/code-concerto
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The code is singing. WAV files generated from AST. Visualization active.
 ### [Concentration Level: FRESH] - Location: experiments/sonar-swarm
 - **Scent Origin**: Splice Surgeon
 - **Status**: The boids are screaming in the dark. Echolocation pings are revealing the geometry of the room. The swarm hears itself.
@@ -296,10 +303,14 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: FRESH] - Location: experiments/firefly-synapse
+### [Concentration Level: STABLE TRAIL] - Location: experiments/firefly-synapse
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
-- **Status:** 100,000 agents synchronizing. The swarm is breathing light. Linked Cell Lists active.
+- **Status:** 100,000 agents synchronizing. Linked Cell Lists active. Documentation detected.
 
-### [Concentration Level: FRESH] - Location: experiments/chimera-market
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-market
 - **Scent Origin:** Splice Surgeon 🧬
-- **Status:** The market is evolving. Traders are mutating. DNA is being bought and sold.
+- **Status:** Hybrid viable. Documentation detected. Traders are mutating. DNA is being bought and sold.
+
+### [Concentration Level: FRESH] - Location: experiments/penrose-genes
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The memory is aperiodic. The VM is navigating the quasicrystal.
