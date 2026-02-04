@@ -29,6 +29,18 @@ pub enum OpCode {
     HelixLen,
     GeneLen,
 
+    // Cortex Features
+    #[cfg(feature = "cortex")]
+    Link,
+    #[cfg(feature = "cortex")]
+    Sever,
+    #[cfg(feature = "cortex")]
+    Spark,
+    #[cfg(feature = "cortex")]
+    Sense,
+    #[cfg(feature = "cortex")]
+    Gate,
+
     // Nova Features
     #[cfg(feature = "nova")]
     Sporulate,
@@ -109,6 +121,17 @@ impl FromStr for OpCode {
             "helix_len" => Ok(OpCode::HelixLen),
             "gene_len" => Ok(OpCode::GeneLen),
 
+            #[cfg(feature = "cortex")]
+            "link" => Ok(OpCode::Link),
+            #[cfg(feature = "cortex")]
+            "sever" => Ok(OpCode::Sever),
+            #[cfg(feature = "cortex")]
+            "spark" => Ok(OpCode::Spark),
+            #[cfg(feature = "cortex")]
+            "sense" => Ok(OpCode::Sense),
+            #[cfg(feature = "cortex")]
+            "gate" => Ok(OpCode::Gate),
+
             #[cfg(feature = "nova")]
             "sporulate" => Ok(OpCode::Sporulate),
             #[cfg(feature = "nova")]
@@ -187,6 +210,17 @@ impl fmt::Display for OpCode {
             OpCode::SLen => write!(f, "s_len"),
             OpCode::HelixLen => write!(f, "helix_len"),
             OpCode::GeneLen => write!(f, "gene_len"),
+
+            #[cfg(feature = "cortex")]
+            OpCode::Link => write!(f, "link"),
+            #[cfg(feature = "cortex")]
+            OpCode::Sever => write!(f, "sever"),
+            #[cfg(feature = "cortex")]
+            OpCode::Spark => write!(f, "spark"),
+            #[cfg(feature = "cortex")]
+            OpCode::Sense => write!(f, "sense"),
+            #[cfg(feature = "cortex")]
+            OpCode::Gate => write!(f, "gate"),
 
             #[cfg(feature = "nova")]
             OpCode::Sporulate => write!(f, "sporulate"),

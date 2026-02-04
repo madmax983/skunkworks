@@ -5,6 +5,7 @@ edition = "2021"
 
 [features]
 nova = []
+cortex = []
 
 [dependencies]
 pest = "2.7"

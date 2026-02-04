@@ -1,0 +1,6 @@
+[
+    push(1) link() push(20) spark()
+]
+[
+    sense() print()
+]

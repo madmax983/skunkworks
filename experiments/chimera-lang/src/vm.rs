@@ -36,6 +36,10 @@ pub struct Spore {
     pub telomeres: Vec<i64>,
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
     pub waste_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "cortex")]
+    pub synapse_map: Vec<Vec<usize>>,
+    #[cfg(feature = "cortex")]
+    pub activation_levels: Vec<i64>,
 }
 
 pub struct ChimeraVM {
@@ -59,18 +63,26 @@ pub struct ChimeraVM {
     pub waste_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
+    #[cfg(feature = "cortex")]
+    pub synapse_map: Vec<Vec<usize>>,
+    #[cfg(feature = "cortex")]
+    pub activation_levels: Vec<i64>,
 }
 
 impl ChimeraVM {
     pub fn new(dna: Dna) -> Self {
         // Initialize 16x16 grid with 0s
         let grid = vec![vec![Value::Int(0); 16]; 16];
-        #[cfg(feature = "nova")]
+        #[cfg(any(feature = "nova", feature = "cortex"))]
         let strand_count = dna.helix.strands.len();
         #[cfg(feature = "nova")]
         let hormone_grid = vec![vec![[0, 0, 0]; 16]; 16];
         #[cfg(feature = "nova")]
         let waste_grid = vec![vec![0; 16]; 16];
+        #[cfg(feature = "cortex")]
+        let synapse_map = vec![vec![]; strand_count];
+        #[cfg(feature = "cortex")]
+        let activation_levels = vec![0; strand_count];
 
         Self {
             dna,
@@ -93,6 +105,10 @@ impl ChimeraVM {
             waste_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
+            #[cfg(feature = "cortex")]
+            synapse_map,
+            #[cfg(feature = "cortex")]
+            activation_levels,
         }
     }
 
@@ -168,6 +184,15 @@ impl ChimeraVM {
         }
 
         self.energy -= 1;
+
+        #[cfg(feature = "cortex")]
+        {
+            for level in self.activation_levels.iter_mut() {
+                if *level > 0 {
+                    *level -= 1;
+                }
+            }
+        }
 
         #[cfg(feature = "nova")]
         {
@@ -325,6 +350,10 @@ impl ChimeraVM {
                     telomeres: self.telomeres.clone(),
                     hormone_grid: self.hormone_grid.clone(),
                     waste_grid: self.waste_grid.clone(),
+                    #[cfg(feature = "cortex")]
+                    synapse_map: self.synapse_map.clone(),
+                    #[cfg(feature = "cortex")]
+                    activation_levels: self.activation_levels.clone(),
                 };
 
                 let id = self.spores.len();
@@ -357,6 +386,11 @@ impl ChimeraVM {
                             self.telomeres = spore.telomeres.clone();
                             self.hormone_grid = spore.hormone_grid.clone();
                             self.waste_grid = spore.waste_grid.clone();
+                            #[cfg(feature = "cortex")]
+                            {
+                                self.synapse_map = spore.synapse_map.clone();
+                                self.activation_levels = spore.activation_levels.clone();
+                            }
 
                             self.output.push(format!("GERMINATE: Restored Spore {}", idx));
                         } else {
@@ -413,6 +447,11 @@ impl ChimeraVM {
                             if valid {
                                 self.dna.helix.strands.push(crate::ast::Strand { genes });
                                 self.telomeres.push(50);
+                                #[cfg(feature = "cortex")]
+                                {
+                                    self.activation_levels.push(0);
+                                    self.synapse_map.push(Vec::new());
+                                }
                                 self.energy -= 20; // Cost
                                 self.output.push(format!(
                                     "INCUBATE: Created new strand {} from grid",
@@ -1063,6 +1102,12 @@ impl ChimeraVM {
                                     .push(crate::ast::Strand { genes: tail_genes });
                                 self.telomeres.push(50);
 
+                                #[cfg(feature = "cortex")]
+                                {
+                                    self.activation_levels.push(0);
+                                    self.synapse_map.push(Vec::new());
+                                }
+
                                 let new_strand_idx = self.dna.helix.strands.len() - 1;
 
                                 self.stack.push(Value::Int(new_strand_idx as i64));
@@ -1169,6 +1214,12 @@ impl ChimeraVM {
                                 let new_strand = self.dna.helix.strands[s_idx].clone();
                                 self.dna.helix.strands.push(new_strand);
                                 self.telomeres.push(50); // Default life
+
+                                #[cfg(feature = "cortex")]
+                                {
+                                    self.activation_levels.push(0);
+                                    self.synapse_map.push(Vec::new());
+                                }
 
                                 // Inherit epigenetics
                                 // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
@@ -1522,6 +1573,105 @@ impl ChimeraVM {
                 self.stack.push(Value::Int(waste));
                 None
             }
+            #[cfg(feature = "cortex")]
+            OpCode::Link => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            let target_idx = target as usize;
+                            let s_idx = self.ip.0;
+                            // Check bounds using activation_levels as proxy for strand count
+                            if target_idx < self.activation_levels.len() && s_idx < self.synapse_map.len() {
+                                if !self.synapse_map[s_idx].contains(&target_idx) {
+                                    self.synapse_map[s_idx].push(target_idx);
+                                    self.output.push(format!("LINK: {} -> {}", s_idx, target_idx));
+                                }
+                            } else {
+                                self.output.push("Error: Invalid strand index for link".to_string());
+                            }
+                        }
+                         _ => self.output.push("Error: Type mismatch for link".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for link".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "cortex")]
+            OpCode::Sever => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(target) => {
+                            let target_idx = target as usize;
+                            let s_idx = self.ip.0;
+                            if s_idx < self.synapse_map.len() {
+                                if let Some(pos) = self.synapse_map[s_idx].iter().position(|&x| x == target_idx) {
+                                    self.synapse_map[s_idx].remove(pos);
+                                    self.output.push(format!("SEVER: {} -x {}", s_idx, target_idx));
+                                }
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for sever".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for sever".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "cortex")]
+            OpCode::Spark => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(amount) => {
+                            let s_idx = self.ip.0;
+                            if s_idx < self.synapse_map.len() {
+                                let targets = self.synapse_map[s_idx].clone();
+                                let count = targets.len();
+                                for target_idx in targets {
+                                    if target_idx < self.activation_levels.len() {
+                                        self.activation_levels[target_idx] += amount;
+                                    }
+                                }
+                                self.energy -= (count as i64) + 1;
+                                self.output.push(format!("SPARK: Fired {} to {} targets", amount, count));
+                            }
+                        }
+                        _ => self.output.push("Error: Type mismatch for spark".to_string()),
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for spark".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "cortex")]
+            OpCode::Sense => {
+                let s_idx = self.ip.0;
+                if s_idx < self.activation_levels.len() {
+                    let level = self.activation_levels[s_idx];
+                    self.stack.push(Value::Int(level));
+                } else {
+                    self.stack.push(Value::Int(0));
+                }
+                None
+            }
+            #[cfg(feature = "cortex")]
+            OpCode::Gate => {
+                if let Some(Nucleotide::Number(threshold)) = args.first() {
+                    let s_idx = self.ip.0;
+                    if s_idx < self.activation_levels.len() {
+                        if self.activation_levels[s_idx] < *threshold {
+                            // Skip next instruction
+                            // VM increments ip.1 by 1 by default after execute_gene returns None.
+                            // So we need to increment it by 1 here to make it skip one more.
+                            self.ip.1 += 1;
+                        }
+                    }
+                } else {
+                    self.output.push("Error: Invalid arg for gate".to_string());
+                }
+                None
+            }
+
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None

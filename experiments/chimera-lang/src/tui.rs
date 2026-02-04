@@ -61,6 +61,21 @@ fn run_app<B: ratatui::backend::Backend>(
             let mut strand_items = Vec::new();
 
             for (s_idx, strand) in helix.strands.iter().enumerate() {
+                #[cfg(feature = "cortex")]
+                {
+                    let mut header = format!("Strand {}", s_idx);
+                    if s_idx < vm.activation_levels.len() {
+                        header.push_str(&format!(" ⚡{}", vm.activation_levels[s_idx]));
+                    }
+                    if s_idx < vm.synapse_map.len() && !vm.synapse_map[s_idx].is_empty() {
+                        header.push_str(&format!(" -> {:?}", vm.synapse_map[s_idx]));
+                    }
+                    strand_items.push(ListItem::new(Span::styled(
+                        header,
+                        Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                    )));
+                }
+
                 for (g_idx, gene) in strand.genes.iter().enumerate() {
                     let content = format!("{}({:?})", gene.op, gene.args);
                     let mut style = Style::default();
