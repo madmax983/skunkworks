@@ -8,3 +8,5 @@ pest = "2.7"
 pest_derive = "2.7"
 clap = { version = "4.4", features = ["derive"] }
 anyhow = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
