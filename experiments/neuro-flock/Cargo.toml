@@ -1,0 +1,20 @@
+[package]
+name = "neuro-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.29"
+crossterm = "0.27"
+anyhow = "1.0"
+rand = "0.8"
+tui-shared = { path = "../../crates/tui-shared" }
+crossbeam-channel = "0.5"
+
+[features]
+default = []
+audio = ["dep:cpal"]
+
+[dependencies.cpal]
+version = "0.15"
+optional = true

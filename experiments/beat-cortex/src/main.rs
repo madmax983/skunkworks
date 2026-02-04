@@ -11,15 +11,15 @@ use ratatui::{
 use std::{collections::VecDeque, time::Duration};
 use tui_shared::Tui;
 
-use ndarray::Array1;
 use crossbeam_channel::unbounded;
+use ndarray::Array1;
 
-use crate::network::Reservoir;
 use crate::audio::{AudioEngine, AudioEvent};
+use crate::network::Reservoir;
 
-pub mod neuron;
-pub mod network;
 pub mod audio;
+pub mod network;
+pub mod neuron;
 
 fn main() -> Result<()> {
     // Initialize TUI
@@ -105,7 +105,11 @@ fn main() -> Result<()> {
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Beat Cortex Raster"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Beat Cortex Raster"),
+                )
                 .x_bounds([sim_time - 200.0, sim_time])
                 .y_bounds([0.0, size as f64])
                 .marker(ratatui::symbols::Marker::Block)

@@ -5,7 +5,8 @@ use crossbeam_channel::Receiver;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
 pub enum AudioEvent {
-    Spike(usize),
+    #[allow(dead_code)]
+    PlayFreq(f32),
 }
 
 pub struct AudioEngine {
@@ -28,11 +29,7 @@ impl AudioEngine {
             // Fail gracefully if no device
             let device = match host.default_output_device() {
                 Some(d) => d,
-                None => {
-                    return Ok(Self {
-                        _stream: stream_dummy(rx)?,
-                    })
-                } // Should probably error or return dummy
+                None => return Ok(Self { _stream: stream_dummy(rx)? }),
             };
 
             let config = device.default_output_config()?;
@@ -51,15 +48,8 @@ impl AudioEngine {
     }
 }
 
-// Dummy function to satisfy type checker if needed, but actually if feature is on, we expect cpal types.
-// If feature is off, struct has no stream.
-
 #[cfg(feature = "audio")]
-fn run<T>(
-    device: &cpal::Device,
-    config: &cpal::StreamConfig,
-    rx: Receiver<AudioEvent>,
-) -> Result<cpal::Stream>
+fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig, rx: Receiver<AudioEvent>) -> Result<cpal::Stream>
 where
     T: cpal::Sample + cpal::FromSample<f32>,
 {
@@ -76,31 +66,7 @@ where
             // Process events
             while let Ok(event) = rx.try_recv() {
                 match event {
-                    AudioEvent::Spike(idx) => {
-                        // Pentatonic scale mapping: C major pentatonic
-                        // C, D, E, G, A
-                        // MIDI: 60, 62, 64, 67, 69
-                        let notes = [261.63, 293.66, 329.63, 392.00, 440.00];
-
-                        // Reduce idx to a manageable range or map specific neurons
-                        // Let's use lower bits for note, higher bits for octave
-                        let note_idx = idx % 5;
-                        let octave_shift = (idx / 100) % 4; // 0..3
-
-                        // Base pitch
-                        let mut freq = notes[note_idx];
-
-                        // Shift octaves (down 1, up 0..2)
-                        // 2^octave_shift
-                        // Let's create a wider spread
-                        let mult = match octave_shift {
-                            0 => 0.5,
-                            1 => 1.0,
-                            2 => 2.0,
-                            _ => 4.0,
-                        };
-                        freq *= mult;
-
+                    AudioEvent::PlayFreq(freq) => {
                         synth.trigger(freq);
                     }
                 }
@@ -122,7 +88,6 @@ where
     Ok(stream)
 }
 
-// Simple Polyphonic Synth Logic
 #[cfg(feature = "audio")]
 struct Voice {
     active: bool,
@@ -148,13 +113,10 @@ impl PolySynth {
                 freq: 0.0,
                 phase: 0.0,
                 envelope: 0.0,
-                decay: 0.999, // Determines length of "ping"
+                decay: 0.995, // Slower decay for more "pad" like sound
             });
         }
-        Self {
-            voices,
-            sample_rate,
-        }
+        Self { voices, sample_rate }
     }
 
     fn trigger(&mut self, freq: f32) {
@@ -162,11 +124,9 @@ impl PolySynth {
         let mut min_env = 100.0;
         let mut idx = 0;
 
-        // First look for inactive
         for (i, v) in self.voices.iter().enumerate() {
             if !v.active {
                 idx = i;
-                // min_env = -1.0; // Found perfect candidate
                 break;
             }
             if v.envelope < min_env {
@@ -178,38 +138,32 @@ impl PolySynth {
         self.voices[idx].active = true;
         self.voices[idx].freq = freq;
         self.voices[idx].phase = 0.0;
-        self.voices[idx].envelope = 0.2; // Volume
+        self.voices[idx].envelope = 0.3; // Volume
     }
 
     fn next_sample(&mut self) -> f32 {
         let mut output = 0.0;
         for voice in &mut self.voices {
             if voice.active {
-                // Sine wave
                 let val = (voice.phase * 2.0 * std::f32::consts::PI).sin();
                 output += val * voice.envelope;
 
-                // Advance phase
                 voice.phase += voice.freq / self.sample_rate;
                 if voice.phase > 1.0 {
                     voice.phase -= 1.0;
                 }
 
-                // Decay envelope
                 voice.envelope *= voice.decay;
                 if voice.envelope < 0.001 {
                     voice.active = false;
                 }
             }
         }
-        // Hard clipper / limiter
         output.max(-0.8).min(0.8)
     }
 }
 
-// Dummy for compilation if cpal feature on but device init fails?
-// No, relying on anyhow error bubbling.
 #[cfg(feature = "audio")]
 fn stream_dummy(_rx: Receiver<AudioEvent>) -> Result<cpal::Stream> {
-    Err(anyhow::anyhow!("No audio device found"))
+   Err(anyhow::anyhow!("No audio device found"))
 }

@@ -142,7 +142,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids navigate using active echolocation (sonar) in a simulated acoustic environment.
 - **Novel trait**: Navigation via pressure gradient descent; "blind" flocking driven by wave interference.
 - **Status**: experiments/sonar-swarm
-- **Evaluation**: Compiles (requires ALSA - skipped in sandbox). Verified concept.
+- **Evaluation**: Failed in sandbox (missing system dependencies: ALSA/pkg-config). Concept remains viable for local environments.
 
 ### chimera-market
 - **Parents**: experiments/chimera-lang + experiments/market-flow
@@ -178,6 +178,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Dynamic visualization where "Creation" (git additions) fights against "Entropy" (git deletions) in a physics simulation.
 - **Status**: experiments/entropic-rain
 - **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### neuro-flock
+- **Parents**: experiments/luminous-flock + experiments/beat-cortex
+- **Concept**: A flying neural network where synapses are formed by spatial proximity. Boids are neurons.
+- **Novel trait**: Dynamic network topology driven by flocking physics; "The brain that flies".
+- **Status**: experiments/neuro-flock
+- **Evaluation**: Compiles. Audio engine ported. Emergent behavior predicted: Swarm density controls neural activity.
 
 <!-- Example:
 ### semantic-spy

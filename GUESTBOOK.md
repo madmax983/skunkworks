@@ -365,3 +365,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/entropic-rain
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The mountains are rising. The rain is falling. The cycle of creation and destruction is visible.
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-flock
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The flock is thinking. Neurons are flying. The synapse map is rewriting itself every frame.
