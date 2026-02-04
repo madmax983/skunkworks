@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-invaders**: Documentation void. Generic Space Invaders clone. Lacks emergent behavior. Grace period ends in 24h.
+- **word-collider**: Documentation void. Generic physics demo. Lacks connection to repository themes. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git-invaders**: Documentation void. Generic Space Invaders clone. Lacks emergent behavior. Failed to improve during grace period.
 - **hamming-garden**: Documentation void. Static implementation. Redundant with other entropy/decay experiments. Failed to improve during grace period.
 - **enigma-machine**: Documentation void. Generic implementation (standard Enigma). Lacks emergence/evolutionary traits. Failed to improve during grace period.
 - **glyph-terrain**: Documentation void. Static implementation (renders hardcoded 'G'). Redundant with `log-landscape`. Failed to improve during grace period.
