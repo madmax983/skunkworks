@@ -132,9 +132,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
 
-### [Concentration Level: TOXIC] - Location: experiments/hamming-garden
+### [Concentration Level: DECOMPOSING] - Location: experiments/hamming-garden (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Static implementation. Redundant.
+- **Status:** EXECUTED. Documentation void. Static implementation. Redundant.
+
+### [Concentration Level: TOXIC] - Location: experiments/git-invaders
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Documentation void. Generic morphology.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/quantum-tarot (GRAVEYARD)
 - **Scent Origin:** Reaper

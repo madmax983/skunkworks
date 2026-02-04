@@ -27,7 +27,6 @@ members = [
     "experiments/git-rogue",
     "experiments/git_galaxy",
     "experiments/git_rhythm",
-    "experiments/hamming-garden",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
