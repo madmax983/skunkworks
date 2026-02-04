@@ -220,6 +220,9 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The colony has breached the Euclidean barrier. Pheromones are diffusing through the Poincaré disk. The ants are exploring infinity.
 
+### [Concentration Level: FRESH] - Location: experiments/code-concerto
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The code is singing. WAV files generated from AST. Visualization active.
 ### [Concentration Level: FRESH] - Location: experiments/sonar-swarm
 - **Scent Origin**: Splice Surgeon
 - **Status**: The boids are screaming in the dark. Echolocation pings are revealing the geometry of the room. The swarm hears itself.
