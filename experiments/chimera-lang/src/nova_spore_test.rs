@@ -21,11 +21,26 @@ mod tests {
         // 4. swap() -> [10, 20, 0]
         // 5. germinate() -> Pops 0. Restores state [10].
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "sporulate".to_string(), args: vec![] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(20)] },
-            Gene { name: "swap".to_string(), args: vec![] },
-            Gene { name: "germinate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "sporulate".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                name: "swap".to_string(),
+                args: vec![],
+            },
+            Gene {
+                name: "germinate".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -102,9 +117,18 @@ mod tests {
     #[cfg(feature = "nova")]
     fn test_spore_mechanics() {
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "sporulate".to_string(), args: vec![] }, // IP 1
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(20)] }, // IP 2
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "sporulate".to_string(),
+                args: vec![],
+            }, // IP 1
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(20)],
+            }, // IP 2
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 1000;
@@ -166,12 +190,30 @@ mod tests {
     fn test_dna_restoration() {
         // Test that DNA mutation is reverted
         let genes = vec![
-            Gene { name: "sporulate".to_string(), args: vec![] }, // 0
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(99)] }, // 1
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // 2 (arg idx)
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] }, // 3 (gene idx)
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(0)] }, // 4 (strand idx)
-            Gene { name: "transcribe".to_string(), args: vec![] }, // 5: Change push(99) to push(SomethingElse)
+            Gene {
+                name: "sporulate".to_string(),
+                args: vec![],
+            }, // 0
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(99)],
+            }, // 1
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // 2 (arg idx)
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(1)],
+            }, // 3 (gene idx)
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            }, // 4 (strand idx)
+            Gene {
+                name: "transcribe".to_string(),
+                args: vec![],
+            }, // 5: Change push(99) to push(SomethingElse)
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 1000;
@@ -185,7 +227,9 @@ mod tests {
         assert_eq!(vm.stack.last(), Some(&Value::Int(99)));
 
         // push args for transcribe
-        vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
 
         // push 77 manually to set value for transcribe
         vm.stack.push(Value::Int(77));

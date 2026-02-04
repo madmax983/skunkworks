@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Nucleotide};
 use rand::Rng;
 #[cfg(feature = "nova")]
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
@@ -34,6 +34,7 @@ pub struct Spore {
     pub epigenome: HashSet<(usize, usize)>,
     pub telomeres: Vec<i64>,
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    pub quantum_entanglement: HashMap<(usize, usize), Vec<(usize, usize)>>,
 }
 
 pub struct ChimeraVM {
@@ -53,6 +54,8 @@ pub struct ChimeraVM {
     pub telomeres: Vec<i64>,
     #[cfg(feature = "nova")]
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
+    #[cfg(feature = "nova")]
+    pub quantum_entanglement: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
 }
@@ -83,6 +86,8 @@ impl ChimeraVM {
             telomeres: vec![50; strand_count],
             #[cfg(feature = "nova")]
             hormone_grid,
+            #[cfg(feature = "nova")]
+            quantum_entanglement: HashMap::new(),
             #[cfg(feature = "nova")]
             spores: Vec::new(),
         }
@@ -211,6 +216,41 @@ impl ChimeraVM {
         }
     }
 
+    fn write_grid(&mut self, start_x: usize, start_y: usize, val: Value) {
+        if start_x >= 16 || start_y >= 16 {
+            return;
+        }
+
+        #[cfg(feature = "nova")]
+        {
+            let mut stack = Vec::new();
+            let mut visited = HashSet::new();
+
+            stack.push((start_x, start_y));
+            visited.insert((start_x, start_y));
+
+            while let Some((x, y)) = stack.pop() {
+                if x < 16 && y < 16 {
+                    self.grid[y][x] = val.clone();
+                }
+
+                if let Some(links) = self.quantum_entanglement.get(&(x, y)) {
+                    for &(lx, ly) in links {
+                        if !visited.contains(&(lx, ly)) {
+                            visited.insert((lx, ly));
+                            stack.push((lx, ly));
+                        }
+                    }
+                }
+            }
+        }
+
+        #[cfg(not(feature = "nova"))]
+        {
+            self.grid[start_y][start_x] = val;
+        }
+    }
+
     fn execute_gene(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
         if self.recursion_depth > 100 {
             self.output
@@ -238,7 +278,11 @@ impl ChimeraVM {
         coords
     }
 
-    pub(crate) fn execute_gene_inner(&mut self, name: &str, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn execute_gene_inner(
+        &mut self,
+        name: &str,
+        args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
         match name {
             "push" => {
                 if let Some(arg) = args.first() {
@@ -269,6 +313,7 @@ impl ChimeraVM {
                     epigenome: self.epigenome.clone(),
                     telomeres: self.telomeres.clone(),
                     hormone_grid: self.hormone_grid.clone(),
+                    quantum_entanglement: self.quantum_entanglement.clone(),
                 };
 
                 let id = self.spores.len();
@@ -300,16 +345,21 @@ impl ChimeraVM {
                             self.epigenome = spore.epigenome.clone();
                             self.telomeres = spore.telomeres.clone();
                             self.hormone_grid = spore.hormone_grid.clone();
+                            self.quantum_entanglement = spore.quantum_entanglement.clone();
 
-                            self.output.push(format!("GERMINATE: Restored Spore {}", idx));
+                            self.output
+                                .push(format!("GERMINATE: Restored Spore {}", idx));
                         } else {
-                            self.output.push("Error: Spore index out of bounds".to_string());
+                            self.output
+                                .push("Error: Spore index out of bounds".to_string());
                         }
                     } else {
-                        self.output.push("Error: Type mismatch for germinate".to_string());
+                        self.output
+                            .push("Error: Type mismatch for germinate".to_string());
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for germinate".to_string());
+                    self.output
+                        .push("Error: Stack underflow for germinate".to_string());
                 }
                 None
             }
@@ -505,7 +555,7 @@ impl ChimeraVM {
                     let val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                         if (0..16).contains(&y) && (0..16).contains(&x) {
-                            self.grid[y as usize][x as usize] = val;
+                            self.write_grid(x as usize, y as usize, val);
                         } else {
                             self.output
                                 .push("Error: Grid index out of bounds".to_string());
@@ -532,7 +582,7 @@ impl ChimeraVM {
                         let coords = self.get_circular_coords(x, y, r);
                         let count = coords.len();
                         for (cx, cy) in coords {
-                            self.grid[cy][cx] = val.clone();
+                            self.write_grid(cx, cy, val.clone());
                         }
                         self.energy -= (count / 2) as i64; // Cost based on area
                         self.output.push(format!(
@@ -564,15 +614,12 @@ impl ChimeraVM {
                             if let Value::Int(n) = self.grid[cy][cx] {
                                 sum += n;
                             }
-                            self.grid[cy][cx] = Value::Int(0);
+                            self.write_grid(cx, cy, Value::Int(0));
                         }
                         self.stack.push(Value::Int(sum));
                         self.energy -= 5;
-                        self.output.push(format!(
-                            "SIPHON: Absorbed {} from {} cells",
-                            sum,
-                            count
-                        ));
+                        self.output
+                            .push(format!("SIPHON: Absorbed {} from {} cells", sum, count));
                     } else {
                         self.output
                             .push("Error: Type mismatch for siphon".to_string());
@@ -1414,6 +1461,68 @@ impl ChimeraVM {
                 }
                 None
             }
+            #[cfg(feature = "nova")]
+            "entangle" => {
+                // stack: y, x (top)
+                if self.stack.len() >= 2 {
+                    let x_val = self.stack.pop().unwrap();
+                    let y_val = self.stack.pop().unwrap();
+
+                    if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
+                        if (0..16).contains(&x) && (0..16).contains(&y) {
+                            let target = (x as usize, y as usize);
+                            let source = self.context_loc;
+
+                            if target != source {
+                                // Add link source -> target
+                                self.quantum_entanglement
+                                    .entry(source)
+                                    .or_default()
+                                    .push(target);
+                                // Add link target -> source
+                                self.quantum_entanglement
+                                    .entry(target)
+                                    .or_default()
+                                    .push(source);
+
+                                self.energy -= 10;
+                                self.output.push(format!(
+                                    "ENTANGLE: Linked {},{} <-> {},{}",
+                                    source.0, source.1, target.0, target.1
+                                ));
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Grid index out of bounds for entangle".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for entangle".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for entangle".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "decohere" => {
+                // Decohere current context_loc
+                let source = self.context_loc;
+
+                // We need to remove source from all its neighbors' lists
+                if let Some(neighbors) = self.quantum_entanglement.remove(&source) {
+                    for neighbor in neighbors {
+                        if let Some(n_neighbors) = self.quantum_entanglement.get_mut(&neighbor) {
+                            n_neighbors.retain(|&x| x != source);
+                        }
+                    }
+                    self.energy -= 5;
+                    self.output
+                        .push(format!("DECOHERE: Unlinked {},{}", source.0, source.1));
+                }
+                None
+            }
             _ => {
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None
@@ -1495,6 +1604,10 @@ impl ChimeraVM {
                 "cas9_cut",
                 #[cfg(feature = "nova")]
                 "ligase",
+                #[cfg(feature = "nova")]
+                "entangle",
+                #[cfg(feature = "nova")]
+                "decohere",
             ];
             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
             // Add "Mutation" log
@@ -2061,11 +2174,26 @@ mod tests {
         // [ push(100) push(2) push(8) push(8) radiate() ]
         // Writes 100 to circle radius 2 at 8,8
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(100)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(8)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(8)] },
-            Gene { name: "radiate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                name: "radiate".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -2085,16 +2213,43 @@ mod tests {
         // First radiate 10s
         // [ push(10) push(1) push(5) push(5) radiate() push(1) push(5) push(5) siphon() ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(10)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "radiate".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "radiate".to_string(),
+                args: vec![],
+            },
             // Siphon same area
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(5)] },
-            Gene { name: "siphon".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                name: "siphon".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -2117,8 +2272,14 @@ mod tests {
     fn test_genome() {
         // [ genome() ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "genome".to_string(), args: vec![] },
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                name: "genome".to_string(),
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
