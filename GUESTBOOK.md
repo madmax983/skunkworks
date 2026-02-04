@@ -299,3 +299,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/firefly-synapse
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** 100,000 agents synchronizing. The swarm is breathing light. Linked Cell Lists active.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-market
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The market is evolving. Traders are mutating. DNA is being bought and sold.

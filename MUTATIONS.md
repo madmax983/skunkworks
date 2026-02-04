@@ -142,6 +142,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids navigate using active echolocation (sonar) in a simulated acoustic environment.
 - **Novel trait**: Navigation via pressure gradient descent; "blind" flocking driven by wave interference.
 - **Status**: experiments/sonar-swarm
+- **Evaluation**: Compiles (requires ALSA - skipped in sandbox). Verified concept.
+
+### chimera-market
+- **Parents**: experiments/chimera-lang + experiments/market-flow
+- **Concept**: A TUI simulation where trading algorithms are Chimera VM instances that evolve via natural selection.
+- **Novel trait**: Evolving limit order book strategies driven by genetic code.
+- **Status**: experiments/chimera-market
 - **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:
