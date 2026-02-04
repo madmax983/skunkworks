@@ -250,7 +250,7 @@ impl ChimeraVM {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if y >= 0 && y < 16 && x >= 0 && x < 16 {
+                        if (0..16).contains(&y) && (0..16).contains(&x) {
                             self.stack.push(self.grid[y as usize][x as usize].clone());
                         } else {
                             self.output
@@ -272,7 +272,7 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
                     let val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if y >= 0 && y < 16 && x >= 0 && x < 16 {
+                        if (0..16).contains(&y) && (0..16).contains(&x) {
                             self.grid[y as usize][x as usize] = val;
                         } else {
                             self.output
@@ -524,6 +524,90 @@ impl ChimeraVM {
                 }
                 None
             }
+            #[cfg(feature = "nova")]
+            "s_index" => {
+                self.stack.push(Value::Int(self.ip.0 as i64));
+                None
+            }
+            #[cfg(feature = "nova")]
+            "mitosis" => {
+                // stack: strand_idx (target to clone)
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(idx) => {
+                            let s_idx = idx as usize;
+                            if s_idx < self.dna.helix.strands.len() {
+                                // Clone the strand
+                                let new_strand = self.dna.helix.strands[s_idx].clone();
+                                self.dna.helix.strands.push(new_strand);
+                                self.telomeres.push(50); // Default life
+
+                                // Inherit epigenetics
+                                // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
+                                let new_s_idx = self.dna.helix.strands.len() - 1;
+                                let genes_to_methylate: Vec<usize> = self
+                                    .epigenome
+                                    .iter()
+                                    .filter(|(s, _)| *s == s_idx)
+                                    .map(|(_, g)| *g)
+                                    .collect();
+
+                                for g_idx in genes_to_methylate {
+                                    self.epigenome.insert((new_s_idx, g_idx));
+                                }
+
+                                self.energy -= 30; // Cost
+                                self.output.push(format!(
+                                    "MITOSIS: Cloned strand {} to {}",
+                                    s_idx, new_s_idx
+                                ));
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for mitosis".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for mitosis".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for mitosis".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            "apoptosis" => {
+                // stack: strand_idx
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(idx) => {
+                            let s_idx = idx as usize;
+                            if s_idx < self.dna.helix.strands.len() {
+                                self.dna.helix.strands[s_idx].genes.clear();
+
+                                // Remove associated epigenetics
+                                self.epigenome.retain(|(s, _)| *s != s_idx);
+
+                                self.energy -= 10;
+                                self.output.push(format!("APOPTOSIS: Cleared strand {}", s_idx));
+                            } else {
+                                self.output.push(
+                                    "Error: Strand index out of bounds for apoptosis".to_string(),
+                                );
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for apoptosis".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for apoptosis".to_string());
+                }
+                None
+            }
             _ => {
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None
@@ -590,6 +674,12 @@ impl ChimeraVM {
                 "telomerase",
                 #[cfg(feature = "nova")]
                 "t_len",
+                #[cfg(feature = "nova")]
+                "s_index",
+                #[cfg(feature = "nova")]
+                "mitosis",
+                #[cfg(feature = "nova")]
+                "apoptosis",
             ];
             let new_name = enzymes[rng.gen_range(0..enzymes.len())];
             // Add "Mutation" log

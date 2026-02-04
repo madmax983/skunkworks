@@ -38,6 +38,11 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 *   `demethylate(strand, gene)`: Activate a gene.
 *   `recombine(strand_a, strand_b, split)`: Swap tails of two strands.
 
+### Cell Cycle (Nova Feature)
+*   `mitosis(strand_idx)`: Clones the target strand and appends it to the Helix. Inherits epigenetic state. Costs 30 Energy.
+*   `apoptosis(strand_idx)`: Clears all genes in the target strand, effectively killing it. Removes epigenetic state. Costs 10 Energy.
+*   `s_index()`: Pushes the current strand index to the stack. Useful for self-reference in `mitosis`.
+
 ### Telomeres (Nova Feature)
 Strands have a limited lifespan (default: 50 executions). When a strand's telomere count reaches 0, it becomes senescent and is skipped by the VM.
 *   `telomerase(amount)`: Extends the current strand's telomere by `amount`. Costs 25 Energy.

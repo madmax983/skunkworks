@@ -323,4 +323,88 @@ mod tests {
         // It's growing every loop.
         assert!(vm.telomeres[0] > 50);
     }
+
+    #[test]
+    fn test_s_index() {
+        // [ s_index() ]
+        let genes = vec![Gene {
+            name: "s_index".to_string(),
+            args: vec![],
+        }];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.step();
+        assert_eq!(vm.stack.pop(), Some(crate::vm::Value::Int(0)));
+    }
+
+    #[test]
+    fn test_mitosis() {
+        // [ push(0) mitosis() ]
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "mitosis".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Setup some epigenetics to test inheritance
+        // Methylate a future gene (5) so it doesn't affect execution of push(0)
+        vm.epigenome.insert((0, 5));
+
+        vm.step(); // push(0)
+        vm.step(); // mitosis()
+
+        assert_eq!(
+            vm.dna.helix.strands.len(),
+            2,
+            "Strand count mismatch. Output: {:?}",
+            vm.output
+        );
+        assert_eq!(vm.telomeres.len(), 2);
+
+        // Check epigenetics inheritance
+        // Original was (0,5). New should be (1,5).
+        assert!(vm.epigenome.contains(&(1, 5)));
+
+        // Check content equality
+        let s0_len = vm.dna.helix.strands[0].genes.len();
+        let s1_len = vm.dna.helix.strands[1].genes.len();
+        assert_eq!(s0_len, s1_len);
+    }
+
+    #[test]
+    fn test_apoptosis() {
+        // [ push(0) apoptosis() ]
+        let genes = vec![
+            Gene {
+                name: "push".to_string(),
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                name: "apoptosis".to_string(),
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        // Methylate a future gene so push(0) runs
+        vm.epigenome.insert((0, 5));
+
+        vm.step(); // push(0)
+        vm.step(); // apoptosis()
+
+        // Strand should still exist but have 0 genes
+        assert_eq!(vm.dna.helix.strands.len(), 1);
+        assert!(
+            vm.dna.helix.strands[0].genes.is_empty(),
+            "Strand should be empty. Output: {:?}",
+            vm.output
+        );
+
+        // Epigenetics should be gone
+        assert!(vm.epigenome.is_empty());
+    }
 }
