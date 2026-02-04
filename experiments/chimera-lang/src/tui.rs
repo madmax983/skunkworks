@@ -90,7 +90,7 @@ fn run_app<B: ratatui::backend::Backend>(
             let stack_list = List::new(stack_items).block(
                 Block::default()
                     .borders(Borders::ALL)
-                    .title("Cytoplasm (Stack)"),
+                    .title(format!("Cytoplasm (Stack) - Energy: {}", vm.energy)),
             );
             f.render_widget(stack_list, right_chunks[0]);
 
