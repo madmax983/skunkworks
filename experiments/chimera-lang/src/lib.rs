@@ -12,6 +12,8 @@ pub mod vm;
 #[cfg(test)]
 mod cortex_test;
 mod havoc_repro;
+#[cfg(all(test, feature = "nova"))]
+mod nova_biolum_test;
 #[cfg(test)]
 mod nova_cerebellum_test;
 #[cfg(all(test, feature = "nova"))]
