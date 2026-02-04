@@ -4,7 +4,7 @@ mod rain;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use physics::FluidSolver;
-use rain::RainManager;
+use rain::Rain;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -19,7 +19,7 @@ use tui_shared::Tui;
 
 struct App {
     fluid: FluidSolver,
-    rain: RainManager,
+    rain: Rain,
     width: f64,
     height: f64,
 }
@@ -29,7 +29,7 @@ impl App {
         // Initial dimensions, will update on first render
         Self {
             fluid: FluidSolver::new(100.0, 100.0),
-            rain: RainManager::new(),
+            rain: Rain::new(),
             width: 100.0,
             height: 100.0,
         }
