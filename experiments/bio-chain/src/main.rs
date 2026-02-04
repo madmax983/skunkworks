@@ -1,21 +1,42 @@
 mod byzantine_test;
 mod network;
 mod types;
+mod ui;
 mod validator;
 
 use byzantine_test::run_byzantine_test;
 use network::Network;
 use types::*;
+use ui::{run_ui, App};
 use validator::Validator;
 
 fn main() -> anyhow::Result<()> {
     println!("🧬 BioCoin: Living Blockchain");
     println!("================================\n");
 
-    // Check if user wants Byzantine test
+    // Check arguments
     let args: Vec<String> = std::env::args().collect();
-    if args.len() > 1 && args[1] == "--byzantine" {
-        return run_byzantine_test();
+
+    if args.len() > 1 {
+        match args[1].as_str() {
+            "--byzantine" => return run_byzantine_test(),
+            "--ui" => {
+                // TUI mode with mixed population
+                let mut network = Network::new();
+
+                // 3 honest + 2 malicious
+                for i in 0..3 {
+                    network.add_validator(Validator::genesis(i, 1000));
+                }
+                for i in 3..5 {
+                    network.add_validator(Validator::malicious(i, 1000));
+                }
+
+                let app = App::new(network);
+                return run_ui(app).map_err(|e| anyhow::anyhow!(e));
+            }
+            _ => {}
+        }
     }
 
     // Create network

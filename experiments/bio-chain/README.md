@@ -30,16 +30,34 @@ Traditional blockchains use Proof-of-Work or Proof-of-Stake. BioCoin uses **Proo
 
 ## Running
 
+### Evolution Demo (Text Output)
 ```bash
 cargo run --release
 ```
 
-Watch organisms:
-- Validate transactions
-- Vote on blocks via hormones
-- Reproduce when successful
-- Die when they fail
-- Evolve better strategies
+### Byzantine Fault Tolerance Test
+```bash
+cargo run --release -- --byzantine
+```
+
+Runs a test with 60% honest + 40% malicious validators.
+Watch evolution eliminate the Byzantine actors!
+
+### Live TUI Visualization
+```bash
+cargo run --release -- --ui
+```
+
+Watch in real-time:
+- Population evolution (honest vs malicious)
+- Energy dynamics
+- Validator reproduction and death
+- Block finalization
+- Natural selection in action
+
+**Controls:**
+- `SPACE`: Pause/Resume
+- `Q`: Quit
 
 ## Architecture
 

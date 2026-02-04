@@ -330,16 +330,56 @@ impl Network {
         }
     }
 
+    /// Propose a block automatically if needed
+    fn auto_propose(&mut self) {
+        // Propose every 3 ticks if we have honest validators
+        if self.tick % 3 == 0 {
+            let honest_validators: Vec<_> = self
+                .validators
+                .iter()
+                .enumerate()
+                .filter(|(_, v)| !v.is_malicious)
+                .map(|(i, _)| i)
+                .collect();
+
+            if !honest_validators.is_empty() {
+                let proposer_idx = honest_validators[(self.tick as usize) % honest_validators.len()];
+                let proposer_id = self.validators[proposer_idx].id;
+
+                let transactions = vec![
+                    Transaction {
+                        from: [1; 20],
+                        to: [2; 20],
+                        amount: 100,
+                        nonce: self.tick,
+                        fee: 100,
+                    },
+                    Transaction {
+                        from: [3; 20],
+                        to: [4; 20],
+                        amount: 50,
+                        nonce: self.tick,
+                        fee: 100,
+                    },
+                ];
+
+                self.propose_block(proposer_id, transactions);
+            }
+        }
+    }
+
     /// Step the network forward one tick
     pub fn step(&mut self) {
         self.tick += 1;
-        println!("\n⏱️  Tick {}", self.tick);
 
         // Metabolism (validators burn energy)
         self.metabolism();
 
         // Decay hormones
         self.decay_hormones();
+
+        // Auto-propose blocks
+        self.auto_propose();
 
         // Validators vote on pending blocks
         self.vote_on_blocks();
@@ -350,6 +390,181 @@ impl Network {
         // Natural selection
         self.reproduce_successful();
         self.kill_failures();
+    }
+
+    /// Step without output (for TUI)
+    pub fn step_silent(&mut self) {
+        self.tick += 1;
+        self.metabolism();
+        self.decay_hormones();
+        self.auto_propose_silent();
+        self.vote_on_blocks_silent();
+        self.check_consensus_silent();
+        self.reproduce_successful_silent();
+        self.kill_failures_silent();
+    }
+
+    fn auto_propose_silent(&mut self) {
+        if self.tick % 3 == 0 {
+            let honest_validators: Vec<_> = self
+                .validators
+                .iter()
+                .enumerate()
+                .filter(|(_, v)| !v.is_malicious)
+                .map(|(i, _)| i)
+                .collect();
+
+            if !honest_validators.is_empty() {
+                let proposer_idx = honest_validators[(self.tick as usize) % honest_validators.len()];
+                let proposer_id = self.validators[proposer_idx].id;
+
+                let transactions = vec![
+                    Transaction {
+                        from: [1; 20],
+                        to: [2; 20],
+                        amount: 100,
+                        nonce: self.tick,
+                        fee: 100,
+                    },
+                    Transaction {
+                        from: [3; 20],
+                        to: [4; 20],
+                        amount: 50,
+                        nonce: self.tick,
+                        fee: 100,
+                    },
+                ];
+
+                let parent = self
+                    .finalized_chain
+                    .last()
+                    .map(|b| b.hash)
+                    .unwrap_or([0; 32]);
+                let height = self.finalized_chain.len() as u64;
+                let block = Block::new(parent, height, transactions, proposer_id);
+                let channel = block.hash_as_channel();
+                let proposer_stake = self.validators[proposer_idx].energy;
+                self.hormone_levels
+                    .entry(channel)
+                    .and_modify(|e| *e += proposer_stake)
+                    .or_insert(proposer_stake);
+                self.hormone_voters
+                    .entry(channel)
+                    .or_insert_with(Vec::new)
+                    .push(proposer_idx);
+                self.pending_blocks.push(block);
+            }
+        }
+    }
+
+    fn vote_on_blocks_silent(&mut self) {
+        let blocks = self.pending_blocks.clone();
+        for block in &blocks {
+            let channel = block.hash_as_channel();
+            for i in 0..self.validators.len() {
+                if self
+                    .hormone_voters
+                    .get(&channel)
+                    .map(|voters| voters.contains(&i))
+                    .unwrap_or(false)
+                {
+                    continue;
+                }
+                let is_malicious = self.validators[i].is_malicious;
+                let actual_validity = !block.transactions.is_empty();
+                let vote_valid = if is_malicious {
+                    !actual_validity
+                } else {
+                    actual_validity
+                };
+                if vote_valid {
+                    let vote_strength = self.validators[i].energy;
+                    self.hormone_levels
+                        .entry(channel)
+                        .and_modify(|e| *e += vote_strength)
+                        .or_insert(vote_strength);
+                    self.hormone_voters
+                        .entry(channel)
+                        .or_insert_with(Vec::new)
+                        .push(i);
+                    self.validators[i].total_votes += 1;
+                }
+            }
+        }
+    }
+
+    fn check_consensus_silent(&mut self) {
+        let threshold = self.consensus_threshold();
+        let mut finalized_blocks = vec![];
+        let pending = self.pending_blocks.clone();
+        for block in &pending {
+            let channel = block.hash_as_channel();
+            let level = *self.hormone_levels.get(&channel).unwrap_or(&0);
+            if level >= threshold {
+                let mut block_with_proof = block.clone();
+                block_with_proof.hormone_proof = HormoneProof {
+                    channel,
+                    final_level: level,
+                    voters: self.hormone_voters.get(&channel).cloned().unwrap_or_default(),
+                };
+                finalized_blocks.push(block_with_proof);
+            }
+        }
+        for block in finalized_blocks {
+            self.reward_validators_silent(&block);
+            self.finalized_chain.push(block.clone());
+            self.pending_blocks.retain(|b| b.hash != block.hash);
+        }
+    }
+
+    fn reward_validators_silent(&mut self, block: &Block) {
+        let total_fees = block.total_fees();
+        let honest_voters: Vec<_> = block
+            .hormone_proof
+            .voters
+            .iter()
+            .filter(|&&id| !self.validators.get(id).map(|v| v.is_malicious).unwrap_or(false))
+            .cloned()
+            .collect();
+        if honest_voters.is_empty() {
+            return;
+        }
+        let reward_per_voter = total_fees / honest_voters.len() as u64;
+        for voter_id in &honest_voters {
+            if let Some(validator) = self.validators.get_mut(*voter_id) {
+                validator.earn_fees(reward_per_voter);
+            }
+        }
+    }
+
+    fn reproduce_successful_silent(&mut self) {
+        let mut new_validators = vec![];
+        for validator in &self.validators {
+            if validator.can_reproduce(MITOSIS_THRESHOLD) {
+                let child_id = self.next_validator_id;
+                self.next_validator_id += 1;
+                let child = Validator::from_parent(validator, child_id);
+                new_validators.push((validator.id, child));
+            }
+        }
+        for (parent_id, child) in new_validators {
+            if let Some(parent) = self.validators.iter_mut().find(|v| v.id == parent_id) {
+                parent.consume_energy(MITOSIS_COST);
+            }
+            self.births += 1;
+            self.validators.push(child);
+        }
+    }
+
+    fn kill_failures_silent(&mut self) {
+        self.validators.retain(|v| {
+            if v.is_dead() {
+                self.deaths += 1;
+                false
+            } else {
+                true
+            }
+        });
     }
 
     /// Print network status
