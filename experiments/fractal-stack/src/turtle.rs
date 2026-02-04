@@ -21,7 +21,7 @@ impl Turtle {
             current: TurtleState {
                 x,
                 y,
-                angle: angle_deg.to_radians()
+                angle: angle_deg.to_radians(),
             },
             lines: Vec::new(),
             angle_step: angle_step_deg.to_radians(),
@@ -33,7 +33,11 @@ impl Turtle {
     pub fn reset(&mut self, x: f64, y: f64, angle_deg: f64) {
         self.stack.clear();
         self.lines.clear();
-        self.current = TurtleState { x, y, angle: angle_deg.to_radians() };
+        self.current = TurtleState {
+            x,
+            y,
+            angle: angle_deg.to_radians(),
+        };
         self.bounds = (x, x, y, y);
     }
 
@@ -42,7 +46,8 @@ impl Turtle {
         let new_y = self.current.y + self.step_len * self.current.angle.sin();
 
         if draw {
-            self.lines.push((self.current.x, self.current.y, new_x, new_y));
+            self.lines
+                .push((self.current.x, self.current.y, new_x, new_y));
         }
 
         self.current.x = new_x;
@@ -67,10 +72,18 @@ impl Turtle {
     }
 
     fn update_bounds(&mut self, x: f64, y: f64) {
-        if x < self.bounds.0 { self.bounds.0 = x; }
-        if x > self.bounds.1 { self.bounds.1 = x; }
-        if y < self.bounds.2 { self.bounds.2 = y; }
-        if y > self.bounds.3 { self.bounds.3 = y; }
+        if x < self.bounds.0 {
+            self.bounds.0 = x;
+        }
+        if x > self.bounds.1 {
+            self.bounds.1 = x;
+        }
+        if y < self.bounds.2 {
+            self.bounds.2 = y;
+        }
+        if y > self.bounds.3 {
+            self.bounds.3 = y;
+        }
     }
 
     pub fn process_char(&mut self, c: char) {

@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use klein_life::life::LifeGrid;
+use macroquad::prelude::*;
 
 const WIDTH: usize = 60;
 const HEIGHT: usize = 60;
@@ -34,15 +34,15 @@ async fn main() {
 
     loop {
         if is_key_pressed(KeyCode::R) {
-             grid = LifeGrid::new(WIDTH, HEIGHT);
+            grid = LifeGrid::new(WIDTH, HEIGHT);
         }
         if is_key_pressed(KeyCode::Space) {
             paused = !paused;
         }
 
         if !paused && get_time() - last_update > 0.05 {
-             grid.update();
-             last_update = get_time();
+            grid.update();
+            last_update = get_time();
         }
 
         // Input for camera
@@ -54,7 +54,7 @@ async fn main() {
         }
         // Auto rotate if no input
         if !is_key_down(KeyCode::Left) && !is_key_down(KeyCode::Right) {
-             cam_angle += 0.005;
+            cam_angle += 0.005;
         }
 
         let cam_pos = vec3(cam_angle.cos() * 10.0, 4.0, cam_angle.sin() * 10.0);
@@ -81,7 +81,7 @@ async fn main() {
                         0.2 + 0.8 * (u / (2.0 * std::f32::consts::PI)),
                         1.0 - 0.5 * (u / (2.0 * std::f32::consts::PI)),
                         0.5,
-                        1.0
+                        1.0,
                     );
                     draw_cube(pos, vec3(0.08, 0.08, 0.08), None, color);
                 }
@@ -90,7 +90,13 @@ async fn main() {
 
         set_default_camera();
         draw_text("Klein Life", 10.0, 30.0, 30.0, WHITE);
-        draw_text("Space: Pause | R: Reset | Arrows: Rotate", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "Space: Pause | R: Reset | Arrows: Rotate",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 70.0, 20.0, DARKGRAY);
 
         next_frame().await

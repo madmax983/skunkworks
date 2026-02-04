@@ -1,7 +1,7 @@
-use syn::visit::Visit;
-use syn::{ItemStruct, ItemEnum, ItemFn};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use syn::visit::Visit;
+use syn::{ItemEnum, ItemFn, ItemStruct};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum MusicalEvent {
@@ -45,8 +45,8 @@ impl CodeConcerto {
 impl<'ast> Visit<'ast> for CodeConcerto {
     fn visit_item_struct(&mut self, i: &'ast ItemStruct) {
         let root = self.hash_to_freq(&i.ident.to_string());
-        let major_third = root * 2.0_f32.powf(4.0/12.0);
-        let fifth = root * 2.0_f32.powf(7.0/12.0);
+        let major_third = root * 2.0_f32.powf(4.0 / 12.0);
+        let fifth = root * 2.0_f32.powf(7.0 / 12.0);
 
         self.events.push(MusicalEvent::Chord {
             freqs: vec![root, major_third, fifth],
@@ -59,8 +59,8 @@ impl<'ast> Visit<'ast> for CodeConcerto {
 
     fn visit_item_enum(&mut self, i: &'ast ItemEnum) {
         let root = self.hash_to_freq(&i.ident.to_string());
-        let minor_third = root * 2.0_f32.powf(3.0/12.0);
-        let fifth = root * 2.0_f32.powf(7.0/12.0);
+        let minor_third = root * 2.0_f32.powf(3.0 / 12.0);
+        let fifth = root * 2.0_f32.powf(7.0 / 12.0);
 
         self.events.push(MusicalEvent::Chord {
             freqs: vec![root, minor_third, fifth],
@@ -93,7 +93,7 @@ mod tests {
         match &events[0] {
             MusicalEvent::Chord { freqs, .. } => {
                 assert_eq!(freqs.len(), 3);
-            },
+            }
             _ => panic!("Expected a Chord event for struct"),
         }
     }
@@ -105,7 +105,7 @@ mod tests {
 
         assert!(!events.is_empty());
         match &events[0] {
-            MusicalEvent::Note { .. } => {},
+            MusicalEvent::Note { .. } => {}
             _ => panic!("Expected a Note event for fn"),
         }
     }

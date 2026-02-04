@@ -119,9 +119,21 @@ mod tests {
         // neighbors: 2*0 - 0 + 0.5 * (1+0+0+0 - 0) = 0.5.
         // So center goes to 0, neighbors go to 0.5.
 
-        assert!(tank.get_height(6, 5) > 0.0, "Wave should propagate to neighbor");
-        assert!(tank.get_height(4, 5) > 0.0, "Wave should propagate to neighbor");
-        assert!(tank.get_height(5, 6) > 0.0, "Wave should propagate to neighbor");
-        assert!(tank.get_height(5, 4) > 0.0, "Wave should propagate to neighbor");
+        assert!(
+            tank.get_height(6, 5) > 0.0,
+            "Wave should propagate to neighbor"
+        );
+        assert!(
+            tank.get_height(4, 5) > 0.0,
+            "Wave should propagate to neighbor"
+        );
+        assert!(
+            tank.get_height(5, 6) > 0.0,
+            "Wave should propagate to neighbor"
+        );
+        assert!(
+            tank.get_height(5, 4) > 0.0,
+            "Wave should propagate to neighbor"
+        );
     }
 }

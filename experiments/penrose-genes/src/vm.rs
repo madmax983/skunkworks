@@ -112,7 +112,8 @@ impl ChimeraVM {
                 }
 
                 if self.telomeres[self.ip.0] <= 0 {
-                    self.output.push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                    self.output
+                        .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
                     self.ip.0 += 1;
                     self.ip.1 = 0;
                     return;
@@ -266,11 +267,11 @@ impl ChimeraVM {
                         // Map x,y to Point
                         let p = Point::new(x as f64, y as f64);
                         if let Some(idx) = self.tiling.get_closest_triangle(p) {
-                             self.stack.push(self.tiling.data[idx].clone());
+                            self.stack.push(self.tiling.data[idx].clone());
                         } else {
-                             // Should theoretically always find one if we search, but maybe range check?
-                             // Default to 0 if "out of bounds" (though Tiling is finite but space is infinite)
-                             self.stack.push(Value::Int(0));
+                            // Should theoretically always find one if we search, but maybe range check?
+                            // Default to 0 if "out of bounds" (though Tiling is finite but space is infinite)
+                            self.stack.push(Value::Int(0));
                         }
                     } else {
                         self.output
@@ -290,9 +291,10 @@ impl ChimeraVM {
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                         let p = Point::new(x as f64, y as f64);
                         if let Some(idx) = self.tiling.get_closest_triangle(p) {
-                             self.tiling.data[idx] = val;
+                            self.tiling.data[idx] = val;
                         } else {
-                             self.output.push("Error: Coordinates too far from tiling".to_string());
+                            self.output
+                                .push("Error: Coordinates too far from tiling".to_string());
                         }
                     } else {
                         self.output
@@ -317,7 +319,8 @@ impl ChimeraVM {
                             None
                         }
                     } else {
-                        self.output.push("Error: Type mismatch for virus".to_string());
+                        self.output
+                            .push("Error: Type mismatch for virus".to_string());
                         None
                     };
 
@@ -330,7 +333,8 @@ impl ChimeraVM {
                         }
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for virus".to_string());
+                    self.output
+                        .push("Error: Stack underflow for virus".to_string());
                 }
                 None
             }
@@ -388,10 +392,13 @@ impl ChimeraVM {
                                 self.output.push("Error: Negative jump target".to_string());
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for jump_s".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for jump_s".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for jump_s".to_string());
+                    self.output
+                        .push("Error: Stack underflow for jump_s".to_string());
                 }
                 None
             }
@@ -410,10 +417,13 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for brz_s".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for brz_s".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for brz_s".to_string());
+                    self.output
+                        .push("Error: Stack underflow for brz_s".to_string());
                 }
                 None
             }
@@ -503,7 +513,9 @@ impl ChimeraVM {
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Invalid arg for telomerase".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Invalid arg for telomerase".to_string()),
                     }
                 } else {
                     self.output
@@ -659,7 +671,8 @@ impl ChimeraVM {
                                 self.dna.helix.strands[s_idx].genes.clear();
                                 self.epigenome.retain(|(s, _)| *s != s_idx);
                                 self.energy -= 10;
-                                self.output.push(format!("APOPTOSIS: Cleared strand {}", s_idx));
+                                self.output
+                                    .push(format!("APOPTOSIS: Cleared strand {}", s_idx));
                             } else {
                                 self.output.push(
                                     "Error: Strand index out of bounds for apoptosis".to_string(),

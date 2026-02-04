@@ -38,7 +38,7 @@ impl Simulation {
 
             self.particles.push(Particle {
                 x: px,
-                y: 0.0, // Start at top
+                y: 0.0,                       // Start at top
                 vy: rng.gen_range(5.0..15.0), // Initial downward velocity
                 alive: true,
                 char: chars[rng.gen_range(0..chars.len())],
@@ -48,7 +48,9 @@ impl Simulation {
 
     pub fn update(&mut self, dt: f64, terrain: &mut Terrain) {
         for p in &mut self.particles {
-            if !p.alive { continue; }
+            if !p.alive {
+                continue;
+            }
 
             // Gravity
             p.vy += self.gravity * dt;

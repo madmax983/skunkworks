@@ -57,7 +57,7 @@ fn main() -> Result<()> {
         }
 
         if auto_play && last_evolution.elapsed() > Duration::from_millis(100) {
-             if let Some(_) = script.evolve() {
+            if let Some(_) = script.evolve() {
                 epoch += 1;
             }
             last_evolution = Instant::now();
@@ -71,10 +71,10 @@ fn draw(f: &mut Frame, script: &Script, epoch: usize, auto_play: bool) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(3), // Header/Stats
-            Constraint::Min(0),    // Content
+            Constraint::Length(3),  // Header/Stats
+            Constraint::Min(0),     // Content
             Constraint::Length(10), // Dictionary
-            Constraint::Length(3), // Help
+            Constraint::Length(3),  // Help
         ])
         .split(f.area());
 
@@ -104,7 +104,9 @@ fn draw(f: &mut Frame, script: &Script, epoch: usize, auto_play: bool) {
     // Content (The Tablet)
     // Render the corpus as braille
     // We can just create a long string.
-    let s: String = script.corpus.iter()
+    let s: String = script
+        .corpus
+        .iter()
         .map(|&id| script.tokens[id].to_braille())
         .collect();
 
@@ -126,7 +128,11 @@ fn draw(f: &mut Frame, script: &Script, epoch: usize, auto_play: bool) {
     }
 
     let dict_p = Paragraph::new(Line::from(dict_spans))
-        .block(Block::default().borders(Borders::ALL).title("Recent Glyphs (Evolutionary Edge)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Recent Glyphs (Evolutionary Edge)"),
+        )
         .wrap(Wrap { trim: true });
 
     f.render_widget(dict_p, chunks[2]);

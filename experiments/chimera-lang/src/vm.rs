@@ -2,7 +2,7 @@ use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
 #[cfg(feature = "nova")]
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
@@ -36,6 +36,9 @@ pub struct Spore {
     pub telomeres: Vec<i64>,
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
     pub waste_grid: Vec<Vec<i64>>,
+    pub call_stack: Vec<(usize, usize)>,
+    pub input_buffer: VecDeque<char>,
+    pub receptors: HashMap<char, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -63,6 +66,12 @@ pub struct ChimeraVM {
     pub waste_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
+    #[cfg(feature = "nova")]
+    pub call_stack: Vec<(usize, usize)>,
+    #[cfg(feature = "nova")]
+    pub input_buffer: VecDeque<char>,
+    #[cfg(feature = "nova")]
+    pub receptors: HashMap<char, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -105,10 +114,26 @@ impl ChimeraVM {
             waste_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
+            #[cfg(feature = "nova")]
+            call_stack: Vec::new(),
+            #[cfg(feature = "nova")]
+            input_buffer: VecDeque::new(),
+            #[cfg(feature = "nova")]
+            receptors: HashMap::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
             activation_levels,
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    pub fn handle_input(&mut self, key: char) -> bool {
+        if self.receptors.contains_key(&key) {
+            self.input_buffer.push_back(key);
+            true
+        } else {
+            false
         }
     }
 
@@ -185,6 +210,29 @@ impl ChimeraVM {
 
         self.energy -= 1;
 
+        #[cfg(feature = "nova")]
+        {
+            if let Some(key) = self.input_buffer.pop_front() {
+                if let Some(&strand_idx) = self.receptors.get(&key) {
+                    // Interrupt!
+                    // Push current IP to call stack so we can return later (if we want)
+                    // Note: We push the *current* IP. If we want to return to the *next* instruction
+                    // when we are interrupted between instructions, it depends.
+                    // Here we are at start of step(), so IP points to the instruction *to be executed*.
+                    // So when we return, we want to execute *that* instruction.
+                    self.call_stack.push(self.ip);
+
+                    if strand_idx < self.dna.helix.strands.len() {
+                        self.ip = (strand_idx, 0);
+                        self.output.push(format!(
+                            "INTERRUPT: Signal '{}' -> Strand {}",
+                            key, strand_idx
+                        ));
+                    }
+                }
+            }
+        }
+
         #[cfg(feature = "cortex")]
         {
             for level in self.activation_levels.iter_mut() {
@@ -218,7 +266,8 @@ impl ChimeraVM {
             if self.waste_grid[cy][cx] > 100 {
                 let mut rng = rand::thread_rng();
                 if rng.gen_bool(0.05) {
-                    self.output.push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
+                    self.output
+                        .push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
                     self.mutate();
                 }
             }
@@ -318,7 +367,11 @@ impl ChimeraVM {
         coords
     }
 
-    pub(crate) fn execute_gene_inner(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn execute_gene_inner(
+        &mut self,
+        op: OpCode,
+        args: &[Nucleotide],
+    ) -> Option<(usize, usize)> {
         match op {
             OpCode::Push => {
                 if let Some(arg) = args.first() {
@@ -350,6 +403,9 @@ impl ChimeraVM {
                     telomeres: self.telomeres.clone(),
                     hormone_grid: self.hormone_grid.clone(),
                     waste_grid: self.waste_grid.clone(),
+                    call_stack: self.call_stack.clone(),
+                    input_buffer: self.input_buffer.clone(),
+                    receptors: self.receptors.clone(),
                     #[cfg(feature = "cortex")]
                     synapse_map: self.synapse_map.clone(),
                     #[cfg(feature = "cortex")]
@@ -386,21 +442,28 @@ impl ChimeraVM {
                             self.telomeres = spore.telomeres.clone();
                             self.hormone_grid = spore.hormone_grid.clone();
                             self.waste_grid = spore.waste_grid.clone();
+                            self.call_stack = spore.call_stack.clone();
+                            self.input_buffer = spore.input_buffer.clone();
+                            self.receptors = spore.receptors.clone();
                             #[cfg(feature = "cortex")]
                             {
                                 self.synapse_map = spore.synapse_map.clone();
                                 self.activation_levels = spore.activation_levels.clone();
                             }
 
-                            self.output.push(format!("GERMINATE: Restored Spore {}", idx));
+                            self.output
+                                .push(format!("GERMINATE: Restored Spore {}", idx));
                         } else {
-                            self.output.push("Error: Spore index out of bounds".to_string());
+                            self.output
+                                .push("Error: Spore index out of bounds".to_string());
                         }
                     } else {
-                        self.output.push("Error: Type mismatch for germinate".to_string());
+                        self.output
+                            .push("Error: Type mismatch for germinate".to_string());
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for germinate".to_string());
+                    self.output
+                        .push("Error: Stack underflow for germinate".to_string());
                 }
                 None
             }
@@ -429,11 +492,9 @@ impl ChimeraVM {
                                             });
                                         }
                                         Value::Str(s) => {
-                                            let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
-                                            genes.push(crate::ast::Gene {
-                                                op,
-                                                args: vec![],
-                                            });
+                                            let op =
+                                                s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                                            genes.push(crate::ast::Gene { op, args: vec![] });
                                         }
                                     }
                                 } else {
@@ -665,11 +726,8 @@ impl ChimeraVM {
                         }
                         self.stack.push(Value::Int(sum));
                         self.energy -= 5;
-                        self.output.push(format!(
-                            "SIPHON: Absorbed {} from {} cells",
-                            sum,
-                            count
-                        ));
+                        self.output
+                            .push(format!("SIPHON: Absorbed {} from {} cells", sum, count));
                     } else {
                         self.output
                             .push("Error: Type mismatch for siphon".to_string());
@@ -1038,10 +1096,16 @@ impl ChimeraVM {
 
                             // We need to match sequence of gene names
                             // Use op.to_string() for comparison
-                            let guide_names: Vec<String> =
-                                guide_strand.genes.iter().map(|g| g.op.to_string()).collect();
-                            let target_names: Vec<String> =
-                                target_strand.genes.iter().map(|g| g.op.to_string()).collect();
+                            let guide_names: Vec<String> = guide_strand
+                                .genes
+                                .iter()
+                                .map(|g| g.op.to_string())
+                                .collect();
+                            let target_names: Vec<String> = target_strand
+                                .genes
+                                .iter()
+                                .map(|g| g.op.to_string())
+                                .collect();
 
                             let mut found_idx: i64 = -1;
 
@@ -1537,12 +1601,15 @@ impl ChimeraVM {
                         let new_x = (cx as i64 + dx).rem_euclid(16) as usize;
                         self.context_loc = (new_y, new_x);
                         self.energy -= 5;
-                        self.output.push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+                        self.output
+                            .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
                     } else {
-                        self.output.push("Error: Type mismatch for migrate".to_string());
+                        self.output
+                            .push("Error: Type mismatch for migrate".to_string());
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for migrate".to_string());
+                    self.output
+                        .push("Error: Stack underflow for migrate".to_string());
                 }
                 None
             }
@@ -1557,12 +1624,15 @@ impl ChimeraVM {
                             self.waste_grid[ty][tx] = 0;
                         }
                         self.energy -= (r * r + 1).clamp(5, 50); // Cost proportional to area
-                        self.output.push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
+                        self.output
+                            .push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
                     } else {
-                        self.output.push("Error: Type mismatch for detox".to_string());
+                        self.output
+                            .push("Error: Type mismatch for detox".to_string());
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for detox".to_string());
+                    self.output
+                        .push("Error: Stack underflow for detox".to_string());
                 }
                 None
             }
@@ -1573,6 +1643,80 @@ impl ChimeraVM {
                 self.stack.push(Value::Int(waste));
                 None
             }
+            #[cfg(feature = "nova")]
+            OpCode::Call => {
+                if let Some(Nucleotide::Number(idx)) = args.first() {
+                    let strand_idx = *idx as usize;
+                    if strand_idx < self.dna.helix.strands.len() {
+                        // Push return address (current strand, next gene)
+                        // ip points to Call instruction. Step loop will increment it.
+                        // But if we jump, step loop sets ip to target.
+                        // So we need to push (ip.0, ip.1 + 1).
+                        self.call_stack.push((self.ip.0, self.ip.1 + 1));
+                        return Some((strand_idx, 0));
+                    } else {
+                        self.output
+                            .push("Error: Invalid strand index for call".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Invalid arg for call".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Ret => {
+                if let Some(ret_addr) = self.call_stack.pop() {
+                    return Some(ret_addr);
+                } else {
+                    self.output
+                        .push("Warning: Return with empty stack".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Bind => {
+                // stack: strand_idx (top), char_code
+                if self.stack.len() >= 2 {
+                    let s_val = self.stack.pop().unwrap();
+                    let c_val = self.stack.pop().unwrap();
+                    if let (Value::Int(s), Value::Int(c)) = (s_val, c_val) {
+                        let strand_idx = s as usize;
+                        let key = (c as u8) as char;
+                        if strand_idx < self.dna.helix.strands.len() {
+                            self.receptors.insert(key, strand_idx);
+                            self.output
+                                .push(format!("BIND: '{}' -> Strand {}", key, strand_idx));
+                        } else {
+                            self.output
+                                .push("Error: Invalid strand index for bind".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for bind".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for bind".to_string());
+                }
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Unbind => {
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Int(c) = val {
+                        let key = (c as u8) as char;
+                        self.receptors.remove(&key);
+                        self.output.push(format!("UNBIND: '{}'", key));
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for unbind".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for unbind".to_string());
+                }
+                None
+            }
             #[cfg(feature = "cortex")]
             OpCode::Link => {
                 if let Some(val) = self.stack.pop() {
@@ -1581,19 +1725,26 @@ impl ChimeraVM {
                             let target_idx = target as usize;
                             let s_idx = self.ip.0;
                             // Check bounds using activation_levels as proxy for strand count
-                            if target_idx < self.activation_levels.len() && s_idx < self.synapse_map.len() {
+                            if target_idx < self.activation_levels.len()
+                                && s_idx < self.synapse_map.len()
+                            {
                                 if !self.synapse_map[s_idx].contains(&target_idx) {
                                     self.synapse_map[s_idx].push(target_idx);
-                                    self.output.push(format!("LINK: {} -> {}", s_idx, target_idx));
+                                    self.output
+                                        .push(format!("LINK: {} -> {}", s_idx, target_idx));
                                 }
                             } else {
-                                self.output.push("Error: Invalid strand index for link".to_string());
+                                self.output
+                                    .push("Error: Invalid strand index for link".to_string());
                             }
                         }
-                         _ => self.output.push("Error: Type mismatch for link".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for link".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for link".to_string());
+                    self.output
+                        .push("Error: Stack underflow for link".to_string());
                 }
                 None
             }
@@ -1605,16 +1756,23 @@ impl ChimeraVM {
                             let target_idx = target as usize;
                             let s_idx = self.ip.0;
                             if s_idx < self.synapse_map.len() {
-                                if let Some(pos) = self.synapse_map[s_idx].iter().position(|&x| x == target_idx) {
+                                if let Some(pos) = self.synapse_map[s_idx]
+                                    .iter()
+                                    .position(|&x| x == target_idx)
+                                {
                                     self.synapse_map[s_idx].remove(pos);
-                                    self.output.push(format!("SEVER: {} -x {}", s_idx, target_idx));
+                                    self.output
+                                        .push(format!("SEVER: {} -x {}", s_idx, target_idx));
                                 }
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for sever".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for sever".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for sever".to_string());
+                    self.output
+                        .push("Error: Stack underflow for sever".to_string());
                 }
                 None
             }
@@ -1633,13 +1791,17 @@ impl ChimeraVM {
                                     }
                                 }
                                 self.energy -= (count as i64) + 1;
-                                self.output.push(format!("SPARK: Fired {} to {} targets", amount, count));
+                                self.output
+                                    .push(format!("SPARK: Fired {} to {} targets", amount, count));
                             }
                         }
-                        _ => self.output.push("Error: Type mismatch for spark".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: Type mismatch for spark".to_string()),
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for spark".to_string());
+                    self.output
+                        .push("Error: Stack underflow for spark".to_string());
                 }
                 None
             }
@@ -2319,11 +2481,26 @@ mod tests {
         // [ push(100) push(2) push(8) push(8) radiate() ]
         // Writes 100 to circle radius 2 at 8,8
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Radiate, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Radiate,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -2343,16 +2520,43 @@ mod tests {
         // First radiate 10s
         // [ push(10) push(1) push(5) push(5) radiate() push(1) push(5) push(5) siphon() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Radiate, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Radiate,
+                args: vec![],
+            },
             // Siphon same area
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Siphon, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Siphon,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -2375,8 +2579,14 @@ mod tests {
     fn test_genome() {
         // [ genome() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Genome, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Genome,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {

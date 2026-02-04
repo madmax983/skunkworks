@@ -1,17 +1,21 @@
-use ratatui::{
-    backend::Backend,
-    layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Modifier, Style},
-    text::{Span, Line, Text},
-    widgets::{Block, Borders, Paragraph, Gauge, BarChart},
-    Frame, Terminal,
-};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use std::{error::Error, io, time::{Duration, Instant}};
+use ratatui::{
+    backend::Backend,
+    layout::{Constraint, Direction, Layout, Rect},
+    style::{Color, Modifier, Style},
+    text::{Line, Span, Text},
+    widgets::{BarChart, Block, Borders, Gauge, Paragraph},
+    Frame, Terminal,
+};
+use std::{
+    error::Error,
+    io,
+    time::{Duration, Instant},
+};
 
 use crate::mapping::MusicalEvent;
 
@@ -26,11 +30,14 @@ pub struct App {
 
 impl App {
     pub fn new(code: String, events: Vec<MusicalEvent>) -> Self {
-        let total_secs: f32 = events.iter().map(|e| match e {
-            MusicalEvent::Note { duration, .. } => *duration,
-            MusicalEvent::Chord { duration, .. } => *duration,
-            MusicalEvent::Rest { duration } => *duration,
-        }).sum();
+        let total_secs: f32 = events
+            .iter()
+            .map(|e| match e {
+                MusicalEvent::Note { duration, .. } => *duration,
+                MusicalEvent::Chord { duration, .. } => *duration,
+                MusicalEvent::Rest { duration } => *duration,
+            })
+            .sum();
 
         Self {
             code_lines: code.lines().map(|s| s.to_string()).collect(),
@@ -69,9 +76,9 @@ impl App {
         }
 
         if !found && elapsed >= time_cursor {
-             // Finished
-             self.is_playing = false;
-             self.current_event_index = self.events.len().saturating_sub(1);
+            // Finished
+            self.is_playing = false;
+            self.current_event_index = self.events.len().saturating_sub(1);
         }
     }
 }
@@ -92,8 +99,9 @@ pub fn run_app<B: Backend>(terminal: &mut Terminal<B>, mut app: App) -> io::Resu
         }
 
         app.update();
-        if !app.is_playing && app.start_time.elapsed() > app.total_duration + Duration::from_secs(1) {
-             // Auto exit or loop? Let's just stop updating but keep running until 'q'
+        if !app.is_playing && app.start_time.elapsed() > app.total_duration + Duration::from_secs(1)
+        {
+            // Auto exit or loop? Let's just stop updating but keep running until 'q'
         }
     }
 }
@@ -123,7 +131,9 @@ fn ui(f: &mut Frame, app: &App) {
     let event = &app.events[app.current_event_index];
     let (desc, color) = match event {
         MusicalEvent::Note { freq, .. } => (format!("Note: {:.1} Hz", freq), Color::Cyan),
-        MusicalEvent::Chord { freqs, .. } => (format!("Chord: {} tones", freqs.len()), Color::Magenta),
+        MusicalEvent::Chord { freqs, .. } => {
+            (format!("Chord: {} tones", freqs.len()), Color::Magenta)
+        }
         MusicalEvent::Rest { .. } => ("Rest".to_string(), Color::Gray),
     };
 
@@ -133,7 +143,11 @@ fn ui(f: &mut Frame, app: &App) {
     f.render_widget(info_block, right_chunks[0]);
 
     // Progress
-    let elapsed = if app.is_playing { app.start_time.elapsed() } else { app.total_duration }; // Simplified
+    let elapsed = if app.is_playing {
+        app.start_time.elapsed()
+    } else {
+        app.total_duration
+    }; // Simplified
     let progress = (elapsed.as_secs_f32() / app.total_duration.as_secs_f32()).min(1.0);
 
     let gauge = Gauge::default()

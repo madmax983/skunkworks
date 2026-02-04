@@ -43,7 +43,11 @@ impl LorenzSystem {
         let dy = x * (self.rho - z) - y;
         let dz = x * y - self.beta * z;
 
-        LorenzState { x: dx, y: dy, z: dz }
+        LorenzState {
+            x: dx,
+            y: dy,
+            z: dz,
+        }
     }
 
     pub fn step(&self, state: LorenzState, dt: f64) -> LorenzState {

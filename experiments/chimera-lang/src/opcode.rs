@@ -86,6 +86,14 @@ pub enum OpCode {
     Detox,
     #[cfg(feature = "nova")]
     WRead,
+    #[cfg(feature = "nova")]
+    Call,
+    #[cfg(feature = "nova")]
+    Ret,
+    #[cfg(feature = "nova")]
+    Bind,
+    #[cfg(feature = "nova")]
+    Unbind,
 
     Unknown(String),
 }
@@ -176,6 +184,14 @@ impl FromStr for OpCode {
             "detox" => Ok(OpCode::Detox),
             #[cfg(feature = "nova")]
             "w_read" => Ok(OpCode::WRead),
+            #[cfg(feature = "nova")]
+            "call" => Ok(OpCode::Call),
+            #[cfg(feature = "nova")]
+            "ret" => Ok(OpCode::Ret),
+            #[cfg(feature = "nova")]
+            "bind" => Ok(OpCode::Bind),
+            #[cfg(feature = "nova")]
+            "unbind" => Ok(OpCode::Unbind),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -266,6 +282,14 @@ impl fmt::Display for OpCode {
             OpCode::Detox => write!(f, "detox"),
             #[cfg(feature = "nova")]
             OpCode::WRead => write!(f, "w_read"),
+            #[cfg(feature = "nova")]
+            OpCode::Call => write!(f, "call"),
+            #[cfg(feature = "nova")]
+            OpCode::Ret => write!(f, "ret"),
+            #[cfg(feature = "nova")]
+            OpCode::Bind => write!(f, "bind"),
+            #[cfg(feature = "nova")]
+            OpCode::Unbind => write!(f, "unbind"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
