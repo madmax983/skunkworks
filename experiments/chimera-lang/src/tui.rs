@@ -175,6 +175,14 @@ fn run_app<B: ratatui::backend::Backend>(
                                 style = style.fg(Color::Red);
                             }
                         }
+
+                        let light = vm.light_grid[y][x];
+                        if light > 0 {
+                            style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                            if light > 200 {
+                                style = style.fg(Color::White);
+                            }
+                        }
                     }
 
                     line_spans.push(Span::styled(char_rep, style));

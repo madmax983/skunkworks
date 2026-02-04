@@ -34,6 +34,8 @@ pub mod vm;
 #[cfg(test)]
 mod cortex_test;
 mod havoc_repro;
+#[cfg(test)]
+mod heliotropism_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_biolum_test;
 #[cfg(test)]
@@ -52,6 +54,6 @@ mod nova_quantum_test;
 mod nova_spore_test;
 mod nova_test;
 #[cfg(test)]
-mod sentry_nova_test;
-#[cfg(test)]
 mod nova_waste_test;
+#[cfg(test)]
+mod sentry_nova_test;

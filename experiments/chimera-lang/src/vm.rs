@@ -567,7 +567,8 @@ impl ChimeraVM {
             | OpCode::Conjugate
             | OpCode::Gravitate
             | OpCode::Lumine
-            | OpCode::SenseLight => self.exec_nova_op(op, args),
+            | OpCode::SenseLight
+            | OpCode::Phototaxis => self.exec_nova_op(op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
@@ -1008,7 +1009,17 @@ impl ChimeraVM {
     fn exec_bio_op(&mut self, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
         match op {
             OpCode::Photosynthesize => {
-                self.energy = self.energy.saturating_add(5);
+                #[allow(unused_mut)]
+                let mut gain = 5;
+                #[cfg(feature = "nova")]
+                {
+                    let (cy, cx) = self.context_loc;
+                    let light = self.light_grid[cy][cx];
+                    if light > 0 {
+                        gain += light / 10;
+                    }
+                }
+                self.energy = self.energy.saturating_add(gain);
             }
             OpCode::Consume => {
                 if let Some(val) = self.stack.pop() {
@@ -1068,6 +1079,12 @@ impl ChimeraVM {
                         } else {
                             self.output
                                 .push("Error: Strand index out of bounds".to_string());
+                        }
+
+                        // Silence unused assignment warning when nova is disabled
+                        #[cfg(not(feature = "nova"))]
+                        {
+                            let _ = success;
                         }
 
                         #[cfg(feature = "nova")]
@@ -2504,6 +2521,39 @@ impl ChimeraVM {
                 let (cy, cx) = self.context_loc;
                 let intensity = self.light_grid[cy][cx];
                 self.stack.push(Value::Int(intensity));
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Phototaxis => {
+                let (cy, cx) = self.context_loc;
+                let mut best_loc = (cy, cx);
+                let mut max_light = self.light_grid[cy][cx];
+
+                // Scan 3x3
+                for dy in -1..=1 {
+                    for dx in -1..=1 {
+                        if dy == 0 && dx == 0 {
+                            continue;
+                        }
+                        let ny = (cy as i64 + dy).rem_euclid(16) as usize;
+                        let nx = (cx as i64 + dx).rem_euclid(16) as usize;
+                        let light = self.light_grid[ny][nx];
+
+                        if light > max_light {
+                            max_light = light;
+                            best_loc = (ny, nx);
+                        }
+                    }
+                }
+
+                if best_loc != (cy, cx) {
+                    self.context_loc = best_loc;
+                    self.energy = self.energy.saturating_sub(2); // Movement cost
+                    self.output.push(format!(
+                        "PHOTOTAXIS: Moved to {},{} (light: {})",
+                        best_loc.1, best_loc.0, max_light
+                    ));
+                }
                 None
             }
             _ => None,
