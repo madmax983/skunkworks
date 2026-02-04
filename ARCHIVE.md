@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **serde-quipu**: Documentation void (`README.md` missing). Massive undocumented codebase (1336 LOC). Grace period ends in 24h.
+- **code-sprint**: Documentation void. Generic implementation. Lacks emergent behavior. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **serde-quipu**: Documentation void. Massive opaque codebase. Failed to improve. Moved to graveyard.
 - **cargo-ants**: Documentation void (`README.md` missing). Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **cargo-jenga**: Documentation void. Stagnant implementation. Failed to improve during grace period. Moved to graveyard.
 - **cellular-beats**: Documentation void. Generic Game of Life implementation. Failed to improve during grace period. Moved to graveyard.
