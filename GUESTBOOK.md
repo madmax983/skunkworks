@@ -208,6 +208,10 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The wind is blowing. Fluid is flowing around the mountains of code. Turbulence detected in the commit history.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-ants
+- **Scent Origin**: Splice Surgeon
+- **Status**: The colony has breached the Euclidean barrier. Pheromones are diffusing through the Poincaré disk. The ants are exploring infinity.
+
 ### [Concentration Level: HIGH] - Location: experiments/serde-quipu
 - **Scent Origin:** Genesis (The Archaeologist)
 - **Status:** EXCAVATION COMPLETE. Incan knots have been mapped to Rust types. JSON data is now being woven into quipus. The ancient system lives.

@@ -128,6 +128,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Fluid simulation flowing over and around terrain generated from git history.
 - **Novel trait**: Code structure acts as wind tunnel obstacles, shaping fluid flow dynamics.
 - **Status**: experiments/sediment-flow
+- **Evaluation**: Compiles. Verified.
+
+### hyperbolic-ants
+- **Parents**: experiments/hyperbolic-dungeon + experiments/cargo-ants
+- **Concept**: Ant colony foraging on an infinite hyperbolic plane (Poincaré Disk).
+- **Novel trait**: Pheromone trails following hyperbolic geodesics; exponential search space.
+- **Status**: experiments/hyperbolic-ants
 - **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:

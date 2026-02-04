@@ -95,6 +95,7 @@ members = [
     "experiments/magnetron-decay", 
     "experiments/echo-chamber",
     "experiments/sediment-flow", "experiments/serde-quipu", "experiments/fungal-balancer",
+    "experiments/hyperbolic-ants",
 ]
 resolver = "2"
 
