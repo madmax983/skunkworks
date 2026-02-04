@@ -133,7 +133,13 @@ async fn main() {
         set_default_camera();
 
         draw_text("ARROWS to Rotate, W/S to Zoom", 10.0, 20.0, 30.0, BLACK);
-        draw_text("Terrain generated from text 'GENESIS'", 10.0, 50.0, 20.0, DARKGRAY);
+        draw_text(
+            "Terrain generated from text 'GENESIS'",
+            10.0,
+            50.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }

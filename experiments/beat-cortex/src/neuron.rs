@@ -1,4 +1,4 @@
-use ndarray::{Array1, azip};
+use ndarray::{azip, Array1};
 use rand::Rng;
 
 pub struct IzhikevichPopulation {

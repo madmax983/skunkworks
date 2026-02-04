@@ -42,12 +42,10 @@ fn test_conjugation_incubation_cycle() {
     // [ s_index() ]
     // Pushes its own index.
     let template = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::SIndex,
-                args: vec![],
-            },
-        ],
+        genes: vec![Gene {
+            op: OpCode::SIndex,
+            args: vec![],
+        }],
     };
 
     // Strand 2: The Incubator
