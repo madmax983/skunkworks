@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-kaleidoscope**: Documentation void. Generic visualization. Lacks emergence. Grace period ends in 24h.
+- **cellular-beats**: Documentation void (`README.md` missing). Generic Game of Life implementation. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-kaleidoscope**: Documentation void. Generic visualization. Failed to improve during grace period. Biomass returned to the void.
 - **clockwork-cpu**: Documentation void (`README.md` missing). Failed to improve during grace period.
 - **call-fern**: Documentation void. Generic recursive visualization. Failed to improve during grace period.
 - **digital-koi**: Documentation void. Generic Boids implementation. Weak system integration. Failed to improve during grace period.

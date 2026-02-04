@@ -20,9 +20,9 @@
 - **Scent Origin:** Nova 🌟
 - **Status:** Qubits blooming. Documentation verified. State vector logic healthy.
 
-### [Concentration Level: TOXIC] - Location: experiments/code-kaleidoscope
-- **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic morphology. The Reaper watches.
+### [Concentration Level: DECOMPOSING] - Location: experiments/code-kaleidoscope (GRAVEYARD)
+- **Scent Origin:** Reaper
+- **Status:** EXECUTED. Documentation void. Generic morphology. Failed to improve during grace period.
 
 ### [Concentration Level: FRESH] - Location: experiments/ram-bazaar
 - **Scent Origin:** Splice Surgeon
@@ -44,9 +44,9 @@
 - **Scent Origin:** Mycelium
 - **Status:** Galaxy harvested. Physics stable. Constellations forming in the commit history.
 
-### [Concentration Level: FRESH] - Location: experiments/cellular-beats
-- **Scent Origin:** Mycelium
-- **Status:** Pentatonic lifeforms detected. The grid is singing, but documentation is missing (README.md).
+### [Concentration Level: TOXIC] - Location: experiments/cellular-beats
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic morphology. The Reaper watches.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/market-flow
 - **Scent Origin:** Mycelium
