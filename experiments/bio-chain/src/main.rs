@@ -23,46 +23,64 @@ fn main() -> anyhow::Result<()> {
 
     network.status();
 
-    // Demo: Propose a block with transactions
-    println!("\n🔬 Starting Consensus Demo\n");
-    println!("{}", "=".repeat(50));
+    // Demo: Run evolution simulation
+    println!("\n🔬 Starting Evolution Simulation\n");
+    println!("{}", "=".repeat(60));
 
-    let transactions = vec![
-        Transaction {
-            from: [1; 20],
-            to: [2; 20],
-            amount: 100,
-            nonce: 0,
-            fee: 10,
-        },
-        Transaction {
-            from: [3; 20],
-            to: [4; 20],
-            amount: 50,
-            nonce: 0,
-            fee: 5,
-        },
-    ];
+    println!("\n📖 Simulation Rules:");
+    println!("  • Validators burn 5 energy/tick (metabolism)");
+    println!("  • Successful votes earn fees → energy");
+    println!("  • Energy > 1200 → Mitosis (reproduction, cost: 300)");
+    println!("  • Energy = 0 → Apoptosis (death)");
+    println!("  • Population evolves through natural selection\n");
 
-    // Validator 0 proposes block
-    network.propose_block(0, transactions);
+    // Run for 40 ticks with periodic block proposals
+    for i in 0..40 {
+        // Propose a block every 3 ticks
+        if i % 3 == 0 && !network.validators.is_empty() {
+            let proposer_id = i % network.validators.len();
+            let transactions = vec![
+                Transaction {
+                    from: [1; 20],
+                    to: [2; 20],
+                    amount: 100,
+                    nonce: i as u64,
+                    fee: 100, // Higher fees for faster evolution
+                },
+                Transaction {
+                    from: [3; 20],
+                    to: [4; 20],
+                    amount: 50,
+                    nonce: i as u64,
+                    fee: 100,
+                },
+            ];
+            network.propose_block(proposer_id, transactions);
+        }
 
-    // Run consensus for a few ticks
-    for _ in 0..5 {
         network.step();
 
-        if !network.pending_blocks.is_empty() {
-            // Still pending
-        } else if !network.finalized_chain.is_empty() {
-            println!("\n🎊 SUCCESS! Block finalized through biological consensus!");
+        // Show status every 5 ticks
+        if (i + 1) % 5 == 0 {
+            network.status();
+        }
+
+        // Stop if all validators died
+        if network.validators.is_empty() {
+            println!("\n💀 EXTINCTION! All validators died.");
             break;
         }
     }
 
+    println!("\n{}", "=".repeat(60));
+    println!("🧬 Evolution Simulation Complete!\n");
     network.status();
 
-    println!("\n{}", "=".repeat(50));
-    println!("🧬 Biological consensus complete!");
+    println!("\n📈 Final Results:");
+    println!("  Total Births: {}", network.births);
+    println!("  Total Deaths: {}", network.deaths);
+    println!("  Population Change: {:+}", network.validators.len() as i64 - 5);
+    println!("  Blocks Finalized: {}", network.finalized_chain.len());
 
     Ok(())
 }

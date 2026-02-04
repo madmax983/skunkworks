@@ -8,6 +8,15 @@ const CONSENSUS_THRESHOLD: f64 = 0.67;
 /// How much hormone decays per tick
 const HORMONE_DECAY: i64 = 5;
 
+/// Energy threshold for reproduction
+const MITOSIS_THRESHOLD: i64 = 1200;
+
+/// Energy cost to create child
+const MITOSIS_COST: i64 = 300;
+
+/// Energy cost per tick (metabolism)
+const METABOLISM_COST: i64 = 5;
+
 pub struct Network {
     pub validators: Vec<Validator>,
     pub pending_blocks: Vec<Block>,
@@ -15,6 +24,9 @@ pub struct Network {
     pub hormone_levels: HashMap<i64, i64>, // channel -> total hormone
     pub hormone_voters: HashMap<i64, Vec<ValidatorId>>, // channel -> voters
     pub tick: u64,
+    pub next_validator_id: ValidatorId,
+    pub births: usize,
+    pub deaths: usize,
 }
 
 impl Network {
@@ -26,10 +38,16 @@ impl Network {
             hormone_levels: HashMap::new(),
             hormone_voters: HashMap::new(),
             tick: 0,
+            next_validator_id: 0,
+            births: 0,
+            deaths: 0,
         }
     }
 
     pub fn add_validator(&mut self, validator: Validator) {
+        if validator.id >= self.next_validator_id {
+            self.next_validator_id = validator.id + 1;
+        }
         self.validators.push(validator);
     }
 
@@ -216,10 +234,75 @@ impl Network {
         self.hormone_levels.retain(|_, v| *v > 0);
     }
 
+    /// Metabolism: validators burn energy each tick
+    pub fn metabolism(&mut self) {
+        for validator in &mut self.validators {
+            validator.consume_energy(METABOLISM_COST);
+        }
+    }
+
+    /// Reproduction: successful validators undergo mitosis
+    pub fn reproduce_successful(&mut self) {
+        let mut new_validators = vec![];
+
+        for validator in &self.validators {
+            if validator.can_reproduce(MITOSIS_THRESHOLD) {
+                let child_id = self.next_validator_id;
+                self.next_validator_id += 1;
+
+                let child = Validator::from_parent(validator, child_id);
+                println!(
+                    "🧬 MITOSIS! Validator {} → Validator {} (energy: {} → {})",
+                    validator.id,
+                    child_id,
+                    validator.energy,
+                    validator.energy - MITOSIS_COST
+                );
+
+                new_validators.push((validator.id, child));
+            }
+        }
+
+        // Add children and deduct cost from parents
+        for (parent_id, child) in new_validators {
+            if let Some(parent) = self.validators.iter_mut().find(|v| v.id == parent_id) {
+                parent.consume_energy(MITOSIS_COST);
+            }
+            self.births += 1;
+            self.validators.push(child);
+        }
+    }
+
+    /// Death: validators with no energy undergo apoptosis
+    pub fn kill_failures(&mut self) {
+        let initial_count = self.validators.len();
+
+        self.validators.retain(|v| {
+            if v.is_dead() {
+                println!(
+                    "💀 APOPTOSIS! Validator {} died (fitness: {:.2})",
+                    v.id, v.fitness
+                );
+                self.deaths += 1;
+                false
+            } else {
+                true
+            }
+        });
+
+        let killed = initial_count - self.validators.len();
+        if killed > 0 {
+            println!("  ⚰️  {} validators eliminated", killed);
+        }
+    }
+
     /// Step the network forward one tick
     pub fn step(&mut self) {
         self.tick += 1;
         println!("\n⏱️  Tick {}", self.tick);
+
+        // Metabolism (validators burn energy)
+        self.metabolism();
 
         // Decay hormones
         self.decay_hormones();
@@ -230,9 +313,9 @@ impl Network {
         // Check for consensus
         self.check_consensus();
 
-        // Natural selection (later)
-        // self.reproduce_successful();
-        // self.kill_failures();
+        // Natural selection
+        self.reproduce_successful();
+        self.kill_failures();
     }
 
     /// Print network status
@@ -247,5 +330,13 @@ impl Network {
         println!("  Finalized blocks: {}", self.finalized_chain.len());
         println!("  Active proposals: {}", self.hormone_levels.len());
         println!("  Consensus threshold: {}", self.consensus_threshold());
+        println!("  Births: {} | Deaths: {}", self.births, self.deaths);
+
+        if !self.validators.is_empty() {
+            let avg_fitness: f64 = self.validators.iter().map(|v| v.fitness).sum::<f64>()
+                / self.validators.len() as f64;
+            let avg_energy: i64 = self.total_stake() / self.validators.len() as i64;
+            println!("  Avg Fitness: {:.2} | Avg Energy: {}", avg_fitness, avg_energy);
+        }
     }
 }
