@@ -102,7 +102,7 @@ members = [
     "experiments/firefly-synapse",
     "experiments/chimera-market",
     "experiments/glyph-evolution",
-    "experiments/penrose-genes", "experiments/seismic-lure", "experiments/syntax-garden", "experiments/entropic-rain", "experiments/beat-cortex", "experiments/text-terra",
+    "experiments/penrose-genes", "experiments/seismic-lure", "experiments/syntax-garden", "experiments/entropic-rain", "experiments/beat-cortex", "experiments/text-terra", "experiments/harmony-of-spheres",
 ]
 resolver = "2"
 
