@@ -149,6 +149,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI simulation where trading algorithms are Chimera VM instances that evolve via natural selection.
 - **Novel trait**: Evolving limit order book strategies driven by genetic code.
 - **Status**: experiments/chimera-market
+- **Evaluation**: Compiles. Documentation present. Traders are mutating.
+
+### penrose-genes
+- **Parents**: experiments/aperiodic-citadel + experiments/chimera-lang
+- **Concept**: A VM where memory is stored in an aperiodic Penrose tiling.
+- **Novel trait**: Aperiodic memory addressing; programs navigating a quasicrystal environment.
+- **Status**: experiments/penrose-genes
 - **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:
