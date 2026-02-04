@@ -1,23 +1,9 @@
 use anyhow::Result;
 use clap::Parser as ClapParser;
 use pest::Parser;
-use pest_derive::Parser;
 use std::fs;
 
-mod ast;
-mod tui;
-mod vm;
-
-#[cfg(test)]
-mod nova_test;
-
-use crate::ast::Dna;
-use crate::tui::run_tui;
-use crate::vm::ChimeraVM;
-
-#[derive(Parser)]
-#[grammar = "grammar.pest"]
-pub struct ChimeraParser;
+use chimera_lang::{ChimeraParser, Rule, ast::Dna, tui::run_tui, vm::ChimeraVM};
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
