@@ -1,5 +1,5 @@
 #[cfg(feature = "audio")]
-use rodio::{OutputStream, OutputStreamHandle, Sink, source::Source};
+use rodio::{source::Source, OutputStream, OutputStreamHandle, Sink};
 #[cfg(feature = "audio")]
 use std::time::Duration;
 

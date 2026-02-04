@@ -1,4 +1,4 @@
-use crate::diff::{DiffLine, get_diff};
+use crate::diff::{get_diff, DiffLine};
 use anyhow::Result;
 use rand::Rng;
 
@@ -48,7 +48,9 @@ impl Game {
     }
 
     pub fn tick(&mut self) {
-        if self.game_over { return; }
+        if self.game_over {
+            return;
+        }
         self.tick_count += 1;
 
         // Spawn enemies
@@ -87,12 +89,12 @@ impl Game {
         let move_freq = if self.score > 1000 { 5 } else { 10 };
 
         if self.tick_count % move_freq == 0 {
-             for e in &mut self.enemies {
-                 e.y += 1.0;
-                 if e.y >= self.height - 2.0 {
-                     self.game_over = true;
-                 }
-             }
+            for e in &mut self.enemies {
+                e.y += 1.0;
+                if e.y >= self.height - 2.0 {
+                    self.game_over = true;
+                }
+            }
         }
 
         // Collisions
@@ -104,10 +106,10 @@ impl Game {
                 // Simple AABB
                 // Enemy height is 1
                 if b.y.round() == e.y.round() {
-                     if b.x >= e.x && b.x <= e.x + e.width as f64 {
-                         dead_bullets.push(bi);
-                         dead_enemies.push(ei);
-                     }
+                    if b.x >= e.x && b.x <= e.x + e.width as f64 {
+                        dead_bullets.push(bi);
+                        dead_enemies.push(ei);
+                    }
                 }
             }
         }
@@ -124,11 +126,11 @@ impl Game {
         dead_enemies.sort_unstable_by(|a, b| b.cmp(a));
         dead_enemies.dedup();
         for idx in dead_enemies {
-             if idx < self.enemies.len() {
-                 let e = self.enemies.remove(idx);
-                 // Score depends on length
-                 self.score += e.width * 10;
-             }
+            if idx < self.enemies.len() {
+                let e = self.enemies.remove(idx);
+                // Score depends on length
+                self.score += e.width * 10;
+            }
         }
     }
 
@@ -140,7 +142,10 @@ impl Game {
 
     pub fn shoot(&mut self) {
         // Center of player
-        self.bullets.push(Bullet { x: self.player_x + 1.0, y: self.height - 3.0 });
+        self.bullets.push(Bullet {
+            x: self.player_x + 1.0,
+            y: self.height - 3.0,
+        });
     }
 }
 
@@ -178,15 +183,18 @@ mod tests {
         game.enemies.push(Enemy {
             x: 50.0,
             y: 50.0,
-            line: DiffLine { content: "target".to_string(), line_type: LineType::Addition },
+            line: DiffLine {
+                content: "target".to_string(),
+                line_type: LineType::Addition,
+            },
             width: 6,
             max_width: 10,
         });
 
         // Place player under enemy
         game.player_x = 49.0; // Shoot from 50.0
-        // height is 100. Player is at 97. Bullet spawns at 97.
-        // Enemy is at 50.
+                              // height is 100. Player is at 97. Bullet spawns at 97.
+                              // Enemy is at 50.
 
         game.shoot();
         assert_eq!(game.bullets.len(), 1);

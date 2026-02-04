@@ -91,3 +91,8 @@
 **Concept:** A top-down Mars Rover exploration game for the file system. Use tank controls to drive around a procedurally generated terrain (Fermat's Spiral) of files and directories.
 **Fate:** Merged
 **Lesson:** Gamifying file system navigation changes the relationship with the codebase from "Management" to "Exploration". Canvas-based vector physics are simple but effective in TUI.
+
+## [Ast Respiration]
+**Concept:** A "Breathing" force-directed graph of the Rust AST. Nodes (Functions, Mods) are connected by springs whose resting lengths oscillate rhythmically, simulating respiration.
+**Fate:** Merged
+**Lesson:** Visualizing code as a biological, living entity (expanding/contracting) provides a visceral sense of structure and liveliness that static graphs lack. Simple sinusoidal modulation of physics parameters creates a compelling "life" effect.

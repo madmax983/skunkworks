@@ -101,7 +101,9 @@ impl System {
                 // F = k * (m1 * m2) / r^2 (Gravity-like repulsion?)
                 // Actually usually just Coulomb for layout: k / r^2
                 // Let's scale by mass to prevent heavy overlaps
-                let force_mag = self.repulsion_strength * (self.nodes[i].mass.sqrt() * self.nodes[j].mass.sqrt()) / dist_sq;
+                let force_mag = self.repulsion_strength
+                    * (self.nodes[i].mass.sqrt() * self.nodes[j].mass.sqrt())
+                    / dist_sq;
                 let force = (delta / dist) * force_mag;
 
                 self.nodes[i].force -= force;

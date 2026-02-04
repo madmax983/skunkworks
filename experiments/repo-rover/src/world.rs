@@ -1,8 +1,8 @@
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
+use std::f64::consts::PI;
 use std::fs;
 use std::path::{Path, PathBuf};
 use tui_shared::math::Vec2;
-use std::f64::consts::PI;
 
 #[derive(Debug, Clone)]
 pub enum EntityType {
@@ -48,7 +48,9 @@ impl World {
             let kind = if metadata.is_dir() {
                 EntityType::Directory
             } else {
-                EntityType::File { size: metadata.len() }
+                EntityType::File {
+                    size: metadata.len(),
+                }
             };
 
             // Calculate position using Fermat's Spiral for deterministic, scattered placement

@@ -1,14 +1,14 @@
+use std::sync::Arc;
+use std::time::{Duration, Instant};
+use sysinfo::System;
+use wgpu::util::DeviceExt;
 use winit::{
+    dpi::PhysicalPosition,
     event::*,
     event_loop::EventLoop,
-    window::{Window, WindowBuilder},
     keyboard::{KeyCode, PhysicalKey},
-    dpi::PhysicalPosition,
+    window::{Window, WindowBuilder},
 };
-use wgpu::util::DeviceExt;
-use sysinfo::System;
-use std::sync::Arc;
-use std::time::{Instant, Duration};
 
 const WIDTH: u32 = 1024;
 const HEIGHT: u32 = 1024;
@@ -102,23 +102,31 @@ impl<'a> State<'a> {
         // Surface creation using Arc<Window>
         let surface = instance.create_surface(window.clone()).unwrap();
 
-        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions {
-            power_preference: wgpu::PowerPreference::HighPerformance,
-            compatible_surface: Some(&surface),
-            force_fallback_adapter: false,
-        }).await.unwrap();
+        let adapter = instance
+            .request_adapter(&wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::HighPerformance,
+                compatible_surface: Some(&surface),
+                force_fallback_adapter: false,
+            })
+            .await
+            .unwrap();
 
-        let (device, queue) = adapter.request_device(
-            &wgpu::DeviceDescriptor {
-                required_features: wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES,
-                required_limits: wgpu::Limits::default(),
-                label: None,
-            },
-            None,
-        ).await.unwrap();
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    required_features: wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES,
+                    required_limits: wgpu::Limits::default(),
+                    label: None,
+                },
+                None,
+            )
+            .await
+            .unwrap();
 
         let surface_caps = surface.get_capabilities(&adapter);
-        let surface_format = surface_caps.formats.iter()
+        let surface_format = surface_caps
+            .formats
+            .iter()
             .copied()
             .find(|f| f.is_srgb())
             .unwrap_or(surface_caps.formats[0]);
@@ -149,7 +157,9 @@ impl<'a> State<'a> {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format: wgpu::TextureFormat::Rgba32Float,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::COPY_DST,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING
+                | wgpu::TextureUsages::STORAGE_BINDING
+                | wgpu::TextureUsages::COPY_DST,
             view_formats: &[],
         };
 
@@ -181,56 +191,59 @@ impl<'a> State<'a> {
         // --- Pipelines ---
 
         // Compute Pipeline
-        let compute_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Compute Bind Group Layout"),
-            entries: &[
-                // Uniforms
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
+        let compute_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("Compute Bind Group Layout"),
+                entries: &[
+                    // Uniforms
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-            ],
-        });
+                ],
+            });
 
-        let storage_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Storage Bind Group Layout"),
-            entries: &[
-                // Current State (Read)
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::Texture {
-                        multisampled: false,
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
+        let storage_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("Storage Bind Group Layout"),
+                entries: &[
+                    // Current State (Read)
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-                // Next State (Write)
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::COMPUTE,
-                    ty: wgpu::BindingType::StorageTexture {
-                        access: wgpu::StorageTextureAccess::WriteOnly,
-                        format: wgpu::TextureFormat::Rgba32Float,
-                        view_dimension: wgpu::TextureViewDimension::D2,
+                    // Next State (Write)
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::StorageTexture {
+                            access: wgpu::StorageTextureAccess::WriteOnly,
+                            format: wgpu::TextureFormat::Rgba32Float,
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-            ],
-        });
+                ],
+            });
 
-        let compute_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Compute Pipeline Layout"),
-            bind_group_layouts: &[&compute_bind_group_layout, &storage_bind_group_layout],
-            push_constant_ranges: &[],
-        });
+        let compute_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Compute Pipeline Layout"),
+                bind_group_layouts: &[&compute_bind_group_layout, &storage_bind_group_layout],
+                push_constant_ranges: &[],
+            });
 
         let compute_pipeline = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("Compute Pipeline"),
@@ -240,46 +253,48 @@ impl<'a> State<'a> {
         });
 
         // Render Pipeline
-        let render_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("Render Bind Group Layout"),
-            entries: &[
-                 // Uniforms
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer {
-                        ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
-                        min_binding_size: None,
+        let render_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("Render Bind Group Layout"),
+                entries: &[
+                    // Uniforms
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-                // Texture to display
-                wgpu::BindGroupLayoutEntry {
-                    binding: 1,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture {
-                        multisampled: false,
-                        view_dimension: wgpu::TextureViewDimension::D2,
-                        sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                    // Texture to display
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 1,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Texture {
+                            multisampled: false,
+                            view_dimension: wgpu::TextureViewDimension::D2,
+                            sample_type: wgpu::TextureSampleType::Float { filterable: false },
+                        },
+                        count: None,
                     },
-                    count: None,
-                },
-                // Sampler
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
-                    count: None,
-                },
-            ],
-        });
+                    // Sampler
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 2,
+                        visibility: wgpu::ShaderStages::FRAGMENT,
+                        ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::NonFiltering),
+                        count: None,
+                    },
+                ],
+            });
 
-        let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[&render_bind_group_layout],
-            push_constant_ranges: &[],
-        });
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[&render_bind_group_layout],
+                push_constant_ranges: &[],
+            });
 
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("Render Pipeline"),
@@ -308,12 +323,10 @@ impl<'a> State<'a> {
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Uniform Bind Group"),
             layout: &compute_bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: uniform_buffer.as_entire_binding(),
-                },
-            ],
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: uniform_buffer.as_entire_binding(),
+            }],
         });
 
         let bind_group_a = device.create_bind_group(&wgpu::BindGroupDescriptor {
@@ -379,7 +392,7 @@ impl<'a> State<'a> {
             label: Some("Display Bind Group B"),
             layout: &render_bind_group_layout,
             entries: &[
-                 wgpu::BindGroupEntry {
+                wgpu::BindGroupEntry {
                     binding: 0,
                     resource: uniform_buffer.as_entire_binding(),
                 },
@@ -387,7 +400,7 @@ impl<'a> State<'a> {
                     binding: 1,
                     resource: wgpu::BindingResource::TextureView(&texture_view_b),
                 },
-                 wgpu::BindGroupEntry {
+                wgpu::BindGroupEntry {
                     binding: 2,
                     resource: wgpu::BindingResource::Sampler(&sampler),
                 },
@@ -402,18 +415,18 @@ impl<'a> State<'a> {
         // Format is R32 G32 B32 A32 floats.
 
         // Use a simple seeded loop for now
-        for y in (HEIGHT/2 - 20)..(HEIGHT/2 + 20) {
-            for x in (WIDTH/2 - 20)..(WIDTH/2 + 20) {
+        for y in (HEIGHT / 2 - 20)..(HEIGHT / 2 + 20) {
+            for x in (WIDTH / 2 - 20)..(WIDTH / 2 + 20) {
                 let idx = ((y * WIDTH + x) * 16) as usize;
                 // Set G (v) to 1.0
                 // F32 as bytes
                 let val: f32 = 1.0;
                 let bytes = val.to_ne_bytes();
                 // R=0, G=1, B=0, A=0
-                initial_data[idx+4] = bytes[0];
-                initial_data[idx+5] = bytes[1];
-                initial_data[idx+6] = bytes[2];
-                initial_data[idx+7] = bytes[3];
+                initial_data[idx + 4] = bytes[0];
+                initial_data[idx + 5] = bytes[1];
+                initial_data[idx + 6] = bytes[2];
+                initial_data[idx + 7] = bytes[3];
             }
         }
 
@@ -434,7 +447,7 @@ impl<'a> State<'a> {
                 width: WIDTH,
                 height: HEIGHT,
                 depth_or_array_layers: 1,
-            }
+            },
         );
 
         Self {
@@ -492,7 +505,9 @@ impl<'a> State<'a> {
         let w = self.size.width as f64;
         let h = self.size.height as f64;
 
-        if w == 0.0 || h == 0.0 { return; }
+        if w == 0.0 || h == 0.0 {
+            return;
+        }
 
         // Clamp cursor to window
         let cx = self.cursor_pos.x.clamp(0.0, w - 1.0);
@@ -514,10 +529,10 @@ impl<'a> State<'a> {
                 let idx = ((dy * diameter + dx) * 16) as usize;
 
                 // R=0, G=0.9, B=0, A=0
-                data[idx+4] = bytes[0];
-                data[idx+5] = bytes[1];
-                data[idx+6] = bytes[2];
-                data[idx+7] = bytes[3];
+                data[idx + 4] = bytes[0];
+                data[idx + 5] = bytes[1];
+                data[idx + 6] = bytes[2];
+                data[idx + 7] = bytes[3];
             }
         }
 
@@ -528,7 +543,9 @@ impl<'a> State<'a> {
         let copy_width = diameter.min(WIDTH - origin_x);
         let copy_height = diameter.min(HEIGHT - origin_y);
 
-        if copy_width == 0 || copy_height == 0 { return; }
+        if copy_width == 0 || copy_height == 0 {
+            return;
+        }
 
         // Write to BOTH textures to ensure it sticks
         for texture in [&self.texture_a, &self.texture_b] {
@@ -536,7 +553,11 @@ impl<'a> State<'a> {
                 wgpu::ImageCopyTexture {
                     texture,
                     mip_level: 0,
-                    origin: wgpu::Origin3d { x: origin_x, y: origin_y, z: 0 },
+                    origin: wgpu::Origin3d {
+                        x: origin_x,
+                        y: origin_y,
+                        z: 0,
+                    },
                     aspect: wgpu::TextureAspect::All,
                 },
                 &data, // This buffer is technically too large if clipped, but write_texture ignores extra
@@ -549,7 +570,7 @@ impl<'a> State<'a> {
                     width: copy_width,
                     height: copy_height,
                     depth_or_array_layers: 1,
-                }
+                },
             );
         }
     }
@@ -574,16 +595,24 @@ impl<'a> State<'a> {
         self.uniforms.kill = 0.045 + (ram / 100.0) * 0.04;
 
         // Update Uniform Buffer
-        self.queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[self.uniforms]));
+        self.queue.write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::cast_slice(&[self.uniforms]),
+        );
     }
 
     fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
         let output = self.surface.get_current_texture()?;
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         // Compute Pass (Ping Pong)
         // If frame is even, read A write B. If odd, read B write A.
@@ -637,35 +666,38 @@ impl<'a> State<'a> {
 pub fn main() {
     env_logger::init();
     let event_loop = EventLoop::new().unwrap();
-    let window = Arc::new(WindowBuilder::new()
-        .with_title("Reaction Monitor")
-        .build(&event_loop)
-        .unwrap());
+    let window = Arc::new(
+        WindowBuilder::new()
+            .with_title("Reaction Monitor")
+            .build(&event_loop)
+            .unwrap(),
+    );
 
     // We clone window for state
     let mut state = pollster::block_on(State::new(window.clone()));
 
-    let _ = event_loop.run(move |event, elwt| {
-        match event {
-            Event::WindowEvent {
-                ref event,
-                window_id,
-            } if window_id == window.id() => if !state.input(event) {
+    let _ = event_loop.run(move |event, elwt| match event {
+        Event::WindowEvent {
+            ref event,
+            window_id,
+        } if window_id == window.id() => {
+            if !state.input(event) {
                 match event {
                     WindowEvent::CloseRequested
                     | WindowEvent::KeyboardInput {
-                        event: KeyEvent {
-                            state: ElementState::Pressed,
-                            physical_key: PhysicalKey::Code(KeyCode::Escape),
-                            ..
-                        },
+                        event:
+                            KeyEvent {
+                                state: ElementState::Pressed,
+                                physical_key: PhysicalKey::Code(KeyCode::Escape),
+                                ..
+                            },
                         ..
                     } => elwt.exit(),
                     WindowEvent::Resized(physical_size) => {
                         state.resize(*physical_size);
                     }
                     WindowEvent::RedrawRequested => {
-                         state.update();
+                        state.update();
                         match state.render() {
                             Ok(_) => {}
                             Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
@@ -675,11 +707,11 @@ pub fn main() {
                     }
                     _ => {}
                 }
-            },
-            Event::AboutToWait => {
-                window.request_redraw();
             }
-            _ => {}
         }
+        Event::AboutToWait => {
+            window.request_redraw();
+        }
+        _ => {}
     });
 }

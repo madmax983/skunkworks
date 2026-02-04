@@ -1,12 +1,12 @@
+pub mod audio;
 pub mod parser;
 pub mod physics;
-pub mod audio;
 
 use anyhow::Result;
+use audio::{map_mass_to_freq, AudioEngine};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use glam::DVec2;
 use physics::{Node, NodeKind, System};
-use audio::{AudioEngine, map_mass_to_freq};
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
@@ -209,9 +209,10 @@ fn ui(f: &mut Frame, app: &App) {
     let sidebar_area = chunks[1];
 
     if app.node_count == 0 {
-        let p = Paragraph::new("No structs found in this directory.\nUsage: struct-harmonics <path>")
-            .style(Style::default().fg(Color::Red))
-            .block(Block::default().borders(Borders::ALL).title("Error"));
+        let p =
+            Paragraph::new("No structs found in this directory.\nUsage: struct-harmonics <path>")
+                .style(Style::default().fg(Color::Red))
+                .block(Block::default().borders(Borders::ALL).title("Error"));
         f.render_widget(p, canvas_area);
         return;
     }
@@ -299,7 +300,11 @@ fn ui(f: &mut Frame, app: &App) {
             }
 
             // Draw "Listener" (Camera Center)
-            ctx.print(app.camera_pos.x, app.camera_pos.y, Span::raw("👂").fg(Color::White));
+            ctx.print(
+                app.camera_pos.x,
+                app.camera_pos.y,
+                Span::raw("👂").fg(Color::White),
+            );
         });
 
     f.render_widget(canvas, canvas_area);
@@ -343,7 +348,7 @@ fn ui(f: &mut Frame, app: &App) {
                 Span::styled("Mass/Fields: ", Style::default().fg(Color::Gray)),
                 Span::raw(format!("{:.1}", node.mass)),
             ]),
-             Line::from(vec![
+            Line::from(vec![
                 Span::styled("Freq: ", Style::default().fg(Color::Gray)),
                 Span::raw(format!("{:.1} Hz", freq)),
             ]),
@@ -354,18 +359,26 @@ fn ui(f: &mut Frame, app: &App) {
         ];
         f.render_widget(
             Paragraph::new(details)
-                .block(Block::default().borders(Borders::ALL).title(" Auditory Focus "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Auditory Focus "),
+                )
                 .wrap(Wrap { trim: true }),
             sidebar_chunks[1],
         );
     } else {
         f.render_widget(
-            Paragraph::new("Move closer to hear...").block(Block::default().borders(Borders::ALL).title(" Auditory Focus ")),
+            Paragraph::new("Move closer to hear...").block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Auditory Focus "),
+            ),
             sidebar_chunks[1],
         );
     }
 
-     // Legend
+    // Legend
     let legend_items = vec![
         ListItem::new(Line::from(vec![
             Span::styled("●", Style::default().fg(Color::Yellow)),
@@ -385,7 +398,7 @@ fn ui(f: &mut Frame, app: &App) {
     f.render_widget(legend, sidebar_chunks[2]);
 
     // Help
-     let help_prompt = Paragraph::new("Press '?' or 'h'\nfor Controls")
+    let help_prompt = Paragraph::new("Press '?' or 'h'\nfor Controls")
         .style(Style::default().fg(Color::Cyan))
         .alignment(ratatui::layout::Alignment::Center)
         .block(Block::default().borders(Borders::ALL));
@@ -428,7 +441,7 @@ fn ui(f: &mut Frame, app: &App) {
 }
 
 fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
-     let popup_layout = Layout::default()
+    let popup_layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
             Constraint::Percentage((100 - percent_y) / 2),

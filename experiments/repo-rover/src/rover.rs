@@ -1,5 +1,5 @@
-use tui_shared::math::Vec2;
 use std::f64::consts::PI;
+use tui_shared::math::Vec2;
 
 pub struct Rover {
     pub pos: Vec2,
@@ -73,7 +73,7 @@ mod tests {
     fn test_rotation() {
         let mut rover = Rover::new(0.0, 0.0);
         rover.rotate(PI / 2.0); // Rotate 90 deg (Down in screen coords usually, but Up in Math)
-        // Cos(PI/2) is ~0, Sin(PI/2) is 1.
+                                // Cos(PI/2) is ~0, Sin(PI/2) is 1.
         rover.thrust(1.0);
         assert!(rover.vel.x.abs() < 0.0001);
         assert!(rover.vel.y > 0.9);
