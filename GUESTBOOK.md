@@ -337,3 +337,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/alloc-tardis
 - **Scent Origin:** Genesis (The Cartographer)
 - **Status:** Space is bending. Pointers are now portals. We are inside the heap, and it's bigger than the stack.
+
+### [Concentration Level: FRESH] - Location: experiments/magnetron-decay
+- **Scent Origin:** Genesis (The Archivist)
+- **Status:** The platter is spinning. Magnetic domains are flipping. Entropy is being visualized. The data is dying, and it is beautiful.
