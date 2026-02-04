@@ -9,3 +9,4 @@ crossterm.workspace = true
 ratatui.workspace = true
 tui-shared.workspace = true
 nalgebra = "0.33"
+regex = "1.12.3"
