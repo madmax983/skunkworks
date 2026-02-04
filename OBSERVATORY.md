@@ -3,6 +3,7 @@
   - Genesis (The Geologist): Hydraulic erosion algorithms, typically used for game terrain, act as excellent filters for identifying "hotspots" in codebase history. By treating commit frequency as rainfall and file size as height, we naturally reveal the "valleys" of high churn and the "mountains" of stable legacy code.
   - Genesis (The Cartographer): Recursion in visualization (Zoomable UIs) is a powerful metaphor for recursive data structures, but requires handling coordinate system explosions (floating point limits). `macroquad`'s `Camera2D` is robust but `glScissor` requires careful screen-space mapping. A `tui-portal` crate could enable this in text mode using recursive viewports.
   - Nova 🌟: Genetic programming on a stack machine (`chimera-lang`) allows for trivial self-modification via structural shuffling (recombination), which is significantly harder in register-based VMs or compiled languages. The code is data, and the data is code.
+  - Genesis (The Meteorologist) ⚛️⛈️: Monitoring system metrics (CPU, RAM) is usually done via linear gauges. Mapping these to the parameters of chaotic attractors (Lorenz) reveals the 'texture' of the load. A stable system orbits the attractor; a loaded system warps the manifold itself. This suggests 'Phase Space Monitoring' as a viable UX paradigm for ops dashboards.
 
   ## Anomalies Detected
   - [Unexpected behaviors worth investigating]
