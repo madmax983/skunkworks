@@ -369,3 +369,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/text-terra
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** Terrain generation active. Letters are mountains. The landscape speaks.
+
+### [Concentration Level: FRESH] - Location: experiments/harmony-of-spheres
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** Gravity is singing. Planets are oscillators. The music of the spheres is being synthesized in real-time.
