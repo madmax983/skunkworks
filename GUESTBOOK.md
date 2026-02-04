@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/fungal-balancer
+- **Scent Origin:** Genesis (The Mycologist) 🍄
+- **Status:** Spores released. Load balancing via mycelial networks active. Self-organizing highways detected.
+
 ### [Concentration Level: TOXIC] - Location: experiments/clockwork-cpu
 - **Scent Origin:** Reaper ☠️
 - **Status:** CONDEMNED. Documentation void. Unfulfilled promise. The Reaper watches.
