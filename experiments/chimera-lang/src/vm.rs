@@ -1,3 +1,28 @@
+//! Virtual Machine for the Chimera language.
+//!
+//! The `ChimeraVM` is the core execution engine that interprets the DNA instructions.
+//! It manages the instruction pointer, stack, memory grid, and biological constraints (energy).
+//!
+//! # Architecture
+//!
+//! - **DNA**: Read-only program code organized in strands of genes.
+//! - **Stack**: LIFO data structure for values (Integers and Strings).
+//! - **Grid**: 16x16 mutable 2D memory space.
+//! - **Energy**: The fuel for execution. Operations cost energy; running out causes death (halt).
+//! - **IP (Instruction Pointer)**: Tracks current `(strand_idx, gene_idx)`.
+//!
+//! # Execution Cycle
+//!
+//! 1. Check constraints (Energy > 0, IP bounds).
+//! 2. Execute Gene at IP.
+//! 3. Update State (Stack, Grid, Energy).
+//! 4. Advance IP (or Jump).
+//!
+//! # Features
+//!
+//! - **Nova**: Epigenetics, Spores (Time Travel), Quantum Entanglement.
+//! - **Cortex**: Neural Network simulation (Synapses, Activation).
+
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -19,6 +44,9 @@ impl std::fmt::Display for Value {
     }
 }
 
+/// Represents a "time-travel" snapshot of the VM state.
+///
+/// Used by the `Sporulate` and `Germinate` opcodes to save and restore the entire simulation state.
 #[cfg(feature = "nova")]
 #[derive(Clone)]
 pub struct Spore {
@@ -47,16 +75,57 @@ pub struct Spore {
     pub activation_levels: Vec<i64>,
 }
 
+/// The execution engine for the Chimera language.
+///
+/// Holds the entire state of a simulation instance.
+///
+/// # Examples
+///
+/// ```rust
+/// use chimera_lang::vm::ChimeraVM;
+/// use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+/// use chimera_lang::opcode::OpCode;
+///
+/// // Create a simple genome: [ push(10) push(20) add() ]
+/// let genes = vec![
+///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
+///     Gene { op: OpCode::Add, args: vec![] },
+/// ];
+/// let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+///
+/// let mut vm = ChimeraVM::new(dna);
+///
+/// // Execute until halted or finished
+/// while !vm.halted && vm.ip.0 < 1 { // Simple loop guard
+///     vm.step();
+/// }
+///
+/// // Check result on stack
+/// // Note: We need to access the public `stack` field.
+/// // Values are wrapped in `Value::Int`.
+/// assert_eq!(vm.stack.len(), 1);
+/// ```
 pub struct ChimeraVM {
+    /// The read-only DNA program.
     pub dna: Dna,
+    /// The LIFO stack for data manipulation.
     pub stack: Vec<Value>,
-    pub ip: (usize, usize), // (strand_idx, gene_idx)
+    /// Instruction Pointer: `(strand_index, gene_index)`.
+    pub ip: (usize, usize),
+    /// Standard Output buffer (silent, accumulates strings).
     pub output: Vec<String>,
+    /// Execution flag. If true, `step()` does nothing.
     pub halted: bool,
+    /// Biological fuel. Starts at 50. Decreases by 1 per step.
     pub energy: i64,
+    /// 16x16 2D memory grid.
     pub grid: Vec<Vec<Value>>,
+    /// If true, random mutations occur frequently.
     pub chaos_mode: bool,
+    /// Current recursion depth (limit 100).
     pub recursion_depth: usize,
+    /// "Cursor" location on the grid for spatial operations.
     pub context_loc: (usize, usize),
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
@@ -85,6 +154,9 @@ pub struct ChimeraVM {
 }
 
 impl ChimeraVM {
+    /// Creates a new VM instance with the given DNA.
+    ///
+    /// Initializes the grid to zeros, energy to 50, and IP to (0,0).
     pub fn new(dna: Dna) -> Self {
         // Initialize 16x16 grid with 0s
         let grid = vec![vec![Value::Int(0); 16]; 16];
@@ -139,6 +211,9 @@ impl ChimeraVM {
         }
     }
 
+    /// Handles a character input event.
+    ///
+    /// If a receptor is bound to this key, the input is buffered and `true` is returned.
     #[cfg(feature = "nova")]
     pub fn handle_input(&mut self, key: char) -> bool {
         if self.receptors.contains_key(&key) {
@@ -248,6 +323,14 @@ impl ChimeraVM {
         self.light_grid = new_grid;
     }
 
+    /// Advances the simulation by one tick.
+    ///
+    /// 1. Consumes 1 energy unit.
+    /// 2. Handles interrupts (Nova feature).
+    /// 3. Processes biological diffusion (hormones, waste).
+    /// 4. Checks for starvation (Energy <= 0).
+    /// 5. Executes the gene at the current Instruction Pointer (IP).
+    /// 6. Advances IP.
     pub fn step(&mut self) {
         if self.halted {
             return;
@@ -386,6 +469,14 @@ impl ChimeraVM {
         }
     }
 
+    /// Executes a single gene operation.
+    ///
+    /// Returns `Some((new_strand, new_gene))` if a jump occurred, or `None` to continue sequentially.
+    ///
+    /// # Errors
+    ///
+    /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
+    /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         if self.recursion_depth > 100 {
             self.output

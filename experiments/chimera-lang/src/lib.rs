@@ -1,3 +1,25 @@
+//! # Chimera Lang 🧬
+//!
+//! A biologically inspired esoteric programming language where code is DNA, memory is a grid, and execution is survival.
+//!
+//! ## Overview
+//!
+//! Chimera Lang simulates a virtual organism. Its "DNA" (code) is composed of strands of genes (instructions).
+//! The organism executes these genes to manipulate its internal state, interact with a 2D grid environment,
+//! and manage its energy levels to avoid starvation.
+//!
+//! ## Key Concepts
+//!
+//! - **DNA**: The program. Mutable at runtime (self-modifying code).
+//! - **Grid**: 16x16 2D memory. Cells can store Integers or Strings (OpCodes).
+//! - **Energy**: Every operation costs energy. `Photosynthesize` or `Consume` to survive.
+//! - **Evolution**: Random mutations can alter the code during execution.
+//!
+//! ## Features
+//!
+//! - **Nova**: Adds advanced biological features like Epigenetics, Spores (Time Travel), and CRISPR (Search/Replace).
+//! - **Cortex**: Adds neural network capabilities, allowing the organism to "learn" and "sense" its environment.
+
 use pest_derive::Parser;
 
 #[derive(Parser)]
@@ -30,10 +52,6 @@ mod nova_quantum_test;
 mod nova_spore_test;
 mod nova_test;
 #[cfg(test)]
-<<<<<<< sentry-chimera-nova-tests-12531520350046153491
-mod cortex_test;
-#[cfg(test)]
 mod sentry_nova_test;
-=======
+#[cfg(test)]
 mod nova_waste_test;
->>>>>>> trunk
