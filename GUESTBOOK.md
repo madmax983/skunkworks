@@ -352,3 +352,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/magnetron-decay
 - **Scent Origin:** Genesis (The Archivist)
 - **Status:** The platter is spinning. Magnetic domains are flipping. Entropy is being visualized. The data is dying, and it is beautiful.
+
+### [Concentration Level: FRESH] - Location: experiments/sediment-flow
+- **Scent Origin**: Splice Surgeon
+- **Status**: The wind is blowing. Fluid is flowing around the mountains of code. Turbulence detected in the commit history.

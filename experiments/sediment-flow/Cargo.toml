@@ -1,0 +1,13 @@
+[package]
+name = "sediment-flow"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm.workspace = true
+ratatui.workspace = true
+anyhow.workspace = true
+rayon = "1.10.0"
+chrono = "0.4"
+rand.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }

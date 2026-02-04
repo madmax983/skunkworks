@@ -121,6 +121,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A roguelike where the dungeon is a volatile market order book generated from git history.
 - **Novel trait**: Commit metadata determines market volatility and price levels; player fights market forces.
 - **Status**: experiments/market-rogue
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### sediment-flow
+- **Parents**: experiments/code-erosion + experiments/karman-text-street
+- **Concept**: Fluid simulation flowing over and around terrain generated from git history.
+- **Novel trait**: Code structure acts as wind tunnel obstacles, shaping fluid flow dynamics.
+- **Status**: experiments/sediment-flow
 - **Evaluation**: Compiles. Freshly spawned.
 
 <!-- Example:

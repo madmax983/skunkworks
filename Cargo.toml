@@ -95,6 +95,7 @@ members = [
     "experiments/alloc-tardis", 
     "experiments/magnetron-decay", 
     "experiments/echo-chamber",
+    "experiments/sediment-flow",
 ]
 resolver = "2"
 
