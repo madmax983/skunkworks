@@ -97,6 +97,7 @@ members = [
     "experiments/hyperbolic-ants", "experiments/sonar-swarm", "experiments/aperiodic-citadel", "experiments/firefly-synapse",
     "experiments/chimera-market",
     "experiments/glyph-evolution",
+    "experiments/penrose-genes",
 ]
 resolver = "2"
 
