@@ -1,3 +1,4 @@
+use crate::opcode::OpCode;
 use crate::Rule;
 use pest::iterators::Pair;
 
@@ -18,7 +19,7 @@ pub struct Strand {
 
 #[derive(Debug, Clone)]
 pub struct Gene {
-    pub name: String,
+    pub op: OpCode,
     pub args: Vec<Nucleotide>,
 }
 
@@ -72,10 +73,11 @@ impl Gene {
         match pair.as_rule() {
             Rule::gene => {
                 let mut inner = pair.into_inner();
-                let name = inner.next().unwrap().as_str().to_string();
+                let name = inner.next().unwrap().as_str();
+                let op = name.parse().expect("Failed to parse opcode");
                 let args_pair = inner.next().unwrap();
                 let args = args_pair.into_inner().map(Nucleotide::from_pair).collect();
-                Gene { name, args }
+                Gene { op, args }
             }
             _ => panic!("Expected Gene rule"),
         }

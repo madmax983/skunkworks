@@ -2,6 +2,7 @@
 #[cfg(feature = "nova")]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::opcode::OpCode;
     use crate::vm::ChimeraVM;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
@@ -21,19 +22,19 @@ mod tests {
         // 3: push(100) - this should be skipped
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(3)],
             },
             Gene {
-                name: "methylate".to_string(),
+                op: OpCode::Methylate,
                 args: vec![],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(100)],
             },
         ];
@@ -75,15 +76,15 @@ mod tests {
 
         let genes2 = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "demethylate".to_string(),
+                op: OpCode::Demethylate,
                 args: vec![],
             },
         ];
@@ -118,15 +119,15 @@ mod tests {
         let strand0 = Strand {
             genes: vec![
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(100)],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(101)],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(102)],
                 },
             ],
@@ -135,15 +136,15 @@ mod tests {
         let strand1 = Strand {
             genes: vec![
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(200)],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(201)],
                 },
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(202)],
                 },
             ],
@@ -152,19 +153,19 @@ mod tests {
         let controller = Strand {
             genes: vec![
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(0)],
                 }, // strand_a
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(1)],
                 }, // strand_b
                 Gene {
-                    name: "push".to_string(),
+                    op: OpCode::Push,
                     args: vec![Nucleotide::Number(1)],
                 }, // split point
                 Gene {
-                    name: "recombine".to_string(),
+                    op: OpCode::Recombine,
                     args: vec![],
                 },
             ],
@@ -222,11 +223,11 @@ mod tests {
         // We use photosynthesize to avoid starvation.
         let genes = vec![
             Gene {
-                name: "photosynthesize".to_string(),
+                op: OpCode::Photosynthesize,
                 args: vec![],
             },
             Gene {
-                name: "jump".to_string(),
+                op: OpCode::Jump,
                 args: vec![Nucleotide::Number(0)],
             },
         ];
@@ -284,19 +285,19 @@ mod tests {
 
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(50)],
             },
             Gene {
-                name: "telomerase".to_string(),
+                op: OpCode::Telomerase,
                 args: vec![],
             },
             Gene {
-                name: "photosynthesize".to_string(),
+                op: OpCode::Photosynthesize,
                 args: vec![],
             },
             Gene {
-                name: "jump".to_string(),
+                op: OpCode::Jump,
                 args: vec![Nucleotide::Number(0)],
             },
         ];
@@ -328,7 +329,7 @@ mod tests {
     fn test_s_index() {
         // [ s_index() ]
         let genes = vec![Gene {
-            name: "s_index".to_string(),
+            op: OpCode::SIndex,
             args: vec![],
         }];
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -341,11 +342,11 @@ mod tests {
         // [ push(0) mitosis() ]
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             },
             Gene {
-                name: "mitosis".to_string(),
+                op: OpCode::Mitosis,
                 args: vec![],
             },
         ];
@@ -381,11 +382,11 @@ mod tests {
         // [ push(0) apoptosis() ]
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             },
             Gene {
-                name: "apoptosis".to_string(),
+                op: OpCode::Apoptosis,
                 args: vec![],
             },
         ];
@@ -413,23 +414,23 @@ mod tests {
         // [ push(0) push(5) push("push") push(999) integrase() ]
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             }, // strand
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             }, // gene_idx (append, len is 5)
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::String("push".to_string())],
             }, // name
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(999)],
             }, // arg
             Gene {
-                name: "integrase".to_string(),
+                op: OpCode::Integrase,
                 args: vec![],
             }, // 4
         ];
@@ -454,27 +455,27 @@ mod tests {
         // Original: 0,1,2,3: pushes, 4: integrase, 5: push(100).
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             }, // strand
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             }, // gene_idx 0
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::String("push".to_string())],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(200)],
             },
             Gene {
-                name: "integrase".to_string(),
+                op: OpCode::Integrase,
                 args: vec![],
             }, // 4: integrase
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(100)],
             }, // 5: target
         ];
@@ -505,19 +506,19 @@ mod tests {
         // Remove at 2.
         let genes = vec![
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(0)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(2)],
             },
             Gene {
-                name: "excision".to_string(),
+                op: OpCode::Excision,
                 args: vec![],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(100)],
             },
         ];
@@ -545,53 +546,53 @@ mod tests {
         let genes = vec![
             // Write 10 to (5,5)
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(10)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "g_write".to_string(),
+                op: OpCode::GWrite,
                 args: vec![],
             },
             // Write "add" to (5,6)
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::String("add".to_string())],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             },
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(6)],
             },
             Gene {
-                name: "g_write".to_string(),
+                op: OpCode::GWrite,
                 args: vec![],
             },
             // Incubate
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(2)],
             }, // len
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             }, // y
             Gene {
-                name: "push".to_string(),
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
             }, // x
             Gene {
-                name: "incubate".to_string(),
+                op: OpCode::Incubate,
                 args: vec![],
             },
         ];
@@ -609,7 +610,7 @@ mod tests {
         assert_eq!(new_strand.genes.len(), 2);
 
         // Check gene 0: push(10)
-        assert_eq!(new_strand.genes[0].name, "push");
+        assert_eq!(new_strand.genes[0].op, OpCode::Push);
         if let Nucleotide::Number(n) = new_strand.genes[0].args[0] {
             assert_eq!(n, 10);
         } else {
@@ -617,7 +618,7 @@ mod tests {
         }
 
         // Check gene 1: add()
-        assert_eq!(new_strand.genes[1].name, "add");
+        assert_eq!(new_strand.genes[1].op, OpCode::Add);
         assert!(new_strand.genes[1].args.is_empty());
     }
 }

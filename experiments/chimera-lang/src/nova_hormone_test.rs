@@ -6,7 +6,7 @@ mod tests {
 
     fn make_gene(name: &str, args: Vec<i64>) -> Gene {
         Gene {
-            name: name.to_string(),
+            op: name.parse().unwrap(),
             args: args.into_iter().map(Nucleotide::Number).collect(),
         }
     }

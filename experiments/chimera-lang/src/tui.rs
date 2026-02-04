@@ -62,7 +62,7 @@ fn run_app<B: ratatui::backend::Backend>(
 
             for (s_idx, strand) in helix.strands.iter().enumerate() {
                 for (g_idx, gene) in strand.genes.iter().enumerate() {
-                    let content = format!("{}({:?})", gene.name, gene.args);
+                    let content = format!("{}({:?})", gene.op, gene.args);
                     let mut style = Style::default();
                     let mut prefix = "  ";
 

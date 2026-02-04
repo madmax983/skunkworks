@@ -2,6 +2,7 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::opcode::OpCode;
     use crate::vm::ChimeraVM;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
@@ -15,8 +16,8 @@ mod tests {
     #[test]
     fn test_waste_accumulation() {
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "drop".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Drop, args: vec![] },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -34,9 +35,9 @@ mod tests {
     fn test_migrate() {
         // [ push(1) push(1) migrate() ] -> moves to (8+1, 8+1) = (9, 9)
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(1)] },
-            Gene { name: "migrate".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Migrate, args: vec![] },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -60,8 +61,8 @@ mod tests {
         // Generate waste then detox
         // [ detox(2) ]
         let genes = vec![
-            Gene { name: "push".to_string(), args: vec![Nucleotide::Number(2)] },
-            Gene { name: "detox".to_string(), args: vec![] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
+            Gene { op: OpCode::Detox, args: vec![] },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
