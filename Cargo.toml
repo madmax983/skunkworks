@@ -93,7 +93,7 @@ members = [
     "experiments/magnetron-decay", 
     "experiments/echo-chamber",
     "experiments/sediment-flow", "experiments/serde-quipu", "experiments/fungal-balancer",
-    "experiments/hyperbolic-ants", "experiments/sonar-swarm", "experiments/aperiodic-citadel",
+    "experiments/hyperbolic-ants", "experiments/sonar-swarm", "experiments/aperiodic-citadel", "experiments/firefly-synapse",
 ]
 resolver = "2"
 

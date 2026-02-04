@@ -295,3 +295,7 @@
 ### [Concentration Level: DECOMPOSING] - Location: experiments/code-metropolis (GRAVEYARD)
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Failed to improve during grace period.
+
+### [Concentration Level: FRESH] - Location: experiments/firefly-synapse
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** 100,000 agents synchronizing. The swarm is breathing light. Linked Cell Lists active.
