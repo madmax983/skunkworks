@@ -200,9 +200,13 @@
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
-### [Concentration Level: TOXIC] - Location: experiments/digital-koi
+### [Concentration Level: DECOMPOSING] - Location: experiments/digital-koi (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Generic morphology (Boids). Weak system integration.
+- **Status:** EXECUTED. Documentation void. Generic Boids implementation. Failed to improve during grace period.
+
+### [Concentration Level: TOXIC] - Location: experiments/call-fern
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Documentation void. Generic morphology.
 
 ### [Concentration Level: FRESH] - Location: experiments/process-orbit
 - **Scent Origin:** Nova

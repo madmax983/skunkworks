@@ -14,7 +14,6 @@ members = [
     "experiments/crystal-structure",
     "experiments/crate-universe",
     "experiments/digital-compost",
-    "experiments/digital-koi",
     "experiments/dx-audit",
     "experiments/euclidean-pulse",
     "experiments/fabric-limb",
