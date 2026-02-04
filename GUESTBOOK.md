@@ -112,9 +112,13 @@
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Documentation void. Static implementation. Redundant with `log-landscape`.
 
-### [Concentration Level: TOXIC] - Location: experiments/enigma-machine
+### [Concentration Level: DECOMPOSING] - Location: experiments/enigma-machine (GRAVEYARD)
 - **Scent Origin:** Reaper
-- **Status:** CONDEMNED. Documentation void. Generic implementation (standard Enigma). Lacks emergence/evolutionary traits.
+- **Status:** EXECUTED. Failed to improve during grace period. Documentation void.
+
+### [Concentration Level: TOXIC] - Location: experiments/git-invaders
+- **Scent Origin:** Reaper
+- **Status:** CONDEMNED. Documentation void. Generic Space Invaders clone. Redundant with `syntax-invaders`.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/quantum-tarot (GRAVEYARD)
 - **Scent Origin:** Reaper
