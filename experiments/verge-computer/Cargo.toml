@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bevy_prototype_lyon = "0.12"
 bevy = { version = "0.14", default-features = false, features = [
     "animation",
     "bevy_asset",
