@@ -46,7 +46,13 @@ impl CodeGraph {
         graph
     }
 
-    fn scan_recursive(graph: &mut CodeGraph, path: PathBuf, parent_idx: usize, depth: usize, max_depth: usize) {
+    fn scan_recursive(
+        graph: &mut CodeGraph,
+        path: PathBuf,
+        parent_idx: usize,
+        depth: usize,
+        max_depth: usize,
+    ) {
         if depth >= max_depth {
             return;
         }
@@ -103,7 +109,9 @@ impl CodeGraph {
         // Radial Tree:
         // Position = (depth * spacing, angle)
 
-        if self.nodes.is_empty() { return; }
+        if self.nodes.is_empty() {
+            return;
+        }
 
         // Assign angles.
         // Map parent_idx -> list of children
@@ -116,7 +124,14 @@ impl CodeGraph {
         self.layout_recursive(root_idx, 0.0, std::f32::consts::TAU, 100.0, &children_map);
     }
 
-    fn layout_recursive(&mut self, node_idx: usize, start_angle: f32, end_angle: f32, radius_step: f32, children_map: &[Vec<usize>]) {
+    fn layout_recursive(
+        &mut self,
+        node_idx: usize,
+        start_angle: f32,
+        end_angle: f32,
+        radius_step: f32,
+        children_map: &[Vec<usize>],
+    ) {
         let children = &children_map[node_idx];
         if children.is_empty() {
             return;
@@ -164,7 +179,11 @@ mod tests {
         // Check positions
         for node in &graph.nodes {
             if node.depth > 0 {
-                assert!(node.position.length() > 0.0, "Node at depth {} should have non-zero position", node.depth);
+                assert!(
+                    node.position.length() > 0.0,
+                    "Node at depth {} should have non-zero position",
+                    node.depth
+                );
             } else {
                 assert_eq!(node.position, Vec2::ZERO);
             }

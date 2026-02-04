@@ -172,10 +172,10 @@ impl Terrain {
         self.add_height(x_i + 1, y_i + 1, amount * u * v);
 
         // Track sediment
-         let idx = y_i * self.width + x_i;
-         if idx < self.sediment_map.len() {
+        let idx = y_i * self.width + x_i;
+        if idx < self.sediment_map.len() {
             self.sediment_map[idx] += amount;
-         }
+        }
     }
 
     fn erode_point(&mut self, x: f64, y: f64, amount: f64) {

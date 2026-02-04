@@ -6,7 +6,6 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use game::{Direction, World};
 use git::GitHistory;
-use semantic::ToSnapshot;
 use ratatui::{
     layout::{Constraint, Direction as LayoutDirection, Layout},
     style::{Color, Modifier, Style},
@@ -14,6 +13,7 @@ use ratatui::{
     widgets::{canvas::Canvas, Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
+use semantic::ToSnapshot;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
@@ -54,7 +54,8 @@ fn main() -> Result<()> {
             status_message = None;
         }
 
-        tui.terminal.draw(|f| ui(f, &world, status_message.as_deref()))?;
+        tui.terminal
+            .draw(|f| ui(f, &world, status_message.as_deref()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())

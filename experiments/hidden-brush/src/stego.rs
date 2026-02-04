@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use image::{DynamicImage};
+use image::DynamicImage;
 
 pub fn encode(img: &DynamicImage, data: &[u8]) -> Result<DynamicImage> {
     let mut rgb_img = img.to_rgb8();
@@ -8,7 +8,11 @@ pub fn encode(img: &DynamicImage, data: &[u8]) -> Result<DynamicImage> {
     let needed_bits = 32 + data.len() * 8;
 
     if needed_bits > capacity_bits {
-        return Err(anyhow!("Image too small to hold data. Capacity: {} bits, Needed: {} bits", capacity_bits, needed_bits));
+        return Err(anyhow!(
+            "Image too small to hold data. Capacity: {} bits, Needed: {} bits",
+            capacity_bits,
+            needed_bits
+        ));
     }
 
     let len_bytes = (data.len() as u32).to_le_bytes();
@@ -62,14 +66,14 @@ pub fn decode(img: &DynamicImage) -> Result<Vec<u8>> {
     for _ in 0..len {
         let mut byte = 0u8;
         for i in 0..8 {
-             if let Some(val) = channel_values.next() {
+            if let Some(val) = channel_values.next() {
                 let bit = val & 1;
                 if bit == 1 {
                     byte |= 1 << i;
                 }
-             } else {
-                 return Err(anyhow!("Unexpected end of image data"));
-             }
+            } else {
+                return Err(anyhow!("Unexpected end of image data"));
+            }
         }
         data.push(byte);
     }
@@ -80,12 +84,14 @@ pub fn decode(img: &DynamicImage) -> Result<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use image::{RgbImage, Rgb};
+    use image::{Rgb, RgbImage};
 
     #[test]
     fn test_roundtrip() {
         let mut img = RgbImage::new(100, 100);
-        for p in img.pixels_mut() { *p = Rgb([100, 100, 100]); }
+        for p in img.pixels_mut() {
+            *p = Rgb([100, 100, 100]);
+        }
         let dynamic = DynamicImage::ImageRgb8(img);
 
         let data = vec![1, 2, 3, 4, 5, 255, 0];

@@ -3,7 +3,7 @@ mod stego;
 mod ui;
 mod vm;
 
-use anyhow::{Result};
+use anyhow::Result;
 use clap::{Parser, Subcommand};
 use image::{DynamicImage, Rgb, RgbImage};
 use rand::Rng;
@@ -54,7 +54,13 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Encode { script, image, output, width, height } => {
+        Commands::Encode {
+            script,
+            image,
+            output,
+            width,
+            height,
+        } => {
             let script_content = fs::read_to_string(&script)?;
             let bytecode = bytecode::Assembler::parse(&script_content)?;
 
@@ -79,7 +85,10 @@ fn main() -> Result<()> {
             let mut turtle = vm::Turtle::new();
             turtle.run(&instructions)?;
 
-            println!("Executed. Path has {} segments. Starting UI...", turtle.path.len());
+            println!(
+                "Executed. Path has {} segments. Starting UI...",
+                turtle.path.len()
+            );
             ui::run(turtle)?;
         }
     }

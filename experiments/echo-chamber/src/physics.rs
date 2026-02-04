@@ -51,10 +51,26 @@ impl AcousticGrid {
                 // If neighbor is a wall, assume neighbor pressure == current pressure
                 // This makes the gradient zero (du/dn = 0) which represents a rigid wall.
 
-                let p_up = if self.walls[idx_up] { p_curr } else { self.pressure[idx_up] };
-                let p_down = if self.walls[idx_down] { p_curr } else { self.pressure[idx_down] };
-                let p_left = if self.walls[idx_left] { p_curr } else { self.pressure[idx_left] };
-                let p_right = if self.walls[idx_right] { p_curr } else { self.pressure[idx_right] };
+                let p_up = if self.walls[idx_up] {
+                    p_curr
+                } else {
+                    self.pressure[idx_up]
+                };
+                let p_down = if self.walls[idx_down] {
+                    p_curr
+                } else {
+                    self.pressure[idx_down]
+                };
+                let p_left = if self.walls[idx_left] {
+                    p_curr
+                } else {
+                    self.pressure[idx_left]
+                };
+                let p_right = if self.walls[idx_right] {
+                    p_curr
+                } else {
+                    self.pressure[idx_right]
+                };
 
                 let laplacian = p_up + p_down + p_left + p_right - 4.0 * p_curr;
 
@@ -87,10 +103,10 @@ impl AcousticGrid {
                 // Smooth injection (Gaussian-ish)
                 self.pressure[idx] += strength;
                 self.pressure_prev[idx] += strength; // Adding to both adds a static displacement (DC offset).
-                // To add an impulse (velocity), we change current but not prev.
-                // u_next = 2u - u_prev + ...
-                // If u is high, u_prev is 0 -> acceleration.
-                // Let's just set P at center.
+                                                     // To add an impulse (velocity), we change current but not prev.
+                                                     // u_next = 2u - u_prev + ...
+                                                     // If u is high, u_prev is 0 -> acceleration.
+                                                     // Let's just set P at center.
             }
         }
     }
@@ -106,7 +122,7 @@ impl AcousticGrid {
     }
 
     pub fn remove_wall(&mut self, x: usize, y: usize) {
-         if x < self.width && y < self.height {
+        if x < self.width && y < self.height {
             let idx = y * self.width + x;
             self.walls[idx] = false;
         }
@@ -181,6 +197,9 @@ mod tests {
         let val_no_wall = grid2.get(5, 5);
 
         println!("With Wall: {}, No Wall: {}", val_with_wall, val_no_wall);
-        assert!(val_with_wall > val_no_wall, "Energy should be conserved better near wall");
+        assert!(
+            val_with_wall > val_no_wall,
+            "Energy should be conserved better near wall"
+        );
     }
 }

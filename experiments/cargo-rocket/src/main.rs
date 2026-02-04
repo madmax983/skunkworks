@@ -150,7 +150,12 @@ fn ui(f: &mut Frame, app: &App) {
     let ship = &app.system.ship;
     let vel_mag = ship.vel.magnitude();
 
-    let visited_count = app.system.bodies.iter().filter(|b| b.color == Color::Green).count();
+    let visited_count = app
+        .system
+        .bodies
+        .iter()
+        .filter(|b| b.color == Color::Green)
+        .count();
     let total_count = app.system.bodies.iter().filter(|b| !b.is_fixed).count();
     let progress_ratio = if total_count > 0 {
         visited_count as f64 / total_count as f64
@@ -202,9 +207,7 @@ fn ui(f: &mut Frame, app: &App) {
         Line::from(if ship.thrusting {
             Span::styled(
                 "🔥 ENGINE ON",
-                Style::default()
-                    .fg(Color::Red)
-                    .add_modifier(Modifier::BOLD),
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
             )
         } else {
             Span::raw("   ENGINE OFF")

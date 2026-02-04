@@ -27,6 +27,7 @@ pub struct System {
     pub bodies: Vec<Body>,
     pub ship: Ship,
     pub g: f64,
+    forces: Vec<Vec2>,
 }
 
 impl Default for System {
@@ -50,6 +51,7 @@ impl System {
                 thrusting: false,
             },
             g: 100.0, // High gravity for fun
+            forces: Vec::new(),
         }
     }
 
@@ -61,30 +63,39 @@ impl System {
         // But for better stability, maybe Verlet.
         // Let's stick to Semi-Implicit Euler (Symplectic Euler) as it's simple and energy conserving-ish.
 
-        let mut forces = vec![Vec2::zero(); self.bodies.len()];
+        if self.forces.len() != self.bodies.len() {
+            self.forces.resize(self.bodies.len(), Vec2::zero());
+        }
+        for f in &mut self.forces {
+            *f = Vec2::zero();
+        }
+
+        let bodies = &mut self.bodies;
+        let forces = &mut self.forces;
+        let g = self.g;
 
         for (i, force) in forces.iter_mut().enumerate() {
-            if self.bodies[i].is_fixed {
+            if bodies[i].is_fixed {
                 continue;
             }
-            for j in 0..self.bodies.len() {
+            for j in 0..bodies.len() {
                 if i == j {
                     continue;
                 }
-                let r = self.bodies[j].pos - self.bodies[i].pos;
+                let r = bodies[j].pos - bodies[i].pos;
                 let dist_sq = r.magnitude_squared();
                 if dist_sq < 0.1 {
                     continue;
                 } // Softening
                 let dist = dist_sq.sqrt();
-                let f = r / dist * (self.g * self.bodies[j].mass / dist_sq); // F/m = a. We just want 'a' from other body.
-                                                                             // Wait, F = G m1 m2 / r^2. a1 = F / m1 = G m2 / r^2.
+                let f = r / dist * (g * bodies[j].mass / dist_sq); // F/m = a. We just want 'a' from other body.
+                                                                   // Wait, F = G m1 m2 / r^2. a1 = F / m1 = G m2 / r^2.
                 *force += f;
             }
         }
 
         // Update Bodies
-        for (i, body) in self.bodies.iter_mut().enumerate() {
+        for (i, body) in bodies.iter_mut().enumerate() {
             if body.is_fixed {
                 continue;
             }
@@ -96,7 +107,7 @@ impl System {
         // 2. Ship Physics
         // Ship is affected by all bodies.
         let mut ship_acc = Vec2::zero();
-        for body in &self.bodies {
+        for body in bodies.iter() {
             let r = body.pos - self.ship.pos;
             let dist_sq = r.magnitude_squared();
             if dist_sq < 1.0 {
@@ -179,5 +190,28 @@ mod tests {
             "Orbit drifted too much: {}",
             dist
         );
+    }
+
+    #[test]
+    fn test_update_perf() {
+        let mut sys = System::new();
+        // Add some bodies
+        for i in 0..10 {
+            sys.bodies.push(Body {
+                pos: Vec2::new(i as f64 * 10.0, 0.0),
+                vel: Vec2::zero(),
+                acc: Vec2::zero(),
+                mass: 10.0,
+                radius: 1.0,
+                name: format!("Body {}", i),
+                color: Color::White,
+                is_fixed: false,
+            });
+        }
+
+        // Run update many times to ensure stability and no crashes
+        for _ in 0..1000 {
+            sys.update(0.1);
+        }
     }
 }

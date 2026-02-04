@@ -90,19 +90,19 @@ The bartender's smile widened. His ugliness was the stuff of legend. In an age o
         ".as_bytes();
 
         for i in 0..count {
-             let mut data = [0u8; 64];
-             // Cycle through corpus
-             for j in 0..64 {
-                 let corpus_idx = (i * 64 + j) % corpus.len();
-                 data[j] = corpus[corpus_idx];
-             }
+            let mut data = [0u8; 64];
+            // Cycle through corpus
+            for j in 0..64 {
+                let corpus_idx = (i * 64 + j) % corpus.len();
+                data[j] = corpus[corpus_idx];
+            }
 
-             // Add some random noise to 10% of sectors to simulate "Empty" or "Binary" space
-             if rng.gen_bool(0.1) {
+            // Add some random noise to 10% of sectors to simulate "Empty" or "Binary" space
+            if rng.gen_bool(0.1) {
                 rng.fill(&mut data);
-             }
+            }
 
-             sectors.push(Sector::new(i, data));
+            sectors.push(Sector::new(i, data));
         }
 
         Self {
@@ -165,6 +165,9 @@ mod tests {
         sector.decay(100.0, &mut rng);
 
         // Check if data changed
-        assert_ne!(sector.data, [0u8; 64], "Bits should have flipped given zero magnetization and high dt");
+        assert_ne!(
+            sector.data, [0u8; 64],
+            "Bits should have flipped given zero magnetization and high dt"
+        );
     }
 }

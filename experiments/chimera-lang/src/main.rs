@@ -1,16 +1,16 @@
+use anyhow::Result;
+use clap::Parser as ClapParser;
 use pest::Parser;
 use pest_derive::Parser;
-use clap::Parser as ClapParser;
 use std::fs;
-use anyhow::Result;
 
 mod ast;
-mod vm;
 mod tui;
+mod vm;
 
 use crate::ast::Dna;
-use crate::vm::ChimeraVM;
 use crate::tui::run_tui;
+use crate::vm::ChimeraVM;
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]

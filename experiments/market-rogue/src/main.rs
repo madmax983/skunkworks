@@ -4,15 +4,15 @@ mod simulation;
 use anyhow::Result;
 use crawler::{crawl, Node};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use rand::{Rng, SeedableRng, rngs::StdRng};
+use rand::{rngs::StdRng, Rng, SeedableRng};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize},
     symbols::Marker,
     text::{Line, Span},
     widgets::{
-        Block, Borders, Paragraph,
         canvas::{Canvas, Points},
+        Block, Borders, Paragraph,
     },
     Frame,
 };
@@ -163,7 +163,9 @@ impl App {
     }
 
     fn move_player(&mut self, dx: f64, dy: f64) {
-        if self.game_over { return; }
+        if self.game_over {
+            return;
+        }
         self.player.x = (self.player.x + dx).clamp(0.0, self.grid.width as f64 - 1.0);
         self.player.y = (self.player.y + dy).clamp(0.0, self.grid.height as f64 - 1.0);
     }
@@ -233,11 +235,25 @@ fn draw(f: &mut Frame, app: &mut App) {
     let info = Paragraph::new(vec![
         Line::from(vec![
             Span::styled(" MARKET ROGUE ", Style::default().fg(Color::Yellow).bold()),
-            Span::raw(format!("Level {}/{}", app.current_commit_idx + 1, app.commits.len())),
+            Span::raw(format!(
+                "Level {}/{}",
+                app.current_commit_idx + 1,
+                app.commits.len()
+            )),
         ]),
         Line::from(vec![
-            Span::raw(format!("Price: {:.1} | Volatility: {:.2} | ", app.market_price, app.volatility)),
-            Span::styled(&app.message, Style::default().fg(if app.game_over { Color::Red } else { Color::Green })),
+            Span::raw(format!(
+                "Price: {:.1} | Volatility: {:.2} | ",
+                app.market_price, app.volatility
+            )),
+            Span::styled(
+                &app.message,
+                Style::default().fg(if app.game_over {
+                    Color::Red
+                } else {
+                    Color::Green
+                }),
+            ),
         ]),
         Line::from(commit_info),
     ])
@@ -258,13 +274,16 @@ fn draw(f: &mut Frame, app: &mut App) {
         for x in 0..app.grid.width {
             match app.grid.get(x, y) {
                 Particle::Bid => {
-                    app.bids_buf.push((x as f64, (app.grid.height - 1 - y) as f64));
+                    app.bids_buf
+                        .push((x as f64, (app.grid.height - 1 - y) as f64));
                 }
                 Particle::Ask => {
-                    app.asks_buf.push((x as f64, (app.grid.height - 1 - y) as f64));
+                    app.asks_buf
+                        .push((x as f64, (app.grid.height - 1 - y) as f64));
                 }
                 Particle::Trade { .. } => {
-                    app.trades_buf.push((x as f64, (app.grid.height - 1 - y) as f64));
+                    app.trades_buf
+                        .push((x as f64, (app.grid.height - 1 - y) as f64));
                 }
                 Particle::Empty => {}
             }
@@ -272,7 +291,11 @@ fn draw(f: &mut Frame, app: &mut App) {
     }
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Exchange Floor "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Exchange Floor "),
+        )
         .x_bounds([0.0, app.grid.width as f64])
         .y_bounds([0.0, app.grid.height as f64])
         .marker(Marker::Block)

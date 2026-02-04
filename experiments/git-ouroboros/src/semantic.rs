@@ -116,7 +116,7 @@ mod tests {
         assert_eq!(food_pos.y, 5.0);
 
         // Verify Food Props
-         match food.props.get("commit_author") {
+        match food.props.get("commit_author") {
             Some(tui_semantic::PropValue::Text(s)) => assert_eq!(s, "Nova"),
             _ => panic!("commit_author missing or wrong type"),
         }
