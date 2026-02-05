@@ -53,19 +53,46 @@ mod tests {
         //   push(1) tune()
         //   push(1) tune() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Broadcast, args: vec![] },
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-            Gene { op: OpCode::Broadcast, args: vec![] },
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Tune, args: vec![], },
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Tune, args: vec![], },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Broadcast,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                op: OpCode::Broadcast,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Tune,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Tune,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         while !vm.halted {
@@ -88,9 +115,18 @@ mod tests {
         // We simulate this with manual loop in simulation for simplicity.
         let mut genes = Vec::new();
         for i in 0..101 {
-            genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] }); // Channel 99
-            genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(i as i64)] });
-            genes.push(Gene { op: OpCode::Broadcast, args: vec![] });
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(99)],
+            }); // Channel 99
+            genes.push(Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(i as i64)],
+            });
+            genes.push(Gene {
+                op: OpCode::Broadcast,
+                args: vec![],
+            });
         }
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -104,32 +140,43 @@ mod tests {
 
         // Check internal ether state
         if let Some(queue) = vm.ether.get(&99) {
-             if queue.len() != 100 {
-                 println!("VM Output: {:?}", vm.output);
-                 println!("Queue len: {}", queue.len());
-             }
-             assert_eq!(queue.len(), 100);
-             // The last one (100) should have been rejected.
-             // Queue contains 0..99.
-             assert_eq!(queue.front(), Some(&Value::Int(0)));
-             assert_eq!(queue.back(), Some(&Value::Int(99)));
+            if queue.len() != 100 {
+                println!("VM Output: {:?}", vm.output);
+                println!("Queue len: {}", queue.len());
+            }
+            assert_eq!(queue.len(), 100);
+            // The last one (100) should have been rejected.
+            // Queue contains 0..99.
+            assert_eq!(queue.front(), Some(&Value::Int(0)));
+            assert_eq!(queue.back(), Some(&Value::Int(99)));
         } else {
-             println!("VM Output: {:?}", vm.output);
-             panic!("Queue 99 not found");
+            println!("VM Output: {:?}", vm.output);
+            panic!("Queue 99 not found");
         }
 
         // Check output for error
         assert!(vm.output.iter().any(|s| s.contains("Channel 99 full")));
     }
 
-
     #[test]
     fn test_radio_persistence_manual() {
-         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(7)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-            Gene { op: OpCode::Broadcast, args: vec![] },
-            Gene { op: OpCode::Sporulate, args: vec![] },
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(7)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(42)],
+            },
+            Gene {
+                op: OpCode::Broadcast,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Sporulate,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 

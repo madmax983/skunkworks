@@ -32,6 +32,7 @@ pub struct Spore {
     pub receptors: HashMap<char, usize>,
     pub entangled_pairs: HashMap<usize, usize>,
     pub portals: HashMap<(usize, usize), (usize, usize)>,
+    pub membranes: Vec<Vec<u8>>,
     pub sonar_target: Option<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
     #[cfg(feature = "cortex")]
@@ -75,9 +76,18 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
                 let mut count = 4;
 
                 for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        sum += vm.hormone_grid[ny][nx][c];
-                        count += 1;
+                    let mut blocked = false;
+                    if let Some(mask) = get_direction_mask(dy, dx) {
+                        if (vm.membranes[y][x] & mask) != 0 {
+                            blocked = true;
+                        }
+                    }
+
+                    if !blocked {
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            sum += vm.hormone_grid[ny][nx][c];
+                            count += 1;
+                        }
                     }
                 }
 
@@ -102,9 +112,18 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
             let mut count = 4;
 
             for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    sum += vm.waste_grid[ny][nx];
-                    count += 1;
+                let mut blocked = false;
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        blocked = true;
+                    }
+                }
+
+                if !blocked {
+                    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        sum += vm.waste_grid[ny][nx];
+                        count += 1;
+                    }
                 }
             }
 
@@ -128,9 +147,18 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             let mut count = 4;
 
             for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    sum += vm.light_grid[ny][nx];
-                    count += 1;
+                let mut blocked = false;
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        blocked = true;
+                    }
+                }
+
+                if !blocked {
+                    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                        sum += vm.light_grid[ny][nx];
+                        count += 1;
+                    }
                 }
             }
 
@@ -289,6 +317,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 receptors: vm.receptors.clone(),
                 entangled_pairs: vm.entangled_pairs.clone(),
                 portals: vm.portals.clone(),
+                membranes: vm.membranes.clone(),
                 sonar_target: vm.sonar_target,
                 ether: vm.ether.clone(),
                 #[cfg(feature = "cortex")]
@@ -333,6 +362,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.receptors = spore.receptors.clone();
                         vm.entangled_pairs = spore.entangled_pairs.clone();
                         vm.portals = spore.portals.clone();
+                        vm.membranes = spore.membranes.clone();
                         vm.sonar_target = spore.sonar_target;
                         vm.ether = spore.ether.clone();
                         #[cfg(feature = "cortex")]
@@ -1169,27 +1199,40 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
                     let (cy, cx) = vm.context_loc;
 
-                    if let Some((mut new_y, mut new_x)) =
-                        vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                    {
-                        // Check for portal
-                        if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
-                            vm.output.push(format!(
-                                "PORTAL: Teleported from {},{} to {},{}",
-                                new_x, new_y, px, py
-                            ));
-                            new_y = py;
-                            new_x = px;
+                    let mut blocked = false;
+                    if let Some(mask) = get_direction_mask(dy, dx) {
+                        if (vm.membranes[cy][cx] & mask) != 0 {
+                            blocked = true;
                         }
+                    }
 
-                        vm.context_loc = (new_y, new_x);
-                        vm.energy = vm.energy.saturating_sub(5);
-                        vm.output
-                            .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+                    if !blocked {
+                        if let Some((mut new_y, mut new_x)) =
+                            vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                        {
+                            // Check for portal
+                            if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
+                                vm.output.push(format!(
+                                    "PORTAL: Teleported from {},{} to {},{}",
+                                    new_x, new_y, px, py
+                                ));
+                                new_y = py;
+                                new_x = px;
+                            }
+
+                            vm.context_loc = (new_y, new_x);
+                            vm.energy = vm.energy.saturating_sub(5);
+                            vm.output
+                                .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+                        } else {
+                            // Hit boundary
+                            vm.energy = vm.energy.saturating_sub(2);
+                            vm.output.push("MIGRATE: Blocked by boundary".to_string());
+                        }
                     } else {
-                        // Hit wall
-                        vm.energy = vm.energy.saturating_sub(2); // Reduced cost for failure
-                        vm.output.push("MIGRATE: Blocked by boundary".to_string());
+                        // Blocked by membrane
+                        vm.energy = vm.energy.saturating_sub(2);
+                        vm.output.push("MIGRATE: Blocked by membrane".to_string());
                     }
                 } else {
                     vm.output
@@ -1871,15 +1914,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if queue.len() < 100 {
                         queue.push_back(value);
                         vm.energy = vm.energy.saturating_sub(1);
-                        vm.output.push(format!("BROADCAST: Sent to channel {}", channel));
+                        vm.output
+                            .push(format!("BROADCAST: Sent to channel {}", channel));
                     } else {
-                        vm.output.push(format!("BROADCAST: Channel {} full", channel));
+                        vm.output
+                            .push(format!("BROADCAST: Channel {} full", channel));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for broadcast".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for broadcast".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for broadcast".to_string());
+                vm.output
+                    .push("Error: Stack underflow for broadcast".to_string());
             }
             None
         }
@@ -1892,7 +1939,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if let Some(queue) = vm.ether.get_mut(&channel) {
                         if let Some(v) = queue.pop_front() {
                             value = v;
-                            vm.output.push(format!("TUNE: Received from channel {}", channel));
+                            vm.output
+                                .push(format!("TUNE: Received from channel {}", channel));
                         }
                     }
                     vm.stack.push(value);
@@ -1901,10 +1949,111 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.output.push("Error: Type mismatch for tune".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for tune".to_string());
+                vm.output
+                    .push("Error: Stack underflow for tune".to_string());
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Membrane => {
+            // stack: mask (1=N, 2=S, 4=E, 8=W)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(mask_val) = val {
+                    let mask = mask_val as u8;
+                    let (cy, cx) = vm.context_loc;
+
+                    // Toggle bits
+                    vm.membranes[cy][cx] ^= mask;
+
+                    // Handle reciprocity
+                    // North
+                    if (mask & 1) != 0 {
+                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 - 1, cx as i64) {
+                            vm.membranes[ny][nx] ^= 2;
+                        }
+                    }
+                    // South
+                    if (mask & 2) != 0 {
+                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + 1, cx as i64) {
+                            vm.membranes[ny][nx] ^= 1;
+                        }
+                    }
+                    // East
+                    if (mask & 4) != 0 {
+                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64, cx as i64 + 1) {
+                            vm.membranes[ny][nx] ^= 8;
+                        }
+                    }
+                    // West
+                    if (mask & 8) != 0 {
+                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64, cx as i64 - 1) {
+                            vm.membranes[ny][nx] ^= 4;
+                        }
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(10);
+                    vm.output
+                        .push(format!("MEMBRANE: Toggled mask {} at {},{}", mask, cx, cy));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for membrane".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for membrane".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Osmosis => {
+            // stack: dy, dx (top)
+            if vm.stack.len() >= 2 {
+                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop().unwrap();
+                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    let (cy, cx) = vm.context_loc;
+                    if let Some((mut new_y, mut new_x)) =
+                        vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                    {
+                        // Check for portal
+                        if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
+                            vm.output.push(format!(
+                                "PORTAL: Teleported from {},{} to {},{}",
+                                new_x, new_y, px, py
+                            ));
+                            new_y = py;
+                            new_x = px;
+                        }
+
+                        vm.context_loc = (new_y, new_x);
+                        vm.energy = vm.energy.saturating_sub(20); // High cost
+                        vm.output
+                            .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
+                    } else {
+                        vm.energy = vm.energy.saturating_sub(5);
+                        vm.output.push("OSMOSIS: Blocked by boundary".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for osmosis".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for osmosis".to_string());
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
+#[cfg(feature = "nova")]
+pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
+    match (dy, dx) {
+        (-1, 0) => Some(1), // N
+        (1, 0) => Some(2),  // S
+        (0, 1) => Some(4),  // E
+        (0, -1) => Some(8), // W
         _ => None,
     }
 }

@@ -130,6 +130,10 @@ pub enum OpCode {
     Broadcast,
     #[cfg(feature = "nova")]
     Tune,
+    #[cfg(feature = "nova")]
+    Membrane,
+    #[cfg(feature = "nova")]
+    Osmosis,
 
     Unknown(String),
 }
@@ -264,6 +268,10 @@ impl FromStr for OpCode {
             "broadcast" => Ok(OpCode::Broadcast),
             #[cfg(feature = "nova")]
             "tune" => Ok(OpCode::Tune),
+            #[cfg(feature = "nova")]
+            "membrane" => Ok(OpCode::Membrane),
+            #[cfg(feature = "nova")]
+            "osmosis" => Ok(OpCode::Osmosis),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -398,6 +406,10 @@ impl fmt::Display for OpCode {
             OpCode::Broadcast => write!(f, "broadcast"),
             #[cfg(feature = "nova")]
             OpCode::Tune => write!(f, "tune"),
+            #[cfg(feature = "nova")]
+            OpCode::Membrane => write!(f, "membrane"),
+            #[cfg(feature = "nova")]
+            OpCode::Osmosis => write!(f, "osmosis"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
