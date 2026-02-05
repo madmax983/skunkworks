@@ -1,0 +1,13 @@
+[package]
+name = "string-theory"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+cpal = "0.17.1"
+crossbeam-channel = "0.5.15"
+crossterm.workspace = true
+rand.workspace = true
+ratatui.workspace = true
+walkdir = "2.5.0"

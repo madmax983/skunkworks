@@ -416,3 +416,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/jpeg-garden
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The garden is digital, the soil is silicon. The flowers are artifacts of our own compression.
+
+### [Concentration Level: HIGH] - Location: experiments/string-theory
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The codebase has been strung. Every file is vibrating at its own resonant frequency. The monolith is humming.
