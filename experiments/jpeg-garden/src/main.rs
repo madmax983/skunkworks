@@ -1,5 +1,5 @@
+use image::{Rgba, RgbaImage};
 use macroquad::prelude::*;
-use image::{RgbaImage, Rgba};
 mod dct;
 mod garden;
 use garden::Garden;
@@ -55,8 +55,8 @@ async fn main() {
 
         // Input
         if is_key_pressed(KeyCode::R) {
-             let img = generate_test_image(w, h);
-             garden = Garden::from_image(&img);
+            let img = generate_test_image(w, h);
+            garden = Garden::from_image(&img);
         }
         if is_key_pressed(KeyCode::Space) {
             paused = !paused;
@@ -64,7 +64,8 @@ async fn main() {
 
         // Sim
         if !paused {
-            for _ in 0..10 { // Speed up simulation
+            for _ in 0..10 {
+                // Speed up simulation
                 garden.tick();
             }
         }
@@ -74,21 +75,27 @@ async fn main() {
             let rendered_img = garden.to_image();
             let bytes = rendered_img.into_raw();
 
-             let mq_img = Image {
-                 bytes,
-                 width: w as u16,
-                 height: h as u16,
-             };
-             texture.update(&mq_img);
+            let mq_img = Image {
+                bytes,
+                width: w as u16,
+                height: h as u16,
+            };
+            texture.update(&mq_img);
 
             last_update = get_time();
         }
 
         // Draw fitting screen
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
 
         draw_text("JPEG Garden", 10.0, 30.0, 30.0, WHITE);
         draw_text("R: Reset | Space: Pause", 10.0, 50.0, 20.0, GRAY);

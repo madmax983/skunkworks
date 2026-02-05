@@ -47,7 +47,14 @@ mod tests {
 
         for i in 0..64 {
             let diff = (input[i] - idct[i]).abs();
-            assert!(diff < 0.01, "Mismatch at {}: input {}, output {}, diff {}", i, input[i], idct[i], diff);
+            assert!(
+                diff < 0.01,
+                "Mismatch at {}: input {}, output {}, diff {}",
+                i,
+                input[i],
+                idct[i],
+                diff
+            );
         }
     }
 }
