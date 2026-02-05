@@ -100,6 +100,7 @@ members = [
     "experiments/neuro-chimera",
     "experiments/luminous-flock-web", "experiments/fairy-consensus",
     "experiments/chimera-resonance",
+    "crates/resonance-audio",
 ]
 resolver = "2"
 
@@ -111,3 +112,4 @@ ratatui = "0.30"
 ratzilla = "0.3"
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
+resonance-audio = { path = "crates/resonance-audio" }

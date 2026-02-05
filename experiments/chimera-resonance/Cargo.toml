@@ -11,6 +11,7 @@ parking_lot = "0.12"
 rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
+resonance-audio = { workspace = true }
 chimera-lang = { path = "../chimera-lang", features = ["nova"] }
 
 [dependencies.cpal]

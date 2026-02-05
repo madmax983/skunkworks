@@ -1,3 +1,4 @@
+/// Shared Audio Model Logic for Resonance Experiments
 use crate::physics::PhysicsGrid;
 use crossbeam_channel::{Receiver, Sender};
 

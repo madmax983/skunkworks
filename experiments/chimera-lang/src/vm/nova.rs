@@ -174,6 +174,17 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
     }
 }
 #[cfg(feature = "nova")]
+fn value_to_nucleotide(v: &Value) -> Nucleotide {
+    match v {
+        Value::Int(n) => Nucleotide::Number(*n),
+        Value::Str(s) => Nucleotide::String(s.clone()),
+        Value::Junction(t, vals) => {
+            Nucleotide::Junction(*t, vals.iter().map(value_to_nucleotide).collect())
+        }
+    }
+}
+
+#[cfg(feature = "nova")]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
@@ -428,6 +439,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         });
                                         k += 1;
                                     }
+                                    Value::Junction(t, vals) => {
+                                        // Treated as push(junction)
+                                        genes.push(crate::ast::Gene {
+                                            op: OpCode::Push,
+                                            args: vec![crate::ast::Nucleotide::Junction(*t, vals.iter().map(value_to_nucleotide).collect())],
+                                        });
+                                        k += 1;
+                                    }
                                     Value::Str(s) => {
                                         let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
                                         let mut args = Vec::new();
@@ -454,16 +473,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                                 }
                                                 // 1 Arg
                                                 if k + 1 < sequence.len() {
-                                                    match &sequence[k + 1] {
-                                                        Value::Int(n) => args.push(
-                                                            crate::ast::Nucleotide::Number(*n),
-                                                        ),
-                                                        Value::Str(ss) => args.push(
-                                                            crate::ast::Nucleotide::String(
-                                                                ss.clone(),
-                                                            ),
-                                                        ),
-                                                    }
+                                                    args.push(value_to_nucleotide(&sequence[k + 1]));
                                                     k += 1; // Consume arg
                                                 }
                                             }
@@ -473,16 +483,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                             | OpCode::Sever
                                             | OpCode::Spark => {
                                                 if k + 1 < sequence.len() {
-                                                    match &sequence[k + 1] {
-                                                        Value::Int(n) => args.push(
-                                                            crate::ast::Nucleotide::Number(*n),
-                                                        ),
-                                                        Value::Str(ss) => args.push(
-                                                            crate::ast::Nucleotide::String(
-                                                                ss.clone(),
-                                                            ),
-                                                        ),
-                                                    }
+                                                    args.push(value_to_nucleotide(&sequence[k + 1]));
                                                     k += 1; // Consume arg
                                                 }
                                             }
@@ -979,14 +980,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 // Create Gene
                                 let new_gene = crate::ast::Gene {
                                     op: name.parse().unwrap_or(OpCode::Unknown(name.clone())),
-                                    args: match arg {
-                                        Value::Int(n) => {
-                                            vec![crate::ast::Nucleotide::Number(n)]
-                                        }
-                                        Value::Str(s) => {
-                                            vec![crate::ast::Nucleotide::String(s)]
-                                        }
-                                    },
+                                    args: vec![value_to_nucleotide(&arg)],
                                 };
 
                                 // Insert

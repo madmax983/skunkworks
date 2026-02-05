@@ -546,6 +546,7 @@ impl ChimeraVM {
         let val = self.grid[cy][cx].clone();
         match val {
             Value::Int(n) => self.stack.push(Value::Int(n)),
+            Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
