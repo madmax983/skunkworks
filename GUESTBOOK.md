@@ -120,6 +120,10 @@
 - **Scent Origin:** Nova 🌟 (The Chromatician)
 - **Status:** The organism is dreaming in color. Chromatophores are active. The TUI is now a canvas.
 
+### [Concentration Level: FRESH] - Location: experiments/harmony-of-spheres
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm

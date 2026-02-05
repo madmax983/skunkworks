@@ -10,7 +10,7 @@ use std::sync::{Arc, RwLock};
 async fn main() {
     let mut universe = Universe::new();
 
-    // Central Star (Silent anchor)
+    // Central Star
     universe.add_body(Body::new(0.0, 0.0, 5000.0, 20.0, YELLOW));
 
     // Planet 1
@@ -23,7 +23,7 @@ async fn main() {
     let v2 = (G * 5000.0 / r2).sqrt();
     universe.add_body(Body::new(r2, 0.0, 20.0, 12.0, RED).with_velocity(0.0, v2));
 
-    // Planet 3 (Elliptical)
+    // Planet 3
     let r3 = 500.0;
     let v3 = (G * 5000.0 / r3).sqrt() * 0.8;
     universe.add_body(Body::new(r3, 0.0, 5.0, 6.0, GREEN).with_velocity(0.0, v3));
@@ -34,7 +34,6 @@ async fn main() {
     #[allow(unused_variables)]
     let stream = init_audio(audio_state.clone()).unwrap_or_else(|e| {
         eprintln!("Audio init failed: {}", e);
-        // Return dummy handle
         audio::AudioHandle {
             #[cfg(feature = "audio")]
             _stream: None,
@@ -46,7 +45,6 @@ async fn main() {
     let mut paused = false;
 
     loop {
-        // Handle Input (Camera & Simulation)
         if is_key_down(KeyCode::Minus) || is_key_down(KeyCode::KpSubtract) {
             cam_zoom *= 0.98;
         }
@@ -54,22 +52,12 @@ async fn main() {
             cam_zoom *= 1.02;
         }
 
-        if is_key_down(KeyCode::Left) {
-            cam_target.x -= 10.0 / cam_zoom / 60.0;
-        }
-        if is_key_down(KeyCode::Right) {
-            cam_target.x += 10.0 / cam_zoom / 60.0;
-        }
-        if is_key_down(KeyCode::Up) {
-            cam_target.y += 10.0 / cam_zoom / 60.0;
-        }
-        if is_key_down(KeyCode::Down) {
-            cam_target.y -= 10.0 / cam_zoom / 60.0;
-        }
+        if is_key_down(KeyCode::Left) { cam_target.x -= 10.0 / cam_zoom / 60.0; }
+        if is_key_down(KeyCode::Right) { cam_target.x += 10.0 / cam_zoom / 60.0; }
+        if is_key_down(KeyCode::Up) { cam_target.y += 10.0 / cam_zoom / 60.0; }
+        if is_key_down(KeyCode::Down) { cam_target.y -= 10.0 / cam_zoom / 60.0; }
 
-        if is_key_pressed(KeyCode::Space) {
-            paused = !paused;
-        }
+        if is_key_pressed(KeyCode::Space) { paused = !paused; }
 
         if is_key_pressed(KeyCode::R) {
             universe = Universe::new();
@@ -82,24 +70,21 @@ async fn main() {
             }
         }
 
-        // Spawn on click
         if is_mouse_button_pressed(MouseButton::Left) {
             let mpos = mouse_position();
             let world_pos = Camera2D {
                 target: cam_target,
                 zoom: Vec2::splat(cam_zoom),
                 ..Default::default()
-            }
-            .screen_to_world(Vec2::new(mpos.0, mpos.1));
+            }.screen_to_world(Vec2::new(mpos.0, mpos.1));
 
             let dist = world_pos.length();
             if dist > 10.0 {
-                let v_circ = (G * 5000.0 / dist as f64).sqrt();
-                // Perpendicular velocity
+                let v_circ = (G * 5000.0 / dist).sqrt();
                 let v_dir = Vec2::new(-world_pos.y, world_pos.x).normalize();
 
                 let mass = rand::gen_range(2.0, 10.0);
-                let radius = mass as f32;
+                let radius = mass;
                 let color = Color::new(
                     rand::gen_range(0.5, 1.0),
                     rand::gen_range(0.5, 1.0),
@@ -108,121 +93,59 @@ async fn main() {
                 );
 
                 universe.add_body(
-                    Body::new(world_pos.x as f64, world_pos.y as f64, mass, radius, color)
-                        .with_velocity(v_dir.x as f64 * v_circ, v_dir.y as f64 * v_circ),
+                    Body::new(world_pos.x, world_pos.y, mass, radius, color)
+                        .with_velocity(v_dir.x * v_circ, v_dir.y * v_circ),
                 );
             }
         }
 
-        // Update Physics
         if !paused {
             let dt = 0.05;
             let physics_steps = 4;
-            let physics_dt = dt / physics_steps as f64;
+            let physics_dt = dt / physics_steps as f32;
 
             for _ in 0..physics_steps {
                 universe.step(physics_dt);
             }
         }
 
-        // Update Audio State
         if let Ok(mut state) = audio_state.write() {
             state.oscillators.clear();
             for (i, body) in universe.bodies.iter().enumerate() {
-                if i == 0 {
-                    continue;
-                }
-
+                if i == 0 { continue; }
                 let speed = body.vel.length();
                 let dist = body.pos.length();
-
-                let freq = 50.0 + speed as f32 * 10.0;
-                let vol = (1000.0 / (dist as f32 + 100.0)).clamp(0.0, 0.5);
-
-                state.oscillators.push(Oscillator {
-                    frequency: freq,
-                    amplitude: vol,
-                });
+                let freq = 50.0 + speed * 10.0;
+                let vol = (1000.0 / (dist + 100.0)).clamp(0.0, 0.5);
+                state.oscillators.push(Oscillator { frequency: freq, amplitude: vol });
             }
         }
 
-        // Draw
         clear_background(BLACK);
-
         set_camera(&Camera2D {
             target: cam_target,
             zoom: Vec2::splat(cam_zoom),
             ..Default::default()
         });
 
-        // Draw Trails
         for body in &universe.bodies {
-            if body.trail.len() < 2 {
-                continue;
-            }
+            if body.trail.len() < 2 { continue; }
             for i in 0..body.trail.len() - 1 {
                 let p1 = body.trail[i];
-                let p2 = body.trail[i + 1];
+                let p2 = body.trail[i+1];
                 let alpha = (i as f32 / body.trail.len() as f32).powf(2.0);
-                draw_line(
-                    p1.x,
-                    p1.y,
-                    p2.x,
-                    p2.y,
-                    2.0 * alpha,
-                    Color::new(body.color.r, body.color.g, body.color.b, alpha),
-                );
+                draw_line(p1.x, p1.y, p2.x, p2.y, 2.0 * alpha, Color::new(body.color.r, body.color.g, body.color.b, alpha));
             }
         }
 
-        // Draw Bodies
         for body in &universe.bodies {
-            draw_circle(
-                body.pos.x as f32,
-                body.pos.y as f32,
-                body.radius,
-                body.color,
-            );
+            draw_circle(body.pos.x, body.pos.y, body.radius, body.color);
         }
 
-        // UI
         set_default_camera();
         draw_text("Harmony of Spheres", 10.0, 20.0, 30.0, GOLD);
-        draw_text("Controls:", 10.0, 50.0, 20.0, WHITE);
-        draw_text("- Arrows: Pan | +/-: Zoom", 20.0, 70.0, 20.0, GRAY);
-        draw_text("- Click: Spawn Orbiting Planet", 20.0, 90.0, 20.0, GRAY);
-        draw_text(
-            "- Space: Pause | R: Reset | C: Clear Trails",
-            20.0,
-            110.0,
-            20.0,
-            GRAY,
-        );
-
-        draw_text(
-            &format!("Bodies: {}", universe.bodies.len()),
-            10.0,
-            screen_height() - 40.0,
-            20.0,
-            WHITE,
-        );
-        draw_text(
-            &format!("Zoom: {:.5}", cam_zoom),
-            10.0,
-            screen_height() - 20.0,
-            20.0,
-            WHITE,
-        );
-
-        if paused {
-            draw_text(
-                "PAUSED",
-                screen_width() / 2.0 - 50.0,
-                screen_height() / 2.0,
-                40.0,
-                RED,
-            );
-        }
+        draw_text("Controls: Arrows (Pan), +/- (Zoom), Click (Spawn), Space (Pause), R (Reset)", 10.0, 50.0, 20.0, GRAY);
+        draw_text(&format!("Bodies: {}", universe.bodies.len()), 10.0, screen_height() - 40.0, 20.0, WHITE);
 
         next_frame().await
     }

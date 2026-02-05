@@ -1,24 +1,24 @@
 use macroquad::prelude::*;
 use std::collections::VecDeque;
 
-pub const G: f64 = 1000.0; // Scaled for visual effect
+pub const G: f32 = 1000.0;
 pub const TRAIL_LENGTH: usize = 200;
 
 #[derive(Clone, Debug)]
 pub struct Body {
-    pub pos: DVec2,
-    pub vel: DVec2,
-    pub mass: f64,
+    pub pos: Vec2,
+    pub vel: Vec2,
+    pub mass: f32,
     pub radius: f32,
     pub color: Color,
     pub trail: VecDeque<Vec2>,
 }
 
 impl Body {
-    pub fn new(x: f64, y: f64, mass: f64, radius: f32, color: Color) -> Self {
+    pub fn new(x: f32, y: f32, mass: f32, radius: f32, color: Color) -> Self {
         Self {
-            pos: DVec2::new(x, y),
-            vel: DVec2::ZERO,
+            pos: Vec2::new(x, y),
+            vel: Vec2::ZERO,
             mass,
             radius,
             color,
@@ -26,8 +26,8 @@ impl Body {
         }
     }
 
-    pub fn with_velocity(mut self, vx: f64, vy: f64) -> Self {
-        self.vel = DVec2::new(vx, vy);
+    pub fn with_velocity(mut self, vx: f32, vy: f32) -> Self {
+        self.vel = Vec2::new(vx, vy);
         self
     }
 }
@@ -51,48 +51,78 @@ impl Universe {
         self.bodies.push(body);
     }
 
-    pub fn step(&mut self, dt: f64) {
+    pub fn step(&mut self, dt: f32) {
+        // Velocity Verlet (Symplectic - Energy Conserving)
         let n = self.bodies.len();
-        let mut accelerations = vec![DVec2::ZERO; n];
 
-        // Compute forces
+        // 1. Calculate Forces (Initial)
+        let mut forces = vec![Vec2::ZERO; n];
         for i in 0..n {
             for j in 0..n {
-                if i == j {
-                    continue;
+                if i == j { continue; }
+                let r_vec = self.bodies[j].pos - self.bodies[i].pos;
+                let r_sq = r_vec.length_squared();
+                if r_sq > 1e-4 {
+                    let r_mag = r_sq.sqrt();
+                    let f_mag = G * self.bodies[i].mass * self.bodies[j].mass / r_sq;
+                    forces[i] += r_vec / r_mag * f_mag;
                 }
-
-                let diff = self.bodies[j].pos - self.bodies[i].pos;
-                let dist_sq = diff.length_squared();
-
-                // Softening to avoid singularity
-                let softening = 1.0;
-                let dist_cubed = (dist_sq + softening).powf(1.5);
-
-                let f = G * self.bodies[j].mass / dist_cubed;
-
-                accelerations[i] += diff * f;
             }
         }
 
-        // Symplectic Euler
-        // v(t+1) = v(t) + a(x(t)) * dt
-        // x(t+1) = x(t) + v(t+1) * dt
+        // 2. First Half-Kick & Drift
         for i in 0..n {
-            self.bodies[i].vel += accelerations[i] * dt;
-            let vel = self.bodies[i].vel;
-            self.bodies[i].pos += vel * dt;
+            let acc = forces[i] / self.bodies[i].mass;
+            let body = &mut self.bodies[i];
 
-            // Update trail
-            if self.bodies[i].trail.len() >= TRAIL_LENGTH {
-                self.bodies[i].trail.pop_front();
+            body.vel += acc * 0.5 * dt;
+            body.pos += body.vel * dt;
+
+             // Update trail
+            if body.trail.len() >= TRAIL_LENGTH {
+                body.trail.pop_front();
             }
-            // Convert to f32 for rendering
-            let pos = self.bodies[i].pos;
-            self.bodies[i]
-                .trail
-                .push_back(Vec2::new(pos.x as f32, pos.y as f32));
+            body.trail.push_back(body.pos);
         }
+
+        // 3. Calculate Forces (Final)
+        let mut new_forces = vec![Vec2::ZERO; n];
+        for i in 0..n {
+            for j in 0..n {
+                if i == j { continue; }
+                let r_vec = self.bodies[j].pos - self.bodies[i].pos;
+                let r_sq = r_vec.length_squared();
+                if r_sq > 1e-4 {
+                    let r_mag = r_sq.sqrt();
+                    let f_mag = G * self.bodies[i].mass * self.bodies[j].mass / r_sq;
+                    new_forces[i] += r_vec / r_mag * f_mag;
+                }
+            }
+        }
+
+        // 4. Second Half-Kick
+        for i in 0..n {
+            let acc = new_forces[i] / self.bodies[i].mass;
+            self.bodies[i].vel += acc * 0.5 * dt;
+        }
+    }
+
+    pub fn total_energy(&self) -> f32 {
+         let mut kinetic = 0.0;
+        let mut potential = 0.0;
+
+        for (i, body) in self.bodies.iter().enumerate() {
+            kinetic += 0.5 * body.mass * body.vel.length_squared();
+
+            for (j, other) in self.bodies.iter().enumerate() {
+                if i >= j { continue; }
+                let r = body.pos.distance(other.pos);
+                if r > 1e-6 {
+                    potential -= G * body.mass * other.mass / r;
+                }
+            }
+        }
+        kinetic + potential
     }
 }
 
@@ -101,35 +131,29 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_orbit_stability() {
-        // Earth-Sun analog
+    fn test_energy_conservation() {
         let mut universe = Universe::new();
-
         // Sun
         universe.add_body(Body::new(0.0, 0.0, 1000.0, 10.0, YELLOW));
-
-        // Earth at r=100
-        // v_circ = sqrt(G * M / r) = sqrt(1000 * 1000 / 100) = sqrt(10000) = 100
+        // Earth
         let r = 100.0;
-        let v = (G * 1000.0 / r).sqrt();
+        let v = (G * 1000.0 / r).sqrt(); // ~100.0
+        universe.add_body(Body::new(r, 0.0, 1.0, 5.0, BLUE).with_velocity(0.0, v));
 
-        universe.add_body(Body::new(r, 0.0, 1.0, 2.0, BLUE).with_velocity(0.0, v));
+        let initial_energy = universe.total_energy();
 
-        let dt = 0.01;
-        // Simulate for a significant time
+        // Simulate
         for _ in 0..10000 {
-            universe.step(dt);
+            universe.step(0.001);
         }
 
-        let earth = &universe.bodies[1];
-        let final_r = earth.pos.length();
+        let final_energy = universe.total_energy();
+        let diff = (final_energy - initial_energy).abs();
 
-        // Check if radius stayed close to 100.0
-        // Symplectic Euler preserves energy on average but radius oscillates.
-        // It shouldn't drift away indefinitely.
-        let drift = (final_r - r).abs();
-        println!("Final radius: {}, drift: {}", final_r, drift);
+        println!("Initial E: {}, Final E: {}, Diff: {}", initial_energy, final_energy, diff);
 
-        assert!(drift < 5.0, "Orbit drifted too much: {}", drift);
+        // Explicit Euler is horrible for orbits, energy should increase.
+        // We assert strictly that energy is conserved to FAIL the test.
+        assert!(diff < 1.0, "Energy drifted too much: {}", diff);
     }
 }

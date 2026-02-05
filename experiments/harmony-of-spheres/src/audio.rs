@@ -29,7 +29,7 @@ impl SharedState {
 
 pub struct AudioHandle {
     #[cfg(feature = "audio")]
-    _stream: Option<cpal::Stream>,
+    pub _stream: Option<cpal::Stream>,
 }
 
 #[cfg(not(feature = "audio"))]
