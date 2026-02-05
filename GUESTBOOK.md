@@ -79,3 +79,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-roots
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Roots are expanding towards infinity. Geodesic growth patterns confirmed. The Poincaré Disk is blooming.
+
+### [Concentration Level: HIGH] - Location: experiments/chaos-pendulum
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The Butterfly Effect is visualized. Dependency tree swinging in chaotic motion. 100 parallel ghosts predicting diverging futures.
