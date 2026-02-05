@@ -1,0 +1,20 @@
+[package]
+name = "schrodingers-beat"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+crossbeam = "0.8"
+parking_lot = "0.12"
+rand = { workspace = true }
+ratatui = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]
