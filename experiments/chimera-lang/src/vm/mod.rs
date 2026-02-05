@@ -114,6 +114,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub membranes: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -140,6 +142,11 @@ pub struct ChimeraVM {
 }
 
 impl ChimeraVM {
+    pub const WALL_N: u8 = 1;
+    pub const WALL_E: u8 = 2;
+    pub const WALL_S: u8 = 4;
+    pub const WALL_W: u8 = 8;
+
     /// Creates a new VM instance with the given DNA.
     ///
     /// Initializes the grid to zeros, energy to 50, and IP to (0,0).
@@ -154,6 +161,8 @@ impl ChimeraVM {
         let waste_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; 16]; 16];
+        #[cfg(feature = "nova")]
+        let membranes = vec![vec![0; 16]; 16];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -180,6 +189,8 @@ impl ChimeraVM {
             waste_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            membranes,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -437,21 +448,37 @@ impl ChimeraVM {
                         }
                         // Move
                         let (dy, dx) = organelle.direction;
-                        let mut new_y = (cy as i64 + dy as i64).rem_euclid(16) as usize;
-                        let mut new_x = (cx as i64 + dx as i64).rem_euclid(16) as usize;
 
-                        // Check for portal
                         #[cfg(feature = "nova")]
-                        if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
-                            self.output.push(format!(
-                                "PORTAL: Teleported from {},{} to {},{}",
-                                new_x, new_y, px, py
-                            ));
-                            new_y = py;
-                            new_x = px;
-                        }
+                        let blocked = {
+                            let mask = self.membranes[cy][cx];
+                            let mut b = false;
+                            if dy == -1 && dx == 0 && (mask & Self::WALL_N != 0) { b = true; }
+                            else if dy == 0 && dx == 1 && (mask & Self::WALL_E != 0) { b = true; }
+                            else if dy == 1 && dx == 0 && (mask & Self::WALL_S != 0) { b = true; }
+                            else if dy == 0 && dx == -1 && (mask & Self::WALL_W != 0) { b = true; }
+                            b
+                        };
+                        #[cfg(not(feature = "nova"))]
+                        let blocked = false;
 
-                        self.context_loc = (new_y, new_x);
+                        if !blocked {
+                            let mut new_y = (cy as i64 + dy as i64).rem_euclid(16) as usize;
+                            let mut new_x = (cx as i64 + dx as i64).rem_euclid(16) as usize;
+
+                            // Check for portal
+                            #[cfg(feature = "nova")]
+                            if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
+                                self.output.push(format!(
+                                    "PORTAL: Teleported from {},{} to {},{}",
+                                    new_x, new_y, px, py
+                                ));
+                                new_y = py;
+                                new_x = px;
+                            }
+
+                            self.context_loc = (new_y, new_x);
+                        }
                     }
                     nova::OrganelleType::Worker => {}
                 }
@@ -571,6 +598,8 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Rift
             | OpCode::Seal
+            | OpCode::Membrane
+            | OpCode::Osmosis
             | OpCode::Simulate
             | OpCode::Dream
             | OpCode::Chemotaxis

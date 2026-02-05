@@ -274,10 +274,20 @@ fn run_app<B: ratatui::backend::Backend>(
                                 .fg(Color::Magenta)
                                 .add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
                         }
+
+                        if (vm.membranes[y][x] & crate::vm::ChimeraVM::WALL_S) != 0 {
+                            style = style.add_modifier(Modifier::UNDERLINED);
+                        }
                     }
 
                     line_spans.push(Span::styled(char_rep, style));
-                    line_spans.push(Span::raw(" ")); // Spacing
+
+                    let mut spacer = " ";
+                    #[cfg(feature = "nova")]
+                    if (vm.membranes[y][x] & crate::vm::ChimeraVM::WALL_E) != 0 {
+                        spacer = "|";
+                    }
+                    line_spans.push(Span::raw(spacer));
                 }
                 grid_lines.push(Line::from(line_spans));
             }

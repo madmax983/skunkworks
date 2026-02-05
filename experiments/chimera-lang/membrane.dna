@@ -1,0 +1,7 @@
+[
+    push(1) membrane()
+    push(2) membrane()
+    push(3) membrane()
+    push(0) membrane()
+    push(1) osmosis()
+]

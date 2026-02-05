@@ -1809,6 +1809,101 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Membrane => {
+            // stack: direction (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(dir) = val {
+                    let (cy, cx) = vm.context_loc;
+                    let wall_bit = match dir.rem_euclid(4) {
+                        0 => ChimeraVM::WALL_N,
+                        1 => ChimeraVM::WALL_E,
+                        2 => ChimeraVM::WALL_S,
+                        3 => ChimeraVM::WALL_W,
+                        _ => 0,
+                    };
+
+                    // Toggle local
+                    vm.membranes[cy][cx] ^= wall_bit;
+
+                    // Toggle neighbor reciprocal
+                    let (ny, nx, reciprocal_bit) = match dir.rem_euclid(4) {
+                        0 => (
+                            (cy as i64 - 1).rem_euclid(16) as usize,
+                            cx,
+                            ChimeraVM::WALL_S,
+                        ),
+                        1 => (
+                            cy,
+                            (cx as i64 + 1).rem_euclid(16) as usize,
+                            ChimeraVM::WALL_W,
+                        ),
+                        2 => (
+                            (cy as i64 + 1).rem_euclid(16) as usize,
+                            cx,
+                            ChimeraVM::WALL_N,
+                        ),
+                        3 => (
+                            cy,
+                            (cx as i64 - 1).rem_euclid(16) as usize,
+                            ChimeraVM::WALL_E,
+                        ),
+                        _ => (cy, cx, 0),
+                    };
+                    vm.membranes[ny][nx] ^= reciprocal_bit;
+
+                    vm.energy = vm.energy.saturating_sub(5);
+                    vm.output
+                        .push(format!("MEMBRANE: Toggled wall {} at {},{}", dir, cx, cy));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for membrane".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for membrane".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Osmosis => {
+            // stack: direction
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(dir) = val {
+                    let (cy, cx) = vm.context_loc;
+                    let wall_bit = match dir.rem_euclid(4) {
+                        0 => ChimeraVM::WALL_N,
+                        1 => ChimeraVM::WALL_E,
+                        2 => ChimeraVM::WALL_S,
+                        3 => ChimeraVM::WALL_W,
+                        _ => 0,
+                    };
+
+                    if (vm.membranes[cy][cx] & wall_bit) == 0 {
+                        // No wall, move
+                        let (ny, nx) = match dir.rem_euclid(4) {
+                            0 => ((cy as i64 - 1).rem_euclid(16) as usize, cx),
+                            1 => (cy, (cx as i64 + 1).rem_euclid(16) as usize),
+                            2 => ((cy as i64 + 1).rem_euclid(16) as usize, cx),
+                            3 => (cy, (cx as i64 - 1).rem_euclid(16) as usize),
+                            _ => (cy, cx),
+                        };
+                        vm.context_loc = (ny, nx);
+                        vm.output.push(format!("OSMOSIS: Moved to {},{}", nx, ny));
+                    } else {
+                        vm.output
+                            .push(format!("OSMOSIS: Blocked by wall at {},{}", cx, cy));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for osmosis".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for osmosis".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }
