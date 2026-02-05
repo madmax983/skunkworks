@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminous Flock - Skunkworks</title>
+    <link data-trunk rel="rust" data-wasm-opt="z" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+        }
+        #terminal {
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        .container {
+            text-align: center;
+        }
+        .info {
+            color: #888;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Luminous Flock</h1>
+        <div id="terminal"></div>
+        <p class="info">Boids + Firefly synchronization | Press 'r' to reset</p>
+    </div>
+</body>
+</html>

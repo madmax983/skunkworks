@@ -99,6 +99,7 @@ members = [
     "experiments/penrose-genes", "experiments/seismic-lure", "experiments/syntax-garden", "experiments/entropic-rain", "experiments/beat-cortex", "experiments/text-terra", "experiments/harmony-of-spheres", "experiments/bio-chain",
     "experiments/turing-terra", "experiments/walker-filesystem", "experiments/primordial-soup", "experiments/hyperbolic-finder", "experiments/jpeg-garden",
     "experiments/neuro-chimera",
+    "experiments/luminous-flock-web",
 ]
 resolver = "2"
 
@@ -106,6 +107,7 @@ resolver = "2"
 anyhow = "1.0"
 crossterm = "0.28"
 rand = "0.8"
-ratatui = "0.29"
+ratatui = "0.30"
+ratzilla = "0.3"
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }

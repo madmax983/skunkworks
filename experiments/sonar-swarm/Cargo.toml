@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0"
 crossterm = "0.28"
-ratatui = "0.29"
+ratatui = "0.30"
 rand = "0.8"
 cpal = "0.15"
 crossbeam-channel = "0.5"
