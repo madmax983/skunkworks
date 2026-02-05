@@ -27,6 +27,7 @@ use pest_derive::Parser;
 pub struct ChimeraParser;
 
 pub mod ast;
+pub mod compiler;
 pub mod opcode;
 pub mod tui;
 pub mod vm;

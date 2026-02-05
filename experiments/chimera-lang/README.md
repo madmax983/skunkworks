@@ -90,10 +90,47 @@ The following enzymes are available in the Nova feature set but are currently ex
 *   `C`: Toggle Chaos Mode (Auto-Mutation).
 *   `Q`: Quit.
 
+## ChimeraScript 🧪
+
+ChimeraScript is a high-level, Concatenative syntax for writing Chimera DNA. It compiles directly to the underlying DNA structure.
+
+### Features
+*   **Clean Syntax**: No brackets, minimal punctuation.
+*   **Named Strands**: Use `strand name { ... }` instead of array indices.
+*   **Labels**: Jump to strand names directly (e.g., `jump(loop)`).
+*   **Literals**: `5` compiles to `push(5)`, `"text"` to `push("text")`.
+*   **Comments**: Use `#` for comments.
+
+### Example
+
+```chimera
+strand main {
+    "Hello World" print
+    5 3 add print
+
+    # Conditional jump
+    0 eq brz(end)
+
+    jump(loop)
+}
+
+strand loop {
+    # ...
+}
+
+strand end {
+    apoptosis
+}
+```
+
 ## Running
+
+You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
 cargo run --release -- --input sample.dna
+# OR
+cargo run --release -- --input examples/genesis.chs
 ```
 
 To run in headless mode (no TUI), use the `--headless` flag:

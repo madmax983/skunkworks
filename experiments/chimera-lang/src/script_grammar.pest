@@ -1,0 +1,23 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
+
+program = { SOI ~ (strand_def)* ~ EOI }
+
+strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
+
+instruction = {
+    literal |
+    call |
+    simple_op
+}
+
+literal = { number | string }
+call = { identifier ~ "(" ~ argument_list ~ ")" }
+simple_op = { identifier }
+
+argument_list = { argument ~ ("," ~ argument)* }
+argument = { literal | identifier }
+
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+number = @{ "-"? ~ ASCII_DIGIT+ }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
