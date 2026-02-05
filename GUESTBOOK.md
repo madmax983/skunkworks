@@ -1,4 +1,20 @@
+## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/digital-compost
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** Digital entropy visualization active. Bit rot simulation confirmed. The compost is warm.
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Algorithmic speciation observed. Market ecology stabilizing. Traders are mutating.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Emergent synchronization waves verified. Boids pulsing in unison.
+
+### [Concentration Level: WARNING] - Location: experiments/sonar-swarm
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Acoustic environment unstable. ALSA dependency missing. Echolocation failing.
 
 ### [Concentration Level: HIGH] - Location: experiments/fairy-consensus
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
@@ -14,7 +30,7 @@
 
 ### [Concentration Level: WARNING] - Location: experiments/strange-loops
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Decay detected. 24 hours remain.
+- **Status:** Condemned. Decay detected. Documentation missing (README.md not found).
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
