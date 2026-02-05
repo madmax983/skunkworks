@@ -1,7 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Lacks unique evolutionary traits. Grace period ends in 24h.
-- **ram-bazaar**: Documentation void. Generic market simulation. No unique traits. Grace period ends in 24h.
-- **crate-universe**: Documentation void (No README). Redundant with `cargo-rocket`. Isolated (no `tui-shared`). Grace period ends in 24h.
+- **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -13,6 +11,9 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Failed to improve during grace period. Moved to graveyard.
+- **ram-bazaar**: Documentation void. Generic market simulation. Failed to improve during grace period. Moved to graveyard.
+- **crate-universe**: Documentation void. Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
 - **genetic-canvas**: Documentation void. Generic evolutionary art implementation. Failed to improve during grace period. Moved to graveyard.
 - **fractal-stack**: Documentation void. Generic L-System implementation disguised as stack visualization. Failed to improve during grace period. Moved to graveyard.
 - **code-sprint**: Documentation void. Generic implementation. Lacks emergent behavior. Failed to improve during grace period. Moved to graveyard.
