@@ -227,7 +227,7 @@ impl ChimeraVM {
     pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
         match self.topology {
             Topology::Plane => {
-                if x >= 0 && x < 16 && y >= 0 && y < 16 {
+                if (0..16).contains(&x) && (0..16).contains(&y) {
                     Some((y as usize, x as usize))
                 } else {
                     None
@@ -239,7 +239,7 @@ impl ChimeraVM {
             )),
             Topology::CylinderH => {
                 // Wraps X, Bounded Y
-                if y >= 0 && y < 16 {
+                if (0..16).contains(&y) {
                     Some((y as usize, x.rem_euclid(16) as usize))
                 } else {
                     None
@@ -247,7 +247,7 @@ impl ChimeraVM {
             }
             Topology::CylinderV => {
                 // Bounded X, Wraps Y
-                if x >= 0 && x < 16 {
+                if (0..16).contains(&x) {
                     Some((y.rem_euclid(16) as usize, x as usize))
                 } else {
                     None
@@ -262,7 +262,7 @@ impl ChimeraVM {
 
                 // First handle Y wrapping (the twisty one)
                 // If we go off top or bottom, we flip X and wrap Y
-                if ny < 0 || ny >= 16 {
+                if !(0..16).contains(&ny) {
                     // How many times did we wrap?
                     // Simple case: single step
                     // General case: rem_euclid logic with flip parity
@@ -291,7 +291,7 @@ impl ChimeraVM {
                 let mut nx = x;
                 let mut ny = y;
 
-                if nx < 0 || nx >= 16 {
+                if !(0..16).contains(&nx) {
                     let wrap_count = nx.div_euclid(16);
                     if wrap_count % 2 != 0 {
                         ny = 15 - ny; // Twist Y
@@ -299,7 +299,7 @@ impl ChimeraVM {
                     nx = nx.rem_euclid(16);
                 }
 
-                if ny >= 0 && ny < 16 {
+                if (0..16).contains(&ny) {
                     Some((ny as usize, nx as usize))
                 } else {
                     None
