@@ -18,15 +18,23 @@ use ratatui::{
 };
 use std::io;
 
+#[derive(Debug, PartialEq)]
+enum ViewMode {
+    Genome,
+    Grid,
+}
+
 enum InputMode {
     Normal,
     Editing,
 }
 
 struct AppState {
+    view_mode: ViewMode,
     input_mode: InputMode,
     selected_strand: usize,
     selected_gene: usize,
+    grid_cursor: (usize, usize),
     input_buffer: String,
     status_msg: String,
 }
@@ -34,9 +42,11 @@ struct AppState {
 impl AppState {
     fn new() -> Self {
         Self {
+            view_mode: ViewMode::Genome,
             input_mode: InputMode::Normal,
             selected_strand: 0,
             selected_gene: 0,
+            grid_cursor: (0, 0),
             input_buffer: String::new(),
             status_msg: String::new(),
         }
@@ -63,6 +73,17 @@ pub fn run_tui(mut vm: ChimeraVM) -> Result<()> {
     }
 
     Ok(())
+}
+
+fn parse_grid_value(s: &str) -> crate::vm::Value {
+    if s.is_empty() {
+        return crate::vm::Value::Int(0);
+    }
+    if let Ok(i) = s.parse::<i64>() {
+        crate::vm::Value::Int(i)
+    } else {
+        crate::vm::Value::Str(s.to_string())
+    }
 }
 
 fn run_app<B: ratatui::backend::Backend>(
@@ -144,8 +165,8 @@ where
                         style = style.fg(Color::DarkGray);
                     }
 
-                    // Logic for Editor Selection highlighting
-                    if s_idx == app_state.selected_strand && g_idx == app_state.selected_gene {
+                    // Logic for Editor Selection highlighting (Only if ViewMode::Genome)
+                    if app_state.view_mode == ViewMode::Genome && s_idx == app_state.selected_strand && g_idx == app_state.selected_gene {
                          if let InputMode::Editing = app_state.input_mode {
                               style = style.bg(Color::Red).fg(Color::White);
                               prefix = "E ";
@@ -160,23 +181,33 @@ where
                 strand_items.push(ListItem::new("-------------------"));
             }
 
-            // Add a placeholder for adding new genes at the end of strand?
-            // For now, keep it simple. Only editing existing genes.
-
             let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
+            let mode_str = match app_state.view_mode {
+                ViewMode::Genome => "GENOME",
+                ViewMode::Grid => "GRID",
+            };
+
             let title = match app_state.input_mode {
                 InputMode::Normal => format!(
-                    "Genome (Space: Step, M: Mutate, C: Chaos[{}], Arrows: Nav, Enter: Edit, Q: Quit)",
-                    chaos_status
+                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], Arrows: Nav, Enter: Edit, Q: Quit)",
+                    mode_str, chaos_status
                 ),
                 InputMode::Editing => format!(
-                    "Editing {}:{} (Enter: Commit, Esc: Cancel) - {}",
-                    app_state.selected_strand, app_state.selected_gene, app_state.input_buffer
+                    "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
+                    mode_str, app_state.input_buffer
                 ),
             };
 
+            let genome_block = Block::default().borders(Borders::ALL).title("Genome");
+            let genome_style = if app_state.view_mode == ViewMode::Genome {
+                 Style::default().fg(Color::White).add_modifier(Modifier::BOLD)
+            } else {
+                 Style::default().fg(Color::DarkGray)
+            };
+
+            // Highlight the active block borders/title
             let genome_list = List::new(strand_items).block(
-                Block::default().borders(Borders::ALL).title(title),
+                genome_block.border_style(genome_style).title(title.clone()) // Show controls in main title usually
             );
             f.render_widget(genome_list, left_chunks[0]);
 
@@ -232,8 +263,6 @@ where
                         let b = h[2].clamp(0, 255) as u8;
                         if r > 0 || g > 0 || b > 0 {
                             style = style.bg(Color::Rgb(r, g, b));
-                            // Ensure foreground is visible if background is bright
-                            // Simple heuristic: if sum > 300, use black fg
                             if (r as u16 + g as u16 + b as u16) > 300 {
                                 style = style.fg(Color::Black);
                             }
@@ -287,8 +316,21 @@ where
                         }
                     }
 
+                    // Highlight Cursor in Grid Mode
+                    if app_state.view_mode == ViewMode::Grid && app_state.grid_cursor == (x, y) {
+                        if let InputMode::Editing = app_state.input_mode {
+                             style = style.bg(Color::Red).fg(Color::White);
+                             // If editing, maybe show first char of input buffer?
+                             // But input buffer might be long string "add".
+                             // Let's just highlight the cell.
+                        } else {
+                             style = style.bg(Color::White).fg(Color::Black);
+                        }
+                    }
+
                     line_spans.push(Span::styled(char_rep, style));
 
+                    #[allow(unused_mut)]
                     let mut spacer = " ";
                     #[cfg(feature = "nova")]
                     if (vm.membranes[y][x] & 4) != 0 {
@@ -305,11 +347,17 @@ where
             let topology_name = "Classic";
 
             let grid_title = format!("Petri Dish (16x16) - {}", topology_name);
+            let grid_style = if app_state.view_mode == ViewMode::Grid {
+                 Style::default().fg(Color::White).add_modifier(Modifier::BOLD)
+            } else {
+                 Style::default().fg(Color::DarkGray)
+            };
 
             let grid_paragraph = Paragraph::new(grid_lines).block(
                 Block::default()
                     .borders(Borders::ALL)
-                    .title(grid_title),
+                    .title(grid_title)
+                    .border_style(grid_style),
             );
             f.render_widget(grid_paragraph, left_chunks[1]);
 
@@ -342,6 +390,14 @@ where
                     Style::default().fg(Color::Yellow)
                 )));
             }
+            if let InputMode::Editing = app_state.input_mode {
+                 if app_state.view_mode == ViewMode::Grid {
+                      output_items.insert(0, ListItem::new(Span::styled(
+                           format!("EDIT GRID [{},{}]: {}", app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer),
+                           Style::default().fg(Color::Cyan)
+                      )));
+                 }
+            }
 
             let output_list = List::new(output_items)
                 .block(Block::default().borders(Borders::ALL).title("Output"));
@@ -354,31 +410,41 @@ where
                 if let InputMode::Editing = app_state.input_mode {
                     match key.code {
                         KeyCode::Enter => {
-                            // Parse and commit
-                            match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
-                                Ok(mut pairs) => {
-                                    let pair = pairs.next().unwrap();
-                                    // We need to convert pair to Gene.
-                                    // Gene::from_pair is available in crate::ast::Gene
-                                    let gene = Gene::from_pair(pair);
+                            match app_state.view_mode {
+                                ViewMode::Genome => {
+                                    // Genome Editing Logic
+                                    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+                                        Ok(mut pairs) => {
+                                            let pair = pairs.next().unwrap();
+                                            let gene = Gene::from_pair(pair);
 
-                                    // Update VM
-                                    if app_state.selected_strand < vm.dna.helix.strands.len()
-                                        && app_state.selected_gene
-                                            < vm.dna.helix.strands[app_state.selected_strand]
-                                                .genes
-                                                .len()
-                                    {
-                                        vm.dna.helix.strands[app_state.selected_strand].genes
-                                            [app_state.selected_gene] = gene;
-                                        app_state.status_msg =
-                                            "Gene updated successfully".to_string();
+                                            if app_state.selected_strand < vm.dna.helix.strands.len()
+                                                && app_state.selected_gene
+                                                    < vm.dna.helix.strands[app_state.selected_strand]
+                                                        .genes
+                                                        .len()
+                                            {
+                                                vm.dna.helix.strands[app_state.selected_strand].genes
+                                                    [app_state.selected_gene] = gene;
+                                                app_state.status_msg =
+                                                    "Gene updated successfully".to_string();
+                                            }
+                                            app_state.input_mode = InputMode::Normal;
+                                            app_state.input_buffer.clear();
+                                        }
+                                        Err(e) => {
+                                            app_state.status_msg = format!("Parse Error: {}", e);
+                                        }
                                     }
+                                }
+                                ViewMode::Grid => {
+                                    // Grid Editing Logic
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
-                                }
-                                Err(e) => {
-                                    app_state.status_msg = format!("Parse Error: {}", e);
                                 }
                             }
                         }
@@ -400,116 +466,155 @@ where
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
-                    // Only handle receptor input if not a control key
                     if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
                         continue;
                     }
                 }
 
                 match key.code {
+                    KeyCode::Tab => {
+                        app_state.view_mode = match app_state.view_mode {
+                            ViewMode::Genome => ViewMode::Grid,
+                            ViewMode::Grid => ViewMode::Genome,
+                        };
+                    }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
                     KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
                     KeyCode::Down => {
-                        // Move to next gene or next strand
-                        let s_len = vm.dna.helix.strands.len();
-                        if s_len > 0 {
-                            let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                            if app_state.selected_gene + 1 < g_len {
-                                app_state.selected_gene += 1;
-                            } else {
-                                // Next strand
-                                if app_state.selected_strand + 1 < s_len {
-                                    app_state.selected_strand += 1;
-                                    app_state.selected_gene = 0;
+                        match app_state.view_mode {
+                            ViewMode::Genome => {
+                                let s_len = vm.dna.helix.strands.len();
+                                if s_len > 0 {
+                                    let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                    if app_state.selected_gene + 1 < g_len {
+                                        app_state.selected_gene += 1;
+                                    } else {
+                                        if app_state.selected_strand + 1 < s_len {
+                                            app_state.selected_strand += 1;
+                                            app_state.selected_gene = 0;
+                                        }
+                                    }
+                                }
+                            }
+                            ViewMode::Grid => {
+                                if app_state.grid_cursor.1 < 15 {
+                                    app_state.grid_cursor.1 += 1;
                                 }
                             }
                         }
                     }
                     KeyCode::Up => {
-                        if app_state.selected_gene > 0 {
-                            app_state.selected_gene -= 1;
-                        } else {
-                            // Prev strand
-                            if app_state.selected_strand > 0 {
-                                app_state.selected_strand -= 1;
-                                let g_len =
-                                    vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                if g_len > 0 {
-                                    app_state.selected_gene = g_len - 1;
+                         match app_state.view_mode {
+                            ViewMode::Genome => {
+                                if app_state.selected_gene > 0 {
+                                    app_state.selected_gene -= 1;
                                 } else {
-                                    app_state.selected_gene = 0;
+                                    if app_state.selected_strand > 0 {
+                                        app_state.selected_strand -= 1;
+                                        let g_len =
+                                            vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                        if g_len > 0 {
+                                            app_state.selected_gene = g_len - 1;
+                                        } else {
+                                            app_state.selected_gene = 0;
+                                        }
+                                    }
+                                }
+                            }
+                            ViewMode::Grid => {
+                                if app_state.grid_cursor.1 > 0 {
+                                    app_state.grid_cursor.1 -= 1;
                                 }
                             }
                         }
                     }
                     KeyCode::Right => {
-                        // Maybe jump strands? For now just same as down/up or maybe nothing
+                         match app_state.view_mode {
+                            ViewMode::Genome => {},
+                            ViewMode::Grid => {
+                                if app_state.grid_cursor.0 < 15 {
+                                    app_state.grid_cursor.0 += 1;
+                                }
+                            }
+                        }
                     }
                     KeyCode::Left => {
-                        // Same
+                         match app_state.view_mode {
+                            ViewMode::Genome => {},
+                            ViewMode::Grid => {
+                                if app_state.grid_cursor.0 > 0 {
+                                    app_state.grid_cursor.0 -= 1;
+                                }
+                            }
+                        }
                     }
                     KeyCode::Enter => {
-                        // Start Editing
-                        if app_state.selected_strand < vm.dna.helix.strands.len() {
-                            let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                            if app_state.selected_gene < g_len {
-                                app_state.input_mode = InputMode::Editing;
-                                // Pre-fill buffer with current gene?
-                                let gene = &vm.dna.helix.strands[app_state.selected_strand].genes
-                                    [app_state.selected_gene];
-                                // We don't have a gene to string converter easily accessible that matches parser format perfecty
-                                // But we can format it manually.
-                                // gene.op is Display, args are Debug.
-                                // Let's rely on user typing from scratch or empty buffer for now,
-                                // or try to reconstruct.
-                                // Format: name(arg1 arg2)
-                                let mut s = format!("{}(", gene.op);
-                                for (i, arg) in gene.args.iter().enumerate() {
-                                    if i > 0 {
-                                        s.push(' ');
-                                    }
-                                    match arg {
-                                        crate::ast::Nucleotide::Number(n) => {
-                                            s.push_str(&n.to_string())
-                                        }
-                                        crate::ast::Nucleotide::String(str_val) => {
-                                            s.push_str(&format!("\"{}\"", str_val))
-                                        }
-                                        crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
-                                        crate::ast::Nucleotide::Junction(t, vals) => {
-                                            let t_str = match t {
-                                                crate::ast::JunctionType::Any => "any",
-                                                crate::ast::JunctionType::All => "all",
-                                            };
-                                            s.push_str(t_str);
-                                            s.push('(');
-                                            for (k, v) in vals.iter().enumerate() {
-                                                if k > 0 {
-                                                    s.push(' ');
+                        app_state.input_mode = InputMode::Editing;
+                        match app_state.view_mode {
+                            ViewMode::Genome => {
+                                if app_state.selected_strand < vm.dna.helix.strands.len() {
+                                    let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                    if app_state.selected_gene < g_len {
+                                        let gene = &vm.dna.helix.strands[app_state.selected_strand].genes
+                                            [app_state.selected_gene];
+                                        let mut s = format!("{}(", gene.op);
+                                        for (i, arg) in gene.args.iter().enumerate() {
+                                            if i > 0 {
+                                                s.push(' ');
+                                            }
+                                            match arg {
+                                                crate::ast::Nucleotide::Number(n) => {
+                                                    s.push_str(&n.to_string())
                                                 }
-                                                match v {
-                                                    crate::ast::Nucleotide::Number(n) => {
-                                                        s.push_str(&n.to_string())
+                                                crate::ast::Nucleotide::String(str_val) => {
+                                                    s.push_str(&format!("\"{}\"", str_val))
+                                                }
+                                                crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
+                                                crate::ast::Nucleotide::Junction(t, vals) => {
+                                                    let t_str = match t {
+                                                        crate::ast::JunctionType::Any => "any",
+                                                        crate::ast::JunctionType::All => "all",
+                                                    };
+                                                    s.push_str(t_str);
+                                                    s.push('(');
+                                                    for (k, v) in vals.iter().enumerate() {
+                                                        if k > 0 {
+                                                            s.push(' ');
+                                                        }
+                                                        match v {
+                                                            crate::ast::Nucleotide::Number(n) => {
+                                                                s.push_str(&n.to_string())
+                                                            }
+                                                            crate::ast::Nucleotide::String(str_val) => {
+                                                                s.push_str(&format!("\"{}\"", str_val))
+                                                            }
+                                                            crate::ast::Nucleotide::Identifier(id) => {
+                                                                s.push_str(id)
+                                                            }
+                                                            crate::ast::Nucleotide::Junction(_, _) => {
+                                                                s.push_str("nested")
+                                                            }
+                                                        }
                                                     }
-                                                    crate::ast::Nucleotide::String(str_val) => {
-                                                        s.push_str(&format!("\"{}\"", str_val))
-                                                    }
-                                                    crate::ast::Nucleotide::Identifier(id) => {
-                                                        s.push_str(id)
-                                                    }
-                                                    crate::ast::Nucleotide::Junction(_, _) => {
-                                                        s.push_str("nested")
-                                                    }
+                                                    s.push(')');
                                                 }
                                             }
-                                            s.push(')');
                                         }
+                                        s.push(')');
+                                        app_state.input_buffer = s;
                                     }
                                 }
-                                s.push(')');
-                                app_state.input_buffer = s;
+                            }
+                            ViewMode::Grid => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => app_state.input_buffer = n.to_string(),
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
                             }
                         }
                     }
