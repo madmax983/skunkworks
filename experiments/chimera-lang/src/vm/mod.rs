@@ -690,12 +690,14 @@ impl ChimeraVM {
 
     pub(crate) fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
         let mut coords = Vec::new();
-        let r_sq = r * r;
+        let r_sq = (r as i128).saturating_mul(r as i128);
         for y in 0..16 {
             for x in 0..16 {
-                let dx = x as i64 - cx;
-                let dy = y as i64 - cy;
-                if dx * dx + dy * dy <= r_sq {
+                let dx = (x as i64).saturating_sub(cx) as i128;
+                let dy = (y as i64).saturating_sub(cy) as i128;
+                let dist_sq = dx.saturating_mul(dx).saturating_add(dy.saturating_mul(dy));
+
+                if dist_sq <= r_sq {
                     coords.push((x, y));
                 }
             }

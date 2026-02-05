@@ -19,3 +19,7 @@
 **2025-05-28 - Alloc-Tardis Scissor Safety & Unwrap Removal**
 **Threat:** Undefined Behavior via unchecked `unsafe` GL calls and DoS via `unwrap()` panic on invalid room IDs in `alloc-tardis`.
 **Defense:** Encapsulated `glScissor` in RAII-guarded `with_scissor` wrapper and replaced panicking accessors with `if let Some(...)` checks.
+
+**2026-02-19 - Chimera-Lang Integer Overflow Panic Hardening**
+**Threat:** DoS via panic injection in `chimera-lang`. `get_circular_coords` allowed integer overflow on `r*r` and coordinate calculations. `diffuse_*` functions allowed integer overflow when summing grid values.
+**Defense:** Upgraded `get_circular_coords` and `diffuse_*` arithmetic to use `i128` and `saturating_*` operations to prevent panics on extreme inputs.
