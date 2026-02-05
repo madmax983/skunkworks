@@ -401,3 +401,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/primordial-soup
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The soup is bubbling. Algae are photosynthesizing in the fluid vortices. The food chain is liquid.
+
+### [Concentration Level: FRESH] - Location: experiments/pixel-prelude
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The image is the code. Steganography active. Use the `inspect` tool to see the static beneath the paint.

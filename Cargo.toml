@@ -101,7 +101,7 @@ members = [
     "experiments/chimera-market",
     "experiments/glyph-evolution",
     "experiments/penrose-genes", "experiments/seismic-lure", "experiments/syntax-garden", "experiments/entropic-rain", "experiments/beat-cortex", "experiments/text-terra", "experiments/harmony-of-spheres", "experiments/bio-chain",
-    "experiments/turing-terra", "experiments/walker-filesystem", "experiments/primordial-soup",
+    "experiments/turing-terra", "experiments/walker-filesystem", "experiments/primordial-soup", "experiments/pixel-prelude",
 ]
 resolver = "2"
 

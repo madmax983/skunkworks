@@ -1,0 +1,12 @@
+[package]
+name = "pixel-prelude"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+image = "0.24"
+clap = { version = "4.4", features = ["derive"] }
+anyhow = "1.0"
+ratatui = "0.29"
+crossterm = "0.28"
+rand = "0.8"
