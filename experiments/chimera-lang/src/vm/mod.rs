@@ -38,12 +38,12 @@ use self::nova::{Organelle, Spore};
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Topology {
-    Plane,      // 0: Bounded. Edges are walls.
-    Torus,      // 1: Wraps X and Y.
-    CylinderH,  // 2: Wraps X, Bounded Y.
-    CylinderV,  // 3: Bounded X, Wraps Y.
-    Klein,      // 4: Wraps X, Wraps Y with twist (x' = 15-x).
-    Mobius,     // 5: Wraps X with twist, Bounded Y.
+    Plane,     // 0: Bounded. Edges are walls.
+    Torus,     // 1: Wraps X and Y.
+    CylinderH, // 2: Wraps X, Bounded Y.
+    CylinderV, // 3: Bounded X, Wraps Y.
+    Klein,     // 4: Wraps X, Wraps Y with twist (x' = 15-x).
+    Mobius,    // 5: Wraps X with twist, Bounded Y.
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -233,10 +233,7 @@ impl ChimeraVM {
                     None
                 }
             }
-            Topology::Torus => Some((
-                y.rem_euclid(16) as usize,
-                x.rem_euclid(16) as usize,
-            )),
+            Topology::Torus => Some((y.rem_euclid(16) as usize, x.rem_euclid(16) as usize)),
             Topology::CylinderH => {
                 // Wraps X, Bounded Y
                 if (0..16).contains(&y) {
@@ -540,10 +537,14 @@ impl ChimeraVM {
                         let (dy, dx) = organelle.direction;
 
                         #[cfg(feature = "nova")]
-                        let next_coords = self.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64);
+                        let next_coords =
+                            self.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64);
 
                         #[cfg(not(feature = "nova"))]
-                        let next_coords = Some(((cy as i64 + dy as i64).rem_euclid(16) as usize, (cx as i64 + dx as i64).rem_euclid(16) as usize));
+                        let next_coords = Some((
+                            (cy as i64 + dy as i64).rem_euclid(16) as usize,
+                            (cx as i64 + dx as i64).rem_euclid(16) as usize,
+                        ));
 
                         if let Some((mut new_y, mut new_x)) = next_coords {
                             // Check for portal

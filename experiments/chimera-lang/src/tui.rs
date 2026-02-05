@@ -69,7 +69,10 @@ fn run_app<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     vm: &mut ChimeraVM,
     app_state: &mut AppState,
-) -> Result<()> {
+) -> Result<()>
+where
+    <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
+{
     loop {
         terminal.draw(|f| {
             let main_chunks = Layout::default()

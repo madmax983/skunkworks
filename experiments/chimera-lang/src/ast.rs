@@ -2,28 +2,28 @@ use crate::opcode::OpCode;
 use crate::Rule;
 use pest::iterators::Pair;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Dna {
     pub helix: Helix,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Helix {
     pub strands: Vec<Strand>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Strand {
     pub genes: Vec<Gene>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Gene {
     pub op: OpCode,
     pub args: Vec<Nucleotide>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Nucleotide {
     Number(i64),
     String(String),

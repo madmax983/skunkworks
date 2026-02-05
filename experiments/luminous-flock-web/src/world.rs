@@ -1,4 +1,4 @@
-use crate::boid::{distance_squared, limit, Boid};
+use crate::boid::{Boid, distance_squared, limit};
 use std::f64::consts::PI;
 
 pub struct World {

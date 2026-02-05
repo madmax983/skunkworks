@@ -156,6 +156,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
                     let idx = s_idx as usize;
                     if idx < vm.dna.helix.strands.len() && ticks > 0 {
+                        if vm.recursion_depth > 100 {
+                            vm.output
+                                .push("Error: Recursion limit exceeded".to_string());
+                            return None;
+                        }
+
                         // Cap ticks to prevent DoS
                         let safe_ticks = ticks.min(1000);
 
@@ -684,6 +690,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                     break;
                                 }
                             }
+                        } else if guide_names.is_empty() {
+                            // Explicitly handle empty guide to ensure -1 (though init value handles it)
+                            found_idx = -1;
                         }
 
                         vm.stack.push(Value::Int(found_idx));
@@ -1157,7 +1166,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
                     let (cy, cx) = vm.context_loc;
 
-                    if let Some((mut new_y, mut new_x)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                    if let Some((mut new_y, mut new_x)) =
+                        vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                    {
                         // Check for portal
                         if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
                             vm.output.push(format!(
@@ -1402,7 +1413,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 success_count += 1;
 
                                 // Advance
-                                if let Some((next_y, next_x)) = vm.normalize_coords(ny as i64 + dy, nx as i64 + dx) {
+                                if let Some((next_y, next_x)) =
+                                    vm.normalize_coords(ny as i64 + dy, nx as i64 + dx)
+                                {
                                     curr_y = next_y as i64;
                                     curr_x = next_x as i64;
                                 } else {
@@ -1476,11 +1489,25 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let dx = cx as i64 - tx as i64;
                             let dy = cy as i64 - ty as i64;
 
-                            let sx = if dx > 0 { 1 } else if dx < 0 { -1 } else { 0 };
-                            let sy = if dy > 0 { 1 } else if dy < 0 { -1 } else { 0 };
+                            let sx = if dx > 0 {
+                                1
+                            } else if dx < 0 {
+                                -1
+                            } else {
+                                0
+                            };
+                            let sy = if dy > 0 {
+                                1
+                            } else if dy < 0 {
+                                -1
+                            } else {
+                                0
+                            };
 
                             // Use normalize_coords to find valid target
-                            if let Some((target_y, target_x)) = vm.normalize_coords(ty as i64 + sy, tx as i64 + sx) {
+                            if let Some((target_y, target_x)) =
+                                vm.normalize_coords(ty as i64 + sy, tx as i64 + sx)
+                            {
                                 // Check if target is empty
                                 if matches!(vm.grid[target_y][target_x], Value::Int(0)) {
                                     // Move
@@ -1618,7 +1645,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
                                 let intensity = vm.hormone_grid[ny][nx][channel_idx];
                                 if intensity > max_intensity {
                                     max_intensity = intensity;
@@ -1704,16 +1733,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                     if let Some(topo) = new_topology {
                         vm.topology = topo;
-                        vm.output.push(format!("SHAPE: Changed topology to {:?}", topo));
+                        vm.output
+                            .push(format!("SHAPE: Changed topology to {:?}", topo));
                         vm.energy = vm.energy.saturating_sub(100); // Massive energy cost to reshape reality
                     } else {
-                        vm.output.push(format!("Error: Invalid topology index {}", t));
+                        vm.output
+                            .push(format!("Error: Invalid topology index {}", t));
                     }
                 } else {
                     vm.output.push("Error: Type mismatch for shape".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for shape".to_string());
+                vm.output
+                    .push("Error: Stack underflow for shape".to_string());
             }
             None
         }
@@ -1794,7 +1826,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     let mut found = false;
 
                     for d in 1..=16 {
-                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy * d, cx as i64 + dx * d) {
+                        if let Some((ny, nx)) =
+                            vm.normalize_coords(cy as i64 + dy * d, cx as i64 + dx * d)
+                        {
                             if !matches!(vm.grid[ny][nx], Value::Int(0)) {
                                 vm.stack.push(Value::Int(d));
                                 vm.stack.push(vm.grid[ny][nx].clone());
