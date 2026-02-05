@@ -2,7 +2,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph, Wrap},
+    widgets::{Block, BorderType, Borders, Gauge, List, ListItem, Paragraph, Wrap},
     Frame,
 };
 
@@ -24,24 +24,22 @@ pub fn draw(f: &mut Frame, game: &Game) {
 }
 
 fn draw_stats(f: &mut Frame, game: &Game, area: Rect) {
-    let hp_color = if game.hp < 30 {
-        Color::Red
-    } else {
-        Color::Green
-    };
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Min(0),
+            Constraint::Length(30), // HP Bar
+        ])
+        .split(area);
+
+    // Left: Stats Text
     let text = vec![Line::from(vec![
         Span::styled("GIT ROGUE", Style::default().add_modifier(Modifier::BOLD)),
-        Span::raw(" | "),
-        Span::raw("HP: "),
-        Span::styled(
-            format!("{}/{}", game.hp, game.max_hp),
-            Style::default().fg(hp_color),
-        ),
         Span::raw(" | "),
         Span::raw("XP: "),
         Span::styled(format!("{}", game.xp), Style::default().fg(Color::Yellow)),
         Span::raw(" | "),
-        Span::raw("Location: "),
+        Span::raw("Loc: "),
         Span::styled(
             game.current_node().short_hash.clone(),
             Style::default().fg(Color::Cyan),
@@ -56,9 +54,27 @@ fn draw_stats(f: &mut Frame, game: &Game, area: Rect) {
         },
     ])];
 
-    let block = Block::default().borders(Borders::ALL);
+    let block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded);
     let p = Paragraph::new(text).block(block);
-    f.render_widget(p, area);
+    f.render_widget(p, chunks[0]);
+
+    // Right: HP Gauge
+    let hp_ratio = (game.hp as f64 / game.max_hp as f64).clamp(0.0, 1.0);
+    let hp_color = if hp_ratio < 0.3 {
+        Color::Red
+    } else if hp_ratio < 0.6 {
+        Color::Yellow
+    } else {
+        Color::Green
+    };
+
+    let gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" ❤️ HP "))
+        .gauge_style(Style::default().fg(hp_color))
+        .ratio(hp_ratio)
+        .label(format!("{}/{}", game.hp, game.max_hp));
+
+    f.render_widget(gauge, chunks[1]);
 }
 
 fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
@@ -92,21 +108,22 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
             "Controls:",
             Style::default().fg(Color::Magenta),
         )]),
-        Line::from("1-9: Go to Parent (Back in time)"),
-        Line::from("Shift + 1-9: Go to Child (Forward in time)"),
+        Line::from("1-9: ⏬ Go to Parent (Back in time)"),
+        Line::from("Shift + 1-9: ⏫ Go to Child (Forward in time)"),
         Line::from("Q: Quit"),
     ];
 
     let desc_block = Block::default()
         .borders(Borders::ALL)
-        .title(" Current Commit ");
+        .border_type(BorderType::Rounded)
+        .title(" 📍 Current Commit ");
     let p = Paragraph::new(desc_text)
         .block(desc_block)
         .wrap(Wrap { trim: true });
     f.render_widget(p, chunks[0]);
 
     // Right: Exits
-    let exits_block = Block::default().borders(Borders::ALL).title(" Exits ");
+    let exits_block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" 🚪 Exits ");
 
     let mut items = Vec::new();
 
@@ -126,7 +143,7 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
             } else {
                 format!("{} (Unknown - outside crawled range)", &p_hash[..7])
             };
-            items.push(ListItem::new(format!("[{}] {}", i + 1, label)));
+            items.push(ListItem::new(format!("[{}] ⏬ {}", i + 1, label)));
         }
     } else {
         items.push(ListItem::new(Span::styled(
@@ -154,7 +171,7 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
                 format!("{} (Unknown)", &c_hash[..7])
             };
             // Use Shift+N logic display
-            items.push(ListItem::new(format!("[Shift+{}] {}", i + 1, label)));
+            items.push(ListItem::new(format!("[Shift+{}] ⏫ {}", i + 1, label)));
         }
     } else {
         items.push(ListItem::new(Span::styled(
@@ -168,10 +185,19 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
 }
 
 fn draw_log(f: &mut Frame, game: &Game, area: Rect) {
-    let block = Block::default().borders(Borders::ALL).title(" Log ");
+    let block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" 📜 Log ");
     let mut lines = Vec::new();
     for msg in game.log.iter().rev() {
-        lines.push(Line::from(Span::raw(msg)));
+        let style = if msg.contains("damage") || msg.contains("FAILURE") {
+            Style::default().fg(Color::Red)
+        } else if msg.contains("XP") || msg.contains("refreshed") {
+            Style::default().fg(Color::Green)
+        } else if msg.contains("Entered Commit") {
+             Style::default().fg(Color::Blue)
+        } else {
+            Style::default()
+        };
+        lines.push(Line::from(Span::styled(msg, style)));
     }
     let p = Paragraph::new(lines).block(block);
     f.render_widget(p, area);
