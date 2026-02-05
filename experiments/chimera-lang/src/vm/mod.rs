@@ -146,6 +146,8 @@ pub struct ChimeraVM {
     pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub topology: Topology,
+    #[cfg(feature = "nova")]
+    pub ether: HashMap<i64, VecDeque<Value>>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -215,6 +217,8 @@ impl ChimeraVM {
             sonar_target: None,
             #[cfg(feature = "nova")]
             topology: Topology::Torus,
+            #[cfg(feature = "nova")]
+            ether: HashMap::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -717,6 +721,8 @@ impl ChimeraVM {
             | OpCode::Gravitate
             | OpCode::Lumine
             | OpCode::SenseLight
+            | OpCode::Broadcast
+            | OpCode::Tune
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {

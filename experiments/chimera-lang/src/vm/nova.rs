@@ -33,6 +33,7 @@ pub struct Spore {
     pub entangled_pairs: HashMap<usize, usize>,
     pub portals: HashMap<(usize, usize), (usize, usize)>,
     pub sonar_target: Option<(usize, usize)>,
+    pub ether: HashMap<i64, VecDeque<Value>>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -283,6 +284,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 entangled_pairs: vm.entangled_pairs.clone(),
                 portals: vm.portals.clone(),
                 sonar_target: vm.sonar_target,
+                ether: vm.ether.clone(),
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -326,6 +328,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.entangled_pairs = spore.entangled_pairs.clone();
                         vm.portals = spore.portals.clone();
                         vm.sonar_target = spore.sonar_target;
+                        vm.ether = spore.ether.clone();
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
@@ -1820,6 +1823,51 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for sonar".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Broadcast => {
+            // stack: channel, value (top)
+            if vm.stack.len() >= 2 {
+                let value = vm.stack.pop().unwrap();
+                let channel_val = vm.stack.pop().unwrap();
+                if let Value::Int(channel) = channel_val {
+                    let queue = vm.ether.entry(channel).or_default();
+                    if queue.len() < 100 {
+                        queue.push_back(value);
+                        vm.energy = vm.energy.saturating_sub(1);
+                        vm.output.push(format!("BROADCAST: Sent to channel {}", channel));
+                    } else {
+                        vm.output.push(format!("BROADCAST: Channel {} full", channel));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for broadcast".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for broadcast".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Tune => {
+            // stack: channel
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(channel) = val {
+                    let mut value = Value::Int(0);
+                    if let Some(queue) = vm.ether.get_mut(&channel) {
+                        if let Some(v) = queue.pop_front() {
+                            value = v;
+                            vm.output.push(format!("TUNE: Received from channel {}", channel));
+                        }
+                    }
+                    vm.stack.push(value);
+                    vm.energy = vm.energy.saturating_sub(1);
+                } else {
+                    vm.output.push("Error: Type mismatch for tune".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for tune".to_string());
             }
             None
         }
