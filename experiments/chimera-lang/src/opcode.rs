@@ -126,6 +126,10 @@ pub enum OpCode {
     Seal,
     #[cfg(feature = "nova")]
     Shape,
+    #[cfg(feature = "nova")]
+    Broadcast,
+    #[cfg(feature = "nova")]
+    Tune,
 
     Unknown(String),
 }
@@ -256,6 +260,10 @@ impl FromStr for OpCode {
             "seal" => Ok(OpCode::Seal),
             #[cfg(feature = "nova")]
             "shape" => Ok(OpCode::Shape),
+            #[cfg(feature = "nova")]
+            "broadcast" => Ok(OpCode::Broadcast),
+            #[cfg(feature = "nova")]
+            "tune" => Ok(OpCode::Tune),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -386,6 +394,10 @@ impl fmt::Display for OpCode {
             OpCode::Seal => write!(f, "seal"),
             #[cfg(feature = "nova")]
             OpCode::Shape => write!(f, "shape"),
+            #[cfg(feature = "nova")]
+            OpCode::Broadcast => write!(f, "broadcast"),
+            #[cfg(feature = "nova")]
+            OpCode::Tune => write!(f, "tune"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
