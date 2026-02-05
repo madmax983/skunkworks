@@ -34,6 +34,7 @@ pub struct Spore {
     pub portals: HashMap<(usize, usize), (usize, usize)>,
     pub membranes: Vec<Vec<u8>>,
     pub sonar_target: Option<(usize, usize)>,
+    pub symbiotes: Vec<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
@@ -319,6 +320,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 portals: vm.portals.clone(),
                 membranes: vm.membranes.clone(),
                 sonar_target: vm.sonar_target,
+                symbiotes: vm.symbiotes.clone(),
                 ether: vm.ether.clone(),
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
@@ -364,6 +366,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.portals = spore.portals.clone();
                         vm.membranes = spore.membranes.clone();
                         vm.sonar_target = spore.sonar_target;
+                        vm.symbiotes = spore.symbiotes.clone();
                         vm.ether = spore.ether.clone();
                         #[cfg(feature = "cortex")]
                         {
@@ -2040,6 +2043,79 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for osmosis".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Symbiosis => {
+            // stack: dy, dx (top)
+            if vm.stack.len() >= 2 {
+                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop().unwrap();
+                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    let (cy, cx) = vm.context_loc;
+                    if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                        // Find organelle at (ny, nx)
+                        let mut found_idx = None;
+                        for (i, org) in vm.organelles.iter().enumerate() {
+                            if org.context_loc == (ny, nx) {
+                                found_idx = Some(i);
+                                break;
+                            }
+                        }
+
+                        if let Some(idx) = found_idx {
+                            let organelle = vm.organelles.remove(idx);
+
+                            // Absorb IP
+                            vm.symbiotes.push(organelle.ip);
+
+                            // Absorb Stack
+                            vm.stack.extend(organelle.stack);
+
+                            vm.energy = vm.energy.saturating_sub(20);
+                            vm.output
+                                .push(format!("SYMBIOSIS: Absorbed organelle at {},{}", nx, ny));
+                        } else {
+                            vm.output.push("SYMBIOSIS: No organelle found".to_string());
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for symbiosis".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for symbiosis".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for symbiosis".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Lysis => {
+            // Eject the last symbiote
+            if let Some(sip) = vm.symbiotes.pop() {
+                let (cy, cx) = vm.context_loc;
+
+                // Create organelle
+                let organelle = Organelle {
+                    stack: Vec::new(),
+                    ip: sip,
+                    context_loc: (cy, cx),
+                    call_stack: Vec::new(),
+                    recursion_depth: 0,
+                    halted: false,
+                    kind: OrganelleType::Worker, // Default
+                    direction: (0, 0),
+                };
+                vm.organelles.push(organelle);
+                vm.energy = vm.energy.saturating_sub(10);
+                vm.output
+                    .push(format!("LYSIS: Ejected symbiote to {},{}", cx, cy));
+            } else {
+                vm.output.push("LYSIS: No symbiotes to eject".to_string());
             }
             None
         }

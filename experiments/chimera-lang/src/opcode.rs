@@ -134,6 +134,10 @@ pub enum OpCode {
     Membrane,
     #[cfg(feature = "nova")]
     Osmosis,
+    #[cfg(feature = "nova")]
+    Symbiosis,
+    #[cfg(feature = "nova")]
+    Lysis,
 
     Unknown(String),
 }
@@ -272,6 +276,10 @@ impl FromStr for OpCode {
             "membrane" => Ok(OpCode::Membrane),
             #[cfg(feature = "nova")]
             "osmosis" => Ok(OpCode::Osmosis),
+            #[cfg(feature = "nova")]
+            "symbiosis" => Ok(OpCode::Symbiosis),
+            #[cfg(feature = "nova")]
+            "lysis" => Ok(OpCode::Lysis),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -410,6 +418,10 @@ impl fmt::Display for OpCode {
             OpCode::Membrane => write!(f, "membrane"),
             #[cfg(feature = "nova")]
             OpCode::Osmosis => write!(f, "osmosis"),
+            #[cfg(feature = "nova")]
+            OpCode::Symbiosis => write!(f, "symbiosis"),
+            #[cfg(feature = "nova")]
+            OpCode::Lysis => write!(f, "lysis"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
