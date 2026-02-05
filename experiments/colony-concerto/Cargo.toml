@@ -1,0 +1,18 @@
+[package]
+name = "colony-concerto"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
+petgraph = "0.6"
+crossbeam = "0.8"
+parking_lot = "0.12"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = []
+audio = ["cpal"]
