@@ -267,6 +267,13 @@ fn run_app<B: ratatui::backend::Backend>(
                                     .add_modifier(Modifier::SLOW_BLINK);
                             }
                         }
+
+                        if vm.portals.contains_key(&(y, x)) {
+                            char_rep = "@".to_string();
+                            style = style
+                                .fg(Color::Magenta)
+                                .add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
+                        }
                     }
 
                     line_spans.push(Span::styled(char_rep, style));

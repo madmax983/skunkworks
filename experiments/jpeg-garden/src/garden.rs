@@ -1,5 +1,5 @@
 use crate::dct::{dct_2d, idct_2d};
-use image::{RgbaImage, Rgba};
+use image::{Rgba, RgbaImage};
 use rand::Rng;
 
 #[derive(Clone)]
@@ -108,7 +108,8 @@ impl Garden {
                         // B = Y + 1.772Cb
 
                         let r = (y_val + 1.402 * cr_val).clamp(0.0, 255.0) as u8;
-                        let g = (y_val - 0.34414 * cb_val - 0.71414 * cr_val).clamp(0.0, 255.0) as u8;
+                        let g =
+                            (y_val - 0.34414 * cb_val - 0.71414 * cr_val).clamp(0.0, 255.0) as u8;
                         let b = (y_val + 1.772 * cb_val).clamp(0.0, 255.0) as u8;
 
                         img.put_pixel(bx * 8 + x, by * 8 + y, Rgba([r, g, b, 255]));
@@ -124,7 +125,9 @@ impl Garden {
         let total_blocks = self.blocks.len();
 
         // Pick a random block to infect
-        if total_blocks == 0 { return; }
+        if total_blocks == 0 {
+            return;
+        }
 
         // Evolve loop: modify a few blocks each tick
         for _ in 0..5 {
@@ -135,9 +138,9 @@ impl Garden {
             // High frequency coefficients are at the bottom-right of the 8x8 matrix (higher indices)
             let high_freq_idx = rng.gen_range(10..64);
             if rng.gen_bool(0.3) {
-                 block.y[high_freq_idx] = 0.0;
-                 block.cb[high_freq_idx] = 0.0;
-                 block.cr[high_freq_idx] = 0.0;
+                block.y[high_freq_idx] = 0.0;
+                block.cb[high_freq_idx] = 0.0;
+                block.cr[high_freq_idx] = 0.0;
             }
 
             // 2. Noise Moss: Add small noise to coefficients
@@ -154,7 +157,7 @@ impl Garden {
             }
 
             // 4. "Ringing" - amplify high freq
-             if rng.gen_bool(0.05) {
+            if rng.gen_bool(0.05) {
                 let idx = rng.gen_range(32..64);
                 block.y[idx] *= 1.1;
             }

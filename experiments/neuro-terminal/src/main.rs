@@ -269,7 +269,11 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                     Color::Magenta
                 };
                 // Use a character to make data points pop against the block background
-                ctx.print(input[0], input[1], Span::styled("●", Style::default().fg(color)));
+                ctx.print(
+                    input[0],
+                    input[1],
+                    Span::styled("●", Style::default().fg(color)),
+                );
             }
         });
     f.render_widget(canvas, area);

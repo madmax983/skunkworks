@@ -31,6 +31,7 @@ pub struct Spore {
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
     pub entangled_pairs: HashMap<usize, usize>,
+    pub portals: HashMap<(usize, usize), (usize, usize)>,
     pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
@@ -298,6 +299,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 input_buffer: vm.input_buffer.clone(),
                 receptors: vm.receptors.clone(),
                 entangled_pairs: vm.entangled_pairs.clone(),
+                portals: vm.portals.clone(),
                 sonar_target: vm.sonar_target,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
@@ -340,6 +342,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.input_buffer = spore.input_buffer.clone();
                         vm.receptors = spore.receptors.clone();
                         vm.entangled_pairs = spore.entangled_pairs.clone();
+                        vm.portals = spore.portals.clone();
                         vm.sonar_target = spore.sonar_target;
                         #[cfg(feature = "cortex")]
                         {
@@ -1172,8 +1175,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let dy_val = vm.stack.pop().unwrap();
                 if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
                     let (cy, cx) = vm.context_loc;
-                    let new_y = (cy as i64 + dy).rem_euclid(16) as usize;
-                    let new_x = (cx as i64 + dx).rem_euclid(16) as usize;
+                    let mut new_y = (cy as i64 + dy).rem_euclid(16) as usize;
+                    let mut new_x = (cx as i64 + dx).rem_euclid(16) as usize;
+
+                    // Check for portal
+                    if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
+                        vm.output.push(format!(
+                            "PORTAL: Teleported from {},{} to {},{}",
+                            new_x, new_y, px, py
+                        ));
+                        new_y = py;
+                        new_x = px;
+                    }
+
                     vm.context_loc = (new_y, new_x);
                     vm.energy = vm.energy.saturating_sub(5);
                     vm.output
@@ -1688,6 +1702,72 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for differentiate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Rift => {
+            // stack: y2, x2, y1, x1 (bottom)
+            if vm.stack.len() >= 4 {
+                let x2_val = vm.stack.pop().unwrap();
+                let y2_val = vm.stack.pop().unwrap();
+                let x1_val = vm.stack.pop().unwrap();
+                let y1_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(x1), Value::Int(y1), Value::Int(x2), Value::Int(y2)) =
+                    (x1_val, y1_val, x2_val, y2_val)
+                {
+                    if (0..16).contains(&x1)
+                        && (0..16).contains(&y1)
+                        && (0..16).contains(&x2)
+                        && (0..16).contains(&y2)
+                    {
+                        vm.portals
+                            .insert((y1 as usize, x1 as usize), (y2 as usize, x2 as usize));
+                        vm.energy = vm.energy.saturating_sub(50);
+                        vm.output.push(format!(
+                            "RIFT: Opened portal from {},{} to {},{}",
+                            x1, y1, x2, y2
+                        ));
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for rift".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for rift".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for rift".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Seal => {
+            // stack: y, x (top)
+            if vm.stack.len() >= 2 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
+                    if (0..16).contains(&x) && (0..16).contains(&y) {
+                        if vm.portals.remove(&(y as usize, x as usize)).is_some() {
+                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.output
+                                .push(format!("SEAL: Closed portal at {},{}", x, y));
+                        } else {
+                            vm.output
+                                .push(format!("SEAL: No portal found at {},{}", x, y));
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for seal".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for seal".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for seal".to_string());
             }
             None
         }

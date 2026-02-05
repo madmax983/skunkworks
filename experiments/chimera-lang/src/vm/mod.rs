@@ -124,6 +124,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub entangled_pairs: HashMap<usize, usize>,
     #[cfg(feature = "nova")]
+    pub portals: HashMap<(usize, usize), (usize, usize)>,
+    #[cfg(feature = "nova")]
     pub organelles: Vec<Organelle>,
     #[cfg(feature = "nova")]
     pub active_organelle_kind: Option<nova::OrganelleType>,
@@ -188,6 +190,8 @@ impl ChimeraVM {
             receptors: HashMap::new(),
             #[cfg(feature = "nova")]
             entangled_pairs: HashMap::new(),
+            #[cfg(feature = "nova")]
+            portals: HashMap::new(),
             #[cfg(feature = "nova")]
             organelles: Vec::new(),
             #[cfg(feature = "nova")]
@@ -433,8 +437,20 @@ impl ChimeraVM {
                         }
                         // Move
                         let (dy, dx) = organelle.direction;
-                        let new_y = (cy as i64 + dy as i64).rem_euclid(16) as usize;
-                        let new_x = (cx as i64 + dx as i64).rem_euclid(16) as usize;
+                        let mut new_y = (cy as i64 + dy as i64).rem_euclid(16) as usize;
+                        let mut new_x = (cx as i64 + dx as i64).rem_euclid(16) as usize;
+
+                        // Check for portal
+                        #[cfg(feature = "nova")]
+                        if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
+                            self.output.push(format!(
+                                "PORTAL: Teleported from {},{} to {},{}",
+                                new_x, new_y, px, py
+                            ));
+                            new_y = py;
+                            new_x = px;
+                        }
+
                         self.context_loc = (new_y, new_x);
                     }
                     nova::OrganelleType::Worker => {}
@@ -553,7 +569,9 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Simulate
+            OpCode::Rift
+            | OpCode::Seal
+            | OpCode::Simulate
             | OpCode::Dream
             | OpCode::Chemotaxis
             | OpCode::Identity
