@@ -147,6 +147,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "nova")]
+    pub symbiotes: Vec<(usize, usize)>,
+    #[cfg(feature = "nova")]
     pub topology: Topology,
     #[cfg(feature = "nova")]
     pub ether: HashMap<i64, VecDeque<Value>>,
@@ -221,6 +223,8 @@ impl ChimeraVM {
             signal_differentiation: None,
             #[cfg(feature = "nova")]
             sonar_target: None,
+            #[cfg(feature = "nova")]
+            symbiotes: Vec::new(),
             #[cfg(feature = "nova")]
             topology: Topology::Torus,
             #[cfg(feature = "nova")]
@@ -410,6 +414,44 @@ impl ChimeraVM {
             }
         }
         false
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_symbiotes(&mut self) {
+        let count = self.symbiotes.len();
+        for i in 0..count {
+            if self.energy <= 0 {
+                break;
+            }
+
+            // Swap execution context
+            let mut sym_ip = self.symbiotes[i];
+            std::mem::swap(&mut self.ip, &mut sym_ip);
+
+            // Execute logic (simplified version of step checks)
+            let helix_len = self.dna.helix.strands.len();
+            if self.ip.0 < helix_len {
+                 let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                 if self.ip.1 < strand_len {
+                     // Check telomeres/epigenetics? For now, skip for symbiotes to avoid complexity
+                     let (gene_op, gene_args) = {
+                        let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                        (gene.op.clone(), gene.args.clone())
+                    };
+
+                    let jump_target = self.execute_gene(gene_op, &gene_args);
+                    if let Some(target) = jump_target {
+                        self.ip = target;
+                    } else {
+                        self.ip.1 += 1;
+                    }
+                 }
+            }
+
+            // Swap back
+            std::mem::swap(&mut self.ip, &mut sym_ip);
+            self.symbiotes[i] = sym_ip;
+        }
     }
 
     #[cfg(feature = "nova")]
@@ -620,6 +662,9 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
+        self.process_symbiotes();
+
+        #[cfg(feature = "nova")]
         self.process_organelles();
     }
 
@@ -735,6 +780,8 @@ impl ChimeraVM {
             | OpCode::Tune
             | OpCode::Membrane
             | OpCode::Osmosis
+            | OpCode::Symbiosis
+            | OpCode::Lysis
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
