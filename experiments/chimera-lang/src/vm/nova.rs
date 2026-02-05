@@ -30,6 +30,7 @@ pub struct Spore {
     pub telomeres: Vec<i64>,
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
     pub waste_grid: Vec<Vec<i64>>,
+    pub mutagen_grid: Vec<Vec<i64>>,
     pub light_grid: Vec<Vec<i64>>,
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
@@ -171,6 +172,32 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
         }
     }
 }
+
+#[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
+pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
+    let mut buffer = [[0i64; 16]; 16];
+    for y in 0..16 {
+        for x in 0..16 {
+            let mut sum = (vm.mutagen_grid[y][x] as i128) * 4;
+            let mut count = 4;
+
+            for (ny, nx) in get_open_neighbors(vm, y, x) {
+                sum += vm.mutagen_grid[ny][nx] as i128;
+                count += 1;
+            }
+
+            // Blur and slow decay (90%)
+            buffer[y][x] = ((sum / count) * 9 / 10) as i64;
+        }
+    }
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.mutagen_grid[y][x] = buffer[y][x];
+        }
+    }
+}
+
 #[cfg(feature = "nova")]
 fn value_to_nucleotide(v: &Value) -> Nucleotide {
     match v {
@@ -321,6 +348,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 telomeres: vm.telomeres.clone(),
                 hormone_grid: vm.hormone_grid.clone(),
                 waste_grid: vm.waste_grid.clone(),
+                mutagen_grid: vm.mutagen_grid.clone(),
                 light_grid: vm.light_grid.clone(),
                 call_stack: vm.call_stack.clone(),
                 input_buffer: vm.input_buffer.clone(),
@@ -370,6 +398,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.telomeres = spore.telomeres.clone();
                         vm.hormone_grid = spore.hormone_grid.clone();
                         vm.waste_grid = spore.waste_grid.clone();
+                        vm.mutagen_grid = spore.mutagen_grid.clone();
                         vm.light_grid = spore.light_grid.clone();
                         vm.call_stack = spore.call_stack.clone();
                         vm.input_buffer = spore.input_buffer.clone();
@@ -2190,6 +2219,57 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     .push("Error: Stack underflow for compile".to_string());
             }
             None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Irradiate => {
+            // stack: amount, radius (top)
+            if vm.stack.len() >= 2 {
+                let radius_val = vm.stack.pop().unwrap();
+                let amount_val = vm.stack.pop().unwrap();
+                if let (Value::Int(r), Value::Int(amount)) = (radius_val, amount_val) {
+                    if r > 0 && amount > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+                        for (tx, ty) in coords {
+                            vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
+                        }
+                        // Cost is proportional to amount and area
+                        vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                        vm.output.push(format!(
+                            "IRRADIATE: Added {} mutagen at {},{} r={}",
+                            amount, cx, cy, r
+                        ));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for irradiate".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for irradiate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseMutagen => {
+            let (cy, cx) = vm.context_loc;
+            let level = vm.mutagen_grid[cy][cx];
+            vm.stack.push(Value::Int(level));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Devour => {
+             let (cy, cx) = vm.context_loc;
+             let level = vm.mutagen_grid[cy][cx];
+             if level > 0 {
+                 vm.mutagen_grid[cy][cx] = 0;
+                 let energy_gain = level / 2; // 50% efficiency
+                 vm.energy = vm.energy.saturating_add(energy_gain);
+                 vm.stack.push(Value::Int(energy_gain));
+                 vm.output.push(format!("DEVOUR: Consumed {} mutagen, gained {} energy", level, energy_gain));
+             } else {
+                 vm.stack.push(Value::Int(0));
+             }
+             None
         }
         #[cfg(feature = "nova")]
         OpCode::Decompile => {

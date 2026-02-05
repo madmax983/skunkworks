@@ -427,6 +427,22 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Decompile,
 
+    /// **[Nova]** Increases local mutagen level.
+    ///
+    /// **Stack:** `[ ..., amount, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Irradiate,
+    /// **[Nova]** Reads local mutagen level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., level ]`
+    #[cfg(feature = "nova")]
+    SenseMutagen,
+    /// **[Nova]** Consumes local mutagen to gain energy.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., energy_gained ]`
+    #[cfg(feature = "nova")]
+    Devour,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -635,6 +651,12 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "compile" => Ok(OpCode::Compile),
             #[cfg(feature = "nova")]
+            "irradiate" => Ok(OpCode::Irradiate),
+            #[cfg(feature = "nova")]
+            "sense_mutagen" => Ok(OpCode::SenseMutagen),
+            #[cfg(feature = "nova")]
+            "devour" => Ok(OpCode::Devour),
+            #[cfg(feature = "nova")]
             "decompile" => Ok(OpCode::Decompile),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
@@ -784,6 +806,12 @@ impl fmt::Display for OpCode {
             OpCode::Compile => write!(f, "compile"),
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
+            #[cfg(feature = "nova")]
+            OpCode::Irradiate => write!(f, "irradiate"),
+            #[cfg(feature = "nova")]
+            OpCode::SenseMutagen => write!(f, "sense_mutagen"),
+            #[cfg(feature = "nova")]
+            OpCode::Devour => write!(f, "devour"),
             #[cfg(feature = "nova")]
             OpCode::Remap => write!(f, "remap"),
             #[cfg(feature = "nova")]
