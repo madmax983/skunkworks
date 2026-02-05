@@ -65,6 +65,7 @@ impl AudioModel {
 
             // Send snapshot at ~60Hz (Assuming 44100Hz, 735 samples)
             // Use rem_euclid or just % if we are sure positive. usize is positive.
+            #[allow(clippy::manual_is_multiple_of)]
             if self.sample_counter % 735 == 0 {
                 // Ignore error if channel is full
                 let _ = self.snapshot_tx.try_send(self.grid.u.clone());

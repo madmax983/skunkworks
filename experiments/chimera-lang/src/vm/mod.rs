@@ -36,6 +36,12 @@ pub mod bard;
 pub mod cortex;
 pub mod nova;
 pub mod oracle;
+pub mod resonance;
+
+#[cfg(feature = "resonance")]
+use resonance_audio::audio::AudioCommand;
+#[cfg(feature = "resonance")]
+use crossbeam_channel::Sender;
 
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
@@ -197,6 +203,8 @@ pub struct ChimeraVM {
     pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
+    #[cfg(feature = "resonance")]
+    pub audio_tx: Option<Sender<AudioCommand>>,
 }
 
 impl ChimeraVM {
@@ -292,7 +300,14 @@ impl ChimeraVM {
             score: Vec::new(),
             #[cfg(feature = "oracle")]
             knowledge_base: Vec::new(),
+            #[cfg(feature = "resonance")]
+            audio_tx: None,
         }
+    }
+
+    #[cfg(feature = "resonance")]
+    pub fn set_audio_tx(&mut self, tx: Sender<AudioCommand>) {
+        self.audio_tx = Some(tx);
     }
 
     /// Triggers an internal reflex event (interrupt).
@@ -1102,6 +1117,12 @@ impl ChimeraVM {
             #[cfg(feature = "oracle")]
             OpCode::Assert | OpCode::Retract | OpCode::Query => {
                 oracle::exec_oracle_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "resonance")]
+            OpCode::Pluck => {
+                resonance::exec_resonance_op(self, op, args);
                 None
             }
 

@@ -520,6 +520,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Perform,
 
+    // Resonance Features (Audio Physics)
+    /// **[Resonance]** Plucks the underlying physics grid at the current location.
+    ///
+    /// **Stack:** `[ ..., strength ] -> [ ... ]`
+    #[cfg(feature = "resonance")]
+    Pluck,
+
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
     ///
@@ -583,6 +590,9 @@ impl FromStr for OpCode {
             "tempo" => Ok(OpCode::Tempo),
             #[cfg(feature = "nova")]
             "perform" => Ok(OpCode::Perform),
+
+            #[cfg(feature = "resonance")]
+            "pluck" => Ok(OpCode::Pluck),
 
             "push" => Ok(OpCode::Push),
             "add" => Ok(OpCode::Add),
@@ -912,6 +922,9 @@ impl fmt::Display for OpCode {
             OpCode::Tempo => write!(f, "tempo"),
             #[cfg(feature = "nova")]
             OpCode::Perform => write!(f, "perform"),
+
+            #[cfg(feature = "resonance")]
+            OpCode::Pluck => write!(f, "pluck"),
 
             #[cfg(feature = "oracle")]
             OpCode::Assert => write!(f, "assert"),
