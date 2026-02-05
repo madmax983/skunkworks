@@ -170,30 +170,6 @@ classDiagram
     note for Synthesizer "Maps file hash -> Frequency\nMaps DiffType -> Color"
 ```
 
-## Core Architecture Changes
-
-Refactoring to decouple storage from core logic.
-
-### Core vs Storage
-
-```mermaid
-classDiagram
-  class Core
-  class Storage
-  Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow
-```
-
-### Storage Flow
-
-```mermaid
-sequenceDiagram
-    participant C as Core
-    participant S as Storage
-
-    C->>S: save_state(data)
-    S-->>C: Result<Ok>
-```
 
 ## Experiment: Chimera Lang (ADR 008)
 
@@ -256,4 +232,29 @@ sequenceDiagram
         Enzyme->>Endocrine: secrete(hormone)
         Enzyme->>Endocrine: detect(hormone)
     end
+```
+
+## Core Architecture Changes (ADR 012)
+
+Refactoring to decouple storage from core logic to resolve circular dependencies.
+
+### Core vs Storage
+
+```mermaid
+classDiagram
+  class Core
+  class Storage
+  Core --> Storage : Uses (Trait Bound)
+  %% Removed the circular dependency arrow
+```
+
+### Storage Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Core
+    participant S as Storage
+
+    C->>S: save_state(data)
+    S-->>C: Result<Ok>
 ```
