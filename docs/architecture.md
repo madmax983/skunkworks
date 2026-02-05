@@ -234,6 +234,73 @@ sequenceDiagram
     end
 ```
 
+### Nova Feature: Time Travel (ADR 013)
+
+The `Spore` struct enables deep state snapshots, allowing the VM to backtrack execution paths.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +Dna dna
+        +Vec~Value~ stack
+        +PetriDish grid
+        +Vec~Spore~ spores
+        +step()
+        +sporulate()
+        +germinate(id)
+    }
+
+    class Spore {
+        <<Snapshot>>
+        +Dna dna
+        +Vec~Value~ stack
+        +PetriDish grid
+        +usize ip
+    }
+
+    ChimeraVM *-- Spore : Manages
+    ChimeraVM ..> Spore : Creates (Sporulate)
+    Spore ..> ChimeraVM : Restores (Germinate)
+```
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant SporeStorage as Vec<Spore>
+
+    VM->>VM: Execute OpCode::Sporulate
+    VM->>SporeStorage: push(clone_state())
+    SporeStorage-->>VM: return spore_id (0)
+    VM->>VM: Continue Execution...
+    VM->>VM: Encounter Hazard (Mutation/Death)
+
+    opt If Failure Detected
+        VM->>VM: Execute OpCode::Germinate(0)
+        SporeStorage->>VM: restore_state(spore_0)
+        VM->>VM: State Reverted (Time Travel)
+    end
+```
+
+### Nova Feature: Prion Protocol (ADR 013)
+
+Dynamic instruction remapping allows the environment or the program itself to alter the meaning of genes.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Normal
+    Normal --> Remapped : OpCode::Remap(Add, Sub)
+    Remapped --> Normal : OpCode::Restore(Add)
+
+    state Normal {
+        Add : Adds two numbers
+    }
+
+    state Remapped {
+        Add : Subtracts two numbers (Prion)
+    }
+```
+
 ## Core Architecture Changes (ADR 012)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
