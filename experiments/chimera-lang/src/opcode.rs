@@ -487,6 +487,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Zip,
 
+    // Oracle Features (Logic Engine)
+    /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
+    ///
+    /// **Stack:** `[ ..., fact ] -> [ ... ]`
+    #[cfg(feature = "oracle")]
+    Assert,
+    /// **[Oracle]** Removes a fact or rule from the Knowledge Base.
+    ///
+    /// **Stack:** `[ ..., fact ] -> [ ... ]`
+    #[cfg(feature = "oracle")]
+    Retract,
+    /// **[Oracle]** Queries the Knowledge Base.
+    ///
+    /// **Stack:** `[ ..., query ] -> [ ..., success ]`
+    /// **Effect:** Tries to prove the query. If successful, variables in the query structure may be unified.
+    #[cfg(feature = "oracle")]
+    Query,
+
     /// Unknown or invalid instruction.
     Unknown(String),
 }
@@ -496,6 +514,13 @@ impl FromStr for OpCode {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            #[cfg(feature = "oracle")]
+            "assert" => Ok(OpCode::Assert),
+            #[cfg(feature = "oracle")]
+            "retract" => Ok(OpCode::Retract),
+            #[cfg(feature = "oracle")]
+            "query" => Ok(OpCode::Query),
+
             #[cfg(feature = "nova")]
             "remap" => Ok(OpCode::Remap),
             #[cfg(feature = "nova")]
@@ -828,6 +853,13 @@ impl fmt::Display for OpCode {
             OpCode::Filter => write!(f, "filter"),
             #[cfg(feature = "nova")]
             OpCode::Zip => write!(f, "zip"),
+
+            #[cfg(feature = "oracle")]
+            OpCode::Assert => write!(f, "assert"),
+            #[cfg(feature = "oracle")]
+            OpCode::Retract => write!(f, "retract"),
+            #[cfg(feature = "oracle")]
+            OpCode::Query => write!(f, "query"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

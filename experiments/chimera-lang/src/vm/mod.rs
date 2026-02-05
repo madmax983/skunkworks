@@ -33,6 +33,7 @@ pub const MAX_RECURSION_DEPTH: usize = 100;
 
 pub mod cortex;
 pub mod nova;
+pub mod oracle;
 
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
@@ -181,6 +182,8 @@ pub struct ChimeraVM {
     pub remap_table: HashMap<OpCode, OpCode>,
     #[cfg(feature = "nova")]
     pub direction: isize,
+    #[cfg(feature = "oracle")]
+    pub knowledge_base: Vec<Value>,
 }
 
 impl ChimeraVM {
@@ -268,6 +271,8 @@ impl ChimeraVM {
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
             direction: 1,
+            #[cfg(feature = "oracle")]
+            knowledge_base: Vec::new(),
         }
     }
 
@@ -1065,6 +1070,12 @@ impl ChimeraVM {
             | OpCode::Fold
             | OpCode::Filter
             | OpCode::Zip => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "oracle")]
+            OpCode::Assert | OpCode::Retract | OpCode::Query => {
+                oracle::exec_oracle_op(self, op, args);
+                None
+            }
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
