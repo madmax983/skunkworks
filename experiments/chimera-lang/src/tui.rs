@@ -177,7 +177,9 @@ fn run_app<B: ratatui::backend::Backend>(
                             }
                         }
 
-                        if let Some(organelle) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
+                        if let Some(organelle) =
+                            vm.organelles.iter().find(|o| o.context_loc == (y, x))
+                        {
                             let (color, char_code) = match organelle.kind {
                                 crate::vm::nova::OrganelleType::Chloroplast => (Color::Green, "C"),
                                 crate::vm::nova::OrganelleType::Mitochondria => (Color::Red, "M"),
@@ -185,7 +187,10 @@ fn run_app<B: ratatui::backend::Backend>(
                                 crate::vm::nova::OrganelleType::Worker => (Color::White, "O"),
                             };
 
-                            style = style.bg(color).fg(Color::Black).add_modifier(Modifier::BOLD);
+                            style = style
+                                .bg(color)
+                                .fg(Color::Black)
+                                .add_modifier(Modifier::BOLD);
                             if char_rep == "." {
                                 char_rep = char_code.to_string();
                             }

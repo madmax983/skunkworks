@@ -81,6 +81,7 @@ impl std::fmt::Display for Value {
 /// // Values are wrapped in `Value::Int`.
 /// assert_eq!(vm.stack.len(), 1);
 /// ```
+#[derive(Clone)]
 pub struct ChimeraVM {
     /// The read-only DNA program.
     pub dna: Dna,
@@ -202,7 +203,6 @@ impl ChimeraVM {
             false
         }
     }
-
 
     /// Advances the simulation by one tick.
     ///
@@ -501,7 +501,8 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Sporulate
+            OpCode::Simulate
+            | OpCode::Sporulate
             | OpCode::Germinate
             | OpCode::Spawn
             | OpCode::Incubate
@@ -979,8 +980,6 @@ impl ChimeraVM {
         }
         None
     }
-
-
 
     pub fn mutate(&mut self) {
         let mut rng = rand::thread_rng();

@@ -46,16 +46,18 @@ mod nova_crispr_test;
 mod nova_gravity_test;
 #[cfg(test)]
 mod nova_hormone_test;
-#[cfg(test)]
-mod nova_quantum_test;
-#[cfg(test)]
-mod nova_spore_test;
-mod nova_test;
-#[cfg(test)]
-mod sentry_nova_test;
-#[cfg(test)]
-mod nova_waste_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_types_test;
+#[cfg(test)]
+mod nova_quantum_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_simulate_test;
+#[cfg(test)]
+mod nova_spore_test;
+mod nova_test;
+#[cfg(test)]
+mod nova_waste_test;
+#[cfg(test)]
+mod sentry_nova_test;
