@@ -179,6 +179,8 @@ pub struct ChimeraVM {
     pub remap_table: HashMap<OpCode, OpCode>,
     #[cfg(feature = "nova")]
     pub direction: isize,
+    #[cfg(feature = "nova")]
+    pub metabolic_rate: usize,
 }
 
 impl ChimeraVM {
@@ -262,6 +264,8 @@ impl ChimeraVM {
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
             direction: 1,
+            #[cfg(feature = "nova")]
+            metabolic_rate: 1,
         }
     }
 
@@ -271,6 +275,12 @@ impl ChimeraVM {
     /// Returns `true` if the reflex was triggered.
     #[cfg(feature = "nova")]
     pub fn trigger_reflex(&mut self, event_id: i64) -> bool {
+        if self.metabolic_rate == 0 {
+            self.metabolic_rate = 1;
+            self.output
+                .push("REFLEX: Waking up from hibernation".to_string());
+        }
+
         if let Some(&strand_idx) = self.reflexes.get(&event_id) {
             if strand_idx < self.dna.helix.strands.len() {
                 // Push return address (current strand, next gene)
@@ -752,7 +762,13 @@ impl ChimeraVM {
             return;
         }
 
-        self.energy -= 1;
+        #[cfg(feature = "nova")]
+        let rate = self.metabolic_rate;
+        #[cfg(not(feature = "nova"))]
+        let rate = 1;
+
+        let cost = if rate > 1 { (rate * rate) as i64 } else { rate as i64 };
+        self.energy -= cost;
 
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();
@@ -774,77 +790,83 @@ impl ChimeraVM {
             return;
         }
 
-        let helix_len = self.dna.helix.strands.len();
-        if self.ip.0 >= helix_len {
-            self.halted = true;
-            return;
-        }
-
-        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-        if self.ip.1 >= strand_len {
-            self.ip.0 += 1;
-            self.ip.1 = 0;
-            return;
-        }
-
-        #[cfg(feature = "nova")]
-        {
-            if self.check_telomeres() {
-                return;
+        for _ in 0..rate {
+            if self.halted {
+                break;
             }
-            if self.epigenome.contains(&self.ip) {
-                self.ip.1 += 1;
-                return;
+
+            let helix_len = self.dna.helix.strands.len();
+            if self.ip.0 >= helix_len {
+                self.halted = true;
+                break;
             }
-            self.active_organelle_kind = None;
-        }
 
-        // Clone gene info to release borrow on self.dna
-        let (gene_op, gene_args) = {
-            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-            (gene.op.clone(), gene.args.clone())
-        };
+            let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+            if self.ip.1 >= strand_len {
+                self.ip.0 += 1;
+                self.ip.1 = 0;
+                continue;
+            }
 
-        let jump_target = self.execute_gene(gene_op, &gene_args);
-
-        if let Some(target) = jump_target {
-            self.ip = target;
-        } else {
             #[cfg(feature = "nova")]
             {
-                if self.direction >= 0 {
+                if self.check_telomeres() {
+                    continue;
+                }
+                if self.epigenome.contains(&self.ip) {
                     self.ip.1 += 1;
-                } else {
-                    if self.ip.1 > 0 {
-                        self.ip.1 -= 1;
+                    continue;
+                }
+                self.active_organelle_kind = None;
+            }
+
+            // Clone gene info to release borrow on self.dna
+            let (gene_op, gene_args) = {
+                let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                (gene.op.clone(), gene.args.clone())
+            };
+
+            let jump_target = self.execute_gene(gene_op, &gene_args);
+
+            if let Some(target) = jump_target {
+                self.ip = target;
+            } else {
+                #[cfg(feature = "nova")]
+                {
+                    if self.direction >= 0 {
+                        self.ip.1 += 1;
                     } else {
-                        // Move to previous non-empty strand
-                        let start_strand = self.ip.0;
-                        let helix_len = self.dna.helix.strands.len();
-                        loop {
-                            if self.ip.0 > 0 {
-                                self.ip.0 -= 1;
-                            } else {
-                                self.ip.0 = helix_len.saturating_sub(1);
-                            }
+                        if self.ip.1 > 0 {
+                            self.ip.1 -= 1;
+                        } else {
+                            // Move to previous non-empty strand
+                            let start_strand = self.ip.0;
+                            let helix_len = self.dna.helix.strands.len();
+                            loop {
+                                if self.ip.0 > 0 {
+                                    self.ip.0 -= 1;
+                                } else {
+                                    self.ip.0 = helix_len.saturating_sub(1);
+                                }
 
-                            let len = self.dna.helix.strands[self.ip.0].genes.len();
-                            if len > 0 {
-                                self.ip.1 = len - 1;
-                                break;
-                            }
+                                let len = self.dna.helix.strands[self.ip.0].genes.len();
+                                if len > 0 {
+                                    self.ip.1 = len - 1;
+                                    break;
+                                }
 
-                            if self.ip.0 == start_strand {
-                                // All strands empty or cycled back
-                                break;
+                                if self.ip.0 == start_strand {
+                                    // All strands empty or cycled back
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
-            #[cfg(not(feature = "nova"))]
-            {
-                self.ip.1 += 1;
+                #[cfg(not(feature = "nova"))]
+                {
+                    self.ip.1 += 1;
+                }
             }
         }
 
@@ -990,7 +1012,8 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Rift
+            OpCode::Metabolism
+            | OpCode::Rift
             | OpCode::Seal
             | OpCode::Shape
             | OpCode::Simulate

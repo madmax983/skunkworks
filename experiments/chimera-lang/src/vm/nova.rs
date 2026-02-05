@@ -186,6 +186,23 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
+        OpCode::Metabolism => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(rate) = val {
+                    let r = rate.max(0).min(100) as usize; // Clamp 0..100
+                    vm.metabolic_rate = r;
+                    vm.output.push(format!("METABOLISM: Rate set to {}", r));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for metabolism".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for metabolism".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Simulate => {
             // stack: ticks, strand_idx (bottom)
             if vm.stack.len() >= 2 {

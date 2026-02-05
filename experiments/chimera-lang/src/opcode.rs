@@ -470,6 +470,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., junction_a, junction_b ] -> [ ..., zipped_junction ]`
     #[cfg(feature = "nova")]
     Zip,
+    /// **[Nova]** Sets the metabolic rate (speed of execution).
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    /// **Effect:** `rate=0` hibernates (cost 0). `rate>1` overclocks (cost rate^2).
+    #[cfg(feature = "nova")]
+    Metabolism,
 
     /// Unknown or invalid instruction.
     Unknown(String),
@@ -480,6 +486,8 @@ impl FromStr for OpCode {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            #[cfg(feature = "nova")]
+            "metabolism" => Ok(OpCode::Metabolism),
             #[cfg(feature = "nova")]
             "remap" => Ok(OpCode::Remap),
             #[cfg(feature = "nova")]
@@ -800,6 +808,8 @@ impl fmt::Display for OpCode {
             OpCode::Filter => write!(f, "filter"),
             #[cfg(feature = "nova")]
             OpCode::Zip => write!(f, "zip"),
+            #[cfg(feature = "nova")]
+            OpCode::Metabolism => write!(f, "metabolism"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
