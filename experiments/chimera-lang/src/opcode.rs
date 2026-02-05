@@ -294,6 +294,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., char_code ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Unbind,
+    /// **[Nova]** Registers an interrupt handler for internal events.
+    ///
+    /// **Stack:** `[ ..., event_id, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Reflex,
     /// **[Nova]** Quantum entangles two strands.
     ///
     /// **Stack:** `[ ..., strand_a, strand_b ] -> [ ... ]`
@@ -509,6 +514,8 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "unbind" => Ok(OpCode::Unbind),
             #[cfg(feature = "nova")]
+            "reflex" => Ok(OpCode::Reflex),
+            #[cfg(feature = "nova")]
             "entangle" => Ok(OpCode::Entangle),
             #[cfg(feature = "nova")]
             "decohere" => Ok(OpCode::Decohere),
@@ -650,6 +657,8 @@ impl fmt::Display for OpCode {
             OpCode::Bind => write!(f, "bind"),
             #[cfg(feature = "nova")]
             OpCode::Unbind => write!(f, "unbind"),
+            #[cfg(feature = "nova")]
+            OpCode::Reflex => write!(f, "reflex"),
             #[cfg(feature = "nova")]
             OpCode::Entangle => write!(f, "entangle"),
             #[cfg(feature = "nova")]

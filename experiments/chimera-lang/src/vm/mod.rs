@@ -171,6 +171,8 @@ pub struct ChimeraVM {
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
     pub activation_levels: Vec<i64>,
+    #[cfg(feature = "nova")]
+    pub reflexes: HashMap<i64, usize>,
 }
 
 impl ChimeraVM {
@@ -248,7 +250,33 @@ impl ChimeraVM {
             synapse_map,
             #[cfg(feature = "cortex")]
             activation_levels,
+            #[cfg(feature = "nova")]
+            reflexes: HashMap::new(),
         }
+    }
+
+    /// Triggers an internal reflex event (interrupt).
+    ///
+    /// If a handler is registered for the event ID, execution jumps to that strand.
+    /// Returns `true` if the reflex was triggered.
+    #[cfg(feature = "nova")]
+    pub fn trigger_reflex(&mut self, event_id: i64) -> bool {
+        if let Some(&strand_idx) = self.reflexes.get(&event_id) {
+            if strand_idx < self.dna.helix.strands.len() {
+                // Push return address (current strand, next gene)
+                // We use ip.1 because usually this is called between instructions or during an instruction
+                // that hasn't advanced IP yet.
+                // If called during step() before gene execution, IP is valid.
+                self.call_stack.push(self.ip);
+                self.ip = (strand_idx, 0);
+                self.output.push(format!(
+                    "REFLEX: Triggered event {} -> Strand {}",
+                    event_id, strand_idx
+                ));
+                return true;
+            }
+        }
+        false
     }
 
     /// Helper to normalize coordinates based on topology
@@ -409,6 +437,10 @@ impl ChimeraVM {
             self.output.push("DEATH: STARVATION".to_string());
             true
         } else {
+            #[cfg(feature = "nova")]
+            if self.energy < 10 {
+                self.trigger_reflex(2); // Event 2: Low Energy
+            }
             false
         }
     }
@@ -800,6 +832,7 @@ impl ChimeraVM {
             | OpCode::Osmosis
             | OpCode::Symbiosis
             | OpCode::Lysis
+            | OpCode::Reflex
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
@@ -1400,6 +1433,11 @@ impl ChimeraVM {
                 .push(format!("MUTATION: {} -> {}", old_op, new_op));
 
             #[cfg(feature = "nova")]
+            {
+                self.trigger_reflex(1); // Event 1: Mutation
+            }
+
+            #[cfg(feature = "nova")]
             if let Some(&partner_idx) = self.entangled_pairs.get(&strand_idx) {
                 if partner_idx < self.dna.helix.strands.len()
                     && gene_idx < self.dna.helix.strands[partner_idx].genes.len()
@@ -1427,6 +1465,11 @@ impl ChimeraVM {
                     Nucleotide::Number(new_n);
                 self.output
                     .push(format!("MUTATION: arg {} -> {}", old_n, new_n));
+
+                #[cfg(feature = "nova")]
+                {
+                    self.trigger_reflex(1); // Event 1: Mutation
+                }
 
                 #[cfg(feature = "nova")]
                 if let Some(&partner_idx) = self.entangled_pairs.get(&strand_idx) {
