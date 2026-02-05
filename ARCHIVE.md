@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Grace period ends in 24h.
+- **origami-singularity**: Documentation void. Generic implementation (grid folding demo). Redundant with `miura-interface` (which features Guestbook integration). Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
 - **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Failed to improve during grace period. Moved to graveyard.
 - **ram-bazaar**: Documentation void. Generic market simulation. Failed to improve during grace period. Moved to graveyard.
 - **crate-universe**: Documentation void. Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
