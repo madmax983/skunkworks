@@ -23,7 +23,7 @@
 //! - **Nova**: Epigenetics, Spores (Time Travel), Quantum Entanglement.
 //! - **Cortex**: Neural Network simulation (Synapses, Activation).
 
-use crate::ast::{Dna, Nucleotide};
+use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
 #[cfg(feature = "nova")]
@@ -50,6 +50,7 @@ pub enum Topology {
 pub enum Value {
     Int(i64),
     Str(String),
+    Junction(JunctionType, Vec<Value>),
 }
 
 impl std::fmt::Display for Value {
@@ -57,6 +58,20 @@ impl std::fmt::Display for Value {
         match self {
             Value::Int(i) => write!(f, "{}", i),
             Value::Str(s) => write!(f, "\"{}\"", s),
+            Value::Junction(t, vals) => {
+                let t_str = match t {
+                    JunctionType::Any => "any",
+                    JunctionType::All => "all",
+                };
+                write!(f, "{}(", t_str)?;
+                for (i, v) in vals.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, ", ")?;
+                    }
+                    write!(f, "{}", v)?;
+                }
+                write!(f, ")")
+            }
         }
     }
 }
@@ -795,7 +810,7 @@ impl ChimeraVM {
 
     fn binary_op<F>(stack: &mut Vec<Value>, output: &mut Vec<String>, op: F)
     where
-        F: Fn(i64, i64) -> i64,
+        F: Fn(i64, i64) -> i64 + Copy,
     {
         if stack.len() < 2 {
             output.push("Error: Stack underflow".to_string());
@@ -804,9 +819,54 @@ impl ChimeraVM {
         let b = stack.pop().unwrap();
         let a = stack.pop().unwrap();
 
-        match (a, b) {
-            (Value::Int(ia), Value::Int(ib)) => stack.push(Value::Int(op(ia, ib))),
-            _ => output.push("Error: Type mismatch".to_string()),
+        fn apply<F>(a: Value, b: Value, op: F) -> Option<Value>
+        where
+            F: Fn(i64, i64) -> i64 + Copy,
+        {
+            match (a, b) {
+                (Value::Int(ia), Value::Int(ib)) => Some(Value::Int(op(ia, ib))),
+                (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
+                    let mut res = Vec::new();
+                    for v in vals {
+                        if let Some(r) = apply(v, scalar.clone(), op) {
+                            res.push(r);
+                        } else {
+                            return None;
+                        }
+                    }
+                    Some(Value::Junction(t, res))
+                }
+                (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
+                    let mut res = Vec::new();
+                    for v in vals {
+                        if let Some(r) = apply(scalar.clone(), v, op) {
+                            res.push(r);
+                        } else {
+                            return None;
+                        }
+                    }
+                    Some(Value::Junction(t, res))
+                }
+                (Value::Junction(ta, va), Value::Junction(_tb, vb)) => {
+                    // Cross product, defaulting to type of A
+                    let mut res = Vec::new();
+                    for xa in va {
+                        for xb in &vb {
+                            if let Some(r) = apply(xa.clone(), xb.clone(), op) {
+                                res.push(r);
+                            }
+                        }
+                    }
+                    Some(Value::Junction(ta, res))
+                }
+                _ => None,
+            }
+        }
+
+        if let Some(res) = apply(a, b, op) {
+            stack.push(res);
+        } else {
+            output.push("Error: Type mismatch".to_string());
         }
     }
 
@@ -814,12 +874,30 @@ impl ChimeraVM {
         match op {
             OpCode::Push => {
                 if let Some(arg) = args.first() {
-                    match arg {
-                        Nucleotide::Number(n) => self.stack.push(Value::Int(*n)),
-                        Nucleotide::String(s) => self.stack.push(Value::Str(s.clone())),
-                        _ => self
-                            .output
-                            .push(format!("Error: Invalid arg for push: {:?}", arg)),
+                    fn nuc_to_val(n: &Nucleotide) -> Option<Value> {
+                        match n {
+                            Nucleotide::Number(v) => Some(Value::Int(*v)),
+                            Nucleotide::String(s) => Some(Value::Str(s.clone())),
+                            Nucleotide::Junction(t, list) => {
+                                let mut vals = Vec::new();
+                                for item in list {
+                                    if let Some(v) = nuc_to_val(item) {
+                                        vals.push(v);
+                                    } else {
+                                        return None;
+                                    }
+                                }
+                                Some(Value::Junction(*t, vals))
+                            }
+                            _ => None,
+                        }
+                    }
+
+                    if let Some(val) = nuc_to_val(arg) {
+                        self.stack.push(val);
+                    } else {
+                        self.output
+                            .push(format!("Error: Invalid arg for push: {:?}", arg));
                     }
                 }
             }
@@ -930,12 +1008,19 @@ impl ChimeraVM {
             OpCode::Brz => {
                 if let Some(Nucleotide::Number(n)) = args.first() {
                     if let Some(val) = self.stack.pop() {
-                        if let Value::Int(i) = val {
-                            if i == 0 {
-                                return Some((*n as usize, 0));
+                        fn check_zero(v: &Value) -> bool {
+                            match v {
+                                Value::Int(i) => *i == 0,
+                                Value::Junction(t, vals) => match t {
+                                    JunctionType::Any => vals.iter().any(check_zero),
+                                    JunctionType::All => vals.iter().all(check_zero),
+                                },
+                                _ => false,
                             }
-                        } else {
-                            self.output.push("Error: Type mismatch for brz".to_string());
+                        }
+
+                        if check_zero(&val) {
+                            return Some((*n as usize, 0));
                         }
                     } else {
                         self.output
@@ -1125,6 +1210,10 @@ impl ChimeraVM {
                                 self.context_loc = old_loc;
                                 return result;
                             }
+                            Value::Junction(_, _) => {
+                                self.output
+                                    .push("Error: Virus cannot execute junction".to_string());
+                            }
                         }
                     }
                 } else {
@@ -1147,6 +1236,10 @@ impl ChimeraVM {
                     match val {
                         Value::Int(n) => self.energy = self.energy.saturating_add(n),
                         Value::Str(s) => self.energy = self.energy.saturating_add(s.len() as i64),
+                        Value::Junction(_, _) => {
+                            self.output
+                                .push("Error: Cannot consume junction".to_string());
+                        }
                     }
                 } else {
                     self.output

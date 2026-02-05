@@ -23,12 +23,19 @@ pub struct Gene {
     pub args: Vec<Nucleotide>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
+pub enum JunctionType {
+    Any,
+    All,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Nucleotide {
     Number(i64),
     String(String),
     #[allow(dead_code)]
     Identifier(String),
+    Junction(JunctionType, Vec<Nucleotide>),
 }
 
 impl Dna {
@@ -94,6 +101,18 @@ impl Nucleotide {
                 Nucleotide::String(s[1..s.len() - 1].to_string())
             }
             Rule::identifier => Nucleotide::Identifier(pair.as_str().to_string()),
+            Rule::junction => {
+                let mut inner = pair.into_inner();
+                let type_pair = inner.next().unwrap();
+                let j_type = match type_pair.as_str() {
+                    "any" => JunctionType::Any,
+                    "all" => JunctionType::All,
+                    _ => panic!("Unknown junction type"),
+                };
+                let args_pair = inner.next().unwrap();
+                let args = args_pair.into_inner().map(Nucleotide::from_pair).collect();
+                Nucleotide::Junction(j_type, args)
+            }
             _ => panic!("Expected Nucleotide rule, got {:?}", pair.as_rule()),
         }
     }

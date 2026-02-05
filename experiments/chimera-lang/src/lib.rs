@@ -83,3 +83,5 @@ mod ribosome_test;
 mod sentry_nova_test;
 #[cfg(test)]
 mod warden_exploit_test;
+#[cfg(test)]
+mod nova_superposition_test;

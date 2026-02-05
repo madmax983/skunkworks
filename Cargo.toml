@@ -5,7 +5,6 @@ members = [
     "experiments/ast-respiration",
     "experiments/code-bio-dome",
     "experiments/code-concerto",
-    "experiments/code-radio",
     "experiments/crystal-structure",
     "experiments/cymatic-lure",
     "experiments/digital-compost",
