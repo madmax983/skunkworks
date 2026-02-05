@@ -1642,6 +1642,52 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Identity => {
+            let id = match &vm.active_organelle_kind {
+                None => -1, // Nucleus
+                Some(OrganelleType::Worker) => 0,
+                Some(OrganelleType::Chloroplast) => 1,
+                Some(OrganelleType::Mitochondria) => 2,
+                Some(OrganelleType::Lysosome) => 3,
+                Some(OrganelleType::Ribosome) => 4,
+            };
+            vm.stack.push(Value::Int(id));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Differentiate => {
+            if let Some(val) = vm.stack.pop() {
+                if vm.active_organelle_kind.is_some() {
+                    if let Value::Int(t) = val {
+                        let new_kind = match t {
+                            1 => Some(OrganelleType::Chloroplast),
+                            2 => Some(OrganelleType::Mitochondria),
+                            3 => Some(OrganelleType::Lysosome),
+                            4 => Some(OrganelleType::Ribosome),
+                            _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
+                        };
+
+                        if let Some(kind) = new_kind {
+                            vm.signal_differentiation = Some(kind.clone());
+                            vm.energy = vm.energy.saturating_sub(50); // High cost to re-specialize
+                            vm.output
+                                .push(format!("DIFFERENTIATE: Requesting change to {:?}", kind));
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Type mismatch for differentiate".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Nucleus cannot differentiate".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for differentiate".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }

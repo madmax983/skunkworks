@@ -34,12 +34,10 @@ fn test_ribosome_execution() {
 
     // Strand 1: Infinite loop to keep VM alive.
     let strand1 = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::Jump,
-                args: vec![Nucleotide::Number(1)],
-            },
-        ],
+        genes: vec![Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        }],
     };
 
     let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
