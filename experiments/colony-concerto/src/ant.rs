@@ -1,12 +1,12 @@
-use std::sync::Arc;
-use std::thread;
-use std::time::Duration;
+use crate::audio::SoundEvent;
+use crate::graph::DepGraph;
 use crossbeam::channel::Sender;
 use petgraph::graph::NodeIndex;
 use petgraph::Direction;
 use rand::prelude::*;
-use crate::graph::DepGraph;
-use crate::audio::SoundEvent;
+use std::sync::Arc;
+use std::thread;
+use std::time::Duration;
 
 pub struct Ant {
     id: usize,
@@ -16,7 +16,12 @@ pub struct Ant {
 }
 
 impl Ant {
-    pub fn new(id: usize, graph: Arc<DepGraph>, audio_tx: Sender<SoundEvent>, start_node: NodeIndex) -> Self {
+    pub fn new(
+        id: usize,
+        graph: Arc<DepGraph>,
+        audio_tx: Sender<SoundEvent>,
+        start_node: NodeIndex,
+    ) -> Self {
         Self {
             id,
             graph,
@@ -39,11 +44,16 @@ impl Ant {
         self.work_on_node(rng);
 
         // 2. Choose next node
-        let neighbors: Vec<NodeIndex> = self.graph.neighbors_directed(self.current_node, Direction::Outgoing).collect();
+        let neighbors: Vec<NodeIndex> = self
+            .graph
+            .neighbors_directed(self.current_node, Direction::Outgoing)
+            .collect();
 
         if neighbors.is_empty() {
             // Respawn at a root node (layer 0)
-            let roots: Vec<NodeIndex> = self.graph.node_indices()
+            let roots: Vec<NodeIndex> = self
+                .graph
+                .node_indices()
                 .filter(|&i| self.graph[i].layer == 0)
                 .collect();
 
@@ -62,8 +72,8 @@ impl Ant {
         for &next_node in &neighbors {
             if let Some(edge_idx) = self.graph.find_edge(self.current_node, next_node) {
                 if let Ok(pheromone) = self.graph[edge_idx].pheromone.lock() {
-                     weights.push(*pheromone as f64 + 1.0);
-                     candidates.push(next_node);
+                    weights.push(*pheromone as f64 + 1.0);
+                    candidates.push(next_node);
                 }
             }
         }
@@ -75,8 +85,8 @@ impl Ant {
                 self.current_node = candidates[rng.gen_range(0..candidates.len())];
             }
         } else {
-             // Fallback
-             self.current_node = neighbors[rng.gen_range(0..neighbors.len())];
+            // Fallback
+            self.current_node = neighbors[rng.gen_range(0..neighbors.len())];
         }
 
         // Travel time

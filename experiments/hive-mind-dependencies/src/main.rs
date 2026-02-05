@@ -1,25 +1,25 @@
-mod graph;
 mod ant;
+mod graph;
 mod simulation;
 
 use graph::DependencyGraph;
-use simulation::Simulation;
 use rand::prelude::*;
+use simulation::Simulation;
 use std::io;
 use std::time::{Duration, Instant};
 
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
     prelude::*,
-    widgets::{
-        canvas::{Canvas, Line as CanvasLine, Points},
-        Block, Borders,
-    },
     symbols::Marker,
+    widgets::{
+        Block, Borders,
+        canvas::{Canvas, Line as CanvasLine, Points},
+    },
 };
 
 fn main() -> io::Result<()> {
@@ -65,10 +65,7 @@ fn main() -> io::Result<()> {
 
     // Restore
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     Ok(())
@@ -78,7 +75,11 @@ fn ui(frame: &mut Frame, sim: &Simulation) {
     let area = frame.area();
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Hive Mind Dependencies - 'q' to quit"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Hive Mind Dependencies - 'q' to quit"),
+        )
         .marker(Marker::Braille)
         .x_bounds([0.0, 1.0])
         .y_bounds([0.0, 1.0])
@@ -86,46 +87,50 @@ fn ui(frame: &mut Frame, sim: &Simulation) {
             // Draw Edges
             for edge_idx in sim.graph.graph.edge_indices() {
                 if let Some((source, target)) = sim.graph.graph.edge_endpoints(edge_idx) {
-                     let n1 = &sim.graph.graph[source];
-                     let n2 = &sim.graph.graph[target];
+                    let n1 = &sim.graph.graph[source];
+                    let n2 = &sim.graph.graph[target];
 
-                     let pheromone = *sim.pheromones.get(&edge_idx).unwrap_or(&0.0);
-                     let color = if pheromone > 50.0 {
-                         Color::Red
-                     } else if pheromone > 10.0 {
-                         Color::Yellow
-                     } else if pheromone > 1.0 {
-                         Color::Blue
-                     } else {
-                         Color::DarkGray
-                     };
+                    let pheromone = *sim.pheromones.get(&edge_idx).unwrap_or(&0.0);
+                    let color = if pheromone > 50.0 {
+                        Color::Red
+                    } else if pheromone > 10.0 {
+                        Color::Yellow
+                    } else if pheromone > 1.0 {
+                        Color::Blue
+                    } else {
+                        Color::DarkGray
+                    };
 
-                     ctx.draw(&CanvasLine {
-                         x1: n1.x as f64,
-                         y1: 1.0 - n1.y as f64, // Invert Y for canvas
-                         x2: n2.x as f64,
-                         y2: 1.0 - n2.y as f64,
-                         color,
-                     });
+                    ctx.draw(&CanvasLine {
+                        x1: n1.x as f64,
+                        y1: 1.0 - n1.y as f64, // Invert Y for canvas
+                        x2: n2.x as f64,
+                        y2: 1.0 - n2.y as f64,
+                        color,
+                    });
                 }
             }
 
             // Draw Nodes
             for node in sim.graph.graph.node_weights() {
-                 ctx.draw(&Points {
-                     coords: &[(node.x as f64, 1.0 - node.y as f64)],
-                     color: Color::White,
-                 });
+                ctx.draw(&Points {
+                    coords: &[(node.x as f64, 1.0 - node.y as f64)],
+                    color: Color::White,
+                });
             }
 
             // Draw Ants
             for ant in &sim.ants {
-                 let node = &sim.graph.graph[ant.current_node];
-                 let color = if ant.carrying_artifact { Color::Green } else { Color::Magenta };
-                 ctx.draw(&Points {
-                     coords: &[(node.x as f64, 1.0 - node.y as f64)],
-                     color,
-                 });
+                let node = &sim.graph.graph[ant.current_node];
+                let color = if ant.carrying_artifact {
+                    Color::Green
+                } else {
+                    Color::Magenta
+                };
+                ctx.draw(&Points {
+                    coords: &[(node.x as f64, 1.0 - node.y as f64)],
+                    color,
+                });
             }
         });
 

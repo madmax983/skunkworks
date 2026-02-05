@@ -43,9 +43,9 @@ pub mod oracle;
 pub mod resonance;
 
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
-#[cfg(feature = "resonance")]
 use crossbeam_channel::Sender;
+#[cfg(feature = "resonance")]
+use resonance_audio::audio::AudioCommand;
 
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
@@ -152,6 +152,8 @@ pub struct ChimeraVM {
     /// "Cursor" location on the grid for spatial operations.
     pub context_loc: (usize, usize),
     #[cfg(feature = "nova")]
+    pub phase: nova::Phase,
+    #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub telomeres: Vec<i64>,
@@ -248,6 +250,8 @@ impl ChimeraVM {
             chaos_mode: false,
             recursion_depth: 0,
             context_loc: (8, 8),
+            #[cfg(feature = "nova")]
+            phase: nova::Phase::default(),
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
             #[cfg(feature = "nova")]
@@ -531,8 +535,12 @@ impl ChimeraVM {
     #[cfg(feature = "nova")]
     fn check_telomeres(&mut self) -> bool {
         if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
-            if self.telomeres[self.ip.0] > 0 {
-                self.telomeres[self.ip.0] -= 1;
+            let degrade = self.phase != nova::Phase::Crystalline;
+
+            if degrade {
+                if self.telomeres[self.ip.0] > 0 {
+                    self.telomeres[self.ip.0] -= 1;
+                }
             }
 
             if self.telomeres[self.ip.0] <= 0 {
@@ -847,75 +855,87 @@ impl ChimeraVM {
             return;
         }
 
-        let helix_len = self.dna.helix.strands.len();
-        if self.ip.0 >= helix_len {
-            self.halted = true;
-            return;
-        }
-
-        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-        if self.ip.1 >= strand_len {
-            self.ip.0 += 1;
-            self.ip.1 = 0;
-            return;
-        }
-
         #[cfg(feature = "nova")]
-        {
-            if self.check_telomeres() {
-                return;
-            }
-            if self.epigenome.contains(&self.ip) {
-                self.ip.1 += 1;
-                return;
-            }
-            self.active_organelle_kind = None;
-        }
-
-        // Clone gene info to release borrow on self.dna
-        let (gene_op, gene_args) = {
-            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-            (gene.op.clone(), gene.args.clone())
-        };
-
-        let jump_target = self.execute_gene(gene_op, &gene_args);
-
-        if let Some(target) = jump_target {
-            self.ip = target;
+        let iterations = if self.phase == nova::Phase::Flux {
+            self.energy -= 1;
+            2
         } else {
+            1
+        };
+        #[cfg(not(feature = "nova"))]
+        let iterations = 1;
+
+        for _ in 0..iterations {
+            let helix_len = self.dna.helix.strands.len();
+            if self.ip.0 >= helix_len {
+                self.halted = true;
+                return;
+            }
+
+            let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+            if self.ip.1 >= strand_len {
+                self.ip.0 += 1;
+                self.ip.1 = 0;
+                return;
+            }
+
             #[cfg(feature = "nova")]
             {
-                if self.direction >= 0 {
+                if self.check_telomeres() {
+                    return;
+                }
+                if self.epigenome.contains(&self.ip) {
                     self.ip.1 += 1;
-                } else if self.ip.1 > 0 {
-                    self.ip.1 -= 1;
-                } else {
-                    // Move to previous non-empty strand
-                    let start_strand = self.ip.0;
-                    let helix_len = self.dna.helix.strands.len();
-                    loop {
-                        if self.ip.0 > 0 {
-                            self.ip.0 -= 1;
-                        } else {
-                            self.ip.0 = helix_len.saturating_sub(1);
-                        }
+                    continue;
+                }
+                self.active_organelle_kind = None;
+            }
 
-                        let len = self.dna.helix.strands[self.ip.0].genes.len();
-                        if len > 0 {
-                            self.ip.1 = len - 1;
-                            break;
-                        }
+            // Clone gene info to release borrow on self.dna
+            let (gene_op, gene_args) = {
+                let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                (gene.op.clone(), gene.args.clone())
+            };
 
-                        if self.ip.0 == start_strand {
-                            // All strands empty or cycled back
-                            break;
+            let jump_target = self.execute_gene(gene_op, &gene_args);
+
+            if let Some(target) = jump_target {
+                self.ip = target;
+            } else {
+                #[cfg(feature = "nova")]
+                {
+                    if self.direction >= 0 {
+                        self.ip.1 += 1;
+                    } else if self.ip.1 > 0 {
+                        self.ip.1 -= 1;
+                    } else {
+                        // Move to previous non-empty strand
+                        let start_strand = self.ip.0;
+                        let helix_len = self.dna.helix.strands.len();
+                        loop {
+                            if self.ip.0 > 0 {
+                                self.ip.0 -= 1;
+                            } else {
+                                self.ip.0 = helix_len.saturating_sub(1);
+                            }
+
+                            let len = self.dna.helix.strands[self.ip.0].genes.len();
+                            if len > 0 {
+                                self.ip.1 = len - 1;
+                                break;
+                            }
+
+                            if self.ip.0 == start_strand {
+                                // All strands empty or cycled back
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            #[cfg(not(feature = "nova"))]
-            {
-                self.ip.1 += 1;
+                #[cfg(not(feature = "nova"))]
+                {
+                    self.ip.1 += 1;
+                }
             }
         }
 
@@ -1114,6 +1134,7 @@ impl ChimeraVM {
             | OpCode::SenseLight
             | OpCode::Broadcast
             | OpCode::Tune
+            | OpCode::PhaseShift
             | OpCode::Membrane
             | OpCode::Osmosis
             | OpCode::Symbiosis
@@ -1454,6 +1475,13 @@ impl ChimeraVM {
                 }
             }
             OpCode::GWrite => {
+                #[cfg(feature = "nova")]
+                if self.phase == nova::Phase::Ethereal {
+                    self.output
+                        .push("Error: Ethereal phase prevents GWrite".to_string());
+                    return None;
+                }
+
                 if self.stack.len() >= 3 {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
@@ -1679,6 +1707,11 @@ impl ChimeraVM {
     }
 
     pub fn mutate(&mut self) {
+        #[cfg(feature = "nova")]
+        if self.phase == nova::Phase::Crystalline {
+            return;
+        }
+
         let mut rng = rand::thread_rng();
         let helix_len = self.dna.helix.strands.len();
         if helix_len == 0 {

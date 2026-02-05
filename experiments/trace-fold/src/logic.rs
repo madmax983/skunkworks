@@ -1,5 +1,5 @@
+use nalgebra::{Isometry3, Translation3, UnitQuaternion, Vector3};
 use regex::Regex;
-use nalgebra::{Isometry3, Vector3, UnitQuaternion, Translation3};
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum SegmentType {
@@ -16,7 +16,9 @@ pub struct TraceSegment {
 pub fn parse_trace(input: &str) -> Vec<TraceSegment> {
     let mut segments = Vec::new();
     let re = Regex::new(r"^\s*\d+:\s*(.*)$").unwrap();
-    let sys_prefixes = ["std::", "core::", "alloc::", "tokio::", "panic::", "actix::"];
+    let sys_prefixes = [
+        "std::", "core::", "alloc::", "tokio::", "panic::", "actix::",
+    ];
 
     for line in input.lines() {
         if let Some(caps) = re.captures(line) {
@@ -64,13 +66,17 @@ pub fn assign_target_angles(segments: &[TraceSegment]) -> Vec<f32> {
                 if i == 0 {
                     fold_angle
                 } else {
-                    let prev_type = &segments[i-1].segment_type;
+                    let prev_type = &segments[i - 1].segment_type;
                     match prev_type {
                         SegmentType::User => fold_angle,
                         SegmentType::System => {
                             // Toggle direction
                             let last_angle = angles.last().unwrap();
-                            if *last_angle > 0.0 { -fold_angle } else { fold_angle }
+                            if *last_angle > 0.0 {
+                                -fold_angle
+                            } else {
+                                fold_angle
+                            }
                         }
                     }
                 }
@@ -84,7 +90,11 @@ pub fn assign_target_angles(segments: &[TraceSegment]) -> Vec<f32> {
     angles
 }
 
-pub fn calculate_strip_transforms(segments: &[TraceSegment], angles: &[f32], progress: f32) -> Vec<Isometry3<f32>> {
+pub fn calculate_strip_transforms(
+    segments: &[TraceSegment],
+    angles: &[f32],
+    progress: f32,
+) -> Vec<Isometry3<f32>> {
     let mut transforms = Vec::new();
     let mut current_transform = Isometry3::identity();
     let segment_length = 1.0; // Arbitrary unit
@@ -153,10 +163,22 @@ stack backtrace:
     #[test]
     fn test_angles_accordion() {
         let segments = vec![
-            TraceSegment { content: "s1".into(), segment_type: SegmentType::System },
-            TraceSegment { content: "s2".into(), segment_type: SegmentType::System },
-            TraceSegment { content: "s3".into(), segment_type: SegmentType::System },
-            TraceSegment { content: "u1".into(), segment_type: SegmentType::User },
+            TraceSegment {
+                content: "s1".into(),
+                segment_type: SegmentType::System,
+            },
+            TraceSegment {
+                content: "s2".into(),
+                segment_type: SegmentType::System,
+            },
+            TraceSegment {
+                content: "s3".into(),
+                segment_type: SegmentType::System,
+            },
+            TraceSegment {
+                content: "u1".into(),
+                segment_type: SegmentType::User,
+            },
         ];
 
         let angles = assign_target_angles(&segments);
@@ -177,8 +199,14 @@ stack backtrace:
     #[test]
     fn test_folding_compresses() {
         let segments = vec![
-            TraceSegment { content: "s1".into(), segment_type: SegmentType::System },
-            TraceSegment { content: "s2".into(), segment_type: SegmentType::System },
+            TraceSegment {
+                content: "s1".into(),
+                segment_type: SegmentType::System,
+            },
+            TraceSegment {
+                content: "s2".into(),
+                segment_type: SegmentType::System,
+            },
         ];
         let angles = assign_target_angles(&segments); // +160, -160
 

@@ -1,8 +1,8 @@
-use pest_derive::Parser;
-use pest::Parser;
-use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
+use pest::Parser;
+use pest_derive::Parser;
 use std::collections::HashMap;
 use std::str::FromStr;
 
@@ -21,94 +21,111 @@ pub fn compile(source: &str) -> Result<Dna> {
     // Iterate inner rules (strands)
     for pair in program.clone().into_inner() {
         if pair.as_rule() == Rule::strand_def {
-             let mut inner = pair.into_inner();
-             let name = inner.next().unwrap().as_str(); // identifier
-             let idx = strand_map.len();
-             if strand_map.insert(name.to_string(), idx).is_some() {
-                 return Err(anyhow!("Duplicate strand name: {}", name));
-             }
+            let mut inner = pair.into_inner();
+            let name = inner.next().unwrap().as_str(); // identifier
+            let idx = strand_map.len();
+            if strand_map.insert(name.to_string(), idx).is_some() {
+                return Err(anyhow!("Duplicate strand name: {}", name));
+            }
         }
     }
 
     // Pass 2: Generate Genes
     for pair in program.into_inner() {
         if pair.as_rule() == Rule::strand_def {
-             let mut inner = pair.into_inner();
-             let _name = inner.next().unwrap(); // skip name (already processed)
-             let mut genes = Vec::new();
+            let mut inner = pair.into_inner();
+            let _name = inner.next().unwrap(); // skip name (already processed)
+            let mut genes = Vec::new();
 
-             for instr in inner { // instruction*
-                 let gene = parse_instruction(instr, &strand_map)?;
-                 genes.push(gene);
-             }
-             strands_ast.push(Strand { genes });
+            for instr in inner {
+                // instruction*
+                let gene = parse_instruction(instr, &strand_map)?;
+                genes.push(gene);
+            }
+            strands_ast.push(Strand { genes });
         }
     }
 
-    Ok(Dna { helix: Helix { strands: strands_ast } })
+    Ok(Dna {
+        helix: Helix {
+            strands: strands_ast,
+        },
+    })
 }
 
-fn parse_instruction(pair: pest::iterators::Pair<Rule>, strand_map: &HashMap<String, usize>) -> Result<Gene> {
+fn parse_instruction(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Gene> {
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
         Rule::literal => {
-             // Implicit push: "5" -> push(5)
-             let val = parse_literal(inner, strand_map)?;
-             Ok(Gene { op: OpCode::Push, args: vec![val] })
-        },
+            // Implicit push: "5" -> push(5)
+            let val = parse_literal(inner, strand_map)?;
+            Ok(Gene {
+                op: OpCode::Push,
+                args: vec![val],
+            })
+        }
         Rule::simple_op => {
-             let name = inner.into_inner().next().unwrap().as_str();
-             let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
-             Ok(Gene { op, args: vec![] })
-        },
+            let name = inner.into_inner().next().unwrap().as_str();
+            let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
+            Ok(Gene { op, args: vec![] })
+        }
         Rule::call => {
-             let mut parts = inner.into_inner();
-             let name = parts.next().unwrap().as_str();
-             let args_pair = parts.next().unwrap(); // argument_list
+            let mut parts = inner.into_inner();
+            let name = parts.next().unwrap().as_str();
+            let args_pair = parts.next().unwrap(); // argument_list
 
-             let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
-             let mut args = Vec::new();
+            let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
+            let mut args = Vec::new();
 
-             for arg_pair in args_pair.into_inner() {
-                 let val = parse_argument(arg_pair, strand_map)?;
-                 args.push(val);
-             }
+            for arg_pair in args_pair.into_inner() {
+                let val = parse_argument(arg_pair, strand_map)?;
+                args.push(val);
+            }
 
-             Ok(Gene { op, args })
-        },
+            Ok(Gene { op, args })
+        }
         _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
     }
 }
 
-fn parse_literal(pair: pest::iterators::Pair<Rule>, _strand_map: &HashMap<String, usize>) -> Result<Nucleotide> {
+fn parse_literal(
+    pair: pest::iterators::Pair<Rule>,
+    _strand_map: &HashMap<String, usize>,
+) -> Result<Nucleotide> {
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
         Rule::number => Ok(Nucleotide::Number(inner.as_str().parse()?)),
         Rule::string => {
-             let s = inner.as_str();
-             // Remove quotes
-             Ok(Nucleotide::String(s[1..s.len()-1].to_string()))
-        },
+            let s = inner.as_str();
+            // Remove quotes
+            Ok(Nucleotide::String(s[1..s.len() - 1].to_string()))
+        }
         _ => unreachable!("Unexpected literal rule"),
     }
 }
 
-fn parse_argument(pair: pest::iterators::Pair<Rule>, strand_map: &HashMap<String, usize>) -> Result<Nucleotide> {
-     let inner = pair.into_inner().next().unwrap();
-     match inner.as_rule() {
-         Rule::literal => parse_literal(inner, strand_map),
-         Rule::identifier => {
-             let id = inner.as_str();
-             // Try to resolve as strand index
-             if let Some(&idx) = strand_map.get(id) {
-                 Ok(Nucleotide::Number(idx as i64))
-             } else {
-                 // Keep as identifier
-                 Ok(Nucleotide::Identifier(id.to_string()))
-             }
-         },
-         _ => unreachable!("Unexpected argument rule"),
-     }
+fn parse_argument(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Nucleotide> {
+    let inner = pair.into_inner().next().unwrap();
+    match inner.as_rule() {
+        Rule::literal => parse_literal(inner, strand_map),
+        Rule::identifier => {
+            let id = inner.as_str();
+            // Try to resolve as strand index
+            if let Some(&idx) = strand_map.get(id) {
+                Ok(Nucleotide::Number(idx as i64))
+            } else {
+                // Keep as identifier
+                Ok(Nucleotide::Identifier(id.to_string()))
+            }
+        }
+        _ => unreachable!("Unexpected argument rule"),
+    }
 }
 
 #[cfg(test)]

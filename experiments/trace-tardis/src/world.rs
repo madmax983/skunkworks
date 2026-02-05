@@ -1,6 +1,6 @@
+use crate::logic::{parse_trace, SegmentType, TraceSegment};
 use macroquad::prelude::*;
 use std::collections::HashMap;
-use crate::logic::{TraceSegment, SegmentType, parse_trace};
 
 #[derive(Clone, Debug)]
 pub struct Portal {
@@ -51,7 +51,7 @@ impl World {
             // If there is a next segment, add a portal to it
             if i + 1 < segments.len() {
                 // Determine portal color based on *next* room type
-                let next_type = &segments[i+1].segment_type;
+                let next_type = &segments[i + 1].segment_type;
                 let portal_color = match next_type {
                     SegmentType::System => BLUE,
                     SegmentType::User => RED,
@@ -65,7 +65,7 @@ impl World {
                 // Or maybe slightly offset to create a spiral?
                 // Let's do a slight spiral.
                 let angle = (i as f32) * 0.5; // Rotate placement?
-                // No, alloc-tardis uses Axis Aligned Rects. We can only translate.
+                                              // No, alloc-tardis uses Axis Aligned Rects. We can only translate.
 
                 let offset_x = (i as f32 * 10.0).sin() * 50.0;
                 let offset_y = (i as f32 * 10.0).cos() * 50.0;
@@ -74,7 +74,7 @@ impl World {
                     (room_w - portal_w) / 2.0 + offset_x,
                     (room_h - portal_h) / 2.0 + offset_y,
                     portal_w,
-                    portal_h
+                    portal_h,
                 );
 
                 portals.push(Portal {

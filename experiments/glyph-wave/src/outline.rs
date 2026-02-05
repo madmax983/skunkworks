@@ -1,10 +1,10 @@
-use rusttype::{Point, OutlineBuilder};
+use rusttype::{OutlineBuilder, Point};
 
 #[derive(Debug, Clone)]
 pub enum PathOp {
     MoveTo(Point<f32>),
     LineTo(Point<f32>),
-    QuadTo(Point<f32>, Point<f32>), // control, to
+    QuadTo(Point<f32>, Point<f32>),              // control, to
     CurveTo(Point<f32>, Point<f32>, Point<f32>), // control1, control2, to
     Close,
 }
@@ -27,7 +27,8 @@ impl OutlineBuilder for GlyphOutline {
         self.ops.push(PathOp::LineTo(Point { x, y }));
     }
     fn quad_to(&mut self, cx: f32, cy: f32, x: f32, y: f32) {
-        self.ops.push(PathOp::QuadTo(Point { x: cx, y: cy }, Point { x, y }));
+        self.ops
+            .push(PathOp::QuadTo(Point { x: cx, y: cy }, Point { x, y }));
     }
     fn curve_to(&mut self, cx1: f32, cy1: f32, cx2: f32, cy2: f32, x: f32, y: f32) {
         self.ops.push(PathOp::CurveTo(

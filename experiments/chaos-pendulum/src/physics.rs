@@ -60,7 +60,9 @@ impl PendulumSystem {
 
     fn verlet(&mut self, dt: f32) {
         for node in &mut self.nodes {
-            if node.fixed { continue; }
+            if node.fixed {
+                continue;
+            }
             let velocity = node.pos - node.prev_pos;
             // Apply friction
             let velocity = velocity * self.friction;
@@ -84,18 +86,30 @@ impl PendulumSystem {
 
                 let delta = pos_b - pos_a;
                 let dist = delta.length();
-                if dist < 0.000001 { continue; }
+                if dist < 0.000001 {
+                    continue;
+                }
 
                 let diff = (dist - link.length) / dist;
 
                 let mass_a = self.nodes[link.a].mass;
                 let mass_b = self.nodes[link.b].mass;
 
-                let inv_mass_a = if self.nodes[link.a].fixed { 0.0 } else { 1.0 / mass_a };
-                let inv_mass_b = if self.nodes[link.b].fixed { 0.0 } else { 1.0 / mass_b };
+                let inv_mass_a = if self.nodes[link.a].fixed {
+                    0.0
+                } else {
+                    1.0 / mass_a
+                };
+                let inv_mass_b = if self.nodes[link.b].fixed {
+                    0.0
+                } else {
+                    1.0 / mass_b
+                };
 
                 let total_inv_mass = inv_mass_a + inv_mass_b;
-                if total_inv_mass == 0.0 { continue; }
+                if total_inv_mass == 0.0 {
+                    continue;
+                }
 
                 let correction = delta * diff;
 
@@ -114,7 +128,9 @@ impl PendulumSystem {
         let mut potential = 0.0;
 
         for node in &self.nodes {
-            if node.fixed { continue; }
+            if node.fixed {
+                continue;
+            }
             let sub_dt = dt / SUB_STEPS as f32;
             let v = (node.pos - node.prev_pos) / sub_dt;
 
@@ -142,10 +158,17 @@ mod tests {
         sys.step(dt);
 
         // Step forward a bit
-        for _ in 0..10 { sys.step(dt); }
+        for _ in 0..10 {
+            sys.step(dt);
+        }
         let e_final = sys.total_energy(dt);
 
-        assert!((e1 - e_final).abs() < 2.0, "Energy diverged significantly: {} vs {}", e1, e_final);
+        assert!(
+            (e1 - e_final).abs() < 2.0,
+            "Energy diverged significantly: {} vs {}",
+            e1,
+            e_final
+        );
         assert_ne!(sys.nodes[child].pos, Vec2::new(1.0, 0.0));
     }
 }

@@ -13,12 +13,23 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Phase {
+    #[default]
+    Corporeal,
+    Ethereal,
+    Crystalline,
+    Flux,
+}
+
 /// Represents a "time-travel" snapshot of the VM state.
 ///
 /// Used by the `Sporulate` and `Germinate` opcodes to save and restore the entire simulation state.
 #[cfg(feature = "nova")]
 #[derive(Clone)]
 pub struct Spore {
+    pub phase: Phase,
     pub dna: Dna,
     pub stack: Vec<Value>,
     pub ip: (usize, usize),
@@ -299,7 +310,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     let s_idx = idx as usize;
                     if s_idx < vm.dna.helix.strands.len() {
                         if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
-                            vm.output.push("Error: Organelle limit exceeded".to_string());
+                            vm.output
+                                .push("Error: Organelle limit exceeded".to_string());
                             return None;
                         }
 
@@ -343,13 +355,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Sporulate => {
             if vm.spores.len() >= crate::vm::MAX_SPORES {
-                vm.output
-                    .push("Error: Spore limit exceeded".to_string());
+                vm.output.push("Error: Spore limit exceeded".to_string());
                 return None;
             }
 
             // Create snapshot
             let spore = Spore {
+                phase: vm.phase,
                 dna: vm.dna.clone(),
                 stack: vm.stack.clone(),
                 ip: vm.ip,
@@ -401,6 +413,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if idx < vm.spores.len() {
                         let spore = &vm.spores[idx];
                         // Restore state
+                        vm.phase = spore.phase;
                         vm.dna = spore.dna.clone();
                         vm.stack = spore.stack.clone();
                         vm.ip = spore.ip;
@@ -1252,12 +1265,20 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let dx_val = vm.stack.pop().unwrap();
                 let dy_val = vm.stack.pop().unwrap();
                 if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    if vm.phase == Phase::Crystalline {
+                        vm.output
+                            .push("Error: Crystalline phase is immobile".to_string());
+                        return None;
+                    }
+
                     let (cy, cx) = vm.context_loc;
 
                     let mut blocked = false;
-                    if let Some(mask) = get_direction_mask(dy, dx) {
-                        if (vm.membranes[cy][cx] & mask) != 0 {
-                            blocked = true;
+                    if vm.phase != Phase::Ethereal {
+                        if let Some(mask) = get_direction_mask(dy, dx) {
+                            if (vm.membranes[cy][cx] & mask) != 0 {
+                                blocked = true;
+                            }
                         }
                     }
 
@@ -2022,6 +2043,30 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::PhaseShift => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(id) = val {
+                    let phase = match id {
+                        1 => Phase::Ethereal,
+                        2 => Phase::Crystalline,
+                        3 => Phase::Flux,
+                        _ => Phase::Corporeal,
+                    };
+                    vm.phase = phase;
+                    vm.energy = vm.energy.saturating_sub(50);
+                    vm.output
+                        .push(format!("PHASE_SHIFT: Transformed to {:?}", phase));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for phase_shift".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for phase_shift".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Membrane => {
             // stack: mask (1=N, 2=S, 4=E, 8=W)
             if let Some(val) = vm.stack.pop() {
@@ -2190,7 +2235,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if let Some(sip) = vm.symbiotes.pop() {
                 if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
                     vm.symbiotes.push(sip); // Put it back
-                    vm.output.push("Error: Organelle limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Organelle limit exceeded".to_string());
                     return None;
                 }
 
@@ -2365,7 +2411,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Void => {
             if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
-                vm.output.push("Error: Organelle limit exceeded".to_string());
+                vm.output
+                    .push("Error: Organelle limit exceeded".to_string());
                 return None;
             }
 

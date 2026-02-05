@@ -40,7 +40,8 @@ async fn main() {
             if let Some(pos) = screen_to_disk(mx, my) {
                 // Add a cluster
                 for _ in 0..3 {
-                    let offset = Complex::from_polar(rand::gen_range(0.0, 0.05), rand::gen_range(0.0, 6.28));
+                    let offset =
+                        Complex::from_polar(rand::gen_range(0.0, 0.05), rand::gen_range(0.0, 6.28));
                     let p = pos + offset;
                     // Ensure inside disk
                     if p.norm() < 0.99 {
@@ -88,8 +89,20 @@ async fn main() {
 
         // UI
         draw_text("Hyperbolic Roots", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Space: Toggle Nutrients | R: Reset | Click: Feed", 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Nodes: {}", root_system.nodes.len()), 20.0, 90.0, 20.0, GRAY);
+        draw_text(
+            "Space: Toggle Nutrients | R: Reset | Click: Feed",
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Nodes: {}", root_system.nodes.len()),
+            20.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -106,7 +119,7 @@ fn get_disk_params() -> (f32, f32, f32) {
 fn disk_to_screen(p: Complex<f64>, cx: f32, cy: f32, scale: f32) -> (f32, f32) {
     (
         cx + p.re as f32 * scale,
-        cy - p.im as f32 * scale // Flip Y for screen coords
+        cy - p.im as f32 * scale, // Flip Y for screen coords
     )
 }
 

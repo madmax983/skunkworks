@@ -393,6 +393,13 @@ pub enum OpCode {
     /// **Stack:** `[ ..., channel ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     Tune,
+    /// **[Nova]** Shifts the organism's phase of matter.
+    ///
+    /// **Stack:** `[ ..., phase_id ] -> [ ... ]`
+    /// **Modes:** 0=Corporeal, 1=Ethereal, 2=Crystalline, 3=Flux.
+    /// **Cost:** 50 Energy.
+    #[cfg(feature = "nova")]
+    PhaseShift,
     /// **[Nova]** Modifies cellular membranes (walls) at current location.
     ///
     /// **Stack:** `[ ..., mask ] -> [ ... ]`
@@ -738,6 +745,8 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "tune" => Ok(OpCode::Tune),
             #[cfg(feature = "nova")]
+            "phase_shift" => Ok(OpCode::PhaseShift),
+            #[cfg(feature = "nova")]
             "membrane" => Ok(OpCode::Membrane),
             #[cfg(feature = "nova")]
             "osmosis" => Ok(OpCode::Osmosis),
@@ -897,6 +906,8 @@ impl fmt::Display for OpCode {
             OpCode::Broadcast => write!(f, "broadcast"),
             #[cfg(feature = "nova")]
             OpCode::Tune => write!(f, "tune"),
+            #[cfg(feature = "nova")]
+            OpCode::PhaseShift => write!(f, "phase_shift"),
             #[cfg(feature = "nova")]
             OpCode::Membrane => write!(f, "membrane"),
             #[cfg(feature = "nova")]

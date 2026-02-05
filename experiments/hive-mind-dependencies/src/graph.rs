@@ -1,5 +1,5 @@
-use petgraph::graph::{Graph, NodeIndex};
 use petgraph::Directed;
+use petgraph::graph::{Graph, NodeIndex};
 use rand::prelude::*;
 use std::collections::HashMap;
 
@@ -23,7 +23,12 @@ impl DependencyGraph {
         }
     }
 
-    pub fn generate_layered_dag(&mut self, layers: usize, nodes_per_layer: usize, rng: &mut impl Rng) {
+    pub fn generate_layered_dag(
+        &mut self,
+        layers: usize,
+        nodes_per_layer: usize,
+        rng: &mut impl Rng,
+    ) {
         let mut layer_nodes: Vec<Vec<NodeIndex>> = Vec::new();
 
         // Create Nodes
@@ -71,7 +76,10 @@ impl DependencyGraph {
         for idx in self.graph.node_indices() {
             let node = &self.graph[idx];
             *layer_counts.entry(node.layer).or_insert(0) += 1;
-            node_indices_by_layer.entry(node.layer).or_insert(Vec::new()).push(idx);
+            node_indices_by_layer
+                .entry(node.layer)
+                .or_insert(Vec::new())
+                .push(idx);
         }
 
         let max_layer = layer_counts.keys().max().cloned().unwrap_or(0);

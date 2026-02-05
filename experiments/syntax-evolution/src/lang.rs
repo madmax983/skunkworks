@@ -68,13 +68,13 @@ impl Word {
                 raw: raw.to_string(),
             }
         } else if raw.ends_with("um") {
-             Self {
+            Self {
                 root: raw.trim_end_matches("um").to_string(),
                 case: Case::Accusative,
                 raw: raw.to_string(),
             }
         } else {
-             Self {
+            Self {
                 root: raw.to_string(),
                 case: Case::None,
                 raw: raw.to_string(),

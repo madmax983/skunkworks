@@ -1,29 +1,29 @@
+mod ant;
 mod audio;
 mod graph;
-mod ant;
 
+use crossbeam::channel::unbounded;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
-use crossbeam::channel::unbounded;
 
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use rand::prelude::*;
 use ratatui::{
     prelude::*,
+    symbols::Marker,
     widgets::{
         canvas::{Canvas, Line as CanvasLine, Points},
         Block, Borders,
     },
-    symbols::Marker,
 };
-use rand::prelude::*;
 
-use crate::audio::AudioEngine;
-use crate::graph::{DepGraph, generate_layered_dag};
 use crate::ant::Ant;
+use crate::audio::AudioEngine;
+use crate::graph::{generate_layered_dag, DepGraph};
 
 fn main() -> anyhow::Result<()> {
     // Setup TUI
@@ -44,7 +44,8 @@ fn main() -> anyhow::Result<()> {
     // Spawn Ants
     let num_ants = 10;
     // Start ants at random root nodes
-    let roots: Vec<_> = graph.node_indices()
+    let roots: Vec<_> = graph
+        .node_indices()
         .filter(|&i| graph[i].layer == 0)
         .collect();
 
@@ -80,10 +81,7 @@ fn main() -> anyhow::Result<()> {
 
     // Cleanup
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     Ok(())
@@ -93,7 +91,11 @@ fn ui(frame: &mut Frame, graph: &Arc<DepGraph>) {
     let area = frame.area();
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Colony Concerto - 'q' to quit"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Colony Concerto - 'q' to quit"),
+        )
         .marker(Marker::Braille)
         .x_bounds([0.0, 1.0])
         .y_bounds([0.0, 1.0])

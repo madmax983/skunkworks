@@ -1,8 +1,8 @@
 mod logic;
 
+use logic::{assign_target_angles, calculate_strip_transforms, parse_trace, SegmentType};
 use macroquad::prelude::*;
-use logic::{parse_trace, assign_target_angles, calculate_strip_transforms, SegmentType};
-use nalgebra::{Point3};
+use nalgebra::Point3;
 
 #[macroquad::main("Trace Fold")]
 async fn main() {
@@ -45,17 +45,25 @@ stack backtrace:
             fold_progress = (fold_progress + 0.02).min(1.0);
         }
 
-        if is_key_down(KeyCode::A) { cam_yaw += 0.05; }
-        if is_key_down(KeyCode::D) { cam_yaw -= 0.05; }
-        if is_key_down(KeyCode::W) { cam_pitch += 0.05; }
-        if is_key_down(KeyCode::S) { cam_pitch -= 0.05; }
+        if is_key_down(KeyCode::A) {
+            cam_yaw += 0.05;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_yaw -= 0.05;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_pitch += 0.05;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_pitch -= 0.05;
+        }
 
         cam_dist = (cam_dist + mouse_wheel().1 * -0.5).clamp(5.0, 50.0);
 
         let cam_pos = vec3(
             cam_dist * cam_yaw.cos() * cam_pitch.cos(),
             cam_dist * cam_pitch.sin(),
-            cam_dist * cam_yaw.sin() * cam_pitch.cos()
+            cam_dist * cam_yaw.sin() * cam_pitch.cos(),
         );
 
         set_camera(&Camera3D {
@@ -93,31 +101,40 @@ stack backtrace:
 
             // Local corners (centered on X, base on Y=0, center Z)
             let corners_local = [
-                Point3::new(-w/2., 0., -d/2.),
-                Point3::new( w/2., 0., -d/2.),
-                Point3::new( w/2., 0.,  d/2.),
-                Point3::new(-w/2., 0.,  d/2.),
-                Point3::new(-w/2., h, -d/2.),
-                Point3::new( w/2., h, -d/2.),
-                Point3::new( w/2., h,  d/2.),
-                Point3::new(-w/2., h,  d/2.),
+                Point3::new(-w / 2., 0., -d / 2.),
+                Point3::new(w / 2., 0., -d / 2.),
+                Point3::new(w / 2., 0., d / 2.),
+                Point3::new(-w / 2., 0., d / 2.),
+                Point3::new(-w / 2., h, -d / 2.),
+                Point3::new(w / 2., h, -d / 2.),
+                Point3::new(w / 2., h, d / 2.),
+                Point3::new(-w / 2., h, d / 2.),
             ];
 
-            let c: Vec<Vec3> = corners_local.iter().map(|p| {
-                let world = transform * p;
-                vec3(world.x, world.y, world.z)
-            }).collect();
+            let c: Vec<Vec3> = corners_local
+                .iter()
+                .map(|p| {
+                    let world = transform * p;
+                    vec3(world.x, world.y, world.z)
+                })
+                .collect();
 
             // Draw box lines
-            draw_line_3d(c[0], c[1], color); draw_line_3d(c[1], c[2], color);
-            draw_line_3d(c[2], c[3], color); draw_line_3d(c[3], c[0], color);
-            draw_line_3d(c[4], c[5], color); draw_line_3d(c[5], c[6], color);
-            draw_line_3d(c[6], c[7], color); draw_line_3d(c[7], c[4], color);
-            draw_line_3d(c[0], c[4], color); draw_line_3d(c[1], c[5], color);
-            draw_line_3d(c[2], c[6], color); draw_line_3d(c[3], c[7], color);
+            draw_line_3d(c[0], c[1], color);
+            draw_line_3d(c[1], c[2], color);
+            draw_line_3d(c[2], c[3], color);
+            draw_line_3d(c[3], c[0], color);
+            draw_line_3d(c[4], c[5], color);
+            draw_line_3d(c[5], c[6], color);
+            draw_line_3d(c[6], c[7], color);
+            draw_line_3d(c[7], c[4], color);
+            draw_line_3d(c[0], c[4], color);
+            draw_line_3d(c[1], c[5], color);
+            draw_line_3d(c[2], c[6], color);
+            draw_line_3d(c[3], c[7], color);
 
             // Label position (Center of face)
-            let center_local = Point3::new(0.0, h/2.0, 0.0);
+            let center_local = Point3::new(0.0, h / 2.0, 0.0);
             let center_world = transform * center_local;
             let center_vec3 = vec3(center_world.x, center_world.y, center_world.z);
 
@@ -126,9 +143,9 @@ stack backtrace:
             let ndc = clip.truncate() / clip.w;
 
             if clip.w > 0.0 && ndc.z < 1.0 {
-                 let screen_x = (ndc.x + 1.0) * 0.5 * screen_width();
-                 let screen_y = (1.0 - ndc.y) * 0.5 * screen_height();
-                 labels.push((screen_x, screen_y, segment.content.clone(), color));
+                let screen_x = (ndc.x + 1.0) * 0.5 * screen_width();
+                let screen_y = (1.0 - ndc.y) * 0.5 * screen_height();
+                labels.push((screen_x, screen_y, segment.content.clone(), color));
             }
         }
 
@@ -137,12 +154,30 @@ stack backtrace:
         // Draw Labels
         for (x, y, text, color) in labels {
             // Draw backdrop
-            draw_rectangle(x, y, text.len() as f32 * 8.0, 20.0, Color::new(0., 0., 0., 0.5));
+            draw_rectangle(
+                x,
+                y,
+                text.len() as f32 * 8.0,
+                20.0,
+                Color::new(0., 0., 0., 0.5),
+            );
             draw_text(&text, x, y + 15.0, 20.0, color);
         }
 
-        draw_text(&format!("Fold: {:.2}", fold_progress), 10.0, 20.0, 30.0, WHITE);
-        draw_text("Controls: Arrows to Fold, WASD+Wheel to Move Camera", 10.0, 40.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Fold: {:.2}", fold_progress),
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Controls: Arrows to Fold, WASD+Wheel to Move Camera",
+            10.0,
+            40.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

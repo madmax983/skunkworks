@@ -1,10 +1,10 @@
+use crate::math::Quasicrystal;
+use bytemuck::{Pod, Zeroable};
+use cgmath::prelude::*;
+use cgmath::{Deg, Matrix4, Point3, Vector3};
 use std::sync::Arc;
 use wgpu::util::DeviceExt;
 use winit::window::Window;
-use cgmath::prelude::*;
-use cgmath::{Matrix4, Point3, Vector3, Deg};
-use bytemuck::{Pod, Zeroable};
-use crate::math::Quasicrystal;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Pod, Zeroable)]
@@ -43,10 +43,7 @@ impl Camera {
         // wgpu has clip space Z 0..1, cgmath is -1..1.
         // OPENGL_TO_WGPU_MATRIX
         let correction = Matrix4::new(
-            1.0, 0.0, 0.0, 0.0,
-            0.0, 1.0, 0.0, 0.0,
-            0.0, 0.0, 0.5, 0.0,
-            0.0, 0.0, 0.5, 1.0,
+            1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.5, 1.0,
         );
         correction * proj * view
     }
@@ -74,35 +71,107 @@ pub struct State {
 const VERTICES: &[Vertex] = &[
     // Cube vertices
     // Front face
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
     // Back face
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
     // Top face
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
     // Bottom face
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
     // Right face
-    Vertex { position: [0.1, -0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [1.0, 0.0, 0.0] },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
     // Left face
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
 ];
 
 const INDICES: &[u16] = &[
@@ -115,13 +184,20 @@ const INDICES: &[u16] = &[
 ];
 
 impl State {
-    pub async fn new(window: Option<Arc<Window>>, width: u32, height: u32, qc: &Quasicrystal) -> Self {
+    pub async fn new(
+        window: Option<Arc<Window>>,
+        width: u32,
+        height: u32,
+        qc: &Quasicrystal,
+    ) -> Self {
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
             backends: wgpu::Backends::all(),
             ..Default::default()
         });
 
-        let surface = window.as_ref().map(|w| instance.create_surface(w.clone()).unwrap());
+        let surface = window
+            .as_ref()
+            .map(|w| instance.create_surface(w.clone()).unwrap());
 
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -162,7 +238,7 @@ impl State {
         };
 
         if let (Some(surface), Some(config)) = (&surface, &config) {
-             surface.configure(&device, config);
+            surface.configure(&device, config);
         }
 
         // Camera
@@ -187,19 +263,20 @@ impl State {
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
 
-        let camera_bind_group_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
-                visibility: wgpu::ShaderStages::VERTEX,
-                ty: wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-                count: None,
-            }],
-            label: Some("camera_bind_group_layout"),
-        });
+        let camera_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+                label: Some("camera_bind_group_layout"),
+            });
 
         let camera_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             layout: &camera_bind_group_layout,
@@ -213,11 +290,12 @@ impl State {
         // Pipeline
         let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
 
-        let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[&camera_bind_group_layout],
-            push_constant_ranges: &[],
-        });
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[&camera_bind_group_layout],
+                push_constant_ranges: &[],
+            });
 
         let vertex_buffer_layout = wgpu::VertexBufferLayout {
             array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
@@ -265,7 +343,10 @@ impl State {
                 module: &shader,
                 entry_point: "fs_main",
                 targets: &[Some(wgpu::ColorTargetState {
-                    format: config.as_ref().map(|c| c.format).unwrap_or(wgpu::TextureFormat::Rgba8UnormSrgb),
+                    format: config
+                        .as_ref()
+                        .map(|c| c.format)
+                        .unwrap_or(wgpu::TextureFormat::Rgba8UnormSrgb),
                     blend: Some(wgpu::BlendState::REPLACE),
                     write_mask: wgpu::ColorWrites::ALL,
                 })],
@@ -308,14 +389,18 @@ impl State {
         });
 
         // Convert QC to instances
-        let instances: Vec<InstanceRaw> = qc.atoms.iter().map(|p| {
-             let dist = p.to_vec().magnitude();
-             let c = (dist / 10.0).sin() * 0.5 + 0.5;
-             InstanceRaw {
-                 model_pos: [p.x, p.y, p.z],
-                 color: [c, 0.5, 1.0 - c],
-             }
-        }).collect();
+        let instances: Vec<InstanceRaw> = qc
+            .atoms
+            .iter()
+            .map(|p| {
+                let dist = p.to_vec().magnitude();
+                let c = (dist / 10.0).sin() * 0.5 + 0.5;
+                InstanceRaw {
+                    model_pos: [p.x, p.y, p.z],
+                    color: [c, 0.5, 1.0 - c],
+                }
+            })
+            .collect();
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -368,7 +453,7 @@ impl State {
                 config.width = new_size.0;
                 config.height = new_size.1;
                 if let Some(surface) = &self.surface {
-                     surface.configure(&self.device, config);
+                    surface.configure(&self.device, config);
                 }
             }
 
@@ -383,7 +468,8 @@ impl State {
                 sample_count: 1,
                 dimension: wgpu::TextureDimension::D2,
                 format: wgpu::TextureFormat::Depth32Float,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | wgpu::TextureUsages::TEXTURE_BINDING,
                 label: Some("Depth Texture"),
                 view_formats: &[],
             });
@@ -393,7 +479,11 @@ impl State {
 
     pub fn update(&mut self) {
         self.camera_uniform.view_proj = self.camera.build_view_projection_matrix().into();
-        self.queue.write_buffer(&self.camera_buffer, 0, bytemuck::cast_slice(&[self.camera_uniform]));
+        self.queue.write_buffer(
+            &self.camera_buffer,
+            0,
+            bytemuck::cast_slice(&[self.camera_uniform]),
+        );
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
@@ -403,11 +493,15 @@ impl State {
             return Ok(()); // Should not happen in window loop
         };
 
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -472,9 +566,11 @@ impl State {
 
         let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Headless Encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Headless Encoder"),
+            });
 
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -522,8 +618,7 @@ impl State {
         let output_buffer_size = (padded_bytes_per_row * self.size.1) as wgpu::BufferAddress;
         let output_buffer_desc = wgpu::BufferDescriptor {
             size: output_buffer_size,
-            usage: wgpu::BufferUsages::COPY_DST
-                | wgpu::BufferUsages::MAP_READ,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
             label: Some("Output Buffer"),
             mapped_at_creation: false,
         };
@@ -558,7 +653,8 @@ impl State {
         rx.recv().unwrap().unwrap();
 
         let data = slice.get_mapped_range();
-        let mut pixels: Vec<u8> = Vec::with_capacity((unpadded_bytes_per_row * self.size.1) as usize);
+        let mut pixels: Vec<u8> =
+            Vec::with_capacity((unpadded_bytes_per_row * self.size.1) as usize);
         for chunk in data.chunks(padded_bytes_per_row as usize) {
             pixels.extend_from_slice(&chunk[..unpadded_bytes_per_row as usize]);
         }

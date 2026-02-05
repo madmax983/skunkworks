@@ -1,6 +1,6 @@
+mod logic;
 mod safe_gl;
 mod world;
-mod logic;
 
 use macroquad::prelude::*;
 use world::World;
@@ -81,8 +81,10 @@ async fn main() {
                             let scale_x = portal.rect.w / target_room.rect.w;
                             let new_zoom = cam_zoom * scale_x;
 
-                            let new_pos_x = target_room.rect.x + (cam_pos.x - portal.rect.x) / scale_x;
-                            let new_pos_y = target_room.rect.y + (cam_pos.y - portal.rect.y) / scale_x;
+                            let new_pos_x =
+                                target_room.rect.x + (cam_pos.x - portal.rect.x) / scale_x;
+                            let new_pos_y =
+                                target_room.rect.y + (cam_pos.y - portal.rect.y) / scale_x;
 
                             current_room_id = portal.target_room_id;
                             cam_pos = vec2(new_pos_x, new_pos_y);
@@ -133,12 +135,12 @@ async fn main() {
 
         // Show current function name at top
         if let Some(room) = world.rooms.get(&current_room_id) {
-             draw_text(
+            draw_text(
                 &format!("Current Frame: {}", room.label),
                 20.0,
                 80.0,
                 20.0,
-                YELLOW
+                YELLOW,
             );
         }
 
@@ -213,7 +215,13 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
 
         // Portal Label ("Next Call")
         let p_font_size = portal.rect.w * 0.1;
-        draw_text("CALL", portal.rect.x + 5.0, portal.rect.y + p_font_size, p_font_size, BLACK);
+        draw_text(
+            "CALL",
+            portal.rect.x + 5.0,
+            portal.rect.y + p_font_size,
+            p_font_size,
+            BLACK,
+        );
 
         // 4. Calculate Child Camera
         let target_room = match world.rooms.get(&portal.target_room_id) {

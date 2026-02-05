@@ -40,7 +40,7 @@ async fn main() {
                 root_system.nutrients.push(Nutrient {
                     pos: Vec2::new(
                         mx + rng.gen_range(-10.0..10.0),
-                        my + rng.gen_range(-10.0..10.0)
+                        my + rng.gen_range(-10.0..10.0),
                     ),
                     strength: 1.0,
                 });
@@ -72,7 +72,14 @@ async fn main() {
 
                 if let Some(pos) = closest_pos {
                     // Draw faint line
-                    draw_line(nutrient.pos.x, nutrient.pos.y, pos.x, pos.y, 0.5, Color::new(0.3, 0.3, 0.3, 0.5));
+                    draw_line(
+                        nutrient.pos.x,
+                        nutrient.pos.y,
+                        pos.x,
+                        pos.y,
+                        0.5,
+                        Color::new(0.3, 0.3, 0.3, 0.5),
+                    );
                 }
             }
         }
@@ -80,7 +87,12 @@ async fn main() {
         // Draw Nutrients (The Radar Targets)
         for nutrient in &root_system.nutrients {
             // Pulse size based on time?
-            draw_circle(nutrient.pos.x, nutrient.pos.y, 1.5 * nutrient.strength, Color::new(1.0, 0.8, 0.2, 0.8));
+            draw_circle(
+                nutrient.pos.x,
+                nutrient.pos.y,
+                1.5 * nutrient.strength,
+                Color::new(1.0, 0.8, 0.2, 0.8),
+            );
         }
 
         // Draw Roots (The Path)
@@ -88,18 +100,38 @@ async fn main() {
             if let Some(parent_idx) = node.parent {
                 let parent = &root_system.nodes[parent_idx];
                 draw_line(
-                    parent.pos.x, parent.pos.y,
-                    node.pos.x, node.pos.y,
+                    parent.pos.x,
+                    parent.pos.y,
+                    node.pos.x,
+                    node.pos.y,
                     2.0 * node.thickness,
-                    Color::new(0.8, 0.9, 0.7, 1.0) // Pale organic color
+                    Color::new(0.8, 0.9, 0.7, 1.0), // Pale organic color
                 );
             }
         }
 
         draw_text("Rhizome Radar", 20.0, 30.0, 30.0, WHITE);
-        draw_text("R: Reset | Space: Toggle Radar | Click: Feed", 20.0, 60.0, 20.0, GRAY);
-        draw_text(&format!("Roots: {}", root_system.nodes.len()), 20.0, 90.0, 20.0, GRAY);
-        draw_text(&format!("Nutrients: {}", root_system.nutrients.len()), 20.0, 110.0, 20.0, GRAY);
+        draw_text(
+            "R: Reset | Space: Toggle Radar | Click: Feed",
+            20.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Roots: {}", root_system.nodes.len()),
+            20.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Nutrients: {}", root_system.nutrients.len()),
+            20.0,
+            110.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -118,10 +150,7 @@ fn create_simulation(width: f32, height: f32) -> RootSystem {
             width / 2.0 + angle.cos() * dist,
             height / 2.0 + angle.sin() * dist,
         );
-        nutrients.push(Nutrient {
-            pos,
-            strength: 1.0,
-        });
+        nutrients.push(Nutrient { pos, strength: 1.0 });
     }
 
     RootSystem::new(Vec2::new(width / 2.0, height / 2.0), nutrients)

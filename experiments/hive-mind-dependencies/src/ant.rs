@@ -1,4 +1,4 @@
-use petgraph::graph::{NodeIndex, EdgeIndex};
+use petgraph::graph::{EdgeIndex, NodeIndex};
 
 #[derive(Clone, Debug)]
 pub struct Ant {

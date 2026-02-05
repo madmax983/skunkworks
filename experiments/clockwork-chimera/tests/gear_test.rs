@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use clockwork_chimera::{mechanism, EscapeWheel, ClockworkChimeraPlugin};
+use clockwork_chimera::{mechanism, ClockworkChimeraPlugin, EscapeWheel};
 
 #[test]
 fn test_gear_rotation() {
