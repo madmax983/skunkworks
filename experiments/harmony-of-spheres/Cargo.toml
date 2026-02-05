@@ -4,13 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-macroquad = { version = "0.4", default-features = false }
-anyhow = "1.0"
-
-[dependencies.cpal]
-version = "0.15"
-optional = true
+macroquad = "0.4"
+cpal = { version = "0.15", optional = true }
+ringbuf = "0.3"
+rand = { workspace = true }
+anyhow = { workspace = true }
 
 [features]
-default = []
+default = ["audio"]
 audio = ["cpal"]
