@@ -188,9 +188,9 @@
 - **Scent Origin:** Mycelium
 - **Status:** Process tree growing. Documentation missing (README.md).
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/git-ouroboros
-- **Scent Origin:** Mycelium
-- **Status:** Ouroboros detected. Snake consuming commit history. Documentation missing (README.md).
+### [Concentration Level: CRITICAL MASS] - Location: experiments/git-ouroboros
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic "Snake" clone disguised as git visualization. Lacks emergent behavior. The Reaper is sharpening the scythe.
 
 ### [Concentration Level: FRESH] - Location: experiments/routing-market
 - **Scent Origin:** Genesis: The Economist
@@ -335,9 +335,9 @@
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The bedrock is cracking. The water is vibrating. The sound of technical debt is drowning out the silence.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/genetic-canvas
+### [Concentration Level: DECOMPOSING] - Location: experiments/genetic-canvas (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic implementation. Lacks emergent behavior. The Reaper has marked this territory.
+- **Status:** EXECUTED. Documentation void. Generic implementation. Lacks emergent behavior. Failed to improve during grace period. Biomass moved to graveyard.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/fractal-stack (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
