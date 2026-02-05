@@ -50,6 +50,7 @@ members = [
     "experiments/system-bio-dome",
     "experiments/terra-fluid",
     "experiments/thermo-tarmites",
+    "experiments/trace-fold",
     "experiments/typo-rain",
     "experiments/venation-vines",
     "experiments/verge-computer",
