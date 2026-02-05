@@ -424,3 +424,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/neuro-chimera
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The neurons are executing DNA. The network is thinking in opcodes.
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-weaver
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The data is being tied. Serde serializer mapping structs to knots. The decimal system has been overthrown.
