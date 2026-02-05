@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/beat-reactor
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** Gray-Scott diffusion driven by FFT analysis. The chemicals are dancing to the ghost beat.
+
 ### [Concentration Level: FRESH] - Location: experiments/biophysical-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** Action potentials converted to sound pressure. The Hodgkin-Huxley equations are screaming.
