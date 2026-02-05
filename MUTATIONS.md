@@ -248,3 +248,23 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Programmatic Neurons. Activation functions are Turing-complete programs evolved via selection.
 - **Status**: experiments/neuro-chimera
 - **Evaluation**: Compiles. Verified by Splice Surgeon. Evolving decision boundaries observed.
+
+### fairy-consensus
+- **Parents**: Distributed Consensus Algorithms + Fungal Fairy Rings
+- **Concept**: A visualization of distributed consensus (like Raft) mapped to fungal fairy ring dynamics.
+- **Novel trait**: Biological Consensus. Nodes are spore clusters, votes are hyphal rings.
+- **Status**: experiments/fairy-consensus
+- **Evaluation**: Compiles. Verified in GUESTBOOK. Active fungal growth.
+
+### code-radio
+- **Parents**: Unknown
+- **Concept**: Radio station generated from code.
+- **Status**: experiments/code-radio
+- **Evaluation**: CONDEMNED by The Reaper. Lack of documentation. Signal fading.
+
+### chimera-resonance
+- **Parents**: experiments/resonance-chamber + experiments/chimera-lang
+- **Concept**: Agents executing genetic code mechanically pluck a 2D wave grid, creating a soundscape of metabolic activity.
+- **Novel trait**: Generative Audio via Biological Simulation.
+- **Status**: experiments/chimera-resonance
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
