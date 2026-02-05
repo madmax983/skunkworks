@@ -13,10 +13,11 @@ fn test_spawn_organelle() {
     // Strand 0: [ push(1) spawn() jump(2) ] -> Spawns Strand 1, then jumps to gene 2 (infinite wait loop to avoid executing Strand 1)
     // Actually simpler: [ push(1) spawn() ] then let it roll.
 
-    // Strand 0: [ push(1) spawn() push(999) ]
+    // Strand 0: [ push(1) push(0) spawn() push(999) ]
     let strand0 = Strand {
         genes: vec![
             Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Type: Worker
             Gene { op: OpCode::Spawn, args: vec![] },
             Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] }, // Just to keep main busy
         ],
@@ -40,7 +41,10 @@ fn test_spawn_organelle() {
     // Step 1: push(1)
     vm.step();
 
-    // Step 2: spawn()
+    // Step 2: push(0)
+    vm.step();
+
+    // Step 3: spawn()
     vm.step();
 
     // Verify spawn
@@ -80,6 +84,7 @@ fn test_spawn_energy_cost() {
     let strand0 = Strand {
         genes: vec![
             Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
             Gene { op: OpCode::Spawn, args: vec![] },
         ],
     };
@@ -90,9 +95,10 @@ fn test_spawn_energy_cost() {
 
     let initial_energy = vm.energy;
     vm.step(); // push
+    vm.step(); // push
     vm.step(); // spawn
 
     // Cost of spawn is 20. Cost of steps is 1 each.
-    // Total cost = 2 (Main metabolism) + 20 (Spawn cost) + 1 (Organelle metabolism for 1st step) = 23.
-    assert_eq!(vm.energy, initial_energy - 23);
+    // Total cost = 3 (Main metabolism) + 20 (Spawn cost) + 1 (Organelle metabolism for 1st step) = 24.
+    assert_eq!(vm.energy, initial_energy - 24);
 }

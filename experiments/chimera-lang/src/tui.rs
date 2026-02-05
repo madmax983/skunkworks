@@ -117,8 +117,6 @@ fn run_app<B: ratatui::backend::Backend>(
 
             // Petri Dish (Grid)
             let mut grid_lines = Vec::new();
-            #[cfg(feature = "nova")]
-            let organelle_locs: Vec<(usize, usize)> = vm.organelles.iter().map(|o| o.context_loc).collect();
 
             for y in 0..16 {
                 let mut line_spans = Vec::new();
@@ -179,10 +177,17 @@ fn run_app<B: ratatui::backend::Backend>(
                             }
                         }
 
-                        if organelle_locs.contains(&(y, x)) {
-                            style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                        if let Some(organelle) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
+                            let (color, char_code) = match organelle.kind {
+                                crate::vm::nova::OrganelleType::Chloroplast => (Color::Green, "C"),
+                                crate::vm::nova::OrganelleType::Mitochondria => (Color::Red, "M"),
+                                crate::vm::nova::OrganelleType::Lysosome => (Color::Magenta, "L"),
+                                crate::vm::nova::OrganelleType::Worker => (Color::White, "O"),
+                            };
+
+                            style = style.bg(color).fg(Color::Black).add_modifier(Modifier::BOLD);
                             if char_rep == "." {
-                                char_rep = "O".to_string();
+                                char_rep = char_code.to_string();
                             }
                         }
                     }

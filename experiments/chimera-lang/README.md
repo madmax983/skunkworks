@@ -52,6 +52,14 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 *   `entangle(strand_a, strand_b)`: Creates a quantum link between two strands. Any mutation (random or via `transcribe`) to one strand is instantly propagated to the other.
 *   `decohere(strand_idx)`: Breaks the quantum link for the target strand and its partner.
 
+### Organelles (Nova Feature)
+*   `spawn(type, strand_idx)`: Spawns an active agent (Organelle) at the current grid location. The Organelle executes the code in `strand_idx` independently.
+    *   **Types**:
+        *   `0`: **Worker** (Standard execution).
+        *   `1`: **Chloroplast** (Photosynthesis). Gains energy from `light_grid` (passive).
+        *   `2`: **Mitochondria** (Powerhouse). Reduces metabolic cost.
+        *   `3`: **Lysosome** (Recycler). Consumes `waste_grid` to produce energy.
+
 ### Petri Dish (New!)
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
 *   `g_write()`: Pop `val`, `y`, `x`. Write `val` to `grid[y][x]`.
