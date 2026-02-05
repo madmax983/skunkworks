@@ -41,7 +41,12 @@ pub struct Ring {
 
 impl Ring {
     pub fn new(x: f64, y: f64) -> Self {
-        Self { x, y, radius: 0.0, term: 0 }
+        Self {
+            x,
+            y,
+            radius: 0.0,
+            term: 0,
+        }
     }
 
     pub fn expand(&mut self) {
@@ -123,16 +128,16 @@ impl World {
                         // Since we can't mutate self.rings while iterating self.nodes,
                         // we'll handle spawning in a second pass or collect events.
                         // For now, just reset timer.
-                         node.reset_timer(rng);
+                        node.reset_timer(rng);
                     } else {
                         node.timer -= 1;
                     }
                 }
                 NodeState::Committed => {
-                     // Committed nodes might revert to Follower eventually or spread logic
-                     if rng.gen_bool(0.001) {
-                         node.state = NodeState::Follower;
-                     }
+                    // Committed nodes might revert to Follower eventually or spread logic
+                    if rng.gen_bool(0.001) {
+                        node.state = NodeState::Follower;
+                    }
                 }
             }
         }
@@ -146,15 +151,16 @@ impl World {
         // We can iterate indices?
 
         for i in 0..self.nodes.len() {
-             let node = &mut self.nodes[i];
-             if node.state == NodeState::Leader && node.timer % 50 == 0 {
-                 new_rings.push(Ring::new(node.x, node.y));
-             }
+            let node = &mut self.nodes[i];
+            if node.state == NodeState::Leader && node.timer % 50 == 0 {
+                new_rings.push(Ring::new(node.x, node.y));
+            }
         }
         self.rings.append(&mut new_rings);
 
         // Cleanup rings
-        self.rings.retain(|r| r.radius < self.width.max(self.height) * 1.5);
+        self.rings
+            .retain(|r| r.radius < self.width.max(self.height) * 1.5);
     }
 }
 
@@ -179,7 +185,11 @@ mod tests {
 
         let voted = ring.interact(&mut node);
         assert!(voted, "Node should vote when touched by ring");
-        assert_eq!(node.state, NodeState::Committed, "Node state should change to Committed");
+        assert_eq!(
+            node.state,
+            NodeState::Committed,
+            "Node state should change to Committed"
+        );
     }
 
     #[test]

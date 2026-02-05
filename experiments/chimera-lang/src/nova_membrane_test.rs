@@ -3,7 +3,7 @@ use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 #[cfg(test)]
 use crate::opcode::OpCode;
 #[cfg(test)]
-use crate::vm::{ChimeraVM, Value};
+use crate::vm::ChimeraVM;
 
 #[cfg(test)]
 fn make_dna(genes: Vec<Gene>) -> Dna {
