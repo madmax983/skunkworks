@@ -51,6 +51,8 @@ mod nova_gravity_test;
 #[cfg(test)]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_membrane_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_types_test;
@@ -58,6 +60,8 @@ mod nova_organelle_types_test;
 mod nova_portal_test;
 #[cfg(test)]
 mod nova_quantum_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
@@ -75,5 +79,3 @@ mod nova_waste_test;
 mod ribosome_test;
 #[cfg(test)]
 mod sentry_nova_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_radio_test;

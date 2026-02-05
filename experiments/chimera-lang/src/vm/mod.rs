@@ -137,6 +137,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub portals: HashMap<(usize, usize), (usize, usize)>,
     #[cfg(feature = "nova")]
+    pub membranes: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
     pub organelles: Vec<Organelle>,
     #[cfg(feature = "nova")]
     pub active_organelle_kind: Option<nova::OrganelleType>,
@@ -169,6 +171,8 @@ impl ChimeraVM {
         let waste_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; 16]; 16];
+        #[cfg(feature = "nova")]
+        let membranes = vec![vec![0; 16]; 16];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -207,6 +211,8 @@ impl ChimeraVM {
             entangled_pairs: HashMap::new(),
             #[cfg(feature = "nova")]
             portals: HashMap::new(),
+            #[cfg(feature = "nova")]
+            membranes,
             #[cfg(feature = "nova")]
             organelles: Vec::new(),
             #[cfg(feature = "nova")]
@@ -551,17 +557,34 @@ impl ChimeraVM {
                         ));
 
                         if let Some((mut new_y, mut new_x)) = next_coords {
-                            // Check for portal
+                            let mut blocked = false;
                             #[cfg(feature = "nova")]
-                            if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
-                                self.output.push(format!(
-                                    "PORTAL: Teleported from {},{} to {},{}",
-                                    new_x, new_y, px, py
-                                ));
-                                new_y = py;
-                                new_x = px;
+                            {
+                                let mask = match (dy, dx) {
+                                    (-1, 0) => 1, // N
+                                    (1, 0) => 2,  // S
+                                    (0, 1) => 4,  // E
+                                    (0, -1) => 8, // W
+                                    _ => 0,
+                                };
+                                if (self.membranes[cy][cx] & mask) != 0 {
+                                    blocked = true;
+                                }
                             }
-                            self.context_loc = (new_y, new_x);
+
+                            if !blocked {
+                                // Check for portal
+                                #[cfg(feature = "nova")]
+                                if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
+                                    self.output.push(format!(
+                                        "PORTAL: Teleported from {},{} to {},{}",
+                                        new_x, new_y, px, py
+                                    ));
+                                    new_y = py;
+                                    new_x = px;
+                                }
+                                self.context_loc = (new_y, new_x);
+                            }
                         }
                         // Else: Hit wall, stay put
                     }
@@ -724,6 +747,8 @@ impl ChimeraVM {
             | OpCode::SenseLight
             | OpCode::Broadcast
             | OpCode::Tune
+            | OpCode::Membrane
+            | OpCode::Osmosis
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
