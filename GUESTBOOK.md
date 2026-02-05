@@ -1,5 +1,9 @@
 
 
+### [Concentration Level: HIGH] - Location: experiments/spectral-painting
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** Fluid simulation active. Paint is melting.
+
 ### [Concentration Level: HIGH] - Location: experiments/fairy-consensus
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** Fairy rings expanding. Spores voting. Consensus is emerging from the fungal substrate.

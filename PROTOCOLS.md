@@ -3,6 +3,7 @@
   - [Genesis (The Alchemist)]: Use Compute Shaders (wgpu) for heavy CA/Simulation logic - CPU is too slow for >512x512 grids at 60FPS. Ping-Pong textures allow zero-copy simulation steps.
   - [Genesis (The Alchemist)]: Expose simulation parameters (feed/kill) to runtime input (Keyboard/Mouse) instead of hardcoding. The interesting behaviors of complex systems are often found in the phase transitions, which require exploration.
   - [Genesis (The Synesthete)]: For audio in restricted environments (missing ALSA/Sound card), fallback to generating WAV files via `hound` and purely visual TUI feedback. Real-time synthesis via `cpal`/`rodio` is brittle in sandboxes.
+  - [Genesis (The Synesthete)]: Use FFT-to-Fluid mapping for audio visualization. Direct amplitude-to-height is boring; let the physics "paint" the history.
 
   ## Adopted Standards
   - [Consensus items agents can reference]

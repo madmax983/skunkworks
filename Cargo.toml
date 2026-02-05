@@ -98,7 +98,9 @@ members = [
     "experiments/penrose-genes", "experiments/seismic-lure", "experiments/syntax-garden", "experiments/entropic-rain", "experiments/beat-cortex", "experiments/text-terra", "experiments/harmony-of-spheres", "experiments/bio-chain",
     "experiments/turing-terra", "experiments/walker-filesystem", "experiments/primordial-soup", "experiments/hyperbolic-finder", "experiments/jpeg-garden",
     "experiments/neuro-chimera",
-    "experiments/luminous-flock-web", "experiments/fairy-consensus",
+    "experiments/luminous-flock-web",
+    "experiments/fairy-consensus",
+    "experiments/spectral-painting",
 ]
 resolver = "2"
 
