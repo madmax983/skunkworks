@@ -7,7 +7,7 @@ mod tests {
     fn make_empty_vm() -> ChimeraVM {
         let dna = Dna {
             helix: Helix {
-                strands: vec![Strand { genes: vec![] }],
+                strands: vec![std::rc::Rc::new(Strand { genes: vec![] })],
             },
         };
         ChimeraVM::new(dna)

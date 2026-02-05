@@ -28,6 +28,7 @@ use crate::opcode::OpCode;
 use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::rc::Rc;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 
@@ -112,7 +113,7 @@ impl std::fmt::Display for Value {
 #[derive(Clone)]
 pub struct ChimeraVM {
     /// The read-only DNA program.
-    pub dna: Dna,
+    pub dna: Rc<Dna>,
     /// The LIFO stack for data manipulation.
     pub stack: Vec<Value>,
     /// Instruction Pointer: `(strand_index, gene_index)`.
@@ -208,7 +209,7 @@ impl ChimeraVM {
         let activation_levels = vec![0; strand_count];
 
         Self {
-            dna,
+            dna: Rc::new(dna),
             stack: Vec::new(),
             ip: (0, 0),
             output: Vec::new(),
@@ -448,12 +449,13 @@ impl ChimeraVM {
         }
 
         if self.mutagen_grid[cy][cx] > 50 {
-             let mut rng = rand::thread_rng();
-             // Higher probability for mutagen (10%)
-             if rng.gen_bool(0.10) {
-                 self.output.push(format!("MUTATION: RADIATION at {},{}", cx, cy));
-                 self.mutate();
-             }
+            let mut rng = rand::thread_rng();
+            // Higher probability for mutagen (10%)
+            if rng.gen_bool(0.10) {
+                self.output
+                    .push(format!("MUTATION: RADIATION at {},{}", cx, cy));
+                self.mutate();
+            }
         }
     }
 
@@ -507,12 +509,12 @@ impl ChimeraVM {
                 let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
                 if self.ip.1 < strand_len {
                     // Check telomeres/epigenetics? For now, skip for symbiotes to avoid complexity
-                    let (gene_op, gene_args) = {
-                        let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-                        (gene.op.clone(), gene.args.clone())
-                    };
+                    let dna = self.dna.clone();
+                    let gene = &dna.helix.strands[self.ip.0].genes[self.ip.1];
+                    let op = gene.op.clone();
+                    let args = &gene.args;
 
-                    let jump_target = self.execute_gene(gene_op, &gene_args);
+                    let jump_target = self.execute_gene(op, args);
                     if let Some(target) = jump_target {
                         self.ip = target;
                     } else {
@@ -742,12 +744,12 @@ impl ChimeraVM {
         if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
             let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
             if self.ip.1 < strand_len {
-                let (gene_op, gene_args) = {
-                    let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-                    (gene.op.clone(), gene.args.clone())
-                };
+                let dna = self.dna.clone();
+                let gene = &dna.helix.strands[self.ip.0].genes[self.ip.1];
+                let op = gene.op.clone();
+                let args = &gene.args;
 
-                let jump_target = self.execute_gene(gene_op, &gene_args);
+                let jump_target = self.execute_gene(op, args);
 
                 if let Some(target) = jump_target {
                     self.ip = target;
@@ -816,12 +818,12 @@ impl ChimeraVM {
         }
 
         // Clone gene info to release borrow on self.dna
-        let (gene_op, gene_args) = {
-            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-            (gene.op.clone(), gene.args.clone())
-        };
+        let dna = self.dna.clone();
+        let gene = &dna.helix.strands[self.ip.0].genes[self.ip.1];
+        let op = gene.op.clone();
+        let args = &gene.args;
 
-        let jump_target = self.execute_gene(gene_op, &gene_args);
+        let jump_target = self.execute_gene(op, args);
 
         if let Some(target) = jump_target {
             self.ip = target;
@@ -922,7 +924,9 @@ impl ChimeraVM {
                     let to_val = self.stack.pop().unwrap();
                     let from_val = self.stack.pop().unwrap();
                     if let (Value::Str(from), Value::Str(to)) = (from_val, to_val) {
-                        if let (Ok(from_op), Ok(to_op)) = (from.parse::<OpCode>(), to.parse::<OpCode>()) {
+                        if let (Ok(from_op), Ok(to_op)) =
+                            (from.parse::<OpCode>(), to.parse::<OpCode>())
+                        {
                             self.remap_table.insert(from_op.clone(), to_op.clone());
                             self.output.push(format!("REMAP: {} -> {}", from_op, to_op));
                         } else {
@@ -1543,7 +1547,8 @@ impl ChimeraVM {
                         #[cfg(feature = "nova")]
                         let mut success = false;
                         if si >= 0 && si_idx < self.dna.helix.strands.len() {
-                            let strand = &mut self.dna.helix.strands[si_idx];
+                            let helix = &mut Rc::make_mut(&mut self.dna).helix;
+                            let strand = Rc::make_mut(&mut helix.strands[si_idx]);
                             if gi >= 0 && (gi as usize) < strand.genes.len() {
                                 let gene = &mut strand.genes[gi as usize];
                                 if ai >= 0 && (ai as usize) < gene.args.len() {
@@ -1573,7 +1578,8 @@ impl ChimeraVM {
                         if success {
                             if let Some(&partner_idx) = self.entangled_pairs.get(&si_idx) {
                                 if partner_idx < self.dna.helix.strands.len() {
-                                    let p_strand = &mut self.dna.helix.strands[partner_idx];
+                                    let helix = &mut Rc::make_mut(&mut self.dna).helix;
+                                    let p_strand = Rc::make_mut(&mut helix.strands[partner_idx]);
                                     if (gi as usize) < p_strand.genes.len() {
                                         let p_gene = &mut p_strand.genes[gi as usize];
                                         if (ai as usize) < p_gene.args.len() {
@@ -1665,7 +1671,9 @@ impl ChimeraVM {
             let old_op = self.dna.helix.strands[strand_idx].genes[gene_idx]
                 .op
                 .clone();
-            self.dna.helix.strands[strand_idx].genes[gene_idx].op = new_op.clone();
+            let helix = &mut Rc::make_mut(&mut self.dna).helix;
+            let strand = Rc::make_mut(&mut helix.strands[strand_idx]);
+            strand.genes[gene_idx].op = new_op.clone();
             self.output
                 .push(format!("MUTATION: {} -> {}", old_op, new_op));
 
@@ -1679,7 +1687,9 @@ impl ChimeraVM {
                 if partner_idx < self.dna.helix.strands.len()
                     && gene_idx < self.dna.helix.strands[partner_idx].genes.len()
                 {
-                    self.dna.helix.strands[partner_idx].genes[gene_idx].op = new_op;
+                    let helix = &mut Rc::make_mut(&mut self.dna).helix;
+                    let p_strand = Rc::make_mut(&mut helix.strands[partner_idx]);
+                    p_strand.genes[gene_idx].op = new_op;
                     self.output.push(format!(
                         "ENTANGLEMENT: Mutated partner {} gene {} op",
                         partner_idx, gene_idx
@@ -1698,8 +1708,9 @@ impl ChimeraVM {
                 let new_n = rng.gen_range(0..100);
 
                 // Apply
-                self.dna.helix.strands[strand_idx].genes[gene_idx].args[0] =
-                    Nucleotide::Number(new_n);
+                let helix = &mut Rc::make_mut(&mut self.dna).helix;
+                let strand = Rc::make_mut(&mut helix.strands[strand_idx]);
+                strand.genes[gene_idx].args[0] = Nucleotide::Number(new_n);
                 self.output
                     .push(format!("MUTATION: arg {} -> {}", old_n, new_n));
 
@@ -1716,8 +1727,9 @@ impl ChimeraVM {
                             .args
                             .is_empty()
                     {
-                        self.dna.helix.strands[partner_idx].genes[gene_idx].args[0] =
-                            Nucleotide::Number(new_n);
+                        let helix = &mut Rc::make_mut(&mut self.dna).helix;
+                        let p_strand = Rc::make_mut(&mut helix.strands[partner_idx]);
+                        p_strand.genes[gene_idx].args[0] = Nucleotide::Number(new_n);
                         self.output.push(format!(
                             "ENTANGLEMENT: Mutated partner {} gene {} arg",
                             partner_idx, gene_idx
@@ -1737,7 +1749,7 @@ mod tests {
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
             helix: Helix {
-                strands: vec![Strand { genes }],
+                strands: vec![Rc::new(Strand { genes })],
             },
         }
     }
@@ -1793,7 +1805,7 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0, strand1],
+                strands: vec![Rc::new(strand0), Rc::new(strand1)],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -1840,7 +1852,7 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0, strand1],
+                strands: vec![Rc::new(strand0), Rc::new(strand1)],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -1898,7 +1910,7 @@ mod tests {
         };
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0],
+                strands: vec![Rc::new(strand0)],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -2260,7 +2272,7 @@ mod tests {
         };
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0, strand1],
+                strands: vec![Rc::new(strand0), Rc::new(strand1)],
             },
         };
         let mut vm = ChimeraVM::new(dna);

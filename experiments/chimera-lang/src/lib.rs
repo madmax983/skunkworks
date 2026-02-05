@@ -37,8 +37,6 @@ mod havoc_repro;
 #[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
 #[cfg(all(test, feature = "nova"))]
-mod prion_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_biolum_test;
 #[cfg(test)]
 mod nova_cerebellum_test;
@@ -89,6 +87,8 @@ mod nova_test;
 mod nova_topology_test;
 #[cfg(test)]
 mod nova_waste_test;
+#[cfg(all(test, feature = "nova"))]
+mod prion_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribosome_test;
 #[cfg(all(test, feature = "nova"))]

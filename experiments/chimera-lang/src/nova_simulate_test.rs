@@ -8,7 +8,9 @@ use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 fn make_dna(strands: Vec<Strand>) -> Dna {
     Dna {
-        helix: Helix { strands },
+        helix: Helix {
+            strands: strands.into_iter().map(std::rc::Rc::new).collect(),
+        },
     }
 }
 

@@ -8,7 +8,7 @@ mod tests {
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
             helix: Helix {
-                strands: vec![Strand { genes }],
+                strands: vec![std::rc::Rc::new(Strand { genes })],
             },
         }
     }
@@ -171,7 +171,7 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![s0, s1],
+                strands: vec![s0.into(), s1.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -208,7 +208,7 @@ mod tests {
         let s1_2 = Strand { genes: vec![] };
         let dna2 = Dna {
             helix: Helix {
-                strands: vec![s0_2, s1_2],
+                strands: vec![s0_2.into(), s1_2.into()],
             },
         };
         let mut vm2 = ChimeraVM::new(dna2);
@@ -492,7 +492,7 @@ mod tests {
         };
         let dna = Dna {
             helix: Helix {
-                strands: vec![s0, s1],
+                strands: vec![s0.into(), s1.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -561,7 +561,13 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![target_strand, guide_match, guide_fail, guide_empty, runner],
+                strands: vec![
+                    target_strand.into(),
+                    guide_match.into(),
+                    guide_fail.into(),
+                    guide_empty.into(),
+                    runner.into(),
+                ],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -655,7 +661,7 @@ mod tests {
         };
         let dna = Dna {
             helix: Helix {
-                strands: vec![s0, s1],
+                strands: vec![s0.into(), s1.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);

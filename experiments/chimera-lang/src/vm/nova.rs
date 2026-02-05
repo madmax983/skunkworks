@@ -9,6 +9,7 @@ use crate::{ChimeraParser, Rule};
 use pest::Parser;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::rc::Rc;
 
 /// Represents a "time-travel" snapshot of the VM state.
 ///
@@ -16,7 +17,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 #[cfg(feature = "nova")]
 #[derive(Clone)]
 pub struct Spore {
-    pub dna: Dna,
+    pub dna: Rc<Dna>,
     pub stack: Vec<Value>,
     pub ip: (usize, usize),
     pub output: Vec<String>,
@@ -536,7 +537,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 }
                             }
 
-                            vm.dna.helix.strands.push(crate::ast::Strand { genes });
+                            Rc::make_mut(&mut vm.dna)
+                                .helix
+                                .strands
+                                .push(Rc::new(crate::ast::Strand { genes }));
                             vm.telomeres.push(50);
                             #[cfg(feature = "cortex")]
                             {
@@ -682,10 +686,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         (sb_idx, sa_idx)
                                     };
 
+                                    let helix = &mut Rc::make_mut(&mut vm.dna).helix;
                                     let (first_slice, second_slice) =
-                                        vm.dna.helix.strands.split_at_mut(upper);
-                                    let strand_low = &mut first_slice[lower];
-                                    let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
+                                        helix.strands.split_at_mut(upper);
+                                    let strand_low_rc = &mut first_slice[lower];
+                                    let strand_high_rc = &mut second_slice[0]; // relative index 0 is absolute 'upper'
+
+                                    let strand_low = Rc::make_mut(strand_low_rc);
+                                    let strand_high = Rc::make_mut(strand_high_rc);
 
                                     // Identify which is A and B
                                     let (strand_a, strand_b) = if sa_idx < sb_idx {
@@ -809,14 +817,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         if cut >= 0 && cut_idx <= strand_len {
                             // Perform split
                             // We need to mutate the strand.
-                            let strand = &mut vm.dna.helix.strands[s_idx];
+                            let helix = &mut Rc::make_mut(&mut vm.dna).helix;
+                            let strand = Rc::make_mut(&mut helix.strands[s_idx]);
                             let tail_genes = strand.genes.split_off(cut_idx);
 
                             // Create new strand
-                            vm.dna
-                                .helix
+                            helix
                                 .strands
-                                .push(crate::ast::Strand { genes: tail_genes });
+                                .push(Rc::new(crate::ast::Strand { genes: tail_genes }));
                             vm.telomeres.push(50);
 
                             #[cfg(feature = "cortex")]
@@ -884,10 +892,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 (r_idx, d_idx)
                             };
 
-                            let (first_slice, second_slice) =
-                                vm.dna.helix.strands.split_at_mut(upper);
-                            let strand_low = &mut first_slice[lower];
-                            let strand_high = &mut second_slice[0];
+                            let helix = &mut Rc::make_mut(&mut vm.dna).helix;
+                            let (first_slice, second_slice) = helix.strands.split_at_mut(upper);
+                            let strand_low_rc = &mut first_slice[lower];
+                            let strand_high_rc = &mut second_slice[0];
+
+                            let strand_low = Rc::make_mut(strand_low_rc);
+                            let strand_high = Rc::make_mut(strand_high_rc);
 
                             let (strand_d, strand_r) = if d_idx < r_idx {
                                 (strand_low, strand_high)
@@ -926,7 +937,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         if s_idx < vm.dna.helix.strands.len() {
                             // Clone the strand
                             let new_strand = vm.dna.helix.strands[s_idx].clone();
-                            vm.dna.helix.strands.push(new_strand);
+                            Rc::make_mut(&mut vm.dna).helix.strands.push(new_strand);
                             vm.telomeres.push(50); // Default life
 
                             #[cfg(feature = "cortex")]
@@ -975,7 +986,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     Value::Int(idx) => {
                         let s_idx = idx as usize;
                         if s_idx < vm.dna.helix.strands.len() {
-                            vm.dna.helix.strands[s_idx].genes.clear();
+                            let helix = &mut Rc::make_mut(&mut vm.dna).helix;
+                            let strand = Rc::make_mut(&mut helix.strands[s_idx]);
+                            strand.genes.clear();
 
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
@@ -1024,7 +1037,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 };
 
                                 // Insert
-                                vm.dna.helix.strands[s_idx].genes.insert(g_idx, new_gene);
+                                let helix = &mut Rc::make_mut(&mut vm.dna).helix;
+                                let strand = Rc::make_mut(&mut helix.strands[s_idx]);
+                                strand.genes.insert(g_idx, new_gene);
 
                                 // Update Epigenome: Shift all markers at (s_idx, k >= g_idx) to k+1
                                 let mut new_markers = Vec::new();
@@ -1092,7 +1107,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let strand_len = vm.dna.helix.strands[s_idx].genes.len();
                             if g >= 0 && g_idx < strand_len {
                                 // Remove
-                                vm.dna.helix.strands[s_idx].genes.remove(g_idx);
+                                let helix = &mut Rc::make_mut(&mut vm.dna).helix;
+                                let strand = Rc::make_mut(&mut helix.strands[s_idx]);
+                                strand.genes.remove(g_idx);
 
                                 // Update Epigenome: Remove marker at g_idx, shift k > g_idx to k-1
                                 vm.epigenome.remove(&(s_idx, g_idx));
@@ -2194,7 +2211,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         Ok(mut pairs) => {
                             let pair = pairs.next().unwrap();
                             let strand = crate::ast::Strand::from_pair(pair);
-                            vm.dna.helix.strands.push(strand);
+                            Rc::make_mut(&mut vm.dna)
+                                .helix
+                                .strands
+                                .push(Rc::new(strand));
                             vm.telomeres.push(50);
                             #[cfg(feature = "cortex")]
                             {
@@ -2231,17 +2251,21 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         let (cy, cx) = vm.context_loc;
                         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
                         for (tx, ty) in coords {
-                            vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
+                            vm.mutagen_grid[ty][tx] =
+                                vm.mutagen_grid[ty][tx].saturating_add(amount);
                         }
                         // Cost is proportional to amount and area
-                        vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                        vm.energy = vm
+                            .energy
+                            .saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
                         vm.output.push(format!(
                             "IRRADIATE: Added {} mutagen at {},{} r={}",
                             amount, cx, cy, r
                         ));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for irradiate".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for irradiate".to_string());
                 }
             } else {
                 vm.output
@@ -2258,18 +2282,21 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         #[cfg(feature = "nova")]
         OpCode::Devour => {
-             let (cy, cx) = vm.context_loc;
-             let level = vm.mutagen_grid[cy][cx];
-             if level > 0 {
-                 vm.mutagen_grid[cy][cx] = 0;
-                 let energy_gain = level / 2; // 50% efficiency
-                 vm.energy = vm.energy.saturating_add(energy_gain);
-                 vm.stack.push(Value::Int(energy_gain));
-                 vm.output.push(format!("DEVOUR: Consumed {} mutagen, gained {} energy", level, energy_gain));
-             } else {
-                 vm.stack.push(Value::Int(0));
-             }
-             None
+            let (cy, cx) = vm.context_loc;
+            let level = vm.mutagen_grid[cy][cx];
+            if level > 0 {
+                vm.mutagen_grid[cy][cx] = 0;
+                let energy_gain = level / 2; // 50% efficiency
+                vm.energy = vm.energy.saturating_add(energy_gain);
+                vm.stack.push(Value::Int(energy_gain));
+                vm.output.push(format!(
+                    "DEVOUR: Consumed {} mutagen, gained {} energy",
+                    level, energy_gain
+                ));
+            } else {
+                vm.stack.push(Value::Int(0));
+            }
+            None
         }
         #[cfg(feature = "nova")]
         OpCode::Decompile => {
@@ -2369,8 +2396,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.stack.push(input);
 
                     match &func_val {
-                         Value::Str(s) => {
-                             // Parse and eval
+                        Value::Str(s) => {
+                            // Parse and eval
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
                                 let strand = crate::ast::Strand::from_pair(pair);
@@ -2378,23 +2405,25 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             } else {
                                 vm.output.push(format!("MAP ERROR: Parse failed for {}", s));
                             }
-                         }
-                         Value::Int(idx) => {
-                             // Sync call strand
-                             execute_strand_sync(vm, *idx as usize);
-                         }
-                         _ => {
-                             vm.output.push("Error: Invalid function for map".to_string());
-                         }
+                        }
+                        Value::Int(idx) => {
+                            // Sync call strand
+                            execute_strand_sync(vm, *idx as usize);
+                        }
+                        _ => {
+                            vm.output
+                                .push("Error: Invalid function for map".to_string());
+                        }
                     }
 
                     if vm.stack.len() > stack_depth {
-                         let new_items = vm.stack.split_off(stack_depth);
-                         results.extend(new_items);
+                        let new_items = vm.stack.split_off(stack_depth);
+                        results.extend(new_items);
                     }
                 }
 
-                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.stack
+                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
                 vm.output.push("Error: Stack underflow for map".to_string());
@@ -2421,17 +2450,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.stack.push(input);
 
                     match &func_val {
-                         Value::Str(s) => {
+                        Value::Str(s) => {
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
                                 let strand = crate::ast::Strand::from_pair(pair);
                                 execute_ephemeral_strand(vm, &strand);
                             }
-                         }
-                         Value::Int(idx) => {
-                             execute_strand_sync(vm, *idx as usize);
-                         }
-                         _ => {}
+                        }
+                        Value::Int(idx) => {
+                            execute_strand_sync(vm, *idx as usize);
+                        }
+                        _ => {}
                     }
 
                     if let Some(res) = vm.stack.pop() {
@@ -2443,13 +2472,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.stack.push(acc);
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
-                vm.output.push("Error: Stack underflow for fold".to_string());
+                vm.output
+                    .push("Error: Stack underflow for fold".to_string());
             }
             None
         }
         #[cfg(feature = "nova")]
         OpCode::Filter => {
-             // stack: junction, predicate (top)
+            // stack: junction, predicate (top)
             if vm.stack.len() >= 2 {
                 let func_val = vm.stack.pop().unwrap();
                 let target_val = vm.stack.pop().unwrap();
@@ -2465,17 +2495,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.stack.push(input.clone());
 
                     match &func_val {
-                         Value::Str(s) => {
+                        Value::Str(s) => {
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
                                 let strand = crate::ast::Strand::from_pair(pair);
                                 execute_ephemeral_strand(vm, &strand);
                             }
-                         }
-                         Value::Int(idx) => {
-                             execute_strand_sync(vm, *idx as usize);
-                         }
-                         _ => {}
+                        }
+                        Value::Int(idx) => {
+                            execute_strand_sync(vm, *idx as usize);
+                        }
+                        _ => {}
                     }
 
                     if let Some(res) = vm.stack.pop() {
@@ -2490,10 +2520,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
 
-                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.stack
+                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
-                vm.output.push("Error: Stack underflow for filter".to_string());
+                vm.output
+                    .push("Error: Stack underflow for filter".to_string());
             }
             None
         }
@@ -2517,13 +2549,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let mut results = Vec::new();
 
                 for i in 0..len {
-                    results.push(Value::Junction(crate::ast::JunctionType::All, vec![inputs_a[i].clone(), inputs_b[i].clone()]));
+                    results.push(Value::Junction(
+                        crate::ast::JunctionType::All,
+                        vec![inputs_a[i].clone(), inputs_b[i].clone()],
+                    ));
                 }
 
-                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.stack
+                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
                 vm.energy = vm.energy.saturating_sub(5);
             } else {
-                 vm.output.push("Error: Stack underflow for zip".to_string());
+                vm.output.push("Error: Stack underflow for zip".to_string());
             }
             None
         }
@@ -2534,7 +2570,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 #[cfg(feature = "nova")]
 fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
     if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output.push("Error: Recursion limit exceeded in ephemeral execution".to_string());
+        vm.output
+            .push("Error: Recursion limit exceeded in ephemeral execution".to_string());
         return;
     }
     vm.recursion_depth += 1;
@@ -2557,7 +2594,8 @@ fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
         let strand = vm.dna.helix.strands[strand_idx].clone();
         execute_ephemeral_strand(vm, &strand);
     } else {
-        vm.output.push("Error: Invalid strand index for sync execution".to_string());
+        vm.output
+            .push("Error: Invalid strand index for sync execution".to_string());
     }
 }
 

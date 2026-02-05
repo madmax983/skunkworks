@@ -50,7 +50,7 @@ fn test_dream_execution() {
 
     let dna = Dna {
         helix: Helix {
-            strands: vec![strand_main, strand_dream],
+            strands: vec![strand_main.into(), strand_dream.into()],
         },
     };
     let mut vm = ChimeraVM::new(dna);

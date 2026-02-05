@@ -28,7 +28,7 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0, strand1],
+                strands: vec![strand0.into(), strand1.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -90,7 +90,7 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0, strand1],
+                strands: vec![strand0.into(), strand1.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -144,7 +144,7 @@ mod tests {
         };
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0],
+                strands: vec![strand0.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);
@@ -178,7 +178,7 @@ mod tests {
         };
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0],
+                strands: vec![strand0.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);

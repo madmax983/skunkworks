@@ -5,7 +5,10 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_dna(strands: Vec<Vec<Gene>>) -> Dna {
-        let strands = strands.into_iter().map(|genes| Strand { genes }).collect();
+        let strands = strands
+            .into_iter()
+            .map(|genes| std::rc::Rc::new(Strand { genes }))
+            .collect();
         Dna {
             helix: Helix { strands },
         }

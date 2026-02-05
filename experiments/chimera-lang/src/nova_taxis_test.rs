@@ -22,7 +22,7 @@ fn test_chemotaxis_gradient() {
     ];
     let dna = Dna {
         helix: Helix {
-            strands: vec![Strand { genes }],
+            strands: vec![std::rc::Rc::new(Strand { genes })],
         },
     };
     let mut vm = ChimeraVM::new(dna);
@@ -66,7 +66,7 @@ fn test_chemotaxis_none() {
     ];
     let dna = Dna {
         helix: Helix {
-            strands: vec![Strand { genes }],
+            strands: vec![std::rc::Rc::new(Strand { genes })],
         },
     };
     let mut vm = ChimeraVM::new(dna);

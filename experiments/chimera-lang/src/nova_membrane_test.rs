@@ -9,7 +9,7 @@ use crate::vm::ChimeraVM;
 fn make_dna(genes: Vec<Gene>) -> Dna {
     Dna {
         helix: Helix {
-            strands: vec![Strand { genes }],
+            strands: vec![std::rc::Rc::new(Strand { genes })],
         },
     }
 }

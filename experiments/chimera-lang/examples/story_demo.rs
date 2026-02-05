@@ -66,7 +66,10 @@ fn run_demo() {
         ],
     };
 
-    vm.dna.helix.strands.push(reader_strand);
+    std::rc::Rc::make_mut(&mut vm.dna)
+        .helix
+        .strands
+        .push(std::rc::Rc::new(reader_strand));
 
     println!("🧪 Incubating narrative...");
 

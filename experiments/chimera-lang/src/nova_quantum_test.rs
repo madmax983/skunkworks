@@ -8,7 +8,10 @@ mod tests {
     fn make_dna(strands: Vec<Vec<Gene>>) -> Dna {
         Dna {
             helix: Helix {
-                strands: strands.into_iter().map(|g| Strand { genes: g }).collect(),
+                strands: strands
+                    .into_iter()
+                    .map(|g| std::rc::Rc::new(Strand { genes: g }))
+                    .collect(),
             },
         }
     }

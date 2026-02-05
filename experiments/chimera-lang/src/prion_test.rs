@@ -7,7 +7,7 @@ mod tests {
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
             helix: Helix {
-                strands: vec![Strand { genes }],
+                strands: vec![std::rc::Rc::new(Strand { genes })],
             },
         }
     }
@@ -132,7 +132,7 @@ mod tests {
 
         let dna = Dna {
             helix: Helix {
-                strands: vec![strand0, strand1, strand2],
+                strands: vec![strand0.into(), strand1.into(), strand2.into()],
             },
         };
         let mut vm = ChimeraVM::new(dna);

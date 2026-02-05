@@ -49,7 +49,7 @@ mod tests {
 
         Dna {
             helix: Helix {
-                strands: vec![strand0, strand1],
+                strands: vec![strand0.into(), strand1.into()],
             },
         }
     }

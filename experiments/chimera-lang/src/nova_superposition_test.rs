@@ -5,7 +5,7 @@ use crate::vm::{ChimeraVM, Value};
 fn make_dna(genes: Vec<Gene>) -> Dna {
     Dna {
         helix: Helix {
-            strands: vec![Strand { genes }],
+            strands: vec![std::rc::Rc::new(Strand { genes })],
         },
     }
 }
@@ -101,7 +101,7 @@ fn test_brz_any() {
     };
     let dna = Dna {
         helix: Helix {
-            strands: vec![strand0, strand1],
+            strands: vec![strand0.into(), strand1.into()],
         },
     };
 
@@ -142,7 +142,7 @@ fn test_brz_all() {
     };
     let dna = Dna {
         helix: Helix {
-            strands: vec![strand0, strand1],
+            strands: vec![strand0.into(), strand1.into()],
         },
     };
 
@@ -174,7 +174,7 @@ fn test_brz_all_success() {
     let strand1 = Strand { genes: vec![] };
     let dna = Dna {
         helix: Helix {
-            strands: vec![strand0, strand1],
+            strands: vec![strand0.into(), strand1.into()],
         },
     };
 

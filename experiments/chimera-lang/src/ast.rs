@@ -1,6 +1,7 @@
 use crate::opcode::OpCode;
 use crate::Rule;
 use pest::iterators::Pair;
+use std::rc::Rc;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Dna {
@@ -9,7 +10,7 @@ pub struct Dna {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Helix {
-    pub strands: Vec<Strand>,
+    pub strands: Vec<Rc<Strand>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -55,7 +56,11 @@ impl Helix {
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
             Rule::helix => {
-                let strands = pair.into_inner().map(Strand::from_pair).collect();
+                let strands = pair
+                    .into_inner()
+                    .map(Strand::from_pair)
+                    .map(Rc::new)
+                    .collect();
                 Helix { strands }
             }
             _ => panic!("Expected Helix rule"),

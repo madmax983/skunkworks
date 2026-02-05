@@ -7,7 +7,10 @@ mod tests {
     fn make_dna(genes: Vec<Gene>, strand2: Vec<Gene>) -> Dna {
         Dna {
             helix: Helix {
-                strands: vec![Strand { genes }, Strand { genes: strand2 }],
+                strands: vec![
+                    std::rc::Rc::new(Strand { genes }),
+                    std::rc::Rc::new(Strand { genes: strand2 }),
+                ],
             },
         }
     }

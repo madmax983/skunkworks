@@ -27,7 +27,7 @@ fn main() {
 
     let dna = Dna {
         helix: Helix {
-            strands: vec![Strand { genes }],
+            strands: vec![std::rc::Rc::new(Strand { genes })],
         },
     };
 

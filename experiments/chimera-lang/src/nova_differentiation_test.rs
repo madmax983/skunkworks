@@ -82,7 +82,9 @@ mod tests {
         strands.push(strand99);
 
         let dna = Dna {
-            helix: Helix { strands },
+            helix: Helix {
+                strands: strands.into_iter().map(std::rc::Rc::new).collect(),
+            },
         };
         let mut vm = ChimeraVM::new(dna);
 
