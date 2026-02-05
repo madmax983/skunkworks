@@ -46,7 +46,7 @@ fn test_alchemy_arithmetic() {
     vm.grid[8][9] = Value::Int(20);
     vm.grid[8][10] = Value::Str("+".to_string());
     vm.grid[8][11] = Value::Int(5);
-    vm.grid[8][12] = Value::Str("*".to_string());
+    vm.grid[8][12] = Value::Str("mul".to_string());
 
     // Step 1: Push 0
     vm.step();

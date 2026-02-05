@@ -88,6 +88,7 @@ pub struct Organelle {
     pub halted: bool,
     pub kind: OrganelleType,
     pub direction: (i8, i8),
+    pub ttl: Option<usize>,
 }
 
 #[cfg(feature = "nova")]
@@ -332,6 +333,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             halted: false,
                             kind: kind.clone(),
                             direction,
+                            ttl: None,
                         };
                         vm.organelles.push(organelle);
                         vm.energy = vm.energy.saturating_sub(20);
@@ -2252,6 +2254,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     halted: false,
                     kind: OrganelleType::Worker, // Default
                     direction: (0, 0),
+                    ttl: None,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(10);
@@ -2426,6 +2429,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 halted: false,
                 kind: OrganelleType::Void,
                 direction: (0, 0),
+                ttl: None,
             };
             vm.organelles.push(organelle);
             vm.energy = vm.energy.saturating_sub(50);

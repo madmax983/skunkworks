@@ -684,6 +684,13 @@ impl ChimeraVM {
         std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
         std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
 
+        if let Some(ttl) = organelle.ttl {
+            if ttl <= 1 {
+                return false;
+            }
+            organelle.ttl = Some(ttl - 1);
+        }
+
         !organelle.halted
     }
 
@@ -717,7 +724,76 @@ impl ChimeraVM {
                 "v" => organelle.direction = (1, 0),
                 "+" => self.ribosome_binary_op(|a, b| Some(a.wrapping_add(b))),
                 "-" => self.ribosome_binary_op(|a, b| Some(a.wrapping_sub(b))),
-                "*" => self.ribosome_binary_op(|a, b| Some(a.wrapping_mul(b))),
+                "*" => {
+                    // Bang: Trigger all neighbors
+                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                    for (dy, dx) in neighbors {
+                        if let Some((ny, nx)) =
+                            self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                        {
+                            let mask = match (dy, dx) {
+                                (-1, 0) => 1,
+                                (1, 0) => 2,
+                                (0, 1) => 4,
+                                (0, -1) => 8,
+                                _ => 0,
+                            };
+                            if (self.membranes[cy][cx] & mask) == 0 {
+                                // Spawn ephemeral Ribosome
+                                let new_org = Organelle {
+                                    stack: Vec::new(),
+                                    ip: (0, 0),
+                                    context_loc: (ny, nx),
+                                    call_stack: Vec::new(),
+                                    recursion_depth: 0,
+                                    halted: false,
+                                    kind: nova::OrganelleType::Ribosome,
+                                    direction: (dy as i8, dx as i8),
+                                    ttl: Some(1),
+                                };
+                                self.organelles.push(new_org);
+                            }
+                        }
+                    }
+                }
+                "o" => {
+                     // Offset Read: [dy, dx] -> [val]
+                     if self.stack.len() >= 2 {
+                        let x_off = self.stack.pop().unwrap();
+                        let y_off = self.stack.pop().unwrap();
+                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                            if let Some((ny, nx)) =
+                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
+                                self.stack.push(self.grid[ny][nx].clone());
+                            } else {
+                                self.stack.push(Value::Int(0));
+                            }
+                        }
+                    }
+                }
+                "x" => {
+                    // Offset Write: [val, dy, dx] -> []
+                    if self.stack.len() >= 3 {
+                        let x_off = self.stack.pop().unwrap();
+                        let y_off = self.stack.pop().unwrap();
+                        let val = self.stack.pop().unwrap();
+                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                            if let Some((ny, nx)) =
+                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
+                                self.grid[ny][nx] = val;
+                            }
+                        }
+                    }
+                }
+                "?" => {
+                    let mut rng = rand::thread_rng();
+                    self.stack.push(Value::Int(rng.gen_range(0..10)));
+                }
+                "mul" => {
+                    self.ribosome_binary_op(|a, b| Some(a.wrapping_mul(b)));
+                }
                 "/" => self.ribosome_binary_op(|a, b| {
                     if b != 0 {
                         Some(a.wrapping_div(b))

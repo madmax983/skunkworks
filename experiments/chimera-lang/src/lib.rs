@@ -99,6 +99,8 @@ mod nova_topology_test;
 mod nova_void_test;
 #[cfg(test)]
 mod nova_waste_test;
+#[cfg(test)]
+mod nova_bang_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;
 #[cfg(all(test, feature = "nova"))]
