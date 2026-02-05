@@ -85,3 +85,5 @@ mod sentry_nova_test;
 mod warden_exploit_test;
 #[cfg(test)]
 mod nova_superposition_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_reflex_test;
