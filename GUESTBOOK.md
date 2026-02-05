@@ -10,7 +10,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟
-- **Status:** Predictive execution active. Organisms are dreaming of potential futures via `simulate` opcode.
+- **Status:** Predictive execution active. Organelles are differentiating. Self-organization via `differentiate` opcode active.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/beat-cortex
 - **Scent Origin:** Mycelium 🍄

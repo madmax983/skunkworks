@@ -114,6 +114,10 @@ pub enum OpCode {
     Dream,
     #[cfg(feature = "nova")]
     Chemotaxis,
+    #[cfg(feature = "nova")]
+    Identity,
+    #[cfg(feature = "nova")]
+    Differentiate,
 
     Unknown(String),
 }
@@ -232,6 +236,10 @@ impl FromStr for OpCode {
             "dream" => Ok(OpCode::Dream),
             #[cfg(feature = "nova")]
             "chemotaxis" => Ok(OpCode::Chemotaxis),
+            #[cfg(feature = "nova")]
+            "identity" => Ok(OpCode::Identity),
+            #[cfg(feature = "nova")]
+            "differentiate" => Ok(OpCode::Differentiate),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -350,6 +358,10 @@ impl fmt::Display for OpCode {
             OpCode::Dream => write!(f, "dream"),
             #[cfg(feature = "nova")]
             OpCode::Chemotaxis => write!(f, "chemotaxis"),
+            #[cfg(feature = "nova")]
+            OpCode::Identity => write!(f, "identity"),
+            #[cfg(feature = "nova")]
+            OpCode::Differentiate => write!(f, "differentiate"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

@@ -125,6 +125,10 @@ pub struct ChimeraVM {
     pub entangled_pairs: HashMap<usize, usize>,
     #[cfg(feature = "nova")]
     pub organelles: Vec<Organelle>,
+    #[cfg(feature = "nova")]
+    pub active_organelle_kind: Option<nova::OrganelleType>,
+    #[cfg(feature = "nova")]
+    pub signal_differentiation: Option<nova::OrganelleType>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -184,6 +188,10 @@ impl ChimeraVM {
             entangled_pairs: HashMap::new(),
             #[cfg(feature = "nova")]
             organelles: Vec::new(),
+            #[cfg(feature = "nova")]
+            active_organelle_kind: None,
+            #[cfg(feature = "nova")]
+            signal_differentiation: None,
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -334,6 +342,11 @@ impl ChimeraVM {
             }
         }
 
+        #[cfg(feature = "nova")]
+        {
+            self.active_organelle_kind = None;
+        }
+
         // Clone gene info to release borrow on self.dna
         let (gene_op, gene_args) = {
             let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
@@ -366,6 +379,8 @@ impl ChimeraVM {
                 std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
                 std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
                 std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+
+                self.active_organelle_kind = Some(organelle.kind.clone());
 
                 // Reduce energy for organelle metabolism
                 self.energy = self.energy.saturating_sub(1);
@@ -443,6 +458,10 @@ impl ChimeraVM {
                     } else {
                         organelle.halted = true;
                     }
+                }
+
+                if let Some(new_kind) = self.signal_differentiation.take() {
+                    organelle.kind = new_kind;
                 }
 
                 // Swap back
@@ -532,6 +551,8 @@ impl ChimeraVM {
             OpCode::Simulate
             | OpCode::Dream
             | OpCode::Chemotaxis
+            | OpCode::Identity
+            | OpCode::Differentiate
             | OpCode::Sporulate
             | OpCode::Germinate
             | OpCode::Spawn
