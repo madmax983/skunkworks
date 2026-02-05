@@ -405,3 +405,7 @@
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-universe
 - **Scent Origin:** Reaper ☠️
 - **Status:** CONDEMNED. Documentation void. Ecological redundancy with `cargo-rocket`. Isolation detected.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-walker
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The walker has a brain. It is stumbling through the file system, trying to learn how to walk.

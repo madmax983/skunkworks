@@ -193,6 +193,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/primordial-soup
 - **Evaluation**: Compiles. Verified by Splice Surgeon.
 
+### chimera-walker
+- **Parents**: experiments/walker-filesystem + experiments/chimera-lang
+- **Concept**: A filesystem walker where the walking gait is determined by a genetic algorithm running on the Chimera VM.
+- **Novel trait**: Procedural animation parameters driven by a real-time executing virtual machine.
+- **Status**: experiments/chimera-walker
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
+
 <!-- Example:
 ### semantic-spy
 - **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)
