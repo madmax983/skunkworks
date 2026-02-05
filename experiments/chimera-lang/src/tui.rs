@@ -423,19 +423,22 @@ where
                             match app_state.view_mode {
                                 ViewMode::Genome => {
                                     // Genome Editing Logic
-                                    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+                                    match ChimeraParser::parse(Rule::gene, &app_state.input_buffer)
+                                    {
                                         Ok(mut pairs) => {
                                             let pair = pairs.next().unwrap();
                                             let gene = Gene::from_pair(pair);
 
-                                            if app_state.selected_strand < vm.dna.helix.strands.len()
+                                            if app_state.selected_strand
+                                                < vm.dna.helix.strands.len()
                                                 && app_state.selected_gene
-                                                    < vm.dna.helix.strands[app_state.selected_strand]
+                                                    < vm.dna.helix.strands
+                                                        [app_state.selected_strand]
                                                         .genes
                                                         .len()
                                             {
-                                                vm.dna.helix.strands[app_state.selected_strand].genes
-                                                    [app_state.selected_gene] = gene;
+                                                vm.dna.helix.strands[app_state.selected_strand]
+                                                    .genes[app_state.selected_gene] = gene;
                                                 app_state.status_msg =
                                                     "Gene updated successfully".to_string();
                                             }
@@ -492,83 +495,77 @@ where
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
                     KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
-                    KeyCode::Down => {
-                        match app_state.view_mode {
-                            ViewMode::Genome => {
-                                let s_len = vm.dna.helix.strands.len();
-                                if s_len > 0 {
-                                    let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                    if app_state.selected_gene + 1 < g_len {
-                                        app_state.selected_gene += 1;
-                                    } else {
-                                        if app_state.selected_strand + 1 < s_len {
-                                            app_state.selected_strand += 1;
-                                            app_state.selected_gene = 0;
-                                        }
-                                    }
-                                }
-                            }
-                            ViewMode::Grid => {
-                                if app_state.grid_cursor.1 < 15 {
-                                    app_state.grid_cursor.1 += 1;
-                                }
-                            }
-                        }
-                    }
-                    KeyCode::Up => {
-                         match app_state.view_mode {
-                            ViewMode::Genome => {
-                                if app_state.selected_gene > 0 {
-                                    app_state.selected_gene -= 1;
+                    KeyCode::Down => match app_state.view_mode {
+                        ViewMode::Genome => {
+                            let s_len = vm.dna.helix.strands.len();
+                            if s_len > 0 {
+                                let g_len =
+                                    vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                if app_state.selected_gene + 1 < g_len {
+                                    app_state.selected_gene += 1;
                                 } else {
-                                    if app_state.selected_strand > 0 {
-                                        app_state.selected_strand -= 1;
-                                        let g_len =
-                                            vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                        if g_len > 0 {
-                                            app_state.selected_gene = g_len - 1;
-                                        } else {
-                                            app_state.selected_gene = 0;
-                                        }
+                                    if app_state.selected_strand + 1 < s_len {
+                                        app_state.selected_strand += 1;
+                                        app_state.selected_gene = 0;
                                     }
                                 }
                             }
-                            ViewMode::Grid => {
-                                if app_state.grid_cursor.1 > 0 {
-                                    app_state.grid_cursor.1 -= 1;
+                        }
+                        ViewMode::Grid => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                    },
+                    KeyCode::Up => match app_state.view_mode {
+                        ViewMode::Genome => {
+                            if app_state.selected_gene > 0 {
+                                app_state.selected_gene -= 1;
+                            } else {
+                                if app_state.selected_strand > 0 {
+                                    app_state.selected_strand -= 1;
+                                    let g_len =
+                                        vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                    if g_len > 0 {
+                                        app_state.selected_gene = g_len - 1;
+                                    } else {
+                                        app_state.selected_gene = 0;
+                                    }
                                 }
                             }
                         }
-                    }
-                    KeyCode::Right => {
-                         match app_state.view_mode {
-                            ViewMode::Genome => {},
-                            ViewMode::Grid => {
-                                if app_state.grid_cursor.0 < 15 {
-                                    app_state.grid_cursor.0 += 1;
-                                }
+                        ViewMode::Grid => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
                             }
                         }
-                    }
-                    KeyCode::Left => {
-                         match app_state.view_mode {
-                            ViewMode::Genome => {},
-                            ViewMode::Grid => {
-                                if app_state.grid_cursor.0 > 0 {
-                                    app_state.grid_cursor.0 -= 1;
-                                }
+                    },
+                    KeyCode::Right => match app_state.view_mode {
+                        ViewMode::Genome => {}
+                        ViewMode::Grid => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
                             }
                         }
-                    }
+                    },
+                    KeyCode::Left => match app_state.view_mode {
+                        ViewMode::Genome => {}
+                        ViewMode::Grid => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                    },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
                         match app_state.view_mode {
                             ViewMode::Genome => {
                                 if app_state.selected_strand < vm.dna.helix.strands.len() {
-                                    let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                    let g_len =
+                                        vm.dna.helix.strands[app_state.selected_strand].genes.len();
                                     if app_state.selected_gene < g_len {
-                                        let gene = &vm.dna.helix.strands[app_state.selected_strand].genes
-                                            [app_state.selected_gene];
+                                        let gene = &vm.dna.helix.strands[app_state.selected_strand]
+                                            .genes[app_state.selected_gene];
                                         let mut s = format!("{}(", gene.op);
                                         for (i, arg) in gene.args.iter().enumerate() {
                                             if i > 0 {
@@ -581,7 +578,9 @@ where
                                                 crate::ast::Nucleotide::String(str_val) => {
                                                     s.push_str(&format!("\"{}\"", str_val))
                                                 }
-                                                crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
+                                                crate::ast::Nucleotide::Identifier(id) => {
+                                                    s.push_str(id)
+                                                }
                                                 crate::ast::Nucleotide::Junction(t, vals) => {
                                                     let t_str = match t {
                                                         crate::ast::JunctionType::Any => "any",
@@ -597,15 +596,19 @@ where
                                                             crate::ast::Nucleotide::Number(n) => {
                                                                 s.push_str(&n.to_string())
                                                             }
-                                                            crate::ast::Nucleotide::String(str_val) => {
-                                                                s.push_str(&format!("\"{}\"", str_val))
-                                                            }
-                                                            crate::ast::Nucleotide::Identifier(id) => {
-                                                                s.push_str(id)
-                                                            }
-                                                            crate::ast::Nucleotide::Junction(_, _) => {
-                                                                s.push_str("nested")
-                                                            }
+                                                            crate::ast::Nucleotide::String(
+                                                                str_val,
+                                                            ) => s.push_str(&format!(
+                                                                "\"{}\"",
+                                                                str_val
+                                                            )),
+                                                            crate::ast::Nucleotide::Identifier(
+                                                                id,
+                                                            ) => s.push_str(id),
+                                                            crate::ast::Nucleotide::Junction(
+                                                                _,
+                                                                _,
+                                                            ) => s.push_str("nested"),
                                                         }
                                                     }
                                                     s.push(')');
@@ -621,7 +624,9 @@ where
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
-                                    crate::vm::Value::Int(n) => app_state.input_buffer = n.to_string(),
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
                                     crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
                                     _ => app_state.input_buffer = String::new(),
                                 }

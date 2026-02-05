@@ -15,30 +15,33 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     vm.knowledge_base.push(fact.clone());
                     vm.output.push(format!("ASSERT: Added {}", fact));
                 } else {
-                     vm.output.push(format!("ASSERT: Fact already exists {}", fact));
+                    vm.output
+                        .push(format!("ASSERT: Fact already exists {}", fact));
                 }
             } else {
-                vm.output.push("Error: Stack underflow for assert".to_string());
+                vm.output
+                    .push("Error: Stack underflow for assert".to_string());
             }
         }
         OpCode::Retract => {
-             if let Some(fact) = vm.stack.pop() {
-                 if let Some(pos) = vm.knowledge_base.iter().position(|x| *x == fact) {
-                     vm.knowledge_base.remove(pos);
-                     vm.output.push(format!("RETRACT: Removed {}", fact));
-                 } else {
-                     vm.output.push(format!("RETRACT: Fact not found {}", fact));
-                 }
-             } else {
-                 vm.output.push("Error: Stack underflow for retract".to_string());
-             }
+            if let Some(fact) = vm.stack.pop() {
+                if let Some(pos) = vm.knowledge_base.iter().position(|x| *x == fact) {
+                    vm.knowledge_base.remove(pos);
+                    vm.output.push(format!("RETRACT: Removed {}", fact));
+                } else {
+                    vm.output.push(format!("RETRACT: Fact not found {}", fact));
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for retract".to_string());
+            }
         }
         OpCode::Query => {
             if let Some(query) = vm.stack.pop() {
                 // Query can be a single term or a junction (conjunction)
                 let goals = match query {
-                     Value::Junction(JunctionType::All, ref args) => args.clone(),
-                     _ => vec![query.clone()],
+                    Value::Junction(JunctionType::All, ref args) => args.clone(),
+                    _ => vec![query.clone()],
                 };
 
                 vm.output.push(format!("QUERY: Solving {:?}", goals));
@@ -51,7 +54,8 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     vm.output.push("QUERY: Failed".to_string());
                 } else {
                     vm.stack.push(Value::Int(1));
-                    vm.output.push(format!("QUERY: Success ({} solutions)", solutions.len()));
+                    vm.output
+                        .push(format!("QUERY: Success ({} solutions)", solutions.len()));
 
                     // For the first solution, print variable bindings to output
                     // In a real Prolog, we'd return them or provide a way to iterate.
@@ -59,7 +63,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     for (i, sol) in solutions.iter().enumerate() {
                         let mut binding_str = String::new();
                         for (var, val) in sol {
-                             binding_str.push_str(&format!("{}={} ", var, val));
+                            binding_str.push_str(&format!("{}={} ", var, val));
                         }
                         if binding_str.is_empty() {
                             binding_str.push_str("Yes");
@@ -68,7 +72,8 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     }
                 }
             } else {
-                vm.output.push("Error: Stack underflow for query".to_string());
+                vm.output
+                    .push("Error: Stack underflow for query".to_string());
             }
         }
         _ => {}
@@ -87,11 +92,11 @@ fn is_var(v: &Value) -> Option<String> {
 fn resolve(term: &Value, subst: &Subst) -> Value {
     match term {
         Value::Str(s) if s.starts_with('?') => {
-             if let Some(val) = subst.get(s) {
-                 resolve(val, subst) // Recurse for chains ?X -> ?Y -> 1
-             } else {
-                 term.clone()
-             }
+            if let Some(val) = subst.get(s) {
+                resolve(val, subst) // Recurse for chains ?X -> ?Y -> 1
+            } else {
+                term.clone()
+            }
         }
         Value::Junction(t, args) => {
             let resolved_args = args.iter().map(|a| resolve(a, subst)).collect();
@@ -193,12 +198,14 @@ fn solve(goals: &[Value], subst: Subst, kb: &[Value], solutions: &mut Vec<Subst>
             // Let's treat everything as a potential rule.
             // If it unifies directly, it's a fact.
             // If it has structure `rule(Head, Body)`, we treat it as rule.
-            Value::Junction(JunctionType::Any, ref args) if !args.is_empty() && is_rule_structure(args) => {
-                 // Convention: any("rule", Head, Body...)
-                 // args[0] is string "rule"
-                 // args[1] is Head
-                 // args[2..] is Body
-                 (args[1].clone(), args[2..].to_vec())
+            Value::Junction(JunctionType::Any, ref args)
+                if !args.is_empty() && is_rule_structure(args) =>
+            {
+                // Convention: any("rule", Head, Body...)
+                // args[0] is string "rule"
+                // args[1] is Head
+                // args[2..] is Body
+                (args[1].clone(), args[2..].to_vec())
             }
             _ => (fact.clone(), Vec::new()), // It is a bare fact
         };

@@ -28,7 +28,10 @@ mod tests {
     fn test_map_junction() {
         let mut vm = make_vm();
         // Stack: Junction(1, 2, 3), "[ push(1) add() ]"
-        let j = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2), Value::Int(3)]);
+        let j = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(1), Value::Int(2), Value::Int(3)],
+        );
         vm.stack.push(j);
         vm.stack.push(Value::Str("[ push(1) add() ]".to_string()));
 
@@ -50,7 +53,10 @@ mod tests {
     fn test_fold_junction() {
         let mut vm = make_vm();
         // Stack: Junction(1, 2, 3), Init(0), "[ add() ]"
-        let j = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2), Value::Int(3)]);
+        let j = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(1), Value::Int(2), Value::Int(3)],
+        );
         vm.stack.push(j);
         vm.stack.push(Value::Int(0)); // Init
         vm.stack.push(Value::Str("[ add() ]".to_string())); // Function
@@ -66,7 +72,10 @@ mod tests {
     fn test_filter_junction() {
         let mut vm = make_vm();
 
-        let j = Value::Junction(JunctionType::Any, vec![Value::Int(1), Value::Int(2), Value::Int(3), Value::Int(4)]);
+        let j = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Int(1), Value::Int(2), Value::Int(3), Value::Int(4)],
+        );
         vm.stack.push(j);
         vm.stack.push(Value::Str("[ push(2) sub() ]".to_string()));
 
