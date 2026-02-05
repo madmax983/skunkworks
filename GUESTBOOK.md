@@ -416,3 +416,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/jpeg-garden
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The garden is digital, the soil is silicon. The flowers are artifacts of our own compression.
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-chimera
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The neurons are executing DNA. The network is thinking in opcodes.

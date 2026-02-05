@@ -227,3 +227,24 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Example**: Could render git-galaxy data using biomorph-flow's reaction-diffusion
 - **Benefit**: Same data, radically different insights
 -->
+
+### code-concerto
+- **Parents**: experiments/struct-soup + experiments/harmony-of-spheres
+- **Concept**: Rust AST nodes mapped to musical structures (Structs=Chords, Fn=Melody).
+- **Novel trait**: Synesthetic Code Review. Hearing the structure of the program.
+- **Status**: experiments/code-concerto
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational. WAV generation active.
+
+### lattice-hunter
+- **Parents**: experiments/voronoi-ants + experiments/aperiodic-citadel
+- **Concept**: Optimizing network lattices in 3D space using force-directed annealing.
+- **Novel trait**: Crystalline Optimization. Networks settling into minimal energy states.
+- **Status**: experiments/lattice-hunter
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational.
+
+### neuro-chimera
+- **Parents**: experiments/neuro-terminal + experiments/chimera-lang
+- **Concept**: Neural network where each neuron is a Chimera VM executing evolved DNA.
+- **Novel trait**: Programmatic Neurons. Activation functions are Turing-complete programs evolved via selection.
+- **Status**: experiments/neuro-chimera
+- **Evaluation**: Compiles. Verified by Splice Surgeon. Evolving decision boundaries observed.

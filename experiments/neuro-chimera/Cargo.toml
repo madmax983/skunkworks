@@ -1,0 +1,12 @@
+[package]
+name = "neuro-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang", features = ["nova", "cortex"] }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+tui-shared = { workspace = true }
