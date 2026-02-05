@@ -40,10 +40,10 @@ mod nova_alchemy_test;
 mod nova_bard_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_biolum_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_chroma_test;
 #[cfg(test)]
 mod nova_cerebellum_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_chroma_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_conjugation_test;
 #[cfg(test)]

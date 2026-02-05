@@ -730,7 +730,10 @@ mod tests {
 
         // Verify limits
         assert!(vm.call_stack.len() <= 100, "Call stack exceeded limit");
-        assert!(vm.output.iter().any(|s| s.contains("Call stack overflow")), "Missing error message");
+        assert!(
+            vm.output.iter().any(|s| s.contains("Call stack overflow")),
+            "Missing error message"
+        );
 
         // Verify execution continued (we hit push(999))
         // The stack should contain at least one 999.

@@ -31,6 +31,8 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
+pub const GRID_SIZE: usize = 16;
+pub const INITIAL_ENERGY: i64 = 50;
 
 pub mod bard;
 pub mod cortex;
@@ -210,24 +212,24 @@ pub struct ChimeraVM {
 impl ChimeraVM {
     /// Creates a new VM instance with the given DNA.
     ///
-    /// Initializes the grid to zeros, energy to 50, and IP to (0,0).
+    /// Initializes the grid to zeros, energy to INITIAL_ENERGY, and IP to (0,0).
     pub fn new(dna: Dna) -> Self {
-        // Initialize 16x16 grid with 0s
-        let grid = vec![vec![Value::Int(0); 16]; 16];
+        // Initialize grid with 0s
+        let grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
         #[cfg(any(feature = "nova", feature = "cortex"))]
         let strand_count = dna.helix.strands.len();
         #[cfg(feature = "nova")]
-        let hormone_grid = vec![vec![[0, 0, 0]; 16]; 16];
+        let hormone_grid = vec![vec![[0, 0, 0]; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
-        let waste_grid = vec![vec![0; 16]; 16];
+        let waste_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
-        let mutagen_grid = vec![vec![0; 16]; 16];
+        let mutagen_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
-        let light_grid = vec![vec![0; 16]; 16];
+        let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
-        let membranes = vec![vec![0; 16]; 16];
+        let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
-        let chroma_grid = vec![vec![ChromaCell::default(); 16]; 16];
+        let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -239,7 +241,7 @@ impl ChimeraVM {
             ip: (0, 0),
             output: Vec::new(),
             halted: false,
-            energy: 50,
+            energy: INITIAL_ENERGY,
             grid,
             chaos_mode: false,
             recursion_depth: 0,
@@ -334,30 +336,37 @@ impl ChimeraVM {
         false
     }
 
+    #[inline]
+    fn is_valid_coord(&self, y: i64, x: i64) -> bool {
+        let size = GRID_SIZE as i64;
+        (0..size).contains(&y) && (0..size).contains(&x)
+    }
+
     /// Helper to normalize coordinates based on topology
     #[cfg(feature = "nova")]
     pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
+        let size = GRID_SIZE as i64;
         match self.topology {
             Topology::Plane => {
-                if (0..16).contains(&x) && (0..16).contains(&y) {
+                if self.is_valid_coord(y, x) {
                     Some((y as usize, x as usize))
                 } else {
                     None
                 }
             }
-            Topology::Torus => Some((y.rem_euclid(16) as usize, x.rem_euclid(16) as usize)),
+            Topology::Torus => Some((y.rem_euclid(size) as usize, x.rem_euclid(size) as usize)),
             Topology::CylinderH => {
                 // Wraps X, Bounded Y
-                if (0..16).contains(&y) {
-                    Some((y as usize, x.rem_euclid(16) as usize))
+                if (0..size).contains(&y) {
+                    Some((y as usize, x.rem_euclid(size) as usize))
                 } else {
                     None
                 }
             }
             Topology::CylinderV => {
                 // Bounded X, Wraps Y
-                if (0..16).contains(&x) {
-                    Some((y.rem_euclid(16) as usize, x as usize))
+                if (0..size).contains(&x) {
+                    Some((y.rem_euclid(size) as usize, x as usize))
                 } else {
                     None
                 }
@@ -371,7 +380,7 @@ impl ChimeraVM {
 
                 // First handle Y wrapping (the twisty one)
                 // If we go off top or bottom, we flip X and wrap Y
-                if !(0..16).contains(&ny) {
+                if !(0..size).contains(&ny) {
                     // How many times did we wrap?
                     // Simple case: single step
                     // General case: rem_euclid logic with flip parity
@@ -381,15 +390,15 @@ impl ChimeraVM {
                     // y' = y mod 16
                     // if (floor(y/16)) is odd, x' = 15 - x.
 
-                    let wrap_count = ny.div_euclid(16);
+                    let wrap_count = ny.div_euclid(size);
                     if wrap_count % 2 != 0 {
-                        nx = 15 - nx; // Twist X
+                        nx = (size - 1) - nx; // Twist X
                     }
-                    ny = ny.rem_euclid(16);
+                    ny = ny.rem_euclid(size);
                 }
 
                 // Now handle X wrapping (Torus-like)
-                nx = nx.rem_euclid(16);
+                nx = nx.rem_euclid(size);
 
                 Some((ny as usize, nx as usize))
             }
@@ -400,15 +409,15 @@ impl ChimeraVM {
                 let mut nx = x;
                 let mut ny = y;
 
-                if !(0..16).contains(&nx) {
-                    let wrap_count = nx.div_euclid(16);
+                if !(0..size).contains(&nx) {
+                    let wrap_count = nx.div_euclid(size);
                     if wrap_count % 2 != 0 {
-                        ny = 15 - ny; // Twist Y
+                        ny = (size - 1) - ny; // Twist Y
                     }
-                    nx = nx.rem_euclid(16);
+                    nx = nx.rem_euclid(size);
                 }
 
-                if (0..16).contains(&ny) {
+                if (0..size).contains(&ny) {
                     Some((ny as usize, nx as usize))
                 } else {
                     None
@@ -624,8 +633,7 @@ impl ChimeraVM {
                 if !matches!(self.grid[cy][cx], Value::Int(0)) {
                     self.grid[cy][cx] = Value::Int(0);
                     self.energy = self.energy.saturating_add(1);
-                    self.output
-                        .push(format!("VOID: Consumed at {},{}", cx, cy));
+                    self.output.push(format!("VOID: Consumed at {},{}", cx, cy));
                 }
 
                 // Brownian Motion
@@ -658,6 +666,22 @@ impl ChimeraVM {
     }
 
     #[cfg(feature = "nova")]
+    fn ribosome_binary_op<F>(&mut self, op: F)
+    where
+        F: Fn(i64, i64) -> Option<i64>,
+    {
+        if self.stack.len() >= 2 {
+            let b = self.stack.pop().unwrap();
+            let a = self.stack.pop().unwrap();
+            if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                if let Some(res) = op(ia, ib) {
+                    self.stack.push(Value::Int(res));
+                }
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
     fn process_ribosome(&mut self, organelle: &mut Organelle) {
         let (cy, cx) = self.context_loc;
         let val = self.grid[cy][cx].clone();
@@ -669,57 +693,23 @@ impl ChimeraVM {
                 "<" => organelle.direction = (0, -1),
                 "^" => organelle.direction = (-1, 0),
                 "v" => organelle.direction = (1, 0),
-                "+" => {
-                    if self.stack.len() >= 2 {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
-                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
-                            self.stack.push(Value::Int(ia.wrapping_add(ib)));
-                        } else {
-                            // Push back if type mismatch or handle error? For now, be silent/permissive
-                        }
+                "+" => self.ribosome_binary_op(|a, b| Some(a.wrapping_add(b))),
+                "-" => self.ribosome_binary_op(|a, b| Some(a.wrapping_sub(b))),
+                "*" => self.ribosome_binary_op(|a, b| Some(a.wrapping_mul(b))),
+                "/" => self.ribosome_binary_op(|a, b| {
+                    if b != 0 {
+                        Some(a.wrapping_div(b))
+                    } else {
+                        None
                     }
-                }
-                "-" => {
-                    if self.stack.len() >= 2 {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
-                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
-                            self.stack.push(Value::Int(ia.wrapping_sub(ib)));
-                        }
+                }),
+                "%" => self.ribosome_binary_op(|a, b| {
+                    if b != 0 {
+                        Some(a.wrapping_rem(b))
+                    } else {
+                        None
                     }
-                }
-                "*" => {
-                    if self.stack.len() >= 2 {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
-                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
-                            self.stack.push(Value::Int(ia.wrapping_mul(ib)));
-                        }
-                    }
-                }
-                "/" => {
-                    if self.stack.len() >= 2 {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
-                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
-                            if ib != 0 {
-                                self.stack.push(Value::Int(ia.wrapping_div(ib)));
-                            }
-                        }
-                    }
-                }
-                "%" => {
-                    if self.stack.len() >= 2 {
-                        let b = self.stack.pop().unwrap();
-                        let a = self.stack.pop().unwrap();
-                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
-                            if ib != 0 {
-                                self.stack.push(Value::Int(ia.wrapping_rem(ib)));
-                            }
-                        }
-                    }
-                }
+                }),
                 "=" => {
                     if self.stack.len() >= 2 {
                         let b = self.stack.pop().unwrap();
@@ -957,8 +947,8 @@ impl ChimeraVM {
     pub(crate) fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
         let mut coords = Vec::new();
         let r_sq = (r as i128).saturating_mul(r as i128);
-        for y in 0..16 {
-            for x in 0..16 {
+        for y in 0..GRID_SIZE {
+            for x in 0..GRID_SIZE {
                 let dx = (x as i64).saturating_sub(cx) as i128;
                 let dy = (y as i64).saturating_sub(cy) as i128;
                 let dist_sq = dx.saturating_mul(dx).saturating_add(dy.saturating_mul(dy));
@@ -1440,7 +1430,7 @@ impl ChimeraVM {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if (0..16).contains(&y) && (0..16).contains(&x) {
+                        if self.is_valid_coord(y, x) {
                             self.stack.push(self.grid[y as usize][x as usize].clone());
                         } else {
                             self.output
@@ -1461,7 +1451,7 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
                     let val = self.stack.pop().unwrap();
                     if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                        if (0..16).contains(&y) && (0..16).contains(&x) {
+                        if self.is_valid_coord(y, x) {
                             self.grid[y as usize][x as usize] = val;
                         } else {
                             self.output
@@ -1538,7 +1528,7 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
 
                     let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
-                        if (0..16).contains(y) && (0..16).contains(x) {
+                        if self.is_valid_coord(*y, *x) {
                             Some((*y, *x))
                         } else {
                             self.output

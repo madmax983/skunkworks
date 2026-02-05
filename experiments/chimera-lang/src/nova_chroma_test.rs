@@ -27,12 +27,30 @@ fn test_pigment() {
     // So Stack bottom -> top: r, g, b, y, x.
 
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // r
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(150)] }, // g
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(200)] }, // b
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },   // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },   // x
-        Gene { op: OpCode::Pigment, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // r
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(150)],
+        }, // g
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(200)],
+        }, // b
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // x
+        Gene {
+            op: OpCode::Pigment,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     for _ in 0..6 {
@@ -47,10 +65,22 @@ fn test_glyph() {
     // [ push(65) push(6) push(6) glyph() ]
     // Stack: char, y, x (top)
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(65)] }, // char code 'A'
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },  // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },  // x
-        Gene { op: OpCode::Glyph, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(65)],
+        }, // char code 'A'
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // x
+        Gene {
+            op: OpCode::Glyph,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     for _ in 0..4 {
@@ -64,20 +94,55 @@ fn test_glyph() {
 fn test_clear_pigment() {
     // Set first
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // r
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // g
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // b
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },   // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },   // x
-        Gene { op: OpCode::Pigment, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // r
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // g
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // b
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // x
+        Gene {
+            op: OpCode::Pigment,
+            args: vec![],
+        },
         // Clear (r = -1)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] }, // r
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },  // g
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },  // b
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // x
-        Gene { op: OpCode::Pigment, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(-1)],
+        }, // r
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // g
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // b
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // x
+        Gene {
+            op: OpCode::Pigment,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     for _ in 0..12 {
@@ -89,15 +154,38 @@ fn test_clear_pigment() {
 #[test]
 fn test_clear_glyph() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(65)] }, // char
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },  // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },  // x
-        Gene { op: OpCode::Glyph, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] }, // char -1
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },  // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },  // x
-        Gene { op: OpCode::Glyph, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(65)],
+        }, // char
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // x
+        Gene {
+            op: OpCode::Glyph,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(-1)],
+        }, // char -1
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // x
+        Gene {
+            op: OpCode::Glyph,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     for _ in 0..8 {
