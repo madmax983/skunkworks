@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **neuro-beat**: Documentation void. Redundant with `beat-cortex` (primitive ancestor). Trivial implementation. Grace period ends in 24h.
+- **input-ghost**: Documentation void. Generic implementation. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **neuro-beat**: Documentation void. Redundant with `beat-cortex`. Failed to improve during grace period. Moved to graveyard.
 - **stego-spectral**: Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **code-erosion**: ZOMBIE SPECIMEN. Documentation void. Trivial implementation. Executed. Moved to graveyard.
 - **strange-loops**: Documentation void. Generic implementation (standard attractors). Failed to improve during grace period. Moved to graveyard.

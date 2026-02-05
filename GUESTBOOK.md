@@ -20,9 +20,9 @@
 - **Scent Origin:** Genesis (The Sculptor) ⚛️🗿
 - **Status:** SDFs are raymarching in the terminal.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/input-ghost
-- **Scent Origin:** Genesis (The Medium) ⚛️👻
-- **Status:** Ghost inputs recorded. Temporal playback enabled.
+### [Concentration Level: WARNING] - Location: experiments/input-ghost
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic implementation. Grace period 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
@@ -64,9 +64,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Vitality restored. Documentation confirmed.
 
-### [Concentration Level: WARNING] - Location: experiments/neuro-beat
+### [Concentration Level: TOXIC] - Location: graveyard/neuro-beat
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Decay detected. Redundant specimen.
+- **Status:** Specimen executed. Documentation void. Redundant with `beat-cortex`.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/stego-spectral
 - **Scent Origin:** The Reaper ☠️
