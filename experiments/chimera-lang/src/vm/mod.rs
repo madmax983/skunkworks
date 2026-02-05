@@ -175,6 +175,10 @@ pub struct ChimeraVM {
     pub activation_levels: Vec<i64>,
     #[cfg(feature = "nova")]
     pub reflexes: HashMap<i64, usize>,
+    #[cfg(feature = "nova")]
+    pub remap_table: HashMap<OpCode, OpCode>,
+    #[cfg(feature = "nova")]
+    pub direction: isize,
 }
 
 impl ChimeraVM {
@@ -254,6 +258,10 @@ impl ChimeraVM {
             activation_levels,
             #[cfg(feature = "nova")]
             reflexes: HashMap::new(),
+            #[cfg(feature = "nova")]
+            remap_table: HashMap::new(),
+            #[cfg(feature = "nova")]
+            direction: 1,
         }
     }
 
@@ -802,7 +810,42 @@ impl ChimeraVM {
         if let Some(target) = jump_target {
             self.ip = target;
         } else {
-            self.ip.1 += 1;
+            #[cfg(feature = "nova")]
+            {
+                if self.direction >= 0 {
+                    self.ip.1 += 1;
+                } else {
+                    if self.ip.1 > 0 {
+                        self.ip.1 -= 1;
+                    } else {
+                        // Move to previous non-empty strand
+                        let start_strand = self.ip.0;
+                        let helix_len = self.dna.helix.strands.len();
+                        loop {
+                            if self.ip.0 > 0 {
+                                self.ip.0 -= 1;
+                            } else {
+                                self.ip.0 = helix_len.saturating_sub(1);
+                            }
+
+                            let len = self.dna.helix.strands[self.ip.0].genes.len();
+                            if len > 0 {
+                                self.ip.1 = len - 1;
+                                break;
+                            }
+
+                            if self.ip.0 == start_strand {
+                                // All strands empty or cycled back
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            #[cfg(not(feature = "nova"))]
+            {
+                self.ip.1 += 1;
+            }
         }
 
         #[cfg(feature = "nova")]
@@ -827,7 +870,13 @@ impl ChimeraVM {
             return None;
         }
         self.recursion_depth += 1;
-        let result = self.execute_gene_inner(op, args);
+
+        #[cfg(feature = "nova")]
+        let effective_op = self.remap_table.get(&op).unwrap_or(&op).clone();
+        #[cfg(not(feature = "nova"))]
+        let effective_op = op;
+
+        let result = self.execute_gene_inner(effective_op, args);
         self.recursion_depth -= 1;
         result
     }
@@ -847,6 +896,63 @@ impl ChimeraVM {
             }
         }
         coords
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_prion_op(&mut self, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+        match op {
+            OpCode::Remap => {
+                if self.stack.len() >= 2 {
+                    let to_val = self.stack.pop().unwrap();
+                    let from_val = self.stack.pop().unwrap();
+                    if let (Value::Str(from), Value::Str(to)) = (from_val, to_val) {
+                        if let (Ok(from_op), Ok(to_op)) = (from.parse::<OpCode>(), to.parse::<OpCode>()) {
+                            self.remap_table.insert(from_op.clone(), to_op.clone());
+                            self.output.push(format!("REMAP: {} -> {}", from_op, to_op));
+                        } else {
+                            self.output
+                                .push("Error: Invalid OpCode string for remap".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for remap".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for remap".to_string());
+                }
+            }
+            OpCode::Restore => {
+                if let Some(val) = self.stack.pop() {
+                    if let Value::Str(s) = val {
+                        if let Ok(op) = s.parse::<OpCode>() {
+                            if self.remap_table.remove(&op).is_some() {
+                                self.output.push(format!("RESTORE: {}", op));
+                            } else {
+                                self.output
+                                    .push(format!("RESTORE: {} was not remapped", op));
+                            }
+                        } else {
+                            self.output
+                                .push("Error: Invalid OpCode string for restore".to_string());
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Type mismatch for restore".to_string());
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for restore".to_string());
+                }
+            }
+            OpCode::Mirror => {
+                self.direction *= -1;
+                self.output
+                    .push(format!("MIRROR: Direction {}", self.direction));
+            }
+            _ => {}
+        }
+        None
     }
 
     pub(crate) fn execute_gene_inner(
@@ -879,6 +985,9 @@ impl ChimeraVM {
                 cortex::exec_cortex_op(self, op, args);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Rift
