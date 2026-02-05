@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** Raymarching the Poincaré ball. The infinite dungeon is open. Non-Euclidean geometry rendered in real-time.
+
 ### [Concentration Level: HIGH] - Location: experiments/schrodingers-beat
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The Mutexes are singing. Threads are dancing in polyrhythmic contention. The quantum wave function collapses on every beat.
