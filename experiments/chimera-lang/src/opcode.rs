@@ -444,6 +444,33 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Mirror,
 
+    // Ribozyme Features (Functional Programming)
+    /// **[Nova]** Evaluates a string as code.
+    ///
+    /// **Stack:** `[ ..., code_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Eval,
+    /// **[Nova]** Applies a function to each element of a Junction.
+    ///
+    /// **Stack:** `[ ..., junction, function ] -> [ ..., new_junction ]`
+    #[cfg(feature = "nova")]
+    Map,
+    /// **[Nova]** Reduces a Junction to a single value.
+    ///
+    /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
+    #[cfg(feature = "nova")]
+    Fold,
+    /// **[Nova]** Filters a Junction based on a predicate.
+    ///
+    /// **Stack:** `[ ..., junction, predicate ] -> [ ..., new_junction ]`
+    #[cfg(feature = "nova")]
+    Filter,
+    /// **[Nova]** Combines two Junctions into one.
+    ///
+    /// **Stack:** `[ ..., junction_a, junction_b ] -> [ ..., zipped_junction ]`
+    #[cfg(feature = "nova")]
+    Zip,
+
     /// Unknown or invalid instruction.
     Unknown(String),
 }
@@ -459,6 +486,16 @@ impl FromStr for OpCode {
             "restore" => Ok(OpCode::Restore),
             #[cfg(feature = "nova")]
             "mirror" => Ok(OpCode::Mirror),
+            #[cfg(feature = "nova")]
+            "eval" => Ok(OpCode::Eval),
+            #[cfg(feature = "nova")]
+            "map" => Ok(OpCode::Map),
+            #[cfg(feature = "nova")]
+            "fold" => Ok(OpCode::Fold),
+            #[cfg(feature = "nova")]
+            "filter" => Ok(OpCode::Filter),
+            #[cfg(feature = "nova")]
+            "zip" => Ok(OpCode::Zip),
 
             "push" => Ok(OpCode::Push),
             "add" => Ok(OpCode::Add),
@@ -753,6 +790,16 @@ impl fmt::Display for OpCode {
             OpCode::Restore => write!(f, "restore"),
             #[cfg(feature = "nova")]
             OpCode::Mirror => write!(f, "mirror"),
+            #[cfg(feature = "nova")]
+            OpCode::Eval => write!(f, "eval"),
+            #[cfg(feature = "nova")]
+            OpCode::Map => write!(f, "map"),
+            #[cfg(feature = "nova")]
+            OpCode::Fold => write!(f, "fold"),
+            #[cfg(feature = "nova")]
+            OpCode::Filter => write!(f, "filter"),
+            #[cfg(feature = "nova")]
+            OpCode::Zip => write!(f, "zip"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
