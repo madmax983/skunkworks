@@ -53,6 +53,8 @@ mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_membrane_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_organelle_types_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;

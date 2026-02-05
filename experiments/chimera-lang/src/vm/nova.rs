@@ -75,6 +75,16 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
                 let mut count = 4;
 
                 for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                    let dir_bit = match (dy, dx) {
+                        (-1, 0) => 1,
+                        (1, 0) => 4,
+                        (0, -1) => 8,
+                        (0, 1) => 2,
+                        _ => 0,
+                    };
+                    if (vm.membranes[y][x] & dir_bit) != 0 {
+                        continue;
+                    }
                     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                         sum += vm.hormone_grid[ny][nx][c];
                         count += 1;
@@ -102,6 +112,16 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
             let mut count = 4;
 
             for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                let dir_bit = match (dy, dx) {
+                    (-1, 0) => 1,
+                    (1, 0) => 4,
+                    (0, -1) => 8,
+                    (0, 1) => 2,
+                    _ => 0,
+                };
+                if (vm.membranes[y][x] & dir_bit) != 0 {
+                    continue;
+                }
                 if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                     sum += vm.waste_grid[ny][nx];
                     count += 1;
@@ -128,6 +148,16 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             let mut count = 4;
 
             for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                let dir_bit = match (dy, dx) {
+                    (-1, 0) => 1,
+                    (1, 0) => 4,
+                    (0, -1) => 8,
+                    (0, 1) => 2,
+                    _ => 0,
+                };
+                if (vm.membranes[y][x] & dir_bit) != 0 {
+                    continue;
+                }
                 if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                     sum += vm.light_grid[ny][nx];
                     count += 1;
@@ -1161,6 +1191,118 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Membrane => {
+            // stack: dir
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(dir) = val {
+                    let d = dir.rem_euclid(4) as u8; // 0-3
+                    let dir_bit = 1 << d;
+                    let (cy, cx) = vm.context_loc;
+
+                    // Toggle local
+                    vm.membranes[cy][cx] ^= dir_bit;
+
+                    // Toggle reciprocal
+                    let (dy, dx) = match d {
+                        0 => (-1, 0),
+                        1 => (0, 1),
+                        2 => (1, 0),
+                        3 => (0, -1),
+                        _ => (0, 0),
+                    };
+
+                    if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                        let opp_bit = match d {
+                            0 => 4, // N -> S
+                            1 => 8, // E -> W
+                            2 => 1, // S -> N
+                            3 => 2, // W -> E
+                            _ => 0,
+                        };
+                        vm.membranes[ny][nx] ^= opp_bit;
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(10);
+                    vm.output
+                        .push(format!("MEMBRANE: Toggled {} at {},{}", d, cx, cy));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for membrane".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for membrane".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Osmosis => {
+            // stack: dy, dx
+            if vm.stack.len() >= 2 {
+                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop().unwrap();
+                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    let (cy, cx) = vm.context_loc;
+
+                    // Determine direction bit
+                    let dir_bit = if dy == -1 && dx == 0 {
+                        1
+                    } else if dy == 1 && dx == 0 {
+                        4
+                    } else if dx == -1 && dy == 0 {
+                        8
+                    } else if dx == 1 && dy == 0 {
+                        2
+                    } else {
+                        0
+                    };
+
+                    let wall = if dir_bit != 0 {
+                        (vm.membranes[cy][cx] & dir_bit) != 0
+                    } else {
+                        false
+                    };
+
+                    let cost = if wall { 20 } else { 5 };
+
+                    if vm.energy >= cost {
+                        if let Some((mut new_y, mut new_x)) =
+                            vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                        {
+                            if let Some(&(py, px)) = vm.portals.get(&(new_y, new_x)) {
+                                vm.output.push(format!(
+                                    "PORTAL: Teleported from {},{} to {},{}",
+                                    new_x, new_y, px, py
+                                ));
+                                new_y = py;
+                                new_x = px;
+                            }
+
+                            // Move
+                            vm.context_loc = (new_y, new_x);
+                            vm.energy -= cost;
+                            vm.output.push(format!(
+                                "OSMOSIS: Moved to {},{} (cost {})",
+                                new_x, new_y, cost
+                            ));
+                        } else {
+                            vm.energy = vm.energy.saturating_sub(2);
+                            vm.output.push("OSMOSIS: Blocked by boundary".to_string());
+                        }
+                    } else {
+                        vm.output.push("OSMOSIS: Not enough energy".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for osmosis".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for osmosis".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Migrate => {
             // stack: dy, dx (top)
             if vm.stack.len() >= 2 {
@@ -1168,6 +1310,25 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let dy_val = vm.stack.pop().unwrap();
                 if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
                     let (cy, cx) = vm.context_loc;
+
+                    // Wall Check
+                    let dir_bit = if dy == -1 && dx == 0 {
+                        1
+                    } else if dy == 1 && dx == 0 {
+                        4
+                    } else if dx == -1 && dy == 0 {
+                        8
+                    } else if dx == 1 && dy == 0 {
+                        2
+                    } else {
+                        0
+                    };
+
+                    if dir_bit != 0 && (vm.membranes[cy][cx] & dir_bit) != 0 {
+                        vm.energy = vm.energy.saturating_sub(2);
+                        vm.output.push("MIGRATE: Blocked by membrane".to_string());
+                        return None;
+                    }
 
                     if let Some((mut new_y, mut new_x)) =
                         vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)

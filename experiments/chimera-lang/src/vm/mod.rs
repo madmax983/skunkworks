@@ -125,6 +125,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub membranes: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -169,6 +171,8 @@ impl ChimeraVM {
         let waste_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; 16]; 16];
+        #[cfg(feature = "nova")]
+        let membranes = vec![vec![0; 16]; 16];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -195,6 +199,8 @@ impl ChimeraVM {
             waste_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            membranes,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -724,6 +730,8 @@ impl ChimeraVM {
             | OpCode::SenseLight
             | OpCode::Broadcast
             | OpCode::Tune
+            | OpCode::Membrane
+            | OpCode::Osmosis
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {

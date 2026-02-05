@@ -277,10 +277,21 @@ where
                                 .fg(Color::Magenta)
                                 .add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
                         }
+
+                        // Wall Rendering: South (4)
+                        if (vm.membranes[y][x] & 4) != 0 {
+                            style = style.add_modifier(Modifier::UNDERLINED);
+                        }
                     }
 
                     line_spans.push(Span::styled(char_rep, style));
-                    line_spans.push(Span::raw(" ")); // Spacing
+
+                    #[cfg(feature = "nova")]
+                    let spacer = if (vm.membranes[y][x] & 2) != 0 { "|" } else { " " };
+                    #[cfg(not(feature = "nova"))]
+                    let spacer = " ";
+
+                    line_spans.push(Span::raw(spacer));
                 }
                 grid_lines.push(Line::from(line_spans));
             }
