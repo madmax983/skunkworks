@@ -71,3 +71,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/colony-concerto
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The swarm is building. Mutexes are clashing. The song of dependencies is rising from the chaos.
+
+### [Concentration Level: HIGH] - Location: experiments/rhizome-radar
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The roots are searching. The Space Colonization Algorithm is active. The radar ping is strong.
