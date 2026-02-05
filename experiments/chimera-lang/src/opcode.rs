@@ -1,144 +1,416 @@
 use std::fmt;
 use std::str::FromStr;
 
+/// Instructions for the Chimera Virtual Machine.
+///
+/// Each opcode represents a fundamental action that the organism can perform,
+/// ranging from basic arithmetic to genetic engineering and inter-dimensional travel.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum OpCode {
+    /// Pushes a value onto the stack.
+    ///
+    /// **Args:** `[Nucleotide::Number(n) | Nucleotide::String(s)]`
+    /// **Stack:** `[ ... ] -> [ ..., value ]`
     Push,
+    /// Pops two values, adds them, and pushes the result.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a + b ]`
     Add,
+    /// Pops two values, subtracts the second from the first, and pushes the result.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a - b ]`
     Sub,
+    /// Pops two values, multiplies them, and pushes the result.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a * b ]`
     Mul,
+    /// Pops two values, divides the first by the second, and pushes the result.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., a / b ]`
+    /// **Error:** Pushes error message if `b` is 0.
     Div,
+    /// Duplicates the top value of the stack.
+    ///
+    /// **Stack:** `[ ..., a ] -> [ ..., a, a ]`
     Dup,
+    /// Swaps the top two values of the stack.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., b, a ]`
     Swap,
+    /// Discards the top value of the stack.
+    ///
+    /// **Stack:** `[ ..., a ] -> [ ... ]`
     Drop,
+    /// Pops a value and prints it to the VM output log.
+    ///
+    /// **Stack:** `[ ..., val ] -> [ ... ]`
     Print,
+    /// Jumps to a specific strand index.
+    ///
+    /// **Args:** `[Nucleotide::Number(strand_idx)]`
+    /// **Effect:** Sets IP to `(strand_idx, 0)`.
     Jump,
+    /// Branches if Zero. Jumps if the top of the stack is 0.
+    ///
+    /// **Args:** `[Nucleotide::Number(strand_idx)]`
+    /// **Stack:** `[ ..., val ] -> [ ... ]`
+    /// **Effect:** If `val == 0`, jump to `(strand_idx, 0)`.
     Brz,
+    /// Generates energy from "sunlight".
+    ///
+    /// **Effect:** Adds 5 Energy.
     Photosynthesize,
+    /// Consumes a value from the stack to gain energy.
+    ///
+    /// **Stack:** `[ ..., val ] -> [ ... ]`
+    /// **Effect:** Adds `val` (if Int) or `val.len()` (if Str) to Energy.
     Consume,
+    /// Reads a value from the grid.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., grid[y][x] ]`
     GRead,
+    /// Writes a value to the grid.
+    ///
+    /// **Stack:** `[ ..., val, y, x ] -> [ ... ]`
+    /// **Effect:** Sets `grid[y][x] = val`.
     GWrite,
+    /// Radiates a value into a circular area on the grid.
+    ///
+    /// **Stack:** `[ ..., val, radius, y, x ] -> [ ... ]`
+    /// **Effect:** Fills circle with `val`. Costs energy proportional to area.
     Radiate,
+    /// Siphons values from a circular area, summing them up.
+    ///
+    /// **Stack:** `[ ..., radius, y, x ] -> [ ..., sum ]`
+    /// **Effect:** Clears circle, pushes sum of integers.
     Siphon,
+    /// Pushes the organism's own genome onto the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., len, op_strings... ]`
+    /// **Effect:** Pushes length of current strand, then all ops as strings.
     Genome,
+    /// Executes a grid cell as an instruction.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]` (pushes result of op if any)
+    /// **Effect:** Parses `grid[y][x]` as OpCode and executes it.
     Virus,
+    /// Modifies the arguments of a gene in a strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx, gene_idx, arg_idx, new_value ] -> [ ... ]`
+    /// **Effect:** Changes the DNA. Can trigger entanglement effects (Nova).
     Transcribe,
+    /// Jumps to a strand index specified on the stack.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
     JumpS,
+    /// Branches if Zero (Stack-based target).
+    ///
+    /// **Stack:** `[ ..., condition, strand_idx ] -> [ ... ]`
     BrzS,
+    /// Pushes the current stack length.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., len ]`
     SLen,
+    /// Pushes the number of strands in the genome.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., helix_len ]`
     HelixLen,
+    /// Pushes the number of genes in a specific strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ..., gene_len ]`
     GeneLen,
 
     // Cortex Features
+    /// **[Cortex]** Links two strands with a neural synapse.
+    ///
+    /// **Stack:** `[ ..., target_strand_idx ]` (uses current IP as source)
     #[cfg(feature = "cortex")]
     Link,
+    /// **[Cortex]** Severs a synapse between the current strand and a target.
+    ///
+    /// **Stack:** `[ ..., target_strand_idx ]`
     #[cfg(feature = "cortex")]
     Sever,
+    /// **[Cortex]** Fires a signal across all synapses from the current strand.
+    ///
+    /// **Stack:** `[ ..., amount ]`
+    /// **Effect:** Increases activation level of target strands.
     #[cfg(feature = "cortex")]
     Spark,
+    /// **[Cortex]** Reads the current strand's activation level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., activation_level ]`
     #[cfg(feature = "cortex")]
     Sense,
+    /// **[Cortex]** Gates execution based on activation level.
+    ///
+    /// **Args:** `[Nucleotide::Number(threshold)]`
+    /// **Effect:** Skips next instruction if `activation < threshold`.
     #[cfg(feature = "cortex")]
     Gate,
 
     // Nova Features
+    /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., spore_id ]`
+    /// **Cost:** 50 Energy.
     #[cfg(feature = "nova")]
     Sporulate,
+    /// **[Nova]** Restores the VM state from a Spore.
+    ///
+    /// **Stack:** `[ ..., spore_id ] -> [ ... ]`
+    /// **Effect:** Reverts *everything* (Grid, DNA, Stack) to the spore's state.
     #[cfg(feature = "nova")]
     Germinate,
+    /// **[Nova]** Creates a new DNA strand from a sequence of values on the grid.
+    ///
+    /// **Stack:** `[ ..., len, y, x ] -> [ ... ]`
+    /// **Effect:** Reads `len` cells starting at `(x, y)` and compiles them into a new strand.
     #[cfg(feature = "nova")]
     Incubate,
+    /// **[Nova]** Marks a gene as methylated (epigenetics).
+    ///
+    /// **Stack:** `[ ..., strand_idx, gene_idx ] -> [ ... ]`
+    /// **Effect:** Adds an epigenetic marker.
     #[cfg(feature = "nova")]
     Methylate,
+    /// **[Nova]** Removes a methylation marker.
+    ///
+    /// **Stack:** `[ ..., strand_idx, gene_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Demethylate,
+    /// **[Nova]** Extends the lifespan (telomeres) of the current strand.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    /// **Cost:** 25 Energy.
     #[cfg(feature = "nova")]
     Telomerase,
+    /// **[Nova]** Reads the remaining telomere length of the current strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., length ]`
     #[cfg(feature = "nova")]
     TLen,
+    /// **[Nova]** Swaps the tails of two strands at a split point.
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b, split_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Recombine,
+    /// **[Nova]** Pushes the index of the currently executing strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., current_strand_idx ]`
     #[cfg(feature = "nova")]
     SIndex,
+    /// **[Nova]** Scans a target strand for a pattern matching a guide strand.
+    ///
+    /// **Stack:** `[ ..., target_idx, guide_idx ] -> [ ..., match_index ]`
+    /// **Effect:** Returns index of first match or -1.
     #[cfg(feature = "nova")]
     CrisprScan,
+    /// **[Nova]** Cuts a strand into two at a specific index.
+    ///
+    /// **Stack:** `[ ..., strand_idx, cut_idx ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** The tail becomes a new strand.
     #[cfg(feature = "nova")]
     Cas9Cut,
+    /// **[Nova]** Joins two strands together.
+    ///
+    /// **Stack:** `[ ..., recipient_idx, donor_idx ] -> [ ... ]`
+    /// **Effect:** Appends donor genes to recipient. Donor becomes empty.
     #[cfg(feature = "nova")]
     Ligase,
+    /// **[Nova]** Clones a strand perfectly.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    /// **Effect:** Creates a new identical strand.
     #[cfg(feature = "nova")]
     Mitosis,
+    /// **[Nova]** Destroys a strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    /// **Effect:** Clears genes and epigenetics of the strand.
     #[cfg(feature = "nova")]
     Apoptosis,
+    /// **[Nova]** Inserts a new gene into a strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx, gene_idx, op_name, arg ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Integrase,
+    /// **[Nova]** Removes a gene from a strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx, gene_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Excision,
+    /// **[Nova]** Secretes hormones into the environment.
+    ///
+    /// **Stack:** `[ ..., channel, amount ] -> [ ... ]`
+    /// **Effect:** Adds to hormone grid at current location.
     #[cfg(feature = "nova")]
     Secrete,
+    /// **[Nova]** Detects hormone levels.
+    ///
+    /// **Stack:** `[ ..., channel ] -> [ ..., intensity ]`
     #[cfg(feature = "nova")]
     Detect,
+    /// **[Nova]** Absorbs hormones from the environment.
+    ///
+    /// **Stack:** `[ ..., channel, amount ] -> [ ..., absorbed_amount ]`
     #[cfg(feature = "nova")]
     Absorb,
+    /// **[Nova]** Moves the execution context (spatial location).
+    ///
+    /// **Stack:** `[ ..., dy, dx ] -> [ ... ]`
+    /// **Cost:** 5 Energy. Blocked by walls/membranes.
     #[cfg(feature = "nova")]
     Migrate,
+    /// **[Nova]** Cleans waste from the environment.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Detox,
+    /// **[Nova]** Reads local waste level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., waste_level ]`
     #[cfg(feature = "nova")]
     WRead,
+    /// **[Nova]** Calls another strand as a subroutine.
+    ///
+    /// **Args:** `[Nucleotide::Number(strand_idx)]`
+    /// **Effect:** Pushes return address to `call_stack` and jumps.
     #[cfg(feature = "nova")]
     Call,
+    /// **[Nova]** Returns from a subroutine.
+    ///
+    /// **Effect:** Pops address from `call_stack` and jumps.
     #[cfg(feature = "nova")]
     Ret,
+    /// **[Nova]** Binds a keyboard input to a strand.
+    ///
+    /// **Stack:** `[ ..., char_code, strand_idx ] -> [ ... ]`
+    /// **Effect:** Pressing the key will trigger an interrupt on that strand.
     #[cfg(feature = "nova")]
     Bind,
+    /// **[Nova]** Unbinds a keyboard input.
+    ///
+    /// **Stack:** `[ ..., char_code ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Unbind,
+    /// **[Nova]** Quantum entangles two strands.
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b ] -> [ ... ]`
+    /// **Effect:** Mutations/Transcriptions on one strand affect the other.
     #[cfg(feature = "nova")]
     Entangle,
+    /// **[Nova]** Breaks quantum entanglement.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Decohere,
+    /// **[Nova]** Writes a strand's code onto the grid physically.
+    ///
+    /// **Stack:** `[ ..., strand_idx, y, x, direction ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Conjugate,
+    /// **[Nova]** Pulls items on the grid towards the center.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Gravitate,
+    /// **[Nova]** Emits light into the environment.
+    ///
+    /// **Stack:** `[ ..., intensity, radius ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Lumine,
+    /// **[Nova]** Senses light level at current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., intensity ]`
     #[cfg(feature = "nova")]
     SenseLight,
+    /// **[Nova]** Spawns an Organelle (sub-process).
+    ///
+    /// **Stack:** `[ ..., strand_idx, type ] -> [ ... ]`
+    /// **Types:** 1=Chloroplast, 2=Mitochondria, 3=Lysosome, 4=Ribosome.
     #[cfg(feature = "nova")]
     Spawn,
+    /// **[Nova]** Runs a simulation of a strand in a sandboxed VM.
+    ///
+    /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., result, energy, status ]`
+    /// **Cost:** High energy cost.
     #[cfg(feature = "nova")]
     Simulate,
+    /// **[Nova]** Simulates a mutated version of a strand; adopts if beneficial.
+    ///
+    /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., success ]`
     #[cfg(feature = "nova")]
     Dream,
+    /// **[Nova]** Calculates direction towards highest chemical concentration.
+    ///
+    /// **Stack:** `[ ..., channel ] -> [ ..., dy, dx ]`
     #[cfg(feature = "nova")]
     Chemotaxis,
+    /// **[Nova]** Returns the identity (Organelle Type) of the current executor.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., type_id ]`
     #[cfg(feature = "nova")]
     Identity,
+    /// **[Nova]** Changes the type of the current organelle.
+    ///
+    /// **Stack:** `[ ..., type_id ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Differentiate,
+    /// **[Nova]** Scans a line on the grid for non-empty cells.
+    ///
+    /// **Stack:** `[ ..., dy, dx ] -> [ ..., distance, value ]`
     #[cfg(feature = "nova")]
     Sonar,
+    /// **[Nova]** Opens a spatial portal between two points.
+    ///
+    /// **Stack:** `[ ..., y1, x1, y2, x2 ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Rift,
+    /// **[Nova]** Closes a portal.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Seal,
+    /// **[Nova]** Warps the topology of the grid (e.g., Torus, Klein Bottle).
+    ///
+    /// **Stack:** `[ ..., topology_type ] -> [ ... ]`
+    /// **Cost:** 100 Energy.
     #[cfg(feature = "nova")]
     Shape,
+    /// **[Nova]** Broadcasts a value to a global radio channel.
+    ///
+    /// **Stack:** `[ ..., channel, value ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Broadcast,
+    /// **[Nova]** Receives a value from a global radio channel.
+    ///
+    /// **Stack:** `[ ..., channel ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     Tune,
+    /// **[Nova]** Modifies cellular membranes (walls) at current location.
+    ///
+    /// **Stack:** `[ ..., mask ] -> [ ... ]`
+    /// **Mask:** 1=N, 2=S, 4=E, 8=W.
     #[cfg(feature = "nova")]
     Membrane,
+    /// **[Nova]** Moves through membranes/walls at high cost.
+    ///
+    /// **Stack:** `[ ..., dy, dx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Osmosis,
+    /// **[Nova]** Merges an organelle back into the main organism (Symbiote).
+    ///
+    /// **Stack:** `[ ..., dy, dx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Symbiosis,
+    /// **[Nova]** Ejects a Symbiote as a free-roaming Organelle.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Lysis,
 
+    /// Unknown or invalid instruction.
     Unknown(String),
 }
 
