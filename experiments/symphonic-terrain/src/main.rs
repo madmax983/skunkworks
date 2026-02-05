@@ -1,13 +1,13 @@
 use macroquad::prelude::*;
 use std::sync::{Arc, RwLock};
 
+mod audio;
 mod heightmap;
 mod physics;
-mod audio;
 
+use audio::{init_audio, Oscillator, SharedState};
 use heightmap::generate_text_heightmap;
-use physics::{Universe, Body, G};
-use audio::{SharedState, Oscillator, init_audio};
+use physics::{Body, Universe, G};
 
 const MAP_WIDTH: u32 = 200;
 const MAP_HEIGHT: u32 = 200;
@@ -88,11 +88,17 @@ async fn main() {
     // Orbiting Notes
     let r1 = 200.0;
     let v1 = (G * 5000.0 / r1).sqrt();
-    universe.add_body(Body::new(Vec3::new(r1, 100.0, 0.0), 10.0, 8.0, SKYBLUE).with_velocity(Vec3::new(0.0, 0.0, v1)));
+    universe.add_body(
+        Body::new(Vec3::new(r1, 100.0, 0.0), 10.0, 8.0, SKYBLUE)
+            .with_velocity(Vec3::new(0.0, 0.0, v1)),
+    );
 
     let r2 = 350.0;
     let v2 = (G * 5000.0 / r2).sqrt();
-    universe.add_body(Body::new(Vec3::new(-r2, 120.0, 0.0), 20.0, 12.0, MAGENTA).with_velocity(Vec3::new(0.0, 0.0, -v2)));
+    universe.add_body(
+        Body::new(Vec3::new(-r2, 120.0, 0.0), 20.0, 12.0, MAGENTA)
+            .with_velocity(Vec3::new(0.0, 0.0, -v2)),
+    );
 
     // 3. Audio Setup
     let audio_state = Arc::new(RwLock::new(SharedState::new()));
@@ -108,12 +114,24 @@ async fn main() {
         clear_background(BLACK);
 
         // Input
-        if is_key_down(KeyCode::Left) { cam_angle_y -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_angle_y += 0.02; }
-        if is_key_down(KeyCode::Up) { cam_angle_x = (cam_angle_x + 0.02).min(1.5); }
-        if is_key_down(KeyCode::Down) { cam_angle_x = (cam_angle_x - 0.02).max(0.1); }
-        if is_key_down(KeyCode::W) { cam_dist -= 5.0; }
-        if is_key_down(KeyCode::S) { cam_dist += 5.0; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y += 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x = (cam_angle_x + 0.02).min(1.5);
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x = (cam_angle_x - 0.02).max(0.1);
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 5.0;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 5.0;
+        }
 
         if is_mouse_button_pressed(MouseButton::Left) {
             // Simple spawn logic: Spawn at camera position? No, just random orbit.
@@ -125,7 +143,10 @@ async fn main() {
             let vx = -angle.sin() * v;
             let vz = angle.cos() * v;
 
-            universe.add_body(Body::new(Vec3::new(x, 150.0, z), 5.0, 5.0, WHITE).with_velocity(Vec3::new(vx, 0.0, vz)));
+            universe.add_body(
+                Body::new(Vec3::new(x, 150.0, z), 5.0, 5.0, WHITE)
+                    .with_velocity(Vec3::new(vx, 0.0, vz)),
+            );
         }
 
         // Update Physics
@@ -136,15 +157,21 @@ async fn main() {
             state.oscillators.clear();
 
             for (i, body) in universe.bodies.iter_mut().enumerate() {
-                if i == 0 { continue; } // Skip central star
+                if i == 0 {
+                    continue;
+                } // Skip central star
 
                 // Map world pos to grid
                 let grid_x = (body.pos.x / TERRAIN_SCALE + offset_x).round() as i32;
                 let grid_z = (body.pos.z / TERRAIN_SCALE + offset_z).round() as i32;
 
                 let mut terrain_height = 0.0;
-                if grid_x >= 0 && grid_x < MAP_WIDTH as i32 && grid_z >= 0 && grid_z < MAP_HEIGHT as i32 {
-                     terrain_height = heightmap.get(grid_x as u32, grid_z as u32);
+                if grid_x >= 0
+                    && grid_x < MAP_WIDTH as i32
+                    && grid_z >= 0
+                    && grid_z < MAP_HEIGHT as i32
+                {
+                    terrain_height = heightmap.get(grid_x as u32, grid_z as u32);
                 }
 
                 // Audio Logic
@@ -195,7 +222,13 @@ async fn main() {
         set_default_camera();
         draw_text("Symphonic Terrain", 10.0, 20.0, 30.0, WHITE);
         draw_text("Click to spawn notes", 10.0, 40.0, 20.0, GRAY);
-        draw_text(format!("Bodies: {}", universe.bodies.len()).as_str(), 10.0, 60.0, 20.0, GRAY);
+        draw_text(
+            format!("Bodies: {}", universe.bodies.len()).as_str(),
+            10.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

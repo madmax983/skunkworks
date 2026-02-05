@@ -3,7 +3,7 @@ mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::nova::OrganelleType;
-    use crate::vm::{ChimeraVM, Value};
+    use crate::vm::ChimeraVM;
 
     fn make_dna_with_spawn(spawn_type: i64) -> Dna {
         // Strand 0: [ push(1) push(type) spawn() jump(3) ]

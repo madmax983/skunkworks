@@ -98,7 +98,11 @@ pub fn run_byzantine_test() -> anyhow::Result<()> {
     println!("  Total Deaths: {}", network.deaths);
     println!("  Blocks Finalized: {}", network.finalized_chain.len());
 
-    let honest_count = network.validators.iter().filter(|v| !v.is_malicious).count();
+    let honest_count = network
+        .validators
+        .iter()
+        .filter(|v| !v.is_malicious)
+        .count();
     let malicious_count = network.validators.iter().filter(|v| v.is_malicious).count();
 
     println!("\n🎯 Security Result:");
@@ -110,15 +114,26 @@ pub fn run_byzantine_test() -> anyhow::Result<()> {
         println!("  ❌ FAILURE! Malicious validators dominated");
     } else {
         println!("  ⚠️  MIXED RESULT: Both types survived");
-        println!("     Honest: {} | Malicious: {}", honest_count, malicious_count);
+        println!(
+            "     Honest: {} | Malicious: {}",
+            honest_count, malicious_count
+        );
     }
 
     Ok(())
 }
 
 fn show_population_breakdown(network: &Network) {
-    let honest: Vec<_> = network.validators.iter().filter(|v| !v.is_malicious).collect();
-    let malicious: Vec<_> = network.validators.iter().filter(|v| v.is_malicious).collect();
+    let honest: Vec<_> = network
+        .validators
+        .iter()
+        .filter(|v| !v.is_malicious)
+        .collect();
+    let malicious: Vec<_> = network
+        .validators
+        .iter()
+        .filter(|v| v.is_malicious)
+        .collect();
 
     println!("\n  👥 Population Breakdown:");
     println!("     🟢 Honest: {} validators", honest.len());

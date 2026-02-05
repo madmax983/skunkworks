@@ -11,7 +11,9 @@ pub struct SharedState {
 
 impl SharedState {
     pub fn new() -> Self {
-        Self { oscillators: Vec::new() }
+        Self {
+            oscillators: Vec::new(),
+        }
     }
 }
 
@@ -26,7 +28,9 @@ pub fn init_audio(_state: Arc<RwLock<SharedState>>) -> anyhow::Result<AudioHandl
         use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
         let host = cpal::default_host();
-        let device = host.default_output_device().ok_or_else(|| anyhow::anyhow!("No audio device"))?;
+        let device = host
+            .default_output_device()
+            .ok_or_else(|| anyhow::anyhow!("No audio device"))?;
         let config = device.default_output_config()?;
         let sample_rate = config.sample_rate().0 as f32;
         let channels = config.channels() as usize;
@@ -55,7 +59,10 @@ pub fn init_audio(_state: Arc<RwLock<SharedState>>) -> anyhow::Result<AudioHandl
                         for frame in data.chunks_mut(channels) {
                             let mut sample = 0.0;
                             for osc in &state.oscillators {
-                                sample += (global_phase * osc.frequency * 2.0 * std::f32::consts::PI).sin() * osc.amplitude;
+                                sample +=
+                                    (global_phase * osc.frequency * 2.0 * std::f32::consts::PI)
+                                        .sin()
+                                        * osc.amplitude;
                             }
 
                             // Soft clipping
@@ -64,7 +71,8 @@ pub fn init_audio(_state: Arc<RwLock<SharedState>>) -> anyhow::Result<AudioHandl
                             for sample_out in frame.iter_mut() {
                                 *sample_out = sample;
                             }
-                            global_phase = (global_phase + 1.0 / sample_rate) % 1000.0; // Wrap to avoid float precision loss eventually
+                            global_phase = (global_phase + 1.0 / sample_rate) % 1000.0;
+                            // Wrap to avoid float precision loss eventually
                         }
                     }
                 },

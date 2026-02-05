@@ -91,8 +91,7 @@ impl Network {
 
         println!(
             "  💉 Proposer secretes {} (total: {})",
-            proposer_stake,
-            self.hormone_levels[&channel]
+            proposer_stake, self.hormone_levels[&channel]
         );
 
         self.pending_blocks.push(block);
@@ -180,7 +179,11 @@ impl Network {
                 block_with_proof.hormone_proof = HormoneProof {
                     channel,
                     final_level: level,
-                    voters: self.hormone_voters.get(&channel).cloned().unwrap_or_default(),
+                    voters: self
+                        .hormone_voters
+                        .get(&channel)
+                        .cloned()
+                        .unwrap_or_default(),
                 };
 
                 finalized_blocks.push(block_with_proof);
@@ -223,7 +226,13 @@ impl Network {
             .hormone_proof
             .voters
             .iter()
-            .filter(|&&id| !self.validators.get(id).map(|v| v.is_malicious).unwrap_or(false))
+            .filter(|&&id| {
+                !self
+                    .validators
+                    .get(id)
+                    .map(|v| v.is_malicious)
+                    .unwrap_or(false)
+            })
             .cloned()
             .collect();
 
@@ -248,7 +257,12 @@ impl Network {
             .hormone_proof
             .voters
             .iter()
-            .filter(|&&id| self.validators.get(id).map(|v| v.is_malicious).unwrap_or(false))
+            .filter(|&&id| {
+                self.validators
+                    .get(id)
+                    .map(|v| v.is_malicious)
+                    .unwrap_or(false)
+            })
             .cloned()
             .collect();
 
@@ -343,7 +357,8 @@ impl Network {
                 .collect();
 
             if !honest_validators.is_empty() {
-                let proposer_idx = honest_validators[(self.tick as usize) % honest_validators.len()];
+                let proposer_idx =
+                    honest_validators[(self.tick as usize) % honest_validators.len()];
                 let proposer_id = self.validators[proposer_idx].id;
 
                 let transactions = vec![
@@ -415,7 +430,8 @@ impl Network {
                 .collect();
 
             if !honest_validators.is_empty() {
-                let proposer_idx = honest_validators[(self.tick as usize) % honest_validators.len()];
+                let proposer_idx =
+                    honest_validators[(self.tick as usize) % honest_validators.len()];
                 let proposer_id = self.validators[proposer_idx].id;
 
                 let transactions = vec![
@@ -505,7 +521,11 @@ impl Network {
                 block_with_proof.hormone_proof = HormoneProof {
                     channel,
                     final_level: level,
-                    voters: self.hormone_voters.get(&channel).cloned().unwrap_or_default(),
+                    voters: self
+                        .hormone_voters
+                        .get(&channel)
+                        .cloned()
+                        .unwrap_or_default(),
                 };
                 finalized_blocks.push(block_with_proof);
             }
@@ -523,7 +543,13 @@ impl Network {
             .hormone_proof
             .voters
             .iter()
-            .filter(|&&id| !self.validators.get(id).map(|v| v.is_malicious).unwrap_or(false))
+            .filter(|&&id| {
+                !self
+                    .validators
+                    .get(id)
+                    .map(|v| v.is_malicious)
+                    .unwrap_or(false)
+            })
             .cloned()
             .collect();
         if honest_voters.is_empty() {
@@ -585,7 +611,10 @@ impl Network {
             let avg_fitness: f64 = self.validators.iter().map(|v| v.fitness).sum::<f64>()
                 / self.validators.len() as f64;
             let avg_energy: i64 = self.total_stake() / self.validators.len() as i64;
-            println!("  Avg Fitness: {:.2} | Avg Energy: {}", avg_fitness, avg_energy);
+            println!(
+                "  Avg Fitness: {:.2} | Avg Energy: {}",
+                avg_fitness, avg_energy
+            );
         }
     }
 }

@@ -1,9 +1,9 @@
-pub mod physics;
 pub mod audio;
+pub mod physics;
 
+use audio::{init_audio, Oscillator, SharedState};
 use macroquad::prelude::*;
-use physics::{Universe, Body, G};
-use audio::{SharedState, Oscillator, init_audio};
+use physics::{Body, Universe, G};
 use std::sync::{Arc, RwLock};
 
 #[macroquad::main("Harmony of Spheres")]
@@ -54,10 +54,18 @@ async fn main() {
             cam_zoom *= 1.02;
         }
 
-        if is_key_down(KeyCode::Left) { cam_target.x -= 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Right) { cam_target.x += 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Up) { cam_target.y += 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Down) { cam_target.y -= 10.0 / cam_zoom / 60.0; }
+        if is_key_down(KeyCode::Left) {
+            cam_target.x -= 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_target.x += 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_target.y += 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_target.y -= 10.0 / cam_zoom / 60.0;
+        }
 
         if is_key_pressed(KeyCode::Space) {
             paused = !paused;
@@ -81,7 +89,8 @@ async fn main() {
                 target: cam_target,
                 zoom: Vec2::splat(cam_zoom),
                 ..Default::default()
-            }.screen_to_world(Vec2::new(mpos.0, mpos.1));
+            }
+            .screen_to_world(Vec2::new(mpos.0, mpos.1));
 
             let dist = world_pos.length();
             if dist > 10.0 {
@@ -91,10 +100,17 @@ async fn main() {
 
                 let mass = rand::gen_range(2.0, 10.0);
                 let radius = mass as f32;
-                let color = Color::new(rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), 1.0);
+                let color = Color::new(
+                    rand::gen_range(0.5, 1.0),
+                    rand::gen_range(0.5, 1.0),
+                    rand::gen_range(0.5, 1.0),
+                    1.0,
+                );
 
-                universe.add_body(Body::new(world_pos.x as f64, world_pos.y as f64, mass, radius, color)
-                    .with_velocity(v_dir.x as f64 * v_circ, v_dir.y as f64 * v_circ));
+                universe.add_body(
+                    Body::new(world_pos.x as f64, world_pos.y as f64, mass, radius, color)
+                        .with_velocity(v_dir.x as f64 * v_circ, v_dir.y as f64 * v_circ),
+                );
             }
         }
 
@@ -113,7 +129,9 @@ async fn main() {
         if let Ok(mut state) = audio_state.write() {
             state.oscillators.clear();
             for (i, body) in universe.bodies.iter().enumerate() {
-                if i == 0 { continue; }
+                if i == 0 {
+                    continue;
+                }
 
                 let speed = body.vel.length();
                 let dist = body.pos.length();
@@ -139,18 +157,32 @@ async fn main() {
 
         // Draw Trails
         for body in &universe.bodies {
-            if body.trail.len() < 2 { continue; }
+            if body.trail.len() < 2 {
+                continue;
+            }
             for i in 0..body.trail.len() - 1 {
                 let p1 = body.trail[i];
-                let p2 = body.trail[i+1];
+                let p2 = body.trail[i + 1];
                 let alpha = (i as f32 / body.trail.len() as f32).powf(2.0);
-                draw_line(p1.x, p1.y, p2.x, p2.y, 2.0 * alpha, Color::new(body.color.r, body.color.g, body.color.b, alpha));
+                draw_line(
+                    p1.x,
+                    p1.y,
+                    p2.x,
+                    p2.y,
+                    2.0 * alpha,
+                    Color::new(body.color.r, body.color.g, body.color.b, alpha),
+                );
             }
         }
 
         // Draw Bodies
         for body in &universe.bodies {
-            draw_circle(body.pos.x as f32, body.pos.y as f32, body.radius, body.color);
+            draw_circle(
+                body.pos.x as f32,
+                body.pos.y as f32,
+                body.radius,
+                body.color,
+            );
         }
 
         // UI
@@ -159,13 +191,37 @@ async fn main() {
         draw_text("Controls:", 10.0, 50.0, 20.0, WHITE);
         draw_text("- Arrows: Pan | +/-: Zoom", 20.0, 70.0, 20.0, GRAY);
         draw_text("- Click: Spawn Orbiting Planet", 20.0, 90.0, 20.0, GRAY);
-        draw_text("- Space: Pause | R: Reset | C: Clear Trails", 20.0, 110.0, 20.0, GRAY);
+        draw_text(
+            "- Space: Pause | R: Reset | C: Clear Trails",
+            20.0,
+            110.0,
+            20.0,
+            GRAY,
+        );
 
-        draw_text(&format!("Bodies: {}", universe.bodies.len()), 10.0, screen_height() - 40.0, 20.0, WHITE);
-        draw_text(&format!("Zoom: {:.5}", cam_zoom), 10.0, screen_height() - 20.0, 20.0, WHITE);
+        draw_text(
+            &format!("Bodies: {}", universe.bodies.len()),
+            10.0,
+            screen_height() - 40.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Zoom: {:.5}", cam_zoom),
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            WHITE,
+        );
 
         if paused {
-             draw_text("PAUSED", screen_width() / 2.0 - 50.0, screen_height() / 2.0, 40.0, RED);
+            draw_text(
+                "PAUSED",
+                screen_width() / 2.0 - 50.0,
+                screen_height() / 2.0,
+                40.0,
+                RED,
+            );
         }
 
         next_frame().await

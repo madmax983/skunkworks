@@ -7,7 +7,7 @@ mod validator;
 use byzantine_test::run_byzantine_test;
 use network::Network;
 use types::*;
-use ui::{run_ui, App};
+use ui::{App, run_ui};
 use validator::Validator;
 
 fn main() -> anyhow::Result<()> {
@@ -108,7 +108,10 @@ fn main() -> anyhow::Result<()> {
     println!("\n📈 Final Results:");
     println!("  Total Births: {}", network.births);
     println!("  Total Deaths: {}", network.deaths);
-    println!("  Population Change: {:+}", network.validators.len() as i64 - 5);
+    println!(
+        "  Population Change: {:+}",
+        network.validators.len() as i64 - 5
+    );
     println!("  Blocks Finalized: {}", network.finalized_chain.len());
 
     Ok(())

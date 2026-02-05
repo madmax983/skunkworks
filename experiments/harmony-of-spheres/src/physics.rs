@@ -44,9 +44,7 @@ impl Default for Universe {
 
 impl Universe {
     pub fn new() -> Self {
-        Self {
-            bodies: Vec::new(),
-        }
+        Self { bodies: Vec::new() }
     }
 
     pub fn add_body(&mut self, body: Body) {
@@ -91,10 +89,9 @@ impl Universe {
             }
             // Convert to f32 for rendering
             let pos = self.bodies[i].pos;
-            self.bodies[i].trail.push_back(Vec2::new(
-                pos.x as f32,
-                pos.y as f32
-            ));
+            self.bodies[i]
+                .trail
+                .push_back(Vec2::new(pos.x as f32, pos.y as f32));
         }
     }
 }

@@ -43,7 +43,9 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 #[cfg(feature = "audio")]
 pub fn init_audio(state: Arc<RwLock<SharedState>>) -> Result<AudioHandle, anyhow::Error> {
     let host = cpal::default_host();
-    let device = host.default_output_device().ok_or(anyhow::anyhow!("No output device available"))?;
+    let device = host
+        .default_output_device()
+        .ok_or(anyhow::anyhow!("No output device available"))?;
     let config = device.default_output_config()?;
 
     let stream = match config.sample_format() {
@@ -53,11 +55,17 @@ pub fn init_audio(state: Arc<RwLock<SharedState>>) -> Result<AudioHandle, anyhow
         _ => return Err(anyhow::anyhow!("Unsupported sample format")),
     }?;
 
-    Ok(AudioHandle { _stream: Some(stream) })
+    Ok(AudioHandle {
+        _stream: Some(stream),
+    })
 }
 
 #[cfg(feature = "audio")]
-fn run<T>(device: &cpal::Device, config: &cpal::StreamConfig, state: Arc<RwLock<SharedState>>) -> Result<cpal::Stream, anyhow::Error>
+fn run<T>(
+    device: &cpal::Device,
+    config: &cpal::StreamConfig,
+    state: Arc<RwLock<SharedState>>,
+) -> Result<cpal::Stream, anyhow::Error>
 where
     T: cpal::Sample + cpal::SizedSample + cpal::FromSample<f32>,
 {
@@ -86,7 +94,9 @@ where
                 let mut sample_value = 0.0;
 
                 for (i, osc) in oscillators.iter().enumerate() {
-                    if i >= phases.len() { break; }
+                    if i >= phases.len() {
+                        break;
+                    }
 
                     let val = (phases[i] * 2.0 * std::f32::consts::PI).sin();
                     sample_value += val * osc.amplitude;

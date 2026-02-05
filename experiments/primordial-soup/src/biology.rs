@@ -42,14 +42,22 @@ impl FluidSolver {
         // To avoid conflicts (A eats B, C eats B), we check dead_flags.
 
         for i in 0..self.particles.len() {
-            if dead_flags[i] { continue; }
+            if dead_flags[i] {
+                continue;
+            }
 
             // Only Grazers and Predators eat
-            if self.particles[i].species == Species::Algae { continue; }
+            if self.particles[i].species == Species::Algae {
+                continue;
+            }
 
             for j in 0..self.particles.len() {
-                if i == j { continue; }
-                if dead_flags[j] { continue; } // Already dead/eaten
+                if i == j {
+                    continue;
+                }
+                if dead_flags[j] {
+                    continue;
+                } // Already dead/eaten
 
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;
@@ -63,7 +71,9 @@ impl FluidSolver {
                     if predator_species == Species::Grazer && prey_species == Species::Algae {
                         self.particles[i].energy += 30.0;
                         ate = true;
-                    } else if predator_species == Species::Predator && prey_species == Species::Grazer {
+                    } else if predator_species == Species::Predator
+                        && prey_species == Species::Grazer
+                    {
                         self.particles[i].energy += 60.0;
                         ate = true;
                     }
@@ -80,22 +90,24 @@ impl FluidSolver {
         // 3. Reproduction
         let mut rng = rand::thread_rng();
         for (i, p) in self.particles.iter_mut().enumerate() {
-             if dead_flags[i] { continue; }
+            if dead_flags[i] {
+                continue;
+            }
 
-             let reproduce_threshold = match p.species {
-                 Species::Algae => 120.0,
-                 Species::Grazer => 250.0,
-                 Species::Predator => 400.0,
-             };
+            let reproduce_threshold = match p.species {
+                Species::Algae => 120.0,
+                Species::Grazer => 250.0,
+                Species::Predator => 400.0,
+            };
 
-             if p.energy > reproduce_threshold {
-                 p.energy *= 0.5; // Split energy
-                 let mut child = *p;
-                 child.x += rng.gen_range(-1.0..1.0);
-                 child.y += rng.gen_range(-1.0..1.0);
-                 child.energy = p.energy; // Child gets half
-                 new_particles.push(child);
-             }
+            if p.energy > reproduce_threshold {
+                p.energy *= 0.5; // Split energy
+                let mut child = *p;
+                child.x += rng.gen_range(-1.0..1.0);
+                child.y += rng.gen_range(-1.0..1.0);
+                child.energy = p.energy; // Child gets half
+                new_particles.push(child);
+            }
         }
 
         // Apply deaths
@@ -112,19 +124,28 @@ impl FluidSolver {
         // Cap population
         if self.particles.len() > 800 {
             let to_remove = self.particles.len() - 800;
-             for _ in 0..to_remove {
-                 if !self.particles.is_empty() {
-                    self.particles.swap_remove(rng.gen_range(0..self.particles.len()));
-                 }
-             }
+            for _ in 0..to_remove {
+                if !self.particles.is_empty() {
+                    self.particles
+                        .swap_remove(rng.gen_range(0..self.particles.len()));
+                }
+            }
         }
 
         // Auto-reseed if extinct
-        let algae_count = self.particles.iter().filter(|p| p.species == Species::Algae).count();
+        let algae_count = self
+            .particles
+            .iter()
+            .filter(|p| p.species == Species::Algae)
+            .count();
         if algae_count < 10 {
-             for _ in 0..10 {
-                self.add_particle(rng.gen_range(0.0..self.width), rng.gen_range(0.0..self.height * 0.3), Species::Algae);
-             }
+            for _ in 0..10 {
+                self.add_particle(
+                    rng.gen_range(0.0..self.width),
+                    rng.gen_range(0.0..self.height * 0.3),
+                    Species::Algae,
+                );
+            }
         }
     }
 }

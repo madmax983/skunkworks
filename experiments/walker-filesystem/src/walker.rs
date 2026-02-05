@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use crate::terrain::{Terrain, START_X, NODE_WIDTH, NODE_GAP};
 use crate::gait::calculate_gait;
+use crate::terrain::{Terrain, NODE_GAP, NODE_WIDTH, START_X};
+use bevy::prelude::*;
 
 #[derive(Component)]
 pub struct Walker {
@@ -53,11 +53,7 @@ pub fn spawn_walker(mut commands: Commands) {
     commands.spawn(Walker::default());
 }
 
-pub fn walker_system(
-    mut query: Query<&mut Walker>,
-    terrain: Res<Terrain>,
-    time: Res<Time>,
-) {
+pub fn walker_system(mut query: Query<&mut Walker>, terrain: Res<Terrain>, time: Res<Time>) {
     let dt = time.delta_seconds();
 
     for mut walker in &mut query {
@@ -68,9 +64,13 @@ pub fn walker_system(
         let current_node_idx = idx.clamp(0, terrain.nodes.len().saturating_sub(1));
 
         let gait = if !terrain.nodes.is_empty() {
-             calculate_gait(&terrain.nodes[current_node_idx])
+            calculate_gait(&terrain.nodes[current_node_idx])
         } else {
-             crate::gait::GaitParameters { speed: 50.0, step_height: 20.0, bounce: 5.0 }
+            crate::gait::GaitParameters {
+                speed: 50.0,
+                step_height: 20.0,
+                bounce: 5.0,
+            }
         };
 
         // Move Hip
@@ -91,8 +91,8 @@ pub fn walker_system(
         // Ground Y lookup
         let ground_y = if !terrain.nodes.is_empty() {
             match terrain.nodes[current_node_idx].file_type {
-                 crate::terrain::FileType::Directory => -50.0,
-                 crate::terrain::FileType::File => -100.0,
+                crate::terrain::FileType::Directory => -50.0,
+                crate::terrain::FileType::File => -100.0,
             }
         } else {
             -100.0
@@ -134,14 +134,24 @@ pub fn walker_system(
         }
 
         // Solve IK
-        if let Some((knee, foot)) = solve_leg(walker.hip_pos, walker.left_foot_target, walker.thigh_len, walker.shin_len) {
+        if let Some((knee, foot)) = solve_leg(
+            walker.hip_pos,
+            walker.left_foot_target,
+            walker.thigh_len,
+            walker.shin_len,
+        ) {
             walker.left_knee = knee;
             walker.left_foot = foot;
         } else {
             walker.left_foot = walker.left_foot_target; // Snap
         }
 
-        if let Some((knee, foot)) = solve_leg(walker.hip_pos, walker.right_foot_target, walker.thigh_len, walker.shin_len) {
+        if let Some((knee, foot)) = solve_leg(
+            walker.hip_pos,
+            walker.right_foot_target,
+            walker.thigh_len,
+            walker.shin_len,
+        ) {
             walker.right_knee = knee;
             walker.right_foot = foot;
         } else {
@@ -163,7 +173,8 @@ pub fn solve_leg(hip: Vec2, target: Vec2, thigh_len: f32, shin_len: f32) -> Opti
         return Some((hip + Vec2::new(thigh_len, 0.0), target));
     }
 
-    let cos_alpha = (thigh_len * thigh_len + dist * dist - shin_len * shin_len) / (2.0 * thigh_len * dist);
+    let cos_alpha =
+        (thigh_len * thigh_len + dist * dist - shin_len * shin_len) / (2.0 * thigh_len * dist);
     let cos_alpha = cos_alpha.clamp(-1.0, 1.0);
     let alpha = cos_alpha.acos();
 
@@ -194,7 +205,13 @@ mod tests {
 
         let (knee, foot) = result.unwrap();
         assert!(foot.distance(target) < 0.001, "Foot should be at target");
-        assert!((knee.distance(hip) - thigh).abs() < 0.001, "Thigh length preserved");
-        assert!((foot.distance(knee) - shin).abs() < 0.001, "Shin length preserved");
+        assert!(
+            (knee.distance(hip) - thigh).abs() < 0.001,
+            "Thigh length preserved"
+        );
+        assert!(
+            (foot.distance(knee) - shin).abs() < 0.001,
+            "Shin length preserved"
+        );
     }
 }

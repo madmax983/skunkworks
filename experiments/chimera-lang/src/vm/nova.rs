@@ -1542,6 +1542,102 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.push(Value::Int(intensity));
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Dream => {
+            // stack: ticks, strand_idx (bottom)
+            if vm.stack.len() >= 2 {
+                let ticks_val = vm.stack.pop().unwrap();
+                let s_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
+                    let idx = s_idx as usize;
+                    if idx < vm.dna.helix.strands.len() && ticks > 0 {
+                        // Cap ticks
+                        let safe_ticks = ticks.min(1000);
+
+                        // Clone VM
+                        let mut dream_vm = vm.clone();
+
+                        // Force a mutation
+                        dream_vm.mutate();
+
+                        // Run simulation
+                        dream_vm.ip = (idx, 0);
+                        dream_vm.output.clear();
+                        dream_vm.halted = false;
+
+                        for _ in 0..safe_ticks {
+                            dream_vm.step();
+                            if dream_vm.halted {
+                                break;
+                            }
+                        }
+
+                        // Evaluate
+                        let success = dream_vm.energy > vm.energy;
+
+                        if success {
+                            // Adopt DNA
+                            vm.dna = dream_vm.dna;
+                            vm.stack.push(Value::Int(1)); // Success
+                            vm.output.push("DREAM: Mutation accepted".to_string());
+                        } else {
+                            vm.stack.push(Value::Int(0)); // Failure
+                            vm.output.push("DREAM: Mutation discarded".to_string());
+                        }
+
+                        // Pay Cost (Base 50 + ticks/2)
+                        let cost = 50 + (safe_ticks / 2);
+                        vm.energy = vm.energy.saturating_sub(cost);
+                    } else {
+                        vm.output.push("Error: Invalid args for dream".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for dream".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for dream".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Chemotaxis => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(c) = val {
+                    let (cy, cx) = vm.context_loc;
+                    let channel_idx = (c.unsigned_abs() as usize) % 3;
+
+                    let mut max_intensity = -1;
+                    let mut best_dy = 0;
+                    let mut best_dx = 0;
+
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            let ny = (cy as i64 + dy).rem_euclid(16) as usize;
+                            let nx = (cx as i64 + dx).rem_euclid(16) as usize;
+                            let intensity = vm.hormone_grid[ny][nx][channel_idx];
+                            if intensity > max_intensity {
+                                max_intensity = intensity;
+                                best_dy = dy;
+                                best_dx = dx;
+                            }
+                        }
+                    }
+
+                    vm.stack.push(Value::Int(best_dy));
+                    vm.stack.push(Value::Int(best_dx));
+                    vm.energy = vm.energy.saturating_sub(5);
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for chemotaxis".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for chemotaxis".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }
