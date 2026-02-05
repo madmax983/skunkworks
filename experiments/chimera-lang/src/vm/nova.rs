@@ -73,7 +73,7 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             for c in 0..3 {
-                let mut sum = vm.hormone_grid[y][x][c] * 4;
+                let mut sum = (vm.hormone_grid[y][x][c] as i128) * 4;
                 let mut count = 4;
 
                 for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
@@ -86,13 +86,13 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
 
                     if !blocked {
                         if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                            sum += vm.hormone_grid[ny][nx][c];
+                            sum += vm.hormone_grid[ny][nx][c] as i128;
                             count += 1;
                         }
                     }
                 }
 
-                buffer[y][x][c] = sum / count;
+                buffer[y][x][c] = (sum / count) as i64;
             }
         }
     }
@@ -109,7 +109,7 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
     let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let mut sum = vm.waste_grid[y][x] * 4;
+            let mut sum = (vm.waste_grid[y][x] as i128) * 4;
             let mut count = 4;
 
             for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
@@ -122,13 +122,13 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
 
                 if !blocked {
                     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        sum += vm.waste_grid[ny][nx];
+                        sum += vm.waste_grid[ny][nx] as i128;
                         count += 1;
                     }
                 }
             }
 
-            buffer[y][x] = sum / count;
+            buffer[y][x] = (sum / count) as i64;
         }
     }
     for y in 0..16 {
@@ -144,7 +144,7 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
     let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let mut sum = vm.light_grid[y][x] * 4;
+            let mut sum = (vm.light_grid[y][x] as i128) * 4;
             let mut count = 4;
 
             for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
@@ -157,14 +157,14 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 
                 if !blocked {
                     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        sum += vm.light_grid[ny][nx];
+                        sum += vm.light_grid[ny][nx] as i128;
                         count += 1;
                     }
                 }
             }
 
             // Blur and strong decay (50%)
-            buffer[y][x] = (sum / count) / 2;
+            buffer[y][x] = ((sum / count) / 2) as i64;
         }
     }
     for y in 0..16 {

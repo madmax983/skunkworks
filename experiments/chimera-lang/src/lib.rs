@@ -81,3 +81,5 @@ mod ribosome_test;
 mod sentry_nova_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_symbiosis_test;
+#[cfg(test)]
+mod warden_exploit_test;
