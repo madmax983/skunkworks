@@ -8,15 +8,18 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    text::Span,
-    widgets::{Block, Borders, Paragraph, canvas::Canvas},
     symbols::Marker,
+    text::Span,
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
-mod physics;
 mod biology;
+mod physics;
 
 use physics::{FluidSolver, Species};
 
@@ -33,10 +36,7 @@ fn main() -> Result<()> {
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -62,29 +62,42 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> Result<()> 
 
     // 50 Algae
     for _ in 0..50 {
-        solver.add_particle(rng.gen_range(0.0..width), rng.gen_range(0.0..height*0.3), Species::Algae);
+        solver.add_particle(
+            rng.gen_range(0.0..width),
+            rng.gen_range(0.0..height * 0.3),
+            Species::Algae,
+        );
     }
     // 10 Grazers
     for _ in 0..10 {
-        solver.add_particle(rng.gen_range(0.0..width), rng.gen_range(height*0.3..height), Species::Grazer);
+        solver.add_particle(
+            rng.gen_range(0.0..width),
+            rng.gen_range(height * 0.3..height),
+            Species::Grazer,
+        );
     }
     // 2 Predators
     for _ in 0..2 {
-        solver.add_particle(rng.gen_range(0.0..width), rng.gen_range(0.0..height), Species::Predator);
+        solver.add_particle(
+            rng.gen_range(0.0..width),
+            rng.gen_range(0.0..height),
+            Species::Predator,
+        );
     }
 
     loop {
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(0),
-                    Constraint::Length(1),
-                ].as_ref())
+                .constraints([Constraint::Min(0), Constraint::Length(1)].as_ref())
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Primordial Soup (q to quit) "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Primordial Soup (q to quit) "),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .marker(Marker::Block)
@@ -96,19 +109,40 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> Result<()> 
                             Species::Predator => Color::Red,
                         };
 
-                        ctx.print(p.x as f64, p.y as f64, Span::styled("█", Style::default().fg(color)));
+                        ctx.print(
+                            p.x as f64,
+                            p.y as f64,
+                            Span::styled("█", Style::default().fg(color)),
+                        );
                     }
                 });
 
             f.render_widget(canvas, chunks[0]);
 
             // Stats
-            let algae_count = solver.particles.iter().filter(|p| p.species == Species::Algae).count();
-            let grazer_count = solver.particles.iter().filter(|p| p.species == Species::Grazer).count();
-            let predator_count = solver.particles.iter().filter(|p| p.species == Species::Predator).count();
+            let algae_count = solver
+                .particles
+                .iter()
+                .filter(|p| p.species == Species::Algae)
+                .count();
+            let grazer_count = solver
+                .particles
+                .iter()
+                .filter(|p| p.species == Species::Grazer)
+                .count();
+            let predator_count = solver
+                .particles
+                .iter()
+                .filter(|p| p.species == Species::Predator)
+                .count();
 
-            let stats = format!("Algae: {} | Grazers: {} | Predators: {} | Total: {}",
-                algae_count, grazer_count, predator_count, solver.particles.len());
+            let stats = format!(
+                "Algae: {} | Grazers: {} | Predators: {} | Total: {}",
+                algae_count,
+                grazer_count,
+                predator_count,
+                solver.particles.len()
+            );
 
             let paragraph = Paragraph::new(stats).style(Style::default().fg(Color::White));
             f.render_widget(paragraph, chunks[1]);

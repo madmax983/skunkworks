@@ -53,7 +53,9 @@ impl Universe {
 
         for i in 0..n {
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let diff = self.bodies[j].pos - self.bodies[i].pos;
                 let dist_sq = diff.length_squared();

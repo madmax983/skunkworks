@@ -160,18 +160,16 @@ impl<'a> State<'a> {
         let compute_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: Some("Compute Bind Group Layout"),
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Uniform,
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
                     },
-                ],
+                    count: None,
+                }],
             });
 
         let storage_bind_group_layout =
@@ -372,9 +370,9 @@ impl<'a> State<'a> {
             let u_val: f32 = 1.0;
             let u_bytes = u_val.to_ne_bytes();
             initial_data[idx] = u_bytes[0];
-            initial_data[idx+1] = u_bytes[1];
-            initial_data[idx+2] = u_bytes[2];
-            initial_data[idx+3] = u_bytes[3];
+            initial_data[idx + 1] = u_bytes[1];
+            initial_data[idx + 2] = u_bytes[2];
+            initial_data[idx + 3] = u_bytes[3];
             // G = V = 0.0 (already zeroed by vec!)
         }
 
@@ -382,17 +380,17 @@ impl<'a> State<'a> {
         use rand::Rng;
         let mut rng = rand::thread_rng();
         for _ in 0..100 {
-            let cx = rng.gen_range(20..(WIDTH-20));
-            let cy = rng.gen_range(20..(HEIGHT-20));
-            for y in (cy-10)..(cy+10) {
-                for x in (cx-10)..(cx+10) {
-                     let idx = ((y * WIDTH + x) * 16) as usize;
-                     let v_val: f32 = 1.0;
-                     let bytes = v_val.to_ne_bytes();
-                     initial_data[idx+4] = bytes[0];
-                     initial_data[idx+5] = bytes[1];
-                     initial_data[idx+6] = bytes[2];
-                     initial_data[idx+7] = bytes[3];
+            let cx = rng.gen_range(20..(WIDTH - 20));
+            let cy = rng.gen_range(20..(HEIGHT - 20));
+            for y in (cy - 10)..(cy + 10) {
+                for x in (cx - 10)..(cx + 10) {
+                    let idx = ((y * WIDTH + x) * 16) as usize;
+                    let v_val: f32 = 1.0;
+                    let bytes = v_val.to_ne_bytes();
+                    initial_data[idx + 4] = bytes[0];
+                    initial_data[idx + 5] = bytes[1];
+                    initial_data[idx + 6] = bytes[2];
+                    initial_data[idx + 7] = bytes[3];
                 }
             }
         }
@@ -460,20 +458,56 @@ impl<'a> State<'a> {
             WindowEvent::MouseInput { state, button, .. } => {
                 match button {
                     MouseButton::Left => self.mouse_pressed_left = *state == ElementState::Pressed,
-                    MouseButton::Right => self.mouse_pressed_right = *state == ElementState::Pressed,
+                    MouseButton::Right => {
+                        self.mouse_pressed_right = *state == ElementState::Pressed
+                    }
                     _ => {}
                 }
                 true
             }
-            WindowEvent::KeyboardInput { event: KeyEvent { state: ElementState::Pressed, physical_key: PhysicalKey::Code(keycode), .. }, .. } => {
-                 match keycode {
-                     KeyCode::ArrowUp => { self.uniforms.feed += 0.001; println!("Feed: {:.4}, Kill: {:.4}", self.uniforms.feed, self.uniforms.kill); true },
-                     KeyCode::ArrowDown => { self.uniforms.feed -= 0.001; println!("Feed: {:.4}, Kill: {:.4}", self.uniforms.feed, self.uniforms.kill); true },
-                     KeyCode::ArrowRight => { self.uniforms.kill += 0.001; println!("Feed: {:.4}, Kill: {:.4}", self.uniforms.feed, self.uniforms.kill); true },
-                     KeyCode::ArrowLeft => { self.uniforms.kill -= 0.001; println!("Feed: {:.4}, Kill: {:.4}", self.uniforms.feed, self.uniforms.kill); true },
-                     _ => false
-                 }
-            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        state: ElementState::Pressed,
+                        physical_key: PhysicalKey::Code(keycode),
+                        ..
+                    },
+                ..
+            } => match keycode {
+                KeyCode::ArrowUp => {
+                    self.uniforms.feed += 0.001;
+                    println!(
+                        "Feed: {:.4}, Kill: {:.4}",
+                        self.uniforms.feed, self.uniforms.kill
+                    );
+                    true
+                }
+                KeyCode::ArrowDown => {
+                    self.uniforms.feed -= 0.001;
+                    println!(
+                        "Feed: {:.4}, Kill: {:.4}",
+                        self.uniforms.feed, self.uniforms.kill
+                    );
+                    true
+                }
+                KeyCode::ArrowRight => {
+                    self.uniforms.kill += 0.001;
+                    println!(
+                        "Feed: {:.4}, Kill: {:.4}",
+                        self.uniforms.feed, self.uniforms.kill
+                    );
+                    true
+                }
+                KeyCode::ArrowLeft => {
+                    self.uniforms.kill -= 0.001;
+                    println!(
+                        "Feed: {:.4}, Kill: {:.4}",
+                        self.uniforms.feed, self.uniforms.kill
+                    );
+                    true
+                }
+                _ => false,
+            },
             _ => false,
         }
     }
@@ -481,7 +515,9 @@ impl<'a> State<'a> {
     fn add_catalyst(&mut self, add_v: bool) {
         let w = self.size.width as f64;
         let h = self.size.height as f64;
-        if w == 0.0 || h == 0.0 { return; }
+        if w == 0.0 || h == 0.0 {
+            return;
+        }
 
         let cx = self.cursor_pos.x.clamp(0.0, w - 1.0);
         let cy = self.cursor_pos.y.clamp(0.0, h - 1.0);
@@ -515,14 +551,14 @@ impl<'a> State<'a> {
                 let u_bytes = u_val.to_ne_bytes();
 
                 data[idx] = u_bytes[0];
-                data[idx+1] = u_bytes[1];
-                data[idx+2] = u_bytes[2];
-                data[idx+3] = u_bytes[3];
+                data[idx + 1] = u_bytes[1];
+                data[idx + 2] = u_bytes[2];
+                data[idx + 3] = u_bytes[3];
 
-                data[idx+4] = bytes[0];
-                data[idx+5] = bytes[1];
-                data[idx+6] = bytes[2];
-                data[idx+7] = bytes[3];
+                data[idx + 4] = bytes[0];
+                data[idx + 5] = bytes[1];
+                data[idx + 6] = bytes[2];
+                data[idx + 7] = bytes[3];
             }
         }
 
@@ -531,14 +567,20 @@ impl<'a> State<'a> {
         let copy_width = diameter.min(WIDTH - origin_x);
         let copy_height = diameter.min(HEIGHT - origin_y);
 
-        if copy_width == 0 || copy_height == 0 { return; }
+        if copy_width == 0 || copy_height == 0 {
+            return;
+        }
 
         for texture in [&self.texture_a, &self.texture_b] {
             self.queue.write_texture(
                 wgpu::ImageCopyTexture {
                     texture,
                     mip_level: 0,
-                    origin: wgpu::Origin3d { x: origin_x, y: origin_y, z: 0 },
+                    origin: wgpu::Origin3d {
+                        x: origin_x,
+                        y: origin_y,
+                        z: 0,
+                    },
                     aspect: wgpu::TextureAspect::All,
                 },
                 &data,
@@ -591,7 +633,7 @@ impl<'a> State<'a> {
                 (&self.bind_group_b, &self.display_bind_group_a)
             };
 
-             {
+            {
                 let mut cpass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                     label: Some("Compute Pass"),
                     timestamp_writes: None,
@@ -605,7 +647,7 @@ impl<'a> State<'a> {
         }
 
         // Display the last state
-         let (_, display_bind_group) = if self.frame_count % 2 == 0 {
+        let (_, display_bind_group) = if self.frame_count % 2 == 0 {
             (&self.bind_group_a, &self.display_bind_group_b)
         } else {
             (&self.bind_group_b, &self.display_bind_group_a)

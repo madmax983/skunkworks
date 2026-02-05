@@ -43,6 +43,8 @@ mod nova_conjugation_test;
 #[cfg(test)]
 mod nova_crispr_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_dream_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(test)]
 mod nova_hormone_test;
@@ -56,6 +58,8 @@ mod nova_quantum_test;
 mod nova_simulate_test;
 #[cfg(test)]
 mod nova_spore_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_taxis_test;
 mod nova_test;
 #[cfg(test)]
 mod nova_waste_test;

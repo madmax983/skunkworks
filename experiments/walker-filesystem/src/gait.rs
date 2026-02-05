@@ -63,9 +63,15 @@ mod tests {
         let gait_dir = calculate_gait(&dir);
 
         // Large files should be heavier (slower)
-        assert!(gait_large.speed < gait_small.speed, "Large files should be slower");
+        assert!(
+            gait_large.speed < gait_small.speed,
+            "Large files should be slower"
+        );
 
         // Directories should be bouncy
-        assert!(gait_dir.bounce > gait_small.bounce, "Directories should be bouncy");
+        assert!(
+            gait_dir.bounce > gait_small.bounce,
+            "Directories should be bouncy"
+        );
     }
 }

@@ -2,16 +2,16 @@ use crate::network::Network;
 use crossterm::{
     event::{self, Event, KeyCode},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Frame, Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     symbols,
     text::Span,
     widgets::{Axis, Block, Borders, Chart, Dataset, List, ListItem, Paragraph},
-    Frame, Terminal,
 };
 use std::io;
 
@@ -40,8 +40,18 @@ impl App {
             self.tick = self.network.tick as usize;
 
             // Record history
-            let honest = self.network.validators.iter().filter(|v| !v.is_malicious).count();
-            let malicious = self.network.validators.iter().filter(|v| v.is_malicious).count();
+            let honest = self
+                .network
+                .validators
+                .iter()
+                .filter(|v| !v.is_malicious)
+                .count();
+            let malicious = self
+                .network
+                .validators
+                .iter()
+                .filter(|v| v.is_malicious)
+                .count();
             self.history.push((self.tick, honest, malicious));
 
             // Keep last 100 points
@@ -51,8 +61,8 @@ impl App {
 
             // Energy history
             if !self.network.validators.is_empty() {
-                let avg_energy = self.network.total_stake() as f64
-                    / self.network.validators.len() as f64;
+                let avg_energy =
+                    self.network.total_stake() as f64 / self.network.validators.len() as f64;
                 self.energy_history.push((self.tick as f64, avg_energy));
 
                 if self.energy_history.len() > 100 {
@@ -137,19 +147,37 @@ fn ui(f: &mut Frame, app: &App) {
 }
 
 fn render_title(f: &mut Frame, area: Rect, app: &App) {
-    let status = if app.paused { "⏸ PAUSED" } else { "▶ RUNNING" };
+    let status = if app.paused {
+        "⏸ PAUSED"
+    } else {
+        "▶ RUNNING"
+    };
     let title = Paragraph::new(format!(
         "🧬 BioCoin: Living Blockchain | Tick {} | {}",
         app.tick, status
     ))
-    .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+    .style(
+        Style::default()
+            .fg(Color::Cyan)
+            .add_modifier(Modifier::BOLD),
+    )
     .block(Block::default().borders(Borders::ALL));
     f.render_widget(title, area);
 }
 
 fn render_stats(f: &mut Frame, area: Rect, app: &App) {
-    let honest = app.network.validators.iter().filter(|v| !v.is_malicious).count();
-    let malicious = app.network.validators.iter().filter(|v| v.is_malicious).count();
+    let honest = app
+        .network
+        .validators
+        .iter()
+        .filter(|v| !v.is_malicious)
+        .count();
+    let malicious = app
+        .network
+        .validators
+        .iter()
+        .filter(|v| v.is_malicious)
+        .count();
     let total = app.network.validators.len();
 
     let items = vec![
@@ -159,8 +187,14 @@ fn render_stats(f: &mut Frame, area: Rect, app: &App) {
             .style(Style::default().fg(Color::Red)),
         ListItem::new(format!("Total Population: {}", total)),
         ListItem::new(""),
-        ListItem::new(format!("⛓️  Blocks Finalized: {}", app.network.finalized_chain.len())),
-        ListItem::new(format!("📦 Pending Blocks: {}", app.network.pending_blocks.len())),
+        ListItem::new(format!(
+            "⛓️  Blocks Finalized: {}",
+            app.network.finalized_chain.len()
+        )),
+        ListItem::new(format!(
+            "📦 Pending Blocks: {}",
+            app.network.pending_blocks.len()
+        )),
         ListItem::new(""),
         ListItem::new(format!("🧬 Births: {}", app.network.births)),
         ListItem::new(format!("💀 Deaths: {}", app.network.deaths)),
@@ -172,7 +206,11 @@ fn render_stats(f: &mut Frame, area: Rect, app: &App) {
         )),
     ];
 
-    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("📊 Statistics"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("📊 Statistics"),
+    );
     f.render_widget(list, area);
 }
 
@@ -193,7 +231,12 @@ fn render_population_chart(f: &mut Frame, area: Rect, app: &App) {
         .map(|(t, _, m)| (*t as f64, *m as f64))
         .collect();
 
-    let max_pop = app.history.iter().map(|(_, h, m)| h + m).max().unwrap_or(10) as f64;
+    let max_pop = app
+        .history
+        .iter()
+        .map(|(_, h, m)| h + m)
+        .max()
+        .unwrap_or(10) as f64;
 
     let datasets = vec![
         Dataset::default()
@@ -250,23 +293,21 @@ fn render_validators(f: &mut Frame, area: Rect, app: &App) {
         .map(|v| {
             let marker = if v.is_malicious { "🔴" } else { "🟢" };
             let energy_bar = "█".repeat((v.energy / 100).min(10) as usize);
-            ListItem::new(format!(
-                "{} V{}: {} {}",
-                marker, v.id, energy_bar, v.energy
-            ))
-            .style(if v.is_malicious {
-                Style::default().fg(Color::Red)
-            } else {
-                Style::default().fg(Color::Green)
-            })
+            ListItem::new(format!("{} V{}: {} {}", marker, v.id, energy_bar, v.energy)).style(
+                if v.is_malicious {
+                    Style::default().fg(Color::Red)
+                } else {
+                    Style::default().fg(Color::Green)
+                },
+            )
         })
         .collect();
 
-    let list = List::new(items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title(format!("🧬 Validators (showing {}/{})", item_count, app.network.validators.len())),
-    );
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title(format!(
+        "🧬 Validators (showing {}/{})",
+        item_count,
+        app.network.validators.len()
+    )));
     f.render_widget(list, area);
 }
 
@@ -275,11 +316,13 @@ fn render_energy_chart(f: &mut Frame, area: Rect, app: &App) {
         return;
     }
 
-    let datasets = vec![Dataset::default()
-        .name("Avg Energy")
-        .marker(symbols::Marker::Braille)
-        .style(Style::default().fg(Color::Yellow))
-        .data(&app.energy_history)];
+    let datasets = vec![
+        Dataset::default()
+            .name("Avg Energy")
+            .marker(symbols::Marker::Braille)
+            .style(Style::default().fg(Color::Yellow))
+            .data(&app.energy_history),
+    ];
 
     let min_tick = app.energy_history.first().map(|(t, _)| *t).unwrap_or(0.0);
     let max_tick = app.energy_history.last().map(|(t, _)| *t).unwrap_or(100.0);

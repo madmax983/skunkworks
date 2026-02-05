@@ -1,4 +1,3 @@
-#![cfg(test)]
 #[cfg(feature = "nova")]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};

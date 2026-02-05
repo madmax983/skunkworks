@@ -1,7 +1,7 @@
+use crate::terrain::{Terrain, NODE_GAP, NODE_WIDTH, START_X};
+use crate::walker::Walker;
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use crate::walker::Walker;
-use crate::terrain::{Terrain, NODE_WIDTH, NODE_GAP, START_X};
 
 pub fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
@@ -20,11 +20,7 @@ pub fn camera_follow(
     }
 }
 
-pub fn draw_terrain(
-    mut commands: Commands,
-    terrain: Res<Terrain>,
-    mut scanned: Local<bool>,
-) {
+pub fn draw_terrain(mut commands: Commands, terrain: Res<Terrain>, mut scanned: Local<bool>) {
     if *scanned || terrain.nodes.is_empty() {
         return;
     }
@@ -61,10 +57,7 @@ pub fn draw_terrain(
     *scanned = true;
 }
 
-pub fn draw_walker(
-    mut gizmos: Gizmos,
-    query: Query<&Walker>,
-) {
+pub fn draw_walker(mut gizmos: Gizmos, query: Query<&Walker>) {
     let red = Color::srgb(1.0, 0.0, 0.0);
     let green = Color::srgb(0.0, 1.0, 0.0);
     let blue = Color::srgb(0.0, 0.0, 1.0);

@@ -309,33 +309,37 @@ fn run_app<B: ratatui::backend::Backend>(
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
-
                 // Handle Editing Mode
                 if let InputMode::Editing = app_state.input_mode {
                     match key.code {
                         KeyCode::Enter => {
-                             // Parse and commit
-                             match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
-                                 Ok(mut pairs) => {
-                                     let pair = pairs.next().unwrap();
-                                     // We need to convert pair to Gene.
-                                     // Gene::from_pair is available in crate::ast::Gene
-                                     let gene = Gene::from_pair(pair);
+                            // Parse and commit
+                            match ChimeraParser::parse(Rule::gene, &app_state.input_buffer) {
+                                Ok(mut pairs) => {
+                                    let pair = pairs.next().unwrap();
+                                    // We need to convert pair to Gene.
+                                    // Gene::from_pair is available in crate::ast::Gene
+                                    let gene = Gene::from_pair(pair);
 
-                                     // Update VM
-                                     if app_state.selected_strand < vm.dna.helix.strands.len() {
-                                         if app_state.selected_gene < vm.dna.helix.strands[app_state.selected_strand].genes.len() {
-                                             vm.dna.helix.strands[app_state.selected_strand].genes[app_state.selected_gene] = gene;
-                                             app_state.status_msg = "Gene updated successfully".to_string();
-                                         }
-                                     }
-                                     app_state.input_mode = InputMode::Normal;
-                                     app_state.input_buffer.clear();
-                                 }
-                                 Err(e) => {
-                                     app_state.status_msg = format!("Parse Error: {}", e);
-                                 }
-                             }
+                                    // Update VM
+                                    if app_state.selected_strand < vm.dna.helix.strands.len()
+                                        && app_state.selected_gene
+                                            < vm.dna.helix.strands[app_state.selected_strand]
+                                                .genes
+                                                .len()
+                                    {
+                                        vm.dna.helix.strands[app_state.selected_strand].genes
+                                            [app_state.selected_gene] = gene;
+                                        app_state.status_msg =
+                                            "Gene updated successfully".to_string();
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                Err(e) => {
+                                    app_state.status_msg = format!("Parse Error: {}", e);
+                                }
+                            }
                         }
                         KeyCode::Esc => {
                             app_state.input_mode = InputMode::Normal;
@@ -356,10 +360,8 @@ fn run_app<B: ratatui::backend::Backend>(
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
                     // Only handle receptor input if not a control key
-                    if c != 'q' && c != ' ' && c != 'm' && c != 'c' {
-                        if vm.handle_input(c) {
-                            continue;
-                        }
+                    if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
+                        continue;
                     }
                 }
 
@@ -391,7 +393,8 @@ fn run_app<B: ratatui::backend::Backend>(
                             // Prev strand
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
-                                let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                let g_len =
+                                    vm.dna.helix.strands[app_state.selected_strand].genes.len();
                                 if g_len > 0 {
                                     app_state.selected_gene = g_len - 1;
                                 } else {
@@ -401,38 +404,45 @@ fn run_app<B: ratatui::backend::Backend>(
                         }
                     }
                     KeyCode::Right => {
-                         // Maybe jump strands? For now just same as down/up or maybe nothing
+                        // Maybe jump strands? For now just same as down/up or maybe nothing
                     }
                     KeyCode::Left => {
-                         // Same
+                        // Same
                     }
                     KeyCode::Enter => {
                         // Start Editing
-                         if app_state.selected_strand < vm.dna.helix.strands.len() {
-                             let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                             if app_state.selected_gene < g_len {
-                                 app_state.input_mode = InputMode::Editing;
-                                 // Pre-fill buffer with current gene?
-                                 let gene = &vm.dna.helix.strands[app_state.selected_strand].genes[app_state.selected_gene];
-                                 // We don't have a gene to string converter easily accessible that matches parser format perfecty
-                                 // But we can format it manually.
-                                 // gene.op is Display, args are Debug.
-                                 // Let's rely on user typing from scratch or empty buffer for now,
-                                 // or try to reconstruct.
-                                 // Format: name(arg1 arg2)
-                                 let mut s = format!("{}(", gene.op);
-                                 for (i, arg) in gene.args.iter().enumerate() {
-                                     if i > 0 { s.push(' '); }
-                                     match arg {
-                                         crate::ast::Nucleotide::Number(n) => s.push_str(&n.to_string()),
-                                         crate::ast::Nucleotide::String(str_val) => s.push_str(&format!("\"{}\"", str_val)),
-                                         crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
-                                     }
-                                 }
-                                 s.push(')');
-                                 app_state.input_buffer = s;
-                             }
-                         }
+                        if app_state.selected_strand < vm.dna.helix.strands.len() {
+                            let g_len = vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                            if app_state.selected_gene < g_len {
+                                app_state.input_mode = InputMode::Editing;
+                                // Pre-fill buffer with current gene?
+                                let gene = &vm.dna.helix.strands[app_state.selected_strand].genes
+                                    [app_state.selected_gene];
+                                // We don't have a gene to string converter easily accessible that matches parser format perfecty
+                                // But we can format it manually.
+                                // gene.op is Display, args are Debug.
+                                // Let's rely on user typing from scratch or empty buffer for now,
+                                // or try to reconstruct.
+                                // Format: name(arg1 arg2)
+                                let mut s = format!("{}(", gene.op);
+                                for (i, arg) in gene.args.iter().enumerate() {
+                                    if i > 0 {
+                                        s.push(' ');
+                                    }
+                                    match arg {
+                                        crate::ast::Nucleotide::Number(n) => {
+                                            s.push_str(&n.to_string())
+                                        }
+                                        crate::ast::Nucleotide::String(str_val) => {
+                                            s.push_str(&format!("\"{}\"", str_val))
+                                        }
+                                        crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
+                                    }
+                                }
+                                s.push(')');
+                                app_state.input_buffer = s;
+                            }
+                        }
                     }
                     _ => {}
                 }

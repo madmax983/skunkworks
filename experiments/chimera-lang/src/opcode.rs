@@ -110,6 +110,10 @@ pub enum OpCode {
     Spawn,
     #[cfg(feature = "nova")]
     Simulate,
+    #[cfg(feature = "nova")]
+    Dream,
+    #[cfg(feature = "nova")]
+    Chemotaxis,
 
     Unknown(String),
 }
@@ -224,6 +228,10 @@ impl FromStr for OpCode {
             "spawn" => Ok(OpCode::Spawn),
             #[cfg(feature = "nova")]
             "simulate" => Ok(OpCode::Simulate),
+            #[cfg(feature = "nova")]
+            "dream" => Ok(OpCode::Dream),
+            #[cfg(feature = "nova")]
+            "chemotaxis" => Ok(OpCode::Chemotaxis),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -338,6 +346,10 @@ impl fmt::Display for OpCode {
             OpCode::Spawn => write!(f, "spawn"),
             #[cfg(feature = "nova")]
             OpCode::Simulate => write!(f, "simulate"),
+            #[cfg(feature = "nova")]
+            OpCode::Dream => write!(f, "dream"),
+            #[cfg(feature = "nova")]
+            OpCode::Chemotaxis => write!(f, "chemotaxis"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

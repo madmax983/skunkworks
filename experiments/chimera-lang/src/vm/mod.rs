@@ -502,6 +502,8 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Simulate
+            | OpCode::Dream
+            | OpCode::Chemotaxis
             | OpCode::Sporulate
             | OpCode::Germinate
             | OpCode::Spawn
