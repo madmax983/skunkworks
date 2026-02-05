@@ -1,0 +1,28 @@
+[package]
+name = "clockwork-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy_prototype_lyon = "0.12"
+bevy = { version = "0.14", default-features = false, features = [
+    "animation",
+    "bevy_asset",
+    "bevy_core_pipeline",
+    "bevy_gizmos",
+    "bevy_render",
+    "bevy_scene",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "bevy_winit",
+    "multi_threaded",
+    "png",
+    "hdr",
+    "x11",
+    "tonemapping_luts",
+    "smaa_luts",
+    "default_font",
+] }
+bevy_rapier2d = "0.27"
+chimera-lang = { path = "../chimera-lang" }
