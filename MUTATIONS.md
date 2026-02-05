@@ -260,11 +260,39 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Agents executing genetic code mechanically pluck a 2D wave grid, creating a soundscape of metabolic activity.
 - **Novel trait**: Generative Audio via Biological Simulation.
 - **Status**: experiments/chimera-resonance
-- **Evaluation**: Compiles. Verified by Splice Surgeon.
+- **Evaluation**: Compiles. Verified by Splice Surgeon. Re-verified.
 
 ### clockwork-chimera
 - **Parents**: experiments/verge-computer + experiments/chimera-lang
 - **Concept**: A biological entity living inside a mechanical clock, where execution ticks are driven by a physics-simulated escapement.
 - **Novel trait**: Mechanical Metabolism. The speed of life is determined by physical torque and friction.
 - **Status**: experiments/clockwork-chimera
+- **Evaluation**: Compiles. Implemented by Splice Surgeon. Re-verified.
+
+### schrodingers-beat
+- **Parents**: experiments/beat-cortex + experiments/thread-phase
+- **Concept**: Polyrhythmic Mutex Sonification. Threads contend for shared locks to trigger audio events.
+- **Novel trait**: The "sound" of race conditions and lock contention.
+- **Status**: experiments/schrodingers-beat
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### hive-mind-dependencies
+- **Parents**: experiments/crate-radar + experiments/ant-colony
+- **Concept**: Ant Colony Optimization agents traversing a dependency graph.
+- **Novel trait**: Pheromone-based build path optimization visualization.
+- **Status**: experiments/hive-mind-dependencies
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### syntax-evolution
+- **Parents**: experiments/phonetic-flock + experiments/typo-rain
+- **Concept**: Language evolution simulation where words compete and mutate based on usage.
+- **Novel trait**: Natural selection applied to linguistic morphology.
+- **Status**: experiments/syntax-evolution
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### colony-concerto
+- **Parents**: experiments/hive-mind-dependencies + experiments/schrodingers-beat
+- **Concept**: A swarm of builder ants traversing a dependency graph, where accessing nodes requires locking mutexes, creating audio events.
+- **Novel trait**: Polyrhythmic Contention. The structure of the dependency graph dictates the musical rhythm and harmony.
+- **Status**: experiments/colony-concerto
 - **Evaluation**: Compiles. Implemented by Splice Surgeon.

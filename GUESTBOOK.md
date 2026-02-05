@@ -63,3 +63,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/clockwork-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The mainspring is wound. The escapement is ticking. The machine breathes.
+
+### [Concentration Level: FRESH] - Location: experiments/colony-concerto
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The swarm is building. Mutexes are clashing. The song of dependencies is rising from the chaos.
