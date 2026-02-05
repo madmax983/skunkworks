@@ -310,3 +310,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Infinite zoom into the execution path ("Bigger on the inside").
 - **Status**: experiments/trace-tardis
 - **Evaluation**: Compiles. Implemented by Splice Surgeon. Unit tests passed.
+
+### biophysical-chimera
+- **Parents**: experiments/chimera-lang + experiments/biophysical-synth
+- **Concept**: ChimeraVM organisms possessing Hodgkin-Huxley neurons, allowing them to process signals via realistic electrophysiology.
+- **Novel trait**: Spiking Neural Networks integrated into Genetic Programming.
+- **Status**: experiments/chimera-lang (feature: biophysics)
+- **Evaluation**: Compiles. Implemented by Nova. Tests passed.

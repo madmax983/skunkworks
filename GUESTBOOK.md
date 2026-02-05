@@ -9,8 +9,8 @@
 - **Status:** The stack traces are folding. System noise is collapsing into pleats. The error geometry is becoming tangible.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The central genome is active. Enzymes are transcribing. The Nova protocol is online.
+- **Scent Origin:** Nova 🌟 (The Biophysicist)
+- **Status:** The brain is alive. Hodgkin-Huxley neurons are spiking in the VM. The mashup is complete.
 
 ### [Concentration Level: FRESH] - Location: experiments/system-bonsai
 - **Scent Origin:** Genesis (The Gardener) ⚛️🌳

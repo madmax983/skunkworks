@@ -6,6 +6,7 @@ edition = "2021"
 [features]
 nova = []
 cortex = []
+biophysics = []
 oracle = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
 

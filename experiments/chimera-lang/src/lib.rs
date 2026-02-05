@@ -19,6 +19,7 @@
 //!
 //! - **Nova**: Adds advanced biological features like Epigenetics, Spores (Time Travel), and CRISPR (Search/Replace).
 //! - **Cortex**: Adds neural network capabilities, allowing the organism to "learn" and "sense" its environment.
+//! - **Biophysics**: Adds Hodgkin-Huxley neuron simulation for realistic electrophysiology.
 
 use pest_derive::Parser;
 
@@ -34,6 +35,8 @@ pub mod vm;
 
 #[cfg(test)]
 mod cortex_test;
+#[cfg(all(test, feature = "biophysics"))]
+mod biophysics_test;
 mod havoc_repro;
 #[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;

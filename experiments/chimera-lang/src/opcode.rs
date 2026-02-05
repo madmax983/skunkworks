@@ -149,6 +149,28 @@ pub enum OpCode {
     #[cfg(feature = "cortex")]
     Gate,
 
+    // Biophysics Features
+    /// **[Biophysics]** Spawns a Hodgkin-Huxley neuron at the specified grid location.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "biophysics")]
+    NeuroGenesis,
+    /// **[Biophysics]** Injects current into a neuron.
+    ///
+    /// **Stack:** `[ ..., amount, y, x ] -> [ ... ]`
+    #[cfg(feature = "biophysics")]
+    Stimulate,
+    /// **[Biophysics]** Reads the membrane potential (voltage) of a neuron.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., voltage ]`
+    #[cfg(feature = "biophysics")]
+    Dendrite,
+    /// **[Biophysics]** Connects a neuron to another target (Synapse/Output).
+    ///
+    /// **Stack:** `[ ..., y_target, x_target, y_source, x_source ] -> [ ... ]`
+    #[cfg(feature = "biophysics")]
+    Axon,
+
     // Nova Features
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
     ///
@@ -654,6 +676,15 @@ impl FromStr for OpCode {
             #[cfg(feature = "cortex")]
             "gate" => Ok(OpCode::Gate),
 
+            #[cfg(feature = "biophysics")]
+            "neuro_genesis" => Ok(OpCode::NeuroGenesis),
+            #[cfg(feature = "biophysics")]
+            "stimulate" => Ok(OpCode::Stimulate),
+            #[cfg(feature = "biophysics")]
+            "dendrite" => Ok(OpCode::Dendrite),
+            #[cfg(feature = "biophysics")]
+            "axon" => Ok(OpCode::Axon),
+
             #[cfg(feature = "nova")]
             "sporulate" => Ok(OpCode::Sporulate),
             #[cfg(feature = "nova")]
@@ -815,6 +846,15 @@ impl fmt::Display for OpCode {
             OpCode::Sense => write!(f, "sense"),
             #[cfg(feature = "cortex")]
             OpCode::Gate => write!(f, "gate"),
+
+            #[cfg(feature = "biophysics")]
+            OpCode::NeuroGenesis => write!(f, "neuro_genesis"),
+            #[cfg(feature = "biophysics")]
+            OpCode::Stimulate => write!(f, "stimulate"),
+            #[cfg(feature = "biophysics")]
+            OpCode::Dendrite => write!(f, "dendrite"),
+            #[cfg(feature = "biophysics")]
+            OpCode::Axon => write!(f, "axon"),
 
             #[cfg(feature = "nova")]
             OpCode::Sporulate => write!(f, "sporulate"),
