@@ -197,6 +197,10 @@ where
                             format!("{}", (n.abs() % 10)),
                             Style::default().fg(Color::Green),
                         ),
+                        crate::vm::Value::Junction(_, _) => (
+                            "J".to_string(),
+                            Style::default().fg(Color::Yellow),
+                        ),
                         crate::vm::Value::Str(s) => {
                             let symbol = match s.as_str() {
                                 "virus" => "V",
@@ -474,6 +478,24 @@ where
                                             s.push_str(&format!("\"{}\"", str_val))
                                         }
                                         crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
+                                        crate::ast::Nucleotide::Junction(t, vals) => {
+                                            let t_str = match t {
+                                                crate::ast::JunctionType::Any => "any",
+                                                crate::ast::JunctionType::All => "all",
+                                            };
+                                            s.push_str(t_str);
+                                            s.push('(');
+                                            for (k, v) in vals.iter().enumerate() {
+                                                if k > 0 { s.push(' '); }
+                                                match v {
+                                                    crate::ast::Nucleotide::Number(n) => s.push_str(&n.to_string()),
+                                                    crate::ast::Nucleotide::String(str_val) => s.push_str(&format!("\"{}\"", str_val)),
+                                                    crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
+                                                    crate::ast::Nucleotide::Junction(_, _) => s.push_str("nested"),
+                                                }
+                                            }
+                                            s.push(')');
+                                        }
                                     }
                                 }
                                 s.push(')');
