@@ -89,6 +89,8 @@ mod nova_taxis_test;
 mod nova_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_void_test;
 #[cfg(test)]
 mod nova_waste_test;
 #[cfg(all(test, feature = "oracle"))]

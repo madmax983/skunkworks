@@ -603,10 +603,29 @@ impl ChimeraVM {
             nova::OrganelleType::Ribosome => {
                 self.process_ribosome(organelle);
             }
+            nova::OrganelleType::Void => {
+                let (cy, cx) = self.context_loc;
+                // Void consumes grid cell if not 0
+                if !matches!(self.grid[cy][cx], Value::Int(0)) {
+                    self.grid[cy][cx] = Value::Int(0);
+                    self.energy = self.energy.saturating_add(1);
+                    self.output
+                        .push(format!("VOID: Consumed at {},{}", cx, cy));
+                }
+
+                // Brownian Motion
+                let mut rng = rand::thread_rng();
+                let dy = rng.gen_range(-1..=1);
+                let dx = rng.gen_range(-1..=1);
+                organelle.direction = (dy, dx);
+            }
             nova::OrganelleType::Worker => {}
         }
 
-        if !matches!(organelle.kind, nova::OrganelleType::Ribosome) {
+        if !matches!(
+            organelle.kind,
+            nova::OrganelleType::Ribosome | nova::OrganelleType::Void
+        ) {
             self.execute_organelle_dna(organelle);
         }
 
@@ -1039,6 +1058,9 @@ impl ChimeraVM {
             | OpCode::Rift
             | OpCode::Seal
             | OpCode::Shape
+            | OpCode::Void
+            | OpCode::Supernova
+            | OpCode::Singularity
             | OpCode::Simulate
             | OpCode::Dream
             | OpCode::Chemotaxis
