@@ -534,6 +534,9 @@ impl ChimeraVM {
                                 "<" => organelle.direction = (0, -1),
                                 "^" => organelle.direction = (-1, 0),
                                 "v" => organelle.direction = (1, 0),
+                                "+" | "-" | "*" | "/" | "%" | "=" | "!" | ":" | ";" => {
+                                    nova::exec_ribosome_glyph(self, s.as_str());
+                                }
                                 _ => {
                                     if let Ok(op) = s.parse::<OpCode>() {
                                         // Execute OpCode (with no args for simplicity in grid mode)

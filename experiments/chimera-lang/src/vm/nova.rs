@@ -2057,3 +2057,120 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
         _ => None,
     }
 }
+
+#[cfg(feature = "nova")]
+pub fn exec_ribosome_glyph(vm: &mut ChimeraVM, glyph: &str) {
+    match glyph {
+        "+" => {
+             if vm.stack.len() >= 2 {
+                 let b = vm.stack.pop().unwrap();
+                 let a = vm.stack.pop().unwrap();
+                 if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                     vm.stack.push(Value::Int(ia.wrapping_add(ib)));
+                 } else {
+                     vm.output.push("Error: Type mismatch for +".to_string());
+                 }
+             }
+        }
+        "-" => {
+             if vm.stack.len() >= 2 {
+                 let b = vm.stack.pop().unwrap();
+                 let a = vm.stack.pop().unwrap();
+                 if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                     vm.stack.push(Value::Int(ia.wrapping_sub(ib)));
+                 } else {
+                     vm.output.push("Error: Type mismatch for -".to_string());
+                 }
+             }
+        }
+        "*" => {
+             if vm.stack.len() >= 2 {
+                 let b = vm.stack.pop().unwrap();
+                 let a = vm.stack.pop().unwrap();
+                 if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                     vm.stack.push(Value::Int(ia.wrapping_mul(ib)));
+                 } else {
+                     vm.output.push("Error: Type mismatch for *".to_string());
+                 }
+             }
+        }
+        "/" => {
+             if vm.stack.len() >= 2 {
+                 let b = vm.stack.pop().unwrap();
+                 let a = vm.stack.pop().unwrap();
+                 if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                     if ib != 0 {
+                         vm.stack.push(Value::Int(ia / ib));
+                     } else {
+                         vm.output.push("Error: Division by zero".to_string());
+                     }
+                 } else {
+                     vm.output.push("Error: Type mismatch for /".to_string());
+                 }
+             }
+        }
+        "%" => {
+             if vm.stack.len() >= 2 {
+                 let b = vm.stack.pop().unwrap();
+                 let a = vm.stack.pop().unwrap();
+                 if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                     if ib != 0 {
+                         vm.stack.push(Value::Int(ia % ib));
+                     } else {
+                         vm.output.push("Error: Division by zero".to_string());
+                     }
+                 } else {
+                     vm.output.push("Error: Type mismatch for %".to_string());
+                 }
+             }
+        }
+        "=" => {
+             if vm.stack.len() >= 2 {
+                 let b = vm.stack.pop().unwrap();
+                 let a = vm.stack.pop().unwrap();
+                 let res = if a == b { 1 } else { 0 };
+                 vm.stack.push(Value::Int(res));
+             }
+        }
+        "!" => {
+             if let Some(val) = vm.stack.pop() {
+                 match val {
+                     Value::Int(i) => vm.stack.push(Value::Int(if i == 0 { 1 } else { 0 })),
+                     _ => vm.stack.push(Value::Int(0)),
+                 }
+             }
+        }
+        ":" => {
+            // Write Relative: val, dy, dx
+             if vm.stack.len() >= 3 {
+                 let x_val = vm.stack.pop().unwrap();
+                 let y_val = vm.stack.pop().unwrap();
+                 let val = vm.stack.pop().unwrap();
+
+                 if let (Value::Int(dy), Value::Int(dx)) = (y_val, x_val) {
+                     let (cy, cx) = vm.context_loc;
+                     if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                         vm.grid[ny][nx] = val;
+                     }
+                 }
+             }
+        }
+        ";" => {
+            // Read Relative: dy, dx
+             if vm.stack.len() >= 2 {
+                 let x_val = vm.stack.pop().unwrap();
+                 let y_val = vm.stack.pop().unwrap();
+
+                 if let (Value::Int(dy), Value::Int(dx)) = (y_val, x_val) {
+                     let (cy, cx) = vm.context_loc;
+                     if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                         vm.stack.push(vm.grid[ny][nx].clone());
+                     } else {
+                         vm.stack.push(Value::Int(0)); // Boundary
+                     }
+                 }
+             }
+        }
+        _ => {}
+    }
+}

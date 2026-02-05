@@ -59,6 +59,23 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
         *   `1`: **Chloroplast** (Photosynthesis). Gains energy from `light_grid` (passive).
         *   `2`: **Mitochondria** (Powerhouse). Reduces metabolic cost.
         *   `3`: **Lysosome** (Recycler). Consumes `waste_grid` to produce energy.
+        *   `4`: **Ribosome** (Alchemist). Executes instructions found on the grid.
+
+### Alchemy (Nova Feature)
+Alchemy transforms the Grid into a computational substrate, inspired by cellular automata logic (like Orca). **Ribosome** organelles can interpret single-character Glyphs found on the grid to perform complex stack and grid operations.
+
+*   **Arithmetic**:
+    *   `+`: Pop `b`, `a`. Push `a + b`.
+    *   `-`: Pop `b`, `a`. Push `a - b`.
+    *   `*`: Pop `b`, `a`. Push `a * b`.
+    *   `/`: Pop `b`, `a`. Push `a / b`.
+    *   `%`: Pop `b`, `a`. Push `a % b`.
+*   **Logic**:
+    *   `=`: Pop `b`, `a`. Push `1` if `a == b` else `0`.
+    *   `!`: Pop `a`. Push `1` if `a == 0` else `0`.
+*   **I/O**:
+    *   `:`: Pop `val`, `dy`, `dx`. Write `val` to `grid[y+dy][x+dx]` (Relative).
+    *   `;`: Pop `dy`, `dx`. Read value from `grid[y+dy][x+dx]` (Relative). Push to stack.
 
 ### Petri Dish (New!)
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
