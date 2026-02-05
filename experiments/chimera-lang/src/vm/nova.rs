@@ -44,6 +44,7 @@ pub enum OrganelleType {
     Chloroplast,  // Generates energy from light
     Mitochondria, // Reduces metabolic cost / generates base energy
     Lysosome,     // Consumes waste to produce energy
+    Ribosome,     // Executes grid instructions
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -57,6 +58,7 @@ pub struct Organelle {
     pub recursion_depth: usize,
     pub halted: bool,
     pub kind: OrganelleType,
+    pub direction: (i8, i8),
 }
 
 #[cfg(feature = "nova")]
@@ -235,11 +237,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(t), Value::Int(idx)) = (type_val, idx_val) {
                     let s_idx = idx as usize;
                     if s_idx < vm.dna.helix.strands.len() {
-                        let kind = match t {
-                            1 => OrganelleType::Chloroplast,
-                            2 => OrganelleType::Mitochondria,
-                            3 => OrganelleType::Lysosome,
-                            _ => OrganelleType::Worker,
+                        let (kind, direction) = match t {
+                            1 => (OrganelleType::Chloroplast, (0, 0)),
+                            2 => (OrganelleType::Mitochondria, (0, 0)),
+                            3 => (OrganelleType::Lysosome, (0, 0)),
+                            4 => (OrganelleType::Ribosome, (0, 1)), // Default East
+                            _ => (OrganelleType::Worker, (0, 0)),
                         };
 
                         let organelle = Organelle {
@@ -250,6 +253,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             recursion_depth: 0,
                             halted: false,
                             kind: kind.clone(),
+                            direction,
                         };
                         vm.organelles.push(organelle);
                         vm.energy = vm.energy.saturating_sub(20);

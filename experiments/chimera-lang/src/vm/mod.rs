@@ -392,29 +392,57 @@ impl ChimeraVM {
                             self.energy = self.energy.saturating_add(consumed / 5);
                         }
                     }
+                    nova::OrganelleType::Ribosome => {
+                        let (cy, cx) = self.context_loc;
+                        let val = self.grid[cy][cx].clone();
+                        match val {
+                            Value::Int(n) => self.stack.push(Value::Int(n)),
+                            Value::Str(s) => match s.as_str() {
+                                ">" => organelle.direction = (0, 1),
+                                "<" => organelle.direction = (0, -1),
+                                "^" => organelle.direction = (-1, 0),
+                                "v" => organelle.direction = (1, 0),
+                                _ => {
+                                    if let Ok(op) = s.parse::<OpCode>() {
+                                        // Execute OpCode (with no args for simplicity in grid mode)
+                                        // Ignoring jump targets for Ribosome as it doesn't use IP
+                                        let _ = self.execute_gene_inner(op, &[]);
+                                    }
+                                }
+                            },
+                        }
+                        // Move
+                        let (dy, dx) = organelle.direction;
+                        let new_y = (cy as i64 + dy as i64).rem_euclid(16) as usize;
+                        let new_x = (cx as i64 + dx as i64).rem_euclid(16) as usize;
+                        self.context_loc = (new_y, new_x);
+                    }
                     nova::OrganelleType::Worker => {}
                 }
 
-                if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
-                    let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-                    if self.ip.1 < strand_len {
-                        let (gene_op, gene_args) = {
-                            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-                            (gene.op.clone(), gene.args.clone())
-                        };
+                // Ribosomes do not execute DNA
+                if !matches!(organelle.kind, nova::OrganelleType::Ribosome) {
+                    if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
+                        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                        if self.ip.1 < strand_len {
+                            let (gene_op, gene_args) = {
+                                let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                                (gene.op.clone(), gene.args.clone())
+                            };
 
-                        let jump_target = self.execute_gene(gene_op, &gene_args);
+                            let jump_target = self.execute_gene(gene_op, &gene_args);
 
-                        if let Some(target) = jump_target {
-                            self.ip = target;
+                            if let Some(target) = jump_target {
+                                self.ip = target;
+                            } else {
+                                self.ip.1 += 1;
+                            }
                         } else {
-                            self.ip.1 += 1;
+                            organelle.halted = true;
                         }
                     } else {
                         organelle.halted = true;
                     }
-                } else {
-                    organelle.halted = true;
                 }
 
                 // Swap back
