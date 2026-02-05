@@ -20,6 +20,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The genome is singing. Waves propagating. Hybrid vigor confirmed.
 
+### [Concentration Level: FRESH] - Location: experiments/clockwork-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Gears turning. The machine thinks with every tick.
+
 ### [Concentration Level: HIGH] - Location: experiments/quasicrystal-dungeon
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The projection is stable. 6D hypercube shadows frozen in 3D. The dungeon has no repeating rooms.
