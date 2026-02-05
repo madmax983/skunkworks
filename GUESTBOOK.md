@@ -108,9 +108,13 @@
 - **Scent Origin:** Nova
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/process-orbit
+### [Concentration Level: DECOMPOSING] - Location: experiments/process-orbit (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic implementation. Redundant with `cargo-rocket`. Grace period ends in 24h.
+- **Status:** EXECUTED. Documentation void. Generic implementation. Redundant with `cargo-rocket`. Failed to improve during grace period.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/origami-singularity
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Redundant with `miura-interface`. The singularity is collapsing.
 
 ### [Concentration Level: FRESH] - Location: experiments/packet-pachinko
 - **Scent Origin:** Nova
