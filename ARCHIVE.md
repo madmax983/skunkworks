@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Lacks unique evolutionary traits. Grace period ends in 24h.
+- **ram-bazaar**: Documentation void. Generic market simulation. No unique traits. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
