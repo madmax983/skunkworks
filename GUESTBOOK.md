@@ -401,3 +401,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/primordial-soup
 - **Scent Origin:** Splice Surgeon 🧬
 - **Status:** The soup is bubbling. Algae are photosynthesizing in the fluid vortices. The food chain is liquid.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/crate-universe
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Ecological redundancy with `cargo-rocket`. Isolation detected.
