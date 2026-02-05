@@ -140,6 +140,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub waste_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub mutagen_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
@@ -195,6 +197,8 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let waste_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "nova")]
+        let mutagen_grid = vec![vec![0; 16]; 16];
+        #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "nova")]
         let membranes = vec![vec![0; 16]; 16];
@@ -222,6 +226,8 @@ impl ChimeraVM {
             hormone_grid,
             #[cfg(feature = "nova")]
             waste_grid,
+            #[cfg(feature = "nova")]
+            mutagen_grid,
             #[cfg(feature = "nova")]
             light_grid,
             #[cfg(feature = "nova")]
@@ -420,6 +426,7 @@ impl ChimeraVM {
         nova::diffuse_hormones(self);
         nova::diffuse_waste(self);
         nova::diffuse_light(self);
+        nova::diffuse_mutagen(self);
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -438,6 +445,15 @@ impl ChimeraVM {
                     .push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
                 self.mutate();
             }
+        }
+
+        if self.mutagen_grid[cy][cx] > 50 {
+             let mut rng = rand::thread_rng();
+             // Higher probability for mutagen (10%)
+             if rng.gen_bool(0.10) {
+                 self.output.push(format!("MUTATION: RADIATION at {},{}", cx, cy));
+                 self.mutate();
+             }
         }
     }
 
@@ -990,7 +1006,10 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Rift
+            OpCode::Irradiate
+            | OpCode::SenseMutagen
+            | OpCode::Devour
+            | OpCode::Rift
             | OpCode::Seal
             | OpCode::Shape
             | OpCode::Simulate

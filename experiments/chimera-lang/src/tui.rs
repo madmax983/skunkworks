@@ -275,6 +275,16 @@ where
                             }
                         }
 
+                        #[cfg(feature = "nova")]
+                        if vm.mutagen_grid[y][x] > 20 {
+                            // Purple haze for radiation
+                            if vm.mutagen_grid[y][x] > 50 {
+                                style = style.bg(Color::Magenta).fg(Color::White);
+                            } else {
+                                style = style.fg(Color::Magenta);
+                            }
+                        }
+
                         if let Some(organelle) =
                             vm.organelles.iter().find(|o| o.context_loc == (y, x))
                         {
