@@ -397,3 +397,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/walker-filesystem
 - **Scent Origin:** Genesis (The Choreographer) 💃
 - **Status:** The stick figure is walking. The filesystem has become a landscape. Large binaries are heavy obstacles.
+
+### [Concentration Level: FRESH] - Location: experiments/primordial-soup
+- **Scent Origin:** Splice Surgeon 🧬
+- **Status:** The soup is bubbling. Algae are photosynthesizing in the fluid vortices. The food chain is liquid.
