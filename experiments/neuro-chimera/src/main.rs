@@ -117,9 +117,7 @@ impl BioNetwork {
             layers.push(layer);
         }
 
-        Self {
-            layers,
-        }
+        Self { layers }
     }
 
     fn forward(&mut self, inputs: &[f64]) -> Vec<f64> {
@@ -132,7 +130,7 @@ impl BioNetwork {
                 // In Chimera, we put them on the grid.
                 let out = neuron.run(&current_inputs);
                 next_inputs.push(out.tanh()); // Activation function to keep stable? Or let VM handle it?
-                // Let's use tanh to normalize between layers so values don't explode
+                                              // Let's use tanh to normalize between layers so values don't explode
             }
             current_inputs = next_inputs;
         }
@@ -147,9 +145,17 @@ fn generate_random_dna() -> Dna {
     let mut genes = Vec::new();
 
     let ops = [
-        OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
-        OpCode::Dup, OpCode::Swap, OpCode::GRead, OpCode::GWrite,
-        OpCode::Brz, OpCode::Jump, // Flow control
+        OpCode::Push,
+        OpCode::Add,
+        OpCode::Sub,
+        OpCode::Mul,
+        OpCode::Div,
+        OpCode::Dup,
+        OpCode::Swap,
+        OpCode::GRead,
+        OpCode::GWrite,
+        OpCode::Brz,
+        OpCode::Jump, // Flow control
     ];
 
     for _ in 0..num_genes {
@@ -212,7 +218,9 @@ impl App {
     }
 
     fn evolve(&mut self) {
-        if self.paused { return; }
+        if self.paused {
+            return;
+        }
 
         let mut fitnesses: Vec<(usize, f64)> = Vec::new();
 
@@ -287,31 +295,40 @@ fn tournament(fitnesses: &[(usize, f64)]) -> usize {
 
 fn mutate_genome(dna: &mut Dna) {
     let mut rng = rand::thread_rng();
-    if dna.helix.strands.is_empty() { return; }
+    if dna.helix.strands.is_empty() {
+        return;
+    }
     let strand = &mut dna.helix.strands[0]; // Assume single strand for simplicity
 
     if rng.gen_bool(0.5) && !strand.genes.is_empty() {
         // Point mutation
         let idx = rng.gen_range(0..strand.genes.len());
         if rng.gen_bool(0.5) {
-             // Change Op
-             let ops = [OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Dup, OpCode::Drop, OpCode::Swap];
-             strand.genes[idx].op = ops[rng.gen_range(0..ops.len())].clone();
+            // Change Op
+            let ops = [
+                OpCode::Push,
+                OpCode::Add,
+                OpCode::Sub,
+                OpCode::Dup,
+                OpCode::Drop,
+                OpCode::Swap,
+            ];
+            strand.genes[idx].op = ops[rng.gen_range(0..ops.len())].clone();
         } else if !strand.genes[idx].args.is_empty() {
-             // Change Arg
-             strand.genes[idx].args[0] = Nucleotide::Number(rng.gen_range(-20..20));
+            // Change Arg
+            strand.genes[idx].args[0] = Nucleotide::Number(rng.gen_range(-20..20));
         }
     } else {
         // Structural mutation (Insert/Delete)
         if rng.gen_bool(0.5) && !strand.genes.is_empty() {
-             // Delete
-             let idx = rng.gen_range(0..strand.genes.len());
-             strand.genes.remove(idx);
+            // Delete
+            let idx = rng.gen_range(0..strand.genes.len());
+            strand.genes.remove(idx);
         } else {
-             // Insert
-             let op = OpCode::Push;
-             let args = vec![Nucleotide::Number(rng.gen_range(-10..10))];
-             strand.genes.push(Gene { op, args });
+            // Insert
+            let op = OpCode::Push;
+            let args = vec![Nucleotide::Number(rng.gen_range(-10..10))];
+            strand.genes.push(Gene { op, args });
         }
     }
 }
@@ -345,7 +362,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
 }
 
 fn ui(f: &mut Frame, app: &App) {
-     let vertical_chunks = Layout::default()
+    let vertical_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
             Constraint::Length(3),
@@ -377,9 +394,15 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
 
     let title = Paragraph::new(Span::styled(
         " NEURO-CHIMERA 🧬🧠 ",
-        Style::default().fg(Color::Green).add_modifier(Modifier::BOLD),
+        Style::default()
+            .fg(Color::Green)
+            .add_modifier(Modifier::BOLD),
     ))
-    .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Green)))
+    .block(
+        Block::default()
+            .borders(Borders::ALL)
+            .border_style(Style::default().fg(Color::Green)),
+    )
     .alignment(Alignment::Center);
     f.render_widget(title, chunks[0]);
 
@@ -394,22 +417,28 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
 
     let status = if app.paused { "PAUSED" } else { "EVOLVING" };
     f.render_widget(
-        Paragraph::new(status).block(Block::default().borders(Borders::ALL)).alignment(Alignment::Center),
-        chunks[2]
+        Paragraph::new(status)
+            .block(Block::default().borders(Borders::ALL))
+            .alignment(Alignment::Center),
+        chunks[2],
     );
 }
 
 fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Phenotype Boundary "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Phenotype Boundary "),
+        )
         .marker(Marker::Block)
         .x_bounds([-1.0, 1.0])
         .y_bounds([-1.0, 1.0])
         .paint(|ctx| {
             if let Some(net) = &app.best_network {
-                 // Background (Decision Boundary)
-                 // Use lower resolution for performance
-                 for x_i in 0..30 {
+                // Background (Decision Boundary)
+                // Use lower resolution for performance
+                for x_i in 0..30 {
                     for y_i in 0..15 {
                         let x = -1.0 + x_i as f64 * 2.0 / 29.0;
                         let y = -1.0 + y_i as f64 * 2.0 / 14.0;
@@ -421,16 +450,27 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                         let out = net_clone.forward(&[x, y]);
 
                         if out[0] > 0.5 {
-                             ctx.draw(&Points { coords: &[(x, y)], color: Color::Cyan });
+                            ctx.draw(&Points {
+                                coords: &[(x, y)],
+                                color: Color::Cyan,
+                            });
                         }
                     }
-                 }
+                }
             }
 
             // Data Points
             for (i, input) in app.inputs.iter().enumerate() {
-                let color = if app.targets[i][0] > 0.5 { Color::Green } else { Color::Red };
-                ctx.print(input[0], input[1], Span::styled("●", Style::default().fg(color)));
+                let color = if app.targets[i][0] > 0.5 {
+                    Color::Green
+                } else {
+                    Color::Red
+                };
+                ctx.print(
+                    input[0],
+                    input[1],
+                    Span::styled("●", Style::default().fg(color)),
+                );
             }
         });
     f.render_widget(canvas, area);
@@ -438,12 +478,16 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
 
 fn draw_network(f: &mut Frame, app: &App, area: Rect) {
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Neural Architecture "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Neural Architecture "),
+        )
         .marker(Marker::Braille)
         .x_bounds([0.0, 100.0])
         .y_bounds([0.0, 100.0])
         .paint(|ctx| {
-             if let Some(net) = &app.best_network {
+            if let Some(net) = &app.best_network {
                 let layer_count = net.layers.len() + 1; // +1 for input layer
                 let x_step = 100.0 / (layer_count as f64 + 1.0);
 
@@ -468,7 +512,7 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                         // (Omitted for simplicity, just nodes)
                     }
                 }
-             }
+            }
         });
     f.render_widget(canvas, area);
 }

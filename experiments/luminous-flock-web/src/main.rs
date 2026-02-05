@@ -5,13 +5,13 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use ratzilla::ratatui::{
+    Frame, Terminal,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
     widgets::{Block, Borders, Paragraph, canvas::Canvas},
-    Frame, Terminal,
 };
-use ratzilla::{event::KeyCode, DomBackend, WebRenderer};
+use ratzilla::{DomBackend, WebRenderer, event::KeyCode};
 
 use world::World;
 
