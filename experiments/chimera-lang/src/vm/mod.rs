@@ -29,6 +29,8 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
+pub const MAX_RECURSION_DEPTH: usize = 100;
+
 pub mod cortex;
 pub mod nova;
 
@@ -817,7 +819,7 @@ impl ChimeraVM {
     /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
-        if self.recursion_depth > 100 {
+        if self.recursion_depth > MAX_RECURSION_DEPTH {
             self.output
                 .push("Error: Recursion limit exceeded".to_string());
             return None;
@@ -945,16 +947,19 @@ impl ChimeraVM {
         let b = stack.pop().unwrap();
         let a = stack.pop().unwrap();
 
-        fn apply<F>(a: Value, b: Value, op: F) -> Option<Value>
+        fn apply<F>(a: Value, b: Value, op: F, depth: usize) -> Option<Value>
         where
             F: Fn(i64, i64) -> i64 + Copy,
         {
+            if depth > MAX_RECURSION_DEPTH {
+                return None;
+            }
             match (a, b) {
                 (Value::Int(ia), Value::Int(ib)) => Some(Value::Int(op(ia, ib))),
                 (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
                     let mut res = Vec::new();
                     for v in vals {
-                        if let Some(r) = apply(v, scalar.clone(), op) {
+                        if let Some(r) = apply(v, scalar.clone(), op, depth + 1) {
                             res.push(r);
                         } else {
                             return None;
@@ -965,7 +970,7 @@ impl ChimeraVM {
                 (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
                     let mut res = Vec::new();
                     for v in vals {
-                        if let Some(r) = apply(scalar.clone(), v, op) {
+                        if let Some(r) = apply(scalar.clone(), v, op, depth + 1) {
                             res.push(r);
                         } else {
                             return None;
@@ -978,7 +983,7 @@ impl ChimeraVM {
                     let mut res = Vec::new();
                     for xa in va {
                         for xb in &vb {
-                            if let Some(r) = apply(xa.clone(), xb.clone(), op) {
+                            if let Some(r) = apply(xa.clone(), xb.clone(), op, depth + 1) {
                                 res.push(r);
                             }
                         }
@@ -989,10 +994,10 @@ impl ChimeraVM {
             }
         }
 
-        if let Some(res) = apply(a, b, op) {
+        if let Some(res) = apply(a, b, op, 0) {
             stack.push(res);
         } else {
-            output.push("Error: Type mismatch".to_string());
+            output.push("Error: Type mismatch or complexity limit".to_string());
         }
     }
 
@@ -1000,14 +1005,17 @@ impl ChimeraVM {
         match op {
             OpCode::Push => {
                 if let Some(arg) = args.first() {
-                    fn nuc_to_val(n: &Nucleotide) -> Option<Value> {
+                    fn nuc_to_val(n: &Nucleotide, depth: usize) -> Option<Value> {
+                        if depth > MAX_RECURSION_DEPTH {
+                            return None;
+                        }
                         match n {
                             Nucleotide::Number(v) => Some(Value::Int(*v)),
                             Nucleotide::String(s) => Some(Value::Str(s.clone())),
                             Nucleotide::Junction(t, list) => {
                                 let mut vals = Vec::new();
                                 for item in list {
-                                    if let Some(v) = nuc_to_val(item) {
+                                    if let Some(v) = nuc_to_val(item, depth + 1) {
                                         vals.push(v);
                                     } else {
                                         return None;
@@ -1019,7 +1027,7 @@ impl ChimeraVM {
                         }
                     }
 
-                    if let Some(val) = nuc_to_val(arg) {
+                    if let Some(val) = nuc_to_val(arg, 0) {
                         self.stack.push(val);
                     } else {
                         self.output
