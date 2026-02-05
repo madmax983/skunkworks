@@ -100,6 +100,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Roots are expanding towards infinity. Geodesic growth patterns confirmed. The Poincaré Disk is blooming.
 
+### [Concentration Level: FRESH] - Location: experiments/trace-tardis
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The stack is recursive. The rooms are infinite. We are flying into the error.
+
 ### [Concentration Level: HIGH] - Location: experiments/chaos-pendulum
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Butterfly Effect is visualized. Dependency tree swinging in chaotic motion. 100 parallel ghosts predicting diverging futures.

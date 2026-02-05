@@ -103,6 +103,7 @@ members = [
     "crates/resonance-audio", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
     "experiments/clockwork-chimera", "experiments/schrodingers-beat",
     "experiments/colony-concerto", "experiments/rhizome-radar", "experiments/hyperbolic-roots",
+    "experiments/trace-tardis",
 ]
 resolver = "2"
 
