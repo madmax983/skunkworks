@@ -67,6 +67,8 @@ mod nova_spore_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_taxis_test;
 mod nova_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_topology_test;
 #[cfg(test)]
 mod nova_waste_test;
 #[cfg(all(test, feature = "nova"))]

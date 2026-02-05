@@ -124,6 +124,8 @@ pub enum OpCode {
     Rift,
     #[cfg(feature = "nova")]
     Seal,
+    #[cfg(feature = "nova")]
+    Shape,
 
     Unknown(String),
 }
@@ -252,6 +254,8 @@ impl FromStr for OpCode {
             "rift" => Ok(OpCode::Rift),
             #[cfg(feature = "nova")]
             "seal" => Ok(OpCode::Seal),
+            #[cfg(feature = "nova")]
+            "shape" => Ok(OpCode::Shape),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -380,6 +384,8 @@ impl fmt::Display for OpCode {
             OpCode::Rift => write!(f, "rift"),
             #[cfg(feature = "nova")]
             OpCode::Seal => write!(f, "seal"),
+            #[cfg(feature = "nova")]
+            OpCode::Shape => write!(f, "shape"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

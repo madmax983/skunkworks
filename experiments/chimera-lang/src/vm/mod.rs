@@ -35,6 +35,17 @@ pub mod nova;
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
 
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Topology {
+    Plane,      // 0: Bounded. Edges are walls.
+    Torus,      // 1: Wraps X and Y.
+    CylinderH,  // 2: Wraps X, Bounded Y.
+    CylinderV,  // 3: Bounded X, Wraps Y.
+    Klein,      // 4: Wraps X, Wraps Y with twist (x' = 15-x).
+    Mobius,     // 5: Wraps X with twist, Bounded Y.
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Int(i64),
@@ -133,6 +144,8 @@ pub struct ChimeraVM {
     pub signal_differentiation: Option<nova::OrganelleType>,
     #[cfg(feature = "nova")]
     pub sonar_target: Option<(usize, usize)>,
+    #[cfg(feature = "nova")]
+    pub topology: Topology,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -200,10 +213,98 @@ impl ChimeraVM {
             signal_differentiation: None,
             #[cfg(feature = "nova")]
             sonar_target: None,
+            #[cfg(feature = "nova")]
+            topology: Topology::Torus,
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
             activation_levels,
+        }
+    }
+
+    /// Helper to normalize coordinates based on topology
+    #[cfg(feature = "nova")]
+    pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
+        match self.topology {
+            Topology::Plane => {
+                if x >= 0 && x < 16 && y >= 0 && y < 16 {
+                    Some((y as usize, x as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Torus => Some((
+                y.rem_euclid(16) as usize,
+                x.rem_euclid(16) as usize,
+            )),
+            Topology::CylinderH => {
+                // Wraps X, Bounded Y
+                if y >= 0 && y < 16 {
+                    Some((y as usize, x.rem_euclid(16) as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::CylinderV => {
+                // Bounded X, Wraps Y
+                if x >= 0 && x < 16 {
+                    Some((y.rem_euclid(16) as usize, x as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Klein => {
+                // Wraps X normal, Y wraps with X-twist
+                // Standard Klein bottle: (x, y+H) = (W-x, y)
+                // Let's implement: X wraps normally. Y wraps with twist.
+                let mut nx = x;
+                let mut ny = y;
+
+                // First handle Y wrapping (the twisty one)
+                // If we go off top or bottom, we flip X and wrap Y
+                if ny < 0 || ny >= 16 {
+                    // How many times did we wrap?
+                    // Simple case: single step
+                    // General case: rem_euclid logic with flip parity
+                    // Let's assume simple wrapping for simulation steps usually +/- 1
+
+                    // Logic:
+                    // y' = y mod 16
+                    // if (floor(y/16)) is odd, x' = 15 - x.
+
+                    let wrap_count = ny.div_euclid(16);
+                    if wrap_count % 2 != 0 {
+                        nx = 15 - nx; // Twist X
+                    }
+                    ny = ny.rem_euclid(16);
+                }
+
+                // Now handle X wrapping (Torus-like)
+                nx = nx.rem_euclid(16);
+
+                Some((ny as usize, nx as usize))
+            }
+            Topology::Mobius => {
+                // Mobius Strip: Wraps X with twist, Bounded Y
+                // strip [0,L]x[0,W]. (x+L, y) = (x, W-y)
+                // Here X wraps with twist.
+                let mut nx = x;
+                let mut ny = y;
+
+                if nx < 0 || nx >= 16 {
+                    let wrap_count = nx.div_euclid(16);
+                    if wrap_count % 2 != 0 {
+                        ny = 15 - ny; // Twist Y
+                    }
+                    nx = nx.rem_euclid(16);
+                }
+
+                if ny >= 0 && ny < 16 {
+                    Some((ny as usize, nx as usize))
+                } else {
+                    None
+                }
+            }
         }
     }
 
@@ -437,21 +538,27 @@ impl ChimeraVM {
                         }
                         // Move
                         let (dy, dx) = organelle.direction;
-                        let mut new_y = (cy as i64 + dy as i64).rem_euclid(16) as usize;
-                        let mut new_x = (cx as i64 + dx as i64).rem_euclid(16) as usize;
 
-                        // Check for portal
                         #[cfg(feature = "nova")]
-                        if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
-                            self.output.push(format!(
-                                "PORTAL: Teleported from {},{} to {},{}",
-                                new_x, new_y, px, py
-                            ));
-                            new_y = py;
-                            new_x = px;
-                        }
+                        let next_coords = self.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64);
 
-                        self.context_loc = (new_y, new_x);
+                        #[cfg(not(feature = "nova"))]
+                        let next_coords = Some(((cy as i64 + dy as i64).rem_euclid(16) as usize, (cx as i64 + dx as i64).rem_euclid(16) as usize));
+
+                        if let Some((mut new_y, mut new_x)) = next_coords {
+                            // Check for portal
+                            #[cfg(feature = "nova")]
+                            if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
+                                self.output.push(format!(
+                                    "PORTAL: Teleported from {},{} to {},{}",
+                                    new_x, new_y, px, py
+                                ));
+                                new_y = py;
+                                new_x = px;
+                            }
+                            self.context_loc = (new_y, new_x);
+                        }
+                        // Else: Hit wall, stay put
                     }
                     nova::OrganelleType::Worker => {}
                 }
@@ -571,6 +678,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Rift
             | OpCode::Seal
+            | OpCode::Shape
             | OpCode::Simulate
             | OpCode::Dream
             | OpCode::Chemotaxis
