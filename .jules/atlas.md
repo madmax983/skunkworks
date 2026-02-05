@@ -29,3 +29,9 @@
 **Blueprint:** Refactored these to use `tui-shared`.
 **Stability:** Reduced boilerplate and enforced consistent TUI lifecycle management (including proper mouse capture for `crystal-structure` and `resonance-chamber`).
 **Verification:** Verified with `cargo check` for all affected packages.
+
+## [Standardize Resonance Audio]
+**Tangle:** The Sprawl - Duplicate `physics.rs` and `audio.rs` in `resonance-chamber` and `chimera-resonance`.
+**Blueprint:** Extracted `crates/resonance-audio` to house shared logic.
+**Stability:** Reduced duplication, enforced single source of truth for physics and audio logic.
+**Verification:** Verified with `cargo test`. Fixed `chimera-lang` feature compilation errors.

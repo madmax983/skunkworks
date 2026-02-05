@@ -1,3 +1,4 @@
+/// Shared Physics Grid Logic for Resonance Experiments
 pub struct PhysicsGrid {
     pub width: usize,
     pub height: usize,

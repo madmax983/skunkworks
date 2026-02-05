@@ -14,10 +14,7 @@ use ratatui::{
 use std::{io, time::Duration};
 use tui_shared::Tui;
 
-use crate::audio::{AudioCommand, AudioModel};
-
-pub mod audio;
-pub mod physics;
+use resonance_audio::audio::{AudioCommand, AudioModel};
 
 fn main() -> Result<()> {
     #[cfg(feature = "audio")]

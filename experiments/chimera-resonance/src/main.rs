@@ -17,7 +17,7 @@ use std::{
 };
 use tui_shared::Tui;
 
-use crate::audio::{AudioCommand, AudioModel};
+use resonance_audio::audio::{AudioCommand, AudioModel};
 
 // Chimera Imports
 use chimera_lang::{
@@ -26,9 +26,6 @@ use chimera_lang::{
     vm::ChimeraVM,
 };
 use rand::Rng;
-
-pub mod audio;
-pub mod physics;
 
 struct Agent {
     vm: ChimeraVM,
