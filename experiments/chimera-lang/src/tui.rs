@@ -282,10 +282,17 @@ fn run_app<B: ratatui::backend::Backend>(
                 grid_lines.push(Line::from(line_spans));
             }
 
+            #[cfg(feature = "nova")]
+            let topology_name = format!("{:?}", vm.topology);
+            #[cfg(not(feature = "nova"))]
+            let topology_name = "Classic";
+
+            let grid_title = format!("Petri Dish (16x16) - {}", topology_name);
+
             let grid_paragraph = Paragraph::new(grid_lines).block(
                 Block::default()
                     .borders(Borders::ALL)
-                    .title("Petri Dish (16x16)"),
+                    .title(grid_title),
             );
             f.render_widget(grid_paragraph, left_chunks[1]);
 
