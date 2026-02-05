@@ -303,3 +303,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Exponential branching logic. Roots curve along geodesic arcs, filling the infinite boundary.
 - **Status**: experiments/hyperbolic-roots
 - **Evaluation**: Compiles. Implemented by Splice Surgeon. Visuals confirmed.
+
+### trace-tardis
+- **Parents**: experiments/trace-fold + experiments/alloc-tardis
+- **Concept**: Recursive visualization of stack traces where each stack frame is a room containing the next frame as a portal.
+- **Novel trait**: Infinite zoom into the execution path ("Bigger on the inside").
+- **Status**: experiments/trace-tardis
+- **Evaluation**: Compiles. Implemented by Splice Surgeon. Unit tests passed.
