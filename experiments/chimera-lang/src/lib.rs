@@ -35,6 +35,8 @@ pub mod vm;
 mod cortex_test;
 mod havoc_repro;
 #[cfg(all(test, feature = "nova"))]
+mod nova_alchemy_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_biolum_test;
 #[cfg(test)]
 mod nova_cerebellum_test;
@@ -51,6 +53,8 @@ mod nova_gravity_test;
 #[cfg(test)]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_linguistics_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
@@ -63,11 +67,15 @@ mod nova_quantum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_reflex_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sonar_test;
 #[cfg(test)]
 mod nova_spore_test;
+#[cfg(test)]
+mod nova_superposition_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_symbiosis_test;
 #[cfg(all(test, feature = "nova"))]
@@ -79,13 +87,7 @@ mod nova_topology_test;
 mod nova_waste_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribosome_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_alchemy_test;
 #[cfg(test)]
 mod sentry_nova_test;
 #[cfg(test)]
 mod warden_exploit_test;
-#[cfg(test)]
-mod nova_superposition_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_reflex_test;

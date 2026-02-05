@@ -486,12 +486,22 @@ where
                                             s.push_str(t_str);
                                             s.push('(');
                                             for (k, v) in vals.iter().enumerate() {
-                                                if k > 0 { s.push(' '); }
+                                                if k > 0 {
+                                                    s.push(' ');
+                                                }
                                                 match v {
-                                                    crate::ast::Nucleotide::Number(n) => s.push_str(&n.to_string()),
-                                                    crate::ast::Nucleotide::String(str_val) => s.push_str(&format!("\"{}\"", str_val)),
-                                                    crate::ast::Nucleotide::Identifier(id) => s.push_str(id),
-                                                    crate::ast::Nucleotide::Junction(_, _) => s.push_str("nested"),
+                                                    crate::ast::Nucleotide::Number(n) => {
+                                                        s.push_str(&n.to_string())
+                                                    }
+                                                    crate::ast::Nucleotide::String(str_val) => {
+                                                        s.push_str(&format!("\"{}\"", str_val))
+                                                    }
+                                                    crate::ast::Nucleotide::Identifier(id) => {
+                                                        s.push_str(id)
+                                                    }
+                                                    crate::ast::Nucleotide::Junction(_, _) => {
+                                                        s.push_str("nested")
+                                                    }
                                                 }
                                             }
                                             s.push(')');

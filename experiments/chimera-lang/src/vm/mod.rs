@@ -647,10 +647,8 @@ impl ChimeraVM {
                     }
                 }
                 "!" => {
-                    if let Some(val) = self.stack.pop() {
-                        if let Value::Int(i) = val {
-                            self.stack.push(Value::Int(if i == 0 { 1 } else { 0 }));
-                        }
+                    if let Some(Value::Int(i)) = self.stack.pop() {
+                        self.stack.push(Value::Int(if i == 0 { 1 } else { 0 }));
                     }
                 }
                 ":" => {
@@ -658,7 +656,9 @@ impl ChimeraVM {
                         let x_off = self.stack.pop().unwrap();
                         let y_off = self.stack.pop().unwrap();
                         if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
-                            if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
                                 self.stack.push(self.grid[ny][nx].clone());
                             }
                         }
@@ -670,9 +670,11 @@ impl ChimeraVM {
                         let y_off = self.stack.pop().unwrap();
                         let val = self.stack.pop().unwrap();
                         if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
-                             if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
                                 self.grid[ny][nx] = val;
-                             }
+                            }
                         }
                     }
                 }
@@ -925,6 +927,8 @@ impl ChimeraVM {
             | OpCode::Symbiosis
             | OpCode::Lysis
             | OpCode::Reflex
+            | OpCode::Compile
+            | OpCode::Decompile
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {

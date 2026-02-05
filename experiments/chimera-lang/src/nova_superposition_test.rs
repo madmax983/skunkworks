@@ -1,4 +1,4 @@
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
@@ -13,15 +13,13 @@ fn make_dna(genes: Vec<Gene>) -> Dna {
 #[test]
 fn test_push_junction() {
     // [ push(any(1, 2)) ]
-    let genes = vec![
-        Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Junction(JunctionType::Any, vec![
-                Nucleotide::Number(1),
-                Nucleotide::Number(2)
-            ])],
-        },
-    ];
+    let genes = vec![Gene {
+        op: OpCode::Push,
+        args: vec![Nucleotide::Junction(
+            JunctionType::Any,
+            vec![Nucleotide::Number(1), Nucleotide::Number(2)],
+        )],
+    }];
     let mut vm = ChimeraVM::new(make_dna(genes));
     vm.step();
     assert_eq!(vm.stack.len(), 1);
@@ -42,10 +40,10 @@ fn test_autothreading_add() {
     let genes = vec![
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::Junction(JunctionType::Any, vec![
-                Nucleotide::Number(1),
-                Nucleotide::Number(2)
-            ])],
+            args: vec![Nucleotide::Junction(
+                JunctionType::Any,
+                vec![Nucleotide::Number(1), Nucleotide::Number(2)],
+            )],
         },
         Gene {
             op: OpCode::Push,
@@ -80,10 +78,10 @@ fn test_brz_any() {
         genes: vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Junction(JunctionType::Any, vec![
-                    Nucleotide::Number(0),
-                    Nucleotide::Number(5)
-                ])],
+                args: vec![Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![Nucleotide::Number(0), Nucleotide::Number(5)],
+                )],
             },
             Gene {
                 op: OpCode::Brz,
@@ -121,10 +119,10 @@ fn test_brz_all() {
         genes: vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Junction(JunctionType::All, vec![
-                    Nucleotide::Number(0),
-                    Nucleotide::Number(5)
-                ])],
+                args: vec![Nucleotide::Junction(
+                    JunctionType::All,
+                    vec![Nucleotide::Number(0), Nucleotide::Number(5)],
+                )],
             },
             Gene {
                 op: OpCode::Brz,
@@ -162,10 +160,10 @@ fn test_brz_all_success() {
         genes: vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Junction(JunctionType::All, vec![
-                    Nucleotide::Number(0),
-                    Nucleotide::Number(0)
-                ])],
+                args: vec![Nucleotide::Junction(
+                    JunctionType::All,
+                    vec![Nucleotide::Number(0), Nucleotide::Number(0)],
+                )],
             },
             Gene {
                 op: OpCode::Brz,

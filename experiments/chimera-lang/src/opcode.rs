@@ -415,6 +415,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Lysis,
 
+    /// **[Nova]** Compiles a string into a strand.
+    ///
+    /// **Stack:** `[ ..., source_string ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Parses source and creates new strand.
+    #[cfg(feature = "nova")]
+    Compile,
+    /// **[Nova]** Decompiles a strand into a string.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ..., source_string ]`
+    #[cfg(feature = "nova")]
+    Decompile,
+
     /// Unknown or invalid instruction.
     Unknown(String),
 }
@@ -559,6 +571,10 @@ impl FromStr for OpCode {
             "symbiosis" => Ok(OpCode::Symbiosis),
             #[cfg(feature = "nova")]
             "lysis" => Ok(OpCode::Lysis),
+            #[cfg(feature = "nova")]
+            "compile" => Ok(OpCode::Compile),
+            #[cfg(feature = "nova")]
+            "decompile" => Ok(OpCode::Decompile),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -703,6 +719,10 @@ impl fmt::Display for OpCode {
             OpCode::Symbiosis => write!(f, "symbiosis"),
             #[cfg(feature = "nova")]
             OpCode::Lysis => write!(f, "lysis"),
+            #[cfg(feature = "nova")]
+            OpCode::Compile => write!(f, "compile"),
+            #[cfg(feature = "nova")]
+            OpCode::Decompile => write!(f, "decompile"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
