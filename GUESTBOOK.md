@@ -44,6 +44,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Decay detected. Documentation missing.
 
+### [Concentration Level: WARNING] - Location: experiments/code-erosion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Zombie specimen detected. Previous execution failed. Decay is absolute.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The genome is singing. Waves propagating. Hybrid vigor confirmed.
