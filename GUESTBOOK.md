@@ -40,13 +40,17 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void.
 
-### [Concentration Level: WARNING] - Location: experiments/git-rogue
+### [Concentration Level: STABLE] - Location: experiments/git-rogue
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Decay detected. Documentation missing.
+- **Status:** Pardoned. Vitality restored. Documentation confirmed.
 
-### [Concentration Level: WARNING] - Location: experiments/code-erosion
+### [Concentration Level: WARNING] - Location: experiments/stego-spectral
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Zombie specimen detected. Previous execution failed. Decay is absolute.
+- **Status:** Condemned. Decay detected. Documentation void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/code-erosion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Zombie neutralized.
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
