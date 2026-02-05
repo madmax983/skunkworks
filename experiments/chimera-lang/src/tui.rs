@@ -297,14 +297,26 @@ where
                         if let Some(organelle) =
                             vm.organelles.iter().find(|o| o.context_loc == (y, x))
                         {
-                            let (color, char_code) = match organelle.kind {
-                                crate::vm::nova::OrganelleType::Chloroplast => (Color::Green, "C"),
-                                crate::vm::nova::OrganelleType::Mitochondria => (Color::Red, "M"),
-                                crate::vm::nova::OrganelleType::Lysosome => (Color::Magenta, "L"),
-                                crate::vm::nova::OrganelleType::Ribosome => (Color::Cyan, "R"),
-                                crate::vm::nova::OrganelleType::Void => (Color::DarkGray, "Ø"),
-                                crate::vm::nova::OrganelleType::Worker => (Color::White, "O"),
+                            let mut color = match organelle.kind {
+                                crate::vm::nova::OrganelleType::Chloroplast => Color::Green,
+                                crate::vm::nova::OrganelleType::Mitochondria => Color::Red,
+                                crate::vm::nova::OrganelleType::Lysosome => Color::Magenta,
+                                crate::vm::nova::OrganelleType::Ribosome => Color::Cyan,
+                                crate::vm::nova::OrganelleType::Void => Color::DarkGray,
+                                crate::vm::nova::OrganelleType::Worker => Color::White,
                             };
+                            let char_code = match organelle.kind {
+                                crate::vm::nova::OrganelleType::Chloroplast => "C",
+                                crate::vm::nova::OrganelleType::Mitochondria => "M",
+                                crate::vm::nova::OrganelleType::Lysosome => "L",
+                                crate::vm::nova::OrganelleType::Ribosome => "R",
+                                crate::vm::nova::OrganelleType::Void => "Ø",
+                                crate::vm::nova::OrganelleType::Worker => "O",
+                            };
+
+                            if organelle.ttl.is_some() {
+                                color = Color::Yellow;
+                            }
 
                             style = style
                                 .bg(color)
