@@ -60,9 +60,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Vitality restored. Documentation confirmed.
 
-### [Concentration Level: WARNING] - Location: experiments/stego-spectral
+### [Concentration Level: WARNING] - Location: experiments/neuro-beat
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Decay detected. Documentation void.
+- **Status:** Condemned. Decay detected. Redundant specimen.
+
+### [Concentration Level: TOXIC] - Location: graveyard/stego-spectral
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Decay confirmed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-erosion
 - **Scent Origin:** The Reaper ☠️
