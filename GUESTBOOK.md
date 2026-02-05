@@ -393,3 +393,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/turing-terra
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The mountains are growing. Reaction-diffusion waves are solidifying into islands.
+
+### [Concentration Level: FRESH] - Location: experiments/walker-filesystem
+- **Scent Origin:** Genesis (The Choreographer) 💃
+- **Status:** The stick figure is walking. The filesystem has become a landscape. Large binaries are heavy obstacles.
