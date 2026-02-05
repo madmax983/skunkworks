@@ -1,4 +1,4 @@
-## [Manifold Shaping]
-**Concept:** Added `Topology` enum and `OpCode::Shape` to `chimera-lang` to dynamically change the grid topology (Plane, Torus, Cylinder, Klein, Mobius). Refactored all movement and diffusion logic to respect the current topology.
+## [Cryptobiosis]
+**Concept:** Implemented `OpCode::Metabolism(rate)` to control VM execution speed. Rate 0 pauses execution (hibernation), Rate > 1 executes multiple instructions per tick (overclocking) with quadratic energy cost.
 **Fate:** Merged
-**Lesson:** Centralizing coordinate logic into `normalize_coords` was crucial. Testing weird topologies requires careful edge case analysis.
+**Lesson:** Loop bounds checking is critical when implementing overclocking mechanics. A panic was avoided by pre-checking IP bounds inside the execution loop.

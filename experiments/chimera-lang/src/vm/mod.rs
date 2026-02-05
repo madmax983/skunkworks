@@ -175,6 +175,8 @@ pub struct ChimeraVM {
     pub activation_levels: Vec<i64>,
     #[cfg(feature = "nova")]
     pub reflexes: HashMap<i64, usize>,
+    #[cfg(feature = "nova")]
+    pub metabolic_rate: u8,
 }
 
 impl ChimeraVM {
@@ -254,6 +256,8 @@ impl ChimeraVM {
             activation_levels,
             #[cfg(feature = "nova")]
             reflexes: HashMap::new(),
+            #[cfg(feature = "nova")]
+            metabolic_rate: 1,
         }
     }
 
@@ -271,6 +275,13 @@ impl ChimeraVM {
                 // If called during step() before gene execution, IP is valid.
                 self.call_stack.push(self.ip);
                 self.ip = (strand_idx, 0);
+
+                #[cfg(feature = "nova")]
+                if self.metabolic_rate == 0 {
+                    self.metabolic_rate = 1; // Wake up
+                    self.output.push("REFLEX: Waking up from hibernation".to_string());
+                }
+
                 self.output.push(format!(
                     "REFLEX: Triggered event {} -> Strand {}",
                     event_id, strand_idx
@@ -527,9 +538,17 @@ impl ChimeraVM {
         std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
         std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
         std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+        std::mem::swap(&mut self.metabolic_rate, &mut organelle.metabolic_rate);
 
         self.active_organelle_kind = Some(organelle.kind.clone());
-        self.energy = self.energy.saturating_sub(1);
+
+        let loop_count = self.metabolic_rate as usize;
+        let cost = if loop_count == 0 {
+            0
+        } else {
+            (loop_count as i64) * (loop_count as i64)
+        };
+        self.energy = self.energy.saturating_sub(cost);
 
         match organelle.kind {
             nova::OrganelleType::Chloroplast => {
@@ -558,7 +577,12 @@ impl ChimeraVM {
         }
 
         if !matches!(organelle.kind, nova::OrganelleType::Ribosome) {
-            self.execute_organelle_dna(organelle);
+            for _ in 0..loop_count {
+                if organelle.halted {
+                    break;
+                }
+                self.execute_organelle_dna(organelle);
+            }
         }
 
         if let Some(new_kind) = self.signal_differentiation.take() {
@@ -570,6 +594,7 @@ impl ChimeraVM {
         std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
         std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
         std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+        std::mem::swap(&mut self.metabolic_rate, &mut organelle.metabolic_rate);
 
         !organelle.halted
     }
@@ -744,7 +769,23 @@ impl ChimeraVM {
             return;
         }
 
-        self.energy -= 1;
+        let loop_count = {
+            #[cfg(feature = "nova")]
+            {
+                self.metabolic_rate as usize
+            }
+            #[cfg(not(feature = "nova"))]
+            {
+                1
+            }
+        };
+
+        let cost = if loop_count == 0 {
+            0 // Hibernation
+        } else {
+            (loop_count as i64) * (loop_count as i64)
+        };
+        self.energy = self.energy.saturating_sub(cost);
 
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();
@@ -791,18 +832,37 @@ impl ChimeraVM {
             self.active_organelle_kind = None;
         }
 
-        // Clone gene info to release borrow on self.dna
-        let (gene_op, gene_args) = {
-            let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-            (gene.op.clone(), gene.args.clone())
-        };
+        for _ in 0..loop_count {
+            if self.halted {
+                break;
+            }
 
-        let jump_target = self.execute_gene(gene_op, &gene_args);
+            if self.ip.0 >= self.dna.helix.strands.len() {
+                self.halted = true;
+                break;
+            }
 
-        if let Some(target) = jump_target {
-            self.ip = target;
-        } else {
-            self.ip.1 += 1;
+            // Clone gene info to release borrow on self.dna
+            let (gene_op, gene_args) = {
+                let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                (gene.op.clone(), gene.args.clone())
+            };
+
+            let jump_target = self.execute_gene(gene_op, &gene_args);
+
+            if let Some(target) = jump_target {
+                self.ip = target;
+            } else {
+                self.ip.1 += 1;
+            }
+
+            // Check loop bounds inside loop to allow multi-step jumps or halts
+            if self.ip.0 < self.dna.helix.strands.len() {
+                if self.ip.1 >= self.dna.helix.strands[self.ip.0].genes.len() {
+                    self.ip.0 += 1;
+                    self.ip.1 = 0;
+                }
+            }
         }
 
         #[cfg(feature = "nova")]
@@ -882,6 +942,7 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Rift
+            | OpCode::Metabolism
             | OpCode::Seal
             | OpCode::Shape
             | OpCode::Simulate

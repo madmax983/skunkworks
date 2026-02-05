@@ -69,6 +69,7 @@ pub struct Organelle {
     pub halted: bool,
     pub kind: OrganelleType,
     pub direction: (i8, i8),
+    pub metabolic_rate: u8,
 }
 
 #[cfg(feature = "nova")]
@@ -281,6 +282,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             halted: false,
                             kind: kind.clone(),
                             direction,
+                            metabolic_rate: 1,
                         };
                         vm.organelles.push(organelle);
                         vm.energy = vm.energy.saturating_sub(20);
@@ -2141,6 +2143,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     halted: false,
                     kind: OrganelleType::Worker, // Default
                     direction: (0, 0),
+                    metabolic_rate: 1,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(10);
@@ -2182,6 +2185,28 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for compile".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Metabolism => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Int(rate) => {
+                        if rate >= 0 && rate <= 10 {
+                            vm.metabolic_rate = rate as u8;
+                            vm.output.push(format!("METABOLISM: Set to {}", rate));
+                        } else {
+                            vm.output.push("Error: Rate must be 0-10".to_string());
+                        }
+                    }
+                    _ => vm
+                        .output
+                        .push("Error: Type mismatch for metabolism".to_string()),
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for metabolism".to_string());
             }
             None
         }

@@ -426,6 +426,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx ] -> [ ..., source_string ]`
     #[cfg(feature = "nova")]
     Decompile,
+    /// **[Nova]** Sets the metabolic rate (execution speed).
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    /// **Effect:** 0 = Hibernate, 1 = Normal, >1 = Overclock.
+    #[cfg(feature = "nova")]
+    Metabolism,
 
     /// Unknown or invalid instruction.
     Unknown(String),
@@ -575,6 +581,8 @@ impl FromStr for OpCode {
             "compile" => Ok(OpCode::Compile),
             #[cfg(feature = "nova")]
             "decompile" => Ok(OpCode::Decompile),
+            #[cfg(feature = "nova")]
+            "metabolism" => Ok(OpCode::Metabolism),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -723,6 +731,8 @@ impl fmt::Display for OpCode {
             OpCode::Compile => write!(f, "compile"),
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
+            #[cfg(feature = "nova")]
+            OpCode::Metabolism => write!(f, "metabolism"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
