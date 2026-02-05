@@ -9,9 +9,9 @@ use crate::{ChimeraParser, Rule};
 #[cfg(feature = "nova")]
 use pest::Parser;
 #[cfg(feature = "nova")]
-use std::collections::{HashMap, HashSet, VecDeque};
-#[cfg(feature = "nova")]
 use rand::Rng;
+#[cfg(feature = "nova")]
+use std::collections::{HashMap, HashSet, VecDeque};
 
 /// Represents a "time-travel" snapshot of the VM state.
 ///
@@ -2360,8 +2360,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             };
             vm.organelles.push(organelle);
             vm.energy = vm.energy.saturating_sub(50);
-            vm.output
-                .push(format!("VOID: Spawned at {},{}", cx, cy));
+            vm.output.push(format!("VOID: Spawned at {},{}", cx, cy));
             None
         }
         #[cfg(feature = "nova")]
@@ -2430,7 +2429,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
 
             // Create single new strand
-            vm.dna.helix.strands.push(crate::ast::Strand { genes: merged_genes });
+            vm.dna.helix.strands.push(crate::ast::Strand {
+                genes: merged_genes,
+            });
 
             // Reset state that depends on strand indices
             vm.telomeres = vec![100]; // Reset telomeres for the new massive strand
@@ -2446,7 +2447,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             // Reset IP to start of new strand
             vm.ip = (0, 0);
 
-            vm.output.push("SINGULARITY: All strands merged".to_string());
+            vm.output
+                .push("SINGULARITY: All strands merged".to_string());
             None
         }
         #[cfg(feature = "nova")]
@@ -2723,8 +2725,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             .push("Error: Coordinates out of bounds for glyph".to_string());
                     }
                 } else {
-                    vm.output
-                        .push("Error: Type mismatch for glyph".to_string());
+                    vm.output.push("Error: Type mismatch for glyph".to_string());
                 }
             } else {
                 vm.output

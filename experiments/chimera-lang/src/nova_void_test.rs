@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
-use crate::vm::{ChimeraVM, Value};
 use crate::vm::nova::OrganelleType;
+use crate::vm::{ChimeraVM, Value};
 
 fn make_dna(strands: Vec<Strand>) -> Dna {
     Dna {
@@ -12,12 +12,10 @@ fn make_dna(strands: Vec<Strand>) -> Dna {
 #[test]
 fn test_void_spawn_and_consume() {
     let strand = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::Void,
-                args: vec![],
-            },
-        ],
+        genes: vec![Gene {
+            op: OpCode::Void,
+            args: vec![],
+        }],
     };
     let mut vm = ChimeraVM::new(make_dna(vec![strand]));
 
@@ -106,20 +104,16 @@ fn test_supernova() {
 #[test]
 fn test_singularity() {
     let strand0 = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::Singularity,
-                args: vec![],
-            },
-        ],
+        genes: vec![Gene {
+            op: OpCode::Singularity,
+            args: vec![],
+        }],
     };
     let strand1 = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(42)],
-            },
-        ],
+        genes: vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        }],
     };
 
     let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
