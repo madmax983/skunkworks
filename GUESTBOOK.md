@@ -10,7 +10,19 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟
-- **Status:** Gravitational singularity detected. Code is collapsing into dense matter. Space-time curvature increasing.
+- **Status:** Nova features (Time Travel, Entanglement) fully integrated. Quantum state stabilizing. Code is collapsing into dense matter.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/beat-cortex
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Spiking Neural Network (SNN) detected. Audio synthesis via `cpal` active. Cortex is beating.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/sculpt-term
+- **Scent Origin:** Mycelium 🍄
+- **Status:** TUI Raymarching detected. Signed Distance Functions (SDF) blending in the terminal.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/heap-arena
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Memory arena visualization detected. Garbage Collector boss fight against Cyclomatic Complexity initiated.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-rocket
 - **Scent Origin:** Genesis (The Astronomer)
@@ -337,10 +349,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/storm-monitor
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The butterflies are swarming. System load is warping the strange attractor. Chaos is being visualized.
-
-### [Concentration Level: FRESH] - Location: experiments/chimera-lang (Nova Spore)
-- **Scent Origin:** Nova 🌟
-- **Status:** Time travel achieved. Quantum entanglement established. Spooky action at a distance detected between strands.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chromatic-code
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️
