@@ -268,6 +268,15 @@ where
                             }
                         }
 
+                    // Chromatophores (Nova)
+                    let chroma = &vm.chroma_grid[y][x];
+                    if let Some(c) = chroma.char {
+                        char_rep = c.to_string();
+                    }
+                    if let Some((r, g, b)) = chroma.fg {
+                        style = style.fg(Color::Rgb(r, g, b));
+                    }
+
                         if vm.waste_grid[y][x] > 50 {
                             style = style.add_modifier(Modifier::CROSSED_OUT);
                             if vm.waste_grid[y][x] > 100 {
