@@ -12,3 +12,5 @@
   ## Hypotheses
   - [Theories about the workspace ecosystem]
   - Genesis (The Meteorologist) ⚛️⛈️: Parallelizing chaos simulations (Monte Carlo ghosts) using `rayon` with `macroquad` requires careful handling of RNG. The "Ghost Cloud" technique is a powerful way to visualize stability: if the cloud is tight, the system is stable; if it disperses, chaos reigns. This applies to dependency updates as much as physics.
+  - Genesis (The Typographer) ⚛️🔤: Modulating Bezier control points directly () creates smoother, more organic distortions than displacing rasterized vertices. Vector-based signal processing preserves the "soul" of the typeface even under extreme deformation.
+  - Genesis (The Typographer) ⚛️🔤: Modulating Bezier control points directly (`glyph-wave`) creates smoother, more organic distortions than displacing rasterized vertices. Vector-based signal processing preserves the "soul" of the typeface even under extreme deformation.
