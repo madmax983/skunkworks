@@ -700,4 +700,41 @@ mod tests {
         }
         assert!(changed, "Mutation never occurred");
     }
+
+    #[test]
+    fn test_call_recursion_limit() {
+        // [ call(0) push(999) ]
+        // If call succeeds, we jump to 0. push(999) is skipped.
+        // If call fails (limit), we execute push(999).
+        let genes = vec![
+            Gene {
+                op: OpCode::Call,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.energy = 1000;
+        vm.telomeres[0] = 1000;
+
+        // Run for 200 iterations
+        for _ in 0..200 {
+            vm.step();
+            if vm.halted {
+                break;
+            }
+        }
+
+        // Verify limits
+        assert!(vm.call_stack.len() <= 100, "Call stack exceeded limit");
+        assert!(vm.output.iter().any(|s| s.contains("Call stack overflow")), "Missing error message");
+
+        // Verify execution continued (we hit push(999))
+        // The stack should contain at least one 999.
+        let found_999 = vm.stack.iter().any(|v| matches!(v, Value::Int(999)));
+        assert!(found_999, "Did not execute instruction after failed call");
+    }
 }
