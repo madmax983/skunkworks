@@ -552,6 +552,98 @@ impl ChimeraVM {
                 "<" => organelle.direction = (0, -1),
                 "^" => organelle.direction = (-1, 0),
                 "v" => organelle.direction = (1, 0),
+                "+" => {
+                    if self.stack.len() >= 2 {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                            self.stack.push(Value::Int(ia.wrapping_add(ib)));
+                        } else {
+                            // Push back if type mismatch or handle error? For now, be silent/permissive
+                        }
+                    }
+                }
+                "-" => {
+                    if self.stack.len() >= 2 {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                            self.stack.push(Value::Int(ia.wrapping_sub(ib)));
+                        }
+                    }
+                }
+                "*" => {
+                    if self.stack.len() >= 2 {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                            self.stack.push(Value::Int(ia.wrapping_mul(ib)));
+                        }
+                    }
+                }
+                "/" => {
+                    if self.stack.len() >= 2 {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                            if ib != 0 {
+                                self.stack.push(Value::Int(ia.wrapping_div(ib)));
+                            }
+                        }
+                    }
+                }
+                "%" => {
+                    if self.stack.len() >= 2 {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
+                            if ib != 0 {
+                                self.stack.push(Value::Int(ia.wrapping_rem(ib)));
+                            }
+                        }
+                    }
+                }
+                "=" => {
+                    if self.stack.len() >= 2 {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if a == b {
+                            self.stack.push(Value::Int(1));
+                        } else {
+                            self.stack.push(Value::Int(0));
+                        }
+                    }
+                }
+                "!" => {
+                    if let Some(val) = self.stack.pop() {
+                        if let Value::Int(i) = val {
+                            self.stack.push(Value::Int(if i == 0 { 1 } else { 0 }));
+                        }
+                    }
+                }
+                ":" => {
+                    if self.stack.len() >= 2 {
+                        let x_off = self.stack.pop().unwrap();
+                        let y_off = self.stack.pop().unwrap();
+                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                            if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                                self.stack.push(self.grid[ny][nx].clone());
+                            }
+                        }
+                    }
+                }
+                ";" => {
+                    if self.stack.len() >= 3 {
+                        let x_off = self.stack.pop().unwrap();
+                        let y_off = self.stack.pop().unwrap();
+                        let val = self.stack.pop().unwrap();
+                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                             if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                                self.grid[ny][nx] = val;
+                             }
+                        }
+                    }
+                }
                 _ => {
                     if let Ok(op) = s.parse::<OpCode>() {
                         let _ = self.execute_gene_inner(op, &[]);
