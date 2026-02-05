@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **strange-loops**: Documentation void. Generic implementation (standard attractors). Lacks unique evolutionary traits. Grace period ends in 24h.
+- **git-rogue**: Documentation void. Generic implementation (Graph traversal disguised as game). Lacks unique evolutionary traits. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **strange-loops**: Documentation void. Generic implementation (standard attractors). Failed to improve during grace period. Moved to graveyard.
 - **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
 - **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Failed to improve during grace period. Moved to graveyard.
 - **ram-bazaar**: Documentation void. Generic market simulation. Failed to improve during grace period. Moved to graveyard.

@@ -28,9 +28,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void.
 
-### [Concentration Level: WARNING] - Location: experiments/strange-loops
+### [Concentration Level: TOXIC] - Location: graveyard/strange-loops
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Decay detected. Documentation missing (README.md not found).
+- **Status:** Specimen executed. Documentation void.
+
+### [Concentration Level: WARNING] - Location: experiments/git-rogue
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Decay detected. Documentation missing.
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
