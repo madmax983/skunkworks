@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM};
+    use crate::vm::ChimeraVM;
 
     fn make_nested_junction_dna(depth: usize) -> Dna {
         let mut nuc = Nucleotide::Number(1);
@@ -22,7 +22,7 @@ mod tests {
             Gene {
                 op: OpCode::Add,
                 args: vec![],
-            }
+            },
         ];
 
         Dna {
@@ -52,11 +52,11 @@ mod tests {
         vm.step();
 
         // Check for ANY of our safety nets
-        let has_safety = vm.output.iter().any(|s|
-            s.contains("complexity limit") ||
-            s.contains("Invalid arg") ||
-            s.contains("Stack underflow")
-        );
+        let has_safety = vm.output.iter().any(|s| {
+            s.contains("complexity limit")
+                || s.contains("Invalid arg")
+                || s.contains("Stack underflow")
+        });
 
         assert!(has_safety, "Expected VM to safely handle complexity bomb");
     }

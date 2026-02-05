@@ -820,7 +820,7 @@ impl ChimeraVM {
     ///
     /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
-    fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    pub(crate) fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         if self.recursion_depth > MAX_RECURSION_DEPTH {
             self.output
                 .push("Error: Recursion limit exceeded".to_string());
@@ -931,6 +931,11 @@ impl ChimeraVM {
             | OpCode::Reflex
             | OpCode::Compile
             | OpCode::Decompile
+            | OpCode::Eval
+            | OpCode::Map
+            | OpCode::Fold
+            | OpCode::Filter
+            | OpCode::Zip
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {

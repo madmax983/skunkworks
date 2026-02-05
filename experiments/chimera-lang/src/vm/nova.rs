@@ -2239,6 +2239,152 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Eval => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Str(s) => {
+                        let op = s.parse::<OpCode>().unwrap_or(OpCode::Unknown(s.clone()));
+                        let _ = vm.execute_gene(op, &[]);
+                    }
+                    v => vm.stack.push(v), // No-op for non-code
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for eval".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Map => {
+            // stack: op_str, junction
+            if vm.stack.len() >= 2 {
+                let op_val = vm.stack.pop().unwrap();
+                let jun_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(s), Value::Junction(t, vals)) = (op_val, jun_val) {
+                    let op = s.parse::<OpCode>().unwrap_or(OpCode::Unknown(s.clone()));
+                    let mut new_vals = Vec::new();
+                    for v in vals {
+                        vm.stack.push(v);
+                        let _ = vm.execute_gene(op.clone(), &[]);
+                        if let Some(res) = vm.stack.pop() {
+                            new_vals.push(res);
+                        } else {
+                            new_vals.push(Value::Int(0)); // Default if void
+                        }
+                    }
+                    vm.stack.push(Value::Junction(t, new_vals));
+                    vm.energy = vm.energy.saturating_sub(5);
+                } else {
+                    vm.output.push("Error: Type mismatch for map".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for map".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Fold => {
+            // stack: op_str, junction (acc is on stack below)
+            if vm.stack.len() >= 2 {
+                let op_val = vm.stack.pop().unwrap();
+                let jun_val = vm.stack.pop().unwrap();
+                // Check if acc exists
+                if vm.stack.is_empty() {
+                    vm.output
+                        .push("Error: Stack underflow (acc) for fold".to_string());
+                    return None;
+                }
+
+                if let (Value::Str(s), Value::Junction(_, vals)) = (op_val, jun_val) {
+                    let op = s.parse::<OpCode>().unwrap_or(OpCode::Unknown(s.clone()));
+                    for v in vals {
+                        vm.stack.push(v);
+                        let _ = vm.execute_gene(op.clone(), &[]);
+                        // Result stays on stack as new acc
+                    }
+                    vm.energy = vm.energy.saturating_sub(5);
+                } else {
+                    vm.output.push("Error: Type mismatch for fold".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for fold".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Filter => {
+            // stack: op_str, junction
+            if vm.stack.len() >= 2 {
+                let op_val = vm.stack.pop().unwrap();
+                let jun_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(s), Value::Junction(t, vals)) = (op_val, jun_val) {
+                    let op = s.parse::<OpCode>().unwrap_or(OpCode::Unknown(s.clone()));
+                    let mut new_vals = Vec::new();
+                    for v in vals {
+                        vm.stack.push(v.clone()); // Copy for predicate check
+                        let _ = vm.execute_gene(op.clone(), &[]);
+                        if let Some(res) = vm.stack.pop() {
+                            let keep = match res {
+                                Value::Int(i) => i != 0,
+                                _ => true,
+                            };
+                            if keep {
+                                new_vals.push(v);
+                            }
+                        }
+                    }
+                    vm.stack.push(Value::Junction(t, new_vals));
+                    vm.energy = vm.energy.saturating_sub(5);
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for filter".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for filter".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Zip => {
+            // stack: op_str, junction_b, junction_a
+            if vm.stack.len() >= 3 {
+                let op_val = vm.stack.pop().unwrap();
+                let jb_val = vm.stack.pop().unwrap();
+                let ja_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(s), Value::Junction(_tb, vb), Value::Junction(ta, va)) =
+                    (op_val, jb_val, ja_val)
+                {
+                    let op = s.parse::<OpCode>().unwrap_or(OpCode::Unknown(s.clone()));
+                    let mut new_vals = Vec::new();
+                    let len = va.len().min(vb.len());
+
+                    for i in 0..len {
+                        vm.stack.push(va[i].clone());
+                        vm.stack.push(vb[i].clone());
+                        let _ = vm.execute_gene(op.clone(), &[]);
+                        if let Some(res) = vm.stack.pop() {
+                            new_vals.push(res);
+                        } else {
+                            new_vals.push(Value::Int(0));
+                        }
+                    }
+                    // Prefer type of A
+                    vm.stack.push(Value::Junction(ta, new_vals));
+                    vm.energy = vm.energy.saturating_sub(5);
+                } else {
+                    vm.output.push("Error: Type mismatch for zip".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for zip".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }
