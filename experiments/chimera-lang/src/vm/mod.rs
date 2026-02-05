@@ -508,7 +508,9 @@ impl ChimeraVM {
             | OpCode::Conjugate
             | OpCode::Gravitate
             | OpCode::Lumine
-            | OpCode::SenseLight => nova::exec_nova_op(self, op, args),
+            | OpCode::SenseLight
+            | OpCode::Phototaxis
+            | OpCode::Chemotaxis => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));

@@ -1477,6 +1477,86 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
                 vm.stack.push(Value::Int(intensity));
                 None
             }
+            #[cfg(feature = "nova")]
+            OpCode::Phototaxis => {
+                let (cy, cx) = vm.context_loc;
+                let mut best_intensity = -1;
+                let mut best_loc = (cy, cx);
+
+                // Scan 8 neighbors
+                for dy in -1..=1 {
+                    for dx in -1..=1 {
+                        if dy == 0 && dx == 0 {
+                            continue;
+                        }
+                        let ny = (cy as i64 + dy).rem_euclid(16) as usize;
+                        let nx = (cx as i64 + dx).rem_euclid(16) as usize;
+
+                        let intensity = vm.light_grid[ny][nx];
+                        if intensity > best_intensity {
+                            best_intensity = intensity;
+                            best_loc = (ny, nx);
+                        }
+                    }
+                }
+
+                // If better than current position, move
+                if best_intensity > vm.light_grid[cy][cx] {
+                    vm.context_loc = best_loc;
+                    vm.output.push(format!(
+                        "PHOTOTAXIS: Moved to {},{} (light: {})",
+                        best_loc.1, best_loc.0, best_intensity
+                    ));
+                }
+
+                vm.energy = vm.energy.saturating_sub(5);
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::Chemotaxis => {
+                if let Some(val) = vm.stack.pop() {
+                    if let Value::Int(c) = val {
+                        let channel_idx = (c.unsigned_abs() as usize) % 3;
+                        let (cy, cx) = vm.context_loc;
+                        let mut best_conc = -1;
+                        let mut best_loc = (cy, cx);
+
+                        // Scan 8 neighbors
+                        for dy in -1..=1 {
+                            for dx in -1..=1 {
+                                if dy == 0 && dx == 0 {
+                                    continue;
+                                }
+                                let ny = (cy as i64 + dy).rem_euclid(16) as usize;
+                                let nx = (cx as i64 + dx).rem_euclid(16) as usize;
+
+                                let conc = vm.hormone_grid[ny][nx][channel_idx];
+                                if conc > best_conc {
+                                    best_conc = conc;
+                                    best_loc = (ny, nx);
+                                }
+                            }
+                        }
+
+                        if best_conc > vm.hormone_grid[cy][cx][channel_idx] {
+                            vm.context_loc = best_loc;
+                            vm.output.push(format!(
+                                "CHEMOTAXIS: Moved to {},{} (conc: {})",
+                                best_loc.1, best_loc.0, best_conc
+                            ));
+                        }
+
+                        vm.energy = vm.energy.saturating_sub(5);
+                    } else {
+                        vm.output
+                            .push("Error: Type mismatch for chemotaxis".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Stack underflow for chemotaxis".to_string());
+                }
+                None
+            }
             _ => None,
         }
     }
