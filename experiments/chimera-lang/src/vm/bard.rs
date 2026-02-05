@@ -1,4 +1,12 @@
 #![cfg(feature = "nova")]
+//! # Bard Extension 🎻
+//!
+//! The `Bard` module enables the Chimera VM to compose music.
+//! It treats the execution trace as a musical score, recording notes, rests, and tempo changes.
+//!
+//! The resulting score can be exported as [ABC Notation](https://abcnotation.com/), allowing
+//! the organism's "song" to be played by external tools.
+
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
@@ -7,10 +15,19 @@ use crate::opcode::OpCode;
 #[derive(Debug, Clone, PartialEq)]
 pub struct Note {
     /// MIDI Pitch (0-127). 0 indicates a Rest.
+    ///
+    /// - 60 = Middle C (C4)
+    /// - 69 = A4 (440Hz)
     pub pitch: u8,
     /// Duration in 1/16th notes.
+    ///
+    /// - 1 = 16th note
+    /// - 4 = Quarter note
+    /// - 16 = Whole note
     pub duration: u8,
-    /// Velocity (0-127). 0 is silent.
+    /// Velocity (0-127). 0 is silent (Rest).
+    ///
+    /// Used for dynamic expression (pianissimo to fortissimo).
     pub velocity: u8,
 }
 
@@ -24,6 +41,16 @@ impl Note {
     }
 }
 
+/// Executes a Bard-specific OpCode.
+///
+/// Handles musical instructions to build up the internal `vm.score`.
+///
+/// # Supported Ops
+///
+/// - `Note`: Adds a pitched note.
+/// - `Rest`: Adds a silence.
+/// - `Tempo`: Logs tempo change (metadata).
+/// - `Perform`: Compiles the score to ABC notation string on the stack.
 pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Note => {
@@ -94,6 +121,28 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     }
 }
 
+/// Converts the recorded score into an ABC Notation string.
+///
+/// # Format Details
+///
+/// - Header: Fixed X:1, T:Chimera Composition, M:4/4, L:1/16, K:C.
+/// - Pitch: Mapped from MIDI to ABC (e.g., 60 -> C).
+/// - Duration: Mapped to ABC duration multipliers.
+///
+/// # Examples
+///
+/// ```
+/// use chimera_lang::vm::bard::{Note, score_to_abc};
+///
+/// let score = vec![
+///     Note::new(60, 4, 100), // Middle C, quarter note
+///     Note::new(64, 4, 100), // E, quarter note
+/// ];
+/// let abc = score_to_abc(&score);
+/// // Middle C (60) is "c" in ABC. E4 (64) is "e".
+/// assert!(abc.contains("c4"));
+/// assert!(abc.contains("e4"));
+/// ```
 pub fn score_to_abc(score: &[Note]) -> String {
     let mut s = String::from("X:1\nT:Chimera Composition\nM:4/4\nL:1/16\nK:C\n");
     let mut measure_dur = 0;
@@ -186,4 +235,51 @@ fn midi_to_abc(pitch: u8) -> String {
     }
 
     res
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_midi_to_abc_conversion() {
+        let cases = vec![
+            (60, "c", "Middle C (C4)"),
+            (48, "C", "C3"),
+            (36, "C,", "C2"),
+            (72, "c'", "C5"),
+            (61, "^c", "C#4"),
+            (59, "B", "B3"),
+        ];
+
+        // We test via score_to_abc since midi_to_abc is private
+        for (pitch, expected_note, desc) in cases {
+            let score = vec![Note::new(pitch, 1, 100)];
+            let abc = score_to_abc(&score);
+            // ABC output will be header... then the note.
+            // Note duration 1 is empty string suffix.
+            // So we expect just the note name.
+            // But score_to_abc adds spaces.
+            assert!(
+                abc.contains(expected_note),
+                "Failed on {}: expected '{}' in output, got '{}'",
+                desc,
+                expected_note,
+                abc
+            );
+        }
+    }
+
+    #[test]
+    fn test_score_to_abc_rhythm() {
+        let score = vec![
+            Note::new(60, 4, 100), // C4, quarter
+            Note::new(0, 4, 0),    // Rest, quarter
+            Note::new(67, 8, 100), // G4, half
+        ];
+        let abc = score_to_abc(&score);
+        // Expected body: c4 z4 g8
+        // Note: G4 (67) is "g" in ABC because C4 (60) is "c".
+        assert!(abc.contains("c4 z4 g8"));
+    }
 }
