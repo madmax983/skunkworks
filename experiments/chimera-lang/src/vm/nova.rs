@@ -4,6 +4,10 @@ use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 use crate::vm::Value;
 #[cfg(feature = "nova")]
+use crate::{ChimeraParser, Rule};
+#[cfg(feature = "nova")]
+use pest::Parser;
+#[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
 /// Represents a "time-travel" snapshot of the VM state.
@@ -68,7 +72,11 @@ pub struct Organelle {
 }
 
 #[cfg(feature = "nova")]
-fn get_open_neighbors(vm: &ChimeraVM, y: usize, x: usize) -> impl Iterator<Item = (usize, usize)> + '_ {
+fn get_open_neighbors(
+    vm: &ChimeraVM,
+    y: usize,
+    x: usize,
+) -> impl Iterator<Item = (usize, usize)> + '_ {
     [(-1, 0), (1, 0), (0, -1), (0, 1)]
         .into_iter()
         .filter_map(move |(dy, dx)| {
@@ -433,7 +441,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         // Treated as push(junction)
                                         genes.push(crate::ast::Gene {
                                             op: OpCode::Push,
-                                            args: vec![crate::ast::Nucleotide::Junction(*t, vals.iter().map(value_to_nucleotide).collect())],
+                                            args: vec![crate::ast::Nucleotide::Junction(
+                                                *t,
+                                                vals.iter().map(value_to_nucleotide).collect(),
+                                            )],
                                         });
                                         k += 1;
                                     }
@@ -463,7 +474,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                                 }
                                                 // 1 Arg
                                                 if k + 1 < sequence.len() {
-                                                    args.push(value_to_nucleotide(&sequence[k + 1]));
+                                                    args.push(value_to_nucleotide(
+                                                        &sequence[k + 1],
+                                                    ));
                                                     k += 1; // Consume arg
                                                 }
                                             }
@@ -473,7 +486,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                             | OpCode::Sever
                                             | OpCode::Spark => {
                                                 if k + 1 < sequence.len() {
-                                                    args.push(value_to_nucleotide(&sequence[k + 1]));
+                                                    args.push(value_to_nucleotide(
+                                                        &sequence[k + 1],
+                                                    ));
                                                     k += 1; // Consume arg
                                                 }
                                             }
@@ -2094,7 +2109,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     let s_idx = s as usize;
                     if s_idx < vm.dna.helix.strands.len() {
                         vm.reflexes.insert(e, s_idx);
-                        vm.output.push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));
+                        vm.output
+                            .push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));
                     } else {
                         vm.output
                             .push("Error: Strand index out of bounds for reflex".to_string());
@@ -2132,6 +2148,94 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     .push(format!("LYSIS: Ejected symbiote to {},{}", cx, cy));
             } else {
                 vm.output.push("LYSIS: No symbiotes to eject".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Compile => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(s) = val {
+                    match ChimeraParser::parse(Rule::strand, &s) {
+                        Ok(mut pairs) => {
+                            let pair = pairs.next().unwrap();
+                            let strand = crate::ast::Strand::from_pair(pair);
+                            vm.dna.helix.strands.push(strand);
+                            vm.telomeres.push(50);
+                            #[cfg(feature = "cortex")]
+                            {
+                                vm.activation_levels.push(0);
+                                vm.synapse_map.push(Vec::new());
+                            }
+                            vm.stack
+                                .push(Value::Int((vm.dna.helix.strands.len() - 1) as i64));
+                            vm.energy = vm.energy.saturating_sub(50);
+                            vm.output.push("COMPILE: Success".to_string());
+                        }
+                        Err(e) => {
+                            vm.output.push(format!("COMPILE ERROR: {}", e));
+                        }
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for compile".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for compile".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Decompile => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    let s_idx = idx as usize;
+                    if s_idx < vm.dna.helix.strands.len() {
+                        let strand = &vm.dna.helix.strands[s_idx];
+
+                        fn format_nucleotide(n: &crate::ast::Nucleotide) -> String {
+                            match n {
+                                crate::ast::Nucleotide::Number(i) => i.to_string(),
+                                crate::ast::Nucleotide::String(s) => format!("\"{}\"", s),
+                                crate::ast::Nucleotide::Identifier(s) => s.clone(),
+                                crate::ast::Nucleotide::Junction(t, args) => {
+                                    let t_str = match t {
+                                        crate::ast::JunctionType::Any => "any",
+                                        crate::ast::JunctionType::All => "all",
+                                    };
+                                    let args_str: Vec<String> =
+                                        args.iter().map(format_nucleotide).collect();
+                                    format!("{}({})", t_str, args_str.join(" "))
+                                }
+                            }
+                        }
+
+                        let mut s = String::from("[ ");
+                        for gene in &strand.genes {
+                            s.push_str(&gene.op.to_string());
+                            s.push('(');
+                            for (i, arg) in gene.args.iter().enumerate() {
+                                if i > 0 {
+                                    s.push(' ');
+                                }
+                                s.push_str(&format_nucleotide(arg));
+                            }
+                            s.push_str(") ");
+                        }
+                        s.push(']');
+                        vm.stack.push(Value::Str(s));
+                        vm.energy = vm.energy.saturating_sub(10);
+                    } else {
+                        vm.output
+                            .push("Error: Strand index out of bounds for decompile".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for decompile".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for decompile".to_string());
             }
             None
         }

@@ -13,15 +13,30 @@ fn test_alchemy_arithmetic() {
     // Strand 0: Spawn Ribosome, then jump to Strand 1.
     let strand0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-            Gene { op: OpCode::Spawn, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(4)],
+            },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(1)],
+            },
         ],
     };
     // Strand 1: Idle loop
     let strand1 = Strand {
-        genes: vec![Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] }],
+        genes: vec![Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        }],
     };
 
     let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
@@ -60,14 +75,29 @@ fn test_alchemy_arithmetic() {
 fn test_alchemy_logic() {
     let strand0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-            Gene { op: OpCode::Spawn, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(4)],
+            },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(1)],
+            },
         ],
     };
     let strand1 = Strand {
-        genes: vec![Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] }],
+        genes: vec![Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        }],
     };
 
     let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
@@ -77,7 +107,9 @@ fn test_alchemy_logic() {
     vm.grid[8][10] = Value::Str("=".to_string());
     vm.grid[8][11] = Value::Str("!".to_string());
 
-    vm.step(); vm.step(); vm.step(); // Spawn (Tick 3). Reads 10.
+    vm.step();
+    vm.step();
+    vm.step(); // Spawn (Tick 3). Reads 10.
 
     vm.step(); // Tick 4: Reads 10.
     vm.step(); // Tick 5: Reads "=". Stack [1].
@@ -99,14 +131,29 @@ fn test_alchemy_logic() {
 fn test_alchemy_io() {
     let strand0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-            Gene { op: OpCode::Spawn, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(4)],
+            },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(1)],
+            },
         ],
     };
     let strand1 = Strand {
-        genes: vec![Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] }],
+        genes: vec![Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        }],
     };
 
     let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
@@ -121,7 +168,9 @@ fn test_alchemy_io() {
     vm.grid[8][13] = Value::Int(-3);
     vm.grid[8][14] = Value::Str(":".to_string());
 
-    vm.step(); vm.step(); vm.step(); // Spawn (Tick 3). Reads 99.
+    vm.step();
+    vm.step();
+    vm.step(); // Spawn (Tick 3). Reads 99.
 
     vm.step(); // Tick 4. Reads 1.
     vm.step(); // Tick 5. Reads 0.

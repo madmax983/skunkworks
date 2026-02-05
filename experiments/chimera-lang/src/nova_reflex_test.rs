@@ -2,7 +2,7 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value, Topology};
+    use crate::vm::{ChimeraVM, Topology, Value};
 
     fn make_dna(strands: Vec<Vec<Gene>>) -> Dna {
         let strands = strands.into_iter().map(|genes| Strand { genes }).collect();
@@ -15,19 +15,46 @@ mod tests {
     fn test_reflex_collision() {
         // Strand 0: Register reflex for Collision (0) to Strand 1, then try to migrate into wall
         let strand0 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Strand 1
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Event 0
-            Gene { op: OpCode::Reflex, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // dy = 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dx = 1 (East)
-            Gene { op: OpCode::Migrate, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Loop
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // Strand 1
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Event 0
+            Gene {
+                op: OpCode::Reflex,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // dy = 0
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // dx = 1 (East)
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            }, // Loop
         ];
 
         // Strand 1: Handler. Push 999 to indicate success. Return.
         let strand1 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-            Gene { op: OpCode::Ret, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            },
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
@@ -67,16 +94,34 @@ mod tests {
     fn test_reflex_low_energy() {
         // Strand 0: Register reflex for Low Energy (2) to Strand 1. Loop.
         let strand0 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Reflex, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(3)] }, // Infinite loop to drain energy
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Reflex,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(3)],
+            }, // Infinite loop to drain energy
         ];
 
         // Strand 1: Handler. Photosynthesize (+5). Ret.
         let strand1 = vec![
-            Gene { op: OpCode::Photosynthesize, args: vec![] },
-            Gene { op: OpCode::Ret, args: vec![] },
+            Gene {
+                op: OpCode::Photosynthesize,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
@@ -112,16 +157,34 @@ mod tests {
     fn test_reflex_mutation() {
         // Strand 0: Register reflex for Mutation (1) to Strand 1.
         let strand0 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Reflex, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(3)] }, // Wait
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Reflex,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(3)],
+            }, // Wait
         ];
 
         // Strand 1: Handler. Push 777. Ret.
         let strand1 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(777)] },
-            Gene { op: OpCode::Ret, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(777)],
+            },
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(vec![strand0, strand1]));
