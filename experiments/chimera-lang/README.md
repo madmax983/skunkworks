@@ -19,6 +19,7 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 *   `dup()`: Duplicate top value.
 *   `swap()`: Swap top two values.
 *   `drop()`: Discard top value.
+*   `print()`: Pop value and print to output log.
 
 ### Arithmetic
 *   `add()`, `sub()`, `mul()`, `div()`: Standard math operations.
@@ -31,6 +32,7 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 *   `photosynthesize()`: Gain 5 Energy.
 *   `consume()`: Pop value; gain Energy equal to value (Int) or length (String).
 *   `transcribe(strand, gene, arg, value)`: Self-modifying code. Changes a gene's argument at runtime.
+*   `genome()`: Introspection. Pushes current strand length, then each gene operator as a string.
 *   `s_len()`, `helix_len()`, `gene_len()`: Introspection.
 
 ### Epigenetics (Nova Feature)
@@ -63,18 +65,24 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 ### Petri Dish (New!)
 *   `g_read()`: Pop `y`, `x`. Push value at `grid[y][x]`.
 *   `g_write()`: Pop `val`, `y`, `x`. Write `val` to `grid[y][x]`.
+*   `radiate()`: Arguments: `val`, `r`, `y`, `x` (top). Write `val` to all cells within radius `r` of `(y, x)`.
+*   `siphon()`: Arguments: `r`, `y`, `x` (top). Sum values of all cells within radius `r` of `(y, x)`, clear them, and push sum.
 
 ### Virology (Grid Execution)
 *   `virus()`: Pop `y`, `x`. Executes the value at `grid[y][x]` as an enzyme.
     *   If `Int(n)`, it behaves like `push(n)`.
     *   If `Str(s)`, it executes the enzyme named `s`.
-*   `incubate()`: (Nova Feature) Pop `len`, `y`, `x`. Reads `len` cells horizontally from grid starting at `(y, x)` and creates a new Strand (Horizontal Gene Transfer).
+*   `incubate()`: (Nova Feature) Arguments: `len`, `y`, `x` (top). Reads `len` cells horizontally from grid starting at `(y, x)` and creates a new Strand (Horizontal Gene Transfer).
     *   `Int(n)` becomes `push(n)`.
     *   `Str(s)` becomes `s()`.
 
 ### Advanced Control Flow
 *   `jump_s()`: Pop target index from stack and jump to that strand.
 *   `brz_s()`: Pop target index and condition. If condition is 0, jump to target strand.
+
+### Experimental Nova Enzymes (Undocumented)
+The following enzymes are available in the Nova feature set but are currently experimental:
+`Rift`, `Seal`, `Shape`, `Simulate`, `Dream`, `Chemotaxis`, `Identity`, `Differentiate`, `Sporulate`, `Germinate`, `CrisprScan`, `Cas9Cut`, `Ligase`, `Integrase`, `Excision`, `Secrete`, `Detect`, `Absorb`, `Migrate`, `Detox`, `WRead`, `Call`, `Ret`, `Bind`, `Unbind`, `Conjugate`, `Gravitate`, `Lumine`, `SenseLight`, `Broadcast`, `Tune`, `Membrane`, `Osmosis`, `Symbiosis`, `Lysis`, `Reflex`, `Compile`, `Decompile`, `Sonar`.
 
 ## Controls (TUI)
 *   `Space`: Step execution.
