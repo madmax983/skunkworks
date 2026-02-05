@@ -1040,7 +1040,12 @@ impl ChimeraVM {
             | OpCode::Reflex
             | OpCode::Compile
             | OpCode::Decompile
-            | OpCode::Sonar => nova::exec_nova_op(self, op, args),
+            | OpCode::Sonar
+            | OpCode::Eval
+            | OpCode::Map
+            | OpCode::Fold
+            | OpCode::Filter
+            | OpCode::Zip => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));

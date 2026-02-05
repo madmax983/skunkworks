@@ -2245,7 +2245,239 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Eval => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(s) = val {
+                    // Parse string to strand
+                    match ChimeraParser::parse(Rule::strand, &s) {
+                        Ok(mut pairs) => {
+                            let pair = pairs.next().unwrap();
+                            let strand = crate::ast::Strand::from_pair(pair);
+                            execute_ephemeral_strand(vm, &strand);
+                            vm.output.push("EVAL: Success".to_string());
+                        }
+                        Err(e) => {
+                            vm.output.push(format!("EVAL ERROR: {}", e));
+                        }
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for eval".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for eval".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Map => {
+            // stack: junction, function (top)
+            if vm.stack.len() >= 2 {
+                let func_val = vm.stack.pop().unwrap();
+                let target_val = vm.stack.pop().unwrap();
+
+                let inputs = match target_val {
+                    Value::Junction(_, vals) => vals,
+                    scalar => vec![scalar],
+                };
+
+                let mut results = Vec::new();
+
+                for input in inputs {
+                    let stack_depth = vm.stack.len();
+                    vm.stack.push(input);
+
+                    match &func_val {
+                         Value::Str(s) => {
+                             // Parse and eval
+                            if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
+                                let pair = pairs.next().unwrap();
+                                let strand = crate::ast::Strand::from_pair(pair);
+                                execute_ephemeral_strand(vm, &strand);
+                            } else {
+                                vm.output.push(format!("MAP ERROR: Parse failed for {}", s));
+                            }
+                         }
+                         Value::Int(idx) => {
+                             // Sync call strand
+                             execute_strand_sync(vm, *idx as usize);
+                         }
+                         _ => {
+                             vm.output.push("Error: Invalid function for map".to_string());
+                         }
+                    }
+
+                    if vm.stack.len() > stack_depth {
+                         let new_items = vm.stack.split_off(stack_depth);
+                         results.extend(new_items);
+                    }
+                }
+
+                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.energy = vm.energy.saturating_sub(10);
+            } else {
+                vm.output.push("Error: Stack underflow for map".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Fold => {
+            // stack: junction, init, function (top)
+            if vm.stack.len() >= 3 {
+                let func_val = vm.stack.pop().unwrap();
+                let init_val = vm.stack.pop().unwrap();
+                let target_val = vm.stack.pop().unwrap();
+
+                let inputs = match target_val {
+                    Value::Junction(_, vals) => vals,
+                    scalar => vec![scalar],
+                };
+
+                let mut acc = init_val;
+
+                for input in inputs {
+                    vm.stack.push(acc.clone());
+                    vm.stack.push(input);
+
+                    match &func_val {
+                         Value::Str(s) => {
+                            if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
+                                let pair = pairs.next().unwrap();
+                                let strand = crate::ast::Strand::from_pair(pair);
+                                execute_ephemeral_strand(vm, &strand);
+                            }
+                         }
+                         Value::Int(idx) => {
+                             execute_strand_sync(vm, *idx as usize);
+                         }
+                         _ => {}
+                    }
+
+                    if let Some(res) = vm.stack.pop() {
+                        acc = res;
+                    }
+                    // Discard extra items if any
+                }
+
+                vm.stack.push(acc);
+                vm.energy = vm.energy.saturating_sub(10);
+            } else {
+                vm.output.push("Error: Stack underflow for fold".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Filter => {
+             // stack: junction, predicate (top)
+            if vm.stack.len() >= 2 {
+                let func_val = vm.stack.pop().unwrap();
+                let target_val = vm.stack.pop().unwrap();
+
+                let inputs = match target_val {
+                    Value::Junction(_, vals) => vals,
+                    scalar => vec![scalar],
+                };
+
+                let mut results = Vec::new();
+
+                for input in inputs {
+                    vm.stack.push(input.clone());
+
+                    match &func_val {
+                         Value::Str(s) => {
+                            if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
+                                let pair = pairs.next().unwrap();
+                                let strand = crate::ast::Strand::from_pair(pair);
+                                execute_ephemeral_strand(vm, &strand);
+                            }
+                         }
+                         Value::Int(idx) => {
+                             execute_strand_sync(vm, *idx as usize);
+                         }
+                         _ => {}
+                    }
+
+                    if let Some(res) = vm.stack.pop() {
+                        let keep = match res {
+                            Value::Int(i) => i != 0,
+                            Value::Str(s) => !s.is_empty(),
+                            _ => false,
+                        };
+                        if keep {
+                            results.push(input);
+                        }
+                    }
+                }
+
+                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.energy = vm.energy.saturating_sub(10);
+            } else {
+                vm.output.push("Error: Stack underflow for filter".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Zip => {
+            // stack: junction_a, junction_b (top)
+            if vm.stack.len() >= 2 {
+                let val_b = vm.stack.pop().unwrap();
+                let val_a = vm.stack.pop().unwrap();
+
+                let inputs_a = match val_a {
+                    Value::Junction(_, vals) => vals,
+                    scalar => vec![scalar],
+                };
+                let inputs_b = match val_b {
+                    Value::Junction(_, vals) => vals,
+                    scalar => vec![scalar],
+                };
+
+                let len = inputs_a.len().min(inputs_b.len());
+                let mut results = Vec::new();
+
+                for i in 0..len {
+                    results.push(Value::Junction(crate::ast::JunctionType::All, vec![inputs_a[i].clone(), inputs_b[i].clone()]));
+                }
+
+                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.energy = vm.energy.saturating_sub(5);
+            } else {
+                 vm.output.push("Error: Stack underflow for zip".to_string());
+            }
+            None
+        }
         _ => None,
+    }
+}
+
+#[cfg(feature = "nova")]
+fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
+    if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
+        vm.output.push("Error: Recursion limit exceeded in ephemeral execution".to_string());
+        return;
+    }
+    vm.recursion_depth += 1;
+
+    for gene in &strand.genes {
+        let result = vm.execute_gene_inner(gene.op.clone(), &gene.args);
+        if let Some(target) = result {
+            vm.ip = target;
+            // Jump occurred! Stop ephemeral execution and let the main loop continue from new IP.
+            break;
+        }
+    }
+
+    vm.recursion_depth -= 1;
+}
+
+#[cfg(feature = "nova")]
+fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
+    if strand_idx < vm.dna.helix.strands.len() {
+        let strand = vm.dna.helix.strands[strand_idx].clone();
+        execute_ephemeral_strand(vm, &strand);
+    } else {
+        vm.output.push("Error: Invalid strand index for sync execution".to_string());
     }
 }
 
