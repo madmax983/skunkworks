@@ -67,5 +67,7 @@ mod nova_test;
 mod nova_waste_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribosome_test;
+#[cfg(all(test, feature = "nova"))]
+mod orca_test;
 #[cfg(test)]
 mod sentry_nova_test;

@@ -417,6 +417,21 @@ impl ChimeraVM {
                                 "<" => organelle.direction = (0, -1),
                                 "^" => organelle.direction = (-1, 0),
                                 "v" => organelle.direction = (1, 0),
+                                "+" => self.exec_math_op(OpCode::Add),
+                                "-" => self.exec_math_op(OpCode::Sub),
+                                "*" => self.exec_math_op(OpCode::Mul),
+                                "/" => self.exec_math_op(OpCode::Div),
+                                "!" => {
+                                    if let Some(val) = self.stack.pop() {
+                                        if let Value::Int(i) = val {
+                                            self.stack.push(Value::Int(if i == 0 { 1 } else { 0 }));
+                                        } else {
+                                            self.output.push("Error: Type mismatch for !".to_string());
+                                        }
+                                    } else {
+                                        self.output.push("Error: Stack underflow for !".to_string());
+                                    }
+                                }
                                 _ => {
                                     if let Ok(op) = s.parse::<OpCode>() {
                                         // Execute OpCode (with no args for simplicity in grid mode)
@@ -585,7 +600,9 @@ impl ChimeraVM {
             | OpCode::Conjugate
             | OpCode::Gravitate
             | OpCode::Lumine
-            | OpCode::SenseLight => nova::exec_nova_op(self, op, args),
+            | OpCode::SenseLight
+            | OpCode::GReadR
+            | OpCode::GWriteR => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));

@@ -1688,6 +1688,49 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::GReadR => {
+            // stack: dy, dx (top) - Consistent with GRead (y, x)
+            if vm.stack.len() >= 2 {
+                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop().unwrap();
+                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    let (cy, cx) = vm.context_loc;
+                    let ty = (cy as i64 + dy).rem_euclid(16) as usize;
+                    let tx = (cx as i64 + dx).rem_euclid(16) as usize;
+                    vm.stack.push(vm.grid[ty][tx].clone());
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for g_read_r".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for g_read_r".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::GWriteR => {
+            // stack: val, dy, dx (top) - Consistent with GWrite (val, y, x)
+            if vm.stack.len() >= 3 {
+                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop().unwrap();
+                let val = vm.stack.pop().unwrap();
+                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    let (cy, cx) = vm.context_loc;
+                    let ty = (cy as i64 + dy).rem_euclid(16) as usize;
+                    let tx = (cx as i64 + dx).rem_euclid(16) as usize;
+                    vm.grid[ty][tx] = val;
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for g_write_r".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for g_write_r".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }

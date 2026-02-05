@@ -118,6 +118,10 @@ pub enum OpCode {
     Identity,
     #[cfg(feature = "nova")]
     Differentiate,
+    #[cfg(feature = "nova")]
+    GReadR,
+    #[cfg(feature = "nova")]
+    GWriteR,
 
     Unknown(String),
 }
@@ -240,6 +244,10 @@ impl FromStr for OpCode {
             "identity" => Ok(OpCode::Identity),
             #[cfg(feature = "nova")]
             "differentiate" => Ok(OpCode::Differentiate),
+            #[cfg(feature = "nova")]
+            "g_read_r" => Ok(OpCode::GReadR),
+            #[cfg(feature = "nova")]
+            "g_write_r" => Ok(OpCode::GWriteR),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -362,6 +370,10 @@ impl fmt::Display for OpCode {
             OpCode::Identity => write!(f, "identity"),
             #[cfg(feature = "nova")]
             OpCode::Differentiate => write!(f, "differentiate"),
+            #[cfg(feature = "nova")]
+            OpCode::GReadR => write!(f, "g_read_r"),
+            #[cfg(feature = "nova")]
+            OpCode::GWriteR => write!(f, "g_write_r"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
