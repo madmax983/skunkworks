@@ -8,9 +8,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void.
 
-### [Concentration Level: WARNING] - Location: experiments/code-radio
+### [Concentration Level: TOXIC] - Location: graveyard/code-radio
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Signal fading. 24 hours remain.
+- **Status:** Specimen executed. Documentation void.
+
+### [Concentration Level: WARNING] - Location: experiments/strange-loops
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Decay detected. 24 hours remain.
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
