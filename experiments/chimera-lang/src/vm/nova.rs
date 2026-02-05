@@ -1167,6 +1167,10 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
                 if let Some(Nucleotide::Number(idx)) = args.first() {
                     let strand_idx = *idx as usize;
                     if strand_idx < vm.dna.helix.strands.len() {
+                        if vm.call_stack.len() >= 1024 {
+                            vm.output.push("Error: Call stack overflow".to_string());
+                            return None;
+                        }
                         // Push return address (current strand, next gene)
                         // ip points to Call instruction. Step loop will increment it.
                         // But if we jump, step loop sets ip to target.

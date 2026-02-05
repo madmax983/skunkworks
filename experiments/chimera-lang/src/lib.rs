@@ -59,3 +59,4 @@ mod nova_waste_test;
 mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_types_test;
+mod havoc_test;

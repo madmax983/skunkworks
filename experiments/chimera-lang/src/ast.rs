@@ -87,7 +87,20 @@ impl Gene {
 impl Nucleotide {
     pub fn from_pair(pair: Pair<Rule>) -> Self {
         match pair.as_rule() {
-            Rule::number => Nucleotide::Number(pair.as_str().parse().unwrap()),
+            Rule::number => {
+                let s = pair.as_str();
+                match s.parse::<i64>() {
+                    Ok(n) => Nucleotide::Number(n),
+                    Err(_) => {
+                        // Handle overflow by saturating
+                        if s.trim().starts_with('-') {
+                            Nucleotide::Number(i64::MIN)
+                        } else {
+                            Nucleotide::Number(i64::MAX)
+                        }
+                    }
+                }
+            }
             Rule::string => {
                 let s = pair.as_str();
                 // Remove quotes
