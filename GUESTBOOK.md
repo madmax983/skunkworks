@@ -125,3 +125,7 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Signal lost. Directory missing. Echo fading.
+
+### [Concentration Level: HIGH] - Location: experiments/glyph-wave
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The letters are liquefying. Bezier curves are vibrating at 60Hz. Typography has become a waveform.
