@@ -488,6 +488,22 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Devour,
 
+    /// **[Nova]** Runs a cellular automaton step on the Grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Evolve,
+    /// **[Nova]** Randomly corrupts the Grid or Stack.
+    ///
+    /// **Stack:** `[ ..., severity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Glitch,
+    /// **[Nova]** Shuffles the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Scramble,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -801,6 +817,12 @@ impl FromStr for OpCode {
             "devour" => Ok(OpCode::Devour),
             #[cfg(feature = "nova")]
             "decompile" => Ok(OpCode::Decompile),
+            #[cfg(feature = "nova")]
+            "evolve" => Ok(OpCode::Evolve),
+            #[cfg(feature = "nova")]
+            "glitch" => Ok(OpCode::Glitch),
+            #[cfg(feature = "nova")]
+            "scramble" => Ok(OpCode::Scramble),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -960,6 +982,12 @@ impl fmt::Display for OpCode {
             OpCode::Compile => write!(f, "compile"),
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
+            #[cfg(feature = "nova")]
+            OpCode::Evolve => write!(f, "evolve"),
+            #[cfg(feature = "nova")]
+            OpCode::Glitch => write!(f, "glitch"),
+            #[cfg(feature = "nova")]
+            OpCode::Scramble => write!(f, "scramble"),
             #[cfg(feature = "nova")]
             OpCode::Void => write!(f, "void"),
             #[cfg(feature = "nova")]

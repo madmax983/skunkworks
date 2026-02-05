@@ -1175,6 +1175,9 @@ impl ChimeraVM {
             OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour
+            | OpCode::Evolve
+            | OpCode::Glitch
+            | OpCode::Scramble
             | OpCode::Pigment
             | OpCode::Glyph
             | OpCode::Rift
