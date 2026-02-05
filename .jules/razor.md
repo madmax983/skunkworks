@@ -41,3 +41,8 @@
 **Bloat:** `RainManager` in `fluid-rain`.
 **Cut:** Renamed to `Rain`. Inlined `scan_files`.
 **Saved:** "Manager" cognitive overhead.
+
+## [Reduction]
+**Bloat:** Repetitive neighbor iteration and boundary checking logic in `chimera-lang` diffusion functions. Dead code `experiments/sonar-swarm`.
+**Cut:** Extracted `get_open_neighbors` helper. Deleted `sonar-swarm`.
+**Saved:** ~30 lines of duplication, 1 broken experiment removed.

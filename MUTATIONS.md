@@ -137,13 +137,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/hyperbolic-ants
 - **Evaluation**: Compiles. Verified.
 
-### sonar-swarm
-- **Parents**: experiments/echo-chamber + experiments/luminous-flock
-- **Concept**: Boids navigate using active echolocation (sonar) in a simulated acoustic environment.
-- **Novel trait**: Navigation via pressure gradient descent; "blind" flocking driven by wave interference.
-- **Status**: experiments/sonar-swarm
-- **Evaluation**: Build fails in sandbox due to missing ALSA system dependencies. Concept verified locally.
-
 ### chimera-market
 - **Parents**: experiments/chimera-lang + experiments/market-flow
 - **Concept**: A TUI simulation where trading algorithms are Chimera VM instances that evolve via natural selection.

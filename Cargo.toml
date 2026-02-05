@@ -90,7 +90,6 @@ members = [
     "experiments/fungal-balancer",
     "experiments/hyperbolic-ants", 
     "experiments/klein-life",
-    "experiments/sonar-swarm", 
     "experiments/aperiodic-citadel", 
     "experiments/firefly-synapse",
     "experiments/chimera-market",
