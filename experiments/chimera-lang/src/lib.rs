@@ -117,3 +117,5 @@ mod sentry_nova_test;
 mod warden_dos_test;
 #[cfg(test)]
 mod warden_exploit_test;
+#[cfg(all(test, feature = "nova"))]
+mod chaos_test;

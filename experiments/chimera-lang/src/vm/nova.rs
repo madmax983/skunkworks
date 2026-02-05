@@ -22,6 +22,8 @@ use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]
+use rand::seq::SliceRandom;
+#[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
 /// The physical state of the organism, affecting movement and mutation.
@@ -2870,6 +2872,98 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.output
                     .push("Error: Stack underflow for glyph".to_string());
             }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Evolve => {
+            // Cellular Automata (Game of Life variant)
+            let rows = vm.grid.len();
+            let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+            let mut next_grid = vm.grid.clone();
+
+            for y in 0..rows {
+                for x in 0..cols {
+                    // Count neighbors
+                    let mut neighbors = 0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
+                            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if !matches!(vm.grid[ny][nx], Value::Int(0)) {
+                                    neighbors += 1;
+                                }
+                            }
+                        }
+                    }
+
+                    let is_alive = !matches!(vm.grid[y][x], Value::Int(0));
+                    if !is_alive && neighbors == 3 {
+                        // Birth: Becomes 1
+                        next_grid[y][x] = Value::Int(1);
+                    } else if is_alive && (neighbors < 2 || neighbors > 3) {
+                        // Death
+                        next_grid[y][x] = Value::Int(0);
+                    }
+                    // Else survive (keep value)
+                }
+            }
+            vm.grid = next_grid;
+            vm.energy = vm.energy.saturating_sub(20);
+            vm.output.push("EVOLVE: Grid updated".to_string());
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Glitch => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(severity) = val {
+                    let mut rng = rand::thread_rng();
+                    let sev = severity.clamp(1, 100) as usize;
+
+                    // Corrupt grid
+                    let rows = vm.grid.len();
+                    if rows > 0 {
+                        let cols = vm.grid[0].len();
+                        for _ in 0..sev {
+                            let rx = rng.gen_range(0..cols);
+                            let ry = rng.gen_range(0..rows);
+                            if rng.gen_bool(0.5) {
+                                vm.grid[ry][rx] = Value::Int(rng.gen_range(0..10));
+                            } else {
+                                vm.grid[ry][rx] = Value::Int(0);
+                            }
+                        }
+                    }
+
+                    // Corrupt stack
+                    if !vm.stack.is_empty() {
+                         let changes = sev.min(vm.stack.len());
+                         for _ in 0..changes {
+                             let idx = rng.gen_range(0..vm.stack.len());
+                             if rng.gen_bool(0.3) {
+                                 // Mutate value
+                                 vm.stack[idx] = Value::Int(rng.gen_range(0..100));
+                             }
+                         }
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(severity as i64);
+                    vm.output.push(format!("GLITCH: Severity {}", severity));
+                } else {
+                    vm.output.push("Error: Type mismatch for glitch".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for glitch".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Scramble => {
+            let mut rng = rand::thread_rng();
+            vm.stack.shuffle(&mut rng);
+            vm.energy = vm.energy.saturating_sub(10);
+            vm.output.push("SCRAMBLE: Stack shuffled".to_string());
             None
         }
         _ => None,

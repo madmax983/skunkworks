@@ -29,7 +29,6 @@ members = [
     "experiments/log-landscape",
     "experiments/market-flow",
     "experiments/myco-transit",
-    "experiments/neuro-beat",
     "experiments/neuro-puppet",
     "experiments/neuro-terminal",
     "experiments/orbital-decay",
