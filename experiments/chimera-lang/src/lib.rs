@@ -68,6 +68,8 @@ mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_types_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_phase_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;
 #[cfg(test)]
 mod nova_quantum_test;
@@ -98,6 +100,8 @@ mod nova_waste_test;
 mod oracle_test;
 #[cfg(all(test, feature = "nova"))]
 mod prion_test;
+#[cfg(all(test, feature = "resonance"))]
+mod resonance_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribosome_test;
 #[cfg(all(test, feature = "nova"))]
@@ -105,8 +109,6 @@ mod ribozyme_test;
 #[cfg(test)]
 mod sentry_nova_test;
 #[cfg(test)]
-mod warden_exploit_test;
-#[cfg(test)]
 mod warden_dos_test;
-#[cfg(all(test, feature = "resonance"))]
-mod resonance_test;
+#[cfg(test)]
+mod warden_exploit_test;

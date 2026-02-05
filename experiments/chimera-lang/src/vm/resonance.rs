@@ -20,16 +20,19 @@ pub fn exec_resonance_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         y: cy,
                         strength,
                     });
-                    vm.output.push(format!("PLUCK: {},{} str={:.2}", cx, cy, strength));
+                    vm.output
+                        .push(format!("PLUCK: {},{} str={:.2}", cx, cy, strength));
                 } else {
-                    vm.output.push("PLUCK: No audio channel connected".to_string());
+                    vm.output
+                        .push("PLUCK: No audio channel connected".to_string());
                 }
                 vm.energy = vm.energy.saturating_sub(1);
             } else {
                 vm.output.push("Error: Type mismatch for pluck".to_string());
             }
         } else {
-            vm.output.push("Error: Stack underflow for pluck".to_string());
+            vm.output
+                .push("Error: Stack underflow for pluck".to_string());
         }
     }
 }

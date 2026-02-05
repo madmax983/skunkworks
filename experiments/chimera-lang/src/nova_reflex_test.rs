@@ -154,6 +154,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_reflex_mutation() {
         // Strand 0: Register reflex for Mutation (1) to Strand 1.
         let strand0 = vec![

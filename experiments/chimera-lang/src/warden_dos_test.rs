@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-    use crate::vm::ChimeraVM;
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{MAX_SPORES, MAX_ORGANELLES, MAX_CALL_STACK_DEPTH};
+    use crate::vm::ChimeraVM;
+    use crate::vm::{MAX_CALL_STACK_DEPTH, MAX_ORGANELLES, MAX_SPORES};
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
         let dna = Dna {
@@ -18,11 +18,20 @@ mod tests {
     #[cfg(feature = "nova")]
     fn test_dos_spore_bomb() {
         let mut genes = Vec::new();
-        genes.push(Gene { op: OpCode::Sporulate, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Sporulate,
+            args: vec![],
+        });
         for _ in 0..10 {
-            genes.push(Gene { op: OpCode::Photosynthesize, args: vec![] });
+            genes.push(Gene {
+                op: OpCode::Photosynthesize,
+                args: vec![],
+            });
         }
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        });
 
         let mut vm = make_vm(genes);
 
@@ -46,9 +55,18 @@ mod tests {
     fn test_dos_organelle_swarm() {
         // Spawn costs 20.
         let mut genes = Vec::new();
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // strand
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }); // type
-        genes.push(Gene { op: OpCode::Spawn, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // strand
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }); // type
+        genes.push(Gene {
+            op: OpCode::Spawn,
+            args: vec![],
+        });
 
         let mut vm = make_vm(genes);
 
@@ -59,8 +77,15 @@ mod tests {
             vm.execute_gene_inner(OpCode::Spawn, &[]);
         }
 
-        assert!(vm.organelles.len() <= MAX_ORGANELLES, "Organelles should be capped");
-        assert_eq!(vm.organelles.len(), MAX_ORGANELLES, "Should reach max organelles");
+        assert!(
+            vm.organelles.len() <= MAX_ORGANELLES,
+            "Organelles should be capped"
+        );
+        assert_eq!(
+            vm.organelles.len(),
+            MAX_ORGANELLES,
+            "Should reach max organelles"
+        );
     }
 
     #[test]
@@ -71,13 +96,30 @@ mod tests {
         // Infinite recursion of call stack.
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // strand 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // event 1 (mutation)
-            Gene { op: OpCode::Reflex, args: vec![] },
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // amount
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // radius
-            Gene { op: OpCode::Irradiate, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // strand 0
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // event 1 (mutation)
+            Gene {
+                op: OpCode::Reflex,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }, // amount
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // radius
+            Gene {
+                op: OpCode::Irradiate,
+                args: vec![],
+            },
         ];
 
         let mut vm = make_vm(genes);
@@ -111,10 +153,17 @@ mod tests {
         // simulating a recursive chain.
 
         for _ in 0..MAX_CALL_STACK_DEPTH + 10 {
-             vm.trigger_reflex(1);
+            vm.trigger_reflex(1);
         }
 
-        assert!(vm.call_stack.len() <= MAX_CALL_STACK_DEPTH, "Call stack should be capped");
-        assert_eq!(vm.call_stack.len(), MAX_CALL_STACK_DEPTH, "Should reach max call stack");
+        assert!(
+            vm.call_stack.len() <= MAX_CALL_STACK_DEPTH,
+            "Call stack should be capped"
+        );
+        assert_eq!(
+            vm.call_stack.len(),
+            MAX_CALL_STACK_DEPTH,
+            "Should reach max call stack"
+        );
     }
 }

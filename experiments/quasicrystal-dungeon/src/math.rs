@@ -67,9 +67,9 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
             for n3 in range.clone() {
                 for n4 in range.clone() {
                     let r_perp_partial = basis_perp[0] * (n1 as f32)
-                         + basis_perp[1] * (n2 as f32)
-                         + basis_perp[2] * (n3 as f32)
-                         + basis_perp[3] * (n4 as f32);
+                        + basis_perp[1] * (n2 as f32)
+                        + basis_perp[2] * (n3 as f32)
+                        + basis_perp[3] * (n4 as f32);
 
                     // Optimization: if partial sum is already too huge, maybe prune?
                     // No, negative contributions can cancel it out.
@@ -79,18 +79,16 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
                             let n5f = n5 as f32;
                             let n6f = n6 as f32;
 
-                            let r_perp = r_perp_partial
-                                + basis_perp[4] * n5f
-                                + basis_perp[5] * n6f;
+                            let r_perp = r_perp_partial + basis_perp[4] * n5f + basis_perp[5] * n6f;
 
                             if r_perp.magnitude() < perp_threshold {
                                 // Accept
                                 let r_par = basis_par[0] * (n1 as f32)
-                                     + basis_par[1] * (n2 as f32)
-                                     + basis_par[2] * (n3 as f32)
-                                     + basis_par[3] * (n4 as f32)
-                                     + basis_par[4] * n5f
-                                     + basis_par[5] * n6f;
+                                    + basis_par[1] * (n2 as f32)
+                                    + basis_par[2] * (n3 as f32)
+                                    + basis_par[3] * (n4 as f32)
+                                    + basis_par[4] * n5f
+                                    + basis_par[5] * n6f;
 
                                 atoms.push(Point3::from_vec(r_par));
                             }

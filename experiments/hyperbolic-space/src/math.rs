@@ -1,4 +1,4 @@
-use cgmath::{Matrix4, Vector4, SquareMatrix, InnerSpace, Vector3, Zero};
+use cgmath::{InnerSpace, Matrix4, SquareMatrix, Vector3, Vector4, Zero};
 
 pub type Mat4 = Matrix4<f32>;
 pub type Vec4 = Vector4<f32>;
@@ -47,10 +47,22 @@ pub fn boost(delta: Vec3) -> Mat4 {
     let nz = n.z;
 
     Mat4::new(
-        1.0 + (c - 1.0) * nx * nx, (c - 1.0) * nx * ny,       (c - 1.0) * nx * nz,       nx * s,
-        (c - 1.0) * ny * nx,       1.0 + (c - 1.0) * ny * ny, (c - 1.0) * ny * nz,       ny * s,
-        (c - 1.0) * nz * nx,       (c - 1.0) * nz * ny,       1.0 + (c - 1.0) * nz * nz, nz * s,
-        nx * s,                    ny * s,                    nz * s,                    c
+        1.0 + (c - 1.0) * nx * nx,
+        (c - 1.0) * nx * ny,
+        (c - 1.0) * nx * nz,
+        nx * s,
+        (c - 1.0) * ny * nx,
+        1.0 + (c - 1.0) * ny * ny,
+        (c - 1.0) * ny * nz,
+        ny * s,
+        (c - 1.0) * nz * nx,
+        (c - 1.0) * nz * ny,
+        1.0 + (c - 1.0) * nz * nz,
+        nz * s,
+        nx * s,
+        ny * s,
+        nz * s,
+        c,
     )
 }
 

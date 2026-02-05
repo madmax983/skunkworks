@@ -44,16 +44,16 @@ pub fn tessellate_and_distort(outline: &GlyphOutline, params: &WaveParams) -> Ve
                 last_point = p;
             }
             PathOp::CurveTo(c1, c2, p) => {
-                 let c1 = to_vec2(*c1);
-                 let c2 = to_vec2(*c2);
-                 let p = to_vec2(*p);
-                 let steps = 5;
-                 for i in 1..=steps {
+                let c1 = to_vec2(*c1);
+                let c2 = to_vec2(*c2);
+                let p = to_vec2(*p);
+                let steps = 5;
+                for i in 1..=steps {
                     let t = i as f32 / steps as f32;
                     let pt = cubic_bezier(last_point, c1, c2, p, t);
                     current_strip.push(pt);
-                 }
-                 last_point = p;
+                }
+                last_point = p;
             }
             PathOp::Close => {
                 if let Some(first) = current_strip.first().cloned() {
@@ -74,14 +74,15 @@ pub fn tessellate_and_distort(outline: &GlyphOutline, params: &WaveParams) -> Ve
         if strip.len() < 2 {
             distorted_strip = strip.clone();
         } else {
-             for (i, p) in strip.iter().enumerate() {
+            for (i, p) in strip.iter().enumerate() {
                 let normal = if i == 0 {
                     get_normal(strip[0], strip[1])
                 } else if i == strip.len() - 1 {
-                    get_normal(strip[i-1], strip[i])
+                    get_normal(strip[i - 1], strip[i])
                 } else {
                     // Average of normals
-                    (get_normal(strip[i-1], strip[i]) + get_normal(strip[i], strip[i+1])).normalize_or_zero()
+                    (get_normal(strip[i - 1], strip[i]) + get_normal(strip[i], strip[i + 1]))
+                        .normalize_or_zero()
                 };
 
                 let phase = i as f32 * 0.2;
@@ -120,16 +121,16 @@ fn get_normal(a: Vec2, b: Vec2) -> Vec2 {
 mod tests {
     use super::*;
     use crate::outline::GlyphOutline;
-    use rusttype::Point;
     use crate::outline::PathOp;
+    use rusttype::Point;
 
     #[test]
     fn test_tessellate_and_distort() {
         // Create a simple outline (a triangle)
         let mut outline = GlyphOutline::new();
-        outline.ops.push(PathOp::MoveTo(Point{x:0.0, y:0.0}));
-        outline.ops.push(PathOp::LineTo(Point{x:10.0, y:0.0}));
-        outline.ops.push(PathOp::LineTo(Point{x:5.0, y:10.0}));
+        outline.ops.push(PathOp::MoveTo(Point { x: 0.0, y: 0.0 }));
+        outline.ops.push(PathOp::LineTo(Point { x: 10.0, y: 0.0 }));
+        outline.ops.push(PathOp::LineTo(Point { x: 5.0, y: 10.0 }));
         outline.ops.push(PathOp::Close);
 
         let params1 = WaveParams {
@@ -160,6 +161,11 @@ mod tests {
         let p1 = result1[0][1];
         let p2 = result2[0][1];
 
-        assert!(p1 != p2, "Points should be distorted. P1: {:?}, P2: {:?}", p1, p2);
+        assert!(
+            p1 != p2,
+            "Points should be distorted. P1: {:?}, P2: {:?}",
+            p1,
+            p2
+        );
     }
 }

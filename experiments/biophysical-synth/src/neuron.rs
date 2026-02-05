@@ -1,4 +1,3 @@
-
 #[derive(Debug, Clone, Copy)]
 pub enum Command {
     SetCurrent(f32),
@@ -20,13 +19,13 @@ pub struct HodgkinHuxley {
     pub n: f32, // K activation
 
     // Parameters (tunable)
-    pub c_m: f32,   // Membrane capacitance
-    pub g_na: f32,  // Max Na conductance
-    pub g_k: f32,   // Max K conductance
-    pub g_l: f32,   // Leak conductance
-    pub e_na: f32,  // Na reversal potential
-    pub e_k: f32,   // K reversal potential
-    pub e_l: f32,   // Leak reversal potential
+    pub c_m: f32,  // Membrane capacitance
+    pub g_na: f32, // Max Na conductance
+    pub g_k: f32,  // Max K conductance
+    pub g_l: f32,  // Leak conductance
+    pub e_na: f32, // Na reversal potential
+    pub e_k: f32,  // K reversal potential
+    pub e_l: f32,  // Leak reversal potential
 
     // Inputs
     pub i_inj: f32, // Injected current
@@ -87,8 +86,16 @@ impl HodgkinHuxley {
         // If v is exactly -55, alpha_n has 0/0. L'Hopital's rule gives 0.1.
         // If v is exactly -40, alpha_m has 0/0. L'Hopital gives 1.0.
 
-        let alpha_n = if (v + 55.0).abs() < 1e-5 { 0.1 } else { alpha_n };
-        let alpha_m = if (v + 40.0).abs() < 1e-5 { 1.0 } else { alpha_m };
+        let alpha_n = if (v + 55.0).abs() < 1e-5 {
+            0.1
+        } else {
+            alpha_n
+        };
+        let alpha_m = if (v + 40.0).abs() < 1e-5 {
+            1.0
+        } else {
+            alpha_m
+        };
 
         // Derivatives
         let dn = alpha_n * (1.0 - self.n) - beta_n * self.n;

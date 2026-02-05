@@ -1,7 +1,7 @@
-use crate::graph::DependencyGraph;
 use crate::ant::Ant;
-use petgraph::graph::EdgeIndex;
+use crate::graph::DependencyGraph;
 use petgraph::Direction;
+use petgraph::graph::EdgeIndex;
 use petgraph::visit::EdgeRef;
 use rand::prelude::*;
 use std::collections::HashMap;
@@ -15,7 +15,9 @@ pub struct Simulation {
 impl Simulation {
     pub fn new(graph: DependencyGraph, num_ants: usize, _rng: &mut impl Rng) -> Self {
         // Find a root node (layer 0). If multiple, pick first.
-        let root_node = graph.graph.node_indices()
+        let root_node = graph
+            .graph
+            .node_indices()
             .find(|&i| graph.graph[i].layer == 0)
             .expect("Graph must have a layer 0 node");
 
@@ -32,33 +34,41 @@ impl Simulation {
     }
 
     pub fn step(&mut self, rng: &mut impl Rng) {
-        let Simulation { graph, ants, pheromones, .. } = self;
+        let Simulation {
+            graph,
+            ants,
+            pheromones,
+            ..
+        } = self;
 
         // Evaporation
         for p in pheromones.values_mut() {
             *p *= 0.95;
-            if *p < 0.01 { *p = 0.0; }
+            if *p < 0.01 {
+                *p = 0.0;
+            }
         }
 
         for ant in ants {
             if ant.carrying_artifact {
                 // Return home logic
                 if let Some(edge_idx) = ant.path_history.pop() {
-                     // Get endpoints to verify movement
-                     if let Some((source, _target)) = graph.graph.edge_endpoints(edge_idx) {
-                         // We are at target, moving to source (backtracking)
-                         ant.current_node = source;
+                    // Get endpoints to verify movement
+                    if let Some((source, _target)) = graph.graph.edge_endpoints(edge_idx) {
+                        // We are at target, moving to source (backtracking)
+                        ant.current_node = source;
 
-                         // Deposit Pheromone
-                         *pheromones.entry(edge_idx).or_insert(0.0) += 2.0;
-                     }
+                        // Deposit Pheromone
+                        *pheromones.entry(edge_idx).or_insert(0.0) += 2.0;
+                    }
                 } else {
                     // Back at root with no history
                     ant.carrying_artifact = false;
                 }
             } else {
                 // Foraging logic
-                let neighbors: Vec<_> = graph.graph
+                let neighbors: Vec<_> = graph
+                    .graph
                     .edges_directed(ant.current_node, Direction::Outgoing)
                     .collect();
 
@@ -68,7 +78,8 @@ impl Simulation {
                 } else {
                     // Probabilistic selection
                     let epsilon = 0.1;
-                    let weights: Vec<f32> = neighbors.iter()
+                    let weights: Vec<f32> = neighbors
+                        .iter()
                         .map(|e| {
                             let p = *pheromones.get(&e.id()).unwrap_or(&0.0);
                             let target_node = &graph.graph[e.target()];
@@ -85,10 +96,10 @@ impl Simulation {
                         ant.current_node = chosen_edge.target();
                     } else {
                         // Fallback if weights are weird
-                         let chosen_idx = rng.gen_range(0..neighbors.len());
-                         let chosen_edge = neighbors[chosen_idx];
-                         ant.path_history.push(chosen_edge.id());
-                         ant.current_node = chosen_edge.target();
+                        let chosen_idx = rng.gen_range(0..neighbors.len());
+                        let chosen_edge = neighbors[chosen_idx];
+                        ant.path_history.push(chosen_edge.id());
+                        ant.current_node = chosen_edge.target();
                     }
                 }
             }

@@ -3,7 +3,7 @@ mod renderer;
 
 use anyhow::Result;
 use cgmath::InnerSpace;
-use log::{info, error};
+use log::{error, info};
 use renderer::State;
 use std::sync::Arc;
 use winit::{
@@ -82,11 +82,12 @@ async fn run_window() -> Result<()> {
                         state.resize((physical_size.width, physical_size.height));
                     }
                     WindowEvent::KeyboardInput {
-                        event: KeyEvent {
-                            state: ElementState::Pressed,
-                            physical_key: PhysicalKey::Code(keycode),
-                            ..
-                        },
+                        event:
+                            KeyEvent {
+                                state: ElementState::Pressed,
+                                physical_key: PhysicalKey::Code(keycode),
+                                ..
+                            },
                         ..
                     } => {
                         // Camera controls

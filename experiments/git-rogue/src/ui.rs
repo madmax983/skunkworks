@@ -54,7 +54,9 @@ fn draw_stats(f: &mut Frame, game: &Game, area: Rect) {
         },
     ])];
 
-    let block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded);
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded);
     let p = Paragraph::new(text).block(block);
     f.render_widget(p, chunks[0]);
 
@@ -69,7 +71,12 @@ fn draw_stats(f: &mut Frame, game: &Game, area: Rect) {
     };
 
     let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" ❤️ HP "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .border_type(BorderType::Rounded)
+                .title(" ❤️ HP "),
+        )
         .gauge_style(Style::default().fg(hp_color))
         .ratio(hp_ratio)
         .label(format!("{}/{}", game.hp, game.max_hp));
@@ -123,7 +130,10 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
     f.render_widget(p, chunks[0]);
 
     // Right: Exits
-    let exits_block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" 🚪 Exits ");
+    let exits_block = Block::default()
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded)
+        .title(" 🚪 Exits ");
 
     let mut items = Vec::new();
 
@@ -185,7 +195,10 @@ fn draw_room(f: &mut Frame, game: &Game, area: Rect) {
 }
 
 fn draw_log(f: &mut Frame, game: &Game, area: Rect) {
-    let block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(" 📜 Log ");
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .border_type(BorderType::Rounded)
+        .title(" 📜 Log ");
     let mut lines = Vec::new();
     for msg in game.log.iter().rev() {
         let style = if msg.contains("damage") || msg.contains("FAILURE") {
@@ -193,7 +206,7 @@ fn draw_log(f: &mut Frame, game: &Game, area: Rect) {
         } else if msg.contains("XP") || msg.contains("refreshed") {
             Style::default().fg(Color::Green)
         } else if msg.contains("Entered Commit") {
-             Style::default().fg(Color::Blue)
+            Style::default().fg(Color::Blue)
         } else {
             Style::default()
         };

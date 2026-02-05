@@ -1,4 +1,4 @@
-use crate::lang::{Meaning, Word, Case, WordOrder, Grammar};
+use crate::lang::{Case, Grammar, Meaning, Word, WordOrder};
 use rand::Rng;
 
 #[derive(Debug, Clone)]
@@ -8,13 +8,15 @@ pub struct Sentence {
 
 impl Sentence {
     pub fn to_string(&self) -> String {
-        self.words.iter().map(|w| w.raw.clone()).collect::<Vec<_>>().join(" ")
+        self.words
+            .iter()
+            .map(|w| w.raw.clone())
+            .collect::<Vec<_>>()
+            .join(" ")
     }
 
     pub fn from_string(s: &str) -> Self {
-        let words = s.split_whitespace()
-            .map(|w| Word::from_raw(w))
-            .collect();
+        let words = s.split_whitespace().map(|w| Word::from_raw(w)).collect();
         Self { words }
     }
 }
@@ -36,8 +38,16 @@ impl Agent {
         // Determine Case based on morphology strength
         let use_case = rand::thread_rng().gen::<f32>() < self.grammar.morphology_strength;
 
-        let sub_case = if use_case { Case::Nominative } else { Case::None };
-        let obj_case = if use_case { Case::Accusative } else { Case::None };
+        let sub_case = if use_case {
+            Case::Nominative
+        } else {
+            Case::None
+        };
+        let obj_case = if use_case {
+            Case::Accusative
+        } else {
+            Case::None
+        };
 
         let w_actor = Word::new(&meaning.actor, sub_case);
         let w_target = Word::new(&meaning.target, obj_case);
@@ -53,7 +63,7 @@ impl Agent {
                     1 => WordOrder::SOV,
                     _ => WordOrder::VSO,
                 }
-            },
+            }
             o => o,
         };
 
@@ -62,17 +72,17 @@ impl Agent {
                 words.push(w_actor);
                 words.push(w_action);
                 words.push(w_target);
-            },
+            }
             WordOrder::SOV => {
                 words.push(w_actor);
                 words.push(w_target);
                 words.push(w_action);
-            },
+            }
             WordOrder::VSO => {
                 words.push(w_action);
                 words.push(w_actor);
                 words.push(w_target);
-            },
+            }
             WordOrder::Free => unreachable!(),
         }
 
@@ -88,13 +98,17 @@ impl Agent {
         for w in &sentence.words {
             match w.case {
                 Case::Nominative => {
-                    if actor.is_some() { return Err("Double Subject".to_string()); }
+                    if actor.is_some() {
+                        return Err("Double Subject".to_string());
+                    }
                     actor = Some(w.root.clone());
-                },
+                }
                 Case::Accusative => {
-                    if target.is_some() { return Err("Double Object".to_string()); }
+                    if target.is_some() {
+                        return Err("Double Object".to_string());
+                    }
                     target = Some(w.root.clone());
-                },
+                }
                 _ => {
                     // Could be action or an un-cased noun
                     // For simplification, assume anything not ending in us/um is the action if we found others
@@ -112,22 +126,22 @@ impl Agent {
 
         // If we found everything via cases, great!
         if let (Some(a), Some(t), Some(act)) = (&actor, &target, &action) {
-             return Ok(Meaning::new(a, act, t));
+            return Ok(Meaning::new(a, act, t));
         }
 
         // Fallback: Word Order
         // If cases failed (e.g. all Case::None), use internal grammar preference to decode.
         // Assuming the speaker used OUR preferred word order (or the dominant one).
         if sentence.words.len() == 3 {
-             let w1 = &sentence.words[0].root;
-             let w2 = &sentence.words[1].root;
-             let w3 = &sentence.words[2].root;
+            let w1 = &sentence.words[0].root;
+            let w2 = &sentence.words[1].root;
+            let w3 = &sentence.words[2].root;
 
-             return match self.grammar.word_order {
-                 WordOrder::SVO | WordOrder::Free => Ok(Meaning::new(w1, w2, w3)), // Default Free to SVO for comprehension
-                 WordOrder::SOV => Ok(Meaning::new(w1, w3, w2)),
-                 WordOrder::VSO => Ok(Meaning::new(w2, w1, w3)),
-             };
+            return match self.grammar.word_order {
+                WordOrder::SVO | WordOrder::Free => Ok(Meaning::new(w1, w2, w3)), // Default Free to SVO for comprehension
+                WordOrder::SOV => Ok(Meaning::new(w1, w3, w2)),
+                WordOrder::VSO => Ok(Meaning::new(w2, w1, w3)),
+            };
         }
 
         Err("Incomplete Sentence".to_string())
@@ -138,7 +152,7 @@ impl Agent {
             // Punish current strategy
             // If we are Free order and failed, maybe become SVO?
             if self.grammar.word_order == WordOrder::Free {
-                 self.grammar.word_order = WordOrder::SVO;
+                self.grammar.word_order = WordOrder::SVO;
             }
         }
     }

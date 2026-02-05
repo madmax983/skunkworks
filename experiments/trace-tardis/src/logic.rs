@@ -15,7 +15,9 @@ pub struct TraceSegment {
 pub fn parse_trace(input: &str) -> Vec<TraceSegment> {
     let mut segments = Vec::new();
     let re = Regex::new(r"^\s*\d+:\s*(.*)$").unwrap();
-    let sys_prefixes = ["std::", "core::", "alloc::", "tokio::", "panic::", "actix::"];
+    let sys_prefixes = [
+        "std::", "core::", "alloc::", "tokio::", "panic::", "actix::",
+    ];
 
     for line in input.lines() {
         if let Some(caps) = re.captures(line) {

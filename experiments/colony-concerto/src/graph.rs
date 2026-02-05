@@ -1,12 +1,12 @@
 use petgraph::graph::{Graph, NodeIndex};
 use petgraph::Directed;
 use rand::prelude::*;
-use std::sync::Mutex;
 use std::collections::HashMap;
+use std::sync::Mutex;
 
 #[derive(Debug)]
 pub struct NodeDynamicState {
-    pub progress: f32, // 0.0 to 1.0
+    pub progress: f32,             // 0.0 to 1.0
     pub builder_id: Option<usize>, // Ant ID
 }
 
@@ -62,7 +62,13 @@ pub fn generate_layered_dag(layers: usize, nodes_per_layer: usize, rng: &mut imp
 
             let chosen = potential_deps.choose_multiple(rng, num_deps);
             for dep_idx in chosen {
-                graph.add_edge(node_idx, *dep_idx, Edge { pheromone: Mutex::new(0.0) });
+                graph.add_edge(
+                    node_idx,
+                    *dep_idx,
+                    Edge {
+                        pheromone: Mutex::new(0.0),
+                    },
+                );
             }
         }
     }
@@ -74,7 +80,10 @@ pub fn generate_layered_dag(layers: usize, nodes_per_layer: usize, rng: &mut imp
     for idx in graph.node_indices() {
         let node = &graph[idx];
         *layer_counts.entry(node.layer).or_insert(0) += 1;
-        node_indices_by_layer.entry(node.layer).or_insert(Vec::new()).push(idx);
+        node_indices_by_layer
+            .entry(node.layer)
+            .or_insert(Vec::new())
+            .push(idx);
     }
 
     let max_layer = layer_counts.keys().max().cloned().unwrap_or(0);

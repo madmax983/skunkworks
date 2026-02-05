@@ -1,8 +1,8 @@
+use crate::physics::PendulumSystem;
 use cargo_metadata::MetadataCommand;
-use crate::physics::{PendulumSystem};
 use macroquad::prelude::Vec2;
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 pub fn load_dependencies() -> anyhow::Result<PendulumSystem> {
     let metadata = MetadataCommand::new().exec()?;
@@ -16,7 +16,9 @@ pub fn load_dependencies() -> anyhow::Result<PendulumSystem> {
 
     // We want to process nodes in topological order or just BFS from roots.
     // metadata.resolve has the graph.
-    let resolve = metadata.resolve.ok_or_else(|| anyhow::anyhow!("No resolve graph found"))?;
+    let resolve = metadata
+        .resolve
+        .ok_or_else(|| anyhow::anyhow!("No resolve graph found"))?;
 
     // Center of screen (approximate, we'll adjust in main)
     let center = Vec2::new(600.0, 100.0);
@@ -69,7 +71,9 @@ pub fn load_dependencies() -> anyhow::Result<PendulumSystem> {
             for dep_id in &node.dependencies {
                 if let Some(&child_idx) = id_to_index.get(dep_id) {
                     // Avoid self-loops (shouldn't exist)
-                    if parent_idx == child_idx { continue; }
+                    if parent_idx == child_idx {
+                        continue;
+                    }
 
                     // Link length
                     // Maybe vary by "kind"?
@@ -114,8 +118,8 @@ pub fn load_dependencies() -> anyhow::Result<PendulumSystem> {
     } else {
         // Fallback
         if !sys.nodes.is_empty() {
-             sys.nodes[0].fixed = true;
-             sys.nodes[0].pos = center;
+            sys.nodes[0].fixed = true;
+            sys.nodes[0].pos = center;
         }
     }
 

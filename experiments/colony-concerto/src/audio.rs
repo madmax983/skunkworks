@@ -4,11 +4,11 @@ use std::thread;
 #[cfg(feature = "audio")]
 use anyhow::Context;
 #[cfg(feature = "audio")]
-use std::sync::{Arc, Mutex};
-#[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 #[cfg(feature = "audio")]
 use std::f32::consts::PI;
+#[cfg(feature = "audio")]
+use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Clone, Copy)]
 pub enum SoundEvent {
@@ -69,9 +69,7 @@ impl AudioEngine {
         #[cfg(not(feature = "audio"))]
         {
             // Drain the channel to prevent memory leak
-            thread::spawn(move || {
-                while let Ok(_) = rx.recv() {}
-            });
+            thread::spawn(move || while let Ok(_) = rx.recv() {});
             println!("Audio disabled (missing 'audio' feature). Running in TUI-only mode.");
             Ok(Self {})
         }

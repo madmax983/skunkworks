@@ -1,9 +1,9 @@
 mod math;
 mod shader;
 
+use cgmath::{InnerSpace, Vector3};
 use macroquad::prelude::*;
-use cgmath::{Vector3, InnerSpace};
-use math::{Mat4 as CgMat4, boost};
+use math::{boost, Mat4 as CgMat4};
 
 #[macroquad::main("Hyperbolic Space")]
 async fn main() {
@@ -23,7 +23,8 @@ async fn main() {
             ],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     let start_time = get_time();
 
@@ -34,12 +35,24 @@ async fn main() {
         let speed = 0.05;
         let mut move_dir = Vector3::new(0.0, 0.0, 0.0);
 
-        if is_key_down(KeyCode::W) { move_dir.z -= 1.0; }
-        if is_key_down(KeyCode::S) { move_dir.z += 1.0; }
-        if is_key_down(KeyCode::A) { move_dir.x -= 1.0; }
-        if is_key_down(KeyCode::D) { move_dir.x += 1.0; }
-        if is_key_down(KeyCode::Q) { move_dir.y -= 1.0; } // Up
-        if is_key_down(KeyCode::E) { move_dir.y += 1.0; } // Down
+        if is_key_down(KeyCode::W) {
+            move_dir.z -= 1.0;
+        }
+        if is_key_down(KeyCode::S) {
+            move_dir.z += 1.0;
+        }
+        if is_key_down(KeyCode::A) {
+            move_dir.x -= 1.0;
+        }
+        if is_key_down(KeyCode::D) {
+            move_dir.x += 1.0;
+        }
+        if is_key_down(KeyCode::Q) {
+            move_dir.y -= 1.0;
+        } // Up
+        if is_key_down(KeyCode::E) {
+            move_dir.y += 1.0;
+        } // Down
 
         if move_dir.magnitude() > 0.001 {
             let b = boost(move_dir.normalize() * speed);

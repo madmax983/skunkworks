@@ -1,8 +1,8 @@
-use crate::neuron::{HodgkinHuxley, Command};
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use ringbuf::{HeapRb, Consumer, Producer, SharedRb};
-use std::sync::Arc;
+use crate::neuron::{Command, HodgkinHuxley};
 use anyhow::Result;
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use ringbuf::{Consumer, HeapRb, Producer, SharedRb};
+use std::sync::Arc;
 
 pub struct AudioSystem {
     // We hold the stream to keep it alive
@@ -16,7 +16,10 @@ pub struct AudioSystem {
     pub waveform_rx: Consumer<f32, Arc<SharedRb<f32, Vec<std::mem::MaybeUninit<f32>>>>>,
 
     // Slower update for m/h/n bars
-    pub state_rx: Consumer<HodgkinHuxley, Arc<SharedRb<HodgkinHuxley, Vec<std::mem::MaybeUninit<HodgkinHuxley>>>>>,
+    pub state_rx: Consumer<
+        HodgkinHuxley,
+        Arc<SharedRb<HodgkinHuxley, Vec<std::mem::MaybeUninit<HodgkinHuxley>>>>,
+    >,
 }
 
 struct AudioState {
@@ -39,7 +42,9 @@ impl AudioState {
 
 pub fn init_audio() -> Result<AudioSystem> {
     let host = cpal::default_host();
-    let device = host.default_output_device().ok_or_else(|| anyhow::anyhow!("No output device"))?;
+    let device = host
+        .default_output_device()
+        .ok_or_else(|| anyhow::anyhow!("No output device"))?;
     let config = device.default_output_config()?;
     let sample_rate = config.sample_rate().0 as f32;
     let channels = config.channels() as usize;
@@ -98,7 +103,7 @@ pub fn init_audio() -> Result<AudioSystem> {
             }
         },
         |err| eprintln!("Audio error: {}", err),
-        None // Timeout
+        None, // Timeout
     )?;
 
     stream.play()?;

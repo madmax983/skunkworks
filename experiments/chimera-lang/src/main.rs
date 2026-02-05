@@ -31,7 +31,10 @@ fn main() -> Result<()> {
     }));
 
     let path = Path::new(&cli.input);
-    let extension = path.extension().and_then(std::ffi::OsStr::to_str).unwrap_or("");
+    let extension = path
+        .extension()
+        .and_then(std::ffi::OsStr::to_str)
+        .unwrap_or("");
 
     let dna = if extension == "chs" {
         compiler::compile(&unparsed_file)?
