@@ -11,22 +11,47 @@ mod tests {
 
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(spawn_type)] },
-                Gene { op: OpCode::Spawn, args: vec![] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(3)] }, // Loop at index 3
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(spawn_type)],
+                },
+                Gene {
+                    op: OpCode::Spawn,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(3)],
+                }, // Loop at index 3
+            ],
         };
 
         let strand1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Drop, args: vec![] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Drop,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
+            ],
         };
 
-        Dna { helix: Helix { strands: vec![strand0, strand1] } }
+        Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        }
     }
 
     #[test]
@@ -60,7 +85,9 @@ mod tests {
         vm.energy = 100;
 
         // Spawn
-        vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
 
         assert_eq!(vm.organelles[0].kind, OrganelleType::Mitochondria);
 
@@ -81,7 +108,9 @@ mod tests {
         vm.energy = 100;
 
         // Spawn
-        vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
 
         assert_eq!(vm.organelles[0].kind, OrganelleType::Lysosome);
 

@@ -14,22 +14,17 @@ pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
                         let target_idx = target as usize;
                         let s_idx = vm.ip.0;
                         // Check bounds using activation_levels as proxy for strand count
-                        if target_idx < vm.activation_levels.len()
-                            && s_idx < vm.synapse_map.len()
-                        {
+                        if target_idx < vm.activation_levels.len() && s_idx < vm.synapse_map.len() {
                             if !vm.synapse_map[s_idx].contains(&target_idx) {
                                 vm.synapse_map[s_idx].push(target_idx);
-                                vm.output
-                                    .push(format!("LINK: {} -> {}", s_idx, target_idx));
+                                vm.output.push(format!("LINK: {} -> {}", s_idx, target_idx));
                             }
                         } else {
                             vm.output
                                 .push("Error: Invalid strand index for link".to_string());
                         }
                     }
-                    _ => vm
-                        .output
-                        .push("Error: Type mismatch for link".to_string()),
+                    _ => vm.output.push("Error: Type mismatch for link".to_string()),
                 }
             } else {
                 vm.output
@@ -43,9 +38,8 @@ pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
                         let target_idx = target as usize;
                         let s_idx = vm.ip.0;
                         if s_idx < vm.synapse_map.len() {
-                            if let Some(pos) = vm.synapse_map[s_idx]
-                                .iter()
-                                .position(|&x| x == target_idx)
+                            if let Some(pos) =
+                                vm.synapse_map[s_idx].iter().position(|&x| x == target_idx)
                             {
                                 vm.synapse_map[s_idx].remove(pos);
                                 vm.output
@@ -53,9 +47,7 @@ pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
                             }
                         }
                     }
-                    _ => vm
-                        .output
-                        .push("Error: Type mismatch for sever".to_string()),
+                    _ => vm.output.push("Error: Type mismatch for sever".to_string()),
                 }
             } else {
                 vm.output
@@ -72,9 +64,8 @@ pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
                             let count = targets.len();
                             for target_idx in targets {
                                 if target_idx < vm.activation_levels.len() {
-                                    vm.activation_levels[target_idx] = vm.activation_levels
-                                        [target_idx]
-                                        .saturating_add(amount);
+                                    vm.activation_levels[target_idx] =
+                                        vm.activation_levels[target_idx].saturating_add(amount);
                                 }
                             }
                             vm.energy = vm.energy.saturating_sub((count as i64) + 1);
@@ -82,9 +73,7 @@ pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
                                 .push(format!("SPARK: Fired {} to {} targets", amount, count));
                         }
                     }
-                    _ => vm
-                        .output
-                        .push("Error: Type mismatch for spark".to_string()),
+                    _ => vm.output.push("Error: Type mismatch for spark".to_string()),
                 }
             } else {
                 vm.output
@@ -103,9 +92,7 @@ pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
         OpCode::Gate => {
             if let Some(Nucleotide::Number(threshold)) = args.first() {
                 let s_idx = vm.ip.0;
-                if s_idx < vm.activation_levels.len()
-                    && vm.activation_levels[s_idx] < *threshold
-                {
+                if s_idx < vm.activation_levels.len() && vm.activation_levels[s_idx] < *threshold {
                     // Skip next instruction
                     vm.ip.1 += 1;
                 }

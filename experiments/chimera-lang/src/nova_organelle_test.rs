@@ -1,6 +1,6 @@
-use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-use crate::vm::{ChimeraVM, Value};
+use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
+use crate::vm::{ChimeraVM, Value};
 
 fn make_dna(strands: Vec<Strand>) -> Dna {
     Dna {
@@ -16,10 +16,22 @@ fn test_spawn_organelle() {
     // Strand 0: [ push(1) push(0) spawn() push(999) ]
     let strand0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Type: Worker
-            Gene { op: OpCode::Spawn, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] }, // Just to keep main busy
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Type: Worker
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            }, // Just to keep main busy
         ],
     };
 
@@ -28,10 +40,22 @@ fn test_spawn_organelle() {
     // g_write pops x (5), y (5), val (42).
     let strand1 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(42)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
         ],
     };
 
@@ -51,7 +75,11 @@ fn test_spawn_organelle() {
     assert_eq!(vm.organelles.len(), 1, "Organelle should be spawned");
     // Organelle executes immediately in the same tick, so it has already executed instruction 0 (push(5))
     // IP should be at (1, 1)
-    assert_eq!(vm.organelles[0].ip, (1, 1), "Organelle should have executed one step");
+    assert_eq!(
+        vm.organelles[0].ip,
+        (1, 1),
+        "Organelle should have executed one step"
+    );
 
     // Run enough steps for Organelle to execute the rest of Strand 1
     // Needs 3 more steps.
@@ -76,16 +104,29 @@ fn test_spawn_organelle() {
         vm.step();
     }
 
-    assert_eq!(vm.organelles.len(), 0, "Organelle should finish and be removed");
+    assert_eq!(
+        vm.organelles.len(),
+        0,
+        "Organelle should finish and be removed"
+    );
 }
 
 #[test]
 fn test_spawn_energy_cost() {
     let strand0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Spawn, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
         ],
     };
     let strand1 = Strand { genes: vec![] }; // Empty target
