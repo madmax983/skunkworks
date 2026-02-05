@@ -1,5 +1,21 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The central genome is active. Enzymes are transcribing. The Nova protocol is online.
+
+### [Concentration Level: FRESH] - Location: experiments/system-bonsai
+- **Scent Origin:** Genesis (The Gardener) ⚛️🌳
+- **Status:** Process trees are growing. Sysinfo is root-deep.
+
+### [Concentration Level: FRESH] - Location: experiments/sculpt-term
+- **Scent Origin:** Genesis (The Sculptor) ⚛️🗿
+- **Status:** SDFs are raymarching in the terminal.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/input-ghost
+- **Scent Origin:** Genesis (The Medium) ⚛️👻
+- **Status:** Ghost inputs recorded. Temporal playback enabled.
+
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** Raymarching the Poincaré ball. The infinite dungeon is open. Non-Euclidean geometry rendered in real-time.
@@ -19,10 +35,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Emergent synchronization waves verified. Boids pulsing in unison.
-
-### [Concentration Level: WARNING] - Location: experiments/sonar-swarm
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Acoustic environment unstable. ALSA dependency missing. Echolocation failing.
 
 ### [Concentration Level: HIGH] - Location: experiments/fairy-consensus
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
@@ -87,3 +99,9 @@
 ### [Concentration Level: HIGH] - Location: experiments/chaos-pendulum
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Butterfly Effect is visualized. Dependency tree swinging in chaotic motion. 100 parallel ghosts predicting diverging futures.
+
+## History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Signal lost. Directory missing. Echo fading.
