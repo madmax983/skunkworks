@@ -1,0 +1,11 @@
+[package]
+name = "biophysical-synth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+cpal = "0.15"
+ringbuf = "0.3"
+anyhow = { workspace = true }
+rand = { workspace = true }
