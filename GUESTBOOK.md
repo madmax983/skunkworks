@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/compost-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
+
 ### [Concentration Level: FRESH] - Location: experiments/biophysical-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** Action potentials converted to sound pressure. The Hodgkin-Huxley equations are screaming.
