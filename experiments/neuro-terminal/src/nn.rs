@@ -206,16 +206,21 @@ impl Network {
         current.data
     }
 
-    pub fn train(&mut self, inputs: &[f64], targets: &[f64]) {
+    pub fn train(&mut self, inputs: &[f64], targets: &[f64]) -> f64 {
         // Forward pass
         self.forward(inputs);
 
         let targets = Matrix::from_vec(targets.to_vec());
         let mut errors = &targets - self.data.last().unwrap();
 
+        // Calculate MSE
+        let mse = errors.data.iter().map(|e| e.powi(2)).sum::<f64>() / errors.data.len() as f64;
+
         for i in (0..self.weights.len()).rev() {
             errors = self.backward_pass_layer(i, errors);
         }
+
+        mse
     }
 
     fn backward_pass_layer(&mut self, layer_idx: usize, errors: Matrix) -> Matrix {
