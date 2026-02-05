@@ -34,7 +34,6 @@ members = [
     "experiments/neuro-terminal",
     "experiments/orbital-decay",
     "experiments/orbital-harmonics",
-    "experiments/origami-singularity",
     "experiments/origami-ui",
     "experiments/packet-pachinko",
     "experiments/pidgin-mesh",
