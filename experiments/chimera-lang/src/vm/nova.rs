@@ -12,7 +12,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{ChimeraVM, ChromaCell, Value};
+use super::{ChimeraVM, ChromaCell, Value, GRID_SIZE};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -63,6 +63,7 @@ pub struct Spore {
     pub waste_grid: Vec<Vec<i64>>,
     pub mutagen_grid: Vec<Vec<i64>>,
     pub light_grid: Vec<Vec<i64>>,
+    pub heat_grid: Vec<Vec<i64>>,
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
@@ -164,9 +165,9 @@ fn get_open_neighbors(
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
-    let mut buffer = [[[0i64; 3]; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
+    let mut buffer = [[[0i64; 3]; GRID_SIZE]; GRID_SIZE];
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             let neighbors: Vec<_> = get_open_neighbors(vm, y, x).collect();
             for c in 0..3 {
                 let mut sum = (vm.hormone_grid[y][x][c] as i128) * 4;
@@ -181,8 +182,8 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
             }
         }
     }
-    for y in 0..16 {
-        for x in 0..16 {
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             vm.hormone_grid[y][x] = buffer[y][x];
         }
     }
@@ -194,9 +195,9 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_waste(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
+    let mut buffer = [[0i64; GRID_SIZE]; GRID_SIZE];
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             let mut sum = (vm.waste_grid[y][x] as i128) * 4;
             let mut count = 4;
 
@@ -208,8 +209,8 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
             buffer[y][x] = (sum / count) as i64;
         }
     }
-    for y in 0..16 {
-        for x in 0..16 {
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             vm.waste_grid[y][x] = buffer[y][x];
         }
     }
@@ -222,9 +223,9 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
+    let mut buffer = [[0i64; GRID_SIZE]; GRID_SIZE];
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             let mut sum = (vm.light_grid[y][x] as i128) * 4;
             let mut count = 4;
 
@@ -237,8 +238,8 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             buffer[y][x] = ((sum / count) / 2) as i64;
         }
     }
-    for y in 0..16 {
-        for x in 0..16 {
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             vm.light_grid[y][x] = buffer[y][x];
         }
     }
@@ -251,9 +252,9 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
+    let mut buffer = [[0i64; GRID_SIZE]; GRID_SIZE];
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             let mut sum = (vm.mutagen_grid[y][x] as i128) * 4;
             let mut count = 4;
 
@@ -266,9 +267,46 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
             buffer[y][x] = ((sum / count) * 9 / 10) as i64;
         }
     }
-    for y in 0..16 {
-        for x in 0..16 {
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
             vm.mutagen_grid[y][x] = buffer[y][x];
+        }
+    }
+}
+
+/// Simulates the diffusion of heat.
+///
+/// Heat spreads and decays towards ambient temperature (20).
+#[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
+pub fn diffuse_heat(vm: &mut ChimeraVM) {
+    let mut buffer = [[0i64; GRID_SIZE]; GRID_SIZE];
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            let mut sum = (vm.heat_grid[y][x] as i128) * 4;
+            let mut count = 4;
+
+            for (ny, nx) in get_open_neighbors(vm, y, x) {
+                sum += vm.heat_grid[ny][nx] as i128;
+                count += 1;
+            }
+
+            // Average
+            let avg = (sum / count) as i64;
+
+            // Decay towards ambient (20)
+            if avg > 20 {
+                buffer[y][x] = avg - 1; // Slow cooling
+            } else if avg < 20 {
+                buffer[y][x] = avg + 1; // Slow warming
+            } else {
+                buffer[y][x] = avg;
+            }
+        }
+    }
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            vm.heat_grid[y][x] = buffer[y][x];
         }
     }
 }
@@ -446,6 +484,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 waste_grid: vm.waste_grid.clone(),
                 mutagen_grid: vm.mutagen_grid.clone(),
                 light_grid: vm.light_grid.clone(),
+                heat_grid: vm.heat_grid.clone(),
                 call_stack: vm.call_stack.clone(),
                 input_buffer: vm.input_buffer.clone(),
                 receptors: vm.receptors.clone(),
@@ -498,6 +537,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.waste_grid = spore.waste_grid.clone();
                         vm.mutagen_grid = spore.mutagen_grid.clone();
                         vm.light_grid = spore.light_grid.clone();
+                        vm.heat_grid = spore.heat_grid.clone();
                         vm.call_stack = spore.call_stack.clone();
                         vm.input_buffer = spore.input_buffer.clone();
                         vm.receptors = spore.receptors.clone();
@@ -530,6 +570,51 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.output
                     .push("Error: Stack underflow for germinate".to_string());
             }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Ignite => {
+            // stack: intensity (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(intensity) = val {
+                    if intensity > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        vm.heat_grid[cy][cx] = vm.heat_grid[cy][cx].saturating_add(intensity);
+                        vm.energy = vm.energy.saturating_sub(intensity / 10); // Cost depends on intensity
+                        vm.output.push(format!("IGNITE: Added {} heat at {},{}", intensity, cx, cy));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for ignite".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for ignite".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Chill => {
+            // stack: intensity (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(intensity) = val {
+                    if intensity > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        vm.heat_grid[cy][cx] = vm.heat_grid[cy][cx].saturating_sub(intensity);
+                        vm.energy = vm.energy.saturating_sub(intensity / 5); // Cooling is expensive
+                        vm.output.push(format!("CHILL: Removed {} heat at {},{}", intensity, cx, cy));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for chill".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for chill".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Thermometer => {
+            let (cy, cx) = vm.context_loc;
+            let temp = vm.heat_grid[cy][cx];
+            vm.stack.push(Value::Int(temp));
             None
         }
         #[cfg(feature = "nova")]

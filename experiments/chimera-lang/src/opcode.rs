@@ -456,6 +456,22 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Decompile,
 
+    /// **[Nova]** Adds heat to the current location.
+    ///
+    /// **Stack:** `[ ..., intensity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Ignite,
+    /// **[Nova]** Removes heat from the current location.
+    ///
+    /// **Stack:** `[ ..., intensity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chill,
+    /// **[Nova]** Reads the temperature at the current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., temp ]`
+    #[cfg(feature = "nova")]
+    Thermometer,
+
     /// **[Nova]** Spawns a Void organelle that consumes everything.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
@@ -801,6 +817,12 @@ impl FromStr for OpCode {
             "devour" => Ok(OpCode::Devour),
             #[cfg(feature = "nova")]
             "decompile" => Ok(OpCode::Decompile),
+            #[cfg(feature = "nova")]
+            "ignite" => Ok(OpCode::Ignite),
+            #[cfg(feature = "nova")]
+            "chill" => Ok(OpCode::Chill),
+            #[cfg(feature = "nova")]
+            "thermometer" => Ok(OpCode::Thermometer),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -992,6 +1014,12 @@ impl fmt::Display for OpCode {
             OpCode::Filter => write!(f, "filter"),
             #[cfg(feature = "nova")]
             OpCode::Zip => write!(f, "zip"),
+            #[cfg(feature = "nova")]
+            OpCode::Ignite => write!(f, "ignite"),
+            #[cfg(feature = "nova")]
+            OpCode::Chill => write!(f, "chill"),
+            #[cfg(feature = "nova")]
+            OpCode::Thermometer => write!(f, "thermometer"),
 
             #[cfg(feature = "nova")]
             OpCode::Note => write!(f, "note"),

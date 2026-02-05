@@ -168,6 +168,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub heat_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -235,6 +237,8 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
+        let heat_grid = vec![vec![20; GRID_SIZE]; GRID_SIZE]; // Ambient temp 20
+        #[cfg(feature = "nova")]
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
@@ -268,6 +272,8 @@ impl ChimeraVM {
             mutagen_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            heat_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -493,6 +499,7 @@ impl ChimeraVM {
         nova::diffuse_waste(self);
         nova::diffuse_light(self);
         nova::diffuse_mutagen(self);
+        nova::diffuse_heat(self);
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -519,6 +526,15 @@ impl ChimeraVM {
             if rng.gen_bool(0.10) {
                 self.output
                     .push(format!("MUTATION: RADIATION at {},{}", cx, cy));
+                self.mutate();
+            }
+        }
+
+        if self.heat_grid[cy][cx] > 100 {
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(0.10) {
+                self.output
+                    .push(format!("MUTATION: OVERHEAT at {},{}", cx, cy));
                 self.mutate();
             }
         }
@@ -945,11 +961,17 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
-        let iterations = if self.phase == nova::Phase::Flux {
-            self.energy -= 1;
-            2
-        } else {
-            1
+        let iterations = {
+            let (cy, cx) = self.context_loc;
+            if self.heat_grid[cy][cx] < 10 {
+                self.output.push("CRYOSTASIS: Frozen".to_string());
+                0
+            } else if self.phase == nova::Phase::Flux {
+                self.energy -= 1;
+                2
+            } else {
+                1
+            }
         };
         #[cfg(not(feature = "nova"))]
         let iterations = 1;
@@ -1172,7 +1194,10 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Irradiate
+            OpCode::Ignite
+            | OpCode::Chill
+            | OpCode::Thermometer
+            | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour
             | OpCode::Pigment
