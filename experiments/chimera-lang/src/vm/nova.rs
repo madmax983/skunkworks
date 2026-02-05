@@ -31,6 +31,7 @@ pub struct Spore {
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
     pub entangled_pairs: HashMap<usize, usize>,
+    pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -297,6 +298,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 input_buffer: vm.input_buffer.clone(),
                 receptors: vm.receptors.clone(),
                 entangled_pairs: vm.entangled_pairs.clone(),
+                sonar_target: vm.sonar_target,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -338,6 +340,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.input_buffer = spore.input_buffer.clone();
                         vm.receptors = spore.receptors.clone();
                         vm.entangled_pairs = spore.entangled_pairs.clone();
+                        vm.sonar_target = spore.sonar_target;
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
@@ -1685,6 +1688,44 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for differentiate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Sonar => {
+            // stack: dy, dx (top)
+            if vm.stack.len() >= 2 {
+                let dx_val = vm.stack.pop().unwrap();
+                let dy_val = vm.stack.pop().unwrap();
+                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                    let (cy, cx) = vm.context_loc;
+                    let mut found = false;
+
+                    for d in 1..=16 {
+                        let ny = (cy as i64 + dy * d).rem_euclid(16) as usize;
+                        let nx = (cx as i64 + dx * d).rem_euclid(16) as usize;
+
+                        if !matches!(vm.grid[ny][nx], Value::Int(0)) {
+                            vm.stack.push(Value::Int(d));
+                            vm.stack.push(vm.grid[ny][nx].clone());
+                            vm.sonar_target = Some((ny, nx));
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if !found {
+                        vm.stack.push(Value::Int(16));
+                        vm.stack.push(Value::Int(0));
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(2);
+                } else {
+                    vm.output.push("Error: Type mismatch for sonar".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for sonar".to_string());
             }
             None
         }

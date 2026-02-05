@@ -58,6 +58,8 @@ mod nova_organelle_types_test;
 mod nova_quantum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_sonar_test;
 #[cfg(test)]
 mod nova_spore_test;
 #[cfg(all(test, feature = "nova"))]

@@ -2,8 +2,8 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::nova::OrganelleType;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_gene(op: OpCode, val: Option<i64>) -> Gene {
         Gene {
@@ -70,7 +70,9 @@ mod tests {
         };
 
         // Strand 99: Error Sink (Empty)
-        let strand99 = Strand { genes: vec![make_gene(OpCode::Jump, Some(99))] };
+        let strand99 = Strand {
+            genes: vec![make_gene(OpCode::Jump, Some(99))],
+        };
 
         // Fill gaps with empty strands
         let mut strands = vec![strand0, strand1, strand2, strand3, strand4];
@@ -97,9 +99,17 @@ mod tests {
         let organelle = &vm.organelles[0];
 
         // Check final type
-        assert_eq!(organelle.kind, OrganelleType::Chloroplast, "Should have differentiated to Chloroplast");
+        assert_eq!(
+            organelle.kind,
+            OrganelleType::Chloroplast,
+            "Should have differentiated to Chloroplast"
+        );
 
         // Check stack for success marker
-        assert!(organelle.stack.iter().any(|v| matches!(v, Value::Int(777))), "Stack should contain 777. Stack: {:?}", organelle.stack);
+        assert!(
+            organelle.stack.iter().any(|v| matches!(v, Value::Int(777))),
+            "Stack should contain 777. Stack: {:?}",
+            organelle.stack
+        );
     }
 }

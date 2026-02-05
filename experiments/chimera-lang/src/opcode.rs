@@ -118,6 +118,8 @@ pub enum OpCode {
     Identity,
     #[cfg(feature = "nova")]
     Differentiate,
+    #[cfg(feature = "nova")]
+    Sonar,
 
     Unknown(String),
 }
@@ -240,6 +242,8 @@ impl FromStr for OpCode {
             "identity" => Ok(OpCode::Identity),
             #[cfg(feature = "nova")]
             "differentiate" => Ok(OpCode::Differentiate),
+            #[cfg(feature = "nova")]
+            "sonar" => Ok(OpCode::Sonar),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -362,6 +366,8 @@ impl fmt::Display for OpCode {
             OpCode::Identity => write!(f, "identity"),
             #[cfg(feature = "nova")]
             OpCode::Differentiate => write!(f, "differentiate"),
+            #[cfg(feature = "nova")]
+            OpCode::Sonar => write!(f, "sonar"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }
