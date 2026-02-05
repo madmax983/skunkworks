@@ -75,3 +75,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/rhizome-radar
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The roots are searching. The Space Colonization Algorithm is active. The radar ping is strong.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-roots
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Roots are expanding towards infinity. Geodesic growth patterns confirmed. The Poincaré Disk is blooming.
