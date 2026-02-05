@@ -178,6 +178,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub remap_table: HashMap<OpCode, OpCode>,
     #[cfg(feature = "nova")]
+    pub catalyst_table: HashMap<OpCode, i64>,
+    #[cfg(feature = "nova")]
     pub direction: isize,
 }
 
@@ -261,8 +263,34 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
+            catalyst_table: HashMap::new(),
+            #[cfg(feature = "nova")]
             direction: 1,
         }
+    }
+
+    /// Consumes energy, accounting for metabolic catalysts (Nova feature).
+    ///
+    /// If an `op` is provided, the cost is reduced by the value in `catalyst_table`.
+    /// The minimum cost is clamped to 1 (if original cost > 0) or 0 (if original cost 0).
+    pub fn consume_energy(&mut self, cost: i64, _op: Option<OpCode>) {
+        let mut final_cost = cost;
+        #[cfg(feature = "nova")]
+        {
+            if let Some(op) = _op {
+                if let Some(&reduction) = self.catalyst_table.get(&op) {
+                    final_cost = final_cost.saturating_sub(reduction);
+                }
+            }
+        }
+
+        if cost > 0 {
+            final_cost = final_cost.max(1);
+        } else {
+            final_cost = final_cost.max(0);
+        }
+
+        self.energy = self.energy.saturating_sub(final_cost);
     }
 
     /// Triggers an internal reflex event (interrupt).
@@ -752,7 +780,7 @@ impl ChimeraVM {
             return;
         }
 
-        self.energy -= 1;
+        self.consume_energy(1, None);
 
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();
@@ -814,11 +842,10 @@ impl ChimeraVM {
             {
                 if self.direction >= 0 {
                     self.ip.1 += 1;
+                } else if self.ip.1 > 0 {
+                    self.ip.1 -= 1;
                 } else {
-                    if self.ip.1 > 0 {
-                        self.ip.1 -= 1;
-                    } else {
-                        // Move to previous non-empty strand
+                    // Move to previous non-empty strand
                         let start_strand = self.ip.0;
                         let helix_len = self.dna.helix.strands.len();
                         loop {
@@ -840,7 +867,6 @@ impl ChimeraVM {
                             }
                         }
                     }
-                }
             }
             #[cfg(not(feature = "nova"))]
             {
@@ -1045,7 +1071,8 @@ impl ChimeraVM {
             | OpCode::Map
             | OpCode::Fold
             | OpCode::Filter
-            | OpCode::Zip => nova::exec_nova_op(self, op, args),
+            | OpCode::Zip
+            | OpCode::Catalyze => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));
@@ -1388,7 +1415,7 @@ impl ChimeraVM {
                         for (cx, cy) in coords {
                             self.grid[cy][cx] = val.clone();
                         }
-                        self.energy = self.energy.saturating_sub((count / 2) as i64);
+                        self.consume_energy((count / 2) as i64, Some(OpCode::Radiate));
                         self.output.push(format!(
                             "RADIATE: Affected {} cells at {},{} r={}",
                             count, x, y, r
@@ -1419,7 +1446,7 @@ impl ChimeraVM {
                             self.grid[cy][cx] = Value::Int(0);
                         }
                         self.stack.push(Value::Int(sum));
-                        self.energy = self.energy.saturating_sub(5);
+                        self.consume_energy(5, Some(OpCode::Siphon));
                         self.output
                             .push(format!("SIPHON: Absorbed {} from {} cells", sum, count));
                     } else {

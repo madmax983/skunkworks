@@ -42,6 +42,7 @@ pub struct Spore {
     pub ether: HashMap<i64, VecDeque<Value>>,
     pub reflexes: HashMap<i64, usize>,
     pub remap_table: HashMap<OpCode, OpCode>,
+    pub catalyst_table: HashMap<OpCode, i64>,
     pub direction: isize,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
@@ -236,7 +237,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         // Deduct Energy Cost: Base cost + duration cost
                         let cost = safe_ticks.saturating_add(50);
-                        vm.energy = vm.energy.saturating_sub(cost);
+                        vm.consume_energy(cost, Some(OpCode::Simulate));
 
                         vm.output.push(format!(
                             "SIMULATE: Ran strand {} for {} ticks. Status: {}",
@@ -285,7 +286,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             direction,
                         };
                         vm.organelles.push(organelle);
-                        vm.energy = vm.energy.saturating_sub(20);
+                        vm.consume_energy(20, Some(OpCode::Spawn));
                         vm.output.push(format!(
                             "SPAWN: Created {:?} Organelle executing strand {}",
                             kind, s_idx
@@ -333,6 +334,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 ether: vm.ether.clone(),
                 reflexes: vm.reflexes.clone(),
                 remap_table: vm.remap_table.clone(),
+                catalyst_table: vm.catalyst_table.clone(),
                 direction: vm.direction,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
@@ -343,7 +345,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             let id = vm.spores.len();
             vm.spores.push(spore);
             vm.stack.push(Value::Int(id as i64));
-            vm.energy = vm.energy.saturating_sub(50); // High cost for time travel
+            vm.consume_energy(50, Some(OpCode::Sporulate)); // High cost for time travel
             vm.output.push(format!("SPORULATE: Created Spore {}", id));
             None
         }
@@ -382,6 +384,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.ether = spore.ether.clone();
                         vm.reflexes = spore.reflexes.clone();
                         vm.remap_table = spore.remap_table.clone();
+                        vm.catalyst_table = spore.catalyst_table.clone();
                         vm.direction = spore.direction;
                         #[cfg(feature = "cortex")]
                         {
@@ -514,7 +517,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.activation_levels.push(0);
                                 vm.synapse_map.push(Vec::new());
                             }
-                            vm.energy = vm.energy.saturating_sub(20); // Cost
+                            vm.consume_energy(20, Some(OpCode::Incubate)); // Cost
                             vm.output.push(format!(
                                 "INCUBATE: Created new strand {} from grid",
                                 vm.dna.helix.strands.len() - 1
@@ -579,7 +582,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let idx = vm.ip.0;
                             if idx < vm.telomeres.len() {
                                 vm.telomeres[idx] = vm.telomeres[idx].saturating_add(amount);
-                                vm.energy = vm.energy.saturating_sub(25); // High cost
+                                vm.consume_energy(25, Some(OpCode::Telomerase)); // High cost
                                 vm.output.push(format!(
                                     "TELOMERASE: Extended strand {} by {}",
                                     idx, amount
@@ -744,7 +747,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
 
                         vm.stack.push(Value::Int(found_idx));
-                        vm.energy = vm.energy.saturating_sub(5);
+                        vm.consume_energy(5, Some(OpCode::CrisprScan));
                         vm.output.push(format!(
                             "CRISPR_SCAN: Scanned strand {} for pattern from {} -> {}",
                             t_idx, g_idx, found_idx
@@ -799,7 +802,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let new_strand_idx = vm.dna.helix.strands.len() - 1;
 
                             vm.stack.push(Value::Int(new_strand_idx as i64));
-                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.consume_energy(10, Some(OpCode::Cas9Cut));
 
                             vm.output.push(format!(
                                 "CAS9_CUT: Cut strand {} at {}, created strand {}",
@@ -869,7 +872,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             strand_r.genes.append(&mut strand_d.genes);
                             // donor genes are now empty.
 
-                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.consume_energy(10, Some(OpCode::Ligase));
                             vm.output
                                 .push(format!("LIGASE: Appended strand {} to {}", d_idx, r_idx));
                         }
@@ -920,7 +923,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.epigenome.insert((new_s_idx, g_idx));
                             }
 
-                            vm.energy = vm.energy.saturating_sub(30); // Cost
+                            vm.consume_energy(30, Some(OpCode::Mitosis)); // Cost
                             vm.output
                                 .push(format!("MITOSIS: Cloned strand {} to {}", s_idx, new_s_idx));
                         } else {
@@ -951,7 +954,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
 
-                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.consume_energy(10, Some(OpCode::Apoptosis));
                             vm.output
                                 .push(format!("APOPTOSIS: Cleared strand {}", s_idx));
                         } else {
@@ -1013,7 +1016,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                     vm.epigenome.insert(marker);
                                 }
 
-                                vm.energy = vm.energy.saturating_sub(20);
+                                vm.consume_energy(20, Some(OpCode::Integrase));
                                 vm.output
                                     .push(format!("INTEGRASE: Inserted {} at {}:{}", name, s, g));
 
@@ -1082,7 +1085,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                     vm.epigenome.insert(marker);
                                 }
 
-                                vm.energy = vm.energy.saturating_sub(15);
+                                vm.consume_energy(15, Some(OpCode::Excision));
                                 vm.output.push(format!("EXCISION: Removed {}:{}", s, g));
 
                                 // Update IP
@@ -1229,12 +1232,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             }
 
                             vm.context_loc = (new_y, new_x);
-                            vm.energy = vm.energy.saturating_sub(5);
+                            vm.consume_energy(5, Some(OpCode::Migrate));
                             vm.output
                                 .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
                         } else {
                             // Hit boundary
-                            vm.energy = vm.energy.saturating_sub(2);
+                            vm.consume_energy(2, Some(OpCode::Migrate));
                             vm.output.push("MIGRATE: Blocked by boundary".to_string());
                             if vm.trigger_reflex(0) {
                                 return Some(vm.ip);
@@ -1242,7 +1245,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
                     } else {
                         // Blocked by membrane
-                        vm.energy = vm.energy.saturating_sub(2);
+                        vm.consume_energy(2, Some(OpCode::Migrate));
                         vm.output.push("MIGRATE: Blocked by membrane".to_string());
                         if vm.trigger_reflex(0) {
                             return Some(vm.ip);
@@ -1268,7 +1271,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     for (tx, ty) in coords {
                         vm.waste_grid[ty][tx] = 0;
                     }
-                    vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50)); // Cost proportional to area
+                    vm.consume_energy((r * r + 1).clamp(5, 50), Some(OpCode::Detox)); // Cost proportional to area
                     vm.output
                         .push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
                 } else {
@@ -1487,7 +1490,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             }
                         }
 
-                        vm.energy -= success_count; // Cost 1 per cell
+                        vm.consume_energy(success_count, Some(OpCode::Conjugate)); // Cost 1 per cell
                         vm.output.push(format!(
                             "CONJUGATE: Wrote {} cells from strand {} at {},{}",
                             success_count, s_idx, x, y
@@ -1578,7 +1581,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             }
                         }
 
-                        vm.energy = vm.energy.saturating_sub(moved_count + 5); // Base cost + variable
+                        vm.consume_energy(moved_count + 5, Some(OpCode::Gravitate)); // Base cost + variable
                         vm.output.push(format!(
                             "GRAVITATE: Pulled {} items towards {},{}",
                             moved_count, cx, cy
@@ -1610,7 +1613,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         for (tx, ty) in coords {
                             vm.light_grid[ty][tx] = vm.light_grid[ty][tx].saturating_add(intensity);
                         }
-                        vm.energy = vm.energy.saturating_sub((count / 2) as i64);
+                        vm.consume_energy((count / 2) as i64, Some(OpCode::Lumine));
                         vm.output.push(format!(
                             "LUMINE: Emitted {} light at {},{} r={}",
                             intensity, cx, cy, r
@@ -1679,7 +1682,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         // Pay Cost (Base 50 + ticks/2)
                         let cost = 50 + (safe_ticks / 2);
-                        vm.energy = vm.energy.saturating_sub(cost);
+                        vm.consume_energy(cost, Some(OpCode::Dream));
                     } else {
                         vm.output.push("Error: Invalid args for dream".to_string());
                     }
@@ -1720,7 +1723,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                     vm.stack.push(Value::Int(best_dy));
                     vm.stack.push(Value::Int(best_dx));
-                    vm.energy = vm.energy.saturating_sub(5);
+                    vm.consume_energy(5, Some(OpCode::Chemotaxis));
                 } else {
                     vm.output
                         .push("Error: Type mismatch for chemotaxis".to_string());
@@ -1759,7 +1762,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         if let Some(kind) = new_kind {
                             vm.signal_differentiation = Some(kind.clone());
-                            vm.energy = vm.energy.saturating_sub(50); // High cost to re-specialize
+                            vm.consume_energy(50, Some(OpCode::Differentiate)); // High cost to re-specialize
                             vm.output
                                 .push(format!("DIFFERENTIATE: Requesting change to {:?}", kind));
                         }
@@ -1795,7 +1798,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.topology = topo;
                         vm.output
                             .push(format!("SHAPE: Changed topology to {:?}", topo));
-                        vm.energy = vm.energy.saturating_sub(100); // Massive energy cost to reshape reality
+                        vm.consume_energy(100, Some(OpCode::Shape)); // Massive energy cost to reshape reality
                     } else {
                         vm.output
                             .push(format!("Error: Invalid topology index {}", t));
@@ -1828,7 +1831,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     {
                         vm.portals
                             .insert((y1 as usize, x1 as usize), (y2 as usize, x2 as usize));
-                        vm.energy = vm.energy.saturating_sub(50);
+                        vm.consume_energy(50, Some(OpCode::Rift));
                         vm.output.push(format!(
                             "RIFT: Opened portal from {},{} to {},{}",
                             x1, y1, x2, y2
@@ -1855,7 +1858,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
                     if (0..16).contains(&x) && (0..16).contains(&y) {
                         if vm.portals.remove(&(y as usize, x as usize)).is_some() {
-                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.consume_energy(10, Some(OpCode::Seal));
                             vm.output
                                 .push(format!("SEAL: Closed portal at {},{}", x, y));
                         } else {
@@ -1907,7 +1910,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.stack.push(Value::Int(0));
                     }
 
-                    vm.energy = vm.energy.saturating_sub(2);
+                    vm.consume_energy(2, Some(OpCode::Sonar));
                 } else {
                     vm.output.push("Error: Type mismatch for sonar".to_string());
                 }
@@ -1927,7 +1930,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     let queue = vm.ether.entry(channel).or_default();
                     if queue.len() < 100 {
                         queue.push_back(value);
-                        vm.energy = vm.energy.saturating_sub(1);
+                        vm.consume_energy(1, Some(OpCode::Broadcast));
                         vm.output
                             .push(format!("BROADCAST: Sent to channel {}", channel));
                     } else {
@@ -1958,7 +1961,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
                     }
                     vm.stack.push(value);
-                    vm.energy = vm.energy.saturating_sub(1);
+                    vm.consume_energy(1, Some(OpCode::Tune));
                 } else {
                     vm.output.push("Error: Type mismatch for tune".to_string());
                 }
@@ -2005,7 +2008,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
                     }
 
-                    vm.energy = vm.energy.saturating_sub(10);
+                    vm.consume_energy(10, Some(OpCode::Membrane));
                     vm.output
                         .push(format!("MEMBRANE: Toggled mask {} at {},{}", mask, cx, cy));
                 } else {
@@ -2040,11 +2043,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
 
                         vm.context_loc = (new_y, new_x);
-                        vm.energy = vm.energy.saturating_sub(20); // High cost
+                        vm.consume_energy(20, Some(OpCode::Osmosis)); // High cost
                         vm.output
                             .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
                     } else {
-                        vm.energy = vm.energy.saturating_sub(5);
+                        vm.consume_energy(5, Some(OpCode::Osmosis));
                         vm.output.push("OSMOSIS: Blocked by boundary".to_string());
                     }
                 } else {
@@ -2084,7 +2087,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Absorb Stack
                             vm.stack.extend(organelle.stack);
 
-                            vm.energy = vm.energy.saturating_sub(20);
+                            vm.consume_energy(20, Some(OpCode::Symbiosis));
                             vm.output
                                 .push(format!("SYMBIOSIS: Absorbed organelle at {},{}", nx, ny));
                         } else {
@@ -2149,11 +2152,45 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     direction: (0, 0),
                 };
                 vm.organelles.push(organelle);
-                vm.energy = vm.energy.saturating_sub(10);
+                vm.consume_energy(10, Some(OpCode::Lysis));
                 vm.output
                     .push(format!("LYSIS: Ejected symbiote to {},{}", cx, cy));
             } else {
                 vm.output.push("LYSIS: No symbiotes to eject".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Catalyze => {
+            // stack: reduction, opcode_str (top)
+            if vm.stack.len() >= 2 {
+                let reduction_val = vm.stack.pop().unwrap();
+                let op_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(reduction), Value::Str(op_str)) = (reduction_val, op_val) {
+                    if let Ok(target_op) = op_str.parse::<OpCode>() {
+                        if reduction > 0 {
+                            vm.catalyst_table.insert(target_op.clone(), reduction);
+                            vm.output.push(format!(
+                                "CATALYZE: Reduced cost of {} by {}",
+                                target_op, reduction
+                            ));
+                            vm.consume_energy(50, Some(OpCode::Catalyze));
+                        } else {
+                            vm.output
+                                .push("Error: Catalysis reduction must be positive".to_string());
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Invalid OpCode string for catalyze".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for catalyze".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for catalyze".to_string());
             }
             None
         }
@@ -2174,7 +2211,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             }
                             vm.stack
                                 .push(Value::Int((vm.dna.helix.strands.len() - 1) as i64));
-                            vm.energy = vm.energy.saturating_sub(50);
+                            vm.consume_energy(50, Some(OpCode::Compile));
                             vm.output.push("COMPILE: Success".to_string());
                         }
                         Err(e) => {
@@ -2230,7 +2267,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
                         s.push(']');
                         vm.stack.push(Value::Str(s));
-                        vm.energy = vm.energy.saturating_sub(10);
+                        vm.consume_energy(10, Some(OpCode::Decompile));
                     } else {
                         vm.output
                             .push("Error: Strand index out of bounds for decompile".to_string());
@@ -2315,7 +2352,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
-                vm.energy = vm.energy.saturating_sub(10);
+                vm.consume_energy(10, Some(OpCode::Map));
             } else {
                 vm.output.push("Error: Stack underflow for map".to_string());
             }
@@ -2361,7 +2398,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 vm.stack.push(acc);
-                vm.energy = vm.energy.saturating_sub(10);
+                vm.consume_energy(10, Some(OpCode::Fold));
             } else {
                 vm.output.push("Error: Stack underflow for fold".to_string());
             }
@@ -2411,7 +2448,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
-                vm.energy = vm.energy.saturating_sub(10);
+                vm.consume_energy(10, Some(OpCode::Filter));
             } else {
                 vm.output.push("Error: Stack underflow for filter".to_string());
             }
@@ -2441,7 +2478,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
-                vm.energy = vm.energy.saturating_sub(5);
+                vm.consume_energy(5, Some(OpCode::Zip));
             } else {
                  vm.output.push("Error: Stack underflow for zip".to_string());
             }

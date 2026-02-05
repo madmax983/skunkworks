@@ -427,6 +427,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Decompile,
 
+    /// **[Nova]** Permanently reduces the energy cost of a specific OpCode.
+    ///
+    /// **Stack:** `[ ..., opcode_string, reduction_amount ] -> [ ... ]`
+    /// **Cost:** 50 Energy.
+    #[cfg(feature = "nova")]
+    Catalyze,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -636,6 +643,8 @@ impl FromStr for OpCode {
             "compile" => Ok(OpCode::Compile),
             #[cfg(feature = "nova")]
             "decompile" => Ok(OpCode::Decompile),
+            #[cfg(feature = "nova")]
+            "catalyze" => Ok(OpCode::Catalyze),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -784,6 +793,8 @@ impl fmt::Display for OpCode {
             OpCode::Compile => write!(f, "compile"),
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
+            #[cfg(feature = "nova")]
+            OpCode::Catalyze => write!(f, "catalyze"),
             #[cfg(feature = "nova")]
             OpCode::Remap => write!(f, "remap"),
             #[cfg(feature = "nova")]
