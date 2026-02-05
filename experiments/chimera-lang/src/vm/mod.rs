@@ -370,6 +370,31 @@ impl ChimeraVM {
                 // Reduce energy for organelle metabolism
                 self.energy = self.energy.saturating_sub(1);
 
+                // Specialized Organelle Logic
+                match organelle.kind {
+                    nova::OrganelleType::Chloroplast => {
+                        let (cy, cx) = self.context_loc;
+                        let light = self.light_grid[cy][cx];
+                        if light > 0 {
+                            self.energy = self.energy.saturating_add(light / 10);
+                        }
+                    }
+                    nova::OrganelleType::Mitochondria => {
+                        // Refund the metabolism cost
+                        self.energy = self.energy.saturating_add(1);
+                    }
+                    nova::OrganelleType::Lysosome => {
+                        let (cy, cx) = self.context_loc;
+                        let waste = self.waste_grid[cy][cx];
+                        if waste > 0 {
+                            let consumed = waste.min(10);
+                            self.waste_grid[cy][cx] -= consumed;
+                            self.energy = self.energy.saturating_add(consumed / 5);
+                        }
+                    }
+                    nova::OrganelleType::Worker => {}
+                }
+
                 if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
                     let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
                     if self.ip.1 < strand_len {

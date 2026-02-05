@@ -37,6 +37,15 @@ pub struct Spore {
     pub activation_levels: Vec<i64>,
 }
 
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, PartialEq)]
+pub enum OrganelleType {
+    Worker,       // Standard execution
+    Chloroplast,  // Generates energy from light
+    Mitochondria, // Reduces metabolic cost / generates base energy
+    Lysosome,     // Consumes waste to produce energy
+}
+
 /// An independent execution unit spawned by the main strand.
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
@@ -47,6 +56,7 @@ pub struct Organelle {
     pub call_stack: Vec<(usize, usize)>,
     pub recursion_depth: usize,
     pub halted: bool,
+    pub kind: OrganelleType,
 }
 
 #[cfg(feature = "nova")]
@@ -152,33 +162,43 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
         match op {
             #[cfg(feature = "nova")]
             OpCode::Spawn => {
-                if let Some(val) = vm.stack.pop() {
-                    match val {
-                        Value::Int(idx) => {
-                            let s_idx = idx as usize;
-                            if s_idx < vm.dna.helix.strands.len() {
-                                let organelle = Organelle {
-                                    stack: Vec::new(),
-                                    ip: (s_idx, 0),
-                                    context_loc: vm.context_loc,
-                                    call_stack: Vec::new(),
-                                    recursion_depth: 0,
-                                    halted: false,
-                                };
-                                vm.organelles.push(organelle);
-                                vm.energy = vm.energy.saturating_sub(20);
-                                vm.output.push(format!(
-                                    "SPAWN: Created Organelle executing strand {}",
-                                    s_idx
-                                ));
-                            } else {
-                                vm.output
-                                    .push("Error: Strand index out of bounds for spawn".to_string());
-                            }
+                // stack: type, strand_idx (bottom)
+                if vm.stack.len() >= 2 {
+                    let type_val = vm.stack.pop().unwrap();
+                    let idx_val = vm.stack.pop().unwrap();
+
+                    if let (Value::Int(t), Value::Int(idx)) = (type_val, idx_val) {
+                        let s_idx = idx as usize;
+                        if s_idx < vm.dna.helix.strands.len() {
+                            let kind = match t {
+                                1 => OrganelleType::Chloroplast,
+                                2 => OrganelleType::Mitochondria,
+                                3 => OrganelleType::Lysosome,
+                                _ => OrganelleType::Worker,
+                            };
+
+                            let organelle = Organelle {
+                                stack: Vec::new(),
+                                ip: (s_idx, 0),
+                                context_loc: vm.context_loc,
+                                call_stack: Vec::new(),
+                                recursion_depth: 0,
+                                halted: false,
+                                kind: kind.clone(),
+                            };
+                            vm.organelles.push(organelle);
+                            vm.energy = vm.energy.saturating_sub(20);
+                            vm.output.push(format!(
+                                "SPAWN: Created {:?} Organelle executing strand {}",
+                                kind, s_idx
+                            ));
+                        } else {
+                            vm.output
+                                .push("Error: Strand index out of bounds for spawn".to_string());
                         }
-                        _ => vm
-                            .output
-                            .push("Error: Type mismatch for spawn".to_string()),
+                    } else {
+                         vm.output
+                            .push("Error: Type mismatch for spawn".to_string());
                     }
                 } else {
                     vm.output
