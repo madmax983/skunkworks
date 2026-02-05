@@ -80,7 +80,6 @@ members = [
     "experiments/repo-rover", 
     "experiments/reaction-monitor", 
     "experiments/syntax-spider", 
-    "experiments/code-erosion",
     "experiments/hive-synth",
     "experiments/market-rogue",
     "experiments/hidden-brush", 

@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-rogue**: Documentation void. Generic implementation (Graph traversal disguised as game). Lacks unique evolutionary traits. Grace period ends in 24h.
-- **code-erosion**: **ZOMBIE SPECIMEN.** Listed as executed but persists in `experiments/`. Documentation void. Trivial implementation. Re-condemned. Grace period ends in 24h.
+- **stego-spectral**: Documentation void. Generic implementation (LSB Steganography). Plasma effect does not redeem it. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-erosion**: ZOMBIE SPECIMEN. Documentation void. Trivial implementation. Executed. Moved to graveyard.
 - **strange-loops**: Documentation void. Generic implementation (standard attractors). Failed to improve during grace period. Moved to graveyard.
 - **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
 - **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Failed to improve during grace period. Moved to graveyard.
