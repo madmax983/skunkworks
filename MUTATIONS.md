@@ -261,3 +261,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Generative Audio via Biological Simulation.
 - **Status**: experiments/chimera-resonance
 - **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### clockwork-chimera
+- **Parents**: experiments/verge-computer + experiments/chimera-lang
+- **Concept**: A biological entity living inside a mechanical clock, where execution ticks are driven by a physics-simulated escapement.
+- **Novel trait**: Mechanical Metabolism. The speed of life is determined by physical torque and friction.
+- **Status**: experiments/clockwork-chimera
+- **Evaluation**: Compiles. Implemented by Splice Surgeon.

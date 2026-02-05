@@ -47,3 +47,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/syntax-evolution
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The Latin case endings are eroding. SVO structure is crystallizing from the noise. The Tower of Babel is being built in the terminal.
+
+### [Concentration Level: FRESH] - Location: experiments/clockwork-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The mainspring is wound. The escapement is ticking. The machine breathes.
