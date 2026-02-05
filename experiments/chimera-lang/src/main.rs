@@ -3,7 +3,8 @@ use clap::Parser as ClapParser;
 use pest::Parser;
 use std::fs;
 
-use chimera_lang::{ast::Dna, tui::run_tui, vm::ChimeraVM, ChimeraParser, Rule};
+use chimera_lang::{ast::Dna, compiler, tui::run_tui, vm::ChimeraVM, ChimeraParser, Rule};
+use std::path::Path;
 
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
@@ -29,11 +30,18 @@ fn main() -> Result<()> {
         original_hook(panic_info);
     }));
 
-    let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
-        .next()
-        .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
+    let path = Path::new(&cli.input);
+    let extension = path.extension().and_then(std::ffi::OsStr::to_str).unwrap_or("");
 
-    let dna = Dna::from_pair(dna_pair);
+    let dna = if extension == "chs" {
+        compiler::compile(&unparsed_file)?
+    } else {
+        let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
+        Dna::from_pair(dna_pair)
+    };
+
     let mut vm = ChimeraVM::new(dna);
 
     if cli.headless {
