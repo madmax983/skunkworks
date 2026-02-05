@@ -38,6 +38,8 @@ pub const INITIAL_ENERGY: i64 = 50;
 
 pub mod bard;
 pub mod cortex;
+#[cfg(feature = "biophysics")]
+pub mod neuron;
 pub mod nova;
 pub mod oracle;
 pub mod resonance;
@@ -211,6 +213,8 @@ pub struct ChimeraVM {
     pub knowledge_base: Vec<Value>,
     #[cfg(feature = "resonance")]
     pub audio_tx: Option<Sender<AudioCommand>>,
+    #[cfg(feature = "biophysics")]
+    pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
 }
 
 impl ChimeraVM {
@@ -310,6 +314,8 @@ impl ChimeraVM {
             knowledge_base: Vec::new(),
             #[cfg(feature = "resonance")]
             audio_tx: None,
+            #[cfg(feature = "biophysics")]
+            neurons: std::collections::HashMap::new(),
         }
     }
 
@@ -844,6 +850,13 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         self.process_environment();
 
+        #[cfg(feature = "biophysics")]
+        {
+            for neuron in self.neurons.values_mut() {
+                neuron.step(0.1);
+            }
+        }
+
         if self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
@@ -1164,6 +1177,12 @@ impl ChimeraVM {
             #[cfg(feature = "resonance")]
             OpCode::Pluck => {
                 resonance::exec_resonance_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "biophysics")]
+            OpCode::NeuroGenesis | OpCode::Stimulate | OpCode::Dendrite | OpCode::Axon => {
+                neuron::exec_biophysics_op(self, op, args);
                 None
             }
 
