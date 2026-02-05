@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque without instructions. Grace period ends in 24h.
+- **strange-loops**: Documentation void. Generic implementation (standard attractors). Lacks unique evolutionary traits. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -47,3 +47,4 @@
 - **epicycle-draw**: Failed to improve during grace period. Implementation remained a generic DFT visualization with no unique evolutionary traits or documentation.
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
+- **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
