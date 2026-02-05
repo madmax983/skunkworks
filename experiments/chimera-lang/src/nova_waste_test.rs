@@ -97,4 +97,29 @@ mod tests {
         assert_eq!(vm.waste_grid[8][8], 0);
         assert_eq!(vm.waste_grid[9][9], 0);
     }
+
+    #[test]
+    fn test_diffusion_performance_and_stability() {
+        // This test runs diffusion many times to check for stability/crashes
+        // and provides a baseline for performance work (allocations).
+        let genes = vec![];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Seed grid
+        vm.waste_grid[5][5] = 10000;
+        vm.light_grid[5][5] = 10000;
+        vm.hormone_grid[5][5][0] = 10000;
+
+        for _ in 0..10 {
+            crate::vm::nova::diffuse_waste(&mut vm);
+            crate::vm::nova::diffuse_light(&mut vm);
+            crate::vm::nova::diffuse_hormones(&mut vm);
+        }
+
+        // Check values have diffused
+        assert!(vm.waste_grid[5][5] < 1000);
+        assert!(vm.waste_grid[5][5] > 0, "Waste decayed to zero too fast");
+        // Check neighbor
+        assert!(vm.waste_grid[5][6] > 0, "Neighbor did not receive waste");
+    }
 }

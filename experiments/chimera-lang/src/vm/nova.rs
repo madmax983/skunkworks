@@ -66,7 +66,7 @@ pub struct Organelle {
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
-    let mut new_grid = vm.hormone_grid.clone();
+    let mut buffer = [[[0i64; 3]; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
             for c in 0..3 {
@@ -80,17 +80,21 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
                     }
                 }
 
-                new_grid[y][x][c] = sum / count;
+                buffer[y][x][c] = sum / count;
             }
         }
     }
-    vm.hormone_grid = new_grid;
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.hormone_grid[y][x] = buffer[y][x];
+        }
+    }
 }
 
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_waste(vm: &mut ChimeraVM) {
-    let mut new_grid = vm.waste_grid.clone();
+    let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
             let mut sum = vm.waste_grid[y][x] * 4;
@@ -103,16 +107,20 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
                 }
             }
 
-            new_grid[y][x] = sum / count;
+            buffer[y][x] = sum / count;
         }
     }
-    vm.waste_grid = new_grid;
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.waste_grid[y][x] = buffer[y][x];
+        }
+    }
 }
 
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light(vm: &mut ChimeraVM) {
-    let mut new_grid = vm.light_grid.clone();
+    let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
             let mut sum = vm.light_grid[y][x] * 4;
@@ -126,10 +134,14 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             }
 
             // Blur and strong decay (50%)
-            new_grid[y][x] = (sum / count) / 2;
+            buffer[y][x] = (sum / count) / 2;
         }
     }
-    vm.light_grid = new_grid;
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.light_grid[y][x] = buffer[y][x];
+        }
+    }
 }
 #[cfg(feature = "nova")]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
