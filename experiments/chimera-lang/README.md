@@ -88,6 +88,11 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 cargo run --release -- --input sample.dna
 ```
 
+To run in headless mode (no TUI), use the `--headless` flag:
+```bash
+cargo run --release -- --input sample.dna --headless
+```
+
 ## Nova Features
 
 Some features (Epigenetics, Cell Cycle, Telomeres, `incubate`) are part of the "Nova" expansion and are gated behind a feature flag. To use them, you must enable the `nova` feature:
@@ -103,7 +108,8 @@ Chimera can be used as a Rust library to embed the VM in other applications.
 Add to your `Cargo.toml`:
 ```toml
 [dependencies]
-chimera-lang = { path = "experiments/chimera-lang", features = ["nova"] }
+# Note: Adjust path to point to the chimera-lang directory relative to your project
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
 ```
 
 Example `main.rs`:
@@ -119,4 +125,4 @@ fn main() {
 }
 ```
 
-See `examples/story_demo.rs` for a full example of programmatic usage.
+See `examples/story_demo.rs` for a full example of programmatic usage (Requires `nova` feature).

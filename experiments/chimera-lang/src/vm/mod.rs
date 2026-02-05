@@ -928,7 +928,7 @@ impl ChimeraVM {
                 match (val, arg_idx_val, gene_idx_val, strand_idx_val) {
                     (Value::Int(v), Value::Int(ai), Value::Int(gi), Value::Int(si)) => {
                         let si_idx = si as usize;
-                        #[allow(unused_mut, unused_variables, unused_assignments)]
+                        #[cfg(feature = "nova")]
                         let mut success = false;
                         if si >= 0 && si_idx < self.dna.helix.strands.len() {
                             let strand = &mut self.dna.helix.strands[si_idx];
@@ -940,7 +940,10 @@ impl ChimeraVM {
                                         "TRANSCRIBE: strand {} gene {} arg {} -> {}",
                                         si, gi, ai, v
                                     ));
-                                    success = true;
+                                    #[cfg(feature = "nova")]
+                                    {
+                                        success = true;
+                                    }
                                 } else {
                                     self.output
                                         .push("Error: Arg index out of bounds".to_string());
