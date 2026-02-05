@@ -23,3 +23,7 @@
 **2026-02-19 - Chimera-Lang Integer Overflow Panic Hardening**
 **Threat:** DoS via panic injection in `chimera-lang`. `get_circular_coords` allowed integer overflow on `r*r` and coordinate calculations. `diffuse_*` functions allowed integer overflow when summing grid values.
 **Defense:** Upgraded `get_circular_coords` and `diffuse_*` arithmetic to use `i128` and `saturating_*` operations to prevent panics on extreme inputs.
+
+**2026-03-01 - Chimera-Lang Resource DoS Hardening**
+**Threat:** Denial of Service (DoS) via unbounded resource allocation (infinite Spore/Organelle creation) and call stack exhaustion (Reflex loops) in `chimera-lang`.
+**Defense:** Enforced hard caps (`MAX_SPORES`, `MAX_ORGANELLES`, `MAX_CALL_STACK_DEPTH`) on resource vectors and reflex recursion.

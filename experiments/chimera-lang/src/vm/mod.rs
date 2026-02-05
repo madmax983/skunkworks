@@ -31,6 +31,8 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
+pub const MAX_SPORES: usize = 64;
+pub const MAX_ORGANELLES: usize = 256;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
 
@@ -320,6 +322,12 @@ impl ChimeraVM {
     pub fn trigger_reflex(&mut self, event_id: i64) -> bool {
         if let Some(&strand_idx) = self.reflexes.get(&event_id) {
             if strand_idx < self.dna.helix.strands.len() {
+                if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
+                    self.output
+                        .push("Error: Reflex ignored, call stack full".to_string());
+                    return false;
+                }
+
                 // Push return address (current strand, next gene)
                 // We use ip.1 because usually this is called between instructions or during an instruction
                 // that hasn't advanced IP yet.
