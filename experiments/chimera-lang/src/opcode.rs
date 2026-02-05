@@ -138,6 +138,8 @@ pub enum OpCode {
     Symbiosis,
     #[cfg(feature = "nova")]
     Lysis,
+    #[cfg(feature = "nova")]
+    Reflex,
 
     Unknown(String),
 }
@@ -280,6 +282,8 @@ impl FromStr for OpCode {
             "symbiosis" => Ok(OpCode::Symbiosis),
             #[cfg(feature = "nova")]
             "lysis" => Ok(OpCode::Lysis),
+            #[cfg(feature = "nova")]
+            "reflex" => Ok(OpCode::Reflex),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -422,6 +426,8 @@ impl fmt::Display for OpCode {
             OpCode::Symbiosis => write!(f, "symbiosis"),
             #[cfg(feature = "nova")]
             OpCode::Lysis => write!(f, "lysis"),
+            #[cfg(feature = "nova")]
+            OpCode::Reflex => write!(f, "reflex"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

@@ -63,11 +63,15 @@ mod nova_quantum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_reflex_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sonar_test;
 #[cfg(test)]
 mod nova_spore_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_symbiosis_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_taxis_test;
 mod nova_test;
@@ -79,7 +83,5 @@ mod nova_waste_test;
 mod ribosome_test;
 #[cfg(test)]
 mod sentry_nova_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_symbiosis_test;
 #[cfg(test)]
 mod warden_exploit_test;

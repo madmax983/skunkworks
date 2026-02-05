@@ -152,6 +152,8 @@ pub struct ChimeraVM {
     pub topology: Topology,
     #[cfg(feature = "nova")]
     pub ether: HashMap<i64, VecDeque<Value>>,
+    #[cfg(feature = "nova")]
+    pub reflexes: HashMap<i64, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -229,6 +231,8 @@ impl ChimeraVM {
             topology: Topology::Torus,
             #[cfg(feature = "nova")]
             ether: HashMap::new(),
+            #[cfg(feature = "nova")]
+            reflexes: HashMap::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -408,6 +412,11 @@ impl ChimeraVM {
             if self.telomeres[self.ip.0] <= 0 {
                 self.output
                     .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+
+                if nova::trigger_reflex(self, 1) {
+                    return true;
+                }
+
                 self.ip.0 += 1;
                 self.ip.1 = 0;
                 return true;
@@ -431,10 +440,10 @@ impl ChimeraVM {
             // Execute logic (simplified version of step checks)
             let helix_len = self.dna.helix.strands.len();
             if self.ip.0 < helix_len {
-                 let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-                 if self.ip.1 < strand_len {
-                     // Check telomeres/epigenetics? For now, skip for symbiotes to avoid complexity
-                     let (gene_op, gene_args) = {
+                let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                if self.ip.1 < strand_len {
+                    // Check telomeres/epigenetics? For now, skip for symbiotes to avoid complexity
+                    let (gene_op, gene_args) = {
                         let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
                         (gene.op.clone(), gene.args.clone())
                     };
@@ -445,7 +454,7 @@ impl ChimeraVM {
                     } else {
                         self.ip.1 += 1;
                     }
-                 }
+                }
             }
 
             // Swap back
@@ -603,7 +612,12 @@ impl ChimeraVM {
         self.energy -= 1;
 
         #[cfg(feature = "nova")]
-        self.handle_input_interrupts();
+        {
+            if self.energy < 10 && nova::trigger_reflex(self, 2) {
+                return;
+            }
+            self.handle_input_interrupts();
+        }
 
         #[cfg(feature = "cortex")]
         self.update_cortex_state();
@@ -784,6 +798,7 @@ impl ChimeraVM {
             | OpCode::Osmosis
             | OpCode::Symbiosis
             | OpCode::Lysis
+            | OpCode::Reflex
             | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
@@ -1304,6 +1319,11 @@ impl ChimeraVM {
             self.dna.helix.strands[strand_idx].genes[gene_idx].op = new_op.clone();
             self.output
                 .push(format!("MUTATION: {} -> {}", old_op, new_op));
+
+            #[cfg(feature = "nova")]
+            {
+                nova::trigger_reflex(self, 1);
+            }
 
             #[cfg(feature = "nova")]
             if let Some(&partner_idx) = self.entangled_pairs.get(&strand_idx) {

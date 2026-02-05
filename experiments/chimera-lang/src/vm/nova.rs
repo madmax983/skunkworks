@@ -36,6 +36,7 @@ pub struct Spore {
     pub sonar_target: Option<(usize, usize)>,
     pub symbiotes: Vec<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
+    pub reflexes: HashMap<i64, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -322,6 +323,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 sonar_target: vm.sonar_target,
                 symbiotes: vm.symbiotes.clone(),
                 ether: vm.ether.clone(),
+                reflexes: vm.reflexes.clone(),
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -368,6 +370,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.sonar_target = spore.sonar_target;
                         vm.symbiotes = spore.symbiotes.clone();
                         vm.ether = spore.ether.clone();
+                        vm.reflexes = spore.reflexes.clone();
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
@@ -1231,11 +1234,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Hit boundary
                             vm.energy = vm.energy.saturating_sub(2);
                             vm.output.push("MIGRATE: Blocked by boundary".to_string());
+                            if trigger_reflex(vm, 0) {
+                                return Some(vm.ip);
+                            }
                         }
                     } else {
                         // Blocked by membrane
                         vm.energy = vm.energy.saturating_sub(2);
                         vm.output.push("MIGRATE: Blocked by membrane".to_string());
+                        if trigger_reflex(vm, 0) {
+                            return Some(vm.ip);
+                        }
                     }
                 } else {
                     vm.output
@@ -1919,6 +1928,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.energy = vm.energy.saturating_sub(1);
                         vm.output
                             .push(format!("BROADCAST: Sent to channel {}", channel));
+
+                        // Reflex Check
+                        if trigger_reflex(vm, 100 + channel) {
+                            return Some(vm.ip);
+                        }
                     } else {
                         vm.output
                             .push(format!("BROADCAST: Channel {} full", channel));
@@ -2035,6 +2049,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     } else {
                         vm.energy = vm.energy.saturating_sub(5);
                         vm.output.push("OSMOSIS: Blocked by boundary".to_string());
+                        if trigger_reflex(vm, 0) {
+                            return Some(vm.ip);
+                        }
                     }
                 } else {
                     vm.output
@@ -2119,8 +2136,104 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Reflex => {
+            // stack: strand_idx, code (bottom)
+            if vm.stack.len() >= 2 {
+                let s_val = vm.stack.pop().unwrap();
+                let c_val = vm.stack.pop().unwrap();
+                if let (Value::Int(code), Value::Int(s_idx)) = (c_val, s_val) {
+                    if s_idx >= 0 && (s_idx as usize) < vm.dna.helix.strands.len() {
+                        vm.reflexes.insert(code, s_idx as usize);
+                        vm.output
+                            .push(format!("REFLEX: Registered {} -> Strand {}", code, s_idx));
+                    } else {
+                        vm.output
+                            .push("Error: Invalid strand index for reflex".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for reflex".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for reflex".to_string());
+            }
+            None
+        }
         _ => None,
     }
+}
+
+#[cfg(feature = "nova")]
+pub fn trigger_reflex(vm: &mut ChimeraVM, code: i64) -> bool {
+    if let Some(strand_idx) = vm.reflexes.remove(&code) {
+        // Found a reflex for this code
+        // Push return address (current ip) to call stack
+        // We push the *next* instruction usually, but since this is an interrupt,
+        // we want to return to exactly where we were?
+        // Wait, if we are in `step`, `ip` points to current instruction being executed?
+        // No, `step` loop:
+        // 1. Check constraints.
+        // 2. Clone op at `ip`.
+        // 3. Execute op (returns jump target or None).
+        // 4. Update `ip` (target or +1).
+        //
+        // If `trigger_reflex` is called:
+        // Case A: Inside an OpCode (e.g. Migrate).
+        //    - `ip` is still at `Migrate`.
+        //    - If we jump, we set `ip` to reflex strand.
+        //    - We want `Ret` to return to `Migrate` + 1? Or retry `Migrate`?
+        //    - Usually interrupts resume *after* the current instruction.
+        //    - So we should push `(ip.0, ip.1 + 1)`.
+        //
+        // Case B: Between steps (e.g. Metabolism check).
+        //    - `ip` is valid for next instruction.
+        //    - We push `ip` as is?
+        //    - If we push `ip`, `Ret` restores it.
+        //    - This is correct.
+        //
+        // However, `trigger_reflex` modifies `vm.ip`.
+        // If called inside `exec_nova_op`, it returns `None`.
+        // `exec_gene` returns `None`. `step` increments `ip` + 1.
+        // This would corrupt the reflex jump if we just set `vm.ip`.
+        //
+        // Solution: `trigger_reflex` should probably NOT change `ip` directly if called from inside an OpCode that returns `Option<(usize, usize)>`.
+        // But `trigger_reflex` is a void helper.
+        //
+        // Let's make `trigger_reflex` return `Option<(usize, usize)>` if it changes IP?
+        // But it's called from places that return `void` (metabolism) and `Option` (Migrate).
+        //
+        // Better: `trigger_reflex` sets `vm.ip` and handles the call stack push.
+        // BUT we must be careful about `step` overwriting `vm.ip`.
+        //
+        // If called from `Migrate` (inside `step` -> `execute_gene`):
+        // `Migrate` returns `None`. `step` does `ip.1 += 1`.
+        // If `trigger_reflex` changed `ip` to `(reflex, 0)`, `step` will make it `(reflex, 1)`. Skip first gene!
+        //
+        // So if triggered from inside OpCode, we must return the new IP from the OpCode.
+        // `trigger_reflex` can prepare the state and return the target IP.
+        //
+        // If triggered from outside (Metabolism), we handle IP update manually.
+        //
+        // Let's implement `trigger_reflex` to return `Option<(usize, usize)>`.
+
+        // We push the *current* IP so that we retry/execute the interrupted instruction upon return.
+        // For 'Migrate' (Collision), this means we retry the move (which will fail again if not fixed, but proceeds).
+        // For 'Metabolism' (Pre-step), this means we execute the pending instruction.
+        vm.call_stack.push(vm.ip);
+        vm.output.push(format!(
+            "REFLEX TRIGGERED: Code {} -> Strand {}",
+            code, strand_idx
+        ));
+
+        // Set IP (but caller might need to return it to avoid overwrite)
+        let target = (strand_idx, 0);
+        vm.ip = target;
+
+        return true;
+    }
+    false
 }
 
 #[cfg(feature = "nova")]

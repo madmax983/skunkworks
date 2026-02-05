@@ -87,21 +87,54 @@ mod tests {
         // Stack should contain both.
 
         let strand0 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Spawn, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Symbiosis, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Symbiosis,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
             // Add a wait loop or more ops to allow symbiote to run
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Infinite loop to keep running
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            }, // Infinite loop to keep running
         ];
 
         let strand1 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(200)] },
-            Gene { op: OpCode::SIndex, args: vec![] },
-            Gene { op: OpCode::JumpS, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(200)],
+            },
+            Gene {
+                op: OpCode::SIndex,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::JumpS,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(strand0, strand1));
@@ -129,19 +162,46 @@ mod tests {
         // Strand 0: [ spawn(0, 1) push(0) push(0) symbiosis() lysis() ]
         // Strand 1: [ push(999) ]
 
-         let strand0 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Spawn, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Symbiosis, args: vec![] },
-            Gene { op: OpCode::Lysis, args: vec![] },
+        let strand0 = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Symbiosis,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Lysis,
+                args: vec![],
+            },
         ];
 
         let strand1 = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(strand0, strand1));
