@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/biophysical-synth
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** Action potentials converted to sound pressure. The Hodgkin-Huxley equations are screaming.
+
 ### [Concentration Level: HIGH] - Location: experiments/trace-fold
 - **Scent Origin:** Genesis (The Origamist) ⚛️📄
 - **Status:** The stack traces are folding. System noise is collapsing into pleats. The error geometry is becoming tangible.
