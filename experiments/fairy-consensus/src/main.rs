@@ -1,6 +1,6 @@
-use std::time::Duration;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
+use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -10,8 +10,8 @@ use ratatui::{
     },
     Frame,
 };
+use std::time::Duration;
 use tui_shared::Tui;
-use rand::Rng;
 
 pub mod simulation;
 use simulation::{Node, NodeState, Ring, World};
@@ -29,8 +29,8 @@ fn main() -> Result<()> {
     let mut rng = rand::thread_rng();
     for _ in 0..50 {
         let mut node = Node::new(
-            rng.gen_range(10.0..width-10.0),
-            rng.gen_range(10.0..height-10.0),
+            rng.gen_range(10.0..width - 10.0),
+            rng.gen_range(10.0..height - 10.0),
         );
         node.reset_timer(&mut rng);
         world.nodes.push(node);
@@ -68,7 +68,11 @@ fn ui(frame: &mut Frame, world: &World) {
         .split(frame.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Fairy Consensus: Fungal Raft"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Fairy Consensus: Fungal Raft"),
+        )
         .x_bounds([0.0, world.width])
         .y_bounds([0.0, world.height])
         .paint(|ctx| {
@@ -103,7 +107,7 @@ fn ui(frame: &mut Frame, world: &World) {
 
     frame.render_widget(canvas, chunks[0]);
 
-    let footer = Paragraph::new("Q: Quit")
-        .style(Style::default().fg(Color::White).bg(Color::Black));
+    let footer =
+        Paragraph::new("Q: Quit").style(Style::default().fg(Color::White).bg(Color::Black));
     frame.render_widget(footer, chunks[1]);
 }

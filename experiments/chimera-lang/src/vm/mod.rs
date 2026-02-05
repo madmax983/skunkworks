@@ -328,14 +328,231 @@ impl ChimeraVM {
         }
     }
 
+    #[cfg(feature = "nova")]
+    fn handle_input_interrupts(&mut self) {
+        self.sonar_target = None;
+        if let Some(key) = self.input_buffer.pop_front() {
+            if let Some(&strand_idx) = self.receptors.get(&key) {
+                self.call_stack.push(self.ip);
+
+                if strand_idx < self.dna.helix.strands.len() {
+                    self.ip = (strand_idx, 0);
+                    self.output.push(format!(
+                        "INTERRUPT: Signal '{}' -> Strand {}",
+                        key, strand_idx
+                    ));
+                }
+            }
+        }
+    }
+
+    #[cfg(feature = "cortex")]
+    fn update_cortex_state(&mut self) {
+        for level in self.activation_levels.iter_mut() {
+            if *level > 0 {
+                *level -= 1;
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_environment(&mut self) {
+        let (cy, cx) = self.context_loc;
+        self.waste_grid[cy][cx] += 10;
+
+        nova::diffuse_hormones(self);
+        nova::diffuse_waste(self);
+        nova::diffuse_light(self);
+
+        for row in self.hormone_grid.iter_mut() {
+            for cell in row.iter_mut() {
+                for val in cell.iter_mut() {
+                    if *val > 0 {
+                        *val -= 1;
+                    }
+                }
+            }
+        }
+
+        if self.waste_grid[cy][cx] > 100 {
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(0.05) {
+                self.output
+                    .push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
+                self.mutate();
+            }
+        }
+    }
+
+    fn check_starvation(&mut self) -> bool {
+        if self.energy <= 0 {
+            self.halted = true;
+            self.output.push("DEATH: STARVATION".to_string());
+            true
+        } else {
+            false
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn check_telomeres(&mut self) -> bool {
+        if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
+            if self.telomeres[self.ip.0] > 0 {
+                self.telomeres[self.ip.0] -= 1;
+            }
+
+            if self.telomeres[self.ip.0] <= 0 {
+                self.output
+                    .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
+                self.ip.0 += 1;
+                self.ip.1 = 0;
+                return true;
+            }
+        }
+        false
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_organelles(&mut self) {
+        let active_organelles = std::mem::take(&mut self.organelles);
+        let mut next_organelles = Vec::new();
+
+        for mut organelle in active_organelles {
+            if self.tick_organelle(&mut organelle) {
+                next_organelles.push(organelle);
+            }
+        }
+        self.organelles.extend(next_organelles);
+    }
+
+    #[cfg(feature = "nova")]
+    fn tick_organelle(&mut self, organelle: &mut Organelle) -> bool {
+        if organelle.halted {
+            return false;
+        }
+
+        std::mem::swap(&mut self.stack, &mut organelle.stack);
+        std::mem::swap(&mut self.ip, &mut organelle.ip);
+        std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
+        std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
+        std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+
+        self.active_organelle_kind = Some(organelle.kind.clone());
+        self.energy = self.energy.saturating_sub(1);
+
+        match organelle.kind {
+            nova::OrganelleType::Chloroplast => {
+                let (cy, cx) = self.context_loc;
+                let light = self.light_grid[cy][cx];
+                if light > 0 {
+                    self.energy = self.energy.saturating_add(light / 10);
+                }
+            }
+            nova::OrganelleType::Mitochondria => {
+                self.energy = self.energy.saturating_add(1);
+            }
+            nova::OrganelleType::Lysosome => {
+                let (cy, cx) = self.context_loc;
+                let waste = self.waste_grid[cy][cx];
+                if waste > 0 {
+                    let consumed = waste.min(10);
+                    self.waste_grid[cy][cx] -= consumed;
+                    self.energy = self.energy.saturating_add(consumed / 5);
+                }
+            }
+            nova::OrganelleType::Ribosome => {
+                self.process_ribosome(organelle);
+            }
+            nova::OrganelleType::Worker => {}
+        }
+
+        if !matches!(organelle.kind, nova::OrganelleType::Ribosome) {
+            self.execute_organelle_dna(organelle);
+        }
+
+        if let Some(new_kind) = self.signal_differentiation.take() {
+            organelle.kind = new_kind;
+        }
+
+        std::mem::swap(&mut self.stack, &mut organelle.stack);
+        std::mem::swap(&mut self.ip, &mut organelle.ip);
+        std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
+        std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
+        std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+
+        !organelle.halted
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_ribosome(&mut self, organelle: &mut Organelle) {
+        let (cy, cx) = self.context_loc;
+        let val = self.grid[cy][cx].clone();
+        match val {
+            Value::Int(n) => self.stack.push(Value::Int(n)),
+            Value::Str(s) => match s.as_str() {
+                ">" => organelle.direction = (0, 1),
+                "<" => organelle.direction = (0, -1),
+                "^" => organelle.direction = (-1, 0),
+                "v" => organelle.direction = (1, 0),
+                _ => {
+                    if let Ok(op) = s.parse::<OpCode>() {
+                        let _ = self.execute_gene_inner(op, &[]);
+                    }
+                }
+            },
+        }
+
+        let (dy, dx) = organelle.direction;
+        if let Some((mut new_y, mut new_x)) =
+            self.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64)
+        {
+            let mask = match (dy, dx) {
+                (-1, 0) => 1,
+                (1, 0) => 2,
+                (0, 1) => 4,
+                (0, -1) => 8,
+                _ => 0,
+            };
+            if (self.membranes[cy][cx] & mask) == 0 {
+                if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
+                    self.output.push(format!(
+                        "PORTAL: Teleported from {},{} to {},{}",
+                        new_x, new_y, px, py
+                    ));
+                    new_y = py;
+                    new_x = px;
+                }
+                self.context_loc = (new_y, new_x);
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn execute_organelle_dna(&mut self, organelle: &mut Organelle) {
+        if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
+            let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+            if self.ip.1 < strand_len {
+                let (gene_op, gene_args) = {
+                    let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
+                    (gene.op.clone(), gene.args.clone())
+                };
+
+                let jump_target = self.execute_gene(gene_op, &gene_args);
+
+                if let Some(target) = jump_target {
+                    self.ip = target;
+                } else {
+                    self.ip.1 += 1;
+                }
+            } else {
+                organelle.halted = true;
+            }
+        } else {
+            organelle.halted = true;
+        }
+    }
+
     /// Advances the simulation by one tick.
-    ///
-    /// 1. Consumes 1 energy unit.
-    /// 2. Handles interrupts (Nova feature).
-    /// 3. Processes biological diffusion (hormones, waste).
-    /// 4. Checks for starvation (Energy <= 0).
-    /// 5. Executes the gene at the current Instruction Pointer (IP).
-    /// 6. Advances IP.
     pub fn step(&mut self) {
         if self.halted {
             return;
@@ -344,81 +561,22 @@ impl ChimeraVM {
         self.energy -= 1;
 
         #[cfg(feature = "nova")]
-        {
-            self.sonar_target = None;
-            if let Some(key) = self.input_buffer.pop_front() {
-                if let Some(&strand_idx) = self.receptors.get(&key) {
-                    // Interrupt!
-                    // Push current IP to call stack so we can return later (if we want)
-                    // Note: We push the *current* IP. If we want to return to the *next* instruction
-                    // when we are interrupted between instructions, it depends.
-                    // Here we are at start of step(), so IP points to the instruction *to be executed*.
-                    // So when we return, we want to execute *that* instruction.
-                    self.call_stack.push(self.ip);
-
-                    if strand_idx < self.dna.helix.strands.len() {
-                        self.ip = (strand_idx, 0);
-                        self.output.push(format!(
-                            "INTERRUPT: Signal '{}' -> Strand {}",
-                            key, strand_idx
-                        ));
-                    }
-                }
-            }
-        }
+        self.handle_input_interrupts();
 
         #[cfg(feature = "cortex")]
-        {
-            for level in self.activation_levels.iter_mut() {
-                if *level > 0 {
-                    *level -= 1;
-                }
-            }
-        }
+        self.update_cortex_state();
 
         #[cfg(feature = "nova")]
-        {
-            // Metabolic Waste Production
-            let (cy, cx) = self.context_loc;
-            self.waste_grid[cy][cx] += 10;
-
-            nova::diffuse_hormones(self);
-            nova::diffuse_waste(self);
-            nova::diffuse_light(self);
-
-            // Decay hormones: reduce intensity by 1 per step
-            for row in self.hormone_grid.iter_mut() {
-                for cell in row.iter_mut() {
-                    for val in cell.iter_mut() {
-                        if *val > 0 {
-                            *val -= 1;
-                        }
-                    }
-                }
-            }
-
-            // Toxicity check
-            if self.waste_grid[cy][cx] > 100 {
-                let mut rng = rand::thread_rng();
-                if rng.gen_bool(0.05) {
-                    self.output
-                        .push(format!("MUTATION: TOXICITY at {},{}", cx, cy));
-                    self.mutate();
-                }
-            }
-        }
+        self.process_environment();
 
         if self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
-                // 10% chance per step
                 self.mutate();
             }
         }
 
-        if self.energy <= 0 {
-            self.halted = true;
-            self.output.push("DEATH: STARVATION".to_string());
+        if self.check_starvation() {
             return;
         }
 
@@ -430,7 +588,6 @@ impl ChimeraVM {
 
         let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
         if self.ip.1 >= strand_len {
-            // End of strand, move to next strand
             self.ip.0 += 1;
             self.ip.1 = 0;
             return;
@@ -438,29 +595,13 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
-            // Telomere check at start of strand
-            if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
-                if self.telomeres[self.ip.0] > 0 {
-                    self.telomeres[self.ip.0] -= 1;
-                }
-
-                if self.telomeres[self.ip.0] <= 0 {
-                    self.output
-                        .push(format!("SENESCENCE: Strand {} decayed", self.ip.0));
-                    self.ip.0 += 1;
-                    self.ip.1 = 0;
-                    return;
-                }
+            if self.check_telomeres() {
+                return;
             }
-
             if self.epigenome.contains(&self.ip) {
                 self.ip.1 += 1;
                 return;
             }
-        }
-
-        #[cfg(feature = "nova")]
-        {
             self.active_organelle_kind = None;
         }
 
@@ -475,166 +616,11 @@ impl ChimeraVM {
         if let Some(target) = jump_target {
             self.ip = target;
         } else {
-            // Move to next gene
             self.ip.1 += 1;
         }
 
         #[cfg(feature = "nova")]
-        {
-            // Execute Organelles
-            let active_organelles = std::mem::take(&mut self.organelles);
-            let mut next_organelles = Vec::new();
-
-            for mut organelle in active_organelles {
-                if organelle.halted {
-                    continue;
-                }
-
-                // Swap state
-                std::mem::swap(&mut self.stack, &mut organelle.stack);
-                std::mem::swap(&mut self.ip, &mut organelle.ip);
-                std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
-                std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
-                std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
-
-                self.active_organelle_kind = Some(organelle.kind.clone());
-
-                // Reduce energy for organelle metabolism
-                self.energy = self.energy.saturating_sub(1);
-
-                // Specialized Organelle Logic
-                match organelle.kind {
-                    nova::OrganelleType::Chloroplast => {
-                        let (cy, cx) = self.context_loc;
-                        let light = self.light_grid[cy][cx];
-                        if light > 0 {
-                            self.energy = self.energy.saturating_add(light / 10);
-                        }
-                    }
-                    nova::OrganelleType::Mitochondria => {
-                        // Refund the metabolism cost
-                        self.energy = self.energy.saturating_add(1);
-                    }
-                    nova::OrganelleType::Lysosome => {
-                        let (cy, cx) = self.context_loc;
-                        let waste = self.waste_grid[cy][cx];
-                        if waste > 0 {
-                            let consumed = waste.min(10);
-                            self.waste_grid[cy][cx] -= consumed;
-                            self.energy = self.energy.saturating_add(consumed / 5);
-                        }
-                    }
-                    nova::OrganelleType::Ribosome => {
-                        let (cy, cx) = self.context_loc;
-                        let val = self.grid[cy][cx].clone();
-                        match val {
-                            Value::Int(n) => self.stack.push(Value::Int(n)),
-                            Value::Str(s) => match s.as_str() {
-                                ">" => organelle.direction = (0, 1),
-                                "<" => organelle.direction = (0, -1),
-                                "^" => organelle.direction = (-1, 0),
-                                "v" => organelle.direction = (1, 0),
-                                _ => {
-                                    if let Ok(op) = s.parse::<OpCode>() {
-                                        // Execute OpCode (with no args for simplicity in grid mode)
-                                        // Ignoring jump targets for Ribosome as it doesn't use IP
-                                        let _ = self.execute_gene_inner(op, &[]);
-                                    }
-                                }
-                            },
-                        }
-                        // Move
-                        let (dy, dx) = organelle.direction;
-
-                        #[cfg(feature = "nova")]
-                        let next_coords =
-                            self.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64);
-
-                        #[cfg(not(feature = "nova"))]
-                        let next_coords = Some((
-                            (cy as i64 + dy as i64).rem_euclid(16) as usize,
-                            (cx as i64 + dx as i64).rem_euclid(16) as usize,
-                        ));
-
-                        if let Some((mut new_y, mut new_x)) = next_coords {
-                            let mut blocked = false;
-                            #[cfg(feature = "nova")]
-                            {
-                                let mask = match (dy, dx) {
-                                    (-1, 0) => 1, // N
-                                    (1, 0) => 2,  // S
-                                    (0, 1) => 4,  // E
-                                    (0, -1) => 8, // W
-                                    _ => 0,
-                                };
-                                if (self.membranes[cy][cx] & mask) != 0 {
-                                    blocked = true;
-                                }
-                            }
-
-                            if !blocked {
-                                // Check for portal
-                                #[cfg(feature = "nova")]
-                                if let Some(&(py, px)) = self.portals.get(&(new_y, new_x)) {
-                                    self.output.push(format!(
-                                        "PORTAL: Teleported from {},{} to {},{}",
-                                        new_x, new_y, px, py
-                                    ));
-                                    new_y = py;
-                                    new_x = px;
-                                }
-                                self.context_loc = (new_y, new_x);
-                            }
-                        }
-                        // Else: Hit wall, stay put
-                    }
-                    nova::OrganelleType::Worker => {}
-                }
-
-                // Ribosomes do not execute DNA
-                if !matches!(organelle.kind, nova::OrganelleType::Ribosome) {
-                    if self.energy > 0 && self.ip.0 < self.dna.helix.strands.len() {
-                        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-                        if self.ip.1 < strand_len {
-                            let (gene_op, gene_args) = {
-                                let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
-                                (gene.op.clone(), gene.args.clone())
-                            };
-
-                            let jump_target = self.execute_gene(gene_op, &gene_args);
-
-                            if let Some(target) = jump_target {
-                                self.ip = target;
-                            } else {
-                                self.ip.1 += 1;
-                            }
-                        } else {
-                            organelle.halted = true;
-                        }
-                    } else {
-                        organelle.halted = true;
-                    }
-                }
-
-                if let Some(new_kind) = self.signal_differentiation.take() {
-                    organelle.kind = new_kind;
-                }
-
-                // Swap back
-                std::mem::swap(&mut self.stack, &mut organelle.stack);
-                std::mem::swap(&mut self.ip, &mut organelle.ip);
-                std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
-                std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
-                std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
-
-                if !organelle.halted {
-                    next_organelles.push(organelle);
-                }
-            }
-
-            // Append surviving organelles back (new ones might have been added by Spawn)
-            self.organelles.extend(next_organelles);
-        }
+        self.process_organelles();
     }
 
     /// Executes a single gene operation.
