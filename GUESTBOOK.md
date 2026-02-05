@@ -27,3 +27,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/hive-mind-dependencies
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The swarm is mapping the dependency tree. Pheromones indicate critical build paths. Emergence imminent.
+
+### [Concentration Level: HIGH] - Location: experiments/syntax-evolution
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The Latin case endings are eroding. SVO structure is crystallizing from the noise. The Tower of Babel is being built in the terminal.
