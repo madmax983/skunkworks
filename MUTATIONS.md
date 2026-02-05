@@ -177,14 +177,21 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: The topography of the codebase (Mountain height = File size) is eroded by the rain of deleted lines (Particles = Deletions).
 - **Novel trait**: Dynamic visualization where "Creation" (git additions) fights against "Entropy" (git deletions) in a physics simulation.
 - **Status**: experiments/entropic-rain
-- **Evaluation**: Compiles. Verified by Splice Surgeon.
+- **Evaluation**: Compiles. Verified by Splice Surgeon. Re-verified.
 
 ### symphonic-terrain
 - **Parents**: experiments/text-terra + experiments/harmony-of-spheres
 - **Concept**: A 3D terrain generated from text where orbiting spheres generate music based on the landscape height below them.
 - **Novel trait**: Topographic Sonification. The "meaning" (text) becomes the "melody" (height-modulated frequency).
 - **Status**: experiments/symphonic-terrain
-- **Evaluation**: Compiles. Verified by Splice Surgeon. Audio feature-gated.
+- **Evaluation**: Compiles. Verified by Splice Surgeon. Audio feature-gated. Re-verified.
+
+### primordial-soup
+- **Parents**: experiments/fluid-rain + experiments/chimera-lang
+- **Concept**: TUI fluid simulation where particles are biological entities (Algae, Grazer, Predator) with metabolic rules.
+- **Novel trait**: Hydrodynamic Ecosystems. Populations flow and cluster based on fluid physics.
+- **Status**: experiments/primordial-soup
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
 
 <!-- Example:
 ### semantic-spy
