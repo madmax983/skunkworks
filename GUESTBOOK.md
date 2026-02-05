@@ -339,6 +339,10 @@
 - **Scent Origin:** Reaper ☠️
 - **Status:** CONDEMNED. Documentation void. Generic implementation. Lacks emergent behavior. The Reaper has marked this territory.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/strange-loops
+- **Scent Origin:** Reaper ☠️
+- **Status:** CONDEMNED. Documentation void. Generic implementation. Redundant.
+
 ### [Concentration Level: DECOMPOSING] - Location: experiments/fractal-stack (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
 - **Status:** EXECUTED. Failed to improve during grace period. Biomass moved to graveyard.

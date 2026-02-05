@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **genetic-canvas**: Documentation void. Generic implementation of evolutionary art (random shapes). Lacks unique traits. Grace period ends in 24h.
+- **strange-loops**: Documentation void (README.md missing). Generic strange attractor visualizer. Redundant with `system-bio-dome` and `storm-monitor`. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
