@@ -1,9 +1,20 @@
 #![cfg(feature = "nova")]
-use super::ChimeraVM;
-use super::ChromaCell;
+//! # Nova Extension 🌌
+//!
+//! The `Nova` module implements advanced biological and physics-defying capabilities for the Chimera VM.
+//!
+//! ## Key Features
+//!
+//! - **Organelles**: Specialized sub-processes (Mitochondria, Ribosomes, Void) that run in parallel.
+//! - **Time Travel**: `Sporulate` creates full VM snapshots; `Germinate` restores them.
+//! - **Epigenetics**: `Methylate`/`Demethylate` modify gene expression without changing DNA.
+//! - **Spatial Physics**: Diffusion of hormones, waste, light, and mutagen across the grid.
+//! - **Quantum Entanglement**: Linked strands that share mutations.
+//! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
+
+use super::{ChimeraVM, ChromaCell, Value};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
-use crate::vm::Value;
 #[cfg(feature = "nova")]
 use crate::{ChimeraParser, Rule};
 #[cfg(feature = "nova")]
@@ -13,19 +24,25 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
+/// The physical state of the organism, affecting movement and mutation.
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Phase {
+    /// Standard state. Blocks movement through walls. Normal energy costs.
     #[default]
     Corporeal,
+    /// Ghost-like state. Can move through walls. Cannot write to grid.
     Ethereal,
+    /// Hardened state. Immune to mutation and decay. Cannot move.
     Crystalline,
+    /// High-energy state. Double execution speed. Higher energy consumption.
     Flux,
 }
 
 /// Represents a "time-travel" snapshot of the VM state.
 ///
 /// Used by the `Sporulate` and `Germinate` opcodes to save and restore the entire simulation state.
+/// This includes the grid, stack, energy, DNA, and all Nova subsystems (epigenetics, portals, etc.).
 #[cfg(feature = "nova")]
 #[derive(Clone)]
 pub struct Spore {
@@ -65,28 +82,47 @@ pub struct Spore {
     pub activation_levels: Vec<i64>,
 }
 
+/// Defines the specialized behavior of an Organelle.
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, PartialEq)]
 pub enum OrganelleType {
-    Worker,       // Standard execution
-    Chloroplast,  // Generates energy from light
-    Mitochondria, // Reduces metabolic cost / generates base energy
-    Lysosome,     // Consumes waste to produce energy
-    Ribosome,     // Executes grid instructions
-    Void,         // Consumes everything
+    /// Standard execution unit. No special abilities.
+    Worker,
+    /// Generates energy from `light_grid` intensity at current location.
+    Chloroplast,
+    /// Passively generates 1 Energy per tick.
+    Mitochondria,
+    /// Consumes `waste_grid` to produce energy.
+    Lysosome,
+    /// Reads the grid cell at its location and executes it as an instruction.
+    /// Acts as a "living read head".
+    Ribosome,
+    /// Consumes the grid cell (turns it to 0) and moves randomly (Brownian motion).
+    Void,
 }
 
 /// An independent execution unit spawned by the main strand.
+///
+/// Organelles run in parallel to the main organism (sequentially in the loop, but logically parallel).
+/// They have their own stack, IP, and location, but share the organism's Energy and DNA.
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
 pub struct Organelle {
+    /// The organelle's private stack.
     pub stack: Vec<Value>,
+    /// Instruction Pointer `(strand_idx, gene_idx)`.
     pub ip: (usize, usize),
+    /// Current location on the 16x16 grid.
     pub context_loc: (usize, usize),
+    /// Call stack for `Call`/`Ret` operations.
     pub call_stack: Vec<(usize, usize)>,
+    /// Recursion depth tracker to prevent infinite loops.
     pub recursion_depth: usize,
+    /// Execution state. If true, the organelle is removed or stops processing.
     pub halted: bool,
+    /// The specialization type (e.g., Chloroplast).
     pub kind: OrganelleType,
+    /// Movement vector (dy, dx) used by some organelles (e.g. Ribosome, Void).
     pub direction: (i8, i8),
 }
 
@@ -113,6 +149,17 @@ fn get_open_neighbors(
         })
 }
 
+/// Simulates the diffusion of chemical signals (hormones) across the grid.
+///
+/// Uses a simple cellular automaton model: each cell becomes the average of itself
+/// and its open neighbors (neighbors not blocked by membranes).
+///
+/// # Examples
+///
+/// ```ignore
+/// // Inside VM step loop
+/// nova::diffuse_hormones(&mut vm);
+/// ```
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
@@ -140,6 +187,9 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     }
 }
 
+/// Simulates the diffusion of metabolic waste products.
+///
+/// Waste accumulates and spreads. High concentrations trigger damage/mutation.
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_waste(vm: &mut ChimeraVM) {
@@ -164,6 +214,10 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
     }
 }
 
+/// Simulates the diffusion and decay of light.
+///
+/// Light spreads but decays rapidly (50% per tick), simulating absorption and scattering.
+/// Chloroplasts harvest energy from this grid.
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light(vm: &mut ChimeraVM) {
@@ -189,6 +243,10 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
     }
 }
 
+/// Simulates the diffusion of mutagenic radiation.
+///
+/// Mutagen spreads and decays slowly (90% retained per tick).
+/// High levels cause random DNA mutations.
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
@@ -225,6 +283,14 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
     }
 }
 
+/// Executes a Nova-specific OpCode.
+///
+/// This function handles the dispatch for all biological and advanced physics operations.
+///
+/// # Returns
+///
+/// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
+/// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[cfg(feature = "nova")]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
@@ -2838,6 +2904,13 @@ fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
     }
 }
 
+/// Converts a direction vector (dy, dx) into a bitmask for membrane checking.
+///
+/// Mappings:
+/// - (-1, 0) North -> 1
+/// - (1, 0) South -> 2
+/// - (0, 1) East -> 4
+/// - (0, -1) West -> 8
 #[cfg(feature = "nova")]
 pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
     match (dy, dx) {
