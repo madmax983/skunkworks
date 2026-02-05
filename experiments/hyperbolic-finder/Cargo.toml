@@ -7,3 +7,4 @@ edition = "2021"
 macroquad = "0.4"
 num-complex = "0.4"
 anyhow = "1.0"
+poincare-disk = { workspace = true }
