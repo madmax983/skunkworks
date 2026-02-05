@@ -67,29 +67,38 @@ pub struct Organelle {
 }
 
 #[cfg(feature = "nova")]
+fn get_open_neighbors(vm: &ChimeraVM, y: usize, x: usize) -> impl Iterator<Item = (usize, usize)> + '_ {
+    [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        .into_iter()
+        .filter_map(move |(dy, dx)| {
+            let blocked = if let Some(mask) = get_direction_mask(dy, dx) {
+                (vm.membranes[y][x] & mask) != 0
+            } else {
+                false
+            };
+
+            if !blocked {
+                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+            } else {
+                None
+            }
+        })
+}
+
+#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     let mut buffer = [[[0i64; 3]; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
+            let neighbors: Vec<_> = get_open_neighbors(vm, y, x).collect();
             for c in 0..3 {
                 let mut sum = (vm.hormone_grid[y][x][c] as i128) * 4;
                 let mut count = 4;
 
-                for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                    let mut blocked = false;
-                    if let Some(mask) = get_direction_mask(dy, dx) {
-                        if (vm.membranes[y][x] & mask) != 0 {
-                            blocked = true;
-                        }
-                    }
-
-                    if !blocked {
-                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                            sum += vm.hormone_grid[ny][nx][c] as i128;
-                            count += 1;
-                        }
-                    }
+                for &(ny, nx) in &neighbors {
+                    sum += vm.hormone_grid[ny][nx][c] as i128;
+                    count += 1;
                 }
 
                 buffer[y][x][c] = (sum / count) as i64;
@@ -112,20 +121,9 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
             let mut sum = (vm.waste_grid[y][x] as i128) * 4;
             let mut count = 4;
 
-            for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                let mut blocked = false;
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[y][x] & mask) != 0 {
-                        blocked = true;
-                    }
-                }
-
-                if !blocked {
-                    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        sum += vm.waste_grid[ny][nx] as i128;
-                        count += 1;
-                    }
-                }
+            for (ny, nx) in get_open_neighbors(vm, y, x) {
+                sum += vm.waste_grid[ny][nx] as i128;
+                count += 1;
             }
 
             buffer[y][x] = (sum / count) as i64;
@@ -147,20 +145,9 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             let mut sum = (vm.light_grid[y][x] as i128) * 4;
             let mut count = 4;
 
-            for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
-                let mut blocked = false;
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[y][x] & mask) != 0 {
-                        blocked = true;
-                    }
-                }
-
-                if !blocked {
-                    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                        sum += vm.light_grid[ny][nx] as i128;
-                        count += 1;
-                    }
-                }
+            for (ny, nx) in get_open_neighbors(vm, y, x) {
+                sum += vm.light_grid[ny][nx] as i128;
+                count += 1;
             }
 
             // Blur and strong decay (50%)
