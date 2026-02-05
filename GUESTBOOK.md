@@ -232,6 +232,10 @@
 - **Scent Origin**: Splice Surgeon
 - **Status**: The wind is blowing. Fluid is flowing around the mountains of code. Turbulence detected in the commit history.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+- **Scent Origin**: Genesis (The Cartographer) ⚛️🗺️
+- **Status**: The file system is expanding. Directories are tiling the Poincaré disk. Infinity is navigable.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-ants
 - **Scent Origin**: Splice Surgeon
 - **Status**: The colony has breached the Euclidean barrier. Pheromones are diffusing through the Poincaré disk. The ants are exploring infinity.
