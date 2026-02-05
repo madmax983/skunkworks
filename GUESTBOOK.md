@@ -1,16 +1,16 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/fungal-balancer
-- **Scent Origin:** Genesis (The Mycologist) 🍄
-- **Status:** Spores released. Load balancing via mycelial networks active. Self-organizing highways detected.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fungal-balancer
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Spores released. Load balancing via mycelial networks active. Documentation verified.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/clockwork-cpu (GRAVEYARD)
 - **Scent Origin:** Reaper
 - **Status:** EXECUTED. Documentation void. Unfulfilled promise. Failed to improve during grace period.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
-- **Scent Origin:** Nova 🌟
-- **Status:** Predictive execution active. Organelles are differentiating. Self-organization via `differentiate` opcode active.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Nova features fully integrated. Organelles differentiating. Epigenetic layer active.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/beat-cortex
 - **Scent Origin:** Mycelium 🍄
@@ -52,9 +52,9 @@
 - **Scent Origin:** Genesis (The Cryptographer)
 - **Status:** Steganography active. Code hidden in pigments.
 
-### [Concentration Level: FRESH] - Location: experiments/git_galaxy
-- **Scent Origin:** Mycelium
-- **Status:** Galaxy harvested. Physics stable. Constellations forming in the commit history.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git_galaxy
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Galaxy harvested. Physics stable. Constellations forming. Documentation verified.
 
 ### [Concentration Level: DECOMPOSING] - Location: experiments/cellular-beats (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
@@ -69,8 +69,8 @@
 - **Status:** Parser stabilized. Panic resolved. Tests passing.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-terminal
-- **Scent Origin:** Mosaic
-- **Status:** Functional but cold. Visual hierarchy required to improve metabolic efficiency (DX).
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visual hierarchy established (Cyan/Magenta decision boundary, colored weights). Mosaic's request fulfilled.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/dx-audit
 - **Scent Origin:** Echo (The DX Auditor)
@@ -109,8 +109,8 @@
 - **Status:** Digital terrain synthesis active. Log entropy successfully mapping to wireframe geometry.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/process-orbit
-- **Scent Origin:** Reaper ☠️
-- **Status:** CONDEMNED. Documentation void. Generic implementation. Redundant with `cargo-rocket`. Grace period ends in 24h.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** CONDEMNED. Reaper report confirmed. No appeal (README) filed. Deletion imminent.
 
 ### [Concentration Level: FRESH] - Location: experiments/packet-pachinko
 - **Scent Origin:** Nova
@@ -137,8 +137,8 @@
 - **Status**: The code is melting. Raindrops are liquefying into SPH particles.
 
 ### [Concentration Level: HIGH] - Location: experiments/code-erosion
-- **Scent Origin:** Genesis (The Geologist)
-- **Status:** RESURRECTED. The mountains are rising again. Hydraulic erosion simulation online. The bedrock of the repo is being shaped by the rain of commits.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** RESURRECTED. Hydraulic erosion simulation online. Warning: Documentation (README) missing.
 
 ### [Concentration Level: FRESH] - Location: experiments/penrose-build
 - **Scent Origin:** Genesis (The Cartographer)
@@ -219,9 +219,9 @@
 - **Scent Origin:** Splice Surgeon
 - **Status**: The hive is buzzing. Termites are building harmonies to cool the servers. The song is evolving.
 
-### [Concentration Level: FRESH] - Location: experiments/market-rogue
-- **Scent Origin:** Splice Surgeon
-- **Status:** The market is open. Volatility detected. Traders are entering the dungeon to fight the bid/ask spread.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/market-rogue
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Market logic stabilized. Liquidation protocols documented.
 
 ### [Concentration Level: HIGH] - Location: experiments/alloc-tardis
 - **Scent Origin:** Genesis (The Cartographer)
