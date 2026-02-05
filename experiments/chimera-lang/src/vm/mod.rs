@@ -41,6 +41,13 @@ pub mod oracle;
 use self::nova::{Organelle, Spore};
 
 #[cfg(feature = "nova")]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct ChromaCell {
+    pub char: Option<char>,
+    pub fg: Option<(u8, u8, u8)>,
+}
+
+#[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Topology {
     Plane,     // 0: Bounded. Edges are walls.
@@ -161,6 +168,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub membranes: Vec<Vec<u8>>,
     #[cfg(feature = "nova")]
+    pub chroma_grid: Vec<Vec<ChromaCell>>,
+    #[cfg(feature = "nova")]
     pub organelles: Vec<Organelle>,
     #[cfg(feature = "nova")]
     pub active_organelle_kind: Option<nova::OrganelleType>,
@@ -209,6 +218,8 @@ impl ChimeraVM {
         let light_grid = vec![vec![0; 16]; 16];
         #[cfg(feature = "nova")]
         let membranes = vec![vec![0; 16]; 16];
+        #[cfg(feature = "nova")]
+        let chroma_grid = vec![vec![ChromaCell::default(); 16]; 16];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -251,6 +262,8 @@ impl ChimeraVM {
             portals: HashMap::new(),
             #[cfg(feature = "nova")]
             membranes,
+            #[cfg(feature = "nova")]
+            chroma_grid,
             #[cfg(feature = "nova")]
             organelles: Vec::new(),
             #[cfg(feature = "nova")]
@@ -1021,6 +1034,8 @@ impl ChimeraVM {
             OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour
+            | OpCode::Pigment
+            | OpCode::Glyph
             | OpCode::Rift
             | OpCode::Seal
             | OpCode::Shape

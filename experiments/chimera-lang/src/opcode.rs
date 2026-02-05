@@ -460,6 +460,17 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Mirror,
 
+    /// **[Nova]** Sets the foreground color of a grid cell (Chromatophores).
+    ///
+    /// **Stack:** `[ ..., r, g, b, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Pigment,
+    /// **[Nova]** Sets the character representation of a grid cell (Chromatophores).
+    ///
+    /// **Stack:** `[ ..., char_code, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Glyph,
+
     // Ribozyme Features (Functional Programming)
     /// **[Nova]** Evaluates a string as code.
     ///
@@ -549,6 +560,10 @@ impl FromStr for OpCode {
             "restore" => Ok(OpCode::Restore),
             #[cfg(feature = "nova")]
             "mirror" => Ok(OpCode::Mirror),
+            #[cfg(feature = "nova")]
+            "pigment" => Ok(OpCode::Pigment),
+            #[cfg(feature = "nova")]
+            "glyph" => Ok(OpCode::Glyph),
             #[cfg(feature = "nova")]
             "eval" => Ok(OpCode::Eval),
             #[cfg(feature = "nova")]
@@ -874,6 +889,10 @@ impl fmt::Display for OpCode {
             OpCode::Restore => write!(f, "restore"),
             #[cfg(feature = "nova")]
             OpCode::Mirror => write!(f, "mirror"),
+            #[cfg(feature = "nova")]
+            OpCode::Pigment => write!(f, "pigment"),
+            #[cfg(feature = "nova")]
+            OpCode::Glyph => write!(f, "glyph"),
             #[cfg(feature = "nova")]
             OpCode::Eval => write!(f, "eval"),
             #[cfg(feature = "nova")]

@@ -1,5 +1,6 @@
 #![cfg(feature = "nova")]
 use super::ChimeraVM;
+use super::ChromaCell;
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 use crate::vm::Value;
@@ -38,6 +39,7 @@ pub struct Spore {
     pub entangled_pairs: HashMap<usize, usize>,
     pub portals: HashMap<(usize, usize), (usize, usize)>,
     pub membranes: Vec<Vec<u8>>,
+    pub chroma_grid: Vec<Vec<ChromaCell>>,
     pub sonar_target: Option<(usize, usize)>,
     pub symbiotes: Vec<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
@@ -356,6 +358,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 entangled_pairs: vm.entangled_pairs.clone(),
                 portals: vm.portals.clone(),
                 membranes: vm.membranes.clone(),
+                chroma_grid: vm.chroma_grid.clone(),
                 sonar_target: vm.sonar_target,
                 symbiotes: vm.symbiotes.clone(),
                 ether: vm.ether.clone(),
@@ -406,6 +409,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.entangled_pairs = spore.entangled_pairs.clone();
                         vm.portals = spore.portals.clone();
                         vm.membranes = spore.membranes.clone();
+                        vm.chroma_grid = spore.chroma_grid.clone();
                         vm.sonar_target = spore.sonar_target;
                         vm.symbiotes = spore.symbiotes.clone();
                         vm.ether = spore.ether.clone();
@@ -2544,6 +2548,78 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.energy = vm.energy.saturating_sub(5);
             } else {
                 vm.output.push("Error: Stack underflow for zip".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Pigment => {
+            // stack: r, g, b, y, x (top)
+            if vm.stack.len() >= 5 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let b_val = vm.stack.pop().unwrap();
+                let g_val = vm.stack.pop().unwrap();
+                let r_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(x), Value::Int(y), Value::Int(r), Value::Int(g), Value::Int(b)) =
+                    (x_val, y_val, r_val, g_val, b_val)
+                {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        if r < 0 || g < 0 || b < 0 {
+                            vm.chroma_grid[ny][nx].fg = None;
+                            vm.output
+                                .push(format!("PIGMENT: Cleared color at {},{}", nx, ny));
+                        } else {
+                            let rc = r.clamp(0, 255) as u8;
+                            let gc = g.clamp(0, 255) as u8;
+                            let bc = b.clamp(0, 255) as u8;
+                            vm.chroma_grid[ny][nx].fg = Some((rc, gc, bc));
+                        }
+                        vm.energy = vm.energy.saturating_sub(2);
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for pigment".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for pigment".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for pigment".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Glyph => {
+            // stack: char_code, y, x (top)
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let c_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(x), Value::Int(y), Value::Int(c)) = (x_val, y_val, c_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        if c < 0 {
+                            vm.chroma_grid[ny][nx].char = None;
+                            vm.output
+                                .push(format!("GLYPH: Cleared char at {},{}", nx, ny));
+                        } else {
+                            let ch = (c as u8) as char;
+                            vm.chroma_grid[ny][nx].char = Some(ch);
+                        }
+                        vm.energy = vm.energy.saturating_sub(2);
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for glyph".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for glyph".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for glyph".to_string());
             }
             None
         }
