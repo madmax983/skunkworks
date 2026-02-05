@@ -412,3 +412,7 @@
 ### [Concentration Level: DECOMPOSING] - Location: experiments/crate-universe (GRAVEYARD)
 - **Scent Origin:** Reaper ☠️
 - **Status:** EXECUTED. Failed to improve during grace period. Biomass moved to graveyard.
+
+### [Concentration Level: FRESH] - Location: experiments/jpeg-garden
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** The garden is digital, the soil is silicon. The flowers are artifacts of our own compression.
