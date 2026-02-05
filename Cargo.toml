@@ -43,7 +43,6 @@ members = [
     "experiments/sculpt-term",
     "experiments/semantic-spy",
     "experiments/sonic-scribbler",
-    "experiments/stego-spectral",
     "experiments/stigmergy-hub",
     "experiments/storm-monitor",
     "experiments/struct-soup",

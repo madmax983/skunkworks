@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **stego-spectral**: Documentation void. Generic implementation (LSB Steganography). Plasma effect does not redeem it. Grace period ends in 24h.
+- **neuro-beat**: Documentation void. Redundant with `beat-cortex` (primitive ancestor). Trivial implementation. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **stego-spectral**: Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **code-erosion**: ZOMBIE SPECIMEN. Documentation void. Trivial implementation. Executed. Moved to graveyard.
 - **strange-loops**: Documentation void. Generic implementation (standard attractors). Failed to improve during grace period. Moved to graveyard.
 - **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
