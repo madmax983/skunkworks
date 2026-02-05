@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **origami-singularity**: Documentation void. Generic implementation (grid folding demo). Redundant with `miura-interface` (which features Guestbook integration). Grace period ends in 24h.
+- **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque without instructions. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -46,3 +46,4 @@
 - **particle-life**: Generic O(N^2) simulation. Failed to improve during grace period. No documentation or unique traits.
 - **epicycle-draw**: Failed to improve during grace period. Implementation remained a generic DFT visualization with no unique evolutionary traits or documentation.
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
+- **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
