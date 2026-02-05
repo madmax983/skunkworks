@@ -100,7 +100,7 @@ members = [
     "experiments/neuro-chimera",
     "experiments/luminous-flock-web", "experiments/fairy-consensus",
     "experiments/chimera-resonance",
-    "crates/resonance-audio",
+    "crates/resonance-audio", "experiments/hive-mind-dependencies",
 ]
 resolver = "2"
 

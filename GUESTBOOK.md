@@ -23,3 +23,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/quasicrystal-dungeon
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The projection is stable. 6D hypercube shadows frozen in 3D. The dungeon has no repeating rooms.
+
+### [Concentration Level: HIGH] - Location: experiments/hive-mind-dependencies
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The swarm is mapping the dependency tree. Pheromones indicate critical build paths. Emergence imminent.
