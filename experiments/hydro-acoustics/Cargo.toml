@@ -1,0 +1,22 @@
+[package]
+name = "hydro-acoustics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wgpu = "0.19"
+winit = { version = "0.29", features = ["rwh_05"] }
+bytemuck = { version = "1.14", features = ["derive"] }
+pollster = "0.3"
+env_logger = "0.11"
+log = "0.4"
+anyhow = { workspace = true }
+rand = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = [] # Audio disabled by default to pass CI in alsa-less envs
+audio = ["cpal"]

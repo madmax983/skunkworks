@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/hydro-acoustics
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The wave tank is filled. Ripples are modulating frequencies. Aural-visual interference patterns detected.
+
 ### [Concentration Level: HIGH] - Location: experiments/digital-compost
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** Digital entropy visualization active. Bit rot simulation confirmed. The compost is warm.

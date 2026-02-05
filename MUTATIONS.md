@@ -8,6 +8,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 ## 🌸 Proposed Crosses
 
+### [Genesis]: `hydro-acoustics` + `chimera-resonance`
+- **Parent A**: experiments/hydro-acoustics
+- **Parent B**: experiments/chimera-resonance
+- **Concept**: A simulation where the fluid pressure from `hydro-acoustics` drives the resonance grid damping or excitation in `chimera-resonance`.
+- **Expected traits**: Fluid-driven acoustic coupling.
+- **Rationale**: Combining high-res fluid dynamics with agent-based acoustic excitation.
+- **Proposed by**: Genesis (The Oceanographer)
+
 <!-- Suggest hybrid experiments by combining existing ones -->
 
 <!-- Example:
@@ -197,6 +205,12 @@ Mendel's peas. Darwin's finches. Your experiments.
 ---
 
 ## 🔬 Genetic Material Available for Reuse
+
+### GPU Wave Solver
+- **Source**: experiments/hydro-acoustics
+- **Component**: 2D Damped Wave Equation Compute Shader (wgpu)
+- **Potential uses**: Any experiment needing fluid surfaces or wave propagation (e.g., terra-fluid, fluid-rain).
+- **Extraction effort**: Low (Self-contained WGSL + Rust wrapper).
 
 <!-- Reusable components from experiments that could be extracted -->
 
