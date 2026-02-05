@@ -11,14 +11,17 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 use tui_shared::Tui;
 
 use crate::audio::{AudioCommand, AudioModel};
 
 // Chimera Imports
 use chimera_lang::{
-    ast::{Dna, Helix, Strand, Gene, Nucleotide},
+    ast::{Dna, Gene, Helix, Nucleotide, Strand},
     opcode::OpCode,
     vm::ChimeraVM,
 };
@@ -65,7 +68,11 @@ fn make_plucker_dna() -> Dna {
         },
     ];
     let strand = Strand { genes };
-    Dna { helix: Helix { strands: vec![strand] } }
+    Dna {
+        helix: Helix {
+            strands: vec![strand],
+        },
+    }
 }
 
 fn make_fast_plucker_dna() -> Dna {
@@ -82,7 +89,11 @@ fn make_fast_plucker_dna() -> Dna {
         },
     ];
     let strand = Strand { genes };
-    Dna { helix: Helix { strands: vec![strand] } }
+    Dna {
+        helix: Helix {
+            strands: vec![strand],
+        },
+    }
 }
 
 fn main() -> Result<()> {
@@ -190,16 +201,16 @@ fn run_app(
     // Create a few random agents
     for _ in 0..5 {
         agents.push(Agent::new(
-            rng.gen_range(5..width-5),
-            rng.gen_range(5..height-5),
+            rng.gen_range(5..width - 5),
+            rng.gen_range(5..height - 5),
             make_plucker_dna(),
             Color::Green,
         ));
     }
     // One fast agent
     agents.push(Agent::new(
-        rng.gen_range(5..width-5),
-        rng.gen_range(5..height-5),
+        rng.gen_range(5..width - 5),
+        rng.gen_range(5..height - 5),
         make_fast_plucker_dna(),
         Color::Magenta,
     ));
@@ -231,25 +242,25 @@ fn run_app(
                 // If the value is a Number and > 0, pluck
                 match val {
                     chimera_lang::vm::Value::Int(n) => {
-                         if *n > 0 {
-                             // Pluck!
-                             let strength = (*n as f32).min(100.0) / 100.0; // Normalize 0-100 -> 0.0-1.0
-                             let _ = cmd_tx.send(AudioCommand::Pluck {
-                                 x: agent.x,
-                                 y: agent.y,
-                                 strength,
-                             });
-                             // Pop the value so we don't pluck forever on same value
-                             agent.vm.stack.pop();
+                        if *n > 0 {
+                            // Pluck!
+                            let strength = (*n as f32).min(100.0) / 100.0; // Normalize 0-100 -> 0.0-1.0
+                            let _ = cmd_tx.send(AudioCommand::Pluck {
+                                x: agent.x,
+                                y: agent.y,
+                                strength,
+                            });
+                            // Pop the value so we don't pluck forever on same value
+                            agent.vm.stack.pop();
 
-                             // Move randomly on pluck?
-                             let dx = rng.gen_range(0..3) as i32 - 1;
-                             let dy = rng.gen_range(0..3) as i32 - 1;
-                             let new_x = (agent.x as i32 + dx).clamp(0, width as i32 - 1) as usize;
-                             let new_y = (agent.y as i32 + dy).clamp(0, height as i32 - 1) as usize;
-                             agent.x = new_x;
-                             agent.y = new_y;
-                         }
+                            // Move randomly on pluck?
+                            let dx = rng.gen_range(0..3) as i32 - 1;
+                            let dy = rng.gen_range(0..3) as i32 - 1;
+                            let new_x = (agent.x as i32 + dx).clamp(0, width as i32 - 1) as usize;
+                            let new_y = (agent.y as i32 + dy).clamp(0, height as i32 - 1) as usize;
+                            agent.x = new_x;
+                            agent.y = new_y;
+                        }
                     }
                     _ => {
                         agent.vm.stack.pop(); // Clear garbage
@@ -332,10 +343,9 @@ fn run_app(
             );
             f.render_widget(grid_widget, area);
 
-            let info = Paragraph::new(
-                "Agents (A) are executing DNA and plucking the grid. | q: Quit",
-            )
-            .block(Block::default().borders(Borders::ALL));
+            let info =
+                Paragraph::new("Agents (A) are executing DNA and plucking the grid. | q: Quit")
+                    .block(Block::default().borders(Borders::ALL));
             f.render_widget(info, chunks[1]);
         })?;
 

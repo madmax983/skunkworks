@@ -431,10 +431,10 @@ impl ChimeraVM {
             // Execute logic (simplified version of step checks)
             let helix_len = self.dna.helix.strands.len();
             if self.ip.0 < helix_len {
-                 let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-                 if self.ip.1 < strand_len {
-                     // Check telomeres/epigenetics? For now, skip for symbiotes to avoid complexity
-                     let (gene_op, gene_args) = {
+                let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                if self.ip.1 < strand_len {
+                    // Check telomeres/epigenetics? For now, skip for symbiotes to avoid complexity
+                    let (gene_op, gene_args) = {
                         let gene = &self.dna.helix.strands[self.ip.0].genes[self.ip.1];
                         (gene.op.clone(), gene.args.clone())
                     };
@@ -445,7 +445,7 @@ impl ChimeraVM {
                     } else {
                         self.ip.1 += 1;
                     }
-                 }
+                }
             }
 
             // Swap back
