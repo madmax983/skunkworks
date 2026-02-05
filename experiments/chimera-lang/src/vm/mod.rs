@@ -30,6 +30,7 @@ use rand::Rng;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
+pub const MAX_CALL_STACK_DEPTH: usize = 100;
 
 pub mod bard;
 pub mod cortex;
@@ -841,30 +842,28 @@ impl ChimeraVM {
             {
                 if self.direction >= 0 {
                     self.ip.1 += 1;
+                } else if self.ip.1 > 0 {
+                    self.ip.1 -= 1;
                 } else {
-                    if self.ip.1 > 0 {
-                        self.ip.1 -= 1;
-                    } else {
-                        // Move to previous non-empty strand
-                        let start_strand = self.ip.0;
-                        let helix_len = self.dna.helix.strands.len();
-                        loop {
-                            if self.ip.0 > 0 {
-                                self.ip.0 -= 1;
-                            } else {
-                                self.ip.0 = helix_len.saturating_sub(1);
-                            }
+                    // Move to previous non-empty strand
+                    let start_strand = self.ip.0;
+                    let helix_len = self.dna.helix.strands.len();
+                    loop {
+                        if self.ip.0 > 0 {
+                            self.ip.0 -= 1;
+                        } else {
+                            self.ip.0 = helix_len.saturating_sub(1);
+                        }
 
-                            let len = self.dna.helix.strands[self.ip.0].genes.len();
-                            if len > 0 {
-                                self.ip.1 = len - 1;
-                                break;
-                            }
+                        let len = self.dna.helix.strands[self.ip.0].genes.len();
+                        if len > 0 {
+                            self.ip.1 = len - 1;
+                            break;
+                        }
 
-                            if self.ip.0 == start_strand {
-                                // All strands empty or cycled back
-                                break;
-                            }
+                        if self.ip.0 == start_strand {
+                            // All strands empty or cycled back
+                            break;
                         }
                     }
                 }

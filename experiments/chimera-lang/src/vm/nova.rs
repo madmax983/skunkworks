@@ -1321,6 +1321,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if let Some(Nucleotide::Number(idx)) = args.first() {
                 let strand_idx = *idx as usize;
                 if strand_idx < vm.dna.helix.strands.len() {
+                    if vm.call_stack.len() >= crate::vm::MAX_CALL_STACK_DEPTH {
+                        vm.output.push("Error: Call stack overflow".to_string());
+                        return None;
+                    }
                     // Push return address (current strand, next gene)
                     // ip points to Call instruction. Step loop will increment it.
                     // But if we jump, step loop sets ip to target.

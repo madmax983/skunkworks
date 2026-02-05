@@ -503,11 +503,9 @@ where
                                     vm.dna.helix.strands[app_state.selected_strand].genes.len();
                                 if app_state.selected_gene + 1 < g_len {
                                     app_state.selected_gene += 1;
-                                } else {
-                                    if app_state.selected_strand + 1 < s_len {
-                                        app_state.selected_strand += 1;
-                                        app_state.selected_gene = 0;
-                                    }
+                                } else if app_state.selected_strand + 1 < s_len {
+                                    app_state.selected_strand += 1;
+                                    app_state.selected_gene = 0;
                                 }
                             }
                         }
@@ -521,16 +519,14 @@ where
                         ViewMode::Genome => {
                             if app_state.selected_gene > 0 {
                                 app_state.selected_gene -= 1;
-                            } else {
-                                if app_state.selected_strand > 0 {
-                                    app_state.selected_strand -= 1;
-                                    let g_len =
-                                        vm.dna.helix.strands[app_state.selected_strand].genes.len();
-                                    if g_len > 0 {
-                                        app_state.selected_gene = g_len - 1;
-                                    } else {
-                                        app_state.selected_gene = 0;
-                                    }
+                            } else if app_state.selected_strand > 0 {
+                                app_state.selected_strand -= 1;
+                                let g_len =
+                                    vm.dna.helix.strands[app_state.selected_strand].genes.len();
+                                if g_len > 0 {
+                                    app_state.selected_gene = g_len - 1;
+                                } else {
+                                    app_state.selected_gene = 0;
                                 }
                             }
                         }
