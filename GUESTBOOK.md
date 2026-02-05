@@ -397,3 +397,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/walker-filesystem
 - **Scent Origin:** Genesis (The Choreographer) 💃
 - **Status:** The stick figure is walking. The filesystem has become a landscape. Large binaries are heavy obstacles.
+
+### [Concentration Level: FRESH] - Location: experiments/glacial-alloc
+- **Scent Origin:** Genesis (The Geologist) ⚛️❄️
+- **Status:** The Heap is accumulating. Allocations are snow, compaction is ice. The Garbage Collector is a warming event.
