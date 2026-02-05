@@ -129,6 +129,8 @@ pub struct ChimeraVM {
     pub active_organelle_kind: Option<nova::OrganelleType>,
     #[cfg(feature = "nova")]
     pub signal_differentiation: Option<nova::OrganelleType>,
+    #[cfg(feature = "nova")]
+    pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -192,6 +194,8 @@ impl ChimeraVM {
             active_organelle_kind: None,
             #[cfg(feature = "nova")]
             signal_differentiation: None,
+            #[cfg(feature = "nova")]
+            sonar_target: None,
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -229,6 +233,7 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
+            self.sonar_target = None;
             if let Some(key) = self.input_buffer.pop_front() {
                 if let Some(&strand_idx) = self.receptors.get(&key) {
                     // Interrupt!
@@ -585,7 +590,8 @@ impl ChimeraVM {
             | OpCode::Conjugate
             | OpCode::Gravitate
             | OpCode::Lumine
-            | OpCode::SenseLight => nova::exec_nova_op(self, op, args),
+            | OpCode::SenseLight
+            | OpCode::Sonar => nova::exec_nova_op(self, op, args),
 
             OpCode::Unknown(name) => {
                 self.output.push(format!("Unknown enzyme: {}", name));

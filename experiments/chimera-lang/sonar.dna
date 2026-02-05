@@ -1,0 +1,11 @@
+[
+    push(10) push(8) push(9) g_write()
+    push(20) push(9) push(8) g_write()
+    push(30) push(8) push(6) g_write()
+    push(40) push(5) push(8) g_write()
+
+    push(1) push(0) sonar() print() print()
+    push(0) push(1) sonar() print() print()
+    push(-1) push(0) sonar() print() print()
+    push(0) push(-1) sonar() print() print()
+]

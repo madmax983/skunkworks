@@ -258,6 +258,15 @@ fn run_app<B: ratatui::backend::Backend>(
                                 char_rep = char_code.to_string();
                             }
                         }
+
+                        if let Some(target) = vm.sonar_target {
+                            if target == (y, x) {
+                                style = style
+                                    .bg(Color::Yellow)
+                                    .fg(Color::Black)
+                                    .add_modifier(Modifier::SLOW_BLINK);
+                            }
+                        }
                     }
 
                     line_spans.push(Span::styled(char_rep, style));
