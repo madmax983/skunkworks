@@ -427,6 +427,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Decompile,
 
+    /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
+    ///
+    /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
+    /// **Effect:** `from_op` will now behave like `to_op`.
+    #[cfg(feature = "nova")]
+    Remap,
+    /// **[Nova]** Restores an OpCode to its original behavior.
+    ///
+    /// **Stack:** `[ ..., op_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Restore,
+    /// **[Nova]** Reverses the direction of execution.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Mirror,
+
     /// Unknown or invalid instruction.
     Unknown(String),
 }
@@ -436,6 +453,13 @@ impl FromStr for OpCode {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            #[cfg(feature = "nova")]
+            "remap" => Ok(OpCode::Remap),
+            #[cfg(feature = "nova")]
+            "restore" => Ok(OpCode::Restore),
+            #[cfg(feature = "nova")]
+            "mirror" => Ok(OpCode::Mirror),
+
             "push" => Ok(OpCode::Push),
             "add" => Ok(OpCode::Add),
             "sub" => Ok(OpCode::Sub),
@@ -723,6 +747,12 @@ impl fmt::Display for OpCode {
             OpCode::Compile => write!(f, "compile"),
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
+            #[cfg(feature = "nova")]
+            OpCode::Remap => write!(f, "remap"),
+            #[cfg(feature = "nova")]
+            OpCode::Restore => write!(f, "restore"),
+            #[cfg(feature = "nova")]
+            OpCode::Mirror => write!(f, "mirror"),
 
             OpCode::Unknown(s) => write!(f, "{}", s),
         }

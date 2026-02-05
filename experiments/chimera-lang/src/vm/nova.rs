@@ -41,6 +41,8 @@ pub struct Spore {
     pub symbiotes: Vec<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
     pub reflexes: HashMap<i64, usize>,
+    pub remap_table: HashMap<OpCode, OpCode>,
+    pub direction: isize,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -330,6 +332,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 symbiotes: vm.symbiotes.clone(),
                 ether: vm.ether.clone(),
                 reflexes: vm.reflexes.clone(),
+                remap_table: vm.remap_table.clone(),
+                direction: vm.direction,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -377,6 +381,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.symbiotes = spore.symbiotes.clone();
                         vm.ether = spore.ether.clone();
                         vm.reflexes = spore.reflexes.clone();
+                        vm.remap_table = spore.remap_table.clone();
+                        vm.direction = spore.direction;
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
