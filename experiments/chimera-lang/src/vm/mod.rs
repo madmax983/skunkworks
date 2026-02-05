@@ -167,6 +167,8 @@ pub struct ChimeraVM {
     pub topology: Topology,
     #[cfg(feature = "nova")]
     pub ether: HashMap<i64, VecDeque<Value>>,
+    #[cfg(feature = "nova")]
+    pub reflex_map: HashMap<i64, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -244,6 +246,8 @@ impl ChimeraVM {
             topology: Topology::Torus,
             #[cfg(feature = "nova")]
             ether: HashMap::new(),
+            #[cfg(feature = "nova")]
+            reflex_map: HashMap::new(),
             #[cfg(feature = "cortex")]
             synapse_map,
             #[cfg(feature = "cortex")]
@@ -365,6 +369,22 @@ impl ChimeraVM {
         }
     }
 
+    #[cfg(feature = "nova")]
+    pub fn trigger_reflex(&mut self, event_id: i64) -> bool {
+        if let Some(strand_idx) = self.reflex_map.remove(&event_id) {
+            if strand_idx < self.dna.helix.strands.len() {
+                self.call_stack.push(self.ip);
+                self.ip = (strand_idx, 0);
+                self.output.push(format!(
+                    "REFLEX: Triggered Event {} -> Strand {}",
+                    event_id, strand_idx
+                ));
+                return true;
+            }
+        }
+        false
+    }
+
     #[cfg(feature = "cortex")]
     fn update_cortex_state(&mut self) {
         for level in self.activation_levels.iter_mut() {
@@ -404,6 +424,13 @@ impl ChimeraVM {
     }
 
     fn check_starvation(&mut self) -> bool {
+        #[cfg(feature = "nova")]
+        if self.energy < 10 {
+            if self.trigger_reflex(2) {
+                return false; // Reflex saved us temporarily
+            }
+        }
+
         if self.energy <= 0 {
             self.halted = true;
             self.output.push("DEATH: STARVATION".to_string());
@@ -546,6 +573,7 @@ impl ChimeraVM {
         let val = self.grid[cy][cx].clone();
         match val {
             Value::Int(n) => self.stack.push(Value::Int(n)),
+            Value::Junction(_, _) => {} // Ribosomes cannot execute junctions
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
@@ -754,6 +782,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Rift
             | OpCode::Seal
+            | OpCode::Reflex
             | OpCode::Shape
             | OpCode::Simulate
             | OpCode::Dream
@@ -1328,6 +1357,9 @@ impl ChimeraVM {
     }
 
     pub fn mutate(&mut self) {
+        #[cfg(feature = "nova")]
+        self.trigger_reflex(1); // Mutation Event
+
         let mut rng = rand::thread_rng();
         let helix_len = self.dna.helix.strands.len();
         if helix_len == 0 {

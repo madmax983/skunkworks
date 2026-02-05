@@ -36,6 +36,7 @@ pub struct Spore {
     pub sonar_target: Option<(usize, usize)>,
     pub symbiotes: Vec<(usize, usize)>,
     pub ether: HashMap<i64, VecDeque<Value>>,
+    pub reflex_map: HashMap<i64, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -322,6 +323,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 sonar_target: vm.sonar_target,
                 symbiotes: vm.symbiotes.clone(),
                 ether: vm.ether.clone(),
+                reflex_map: vm.reflex_map.clone(),
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -368,6 +370,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.sonar_target = spore.sonar_target;
                         vm.symbiotes = spore.symbiotes.clone();
                         vm.ether = spore.ether.clone();
+                        vm.reflex_map = spore.reflex_map.clone();
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
@@ -420,6 +423,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let mut k = 0;
                             while k < sequence.len() {
                                 match &sequence[k] {
+                                    Value::Junction(_, _) => k += 1, // Ignore junctions
                                     Value::Int(n) => {
                                         // Treated as push(n)
                                         genes.push(crate::ast::Gene {
@@ -463,6 +467,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                                                 ss.clone(),
                                                             ),
                                                         ),
+                                                        Value::Junction(_, _) => {}
                                                     }
                                                     k += 1; // Consume arg
                                                 }
@@ -986,6 +991,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         Value::Str(s) => {
                                             vec![crate::ast::Nucleotide::String(s)]
                                         }
+                                        Value::Junction(_, _) => vec![],
                                     },
                                 };
 
@@ -1231,11 +1237,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Hit boundary
                             vm.energy = vm.energy.saturating_sub(2);
                             vm.output.push("MIGRATE: Blocked by boundary".to_string());
+                            vm.trigger_reflex(0); // Collision Event
                         }
                     } else {
                         // Blocked by membrane
                         vm.energy = vm.energy.saturating_sub(2);
                         vm.output.push("MIGRATE: Blocked by membrane".to_string());
+                        vm.trigger_reflex(0); // Collision Event
                     }
                 } else {
                     vm.output
@@ -1410,6 +1418,35 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for decohere".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Reflex => {
+            // stack: event_id, strand_idx (bottom)
+            if vm.stack.len() >= 2 {
+                let strand_val = vm.stack.pop().unwrap();
+                let event_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(event), Value::Int(strand)) = (event_val, strand_val) {
+                    let s_idx = strand as usize;
+                    if s_idx < vm.dna.helix.strands.len() {
+                        vm.reflex_map.insert(event, s_idx);
+                        vm.output.push(format!(
+                            "REFLEX: Registered handler for Event {} -> Strand {}",
+                            event, s_idx
+                        ));
+                    } else {
+                        vm.output
+                            .push("Error: Strand index out of bounds for reflex".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for reflex".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for reflex".to_string());
             }
             None
         }
@@ -2035,6 +2072,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     } else {
                         vm.energy = vm.energy.saturating_sub(5);
                         vm.output.push("OSMOSIS: Blocked by boundary".to_string());
+                        vm.trigger_reflex(0); // Collision Event
                     }
                 } else {
                     vm.output

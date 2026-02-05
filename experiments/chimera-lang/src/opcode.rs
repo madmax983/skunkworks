@@ -305,6 +305,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Decohere,
+    /// **[Nova]** Registers an interrupt handler (Reflex).
+    ///
+    /// **Stack:** `[ ..., event_id, strand_idx ] -> [ ... ]`
+    /// **Events:** 0=Collision, 1=Mutation, 2=Low Energy.
+    #[cfg(feature = "nova")]
+    Reflex,
     /// **[Nova]** Writes a strand's code onto the grid physically.
     ///
     /// **Stack:** `[ ..., strand_idx, y, x, direction ] -> [ ... ]`
@@ -513,6 +519,8 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "decohere" => Ok(OpCode::Decohere),
             #[cfg(feature = "nova")]
+            "reflex" => Ok(OpCode::Reflex),
+            #[cfg(feature = "nova")]
             "conjugate" => Ok(OpCode::Conjugate),
             #[cfg(feature = "nova")]
             "gravitate" => Ok(OpCode::Gravitate),
@@ -654,6 +662,8 @@ impl fmt::Display for OpCode {
             OpCode::Entangle => write!(f, "entangle"),
             #[cfg(feature = "nova")]
             OpCode::Decohere => write!(f, "decohere"),
+            #[cfg(feature = "nova")]
+            OpCode::Reflex => write!(f, "reflex"),
             #[cfg(feature = "nova")]
             OpCode::Conjugate => write!(f, "conjugate"),
             #[cfg(feature = "nova")]
