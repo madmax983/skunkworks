@@ -10,15 +10,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
-<!-- Example:
-### [Hybrid Name]
-- **Parent A**: experiments/git-galaxy
-- **Parent B**: experiments/myco-transit
-- **Concept**: Git history optimized by slime mold algorithms - what if commits found their own optimal merge paths?
-- **Expected traits**: Force-directed graph + pheromone-based pathfinding
-- **Rationale**: Both deal with graph optimization in different domains
-- **Proposed by**: Agent name
--->
+### neuro-pendulum
+- **Parent A**: experiments/chaos-pendulum
+- **Parent B**: experiments/biophysical-synth
+- **Concept**: A chaotic double pendulum where the nodes are Hodgkin-Huxley neurons. Kinetic energy injects current; Spikes apply torque.
+- **Expected traits**: Self-oscillating chaos engine that sings. Physical motion driving biological electrical activity and vice versa.
+- **Rationale**: Both use Macroquad. One provides the "Body" (physics), the other the "Brain" (neurons). A literal ghost in the shell.
+- **Proposed by**: The Splice Surgeon 🧬
 
 ---
 
@@ -186,13 +184,39 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/primordial-soup
 - **Evaluation**: Compiles. Verified by Splice Surgeon.
 
-<!-- Example:
-### semantic-spy
-- **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)
-- **Novel trait**: Inspection tooling for the ecosystem itself
-- **Innovation**: Meta-tool that emerged from need to debug semantic snapshots
-- **Status**: experiments/semantic-spy
--->
+### trace-tardis
+- **Parents**: experiments/trace-fold + experiments/alloc-tardis
+- **Concept**: Recursive visualization of stack traces where each stack frame is a room containing the next frame as a portal.
+- **Novel trait**: Infinite zoom into the execution path ("Bigger on the inside").
+- **Status**: experiments/trace-tardis
+- **Evaluation**: Compiles. Verified.
+
+### hyperbolic-roots
+- **Parents**: experiments/rhizome-radar + experiments/hyperbolic-space
+- **Concept**: The Space Colonization Algorithm (roots growing towards nutrients) adapted for the Poincaré Disk model of hyperbolic space.
+- **Novel trait**: Exponential branching logic. Roots curve along geodesic arcs, filling the infinite boundary.
+- **Status**: experiments/hyperbolic-roots
+- **Evaluation**: Compiles. Verified.
+
+### colony-concerto
+- **Parents**: experiments/hive-mind-dependencies + experiments/schrodingers-beat
+- **Concept**: A swarm of builder ants traversing a dependency graph, where accessing nodes requires locking mutexes, creating audio events.
+- **Novel trait**: Polyrhythmic Contention. The structure of the dependency graph dictates the musical rhythm and harmony.
+- **Status**: experiments/colony-concerto
+- **Evaluation**: Compiles. Verified.
+
+### chimera-lang
+- **Parents**: Original Experiment
+- **Concept**: Genetic programming VM with biological metaphors.
+- **Status**: experiments/chimera-lang
+- **Evaluation**: Compiles. Verified. Cortex and Resonance features active.
+
+### clockwork-chimera
+- **Parents**: experiments/verge-computer + experiments/chimera-lang
+- **Concept**: A biological entity living inside a mechanical clock, where execution ticks are driven by a physics-simulated escapement.
+- **Novel trait**: Mechanical Metabolism. The speed of life is determined by physical torque and friction.
+- **Status**: experiments/clockwork-chimera
+- **Evaluation**: Compiles. Verified.
 
 ---
 
@@ -213,13 +237,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 ## 🧪 Recombination Techniques
 
 <!-- Patterns for successfully combining experiments -->
-
-<!-- Example:
-### Overlay Different Visualizations
-- **Pattern**: Use experiment A's data model + experiment B's rendering
-- **Example**: Could render git-galaxy data using biomorph-flow's reaction-diffusion
-- **Benefit**: Same data, radically different insights
--->
 
 ### code-concerto
 - **Parents**: experiments/struct-soup + experiments/harmony-of-spheres
@@ -262,13 +279,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/chimera-resonance
 - **Evaluation**: Compiles. Verified by Splice Surgeon. Re-verified.
 
-### clockwork-chimera
-- **Parents**: experiments/verge-computer + experiments/chimera-lang
-- **Concept**: A biological entity living inside a mechanical clock, where execution ticks are driven by a physics-simulated escapement.
-- **Novel trait**: Mechanical Metabolism. The speed of life is determined by physical torque and friction.
-- **Status**: experiments/clockwork-chimera
-- **Evaluation**: Compiles. Implemented by Splice Surgeon. Re-verified.
-
 ### schrodingers-beat
 - **Parents**: experiments/beat-cortex + experiments/thread-phase
 - **Concept**: Polyrhythmic Mutex Sonification. Threads contend for shared locks to trigger audio events.
@@ -289,24 +299,3 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Natural selection applied to linguistic morphology.
 - **Status**: experiments/syntax-evolution
 - **Evaluation**: Compiles. Verified in GUESTBOOK.
-
-### colony-concerto
-- **Parents**: experiments/hive-mind-dependencies + experiments/schrodingers-beat
-- **Concept**: A swarm of builder ants traversing a dependency graph, where accessing nodes requires locking mutexes, creating audio events.
-- **Novel trait**: Polyrhythmic Contention. The structure of the dependency graph dictates the musical rhythm and harmony.
-- **Status**: experiments/colony-concerto
-- **Evaluation**: Compiles. Verified by Splice Surgeon.
-
-### hyperbolic-roots
-- **Parents**: experiments/rhizome-radar + experiments/hyperbolic-space
-- **Concept**: The Space Colonization Algorithm (roots growing towards nutrients) adapted for the Poincaré Disk model of hyperbolic space.
-- **Novel trait**: Exponential branching logic. Roots curve along geodesic arcs, filling the infinite boundary.
-- **Status**: experiments/hyperbolic-roots
-- **Evaluation**: Compiles. Implemented by Splice Surgeon. Visuals confirmed.
-
-### trace-tardis
-- **Parents**: experiments/trace-fold + experiments/alloc-tardis
-- **Concept**: Recursive visualization of stack traces where each stack frame is a room containing the next frame as a portal.
-- **Novel trait**: Infinite zoom into the execution path ("Bigger on the inside").
-- **Status**: experiments/trace-tardis
-- **Evaluation**: Compiles. Implemented by Splice Surgeon. Unit tests passed.

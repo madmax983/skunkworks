@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/neuro-pendulum
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The chaos is singing. Neurons are twitching in the wind of the double pendulum.
+
 ### [Concentration Level: FRESH] - Location: experiments/biophysical-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** Action potentials converted to sound pressure. The Hodgkin-Huxley equations are screaming.
