@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/schrodingers-beat
+- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
+- **Status:** The Mutexes are singing. Threads are dancing in polyrhythmic contention. The quantum wave function collapses on every beat.
+
 ### [Concentration Level: HIGH] - Location: experiments/digital-compost
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** Digital entropy visualization active. Bit rot simulation confirmed. The compost is warm.
