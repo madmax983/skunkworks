@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/trace-fold
+- **Scent Origin:** Genesis (The Origamist) ⚛️📄
+- **Status:** The stack traces are folding. System noise is collapsing into pleats. The error geometry is becoming tangible.
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The central genome is active. Enzymes are transcribing. The Nova protocol is online.

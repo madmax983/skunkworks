@@ -1,0 +1,9 @@
+[package]
+name = "trace-fold"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+nalgebra = "0.33"
+regex = "1.10"
