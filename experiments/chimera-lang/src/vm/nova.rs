@@ -298,6 +298,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(t), Value::Int(idx)) = (type_val, idx_val) {
                     let s_idx = idx as usize;
                     if s_idx < vm.dna.helix.strands.len() {
+                        if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
+                            vm.output.push("Error: Organelle limit exceeded".to_string());
+                            return None;
+                        }
+
                         let (kind, direction) = match t {
                             1 => (OrganelleType::Chloroplast, (0, 0)),
                             2 => (OrganelleType::Mitochondria, (0, 0)),
@@ -337,6 +342,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         #[cfg(feature = "nova")]
         OpCode::Sporulate => {
+            if vm.spores.len() >= crate::vm::MAX_SPORES {
+                vm.output
+                    .push("Error: Spore limit exceeded".to_string());
+                return None;
+            }
+
             // Create snapshot
             let spore = Spore {
                 dna: vm.dna.clone(),
@@ -2177,6 +2188,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Lysis => {
             // Eject the last symbiote
             if let Some(sip) = vm.symbiotes.pop() {
+                if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
+                    vm.symbiotes.push(sip); // Put it back
+                    vm.output.push("Error: Organelle limit exceeded".to_string());
+                    return None;
+                }
+
                 let (cy, cx) = vm.context_loc;
 
                 // Create organelle
@@ -2347,6 +2364,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         #[cfg(feature = "nova")]
         OpCode::Void => {
+            if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
+                vm.output.push("Error: Organelle limit exceeded".to_string());
+                return None;
+            }
+
             let (cy, cx) = vm.context_loc;
             let organelle = Organelle {
                 stack: Vec::new(),

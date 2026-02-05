@@ -105,5 +105,7 @@ mod ribozyme_test;
 mod sentry_nova_test;
 #[cfg(test)]
 mod warden_exploit_test;
+#[cfg(test)]
+mod warden_dos_test;
 #[cfg(all(test, feature = "resonance"))]
 mod resonance_test;
