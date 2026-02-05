@@ -62,6 +62,7 @@ members = [
     "experiments/lattice-hunter",
     "experiments/crate-radar",
     "experiments/quantum-garden",
+    "experiments/quasicrystal-dungeon",
     "experiments/quipu-symphony",
     "experiments/git-harmonograph",
     "experiments/poincare-crawl",
