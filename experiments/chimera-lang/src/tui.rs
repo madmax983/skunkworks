@@ -302,6 +302,7 @@ where
                                 crate::vm::nova::OrganelleType::Mitochondria => (Color::Red, "M"),
                                 crate::vm::nova::OrganelleType::Lysosome => (Color::Magenta, "L"),
                                 crate::vm::nova::OrganelleType::Ribosome => (Color::Cyan, "R"),
+                                crate::vm::nova::OrganelleType::Void => (Color::DarkGray, "Ø"),
                                 crate::vm::nova::OrganelleType::Worker => (Color::White, "O"),
                             };
 

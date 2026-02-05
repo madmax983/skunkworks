@@ -10,6 +10,8 @@ use crate::{ChimeraParser, Rule};
 use pest::Parser;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+#[cfg(feature = "nova")]
+use rand::Rng;
 
 /// Represents a "time-travel" snapshot of the VM state.
 ///
@@ -60,6 +62,7 @@ pub enum OrganelleType {
     Mitochondria, // Reduces metabolic cost / generates base energy
     Lysosome,     // Consumes waste to produce energy
     Ribosome,     // Executes grid instructions
+    Void,         // Consumes everything
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -1777,6 +1780,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Mitochondria) => 2,
                 Some(OrganelleType::Lysosome) => 3,
                 Some(OrganelleType::Ribosome) => 4,
+                Some(OrganelleType::Void) => 5,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -1791,6 +1795,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             2 => Some(OrganelleType::Mitochondria),
                             3 => Some(OrganelleType::Lysosome),
                             4 => Some(OrganelleType::Ribosome),
+                            5 => Some(OrganelleType::Void),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 
@@ -2338,6 +2343,110 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.output
                     .push("Error: Stack underflow for decompile".to_string());
             }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Void => {
+            let (cy, cx) = vm.context_loc;
+            let organelle = Organelle {
+                stack: Vec::new(),
+                ip: (0, 0), // Void has no IP
+                context_loc: (cy, cx),
+                call_stack: Vec::new(),
+                recursion_depth: 0,
+                halted: false,
+                kind: OrganelleType::Void,
+                direction: (0, 0),
+            };
+            vm.organelles.push(organelle);
+            vm.energy = vm.energy.saturating_sub(50);
+            vm.output
+                .push(format!("VOID: Spawned at {},{}", cx, cy));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Supernova => {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                // Remove genes from strand
+                let genes = std::mem::take(&mut vm.dna.helix.strands[s_idx].genes);
+                let mut rng = rand::thread_rng();
+
+                let rows = vm.grid.len();
+                let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+
+                if rows > 0 && cols > 0 {
+                    // Helper to format gene with args
+                    fn format_nucleotide(n: &Nucleotide) -> String {
+                        match n {
+                            Nucleotide::Number(i) => i.to_string(),
+                            Nucleotide::String(s) => format!("\"{}\"", s),
+                            Nucleotide::Identifier(s) => s.clone(),
+                            Nucleotide::Junction(t, args) => {
+                                let t_str = match t {
+                                    crate::ast::JunctionType::Any => "any",
+                                    crate::ast::JunctionType::All => "all",
+                                };
+                                let args_str: Vec<String> =
+                                    args.iter().map(format_nucleotide).collect();
+                                format!("{}({})", t_str, args_str.join(" "))
+                            }
+                        }
+                    }
+
+                    for gene in genes {
+                        let mut s = gene.op.to_string();
+                        if !gene.args.is_empty() {
+                            s.push('(');
+                            for (i, arg) in gene.args.iter().enumerate() {
+                                if i > 0 {
+                                    s.push(' ');
+                                }
+                                s.push_str(&format_nucleotide(arg));
+                            }
+                            s.push(')');
+                        }
+
+                        // Scatter gene to random grid location
+                        let rx = rng.gen_range(0..cols);
+                        let ry = rng.gen_range(0..rows);
+                        vm.grid[ry][rx] = Value::Str(s);
+                    }
+                }
+
+                vm.output
+                    .push(format!("SUPERNOVA: Strand {} exploded", s_idx));
+                vm.halted = true; // Suicide
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Singularity => {
+            let mut merged_genes = Vec::new();
+            // Take all strands
+            let strands = std::mem::take(&mut vm.dna.helix.strands);
+            for mut strand in strands {
+                merged_genes.append(&mut strand.genes);
+            }
+
+            // Create single new strand
+            vm.dna.helix.strands.push(crate::ast::Strand { genes: merged_genes });
+
+            // Reset state that depends on strand indices
+            vm.telomeres = vec![100]; // Reset telomeres for the new massive strand
+            #[cfg(feature = "cortex")]
+            {
+                vm.activation_levels = vec![0];
+                vm.synapse_map = vec![Vec::new()];
+            }
+            // Clear other specific mappings?
+            vm.epigenome.clear();
+            // We should ideally remap epigenome, but Singularity is destructive/transformative.
+
+            // Reset IP to start of new strand
+            vm.ip = (0, 0);
+
+            vm.output.push("SINGULARITY: All strands merged".to_string());
             None
         }
         #[cfg(feature = "nova")]

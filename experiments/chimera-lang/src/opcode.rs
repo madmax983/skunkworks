@@ -427,6 +427,22 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Decompile,
 
+    /// **[Nova]** Spawns a Void organelle that consumes everything.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Void,
+    /// **[Nova]** Explodes the current strand, scattering genes onto the grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Supernova,
+    /// **[Nova]** Merges all strands into a single massive strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Singularity,
+
     /// **[Nova]** Increases local mutagen level.
     ///
     /// **Stack:** `[ ..., amount, radius ] -> [ ... ]`
@@ -722,6 +738,12 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "compile" => Ok(OpCode::Compile),
             #[cfg(feature = "nova")]
+            "void" => Ok(OpCode::Void),
+            #[cfg(feature = "nova")]
+            "supernova" => Ok(OpCode::Supernova),
+            #[cfg(feature = "nova")]
+            "singularity" => Ok(OpCode::Singularity),
+            #[cfg(feature = "nova")]
             "irradiate" => Ok(OpCode::Irradiate),
             #[cfg(feature = "nova")]
             "sense_mutagen" => Ok(OpCode::SenseMutagen),
@@ -877,6 +899,12 @@ impl fmt::Display for OpCode {
             OpCode::Compile => write!(f, "compile"),
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
+            #[cfg(feature = "nova")]
+            OpCode::Void => write!(f, "void"),
+            #[cfg(feature = "nova")]
+            OpCode::Supernova => write!(f, "supernova"),
+            #[cfg(feature = "nova")]
+            OpCode::Singularity => write!(f, "singularity"),
             #[cfg(feature = "nova")]
             OpCode::Irradiate => write!(f, "irradiate"),
             #[cfg(feature = "nova")]
