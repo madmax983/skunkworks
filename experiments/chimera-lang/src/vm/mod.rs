@@ -31,6 +31,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 
+pub mod bard;
 pub mod cortex;
 pub mod nova;
 pub mod oracle;
@@ -182,6 +183,8 @@ pub struct ChimeraVM {
     pub remap_table: HashMap<OpCode, OpCode>,
     #[cfg(feature = "nova")]
     pub direction: isize,
+    #[cfg(feature = "nova")]
+    pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
 }
@@ -271,6 +274,8 @@ impl ChimeraVM {
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
             direction: 1,
+            #[cfg(feature = "nova")]
+            score: Vec::new(),
             #[cfg(feature = "oracle")]
             knowledge_base: Vec::new(),
         }
@@ -453,12 +458,13 @@ impl ChimeraVM {
         }
 
         if self.mutagen_grid[cy][cx] > 50 {
-             let mut rng = rand::thread_rng();
-             // Higher probability for mutagen (10%)
-             if rng.gen_bool(0.10) {
-                 self.output.push(format!("MUTATION: RADIATION at {},{}", cx, cy));
-                 self.mutate();
-             }
+            let mut rng = rand::thread_rng();
+            // Higher probability for mutagen (10%)
+            if rng.gen_bool(0.10) {
+                self.output
+                    .push(format!("MUTATION: RADIATION at {},{}", cx, cy));
+                self.mutate();
+            }
         }
     }
 
@@ -927,7 +933,9 @@ impl ChimeraVM {
                     let to_val = self.stack.pop().unwrap();
                     let from_val = self.stack.pop().unwrap();
                     if let (Value::Str(from), Value::Str(to)) = (from_val, to_val) {
-                        if let (Ok(from_op), Ok(to_op)) = (from.parse::<OpCode>(), to.parse::<OpCode>()) {
+                        if let (Ok(from_op), Ok(to_op)) =
+                            (from.parse::<OpCode>(), to.parse::<OpCode>())
+                        {
                             self.remap_table.insert(from_op.clone(), to_op.clone());
                             self.output.push(format!("REMAP: {} -> {}", from_op, to_op));
                         } else {
@@ -1070,6 +1078,12 @@ impl ChimeraVM {
             | OpCode::Fold
             | OpCode::Filter
             | OpCode::Zip => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
+                bard::exec_bard_op(self, op, args);
+                None
+            }
 
             #[cfg(feature = "oracle")]
             OpCode::Assert | OpCode::Retract | OpCode::Query => {

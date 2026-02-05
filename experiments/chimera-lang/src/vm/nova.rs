@@ -2231,17 +2231,21 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         let (cy, cx) = vm.context_loc;
                         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
                         for (tx, ty) in coords {
-                            vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
+                            vm.mutagen_grid[ty][tx] =
+                                vm.mutagen_grid[ty][tx].saturating_add(amount);
                         }
                         // Cost is proportional to amount and area
-                        vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                        vm.energy = vm
+                            .energy
+                            .saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
                         vm.output.push(format!(
                             "IRRADIATE: Added {} mutagen at {},{} r={}",
                             amount, cx, cy, r
                         ));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for irradiate".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for irradiate".to_string());
                 }
             } else {
                 vm.output
@@ -2258,18 +2262,21 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         #[cfg(feature = "nova")]
         OpCode::Devour => {
-             let (cy, cx) = vm.context_loc;
-             let level = vm.mutagen_grid[cy][cx];
-             if level > 0 {
-                 vm.mutagen_grid[cy][cx] = 0;
-                 let energy_gain = level / 2; // 50% efficiency
-                 vm.energy = vm.energy.saturating_add(energy_gain);
-                 vm.stack.push(Value::Int(energy_gain));
-                 vm.output.push(format!("DEVOUR: Consumed {} mutagen, gained {} energy", level, energy_gain));
-             } else {
-                 vm.stack.push(Value::Int(0));
-             }
-             None
+            let (cy, cx) = vm.context_loc;
+            let level = vm.mutagen_grid[cy][cx];
+            if level > 0 {
+                vm.mutagen_grid[cy][cx] = 0;
+                let energy_gain = level / 2; // 50% efficiency
+                vm.energy = vm.energy.saturating_add(energy_gain);
+                vm.stack.push(Value::Int(energy_gain));
+                vm.output.push(format!(
+                    "DEVOUR: Consumed {} mutagen, gained {} energy",
+                    level, energy_gain
+                ));
+            } else {
+                vm.stack.push(Value::Int(0));
+            }
+            None
         }
         #[cfg(feature = "nova")]
         OpCode::Decompile => {
@@ -2369,8 +2376,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.stack.push(input);
 
                     match &func_val {
-                         Value::Str(s) => {
-                             // Parse and eval
+                        Value::Str(s) => {
+                            // Parse and eval
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
                                 let strand = crate::ast::Strand::from_pair(pair);
@@ -2378,23 +2385,25 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             } else {
                                 vm.output.push(format!("MAP ERROR: Parse failed for {}", s));
                             }
-                         }
-                         Value::Int(idx) => {
-                             // Sync call strand
-                             execute_strand_sync(vm, *idx as usize);
-                         }
-                         _ => {
-                             vm.output.push("Error: Invalid function for map".to_string());
-                         }
+                        }
+                        Value::Int(idx) => {
+                            // Sync call strand
+                            execute_strand_sync(vm, *idx as usize);
+                        }
+                        _ => {
+                            vm.output
+                                .push("Error: Invalid function for map".to_string());
+                        }
                     }
 
                     if vm.stack.len() > stack_depth {
-                         let new_items = vm.stack.split_off(stack_depth);
-                         results.extend(new_items);
+                        let new_items = vm.stack.split_off(stack_depth);
+                        results.extend(new_items);
                     }
                 }
 
-                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.stack
+                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
                 vm.output.push("Error: Stack underflow for map".to_string());
@@ -2421,17 +2430,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.stack.push(input);
 
                     match &func_val {
-                         Value::Str(s) => {
+                        Value::Str(s) => {
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
                                 let strand = crate::ast::Strand::from_pair(pair);
                                 execute_ephemeral_strand(vm, &strand);
                             }
-                         }
-                         Value::Int(idx) => {
-                             execute_strand_sync(vm, *idx as usize);
-                         }
-                         _ => {}
+                        }
+                        Value::Int(idx) => {
+                            execute_strand_sync(vm, *idx as usize);
+                        }
+                        _ => {}
                     }
 
                     if let Some(res) = vm.stack.pop() {
@@ -2443,13 +2452,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.stack.push(acc);
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
-                vm.output.push("Error: Stack underflow for fold".to_string());
+                vm.output
+                    .push("Error: Stack underflow for fold".to_string());
             }
             None
         }
         #[cfg(feature = "nova")]
         OpCode::Filter => {
-             // stack: junction, predicate (top)
+            // stack: junction, predicate (top)
             if vm.stack.len() >= 2 {
                 let func_val = vm.stack.pop().unwrap();
                 let target_val = vm.stack.pop().unwrap();
@@ -2465,17 +2475,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.stack.push(input.clone());
 
                     match &func_val {
-                         Value::Str(s) => {
+                        Value::Str(s) => {
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
                                 let strand = crate::ast::Strand::from_pair(pair);
                                 execute_ephemeral_strand(vm, &strand);
                             }
-                         }
-                         Value::Int(idx) => {
-                             execute_strand_sync(vm, *idx as usize);
-                         }
-                         _ => {}
+                        }
+                        Value::Int(idx) => {
+                            execute_strand_sync(vm, *idx as usize);
+                        }
+                        _ => {}
                     }
 
                     if let Some(res) = vm.stack.pop() {
@@ -2490,10 +2500,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
 
-                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.stack
+                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
-                vm.output.push("Error: Stack underflow for filter".to_string());
+                vm.output
+                    .push("Error: Stack underflow for filter".to_string());
             }
             None
         }
@@ -2517,13 +2529,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let mut results = Vec::new();
 
                 for i in 0..len {
-                    results.push(Value::Junction(crate::ast::JunctionType::All, vec![inputs_a[i].clone(), inputs_b[i].clone()]));
+                    results.push(Value::Junction(
+                        crate::ast::JunctionType::All,
+                        vec![inputs_a[i].clone(), inputs_b[i].clone()],
+                    ));
                 }
 
-                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, results));
+                vm.stack
+                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
                 vm.energy = vm.energy.saturating_sub(5);
             } else {
-                 vm.output.push("Error: Stack underflow for zip".to_string());
+                vm.output.push("Error: Stack underflow for zip".to_string());
             }
             None
         }
@@ -2534,7 +2550,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 #[cfg(feature = "nova")]
 fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
     if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-        vm.output.push("Error: Recursion limit exceeded in ephemeral execution".to_string());
+        vm.output
+            .push("Error: Recursion limit exceeded in ephemeral execution".to_string());
         return;
     }
     vm.recursion_depth += 1;
@@ -2557,7 +2574,8 @@ fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
         let strand = vm.dna.helix.strands[strand_idx].clone();
         execute_ephemeral_strand(vm, &strand);
     } else {
-        vm.output.push("Error: Invalid strand index for sync execution".to_string());
+        vm.output
+            .push("Error: Invalid strand index for sync execution".to_string());
     }
 }
 

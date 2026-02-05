@@ -487,6 +487,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Zip,
 
+    // Bard Features (Music)
+    /// **[Nova]** Adds a note to the musical score.
+    ///
+    /// **Stack:** `[ ..., velocity, duration, pitch ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Note,
+    /// **[Nova]** Adds a rest to the musical score.
+    ///
+    /// **Stack:** `[ ..., duration ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Rest,
+    /// **[Nova]** Sets the tempo of the composition.
+    ///
+    /// **Stack:** `[ ..., bpm ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tempo,
+    /// **[Nova]** Exports the score as ABC Notation to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., abc_string ]`
+    #[cfg(feature = "nova")]
+    Perform,
+
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
     ///
@@ -537,6 +559,15 @@ impl FromStr for OpCode {
             "filter" => Ok(OpCode::Filter),
             #[cfg(feature = "nova")]
             "zip" => Ok(OpCode::Zip),
+
+            #[cfg(feature = "nova")]
+            "note" => Ok(OpCode::Note),
+            #[cfg(feature = "nova")]
+            "rest" => Ok(OpCode::Rest),
+            #[cfg(feature = "nova")]
+            "tempo" => Ok(OpCode::Tempo),
+            #[cfg(feature = "nova")]
+            "perform" => Ok(OpCode::Perform),
 
             "push" => Ok(OpCode::Push),
             "add" => Ok(OpCode::Add),
@@ -853,6 +884,15 @@ impl fmt::Display for OpCode {
             OpCode::Filter => write!(f, "filter"),
             #[cfg(feature = "nova")]
             OpCode::Zip => write!(f, "zip"),
+
+            #[cfg(feature = "nova")]
+            OpCode::Note => write!(f, "note"),
+            #[cfg(feature = "nova")]
+            OpCode::Rest => write!(f, "rest"),
+            #[cfg(feature = "nova")]
+            OpCode::Tempo => write!(f, "tempo"),
+            #[cfg(feature = "nova")]
+            OpCode::Perform => write!(f, "perform"),
 
             #[cfg(feature = "oracle")]
             OpCode::Assert => write!(f, "assert"),
