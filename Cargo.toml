@@ -101,7 +101,7 @@ members = [
     "experiments/chimera-resonance",
     "crates/resonance-audio", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
     "experiments/clockwork-chimera", "experiments/schrodingers-beat",
-    "experiments/colony-concerto", "experiments/rhizome-radar",
+    "experiments/colony-concerto", "experiments/rhizome-radar", "experiments/hyperbolic-roots",
 ]
 resolver = "2"
 

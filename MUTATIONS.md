@@ -295,4 +295,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A swarm of builder ants traversing a dependency graph, where accessing nodes requires locking mutexes, creating audio events.
 - **Novel trait**: Polyrhythmic Contention. The structure of the dependency graph dictates the musical rhythm and harmony.
 - **Status**: experiments/colony-concerto
-- **Evaluation**: Compiles. Implemented by Splice Surgeon.
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### hyperbolic-roots
+- **Parents**: experiments/rhizome-radar + experiments/hyperbolic-space
+- **Concept**: The Space Colonization Algorithm (roots growing towards nutrients) adapted for the Poincaré Disk model of hyperbolic space.
+- **Novel trait**: Exponential branching logic. Roots curve along geodesic arcs, filling the infinite boundary.
+- **Status**: experiments/hyperbolic-roots
+- **Evaluation**: Compiles. Implemented by Splice Surgeon. Visuals confirmed.
