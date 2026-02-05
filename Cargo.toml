@@ -98,7 +98,7 @@ members = [
     "experiments/neuro-chimera",
     "experiments/luminous-flock-web", "experiments/fairy-consensus",
     "experiments/chimera-resonance",
-    "crates/resonance-audio", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
+    "crates/resonance-audio", "crates/poincare-disk", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
     "experiments/clockwork-chimera", "experiments/schrodingers-beat",
     "experiments/colony-concerto", "experiments/rhizome-radar", "experiments/hyperbolic-roots",
     "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor",
@@ -114,3 +114,4 @@ ratzilla = "0.3"
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
 resonance-audio = { path = "crates/resonance-audio" }
+poincare-disk = { path = "crates/poincare-disk" }

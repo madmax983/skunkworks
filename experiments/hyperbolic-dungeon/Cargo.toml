@@ -10,3 +10,4 @@ rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
 num-complex = "0.4"
+poincare-disk = { workspace = true }

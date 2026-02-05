@@ -1,4 +1,4 @@
-use crate::geometry::{hyperbolic_dist, mobius_add, mobius_sub, Point};
+use poincare_disk::{hyperbolic_dist, mobius_add, mobius_sub, Point};
 use num_complex::Complex;
 use rand::Rng;
 

@@ -1,5 +1,5 @@
 use crate::dungeon::{Dungeon, TileType};
-use crate::geometry::{self, Mobius, Point, TilingConsts};
+use poincare_disk::{mobius_add, neighbor_transform_a, Mobius, Point, TilingConsts};
 use rand::Rng;
 
 pub struct Ant {
@@ -66,20 +66,20 @@ impl Ant {
 
         // 3. Movement Physics
         let speed = 0.05;
-        let move_vec = geometry::neighbor_transform_a(self.target_dir, consts);
+        let move_vec = neighbor_transform_a(self.target_dir, consts);
         // Normalize move_vec is tricky in hyperbolic, but roughly:
         let dir_vec = move_vec / move_vec.norm();
 
         // Apply movement
         let delta = dir_vec * speed;
-        let candidate_offset = geometry::mobius_add(self.offset, delta);
+        let candidate_offset = mobius_add(self.offset, delta);
 
         // 4. Check for transition
         let mut best_neighbor = None;
         let mut best_dist_sq = candidate_offset.norm_sqr();
 
         for i in 0..4 {
-            let neighbor_pos = geometry::neighbor_transform_a(i, consts);
+            let neighbor_pos = neighbor_transform_a(i, consts);
             let t = Mobius::inverse_translation(neighbor_pos);
             let p_in_neighbor = t.apply(candidate_offset);
 
