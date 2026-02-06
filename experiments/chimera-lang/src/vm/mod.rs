@@ -168,6 +168,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub heat_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -235,6 +237,8 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
+        let heat_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
@@ -268,6 +272,8 @@ impl ChimeraVM {
             mutagen_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            heat_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -493,6 +499,27 @@ impl ChimeraVM {
         nova::diffuse_waste(self);
         nova::diffuse_light(self);
         nova::diffuse_mutagen(self);
+        nova::diffuse_heat(self);
+
+        // Thermodynamics Effects
+        let heat = self.heat_grid[cy][cx];
+        if heat > 50 {
+            // Thermal Noise (Mutation)
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(0.05) {
+                self.output
+                    .push(format!("MUTATION: HEAT STRESS at {},{}", cx, cy));
+                self.mutate();
+            }
+        }
+        if heat > 75 {
+            // Metabolic Stress
+            self.energy = self.energy.saturating_sub(1);
+        }
+        if heat < -20 {
+            // Cryostasis (Metabolic slowing) - Refund energy used by step()
+            self.energy = self.energy.saturating_add(1);
+        }
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -543,10 +570,8 @@ impl ChimeraVM {
         if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
             let degrade = self.phase != nova::Phase::Crystalline;
 
-            if degrade {
-                if self.telomeres[self.ip.0] > 0 {
-                    self.telomeres[self.ip.0] -= 1;
-                }
+            if degrade && self.telomeres[self.ip.0] > 0 {
+                self.telomeres[self.ip.0] -= 1;
             }
 
             if self.telomeres[self.ip.0] <= 0 {
@@ -1185,6 +1210,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
+            | OpCode::Ignite
+            | OpCode::Freeze
+            | OpCode::Thermometer
             | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour

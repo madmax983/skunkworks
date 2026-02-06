@@ -65,6 +65,7 @@ pub struct Spore {
     pub waste_grid: Vec<Vec<i64>>,
     pub mutagen_grid: Vec<Vec<i64>>,
     pub light_grid: Vec<Vec<i64>>,
+    pub heat_grid: Vec<Vec<i64>>,
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
@@ -188,6 +189,44 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             vm.hormone_grid[y][x] = buffer[y][x];
+        }
+    }
+}
+
+/// Simulates diffusion of heat.
+///
+/// Heat spreads and decays towards ambient (0).
+#[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
+pub fn diffuse_heat(vm: &mut ChimeraVM) {
+    let mut buffer = [[0i64; 16]; 16];
+    for y in 0..16 {
+        for x in 0..16 {
+            let neighbors: Vec<_> = get_open_neighbors(vm, y, x).collect();
+            let mut sum = (vm.heat_grid[y][x] as i128) * 4;
+            let mut count = 4;
+
+            for (ny, nx) in neighbors {
+                sum += vm.heat_grid[ny][nx] as i128;
+                count += 1;
+            }
+
+            // Blur
+            let avg = (sum / count) as i64;
+            // Decay towards 0 (Ambient) by 1 unit or 5%, whichever is larger, but preserve sign
+            let decay = if avg > 0 {
+                (avg / 20).max(1)
+            } else if avg < 0 {
+                (avg / 20).min(-1)
+            } else {
+                0
+            };
+            buffer[y][x] = avg - decay;
+        }
+    }
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.heat_grid[y][x] = buffer[y][x];
         }
     }
 }
@@ -518,6 +557,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 waste_grid: vm.waste_grid.clone(),
                 mutagen_grid: vm.mutagen_grid.clone(),
                 light_grid: vm.light_grid.clone(),
+                heat_grid: vm.heat_grid.clone(),
                 call_stack: vm.call_stack.clone(),
                 input_buffer: vm.input_buffer.clone(),
                 receptors: vm.receptors.clone(),
@@ -570,6 +610,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.waste_grid = spore.waste_grid.clone();
                         vm.mutagen_grid = spore.mutagen_grid.clone();
                         vm.light_grid = spore.light_grid.clone();
+                        vm.heat_grid = spore.heat_grid.clone();
                         vm.call_stack = spore.call_stack.clone();
                         vm.input_buffer = spore.input_buffer.clone();
                         vm.receptors = spore.receptors.clone();
@@ -2446,7 +2487,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let radius_val = vm.stack.pop().unwrap();
                 let amount_val = vm.stack.pop().unwrap();
                 if let (Value::Int(r), Value::Int(amount)) = (radius_val, amount_val) {
-                    if r > 0 && amount > 0 {
+                    if r >= 0 && amount > 0 {
                         let (cy, cx) = vm.context_loc;
                         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
                         for (tx, ty) in coords {
@@ -2454,9 +2495,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.mutagen_grid[ty][tx].saturating_add(amount);
                         }
                         // Cost is proportional to amount and area
-                        vm.energy = vm
-                            .energy
-                            .saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                        let cost = (r.saturating_mul(r).saturating_add(1)).clamp(5, 50)
+                            .saturating_add(amount / 10);
+                        vm.energy = vm.energy.saturating_sub(cost);
                         vm.output.push(format!(
                             "IRRADIATE: Added {} mutagen at {},{} r={}",
                             amount, cx, cy, r
@@ -2476,6 +2517,75 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::SenseMutagen => {
             let (cy, cx) = vm.context_loc;
             let level = vm.mutagen_grid[cy][cx];
+            vm.stack.push(Value::Int(level));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Ignite => {
+            // stack: amount, radius (top)
+            if vm.stack.len() >= 2 {
+                let radius_val = vm.stack.pop().unwrap();
+                let amount_val = vm.stack.pop().unwrap();
+                if let (Value::Int(r), Value::Int(amount)) = (radius_val, amount_val) {
+                    if r >= 0 && amount > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+                        for (tx, ty) in coords {
+                            vm.heat_grid[ty][tx] = vm.heat_grid[ty][tx].saturating_add(amount);
+                        }
+                        let cost = (r.saturating_mul(r).saturating_add(1)).clamp(5, 50)
+                            .saturating_add(amount / 10);
+                        vm.energy = vm.energy.saturating_sub(cost);
+                        vm.output.push(format!(
+                            "IGNITE: Added {} heat at {},{} r={}",
+                            amount, cx, cy, r
+                        ));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for ignite".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for ignite".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Freeze => {
+            // stack: amount, radius (top)
+            if vm.stack.len() >= 2 {
+                let radius_val = vm.stack.pop().unwrap();
+                let amount_val = vm.stack.pop().unwrap();
+                if let (Value::Int(r), Value::Int(amount)) = (radius_val, amount_val) {
+                    if r > 0 && amount > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+                        for (tx, ty) in coords {
+                            vm.heat_grid[ty][tx] = vm.heat_grid[ty][tx].saturating_sub(amount);
+                        }
+                        let cost = (r.saturating_mul(r).saturating_add(1)).clamp(5, 50)
+                            .saturating_add(amount / 10);
+                        vm.energy = vm.energy.saturating_sub(cost);
+                        vm.output.push(format!(
+                            "FREEZE: Removed {} heat at {},{} r={}",
+                            amount, cx, cy, r
+                        ));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for freeze".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for freeze".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Thermometer => {
+            let (cy, cx) = vm.context_loc;
+            let level = vm.heat_grid[cy][cx];
             vm.stack.push(Value::Int(level));
             None
         }
@@ -2953,6 +3063,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
             let mut next_grid = vm.grid.clone();
 
+            #[allow(clippy::needless_range_loop)]
             for y in 0..rows {
                 for x in 0..cols {
                     // Count neighbors
@@ -2974,7 +3085,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if !is_alive && neighbors == 3 {
                         // Birth: Becomes 1
                         next_grid[y][x] = Value::Int(1);
-                    } else if is_alive && (neighbors < 2 || neighbors > 3) {
+                    } else if is_alive && !(2..=3).contains(&neighbors) {
                         // Death
                         next_grid[y][x] = Value::Int(0);
                     }
@@ -3020,7 +3131,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                          }
                     }
 
-                    vm.energy = vm.energy.saturating_sub(severity as i64);
+                    vm.energy = vm.energy.saturating_sub(severity);
                     vm.output.push(format!("GLITCH: Severity {}", severity));
                 } else {
                     vm.output.push("Error: Type mismatch for glitch".to_string());

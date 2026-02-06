@@ -1,4 +1,3 @@
-#![cfg(feature = "biophysics")]
 use super::ChimeraVM;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
@@ -81,6 +80,12 @@ impl Neuron {
     }
 }
 
+impl Default for Neuron {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::NeuroGenesis => {
@@ -91,8 +96,9 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
                     if vm.is_valid_coord(y, x) {
                         let coord = (y as usize, x as usize);
-                        if !vm.neurons.contains_key(&coord) {
-                            vm.neurons.insert(coord, Neuron::new());
+                        use std::collections::hash_map::Entry;
+                        if let Entry::Vacant(e) = vm.neurons.entry(coord) {
+                            e.insert(Neuron::new());
                             vm.energy = vm.energy.saturating_sub(20);
                             vm.output
                                 .push(format!("NEUROGENESIS: Created neuron at {},{}", x, y));

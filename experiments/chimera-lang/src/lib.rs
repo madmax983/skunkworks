@@ -73,6 +73,8 @@ mod nova_organelle_types_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_phase_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_thermo_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;
 #[cfg(test)]
 mod nova_quantum_test;

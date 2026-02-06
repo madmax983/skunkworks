@@ -23,7 +23,6 @@ members = [
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
     "experiments/hyperbolic-space",
-    "experiments/input-ghost",
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/log-landscape",

@@ -510,6 +510,22 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    /// **[Nova]** Increases local temperature.
+    ///
+    /// **Stack:** `[ ..., amount, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Ignite,
+    /// **[Nova]** Decreases local temperature.
+    ///
+    /// **Stack:** `[ ..., amount, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Freeze,
+    /// **[Nova]** Reads local temperature.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., temp ]`
+    #[cfg(feature = "nova")]
+    Thermometer,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -627,6 +643,13 @@ impl FromStr for OpCode {
             "retract" => Ok(OpCode::Retract),
             #[cfg(feature = "oracle")]
             "query" => Ok(OpCode::Query),
+
+            #[cfg(feature = "nova")]
+            "ignite" => Ok(OpCode::Ignite),
+            #[cfg(feature = "nova")]
+            "freeze" => Ok(OpCode::Freeze),
+            #[cfg(feature = "nova")]
+            "thermometer" => Ok(OpCode::Thermometer),
 
             #[cfg(feature = "nova")]
             "remap" => Ok(OpCode::Remap),
@@ -1030,6 +1053,13 @@ impl fmt::Display for OpCode {
             OpCode::Filter => write!(f, "filter"),
             #[cfg(feature = "nova")]
             OpCode::Zip => write!(f, "zip"),
+
+            #[cfg(feature = "nova")]
+            OpCode::Ignite => write!(f, "ignite"),
+            #[cfg(feature = "nova")]
+            OpCode::Freeze => write!(f, "freeze"),
+            #[cfg(feature = "nova")]
+            OpCode::Thermometer => write!(f, "thermometer"),
 
             #[cfg(feature = "nova")]
             OpCode::Note => write!(f, "note"),
