@@ -538,6 +538,35 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Glyph,
 
+    // Fungi Features (Mycelial Network)
+    /// **[Nova]** Spawns a fungal node (Hyphae) at the current grid location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Hyphae,
+    /// **[Nova]** Connects the current Hyphae to another at target coordinates.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Connect,
+    /// **[Nova]** Transport a value instantly to a connected Hyphae.
+    ///
+    /// **Stack:** `[ ..., val, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Transport,
+    /// **[Nova]** Release spores to randomly spawn Hyphae nearby.
+    ///
+    /// **Stack:** `[ ..., radius, density ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    SporeCloud,
+
+    // Polyglot Features
+    /// **[Nova]** Executes a string as Brainfuck code.
+    ///
+    /// **Stack:** `[ ..., bf_code_string, input_string ] -> [ ..., output_string ]`
+    #[cfg(feature = "nova")]
+    Brainfuck,
+
     // Ribozyme Features (Functional Programming)
     /// **[Nova]** Evaluates a string as code.
     ///
@@ -638,6 +667,18 @@ impl FromStr for OpCode {
             "pigment" => Ok(OpCode::Pigment),
             #[cfg(feature = "nova")]
             "glyph" => Ok(OpCode::Glyph),
+
+            #[cfg(feature = "nova")]
+            "hyphae" => Ok(OpCode::Hyphae),
+            #[cfg(feature = "nova")]
+            "connect" => Ok(OpCode::Connect),
+            #[cfg(feature = "nova")]
+            "transport" => Ok(OpCode::Transport),
+            #[cfg(feature = "nova")]
+            "spore_cloud" => Ok(OpCode::SporeCloud),
+            #[cfg(feature = "nova")]
+            "brainfuck" => Ok(OpCode::Brainfuck),
+
             #[cfg(feature = "nova")]
             "eval" => Ok(OpCode::Eval),
             #[cfg(feature = "nova")]
@@ -1020,6 +1061,18 @@ impl fmt::Display for OpCode {
             OpCode::Pigment => write!(f, "pigment"),
             #[cfg(feature = "nova")]
             OpCode::Glyph => write!(f, "glyph"),
+
+            #[cfg(feature = "nova")]
+            OpCode::Hyphae => write!(f, "hyphae"),
+            #[cfg(feature = "nova")]
+            OpCode::Connect => write!(f, "connect"),
+            #[cfg(feature = "nova")]
+            OpCode::Transport => write!(f, "transport"),
+            #[cfg(feature = "nova")]
+            OpCode::SporeCloud => write!(f, "spore_cloud"),
+            #[cfg(feature = "nova")]
+            OpCode::Brainfuck => write!(f, "brainfuck"),
+
             #[cfg(feature = "nova")]
             OpCode::Eval => write!(f, "eval"),
             #[cfg(feature = "nova")]

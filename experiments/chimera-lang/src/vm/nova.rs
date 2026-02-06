@@ -78,6 +78,7 @@ pub struct Spore {
     pub reflexes: HashMap<i64, usize>,
     pub remap_table: HashMap<OpCode, OpCode>,
     pub direction: isize,
+    pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -438,6 +439,86 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Brainfuck => {
+            // stack: bf_code_string, input_string (top)
+            if vm.stack.len() >= 2 {
+                let input_val = vm.stack.pop().unwrap();
+                let code_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(code), Value::Str(input)) = (code_val, input_val) {
+                    let code_chars: Vec<char> = code.chars().collect();
+                    let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
+                    let mut output_bytes: Vec<u8> = Vec::new();
+
+                    let mut tape = vec![0u8; 30000];
+                    let mut ptr = 0;
+                    let mut pc = 0;
+                    let mut cycles = 0;
+                    let max_cycles = 10000; // Safety limit
+
+                    // Precompute jump targets
+                    let mut jumps = HashMap::new();
+                    let mut loop_stack = Vec::new();
+                    for (i, &c) in code_chars.iter().enumerate() {
+                        if c == '[' {
+                            loop_stack.push(i);
+                        } else if c == ']' {
+                            if let Some(start) = loop_stack.pop() {
+                                jumps.insert(start, i);
+                                jumps.insert(i, start);
+                            }
+                        }
+                    }
+
+                    while pc < code_chars.len() && cycles < max_cycles {
+                        match code_chars[pc] {
+                            '>' => {
+                                if ptr < tape.len() - 1 { ptr += 1; }
+                                else { ptr = 0; } // Wrap
+                            },
+                            '<' => {
+                                if ptr > 0 { ptr -= 1; }
+                                else { ptr = tape.len() - 1; } // Wrap
+                            },
+                            '+' => tape[ptr] = tape[ptr].wrapping_add(1),
+                            '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
+                            '.' => output_bytes.push(tape[ptr]),
+                            ',' => {
+                                tape[ptr] = input_chars.pop_front().unwrap_or(0);
+                            },
+                            '[' => {
+                                if tape[ptr] == 0 {
+                                    if let Some(&target) = jumps.get(&pc) {
+                                        pc = target;
+                                    }
+                                }
+                            },
+                            ']' => {
+                                if tape[ptr] != 0 {
+                                    if let Some(&target) = jumps.get(&pc) {
+                                        pc = target;
+                                    }
+                                }
+                            },
+                            _ => {} // Ignore non-BF chars
+                        }
+                        pc += 1;
+                        cycles += 1;
+                    }
+
+                    let output_str = String::from_utf8_lossy(&output_bytes).to_string();
+                    vm.stack.push(Value::Str(output_str));
+                    vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
+                    vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
+                } else {
+                    vm.output.push("Error: Type mismatch for brainfuck".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for brainfuck".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Spawn => {
             // stack: type, strand_idx (bottom)
             if vm.stack.len() >= 2 {
@@ -531,6 +612,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 reflexes: vm.reflexes.clone(),
                 remap_table: vm.remap_table.clone(),
                 direction: vm.direction,
+                mycelium: vm.mycelium.clone(),
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -583,6 +665,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.reflexes = spore.reflexes.clone();
                         vm.remap_table = spore.remap_table.clone();
                         vm.direction = spore.direction;
+                        vm.mycelium = spore.mycelium.clone();
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
@@ -3036,6 +3119,129 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.shuffle(&mut rng);
             vm.energy = vm.energy.saturating_sub(10);
             vm.output.push("SCRAMBLE: Stack shuffled".to_string());
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Hyphae => {
+            let (cy, cx) = vm.context_loc;
+            if vm.mycelium.contains_key(&(cy, cx)) {
+                vm.output.push(format!("HYPHAE: Node already exists at {},{}", cx, cy));
+            } else {
+                vm.mycelium.insert((cy, cx), Vec::new());
+                vm.energy = vm.energy.saturating_sub(20);
+                vm.output.push(format!("HYPHAE: Sprouted at {},{}", cx, cy));
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Connect => {
+            // stack: y, x (top)
+            if vm.stack.len() >= 2 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
+                    if let Some((ty, tx)) = vm.normalize_coords(y, x) {
+                        let (cy, cx) = vm.context_loc;
+                        if vm.mycelium.contains_key(&(cy, cx)) && vm.mycelium.contains_key(&(ty, tx)) {
+                            // Add undirected edge
+                            vm.mycelium.get_mut(&(cy, cx)).unwrap().push((ty, tx));
+                            vm.mycelium.get_mut(&(ty, tx)).unwrap().push((cy, cx));
+                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.output.push(format!("CONNECT: Mycelium linked {},{} <-> {},{}", cx, cy, tx, ty));
+                        } else {
+                            vm.output.push("CONNECT: Both ends must be Hyphae".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Coordinates out of bounds for connect".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for connect".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for connect".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Transport => {
+            // stack: val, y, x (top)
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
+                    if let Some((ty, tx)) = vm.normalize_coords(y, x) {
+                        let (cy, cx) = vm.context_loc;
+
+                        // BFS to find path
+                        let mut queue = VecDeque::new();
+                        let mut visited = HashSet::new();
+                        queue.push_back((cy, cx));
+                        visited.insert((cy, cx));
+
+                        let mut found = false;
+                        while let Some(curr) = queue.pop_front() {
+                            if curr == (ty, tx) {
+                                found = true;
+                                break;
+                            }
+                            if let Some(neighbors) = vm.mycelium.get(&curr) {
+                                for &next in neighbors {
+                                    if !visited.contains(&next) {
+                                        visited.insert(next);
+                                        queue.push_back(next);
+                                    }
+                                }
+                            }
+                        }
+
+                        if found {
+                            vm.grid[ty][tx] = val;
+                            vm.energy = vm.energy.saturating_sub(5);
+                            vm.output.push(format!("TRANSPORT: Sent value to {},{}", tx, ty));
+                        } else {
+                            vm.output.push("TRANSPORT: No mycelial path found".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Coordinates out of bounds for transport".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for transport".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for transport".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SporeCloud => {
+            // stack: radius, density (top)
+            if vm.stack.len() >= 2 {
+                let dens_val = vm.stack.pop().unwrap();
+                let rad_val = vm.stack.pop().unwrap();
+                if let (Value::Int(r), Value::Int(d)) = (rad_val, dens_val) {
+                    let (cy, cx) = vm.context_loc;
+                    let mut rng = rand::thread_rng();
+                    let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+
+                    let mut count = 0;
+                    for (tx, ty) in coords {
+                        if rng.gen_range(0..100) < d {
+                            if !vm.mycelium.contains_key(&(ty, tx)) {
+                                vm.mycelium.insert((ty, tx), Vec::new());
+                                count += 1;
+                            }
+                        }
+                    }
+                    vm.energy = vm.energy.saturating_sub(count * 5);
+                    vm.output.push(format!("SPORE_CLOUD: Sprouted {} hyphae", count));
+                } else {
+                    vm.output.push("Error: Type mismatch for spore_cloud".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for spore_cloud".to_string());
+            }
             None
         }
         _ => None,

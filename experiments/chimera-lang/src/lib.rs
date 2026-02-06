@@ -121,5 +121,7 @@ mod warden_dos_test;
 mod warden_exploit_test;
 #[cfg(all(test, feature = "nova"))]
 mod chaos_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_fungi_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod cortex_view_test;

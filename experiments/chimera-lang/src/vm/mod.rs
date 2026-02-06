@@ -208,6 +208,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub direction: isize,
     #[cfg(feature = "nova")]
+    pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
+    #[cfg(feature = "nova")]
     pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
@@ -308,6 +310,8 @@ impl ChimeraVM {
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
             direction: 1,
+            #[cfg(feature = "nova")]
+            mycelium: HashMap::new(),
             #[cfg(feature = "nova")]
             score: Vec::new(),
             #[cfg(feature = "oracle")]
@@ -1185,6 +1189,11 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
+            | OpCode::Hyphae
+            | OpCode::Connect
+            | OpCode::Transport
+            | OpCode::SporeCloud
+            | OpCode::Brainfuck
             | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour
