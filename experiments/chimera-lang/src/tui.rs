@@ -18,7 +18,7 @@ use ratatui::{
 };
 use std::io;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
     Genome,
     Grid,
@@ -122,6 +122,36 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        // Process Tui Queue
+        while !vm.tui_queue.is_empty() {
+            let cmd = vm.tui_queue.remove(0);
+            match cmd {
+                crate::vm::TuiCommand::SwitchView(idx) => {
+                    app_state.view_mode = match idx {
+                        0 => ViewMode::Genome,
+                        1 => ViewMode::Grid,
+                        2 => ViewMode::Microscope,
+                        #[cfg(feature = "biophysics")]
+                        3 => ViewMode::Cortex,
+                        #[cfg(not(feature = "biophysics"))]
+                        3 => app_state.view_mode, // Skip
+                        #[cfg(feature = "nova")]
+                        4 => ViewMode::Metaphysics,
+                        #[cfg(not(feature = "nova"))]
+                        4 => app_state.view_mode,
+                        #[cfg(feature = "nova")]
+                        5 => ViewMode::Laboratory,
+                        #[cfg(not(feature = "nova"))]
+                        5 => app_state.view_mode,
+                        _ => app_state.view_mode,
+                    };
+                },
+                crate::vm::TuiCommand::SetStatus(msg) => {
+                    app_state.status_msg = msg;
+                }
+            }
+        }
+
         #[cfg(feature = "biophysics")]
         if let Some(coord) = app_state.selected_neuron_coords {
             if let Some(neuron) = vm.neurons.get(&coord) {

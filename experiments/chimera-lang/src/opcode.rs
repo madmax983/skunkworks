@@ -342,6 +342,11 @@ pub enum OpCode {
     /// **Effect:** Pushes return address to `call_stack` and jumps.
     #[cfg(feature = "nova")]
     Call,
+    /// **[Nova]** Calls a strand specified on the stack.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    CallS,
     /// **[Nova]** Returns from a subroutine.
     ///
     /// **Effect:** Pops address from `call_stack` and jumps.
@@ -676,6 +681,40 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     SporeCloud,
 
+    // Meta / TUI Control Features
+    /// **[Nova]** Switches the TUI View.
+    ///
+    /// **Args:** `[Nucleotide::Number(mode_idx)]`
+    #[cfg(feature = "nova")]
+    View,
+    /// **[Nova]** Sets the status message in the TUI.
+    ///
+    /// **Args:** `[Nucleotide::String(msg)]`
+    #[cfg(feature = "nova")]
+    Status,
+    /// **[Nova]** Toggles Chaos Mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chaos,
+    /// **[Nova]** Reads a column from the grid as a Junction.
+    ///
+    /// **Args:** `[Nucleotide::Number(x)]`
+    /// **Stack:** `[ ... ] -> [ ..., column_junction ]`
+    #[cfg(feature = "nova")]
+    Column,
+    /// **[Nova]** Scans a horizontal range from the grid as a Junction.
+    ///
+    /// **Args:** `[Nucleotide::Number(len), Nucleotide::Number(y), Nucleotide::Number(x)]`
+    /// **Stack:** `[ ... ] -> [ ..., scanned_junction ]`
+    #[cfg(feature = "nova")]
+    Scan,
+    /// **[Nova]** Formats a Junction into a String representation.
+    ///
+    /// **Stack:** `[ ..., junction ] -> [ ..., string ]`
+    #[cfg(feature = "nova")]
+    Format,
+
     // Polyglot Features
     /// **[Nova]** Executes a string as Brainfuck code.
     ///
@@ -852,5 +891,13 @@ mod tests {
         assert_eq!(OpCode::GRead.to_string(), "g_read");
         assert_eq!(OpCode::SLen.to_string(), "s_len");
         assert_eq!(OpCode::Unknown("foo".to_string()).to_string(), "foo");
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_nova_opcodes() {
+        assert_eq!(OpCode::from_str("view"), Ok(OpCode::View));
+        assert_eq!(OpCode::from_str("status"), Ok(OpCode::Status));
+        assert_eq!(OpCode::from_str("scan"), Ok(OpCode::Scan));
     }
 }

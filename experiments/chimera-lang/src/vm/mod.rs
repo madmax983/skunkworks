@@ -102,6 +102,12 @@ pub enum Topology {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub enum TuiCommand {
+    SwitchView(usize),
+    SetStatus(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Int(i64),
     Str(String),
@@ -266,6 +272,7 @@ pub struct ChimeraVM {
     pub spirit_request: bool,
     #[cfg(feature = "nova")]
     pub spirit_value: Option<Value>,
+    pub tui_queue: Vec<TuiCommand>,
 }
 
 impl ChimeraVM {
@@ -387,6 +394,7 @@ impl ChimeraVM {
             spirit_request: false,
             #[cfg(feature = "nova")]
             spirit_value: None,
+            tui_queue: Vec::new(),
         }
     }
 
@@ -1426,7 +1434,14 @@ impl ChimeraVM {
             OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Splice
+            OpCode::View
+            | OpCode::Status
+            | OpCode::Chaos
+            | OpCode::Column
+            | OpCode::Scan
+            | OpCode::Format
+            | OpCode::CallS
+            | OpCode::Splice
             | OpCode::Isomerize
             | OpCode::Spirit
             | OpCode::Alchemy

@@ -106,10 +106,11 @@ fn test_conjugation_incubation_cycle() {
 
     // S0 pops 4. Stack empty.
     // S1 pushes 1. Stack: [1].
-    // S2 pops 3. Stack: [1].
-    // S3 pushes 3. Stack: [1, 3].
+    // S2 pops 3. Incubate pushes new strand index (3). Stack: [1, 3].
+    // S3 pushes 3. Stack: [1, 3, 3].
 
-    assert_eq!(vm.stack.len(), 2);
+    assert_eq!(vm.stack.len(), 3);
     assert_eq!(vm.stack[0], Value::Int(1));
     assert_eq!(vm.stack[1], Value::Int(3));
+    assert_eq!(vm.stack[2], Value::Int(3));
 }

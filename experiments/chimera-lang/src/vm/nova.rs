@@ -462,6 +462,119 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
+        OpCode::View => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.tui_queue.push(crate::vm::TuiCommand::SwitchView(idx as usize));
+                }
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::CallS => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Int(idx) => {
+                        let strand_idx = idx as usize;
+                        if strand_idx < vm.dna.helix.strands.len() {
+                            if vm.call_stack.len() >= crate::vm::MAX_CALL_STACK_DEPTH {
+                                vm.output.push("Error: Call stack overflow".to_string());
+                                return None;
+                            }
+                            vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
+                            return Some((strand_idx, 0));
+                        } else {
+                            vm.output.push("Error: Invalid strand index for call_s".to_string());
+                        }
+                    }
+                    _ => vm.output.push("Error: Type mismatch for call_s".to_string()),
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for call_s".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Status => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(msg) = val {
+                    vm.tui_queue.push(crate::vm::TuiCommand::SetStatus(msg));
+                }
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Chaos => {
+            vm.chaos_mode = !vm.chaos_mode;
+            vm.output.push(format!("CHAOS: {}", if vm.chaos_mode { "ON" } else { "OFF" }));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Column => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(x) = val {
+                    let col_idx = x as usize;
+                    if col_idx < crate::vm::GRID_SIZE {
+                        let mut vals = Vec::new();
+                        for y in 0..crate::vm::GRID_SIZE {
+                            vals.push(vm.grid[y][col_idx].clone());
+                        }
+                        vm.stack.push(Value::Junction(crate::ast::JunctionType::All, vals));
+                    } else {
+                        vm.output.push("Error: Column index out of bounds".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for column".to_string());
+                }
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Scan => {
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let len_val = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y), Value::Int(len)) = (x_val, y_val, len_val) {
+                    let mut vals = Vec::new();
+                    for k in 0..len {
+                        if let Some((ny, nx)) = vm.normalize_coords(y, x + k) {
+                            vals.push(vm.grid[ny][nx].clone());
+                        }
+                    }
+                    vm.stack.push(Value::Junction(crate::ast::JunctionType::All, vals));
+                } else {
+                    vm.output.push("Error: Type mismatch for scan".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for scan".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Format => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Junction(_, vals) = val {
+                    // Convert list of values/opcodes to a string representation suitable for Eval/Compile
+                    let mut s = String::new();
+                    for (i, v) in vals.iter().enumerate() {
+                        if i > 0 { s.push(' '); }
+                        match v {
+                            Value::Int(n) => s.push_str(&n.to_string()),
+                            Value::Str(str_val) => s.push_str(str_val),
+                            Value::Junction(_, _) => s.push_str("nested"),
+                        }
+                    }
+                    vm.stack.push(Value::Str(s));
+                } else {
+                    vm.output.push("Error: Type mismatch for format (expected junction)".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for format".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Prophecy => {
             // stack: ticks (top)
             if let Some(val) = vm.stack.pop() {
@@ -1222,10 +1335,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.activation_levels.push(0);
                                 vm.synapse_map.push(Vec::new());
                             }
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.stack.push(Value::Int(new_idx as i64));
                             vm.energy = vm.energy.saturating_sub(20); // Cost
                             vm.output.push(format!(
                                 "INCUBATE: Created new strand {} from grid",
-                                vm.dna.helix.strands.len() - 1
+                                new_idx
                             ));
                         }
                     } else {
