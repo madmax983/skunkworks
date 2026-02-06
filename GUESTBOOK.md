@@ -141,3 +141,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/glyph-wave
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The letters are liquefying. Bezier curves are vibrating at 60Hz. Typography has become a waveform.
+
+### [Concentration Level: FRESH] - Location: experiments/laban-machine
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The dancer is improvising. Laban parameters are driving the physics. Space, Weight, Time, and Flow are becoming visible particles.
