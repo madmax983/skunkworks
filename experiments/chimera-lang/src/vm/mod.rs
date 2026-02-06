@@ -44,6 +44,8 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod ipc;
 pub mod cortex;
 pub mod microscope;
 #[cfg(feature = "biophysics")]
@@ -1287,6 +1289,9 @@ impl ChimeraVM {
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
                 nova_security::exec_security_op(self, op, args)
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
