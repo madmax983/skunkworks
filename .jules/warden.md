@@ -31,3 +31,7 @@
 **2026-03-05 - Chimera-Lang Parser Panic Hardening**
 **Threat:** DoS via panic in `chimera-lang` parser when parsing DNA strands with integer overflow (numbers > i64::MAX).
 **Defense:** Refactored `from_pair` to `try_from_pair` returning `Result`, ensuring parsing errors are propagated and handled safely without crashing the VM.
+
+**2026-03-10 - Chimera-Lang Memory & Recursion Hardening**
+**Threat:** DoS via memory exhaustion in `Incubate` (unbounded strand creation), `Methylate` (unbounded epigenome), and Stack Overflow in recursive nucleotide parsing/formatting.
+**Defense:** Capped `Incubate` length and `Methylate` epigenome size to 1024. Implemented recursion depth limits in `value_to_nucleotide` and `format_nucleotide`.

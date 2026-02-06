@@ -1,6 +1,6 @@
 use crate::types::{Order, Side};
-use uuid::Uuid;
 use rand::Rng;
+use uuid::Uuid;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Strategy {
@@ -32,7 +32,9 @@ impl Agent {
     }
 
     pub fn tick(&mut self) {
-        if !self.is_alive { return; }
+        if !self.is_alive {
+            return;
+        }
 
         // Passive drain (Context switching cost)
         self.battery -= 0.2;
@@ -40,39 +42,42 @@ impl Agent {
         // Basic Income
         self.credits += 0.5;
 
-        if self.battery <= 0.0 || self.credits < -50.0 { // Allow some debt
+        if self.battery <= 0.0 || self.credits < -50.0 {
+            // Allow some debt
             self.is_alive = false;
         }
     }
 
     pub fn decide(&self, market_price: f64, tick: u64) -> Option<Order> {
-        if !self.is_alive { return None; }
+        if !self.is_alive {
+            return None;
+        }
 
         let mut rng = rand::thread_rng();
         let volatility = 0.1;
 
         // Buying Logic (Low Battery)
         if self.battery < 40.0 {
-             let price_mult = match self.strategy {
+            let price_mult = match self.strategy {
                 Strategy::Desperate => 1.5,
                 Strategy::Saver => 0.8,
                 Strategy::Market => 1.0 + rng.gen_range(-volatility..volatility),
-             };
+            };
 
-             let bid_price = (market_price * price_mult).max(0.1);
-             return Some(Order::new(Side::Bid, bid_price, 5, self.id, tick));
+            let bid_price = (market_price * price_mult).max(0.1);
+            return Some(Order::new(Side::Bid, bid_price, 5, self.id, tick));
         }
 
         // Selling Logic (High Battery - selling excess compute cycles?)
         if self.battery > 80.0 {
-             let price_mult = match self.strategy {
+            let price_mult = match self.strategy {
                 Strategy::Desperate => 0.8, // Sell quick
-                Strategy::Saver => 1.2, // Wait for profit
+                Strategy::Saver => 1.2,     // Wait for profit
                 Strategy::Market => 1.0 + rng.gen_range(-volatility..volatility),
-             };
+            };
 
-             let ask_price = (market_price * price_mult).max(0.1);
-             return Some(Order::new(Side::Ask, ask_price, 5, self.id, tick));
+            let ask_price = (market_price * price_mult).max(0.1);
+            return Some(Order::new(Side::Ask, ask_price, 5, self.id, tick));
         }
 
         None

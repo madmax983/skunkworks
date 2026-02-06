@@ -1,7 +1,7 @@
-use crate::physics::{Particle, PacketKind, NeuronPin, resolve_collision};
 use crate::audio::{NeuronHit, Snapshot};
-use tui_shared::math::Vec2;
+use crate::physics::{resolve_collision, NeuronPin, PacketKind, Particle};
 use rand::Rng;
+use tui_shared::math::Vec2;
 
 pub struct GameState {
     pub width: f64,
@@ -75,7 +75,9 @@ impl GameState {
 
         // Pin collisions
         for p in &mut self.particles {
-            if !p.active { continue; }
+            if !p.active {
+                continue;
+            }
             for pin in &self.pins {
                 if let Some(idx) = resolve_collision(p, pin) {
                     // Send Hit Event
@@ -84,7 +86,10 @@ impl GameState {
                         PacketKind::Ssh => 15.0,
                         PacketKind::Malware => 25.0,
                     };
-                    let _ = hit_tx.send(NeuronHit { index: idx, strength });
+                    let _ = hit_tx.send(NeuronHit {
+                        index: idx,
+                        strength,
+                    });
                     self.score += 1;
                 }
             }
@@ -96,7 +101,7 @@ impl GameState {
 
     pub fn update_voltages(&mut self, snap: Snapshot) {
         if snap.voltages.len() == self.pins.len() {
-             self.neuron_voltages = snap.voltages;
+            self.neuron_voltages = snap.voltages;
         }
         self.mean_field = snap.mean_field;
     }

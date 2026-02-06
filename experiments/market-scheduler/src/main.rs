@@ -1,8 +1,8 @@
-mod types;
-mod market;
 mod agent;
+mod market;
 mod simulation;
 mod tui;
+mod types;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};

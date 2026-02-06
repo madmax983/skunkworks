@@ -26,6 +26,9 @@ use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
+const MAX_EPIGENOME_SIZE: usize = 1024;
+const MAX_INCUBATE_LENGTH: usize = 1024;
+
 /// The physical state of the organism, affecting movement and mutation.
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -440,12 +443,23 @@ pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
 }
 
 #[cfg(feature = "nova")]
-fn value_to_nucleotide(v: &Value) -> Nucleotide {
+fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
+    if depth > crate::vm::MAX_RECURSION_DEPTH {
+        return None;
+    }
     match v {
-        Value::Int(n) => Nucleotide::Number(*n),
-        Value::Str(s) => Nucleotide::String(s.clone()),
+        Value::Int(n) => Some(Nucleotide::Number(*n)),
+        Value::Str(s) => Some(Nucleotide::String(s.clone())),
         Value::Junction(t, vals) => {
-            Nucleotide::Junction(*t, vals.iter().map(value_to_nucleotide).collect())
+            let mut nuc_vals = Vec::new();
+            for val in vals {
+                if let Some(n) = value_to_nucleotide(val, depth + 1) {
+                    nuc_vals.push(n);
+                } else {
+                    return None;
+                }
+            }
+            Some(Nucleotide::Junction(*t, nuc_vals))
         }
     }
 }
@@ -536,12 +550,19 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     x += 1;
                 }
                 Value::Junction(t, vals) => {
+                    let mut nuc_vals = Vec::new();
+                    for v in vals {
+                        if let Some(n) = value_to_nucleotide(v, 0) {
+                            nuc_vals.push(n);
+                        } else {
+                            vm.output.push(
+                                "METAMORPHOSIS: Warning: Recursion limit exceeded".to_string(),
+                            );
+                        }
+                    }
                     genes.push(crate::ast::Gene {
                         op: OpCode::Push,
-                        args: vec![crate::ast::Nucleotide::Junction(
-                            *t,
-                            vals.iter().map(value_to_nucleotide).collect(),
-                        )],
+                        args: vec![crate::ast::Nucleotide::Junction(*t, nuc_vals)],
                     });
                     x += 1;
                 }
@@ -551,14 +572,28 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     match op {
                         OpCode::Push | OpCode::Jump | OpCode::Brz | OpCode::Call => {
                             if x + 1 < cols {
-                                args.push(value_to_nucleotide(&row[x + 1]));
+                                if let Some(arg) = value_to_nucleotide(&row[x + 1], 0) {
+                                    args.push(arg);
+                                } else {
+                                    vm.output.push(
+                                        "METAMORPHOSIS: Warning: Recursion limit exceeded"
+                                            .to_string(),
+                                    );
+                                }
                                 x += 1;
                             }
                         }
                         #[cfg(feature = "cortex")]
                         OpCode::Gate => {
                             if x + 1 < cols {
-                                args.push(value_to_nucleotide(&row[x + 1]));
+                                if let Some(arg) = value_to_nucleotide(&row[x + 1], 0) {
+                                    args.push(arg);
+                                } else {
+                                    vm.output.push(
+                                        "METAMORPHOSIS: Warning: Recursion limit exceeded"
+                                            .to_string(),
+                                    );
+                                }
                                 x += 1;
                             }
                         }
@@ -1488,7 +1523,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if len > 0 {
                         let mut genes = Vec::new();
                         let mut valid = true;
-                        let max_len = len as usize;
+                        let max_len = (len as usize).min(MAX_INCUBATE_LENGTH);
 
                         // Read sequence from grid
                         let mut sequence = Vec::new();
@@ -1517,11 +1552,21 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                     }
                                     Value::Junction(t, vals) => {
                                         // Treated as push(junction)
+                                        let mut nuc_vals = Vec::new();
+                                        for v in vals {
+                                            if let Some(n) = value_to_nucleotide(v, 0) {
+                                                nuc_vals.push(n);
+                                            } else {
+                                                vm.output.push(
+                                                    "INCUBATE: Warning: Recursion limit exceeded"
+                                                        .to_string(),
+                                                );
+                                            }
+                                        }
                                         genes.push(crate::ast::Gene {
                                             op: OpCode::Push,
                                             args: vec![crate::ast::Nucleotide::Junction(
-                                                *t,
-                                                vals.iter().map(value_to_nucleotide).collect(),
+                                                *t, nuc_vals,
                                             )],
                                         });
                                         k += 1;
@@ -1552,9 +1597,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                                 }
                                                 // 1 Arg
                                                 if k + 1 < sequence.len() {
-                                                    args.push(value_to_nucleotide(
-                                                        &sequence[k + 1],
-                                                    ));
+                                                    if let Some(arg) =
+                                                        value_to_nucleotide(&sequence[k + 1], 0)
+                                                    {
+                                                        args.push(arg);
+                                                    } else {
+                                                        vm.output.push(
+                                                            "INCUBATE: Warning: Recursion limit exceeded".to_string(),
+                                                        );
+                                                    }
                                                     k += 1; // Consume arg
                                                 }
                                             }
@@ -1564,9 +1615,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                             | OpCode::Sever
                                             | OpCode::Spark => {
                                                 if k + 1 < sequence.len() {
-                                                    args.push(value_to_nucleotide(
-                                                        &sequence[k + 1],
-                                                    ));
+                                                    if let Some(arg) =
+                                                        value_to_nucleotide(&sequence[k + 1], 0)
+                                                    {
+                                                        args.push(arg);
+                                                    } else {
+                                                        vm.output.push(
+                                                            "INCUBATE: Warning: Recursion limit exceeded".to_string(),
+                                                        );
+                                                    }
                                                     k += 1; // Consume arg
                                                 }
                                             }
@@ -1612,8 +1669,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let gene_val = vm.stack.pop().unwrap();
                 let strand_val = vm.stack.pop().unwrap();
                 if let (Value::Int(g_idx), Value::Int(s_idx)) = (gene_val, strand_val) {
-                    vm.epigenome.insert((s_idx as usize, g_idx as usize));
-                    vm.output.push(format!("METHYLATED: {}:{}", s_idx, g_idx));
+                    if vm.epigenome.len() < MAX_EPIGENOME_SIZE {
+                        vm.epigenome.insert((s_idx as usize, g_idx as usize));
+                        vm.output.push(format!("METHYLATED: {}:{}", s_idx, g_idx));
+                    } else {
+                        vm.output
+                            .push("Error: Epigenome size limit exceeded".to_string());
+                    }
                 } else {
                     vm.output
                         .push("Error: Invalid args for methylate".to_string());
@@ -1856,7 +1918,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 // Create Gene
                                 let new_gene = crate::ast::Gene {
                                     op: name.parse().unwrap_or(OpCode::Unknown(name.clone())),
-                                    args: vec![value_to_nucleotide(&arg)],
+                                    args: if let Some(n) = value_to_nucleotide(&arg, 0) {
+                                        vec![n]
+                                    } else {
+                                        vm.output.push(
+                                            "INTEGRASE: Warning: Recursion limit exceeded"
+                                                .to_string(),
+                                        );
+                                        vec![]
+                                    },
                                 };
 
                                 // Insert
@@ -3192,7 +3262,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if s_idx < vm.dna.helix.strands.len() {
                         let strand = &vm.dna.helix.strands[s_idx];
 
-                        fn format_nucleotide(n: &crate::ast::Nucleotide) -> String {
+                        fn format_nucleotide(n: &crate::ast::Nucleotide, depth: usize) -> String {
+                            if depth > crate::vm::MAX_RECURSION_DEPTH {
+                                return "...".to_string();
+                            }
                             match n {
                                 crate::ast::Nucleotide::Number(i) => i.to_string(),
                                 crate::ast::Nucleotide::String(s) => format!("\"{}\"", s),
@@ -3202,8 +3275,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         crate::ast::JunctionType::Any => "any",
                                         crate::ast::JunctionType::All => "all",
                                     };
-                                    let args_str: Vec<String> =
-                                        args.iter().map(format_nucleotide).collect();
+                                    let args_str: Vec<String> = args
+                                        .iter()
+                                        .map(|arg| format_nucleotide(arg, depth + 1))
+                                        .collect();
                                     format!("{}({})", t_str, args_str.join(" "))
                                 }
                             }
@@ -3217,7 +3292,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 if i > 0 {
                                     s.push(' ');
                                 }
-                                s.push_str(&format_nucleotide(arg));
+                                s.push_str(&format_nucleotide(arg, 0));
                             }
                             s.push_str(") ");
                         }
@@ -3280,7 +3355,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 if rows > 0 && cols > 0 {
                     // Helper to format gene with args
-                    fn format_nucleotide(n: &Nucleotide) -> String {
+                    fn format_nucleotide(n: &Nucleotide, depth: usize) -> String {
+                        if depth > crate::vm::MAX_RECURSION_DEPTH {
+                            return "...".to_string();
+                        }
                         match n {
                             Nucleotide::Number(i) => i.to_string(),
                             Nucleotide::String(s) => format!("\"{}\"", s),
@@ -3290,8 +3368,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                     crate::ast::JunctionType::Any => "any",
                                     crate::ast::JunctionType::All => "all",
                                 };
-                                let args_str: Vec<String> =
-                                    args.iter().map(format_nucleotide).collect();
+                                let args_str: Vec<String> = args
+                                    .iter()
+                                    .map(|arg| format_nucleotide(arg, depth + 1))
+                                    .collect();
                                 format!("{}({})", t_str, args_str.join(" "))
                             }
                         }
@@ -3305,7 +3385,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 if i > 0 {
                                     s.push(' ');
                                 }
-                                s.push_str(&format_nucleotide(arg));
+                                s.push_str(&format_nucleotide(arg, 0));
                             }
                             s.push(')');
                         }

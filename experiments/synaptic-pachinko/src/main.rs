@@ -1,7 +1,7 @@
-pub mod game;
-pub mod physics;
 pub mod audio;
+pub mod game;
 pub mod neuron;
+pub mod physics;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -18,9 +18,9 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use crate::game::GameState;
-use crate::physics::{PacketKind};
 use crate::audio::AudioEngine;
+use crate::game::GameState;
+use crate::physics::PacketKind;
 
 struct App {
     game: GameState,

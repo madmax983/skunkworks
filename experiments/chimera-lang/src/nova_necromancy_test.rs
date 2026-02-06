@@ -162,18 +162,24 @@ fn test_mourn() {
 
 #[test]
 fn test_resurrect_from_graveyard() {
-     // Setup VM with a strand in graveyard
-     let mut vm = make_vm(vec![]);
-     vm.graveyard.push(Strand {
-         genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] }]
-     });
+    // Setup VM with a strand in graveyard
+    let mut vm = make_vm(vec![]);
+    vm.graveyard.push(Strand {
+        genes: vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        }],
+    });
 
-     // Resurrect index 0
-     let res = vm.resurrect_from_graveyard(0);
-     assert!(res.is_ok());
+    // Resurrect index 0
+    let res = vm.resurrect_from_graveyard(0);
+    assert!(res.is_ok());
 
-     // Check it moved to helix
-     assert_eq!(vm.graveyard.len(), 0);
-     assert_eq!(vm.dna.helix.strands.len(), 2); // 1 initial empty + 1 resurrected
-     assert_eq!(vm.dna.helix.strands[1].genes[0].args[0], Nucleotide::Number(42));
+    // Check it moved to helix
+    assert_eq!(vm.graveyard.len(), 0);
+    assert_eq!(vm.dna.helix.strands.len(), 2); // 1 initial empty + 1 resurrected
+    assert_eq!(
+        vm.dna.helix.strands[1].genes[0].args[0],
+        Nucleotide::Number(42)
+    );
 }
