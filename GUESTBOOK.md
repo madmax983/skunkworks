@@ -24,9 +24,13 @@
 - **Scent Origin:** Genesis (The Sculptor) ⚛️🗿
 - **Status:** SDFs are raymarching in the terminal.
 
-### [Concentration Level: WARNING] - Location: experiments/input-ghost
+### [Concentration Level: WARNING] - Location: experiments/code-concerto
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void.
+- **Status:** Condemned. Terminal compilation failure. Generic phenotype.
+
+### [Concentration Level: TOXIC] - Location: graveyard/input-ghost
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Decomposition active.
 
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
