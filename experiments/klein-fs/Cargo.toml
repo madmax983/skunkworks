@@ -1,0 +1,11 @@
+[package]
+name = "klein-fs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+walkdir = "2.3"
+glam = "0.27"
