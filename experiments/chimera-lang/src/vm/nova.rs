@@ -3733,7 +3733,54 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             super::ipc::receive(vm);
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Match => {
+            // stack: pattern, target (top)
+            if vm.stack.len() >= 2 {
+                let target_val = vm.stack.pop().unwrap();
+                let pattern_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(p), Value::Str(t)) = (pattern_val, target_val) {
+                    let is_match = glob_match(&p, &t);
+                    vm.stack.push(Value::Int(if is_match { 1 } else { 0 }));
+                    vm.energy = vm.energy.saturating_sub(5);
+                } else {
+                    vm.output.push("Error: Type mismatch for match".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for match".to_string());
+            }
+            None
+        }
         _ => None,
+    }
+}
+
+#[cfg(feature = "nova")]
+fn glob_match(pattern: &str, target: &str) -> bool {
+    if let Some((p_head, p_tail)) = pattern.split_once('*') {
+        if !target.starts_with(p_head) {
+            return false;
+        }
+        let t_rest = &target[p_head.len()..];
+        if p_tail.is_empty() { return true; }
+
+        for i in 0..=t_rest.len() {
+            // Optimization: if p_tail doesn't have *, we can check ends_with directly?
+            // But p_tail might have *. Recursion handles it.
+            // Only optimize matching char boundaries to avoid panic?
+            // split_once uses byte indices but string slicing requires char boundaries.
+            // split_once returns valid &str so p_head is valid.
+            // t_rest slicing [i..] needs to be on char boundary.
+            if t_rest.is_char_boundary(i) {
+                if glob_match(p_tail, &t_rest[i..]) {
+                    return true;
+                }
+            }
+        }
+        false
+    } else {
+        pattern == target
     }
 }
 

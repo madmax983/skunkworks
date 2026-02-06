@@ -34,8 +34,12 @@ fn test_meme_spreading() {
     // Loop until s1 has genes to ensure infection
     let mut infected = false;
     for _ in 0..100 {
+        // Run Push(42) to set last_gene
+        vm.ip = (0, 0);
+        vm.step();
+
         // Run Meme
-        vm.ip = (0, 1);
+        // ip is (0, 1) now
         vm.step();
 
         if vm.dna.helix.strands[1].genes.len() > 0 {

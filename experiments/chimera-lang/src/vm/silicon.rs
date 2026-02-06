@@ -7,7 +7,7 @@ use crate::opcode::OpCode;
 pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Conduct => {
-            step_wireworld(vm);
+            step_circuit(vm);
             vm.output.push("SILICON: Conducted one step".to_string());
         }
         OpCode::Wire => {
@@ -50,30 +50,74 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             vm.output
                 .push(format!("SILICON: Auto-conduction {}", status));
         }
+        OpCode::Construct => {
+            // stack: type, dir, y, x (top)
+            if vm.stack.len() >= 4 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let dir_val = vm.stack.pop().unwrap();
+                let type_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(t), Value::Int(d), Value::Int(y), Value::Int(x)) =
+                    (type_val, dir_val, y_val, x_val)
+                {
+                    let type_str = match t {
+                        0 => "AND",
+                        1 => "OR",
+                        2 => "XOR",
+                        3 => "NAND",
+                        4 => "NOT",
+                        _ => "AND",
+                    };
+                    let dir_idx = d.rem_euclid(4);
+                    let s = format!("G:{}:{}", type_str, dir_idx);
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(s);
+                        vm.output.push(format!(
+                            "CONSTRUCT: {} gate facing {} at {},{}",
+                            type_str, dir_idx, nx, ny
+                        ));
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for construct".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for construct".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for construct".to_string());
+            }
+        }
+        OpCode::LogicGate => {
+            // Manual placement logic if needed, or introspection
+            // For now, no-op or placeholder
+        }
         _ => {}
     }
 }
 
-/// Runs one step of the Wireworld Cellular Automaton on the grid.
+/// Runs one step of the Circuit (Wireworld + Gates) on the grid.
 ///
 /// **States:**
 /// - `0`: Empty
 /// - `1`: Conductor
 /// - `2`: Electron Head
 /// - `3`: Electron Tail
-///
-/// **Rules:**
-/// - Empty -> Empty
-/// - Head -> Tail
-/// - Tail -> Conductor
-/// - Conductor -> Head if 1 or 2 neighbors are Head.
-pub fn step_wireworld(vm: &mut ChimeraVM) {
+/// - `Str("G:TYPE:DIR")`: Logic Gate
+pub fn step_circuit(vm: &mut ChimeraVM) {
     let rows = vm.grid.len();
     if rows == 0 {
         return;
     }
     let cols = vm.grid[0].len();
     let mut next_grid = vm.grid.clone();
+
+    // Helper to get neighbor coords
+    let get_neighbor = |vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64| -> Option<(usize, usize)> {
+        vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+    };
 
     for y in 0..rows {
         for x in 0..cols {
@@ -123,6 +167,62 @@ pub fn step_wireworld(vm: &mut ChimeraVM) {
 
             if next_state != state {
                 next_grid[y][x] = Value::Int(next_state);
+            }
+        }
+    }
+
+    // Pass 2: Gate Logic Overrides
+    for y in 0..rows {
+        for x in 0..cols {
+            if let Value::Str(s) = &vm.grid[y][x] {
+                if s.starts_with("G:") {
+                    let parts: Vec<&str> = s.split(':').collect();
+                    if parts.len() == 3 {
+                        let gate_type = parts[1];
+                        let dir_idx = parts[2].parse::<usize>().unwrap_or(0) % 4;
+                        let (out_dy, out_dx) = match dir_idx {
+                            0 => (-1, 0),
+                            1 => (0, 1),
+                            2 => (1, 0),
+                            3 => (0, -1),
+                            _ => (0, 0),
+                        };
+
+                        let mut active_inputs = 0;
+                        for dy in -1..=1 {
+                            for dx in -1..=1 {
+                                if dy == 0 && dx == 0 {
+                                    continue;
+                                }
+                                if dy == out_dy && dx == out_dx {
+                                    continue;
+                                }
+                                if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
+                                    if let Value::Int(2) = vm.grid[ny][nx] {
+                                        active_inputs += 1;
+                                    }
+                                }
+                            }
+                        }
+
+                        let output_high = match gate_type {
+                            "AND" => active_inputs >= 2,
+                            "OR" => active_inputs >= 1,
+                            "XOR" => active_inputs % 2 == 1,
+                            "NAND" => active_inputs < 2,
+                            "NOT" => active_inputs == 0,
+                            _ => false,
+                        };
+
+                        if output_high {
+                            if let Some((ny, nx)) = get_neighbor(vm, y, x, out_dy, out_dx) {
+                                if let Value::Int(1) = vm.grid[ny][nx] {
+                                    next_grid[ny][nx] = Value::Int(2);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

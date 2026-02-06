@@ -450,10 +450,25 @@ where
                             Style::default().fg(Color::Yellow),
                         ),
                         crate::vm::Value::Str(s) => {
-                            let symbol = match s.as_str() {
-                                "virus" => "V",
-                                "incubate" => "I",
-                                "push" => "^",
+                            let symbol = if s.starts_with("G:") {
+                                let parts: Vec<&str> = s.split(':').collect();
+                                if parts.len() >= 2 {
+                                    match parts[1] {
+                                        "AND" => "&",
+                                        "OR" => "|",
+                                        "XOR" => "^",
+                                        "NAND" => "!",
+                                        "NOT" => "~",
+                                        _ => "G",
+                                    }
+                                } else {
+                                    "G"
+                                }
+                            } else {
+                                match s.as_str() {
+                                    "virus" => "V",
+                                    "incubate" => "I",
+                                    "push" => "^",
                                 "add" => "+",
                                 "sub" => "-",
                                 "mul" => "*",
@@ -475,12 +490,16 @@ where
                                 "cloud" => "C",
                                 "spirit" => "S",
                                 "gold" => "G",
-                                "lead" => "L",
-                                _ => &s[0..1],
+                                    "lead" => "L",
+                                    _ => &s[0..1],
+                                }
                             };
-                            let style = match s.as_str() {
-                                "fire" => Style::default().fg(Color::Red),
-                                "water" => Style::default().fg(Color::Blue),
+                            let style = if s.starts_with("G:") {
+                                Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)
+                            } else {
+                                match s.as_str() {
+                                    "fire" => Style::default().fg(Color::Red),
+                                    "water" => Style::default().fg(Color::Blue),
                                 "earth" => Style::default().fg(Color::Yellow),
                                 "air" => Style::default().fg(Color::Cyan),
                                 "steam" => Style::default().fg(Color::White),
@@ -488,8 +507,9 @@ where
                                 "cloud" => Style::default().fg(Color::White).add_modifier(Modifier::BOLD),
                                 "spirit" => Style::default().fg(Color::Magenta),
                                 "gold" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
-                                "lead" => Style::default().fg(Color::DarkGray),
-                                _ => Style::default().fg(Color::Cyan),
+                                    "lead" => Style::default().fg(Color::DarkGray),
+                                    _ => Style::default().fg(Color::Cyan),
+                                }
                             };
                             (symbol.to_string(), style)
                         }

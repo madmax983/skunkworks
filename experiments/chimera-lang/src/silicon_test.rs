@@ -28,7 +28,7 @@ fn test_wireworld_pulse_propagation() {
     // 0,1: Cond(1) -> Head(2) (1 neighbor is head)
     // 0,2: Cond(1) -> Cond(1) (0 neighbors head - strictly neighbor of 0,2 is 0,1 which is 1, not 2 yet)
     // Update is simultaneous.
-    crate::vm::silicon::step_wireworld(&mut vm);
+    crate::vm::silicon::step_circuit(&mut vm);
 
     assert_eq!(vm.grid[0][0], Value::Int(3));
     assert_eq!(vm.grid[0][1], Value::Int(2));
@@ -38,7 +38,7 @@ fn test_wireworld_pulse_propagation() {
     // 0,0: Tail(3) -> Cond(1)
     // 0,1: Head(2) -> Tail(3)
     // 0,2: Cond(1) -> Head(2) (Neighbor 0,1 was Head)
-    crate::vm::silicon::step_wireworld(&mut vm);
+    crate::vm::silicon::step_circuit(&mut vm);
 
     assert_eq!(vm.grid[0][0], Value::Int(1));
     assert_eq!(vm.grid[0][1], Value::Int(3));
@@ -60,7 +60,7 @@ fn test_wireworld_diode() {
     vm.grid[0][1] = Value::Int(1);
     vm.grid[1][0] = Value::Int(1);
 
-    crate::vm::silicon::step_wireworld(&mut vm);
+    crate::vm::silicon::step_circuit(&mut vm);
 
     assert_eq!(vm.grid[0][0], Value::Int(3)); // Head -> Tail
     assert_eq!(vm.grid[0][1], Value::Int(2)); // Cond -> Head

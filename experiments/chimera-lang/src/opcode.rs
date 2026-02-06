@@ -194,6 +194,18 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Silicon,
+    /// **[Silicon]** Constructs a logic gate on the grid.
+    ///
+    /// **Stack:** `[ ..., type, dir, y, x ] -> [ ... ]`
+    /// **Types:** 0=AND, 1=OR, 2=XOR, 3=NAND, 4=NOT.
+    /// **Dirs:** 0=N, 1=E, 2=S, 3=W.
+    #[cfg(feature = "silicon")]
+    Construct,
+    /// **[Silicon]** A logic gate instruction (usually on grid, not in DNA).
+    ///
+    /// **Args:** `[Nucleotide::String(type), Nucleotide::Number(dir)]`
+    #[cfg(feature = "silicon")]
+    LogicGate,
 
     // Nova Features
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
@@ -718,6 +730,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., junction_a, junction_b ] -> [ ..., zipped_junction ]`
     #[cfg(feature = "nova")]
     Zip,
+    /// **[Nova]** Matches a string against a pattern (wildcards supported).
+    ///
+    /// **Stack:** `[ ..., pattern, target ] -> [ ..., is_match ]`
+    #[cfg(feature = "nova")]
+    Match,
 
     // IPC Features (Ether Link)
     /// **[Nova]** Sends a value to an external Ether channel.
