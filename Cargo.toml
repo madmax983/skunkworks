@@ -22,7 +22,6 @@ members = [
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",
-    "experiments/origami-ui",
     "experiments/packet-pachinko",
     "experiments/pidgin-mesh",
     "experiments/resonance-chamber",

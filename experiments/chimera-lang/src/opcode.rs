@@ -835,6 +835,9 @@ pub enum OpCode {
     Rest,
     /// **[Nova]** Sets the tempo of the composition.
     ///
+    /// This instruction logs the tempo change as metadata for the score (e.g., for ABC export).
+    /// It does **not** affect the VM's execution speed.
+    ///
     /// **Stack:** `[ ..., bpm ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Tempo,
