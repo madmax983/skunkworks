@@ -13,7 +13,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
     Terminal,
 };
 use std::io;
@@ -22,6 +22,7 @@ use std::io;
 pub(crate) enum ViewMode {
     Genome,
     Grid,
+    Microscope,
     #[cfg(feature = "biophysics")]
     Cortex,
 }
@@ -119,6 +120,101 @@ where
         }
 
         terminal.draw(|f| {
+            // Handle Microscope View
+            if let ViewMode::Microscope = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+                    .split(f.area());
+
+                // Scan Data
+                let (cx, cy) = app_state.grid_cursor;
+                let data = crate::vm::microscope::scan(vm, cy, cx);
+
+                // Header
+                let header = Paragraph::new(format!(
+                    "Microscope: Cell ({}, {}) - Value: {}",
+                    cx, cy, data.value
+                ))
+                .block(Block::default().borders(Borders::ALL).title("Inspection"));
+                f.render_widget(header, chunks[0]);
+
+                let main_split = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                    .split(chunks[1]);
+
+                // Left: Environment
+                let env_chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([
+                        Constraint::Length(3), // Hormones
+                        Constraint::Length(3), // Waste
+                        Constraint::Length(3), // Mutagen
+                        Constraint::Length(3), // Light
+                    ].as_ref())
+                    .split(main_split[0]);
+
+                // Hormones (RGB)
+                let h = data.hormone_levels;
+                let h_label = format!("Hormones [R:{} G:{} B:{}]", h[0], h[1], h[2]);
+                let h_ratio = ((h[0] + h[1] + h[2]) as f64 / 765.0).clamp(0.0, 1.0);
+                let h_gauge = Gauge::default()
+                    .block(Block::default().borders(Borders::ALL).title("Hormones"))
+                    .gauge_style(Style::default().fg(Color::Magenta))
+                    .ratio(h_ratio)
+                    .label(h_label);
+                f.render_widget(h_gauge, env_chunks[0]);
+
+                // Waste
+                let w_ratio = (data.waste_level as f64 / 100.0).clamp(0.0, 1.0);
+                let w_gauge = Gauge::default()
+                    .block(Block::default().borders(Borders::ALL).title("Waste"))
+                    .gauge_style(Style::default().fg(Color::Green))
+                    .ratio(w_ratio)
+                    .label(format!("{} / 100", data.waste_level));
+                f.render_widget(w_gauge, env_chunks[1]);
+
+                // Mutagen
+                let m_ratio = (data.mutagen_level as f64 / 100.0).clamp(0.0, 1.0);
+                let m_gauge = Gauge::default()
+                    .block(Block::default().borders(Borders::ALL).title("Mutagen"))
+                    .gauge_style(Style::default().fg(Color::Red))
+                    .ratio(m_ratio)
+                    .label(format!("{} / 100", data.mutagen_level));
+                f.render_widget(m_gauge, env_chunks[2]);
+
+                // Light
+                let l_ratio = (data.light_level as f64 / 100.0).clamp(0.0, 1.0);
+                let l_gauge = Gauge::default()
+                    .block(Block::default().borders(Borders::ALL).title("Light"))
+                    .gauge_style(Style::default().fg(Color::Yellow))
+                    .ratio(l_ratio)
+                    .label(format!("{} / 100", data.light_level));
+                f.render_widget(l_gauge, env_chunks[3]);
+
+                // Right: Organelles
+                let rows: Vec<Row> = data.organelles.iter().map(|org| {
+                    Row::new(vec![
+                        org.kind.clone(),
+                        format!("{:?}", org.ip),
+                        org.stack_depth.to_string(),
+                    ])
+                }).collect();
+
+                let table = Table::new(rows, [
+                    Constraint::Percentage(40),
+                    Constraint::Percentage(30),
+                    Constraint::Percentage(30),
+                ])
+                .header(Row::new(vec!["Type", "IP", "Stack"]))
+                .block(Block::default().borders(Borders::ALL).title("Inhabitants"));
+
+                f.render_widget(table, main_split[1]);
+
+                return;
+            }
+
             // Handle Cortex View
             #[cfg(feature = "biophysics")]
             if let ViewMode::Cortex = app_state.view_mode {
@@ -292,6 +388,7 @@ where
             let mode_str = match app_state.view_mode {
                 ViewMode::Genome => "GENOME",
                 ViewMode::Grid => "GRID",
+                ViewMode::Microscope => "MICROSCOPE",
                 #[cfg(feature = "biophysics")]
                 ViewMode::Cortex => "CORTEX",
             };
@@ -333,10 +430,21 @@ where
                         crate::vm::Value::Int(0) => {
                             (".".to_string(), Style::default().fg(Color::DarkGray))
                         }
-                        crate::vm::Value::Int(n) => (
-                            format!("{}", (n.abs() % 10)),
-                            Style::default().fg(Color::Green),
-                        ),
+                        crate::vm::Value::Int(n) => {
+                            #[cfg(feature = "silicon")]
+                            if vm.silicon_mode {
+                                match n {
+                                    1 => ("#".to_string(), Style::default().fg(Color::Yellow)), // Conductor
+                                    2 => ("@".to_string(), Style::default().fg(Color::White).bg(Color::Cyan)), // Head
+                                    3 => ("~".to_string(), Style::default().fg(Color::Red)), // Tail
+                                    _ => (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green)),
+                                }
+                            } else {
+                                (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                            }
+                            #[cfg(not(feature = "silicon"))]
+                            (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                        },
                         crate::vm::Value::Junction(_, _) => (
                             "J".to_string(),
                             Style::default().fg(Color::Yellow),
@@ -615,6 +723,10 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                ViewMode::Microscope => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 #[cfg(feature = "biophysics")]
                                 ViewMode::Cortex => {
                                     // No editing for Cortex view yet
@@ -650,7 +762,8 @@ where
                     KeyCode::Tab => {
                         app_state.view_mode = match app_state.view_mode {
                             ViewMode::Genome => ViewMode::Grid,
-                            ViewMode::Grid => {
+                            ViewMode::Grid => ViewMode::Microscope,
+                            ViewMode::Microscope => {
                                 #[cfg(feature = "biophysics")]
                                 {
                                     ViewMode::Cortex
@@ -689,6 +802,7 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        ViewMode::Microscope => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -728,6 +842,7 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        ViewMode::Microscope => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -754,6 +869,7 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        ViewMode::Microscope => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                     },
@@ -764,6 +880,7 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        ViewMode::Microscope => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                     },
@@ -841,6 +958,9 @@ where
                                     crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
                                     _ => app_state.input_buffer = String::new(),
                                 }
+                            }
+                            ViewMode::Microscope => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "biophysics")]
                             ViewMode::Cortex => {

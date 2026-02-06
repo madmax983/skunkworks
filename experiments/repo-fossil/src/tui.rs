@@ -1,5 +1,5 @@
-use crate::git::{Commit};
 use crate::entropy::Fossil;
+use crate::git::Commit;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
@@ -17,7 +17,6 @@ pub struct AppState {
 
     pub current_fossil: Option<Fossil>,
     // TODO: Add user input buffer for restoration mechanics
-
     pub mode: Mode,
 }
 
@@ -46,7 +45,9 @@ impl AppState {
     }
 
     pub fn next_commit(&mut self) {
-        if self.commits.is_empty() { return; }
+        if self.commits.is_empty() {
+            return;
+        }
         let i = match self.commit_list_state.selected() {
             Some(i) => {
                 if i >= self.commits.len() - 1 {
@@ -61,7 +62,9 @@ impl AppState {
     }
 
     pub fn previous_commit(&mut self) {
-        if self.commits.is_empty() { return; }
+        if self.commits.is_empty() {
+            return;
+        }
         let i = match self.commit_list_state.selected() {
             Some(i) => {
                 if i == 0 {
@@ -76,7 +79,9 @@ impl AppState {
     }
 
     pub fn next_file(&mut self) {
-        if self.files.is_empty() { return; }
+        if self.files.is_empty() {
+            return;
+        }
         let i = match self.file_list_state.selected() {
             Some(i) => {
                 if i >= self.files.len() - 1 {
@@ -91,7 +96,9 @@ impl AppState {
     }
 
     pub fn previous_file(&mut self) {
-        if self.files.is_empty() { return; }
+        if self.files.is_empty() {
+            return;
+        }
         let i = match self.file_list_state.selected() {
             Some(i) => {
                 if i == 0 {
@@ -122,7 +129,11 @@ pub fn draw(f: &mut Frame, state: &mut AppState) {
         .commits
         .iter()
         .map(|c| {
-            let hash = if c.hash.len() > 7 { &c.hash[..7] } else { &c.hash };
+            let hash = if c.hash.len() > 7 {
+                &c.hash[..7]
+            } else {
+                &c.hash
+            };
             // Simple truncation of message
             let msg = if c.message.len() > 20 {
                 format!("{}...", &c.message[..20])
@@ -150,7 +161,11 @@ pub fn draw(f: &mut Frame, state: &mut AppState) {
 
     let commits_list = List::new(items)
         .block(commits_block)
-        .highlight_style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Cyan))
+        .highlight_style(
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Cyan),
+        )
         .highlight_symbol("> ");
 
     f.render_stateful_widget(commits_list, left_chunks[0], &mut state.commit_list_state);
@@ -175,7 +190,11 @@ pub fn draw(f: &mut Frame, state: &mut AppState) {
 
     let files_list = List::new(file_items)
         .block(files_block)
-        .highlight_style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Cyan))
+        .highlight_style(
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Cyan),
+        )
         .highlight_symbol("> ");
 
     f.render_stateful_widget(files_list, left_chunks[1], &mut state.file_list_state);
@@ -208,7 +227,7 @@ pub fn draw(f: &mut Frame, state: &mut AppState) {
         let mut current_line = Vec::new();
 
         for (i, c) in fossil.displayed_text.chars().enumerate() {
-             let style = if fossil.mask.get(i).copied().unwrap_or(true) {
+            let style = if fossil.mask.get(i).copied().unwrap_or(true) {
                 Style::default().fg(Color::Gray)
             } else {
                 Style::default().fg(Color::Red) // Corrupted
@@ -225,14 +244,14 @@ pub fn draw(f: &mut Frame, state: &mut AppState) {
             lines.push(Line::from(current_line));
         }
 
-        let paragraph = Paragraph::new(lines)
-            .block(block)
-            .scroll((0, 0)); // TODO: Add scrolling state
+        let paragraph = Paragraph::new(lines).block(block).scroll((0, 0)); // TODO: Add scrolling state
 
         f.render_widget(paragraph, right_area);
-
     } else {
-        let text = Paragraph::new("Select a commit, then a file to begin excavation.\nPress <Enter> to load.").block(block);
+        let text = Paragraph::new(
+            "Select a commit, then a file to begin excavation.\nPress <Enter> to load.",
+        )
+        .block(block);
         f.render_widget(text, right_area);
     }
 }

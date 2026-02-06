@@ -1,7 +1,7 @@
-use std::f64::consts::PI;
-use tui_shared::math::Vec2;
 use crate::laban::LabanEffort;
 use rand::Rng;
+use std::f64::consts::PI;
+use tui_shared::math::Vec2;
 
 pub struct Rover {
     pub pos: Vec2,
@@ -48,13 +48,14 @@ impl Rover {
         // Indirect movements wander. Direct movements are precise.
         let mut jitter = 0.0;
         if effort.space > 0.2 {
-             let mut rng = rand::thread_rng();
-             // Jitter up to +/- 0.5 radians if totally Indirect
-             jitter = rng.gen_range(-0.5..0.5) * effort.space as f64;
+            let mut rng = rand::thread_rng();
+            // Jitter up to +/- 0.5 radians if totally Indirect
+            jitter = rng.gen_range(-0.5..0.5) * effort.space as f64;
         }
 
         let effective_angle = self.angle + jitter;
-        let thrust_vec = Vec2::new(effective_angle.cos(), effective_angle.sin()) * amount * accel_mult;
+        let thrust_vec =
+            Vec2::new(effective_angle.cos(), effective_angle.sin()) * amount * accel_mult;
 
         self.vel += thrust_vec;
 

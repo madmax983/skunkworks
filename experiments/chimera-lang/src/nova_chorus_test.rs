@@ -51,12 +51,30 @@ mod tests {
         // "Vitality": Mi Re Do -> Energy + 50
         // [ push("Mi") sing() push("Re") sing() push("Do") sing() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Mi".to_string())] },
-            Gene { op: OpCode::Sing, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Re".to_string())] },
-            Gene { op: OpCode::Sing, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Do".to_string())] },
-            Gene { op: OpCode::Sing, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Mi".to_string())],
+            },
+            Gene {
+                op: OpCode::Sing,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Re".to_string())],
+            },
+            Gene {
+                op: OpCode::Sing,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Do".to_string())],
+            },
+            Gene {
+                op: OpCode::Sing,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -69,8 +87,15 @@ mod tests {
             vm.step();
         }
 
-        assert!(vm.energy > 80, "Energy should be restored significantly (Current: {})", vm.energy);
-        assert!(vm.chorus_buffer.is_empty(), "Buffer should be cleared after spell");
+        assert!(
+            vm.energy > 80,
+            "Energy should be restored significantly (Current: {})",
+            vm.energy
+        );
+        assert!(
+            vm.chorus_buffer.is_empty(),
+            "Buffer should be cleared after spell"
+        );
         assert!(vm.output.iter().any(|s| s.contains("Vitality Chord")));
     }
 }

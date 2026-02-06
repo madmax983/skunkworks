@@ -301,6 +301,35 @@ stateDiagram-v2
     }
 ```
 
+### Nova Feature: Chorus System (ADR 014)
+
+The Chorus System allows the VM to trigger global effects by detecting specific sequences of "notes" (strings) in a sliding window buffer.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant ChorusBuffer as VecDeque<String>
+    participant State as Global State
+
+    Note over VM: Program executes Sing("Do")
+    VM->>ChorusBuffer: push_back("Do")
+    VM->>VM: check_chorus_chords()
+
+    Note over VM: Program executes Sing("Mi")
+    VM->>ChorusBuffer: push_back("Mi")
+    VM->>VM: check_chorus_chords()
+
+    Note over VM: Program executes Sing("Sol")
+    VM->>ChorusBuffer: push_back("Sol")
+    VM->>VM: check_chorus_chords()
+
+    rect rgb(200, 255, 200)
+        Note right of VM: "Genesis" Chord Detected!
+        VM->>State: Spawn(Worker)
+        VM->>ChorusBuffer: clear()
+    end
+```
+
 ## Core Architecture Changes (ADR 012)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.

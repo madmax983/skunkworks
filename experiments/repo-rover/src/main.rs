@@ -38,7 +38,10 @@ impl App {
             world,
             running: true,
             view_radius: 60.0,
-            logs: vec![String::from("Welcome to Repo Rover!"), String::from("Use Arrow Keys to move.")],
+            logs: vec![
+                String::from("Welcome to Repo Rover!"),
+                String::from("Use Arrow Keys to move."),
+            ],
         })
     }
 
@@ -186,7 +189,12 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
     let r = app.view_radius;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Sector Map ").border_style(Style::default().fg(Color::Cyan)))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Sector Map ")
+                .border_style(Style::default().fg(Color::Cyan)),
+        )
         .x_bounds([view_x - r * 1.5, view_x + r * 1.5])
         .y_bounds([view_y - r, view_y + r])
         .marker(symbols::Marker::Braille)
@@ -222,7 +230,12 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
                     ctx.print(
                         entity.pos.x,
                         entity.pos.y + 1.0,
-                        Span::styled(entity.name.clone(), Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
+                        Span::styled(
+                            entity.name.clone(),
+                            Style::default()
+                                .fg(Color::White)
+                                .add_modifier(Modifier::BOLD),
+                        ),
                     );
                 }
             }
@@ -283,7 +296,12 @@ fn draw_dashboard(f: &mut Frame, app: &App, area: Rect) {
     let velocity_ratio = (velocity / app.rover.max_speed).min(1.0);
 
     let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title(" Thrusters ").border_style(Style::default().fg(Color::Cyan)))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Thrusters ")
+                .border_style(Style::default().fg(Color::Cyan)),
+        )
         .gauge_style(Style::default().fg(Color::LightGreen).bg(Color::DarkGray))
         .ratio(velocity_ratio)
         .label(format!("{:.1} m/s", velocity));
@@ -298,8 +316,12 @@ fn draw_dashboard(f: &mut Frame, app: &App, area: Rect) {
         .map(|m| ListItem::new(Span::raw(m)))
         .collect();
 
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title(" Scanner Log ").border_style(Style::default().fg(Color::Cyan)));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" Scanner Log ")
+            .border_style(Style::default().fg(Color::Cyan)),
+    );
 
     f.render_widget(list, chunks[1]);
 
@@ -316,7 +338,13 @@ fn draw_dashboard(f: &mut Frame, app: &App, area: Rect) {
     let info_text = vec![
         Line::from(vec![
             Span::styled("SECTOR: ", Style::default().fg(Color::Yellow)),
-            Span::raw(app.world.current_path.file_name().unwrap_or_default().to_string_lossy()),
+            Span::raw(
+                app.world
+                    .current_path
+                    .file_name()
+                    .unwrap_or_default()
+                    .to_string_lossy(),
+            ),
         ]),
         Line::from(vec![
             Span::styled("PATH:   ", Style::default().fg(Color::Yellow)),
@@ -328,8 +356,12 @@ fn draw_dashboard(f: &mut Frame, app: &App, area: Rect) {
         ]),
     ];
 
-    let info = Paragraph::new(info_text)
-        .block(Block::default().borders(Borders::ALL).title(" Nav Computer ").border_style(Style::default().fg(Color::Cyan)));
+    let info = Paragraph::new(info_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" Nav Computer ")
+            .border_style(Style::default().fg(Color::Cyan)),
+    );
 
     f.render_widget(info, chunks[2]);
 }

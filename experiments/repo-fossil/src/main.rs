@@ -1,20 +1,20 @@
-mod git;
-mod entropy;
-mod tui;
 mod audio;
+mod entropy;
+mod git;
+mod tui;
 
 use anyhow::Result;
+use audio::Geiger;
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use entropy::fossilize;
+use git::{get_file_content, get_files_in_commit, load_history};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
-use tui::{AppState, Mode, draw};
-use git::{load_history, get_files_in_commit, get_file_content};
-use entropy::fossilize;
-use audio::Geiger;
+use tui::{draw, AppState, Mode};
 
 fn main() -> Result<()> {
     // Setup Terminal
@@ -59,7 +59,11 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, state: &mut AppState, geiger: &Geiger) -> Result<()> {
+fn run_app(
+    terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
+    state: &mut AppState,
+    geiger: &Geiger,
+) -> Result<()> {
     loop {
         terminal.draw(|f| draw(f, state))?;
 
@@ -86,7 +90,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, state: &mut Ap
                             state.previous_commit();
                             geiger.click();
                             // Refresh files
-                             if let Some(idx) = state.commit_list_state.selected() {
+                            if let Some(idx) = state.commit_list_state.selected() {
                                 if let Some(commit) = state.commits.get(idx) {
                                     if let Ok(files) = get_files_in_commit(&commit.hash) {
                                         state.files = files;
@@ -117,28 +121,28 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, state: &mut Ap
                             geiger.click();
                         }
                         KeyCode::Enter | KeyCode::Right | KeyCode::Char('l') => {
-                             // Load File Content
-                             if let Some(commit_idx) = state.commit_list_state.selected() {
-                                 if let Some(file_idx) = state.file_list_state.selected() {
-                                     let commit = &state.commits[commit_idx];
-                                     if let Some(path) = state.files.get(file_idx) {
-                                         if let Ok(content) = get_file_content(&commit.hash, path) {
-                                             use std::collections::hash_map::DefaultHasher;
-                                             use std::hash::{Hash, Hasher};
+                            // Load File Content
+                            if let Some(commit_idx) = state.commit_list_state.selected() {
+                                if let Some(file_idx) = state.file_list_state.selected() {
+                                    let commit = &state.commits[commit_idx];
+                                    if let Some(path) = state.files.get(file_idx) {
+                                        if let Ok(content) = get_file_content(&commit.hash, path) {
+                                            use std::collections::hash_map::DefaultHasher;
+                                            use std::hash::{Hash, Hasher};
 
-                                             let mut hasher = DefaultHasher::new();
-                                             commit.hash.hash(&mut hasher);
-                                             let seed = hasher.finish();
+                                            let mut hasher = DefaultHasher::new();
+                                            commit.hash.hash(&mut hasher);
+                                            let seed = hasher.finish();
 
-                                             let age_factor = (commit_idx as f64) / 50.0;
-                                             let fossil = fossilize(&content, age_factor, seed);
-                                             state.current_fossil = Some(fossil);
-                                             state.mode = Mode::Excavation;
-                                             geiger.click();
-                                         }
-                                     }
-                                 }
-                             }
+                                            let age_factor = (commit_idx as f64) / 50.0;
+                                            let fossil = fossilize(&content, age_factor, seed);
+                                            state.current_fossil = Some(fossil);
+                                            state.mode = Mode::Excavation;
+                                            geiger.click();
+                                        }
+                                    }
+                                }
+                            }
                         }
                         _ => {}
                     }

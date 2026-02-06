@@ -168,21 +168,32 @@ fn get_open_neighbors(
 /// ```
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
+/// Simulates the diffusion of chemical signals (hormones) across the grid.
+///
+/// Uses a simple cellular automaton model: each cell becomes the average of itself
+/// and its open neighbors (neighbors not blocked by membranes).
+///
+/// Optimized to avoid intermediate Vec allocations.
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     let mut buffer = [[[0i64; 3]; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let neighbors: Vec<_> = get_open_neighbors(vm, y, x).collect();
-            for c in 0..3 {
-                let mut sum = (vm.hormone_grid[y][x][c] as i128) * 4;
-                let mut count = 4;
+            let mut sums = [
+                (vm.hormone_grid[y][x][0] as i128) * 4,
+                (vm.hormone_grid[y][x][1] as i128) * 4,
+                (vm.hormone_grid[y][x][2] as i128) * 4,
+            ];
+            let mut count = 4;
 
-                for &(ny, nx) in &neighbors {
-                    sum += vm.hormone_grid[ny][nx][c] as i128;
-                    count += 1;
+            for (ny, nx) in get_open_neighbors(vm, y, x) {
+                for c in 0..3 {
+                    sums[c] += vm.hormone_grid[ny][nx][c] as i128;
                 }
+                count += 1;
+            }
 
-                buffer[y][x][c] = (sum / count) as i64;
+            for c in 0..3 {
+                buffer[y][x][c] = (sums[c] / count) as i64;
             }
         }
     }
@@ -279,7 +290,6 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
-#[cfg(feature = "nova")]
 pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
     let len = buffer.len();
@@ -327,16 +337,17 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
     }
 
     // "Apocalypse": La Sol Fa Mi Re Do -> Kill random organelle
-    if len >= 6 && buffer[len - 6..] == ["La", "Sol", "Fa", "Mi", "Re", "Do"] {
-        if !vm.organelles.is_empty() {
-            let mut rng = rand::thread_rng();
-            let idx = rng.gen_range(0..vm.organelles.len());
-            vm.organelles.remove(idx);
-            vm.chorus_buffer.clear();
-            vm.output
-                .push("CHORUS: Apocalypse Chord! A life was taken.".to_string());
-            return true;
-        }
+    if len >= 6
+        && buffer[len - 6..] == ["La", "Sol", "Fa", "Mi", "Re", "Do"]
+        && !vm.organelles.is_empty()
+    {
+        let mut rng = rand::thread_rng();
+        let idx = rng.gen_range(0..vm.organelles.len());
+        vm.organelles.remove(idx);
+        vm.chorus_buffer.clear();
+        vm.output
+            .push("CHORUS: Apocalypse Chord! A life was taken.".to_string());
+        return true;
     }
 
     // "Transmute": Lead Gold -> Transmute Grid
@@ -353,8 +364,10 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
             }
         }
         vm.chorus_buffer.clear();
-        vm.output
-            .push(format!("CHORUS: Transmute Chord! {} Lead became Gold.", count));
+        vm.output.push(format!(
+            "CHORUS: Transmute Chord! {} Lead became Gold.",
+            count
+        ));
         return true;
     }
 
@@ -521,6 +534,30 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for simulate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SensePigment => {
+            let (cy, cx) = vm.context_loc;
+            if let Some((r, g, b)) = vm.chroma_grid[cy][cx].fg {
+                vm.stack.push(Value::Int(r as i64));
+                vm.stack.push(Value::Int(g as i64));
+                vm.stack.push(Value::Int(b as i64));
+            } else {
+                vm.stack.push(Value::Int(0));
+                vm.stack.push(Value::Int(0));
+                vm.stack.push(Value::Int(0));
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseGlyph => {
+            let (cy, cx) = vm.context_loc;
+            if let Some(c) = vm.chroma_grid[cy][cx].char {
+                vm.stack.push(Value::Int(c as u8 as i64));
+            } else {
+                vm.stack.push(Value::Int(-1));
             }
             None
         }

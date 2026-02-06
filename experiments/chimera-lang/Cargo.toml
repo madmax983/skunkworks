@@ -8,6 +8,7 @@ nova = []
 cortex = []
 biophysics = []
 oracle = []
+silicon = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
 
 [dependencies]
