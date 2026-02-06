@@ -29,6 +29,7 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+use poincare_disk::{Point, mobius_add, mobius_sub, hyperbolic_dist};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -87,6 +88,7 @@ pub enum Topology {
     CylinderV, // 3: Bounded X, Wraps Y.
     Klein,     // 4: Wraps X, Wraps Y with twist (x' = 15-x).
     Mobius,    // 5: Wraps X with twist, Bounded Y.
+    Hyperbolic, // 6: Poincaré Disk model mapping.
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -415,6 +417,43 @@ impl ChimeraVM {
         (0..size).contains(&y) && (0..size).contains(&x)
     }
 
+    /// Maps grid coordinates to the Poincaré disk range [-0.95, 0.95].
+    pub fn grid_to_disk(&self, y: i64, x: i64) -> Point {
+        let center = (GRID_SIZE as f64 - 1.0) / 2.0;
+        // Scale so that the corner (max extent) is at distance 0.95
+        // Max dist from center is sqrt(center^2 + center^2) = center * sqrt(2)
+        let max_dist = center * 2.0_f64.sqrt();
+        let scale = 0.95 / max_dist;
+
+        let dx = (x as f64 - center) * scale;
+        let dy = (y as f64 - center) * scale;
+
+        Point::new(dx, dy)
+    }
+
+    /// Maps a point in the Poincaré disk back to grid coordinates.
+    pub fn disk_to_grid(&self, p: Point) -> Option<(usize, usize)> {
+        if p.norm() >= 1.0 {
+            return None;
+        }
+
+        let center = (GRID_SIZE as f64 - 1.0) / 2.0;
+        let max_dist = center * 2.0_f64.sqrt();
+        let scale = 0.95 / max_dist;
+
+        let x = (p.re / scale) + center;
+        let y = (p.im / scale) + center;
+
+        let ix = x.round() as i64;
+        let iy = y.round() as i64;
+
+        if self.is_valid_coord(iy, ix) {
+            Some((iy as usize, ix as usize))
+        } else {
+            None
+        }
+    }
+
     /// Helper to normalize coordinates based on topology
     #[cfg(any(feature = "nova", feature = "silicon"))]
     pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
@@ -492,6 +531,17 @@ impl ChimeraVM {
 
                 if (0..size).contains(&ny) {
                     Some((ny as usize, nx as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Hyperbolic => {
+                // Hyperbolic topology doesn't support simple integer coordinate normalization
+                // because space is curved. It relies on the caller (OpCode::Migrate)
+                // to use grid_to_disk / disk_to_grid.
+                // However, if we just want to clamp/check bounds for static access:
+                if self.is_valid_coord(y, x) {
+                    Some((y as usize, x as usize))
                 } else {
                     None
                 }
@@ -1205,6 +1255,30 @@ impl ChimeraVM {
 
     pub(crate) fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
         let mut coords = Vec::new();
+
+        #[cfg(feature = "nova")]
+        if self.topology == Topology::Hyperbolic {
+            let center_p = self.grid_to_disk(cy, cx);
+            // r is integer grid radius. Convert to hyperbolic distance?
+            // Center is dense, edge is sparse.
+            // Let's assume r=1 means "distance to neighbor at center".
+            // Center neighbor distance is approx 0.13 (scale=0.126).
+            // So hyper_r = r * 0.15 ?
+            // Let's just use r as a generous bounds.
+            let hyper_r = (r as f64) * 0.5;
+
+            for y in 0..GRID_SIZE {
+                for x in 0..GRID_SIZE {
+                    let p = self.grid_to_disk(y as i64, x as i64);
+                    let dist = hyperbolic_dist(center_p, p);
+                    if dist <= hyper_r {
+                        coords.push((x, y));
+                    }
+                }
+            }
+            return coords;
+        }
+
         let r_sq = (r as i128).saturating_mul(r as i128);
         for y in 0..GRID_SIZE {
             for x in 0..GRID_SIZE {
@@ -1340,6 +1414,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Alchemy
             | OpCode::Meme
+            | OpCode::Spirit
             | OpCode::Drift
             | OpCode::Poly
             | OpCode::Chronostasis

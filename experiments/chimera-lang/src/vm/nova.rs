@@ -18,6 +18,8 @@ use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use crate::{ChimeraParser, Rule};
 #[cfg(feature = "nova")]
+use poincare_disk;
+#[cfg(feature = "nova")]
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::seq::SliceRandom;
@@ -2509,6 +2511,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         3 => Some(super::Topology::CylinderV),
                         4 => Some(super::Topology::Klein),
                         5 => Some(super::Topology::Mobius),
+                        6 => Some(super::Topology::Hyperbolic),
                         _ => None,
                     };
 

@@ -848,6 +848,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Metaphysics => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -946,6 +951,8 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -986,6 +993,8 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}

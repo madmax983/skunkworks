@@ -91,4 +91,52 @@ mod tests {
             vm.output
         );
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_hyperbolic_virus_singularity() {
+        // 👺 HAVOC: Triggering Hyperbolic Singularity via Virus-injected Geometry
+        // 1. Set Topology to Hyperbolic (6).
+        // 2. Use Virus to execute Migrate at (15, 15).
+        //    (15, 15) maps to (0.95, 0.95) which has norm > 1.3 in Euclidean,
+        //    but grid_to_disk allows it (mapping square to "disk" space naively).
+        // 3. Migrate(-5, -5) creates displacement a=(-0.5, -0.5).
+        //    This aligns with z=(0.95, 0.95) to minimize denominator |1 + a'z|.
+        //    1 + (-0.5+0.5i)(0.95+0.95i) = 1 + (-0.95) = 0.05.
+        //    This amplifies the result.
+        //    If we tune it closer, we might get infinity.
+
+        let genes = vec![
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] }, // Hyperbolic
+            Gene { op: OpCode::Shape, args: vec![] },
+
+            // Stack for Virus: [ "Migrate", dy, dx ] -> Virus pops y, x.
+            // Virus executes "Migrate". Migrate expects [dy, dx].
+            // So we need to push [dy, dx] BEFORE calling Virus?
+            // No, Virus executes an opcode. Migrate pops from the VM stack.
+            // So we need stack to be [..., dy, dx, "Migrate", y, x] (top)
+            // Virus pops x, y. Pops "Migrate". Executes it.
+            // Migrate pops dx, dy.
+
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-5)] }, // dy
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-5)] }, // dx
+            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Migrate".to_string())] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] }, // y
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] }, // x
+            Gene { op: OpCode::Virus, args: vec![] },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Run
+        let mut steps = 0;
+        while !vm.halted && steps < 100 {
+            vm.step();
+            steps += 1;
+        }
+
+        println!("VM Output: {:?}", vm.output);
+
+        // Assert that we didn't crash (if we crashed, test fails with panic, which is also a win)
+    }
 }
