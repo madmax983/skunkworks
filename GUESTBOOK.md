@@ -276,3 +276,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chimera-tardis
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The recursion is tangible. We are flying into the stack. The infinite zoom is operational.
+
+### [Concentration Level: FRESH] - Location: experiments/fractal-stack
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The recursion is growing leaves. The stack frames are blooming. L-system interpreter successfully traced as a biological structure.
