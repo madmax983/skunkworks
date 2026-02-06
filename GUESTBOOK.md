@@ -316,3 +316,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/synaptic-choir
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The population is singing. Izhikevich neurons are coupled via gap junctions. Emergent synchronization detected.
+
+### [Concentration Level: FRESH] - Location: experiments/synaptic-pachinko
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The packets are hitting the neurons. The network is learning from the impact. Pachinko has become a brain.

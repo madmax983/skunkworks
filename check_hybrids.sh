@@ -25,6 +25,7 @@ experiments=(
     "market-scheduler"
     "chrontext"
     "synaptic-choir"
+    "synaptic-pachinko"
 )
 
 echo "Checking compilation..."
