@@ -168,21 +168,32 @@ fn get_open_neighbors(
 /// ```
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
+/// Simulates the diffusion of chemical signals (hormones) across the grid.
+///
+/// Uses a simple cellular automaton model: each cell becomes the average of itself
+/// and its open neighbors (neighbors not blocked by membranes).
+///
+/// Optimized to avoid intermediate Vec allocations.
 pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     let mut buffer = [[[0i64; 3]; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let neighbors: Vec<_> = get_open_neighbors(vm, y, x).collect();
-            for c in 0..3 {
-                let mut sum = (vm.hormone_grid[y][x][c] as i128) * 4;
-                let mut count = 4;
+            let mut sums = [
+                (vm.hormone_grid[y][x][0] as i128) * 4,
+                (vm.hormone_grid[y][x][1] as i128) * 4,
+                (vm.hormone_grid[y][x][2] as i128) * 4,
+            ];
+            let mut count = 4;
 
-                for &(ny, nx) in &neighbors {
-                    sum += vm.hormone_grid[ny][nx][c] as i128;
-                    count += 1;
+            for (ny, nx) in get_open_neighbors(vm, y, x) {
+                for c in 0..3 {
+                    sums[c] += vm.hormone_grid[ny][nx][c] as i128;
                 }
+                count += 1;
+            }
 
-                buffer[y][x][c] = (sum / count) as i64;
+            for c in 0..3 {
+                buffer[y][x][c] = (sums[c] / count) as i64;
             }
         }
     }
