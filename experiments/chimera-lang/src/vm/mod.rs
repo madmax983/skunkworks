@@ -45,6 +45,7 @@ pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod cortex;
+pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;

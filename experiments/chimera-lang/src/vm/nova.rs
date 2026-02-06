@@ -279,7 +279,6 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
-#[cfg(feature = "nova")]
 pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
     let len = buffer.len();
@@ -327,16 +326,17 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
     }
 
     // "Apocalypse": La Sol Fa Mi Re Do -> Kill random organelle
-    if len >= 6 && buffer[len - 6..] == ["La", "Sol", "Fa", "Mi", "Re", "Do"] {
-        if !vm.organelles.is_empty() {
-            let mut rng = rand::thread_rng();
-            let idx = rng.gen_range(0..vm.organelles.len());
-            vm.organelles.remove(idx);
-            vm.chorus_buffer.clear();
-            vm.output
-                .push("CHORUS: Apocalypse Chord! A life was taken.".to_string());
-            return true;
-        }
+    if len >= 6
+        && buffer[len - 6..] == ["La", "Sol", "Fa", "Mi", "Re", "Do"]
+        && !vm.organelles.is_empty()
+    {
+        let mut rng = rand::thread_rng();
+        let idx = rng.gen_range(0..vm.organelles.len());
+        vm.organelles.remove(idx);
+        vm.chorus_buffer.clear();
+        vm.output
+            .push("CHORUS: Apocalypse Chord! A life was taken.".to_string());
+        return true;
     }
 
     // "Transmute": Lead Gold -> Transmute Grid

@@ -79,6 +79,8 @@ mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
+mod microscope_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_mutagen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
