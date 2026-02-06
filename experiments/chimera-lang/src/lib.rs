@@ -33,13 +33,21 @@ pub mod opcode;
 pub mod tui;
 pub mod vm;
 
+#[cfg(all(test, feature = "biophysics"))]
+mod biophysics_test;
+#[cfg(all(test, feature = "nova"))]
+mod chaos_test;
 #[cfg(test)]
 mod cortex_test;
 #[cfg(all(test, feature = "biophysics"))]
-mod biophysics_test;
+mod cortex_view_test;
 mod havoc_repro;
 #[cfg(all(test, feature = "nova"))]
+mod nova_akashic_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
+#[cfg(test)]
+mod nova_bang_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_bard_test;
 #[cfg(all(test, feature = "nova"))]
@@ -56,6 +64,8 @@ mod nova_crispr_test;
 mod nova_differentiation_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_dream_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(test)]
@@ -96,11 +106,11 @@ mod nova_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_true_alchemy_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(test)]
 mod nova_waste_test;
-#[cfg(test)]
-mod nova_bang_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;
 #[cfg(all(test, feature = "nova"))]
@@ -117,5 +127,3 @@ mod sentry_nova_test;
 mod warden_dos_test;
 #[cfg(test)]
 mod warden_exploit_test;
-#[cfg(all(test, feature = "nova"))]
-mod chaos_test;

@@ -4,7 +4,6 @@ members = [
     "crates/tui-shared",
     "experiments/ast-respiration",
     "experiments/code-bio-dome",
-    "experiments/code-concerto",
     "experiments/crystal-structure",
     "experiments/cymatic-lure",
     "experiments/digital-compost",
@@ -23,7 +22,6 @@ members = [
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
     "experiments/hyperbolic-space",
-    "experiments/input-ghost",
     "experiments/karman-text-street",
     "experiments/l-system-garden",
     "experiments/log-landscape",
@@ -61,6 +59,7 @@ members = [
     "experiments/quantum-garden",
     "experiments/quasicrystal-dungeon",
     "experiments/quipu-symphony",
+    "experiments/quantum-boids",
     "experiments/git-harmonograph",
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
@@ -99,7 +98,7 @@ members = [
     "crates/resonance-audio", "crates/poincare-disk", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
     "experiments/clockwork-chimera", "experiments/schrodingers-beat",
     "experiments/colony-concerto", "experiments/rhizome-radar", "experiments/hyperbolic-roots",
-    "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor",
+    "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor", "experiments/laban-machine", "experiments/code-erosion", "experiments/chromatic-cipher",
 ]
 resolver = "2"
 

@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
-use git_rhythm::experimental::circadian::CircadianContext;
+use git_rhythm::experimental::circadian::CircadianPhase;
 use ratatui::{
     Terminal,
     backend::CrosstermBackend,
@@ -36,7 +36,10 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
+fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> io::Result<()>
+where
+    std::io::Error: From<B::Error>,
+{
     let mut hour = 0;
     let mut minute = 0;
 
@@ -47,9 +50,8 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> io::Resu
 
             // Calculate timestamp for current simulated time (relative to a day)
             let timestamp = (hour * 3600 + minute * 60) as i64;
-            let ctx = CircadianContext::new(timestamp);
-            let (theme_color, mood) = ctx.theme();
-            let phase = ctx.phase();
+            let phase = CircadianPhase::from_timestamp(timestamp);
+            let (theme_color, mood) = phase.theme();
 
             let chunks = Layout::default()
                 .direction(Direction::Vertical)

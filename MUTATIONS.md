@@ -37,7 +37,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Gray-Scott reaction parameters driven by Lorenz Attractor chaos.
 - **Novel trait**: Biomes shift and breathe according to deterministic chaotic rhythms.
 - **Status**: experiments/system-bio-dome
-- **Evaluation**: Compiles. Documented.
+- **Evaluation**: Fails compilation (IO Result mismatch). Documented.
 
 ### fluid-rain
 - **Parents**: experiments/source-rain + experiments/term-fluids
@@ -226,7 +226,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Rust AST nodes mapped to musical structures (Structs=Chords, Fn=Melody).
 - **Novel trait**: Synesthetic Code Review. Hearing the structure of the program.
 - **Status**: experiments/code-concerto
-- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational. WAV generation active.
+- **Evaluation**: Fails compilation (IO Result mismatch). TUI operational. WAV generation active.
 
 ### lattice-hunter
 - **Parents**: experiments/voronoi-ants + experiments/aperiodic-citadel
@@ -240,7 +240,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Neural network where each neuron is a Chimera VM executing evolved DNA.
 - **Novel trait**: Programmatic Neurons. Activation functions are Turing-complete programs evolved via selection.
 - **Status**: experiments/neuro-chimera
-- **Evaluation**: Compiles. Verified by Splice Surgeon. Evolving decision boundaries observed.
+- **Evaluation**: Fails compilation (Match error + IO Result mismatch). Evolving decision boundaries observed.
 
 ### fairy-consensus
 - **Parents**: Distributed Consensus Algorithms + Fungal Fairy Rings
@@ -317,3 +317,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Spiking Neural Networks integrated into Genetic Programming.
 - **Status**: experiments/chimera-lang (feature: biophysics)
 - **Evaluation**: Compiles. Implemented by Nova. Tests passed.
+
+### quantum-boids
+- **Parents**: experiments/luminous-flock + experiments/quantum-garden
+- **Concept**: Boids that carry quantum states and entangle with neighbors.
+- **Novel trait**: "Spooky Action at a Distance" in swarm behavior. Entangled boids share state changes instantly.
+- **Status**: experiments/quantum-boids
+- **Evaluation**: Compiles. Implemented by Splice Surgeon. Verified.
