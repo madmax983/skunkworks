@@ -1,18 +1,28 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
 
-program = { SOI ~ (strand_def)* ~ EOI }
+program = { SOI ~ (include_stmt | macro_def | strand_def)* ~ EOI }
+
+include_stmt = { "include" ~ string }
+
+macro_def = { "macro" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 instruction = {
     literal |
     call |
+    arrow_jump |
+    question_branch |
     simple_op
 }
 
 literal = { number | string }
 call = { identifier ~ "(" ~ argument_list ~ ")" }
+
+arrow_jump = { "->" ~ identifier }
+question_branch = { "?" ~ identifier }
+
 simple_op = { identifier }
 
 argument_list = { argument ~ ("," ~ argument)* }

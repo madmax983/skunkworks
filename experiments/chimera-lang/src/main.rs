@@ -37,7 +37,7 @@ fn main() -> Result<()> {
         .unwrap_or("");
 
     let dna = if extension == "chs" {
-        compiler::compile(&unparsed_file)?
+        compiler::compile(&unparsed_file, path.parent())?
     } else {
         let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
             .next()
