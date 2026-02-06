@@ -39,24 +39,8 @@ use std::collections::HashMap;
 
 /// 2D position/vector used for positioning entities in the TUI space.
 ///
-/// # Examples
-///
-/// ```
-/// use tui_semantic::Vec2;
-/// let pos = Vec2::new(10.0, 5.0);
-/// ```
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, Default)]
-pub struct Vec2 {
-    pub x: f64,
-    pub y: f64,
-}
-
-impl Vec2 {
-    /// Creates a new vector with the given coordinates.
-    pub fn new(x: f64, y: f64) -> Self {
-        Self { x, y }
-    }
-}
+/// Re-exported from `locus` crate.
+pub use locus::Vec2;
 
 /// A semantic entity in the TUI (particle, player, enemy, UI element, etc.).
 ///

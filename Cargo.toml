@@ -1,5 +1,7 @@
 [workspace]
 members = [
+    "crates/locus",
+    "crates/synaptic-physics",
     "crates/tui-semantic",
     "crates/tui-shared",
     "experiments/code-bio-dome",
@@ -140,3 +142,5 @@ tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
 resonance-audio = { path = "crates/resonance-audio" }
 poincare-disk = { path = "crates/poincare-disk" }
+locus = { path = "crates/locus" }
+synaptic-physics = { path = "crates/synaptic-physics" }
