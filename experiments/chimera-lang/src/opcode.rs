@@ -858,6 +858,18 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Query,
 
+    /// **[Oracle]** Registers an Omen (Trigger).
+    ///
+    /// **Stack:** `[ ..., condition, effect ] -> [ ... ]`
+    #[cfg(feature = "oracle")]
+    Augury,
+
+    /// **[Oracle]** Checks all registered Omens.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., triggered_count ]`
+    #[cfg(feature = "oracle")]
+    Divinate,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),

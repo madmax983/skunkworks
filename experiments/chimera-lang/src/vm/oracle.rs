@@ -2,7 +2,14 @@
 use super::{ChimeraVM, Value};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Omen {
+    pub condition: Value,
+    pub effect: Value,
+}
 
 type Subst = HashMap<String, Value>;
 
@@ -75,6 +82,57 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output
                     .push("Error: Stack underflow for query".to_string());
             }
+        }
+        OpCode::Augury => {
+            if vm.stack.len() >= 2 {
+                let effect = vm.stack.pop().unwrap();
+                let condition = vm.stack.pop().unwrap();
+                vm.omens.push(Omen {
+                    condition: condition.clone(),
+                    effect: effect.clone(),
+                });
+                vm.output
+                    .push(format!("AUGURY: Registered omen for {}", condition));
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for augury".to_string());
+            }
+        }
+        OpCode::Divinate => {
+            let mut triggered_count = 0;
+            // Clone omens to avoid borrow issues while executing effects
+            let omens_snapshot = vm.omens.clone();
+
+            for omen in omens_snapshot {
+                let mut solutions = Vec::new();
+                solve(
+                    &[omen.condition.clone()],
+                    HashMap::new(),
+                    &vm.knowledge_base,
+                    &mut solutions,
+                );
+
+                if !solutions.is_empty() {
+                    triggered_count += 1;
+                    vm.output
+                        .push(format!("DIVINATE: Omen fulfilled! {}", omen.condition));
+
+                    match omen.effect {
+                        Value::Int(n) => {
+                            if n >= 0 {
+                                vm.ip = (n as usize, 0);
+                            }
+                        }
+                        Value::Str(ref s) => {
+                            if let Ok(op) = s.parse::<OpCode>() {
+                                let _ = vm.execute_gene_inner(op, &[]);
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            vm.stack.push(Value::Int(triggered_count));
         }
         _ => {}
     }
