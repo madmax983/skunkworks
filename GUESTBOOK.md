@@ -232,3 +232,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cam-automaton
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The cams are grinding. The linkage is tight. The puppet dances to the rhythm of the machine.
+
+### [Concentration Level: FRESH] - Location: experiments/git-cantata
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The commit log is singing. Generative audio engine active. Oil painting visualizer rendering history as art.
