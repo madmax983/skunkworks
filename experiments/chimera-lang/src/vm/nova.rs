@@ -101,6 +101,8 @@ pub enum OrganelleType {
     Ribosome,
     /// Consumes the grid cell (turns it to 0) and moves randomly (Brownian motion).
     Void,
+    /// Transmutes neighbors based on elemental recipes.
+    Alchemist,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -276,6 +278,66 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
+    // Recipes:
+    // "fire" + "water" -> "steam"
+    // "earth" + "fire" -> "lava"
+    // "air" + "water" -> "cloud"
+    // "life" + "death" -> "spirit"
+    // "lead" + "energy" (center=lead) -> "gold"
+
+    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    let mut ingredients = Vec::new();
+    let mut coords = Vec::new();
+
+    for (dy, dx) in neighbors {
+        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+            ingredients.push(vm.grid[ny][nx].clone());
+            coords.push((ny, nx));
+        }
+    }
+
+    let has_ingredient = |s: &str| -> bool {
+        ingredients.iter().any(|v| matches!(v, Value::Str(val) if val == s))
+    };
+
+    let center_val = vm.grid[y][x].clone();
+    let mut transmuted = false;
+    let mut result = Value::Int(0);
+
+    if has_ingredient("fire") && has_ingredient("water") {
+        result = Value::Str("steam".to_string());
+        transmuted = true;
+    } else if has_ingredient("earth") && has_ingredient("fire") {
+        result = Value::Str("lava".to_string());
+        transmuted = true;
+    } else if has_ingredient("air") && has_ingredient("water") {
+        result = Value::Str("cloud".to_string());
+        transmuted = true;
+    } else if has_ingredient("life") && has_ingredient("death") {
+        result = Value::Str("spirit".to_string());
+        transmuted = true;
+    } else if let Value::Str(c) = center_val {
+        if c == "lead" && has_ingredient("energy") {
+            result = Value::Str("gold".to_string());
+            transmuted = true;
+        }
+    }
+
+    if transmuted {
+        vm.grid[y][x] = result;
+        // Consume ingredients (set to 0/void)
+        for (ny, nx) in coords {
+            vm.grid[ny][nx] = Value::Int(0);
+        }
+        vm.output.push(format!("ALCHEMY: Transmutation occurred at {},{}", x, y));
+        return true;
+    }
+
+    false
+}
+
+#[cfg(feature = "nova")]
 fn value_to_nucleotide(v: &Value) -> Nucleotide {
     match v {
         Value::Int(n) => Nucleotide::Number(*n),
@@ -297,6 +359,13 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 #[cfg(feature = "nova")]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
+        #[cfg(feature = "nova")]
+        OpCode::Alchemy => {
+            let (cy, cx) = vm.context_loc;
+            perform_alchemy(vm, cy, cx);
+            vm.energy = vm.energy.saturating_sub(5);
+            None
+        }
         #[cfg(feature = "nova")]
         OpCode::Simulate => {
             // stack: ticks, strand_idx (bottom)
@@ -389,6 +458,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             2 => (OrganelleType::Mitochondria, (0, 0)),
                             3 => (OrganelleType::Lysosome, (0, 0)),
                             4 => (OrganelleType::Ribosome, (0, 1)), // Default East
+                            6 => (OrganelleType::Alchemist, (0, 0)),
                             _ => (OrganelleType::Worker, (0, 0)),
                         };
 
@@ -1883,6 +1953,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Lysosome) => 3,
                 Some(OrganelleType::Ribosome) => 4,
                 Some(OrganelleType::Void) => 5,
+                Some(OrganelleType::Alchemist) => 6,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -1898,6 +1969,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             3 => Some(OrganelleType::Lysosome),
                             4 => Some(OrganelleType::Ribosome),
                             5 => Some(OrganelleType::Void),
+                            6 => Some(OrganelleType::Alchemist),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 

@@ -664,12 +664,24 @@ impl ChimeraVM {
                 let dx = rng.gen_range(-1..=1);
                 organelle.direction = (dy, dx);
             }
+            nova::OrganelleType::Alchemist => {
+                let (cy, cx) = self.context_loc;
+                if nova::perform_alchemy(self, cy, cx) {
+                    self.energy = self.energy.saturating_sub(5);
+                }
+
+                // Brownian Motion
+                let mut rng = rand::thread_rng();
+                let dy = rng.gen_range(-1..=1);
+                let dx = rng.gen_range(-1..=1);
+                organelle.direction = (dy, dx);
+            }
             nova::OrganelleType::Worker => {}
         }
 
         if !matches!(
             organelle.kind,
-            nova::OrganelleType::Ribosome | nova::OrganelleType::Void
+            nova::OrganelleType::Ribosome | nova::OrganelleType::Void | nova::OrganelleType::Alchemist
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1172,7 +1184,8 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Irradiate
+            OpCode::Alchemy
+            | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour
             | OpCode::Evolve

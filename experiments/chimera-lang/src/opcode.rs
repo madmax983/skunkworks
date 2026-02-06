@@ -504,6 +504,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scramble,
 
+    /// **[Nova]** Transmutes the current grid cell based on neighbors (Alchemy).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Alchemy,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -823,6 +829,8 @@ impl FromStr for OpCode {
             "glitch" => Ok(OpCode::Glitch),
             #[cfg(feature = "nova")]
             "scramble" => Ok(OpCode::Scramble),
+            #[cfg(feature = "nova")]
+            "alchemy" => Ok(OpCode::Alchemy),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -988,6 +996,8 @@ impl fmt::Display for OpCode {
             OpCode::Glitch => write!(f, "glitch"),
             #[cfg(feature = "nova")]
             OpCode::Scramble => write!(f, "scramble"),
+            #[cfg(feature = "nova")]
+            OpCode::Alchemy => write!(f, "alchemy"),
             #[cfg(feature = "nova")]
             OpCode::Void => write!(f, "void"),
             #[cfg(feature = "nova")]

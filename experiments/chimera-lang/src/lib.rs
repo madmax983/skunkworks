@@ -97,6 +97,8 @@ mod nova_test;
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_true_alchemy_test;
 #[cfg(test)]
 mod nova_waste_test;
 #[cfg(test)]
