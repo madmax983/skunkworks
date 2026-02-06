@@ -172,6 +172,28 @@ pub enum OpCode {
     #[cfg(feature = "biophysics")]
     Axon,
 
+    // Silicon Features
+    /// **[Silicon]** Runs one step of Wireworld on the grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Conduct,
+    /// **[Silicon]** Writes a conductor (1) to the grid.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Wire,
+    /// **[Silicon]** Writes an electron head (2) to the grid (Pulse).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Pulse,
+    /// **[Silicon]** Toggles automatic conduction mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Silicon,
+
     // Nova Features
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
     ///
@@ -796,6 +818,15 @@ impl FromStr for OpCode {
             #[cfg(feature = "biophysics")]
             "axon" => Ok(OpCode::Axon),
 
+            #[cfg(feature = "silicon")]
+            "conduct" => Ok(OpCode::Conduct),
+            #[cfg(feature = "silicon")]
+            "wire" => Ok(OpCode::Wire),
+            #[cfg(feature = "silicon")]
+            "pulse" => Ok(OpCode::Pulse),
+            #[cfg(feature = "silicon")]
+            "silicon" => Ok(OpCode::Silicon),
+
             #[cfg(feature = "nova")]
             "sporulate" => Ok(OpCode::Sporulate),
             #[cfg(feature = "nova")]
@@ -978,6 +1009,15 @@ impl fmt::Display for OpCode {
             OpCode::Dendrite => write!(f, "dendrite"),
             #[cfg(feature = "biophysics")]
             OpCode::Axon => write!(f, "axon"),
+
+            #[cfg(feature = "silicon")]
+            OpCode::Conduct => write!(f, "conduct"),
+            #[cfg(feature = "silicon")]
+            OpCode::Wire => write!(f, "wire"),
+            #[cfg(feature = "silicon")]
+            OpCode::Pulse => write!(f, "pulse"),
+            #[cfg(feature = "silicon")]
+            OpCode::Silicon => write!(f, "silicon"),
 
             #[cfg(feature = "nova")]
             OpCode::Sporulate => write!(f, "sporulate"),

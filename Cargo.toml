@@ -74,7 +74,6 @@ members = [
     "experiments/hive-synth",
     "experiments/market-rogue",
     "experiments/hidden-brush", 
-    "experiments/alloc-tardis", 
     "experiments/magnetron-decay", 
     "experiments/sediment-flow", 
     "experiments/fungal-balancer",
