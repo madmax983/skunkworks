@@ -2,7 +2,6 @@
 members = [
     "crates/tui-semantic",
     "crates/tui-shared",
-    "experiments/ast-respiration",
     "experiments/code-bio-dome",
     "experiments/crystal-structure",
     "experiments/cymatic-lure",
@@ -88,13 +87,12 @@ members = [
     "experiments/glyph-evolution",
     "experiments/penrose-genes", "experiments/seismic-lure", "experiments/syntax-garden", "experiments/entropic-rain", "experiments/beat-cortex", "experiments/text-terra", "experiments/harmony-of-spheres", "experiments/bio-chain",
     "experiments/turing-terra", "experiments/walker-filesystem", "experiments/primordial-soup", "experiments/hyperbolic-finder", "experiments/jpeg-garden",
-    "experiments/neuro-chimera",
     "experiments/luminous-flock-web", "experiments/fairy-consensus",
     "experiments/chimera-resonance",
     "crates/resonance-audio", "crates/poincare-disk", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
     "experiments/clockwork-chimera", "experiments/schrodingers-beat",
     "experiments/colony-concerto", "experiments/rhizome-radar", "experiments/hyperbolic-roots",
-    "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor", "experiments/laban-machine", "experiments/laban-rover", "experiments/code-erosion", "experiments/chromatic-cipher", "experiments/repo-fossil",
+    "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor", "experiments/laban-machine", "experiments/laban-rover", "experiments/code-erosion", "experiments/chromatic-cipher", "experiments/repo-fossil", "experiments/chimera-fossil",
 ]
 resolver = "2"
 

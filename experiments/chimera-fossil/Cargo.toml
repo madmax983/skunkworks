@@ -1,0 +1,12 @@
+[package]
+name = "chimera-fossil"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+crossterm = "0.28"
+ratatui = "0.30"
+anyhow = "1.0"
+chrono = "0.4.43"
+rand = "0.8"

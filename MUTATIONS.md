@@ -337,4 +337,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Filesystem explorer where movement physics are driven by Laban Effort parameters derived from file attributes.
 - **Novel trait**: "Choreographic Navigation". Data texture (size, age) becomes physical texture (weight, time).
 - **Status**: experiments/laban-rover
-- **Evaluation**: Compiles. Implemented by Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
+
+### repo-fossil
+- **Parents**: Unknown
+- **Concept**: TUI to visualize git history as decaying artifacts.
+- **Status**: experiments/repo-fossil
+- **Evaluation**: Compiles. Verified.
+
+### chimera-fossil
+- **Parents**: experiments/chimera-lang + experiments/repo-fossil
+- **Concept**: "Jurassic Park for Code". Resurrecting dead code from git history by splicing it into Chimera VM DNA.
+- **Novel trait**: Paleo-genetic Resurrection. Old code becomes the genome for new digital life.
+- **Status**: experiments/chimera-fossil
+- **Evaluation**: Compiles. Splicing mechanism operational.
