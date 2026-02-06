@@ -385,11 +385,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI flight simulator over the "terrain" of git history.
 - **Novel trait**: Temporal Flight. Commits form a moving landscape where height = change magnitude.
 - **Status**: experiments/git-landscape
-- **Evaluation**: Compiles. Implemented by Splice Surgeon.
+- **Evaluation**: Compiles. Verified. "We are flying over the history."
 
 ### hyperbolic-git
 - **Parents**: experiments/git-etymology + experiments/hyperbolic-space
 - **Concept**: Git history visualization on the Poincaré Disk.
 - **Novel trait**: Time Travel by Hyperbolic Isometry.
 - **Status**: experiments/hyperbolic-git
+- **Evaluation**: Compiles. Verified. "The time machine is active."
+
+### chimera-tardis
+- **Parents**: experiments/chimera-lang + experiments/trace-tardis
+- **Concept**: Recursive visualization of the call stack of an evolving VM.
+- **Novel trait**: Infinite zoom debugger. Fly into the code execution.
+- **Status**: experiments/chimera-tardis
 - **Evaluation**: Compiles. Implemented by Splice Surgeon.

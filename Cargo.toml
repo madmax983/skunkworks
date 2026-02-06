@@ -119,9 +119,15 @@ members = [
     "experiments/knot-archiver", 
     "experiments/hyperbolic-browser",  
     "experiments/chimera-fossil",
-    "experiments/cam-automaton", "experiments/git-cantata",
-    "experiments/chimera-automaton", "experiments/miller-fs", "experiments/git-landscape", "experiments/git-etymology",
-    "experiments/hyperbolic-git", "experiments/klein-fs",
+    "experiments/cam-automaton", 
+    "experiments/git-cantata",
+    "experiments/chimera-automaton", 
+    "experiments/miller-fs", 
+    "experiments/git-landscape", 
+    "experiments/git-etymology",
+    "experiments/chimera-tardis",
+    "experiments/hyperbolic-git", 
+    "experiments/klein-fs",
 ]
 resolver = "2"
 

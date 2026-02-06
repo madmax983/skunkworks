@@ -14,6 +14,12 @@ experiments=(
     "tectonic-git"
     "struct-harmonics"
     "thermo-termites"
+    "hyperbolic-git"
+    "git-landscape"
+    "miller-fs"
+    "chimera-automaton"
+    "git-cantata"
+    "chimera-tardis"
 )
 
 echo "Checking compilation..."
