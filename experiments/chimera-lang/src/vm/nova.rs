@@ -2730,6 +2730,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                     if vm.stack.len() > stack_depth {
                         let new_items = vm.stack.split_off(stack_depth);
+                        if results.len() + new_items.len() > crate::vm::MAX_JUNCTION_SIZE {
+                            vm.output.push("Error: Junction size limit exceeded in Map".to_string());
+                            return None;
+                        }
                         results.extend(new_items);
                     }
                 }
@@ -2827,6 +2831,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             _ => false,
                         };
                         if keep {
+                            if results.len() >= crate::vm::MAX_JUNCTION_SIZE {
+                                vm.output.push("Error: Junction size limit exceeded in Filter".to_string());
+                                return None;
+                            }
                             results.push(input);
                         }
                     }
@@ -2858,6 +2866,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 };
 
                 let len = inputs_a.len().min(inputs_b.len());
+                if len > crate::vm::MAX_JUNCTION_SIZE {
+                    vm.output.push("Error: Junction size limit exceeded in Zip".to_string());
+                    return None;
+                }
+
                 let mut results = Vec::new();
 
                 for i in 0..len {

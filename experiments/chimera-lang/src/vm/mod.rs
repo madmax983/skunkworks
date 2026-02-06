@@ -33,6 +33,7 @@ pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
 pub const MAX_SPORES: usize = 64;
 pub const MAX_ORGANELLES: usize = 256;
+pub const MAX_JUNCTION_SIZE: usize = 1024;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
 
@@ -1308,6 +1309,9 @@ impl ChimeraVM {
                 (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
                     let mut res = Vec::new();
                     for v in vals {
+                        if res.len() >= MAX_JUNCTION_SIZE {
+                            return None;
+                        }
                         if let Some(r) = apply(v, scalar.clone(), op, depth + 1) {
                             res.push(r);
                         } else {
@@ -1319,6 +1323,9 @@ impl ChimeraVM {
                 (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
                     let mut res = Vec::new();
                     for v in vals {
+                        if res.len() >= MAX_JUNCTION_SIZE {
+                            return None;
+                        }
                         if let Some(r) = apply(scalar.clone(), v, op, depth + 1) {
                             res.push(r);
                         } else {
@@ -1332,6 +1339,9 @@ impl ChimeraVM {
                     let mut res = Vec::new();
                     for xa in va {
                         for xb in &vb {
+                            if res.len() >= MAX_JUNCTION_SIZE {
+                                return None;
+                            }
                             if let Some(r) = apply(xa.clone(), xb.clone(), op, depth + 1) {
                                 res.push(r);
                             }
