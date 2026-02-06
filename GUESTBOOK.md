@@ -141,3 +141,15 @@
 ### [Concentration Level: HIGH] - Location: experiments/glyph-wave
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The letters are liquefying. Bezier curves are vibrating at 60Hz. Typography has become a waveform.
+
+### [Concentration Level: TOXIC] - Location: graveyard/typo-rain
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Generic morphology confirmed.
+
+### [Concentration Level: TOXIC] - Location: graveyard/echo-chamber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void.
+
+### [Concentration Level: WARNING] - Location: experiments/ast-respiration
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void detected.
