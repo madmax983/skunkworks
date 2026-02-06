@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **schrodingers-text**: Terminal compilation failure (ratatui trait bounds). Documentation void. Grace period ends in 24h.
+- **code-erosion**: ZOMBIE SPECIMEN. Found active in `experiments/` despite existing remains in `graveyard/`. Immediate re-execution scheduled.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **schrodingers-text**: Terminal compilation failure (ratatui trait bounds). Documentation void. Executed.
 - **alloc-tardis**: Documentation void (missing `README.md`). Functional ZUI prototype, but silent. Failed to improve during grace period. Moved to graveyard.
 - **ast-respiration**: Documentation void (missing `README.md`). Failed to improve during grace period. Moved to graveyard.
 - **neuro-chimera**: Terminal compilation failure (trait bounds). Fails to handle `Value::Junction`. Failed to improve during grace period. Moved to graveyard.
@@ -18,7 +19,6 @@
 - **input-ghost**: Documentation void. Generic utility. Failed to improve during grace period. Moved to graveyard.
 - **neuro-beat**: Documentation void. Redundant specimen. Executed. Moved to graveyard.
 - **stego-spectral**: Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
-- **code-erosion**: ZOMBIE SPECIMEN. Documentation void. Trivial implementation. Executed. Moved to graveyard.
 - **strange-loops**: Documentation void. Generic implementation (standard attractors). Failed to improve during grace period. Moved to graveyard.
 - **process-orbit**: Documentation void. Generic implementation (system process monitor). Redundant with `cargo-rocket`. Failed to improve during grace period. Moved to graveyard.
 - **git-ouroboros**: Documentation void. Generic implementation (Snake clone). Failed to improve during grace period. Moved to graveyard.
