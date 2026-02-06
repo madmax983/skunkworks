@@ -352,8 +352,8 @@ where
                 #[cfg(not(feature = "oracle"))]
                 {
                     let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
-                    f.render_widget(oracle_list, chunks[1]);
-                    f.render_widget(oracle_list.clone(), chunks[2]);
+                    f.render_widget(&oracle_list, chunks[1]);
+                    f.render_widget(&oracle_list, chunks[2]);
                 }
 
                 // Bard (Score)
