@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-    use crate::vm::ChimeraVM;
     use crate::opcode::OpCode;
+    use crate::vm::ChimeraVM;
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -21,26 +21,55 @@ mod tests {
 
         let genes = vec![
             // Init: Push(1)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
             // Make it [1, 1] using Map("[ dup() ]")
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("[ dup() ]".to_string())] },
-            Gene { op: OpCode::Map, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("[ dup() ]".to_string())],
+            },
+            Gene {
+                op: OpCode::Map,
+                args: vec![],
+            },
             // Iteration 1: 2 -> 4
-            Gene { op: OpCode::Dup, args: vec![] },
-            Gene { op: OpCode::Add, args: vec![] },
-
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
             // Iteration 2: 4 -> 16
-            Gene { op: OpCode::Dup, args: vec![] },
-            Gene { op: OpCode::Add, args: vec![] },
-
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
             // Iteration 3: 16 -> 256
-            Gene { op: OpCode::Dup, args: vec![] },
-            Gene { op: OpCode::Add, args: vec![] },
-
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
             // Iteration 4: 256 -> 65536 (Wait, 65536 is > 1024, so it should be blocked here)
-            Gene { op: OpCode::Dup, args: vec![] },
-            Gene { op: OpCode::Add, args: vec![] },
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -52,9 +81,14 @@ mod tests {
         }
 
         // Verify we hit the complexity limit
-        let has_error = vm.output.iter().any(|s|
-            s.contains("complexity limit") || s.contains("limit exceeded")
+        let has_error = vm
+            .output
+            .iter()
+            .any(|s| s.contains("complexity limit") || s.contains("limit exceeded"));
+        assert!(
+            has_error,
+            "Expected complexity/size limit error, got: {:?}",
+            vm.output
         );
-        assert!(has_error, "Expected complexity/size limit error, got: {:?}", vm.output);
     }
 }

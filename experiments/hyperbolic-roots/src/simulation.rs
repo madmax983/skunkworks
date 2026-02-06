@@ -1,5 +1,5 @@
-use poincare_disk::{hyperbolic_dist, mobius_add, mobius_sub, Point};
 use num_complex::Complex;
+use poincare_disk::{hyperbolic_dist, mobius_add, mobius_sub, Point};
 use rand::Rng;
 
 #[derive(Clone, Copy)]

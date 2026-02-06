@@ -4,18 +4,21 @@ use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    Terminal,
     backend::Backend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
-    widgets::{Block, Borders, Paragraph, canvas::{Canvas, Line}},
+    widgets::{
+        canvas::{Canvas, Line},
+        Block, Borders, Paragraph,
+    },
+    Terminal,
 };
 
 use tui_shared::Tui;
 
-mod qubit;
 mod boid;
+mod qubit;
 mod world;
 use world::World;
 
@@ -52,7 +55,8 @@ impl App {
 }
 
 fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()>
-where std::io::Error: From<<B as Backend>::Error>
+where
+    std::io::Error: From<<B as Backend>::Error>,
 {
     // Canvas dimensions (virtual units)
     let world_width = 200.0;
@@ -118,16 +122,16 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             // Draw entanglement lines first (background)
             for boid in &app.world.boids {
                 if let Some(partner_idx) = boid.entangled_partner {
-                     if partner_idx < app.world.boids.len() {
-                         let partner = &app.world.boids[partner_idx];
-                         ctx.draw(&Line {
-                             x1: boid.position.0,
-                             y1: boid.position.1,
-                             x2: partner.position.0,
-                             y2: partner.position.1,
-                             color: Color::DarkGray,
-                         });
-                     }
+                    if partner_idx < app.world.boids.len() {
+                        let partner = &app.world.boids[partner_idx];
+                        ctx.draw(&Line {
+                            x1: boid.position.0,
+                            y1: boid.position.1,
+                            x2: partner.position.0,
+                            y2: partner.position.1,
+                            color: Color::DarkGray,
+                        });
+                    }
                 }
             }
 

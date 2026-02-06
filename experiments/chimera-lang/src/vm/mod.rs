@@ -26,6 +26,7 @@
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -37,6 +38,8 @@ pub const MAX_JUNCTION_SIZE: usize = 1024;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
 
+#[cfg(feature = "nova")]
+pub mod akashic;
 pub mod bard;
 pub mod cortex;
 #[cfg(feature = "biophysics")]
@@ -71,7 +74,7 @@ pub enum Topology {
     Mobius,    // 5: Wraps X with twist, Bounded Y.
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Int(i64),
     Str(String),
@@ -548,10 +551,8 @@ impl ChimeraVM {
         if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
             let degrade = self.phase != nova::Phase::Crystalline;
 
-            if degrade {
-                if self.telomeres[self.ip.0] > 0 {
-                    self.telomeres[self.ip.0] -= 1;
-                }
+            if degrade && self.telomeres[self.ip.0] > 0 {
+                self.telomeres[self.ip.0] -= 1;
             }
 
             if self.telomeres[self.ip.0] <= 0 {
@@ -686,7 +687,9 @@ impl ChimeraVM {
 
         if !matches!(
             organelle.kind,
-            nova::OrganelleType::Ribosome | nova::OrganelleType::Void | nova::OrganelleType::Alchemist
+            nova::OrganelleType::Ribosome
+                | nova::OrganelleType::Void
+                | nova::OrganelleType::Alchemist
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -774,8 +777,8 @@ impl ChimeraVM {
                     }
                 }
                 "o" => {
-                     // Offset Read: [dy, dx] -> [val]
-                     if self.stack.len() >= 2 {
+                    // Offset Read: [dy, dx] -> [val]
+                    if self.stack.len() >= 2 {
                         let x_off = self.stack.pop().unwrap();
                         let y_off = self.stack.pop().unwrap();
                         if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
@@ -1187,6 +1190,12 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::AkashicWrite | OpCode::AkashicRead => {
+                akashic::exec_akashic_op(self, op, args);
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy

@@ -1,6 +1,6 @@
-use walkdir::WalkDir;
 use std::collections::HashMap;
 use std::fs;
+use walkdir::WalkDir;
 
 pub const GRID_SIZE: usize = 256;
 
@@ -64,7 +64,9 @@ impl Terrain {
         }
     }
     pub fn get_height(&self, x: usize, y: usize) -> f32 {
-        if x >= GRID_SIZE || y >= GRID_SIZE { return 0.0; }
+        if x >= GRID_SIZE || y >= GRID_SIZE {
+            return 0.0;
+        }
         self.heightmap[y * GRID_SIZE + x]
     }
 

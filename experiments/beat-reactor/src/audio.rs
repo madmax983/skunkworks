@@ -5,11 +5,11 @@ use std::time::{Duration, Instant};
 #[cfg(feature = "real_audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 #[cfg(feature = "real_audio")]
-use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
-#[cfg(feature = "real_audio")]
 use spectrum_analyzer::scaling::divide_by_N;
 #[cfg(feature = "real_audio")]
 use spectrum_analyzer::windows::hann_window;
+#[cfg(feature = "real_audio")]
+use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 
 #[derive(Debug, Clone, Copy)]
 pub struct AudioFeatures {
@@ -75,12 +75,18 @@ impl AudioEngine {
             }
         };
 
-        log::info!("Using audio device: {}", device.name().unwrap_or("Unknown".into()));
+        log::info!(
+            "Using audio device: {}",
+            device.name().unwrap_or("Unknown".into())
+        );
 
         let config = match device.default_input_config() {
             Ok(c) => c,
             Err(e) => {
-                log::error!("Failed to get default input config: {:?}. Engaging Ghost Mode.", e);
+                log::error!(
+                    "Failed to get default input config: {:?}. Engaging Ghost Mode.",
+                    e
+                );
                 self.start_ghost_mode();
                 return;
             }
@@ -88,9 +94,11 @@ impl AudioEngine {
 
         // We only support F32 for simplicity in this moonshot.
         if config.sample_format() != cpal::SampleFormat::F32 {
-             log::warn!("Device does not support F32 natively. Engaging Ghost Mode (Converter TODO).");
-             self.start_ghost_mode();
-             return;
+            log::warn!(
+                "Device does not support F32 natively. Engaging Ghost Mode (Converter TODO)."
+            );
+            self.start_ghost_mode();
+            return;
         }
 
         let config: cpal::StreamConfig = config.into();

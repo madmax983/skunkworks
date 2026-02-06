@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use crate::laban::Director;
 use crate::actor::Actor;
+use crate::laban::Director;
+use bevy::prelude::*;
 use rand::Rng;
 
 #[derive(Component)]

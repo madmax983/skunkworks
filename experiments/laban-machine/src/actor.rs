@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::laban::Director;
+use bevy::prelude::*;
 use rand::Rng;
 
 #[derive(Component)]
@@ -45,16 +45,18 @@ pub fn actor_move_system(
         // 2. Calculate desired velocity
         let to_target = actor.target - pos;
         let dist = to_target.length();
-        let _dir = if dist > 0.0 { to_target / dist } else { Vec2::ZERO };
+        let _dir = if dist > 0.0 {
+            to_target / dist
+        } else {
+            Vec2::ZERO
+        };
 
         // 3. Apply Laban "Space" (Direct vs Indirect)
         // Indirect adds noise to the direction
         let noise_strength = effort.space * 2.0; // 0.0 to 2.0
         let time_now = time.elapsed_seconds();
-        let noise = Vec2::new(
-            (time_now * 5.0).sin(),
-            (time_now * 4.0).cos(),
-        ) * noise_strength * 100.0;
+        let noise =
+            Vec2::new((time_now * 5.0).sin(), (time_now * 4.0).cos()) * noise_strength * 100.0;
 
         // Target point is effectively shifted by noise for Indirect movement
         let effective_target = actor.target + noise;

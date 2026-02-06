@@ -17,7 +17,7 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 use dungeon::Dungeon;
-use poincare_disk::{neighbor_transform_a, mobius_add, Mobius, Point, TilingConsts};
+use poincare_disk::{mobius_add, neighbor_transform_a, Mobius, Point, TilingConsts};
 use render::draw_dungeon;
 
 struct App {

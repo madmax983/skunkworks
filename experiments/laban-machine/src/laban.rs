@@ -26,7 +26,12 @@ impl Default for LabanEffort {
 
 impl LabanEffort {
     pub fn new(space: f32, weight: f32, time: f32, flow: f32) -> Self {
-        Self { space, weight, time, flow }
+        Self {
+            space,
+            weight,
+            time,
+            flow,
+        }
     }
 
     pub fn interpolate(&self, target: &LabanEffort, t: f32) -> Self {
@@ -58,10 +63,7 @@ impl Default for Director {
     }
 }
 
-pub fn director_system(
-    time: Res<Time>,
-    mut director: ResMut<Director>,
-) {
+pub fn director_system(time: Res<Time>, mut director: ResMut<Director>) {
     director.timer.tick(time.delta());
 
     if director.timer.finished() {
@@ -86,7 +88,9 @@ pub fn director_system(
 
     // Simple lerp with clamping
     let t = dt.clamp(0.0, 1.0);
-    director.current_effort = director.current_effort.interpolate(&director.target_effort, t * 0.1); // Smooth damping
+    director.current_effort = director
+        .current_effort
+        .interpolate(&director.target_effort, t * 0.1); // Smooth damping
 }
 
 #[cfg(test)]

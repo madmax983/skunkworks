@@ -1,5 +1,5 @@
-use rand::Rng;
 use crate::qubit::Qubit;
+use rand::Rng;
 use std::f64::consts::PI;
 
 const MAX_FORCE: f64 = 0.05;
@@ -64,10 +64,18 @@ impl Boid {
         self.position.1 += self.velocity.1;
 
         // Wrap around (toroidal world)
-        if self.position.0 < 0.0 { self.position.0 += width; }
-        if self.position.0 > width { self.position.0 -= width; }
-        if self.position.1 < 0.0 { self.position.1 += height; }
-        if self.position.1 > height { self.position.1 -= height; }
+        if self.position.0 < 0.0 {
+            self.position.0 += width;
+        }
+        if self.position.0 > width {
+            self.position.0 -= width;
+        }
+        if self.position.1 < 0.0 {
+            self.position.1 += height;
+        }
+        if self.position.1 > height {
+            self.position.1 -= height;
+        }
 
         // Reset acceleration
         self.acceleration = (0.0, 0.0);
@@ -86,7 +94,9 @@ impl Boid {
         let mut total = 0;
 
         for other in boids {
-            if other.id == self.id { continue; }
+            if other.id == self.id {
+                continue;
+            }
 
             let d = distance(self.position, other.position);
 
@@ -144,7 +154,7 @@ impl Boid {
 
         let align_w = 1.0;
         let coh_w = 1.0 + (1.0 - p_one); // More cohesion if closer to |0>
-        let sep_w = 1.0 + p_one * 2.0;   // More separation if closer to |1>
+        let sep_w = 1.0 + p_one * 2.0; // More separation if closer to |1>
 
         self.apply_force((alignment.0 * align_w, alignment.1 * align_w));
         self.apply_force((cohesion.0 * coh_w, cohesion.1 * coh_w));
@@ -158,7 +168,9 @@ fn distance(a: (f64, f64), b: (f64, f64)) -> f64 {
 
 fn set_mag(v: (f64, f64), mag: f64) -> (f64, f64) {
     let len = (v.0.powi(2) + v.1.powi(2)).sqrt();
-    if len == 0.0 { return (0.0, 0.0); }
+    if len == 0.0 {
+        return (0.0, 0.0);
+    }
     (v.0 * mag / len, v.1 * mag / len)
 }
 

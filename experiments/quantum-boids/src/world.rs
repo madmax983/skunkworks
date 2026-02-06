@@ -1,6 +1,6 @@
-use rand::Rng;
 use crate::boid::{Boid, ENTANGLEMENT_RADIUS};
 use crate::qubit::apply_cnot_approx;
+use rand::Rng;
 
 pub struct World {
     pub boids: Vec<Boid>,
@@ -36,13 +36,16 @@ impl World {
 
             // Entanglement logic
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let dist = distance(boid.position, self.boids[j].position);
                 if dist < ENTANGLEMENT_RADIUS {
                     // Close proximity: Interact
                     // If not entangled, entangle
-                    if boid.entangled_partner.is_none() && self.boids[j].entangled_partner.is_none() {
+                    if boid.entangled_partner.is_none() && self.boids[j].entangled_partner.is_none()
+                    {
                         if rand::thread_rng().gen_bool(0.1) {
                             boid.entangled_partner = Some(j);
                             // Partner update handled when j is processed or we can do it here via index lookups if careful
@@ -73,8 +76,8 @@ impl World {
 
         let old_boids = self.boids.clone();
         for boid in &mut self.boids {
-             boid.flock(&old_boids); // Using old positions for flocking calculation
-             boid.update(self.width, self.height);
+            boid.flock(&old_boids); // Using old positions for flocking calculation
+            boid.update(self.width, self.height);
         }
     }
 
