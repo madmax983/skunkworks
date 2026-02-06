@@ -21,6 +21,7 @@ experiments=(
     "git-cantata"
     "chimera-tardis"
     "chaos-monitor"
+    "syntax-fold"
 )
 
 echo "Checking compilation..."

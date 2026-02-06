@@ -129,6 +129,7 @@ members = [
     "experiments/chimera-tardis",
     "experiments/hyperbolic-git", 
     "experiments/klein-fs", "experiments/fractal-stack",
+    "experiments/syntax-fold",
 ]
 resolver = "2"
 
