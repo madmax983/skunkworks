@@ -430,10 +430,21 @@ where
                         crate::vm::Value::Int(0) => {
                             (".".to_string(), Style::default().fg(Color::DarkGray))
                         }
-                        crate::vm::Value::Int(n) => (
-                            format!("{}", (n.abs() % 10)),
-                            Style::default().fg(Color::Green),
-                        ),
+                        crate::vm::Value::Int(n) => {
+                            #[cfg(feature = "silicon")]
+                            if vm.silicon_mode {
+                                match n {
+                                    1 => ("#".to_string(), Style::default().fg(Color::Yellow)), // Conductor
+                                    2 => ("@".to_string(), Style::default().fg(Color::White).bg(Color::Cyan)), // Head
+                                    3 => ("~".to_string(), Style::default().fg(Color::Red)), // Tail
+                                    _ => (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green)),
+                                }
+                            } else {
+                                (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                            }
+                            #[cfg(not(feature = "silicon"))]
+                            (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                        },
                         crate::vm::Value::Junction(_, _) => (
                             "J".to_string(),
                             Style::default().fg(Color::Yellow),
