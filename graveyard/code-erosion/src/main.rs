@@ -1,246 +1,159 @@
-mod git;
+mod erosion;
+mod git_history;
 mod terrain;
 
-use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use git::GitScanner;
-use ratatui::{
-    prelude::*,
-    widgets::{
-        canvas::{Canvas, Rectangle},
-        Block, Borders, Paragraph,
-    },
-};
-use std::time::{Duration, Instant};
-use terrain::Terrain;
+use macroquad::prelude::*;
+use terrain::{Terrain, GRID_SIZE};
 
-struct App {
-    terrain: Terrain,
-    commits: Vec<git::Commit>,
-    commit_idx: usize,
-    speed: usize,
-    paused: bool,
-    should_quit: bool,
-}
+#[macroquad::main("Code Erosion")]
+async fn main() {
+    let mut terrain = Terrain::new();
+    terrain.init_from_files(".");
 
-impl App {
-    fn new() -> Result<Self> {
-        let commits = GitScanner::load_history()?;
-        Ok(Self {
-            terrain: Terrain::new(120, 60), // Match canvas resolution roughly
-            commits,
-            commit_idx: 0,
-            speed: 5,
-            paused: false,
-            should_quit: false,
-        })
-    }
+    let history = git_history::load_history();
+    let mut history_index = 0;
 
-    fn update(&mut self) {
-        if self.paused || self.commit_idx >= self.commits.len() {
-            // Even if paused or done, we can run global erosion or water decay
-            self.terrain.decay_water();
-            return;
-        }
+    // Camera params
+    let cam_pos = vec3(GRID_SIZE as f32 / 2.0, 100.0, GRID_SIZE as f32 / 2.0);
+    let mut cam_target = vec3(GRID_SIZE as f32 / 2.0, 0.0, GRID_SIZE as f32 / 2.0);
+    let mut zoom = 1.0;
+    let mut rot_angle: f32 = 0.0;
 
-        let end_idx = (self.commit_idx + self.speed).min(self.commits.len());
-
-        for i in self.commit_idx..end_idx {
-            let commit = &self.commits[i];
-            for file in &commit.files {
-                let path_str = file.to_string_lossy();
-                let (x, y) =
-                    GitScanner::map_path(&path_str, self.terrain.width, self.terrain.height);
-
-                // Uplift (Magma/Growth)
-                self.terrain.uplift(x, y, 5.0);
-
-                // Erosion (Weather)
-                // Rain falls where changes happen
-                self.terrain.erode_droplet(x as f64, y as f64);
-            }
-        }
-        self.commit_idx = end_idx;
-
-        // Global Erosion (Time passes)
-        // Occasional random rain?
-        // self.terrain.erode(1);
-
-        self.terrain.decay_water();
-    }
-}
-
-fn main() -> Result<()> {
-    // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = std::io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    // Init App
-    let mut app = match App::new() {
-        Ok(app) => app,
-        Err(e) => {
-            disable_raw_mode()?;
-            execute!(std::io::stdout(), LeaveAlternateScreen)?;
-            eprintln!("Error initializing: {}", e);
-            return Err(e);
-        }
-    };
-
-    let tick_rate = Duration::from_millis(50);
-    let mut last_tick = Instant::now();
+    // Commit replay speed
+    let commits_per_frame = 1;
+    let erosion_steps = 1000;
+    let mut auto_rotate = true;
 
     loop {
-        terminal.draw(|f| ui(f, &app))?;
+        // --- Input ---
+        if is_key_down(KeyCode::W) {
+            cam_target.z -= 1.0;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_target.z += 1.0;
+        }
+        if is_key_down(KeyCode::A) {
+            cam_target.x -= 1.0;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_target.x += 1.0;
+        }
+        if is_key_down(KeyCode::Q) {
+            zoom *= 1.01;
+        }
+        if is_key_down(KeyCode::E) {
+            zoom *= 0.99;
+        }
+        if is_key_pressed(KeyCode::Space) {
+            auto_rotate = !auto_rotate;
+        }
 
-        let timeout = tick_rate
-            .checked_sub(last_tick.elapsed())
-            .unwrap_or_else(|| Duration::from_secs(0));
+        if auto_rotate {
+            rot_angle += 0.005;
+        }
 
-        if event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
-                        KeyCode::Char(' ') => app.paused = !app.paused,
-                        KeyCode::Char('+') => app.speed = (app.speed * 2).min(1000),
-                        KeyCode::Char('-') => app.speed = (app.speed / 2).max(1),
-                        KeyCode::Char('r') => {
-                            app.terrain = Terrain::new(120, 60);
-                            app.commit_idx = 0;
-                        }
-                        _ => {}
+        // --- Simulation ---
+        // Replay commits
+        for _ in 0..commits_per_frame {
+            if history_index < history.len() {
+                let commit = &history[history_index];
+                history_index += 1;
+
+                for change in &commit.changes {
+                    if let Some((x, y)) = terrain.get_coords(&change.path) {
+                        // "Rain"
+                        // Add water? The erosion model spawns drops randomly.
+                        // Here we can spawn drops specifically at these coords.
+                        // For now, let's just Uplift (add lines)
+                        // Add height for added lines
+                        let idx = y * GRID_SIZE + x;
+
+                        // Scale: 100 lines = 1.0 height unit?
+                        let uplift = (change.added as f32).sqrt() / 10.0;
+                        terrain.heightmap[idx] += uplift;
+
+                        // Erosion from "Rain" of deletions/churn?
+                        // Let's say churn causes local erosion
+                        let _churn = change.added + change.deleted;
+                        // Maybe spawn erosion drops here?
+                        // For simplicity, we just uplift now and let global rain erode it.
                     }
                 }
             }
         }
 
-        if last_tick.elapsed() >= tick_rate {
-            app.update();
-            last_tick = Instant::now();
-        }
+        // Erode
+        erosion::erode(&mut terrain, erosion_steps);
 
-        if app.should_quit {
-            break;
-        }
-    }
+        // --- Render ---
+        clear_background(BLACK);
 
-    // Cleanup
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+        // 3D Camera setup
+        let orbit_radius = GRID_SIZE as f32 * 1.5 * zoom;
+        let cam_x = cam_target.x + orbit_radius * rot_angle.cos();
+        let cam_z = cam_target.z + orbit_radius * rot_angle.sin();
+        let cam_y = cam_pos.y * zoom + 100.0; // elevated
 
-    Ok(())
-}
-
-fn ui(f: &mut Frame, app: &App) {
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Min(0), Constraint::Length(3)])
-        .split(f.area());
-
-    let w = app.terrain.width as f64;
-    let h = app.terrain.height as f64;
-
-    let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title(" Code Erosion "),
-        )
-        .x_bounds([0.0, w])
-        .y_bounds([0.0, h])
-        .paint(|ctx| {
-            // Draw terrain cells
-            // We iterate over the terrain grid and draw rectangles (pixels)
-            // Canvas resolution in Ratatui is effectively 2x4 per char if using Block markers?
-            // Actually Canvas uses Braille or Block.
-            // Let's rely on Canvas::paint to draw Rectangles which are quantized.
-
-            // Optimization: Don't draw 0 height?
-            for y in 0..app.terrain.height {
-                for x in 0..app.terrain.width {
-                    let height = app.terrain.get_height(x, y);
-                    let water = app.terrain.water_map[y * app.terrain.width + x];
-
-                    if height <= 0.1 && water <= 0.1 {
-                        continue;
-                    }
-
-                    // Color mapping
-                    // Water: Blue
-                    // Low: Green
-                    // Mid: Grey
-                    // High: White
-                    // Sediment: Yellow?
-
-                    let color = if water > 0.5 {
-                        Color::Blue
-                    } else if height < 5.0 {
-                        Color::Rgb(34, 139, 34) // Forest Green
-                    } else if height < 20.0 {
-                        Color::DarkGray
-                    } else if height < 50.0 {
-                        Color::Gray
-                    } else {
-                        Color::White
-                    };
-
-                    // Draw a 1x1 rect at x, y
-                    // Since y in terrain is 0..H, and canvas is 0..H
-                    // We need to invert Y if terrain 0 is top.
-                    // Usually graphics 0 is bottom left.
-                    // Terrain 0,0 is usually top left in array.
-                    // So let's flip Y.
-
-                    ctx.draw(&Rectangle {
-                        x: x as f64,
-                        y: (app.terrain.height - 1 - y) as f64,
-                        width: 1.0,
-                        height: 1.0,
-                        color,
-                    });
-                }
-            }
+        set_camera(&Camera3D {
+            position: vec3(cam_x, cam_y, cam_z),
+            target: cam_target,
+            up: vec3(0.0, 1.0, 0.0),
+            fovy: 45.0,
+            ..Default::default()
         });
 
-    f.render_widget(canvas, chunks[0]);
+        draw_grid(20, 1.0, BLACK, GRAY);
 
-    // Status
-    let progress = if !app.commits.is_empty() {
-        (app.commit_idx as f64 / app.commits.len() as f64) * 100.0
-    } else {
-        0.0
-    };
+        // Render Terrain as Points or Mesh
+        // Mesh is expensive to rebuild every frame?
+        // 65k points.
+        // Let's draw vertical lines for non-zero height
 
-    let (current_hash, current_date) = if app.commit_idx > 0 && app.commit_idx <= app.commits.len()
-    {
-        let c = &app.commits[app.commit_idx - 1];
-        let date = chrono::DateTime::from_timestamp(c.timestamp, 0)
-            .unwrap_or_default()
-            .format("%Y-%m-%d");
-        (&c.hash[..], date.to_string())
-    } else {
-        ("...", "Start".to_string())
-    };
+        for y in (0..GRID_SIZE).step_by(2) {
+            // Skip every other for perf
+            for x in (0..GRID_SIZE).step_by(2) {
+                let h = terrain.get_height(x, y);
+                if h > 0.1 {
+                    let pos = vec3(x as f32, 0.0, y as f32);
+                    let color = if h > 10.0 {
+                        WHITE
+                    } else if h > 5.0 {
+                        GRAY
+                    } else if h > 2.0 {
+                        BROWN
+                    } else {
+                        GREEN
+                    };
 
-    let status = format!(
-        "Commit: {} | Date: {} | Progress: {:.1}% | Speed: {} | Paused: {} | [Space] Pause [+/-] Speed [r] Reset [q] Quit",
-        &current_hash[0..7.min(current_hash.len())],
-        current_date,
-        progress,
-        app.speed,
-        app.paused
-    );
+                    // Draw a box or line
+                    draw_cube(vec3(pos.x, h / 2.0, pos.z), vec3(1.0, h, 1.0), None, color);
+                }
+            }
+        }
 
-    f.render_widget(
-        Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
-        chunks[1],
-    );
+        set_default_camera();
+
+        // HUD
+        draw_text(
+            &format!("Commit: {}/{}", history_index, history.len()),
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        if history_index < history.len() {
+            let date = history[history_index].date.to_string();
+            draw_text(&format!("Date: {}", date), 10.0, 60.0, 20.0, LIGHTGRAY);
+        }
+
+        draw_text(
+            "WASD: Pan | QE: Zoom | SPACE: Rotate",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            DARKGRAY,
+        );
+
+        next_frame().await
+    }
 }

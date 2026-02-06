@@ -1,238 +1,105 @@
+use std::collections::HashMap;
+use std::fs;
+use walkdir::WalkDir;
+
+pub const GRID_SIZE: usize = 256;
+
 pub struct Terrain {
-    pub width: usize,
-    pub height: usize,
-    pub heightmap: Vec<f64>,
-    pub water_map: Vec<f64>,    // Tracks water accumulation (transient)
-    pub sediment_map: Vec<f64>, // Tracks sediment history (where deposition happens)
+    pub heightmap: Vec<f32>,
+    pub sediment_map: Vec<f32>,
+    pub file_map: HashMap<String, (usize, usize)>,
 }
 
 impl Terrain {
-    pub fn new(width: usize, height: usize) -> Self {
+    pub fn new() -> Self {
+        let size = GRID_SIZE * GRID_SIZE;
         Self {
-            width,
-            height,
-            heightmap: vec![0.0; width * height],
-            water_map: vec![0.0; width * height],
-            sediment_map: vec![0.0; width * height],
+            heightmap: vec![0.0; size],
+            sediment_map: vec![0.0; size],
+            file_map: HashMap::new(),
         }
     }
 
-    pub fn get_height(&self, x: usize, y: usize) -> f64 {
-        if x >= self.width || y >= self.height {
+    pub fn init_from_files(&mut self, root: &str) {
+        println!("Scanning files in {}...", root);
+        let mut files = Vec::new();
+
+        for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
+            if entry.file_type().is_file() {
+                // Ignore target, .git
+                let path_str = entry.path().to_string_lossy().to_string();
+                if path_str.contains("/target/") || path_str.contains("/.git/") {
+                    continue;
+                }
+                files.push(path_str);
+            }
+        }
+
+        // Sort for stability
+        files.sort();
+        println!("Found {} files.", files.len());
+
+        // Map to grid
+        // Scanline mapping
+        for (i, path) in files.iter().enumerate() {
+            if i >= GRID_SIZE * GRID_SIZE {
+                break;
+            }
+
+            let x = i % GRID_SIZE;
+            let y = i / GRID_SIZE;
+
+            self.file_map.insert(path.clone(), (x, y));
+
+            // Set initial height based on file size
+            if let Ok(metadata) = fs::metadata(path) {
+                let size = metadata.len();
+                // Height scaling: log scale or sqrt?
+                // 1KB -> 1.0 height
+                // 1MB -> 1000.0 height? Too tall.
+                // Let's take sqrt(size) / 10.0
+                let h = (size as f32).sqrt() / 5.0;
+                self.heightmap[y * GRID_SIZE + x] = h.max(0.5); // At least some height
+            }
+        }
+    }
+    pub fn get_height(&self, x: usize, y: usize) -> f32 {
+        if x >= GRID_SIZE || y >= GRID_SIZE {
             return 0.0;
         }
-        self.heightmap[y * self.width + x]
+        self.heightmap[y * GRID_SIZE + x]
     }
 
-    #[allow(dead_code)]
-    pub fn set_height(&mut self, x: usize, y: usize, h: f64) {
-        if x < self.width && y < self.height {
-            self.heightmap[y * self.width + x] = h;
+    pub fn get_coords(&self, path: &str) -> Option<(usize, usize)> {
+        // Try exact match first
+        if let Some(coords) = self.file_map.get(path) {
+            return Some(*coords);
         }
-    }
 
-    pub fn uplift(&mut self, x: usize, y: usize, amount: f64) {
-        if x < self.width && y < self.height {
-            self.heightmap[y * self.width + x] += amount;
-        }
-    }
+        // Try relative path match if input path is relative and map has absolute, or vice versa
+        // This is tricky. Let's just rely on exact match for now, or suffix match.
+        // git log output paths are relative to repo root (e.g. "experiments/code-erosion/src/main.rs")
+        // WalkDir output might be "./experiments..."
 
-    // Helper for bilinear interpolation
-    fn height_at(&self, x: f64, y: f64) -> f64 {
-        let x_i = x.floor() as usize;
-        let y_i = y.floor() as usize;
-        let u = x - x_i as f64;
-        let v = y - y_i as f64;
+        let needle = if path.starts_with("./") {
+            &path[2..]
+        } else {
+            path
+        };
 
-        let h00 = self.get_height(x_i, y_i);
-        let h10 = self.get_height(x_i + 1, y_i);
-        let h01 = self.get_height(x_i, y_i + 1);
-        let h11 = self.get_height(x_i + 1, y_i + 1);
-
-        (h00 * (1.0 - u) + h10 * u) * (1.0 - v) + (h01 * (1.0 - u) + h11 * u) * v
-    }
-
-    fn gradient_at(&self, x: f64, y: f64) -> (f64, f64) {
-        let x_i = x.floor() as usize;
-        let y_i = y.floor() as usize;
-        let u = x - x_i as f64;
-        let v = y - y_i as f64;
-
-        let h00 = self.get_height(x_i, y_i);
-        let h10 = self.get_height(x_i + 1, y_i);
-        let h01 = self.get_height(x_i, y_i + 1);
-        let h11 = self.get_height(x_i + 1, y_i + 1);
-
-        let dx = (h10 - h00) * (1.0 - v) + (h11 - h01) * v;
-        let dy = (h01 - h00) * (1.0 - u) + (h11 - h10) * u;
-
-        (dx, dy)
-    }
-
-    pub fn erode_droplet(&mut self, mut x: f64, mut y: f64) {
-        let max_steps = 30;
-        let inertia = 0.05; // Low inertia = follow gradient closely
-        let gravity = 4.0;
-        let evaporation = 0.05;
-        let capacity_factor = 4.0; // How much sediment can it carry
-        let min_slope = 0.05;
-        let deposit_speed = 0.3;
-        let erode_speed = 0.3;
-
-        let mut speed: f64 = 1.0;
-        let mut water: f64 = 1.0;
-        let mut sediment: f64 = 0.0;
-        let mut dir_x: f64 = 0.0;
-        let mut dir_y: f64 = 0.0;
-
-        for _ in 0..max_steps {
-            // Check bounds
-            if x < 1.0 || x >= (self.width - 2) as f64 || y < 1.0 || y >= (self.height - 2) as f64 {
-                break;
-            }
-
-            // Track water for visualization
-            let ipos = (y.round() as usize) * self.width + (x.round() as usize);
-            if ipos < self.water_map.len() {
-                self.water_map[ipos] += water * 0.1;
-            }
-
-            let (gx, gy) = self.gradient_at(x, y);
-
-            // Update direction
-            dir_x = dir_x * inertia - gx * (1.0 - inertia);
-            dir_y = dir_y * inertia - gy * (1.0 - inertia);
-
-            // Normalize
-            let len = (dir_x * dir_x + dir_y * dir_y).sqrt();
-            if len == 0.0 {
-                break;
-            }
-            dir_x /= len;
-            dir_y /= len;
-
-            let old_x = x;
-            let old_y = y;
-            x += dir_x;
-            y += dir_y;
-
-            // Check bounds again
-            if x < 1.0 || x >= (self.width - 2) as f64 || y < 1.0 || y >= (self.height - 2) as f64 {
-                break;
-            }
-
-            let h_old = self.height_at(old_x, old_y);
-            let h_new = self.height_at(x, y);
-            let diff = h_new - h_old;
-
-            // Update capacity and velocity
-            let c = (-diff).max(min_slope) * speed * water * capacity_factor;
-
-            if diff > 0.0 {
-                // Moving uphill (kinetic energy depleted or pit)
-                // Fill pit
-                let amount = sediment.min(diff); // Fill up to the height
-                sediment -= amount;
-                self.deposit(old_x, old_y, amount);
-                speed = 0.0; // Stop
+        for (key, val) in &self.file_map {
+            // key might be "./experiments/..."
+            let key_clean = if key.starts_with("./") {
+                &key[2..]
             } else {
-                // Moving downhill
-                speed = (speed * speed + (-diff) * gravity).sqrt();
-                if sediment > c {
-                    // Deposit
-                    let amount = (sediment - c) * deposit_speed;
-                    sediment -= amount;
-                    self.deposit(old_x, old_y, amount);
-                } else {
-                    // Erode
-                    let amount = (c - sediment) * erode_speed;
-                    let amount = amount.min(-diff); // Don't dig deeper than the fall
-                    sediment += amount;
-                    self.erode_point(old_x, old_y, amount);
-                }
-            }
+                key
+            };
 
-            water *= 1.0 - evaporation;
-            if water < 0.01 {
-                break;
-            }
-        }
-    }
-
-    fn deposit(&mut self, x: f64, y: f64, amount: f64) {
-        let x_i = x.floor() as usize;
-        let y_i = y.floor() as usize;
-        let u = x - x_i as f64;
-        let v = y - y_i as f64;
-
-        // Bilinear deposit
-        self.add_height(x_i, y_i, amount * (1.0 - u) * (1.0 - v));
-        self.add_height(x_i + 1, y_i, amount * u * (1.0 - v));
-        self.add_height(x_i, y_i + 1, amount * (1.0 - u) * v);
-        self.add_height(x_i + 1, y_i + 1, amount * u * v);
-
-        // Track sediment
-        let idx = y_i * self.width + x_i;
-        if idx < self.sediment_map.len() {
-            self.sediment_map[idx] += amount;
-        }
-    }
-
-    fn erode_point(&mut self, x: f64, y: f64, amount: f64) {
-        let x_i = x.floor() as usize;
-        let y_i = y.floor() as usize;
-        let u = x - x_i as f64;
-        let v = y - y_i as f64;
-
-        self.add_height(x_i, y_i, -amount * (1.0 - u) * (1.0 - v));
-        self.add_height(x_i + 1, y_i, -amount * u * (1.0 - v));
-        self.add_height(x_i, y_i + 1, -amount * (1.0 - u) * v);
-        self.add_height(x_i + 1, y_i + 1, -amount * u * v);
-    }
-
-    fn add_height(&mut self, x: usize, y: usize, amount: f64) {
-        if x < self.width && y < self.height {
-            self.heightmap[y * self.width + x] += amount;
-        }
-    }
-
-    pub fn decay_water(&mut self) {
-        for w in &mut self.water_map {
-            *w *= 0.8; // Fast decay for display
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_erosion_runs() {
-        let mut terrain = Terrain::new(50, 50);
-        // Create a mound
-        for y in 20..30 {
-            for x in 20..30 {
-                terrain.set_height(x, y, 10.0);
+            if key_clean == needle {
+                return Some(*val);
             }
         }
 
-        // Drop rain on edge of the mound
-        // Mound is 20..30. Edge is at 20.
-        // Slope is between 19 and 20.
-        // Drop at 19.5, 25.0. It should flow towards 19.
-        terrain.erode_droplet(19.5, 25.0);
-
-        // Check if height changed (eroded or deposited)
-        // It should have eroded the top or deposited on sides
-        let mut changed = false;
-        for h in &terrain.heightmap {
-            if *h != 0.0 && *h != 10.0 {
-                changed = true;
-                break;
-            }
-        }
-        // It might be subtle, but let's assume one run changes something.
-        assert!(changed, "Erosion should modify terrain");
+        None
     }
 }
