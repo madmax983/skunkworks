@@ -268,3 +268,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-git
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The time machine is active. We are navigating the DAG on the Poincaré disk. History has no boundary.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-tardis
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The recursion is tangible. We are flying into the stack. The infinite zoom is operational.
