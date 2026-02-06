@@ -1,0 +1,10 @@
+[package]
+name = "chimera-automaton"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rapier2d = "0.21.0"
+nalgebra = "0.33"
+chimera-lang = { path = "../chimera-lang" }

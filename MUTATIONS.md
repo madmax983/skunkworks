@@ -316,7 +316,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM organisms possessing Hodgkin-Huxley neurons, allowing them to process signals via realistic electrophysiology.
 - **Novel trait**: Spiking Neural Networks integrated into Genetic Programming.
 - **Status**: experiments/chimera-lang (feature: biophysics)
-- **Evaluation**: Compiles. Tests passed.
+- **Evaluation**: Compiles. Tests passed. Note: Parent `biophysical-synth` fails compilation in headless env (alsa-sys), but `chimera-lang` feature is safe.
 
 ### compost-chimera
 - **Parents**: experiments/chimera-lang + experiments/digital-compost
@@ -350,4 +350,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Jurassic Park for Code". Resurrecting dead code from git history by splicing it into Chimera VM DNA.
 - **Novel trait**: Paleo-genetic Resurrection. Old code becomes the genome for new digital life.
 - **Status**: experiments/chimera-fossil
-- **Evaluation**: Compiles. Splicing mechanism operational.
+- **Evaluation**: Compiles. Verified in GUESTBOOK. Splicing mechanism operational.
+
+### cam-automaton
+- **Parents**: Physics Engine + Mechanical Linkage Logic
+- **Concept**: Simulation of cams, followers, and linkages driving a ragdoll puppet.
+- **Novel trait**: Pure mechanical computation driving kinetic art.
+- **Status**: experiments/cam-automaton
+- **Evaluation**: Compiles. Functional physics simulation.
+
+### git-cantata
+- **Parents**: experiments/git-history + experiments/generative-audio
+- **Concept**: Visualizing and sonifying git history as an oil painting and musical composition.
+- **Novel trait**: Synesthetic representation of version control data.
+- **Status**: experiments/git-cantata
+- **Evaluation**: Compiles. Audio generation active.
+
+### chimera-automaton
+- **Parents**: experiments/cam-automaton + experiments/chimera-lang
+- **Concept**: Biomechanical vehicle where a Genetic Program (ChimeraVM) drives a Physics Body (Rapier2D).
+- **Novel trait**: Embodied Artificial Life. Code becomes motion.
+- **Status**: experiments/chimera-automaton
+- **Evaluation**: Compiles. Vehicle operational.
