@@ -228,3 +228,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chimera-fossil
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The excavation is complete. Fossilized code is being reanimated. Jurassic Park is online.
+
+### [Concentration Level: FRESH] - Location: experiments/cam-automaton
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The cams are grinding. The linkage is tight. The puppet dances to the rhythm of the machine.
