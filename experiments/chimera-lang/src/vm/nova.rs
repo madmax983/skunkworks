@@ -2509,6 +2509,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         3 => Some(super::Topology::CylinderV),
                         4 => Some(super::Topology::Klein),
                         5 => Some(super::Topology::Mobius),
+                        6 => Some(super::Topology::Hyperbolic),
                         _ => None,
                     };
 

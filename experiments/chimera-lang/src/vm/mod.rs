@@ -29,6 +29,8 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+#[cfg(feature = "nova")]
+use poincare_disk::{hyperbolic_dist, Point};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -87,6 +89,8 @@ pub enum Topology {
     CylinderV, // 3: Bounded X, Wraps Y.
     Klein,     // 4: Wraps X, Wraps Y with twist (x' = 15-x).
     Mobius,    // 5: Wraps X with twist, Bounded Y.
+    #[cfg(feature = "nova")]
+    Hyperbolic, // 6: Poincaré Disk model. Distance is non-Euclidean.
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -484,6 +488,15 @@ impl ChimeraVM {
 
                 if (0..size).contains(&ny) {
                     Some((ny as usize, nx as usize))
+                } else {
+                    None
+                }
+            }
+            #[cfg(feature = "nova")]
+            Topology::Hyperbolic => {
+                // Bounded disk. Edges are walls (or infinity).
+                if self.is_valid_coord(y, x) {
+                    Some((y as usize, x as usize))
                 } else {
                     None
                 }
@@ -1184,8 +1197,46 @@ impl ChimeraVM {
         result
     }
 
+    #[cfg(feature = "nova")]
+    fn to_poincare(c: i64) -> f64 {
+        // Map 0..(GRID_SIZE-1) to -0.95..0.95
+        let max_idx = (GRID_SIZE - 1) as f64;
+        (c as f64 / max_idx) * 1.9 - 0.95
+    }
+
     pub(crate) fn get_circular_coords(&self, cx: i64, cy: i64, r: i64) -> Vec<(usize, usize)> {
         let mut coords = Vec::new();
+
+        #[cfg(feature = "nova")]
+        if self.topology == Topology::Hyperbolic {
+            let px = Self::to_poincare(cx);
+            let py = Self::to_poincare(cy);
+            let center = Point::new(px, py);
+            // Heuristic: Use r directly as hyperbolic distance?
+            // r=1 -> 1.0 hyperbolic distance.
+            // At center, neighbor is ~0.22 away.
+            // So r=1 covers ~4 cells radius at center.
+            // r=5 covers ~20 cells (whole grid).
+            // Let's scale it down to make it more interesting?
+            // If we use r * 0.5:
+            // r=1 -> 0.5. Covers immediate neighbors (0.22) and diagonals (0.31).
+            // r=5 -> 2.5. Covers large area.
+            let r_hyp = (r as f64) * 0.5;
+
+            for y in 0..GRID_SIZE {
+                for x in 0..GRID_SIZE {
+                    let tx = Self::to_poincare(x as i64);
+                    let ty = Self::to_poincare(y as i64);
+                    let target = Point::new(tx, ty);
+                    let dist = hyperbolic_dist(center, target);
+                    if dist <= r_hyp {
+                        coords.push((x, y));
+                    }
+                }
+            }
+            return coords;
+        }
+
         let r_sq = (r as i128).saturating_mul(r as i128);
         for y in 0..GRID_SIZE {
             for x in 0..GRID_SIZE {
