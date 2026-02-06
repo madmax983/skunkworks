@@ -211,7 +211,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                 Paragraph::new(status).block(Block::default().borders(Borders::TOP)),
                 chunks[1],
             );
-        })?;
+        }).map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
