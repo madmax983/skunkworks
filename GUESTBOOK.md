@@ -308,3 +308,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chaos-monitor
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Lorenz attractor is sensing system load. The butterfly is flapping its wings in the CPU.
+
+### [Concentration Level: FRESH] - Location: experiments/klein-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is looping. The twist is active. Boids are flying upside down.

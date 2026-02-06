@@ -399,7 +399,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Recursive visualization of the call stack of an evolving VM.
 - **Novel trait**: Infinite zoom debugger. Fly into the code execution.
 - **Status**: experiments/chimera-tardis
-- **Evaluation**: Compiles. Implemented by Splice Surgeon.
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
 
 ### chaos-monitor
 - **Parents**: experiments/chaos-pendulum + experiments/storm-monitor
@@ -407,3 +407,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Deterministic Chaos driven by System State. The computer's effort shapes the attractor's orbit.
 - **Status**: experiments/chaos-monitor
 - **Evaluation**: Compiles.
+
+### klein-flock
+- **Parents**: experiments/klein-fs + experiments/luminous-flock
+- **Concept**: A swarm of boids flocking on the surface of a non-orientable 4D manifold (Klein Bottle) projected into 3D.
+- **Novel trait**: Non-orientable Swarm Dynamics. Boids flip orientation and velocity when traversing the topological twist.
+- **Status**: experiments/klein-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
