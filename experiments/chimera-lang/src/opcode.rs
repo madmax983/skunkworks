@@ -705,6 +705,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Brainfuck,
 
+    // Meta Features (Self-Definition)
+    /// **[Nova]** Defines a new enzyme (OpCode) that calls a strand.
+    ///
+    /// **Stack:** `[ ..., name_str, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Define,
+    /// **[Nova]** Removes a defined enzyme.
+    ///
+    /// **Stack:** `[ ..., name_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Undefine,
+    /// **[Nova]** Pushes a list of all defined custom enzymes.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., list_junction ]`
+    #[cfg(feature = "nova")]
+    Dictionary,
+
     // Akashic Features (Persistent Storage)
     /// **[Nova]** Writes a key-value pair to the persistent Akashic Record.
     ///

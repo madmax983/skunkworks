@@ -51,6 +51,8 @@ pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
 pub mod microscope;
+#[cfg(feature = "nova")]
+pub mod meta;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
@@ -268,6 +270,8 @@ pub struct ChimeraVM {
     pub spirit_value: Option<Value>,
     #[cfg(feature = "nova")]
     pub graveyard: Vec<crate::ast::Strand>,
+    #[cfg(feature = "nova")]
+    pub dictionary: HashMap<String, usize>,
 }
 
 impl ChimeraVM {
@@ -391,6 +395,8 @@ impl ChimeraVM {
             spirit_value: None,
             #[cfg(feature = "nova")]
             graveyard: Vec::new(),
+            #[cfg(feature = "nova")]
+            dictionary: HashMap::new(),
         }
     }
 
@@ -1433,6 +1439,11 @@ impl ChimeraVM {
             OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
+                meta::exec_meta_op(self, op, args)
+            }
+
+            #[cfg(feature = "nova")]
             OpCode::Splice
             | OpCode::Isomerize
             | OpCode::Spirit
@@ -1562,6 +1573,16 @@ impl ChimeraVM {
             }
 
             OpCode::Unknown(name) => {
+                #[cfg(feature = "nova")]
+                if let Some(&strand_idx) = self.dictionary.get(&name) {
+                    if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
+                        self.output.push("Error: Call stack overflow".to_string());
+                        return None;
+                    }
+                    self.call_stack.push((self.ip.0, self.ip.1 + 1));
+                    return Some((strand_idx, 0));
+                }
+
                 self.output.push(format!("Unknown enzyme: {}", name));
                 None
             }

@@ -90,6 +90,8 @@ mod nova_madness_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_meta_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_mutagen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_necromancy_test;
