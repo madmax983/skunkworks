@@ -108,6 +108,8 @@ mod nova_phase_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_probabilistic_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_quantum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_radio_test;
