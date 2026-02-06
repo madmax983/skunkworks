@@ -77,6 +77,69 @@ classDiagram
     Snapshot *-- Action : Contains
 ```
 
+### Poincaré Disk (crates/poincare-disk)
+
+The `poincare-disk` crate provides hyperbolic geometry primitives, shared by `hyperbolic-git`, `chimera-lang`, and others.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class Point {
+        <<Type Alias>>
+        Complex~f64~
+    }
+
+    class Mobius {
+        +Complex~f64~ a
+        +Complex~f64~ b
+        +Complex~f64~ c
+        +Complex~f64~ d
+        +apply(z: Point) Point
+        +then(other: Mobius) Mobius
+    }
+
+    class TilingConsts {
+        +f64 neighbor_offset
+        +f64 vertex_offset
+        +new_4_5() TilingConsts
+    }
+
+    Mobius ..> Point : Transforms
+    TilingConsts ..> Point : Generates Offsets
+```
+
+### Resonance Audio (crates/resonance-audio)
+
+The `resonance-audio` crate implements a 2D wave equation solver and audio state management, decoupled from any specific visualization.
+
+```mermaid
+classDiagram
+    direction TB
+
+    class AudioModel {
+        +PhysicsGrid grid
+        +HashMap oscillators
+        +process(output: &mut [f32])
+    }
+
+    class PhysicsGrid {
+        +Vec~f32~ u
+        +step()
+        +pluck(x, y, strength)
+    }
+
+    class AudioCommand {
+        <<Enum>>
+        +Pluck
+        +Oscillate
+        +AddWall
+    }
+
+    AudioModel *-- PhysicsGrid : Owns
+    AudioModel ..> AudioCommand : Consumes
+```
+
 ### Optional Audio Backend (ADR 005)
 
 To support CI environments without audio drivers, all audio functionality is gated behind a `feature = "audio"` flag.
