@@ -316,3 +316,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chrontext
 - **Scent Origin:** Nova 🌟 (The Archaeologist)
 - **Status:** The strata are visible. Code age is now a color. We can read the time dimension.
+
+### [Concentration Level: FRESH] - Location: experiments/synaptic-choir
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The population is singing. Izhikevich neurons are coupled via gap junctions. Emergent synchronization detected.

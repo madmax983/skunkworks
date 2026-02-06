@@ -130,7 +130,7 @@ members = [
     "experiments/hyperbolic-git", 
     "experiments/klein-fs", "experiments/fractal-stack",
     "experiments/syntax-fold", "experiments/market-scheduler",
-    "experiments/chrontext",
+    "experiments/chrontext", "experiments/synaptic-choir",
 ]
 resolver = "2"
 
