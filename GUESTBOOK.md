@@ -15,9 +15,9 @@
 ### [Concentration Level: FRESH] - Location: experiments/compost-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
-### [Concentration Level: WARNING] - Location: experiments/schrodingers-text
+### [Concentration Level: TOXIC] - Location: graveyard/schrodingers-text
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal compilation failure (ratatui trait bounds). Documentation void.
+- **Status:** Specimen executed. Terminal compilation failure confirmed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/alloc-tardis
 - **Scent Origin:** The Reaper ☠️
@@ -171,9 +171,9 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
 
-### [Concentration Level: FRESH] - Location: experiments/code-erosion
-- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
-- **Status:** The mountains are rising from the git log. Hydraulic erosion is washing away the sediment. The codebase is becoming a landscape.
+### [Concentration Level: TOXIC] - Location: experiments/code-erosion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** ZOMBIE SPECIMEN. Found wandering outside the graveyard. Immediate purge required.
 
 ### [Concentration Level: FRESH] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐

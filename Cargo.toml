@@ -31,7 +31,6 @@ members = [
     "experiments/pidgin-mesh",
     "experiments/resonance-chamber",
     "experiments/rhizome-seeker",
-    "experiments/schrodingers-text",
     "experiments/sculpt-term",
     "experiments/semantic-spy",
     "experiments/stigmergy-hub",
