@@ -7,14 +7,17 @@ mod tests {
     #[test]
     #[cfg(feature = "nova")]
     fn test_chronostasis() {
-        // [ chronostasis(5) push(1) consume() ]
-        // We will simulate a scenario where environment would normally decay/diffuse.
-        // But with chronostasis, it shouldn't.
+        // [ push(5) chronostasis() push(10) consume() jump(2) ]
+        // Loop to keep VM alive while timer ticks.
 
         let genes = vec![
             Gene {
-                op: OpCode::Chronostasis,
+                op: OpCode::Push,
                 args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Chronostasis,
+                args: vec![],
             },
             Gene {
                 op: OpCode::Push,
@@ -24,67 +27,86 @@ mod tests {
                 op: OpCode::Consume,
                 args: vec![],
             },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)], // Jump to strand 0
+            },
         ];
+
+        // Wait, Jump(0) jumps to (0,0).
+        // That re-executes Push(5) and Chronostasis!
+        // That resets the timer!
+        // We want to jump to (0, 2).
+        // Chimera `Jump` opcode takes Strand Index. It jumps to (strand_idx, 0).
+        // `JumpS` jumps to strand index from stack.
+        // There is no intra-strand jump to specific gene index in standard ops?
+        // Ah, `jump` is only to start of strand.
+
+        // Solution: Split into strands.
+        // Strand 0: [ Push(5) Chronostasis Jump(1) ]
+        // Strand 1: [ Push(10) Consume Jump(1) ]
+
+        let s0 = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+                Gene { op: OpCode::Chronostasis, args: vec![] },
+                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+            ]
+        };
+
+        let s1 = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+                Gene { op: OpCode::Consume, args: vec![] },
+                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+            ]
+        };
 
         let mut vm = ChimeraVM::new(Dna {
             helix: Helix {
-                strands: vec![Strand { genes }],
+                strands: vec![s0, s1],
             },
         });
+        vm.energy = 1000; // Give enough energy
 
-        // Setup environment: Add waste at current location
+        // Setup environment
         let (cy, cx) = vm.context_loc;
         vm.waste_grid[cy][cx] = 100;
 
-        // Setup organelle: A Mitochondria that usually generates energy
-        // We'll manually inject one since Spawn might not be enough to control timing perfectly
-        // But wait, organelles run *after* main step usually.
-        // If we freeze, organelles shouldn't run.
-
-        // Let's use waste diffusion as the marker.
-        // Normal step diffuses waste.
-        // Frozen step should NOT diffuse waste.
-
-        // Step 1: Execute Chronostasis(5)
+        // Step 1: Push(5)
+        vm.step();
+        // Step 2: Chronostasis
         vm.step();
         assert_eq!(vm.chronostasis_timer, 5);
 
-        // Initial waste
-        let initial_waste = vm.waste_grid[cy][cx];
-        assert_eq!(initial_waste, 110); // +10 from process_environment (waaaait)
+        // Step 3: Jump(1)
+        vm.step();
+        // Now ip is (1,0)
 
-        // The first step executed Chronostasis.
-        // process_environment ran BEFORE the instruction.
-        // So waste increased by 10 (metabolism) and diffused?
-        // Let's reset for clarity.
-
-        vm.waste_grid[cy][cx] = 100;
+        // Capture waste state
         let diff_check = vm.waste_grid[cy][cx];
 
-        // Step 2: Push(10). Should be frozen.
+        // Run loop in Strand 1.
+        // Timer was 4 after Jump.
+        // Step 4: Push(10). Timer -> 3.
         vm.step();
-
-        // Timer should decrement
-        assert_eq!(vm.chronostasis_timer, 4);
-
-        // Waste should NOT have changed (no diffusion, no accumulation)
-        // Normal process_environment adds 10 waste and diffuses.
+        assert_eq!(vm.chronostasis_timer, 3);
         assert_eq!(vm.waste_grid[cy][cx], diff_check);
 
         // Run until timer expires
-        vm.step(); // 3
-        vm.step(); // 2
-        vm.step(); // 1
-        vm.step(); // 0 - Last frozen tick? Or timer decrements then checks?
-
-        // Let's see implementation details.
-        // If timer > 0, skip env. Decrement timer.
+        vm.step(); // Consume. Timer -> 3
+        vm.step(); // Jump(1). Timer -> 2
+        vm.step(); // Push(10). Timer -> 1
+        vm.step(); // Consume. Timer -> 0
 
         assert_eq!(vm.chronostasis_timer, 0);
 
-        // Step 6: Normal execution resumes
+        // Step 9: Jump(1). Normal execution resumes.
         vm.step();
-        // Now waste should change
+        // Step 10: Push(10). Env process runs.
+        vm.step();
+
+        // Now waste should change (diffusion + accumulation)
         assert_ne!(vm.waste_grid[cy][cx], diff_check);
     }
 }

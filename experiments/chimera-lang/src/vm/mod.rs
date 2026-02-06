@@ -1039,7 +1039,7 @@ impl ChimeraVM {
 
         #[cfg(feature = "silicon")]
         if !time_frozen && self.silicon_mode {
-            silicon::step_wireworld(self);
+            silicon::step_circuit(self);
         }
 
         if !time_frozen && self.chaos_mode {
@@ -1402,7 +1402,8 @@ impl ChimeraVM {
             | OpCode::Map
             | OpCode::Fold
             | OpCode::Filter
-            | OpCode::Zip => nova::exec_nova_op(self, op, args),
+            | OpCode::Zip
+            | OpCode::Match => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
@@ -1429,7 +1430,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "silicon")]
-            OpCode::Conduct | OpCode::Wire | OpCode::Pulse | OpCode::Silicon => {
+            OpCode::Conduct | OpCode::Wire | OpCode::Pulse | OpCode::Silicon | OpCode::Construct | OpCode::LogicGate => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }
