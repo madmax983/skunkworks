@@ -182,6 +182,10 @@
 ## History/Decay
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Chronomancer)
+- **Status:** Time has stopped. The environment is frozen. The Nucleus moves in the stillness between seconds. `Chronostasis` enzyme synthesized.
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Chromatician)
 - **Status:** Camouflage verified. The organism can now see and mimic the colors of its environment. `SensePigment` and `SenseGlyph` enzymes synthesized.
 

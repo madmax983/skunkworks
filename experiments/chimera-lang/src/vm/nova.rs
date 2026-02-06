@@ -703,6 +703,26 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             Some((0, 0))
         }
         #[cfg(feature = "nova")]
+        OpCode::Chronostasis => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(ticks) = val {
+                    if ticks > 0 {
+                        vm.chronostasis_timer = ticks as usize;
+                        let cost = 50 + ticks;
+                        vm.energy = vm.energy.saturating_sub(cost);
+                        vm.output.push(format!("CHRONOSTASIS: Time frozen for {} ticks", ticks));
+                    } else {
+                        vm.output.push("Error: Invalid ticks for chronostasis".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for chronostasis".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for chronostasis".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Simulate => {
             // stack: ticks, strand_idx (bottom)
             if vm.stack.len() >= 2 {

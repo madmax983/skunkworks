@@ -578,6 +578,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Metamorphosis,
 
+    /// **[Nova]** Freezes the environment and other organisms for a duration.
+    ///
+    /// **Stack:** `[ ..., ticks ] -> [ ... ]`
+    /// **Cost:** 50 + ticks Energy.
+    #[cfg(feature = "nova")]
+    Chronostasis,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -1049,6 +1056,8 @@ impl FromStr for OpCode {
             "poly" => Ok(OpCode::Poly),
             #[cfg(feature = "nova")]
             "metamorphosis" => Ok(OpCode::Metamorphosis),
+            #[cfg(feature = "nova")]
+            "chronostasis" => Ok(OpCode::Chronostasis),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -1317,6 +1326,8 @@ impl fmt::Display for OpCode {
             OpCode::Tempo => write!(f, "tempo"),
             #[cfg(feature = "nova")]
             OpCode::Perform => write!(f, "perform"),
+            #[cfg(feature = "nova")]
+            OpCode::Chronostasis => write!(f, "chronostasis"),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck => write!(f, "pluck"),
