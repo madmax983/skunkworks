@@ -691,8 +691,8 @@ where
                                     {
                                         Ok(mut pairs) => {
                                             let pair = pairs.next().unwrap();
-                                            let gene = Gene::from_pair(pair);
-
+                                            match Gene::try_from_pair(pair) {
+                                                Ok(gene) => {
                                             if app_state.selected_strand
                                                 < vm.dna.helix.strands.len()
                                                 && app_state.selected_gene
@@ -708,6 +708,11 @@ where
                                             }
                                             app_state.input_mode = InputMode::Normal;
                                             app_state.input_buffer.clear();
+                                                }
+                                                Err(e) => {
+                                                    app_state.status_msg = format!("Parse Error: {}", e);
+                                                }
+                                            }
                                         }
                                         Err(e) => {
                                             app_state.status_msg = format!("Parse Error: {}", e);

@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[cfg(feature = "nova")]
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
@@ -15,7 +16,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "nova")]
     fn test_dos_spore_bomb() {
         let mut genes = Vec::new();
         genes.push(Gene {
@@ -51,7 +51,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "nova")]
     fn test_dos_organelle_swarm() {
         // Spawn costs 20.
         let mut genes = Vec::new();
@@ -89,7 +88,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "nova")]
     fn test_dos_reflex_storm() {
         // Strand 0: [ reflex(1, 0) irradiate(1, 10) ]
         // irradiate -> triggers mutation -> triggers reflex(1) -> calls strand 0
