@@ -521,6 +521,105 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Meme => {
+            if let Some(gene) = &vm.last_gene {
+                let gene_clone = gene.clone();
+                let helix_len = vm.dna.helix.strands.len();
+                if helix_len > 0 {
+                    let mut rng = rand::thread_rng();
+                    let target_strand = rng.gen_range(0..helix_len);
+                    let strand_len = vm.dna.helix.strands[target_strand].genes.len();
+                    let insert_pos = rng.gen_range(0..=strand_len); // Can insert at end
+
+                    vm.dna.helix.strands[target_strand]
+                        .genes
+                        .insert(insert_pos, gene_clone);
+
+                    vm.energy = vm.energy.saturating_sub(20);
+                    vm.output.push(format!(
+                        "MEME: Infected strand {} at {} with {}",
+                        target_strand, insert_pos, gene.op
+                    ));
+                }
+            } else {
+                vm.output.push("MEME: No previous gene to spread".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Drift => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(prob) = val {
+                    let p = prob.clamp(0, 100);
+                    let mut rng = rand::thread_rng();
+                    let mut changes = 0;
+
+                    let enzymes = [
+                        OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
+                        OpCode::Dup, OpCode::Print, OpCode::Swap, OpCode::Drop,
+                        OpCode::Jump, OpCode::Brz, OpCode::Photosynthesize, OpCode::Consume,
+                        OpCode::GRead, OpCode::GWrite, OpCode::Genome,
+                        OpCode::Meme, OpCode::Poly, // Self-reference!
+                    ];
+
+                    for strand in &mut vm.dna.helix.strands {
+                        for gene in &mut strand.genes {
+                            if rng.gen_range(0..100) < p {
+                                let new_op = enzymes[rng.gen_range(0..enzymes.len())].clone();
+                                gene.op = new_op;
+                                changes += 1;
+                            }
+                        }
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(50 + changes);
+                    vm.output.push(format!("DRIFT: Mutated {} genes", changes));
+                } else {
+                    vm.output.push("Error: Type mismatch for drift".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for drift".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Poly => {
+            // stack: [ val ] (peek)
+            if let Some(val) = vm.stack.last() {
+                // args: [ op_int, op_str ]
+                if args.len() >= 2 {
+                    let op_to_run = match val {
+                        Value::Int(_) => Some(&args[0]),
+                        Value::Str(_) => Some(&args[1]),
+                        _ => None,
+                    };
+
+                    if let Some(nucleotide) = op_to_run {
+                        let op_str = match nucleotide {
+                            Nucleotide::String(s) => Some(s.clone()),
+                            Nucleotide::Identifier(s) => Some(s.clone()),
+                            _ => None,
+                        };
+
+                        if let Some(s) = op_str {
+                            if let Ok(op) = s.parse::<OpCode>() {
+                                return vm.execute_gene_inner(op, &[]);
+                            } else {
+                                vm.output.push(format!("POLY: Invalid OpCode {}", s));
+                            }
+                        } else {
+                            vm.output.push("POLY: Arg must be String or Identifier".to_string());
+                        }
+                    }
+                } else {
+                    vm.output.push("POLY: Requires 2 arguments".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for poly".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Metamorphosis => {
             let rows = vm.grid.len();
             let cols = if rows > 0 { vm.grid[0].len() } else { 0 };

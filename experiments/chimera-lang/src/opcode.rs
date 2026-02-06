@@ -552,6 +552,25 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    /// **[Nova]** Spreads the last executed instruction to a random strand (Memetics).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Meme,
+
+    /// **[Nova]** Randomly mutates the genome with a given probability (Linguistic Drift).
+    ///
+    /// **Stack:** `[ ..., probability ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Drift,
+
+    /// **[Nova]** Dynamic dispatch based on stack top type (Polymorphism).
+    ///
+    /// **Stack:** `[ val ]` (peeks) -> executes op1 (if Int) or op2 (if Str)
+    /// **Args:** `[Nucleotide::String(op_int), Nucleotide::String(op_str)]`
+    #[cfg(feature = "nova")]
+    Poly,
+
     /// **[Nova]** Reshuffles the entire DNA based on the current Grid state.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
@@ -1006,6 +1025,12 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "alchemy" => Ok(OpCode::Alchemy),
             #[cfg(feature = "nova")]
+            "meme" => Ok(OpCode::Meme),
+            #[cfg(feature = "nova")]
+            "drift" => Ok(OpCode::Drift),
+            #[cfg(feature = "nova")]
+            "poly" => Ok(OpCode::Poly),
+            #[cfg(feature = "nova")]
             "metamorphosis" => Ok(OpCode::Metamorphosis),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
@@ -1189,6 +1214,12 @@ impl fmt::Display for OpCode {
             OpCode::Prophecy => write!(f, "prophecy"),
             #[cfg(feature = "nova")]
             OpCode::Alchemy => write!(f, "alchemy"),
+            #[cfg(feature = "nova")]
+            OpCode::Meme => write!(f, "meme"),
+            #[cfg(feature = "nova")]
+            OpCode::Drift => write!(f, "drift"),
+            #[cfg(feature = "nova")]
+            OpCode::Poly => write!(f, "poly"),
             #[cfg(feature = "nova")]
             OpCode::Metamorphosis => write!(f, "metamorphosis"),
             #[cfg(feature = "nova")]

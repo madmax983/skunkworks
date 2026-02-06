@@ -82,6 +82,8 @@ mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_madness_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_mutagen_test;
