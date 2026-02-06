@@ -24,7 +24,6 @@ members = [
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",
-    "experiments/orbital-decay",
     "experiments/orbital-harmonics",
     "experiments/origami-ui",
     "experiments/packet-pachinko",
