@@ -143,6 +143,8 @@ mod ribozyme_test;
 mod sentry_brainfuck_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_security_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_splice_test;
 #[cfg(test)]
 mod sentry_nova_test;
 #[cfg(all(test, feature = "silicon"))]

@@ -27,6 +27,8 @@ pub(crate) enum ViewMode {
     Cortex,
     #[cfg(feature = "nova")]
     Metaphysics,
+    #[cfg(feature = "nova")]
+    Laboratory,
 }
 
 enum InputMode {
@@ -46,6 +48,12 @@ pub(crate) struct AppState {
     pub(crate) voltage_history: Vec<u64>,
     #[cfg(feature = "biophysics")]
     pub(crate) selected_neuron_coords: Option<(usize, usize)>,
+    #[cfg(feature = "nova")]
+    pub(crate) lab_parent_a: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) lab_parent_b: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) lab_method: usize,
 }
 
 impl AppState {
@@ -62,6 +70,12 @@ impl AppState {
             voltage_history: Vec::with_capacity(100),
             #[cfg(feature = "biophysics")]
             selected_neuron_coords: None,
+            #[cfg(feature = "nova")]
+            lab_parent_a: 0,
+            #[cfg(feature = "nova")]
+            lab_parent_b: 0,
+            #[cfg(feature = "nova")]
+            lab_method: 0,
         }
     }
 }
@@ -343,6 +357,112 @@ where
                 return;
             }
 
+            // Handle Laboratory View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Laboratory = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([
+                        Constraint::Percentage(30),
+                        Constraint::Percentage(30),
+                        Constraint::Percentage(40),
+                    ].as_ref())
+                    .split(f.area());
+
+                // Helper to render strand preview
+                let render_strand = |idx: usize, title: &str, is_focused: bool| {
+                    let mut items = Vec::new();
+                    if idx < vm.dna.helix.strands.len() {
+                        let strand = &vm.dna.helix.strands[idx];
+                        for gene in &strand.genes {
+                            items.push(ListItem::new(format!("{}", gene.op)));
+                        }
+                    } else {
+                        items.push(ListItem::new("Invalid Strand"));
+                    }
+
+                    let border_style = if is_focused {
+                        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    } else {
+                        Style::default().fg(Color::White)
+                    };
+
+                    List::new(items).block(Block::default().borders(Borders::ALL).title(format!("{} (Idx: {})", title, idx)).border_style(border_style))
+                };
+
+                // Parent A
+                f.render_widget(render_strand(app_state.lab_parent_a, "Parent A", app_state.selected_strand == 0), chunks[0]);
+
+                // Parent B
+                f.render_widget(render_strand(app_state.lab_parent_b, "Parent B", app_state.selected_strand == 1), chunks[1]);
+
+                // Child / Method
+                let method_name = match app_state.lab_method {
+                    0 => "Interleave",
+                    1 => "Uniform Crossover",
+                    2 => "Midpoint Split",
+                    _ => "Unknown",
+                };
+
+                let right_chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+                    .split(chunks[2]);
+
+                let method_border = if app_state.selected_strand == 2 {
+                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                } else {
+                    Style::default().fg(Color::White)
+                };
+
+                let method_widget = Paragraph::new(method_name)
+                    .block(Block::default().borders(Borders::ALL).title("Splice Method").border_style(method_border));
+                f.render_widget(method_widget, right_chunks[0]);
+
+                // Preview Child
+                // We simulate the splice to show preview
+                // This is a bit expensive to do every frame but OK for TUI.
+                let mut preview_items = Vec::new();
+
+                let idx_a = app_state.lab_parent_a;
+                let idx_b = app_state.lab_parent_b;
+                let helix_len = vm.dna.helix.strands.len();
+
+                if idx_a < helix_len && idx_b < helix_len {
+                    let genes_a = &vm.dna.helix.strands[idx_a].genes;
+                    let genes_b = &vm.dna.helix.strands[idx_b].genes;
+                    let len_a = genes_a.len();
+                    let len_b = genes_b.len();
+                    let max_len = len_a.max(len_b);
+
+                    // Simple simulation for preview (deterministic only)
+                    match app_state.lab_method {
+                        0 => { // Interleave
+                            for i in 0..max_len {
+                                if i < len_a { preview_items.push(ListItem::new(format!("{}", genes_a[i].op)).style(Style::default().fg(Color::Cyan))); }
+                                if i < len_b { preview_items.push(ListItem::new(format!("{}", genes_b[i].op)).style(Style::default().fg(Color::Magenta))); }
+                            }
+                        }
+                        1 => { // Uniform
+                            preview_items.push(ListItem::new("Randomized Result").style(Style::default().fg(Color::DarkGray)));
+                        }
+                        2 => { // Midpoint
+                            let mid_a = len_a / 2;
+                            let mid_b = len_b / 2;
+                            for i in 0..mid_a { preview_items.push(ListItem::new(format!("{}", genes_a[i].op)).style(Style::default().fg(Color::Cyan))); }
+                            for i in mid_b..len_b { preview_items.push(ListItem::new(format!("{}", genes_b[i].op)).style(Style::default().fg(Color::Magenta))); }
+                        }
+                        _ => {}
+                    }
+                }
+
+                let preview_list = List::new(preview_items)
+                    .block(Block::default().borders(Borders::ALL).title("Child Preview (Enter to Splice)"));
+                f.render_widget(preview_list, right_chunks[1]);
+
+                return;
+            }
+
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
@@ -437,6 +557,8 @@ where
                 ViewMode::Cortex => "CORTEX",
                 #[cfg(feature = "nova")]
                 ViewMode::Metaphysics => "METAPHYSICS",
+                #[cfg(feature = "nova")]
+                ViewMode::Laboratory => "LABORATORY",
             };
 
             let title = match app_state.input_mode {
@@ -853,6 +975,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Laboratory => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -904,7 +1031,9 @@ where
                                 { ViewMode::Genome }
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Metaphysics => ViewMode::Genome,
+                            ViewMode::Metaphysics => ViewMode::Laboratory,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Laboratory => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "biophysics")]
@@ -935,6 +1064,15 @@ where
                         ViewMode::Microscope => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Laboratory => {
+                            match app_state.selected_strand { // 0=A, 1=B, 2=Method
+                                0 => if app_state.lab_parent_a > 0 { app_state.lab_parent_a -= 1; },
+                                1 => if app_state.lab_parent_b > 0 { app_state.lab_parent_b -= 1; },
+                                2 => if app_state.lab_method > 0 { app_state.lab_method -= 1; },
+                                _ => {}
+                            }
+                        }
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -977,6 +1115,16 @@ where
                         ViewMode::Microscope => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Laboratory => {
+                            let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
+                            match app_state.selected_strand { // 0=A, 1=B, 2=Method
+                                0 => if app_state.lab_parent_a < max_strand { app_state.lab_parent_a += 1; },
+                                1 => if app_state.lab_parent_b < max_strand { app_state.lab_parent_b += 1; },
+                                2 => if app_state.lab_method < 2 { app_state.lab_method += 1; },
+                                _ => {}
+                            }
+                        }
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -1008,6 +1156,14 @@ where
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Laboratory => {
+                            if app_state.selected_strand < 2 {
+                                app_state.selected_strand += 1;
+                            } else {
+                                app_state.selected_strand = 0;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1021,6 +1177,14 @@ where
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Laboratory => {
+                            if app_state.selected_strand > 0 {
+                                app_state.selected_strand -= 1;
+                            } else {
+                                app_state.selected_strand = 2;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1108,6 +1272,18 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Metaphysics => {
                                 app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Laboratory => {
+                                app_state.input_mode = InputMode::Normal;
+                                let splice_op = crate::opcode::OpCode::Splice;
+                                let args = vec![
+                                    crate::ast::Nucleotide::Number(app_state.lab_parent_a as i64),
+                                    crate::ast::Nucleotide::Number(app_state.lab_parent_b as i64),
+                                    crate::ast::Nucleotide::Number(app_state.lab_method as i64),
+                                ];
+                                vm.execute_gene_inner(splice_op, &args);
+                                app_state.status_msg = format!("Spliced {} & {} (Method {})", app_state.lab_parent_a, app_state.lab_parent_b, app_state.lab_method);
                             }
                         }
                     }
