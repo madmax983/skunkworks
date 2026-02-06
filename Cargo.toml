@@ -38,7 +38,7 @@ members = [
     "experiments/struct-soup",
     "experiments/system-bio-dome",
     "experiments/terra-fluid",
-    "experiments/thermo-tarmites",
+    "experiments/thermo-termites",
     "experiments/trace-fold",
     "experiments/venation-vines",
     "experiments/verge-computer",

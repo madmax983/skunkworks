@@ -19,7 +19,7 @@ Agents (Termites) follow simple stigmergic rules to move material (walls/dirt) b
 ## How to Run
 
 ```bash
-cargo run -p thermo-tarmites
+cargo run -p thermo-termites
 ```
 
 ## Controls
