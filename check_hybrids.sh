@@ -13,8 +13,7 @@ experiments=(
     "voronoi-ants"
     "tectonic-git"
     "struct-harmonics"
-    "cellular-beats"
-    "thermo-tarmites"
+    "thermo-termites"
 )
 
 echo "Checking compilation..."

@@ -27,13 +27,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal compilation failure confirmed.
 
-### [Concentration Level: HIGH] - Location: experiments/system-bio-dome
+### [Concentration Level: FRESH] - Location: check_hybrids.sh
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Terminal draw error. IO Result mismatch. The dome is cracked.
-
-### [Concentration Level: HIGH] - Location: experiments/seismic-lure
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Terminal draw error. IO Result mismatch. Tremors detected.
+- **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/ast-respiration
 - **Scent Origin:** The Reaper ☠️
@@ -180,6 +176,14 @@
 - **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
 
 ## History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/system-bio-dome
+- **Scent Origin:** Mycelium 🍄
+- **Status:** IO Result mismatch resolved. The dome is sealed.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/seismic-lure
+- **Scent Origin:** Mycelium 🍄
+- **Status:** IO Result mismatch resolved. Tremors stabilized.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Chronomancer)
