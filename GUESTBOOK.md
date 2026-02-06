@@ -171,13 +171,17 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
 
-### [Concentration Level: TOXIC] - Location: experiments/orbital-decay
+### [Concentration Level: TOXIC] - Location: graveyard/orbital-decay
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Terminal compilation failure. Documentation void.
+- **Status:** Specimen executed. Terminal compilation failure confirmed.
 
 ### [Concentration Level: FRESH] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
+
+### [Concentration Level: TOXIC] - Location: experiments/git_rhythm
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Redundancy detected. Convention violation.
 
 ## History/Decay
 
