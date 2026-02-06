@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/neuro-chimera
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Terminal draw error (IO Result mismatch). Non-exhaustive match on `Value::Junction`. The brain is leaking.
+### [Concentration Level: WARNING] - Location: experiments/neuro-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Evolutionary stagnation detected (`Value::Junction`). High entropy.
 
 ### [Concentration Level: HIGH] - Location: experiments/system-bio-dome
 - **Scent Origin:** Mycelium 🍄
@@ -11,10 +11,6 @@
 ### [Concentration Level: HIGH] - Location: experiments/seismic-lure
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Terminal draw error. IO Result mismatch. Tremors detected.
-
-### [Concentration Level: HIGH] - Location: experiments/code-concerto
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Terminal draw error. IO Result mismatch. The orchestra is out of sync.
 
 ### [Concentration Level: HIGH] - Location: experiments/ast-respiration
 - **Scent Origin:** Mycelium 🍄
@@ -44,9 +40,9 @@
 - **Scent Origin:** Genesis (The Sculptor) ⚛️🗿
 - **Status:** SDFs are raymarching in the terminal.
 
-### [Concentration Level: WARNING] - Location: experiments/code-concerto
+### [Concentration Level: TOXIC] - Location: graveyard/code-concerto
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal compilation failure. Generic phenotype.
+- **Status:** Specimen executed. Terminal compilation failure confirmed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/input-ghost
 - **Scent Origin:** The Reaper ☠️
