@@ -610,6 +610,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., junction, function ] -> [ ..., new_junction ]`
     #[cfg(feature = "nova")]
     Map,
+    /// **[Nova]** Invokes a magical Sigil based on a spatial pattern.
+    ///
+    /// **Stack:** `[ ..., sigil_name ] -> [ ... ]`
+    /// **Effect:** Checks grid for pattern and applies effect.
+    #[cfg(feature = "nova")]
+    Invoke,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -723,6 +729,8 @@ impl FromStr for OpCode {
             "eval" => Ok(OpCode::Eval),
             #[cfg(feature = "nova")]
             "map" => Ok(OpCode::Map),
+            #[cfg(feature = "nova")]
+            "invoke" => Ok(OpCode::Invoke),
             #[cfg(feature = "nova")]
             "fold" => Ok(OpCode::Fold),
             #[cfg(feature = "nova")]
@@ -1133,6 +1141,8 @@ impl fmt::Display for OpCode {
             OpCode::Eval => write!(f, "eval"),
             #[cfg(feature = "nova")]
             OpCode::Map => write!(f, "map"),
+            #[cfg(feature = "nova")]
+            OpCode::Invoke => write!(f, "invoke"),
             #[cfg(feature = "nova")]
             OpCode::Fold => write!(f, "fold"),
             #[cfg(feature = "nova")]

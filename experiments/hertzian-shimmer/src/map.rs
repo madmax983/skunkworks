@@ -72,7 +72,7 @@ pub fn generate_layout(root: &Node, width: usize, height: usize) -> (Vec<bool>, 
         pad,
         width - 2 * pad,
         height - 2 * pad,
-        true, // start vertical split
+        true,  // start vertical split
         width, // stride
         &mut walls,
         &mut rooms,
@@ -131,35 +131,55 @@ fn layout_recursive(
             let fraction = child.size as f64 / total_size as f64;
 
             if split_vertical {
-                 let mut child_w = (inner_w as f64 * fraction).round() as usize;
-                 child_w = child_w.max(1);
-                 let available = inner_w - current_offset;
-                 child_w = child_w.min(available);
+                let mut child_w = (inner_w as f64 * fraction).round() as usize;
+                child_w = child_w.max(1);
+                let available = inner_w - current_offset;
+                child_w = child_w.min(available);
 
-                 // If last child, take all remaining space to avoid gaps
-                 if std::ptr::eq(child, node.children.last().unwrap()) {
-                     child_w = available;
-                 }
+                // If last child, take all remaining space to avoid gaps
+                if std::ptr::eq(child, node.children.last().unwrap()) {
+                    child_w = available;
+                }
 
-                 if child_w > 0 {
-                    layout_recursive(child, inner_x + current_offset, inner_y, child_w, inner_h, !split_vertical, stride, walls, rooms);
+                if child_w > 0 {
+                    layout_recursive(
+                        child,
+                        inner_x + current_offset,
+                        inner_y,
+                        child_w,
+                        inner_h,
+                        !split_vertical,
+                        stride,
+                        walls,
+                        rooms,
+                    );
                     current_offset += child_w;
-                 }
+                }
             } else {
-                 let mut child_h = (inner_h as f64 * fraction).round() as usize;
-                 child_h = child_h.max(1);
-                 let available = inner_h - current_offset;
-                 child_h = child_h.min(available);
+                let mut child_h = (inner_h as f64 * fraction).round() as usize;
+                child_h = child_h.max(1);
+                let available = inner_h - current_offset;
+                child_h = child_h.min(available);
 
-                 // If last child, take all remaining space
-                 if std::ptr::eq(child, node.children.last().unwrap()) {
-                     child_h = available;
-                 }
+                // If last child, take all remaining space
+                if std::ptr::eq(child, node.children.last().unwrap()) {
+                    child_h = available;
+                }
 
-                 if child_h > 0 {
-                    layout_recursive(child, inner_x, inner_y + current_offset, inner_w, child_h, !split_vertical, stride, walls, rooms);
+                if child_h > 0 {
+                    layout_recursive(
+                        child,
+                        inner_x,
+                        inner_y + current_offset,
+                        inner_w,
+                        child_h,
+                        !split_vertical,
+                        stride,
+                        walls,
+                        rooms,
+                    );
                     current_offset += child_h;
-                 }
+                }
             }
         }
     }
@@ -187,10 +207,14 @@ fn draw_rect(x: usize, y: usize, w: usize, h: usize, walls: &mut [bool], stride:
     let mid = x + w / 2;
     if mid < stride {
         let idx = y * stride + mid;
-        if idx < walls.len() { walls[idx] = false; }
+        if idx < walls.len() {
+            walls[idx] = false;
+        }
         if mid + 1 < stride {
-             let idx2 = y * stride + mid + 1;
-             if idx2 < walls.len() { walls[idx2] = false; }
+            let idx2 = y * stride + mid + 1;
+            if idx2 < walls.len() {
+                walls[idx2] = false;
+            }
         }
     }
 }
@@ -220,7 +244,15 @@ mod tests {
         // Root is at 1,1 size 18x18. Top wall at y=1. Mid x=10.
         // walls[1*20 + 10] should be false.
         let stride = width;
-        assert_eq!(walls[1 * stride + 10], false, "Door should exist at top of root");
-        assert_eq!(walls[1 * stride + 9], true, "Wall should exist next to door");
+        assert_eq!(
+            walls[1 * stride + 10],
+            false,
+            "Door should exist at top of root"
+        );
+        assert_eq!(
+            walls[1 * stride + 9],
+            true,
+            "Wall should exist next to door"
+        );
     }
 }

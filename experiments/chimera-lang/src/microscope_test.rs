@@ -1,9 +1,9 @@
 #[cfg(all(test, feature = "nova"))]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value, microscope};
-    use crate::vm::nova::{OrganelleType, Organelle};
+    use crate::vm::nova::{Organelle, OrganelleType};
+    use crate::vm::{microscope, ChimeraVM, Value};
 
     fn make_empty_dna() -> Dna {
         Dna {
@@ -58,7 +58,10 @@ mod tests {
         assert_eq!(data.mutagen_level, 100, "Mutagen matches");
 
         assert_eq!(data.organelles.len(), 1, "Organelle found");
-        assert_eq!(data.organelles[0].kind, "Chloroplast", "Organelle kind matches");
+        assert_eq!(
+            data.organelles[0].kind, "Chloroplast",
+            "Organelle kind matches"
+        );
         assert_eq!(data.organelles[0].stack_depth, 1, "Stack depth matches");
     }
 }

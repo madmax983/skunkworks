@@ -1,9 +1,10 @@
+mod laban;
 mod rover;
 mod world;
-mod laban;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use laban::{Director, LabanEffort};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
@@ -16,10 +17,9 @@ use ratatui::{
     Frame,
 };
 use rover::Rover;
-use world::{EntityType, World};
-use laban::{Director, LabanEffort};
 use std::time::{Duration, Instant};
 use tui_shared::{math::Vec2, Tui};
+use world::{EntityType, World};
 
 struct App {
     rover: Rover,
@@ -73,16 +73,24 @@ impl App {
     }
 
     fn push_history(&mut self, e: &LabanEffort) {
-        if self.history_weight.len() >= 100 { self.history_weight.remove(0); }
+        if self.history_weight.len() >= 100 {
+            self.history_weight.remove(0);
+        }
         self.history_weight.push((e.weight * 10.0) as u64);
 
-        if self.history_time.len() >= 100 { self.history_time.remove(0); }
+        if self.history_time.len() >= 100 {
+            self.history_time.remove(0);
+        }
         self.history_time.push((e.time * 10.0) as u64);
 
-        if self.history_space.len() >= 100 { self.history_space.remove(0); }
+        if self.history_space.len() >= 100 {
+            self.history_space.remove(0);
+        }
         self.history_space.push((e.space * 10.0) as u64);
 
-        if self.history_flow.len() >= 100 { self.history_flow.remove(0); }
+        if self.history_flow.len() >= 100 {
+            self.history_flow.remove(0);
+        }
         self.history_flow.push((e.flow * 10.0) as u64);
     }
 
@@ -95,37 +103,38 @@ impl App {
         for e in &self.world.entities {
             // Check entities within "sensor range" (30 units)
             if e.pos.distance(self.rover.pos) < 30.0 {
-                 match e.kind {
-                     EntityType::File { size } => total_size += size,
-                     _ => total_size += 4096, // Directory weight assumption
-                 }
-                 let age = now.duration_since(e.modified).unwrap_or_default().as_secs();
-                 total_age_sec += age;
-                 count += 1;
+                match e.kind {
+                    EntityType::File { size } => total_size += size,
+                    _ => total_size += 4096, // Directory weight assumption
+                }
+                let age = now.duration_since(e.modified).unwrap_or_default().as_secs();
+                total_age_sec += age;
+                count += 1;
             }
         }
 
         if count > 0 {
-             let avg_size = total_size as f64 / count as f64;
-             let avg_age = total_age_sec as f64 / count as f64;
+            let avg_size = total_size as f64 / count as f64;
+            let avg_age = total_age_sec as f64 / count as f64;
 
-             // Normalize
-             // Size: 1KB = Light, 10MB = Heavy.
-             // ln(1) = 0. ln(10000000) ~ 16.
-             let size_factor = (avg_size.ln() / 16.0).clamp(0.0, 1.0) as f32;
+            // Normalize
+            // Size: 1KB = Light, 10MB = Heavy.
+            // ln(1) = 0. ln(10000000) ~ 16.
+            let size_factor = (avg_size.ln() / 16.0).clamp(0.0, 1.0) as f32;
 
-             // Age: 0 = New, 1 Year = Old.
-             let year_sec = 31536000.0;
-             let age_factor = (avg_age as f64 / year_sec).clamp(0.0, 1.0) as f32;
+            // Age: 0 = New, 1 Year = Old.
+            let year_sec = 31536000.0;
+            let age_factor = (avg_age as f64 / year_sec).clamp(0.0, 1.0) as f32;
 
-             // Depth: Deeper = More Indirect/Complex Space?
-             let depth = self.world.current_path.components().count();
-             let depth_factor = (depth as f32 / 8.0).clamp(0.0, 1.0);
+            // Depth: Deeper = More Indirect/Complex Space?
+            let depth = self.world.current_path.components().count();
+            let depth_factor = (depth as f32 / 8.0).clamp(0.0, 1.0);
 
-             self.director.set_target_from_environment(size_factor, age_factor, depth_factor);
+            self.director
+                .set_target_from_environment(size_factor, age_factor, depth_factor);
         } else {
-             // In the void, return to neutral
-             self.director.set_target_from_environment(0.5, 0.5, 0.5);
+            // In the void, return to neutral
+            self.director.set_target_from_environment(0.5, 0.5, 0.5);
         }
     }
 
@@ -154,7 +163,7 @@ impl App {
     }
 
     fn get_nearest_entity(&self) -> Option<(String, EntityType, f64)> {
-         self.world
+        self.world
             .entities
             .iter()
             .map(|e| {
@@ -168,7 +177,7 @@ impl App {
     }
 
     fn enter_action(&mut self) -> Result<()> {
-         let target = self
+        let target = self
             .world
             .entities
             .iter()
@@ -332,9 +341,27 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
             let p2 = pos + left;
             let p3 = pos + right;
 
-            ctx.draw(&CanvasLine { x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, color: flow_color });
-            ctx.draw(&CanvasLine { x1: p2.x, y1: p2.y, x2: p3.x, y2: p3.y, color: flow_color });
-            ctx.draw(&CanvasLine { x1: p3.x, y1: p3.y, x2: p1.x, y2: p1.y, color: flow_color });
+            ctx.draw(&CanvasLine {
+                x1: p1.x,
+                y1: p1.y,
+                x2: p2.x,
+                y2: p2.y,
+                color: flow_color,
+            });
+            ctx.draw(&CanvasLine {
+                x1: p2.x,
+                y1: p2.y,
+                x2: p3.x,
+                y2: p3.y,
+                color: flow_color,
+            });
+            ctx.draw(&CanvasLine {
+                x1: p3.x,
+                y1: p3.y,
+                x2: p1.x,
+                y2: p1.y,
+                color: flow_color,
+            });
         });
 
     f.render_widget(canvas, area);
@@ -354,24 +381,48 @@ fn draw_hud(f: &mut Frame, app: &mut App, area: Rect) {
     let e = app.director.current_effort;
 
     let draw_metric = |f: &mut Frame, title: &str, val: f32, hist: &[u64], rect: Rect| {
-         let label = match title {
-             "Weight" => if val < 0.5 { "STRONG" } else { "LIGHT" },
-             "Time" => if val < 0.5 { "SUDDEN" } else { "SUSTAINED" },
-             "Space" => if val < 0.5 { "DIRECT" } else { "INDIRECT" },
-             "Flow" => if val < 0.5 { "BOUND" } else { "FREE" },
-             _ => ""
-         };
+        let label = match title {
+            "Weight" => {
+                if val < 0.5 {
+                    "STRONG"
+                } else {
+                    "LIGHT"
+                }
+            }
+            "Time" => {
+                if val < 0.5 {
+                    "SUDDEN"
+                } else {
+                    "SUSTAINED"
+                }
+            }
+            "Space" => {
+                if val < 0.5 {
+                    "DIRECT"
+                } else {
+                    "INDIRECT"
+                }
+            }
+            "Flow" => {
+                if val < 0.5 {
+                    "BOUND"
+                } else {
+                    "FREE"
+                }
+            }
+            _ => "",
+        };
 
-         let block = Block::default()
+        let block = Block::default()
             .borders(Borders::ALL)
             .title(format!("{} {:.2} {}", title, val, label));
 
-         let sparkline = Sparkline::default()
+        let sparkline = Sparkline::default()
             .block(block)
             .data(hist)
             .style(Style::default().fg(Color::Green));
 
-         f.render_widget(sparkline, rect);
+        f.render_widget(sparkline, rect);
     };
 
     draw_metric(f, "Weight", e.weight, &app.history_weight, chunks[0]);

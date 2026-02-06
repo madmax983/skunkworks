@@ -18,7 +18,8 @@ pub fn load_history() -> Result<Vec<Commit>> {
             "log",
             "--date=iso-strict",
             "--pretty=format:%H|%ad|%an|%s",
-            "-n", "100",
+            "-n",
+            "100",
         ])
         .output()
         .context("Failed to execute git log")?;

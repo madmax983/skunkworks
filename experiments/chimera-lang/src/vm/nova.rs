@@ -353,8 +353,10 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
             }
         }
         vm.chorus_buffer.clear();
-        vm.output
-            .push(format!("CHORUS: Transmute Chord! {} Lead became Gold.", count));
+        vm.output.push(format!(
+            "CHORUS: Transmute Chord! {} Lead became Gold.",
+            count
+        ));
         return true;
     }
 

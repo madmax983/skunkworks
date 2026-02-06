@@ -31,16 +31,16 @@ pub fn fossilize(text: &str, age_factor: f64, seed: u64) -> Fossil {
         }
 
         if c.is_whitespace() {
-             // Randomly corrupt whitespace too, but less likely
-             if rng.gen::<f64>() < age_factor * 0.1 {
+            // Randomly corrupt whitespace too, but less likely
+            if rng.gen::<f64>() < age_factor * 0.1 {
                 displayed_text.push('·'); // Visible space corruption
                 mask.push(false);
-             } else {
+            } else {
                 displayed_text.push(c);
                 mask.push(true);
-             }
-             i += 1;
-             continue;
+            }
+            i += 1;
+            continue;
         }
 
         // Identify word boundaries
@@ -91,14 +91,14 @@ pub fn fossilize(text: &str, age_factor: f64, seed: u64) -> Fossil {
             i = j;
         } else {
             // Symbols / Punctuation
-             if rng.gen::<f64>() < age_factor * 0.3 {
+            if rng.gen::<f64>() < age_factor * 0.3 {
                 displayed_text.push('░');
                 mask.push(false);
-             } else {
+            } else {
                 displayed_text.push(c);
                 mask.push(true);
-             }
-             i += 1;
+            }
+            i += 1;
         }
     }
 
@@ -131,7 +131,7 @@ mod tests {
         // It's possible RNG produces no corruption even at high age, but unlikely given the length.
         // We assert that IF they are different, mask contains false.
         if fossil.original_text != fossil.displayed_text {
-             assert!(fossil.mask.contains(&false));
+            assert!(fossil.mask.contains(&false));
         }
     }
 }
