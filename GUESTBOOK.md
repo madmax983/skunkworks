@@ -1,5 +1,25 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/neuro-chimera
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal draw error (IO Result mismatch). Non-exhaustive match on `Value::Junction`. The brain is leaking.
+
+### [Concentration Level: HIGH] - Location: experiments/system-bio-dome
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal draw error. IO Result mismatch. The dome is cracked.
+
+### [Concentration Level: HIGH] - Location: experiments/seismic-lure
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal draw error. IO Result mismatch. Tremors detected.
+
+### [Concentration Level: HIGH] - Location: experiments/code-concerto
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal draw error. IO Result mismatch. The orchestra is out of sync.
+
+### [Concentration Level: HIGH] - Location: experiments/ast-respiration
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Condemned. Documentation void. No README detected.
+
 ### [Concentration Level: FRESH] - Location: experiments/beat-reactor
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Gray-Scott diffusion driven by FFT analysis. The chemicals are dancing to the ghost beat.
@@ -93,8 +113,8 @@
 - **Status:** The projection is stable. 6D hypercube shadows frozen in 3D. The dungeon has no repeating rooms.
 
 ### [Concentration Level: HIGH] - Location: experiments/hive-mind-dependencies
-- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
-- **Status:** The swarm is mapping the dependency tree. Pheromones indicate critical build paths. Emergence imminent.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Glam version conflict detected (v0.25 vs v0.27). The crystal lattice is fracturing.
 
 ### [Concentration Level: HIGH] - Location: experiments/syntax-evolution
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
