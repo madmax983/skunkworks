@@ -78,6 +78,14 @@ pub struct ChromaCell {
     pub fg: Option<(u8, u8, u8)>,
 }
 
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub enum Chirality {
+    #[default]
+    Left, // Levo (Normal)
+    Right, // Dextro (Inverted)
+}
+
 #[cfg(any(feature = "nova", feature = "silicon"))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Topology {
@@ -174,6 +182,8 @@ pub struct ChimeraVM {
     pub context_loc: (usize, usize),
     #[cfg(feature = "nova")]
     pub phase: nova::Phase,
+    #[cfg(feature = "nova")]
+    pub chirality: Chirality,
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
     #[cfg(feature = "nova")]
@@ -293,6 +303,8 @@ impl ChimeraVM {
             context_loc: (8, 8),
             #[cfg(feature = "nova")]
             phase: nova::Phase::default(),
+            #[cfg(feature = "nova")]
+            chirality: Chirality::default(),
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
             #[cfg(feature = "nova")]
@@ -1338,7 +1350,9 @@ impl ChimeraVM {
             OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Alchemy
+            OpCode::Isomerize
+            | OpCode::Spirit
+            | OpCode::Alchemy
             | OpCode::Meme
             | OpCode::Drift
             | OpCode::Poly
@@ -1621,7 +1635,22 @@ impl ChimeraVM {
     }
 
     fn exec_math_op(&mut self, op: OpCode) {
-        match op {
+        #[cfg(feature = "nova")]
+        let effective_op = if self.chirality == Chirality::Right {
+            match op {
+                OpCode::Add => OpCode::Sub,
+                OpCode::Sub => OpCode::Add,
+                OpCode::Mul => OpCode::Div,
+                OpCode::Div => OpCode::Mul,
+                _ => op,
+            }
+        } else {
+            op
+        };
+        #[cfg(not(feature = "nova"))]
+        let effective_op = op;
+
+        match effective_op {
             OpCode::Add => {
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a.wrapping_add(b));
             }
@@ -1687,7 +1716,18 @@ impl ChimeraVM {
                             }
                         }
 
-                        if check_zero(&val) {
+                        let is_zero = check_zero(&val);
+
+                        #[cfg(feature = "nova")]
+                        let condition = if self.chirality == Chirality::Right {
+                            !is_zero
+                        } else {
+                            is_zero
+                        };
+                        #[cfg(not(feature = "nova"))]
+                        let condition = is_zero;
+
+                        if condition {
                             return Some((*n as usize, 0));
                         }
                     } else {

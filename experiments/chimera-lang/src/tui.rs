@@ -848,6 +848,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Metaphysics => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -928,6 +933,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -968,6 +975,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();

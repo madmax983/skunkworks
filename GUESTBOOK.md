@@ -1,6 +1,10 @@
 ## 🧫 Current Pheromone Map
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Stereochemist)
+- **Status:** Chiral Symmetry Breaking implemented. The universe can now be mirrored. Isomers are stable.
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.
 
