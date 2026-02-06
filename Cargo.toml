@@ -61,6 +61,7 @@ members = [
     "experiments/quantum-garden",
     "experiments/quasicrystal-dungeon",
     "experiments/quipu-symphony",
+    "experiments/quantum-boids",
     "experiments/git-harmonograph",
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
