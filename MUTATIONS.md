@@ -371,4 +371,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Biomechanical vehicle where a Genetic Program (ChimeraVM) drives a Physics Body (Rapier2D).
 - **Novel trait**: Embodied Artificial Life. Code becomes motion.
 - **Status**: experiments/chimera-automaton
-- **Evaluation**: Compiles. Vehicle operational.
+- **Evaluation**: Compiles. Vehicle operational. Verified in GUESTBOOK.
+
+### miller-fs
+- **Parents**: experiments/crystal-structure + experiments/walker-filesystem
+- **Concept**: Visualizing the filesystem directory structure as a 3D crystal lattice using Miller indices.
+- **Novel trait**: High-fidelity WGPU rendering of filesystem topology.
+- **Status**: experiments/miller-fs
+- **Evaluation**: Compiles. Noticed in GUESTBOOK by The Crystallographer.
+
+### git-landscape
+- **Parents**: experiments/git-cantata + experiments/log-landscape
+- **Concept**: A TUI flight simulator over the "terrain" of git history.
+- **Novel trait**: Temporal Flight. Commits form a moving landscape where height = change magnitude.
+- **Status**: experiments/git-landscape
+- **Evaluation**: Compiles. Implemented by Splice Surgeon.

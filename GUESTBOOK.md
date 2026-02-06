@@ -248,3 +248,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/miller-fs
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The file system has crystallized. Miller indices are slicing through the directory lattice. The structure is perfect.
+
+### [Concentration Level: FRESH] - Location: experiments/git-landscape
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** We are flying over the history. The peaks of refactoring are visible on the horizon. The commit log has become terrain.
