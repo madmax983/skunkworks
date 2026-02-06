@@ -3,9 +3,13 @@ name = "neuro-terminal"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+nova = ["dep:tui-semantic"]
+
 [dependencies]
 anyhow.workspace = true
 crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-shared.workspace = true
+tui-semantic = { workspace = true, optional = true }
