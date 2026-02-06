@@ -208,6 +208,17 @@ pub enum OpCode {
     LogicGate,
 
     // Nova Features
+    /// **[Nova]** Expands an L-System axiom using rules and iterations.
+    ///
+    /// **Stack:** `[ ..., axiom, rules, iterations ] -> [ ..., result_string ]`
+    #[cfg(feature = "nova")]
+    Morph,
+    /// **[Nova]** Grows a structure on the grid using Turtle graphics commands.
+    ///
+    /// **Stack:** `[ ..., instruction_string, start_y, start_x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Grow,
+
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
     ///
     /// **Stack:** `[ ... ] -> [ ..., spore_id ]`

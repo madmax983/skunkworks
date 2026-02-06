@@ -17,16 +17,32 @@ mod tests {
     fn test_omen_photosynthesis() {
         let genes = vec![
             // Assert "sun"
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("sun".to_string())] },
-            Gene { op: OpCode::Assert, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("sun".to_string())],
+            },
+            Gene {
+                op: OpCode::Assert,
+                args: vec![],
+            },
             // Register Omen: Augury("sun", "photosynthesize")
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("sun".to_string())] }, // condition
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("photosynthesize".to_string())] }, // effect
-            Gene { op: OpCode::Augury, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("sun".to_string())],
+            }, // condition
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("photosynthesize".to_string())],
+            }, // effect
+            Gene {
+                op: OpCode::Augury,
+                args: vec![],
+            },
             // Divinate
-            Gene { op: OpCode::Divinate, args: vec![] },
+            Gene {
+                op: OpCode::Divinate,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -42,7 +58,13 @@ mod tests {
         // Steps 1-6 cost 1 each: -6 -> 44
         // Omen triggers "photosynthesize" -> +5 -> 49
 
-        assert!(vm.output.iter().any(|s| s.contains("DIVINATE: Omen fulfilled!")), "Output: {:?}", vm.output);
+        assert!(
+            vm.output
+                .iter()
+                .any(|s| s.contains("DIVINATE: Omen fulfilled!")),
+            "Output: {:?}",
+            vm.output
+        );
 
         // Verify stack has count 1
         let count = vm.stack.pop();

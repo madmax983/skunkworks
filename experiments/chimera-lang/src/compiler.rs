@@ -4,9 +4,9 @@ use anyhow::{anyhow, Result};
 use pest::Parser;
 use pest_derive::Parser;
 use std::collections::HashMap;
+use std::fs;
 use std::path::Path;
 use std::str::FromStr;
-use std::fs;
 
 #[derive(Parser)]
 #[grammar = "script_grammar.pest"]
@@ -17,28 +17,28 @@ fn preprocess(source: &str, base_path: Option<&Path>) -> Result<String> {
     for line in source.lines() {
         let trimmed = line.trim();
         if trimmed.starts_with("include") {
-             // Extract filename
-             // Format: include "filename"
-             let parts: Vec<&str> = trimmed.split_whitespace().collect();
-             if parts.len() >= 2 {
-                 let raw_filename = parts[1];
-                 // Strip quotes if present
-                 let filename = raw_filename.trim_matches('"');
+            // Extract filename
+            // Format: include "filename"
+            let parts: Vec<&str> = trimmed.split_whitespace().collect();
+            if parts.len() >= 2 {
+                let raw_filename = parts[1];
+                // Strip quotes if present
+                let filename = raw_filename.trim_matches('"');
 
-                 if let Some(bp) = base_path {
-                     let path = bp.join(filename);
-                     let content = fs::read_to_string(&path)
-                         .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
-                     // Recursive preprocess
-                     let sub_expanded = preprocess(&content, Some(bp))?;
-                     expanded.push_str(&sub_expanded);
-                     expanded.push('\n');
-                 } else {
-                     return Err(anyhow!("Cannot include files without a base path"));
-                 }
-             } else {
-                 return Err(anyhow!("Invalid include statement: {}", trimmed));
-             }
+                if let Some(bp) = base_path {
+                    let path = bp.join(filename);
+                    let content = fs::read_to_string(&path)
+                        .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
+                    // Recursive preprocess
+                    let sub_expanded = preprocess(&content, Some(bp))?;
+                    expanded.push_str(&sub_expanded);
+                    expanded.push('\n');
+                } else {
+                    return Err(anyhow!("Cannot include files without a base path"));
+                }
+            } else {
+                return Err(anyhow!("Invalid include statement: {}", trimmed));
+            }
         } else {
             expanded.push_str(line);
             expanded.push('\n');
@@ -66,13 +66,13 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 if strand_map.insert(name.to_string(), idx).is_some() {
                     return Err(anyhow!("Duplicate strand name: {}", name));
                 }
-            },
+            }
             Rule::macro_def => {
                 let mut inner = pair.into_inner();
                 let name = inner.next().unwrap().as_str();
                 // Store the instructions (rest of inner)
                 macro_map.insert(name.to_string(), inner);
-            },
+            }
             _ => {}
         }
     }
@@ -115,11 +115,11 @@ fn parse_instructions(
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
         Rule::literal => {
-             let val = parse_literal(inner, strand_map)?;
-             Ok(vec![Gene {
-                 op: OpCode::Push,
-                 args: vec![val],
-             }])
+            let val = parse_literal(inner, strand_map)?;
+            Ok(vec![Gene {
+                op: OpCode::Push,
+                args: vec![val],
+            }])
         }
         Rule::simple_op => {
             let name = inner.clone().into_inner().next().unwrap().as_str();

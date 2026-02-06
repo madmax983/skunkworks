@@ -50,15 +50,17 @@ pub mod blackbox;
 pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
-pub mod microscope;
 #[cfg(feature = "nova")]
 pub mod meta;
+pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
+#[cfg(feature = "nova")]
+pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
@@ -1437,6 +1439,18 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
                 nova_security::exec_security_op(self, op, args)
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Morph => {
+                nova_morphogenesis::exec_morph(self);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Grow => {
+                nova_morphogenesis::exec_grow(self);
+                None
             }
 
             #[cfg(feature = "nova")]
