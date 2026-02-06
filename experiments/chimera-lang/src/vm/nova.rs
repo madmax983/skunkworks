@@ -538,6 +538,30 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::SensePigment => {
+            let (cy, cx) = vm.context_loc;
+            if let Some((r, g, b)) = vm.chroma_grid[cy][cx].fg {
+                vm.stack.push(Value::Int(r as i64));
+                vm.stack.push(Value::Int(g as i64));
+                vm.stack.push(Value::Int(b as i64));
+            } else {
+                vm.stack.push(Value::Int(0));
+                vm.stack.push(Value::Int(0));
+                vm.stack.push(Value::Int(0));
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseGlyph => {
+            let (cy, cx) = vm.context_loc;
+            if let Some(c) = vm.chroma_grid[cy][cx].char {
+                vm.stack.push(Value::Int(c as u8 as i64));
+            } else {
+                vm.stack.push(Value::Int(-1));
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Sing => {
             // stack: note (top)
             if let Some(val) = vm.stack.pop() {

@@ -1,5 +1,5 @@
-use serde::{ser, Serialize};
 use crate::quipu::{Cord, Knot};
+use serde::{ser, Serialize};
 use std::fmt;
 
 #[derive(Debug, thiserror::Error)]
@@ -200,7 +200,7 @@ impl ser::Serializer for Serializer {
         _variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeTupleVariant, Self::Error> {
-         Ok(Compound {
+        Ok(Compound {
             parent: Cord::from_u64(variant_index as u64),
         })
     }
@@ -329,9 +329,9 @@ impl ser::SerializeMap for Compound {
     where
         T: Serialize,
     {
-         let sub = value.serialize(Serializer)?;
-         self.parent.subsidiaries.push(sub);
-         Ok(())
+        let sub = value.serialize(Serializer)?;
+        self.parent.subsidiaries.push(sub);
+        Ok(())
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
@@ -343,7 +343,11 @@ impl ser::SerializeStruct for Compound {
     type Ok = Cord;
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, value: &T) -> Result<(), Self::Error>
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        _key: &'static str,
+        value: &T,
+    ) -> Result<(), Self::Error>
     where
         T: Serialize,
     {
@@ -363,7 +367,11 @@ impl ser::SerializeStructVariant for Compound {
     type Ok = Cord;
     type Error = Error;
 
-    fn serialize_field<T: ?Sized>(&mut self, _key: &'static str, value: &T) -> Result<(), Self::Error>
+    fn serialize_field<T: ?Sized>(
+        &mut self,
+        _key: &'static str,
+        value: &T,
+    ) -> Result<(), Self::Error>
     where
         T: Serialize,
     {

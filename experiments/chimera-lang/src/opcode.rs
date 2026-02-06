@@ -573,6 +573,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., char_code, y, x ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Glyph,
+    /// **[Nova]** Reads the foreground color of a grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., r, g, b ]`
+    #[cfg(feature = "nova")]
+    SensePigment,
+    /// **[Nova]** Reads the character representation of a grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., char_code ]`
+    #[cfg(feature = "nova")]
+    SenseGlyph,
 
     // Fungi Features (Mycelial Network)
     /// **[Nova]** Spawns a fungal node (Hyphae) at the current grid location.
@@ -727,6 +737,10 @@ impl FromStr for OpCode {
             "pigment" => Ok(OpCode::Pigment),
             #[cfg(feature = "nova")]
             "glyph" => Ok(OpCode::Glyph),
+            #[cfg(feature = "nova")]
+            "sense_pigment" => Ok(OpCode::SensePigment),
+            #[cfg(feature = "nova")]
+            "sense_glyph" => Ok(OpCode::SenseGlyph),
 
             #[cfg(feature = "nova")]
             "hyphae" => Ok(OpCode::Hyphae),
@@ -1157,6 +1171,10 @@ impl fmt::Display for OpCode {
             OpCode::Pigment => write!(f, "pigment"),
             #[cfg(feature = "nova")]
             OpCode::Glyph => write!(f, "glyph"),
+            #[cfg(feature = "nova")]
+            OpCode::SensePigment => write!(f, "sense_pigment"),
+            #[cfg(feature = "nova")]
+            OpCode::SenseGlyph => write!(f, "sense_glyph"),
 
             #[cfg(feature = "nova")]
             OpCode::Hyphae => write!(f, "hyphae"),

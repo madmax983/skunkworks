@@ -58,6 +58,8 @@ mod nova_biolum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_blackbox_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_camouflage_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_cerebellum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_chorus_test;
@@ -133,9 +135,9 @@ mod ribosome_test;
 mod ribozyme_test;
 #[cfg(test)]
 mod sentry_nova_test;
+#[cfg(all(test, feature = "silicon"))]
+mod silicon_test;
 #[cfg(test)]
 mod warden_dos_test;
 #[cfg(test)]
 mod warden_exploit_test;
-#[cfg(all(test, feature = "silicon"))]
-mod silicon_test;

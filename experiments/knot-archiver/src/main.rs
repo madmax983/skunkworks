@@ -78,7 +78,11 @@ fn main() -> Result<()> {
             // Quipu View
             let content = Paragraph::new(quipu_text.clone())
                 .style(Style::default().fg(Color::Yellow))
-                .block(Block::default().borders(Borders::ALL).title(" Quipu Artifact "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Quipu Artifact "),
+                )
                 .scroll((vertical_scroll as u16, 0));
             f.render_widget(content, chunks[1]);
 
@@ -125,10 +129,7 @@ fn main() -> Result<()> {
 
     // 5. Cleanup
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     Ok(())
