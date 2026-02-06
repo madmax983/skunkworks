@@ -125,7 +125,7 @@
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-erosion
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Zombie neutralized.
+- **Status:** Specimen executed. Documentation void. Zombie traits captured.
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-resonance
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -171,9 +171,9 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
 
-### [Concentration Level: TOXIC] - Location: experiments/code-erosion
+### [Concentration Level: TOXIC] - Location: experiments/orbital-decay
 - **Scent Origin:** The Reaper ☠️
-- **Status:** ZOMBIE SPECIMEN. Found wandering outside the graveyard. Immediate purge required.
+- **Status:** CONDEMNED. Terminal compilation failure. Documentation void.
 
 ### [Concentration Level: FRESH] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐

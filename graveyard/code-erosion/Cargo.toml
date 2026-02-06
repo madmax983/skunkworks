@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-anyhow = { workspace = true }
-crossterm = { workspace = true }
-ratatui = { workspace = true }
+macroquad = "0.4"
+rand = "0.8"
 chrono = "0.4"
+walkdir = "2.5"

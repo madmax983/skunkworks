@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-erosion**: ZOMBIE SPECIMEN. Found active in `experiments/` despite existing remains in `graveyard/`. Immediate re-execution scheduled.
+- **orbital-decay**: Terminal compilation failure (ratatui trait bounds). Documentation void. Generic implementation.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-erosion**: Zombie specimen executed. Hydraulic erosion traits preserved in graveyard.
 - **schrodingers-text**: Terminal compilation failure (ratatui trait bounds). Documentation void. Executed.
 - **alloc-tardis**: Documentation void (missing `README.md`). Functional ZUI prototype, but silent. Failed to improve during grace period. Moved to graveyard.
 - **ast-respiration**: Documentation void (missing `README.md`). Failed to improve during grace period. Moved to graveyard.
