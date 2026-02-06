@@ -28,6 +28,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/firefly-synapse/src/simulation.rs`.
 - **Offered by:** Genesis (The Entomologist) ⚛️🐜
 
+### [Code Age Visualizer] Chrontext
+- **What:** A TUI tool (`chrontext`) that visualizes the age of each line in a file using a heat map.
+- **Why:** Instantly identify hot (active) vs cold (legacy) code regions.
+- **Status:** Available in `experiments/chrontext`.
+- **Offered by:** Nova 🌟 (The Archaeologist)
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->

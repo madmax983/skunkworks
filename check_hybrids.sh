@@ -23,6 +23,7 @@ experiments=(
     "chaos-monitor"
     "syntax-fold"
     "market-scheduler"
+    "chrontext"
 )
 
 echo "Checking compilation..."

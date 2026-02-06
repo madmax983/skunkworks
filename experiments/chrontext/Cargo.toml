@@ -1,0 +1,11 @@
+[package]
+name = "chrontext"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+git2 = "0.18"
+chrono = "0.4"
