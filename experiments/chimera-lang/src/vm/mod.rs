@@ -199,7 +199,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub mutagen_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
-    pub light_grid: Vec<Vec<i64>>,
+    pub light_grid: Vec<Vec<[i64; 3]>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
@@ -284,7 +284,7 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let mutagen_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
-        let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        let light_grid = vec![vec![[0, 0, 0]; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
@@ -426,7 +426,7 @@ impl ChimeraVM {
     }
 
     #[inline]
-    fn is_valid_coord(&self, y: i64, x: i64) -> bool {
+    pub(crate) fn is_valid_coord(&self, y: i64, x: i64) -> bool {
         let size = GRID_SIZE as i64;
         (0..size).contains(&y) && (0..size).contains(&x)
     }
@@ -747,8 +747,9 @@ impl ChimeraVM {
             nova::OrganelleType::Chloroplast => {
                 let (cy, cx) = self.context_loc;
                 let light = self.light_grid[cy][cx];
-                if light > 0 {
-                    self.energy = self.energy.saturating_add(light / 10);
+                let intensity = (light[0] + light[1] + light[2]) / 3;
+                if intensity > 0 {
+                    self.energy = self.energy.saturating_add(intensity / 10);
                 }
             }
             nova::OrganelleType::Mitochondria => {
@@ -1426,7 +1427,8 @@ impl ChimeraVM {
             OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Isomerize
+            OpCode::LumineRGB
+            | OpCode::Isomerize
             | OpCode::Spirit
             | OpCode::Alchemy
             | OpCode::Meme

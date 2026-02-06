@@ -107,7 +107,7 @@ mod tests {
 
         // Seed grid
         vm.waste_grid[5][5] = 10000;
-        vm.light_grid[5][5] = 10000;
+        vm.light_grid[5][5] = [10000, 10000, 10000];
         vm.hormone_grid[5][5][0] = 10000;
 
         for _ in 0..10 {

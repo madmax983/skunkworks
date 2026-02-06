@@ -41,11 +41,11 @@ mod tests {
         vm.step();
 
         // Check center (8,8)
-        assert_eq!(vm.light_grid[8][8], 100);
+        assert_eq!(vm.light_grid[8][8], [100, 100, 100]);
         // Check neighbor (8,9) - within radius 3
-        assert_eq!(vm.light_grid[8][9], 100);
+        assert_eq!(vm.light_grid[8][9], [100, 100, 100]);
         // Check far away (8,12) - outside radius 3
-        assert_eq!(vm.light_grid[8][12], 0);
+        assert_eq!(vm.light_grid[8][12], [0, 0, 0]);
 
         // Step 4: End of Strand 0. ip moves.
         // Diffuse happens. Strong decay (50%).
@@ -55,8 +55,8 @@ mod tests {
         // After diffusion: (100*4 + neighbors...) / count / 2
         // It should be roughly 100 / 2 = 50.
         let center_val_before = vm.light_grid[8][8];
-        assert!(center_val_before < 100);
-        assert!(center_val_before > 0);
+        assert!(center_val_before[0] < 100);
+        assert!(center_val_before[0] > 0);
 
         // Step 5: sense_light() (Strand 1)
         // Note: step() calls diffuse_light() BEFORE executing the instruction.
@@ -65,10 +65,13 @@ mod tests {
 
         let val = vm.stack.pop().unwrap();
         if let Value::Int(n) = val {
-            // Verify against current grid state
-            assert_eq!(n, vm.light_grid[8][8]);
+            // SenseLight returns average intensity.
+            // vm.light_grid is RGB.
+            let grid_val = vm.light_grid[8][8];
+            let avg = (grid_val[0] + grid_val[1] + grid_val[2]) / 3;
+            assert_eq!(n, avg);
             // It should be roughly half of previous
-            assert!(n < center_val_before);
+            assert!(n < center_val_before[0]);
         } else {
             panic!("Expected Int");
         }
@@ -98,19 +101,19 @@ mod tests {
         vm.step();
         vm.step();
 
-        assert_eq!(vm.light_grid[8][8], 1000);
+        assert_eq!(vm.light_grid[8][8], [1000, 1000, 1000]);
 
         // Step (push 0) -> Diffuse runs
         vm.step();
 
         // Should decay significantly
         let val1 = vm.light_grid[8][8];
-        assert!(val1 < 600); // 1000 -> ~500
+        assert!(val1[0] < 600); // 1000 -> ~500
 
         // Step (jump 3) -> Diffuse runs
         vm.step();
 
         let val2 = vm.light_grid[8][8];
-        assert!(val2 < val1);
+        assert!(val2[0] < val1[0]);
     }
 }

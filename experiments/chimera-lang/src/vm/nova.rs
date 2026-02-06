@@ -65,7 +65,7 @@ pub struct Spore {
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
     pub waste_grid: Vec<Vec<i64>>,
     pub mutagen_grid: Vec<Vec<i64>>,
-    pub light_grid: Vec<Vec<i64>>,
+    pub light_grid: Vec<Vec<[i64; 3]>>,
     pub call_stack: Vec<(usize, usize)>,
     pub input_buffer: VecDeque<char>,
     pub receptors: HashMap<char, usize>,
@@ -240,19 +240,27 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
+    let mut buffer = [[[0i64; 3]; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let mut sum = (vm.light_grid[y][x] as i128) * 4;
+            let mut sums = [
+                (vm.light_grid[y][x][0] as i128) * 4,
+                (vm.light_grid[y][x][1] as i128) * 4,
+                (vm.light_grid[y][x][2] as i128) * 4,
+            ];
             let mut count = 4;
 
             for (ny, nx) in get_open_neighbors(vm, y, x) {
-                sum += vm.light_grid[ny][nx] as i128;
+                for c in 0..3 {
+                    sums[c] += vm.light_grid[ny][nx][c] as i128;
+                }
                 count += 1;
             }
 
-            // Blur and strong decay (50%)
-            buffer[y][x] = ((sum / count) / 2) as i64;
+            for c in 0..3 {
+                // Blur and strong decay (50%)
+                buffer[y][x][c] = ((sums[c] / count) / 2) as i64;
+            }
         }
     }
     for y in 0..16 {
@@ -439,6 +447,57 @@ pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
 }
 
 #[cfg(feature = "nova")]
+fn check_line_of_sight(vm: &ChimeraVM, x0: i64, y0: i64, x1: i64, y1: i64) -> bool {
+    let dx = (x1 - x0).abs();
+    let dy = -(y1 - y0).abs();
+    let sx = if x0 < x1 { 1 } else { -1 };
+    let sy = if y0 < y1 { 1 } else { -1 };
+    let mut err = dx + dy;
+    let mut x = x0;
+    let mut y = y0;
+
+    loop {
+        if x == x1 && y == y1 { break; }
+        let e2 = 2 * err;
+
+        let mut next_x = x;
+        let mut next_y = y;
+        let mut moved_x = false;
+        let mut moved_y = false;
+
+        if e2 >= dy {
+            err += dy;
+            next_x += sx;
+            moved_x = true;
+        }
+        if e2 <= dx {
+            err += dx;
+            next_y += sy;
+            moved_y = true;
+        }
+
+        if moved_x {
+             if let Some(mask) = get_direction_mask(0, sx) {
+                 if vm.is_valid_coord(y, x) && (vm.membranes[y as usize][x as usize] & mask) != 0 {
+                     return false;
+                 }
+             }
+             x = next_x;
+        }
+
+        if moved_y {
+             if let Some(mask) = get_direction_mask(sy, 0) {
+                 if vm.is_valid_coord(y, x) && (vm.membranes[y as usize][x as usize] & mask) != 0 {
+                     return false;
+                 }
+             }
+             y = next_y;
+        }
+    }
+    true
+}
+
+#[cfg(feature = "nova")]
 fn value_to_nucleotide(v: &Value) -> Nucleotide {
     match v {
         Value::Int(n) => Nucleotide::Number(*n),
@@ -461,6 +520,44 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 #[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
+        #[cfg(feature = "nova")]
+        OpCode::LumineRGB => {
+            // stack: r, g, b, radius
+            if vm.stack.len() >= 4 {
+                let radius_val = vm.stack.pop().unwrap();
+                let b_val = vm.stack.pop().unwrap();
+                let g_val = vm.stack.pop().unwrap();
+                let r_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(r_int), Value::Int(g_int), Value::Int(b_int), Value::Int(rad)) = (r_val, g_val, b_val, radius_val) {
+                    if rad > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, rad);
+                        let mut lit_count = 0;
+                        for (tx, ty) in coords {
+                            if check_line_of_sight(vm, cx as i64, cy as i64, tx as i64, ty as i64) {
+                                let rgb = [r_int, g_int, b_int];
+                                for c in 0..3 {
+                                    vm.light_grid[ty][tx][c] =
+                                        vm.light_grid[ty][tx][c].saturating_add(rgb[c]);
+                                }
+                                lit_count += 1;
+                            }
+                        }
+                        vm.energy = vm.energy.saturating_sub((rad * rad + 1).clamp(5, 50));
+                        vm.output.push(format!(
+                            "LUMINE_RGB: Emitted [{},{},{}] light at {},{} r={} ({} cells)",
+                            r_int, g_int, b_int, cx, cy, rad, lit_count
+                        ));
+                    }
+                } else {
+                     vm.output.push("Error: Type mismatch for lumine_rgb".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for lumine_rgb".to_string());
+            }
+            None
+        }
         #[cfg(feature = "nova")]
         OpCode::Prophecy => {
             // stack: ticks (top)
@@ -2331,14 +2428,20 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if r > 0 && intensity > 0 {
                         let (cy, cx) = vm.context_loc;
                         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                        let count = coords.len();
+                        let mut lit_count = 0;
                         for (tx, ty) in coords {
-                            vm.light_grid[ty][tx] = vm.light_grid[ty][tx].saturating_add(intensity);
+                            if check_line_of_sight(vm, cx as i64, cy as i64, tx as i64, ty as i64) {
+                                for c in 0..3 {
+                                    vm.light_grid[ty][tx][c] =
+                                        vm.light_grid[ty][tx][c].saturating_add(intensity);
+                                }
+                                lit_count += 1;
+                            }
                         }
-                        vm.energy = vm.energy.saturating_sub((count / 2) as i64);
+                        vm.energy = vm.energy.saturating_sub((lit_count / 2) as i64);
                         vm.output.push(format!(
-                            "LUMINE: Emitted {} light at {},{} r={}",
-                            intensity, cx, cy, r
+                            "LUMINE: Emitted {} light at {},{} r={} ({} cells)",
+                            intensity, cx, cy, r, lit_count
                         ));
                     }
                 } else {
@@ -2354,7 +2457,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::SenseLight => {
             let (cy, cx) = vm.context_loc;
-            let intensity = vm.light_grid[cy][cx];
+            let light = vm.light_grid[cy][cx];
+            let intensity = (light[0] + light[1] + light[2]) / 3;
             vm.stack.push(Value::Int(intensity));
             None
         }

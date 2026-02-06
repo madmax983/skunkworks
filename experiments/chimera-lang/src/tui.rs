@@ -187,12 +187,14 @@ where
                 f.render_widget(m_gauge, env_chunks[2]);
 
                 // Light
-                let l_ratio = (data.light_level as f64 / 100.0).clamp(0.0, 1.0);
+                let l = data.light_levels;
+                let l_label = format!("Light [R:{} G:{} B:{}]", l[0], l[1], l[2]);
+                let l_ratio = ((l[0] + l[1] + l[2]) as f64 / 765.0).clamp(0.0, 1.0);
                 let l_gauge = Gauge::default()
                     .block(Block::default().borders(Borders::ALL).title("Light"))
                     .gauge_style(Style::default().fg(Color::Yellow))
                     .ratio(l_ratio)
-                    .label(format!("{} / 100", data.light_level));
+                    .label(l_label);
                 f.render_widget(l_gauge, env_chunks[3]);
 
                 // Right: Organelles
@@ -564,9 +566,10 @@ where
                     #[cfg(feature = "nova")]
                     {
                         let h = vm.hormone_grid[y][x];
-                        let r = h[0].clamp(0, 255) as u8;
-                        let g = h[1].clamp(0, 255) as u8;
-                        let b = h[2].clamp(0, 255) as u8;
+                        let l = vm.light_grid[y][x];
+                        let r = (h[0] + l[0]).clamp(0, 255) as u8;
+                        let g = (h[1] + l[1]).clamp(0, 255) as u8;
+                        let b = (h[2] + l[2]).clamp(0, 255) as u8;
                         if r > 0 || g > 0 || b > 0 {
                             style = style.bg(Color::Rgb(r, g, b));
                             if (r as u16 + g as u16 + b as u16) > 300 {

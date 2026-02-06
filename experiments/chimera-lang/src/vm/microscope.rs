@@ -8,7 +8,7 @@ pub struct MicroscopeData {
     pub hormone_levels: [i64; 3],
     pub waste_level: i64,
     pub mutagen_level: i64,
-    pub light_level: i64,
+    pub light_levels: [i64; 3],
     pub organelles: Vec<OrganelleInfo>,
 }
 
@@ -28,7 +28,7 @@ impl Default for MicroscopeData {
             hormone_levels: [0, 0, 0],
             waste_level: 0,
             mutagen_level: 0,
-            light_level: 0,
+            light_levels: [0, 0, 0],
             organelles: Vec::new(),
         }
     }
@@ -48,7 +48,7 @@ pub fn scan(vm: &ChimeraVM, y: usize, x: usize) -> MicroscopeData {
             data.hormone_levels = vm.hormone_grid[y][x];
             data.waste_level = vm.waste_grid[y][x];
             data.mutagen_level = vm.mutagen_grid[y][x];
-            data.light_level = vm.light_grid[y][x];
+            data.light_levels = vm.light_grid[y][x];
 
             for org in &vm.organelles {
                 if org.context_loc == (y, x) {

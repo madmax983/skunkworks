@@ -69,7 +69,7 @@ mod tests {
 
         // Set light
         let (y, x) = vm.organelles[0].context_loc;
-        vm.light_grid[y][x] = 200;
+        vm.light_grid[y][x] = [200, 200, 200];
 
         let initial_energy = vm.energy; // 76
 

@@ -12,3 +12,8 @@
 **Concept:** Added `ViewMode::Microscope` to `chimera-lang` TUI. This view provides a detailed dashboard of the currently selected grid cell, visualizing hormone levels (RGB), waste, mutagen, light, and inspecting resident Organelles (Stack, IP). Implemented via a new `vm::microscope` module that scans the VM state.
 **Fate:** Merged
 **Lesson:** Adding specialized views to a TUI significantly improves debuggability of complex simulations. Handling feature flags (`#[cfg(feature = "nova")]`) in UI rendering requires careful block management.
+
+## [Shadows of the Genome]
+**Concept:** Upgraded `light_grid` from scalar intensity to full RGB. Implemented recursive shadowcasting for `OpCode::Lumine` and `OpCode::LumineRGB`. Light now respects walls (membranes). Updated TUI to render colored light blending.
+**Fate:** Pending
+**Lesson:** Changing core data structures requires updating every touchpoint (tests, TUI, logic). Bresenham's algorithm is surprisingly effective for small grid shadowcasting.

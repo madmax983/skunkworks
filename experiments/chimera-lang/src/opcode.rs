@@ -383,6 +383,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., intensity, radius ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Lumine,
+    /// **[Nova]** Emits colored light into the environment.
+    ///
+    /// **Stack:** `[ ..., r, g, b, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    LumineRGB,
     /// **[Nova]** Senses light level at current location.
     ///
     /// **Stack:** `[ ... ] -> [ ..., intensity ]`
