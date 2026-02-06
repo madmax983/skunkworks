@@ -461,6 +461,59 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
+        OpCode::Prophecy => {
+            // stack: ticks (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(ticks) = val {
+                    if ticks > 0 {
+                        let safe_ticks = ticks.min(1000);
+
+                        // Clone VM
+                        let mut sim_vm = vm.clone();
+                        sim_vm.output.clear(); // Silence output
+                        sim_vm.halted = false; // Ensure it can run (unless already dead?)
+
+                        // Advance IP to avoid infinite recursion (executing prophecy again)
+                        // We assume standard sequential flow (IP.1 + 1)
+                        sim_vm.ip.1 += 1;
+
+                        if vm.energy <= 0 {
+                            // If already dead, prophecy is 1
+                            vm.stack.push(Value::Int(1));
+                        } else {
+                            // Run simulation loop
+                            for _ in 0..safe_ticks {
+                                sim_vm.step();
+                                if sim_vm.halted {
+                                    break;
+                                }
+                            }
+
+                            // Result: 1 if Dead (halted), 0 if Alive
+                            let result = if sim_vm.halted { 1 } else { 0 };
+                            vm.stack.push(Value::Int(result));
+
+                            // Cost
+                            let cost = 50 + (safe_ticks / 2);
+                            vm.energy = vm.energy.saturating_sub(cost);
+                            vm.output.push(format!(
+                                "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
+                                result, safe_ticks
+                            ));
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid ticks for prophecy".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for prophecy".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for prophecy".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Alchemy => {
             let (cy, cx) = vm.context_loc;
             perform_alchemy(vm, cy, cx);

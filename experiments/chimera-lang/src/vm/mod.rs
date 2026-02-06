@@ -684,10 +684,32 @@ impl ChimeraVM {
             nova::OrganelleType::Void => {
                 let (cy, cx) = self.context_loc;
                 // Void consumes grid cell if not 0
-                if !matches!(self.grid[cy][cx], Value::Int(0)) {
+                let val = self.grid[cy][cx].clone();
+                if !matches!(val, Value::Int(0)) {
                     self.grid[cy][cx] = Value::Int(0);
                     self.energy = self.energy.saturating_add(1);
                     self.output.push(format!("VOID: Consumed at {},{}", cx, cy));
+
+                    // Void Song: Check for elemental strings
+                    if let Value::Str(s) = val {
+                        let note = match s.as_str() {
+                            "Fire" => Some("Do"),
+                            "Water" => Some("Re"),
+                            "Earth" => Some("Mi"),
+                            "Air" => Some("Fa"),
+                            "Spirit" => Some("Sol"),
+                            _ => None,
+                        };
+
+                        if let Some(n) = note {
+                            self.chorus_buffer.push_back(n.to_string());
+                            if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
+                                self.chorus_buffer.pop_front();
+                            }
+                            self.output.push(format!("VOID SONG: {}", n));
+                            nova::check_chorus_chords(self);
+                        }
+                    }
                 }
 
                 // Brownian Motion
@@ -1254,6 +1276,7 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
+            | OpCode::Prophecy
             | OpCode::Sing
             | OpCode::Listen
             | OpCode::Hyphae

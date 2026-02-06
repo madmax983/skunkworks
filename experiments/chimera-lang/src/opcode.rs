@@ -540,6 +540,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scramble,
 
+    /// **[Nova]** Predicts if the current execution path leads to death within `ticks`.
+    ///
+    /// **Stack:** `[ ..., ticks ] -> [ ..., 1(Death)|0(Life) ]`
+    #[cfg(feature = "nova")]
+    Prophecy,
+
     /// **[Nova]** Transmutes the current grid cell based on neighbors (Alchemy).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
@@ -996,6 +1002,8 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "scramble" => Ok(OpCode::Scramble),
             #[cfg(feature = "nova")]
+            "prophecy" => Ok(OpCode::Prophecy),
+            #[cfg(feature = "nova")]
             "alchemy" => Ok(OpCode::Alchemy),
             #[cfg(feature = "nova")]
             "metamorphosis" => Ok(OpCode::Metamorphosis),
@@ -1177,6 +1185,8 @@ impl fmt::Display for OpCode {
             OpCode::Glitch => write!(f, "glitch"),
             #[cfg(feature = "nova")]
             OpCode::Scramble => write!(f, "scramble"),
+            #[cfg(feature = "nova")]
+            OpCode::Prophecy => write!(f, "prophecy"),
             #[cfg(feature = "nova")]
             OpCode::Alchemy => write!(f, "alchemy"),
             #[cfg(feature = "nova")]
