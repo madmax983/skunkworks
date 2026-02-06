@@ -46,3 +46,8 @@
 **Bloat:** Repetitive neighbor iteration and boundary checking logic in `chimera-lang` diffusion functions. Dead code `experiments/sonar-swarm`.
 **Cut:** Extracted `get_open_neighbors` helper. Deleted `sonar-swarm`.
 **Saved:** ~30 lines of duplication, 1 broken experiment removed.
+
+## [Reduction]
+**Bloat:** Massive manual `impl FromStr` and `impl Display` for `OpCode` in `chimera-lang` (~600 lines).
+**Cut:** Replaced with `strum` derives: `EnumString` and `AsRefStr`.
+**Saved:** ~550 lines of brittle boilerplate code.
