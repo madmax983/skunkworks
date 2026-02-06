@@ -156,6 +156,10 @@
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** The mountains are rising from the git log. Hydraulic erosion is washing away the sediment. The codebase is becoming a landscape.
 
+### [Concentration Level: FRESH] - Location: experiments/chromatic-cipher
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
