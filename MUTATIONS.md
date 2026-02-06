@@ -37,7 +37,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Gray-Scott reaction parameters driven by Lorenz Attractor chaos.
 - **Novel trait**: Biomes shift and breathe according to deterministic chaotic rhythms.
 - **Status**: experiments/system-bio-dome
-- **Evaluation**: Compilation ERROR.
 - **Evaluation**: Fails compilation (IO Result mismatch). Documented.
 
 ### fluid-rain
@@ -227,7 +226,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Rust AST nodes mapped to musical structures (Structs=Chords, Fn=Melody).
 - **Novel trait**: Synesthetic Code Review. Hearing the structure of the program.
 - **Status**: experiments/code-concerto
-- **Evaluation**: Compilation ERROR.
 - **Evaluation**: Fails compilation (IO Result mismatch). TUI operational. WAV generation active.
 
 ### lattice-hunter
@@ -242,7 +240,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Neural network where each neuron is a Chimera VM executing evolved DNA.
 - **Novel trait**: Programmatic Neurons. Activation functions are Turing-complete programs evolved via selection.
 - **Status**: experiments/neuro-chimera
-- **Evaluation**: Compilation ERROR.
 - **Evaluation**: Fails compilation (Match error + IO Result mismatch). Evolving decision boundaries observed.
 
 ### fairy-consensus
@@ -326,8 +323,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Digital Detritivores. Chimera organisms that live in the decaying file buffers, feeding on "glitch" entropy.
 - **Novel trait**: Ecological restoration (or acceleration) of bit rot.
 - **Status**: experiments/compost-chimera
-- **Evaluation**: Compiles. Implemented by Splice Surgeon.
-- **Evaluation**: Compiles. Implemented by Nova. Tests passed.
+- **Evaluation**: Compiles. Implemented by Splice Surgeon. Tests passed.
 
 ### quantum-boids
 - **Parents**: experiments/luminous-flock + experiments/quantum-garden
@@ -335,3 +331,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: "Spooky Action at a Distance" in swarm behavior. Entangled boids share state changes instantly.
 - **Status**: experiments/quantum-boids
 - **Evaluation**: Compiles. Implemented by Splice Surgeon. Verified.
+
+### laban-rover
+- **Parents**: experiments/repo-rover + experiments/laban-machine
+- **Concept**: Filesystem explorer where movement physics are driven by Laban Effort parameters derived from file attributes.
+- **Novel trait**: "Choreographic Navigation". Data texture (size, age) becomes physical texture (weight, time).
+- **Status**: experiments/laban-rover
+- **Evaluation**: Compiles. Implemented by Splice Surgeon.

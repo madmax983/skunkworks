@@ -191,3 +191,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/quantum-boids
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is entangled. Bell pairs are forming. Spooky action at a distance is driving the swarm. The wave function collapses on every frame.
+
+### [Concentration Level: FRESH] - Location: experiments/laban-rover
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The rover is dancing. Heavy files create friction. Old files smooth the motion. The filesystem has become a stage for Laban analysis.
