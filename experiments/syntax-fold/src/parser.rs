@@ -1,6 +1,6 @@
+use syn::spanned::Spanned;
 use syn::visit::{self, Visit};
 use syn::{Block, ItemFn, ItemImpl};
-use syn::spanned::Spanned;
 
 #[derive(Debug, Clone)]
 pub struct Line {
@@ -124,13 +124,13 @@ fn build_hierarchy(scopes: &mut Vec<Scope>, _parent_start: usize, parent_end: us
 
         // If the next scope is strictly contained within parent (start >= parent_start is guaranteed by sort)
         if next_end <= parent_end {
-             let mut scope = scopes.remove(0);
-             scope.children = build_hierarchy(scopes, scope.start_line, scope.end_line);
-             children.push(scope);
+            let mut scope = scopes.remove(0);
+            scope.children = build_hierarchy(scopes, scope.start_line, scope.end_line);
+            children.push(scope);
         } else {
             // Overlapping or malformed scope? Should not happen with valid AST.
             // But if it does, skip it to avoid infinite loop
-             scopes.remove(0);
+            scopes.remove(0);
         }
     }
 

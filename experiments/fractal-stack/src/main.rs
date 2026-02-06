@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use crate::lsystem::{LSystem, Operation};
+use macroquad::prelude::*;
 
 mod lsystem;
 
@@ -62,16 +62,16 @@ async fn main() {
             animate = !animate;
         }
         if is_key_pressed(KeyCode::Right) {
-             draw_limit = (draw_limit + 1).min(operations.len());
+            draw_limit = (draw_limit + 1).min(operations.len());
         }
         if is_key_pressed(KeyCode::Left) {
-             draw_limit = draw_limit.saturating_sub(1);
+            draw_limit = draw_limit.saturating_sub(1);
         }
 
         if animate && draw_limit < operations.len() {
             draw_limit = (draw_limit + animation_speed).min(operations.len());
         } else if animate && draw_limit == operations.len() {
-             animate = false;
+            animate = false;
         }
 
         // Camera Orbit
@@ -120,7 +120,7 @@ async fn main() {
                         start_color.r + (end_color.r - start_color.r) * t,
                         start_color.g + (end_color.g - start_color.g) * t,
                         start_color.b + (end_color.b - start_color.b) * t,
-                        1.0
+                        1.0,
                     );
 
                     draw_line_3d(turtle.position, end_pos, color);
@@ -163,12 +163,35 @@ async fn main() {
 
         // UI Overlay
         draw_text("Fractal Stack", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Iteration: {} | Ops: {}/{}", iterations, draw_limit, operations.len()), 20.0, 60.0, 20.0, WHITE);
-        draw_text("Space: Grow | Enter: Animate | Left/Right: Step", 20.0, 80.0, 20.0, WHITE);
+        draw_text(
+            &format!(
+                "Iteration: {} | Ops: {}/{}",
+                iterations,
+                draw_limit,
+                operations.len()
+            ),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Space: Grow | Enter: Animate | Left/Right: Step",
+            20.0,
+            80.0,
+            20.0,
+            WHITE,
+        );
 
         // Stack Visualization (2D Overlay)
         let stack_height = stack.len();
-        draw_text(&format!("Stack Depth: {}", stack_height), 20.0, 110.0, 20.0, YELLOW);
+        draw_text(
+            &format!("Stack Depth: {}", stack_height),
+            20.0,
+            110.0,
+            20.0,
+            YELLOW,
+        );
         // Draw a bar representing the stack
         for i in 0..stack_height {
             draw_rectangle(20.0, 120.0 + i as f32 * 10.0, 20.0, 8.0, RED);

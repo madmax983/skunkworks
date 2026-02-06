@@ -6,7 +6,11 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
 #[cfg(feature = "nova")]
-pub fn exec_meta_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_meta_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::Define => {
             // stack: strand_idx, name_str (top)
@@ -18,16 +22,20 @@ pub fn exec_meta_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opt
                 if let (Value::Str(name), Value::Int(idx)) = (name_val, s_val) {
                     if idx >= 0 && (idx as usize) < vm.dna.helix.strands.len() {
                         vm.dictionary.insert(name.clone(), idx as usize);
-                        vm.output.push(format!("DEFINE: {} -> Strand {}", name, idx));
+                        vm.output
+                            .push(format!("DEFINE: {} -> Strand {}", name, idx));
                         vm.energy = vm.energy.saturating_sub(10);
                     } else {
-                        vm.output.push("Error: Invalid strand index for define".to_string());
+                        vm.output
+                            .push("Error: Invalid strand index for define".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for define".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for define".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for define".to_string());
+                vm.output
+                    .push("Error: Stack underflow for define".to_string());
             }
         }
         OpCode::Undefine => {
@@ -41,15 +49,22 @@ pub fn exec_meta_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opt
                         vm.output.push(format!("UNDEFINE: {} not found", name));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for undefine".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for undefine".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for undefine".to_string());
+                vm.output
+                    .push("Error: Stack underflow for undefine".to_string());
             }
         }
         OpCode::Dictionary => {
-            let names: Vec<Value> = vm.dictionary.keys().map(|k| Value::Str(k.clone())).collect();
-            vm.stack.push(Value::Junction(crate::ast::JunctionType::All, names));
+            let names: Vec<Value> = vm
+                .dictionary
+                .keys()
+                .map(|k| Value::Str(k.clone()))
+                .collect();
+            vm.stack
+                .push(Value::Junction(crate::ast::JunctionType::All, names));
             vm.energy = vm.energy.saturating_sub(2);
         }
         _ => {}

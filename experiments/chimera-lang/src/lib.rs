@@ -92,9 +92,13 @@ mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_meta_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_morphogenesis_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_mutagen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_necromancy_test;
+#[cfg(all(test, feature = "oracle"))]
+mod nova_omen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
@@ -161,5 +165,3 @@ mod warden_dos_test;
 mod warden_exploit_test;
 #[cfg(test)]
 mod warden_parser_test;
-#[cfg(all(test, feature = "oracle"))]
-mod nova_omen_test;

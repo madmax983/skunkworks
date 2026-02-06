@@ -1,10 +1,10 @@
-mod parser;
 mod origami;
+mod parser;
 
-use macroquad::prelude::*;
 use macroquad::models::Vertex;
-use parser::{parse_code, Scope};
+use macroquad::prelude::*;
 use origami::OrigamiMesh;
+use parser::{parse_code, Scope};
 use std::collections::HashMap;
 
 const SAMPLE_CODE: &str = r#"fn main() {
@@ -115,12 +115,16 @@ async fn main() {
             let w = 20.0;
             let h = 1.0;
 
-            let p1 = transform.transform_point3(vec3(-w/2.0, 0.0, 0.0));
-            let p2 = transform.transform_point3(vec3(w/2.0, 0.0, 0.0));
-            let p3 = transform.transform_point3(vec3(w/2.0, -h, 0.0)); // Down is negative Y in local
-            let p4 = transform.transform_point3(vec3(-w/2.0, -h, 0.0));
+            let p1 = transform.transform_point3(vec3(-w / 2.0, 0.0, 0.0));
+            let p2 = transform.transform_point3(vec3(w / 2.0, 0.0, 0.0));
+            let p3 = transform.transform_point3(vec3(w / 2.0, -h, 0.0)); // Down is negative Y in local
+            let p4 = transform.transform_point3(vec3(-w / 2.0, -h, 0.0));
 
-            let color = if i % 2 == 0 { Color::new(0.9, 0.9, 0.9, 1.0) } else { Color::new(0.85, 0.85, 0.85, 1.0) };
+            let color = if i % 2 == 0 {
+                Color::new(0.9, 0.9, 0.9, 1.0)
+            } else {
+                Color::new(0.85, 0.85, 0.85, 1.0)
+            };
 
             // Draw Quad
             draw_quad_3d(p1, p2, p3, p4, color);
@@ -140,17 +144,35 @@ async fn main() {
         let start_x = 20.0;
 
         draw_text("Syntax Fold ⚛️📄", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Left Click: Toggle Fold | Right Drag: Rotate Camera", 20.0, screen_height() - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Left Click: Toggle Fold | Right Drag: Rotate Camera",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         // Maekawa Check
         let is_flat = origami.check_foldability(&lines, &root_scope, &fold_states);
         let status = if is_flat { "PASS" } else { "FAIL" };
         let color = if is_flat { GREEN } else { RED };
-        draw_text(&format!("Maekawa Check: {}", status), screen_width() - 250.0, 30.0, 20.0, color);
+        draw_text(
+            &format!("Maekawa Check: {}", status),
+            screen_width() - 250.0,
+            30.0,
+            20.0,
+            color,
+        );
 
         let cp_info = origami.get_crease_pattern_info(&lines, &root_scope, &fold_states);
         for (i, (_line_idx, info)) in cp_info.iter().enumerate() {
-            draw_text(info, screen_width() - 250.0, 60.0 + i as f32 * 20.0, 16.0, WHITE);
+            draw_text(
+                info,
+                screen_width() - 250.0,
+                60.0 + i as f32 * 20.0,
+                16.0,
+                WHITE,
+            );
         }
 
         // Draw 2D Interactive List
@@ -161,11 +183,21 @@ async fn main() {
             let mouse_y = mouse_position().1;
             let is_hover = mouse_y >= y && mouse_y < y + line_h && mouse_position().0 < 400.0;
 
-            let bg_color = if is_hover { Color::new(0.3, 0.3, 0.3, 0.5) } else { Color::new(0.0, 0.0, 0.0, 0.5) };
+            let bg_color = if is_hover {
+                Color::new(0.3, 0.3, 0.3, 0.5)
+            } else {
+                Color::new(0.0, 0.0, 0.0, 0.5)
+            };
             draw_rectangle(start_x, y, 380.0, line_h, bg_color);
 
             let prefix = "  ".repeat(line.indent);
-            draw_text(&format!("{}{}", prefix, line.content), start_x + 5.0, y + 14.0, 16.0, WHITE);
+            draw_text(
+                &format!("{}{}", prefix, line.content),
+                start_x + 5.0,
+                y + 14.0,
+                16.0,
+                WHITE,
+            );
 
             // If this line starts a scope, show toggle
             if let Some(_scope) = find_scope_starting_at(&root_scope, i) {
@@ -193,9 +225,9 @@ fn init_fold_states(scope: &Scope, states: &mut HashMap<usize, f32>) {
 
 fn find_scope_starting_at<'a>(scope: &'a Scope, line_idx: usize) -> Option<&'a Scope> {
     if scope.start_line == line_idx && !scope.children.is_empty() {
-         if scope.end_line > scope.start_line {
-             return Some(scope);
-         }
+        if scope.end_line > scope.start_line {
+            return Some(scope);
+        }
     }
     for child in &scope.children {
         if let Some(s) = find_scope_starting_at(child, line_idx) {
@@ -212,10 +244,30 @@ fn draw_quad_3d(p1: Vec3, p2: Vec3, p3: Vec3, p4: Vec3, color: Color) {
     let normal = vec4(0.0, 0.0, 1.0, 0.0);
     let mesh = Mesh {
         vertices: vec![
-            Vertex { position: p1, uv: Vec2::ZERO, color, normal },
-            Vertex { position: p2, uv: Vec2::ZERO, color, normal },
-            Vertex { position: p3, uv: Vec2::ZERO, color, normal },
-            Vertex { position: p4, uv: Vec2::ZERO, color, normal },
+            Vertex {
+                position: p1,
+                uv: Vec2::ZERO,
+                color,
+                normal,
+            },
+            Vertex {
+                position: p2,
+                uv: Vec2::ZERO,
+                color,
+                normal,
+            },
+            Vertex {
+                position: p3,
+                uv: Vec2::ZERO,
+                color,
+                normal,
+            },
+            Vertex {
+                position: p4,
+                uv: Vec2::ZERO,
+                color,
+                normal,
+            },
         ],
         indices: vec![0, 1, 2, 0, 2, 3],
         texture: None,

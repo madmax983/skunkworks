@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operation {
-    DrawForward(f32), // Draw and move
-    MoveForward(f32), // Move without drawing
+    DrawForward(f32),    // Draw and move
+    MoveForward(f32),    // Move without drawing
     Turn(f32, f32, f32), // Rotate (yaw, pitch, roll) in radians
     PushStack,
     PopStack,
@@ -109,7 +109,7 @@ mod tests {
         let ops0 = lsys.expand(0);
         assert_eq!(ops0.len(), 1);
         match ops0[0] {
-            Operation::DrawForward(_) => {},
+            Operation::DrawForward(_) => {}
             _ => panic!("Expected DrawForward"),
         }
 

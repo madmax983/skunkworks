@@ -77,21 +77,28 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
 
             // Calculate projection
             // We want to reuse the allocated vector if possible, but for now strict allocation is fine for 10k points
-            let projected_points: Vec<(f64, f64)> = history.iter().map(|(x, y, z)| {
-                // Rotate around Y axis (which is vertical in screen space usually, but here z is up in Lorenz)
-                // In Lorenz: z is up. x, y are horizontal.
-                // Let's rotate around Z axis? No, we want to spin the attractor.
-                // Rotate around Z (vertical axis in Lorenz terms)
-                let x_rot = x * angle.cos() - y * angle.sin();
+            let projected_points: Vec<(f64, f64)> = history
+                .iter()
+                .map(|(x, y, z)| {
+                    // Rotate around Y axis (which is vertical in screen space usually, but here z is up in Lorenz)
+                    // In Lorenz: z is up. x, y are horizontal.
+                    // Let's rotate around Z axis? No, we want to spin the attractor.
+                    // Rotate around Z (vertical axis in Lorenz terms)
+                    let x_rot = x * angle.cos() - y * angle.sin();
 
-                // Map z to screen y?
-                // Screen X = x_rot
-                // Screen Y = z
-                (x_rot, *z)
-            }).collect();
+                    // Map z to screen y?
+                    // Screen X = x_rot
+                    // Screen Y = z
+                    (x_rot, *z)
+                })
+                .collect();
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Lorenz Attractor (System Load)"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Lorenz Attractor (System Load)"),
+                )
                 .x_bounds([-30.0, 30.0])
                 .y_bounds([0.0, 60.0]) // Lorenz z goes 0 to 50ish
                 .paint(|ctx| {
@@ -117,7 +124,10 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
 
             // Info Panel
             let info_text = vec![
-                Line::from(Span::styled("Chaos Monitor", Style::default().fg(Color::Green))),
+                Line::from(Span::styled(
+                    "Chaos Monitor",
+                    Style::default().fg(Color::Green),
+                )),
                 Line::from(""),
                 Line::from(format!("CPU Load: {:.1}%", cpu_load * 100.0)),
                 Line::from(format!(" -> Rho: {:.2}", system.rho)),
@@ -129,7 +139,10 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
                 Line::from(format!(" -> Beta: {:.2}", system.beta)),
                 Line::from(""),
                 Line::from(format!("Points: {}", history.len())),
-                Line::from(format!("Coords: ({:.1}, {:.1}, {:.1})", system.x, system.y, system.z)),
+                Line::from(format!(
+                    "Coords: ({:.1}, {:.1}, {:.1})",
+                    system.x, system.y, system.z
+                )),
                 Line::from(""),
                 Line::from("Controls:"),
                 Line::from(" 'q': Quit"),
@@ -167,7 +180,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
                 // Base: sigma=10, rho=28, beta=8/3 (2.66)
                 system.rho = 28.0 + (cpu_load * 30.0); // 28 to 58
                 system.sigma = 10.0 + (mem_load * 10.0); // 10 to 20
-                // system.beta = (8.0/3.0) + (swap_load * 2.0);
+                                                         // system.beta = (8.0/3.0) + (swap_load * 2.0);
 
                 last_monitor_update = now;
             }
@@ -177,7 +190,8 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
             for _ in 0..10 {
                 system.update_rk4(dt);
                 history.push_back((system.x, system.y, system.z));
-                if history.len() > 5000 { // Limit points
+                if history.len() > 5000 {
+                    // Limit points
                     history.pop_front();
                 }
             }
