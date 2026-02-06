@@ -460,63 +460,637 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
-pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
-    match op {
-        #[cfg(feature = "nova")]
-        OpCode::Prophecy => {
-            // stack: ticks (top)
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(ticks) = val {
-                    if ticks > 0 {
-                        let safe_ticks = ticks.min(1000);
+fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: ticks (top)
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(ticks) = val {
+            if ticks > 0 {
+                let safe_ticks = ticks.min(1000);
 
-                        // Clone VM
-                        let mut sim_vm = vm.clone();
-                        sim_vm.output.clear(); // Silence output
-                        sim_vm.halted = false; // Ensure it can run (unless already dead?)
+                // Clone VM
+                let mut sim_vm = vm.clone();
+                sim_vm.output.clear(); // Silence output
+                sim_vm.halted = false; // Ensure it can run (unless already dead?)
 
-                        // Advance IP to avoid infinite recursion (executing prophecy again)
-                        // We assume standard sequential flow (IP.1 + 1)
-                        sim_vm.ip.1 += 1;
+                // Advance IP to avoid infinite recursion (executing prophecy again)
+                // We assume standard sequential flow (IP.1 + 1)
+                sim_vm.ip.1 += 1;
 
-                        if vm.energy <= 0 {
-                            // If already dead, prophecy is 1
-                            vm.stack.push(Value::Int(1));
-                        } else {
-                            // Run simulation loop
-                            for _ in 0..safe_ticks {
-                                sim_vm.step();
-                                if sim_vm.halted {
-                                    break;
-                                }
+                if vm.energy <= 0 {
+                    // If already dead, prophecy is 1
+                    vm.stack.push(Value::Int(1));
+                } else {
+                    // Run simulation loop
+                    for _ in 0..safe_ticks {
+                        sim_vm.step();
+                        if sim_vm.halted {
+                            break;
+                        }
+                    }
+
+                    // Result: 1 if Dead (halted), 0 if Alive
+                    let result = if sim_vm.halted { 1 } else { 0 };
+                    vm.stack.push(Value::Int(result));
+
+                    // Cost
+                    let cost = 50 + (safe_ticks / 2);
+                    vm.energy = vm.energy.saturating_sub(cost);
+                    vm.output.push(format!(
+                        "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
+                        result, safe_ticks
+                    ));
+                }
+            } else {
+                vm.output
+                    .push("Error: Invalid ticks for prophecy".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for prophecy".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for prophecy".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let rows = vm.grid.len();
+    let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+
+    let mut new_strands = Vec::new();
+
+    for row in &vm.grid {
+        let mut genes = Vec::new();
+        let mut x = 0;
+        while x < cols {
+            let val = &row[x];
+            match val {
+                Value::Int(n) => {
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Push,
+                        args: vec![crate::ast::Nucleotide::Number(*n)],
+                    });
+                    x += 1;
+                }
+                Value::Junction(t, vals) => {
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Push,
+                        args: vec![crate::ast::Nucleotide::Junction(
+                            *t,
+                            vals.iter().map(value_to_nucleotide).collect(),
+                        )],
+                    });
+                    x += 1;
+                }
+                Value::Str(s) => {
+                    let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                    let mut args = Vec::new();
+                    match op {
+                        OpCode::Push | OpCode::Jump | OpCode::Brz | OpCode::Call => {
+                            if x + 1 < cols {
+                                args.push(value_to_nucleotide(&row[x + 1]));
+                                x += 1;
                             }
+                        }
+                        #[cfg(feature = "cortex")]
+                        OpCode::Gate => {
+                            if x + 1 < cols {
+                                args.push(value_to_nucleotide(&row[x + 1]));
+                                x += 1;
+                            }
+                        }
+                        _ => {}
+                    }
+                    genes.push(crate::ast::Gene { op, args });
+                    x += 1;
+                }
+            }
+        }
+        if !genes.is_empty() {
+            new_strands.push(crate::ast::Strand { genes });
+        }
+    }
 
-                            // Result: 1 if Dead (halted), 0 if Alive
-                            let result = if sim_vm.halted { 1 } else { 0 };
-                            vm.stack.push(Value::Int(result));
+    if !new_strands.is_empty() {
+        vm.dna.helix.strands = new_strands;
 
-                            // Cost
-                            let cost = 50 + (safe_ticks / 2);
-                            vm.energy = vm.energy.saturating_sub(cost);
+        // Reset State
+        vm.energy = 50;
+        vm.ip = (0, 0);
+        vm.stack.clear();
+        vm.telomeres = vec![50; vm.dna.helix.strands.len()];
+        vm.epigenome.clear();
+        vm.receptors.clear();
+        #[cfg(feature = "cortex")]
+        {
+            vm.activation_levels = vec![0; vm.dna.helix.strands.len()];
+            vm.synapse_map = vec![Vec::new(); vm.dna.helix.strands.len()];
+        }
+
+        vm.output
+            .push("METAMORPHOSIS: The chrysalis breaks...".to_string());
+        Some((0, 0))
+    } else {
+        vm.output
+            .push("METAMORPHOSIS: Failed (Grid empty/invalid)".to_string());
+        Some((0, 0))
+    }
+}
+
+#[cfg(feature = "nova")]
+fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: ticks, strand_idx (bottom)
+    if vm.stack.len() >= 2 {
+        let ticks_val = vm.stack.pop().unwrap();
+        let s_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
+            let idx = s_idx as usize;
+            if idx < vm.dna.helix.strands.len() && ticks > 0 {
+                if vm.recursion_depth > 100 {
+                    vm.output
+                        .push("Error: Recursion limit exceeded".to_string());
+                    return None;
+                }
+
+                // Cap ticks to prevent DoS
+                let safe_ticks = ticks.min(1000);
+
+                // Fork VM
+                // Cloning `vm` clones everything, which provides an accurate snapshot.
+                let mut sim_vm = vm.clone();
+
+                // Setup simulation context
+                sim_vm.ip = (idx, 0);
+                sim_vm.output.clear(); // Silence output
+                sim_vm.halted = false;
+
+                // Run simulation loop
+                for _ in 0..safe_ticks {
+                    sim_vm.step();
+                    if sim_vm.halted {
+                        break;
+                    }
+                }
+
+                // Collect Results
+                // 1. Top of stack (or 0 if empty)
+                let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
+                // 2. Final Energy
+                let energy = sim_vm.energy;
+                // 3. Status (1 = Alive, 0 = Halted/Dead)
+                let status = if sim_vm.halted { 0 } else { 1 };
+
+                // Push results to original VM stack
+                vm.stack.push(top_val);
+                vm.stack.push(Value::Int(energy));
+                vm.stack.push(Value::Int(status));
+
+                // Deduct Energy Cost: Base cost + duration cost
+                let cost = safe_ticks.saturating_add(50);
+                vm.energy = vm.energy.saturating_sub(cost);
+
+                vm.output.push(format!(
+                    "SIMULATE: Ran strand {} for {} ticks. Status: {}",
+                    idx, safe_ticks, status
+                ));
+            } else {
+                vm.output
+                    .push("Error: Invalid args for simulate".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for simulate".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for simulate".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: bf_code_string, input_string (top)
+    if vm.stack.len() >= 2 {
+        let input_val = vm.stack.pop().unwrap();
+        let code_val = vm.stack.pop().unwrap();
+
+        if let (Value::Str(code), Value::Str(input)) = (code_val, input_val) {
+            let code_chars: Vec<char> = code.chars().collect();
+            let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
+            let mut output_bytes: Vec<u8> = Vec::new();
+
+            let mut tape = vec![0u8; 30000];
+            let mut ptr = 0;
+            let mut pc = 0;
+            let mut cycles = 0;
+            let max_cycles = 10000; // Safety limit
+
+            // Precompute jump targets
+            let mut jumps = HashMap::new();
+            let mut loop_stack = Vec::new();
+            for (i, &c) in code_chars.iter().enumerate() {
+                if c == '[' {
+                    loop_stack.push(i);
+                } else if c == ']' {
+                    if let Some(start) = loop_stack.pop() {
+                        jumps.insert(start, i);
+                        jumps.insert(i, start);
+                    }
+                }
+            }
+
+            while pc < code_chars.len() && cycles < max_cycles {
+                match code_chars[pc] {
+                    '>' => {
+                        if ptr < tape.len() - 1 {
+                            ptr += 1;
+                        } else {
+                            ptr = 0;
+                        } // Wrap
+                    }
+                    '<' => {
+                        if ptr > 0 {
+                            ptr -= 1;
+                        } else {
+                            ptr = tape.len() - 1;
+                        } // Wrap
+                    }
+                    '+' => tape[ptr] = tape[ptr].wrapping_add(1),
+                    '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
+                    '.' => output_bytes.push(tape[ptr]),
+                    ',' => {
+                        tape[ptr] = input_chars.pop_front().unwrap_or(0);
+                    }
+                    '[' => {
+                        if tape[ptr] == 0 {
+                            if let Some(&target) = jumps.get(&pc) {
+                                pc = target;
+                            }
+                        }
+                    }
+                    ']' => {
+                        if tape[ptr] != 0 {
+                            if let Some(&target) = jumps.get(&pc) {
+                                pc = target;
+                            }
+                        }
+                    }
+                    _ => {} // Ignore non-BF chars
+                }
+                pc += 1;
+                cycles += 1;
+            }
+
+            let output_str = String::from_utf8_lossy(&output_bytes).to_string();
+            vm.stack.push(Value::Str(output_str));
+            vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
+            vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
+        } else {
+            vm.output
+                .push("Error: Type mismatch for brainfuck".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for brainfuck".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: method, strand_b, strand_a (bottom)
+    if vm.stack.len() >= 3 {
+        let method_val = vm.stack.pop().unwrap();
+        let strand_b_val = vm.stack.pop().unwrap();
+        let strand_a_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(s_a), Value::Int(s_b), Value::Int(method)) =
+            (strand_a_val, strand_b_val, method_val)
+        {
+            let idx_a = s_a as usize;
+            let idx_b = s_b as usize;
+            let helix_len = vm.dna.helix.strands.len();
+
+            if s_a >= 0 && s_b >= 0 && idx_a < helix_len && idx_b < helix_len {
+                let genes_a = &vm.dna.helix.strands[idx_a].genes;
+                let genes_b = &vm.dna.helix.strands[idx_b].genes;
+                let len_a = genes_a.len();
+                let len_b = genes_b.len();
+                let max_len = len_a.max(len_b);
+
+                let mut new_genes = Vec::new();
+                let mut rng = rand::thread_rng();
+
+                match method {
+                    0 => {
+                        // Interleave
+                        for i in 0..max_len {
+                            if i < len_a {
+                                new_genes.push(genes_a[i].clone());
+                            }
+                            if i < len_b {
+                                new_genes.push(genes_b[i].clone());
+                            }
+                        }
+                        vm.output
+                            .push(format!("SPLICE: Interleaved strands {} and {}", s_a, s_b));
+                    }
+                    1 => {
+                        // Uniform Crossover
+                        for i in 0..max_len {
+                            if i < len_a && i < len_b {
+                                if rng.gen_bool(0.5) {
+                                    new_genes.push(genes_a[i].clone());
+                                } else {
+                                    new_genes.push(genes_b[i].clone());
+                                }
+                            } else if i < len_a {
+                                new_genes.push(genes_a[i].clone());
+                            } else if i < len_b {
+                                new_genes.push(genes_b[i].clone());
+                            }
+                        }
+                        vm.output
+                            .push(format!("SPLICE: Crossover strands {} and {}", s_a, s_b));
+                    }
+                    2 => {
+                        // Midpoint Split (Head A + Tail B)
+                        let mid_a = len_a / 2;
+                        let mid_b = len_b / 2;
+                        for gene in genes_a.iter().take(mid_a) {
+                            new_genes.push(gene.clone());
+                        }
+                        for gene in genes_b.iter().skip(mid_b) {
+                            new_genes.push(gene.clone());
+                        }
+                        vm.output
+                            .push(format!("SPLICE: Hybridized strands {} and {}", s_a, s_b));
+                    }
+                    _ => {
+                        vm.output.push("Error: Invalid splice method".to_string());
+                    }
+                }
+
+                if !new_genes.is_empty() {
+                    vm.dna
+                        .helix
+                        .strands
+                        .push(crate::ast::Strand { genes: new_genes });
+                    vm.telomeres.push(50);
+                    #[cfg(feature = "cortex")]
+                    {
+                        vm.activation_levels.push(0);
+                        vm.synapse_map.push(Vec::new());
+                    }
+                    let new_idx = vm.dna.helix.strands.len() - 1;
+                    vm.stack.push(Value::Int(new_idx as i64));
+                    vm.energy = vm.energy.saturating_sub(30);
+                } else if method <= 2 {
+                    // If result empty but method valid (e.g. empty parents)
+                    vm.stack.push(Value::Int(-1));
+                }
+            } else {
+                vm.output
+                    .push("Error: Strand index out of bounds for splice".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for splice".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for splice".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: split_point, strand_b, strand_a (bottom)
+    if vm.stack.len() >= 3 {
+        let split_val = vm.stack.pop().unwrap();
+        let strand_b_val = vm.stack.pop().unwrap();
+        let strand_a_val = vm.stack.pop().unwrap();
+
+        match (strand_a_val, strand_b_val, split_val) {
+            (Value::Int(sa), Value::Int(sb), Value::Int(split)) => {
+                let helix_len = vm.dna.helix.strands.len();
+                let sa_idx = sa as usize;
+                let sb_idx = sb as usize;
+                let split_idx = split as usize;
+
+                if sa >= 0 && sb >= 0 && split >= 0 && sa_idx < helix_len && sb_idx < helix_len {
+                    // We need to check split bounds for both strands
+                    let len_a = vm.dna.helix.strands[sa_idx].genes.len();
+                    let len_b = vm.dna.helix.strands[sb_idx].genes.len();
+
+                    if split_idx <= len_a && split_idx <= len_b {
+                        // Perform recombination
+                        // We need to borrow strands mutably.
+                        // Since they are in the same Vec, we need split_at_mut or similar trickery,
+                        // or just use indices if we can modify the Vec safely.
+                        // We can't get two mutable references to the same Vec at different indices directly.
+                        // So we'll use `split_at_mut` if they are different indices, or just do nothing if same.
+
+                        if sa_idx == sb_idx {
+                            // Recombining same strand with itself at same point is a no-op.
+                            vm.output
+                                .push("Warning: Recombining strand with itself".to_string());
+                        } else {
+                            // Ensure ordered access to avoid panic
+                            let (lower, upper) = if sa_idx < sb_idx {
+                                (sa_idx, sb_idx)
+                            } else {
+                                (sb_idx, sa_idx)
+                            };
+
+                            let (first_slice, second_slice) =
+                                vm.dna.helix.strands.split_at_mut(upper);
+                            let strand_low = &mut first_slice[lower];
+                            let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
+
+                            // Identify which is A and B
+                            let (strand_a, strand_b) = if sa_idx < sb_idx {
+                                (strand_low, strand_high)
+                            } else {
+                                (strand_high, strand_low)
+                            };
+
+                            let mut tail_a = strand_a.genes.split_off(split_idx);
+                            let mut tail_b = strand_b.genes.split_off(split_idx);
+
+                            strand_a.genes.append(&mut tail_b);
+                            strand_b.genes.append(&mut tail_a);
+
                             vm.output.push(format!(
-                                "PROPHECY: Predicted {} (1=Death, 0=Life) in {} ticks",
-                                result, safe_ticks
+                                "RECOMBINATION: Swapped tails of strand {} and {} at {}",
+                                sa, sb, split
                             ));
                         }
                     } else {
                         vm.output
-                            .push("Error: Invalid ticks for prophecy".to_string());
+                            .push("Error: Split point out of bounds".to_string());
                     }
                 } else {
                     vm.output
-                        .push("Error: Type mismatch for prophecy".to_string());
+                        .push("Error: Strand index out of bounds".to_string());
+                }
+            }
+            _ => vm
+                .output
+                .push("Error: Type mismatch for recombine".to_string()),
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for recombine".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: guide_idx, target_idx (bottom)
+    if vm.stack.len() >= 2 {
+        let guide_val = vm.stack.pop().unwrap();
+        let target_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(g_idx), Value::Int(t_idx)) = (guide_val, target_val) {
+            let g_idx = g_idx as usize;
+            let t_idx = t_idx as usize;
+            let helix_len = vm.dna.helix.strands.len();
+
+            if g_idx < helix_len && t_idx < helix_len {
+                let guide_strand = &vm.dna.helix.strands[g_idx];
+                let target_strand = &vm.dna.helix.strands[t_idx];
+
+                // We need to match sequence of gene names
+                // Use op.to_string() for comparison
+                let guide_names: Vec<String> = guide_strand
+                    .genes
+                    .iter()
+                    .map(|g| g.op.to_string())
+                    .collect();
+                let target_names: Vec<String> = target_strand
+                    .genes
+                    .iter()
+                    .map(|g| g.op.to_string())
+                    .collect();
+
+                let mut found_idx: i64 = -1;
+
+                if !guide_names.is_empty() && guide_names.len() <= target_names.len() {
+                    for i in 0..=(target_names.len() - guide_names.len()) {
+                        if target_names[i..i + guide_names.len()] == guide_names[..] {
+                            found_idx = i as i64;
+                            break;
+                        }
+                    }
+                } else if guide_names.is_empty() {
+                    // Explicitly handle empty guide to ensure -1 (though init value handles it)
+                    found_idx = -1;
+                }
+
+                vm.stack.push(Value::Int(found_idx));
+                vm.energy = vm.energy.saturating_sub(5);
+                vm.output.push(format!(
+                    "CRISPR_SCAN: Scanned strand {} for pattern from {} -> {}",
+                    t_idx, g_idx, found_idx
+                ));
+            } else {
+                vm.output
+                    .push("Error: Strand index out of bounds for crispr_scan".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for crispr_scan".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for crispr_scan".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: cut_index, strand_idx (bottom)
+    if vm.stack.len() >= 2 {
+        let cut_val = vm.stack.pop().unwrap();
+        let strand_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(cut), Value::Int(s_idx)) = (cut_val, strand_val) {
+            let s_idx = s_idx as usize;
+            let cut_idx = cut as usize;
+            let helix_len = vm.dna.helix.strands.len();
+
+            if s_idx < helix_len {
+                let strand_len = vm.dna.helix.strands[s_idx].genes.len();
+                if cut >= 0 && cut_idx <= strand_len {
+                    // Perform split
+                    // We need to mutate the strand.
+                    let strand = &mut vm.dna.helix.strands[s_idx];
+                    let tail_genes = strand.genes.split_off(cut_idx);
+
+                    // Create new strand
+                    vm.dna
+                        .helix
+                        .strands
+                        .push(crate::ast::Strand { genes: tail_genes });
+                    vm.telomeres.push(50);
+
+                    #[cfg(feature = "cortex")]
+                    {
+                        vm.activation_levels.push(0);
+                        vm.synapse_map.push(Vec::new());
+                    }
+
+                    let new_strand_idx = vm.dna.helix.strands.len() - 1;
+
+                    vm.stack.push(Value::Int(new_strand_idx as i64));
+                    vm.energy = vm.energy.saturating_sub(10);
+
+                    vm.output.push(format!(
+                        "CAS9_CUT: Cut strand {} at {}, created strand {}",
+                        s_idx, cut_idx, new_strand_idx
+                    ));
+
+                    // Handling Self-Modification Safety:
+                    // If we cut the strand we are currently executing,
+                    // and the cut point is BEFORE or AT our current IP, execution context moves.
+                    if s_idx == vm.ip.0 && vm.ip.1 >= cut_idx {
+                        let new_gene_idx = vm.ip.1 - cut_idx;
+                        // We jump to the next instruction in the NEW strand
+                        return Some((new_strand_idx, new_gene_idx + 1));
+                    }
+                } else {
+                    vm.output.push("Error: Cut index out of bounds".to_string());
                 }
             } else {
                 vm.output
-                    .push("Error: Stack underflow for prophecy".to_string());
+                    .push("Error: Strand index out of bounds for cas9_cut".to_string());
             }
-            None
+        } else {
+            vm.output
+                .push("Error: Type mismatch for cas9_cut".to_string());
         }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for cas9_cut".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
+pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    match op {
+        #[cfg(feature = "nova")]
+        OpCode::Prophecy => exec_prophecy(vm),
         #[cfg(feature = "nova")]
         OpCode::Alchemy => {
             let (cy, cx) = vm.context_loc;
@@ -641,88 +1215,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
-        OpCode::Metamorphosis => {
-            let rows = vm.grid.len();
-            let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
-
-            let mut new_strands = Vec::new();
-
-            for y in 0..rows {
-                let mut genes = Vec::new();
-                let mut x = 0;
-                while x < cols {
-                    let val = &vm.grid[y][x];
-                    match val {
-                        Value::Int(n) => {
-                            genes.push(crate::ast::Gene {
-                                op: OpCode::Push,
-                                args: vec![crate::ast::Nucleotide::Number(*n)],
-                            });
-                            x += 1;
-                        }
-                        Value::Junction(t, vals) => {
-                            genes.push(crate::ast::Gene {
-                                op: OpCode::Push,
-                                args: vec![crate::ast::Nucleotide::Junction(
-                                    *t,
-                                    vals.iter().map(value_to_nucleotide).collect(),
-                                )],
-                            });
-                            x += 1;
-                        }
-                        Value::Str(s) => {
-                            let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
-                            let mut args = Vec::new();
-                            match op {
-                                OpCode::Push | OpCode::Jump | OpCode::Brz | OpCode::Call => {
-                                    if x + 1 < cols {
-                                        args.push(value_to_nucleotide(&vm.grid[y][x + 1]));
-                                        x += 1;
-                                    }
-                                }
-                                #[cfg(feature = "cortex")]
-                                OpCode::Gate => {
-                                    if x + 1 < cols {
-                                        args.push(value_to_nucleotide(&vm.grid[y][x + 1]));
-                                        x += 1;
-                                    }
-                                }
-                                _ => {}
-                            }
-                            genes.push(crate::ast::Gene { op, args });
-                            x += 1;
-                        }
-                    }
-                }
-                if !genes.is_empty() {
-                    new_strands.push(crate::ast::Strand { genes });
-                }
-            }
-
-            if !new_strands.is_empty() {
-                vm.dna.helix.strands = new_strands;
-
-                // Reset State
-                vm.energy = 50;
-                vm.ip = (0, 0);
-                vm.stack.clear();
-                vm.telomeres = vec![50; vm.dna.helix.strands.len()];
-                vm.epigenome.clear();
-                vm.receptors.clear();
-                #[cfg(feature = "cortex")]
-                {
-                    vm.activation_levels = vec![0; vm.dna.helix.strands.len()];
-                    vm.synapse_map = vec![Vec::new(); vm.dna.helix.strands.len()];
-                }
-
-                vm.output
-                    .push("METAMORPHOSIS: The chrysalis breaks...".to_string());
-            } else {
-                vm.output
-                    .push("METAMORPHOSIS: Failed (Grid empty/invalid)".to_string());
-            }
-            Some((0, 0))
-        }
+        OpCode::Metamorphosis => exec_metamorphosis(vm),
         #[cfg(feature = "nova")]
         OpCode::Chronostasis => {
             if let Some(val) = vm.stack.pop() {
@@ -748,76 +1241,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
-        OpCode::Simulate => {
-            // stack: ticks, strand_idx (bottom)
-            if vm.stack.len() >= 2 {
-                let ticks_val = vm.stack.pop().unwrap();
-                let s_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(ticks), Value::Int(s_idx)) = (ticks_val, s_val) {
-                    let idx = s_idx as usize;
-                    if idx < vm.dna.helix.strands.len() && ticks > 0 {
-                        if vm.recursion_depth > 100 {
-                            vm.output
-                                .push("Error: Recursion limit exceeded".to_string());
-                            return None;
-                        }
-
-                        // Cap ticks to prevent DoS
-                        let safe_ticks = ticks.min(1000);
-
-                        // Fork VM
-                        // Cloning `vm` clones everything, which provides an accurate snapshot.
-                        let mut sim_vm = vm.clone();
-
-                        // Setup simulation context
-                        sim_vm.ip = (idx, 0);
-                        sim_vm.output.clear(); // Silence output
-                        sim_vm.halted = false;
-
-                        // Run simulation loop
-                        for _ in 0..safe_ticks {
-                            sim_vm.step();
-                            if sim_vm.halted {
-                                break;
-                            }
-                        }
-
-                        // Collect Results
-                        // 1. Top of stack (or 0 if empty)
-                        let top_val = sim_vm.stack.last().cloned().unwrap_or(Value::Int(0));
-                        // 2. Final Energy
-                        let energy = sim_vm.energy;
-                        // 3. Status (1 = Alive, 0 = Halted/Dead)
-                        let status = if sim_vm.halted { 0 } else { 1 };
-
-                        // Push results to original VM stack
-                        vm.stack.push(top_val);
-                        vm.stack.push(Value::Int(energy));
-                        vm.stack.push(Value::Int(status));
-
-                        // Deduct Energy Cost: Base cost + duration cost
-                        let cost = safe_ticks.saturating_add(50);
-                        vm.energy = vm.energy.saturating_sub(cost);
-
-                        vm.output.push(format!(
-                            "SIMULATE: Ran strand {} for {} ticks. Status: {}",
-                            idx, safe_ticks, status
-                        ));
-                    } else {
-                        vm.output
-                            .push("Error: Invalid args for simulate".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for simulate".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for simulate".to_string());
-            }
-            None
-        }
+        OpCode::Simulate => exec_simulate(vm),
         #[cfg(feature = "nova")]
         OpCode::SensePigment => {
             let (cy, cx) = vm.context_loc;
@@ -876,93 +1300,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
-        OpCode::Brainfuck => {
-            // stack: bf_code_string, input_string (top)
-            if vm.stack.len() >= 2 {
-                let input_val = vm.stack.pop().unwrap();
-                let code_val = vm.stack.pop().unwrap();
-
-                if let (Value::Str(code), Value::Str(input)) = (code_val, input_val) {
-                    let code_chars: Vec<char> = code.chars().collect();
-                    let mut input_chars: VecDeque<u8> = input.bytes().collect::<VecDeque<_>>();
-                    let mut output_bytes: Vec<u8> = Vec::new();
-
-                    let mut tape = vec![0u8; 30000];
-                    let mut ptr = 0;
-                    let mut pc = 0;
-                    let mut cycles = 0;
-                    let max_cycles = 10000; // Safety limit
-
-                    // Precompute jump targets
-                    let mut jumps = HashMap::new();
-                    let mut loop_stack = Vec::new();
-                    for (i, &c) in code_chars.iter().enumerate() {
-                        if c == '[' {
-                            loop_stack.push(i);
-                        } else if c == ']' {
-                            if let Some(start) = loop_stack.pop() {
-                                jumps.insert(start, i);
-                                jumps.insert(i, start);
-                            }
-                        }
-                    }
-
-                    while pc < code_chars.len() && cycles < max_cycles {
-                        match code_chars[pc] {
-                            '>' => {
-                                if ptr < tape.len() - 1 {
-                                    ptr += 1;
-                                } else {
-                                    ptr = 0;
-                                } // Wrap
-                            }
-                            '<' => {
-                                if ptr > 0 {
-                                    ptr -= 1;
-                                } else {
-                                    ptr = tape.len() - 1;
-                                } // Wrap
-                            }
-                            '+' => tape[ptr] = tape[ptr].wrapping_add(1),
-                            '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
-                            '.' => output_bytes.push(tape[ptr]),
-                            ',' => {
-                                tape[ptr] = input_chars.pop_front().unwrap_or(0);
-                            }
-                            '[' => {
-                                if tape[ptr] == 0 {
-                                    if let Some(&target) = jumps.get(&pc) {
-                                        pc = target;
-                                    }
-                                }
-                            }
-                            ']' => {
-                                if tape[ptr] != 0 {
-                                    if let Some(&target) = jumps.get(&pc) {
-                                        pc = target;
-                                    }
-                                }
-                            }
-                            _ => {} // Ignore non-BF chars
-                        }
-                        pc += 1;
-                        cycles += 1;
-                    }
-
-                    let output_str = String::from_utf8_lossy(&output_bytes).to_string();
-                    vm.stack.push(Value::Str(output_str));
-                    vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
-                    vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for brainfuck".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for brainfuck".to_string());
-            }
-            None
-        }
+        OpCode::Brainfuck => exec_brainfuck(vm),
         #[cfg(feature = "nova")]
         OpCode::Spawn => {
             // stack: type, strand_idx (bottom)
@@ -1342,340 +1680,18 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
-        OpCode::Splice => {
-            // stack: method, strand_b, strand_a (bottom)
-            if vm.stack.len() >= 3 {
-                let method_val = vm.stack.pop().unwrap();
-                let strand_b_val = vm.stack.pop().unwrap();
-                let strand_a_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(s_a), Value::Int(s_b), Value::Int(method)) =
-                    (strand_a_val, strand_b_val, method_val)
-                {
-                    let idx_a = s_a as usize;
-                    let idx_b = s_b as usize;
-                    let helix_len = vm.dna.helix.strands.len();
-
-                    if s_a >= 0 && s_b >= 0 && idx_a < helix_len && idx_b < helix_len {
-                        let genes_a = &vm.dna.helix.strands[idx_a].genes;
-                        let genes_b = &vm.dna.helix.strands[idx_b].genes;
-                        let len_a = genes_a.len();
-                        let len_b = genes_b.len();
-                        let max_len = len_a.max(len_b);
-
-                        let mut new_genes = Vec::new();
-                        let mut rng = rand::thread_rng();
-
-                        match method {
-                            0 => {
-                                // Interleave
-                                for i in 0..max_len {
-                                    if i < len_a {
-                                        new_genes.push(genes_a[i].clone());
-                                    }
-                                    if i < len_b {
-                                        new_genes.push(genes_b[i].clone());
-                                    }
-                                }
-                                vm.output.push(format!(
-                                    "SPLICE: Interleaved strands {} and {}",
-                                    s_a, s_b
-                                ));
-                            }
-                            1 => {
-                                // Uniform Crossover
-                                for i in 0..max_len {
-                                    if i < len_a && i < len_b {
-                                        if rng.gen_bool(0.5) {
-                                            new_genes.push(genes_a[i].clone());
-                                        } else {
-                                            new_genes.push(genes_b[i].clone());
-                                        }
-                                    } else if i < len_a {
-                                        new_genes.push(genes_a[i].clone());
-                                    } else if i < len_b {
-                                        new_genes.push(genes_b[i].clone());
-                                    }
-                                }
-                                vm.output
-                                    .push(format!("SPLICE: Crossover strands {} and {}", s_a, s_b));
-                            }
-                            2 => {
-                                // Midpoint Split (Head A + Tail B)
-                                let mid_a = len_a / 2;
-                                let mid_b = len_b / 2;
-                                for i in 0..mid_a {
-                                    new_genes.push(genes_a[i].clone());
-                                }
-                                for i in mid_b..len_b {
-                                    new_genes.push(genes_b[i].clone());
-                                }
-                                vm.output.push(format!(
-                                    "SPLICE: Hybridized strands {} and {}",
-                                    s_a, s_b
-                                ));
-                            }
-                            _ => {
-                                vm.output.push("Error: Invalid splice method".to_string());
-                            }
-                        }
-
-                        if !new_genes.is_empty() {
-                            vm.dna
-                                .helix
-                                .strands
-                                .push(crate::ast::Strand { genes: new_genes });
-                            vm.telomeres.push(50);
-                            #[cfg(feature = "cortex")]
-                            {
-                                vm.activation_levels.push(0);
-                                vm.synapse_map.push(Vec::new());
-                            }
-                            let new_idx = vm.dna.helix.strands.len() - 1;
-                            vm.stack.push(Value::Int(new_idx as i64));
-                            vm.energy = vm.energy.saturating_sub(30);
-                        } else if method <= 2 {
-                            // If result empty but method valid (e.g. empty parents)
-                            vm.stack.push(Value::Int(-1));
-                        }
-                    } else {
-                        vm.output
-                            .push("Error: Strand index out of bounds for splice".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for splice".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for splice".to_string());
-            }
-            None
-        }
+        OpCode::Splice => exec_splice(vm),
         #[cfg(feature = "nova")]
-        OpCode::Recombine => {
-            // stack: split_point, strand_b, strand_a (bottom)
-            if vm.stack.len() >= 3 {
-                let split_val = vm.stack.pop().unwrap();
-                let strand_b_val = vm.stack.pop().unwrap();
-                let strand_a_val = vm.stack.pop().unwrap();
-
-                match (strand_a_val, strand_b_val, split_val) {
-                    (Value::Int(sa), Value::Int(sb), Value::Int(split)) => {
-                        let helix_len = vm.dna.helix.strands.len();
-                        let sa_idx = sa as usize;
-                        let sb_idx = sb as usize;
-                        let split_idx = split as usize;
-
-                        if sa >= 0
-                            && sb >= 0
-                            && split >= 0
-                            && sa_idx < helix_len
-                            && sb_idx < helix_len
-                        {
-                            // We need to check split bounds for both strands
-                            let len_a = vm.dna.helix.strands[sa_idx].genes.len();
-                            let len_b = vm.dna.helix.strands[sb_idx].genes.len();
-
-                            if split_idx <= len_a && split_idx <= len_b {
-                                // Perform recombination
-                                // We need to borrow strands mutably.
-                                // Since they are in the same Vec, we need split_at_mut or similar trickery,
-                                // or just use indices if we can modify the Vec safely.
-                                // We can't get two mutable references to the same Vec at different indices directly.
-                                // So we'll use `split_at_mut` if they are different indices, or just do nothing if same.
-
-                                if sa_idx == sb_idx {
-                                    // Recombining same strand with itself at same point is a no-op.
-                                    vm.output.push(
-                                        "Warning: Recombining strand with itself".to_string(),
-                                    );
-                                } else {
-                                    // Ensure ordered access to avoid panic
-                                    let (lower, upper) = if sa_idx < sb_idx {
-                                        (sa_idx, sb_idx)
-                                    } else {
-                                        (sb_idx, sa_idx)
-                                    };
-
-                                    let (first_slice, second_slice) =
-                                        vm.dna.helix.strands.split_at_mut(upper);
-                                    let strand_low = &mut first_slice[lower];
-                                    let strand_high = &mut second_slice[0]; // relative index 0 is absolute 'upper'
-
-                                    // Identify which is A and B
-                                    let (strand_a, strand_b) = if sa_idx < sb_idx {
-                                        (strand_low, strand_high)
-                                    } else {
-                                        (strand_high, strand_low)
-                                    };
-
-                                    let mut tail_a = strand_a.genes.split_off(split_idx);
-                                    let mut tail_b = strand_b.genes.split_off(split_idx);
-
-                                    strand_a.genes.append(&mut tail_b);
-                                    strand_b.genes.append(&mut tail_a);
-
-                                    vm.output.push(format!(
-                                        "RECOMBINATION: Swapped tails of strand {} and {} at {}",
-                                        sa, sb, split
-                                    ));
-                                }
-                            } else {
-                                vm.output
-                                    .push("Error: Split point out of bounds".to_string());
-                            }
-                        } else {
-                            vm.output
-                                .push("Error: Strand index out of bounds".to_string());
-                        }
-                    }
-                    _ => vm
-                        .output
-                        .push("Error: Type mismatch for recombine".to_string()),
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for recombine".to_string());
-            }
-            None
-        }
+        OpCode::Recombine => exec_recombine(vm),
         #[cfg(feature = "nova")]
         OpCode::SIndex => {
             vm.stack.push(Value::Int(vm.ip.0 as i64));
             None
         }
         #[cfg(feature = "nova")]
-        OpCode::CrisprScan => {
-            // stack: guide_idx, target_idx (bottom)
-            if vm.stack.len() >= 2 {
-                let guide_val = vm.stack.pop().unwrap();
-                let target_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(g_idx), Value::Int(t_idx)) = (guide_val, target_val) {
-                    let g_idx = g_idx as usize;
-                    let t_idx = t_idx as usize;
-                    let helix_len = vm.dna.helix.strands.len();
-
-                    if g_idx < helix_len && t_idx < helix_len {
-                        let guide_strand = &vm.dna.helix.strands[g_idx];
-                        let target_strand = &vm.dna.helix.strands[t_idx];
-
-                        // We need to match sequence of gene names
-                        // Use op.to_string() for comparison
-                        let guide_names: Vec<String> = guide_strand
-                            .genes
-                            .iter()
-                            .map(|g| g.op.to_string())
-                            .collect();
-                        let target_names: Vec<String> = target_strand
-                            .genes
-                            .iter()
-                            .map(|g| g.op.to_string())
-                            .collect();
-
-                        let mut found_idx: i64 = -1;
-
-                        if !guide_names.is_empty() && guide_names.len() <= target_names.len() {
-                            for i in 0..=(target_names.len() - guide_names.len()) {
-                                if target_names[i..i + guide_names.len()] == guide_names[..] {
-                                    found_idx = i as i64;
-                                    break;
-                                }
-                            }
-                        } else if guide_names.is_empty() {
-                            // Explicitly handle empty guide to ensure -1 (though init value handles it)
-                            found_idx = -1;
-                        }
-
-                        vm.stack.push(Value::Int(found_idx));
-                        vm.energy = vm.energy.saturating_sub(5);
-                        vm.output.push(format!(
-                            "CRISPR_SCAN: Scanned strand {} for pattern from {} -> {}",
-                            t_idx, g_idx, found_idx
-                        ));
-                    } else {
-                        vm.output
-                            .push("Error: Strand index out of bounds for crispr_scan".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for crispr_scan".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for crispr_scan".to_string());
-            }
-            None
-        }
+        OpCode::CrisprScan => exec_crispr_scan(vm),
         #[cfg(feature = "nova")]
-        OpCode::Cas9Cut => {
-            // stack: cut_index, strand_idx (bottom)
-            if vm.stack.len() >= 2 {
-                let cut_val = vm.stack.pop().unwrap();
-                let strand_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(cut), Value::Int(s_idx)) = (cut_val, strand_val) {
-                    let s_idx = s_idx as usize;
-                    let cut_idx = cut as usize;
-                    let helix_len = vm.dna.helix.strands.len();
-
-                    if s_idx < helix_len {
-                        let strand_len = vm.dna.helix.strands[s_idx].genes.len();
-                        if cut >= 0 && cut_idx <= strand_len {
-                            // Perform split
-                            // We need to mutate the strand.
-                            let strand = &mut vm.dna.helix.strands[s_idx];
-                            let tail_genes = strand.genes.split_off(cut_idx);
-
-                            // Create new strand
-                            vm.dna
-                                .helix
-                                .strands
-                                .push(crate::ast::Strand { genes: tail_genes });
-                            vm.telomeres.push(50);
-
-                            #[cfg(feature = "cortex")]
-                            {
-                                vm.activation_levels.push(0);
-                                vm.synapse_map.push(Vec::new());
-                            }
-
-                            let new_strand_idx = vm.dna.helix.strands.len() - 1;
-
-                            vm.stack.push(Value::Int(new_strand_idx as i64));
-                            vm.energy = vm.energy.saturating_sub(10);
-
-                            vm.output.push(format!(
-                                "CAS9_CUT: Cut strand {} at {}, created strand {}",
-                                s_idx, cut_idx, new_strand_idx
-                            ));
-
-                            // Handling Self-Modification Safety:
-                            // If we cut the strand we are currently executing,
-                            // and the cut point is BEFORE or AT our current IP, execution context moves.
-                            if s_idx == vm.ip.0 && vm.ip.1 >= cut_idx {
-                                let new_gene_idx = vm.ip.1 - cut_idx;
-                                // We jump to the next instruction in the NEW strand
-                                return Some((new_strand_idx, new_gene_idx + 1));
-                            }
-                        } else {
-                            vm.output.push("Error: Cut index out of bounds".to_string());
-                        }
-                    } else {
-                        vm.output
-                            .push("Error: Strand index out of bounds for cas9_cut".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for cas9_cut".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for cas9_cut".to_string());
-            }
-            None
-        }
+        OpCode::Cas9Cut => exec_cas9_cut(vm),
         #[cfg(feature = "nova")]
         OpCode::Ligase => {
             // stack: donor_idx, recipient_idx (bottom)
