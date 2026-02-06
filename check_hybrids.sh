@@ -20,6 +20,7 @@ experiments=(
     "chimera-automaton"
     "git-cantata"
     "chimera-tardis"
+    "chaos-monitor"
 )
 
 echo "Checking compilation..."
