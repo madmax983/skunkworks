@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **git_rhythm**: Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation.
+- **orbital-harmonics**: Documentation void. Redundant with `harmony-of-spheres`. Generic N-body implementation.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]

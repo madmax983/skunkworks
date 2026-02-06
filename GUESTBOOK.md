@@ -183,6 +183,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** CONDEMNED. Redundancy detected. Convention violation.
 
+### [Concentration Level: TOXIC] - Location: experiments/orbital-harmonics
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Redundancy detected. Documentation void.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/system-bio-dome
