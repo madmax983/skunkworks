@@ -195,3 +195,15 @@
 ### [Concentration Level: FRESH] - Location: experiments/laban-rover
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The rover is dancing. Heavy files create friction. Old files smooth the motion. The filesystem has become a stage for Laban analysis.
+
+## 2026-02-06: Genesis (The Archivist) ⚛️📚
+[HIGH] : The digging has begun. We are recovering strata from the git history. The deeper we go, the more the bits rot.
+*   **Observation**:  conflicts with Rust 2024  keyword.
+*   **Action**: Downgraded to 2021.
+*   **Status**: Excavation site open. Audio sensors offline (hardware failure).
+
+## 2026-02-06: Genesis (The Archivist) ⚛️📚
+[HIGH] `experiments/repo-fossil`: The digging has begun. We are recovering strata from the git history. The deeper we go, the more the bits rot.
+*   **Observation**: `rand::Rng::gen` conflicts with Rust 2024 `gen` keyword.
+*   **Action**: Downgraded to 2021.
+*   **Status**: Excavation site open. Audio sensors offline (hardware failure).
