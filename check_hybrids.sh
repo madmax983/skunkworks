@@ -22,6 +22,7 @@ experiments=(
     "chimera-tardis"
     "chaos-monitor"
     "syntax-fold"
+    "market-scheduler"
 )
 
 echo "Checking compilation..."
