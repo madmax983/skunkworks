@@ -642,6 +642,21 @@ pub enum OpCode {
     /// **Stack:** `[ ..., junction, function ] -> [ ..., new_junction ]`
     #[cfg(feature = "nova")]
     Map,
+    /// **[Nova]** Hashes a strand and adds it to the immune allowlist.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Vaccinate,
+    /// **[Nova]** Verifies if a strand is in the allowlist.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ..., is_trusted ]`
+    #[cfg(feature = "nova")]
+    Verify,
+    /// **[Nova]** Returns indices of all untrusted strands.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., junction_of_indices ]`
+    #[cfg(feature = "nova")]
+    Audit,
     /// **[Nova]** Invokes a magical Sigil based on a spatial pattern.
     ///
     /// **Stack:** `[ ..., sigil_name ] -> [ ... ]`
@@ -765,6 +780,12 @@ impl FromStr for OpCode {
             "eval" => Ok(OpCode::Eval),
             #[cfg(feature = "nova")]
             "map" => Ok(OpCode::Map),
+            #[cfg(feature = "nova")]
+            "vaccinate" => Ok(OpCode::Vaccinate),
+            #[cfg(feature = "nova")]
+            "verify" => Ok(OpCode::Verify),
+            #[cfg(feature = "nova")]
+            "audit" => Ok(OpCode::Audit),
             #[cfg(feature = "nova")]
             "invoke" => Ok(OpCode::Invoke),
             #[cfg(feature = "nova")]
@@ -1199,6 +1220,12 @@ impl fmt::Display for OpCode {
             OpCode::Eval => write!(f, "eval"),
             #[cfg(feature = "nova")]
             OpCode::Map => write!(f, "map"),
+            #[cfg(feature = "nova")]
+            OpCode::Vaccinate => write!(f, "vaccinate"),
+            #[cfg(feature = "nova")]
+            OpCode::Verify => write!(f, "verify"),
+            #[cfg(feature = "nova")]
+            OpCode::Audit => write!(f, "audit"),
             #[cfg(feature = "nova")]
             OpCode::Invoke => write!(f, "invoke"),
             #[cfg(feature = "nova")]
