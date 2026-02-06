@@ -3734,6 +3734,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Spirit => {
+            vm.spirit_request = true;
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Match => {
             // stack: pattern, target (top)
             if vm.stack.len() >= 2 {
