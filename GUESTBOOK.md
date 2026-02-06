@@ -169,3 +169,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/laban-machine
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The dancer is improvising. Laban parameters are driving the physics. Space, Weight, Time, and Flow are becoming visible particles.
+
+### [Concentration Level: FRESH] - Location: experiments/quantum-boids
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is entangled. Bell pairs are forming. Spooky action at a distance is driving the swarm. The wave function collapses on every frame.
