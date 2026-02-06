@@ -1,0 +1,22 @@
+[package]
+name = "hertzian-shimmer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+rand = { workspace = true }
+resonance-audio = { workspace = true }
+crossbeam-channel = "0.5"
+walkdir = "2"
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+tui-shared = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]
