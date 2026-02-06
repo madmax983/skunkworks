@@ -1,6 +1,6 @@
 use crate::fs::FsNode;
-use crate::hyperbolic::Point;
 use num_complex::Complex;
+use poincare_disk::Point;
 use std::f64::consts::PI;
 
 #[derive(Debug, Clone)]

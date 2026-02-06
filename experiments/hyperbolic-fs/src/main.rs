@@ -1,5 +1,4 @@
 pub mod fs;
-pub mod hyperbolic;
 pub mod layout;
 
 use crossterm::event::{self, Event, KeyCode};
@@ -17,8 +16,8 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use hyperbolic::{mobius_transform, Point};
 use layout::LayoutNode;
+use poincare_disk::{mobius_sub, Point};
 
 struct App {
     layout_root: LayoutNode,
@@ -223,7 +222,7 @@ fn draw_node(
     selected_child_idx: usize,
 ) {
     // Transform position
-    let screen_pos = mobius_transform(node.global_pos, view_center);
+    let screen_pos = mobius_sub(node.global_pos, view_center);
 
     // Visibility cull
     if screen_pos.norm_sqr() > 1.0 {
@@ -277,7 +276,7 @@ fn draw_node(
 
     // Draw Lines to children
     for (i, child) in node.children.iter().enumerate() {
-        let child_screen_pos = mobius_transform(child.global_pos, view_center);
+        let child_screen_pos = mobius_sub(child.global_pos, view_center);
 
         ctx.draw(&CanvasLine {
             x1: screen_pos.re,
