@@ -308,3 +308,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chaos-monitor
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Lorenz attractor is sensing system load. The butterfly is flapping its wings in the CPU.
+
+### [Concentration Level: FRESH] - Location: experiments/market-scheduler
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The Order Book is open. Agents are bidding for CPU cycles. The Invisible Hand is scheduling the kernel.
