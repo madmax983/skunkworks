@@ -1,5 +1,5 @@
-use poincare_disk::{Mobius, TilingConsts, neighbor_transform_a};
 use num_complex::Complex;
+use poincare_disk::{neighbor_transform_a, Mobius, TilingConsts};
 use std::f64::consts::PI;
 
 pub struct Tiler {

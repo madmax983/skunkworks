@@ -1,6 +1,6 @@
-use std::path::PathBuf;
-use std::collections::HashMap;
 use anyhow::Result;
+use std::collections::HashMap;
+use std::path::PathBuf;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct RoomId {
@@ -47,17 +47,32 @@ impl FsCache {
         // If page > 0: Previous Page
         // If page == 0: Parent
         if page > 0 {
-             neighbors[2] = Some(RoomId { path: path.clone(), page: page - 1 });
+            neighbors[2] = Some(RoomId {
+                path: path.clone(),
+                page: page - 1,
+            });
         } else {
-             if let Some(parent) = path.parent() {
-                 neighbors[2] = Some(RoomId { path: parent.to_path_buf(), page: 0 });
-             }
+            if let Some(parent) = path.parent() {
+                neighbors[2] = Some(RoomId {
+                    path: parent.to_path_buf(),
+                    page: 0,
+                });
+            }
         }
 
         let name = if page == 0 {
-            path.file_name().unwrap_or(std::ffi::OsStr::new("Root")).to_string_lossy().to_string()
+            path.file_name()
+                .unwrap_or(std::ffi::OsStr::new("Root"))
+                .to_string_lossy()
+                .to_string()
         } else {
-            format!("{} (p{})", path.file_name().unwrap_or(std::ffi::OsStr::new("Root")).to_string_lossy(), page)
+            format!(
+                "{} (p{})",
+                path.file_name()
+                    .unwrap_or(std::ffi::OsStr::new("Root"))
+                    .to_string_lossy(),
+                page
+            )
         };
 
         if is_dir {
@@ -79,17 +94,26 @@ impl FsCache {
 
             // Slot 0: Item 1
             if start_idx < entries.len() {
-                neighbors[0] = Some(RoomId { path: entries[start_idx].clone(), page: 0 });
+                neighbors[0] = Some(RoomId {
+                    path: entries[start_idx].clone(),
+                    page: 0,
+                });
             }
 
             // Slot 1: Item 2
             if start_idx + 1 < entries.len() {
-                neighbors[1] = Some(RoomId { path: entries[start_idx + 1].clone(), page: 0 });
+                neighbors[1] = Some(RoomId {
+                    path: entries[start_idx + 1].clone(),
+                    page: 0,
+                });
             }
 
             // Slot 3: Next Page
             if start_idx + 2 < entries.len() {
-                 neighbors[3] = Some(RoomId { path: path.clone(), page: page + 1 });
+                neighbors[3] = Some(RoomId {
+                    path: path.clone(),
+                    page: page + 1,
+                });
             }
         }
 
