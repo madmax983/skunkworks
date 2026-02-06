@@ -30,8 +30,9 @@ use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 #[cfg(feature = "nova")]
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -280,6 +281,7 @@ pub struct ChimeraVM {
     pub graveyard: Vec<crate::ast::Strand>,
     #[cfg(feature = "nova")]
     pub dictionary: HashMap<String, usize>,
+    pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
 impl ChimeraVM {
@@ -411,6 +413,25 @@ impl ChimeraVM {
             graveyard: Vec::new(),
             #[cfg(feature = "nova")]
             dictionary: HashMap::new(),
+            gene_execution_counts: HashMap::new(),
+        }
+    }
+
+    pub fn inject_genes(&mut self, genes: Vec<crate::ast::Gene>) {
+        if self.ip.0 < self.dna.helix.strands.len() {
+            let count = genes.len();
+            let insert_idx = self.ip.1;
+            for (i, gene) in genes.into_iter().enumerate() {
+                self.dna.helix.strands[self.ip.0]
+                    .genes
+                    .insert(insert_idx + i, gene);
+            }
+            self.output.push(format!(
+                "INJECTION: Spliced {} genes at strand {} index {}",
+                count, self.ip.0, insert_idx
+            ));
+        } else {
+            self.output.push("INJECTION ERROR: Invalid strand index".to_string());
         }
     }
 
@@ -1291,6 +1312,8 @@ impl ChimeraVM {
     /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        *self.gene_execution_counts.entry(self.ip).or_insert(0) += 1;
+
         if self.recursion_depth > MAX_RECURSION_DEPTH {
             self.output
                 .push("Error: Recursion limit exceeded".to_string());

@@ -35,11 +35,13 @@ pub(crate) enum ViewMode {
     Topology,
     #[cfg(feature = "nova")]
     Graveyard,
+    Heatmap,
 }
 
 enum InputMode {
     Normal,
     Editing,
+    Injection,
 }
 
 pub(crate) struct AppState {
@@ -658,6 +660,54 @@ where
                 return;
             }
 
+            // Handle Heatmap View
+            if let ViewMode::Heatmap = app_state.view_mode {
+                 let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(100)].as_ref())
+                    .split(f.area());
+
+                 let mut max_count = 1;
+                 for count in vm.gene_execution_counts.values() {
+                     if *count > max_count {
+                         max_count = *count;
+                     }
+                 }
+
+                 let mut items = Vec::new();
+                 for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                     items.push(ListItem::new(Span::styled(
+                         format!("Strand {}", s_idx),
+                         Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)
+                     )));
+
+                     for (g_idx, gene) in strand.genes.iter().enumerate() {
+                         let count = vm.gene_execution_counts.get(&(s_idx, g_idx)).unwrap_or(&0);
+                         let ratio = (*count as f64) / (max_count as f64);
+                         let color = if ratio < 0.01 {
+                             Color::DarkGray
+                         } else if ratio < 0.3 {
+                             Color::Blue
+                         } else if ratio < 0.6 {
+                             Color::Green
+                         } else if ratio < 0.9 {
+                             Color::Yellow
+                         } else {
+                             Color::Red
+                         };
+
+                         let content = format!("  {}({:?}) - Exec: {}", gene.op, gene.args, count);
+                         items.push(ListItem::new(Span::styled(content, Style::default().fg(color))));
+                     }
+                     items.push(ListItem::new(""));
+                 }
+
+                 let list = List::new(items).block(Block::default().borders(Borders::ALL).title(format!("Gene Expression Heatmap (Max: {})", max_count)));
+                 f.render_widget(list, chunks[0]);
+
+                 return;
+            }
+
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
@@ -760,16 +810,20 @@ where
                 ViewMode::Topology => "TOPOLOGY",
                 #[cfg(feature = "nova")]
                 ViewMode::Graveyard => "GRAVEYARD",
+                ViewMode::Heatmap => "HEATMAP",
             };
 
             let title = match app_state.input_mode {
                 InputMode::Normal => format!(
-                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], Arrows: Nav, Enter: Edit, Q: Quit)",
+                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
                     mode_str, chaos_status
                 ),
                 InputMode::Editing => format!(
                     "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
                     mode_str, app_state.input_buffer
+                ),
+                InputMode::Injection => format!(
+                    "INJECTION (Enter: Splice, Esc: Cancel)"
                 ),
             };
 
@@ -1066,6 +1120,22 @@ where
                 .block(Block::default().borders(Borders::ALL).title("Output"));
             f.render_widget(output_list, right_chunks[1]);
 
+            // Draw Injection Popup
+            if let InputMode::Injection = app_state.input_mode {
+                let area = f.area();
+                let popup_area = ratatui::layout::Rect {
+                    x: area.width / 4,
+                    y: area.height / 3,
+                    width: area.width / 2,
+                    height: 5,
+                };
+                f.render_widget(ratatui::widgets::Clear, popup_area);
+
+                let block = Block::default().borders(Borders::ALL).title("Viral Injection Vector (ChimeraScript)").style(Style::default().fg(Color::Green));
+                let text = Paragraph::new(app_state.input_buffer.clone()).block(block).wrap(ratatui::widgets::Wrap { trim: true });
+                f.render_widget(text, popup_area);
+            }
+
             // Draw Spirit Popup on top
             #[cfg(feature = "nova")]
             if vm.spirit_request {
@@ -1100,6 +1170,42 @@ where
                         KeyCode::Esc => {
                             vm.spirit_value = Some(crate::vm::Value::Int(0));
                             vm.step();
+                            app_state.input_buffer.clear();
+                        }
+                        KeyCode::Char(c) => {
+                            app_state.input_buffer.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.input_buffer.pop();
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                // Handle Injection Mode
+                if let InputMode::Injection = app_state.input_mode {
+                    match key.code {
+                        KeyCode::Enter => {
+                            let src = format!("strand injection {{ {} }}", app_state.input_buffer);
+                            match crate::compiler::compile(&src, None) {
+                                Ok(dna) => {
+                                    if let Some(strand) = dna.helix.strands.first() {
+                                        vm.inject_genes(strand.genes.clone());
+                                        app_state.status_msg = "Injection Successful".to_string();
+                                    } else {
+                                        app_state.status_msg = "Injection Failed: No genes".to_string();
+                                    }
+                                }
+                                Err(e) => {
+                                    app_state.status_msg = format!("Injection Error: {}", e);
+                                }
+                            }
+                            app_state.input_mode = InputMode::Normal;
+                            app_state.input_buffer.clear();
+                        }
+                        KeyCode::Esc => {
+                            app_state.input_mode = InputMode::Normal;
                             app_state.input_buffer.clear();
                         }
                         KeyCode::Char(c) => {
@@ -1198,6 +1304,10 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                ViewMode::Heatmap => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -1247,7 +1357,7 @@ where
                                         }
                                         #[cfg(not(feature = "nova"))]
                                         {
-                                            ViewMode::Genome
+                                            ViewMode::Heatmap
                                         }
                                     }
                                 }
@@ -1266,7 +1376,7 @@ where
                                     }
                                     #[cfg(not(feature = "nova"))]
                                     {
-                                        ViewMode::Genome
+                                        ViewMode::Heatmap
                                     }
                                 }
                             }
@@ -1278,7 +1388,7 @@ where
                                 }
                                 #[cfg(not(feature = "nova"))]
                                 {
-                                    ViewMode::Genome
+                                    ViewMode::Heatmap
                                 }
                             }
                             #[cfg(feature = "nova")]
@@ -1286,10 +1396,25 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Topology => ViewMode::Graveyard,
                             #[cfg(feature = "nova")]
-                            ViewMode::Graveyard => ViewMode::Laboratory,
+                            ViewMode::Graveyard => ViewMode::Heatmap,
+                            ViewMode::Heatmap => {
+                                #[cfg(feature = "nova")]
+                                {
+                                    ViewMode::Laboratory
+                                }
+                                #[cfg(not(feature = "nova"))]
+                                {
+                                    ViewMode::Genome
+                                }
+                            }
                             #[cfg(feature = "nova")]
                             ViewMode::Laboratory => ViewMode::Genome,
                         };
+                    }
+                    KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
+                    KeyCode::Char('i') => {
+                        app_state.input_mode = InputMode::Injection;
+                        app_state.input_buffer.clear();
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('r') => {
@@ -1356,6 +1481,7 @@ where
                                 app_state.selected_graveyard_strand += 1;
                             }
                         }
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -1469,6 +1595,7 @@ where
                                 app_state.selected_graveyard_strand -= 1;
                             }
                         }
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                     },
@@ -1490,6 +1617,7 @@ where
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
@@ -1517,6 +1645,7 @@ where
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
@@ -1640,6 +1769,9 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Graveyard => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            ViewMode::Heatmap => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
