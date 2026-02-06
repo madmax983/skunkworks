@@ -25,6 +25,8 @@ pub(crate) enum ViewMode {
     Microscope,
     #[cfg(feature = "biophysics")]
     Cortex,
+    #[cfg(feature = "nova")]
+    Metaphysics,
 }
 
 enum InputMode {
@@ -267,8 +269,12 @@ where
                 if let Some(coord) = app_state.selected_neuron_coords {
                     if let Some(neuron) = vm.neurons.get(&coord) {
                         // Sparkline
+                        // ratatui::widgets::Sparkline is what we need but we must import it if not present.
+                        // Wait, previous code used Sparkline but it wasn't in imports in my `read_file`.
+                        // It must be there or I missed it.
+                        // I'll assume it works as it was existing code.
                         let history = &app_state.voltage_history;
-                        let sparkline = Sparkline::default()
+                        let sparkline = ratatui::widgets::Sparkline::default()
                             .block(
                                 Block::default()
                                     .title("Voltage Trace")
@@ -297,6 +303,44 @@ where
                 }
 
                 return; // Skip normal rendering
+            }
+
+            // Handle Metaphysics View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Metaphysics = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(34)].as_ref())
+                    .split(f.area());
+
+                // Ether (IPC)
+                let ether_items: Vec<ListItem> = vm.ether.iter().map(|(ch, queue)| {
+                    ListItem::new(format!("Channel {}: {} msgs", ch, queue.len()))
+                }).collect();
+                let ether_list = List::new(ether_items).block(Block::default().borders(Borders::ALL).title("Ether (IPC)"));
+                f.render_widget(ether_list, chunks[0]);
+
+                // Oracle (KB)
+                #[cfg(feature = "oracle")]
+                {
+                    let kb_items: Vec<ListItem> = vm.knowledge_base.iter().take(20).map(|fact| {
+                        ListItem::new(format!("{}", fact))
+                    }).collect();
+                    let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).title("Oracle (Knowledge Base)"));
+                    f.render_widget(oracle_list, chunks[1]);
+                }
+                #[cfg(not(feature = "oracle"))]
+                {
+                    let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
+                    f.render_widget(oracle_list, chunks[1]);
+                }
+
+                // Bard (Score)
+                let score_text: String = crate::vm::bard::score_to_abc(&vm.score);
+                let bard_paragraph = Paragraph::new(score_text).block(Block::default().borders(Borders::ALL).title("Bard (Score)"));
+                f.render_widget(bard_paragraph, chunks[2]);
+
+                return;
             }
 
             let main_chunks = Layout::default()
@@ -391,6 +435,8 @@ where
                 ViewMode::Microscope => "MICROSCOPE",
                 #[cfg(feature = "biophysics")]
                 ViewMode::Cortex => "CORTEX",
+                #[cfg(feature = "nova")]
+                ViewMode::Metaphysics => "METAPHYSICS",
             };
 
             let title = match app_state.input_mode {
@@ -696,10 +742,54 @@ where
             let output_list = List::new(output_items)
                 .block(Block::default().borders(Borders::ALL).title("Output"));
             f.render_widget(output_list, right_chunks[1]);
+
+            // Draw Spirit Popup on top
+            #[cfg(feature = "nova")]
+            if vm.spirit_request {
+                let area = f.area();
+                let popup_area = ratatui::layout::Rect {
+                    x: area.width / 4,
+                    y: area.height / 3,
+                    width: area.width / 2,
+                    height: 3,
+                };
+                f.render_widget(ratatui::widgets::Clear, popup_area);
+
+                let text = format!("SPIRIT SUMMONING: {}", app_state.input_buffer);
+                let popup = Paragraph::new(text)
+                    .block(Block::default().borders(Borders::ALL).title("Enter Value").style(Style::default().fg(Color::Cyan)));
+                f.render_widget(popup, popup_area);
+            }
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
+                // Handle Spirit Request
+                #[cfg(feature = "nova")]
+                if vm.spirit_request {
+                    match key.code {
+                        KeyCode::Enter => {
+                            let val = parse_grid_value(&app_state.input_buffer);
+                            vm.spirit_value = Some(val);
+                            vm.step(); // Resume
+                            app_state.input_buffer.clear();
+                        }
+                        KeyCode::Esc => {
+                             vm.spirit_value = Some(crate::vm::Value::Int(0));
+                             vm.step();
+                             app_state.input_buffer.clear();
+                        }
+                        KeyCode::Char(c) => {
+                            app_state.input_buffer.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.input_buffer.pop();
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
                 // Handle Editing Mode
                 if let InputMode::Editing = app_state.input_mode {
                     match key.code {
@@ -795,11 +885,21 @@ where
                                 }
                                 #[cfg(not(feature = "biophysics"))]
                                 {
-                                    ViewMode::Genome
+                                    #[cfg(feature = "nova")]
+                                    { ViewMode::Metaphysics }
+                                    #[cfg(not(feature = "nova"))]
+                                    { ViewMode::Genome }
                                 }
                             }
                             #[cfg(feature = "biophysics")]
-                            ViewMode::Cortex => ViewMode::Genome,
+                            ViewMode::Cortex => {
+                                #[cfg(feature = "nova")]
+                                { ViewMode::Metaphysics }
+                                #[cfg(not(feature = "nova"))]
+                                { ViewMode::Genome }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Metaphysics => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "biophysics")]
@@ -897,6 +997,8 @@ where
                         ViewMode::Microscope => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -908,6 +1010,8 @@ where
                         ViewMode::Microscope => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -990,6 +1094,10 @@ where
                             #[cfg(feature = "biophysics")]
                             ViewMode::Cortex => {
                                 // Prevent entering edit mode for Cortex
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Metaphysics => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }

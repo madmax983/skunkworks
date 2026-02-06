@@ -464,6 +464,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Listen,
 
+    /// **[Nova]** Pauses execution and requests input from the Spirit (User).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., input_value ]`
+    #[cfg(feature = "nova")]
+    Spirit,
+
     /// **[Nova]** Shifts the organism's phase of matter.
     ///
     /// **Stack:** `[ ..., phase_id ] -> [ ... ]`

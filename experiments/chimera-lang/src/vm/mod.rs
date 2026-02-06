@@ -248,6 +248,10 @@ pub struct ChimeraVM {
     pub last_gene: Option<crate::ast::Gene>,
     #[cfg(feature = "nova")]
     pub chronostasis_timer: usize,
+    #[cfg(feature = "nova")]
+    pub spirit_request: bool,
+    #[cfg(feature = "nova")]
+    pub spirit_value: Option<Value>,
 }
 
 impl ChimeraVM {
@@ -363,6 +367,10 @@ impl ChimeraVM {
             last_gene: None,
             #[cfg(feature = "nova")]
             chronostasis_timer: 0,
+            #[cfg(feature = "nova")]
+            spirit_request: false,
+            #[cfg(feature = "nova")]
+            spirit_value: None,
         }
     }
 
@@ -994,6 +1002,17 @@ impl ChimeraVM {
     pub fn step(&mut self) {
         if self.halted {
             return;
+        }
+
+        #[cfg(feature = "nova")]
+        if self.spirit_request {
+            if let Some(val) = self.spirit_value.take() {
+                self.stack.push(val);
+                self.spirit_request = false;
+                self.output.push(format!("SPIRIT: Received input: {}", self.stack.last().unwrap()));
+            } else {
+                return; // Wait for spirit input
+            }
         }
 
         #[cfg(feature = "nova")]
