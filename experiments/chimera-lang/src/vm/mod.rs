@@ -25,13 +25,13 @@
 
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+#[cfg(feature = "nova")]
+use poincare_disk::hyperbolic_dist;
+use poincare_disk::Point;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
-use poincare_disk::Point;
-#[cfg(feature = "nova")]
-use poincare_disk::hyperbolic_dist;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -47,9 +47,9 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
-pub mod cortex;
 pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
@@ -92,12 +92,12 @@ pub enum Chirality {
 #[cfg(any(feature = "nova", feature = "silicon"))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Topology {
-    Plane,     // 0: Bounded. Edges are walls.
-    Torus,     // 1: Wraps X and Y.
-    CylinderH, // 2: Wraps X, Bounded Y.
-    CylinderV, // 3: Bounded X, Wraps Y.
-    Klein,     // 4: Wraps X, Wraps Y with twist (x' = 15-x).
-    Mobius,    // 5: Wraps X with twist, Bounded Y.
+    Plane,      // 0: Bounded. Edges are walls.
+    Torus,      // 1: Wraps X and Y.
+    CylinderH,  // 2: Wraps X, Bounded Y.
+    CylinderV,  // 3: Bounded X, Wraps Y.
+    Klein,      // 4: Wraps X, Wraps Y with twist (x' = 15-x).
+    Mobius,     // 5: Wraps X with twist, Bounded Y.
     Hyperbolic, // 6: Poincaré Disk model mapping.
 }
 
@@ -266,6 +266,8 @@ pub struct ChimeraVM {
     pub spirit_request: bool,
     #[cfg(feature = "nova")]
     pub spirit_value: Option<Value>,
+    #[cfg(feature = "nova")]
+    pub graveyard: Vec<crate::ast::Strand>,
 }
 
 impl ChimeraVM {
@@ -387,6 +389,8 @@ impl ChimeraVM {
             spirit_request: false,
             #[cfg(feature = "nova")]
             spirit_value: None,
+            #[cfg(feature = "nova")]
+            graveyard: Vec::new(),
         }
     }
 
@@ -1073,7 +1077,10 @@ impl ChimeraVM {
             if let Some(val) = self.spirit_value.take() {
                 self.stack.push(val);
                 self.spirit_request = false;
-                self.output.push(format!("SPIRIT: Received input: {}", self.stack.last().unwrap()));
+                self.output.push(format!(
+                    "SPIRIT: Received input: {}",
+                    self.stack.last().unwrap()
+                ));
             } else {
                 return; // Wait for spirit input
             }
@@ -1513,7 +1520,11 @@ impl ChimeraVM {
             | OpCode::Fold
             | OpCode::Filter
             | OpCode::Zip
-            | OpCode::Match => nova::exec_nova_op(self, op, args),
+            | OpCode::Match
+            | OpCode::Bury
+            | OpCode::Exhume
+            | OpCode::Seance
+            | OpCode::Mourn => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
@@ -1540,7 +1551,12 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "silicon")]
-            OpCode::Conduct | OpCode::Wire | OpCode::Pulse | OpCode::Silicon | OpCode::Construct | OpCode::LogicGate => {
+            OpCode::Conduct
+            | OpCode::Wire
+            | OpCode::Pulse
+            | OpCode::Silicon
+            | OpCode::Construct
+            | OpCode::LogicGate => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }

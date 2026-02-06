@@ -1,23 +1,23 @@
+use crate::graph::CommitGraph;
+use git2::Oid;
+use poincare_disk::Point;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line as TextLine, Span},
     widgets::{
-        canvas::{Canvas, Line, Circle},
+        canvas::{Canvas, Circle, Line},
         Block, Borders, Paragraph, Wrap,
     },
     Frame,
 };
-use crate::graph::CommitGraph;
-use git2::Oid;
-use poincare_disk::Point;
 
 pub fn draw_ui(
     f: &mut Frame,
     graph: &CommitGraph,
     layout: &[(Oid, Point)],
     focus_oid: Oid,
-    selected_oid: Option<Oid>
+    selected_oid: Option<Oid>,
 ) {
     let area = f.area();
     let chunks = Layout::default()
@@ -29,7 +29,11 @@ pub fn draw_ui(
     let info_area = chunks[1];
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Hyperbolic Git (Poincaré Disk)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Hyperbolic Git (Poincaré Disk)"),
+        )
         .x_bounds([-1.05, 1.05])
         .y_bounds([-1.05, 1.05])
         .paint(|ctx| {
@@ -87,8 +91,8 @@ pub fn draw_ui(
 
                 // Label for focused/selected or nearby
                 if is_focused || is_selected || pos.norm() < 0.5 {
-                     let label = format!("{}", &oid.to_string()[0..6]);
-                     ctx.print(pos.re + radius, pos.im, label);
+                    let label = format!("{}", &oid.to_string()[0..6]);
+                    ctx.print(pos.re + radius, pos.im, label);
                 }
             }
         });
@@ -101,20 +105,29 @@ pub fn draw_ui(
     let display_oid = selected_oid.unwrap_or(focus_oid);
 
     let info_text = if let Some(data) = graph.commits.get(&display_oid) {
-         vec![
-             TextLine::from(vec![Span::styled("Commit: ", Style::default().fg(Color::Cyan)), Span::raw(display_oid.to_string())]),
-             TextLine::from(vec![Span::styled("Author: ", Style::default().fg(Color::Yellow)), Span::raw(&data.author)]),
-             TextLine::from(Span::raw("")),
-             TextLine::from(Span::styled("Message:", Style::default().fg(Color::Green))),
-             TextLine::from(Span::raw(&data.message)),
-             TextLine::from(Span::raw("")),
-             TextLine::from(Span::styled("Controls:", Style::default().fg(Color::Magenta))),
-             TextLine::from("Arrows: Navigate selection"),
-             TextLine::from("Enter: Center on selection"),
-             TextLine::from("q/Esc: Quit"),
-         ]
+        vec![
+            TextLine::from(vec![
+                Span::styled("Commit: ", Style::default().fg(Color::Cyan)),
+                Span::raw(display_oid.to_string()),
+            ]),
+            TextLine::from(vec![
+                Span::styled("Author: ", Style::default().fg(Color::Yellow)),
+                Span::raw(&data.author),
+            ]),
+            TextLine::from(Span::raw("")),
+            TextLine::from(Span::styled("Message:", Style::default().fg(Color::Green))),
+            TextLine::from(Span::raw(&data.message)),
+            TextLine::from(Span::raw("")),
+            TextLine::from(Span::styled(
+                "Controls:",
+                Style::default().fg(Color::Magenta),
+            )),
+            TextLine::from("Arrows: Navigate selection"),
+            TextLine::from("Enter: Center on selection"),
+            TextLine::from("q/Esc: Quit"),
+        ]
     } else {
-         vec![TextLine::from("Loading...")]
+        vec![TextLine::from("Loading...")]
     };
 
     let paragraph = Paragraph::new(info_text)

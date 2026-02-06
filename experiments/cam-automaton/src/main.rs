@@ -1,13 +1,13 @@
 use macroquad::prelude::*;
-use rapier2d::prelude::*;
 use nalgebra::Vector2 as Vec2N;
+use rapier2d::prelude::*;
 
-mod physics;
 mod mechanism;
+mod physics;
 mod puppet;
 
-use physics::PhysicsWorld;
 use mechanism::Mechanism;
+use physics::PhysicsWorld;
 use puppet::Puppet;
 
 #[macroquad::main("Cam Automaton")]
@@ -99,11 +99,17 @@ async fn main() {
                         // Let's use `draw_rectangle_ex` with `offset: vec2(0.5, 0.5)`.
                         // If offset is (0.5, 0.5), the x,y argument is the center.
 
-                        draw_rectangle_ex(c_pos.x, c_pos.y, w, h, DrawRectangleParams {
-                            offset: vec2(0.5, 0.5),
-                            rotation: c_rot,
-                            color: BLUE,
-                        });
+                        draw_rectangle_ex(
+                            c_pos.x,
+                            c_pos.y,
+                            w,
+                            h,
+                            DrawRectangleParams {
+                                offset: vec2(0.5, 0.5),
+                                rotation: c_rot,
+                                color: BLUE,
+                            },
+                        );
                     }
                 }
             }

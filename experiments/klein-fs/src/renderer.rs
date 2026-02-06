@@ -1,8 +1,8 @@
-use glam::{Vec3, Mat4, Vec4Swizzles};
-use ratatui::widgets::canvas::Context;
-use ratatui::style::Color;
-use crate::topology::figure_8_klein;
 use crate::fs::FsNode;
+use crate::topology::figure_8_klein;
+use glam::{Mat4, Vec3, Vec4Swizzles};
+use ratatui::style::Color;
+use ratatui::widgets::canvas::Context;
 
 pub struct Camera {
     pub position: Vec3,
@@ -49,23 +49,25 @@ pub fn draw_wireframe(ctx: &mut Context, camera: &Camera, aspect_ratio: f32) {
         let mut prev_point: Option<(f64, f64)> = None;
 
         for i in 0..=u_steps {
-             let u = (i as f32 / u_steps as f32) * 2.0 * std::f32::consts::PI;
-             let p = figure_8_klein(u, v, radius);
+            let u = (i as f32 / u_steps as f32) * 2.0 * std::f32::consts::PI;
+            let p = figure_8_klein(u, v, radius);
 
-             if let Some((x, y)) = project(p, view_proj) {
-                 if let Some((px, py)) = prev_point {
-                     if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
+            if let Some((x, y)) = project(p, view_proj) {
+                if let Some((px, py)) = prev_point {
+                    if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
                         ctx.draw(&ratatui::widgets::canvas::Line {
-                            x1: px, y1: py,
-                            x2: x, y2: y,
+                            x1: px,
+                            y1: py,
+                            x2: x,
+                            y2: y,
                             color: Color::DarkGray,
                         });
-                     }
-                 }
-                 prev_point = Some((x, y));
-             } else {
-                 prev_point = None;
-             }
+                    }
+                }
+                prev_point = Some((x, y));
+            } else {
+                prev_point = None;
+            }
         }
     }
 
@@ -75,28 +77,36 @@ pub fn draw_wireframe(ctx: &mut Context, camera: &Camera, aspect_ratio: f32) {
 
         for j in 0..=v_steps {
             let v = (j as f32 / v_steps as f32) * 2.0 * std::f32::consts::PI;
-             let p = figure_8_klein(u, v, radius);
+            let p = figure_8_klein(u, v, radius);
 
-             if let Some((x, y)) = project(p, view_proj) {
-                 if let Some((px, py)) = prev_point {
-                      if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
-                         ctx.draw(&ratatui::widgets::canvas::Line {
-                             x1: px, y1: py,
-                             x2: x, y2: y,
-                             color: Color::DarkGray,
-                         });
-                      }
-                 }
-                 prev_point = Some((x, y));
-             } else {
-                 prev_point = None;
-             }
+            if let Some((x, y)) = project(p, view_proj) {
+                if let Some((px, py)) = prev_point {
+                    if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
+                        ctx.draw(&ratatui::widgets::canvas::Line {
+                            x1: px,
+                            y1: py,
+                            x2: x,
+                            y2: y,
+                            color: Color::DarkGray,
+                        });
+                    }
+                }
+                prev_point = Some((x, y));
+            } else {
+                prev_point = None;
+            }
         }
     }
 }
 
 // Removed lifetimes 'a, 'b.
-pub fn draw_nodes(ctx: &mut Context, camera: &Camera, aspect_ratio: f32, nodes: &[FsNode], selected_idx: usize) {
+pub fn draw_nodes(
+    ctx: &mut Context,
+    camera: &Camera,
+    aspect_ratio: f32,
+    nodes: &[FsNode],
+    selected_idx: usize,
+) {
     let view_proj = camera.projection_matrix(aspect_ratio) * camera.view_matrix();
     let radius = 2.0;
 
@@ -105,18 +115,36 @@ pub fn draw_nodes(ctx: &mut Context, camera: &Camera, aspect_ratio: f32, nodes: 
 
         if let Some((x, y)) = project(p, view_proj) {
             let is_selected = i == selected_idx;
-            let color = if is_selected { Color::Yellow } else {
-                if node.is_dir { Color::Cyan } else { Color::Green }
+            let color = if is_selected {
+                Color::Yellow
+            } else {
+                if node.is_dir {
+                    Color::Cyan
+                } else {
+                    Color::Green
+                }
             };
             let r = if is_selected { 0.05 } else { 0.02 };
 
             ctx.draw(&ratatui::widgets::canvas::Circle {
-                x, y, radius: r, color
+                x,
+                y,
+                radius: r,
+                color,
             });
 
             if is_selected {
-                 // Clone the name to create an owned Span, avoiding lifetime dependency on `nodes`.
-                 ctx.print(x, y + 0.05, ratatui::text::Span::styled(node.name.clone(), ratatui::style::Style::default().fg(color).add_modifier(ratatui::style::Modifier::BOLD)));
+                // Clone the name to create an owned Span, avoiding lifetime dependency on `nodes`.
+                ctx.print(
+                    x,
+                    y + 0.05,
+                    ratatui::text::Span::styled(
+                        node.name.clone(),
+                        ratatui::style::Style::default()
+                            .fg(color)
+                            .add_modifier(ratatui::style::Modifier::BOLD),
+                    ),
+                );
             }
         }
     }

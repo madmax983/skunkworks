@@ -7,10 +7,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, List, ListItem, ListState, Paragraph, Wrap,
-    },
+    widgets::{canvas::Canvas, Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Frame,
 };
 use std::{
@@ -59,7 +56,9 @@ impl App {
     }
 
     fn next_commit(&mut self) {
-        if self.commits.is_empty() { return; }
+        if self.commits.is_empty() {
+            return;
+        }
 
         self.current_idx = (self.current_idx + 1) % self.commits.len();
         self.last_commit_change = Instant::now();
@@ -67,7 +66,9 @@ impl App {
     }
 
     fn prev_commit(&mut self) {
-        if self.commits.is_empty() { return; }
+        if self.commits.is_empty() {
+            return;
+        }
 
         if self.current_idx == 0 {
             self.current_idx = self.commits.len() - 1;
@@ -139,15 +140,16 @@ fn run_app(tui: &mut Tui, app: &mut App) -> Result<()> {
 fn ui(f: &mut Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(10),
-            Constraint::Length(12),
-        ])
+        .constraints([Constraint::Min(10), Constraint::Length(12)])
         .split(f.area());
 
     // Top: Visualizer
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" The Song of the Commit 🎶 "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" The Song of the Commit 🎶 "),
+        )
         .x_bounds([0.0, app.vis.width])
         .y_bounds([0.0, app.vis.height])
         .paint(|ctx| {
@@ -162,16 +164,22 @@ fn ui(f: &mut Frame, app: &App) {
         .split(chunks[1]);
 
     // Commit List
-    let items: Vec<ListItem> = app.commits
+    let items: Vec<ListItem> = app
+        .commits
         .iter()
         .enumerate()
         .map(|(i, c)| {
             let style = if i == app.current_idx {
-                Style::default().fg(Color::Yellow).add_modifier(ratatui::style::Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(ratatui::style::Modifier::BOLD)
             } else {
                 Style::default()
             };
-            ListItem::new(Span::styled(format!("{} - {}", &c.hash[..7], c.author), style))
+            ListItem::new(Span::styled(
+                format!("{} - {}", &c.hash[..7], c.author),
+                style,
+            ))
         })
         .collect();
 

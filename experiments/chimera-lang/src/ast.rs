@@ -57,7 +57,8 @@ impl Helix {
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
             Rule::helix => {
-                let strands: Result<Vec<Strand>, String> = pair.into_inner().map(Strand::try_from_pair).collect();
+                let strands: Result<Vec<Strand>, String> =
+                    pair.into_inner().map(Strand::try_from_pair).collect();
                 Ok(Helix { strands: strands? })
             }
             _ => Err(format!("Expected Helix rule, got {:?}", pair.as_rule())),
@@ -69,7 +70,8 @@ impl Strand {
     pub fn try_from_pair(pair: Pair<Rule>) -> Result<Self, String> {
         match pair.as_rule() {
             Rule::strand => {
-                let genes: Result<Vec<Gene>, String> = pair.into_inner().map(Gene::try_from_pair).collect();
+                let genes: Result<Vec<Gene>, String> =
+                    pair.into_inner().map(Gene::try_from_pair).collect();
                 Ok(Strand { genes: genes? })
             }
             _ => Err(format!("Expected Strand rule, got {:?}", pair.as_rule())),
@@ -83,9 +85,14 @@ impl Gene {
             Rule::gene => {
                 let mut inner = pair.into_inner();
                 let name = inner.next().ok_or("Expected gene name")?.as_str();
-                let op = name.parse().map_err(|_| format!("Failed to parse opcode: {}", name))?;
+                let op = name
+                    .parse()
+                    .map_err(|_| format!("Failed to parse opcode: {}", name))?;
                 let args_pair = inner.next().ok_or("Expected gene args")?;
-                let args: Result<Vec<Nucleotide>, String> = args_pair.into_inner().map(Nucleotide::try_from_pair).collect();
+                let args: Result<Vec<Nucleotide>, String> = args_pair
+                    .into_inner()
+                    .map(Nucleotide::try_from_pair)
+                    .collect();
                 Ok(Gene { op, args: args? })
             }
             _ => Err(format!("Expected Gene rule, got {:?}", pair.as_rule())),
@@ -98,7 +105,9 @@ impl Nucleotide {
         match pair.as_rule() {
             Rule::number => {
                 let s = pair.as_str();
-                s.parse().map(Nucleotide::Number).map_err(|e| format!("Invalid number '{}': {}", s, e))
+                s.parse()
+                    .map(Nucleotide::Number)
+                    .map_err(|e| format!("Invalid number '{}': {}", s, e))
             }
             Rule::string => {
                 let s = pair.as_str();
@@ -118,10 +127,16 @@ impl Nucleotide {
                     _ => return Err(format!("Unknown junction type: {}", type_pair.as_str())),
                 };
                 let args_pair = inner.next().ok_or("Expected junction args")?;
-                let args: Result<Vec<Nucleotide>, String> = args_pair.into_inner().map(Nucleotide::try_from_pair).collect();
+                let args: Result<Vec<Nucleotide>, String> = args_pair
+                    .into_inner()
+                    .map(Nucleotide::try_from_pair)
+                    .collect();
                 Ok(Nucleotide::Junction(j_type, args?))
             }
-            _ => Err(format!("Expected Nucleotide rule, got {:?}", pair.as_rule())),
+            _ => Err(format!(
+                "Expected Nucleotide rule, got {:?}",
+                pair.as_rule()
+            )),
         }
     }
 }

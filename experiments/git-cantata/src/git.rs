@@ -41,34 +41,34 @@ pub fn get_repo_history(path: &str, limit: usize) -> Result<Vec<CommitData>> {
         if let (Ok(tree), Ok(parent)) = (commit.tree(), commit.parent(0)) {
             if let Ok(parent_tree) = parent.tree() {
                 if let Ok(diff) = repo.diff_tree_to_tree(Some(&parent_tree), Some(&tree), None) {
-                     // Iterate over deltas to get file stats
-                     for i in 0..diff.deltas().len() {
-                         // Patch::from_diff returns Result<Option<Patch>>
-                         if let Ok(Some(patch)) = git2::Patch::from_diff(&diff, i) {
-                             let delta = patch.delta();
-                             // Try new file path, fallback to old file path
-                             let file_path = delta.new_file().path().or(delta.old_file().path());
+                    // Iterate over deltas to get file stats
+                    for i in 0..diff.deltas().len() {
+                        // Patch::from_diff returns Result<Option<Patch>>
+                        if let Ok(Some(patch)) = git2::Patch::from_diff(&diff, i) {
+                            let delta = patch.delta();
+                            // Try new file path, fallback to old file path
+                            let file_path = delta.new_file().path().or(delta.old_file().path());
 
-                             if let Some(p) = file_path {
-                                 let path_str = p.to_string_lossy().to_string();
-                                 let extension = Path::new(&path_str)
-                                     .extension()
-                                     .and_then(|e| e.to_str())
-                                     .unwrap_or("")
-                                     .to_string();
+                            if let Some(p) = file_path {
+                                let path_str = p.to_string_lossy().to_string();
+                                let extension = Path::new(&path_str)
+                                    .extension()
+                                    .and_then(|e| e.to_str())
+                                    .unwrap_or("")
+                                    .to_string();
 
-                                 // line_stats returns Result<(usize, usize, usize)>
-                                 let stats = patch.line_stats().unwrap_or((0, 0, 0)); // context, additions, deletions
+                                // line_stats returns Result<(usize, usize, usize)>
+                                let stats = patch.line_stats().unwrap_or((0, 0, 0)); // context, additions, deletions
 
-                                 changes.push(FileChange {
-                                     path: path_str,
-                                     extension,
-                                     insertions: stats.1,
-                                     deletions: stats.2,
-                                 });
-                             }
-                         }
-                     }
+                                changes.push(FileChange {
+                                    path: path_str,
+                                    extension,
+                                    insertions: stats.1,
+                                    deletions: stats.2,
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }

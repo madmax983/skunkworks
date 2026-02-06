@@ -1,6 +1,6 @@
+use chimera_lang::vm::ChimeraVM;
 use macroquad::prelude::*;
 use std::collections::HashMap;
-use chimera_lang::vm::ChimeraVM;
 
 #[derive(Clone, Debug)]
 pub struct Portal {
@@ -84,10 +84,10 @@ impl World {
                         description.push_str(&format!(" {:?}", arg));
                     }
                 } else {
-                     label = "EOF".to_string();
+                    label = "EOF".to_string();
                 }
             } else {
-                 label = "VOID".to_string();
+                label = "VOID".to_string();
             }
 
             // Color based on Strand Index to show "thread" context
@@ -99,7 +99,7 @@ impl World {
 
             // Link to next frame
             if i + 1 < frames.len() {
-                let next_strand = frames[i+1].0;
+                let next_strand = frames[i + 1].0;
                 let next_hue = (next_strand as f32 * 0.61803398875) % 1.0;
                 let portal_color = hsl_to_color(next_hue, 0.8, 0.5); // Brighter portal
 

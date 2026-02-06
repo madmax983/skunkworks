@@ -2,9 +2,9 @@ use crate::git::CommitData;
 #[cfg(feature = "audio")]
 use rodio::{OutputStream, OutputStreamHandle, Sink, Source};
 #[cfg(feature = "audio")]
-use std::time::Duration;
-#[cfg(feature = "audio")]
 use std::f32::consts::PI;
+#[cfg(feature = "audio")]
+use std::time::Duration;
 
 pub struct AudioEngine {
     #[cfg(feature = "audio")]
@@ -23,19 +23,15 @@ impl AudioEngine {
         #[cfg(feature = "audio")]
         {
             match OutputStream::try_default() {
-                Ok((stream, handle)) => {
-                    match Sink::try_new(&handle) {
-                        Ok(sink) => {
-                             Self {
-                                state: Some(AudioState {
-                                    _stream: stream,
-                                    _stream_handle: handle,
-                                    sink,
-                                })
-                            }
-                        },
-                        Err(_) => Self { state: None },
-                    }
+                Ok((stream, handle)) => match Sink::try_new(&handle) {
+                    Ok(sink) => Self {
+                        state: Some(AudioState {
+                            _stream: stream,
+                            _stream_handle: handle,
+                            sink,
+                        }),
+                    },
+                    Err(_) => Self { state: None },
                 },
                 Err(_) => Self { state: None },
             }
@@ -112,7 +108,13 @@ impl Iterator for CommitSource {
         // Waveform based on extension
         let sample = match change.extension.as_str() {
             "rs" => (self.phase * 2.0 * PI).sin(),
-            "toml" | "json" | "yaml" => if (self.phase * 2.0 * PI).sin() > 0.0 { 1.0 } else { -1.0 },
+            "toml" | "json" | "yaml" => {
+                if (self.phase * 2.0 * PI).sin() > 0.0 {
+                    1.0
+                } else {
+                    -1.0
+                }
+            }
             "md" | "txt" => (rand::random::<f32>() * 2.0 - 1.0) * 0.5,
             _ => (self.phase * 2.0 - 1.0), // Sawtooth
         };
@@ -160,6 +162,8 @@ impl Source for CommitSource {
 
     fn total_duration(&self) -> Option<Duration> {
         let total_samples = self.commit.changes.len() * self.samples_per_file;
-        Some(Duration::from_secs_f32(total_samples as f32 / self.sample_rate as f32))
+        Some(Duration::from_secs_f32(
+            total_samples as f32 / self.sample_rate as f32,
+        ))
     }
 }

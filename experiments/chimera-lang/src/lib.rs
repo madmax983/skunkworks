@@ -48,10 +48,6 @@ mod microscope_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_isomer_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_ipc_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_bang_test;
@@ -84,6 +80,10 @@ mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_ipc_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_isomer_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_madness_test;
@@ -91,6 +91,8 @@ mod nova_madness_test;
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_mutagen_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_necromancy_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
 #[cfg(all(test, feature = "nova"))]
@@ -105,12 +107,18 @@ mod nova_quantum_test;
 mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_reflex_test;
+#[cfg(all(test, feature = "resonance"))]
+mod nova_resonance_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_security_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sigil_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sonar_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_splice_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_spore_test;
 #[cfg(all(test, feature = "nova"))]
@@ -135,18 +143,12 @@ mod oracle_test;
 mod prion_test;
 #[cfg(all(test, feature = "resonance"))]
 mod resonance_test;
-#[cfg(all(test, feature = "resonance"))]
-mod nova_resonance_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribosome_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribozyme_test;
 #[cfg(all(test, feature = "nova"))]
 mod sentry_brainfuck_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_security_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_splice_test;
 #[cfg(test)]
 mod sentry_nova_test;
 #[cfg(all(test, feature = "silicon"))]

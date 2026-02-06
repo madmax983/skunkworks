@@ -15,9 +15,10 @@ mod tests {
 
     #[test]
     fn test_isomerize_toggle() {
-        let genes = vec![
-            Gene { op: OpCode::Isomerize, args: vec![] },
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Isomerize,
+            args: vec![],
+        }];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
         assert_eq!(vm.chirality, Chirality::Left);
@@ -32,24 +33,49 @@ mod tests {
         // Right: 10 - 5 = 15 (Add) - wait Sub -> Add
 
         let genes = vec![
-            Gene { op: OpCode::Isomerize, args: vec![] },
+            Gene {
+                op: OpCode::Isomerize,
+                args: vec![],
+            },
             // Test Add -> Sub
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-            Gene { op: OpCode::Add, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
             // Test Sub -> Add
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Sub, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Sub,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
         vm.step(); // Isomerize
-        vm.step(); vm.step(); vm.step(); // 10, 20, Add(Sub) -> -10
+        vm.step();
+        vm.step();
+        vm.step(); // 10, 20, Add(Sub) -> -10
 
         assert_eq!(vm.stack.pop(), Some(Value::Int(-10)));
 
-        vm.step(); vm.step(); vm.step(); // 10, 5, Sub(Add) -> 15
+        vm.step();
+        vm.step();
+        vm.step(); // 10, 5, Sub(Add) -> 15
         assert_eq!(vm.stack.pop(), Some(Value::Int(15)));
     }
 
@@ -70,19 +96,36 @@ mod tests {
 
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Isomerize, args: vec![] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Brz, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] },
-            ]
+                Gene {
+                    op: OpCode::Isomerize,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Brz,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(99)],
+                },
+            ],
         };
         let strand1 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Isomerize
@@ -105,10 +148,22 @@ mod tests {
         // Expect: 7,8 (North)
 
         let genes = vec![
-            Gene { op: OpCode::Isomerize, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // dx
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dy
-            Gene { op: OpCode::Migrate, args: vec![] },
+            Gene {
+                op: OpCode::Isomerize,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // dx
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // dy
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 

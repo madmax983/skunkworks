@@ -420,6 +420,10 @@ mod tests {
         // This SHOULD fail if we are properly paranoid, but the current impl doesn't check for Inf/NaN output.
         // We assert that it IS a valid point (norm < 1.0), which it mathematically isn't (it escapes to infinity).
         // If the library claims to implement the Poincaré disk, the result MUST be in the disk.
-        assert!(res.norm() < 1.0, "Singularity breach! Point escaped the disk: {:?}", res);
+        assert!(
+            res.norm() < 1.0,
+            "Singularity breach! Point escaped the disk: {:?}",
+            res
+        );
     }
 }

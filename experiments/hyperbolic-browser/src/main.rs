@@ -2,10 +2,10 @@ mod fs_map;
 mod render;
 mod tiling;
 
+use fs_map::{FsCache, RoomId};
 use macroquad::prelude::*;
 use num_complex::Complex;
 use poincare_disk::{Mobius, Point};
-use fs_map::{FsCache, RoomId};
 use render::Renderer;
 
 #[macroquad::main("Hyperbolic Browser")]
@@ -48,19 +48,19 @@ async fn main() -> anyhow::Result<()> {
 
                 // Check neighbors
                 if let Ok(room) = fs_cache.get_room(&current_room_id) {
-                     for (dir, neighbor_opt) in room.neighbors.iter().enumerate() {
-                         if neighbor_opt.is_some() {
-                             let t = renderer.tiler.get_neighbor_transform(dir);
-                             let pos = t.apply(Point::new(0.0, 0.0));
+                    for (dir, neighbor_opt) in room.neighbors.iter().enumerate() {
+                        if neighbor_opt.is_some() {
+                            let t = renderer.tiler.get_neighbor_transform(dir);
+                            let pos = t.apply(Point::new(0.0, 0.0));
 
-                             let d = poincare_disk::hyperbolic_dist(click_z, pos);
-                             // Bias towards neighbors slightly to make clicking easier?
-                             if d < min_dist {
-                                 min_dist = d;
-                                 best_dir = Some(dir);
-                             }
-                         }
-                     }
+                            let d = poincare_disk::hyperbolic_dist(click_z, pos);
+                            // Bias towards neighbors slightly to make clicking easier?
+                            if d < min_dist {
+                                min_dist = d;
+                                best_dir = Some(dir);
+                            }
+                        }
+                    }
                 }
 
                 if let Some(dir) = best_dir {
@@ -111,11 +111,21 @@ async fn main() -> anyhow::Result<()> {
         draw_text("Hyperbolic Browser", 20.0, 30.0, 30.0, WHITE);
 
         let path_str = current_room_id.path.display().to_string();
-        let page_str = if current_room_id.page > 0 { format!(" (Page {})", current_room_id.page) } else { "".to_string() };
+        let page_str = if current_room_id.page > 0 {
+            format!(" (Page {})", current_room_id.page)
+        } else {
+            "".to_string()
+        };
         draw_text(&format!("{}{}", path_str, page_str), 20.0, 60.0, 20.0, GRAY);
 
         if is_animating {
-             draw_text("Warping...", 20.0, 90.0, 20.0, Color::new(1.0, 0.5, 0.0, 1.0));
+            draw_text(
+                "Warping...",
+                20.0,
+                90.0,
+                20.0,
+                Color::new(1.0, 0.5, 0.0, 1.0),
+            );
         }
 
         next_frame().await

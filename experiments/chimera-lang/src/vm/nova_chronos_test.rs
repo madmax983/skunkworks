@@ -48,18 +48,36 @@ mod tests {
 
         let s0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-                Gene { op: OpCode::Chronostasis, args: vec![] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(5)],
+                },
+                Gene {
+                    op: OpCode::Chronostasis,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(1)],
+                },
+            ],
         };
 
         let s1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-                Gene { op: OpCode::Consume, args: vec![] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(10)],
+                },
+                Gene {
+                    op: OpCode::Consume,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(1)],
+                },
+            ],
         };
 
         let mut vm = ChimeraVM::new(Dna {

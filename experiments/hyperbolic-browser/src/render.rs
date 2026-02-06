@@ -1,8 +1,8 @@
+use crate::fs_map::{FsCache, RoomId};
+use crate::tiling::Tiler;
 use macroquad::prelude::*;
 use num_complex::Complex;
 use poincare_disk::{Mobius, Point};
-use crate::fs_map::{FsCache, RoomId};
-use crate::tiling::Tiler;
 use std::collections::HashSet;
 
 pub struct Renderer {
@@ -39,7 +39,7 @@ impl Renderer {
             screen_center,
             disk_radius,
             0,
-            &mut visited
+            &mut visited,
         );
 
         // Draw Boundary over everything
@@ -83,11 +83,11 @@ impl Renderer {
         let vertex_dist = self.tiler.consts.vertex_offset;
         let mut vertices = Vec::new();
         for i in 0..4 {
-             // 45, 135, 225, 315
-             let angle = (i as f64 * 90.0 + 45.0) * std::f64::consts::PI / 180.0;
-             let p_local = Complex::from_polar(vertex_dist, angle);
-             let p_screen = to_screen(transform.apply(p_local), screen_center, disk_radius);
-             vertices.push(p_screen);
+            // 45, 135, 225, 315
+            let angle = (i as f64 * 90.0 + 45.0) * std::f64::consts::PI / 180.0;
+            let p_local = Complex::from_polar(vertex_dist, angle);
+            let p_screen = to_screen(transform.apply(p_local), screen_center, disk_radius);
+            vertices.push(p_screen);
         }
 
         // Draw Quad
@@ -104,15 +104,22 @@ impl Renderer {
         let line_color = Color::new(0.5, 0.5, 0.5, 0.5);
         for i in 0..4 {
             let next = (i + 1) % 4;
-            draw_line(vertices[i].x, vertices[i].y, vertices[next].x, vertices[next].y, 2.0, line_color);
+            draw_line(
+                vertices[i].x,
+                vertices[i].y,
+                vertices[next].x,
+                vertices[next].y,
+                2.0,
+                line_color,
+            );
         }
 
         // Draw Name
         let center_screen = to_screen(center_pos, screen_center, disk_radius);
         let scale = (1.0 - dist_sq).sqrt() * 1.5; // Scale based on disk compression
         if scale > 0.1 {
-             let font_size = (30.0 * scale) as u16;
-             if font_size > 5 {
+            let font_size = (30.0 * scale) as u16;
+            if font_size > 5 {
                 let text = &room.name;
                 let dims = measure_text(text, None, font_size, 1.0);
                 draw_text(
@@ -120,9 +127,9 @@ impl Renderer {
                     center_screen.x - dims.width / 2.0,
                     center_screen.y + dims.height / 2.0,
                     font_size as f32,
-                    WHITE
+                    WHITE,
                 );
-             }
+            }
         }
 
         // Recurse
@@ -138,7 +145,7 @@ impl Renderer {
                     screen_center,
                     disk_radius,
                     depth + 1,
-                    visited
+                    visited,
                 );
             }
         }

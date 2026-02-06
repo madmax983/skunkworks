@@ -132,86 +132,89 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
     let mut last_tick = Instant::now();
 
     loop {
-        terminal.draw(|f| {
-            let chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .constraints([Constraint::Min(0), Constraint::Length(1)])
-                .split(f.area());
+        terminal
+            .draw(|f| {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Min(0), Constraint::Length(1)])
+                    .split(f.area());
 
-            let mut lines = Vec::new();
-            let chars = [' ', ' ', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+                let mut lines = Vec::new();
+                let chars = [' ', ' ', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
 
-            // Render WaveTank + Overlay Nodes
-            // We construct a grid of characters first, then convert to Lines.
-            // But we can't easily overlay efficiently with just `Paragraph`.
-            // We have to build the string line by line.
+                // Render WaveTank + Overlay Nodes
+                // We construct a grid of characters first, then convert to Lines.
+                // But we can't easily overlay efficiently with just `Paragraph`.
+                // We have to build the string line by line.
 
-            let w = app.tank.width;
-            let h = app.tank.height;
+                let w = app.tank.width;
+                let h = app.tank.height;
 
-            let cx = w as f64 / 2.0;
-            let cy = h as f64 / 2.0;
+                let cx = w as f64 / 2.0;
+                let cy = h as f64 / 2.0;
 
-            // Pre-calculate node positions on screen
-            let mut node_map = vec![vec![None; w]; h];
-            for node in &app.graph.nodes {
-                let x = (node.pos.x - app.center_x) * app.scale + cx;
-                let y = (node.pos.y - app.center_y) * app.scale + cy;
-                let ix = x as usize;
-                let iy = y as usize;
-                if ix < w && iy < h {
-                    node_map[iy][ix] = Some(node);
-                }
-            }
-
-            for y in 0..h {
-                let mut spans = Vec::new();
-                for x in 0..w {
-                    if let Some(node) = node_map[y][x] {
-                        // Draw Node
-                        let symbol = if node.stress > 0.0 { "●" } else { "○" };
-                        let color = if node.stress > 10.0 {
-                            Color::Red
-                        } else if node.stress > 0.0 {
-                            Color::Yellow
-                        } else {
-                            Color::Green
-                        };
-                        spans.push(Span::styled(symbol, Style::default().fg(color)));
-                    } else {
-                        // Draw Wave
-                        let height_val = app.tank.get_height(x, y);
-                        let idx = ((height_val + 0.5).clamp(0.0, 1.0) * (chars.len() - 1) as f32)
-                            as usize;
-                        let c = chars[idx];
-                        // Color based on height
-                        let color = if height_val > 0.2 {
-                            Color::Cyan
-                        } else if height_val < -0.2 {
-                            Color::Blue
-                        } else {
-                            Color::DarkGray
-                        };
-                        spans.push(Span::styled(c.to_string(), Style::default().fg(color)));
+                // Pre-calculate node positions on screen
+                let mut node_map = vec![vec![None; w]; h];
+                for node in &app.graph.nodes {
+                    let x = (node.pos.x - app.center_x) * app.scale + cx;
+                    let y = (node.pos.y - app.center_y) * app.scale + cy;
+                    let ix = x as usize;
+                    let iy = y as usize;
+                    if ix < w && iy < h {
+                        node_map[iy][ix] = Some(node);
                     }
                 }
-                lines.push(Line::from(spans));
-            }
 
-            let tank_widget = Paragraph::new(lines);
-            f.render_widget(tank_widget, chunks[0]);
+                for y in 0..h {
+                    let mut spans = Vec::new();
+                    for x in 0..w {
+                        if let Some(node) = node_map[y][x] {
+                            // Draw Node
+                            let symbol = if node.stress > 0.0 { "●" } else { "○" };
+                            let color = if node.stress > 10.0 {
+                                Color::Red
+                            } else if node.stress > 0.0 {
+                                Color::Yellow
+                            } else {
+                                Color::Green
+                            };
+                            spans.push(Span::styled(symbol, Style::default().fg(color)));
+                        } else {
+                            // Draw Wave
+                            let height_val = app.tank.get_height(x, y);
+                            let idx = ((height_val + 0.5).clamp(0.0, 1.0)
+                                * (chars.len() - 1) as f32)
+                                as usize;
+                            let c = chars[idx];
+                            // Color based on height
+                            let color = if height_val > 0.2 {
+                                Color::Cyan
+                            } else if height_val < -0.2 {
+                                Color::Blue
+                            } else {
+                                Color::DarkGray
+                            };
+                            spans.push(Span::styled(c.to_string(), Style::default().fg(color)));
+                        }
+                    }
+                    lines.push(Line::from(spans));
+                }
 
-            let status = format!(
-                "Freq: {:.1}Hz | Files: {} | Stressors: {} | WASD Pan | +/- Zoom | 'q' Quit",
-                app.freq,
-                app.graph.nodes.len(),
-                app.graph.nodes.iter().filter(|n| n.stress > 0.0).count()
-            );
-            f.render_widget(
-                Paragraph::new(status).block(Block::default().borders(Borders::TOP)),
-                chunks[1],
-            );
-        }).map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
+                let tank_widget = Paragraph::new(lines);
+                f.render_widget(tank_widget, chunks[0]);
+
+                let status = format!(
+                    "Freq: {:.1}Hz | Files: {} | Stressors: {} | WASD Pan | +/- Zoom | 'q' Quit",
+                    app.freq,
+                    app.graph.nodes.len(),
+                    app.graph.nodes.iter().filter(|n| n.stress > 0.0).count()
+                );
+                f.render_widget(
+                    Paragraph::new(status).block(Block::default().borders(Borders::TOP)),
+                    chunks[1],
+                );
+            })
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())

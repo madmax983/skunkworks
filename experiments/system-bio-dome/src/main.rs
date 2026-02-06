@@ -61,9 +61,11 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
     let tick_rate = Duration::from_millis(16); // ~60 FPS
 
     loop {
-        terminal.draw(|f| {
-            ui(f, &chem, &lorenz_state);
-        }).map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
+        terminal
+            .draw(|f| {
+                ui(f, &chem, &lorenz_state);
+            })
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())

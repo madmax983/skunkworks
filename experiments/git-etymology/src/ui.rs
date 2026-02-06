@@ -1,11 +1,11 @@
+use crate::etym::{ChangeType, TraceEntry};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph, Wrap, ListState},
+    widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap},
     Frame,
 };
-use crate::etym::{TraceEntry, ChangeType};
 
 #[derive(Debug, PartialEq)]
 pub enum AppMode {
@@ -55,11 +55,15 @@ impl AppState {
             };
             self.list_state.select(Some(i));
         } else {
-             let i = match self.trace_state.selected() {
+            let i = match self.trace_state.selected() {
                 Some(i) => {
-                    if self.trace.is_empty() { 0 }
-                    else if i >= self.trace.len() - 1 { 0 }
-                    else { i + 1 }
+                    if self.trace.is_empty() {
+                        0
+                    } else if i >= self.trace.len() - 1 {
+                        0
+                    } else {
+                        i + 1
+                    }
                 }
                 None => 0,
             };
@@ -83,9 +87,13 @@ impl AppState {
         } else {
             let i = match self.trace_state.selected() {
                 Some(i) => {
-                    if self.trace.is_empty() { 0 }
-                    else if i == 0 { self.trace.len() - 1 }
-                    else { i - 1 }
+                    if self.trace.is_empty() {
+                        0
+                    } else if i == 0 {
+                        self.trace.len() - 1
+                    } else {
+                        i - 1
+                    }
                 }
                 None => 0,
             };
@@ -154,53 +162,76 @@ fn draw_trace_viewer(f: &mut Frame, app: &mut AppState, area: Rect) {
         .border_style(border_style);
 
     if app.trace.is_empty() {
-        let p = Paragraph::new(app.status_msg.clone()).block(block).wrap(Wrap { trim: true });
+        let p = Paragraph::new(app.status_msg.clone())
+            .block(block)
+            .wrap(Wrap { trim: true });
         f.render_widget(p, area);
         return;
     }
 
-    let items: Vec<ListItem> = app.trace.iter().map(|entry| {
-        let header = Line::from(vec![
-            Span::styled(format!("{} ", &entry.short_hash), Style::default().fg(Color::Yellow)),
-            Span::styled(format!("{} ", entry.date.format("%Y-%m-%d")), Style::default().fg(Color::Blue)),
-            Span::styled(format!("{} ", entry.author), Style::default().fg(Color::Green)),
-        ]);
+    let items: Vec<ListItem> = app
+        .trace
+        .iter()
+        .map(|entry| {
+            let header = Line::from(vec![
+                Span::styled(
+                    format!("{} ", &entry.short_hash),
+                    Style::default().fg(Color::Yellow),
+                ),
+                Span::styled(
+                    format!("{} ", entry.date.format("%Y-%m-%d")),
+                    Style::default().fg(Color::Blue),
+                ),
+                Span::styled(
+                    format!("{} ", entry.author),
+                    Style::default().fg(Color::Green),
+                ),
+            ]);
 
-        let change_style = match entry.change_type {
-            ChangeType::Genesis => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-            ChangeType::Shift => Style::default().fg(Color::Magenta),
-            ChangeType::Inertia => Style::default().fg(Color::DarkGray),
-        };
+            let change_style = match entry.change_type {
+                ChangeType::Genesis => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                ChangeType::Shift => Style::default().fg(Color::Magenta),
+                ChangeType::Inertia => Style::default().fg(Color::DarkGray),
+            };
 
-        let type_str = match entry.change_type {
-            ChangeType::Genesis => "★ GENESIS",
-            ChangeType::Shift => "⚡ SHIFT",
-            ChangeType::Inertia => "⬇ INERTIA",
-        };
+            let type_str = match entry.change_type {
+                ChangeType::Genesis => "★ GENESIS",
+                ChangeType::Shift => "⚡ SHIFT",
+                ChangeType::Inertia => "⬇ INERTIA",
+            };
 
-        let meta = Line::from(vec![
-            Span::styled(type_str, change_style),
-            Span::raw(format!(" (Line {})", entry.line_num)),
-        ]);
+            let meta = Line::from(vec![
+                Span::styled(type_str, change_style),
+                Span::raw(format!(" (Line {})", entry.line_num)),
+            ]);
 
-        let content = Line::from(Span::styled(format!("  {}", entry.line_content), Style::default().fg(Color::White)));
-        let msg = Line::from(Span::styled(format!("  \"{}\"", entry.message), Style::default().fg(Color::Gray).add_modifier(Modifier::ITALIC)));
+            let content = Line::from(Span::styled(
+                format!("  {}", entry.line_content),
+                Style::default().fg(Color::White),
+            ));
+            let msg = Line::from(Span::styled(
+                format!("  \"{}\"", entry.message),
+                Style::default()
+                    .fg(Color::Gray)
+                    .add_modifier(Modifier::ITALIC),
+            ));
 
-        // Multiline items are hard in List, so we cheat by just doing lines?
-        // Or we use a simple representation.
-        // Let's stick to 2 lines per entry if possible, or just the content.
+            // Multiline items are hard in List, so we cheat by just doing lines?
+            // Or we use a simple representation.
+            // Let's stick to 2 lines per entry if possible, or just the content.
 
-        // Actually ListItems can be height 1+.
-        // But let's keep it compact.
+            // Actually ListItems can be height 1+.
+            // But let's keep it compact.
 
-        ListItem::new(vec![
-            header,
-            meta,
-            content,
-            msg,
-            Line::from(""), // Spacer
-        ])
-    }).collect();
+            ListItem::new(vec![
+                header,
+                meta,
+                content,
+                msg,
+                Line::from(""), // Spacer
+            ])
+        })
+        .collect();
 
     let list = List::new(items)
         .block(block)

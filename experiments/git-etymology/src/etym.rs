@@ -45,14 +45,18 @@ impl EtymologyTracer {
 
         // Get initial content
         let initial_blob = self.get_file_blob(current_oid, rel_path)?;
-        let initial_content = get_line_from_blob(&initial_blob, current_line)
-            .unwrap_or_else(|| "???".to_string());
+        let initial_content =
+            get_line_from_blob(&initial_blob, current_line).unwrap_or_else(|| "???".to_string());
 
         // Push the starting point (Present Day)
         history.push(TraceEntry {
             commit_hash: current_oid.to_string(),
             short_hash: current_oid.to_string()[..7].to_string(),
-            author: current_commit.author().name().unwrap_or("Unknown").to_string(),
+            author: current_commit
+                .author()
+                .name()
+                .unwrap_or("Unknown")
+                .to_string(),
             date: DateTime::from_timestamp(current_commit.time().seconds(), 0)
                 .unwrap_or_default()
                 .with_timezone(&Utc),
@@ -79,7 +83,9 @@ impl EtymologyTracer {
             let current_tree = current_commit.tree()?;
 
             // Diff parent -> current
-            let diff = self.repo.diff_tree_to_tree(Some(&parent_tree), Some(&current_tree), None)?;
+            let diff =
+                self.repo
+                    .diff_tree_to_tree(Some(&parent_tree), Some(&current_tree), None)?;
 
             // Find patch for our file
             let mut found_change = false;
@@ -91,14 +97,14 @@ impl EtymologyTracer {
             // Optimization: Find the delta for this file specifically.
             let mut file_patch = None;
             for i in 0..diff.deltas().len() {
-                 let delta = diff.get_delta(i).unwrap();
-                 let delta_path = delta.new_file().path().or(delta.old_file().path());
-                 if let Some(p) = delta_path {
-                     if p.to_string_lossy() == rel_path {
-                         file_patch = Some(git2::Patch::from_diff(&diff, i)?);
-                         break;
-                     }
-                 }
+                let delta = diff.get_delta(i).unwrap();
+                let delta_path = delta.new_file().path().or(delta.old_file().path());
+                if let Some(p) = delta_path {
+                    if p.to_string_lossy() == rel_path {
+                        file_patch = Some(git2::Patch::from_diff(&diff, i)?);
+                        break;
+                    }
+                }
             }
 
             if let Some(Some(patch)) = file_patch {
@@ -140,8 +146,13 @@ impl EtymologyTracer {
                             match line.origin() {
                                 '-' => {
                                     // Deleted line from parent
-                                    let content = std::str::from_utf8(line.content()).unwrap_or("").trim_end();
-                                    potential_ancestors.push((line.old_lineno().unwrap() as usize, content.to_string()));
+                                    let content = std::str::from_utf8(line.content())
+                                        .unwrap_or("")
+                                        .trim_end();
+                                    potential_ancestors.push((
+                                        line.old_lineno().unwrap() as usize,
+                                        content.to_string(),
+                                    ));
                                 }
                                 '+' => {
                                     // Added line (our line might be this one)
@@ -173,7 +184,8 @@ impl EtymologyTracer {
                             // Search ancestors.
                             // Get current content
                             let blob = self.get_file_blob(current_oid, rel_path)?;
-                            let current_content = get_line_from_blob(&blob, current_line).unwrap_or_default();
+                            let current_content =
+                                get_line_from_blob(&blob, current_line).unwrap_or_default();
 
                             // Find best match
                             let mut best_sim = 0.0;
@@ -182,7 +194,11 @@ impl EtymologyTracer {
                             for (old_ln, old_content) in &potential_ancestors {
                                 let dist = levenshtein(&current_content, old_content);
                                 let max_len = current_content.len().max(old_content.len());
-                                let sim = if max_len == 0 { 1.0 } else { 1.0 - (dist as f64 / max_len as f64) };
+                                let sim = if max_len == 0 {
+                                    1.0
+                                } else {
+                                    1.0 - (dist as f64 / max_len as f64)
+                                };
 
                                 if sim > best_sim {
                                     best_sim = sim;
@@ -238,7 +254,6 @@ impl EtymologyTracer {
                     // So it maps to current_line - total_shift.
                     new_line_in_parent = (current_line as isize - line_shift) as usize;
                 }
-
             } else {
                 // No patch for this file?
                 // It means the file wasn't changed at all in this commit.
@@ -252,12 +267,17 @@ impl EtymologyTracer {
 
             // Get content for new entry
             let blob = self.get_file_blob(current_oid, rel_path)?;
-            let content = get_line_from_blob(&blob, current_line).unwrap_or_else(|| "???".to_string());
+            let content =
+                get_line_from_blob(&blob, current_line).unwrap_or_else(|| "???".to_string());
 
             history.push(TraceEntry {
                 commit_hash: current_oid.to_string(),
                 short_hash: current_oid.to_string()[..7].to_string(),
-                author: current_commit.author().name().unwrap_or("Unknown").to_string(),
+                author: current_commit
+                    .author()
+                    .name()
+                    .unwrap_or("Unknown")
+                    .to_string(),
                 date: DateTime::from_timestamp(current_commit.time().seconds(), 0)
                     .unwrap_or_default()
                     .with_timezone(&Utc),
@@ -287,7 +307,9 @@ impl EtymologyTracer {
 }
 
 fn get_line_from_blob(blob: &[u8], line_num: usize) -> Option<String> {
-    if line_num == 0 { return None; }
+    if line_num == 0 {
+        return None;
+    }
     let s = std::str::from_utf8(blob).ok()?;
     s.lines().nth(line_num - 1).map(|s| s.to_string())
 }
@@ -317,13 +339,13 @@ mod tests {
         // `README.md` usually exists.
         let file = "README.md";
         if std::path::Path::new(file).exists() {
-             let tracer = EtymologyTracer::new(path).expect("Failed to init tracer");
-             // Trace line 1
-             let trace = tracer.trace_line(file, 1);
-             // It might fail if file not in HEAD (e.g. strict sparse checkout or something), but generally ok.
-             if let Ok(t) = trace {
-                 println!("Trace length: {}", t.len());
-             }
+            let tracer = EtymologyTracer::new(path).expect("Failed to init tracer");
+            // Trace line 1
+            let trace = tracer.trace_line(file, 1);
+            // It might fail if file not in HEAD (e.g. strict sparse checkout or something), but generally ok.
+            if let Ok(t) = trace {
+                println!("Trace length: {}", t.len());
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
-use rapier2d::prelude::*;
 use nalgebra::Vector2;
+use rapier2d::prelude::*;
 
 pub struct PhysicsWorld {
     pub rigid_body_set: RigidBodySet,
@@ -66,7 +66,9 @@ mod tests {
             .build();
         let body_handle = world.rigid_body_set.insert(rigid_body);
         let collider = ColliderBuilder::ball(0.5).build();
-        world.collider_set.insert_with_parent(collider, body_handle, &mut world.rigid_body_set);
+        world
+            .collider_set
+            .insert_with_parent(collider, body_handle, &mut world.rigid_body_set);
 
         // Step simulation
         for _ in 0..10 {

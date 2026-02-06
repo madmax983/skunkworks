@@ -449,8 +449,8 @@ where
                         2 => { // Midpoint
                             let mid_a = len_a / 2;
                             let mid_b = len_b / 2;
-                            for i in 0..mid_a { preview_items.push(ListItem::new(format!("{}", genes_a[i].op)).style(Style::default().fg(Color::Cyan))); }
-                            for i in mid_b..len_b { preview_items.push(ListItem::new(format!("{}", genes_b[i].op)).style(Style::default().fg(Color::Magenta))); }
+                            for gene in genes_a.iter().take(mid_a) { preview_items.push(ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Cyan))); }
+                            for gene in genes_b.iter().skip(mid_b) { preview_items.push(ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Magenta))); }
                         }
                         _ => {}
                     }
@@ -897,9 +897,9 @@ where
                             app_state.input_buffer.clear();
                         }
                         KeyCode::Esc => {
-                             vm.spirit_value = Some(crate::vm::Value::Int(0));
-                             vm.step();
-                             app_state.input_buffer.clear();
+                            vm.spirit_value = Some(crate::vm::Value::Int(0));
+                            vm.step();
+                            app_state.input_buffer.clear();
                         }
                         KeyCode::Char(c) => {
                             app_state.input_buffer.push(c);
@@ -925,24 +925,26 @@ where
                                             let pair = pairs.next().unwrap();
                                             match Gene::try_from_pair(pair) {
                                                 Ok(gene) => {
-                                            if app_state.selected_strand
-                                                < vm.dna.helix.strands.len()
-                                                && app_state.selected_gene
-                                                    < vm.dna.helix.strands
-                                                        [app_state.selected_strand]
-                                                        .genes
-                                                        .len()
-                                            {
-                                                vm.dna.helix.strands[app_state.selected_strand]
-                                                    .genes[app_state.selected_gene] = gene;
-                                                app_state.status_msg =
-                                                    "Gene updated successfully".to_string();
-                                            }
-                                            app_state.input_mode = InputMode::Normal;
-                                            app_state.input_buffer.clear();
+                                                    if app_state.selected_strand
+                                                        < vm.dna.helix.strands.len()
+                                                        && app_state.selected_gene
+                                                            < vm.dna.helix.strands
+                                                                [app_state.selected_strand]
+                                                                .genes
+                                                                .len()
+                                                    {
+                                                        vm.dna.helix.strands
+                                                            [app_state.selected_strand]
+                                                            .genes[app_state.selected_gene] = gene;
+                                                        app_state.status_msg =
+                                                            "Gene updated successfully".to_string();
+                                                    }
+                                                    app_state.input_mode = InputMode::Normal;
+                                                    app_state.input_buffer.clear();
                                                 }
                                                 Err(e) => {
-                                                    app_state.status_msg = format!("Parse Error: {}", e);
+                                                    app_state.status_msg =
+                                                        format!("Parse Error: {}", e);
                                                 }
                                             }
                                         }
@@ -1018,17 +1020,25 @@ where
                                 #[cfg(not(feature = "biophysics"))]
                                 {
                                     #[cfg(feature = "nova")]
-                                    { ViewMode::Metaphysics }
+                                    {
+                                        ViewMode::Metaphysics
+                                    }
                                     #[cfg(not(feature = "nova"))]
-                                    { ViewMode::Genome }
+                                    {
+                                        ViewMode::Genome
+                                    }
                                 }
                             }
                             #[cfg(feature = "biophysics")]
                             ViewMode::Cortex => {
                                 #[cfg(feature = "nova")]
-                                { ViewMode::Metaphysics }
+                                {
+                                    ViewMode::Metaphysics
+                                }
                                 #[cfg(not(feature = "nova"))]
-                                { ViewMode::Genome }
+                                {
+                                    ViewMode::Genome
+                                }
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Metaphysics => ViewMode::Laboratory,
@@ -1066,10 +1076,23 @@ where
                         ViewMode::Metaphysics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
-                            match app_state.selected_strand { // 0=A, 1=B, 2=Method
-                                0 => if app_state.lab_parent_a > 0 { app_state.lab_parent_a -= 1; },
-                                1 => if app_state.lab_parent_b > 0 { app_state.lab_parent_b -= 1; },
-                                2 => if app_state.lab_method > 0 { app_state.lab_method -= 1; },
+                            match app_state.selected_strand {
+                                // 0=A, 1=B, 2=Method
+                                0 => {
+                                    if app_state.lab_parent_a > 0 {
+                                        app_state.lab_parent_a -= 1;
+                                    }
+                                }
+                                1 => {
+                                    if app_state.lab_parent_b > 0 {
+                                        app_state.lab_parent_b -= 1;
+                                    }
+                                }
+                                2 => {
+                                    if app_state.lab_method > 0 {
+                                        app_state.lab_method -= 1;
+                                    }
+                                }
                                 _ => {}
                             }
                         }
@@ -1118,10 +1141,23 @@ where
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
-                            match app_state.selected_strand { // 0=A, 1=B, 2=Method
-                                0 => if app_state.lab_parent_a < max_strand { app_state.lab_parent_a += 1; },
-                                1 => if app_state.lab_parent_b < max_strand { app_state.lab_parent_b += 1; },
-                                2 => if app_state.lab_method < 2 { app_state.lab_method += 1; },
+                            match app_state.selected_strand {
+                                // 0=A, 1=B, 2=Method
+                                0 => {
+                                    if app_state.lab_parent_a < max_strand {
+                                        app_state.lab_parent_a += 1;
+                                    }
+                                }
+                                1 => {
+                                    if app_state.lab_parent_b < max_strand {
+                                        app_state.lab_parent_b += 1;
+                                    }
+                                }
+                                2 => {
+                                    if app_state.lab_method < 2 {
+                                        app_state.lab_method += 1;
+                                    }
+                                }
                                 _ => {}
                             }
                         }
@@ -1283,7 +1319,12 @@ where
                                     crate::ast::Nucleotide::Number(app_state.lab_method as i64),
                                 ];
                                 vm.execute_gene_inner(splice_op, &args);
-                                app_state.status_msg = format!("Spliced {} & {} (Method {})", app_state.lab_parent_a, app_state.lab_parent_b, app_state.lab_method);
+                                app_state.status_msg = format!(
+                                    "Spliced {} & {} (Method {})",
+                                    app_state.lab_parent_a,
+                                    app_state.lab_parent_b,
+                                    app_state.lab_method
+                                );
                             }
                         }
                     }

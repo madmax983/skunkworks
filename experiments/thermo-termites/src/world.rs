@@ -162,8 +162,8 @@ impl World {
 
         // Heat diffusion rate
         let diffusion = 0.20; // Fast
-        let cooling = 0.005;  // Global cooling
-        let evap = 0.01;      // Pheromone evaporation
+        let cooling = 0.005; // Global cooling
+        let evap = 0.01; // Pheromone evaporation
         let pheromone_diffusion = 0.1;
 
         // Use par_chunks_mut to allow writing to next_* safely if we split correctly.
@@ -226,8 +226,8 @@ impl World {
         let mut next_heats = vec![0.0; WIDTH * HEIGHT];
         let mut next_pheros = vec![0.0; WIDTH * HEIGHT];
 
-        for y in 1..HEIGHT-1 {
-            for x in 1..WIDTH-1 {
+        for y in 1..HEIGHT - 1 {
+            for x in 1..WIDTH - 1 {
                 let idx = y * WIDTH + x;
                 let cell = &self.grid[idx];
 
@@ -245,9 +245,9 @@ impl World {
 
                     // Walls insulate?
                     let diff_rate = if matches!(cell.material, Material::Wall) {
-                         diffusion * 0.1
+                        diffusion * 0.1
                     } else {
-                         diffusion
+                        diffusion
                     };
 
                     next_heats[idx] = (cell.heat + diff * diff_rate) * (1.0 - cooling);
@@ -260,7 +260,9 @@ impl World {
                 let right_p = self.grid[idx + 1].pheromone;
 
                 let avg_p = (top_p + bottom_p + left_p + right_p) * 0.25;
-                next_pheros[idx] = (cell.pheromone + (avg_p - cell.pheromone) * pheromone_diffusion) * (1.0 - evap);
+                next_pheros[idx] = (cell.pheromone
+                    + (avg_p - cell.pheromone) * pheromone_diffusion)
+                    * (1.0 - evap);
             }
         }
 
@@ -323,9 +325,11 @@ impl World {
                         agent.vy *= -1.0;
                         agent.y = agent.y.clamp(0.0, height - 1.0);
                         // Floor/Ceiling thermal interaction?
-                        if agent.y < 5.0 { agent.heat *= 0.8; } // Top is cooling sink (if -y is up)
-                        // Wait, y=0 is TOP in standard grid? usually.
-                        // Let's assume y=0 is TOP.
+                        if agent.y < 5.0 {
+                            agent.heat *= 0.8;
+                        } // Top is cooling sink (if -y is up)
+                          // Wait, y=0 is TOP in standard grid? usually.
+                          // Let's assume y=0 is TOP.
                     }
 
                     let ix = agent.x as usize;
@@ -337,11 +341,11 @@ impl World {
 
                         // Bounce off walls
                         if matches!(cell.material, Material::Wall) {
-                             agent.vx *= -1.0;
-                             agent.vy *= -1.0;
-                             // Simple bounce
-                             agent.x += agent.vx;
-                             agent.y += agent.vy;
+                            agent.vx *= -1.0;
+                            agent.vy *= -1.0;
+                            // Simple bounce
+                            agent.x += agent.vx;
+                            agent.y += agent.vy;
                         } else if matches!(cell.material, Material::Server) {
                             agent.heat += 5.0;
                             cell.heat -= 0.1; // Cool the server slightly
@@ -353,7 +357,7 @@ impl World {
                         agent.heat += transfer;
                         cell.heat -= transfer * 0.01; // Air has less thermal mass
                     }
-                },
+                }
                 AgentKind::Termite => {
                     // Move Randomly
                     agent.vx += rng.gen_range(-0.5..0.5);
@@ -376,56 +380,66 @@ impl World {
 
                     // Actions
                     if idx < self.grid.len() {
-                         // Pick/Drop
-                         // Count neighbors
-                         let mut neighbors = 0;
-                         // Simple 4-neighbor check
-                         if ix > 0 && matches!(self.grid[idx-1].material, Material::Wall) { neighbors += 1; }
-                         if ix < WIDTH-1 && matches!(self.grid[idx+1].material, Material::Wall) { neighbors += 1; }
-                         if iy > 0 && matches!(self.grid[idx-WIDTH].material, Material::Wall) { neighbors += 1; }
-                         if iy < HEIGHT-1 && matches!(self.grid[idx+WIDTH].material, Material::Wall) { neighbors += 1; }
+                        // Pick/Drop
+                        // Count neighbors
+                        let mut neighbors = 0;
+                        // Simple 4-neighbor check
+                        if ix > 0 && matches!(self.grid[idx - 1].material, Material::Wall) {
+                            neighbors += 1;
+                        }
+                        if ix < WIDTH - 1 && matches!(self.grid[idx + 1].material, Material::Wall) {
+                            neighbors += 1;
+                        }
+                        if iy > 0 && matches!(self.grid[idx - WIDTH].material, Material::Wall) {
+                            neighbors += 1;
+                        }
+                        if iy < HEIGHT - 1
+                            && matches!(self.grid[idx + WIDTH].material, Material::Wall)
+                        {
+                            neighbors += 1;
+                        }
 
-                         let cell = &mut self.grid[idx];
+                        let cell = &mut self.grid[idx];
 
-                         // Drop Pheromone
-                         if agent.carrying {
-                             cell.pheromone = (cell.pheromone + 10.0).min(100.0);
-                         }
+                        // Drop Pheromone
+                        if agent.carrying {
+                            cell.pheromone = (cell.pheromone + 10.0).min(100.0);
+                        }
 
-                         if agent.carrying {
-                             // Wants to drop
-                             // If near other walls (building) OR High Pheromone
-                             // Avoid dropping on servers or existing walls
-                             if matches!(cell.material, Material::Empty) {
-                                 let should_drop = if neighbors > 0 {
-                                     rng.gen_bool(0.05) // Build onto existing
-                                 } else if cell.pheromone > 20.0 {
-                                     rng.gen_bool(0.1) // Stigmergy
-                                 } else {
-                                     rng.gen_bool(0.001) // Random drop
-                                 };
+                        if agent.carrying {
+                            // Wants to drop
+                            // If near other walls (building) OR High Pheromone
+                            // Avoid dropping on servers or existing walls
+                            if matches!(cell.material, Material::Empty) {
+                                let should_drop = if neighbors > 0 {
+                                    rng.gen_bool(0.05) // Build onto existing
+                                } else if cell.pheromone > 20.0 {
+                                    rng.gen_bool(0.1) // Stigmergy
+                                } else {
+                                    rng.gen_bool(0.001) // Random drop
+                                };
 
-                                 if should_drop {
-                                     cell.material = Material::Wall;
-                                     agent.carrying = false;
-                                 }
-                             }
-                         } else {
-                             // Wants to pick
-                             if matches!(cell.material, Material::Wall) {
-                                 // Pick if isolated
-                                 let should_pick = if neighbors <= 1 {
-                                     rng.gen_bool(0.1)
-                                 } else {
-                                     rng.gen_bool(0.0001) // Rarely break walls
-                                 };
+                                if should_drop {
+                                    cell.material = Material::Wall;
+                                    agent.carrying = false;
+                                }
+                            }
+                        } else {
+                            // Wants to pick
+                            if matches!(cell.material, Material::Wall) {
+                                // Pick if isolated
+                                let should_pick = if neighbors <= 1 {
+                                    rng.gen_bool(0.1)
+                                } else {
+                                    rng.gen_bool(0.0001) // Rarely break walls
+                                };
 
-                                 if should_pick {
-                                     cell.material = Material::Empty;
-                                     agent.carrying = true;
-                                 }
-                             }
-                         }
+                                if should_pick {
+                                    cell.material = Material::Empty;
+                                    agent.carrying = true;
+                                }
+                            }
+                        }
                     }
                 }
             }

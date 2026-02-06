@@ -1,9 +1,9 @@
 use anyhow::{Context, Result};
 use git2::{Oid, Repository};
+use num_complex::Complex;
 use poincare_disk::{Mobius, Point};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::f64::consts::PI;
-use num_complex::Complex;
 
 #[derive(Clone, Debug)]
 pub struct CommitData {
@@ -64,7 +64,7 @@ impl CommitGraph {
 
     pub fn ensure_neighbors_loaded(&mut self, oid: Oid) -> Result<()> {
         let parents = if let Some(data) = self.commits.get(&oid) {
-             data.parents.clone()
+            data.parents.clone()
         } else {
             self.load_commit(oid)?;
             self.commits.get(&oid).unwrap().parents.clone()
@@ -112,8 +112,16 @@ impl CommitGraph {
             let data = self.commits.get(&u).unwrap();
             let mut neighbors = Vec::new();
             // Prioritize parents then children? Mixed is fine.
-            for p in &data.parents { if !visited.contains(p) { neighbors.push(*p); } }
-            for c in &data.children { if !visited.contains(c) { neighbors.push(*c); } }
+            for p in &data.parents {
+                if !visited.contains(p) {
+                    neighbors.push(*p);
+                }
+            }
+            for c in &data.children {
+                if !visited.contains(c) {
+                    neighbors.push(*c);
+                }
+            }
 
             if neighbors.is_empty() {
                 continue;
@@ -127,8 +135,14 @@ impl CommitGraph {
                 let spread = 2.0 * PI - (PI / 2.0); // 270 degrees available
                 let start_angle = p_angle + PI - (spread / 2.0);
 
-                let step = if count > 1 { spread / (count as f64 - 1.0) } else { 0.0 };
-                (0..count).map(|i| start_angle + step * (i as f64)).collect()
+                let step = if count > 1 {
+                    spread / (count as f64 - 1.0)
+                } else {
+                    0.0
+                };
+                (0..count)
+                    .map(|i| start_angle + step * (i as f64))
+                    .collect()
             } else {
                 // Root: 360 degrees
                 let step = 2.0 * PI / (count as f64);
@@ -193,20 +207,24 @@ mod tests {
 
     #[test]
     fn test_layout() {
-        let path = if Path::new("../../.git").exists() { "../.." } else { "." };
+        let path = if Path::new("../../.git").exists() {
+            "../.."
+        } else {
+            "."
+        };
         if let Ok(mut graph) = CommitGraph::new(path) {
-             let layout = graph.layout(graph.head_oid, 2).unwrap();
-             assert!(!layout.is_empty());
-             // Head should be at 0,0 (approx)
-             let (head_oid, head_pos) = layout[0];
-             assert_eq!(head_oid, graph.head_oid);
-             assert!(head_pos.norm() < 1e-9);
+            let layout = graph.layout(graph.head_oid, 2).unwrap();
+            assert!(!layout.is_empty());
+            // Head should be at 0,0 (approx)
+            let (head_oid, head_pos) = layout[0];
+            assert_eq!(head_oid, graph.head_oid);
+            assert!(head_pos.norm() < 1e-9);
 
-             if layout.len() > 1 {
-                 // Check second node distance
-                 let (_, pos) = layout[1];
-                 assert!(pos.norm() > 0.3); // Should be around 0.45
-             }
+            if layout.len() > 1 {
+                // Check second node distance
+                let (_, pos) = layout[1];
+                assert!(pos.norm() > 0.3); // Should be around 0.45
+            }
         }
     }
 }

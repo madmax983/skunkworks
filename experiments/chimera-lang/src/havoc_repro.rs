@@ -107,9 +107,14 @@ mod tests {
         //    If we tune it closer, we might get infinity.
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] }, // Hyperbolic
-            Gene { op: OpCode::Shape, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(6)],
+            }, // Hyperbolic
+            Gene {
+                op: OpCode::Shape,
+                args: vec![],
+            },
             // Stack for Virus: [ "Migrate", dy, dx ] -> Virus pops y, x.
             // Virus executes "Migrate". Migrate expects [dy, dx].
             // So we need to push [dy, dx] BEFORE calling Virus?
@@ -117,13 +122,30 @@ mod tests {
             // So we need stack to be [..., dy, dx, "Migrate", y, x] (top)
             // Virus pops x, y. Pops "Migrate". Executes it.
             // Migrate pops dx, dy.
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-5)] }, // dy
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-5)] }, // dx
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Migrate".to_string())] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] }, // x
-            Gene { op: OpCode::Virus, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(-5)],
+            }, // dy
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(-5)],
+            }, // dx
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Migrate".to_string())],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(15)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(15)],
+            }, // x
+            Gene {
+                op: OpCode::Virus,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

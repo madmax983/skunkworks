@@ -1,5 +1,5 @@
-mod git;
 mod audio;
+mod git;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -24,13 +24,13 @@ use tui_shared::Tui;
 use crate::audio::AudioEngine;
 
 const WIDTH: usize = 100; // Number of X buckets (File Hash buckets)
-const DEPTH: usize = 60;  // Number of Z rows (Visible Commits)
+const DEPTH: usize = 60; // Number of Z rows (Visible Commits)
 
 struct App {
-    commits: Vec<CommitData>,      // All loaded commits (Oldest -> Newest)
-    terrain: VecDeque<Vec<u8>>,    // Current visible terrain (Rows of heights)
-    commit_idx: usize,             // Index of next commit to enter the horizon
-    speed: f64,                    // Flight speed (commits per second)
+    commits: Vec<CommitData>,   // All loaded commits (Oldest -> Newest)
+    terrain: VecDeque<Vec<u8>>, // Current visible terrain (Rows of heights)
+    commit_idx: usize,          // Index of next commit to enter the horizon
+    speed: f64,                 // Flight speed (commits per second)
     paused: bool,
     accumulation: f64,
     audio: AudioEngine,
@@ -108,7 +108,11 @@ impl App {
 
             // Height based on changes
             let magnitude = change.insertions + change.deletions;
-            let height = if magnitude == 0 { 0 } else { (magnitude as f64).log2() as u8 + 1 };
+            let height = if magnitude == 0 {
+                0
+            } else {
+                (magnitude as f64).log2() as u8 + 1
+            };
 
             // Accumulate height in bucket (capped at 40)
             row[bucket] = row[bucket].saturating_add(height).min(40);
@@ -195,7 +199,9 @@ fn ui(f: &mut Frame, app: &App) {
 
                 for (x, &h) in row.iter().enumerate() {
                     let h = h as f64;
-                    if h == 0.0 { continue; }
+                    if h == 0.0 {
+                        continue;
+                    }
 
                     let x_pos = x as f64;
                     // Perspective: Distant things are higher up on screen.
