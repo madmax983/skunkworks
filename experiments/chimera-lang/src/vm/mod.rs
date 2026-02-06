@@ -71,7 +71,7 @@ pub mod resonance;
 pub mod silicon;
 
 #[cfg(feature = "resonance")]
-use crossbeam_channel::Sender;
+use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioCommand;
 
@@ -258,6 +258,10 @@ pub struct ChimeraVM {
     pub omens: Vec<oracle::Omen>,
     #[cfg(feature = "resonance")]
     pub audio_tx: Option<Sender<AudioCommand>>,
+    #[cfg(feature = "resonance")]
+    pub snapshot_rx: Option<Receiver<Vec<f32>>>,
+    #[cfg(feature = "resonance")]
+    pub audio_snapshot: Vec<f32>,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
     #[cfg(feature = "nova")]
@@ -385,6 +389,10 @@ impl ChimeraVM {
             omens: Vec::new(),
             #[cfg(feature = "resonance")]
             audio_tx: None,
+            #[cfg(feature = "resonance")]
+            snapshot_rx: None,
+            #[cfg(feature = "resonance")]
+            audio_snapshot: vec![0.0; GRID_SIZE * GRID_SIZE],
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
             #[cfg(feature = "nova")]
@@ -409,6 +417,25 @@ impl ChimeraVM {
     #[cfg(feature = "resonance")]
     pub fn set_audio_tx(&mut self, tx: Sender<AudioCommand>) {
         self.audio_tx = Some(tx);
+    }
+
+    #[cfg(feature = "resonance")]
+    pub fn set_snapshot_rx(&mut self, rx: Receiver<Vec<f32>>) {
+        self.snapshot_rx = Some(rx);
+    }
+
+    #[cfg(feature = "resonance")]
+    pub fn update_audio_state(&mut self) {
+        if let Some(rx) = &self.snapshot_rx {
+            // Drain receiver, keeping only the latest snapshot
+            let mut last_snapshot = None;
+            while let Ok(snap) = rx.try_recv() {
+                last_snapshot = Some(snap);
+            }
+            if let Some(snap) = last_snapshot {
+                self.audio_snapshot = snap;
+            }
+        }
     }
 
     /// Triggers an internal reflex event (interrupt).
@@ -1139,6 +1166,11 @@ impl ChimeraVM {
             }
         }
 
+        #[cfg(feature = "resonance")]
+        if !time_frozen {
+            self.update_audio_state();
+        }
+
         #[cfg(feature = "silicon")]
         if !time_frozen && self.silicon_mode {
             silicon::step_circuit(self);
@@ -1573,7 +1605,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "resonance")]
-            OpCode::Pluck | OpCode::Oscillate => {
+            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
                 resonance::exec_resonance_op(self, op, args);
                 None
             }
