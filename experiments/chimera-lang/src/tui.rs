@@ -13,15 +13,17 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    widgets::{Block, Borders, List, ListItem, Paragraph, Sparkline},
     Terminal,
 };
 use std::io;
 
 #[derive(Debug, PartialEq)]
-enum ViewMode {
+pub(crate) enum ViewMode {
     Genome,
     Grid,
+    #[cfg(feature = "biophysics")]
+    Cortex,
 }
 
 enum InputMode {
@@ -29,18 +31,22 @@ enum InputMode {
     Editing,
 }
 
-struct AppState {
-    view_mode: ViewMode,
+pub(crate) struct AppState {
+    pub(crate) view_mode: ViewMode,
     input_mode: InputMode,
     selected_strand: usize,
     selected_gene: usize,
     grid_cursor: (usize, usize),
     input_buffer: String,
     status_msg: String,
+    #[cfg(feature = "biophysics")]
+    pub(crate) voltage_history: Vec<u64>,
+    #[cfg(feature = "biophysics")]
+    pub(crate) selected_neuron_coords: Option<(usize, usize)>,
 }
 
 impl AppState {
-    fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
             view_mode: ViewMode::Genome,
             input_mode: InputMode::Normal,
@@ -49,6 +55,10 @@ impl AppState {
             grid_cursor: (0, 0),
             input_buffer: String::new(),
             status_msg: String::new(),
+            #[cfg(feature = "biophysics")]
+            voltage_history: Vec::with_capacity(100),
+            #[cfg(feature = "biophysics")]
+            selected_neuron_coords: None,
         }
     }
 }
@@ -95,7 +105,104 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        #[cfg(feature = "biophysics")]
+        if let Some(coord) = app_state.selected_neuron_coords {
+            if let Some(neuron) = vm.neurons.get(&coord) {
+                // Push voltage (mapped to u64 for Sparkline)
+                // V is approx -100 to +50. Shift by +100.
+                let v_norm = (neuron.v + 100.0).clamp(0.0, 200.0) as u64;
+                if app_state.voltage_history.len() >= 100 {
+                    app_state.voltage_history.remove(0);
+                }
+                app_state.voltage_history.push(v_norm);
+            }
+        }
+
         terminal.draw(|f| {
+            // Handle Cortex View
+            #[cfg(feature = "biophysics")]
+            if let ViewMode::Cortex = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+                    .split(f.area());
+
+                let right_split = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                    .split(chunks[1]);
+
+                // Neuron List
+                let mut neuron_items = Vec::new();
+                let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
+                neurons_sorted.sort();
+
+                for (i, coord) in neurons_sorted.iter().enumerate() {
+                    let neuron = &vm.neurons[coord];
+                    let is_selected = app_state.selected_neuron_coords == Some(**coord);
+
+                    let style = if is_selected {
+                        Style::default()
+                            .fg(Color::Yellow)
+                            .add_modifier(Modifier::BOLD)
+                    } else {
+                        Style::default().fg(Color::White)
+                    };
+
+                    // Auto-select first if none selected
+                    if app_state.selected_neuron_coords.is_none() && i == 0 {
+                        app_state.selected_neuron_coords = Some(**coord);
+                    }
+
+                    neuron_items.push(ListItem::new(Span::styled(
+                        format!("({}, {}) - {:.2}mV", coord.1, coord.0, neuron.v),
+                        style,
+                    )));
+                }
+
+                let neuron_list = List::new(neuron_items).block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Neurons (Cortex)"),
+                );
+                f.render_widget(neuron_list, chunks[0]);
+
+                // Details & Oscilloscope
+                if let Some(coord) = app_state.selected_neuron_coords {
+                    if let Some(neuron) = vm.neurons.get(&coord) {
+                        // Sparkline
+                        let history = &app_state.voltage_history;
+                        let sparkline = Sparkline::default()
+                            .block(
+                                Block::default()
+                                    .title("Voltage Trace")
+                                    .borders(Borders::ALL),
+                            )
+                            .data(history)
+                            .style(Style::default().fg(Color::Cyan));
+                        f.render_widget(sparkline, right_split[1]);
+
+                        // Details
+                        let details = vec![
+                            Line::from(format!("Membrane Potential (v): {:.2} mV", neuron.v)),
+                            Line::from(format!("Injected Current (i_inj): {:.2}", neuron.i_inj)),
+                            Line::from(" "),
+                            Line::from(format!("Na Activation (m): {:.4}", neuron.m)),
+                            Line::from(format!("Na Inactivation (h): {:.4}", neuron.h)),
+                            Line::from(format!("K Activation (n): {:.4}", neuron.n)),
+                        ];
+                        let info = Paragraph::new(details).block(
+                            Block::default()
+                                .borders(Borders::ALL)
+                                .title(format!("Neuron Details [{}, {}]", coord.1, coord.0)),
+                        );
+                        f.render_widget(info, right_split[0]);
+                    }
+                }
+
+                return; // Skip normal rendering
+            }
+
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
@@ -185,6 +292,8 @@ where
             let mode_str = match app_state.view_mode {
                 ViewMode::Genome => "GENOME",
                 ViewMode::Grid => "GRID",
+                #[cfg(feature = "biophysics")]
+                ViewMode::Cortex => "CORTEX",
             };
 
             let title = match app_state.input_mode {
@@ -481,6 +590,12 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "biophysics")]
+                                ViewMode::Cortex => {
+                                    // No editing for Cortex view yet
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -510,9 +625,22 @@ where
                     KeyCode::Tab => {
                         app_state.view_mode = match app_state.view_mode {
                             ViewMode::Genome => ViewMode::Grid,
-                            ViewMode::Grid => ViewMode::Genome,
+                            ViewMode::Grid => {
+                                #[cfg(feature = "biophysics")]
+                                {
+                                    ViewMode::Cortex
+                                }
+                                #[cfg(not(feature = "biophysics"))]
+                                {
+                                    ViewMode::Genome
+                                }
+                            }
+                            #[cfg(feature = "biophysics")]
+                            ViewMode::Cortex => ViewMode::Genome,
                         };
                     }
+                    #[cfg(feature = "biophysics")]
+                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
@@ -536,6 +664,24 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "biophysics")]
+                        ViewMode::Cortex => {
+                            let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
+                            neurons_sorted.sort();
+                            if let Some(current) = app_state.selected_neuron_coords {
+                                if let Some(pos) =
+                                    neurons_sorted.iter().position(|&c| *c == current)
+                                {
+                                    if pos + 1 < neurons_sorted.len() {
+                                        app_state.selected_neuron_coords =
+                                            Some(*neurons_sorted[pos + 1]);
+                                        app_state.voltage_history.clear(); // Reset history on switch
+                                    }
+                                }
+                            } else if !neurons_sorted.is_empty() {
+                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
+                            }
+                        }
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -557,6 +703,24 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "biophysics")]
+                        ViewMode::Cortex => {
+                            let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
+                            neurons_sorted.sort();
+                            if let Some(current) = app_state.selected_neuron_coords {
+                                if let Some(pos) =
+                                    neurons_sorted.iter().position(|&c| *c == current)
+                                {
+                                    if pos > 0 {
+                                        app_state.selected_neuron_coords =
+                                            Some(*neurons_sorted[pos - 1]);
+                                        app_state.voltage_history.clear();
+                                    }
+                                }
+                            } else if !neurons_sorted.is_empty() {
+                                app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -565,6 +729,8 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "biophysics")]
+                        ViewMode::Cortex => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -573,6 +739,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "biophysics")]
+                        ViewMode::Cortex => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -648,6 +816,11 @@ where
                                     crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
                                     _ => app_state.input_buffer = String::new(),
                                 }
+                            }
+                            #[cfg(feature = "biophysics")]
+                            ViewMode::Cortex => {
+                                // Prevent entering edit mode for Cortex
+                                app_state.input_mode = InputMode::Normal;
                             }
                         }
                     }
