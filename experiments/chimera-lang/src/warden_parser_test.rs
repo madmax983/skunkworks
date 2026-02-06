@@ -14,10 +14,17 @@ mod tests {
 
         for pair in pairs {
             let result = crate::ast::Strand::try_from_pair(pair);
-            assert!(result.is_err(), "Parser should return error on huge number, but succeeded");
+            assert!(
+                result.is_err(),
+                "Parser should return error on huge number, but succeeded"
+            );
 
             if let Err(msg) = result {
-                assert!(msg.contains("Invalid number"), "Error message should mention invalid number, got: {}", msg);
+                assert!(
+                    msg.contains("Invalid number"),
+                    "Error message should mention invalid number, got: {}",
+                    msg
+                );
             }
         }
     }

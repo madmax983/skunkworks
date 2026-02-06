@@ -511,6 +511,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Lysis,
 
+    // Necromancy Features
+    /// **[Nova]** Buries a strand in the graveyard (copies and clears).
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Bury,
+    /// **[Nova]** Exhumes a strand from the graveyard (restores it).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Exhume,
+    /// **[Nova]** Executes a dead strand from the graveyard (ephemeral).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Seance,
+    /// **[Nova]** Gains energy from the graveyard.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., energy_gained ]`
+    #[cfg(feature = "nova")]
+    Mourn,
+
     /// **[Nova]** Compiles a string into a strand.
     ///
     /// **Stack:** `[ ..., source_string ] -> [ ..., new_strand_idx ]`
@@ -844,7 +866,10 @@ mod tests {
         assert_eq!(OpCode::from_str("s_len"), Ok(OpCode::SLen));
         assert_eq!(OpCode::from_str("brz_s"), Ok(OpCode::BrzS));
         assert_eq!(OpCode::from_str("helix_len"), Ok(OpCode::HelixLen));
-        assert_eq!(OpCode::from_str("unknown_op"), Ok(OpCode::Unknown("unknown_op".to_string())));
+        assert_eq!(
+            OpCode::from_str("unknown_op"),
+            Ok(OpCode::Unknown("unknown_op".to_string()))
+        );
     }
 
     #[test]

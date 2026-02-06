@@ -1,5 +1,5 @@
-use rapier2d::prelude::*;
 use crate::physics::PhysicsWorld;
+use rapier2d::prelude::*;
 
 pub struct Puppet {
     pub torso: RigidBodyHandle,
@@ -15,7 +15,9 @@ impl Puppet {
             .build();
         let torso = world.rigid_body_set.insert(torso_rb);
         let torso_coll = ColliderBuilder::cuboid(1.0, 2.0).build();
-        world.collider_set.insert_with_parent(torso_coll, torso, &mut world.rigid_body_set);
+        world
+            .collider_set
+            .insert_with_parent(torso_coll, torso, &mut world.rigid_body_set);
 
         // Legs
         let leg_shape = ColliderBuilder::cuboid(0.3, 1.5).build();
@@ -25,7 +27,11 @@ impl Puppet {
             .translation(vector![x - 0.5, y - 2.0])
             .build();
         let left_leg = world.rigid_body_set.insert(l_leg_rb);
-        world.collider_set.insert_with_parent(leg_shape.clone(), left_leg, &mut world.rigid_body_set);
+        world.collider_set.insert_with_parent(
+            leg_shape.clone(),
+            left_leg,
+            &mut world.rigid_body_set,
+        );
 
         // Joint Torso-LeftLeg (Hip)
         let joint = RevoluteJointBuilder::new()
@@ -39,25 +45,37 @@ impl Puppet {
             .translation(vector![x + 0.5, y - 2.0])
             .build();
         let right_leg = world.rigid_body_set.insert(r_leg_rb);
-        world.collider_set.insert_with_parent(leg_shape, right_leg, &mut world.rigid_body_set);
+        world
+            .collider_set
+            .insert_with_parent(leg_shape, right_leg, &mut world.rigid_body_set);
 
         // Joint Torso-RightLeg
         let joint = RevoluteJointBuilder::new()
             .local_anchor1(point![0.5, -2.0])
             .local_anchor2(point![0.0, 1.5])
             .build();
-        world.impulse_joint_set.insert(torso, right_leg, joint, true);
+        world
+            .impulse_joint_set
+            .insert(torso, right_leg, joint, true);
 
         // Hang the puppet from a static point so it dangles
-        let anchor = RigidBodyBuilder::fixed().translation(vector![x, y + 5.0]).build();
+        let anchor = RigidBodyBuilder::fixed()
+            .translation(vector![x, y + 5.0])
+            .build();
         let anchor_h = world.rigid_body_set.insert(anchor);
         let hanger = RopeJointBuilder::new(5.0)
-             .local_anchor1(point![0.0, 0.0])
-             .local_anchor2(point![0.0, 2.0])
-             .build();
-        world.impulse_joint_set.insert(anchor_h, torso, hanger, true);
+            .local_anchor1(point![0.0, 0.0])
+            .local_anchor2(point![0.0, 2.0])
+            .build();
+        world
+            .impulse_joint_set
+            .insert(anchor_h, torso, hanger, true);
 
-        Puppet { torso, left_leg, right_leg }
+        Puppet {
+            torso,
+            left_leg,
+            right_leg,
+        }
     }
 
     pub fn attach_rod(world: &mut PhysicsWorld, follower: RigidBodyHandle, limb: RigidBodyHandle) {
@@ -68,9 +86,9 @@ impl Puppet {
         let dist = (p1 - p2).magnitude();
 
         let joint = SpringJointBuilder::new(dist, 10000.0, 10.0) // Stiff spring
-             .local_anchor1(point![0.0, 1.0]) // Top of follower
-             .local_anchor2(point![0.0, -1.5]) // Bottom of leg
-             .build();
+            .local_anchor1(point![0.0, 1.0]) // Top of follower
+            .local_anchor2(point![0.0, -1.5]) // Bottom of leg
+            .build();
         world.impulse_joint_set.insert(follower, limb, joint, true);
     }
 }

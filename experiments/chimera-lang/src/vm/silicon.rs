@@ -115,9 +115,10 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
     let mut next_grid = vm.grid.clone();
 
     // Helper to get neighbor coords
-    let get_neighbor = |vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64| -> Option<(usize, usize)> {
-        vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-    };
+    let get_neighbor =
+        |vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64| -> Option<(usize, usize)> {
+            vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+        };
 
     for y in 0..rows {
         for x in 0..cols {

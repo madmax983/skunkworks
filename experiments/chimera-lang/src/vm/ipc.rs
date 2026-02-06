@@ -1,13 +1,13 @@
 #[cfg(feature = "nova")]
 use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
+use rand::Rng;
+#[cfg(feature = "nova")]
 use std::fs;
 #[cfg(feature = "nova")]
 use std::path::Path;
 #[cfg(feature = "nova")]
 use std::time::{SystemTime, UNIX_EPOCH};
-#[cfg(feature = "nova")]
-use rand::Rng;
 
 #[cfg(feature = "nova")]
 const ETHER_DIR: &str = ".chimera_ether";
@@ -77,7 +77,8 @@ pub fn receive(vm: &mut ChimeraVM) {
                                     vm.stack.push(value);
                                     // Consume message
                                     let _ = fs::remove_file(lock_path);
-                                    vm.output.push(format!("RECEIVE: Read from channel {}", channel));
+                                    vm.output
+                                        .push(format!("RECEIVE: Read from channel {}", channel));
                                     vm.energy = vm.energy.saturating_sub(5);
                                     found = true;
                                     break;
@@ -100,7 +101,8 @@ pub fn receive(vm: &mut ChimeraVM) {
                             .push(format!("RECEIVE: Channel {} empty", channel));
                     }
                 } else {
-                     vm.output.push("Error: Failed to read ether directory".to_string());
+                    vm.output
+                        .push("Error: Failed to read ether directory".to_string());
                 }
             } else {
                 vm.stack.push(Value::Int(0));

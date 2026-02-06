@@ -1,6 +1,6 @@
-use std::path::{Path, PathBuf};
 use anyhow::Result;
 use std::f32::consts::PI;
+use std::path::{Path, PathBuf};
 
 #[derive(Clone, Debug)]
 pub struct FsNode {
@@ -26,7 +26,11 @@ pub fn scan_directory(path: &Path) -> Result<Vec<FsNode>> {
     for entry in std::fs::read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
-        let name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
+        let name = path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
         let is_dir = path.is_dir();
 
         nodes.push(FsNode {
@@ -39,9 +43,7 @@ pub fn scan_directory(path: &Path) -> Result<Vec<FsNode>> {
     }
 
     // Sort by name (dirs first)
-    nodes.sort_by(|a, b| {
-        b.is_dir.cmp(&a.is_dir).then(a.name.cmp(&b.name))
-    });
+    nodes.sort_by(|a, b| b.is_dir.cmp(&a.is_dir).then(a.name.cmp(&b.name)));
 
     // Layout
     layout_nodes(&mut nodes);

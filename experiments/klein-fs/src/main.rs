@@ -1,6 +1,6 @@
-mod topology;
 mod fs;
 mod renderer;
+mod topology;
 
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
@@ -66,8 +66,8 @@ impl App {
     fn on_tick(&mut self) {
         // Auto-rotate slowly if desired, or just smooth move
         if !self.fs_nodes.is_empty() {
-             // Placeholder for auto-focus logic
-             let _target_node = &self.fs_nodes[self.selected_idx];
+            // Placeholder for auto-focus logic
+            let _target_node = &self.fs_nodes[self.selected_idx];
         }
     }
 
@@ -129,8 +129,12 @@ fn main() -> Result<()> {
                     KeyCode::Down => app.move_selection(1),
                     KeyCode::Char('w') => app.camera_height += 0.5,
                     KeyCode::Char('s') => app.camera_height -= 0.5,
-                    KeyCode::Enter => { app.enter_directory()?; },
-                    KeyCode::Backspace => { app.go_up()?; },
+                    KeyCode::Enter => {
+                        app.enter_directory()?;
+                    }
+                    KeyCode::Backspace => {
+                        app.go_up()?;
+                    }
                     _ => {}
                 }
             }
@@ -156,10 +160,7 @@ fn main() -> Result<()> {
 fn ui(f: &mut Frame, app: &mut App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(f.area());
 
     // Info Bar
@@ -177,13 +178,16 @@ fn ui(f: &mut Frame, app: &mut App) {
             Span::raw(" | Selected: "),
             Span::styled(selected_name, Style::default().fg(Color::Yellow)),
         ]),
-        Line::from(vec![
-            Span::raw("Arrows: Rotate/Select | W/S: Height | Enter: Open | Backspace: Up | Q: Quit"),
-        ]),
+        Line::from(vec![Span::raw(
+            "Arrows: Rotate/Select | W/S: Height | Enter: Open | Backspace: Up | Q: Quit",
+        )]),
     ];
 
-    let info = Paragraph::new(info_text)
-        .block(Block::default().borders(Borders::ALL).title("Klein File System"));
+    let info = Paragraph::new(info_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Klein File System"),
+    );
     f.render_widget(info, chunks[1]);
 
     // 3D Canvas
@@ -212,7 +216,11 @@ fn ui(f: &mut Frame, app: &mut App) {
     let aspect = (width * 0.5) / height;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Figure-8 Immersion"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Figure-8 Immersion"),
+        )
         .x_bounds([-2.0, 2.0])
         .y_bounds([-1.5, 1.5])
         .paint(move |ctx| {

@@ -24,16 +24,22 @@ pub fn exec_security_op(
                     if s_idx < vm.dna.helix.strands.len() {
                         let hash = hash_strand(&vm.dna.helix.strands[s_idx]);
                         vm.immune_system.insert(hash);
-                        vm.output.push(format!("VACCINATE: Immunized against strand {} (Hash: {:x})", s_idx, hash));
+                        vm.output.push(format!(
+                            "VACCINATE: Immunized against strand {} (Hash: {:x})",
+                            s_idx, hash
+                        ));
                         vm.energy = vm.energy.saturating_sub(10);
                     } else {
-                        vm.output.push("Error: Strand index out of bounds for vaccinate".to_string());
+                        vm.output
+                            .push("Error: Strand index out of bounds for vaccinate".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for vaccinate".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for vaccinate".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for vaccinate".to_string());
+                vm.output
+                    .push("Error: Stack underflow for vaccinate".to_string());
             }
         }
         OpCode::Verify => {
@@ -43,18 +49,25 @@ pub fn exec_security_op(
                     let s_idx = idx as usize;
                     if s_idx < vm.dna.helix.strands.len() {
                         let hash = hash_strand(&vm.dna.helix.strands[s_idx]);
-                        let is_trusted = if vm.immune_system.contains(&hash) { 1 } else { 0 };
+                        let is_trusted = if vm.immune_system.contains(&hash) {
+                            1
+                        } else {
+                            0
+                        };
                         vm.stack.push(Value::Int(is_trusted));
                         vm.energy = vm.energy.saturating_sub(1);
                     } else {
-                        vm.output.push("Error: Strand index out of bounds for verify".to_string());
+                        vm.output
+                            .push("Error: Strand index out of bounds for verify".to_string());
                         vm.stack.push(Value::Int(0)); // Default to distrust
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for verify".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for verify".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for verify".to_string());
+                vm.output
+                    .push("Error: Stack underflow for verify".to_string());
             }
         }
         OpCode::Audit => {
@@ -66,7 +79,10 @@ pub fn exec_security_op(
                     untrusted_indices.push(Value::Int(i as i64));
                 }
             }
-            vm.stack.push(Value::Junction(crate::ast::JunctionType::All, untrusted_indices));
+            vm.stack.push(Value::Junction(
+                crate::ast::JunctionType::All,
+                untrusted_indices,
+            ));
             vm.energy = vm.energy.saturating_sub(5);
             vm.output.push("AUDIT: Scan complete".to_string());
         }

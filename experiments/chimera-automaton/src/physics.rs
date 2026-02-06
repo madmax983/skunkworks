@@ -1,5 +1,5 @@
-use rapier2d::prelude::*;
 use nalgebra::Vector2;
+use rapier2d::prelude::*;
 
 pub struct PhysicsWorld {
     pub rigid_body_set: RigidBodySet,

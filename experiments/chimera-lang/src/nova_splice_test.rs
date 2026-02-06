@@ -1,9 +1,9 @@
 #[cfg(test)]
 #[cfg(feature = "nova")]
 mod tests {
-    use crate::vm::{ChimeraVM, Value};
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_dna(strands: Vec<Strand>) -> Dna {
         Dna {
@@ -16,15 +16,27 @@ mod tests {
         // Strand 0: [ push(1) push(1) ]
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
             ],
         };
         // Strand 1: [ push(2) push(2) ]
         let strand1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
             ],
         };
 
@@ -46,10 +58,26 @@ mod tests {
 
         // Expected: 1, 2, 1, 2
         // We check the first arg of each gene (which is push(N))
-        if let Nucleotide::Number(n) = &child.genes[0].args[0] { assert_eq!(*n, 1); } else { panic!("Gene 0 arg mismatch"); }
-        if let Nucleotide::Number(n) = &child.genes[1].args[0] { assert_eq!(*n, 2); } else { panic!("Gene 1 arg mismatch"); }
-        if let Nucleotide::Number(n) = &child.genes[2].args[0] { assert_eq!(*n, 1); } else { panic!("Gene 2 arg mismatch"); }
-        if let Nucleotide::Number(n) = &child.genes[3].args[0] { assert_eq!(*n, 2); } else { panic!("Gene 3 arg mismatch"); }
+        if let Nucleotide::Number(n) = &child.genes[0].args[0] {
+            assert_eq!(*n, 1);
+        } else {
+            panic!("Gene 0 arg mismatch");
+        }
+        if let Nucleotide::Number(n) = &child.genes[1].args[0] {
+            assert_eq!(*n, 2);
+        } else {
+            panic!("Gene 1 arg mismatch");
+        }
+        if let Nucleotide::Number(n) = &child.genes[2].args[0] {
+            assert_eq!(*n, 1);
+        } else {
+            panic!("Gene 2 arg mismatch");
+        }
+        if let Nucleotide::Number(n) = &child.genes[3].args[0] {
+            assert_eq!(*n, 2);
+        } else {
+            panic!("Gene 3 arg mismatch");
+        }
     }
 
     #[test]
@@ -57,19 +85,43 @@ mod tests {
         // Strand 0: [ push(1) push(1) push(1) push(1) ]
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
             ],
         };
         // Strand 1: [ push(2) push(2) push(2) push(2) ]
         let strand1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
             ],
         };
 
@@ -89,9 +141,17 @@ mod tests {
         assert_eq!(child.genes.len(), 4);
 
         // Expected: 1, 1, 2, 2
-        if let Nucleotide::Number(n) = &child.genes[0].args[0] { assert_eq!(*n, 1); }
-        if let Nucleotide::Number(n) = &child.genes[1].args[0] { assert_eq!(*n, 1); }
-        if let Nucleotide::Number(n) = &child.genes[2].args[0] { assert_eq!(*n, 2); }
-        if let Nucleotide::Number(n) = &child.genes[3].args[0] { assert_eq!(*n, 2); }
+        if let Nucleotide::Number(n) = &child.genes[0].args[0] {
+            assert_eq!(*n, 1);
+        }
+        if let Nucleotide::Number(n) = &child.genes[1].args[0] {
+            assert_eq!(*n, 1);
+        }
+        if let Nucleotide::Number(n) = &child.genes[2].args[0] {
+            assert_eq!(*n, 2);
+        }
+        if let Nucleotide::Number(n) = &child.genes[3].args[0] {
+            assert_eq!(*n, 2);
+        }
     }
 }

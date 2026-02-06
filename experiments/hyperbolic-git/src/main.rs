@@ -37,7 +37,7 @@ fn main() -> Result<()> {
 
         match layout_res {
             Ok(layout) => {
-                 tui.terminal.draw(|f| {
+                tui.terminal.draw(|f| {
                     draw_ui(f, &graph, &layout, focus_oid, Some(selected_oid));
                 })?;
 
@@ -51,8 +51,11 @@ fn main() -> Result<()> {
                                 }
                                 KeyCode::Up | KeyCode::Down | KeyCode::Left | KeyCode::Right => {
                                     // Navigation logic
-                                    let current_pos = layout.iter().find(|(id, _)| *id == selected_oid)
-                                        .map(|(_, p)| *p).unwrap_or(num_complex::Complex::new(0.0, 0.0));
+                                    let current_pos = layout
+                                        .iter()
+                                        .find(|(id, _)| *id == selected_oid)
+                                        .map(|(_, p)| *p)
+                                        .unwrap_or(num_complex::Complex::new(0.0, 0.0));
 
                                     let dir = match key.code {
                                         KeyCode::Up => num_complex::Complex::new(0.0, 1.0),
@@ -67,14 +70,19 @@ fn main() -> Result<()> {
                                     let mut max_score = -f64::INFINITY;
 
                                     for (oid, pos) in &layout {
-                                        if *oid == selected_oid { continue; }
+                                        if *oid == selected_oid {
+                                            continue;
+                                        }
 
                                         let diff = pos - current_pos;
                                         let dist = diff.norm();
-                                        if dist < 0.01 { continue; }
+                                        if dist < 0.01 {
+                                            continue;
+                                        }
 
                                         // Cosine similarity
-                                        let dir_score = (diff.re * dir.re + diff.im * dir.im) / dist;
+                                        let dir_score =
+                                            (diff.re * dir.re + diff.im * dir.im) / dist;
 
                                         // Filter by cone (> 45 degrees approx)
                                         if dir_score > 0.5 {
@@ -98,7 +106,7 @@ fn main() -> Result<()> {
                         }
                     }
                 }
-            },
+            }
             Err(e) => {
                 // If layout fails, just break loop and print error
                 tui.exit()?;

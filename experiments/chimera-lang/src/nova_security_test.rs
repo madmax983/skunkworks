@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
 #[cfg(test)]
 use crate::opcode::OpCode;
 #[cfg(test)]
@@ -137,7 +137,9 @@ fn test_mutation_breaks_immunity() {
         },
     ];
 
-    vm.dna.helix.strands.push(Strand { genes: verify_genes });
+    vm.dna.helix.strands.push(Strand {
+        genes: verify_genes,
+    });
 
     // Jump to verification strand
     vm.ip = (1, 0);

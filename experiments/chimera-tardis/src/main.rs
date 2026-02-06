@@ -1,11 +1,11 @@
 mod safe_gl;
 mod world;
 
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::ChimeraVM;
 use macroquad::prelude::*;
 use world::World;
-use chimera_lang::vm::ChimeraVM;
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-use chimera_lang::opcode::OpCode;
 
 // Constants
 const MAX_DEPTH: i32 = 10;
@@ -15,35 +15,67 @@ async fn main() {
     // 1. Initialize ChimeraVM with recursive DNA
     let strand0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] }, // Initial Depth
-            Gene { op: OpCode::Call, args: vec![Nucleotide::Number(1)] },  // Call recursive fn
-        ]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(50)],
+            }, // Initial Depth
+            Gene {
+                op: OpCode::Call,
+                args: vec![Nucleotide::Number(1)],
+            }, // Call recursive fn
+        ],
     };
 
     // Recursive Function (Strand 1)
     // Stack: [N]
     let strand1 = Strand {
         genes: vec![
-            Gene { op: OpCode::Dup, args: vec![] },                        // [N, N]
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },  // [N, N, 0]
-            Gene { op: OpCode::Brz, args: vec![Nucleotide::Number(6)] },   // Jump to Return (Gene 6) if N==0. Note: Brz pops. Wait, Brz pops. So [N, N] -> pop 0? No.
-                                                                           // Brz checks top. If 0, pop and jump.
-                                                                           // Need to check equality with 0.
-                                                                           // Let's use simple non-zero check.
-                                                                           // If N == 0, Brz takes it.
-                                                                           // So stack is [N].
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            }, // [N, N]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // [N, N, 0]
+            Gene {
+                op: OpCode::Brz,
+                args: vec![Nucleotide::Number(6)],
+            }, // Jump to Return (Gene 6) if N==0. Note: Brz pops. Wait, Brz pops. So [N, N] -> pop 0? No.
+            // Brz checks top. If 0, pop and jump.
+            // Need to check equality with 0.
+            // Let's use simple non-zero check.
+            // If N == 0, Brz takes it.
+            // So stack is [N].
 
             // If we are here, N != 0.
             // We need to decrement.
-            Gene { op: OpCode::Dup, args: vec![] },                        // [N, N]
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },  // [N, N, 1]
-            Gene { op: OpCode::Sub, args: vec![] },                        // [N, N-1]
-            Gene { op: OpCode::Call, args: vec![Nucleotide::Number(1)] },  // Recurse!
-
+            Gene {
+                op: OpCode::Dup,
+                args: vec![],
+            }, // [N, N]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // [N, N, 1]
+            Gene {
+                op: OpCode::Sub,
+                args: vec![],
+            }, // [N, N-1]
+            Gene {
+                op: OpCode::Call,
+                args: vec![Nucleotide::Number(1)],
+            }, // Recurse!
             // Return logic
-            Gene { op: OpCode::Drop, args: vec![] },                       // Drop the result
-            Gene { op: OpCode::Ret, args: vec![] },                        // Return
-        ]
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            }, // Drop the result
+            Gene {
+                op: OpCode::Ret,
+                args: vec![],
+            }, // Return
+        ],
     };
 
     let dna = Dna {
@@ -65,13 +97,15 @@ async fn main() {
     loop {
         // --- VM Step ---
         if is_key_pressed(KeyCode::Space) {
-             vm.halted = !vm.halted;
+            vm.halted = !vm.halted;
         }
 
         if !vm.halted {
             for _ in 0..speed_multiplier {
-                 vm.step();
-                 if vm.halted { break; }
+                vm.step();
+                if vm.halted {
+                    break;
+                }
             }
         }
 
@@ -80,7 +114,7 @@ async fn main() {
 
         // Clamp current_room_id
         if current_room_id >= world.rooms.len() {
-             current_room_id = world.rooms.len().saturating_sub(1);
+            current_room_id = world.rooms.len().saturating_sub(1);
         }
 
         // --- Input ---
@@ -108,7 +142,9 @@ async fn main() {
             speed_multiplier *= 2;
         }
         if is_key_pressed(KeyCode::S) {
-             if speed_multiplier > 1 { speed_multiplier /= 2; }
+            if speed_multiplier > 1 {
+                speed_multiplier /= 2;
+            }
         }
 
         // Check for Portal Crossing
@@ -170,16 +206,22 @@ async fn main() {
         );
 
         draw_text(
-             &format!("VM Steps: ? | Energy: {}", vm.energy),
-             20.0,
-             80.0,
-             20.0,
-             YELLOW
+            &format!("VM Steps: ? | Energy: {}", vm.energy),
+            20.0,
+            80.0,
+            20.0,
+            YELLOW,
         );
 
         // Show current room info
         if let Some(room) = world.rooms.get(&current_room_id) {
-             draw_text(&format!("Current: {}", room.description), 20.0, 110.0, 20.0, GREEN);
+            draw_text(
+                &format!("Current: {}", room.description),
+                20.0,
+                110.0,
+                20.0,
+                GREEN,
+            );
         }
 
         next_frame().await
@@ -233,14 +275,13 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
     );
 
     let desc_size = room.rect.w * 0.05;
-     draw_text(
+    draw_text(
         &room.description,
         room.rect.x + 10.0,
         center.y + desc_size,
         desc_size,
         LIGHTGRAY,
     );
-
 
     // 3. Draw Portals
     for portal in &room.portals {

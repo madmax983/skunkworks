@@ -15,8 +15,8 @@ use ratatui::{
 use std::io;
 use std::str::FromStr;
 
-mod git;
 mod entropy;
+mod git;
 
 use chimera_lang::{
     ast::{Dna, Gene, Helix, Nucleotide, Strand},
@@ -85,10 +85,16 @@ impl AppState {
     }
 
     fn next_commit(&mut self) {
-        if self.commits.is_empty() { return; }
+        if self.commits.is_empty() {
+            return;
+        }
         let i = match self.commit_list_state.selected() {
             Some(i) => {
-                if i >= self.commits.len() - 1 { 0 } else { i + 1 }
+                if i >= self.commits.len() - 1 {
+                    0
+                } else {
+                    i + 1
+                }
             }
             None => 0,
         };
@@ -97,10 +103,16 @@ impl AppState {
     }
 
     fn previous_commit(&mut self) {
-        if self.commits.is_empty() { return; }
+        if self.commits.is_empty() {
+            return;
+        }
         let i = match self.commit_list_state.selected() {
             Some(i) => {
-                if i == 0 { self.commits.len() - 1 } else { i - 1 }
+                if i == 0 {
+                    self.commits.len() - 1
+                } else {
+                    i - 1
+                }
             }
             None => 0,
         };
@@ -121,10 +133,16 @@ impl AppState {
     }
 
     fn next_file(&mut self) {
-        if self.files.is_empty() { return; }
+        if self.files.is_empty() {
+            return;
+        }
         let i = match self.file_list_state.selected() {
             Some(i) => {
-                if i >= self.files.len() - 1 { 0 } else { i + 1 }
+                if i >= self.files.len() - 1 {
+                    0
+                } else {
+                    i + 1
+                }
             }
             None => 0,
         };
@@ -132,10 +150,16 @@ impl AppState {
     }
 
     fn previous_file(&mut self) {
-        if self.files.is_empty() { return; }
+        if self.files.is_empty() {
+            return;
+        }
         let i = match self.file_list_state.selected() {
             Some(i) => {
-                if i == 0 { self.files.len() - 1 } else { i - 1 }
+                if i == 0 {
+                    self.files.len() - 1
+                } else {
+                    i - 1
+                }
             }
             None => 0,
         };
@@ -148,16 +172,16 @@ impl AppState {
                 let commit = &self.commits[c_idx];
                 if let Some(path) = self.files.get(f_idx) {
                     if let Ok(content) = get_file_content(&commit.hash, path) {
-                         use std::collections::hash_map::DefaultHasher;
-                         use std::hash::{Hash, Hasher};
-                         let mut hasher = DefaultHasher::new();
-                         commit.hash.hash(&mut hasher);
-                         let seed = hasher.finish();
-                         // Age factor: index / 50.0 (older commits = more corruption)
-                         let age_factor = (c_idx as f64) / 50.0;
-                         let fossil = fossilize(&content, age_factor, seed);
-                         self.current_fossil = Some(fossil);
-                         self.log(&format!("Excavated fossil from {}", commit.hash));
+                        use std::collections::hash_map::DefaultHasher;
+                        use std::hash::{Hash, Hasher};
+                        let mut hasher = DefaultHasher::new();
+                        commit.hash.hash(&mut hasher);
+                        let seed = hasher.finish();
+                        // Age factor: index / 50.0 (older commits = more corruption)
+                        let age_factor = (c_idx as f64) / 50.0;
+                        let fossil = fossilize(&content, age_factor, seed);
+                        self.current_fossil = Some(fossil);
+                        self.log(&format!("Excavated fossil from {}", commit.hash));
                     }
                 }
             }
@@ -170,8 +194,16 @@ impl AppState {
             if dna.helix.strands.is_empty() || dna.helix.strands[0].genes.is_empty() {
                 self.log("Splicing failed: No viable genetic material found.");
             } else {
-                let genes_count = dna.helix.strands.iter().map(|s| s.genes.len()).sum::<usize>();
-                self.log(&format!("Resurrection successful! Spliced {} genes.", genes_count));
+                let genes_count = dna
+                    .helix
+                    .strands
+                    .iter()
+                    .map(|s| s.genes.len())
+                    .sum::<usize>();
+                self.log(&format!(
+                    "Resurrection successful! Spliced {} genes.",
+                    genes_count
+                ));
                 self.vm = Some(ChimeraVM::new(dna));
                 self.active_pane = ActivePane::Chimera;
             }
@@ -183,7 +215,10 @@ impl AppState {
 
 fn splice_text_to_dna(text: &str) -> Dna {
     // Improve splicing by treating punctuation as separators
-    let clean_text = text.replace(&['(', ')', '[', ']', '{', '}', ',', ';', '.', ':', '!', '?'][..], " ");
+    let clean_text = text.replace(
+        &['(', ')', '[', ']', '{', '}', ',', ';', '.', ':', '!', '?'][..],
+        " ",
+    );
     let tokens: Vec<&str> = clean_text.split_whitespace().collect();
     let mut genes = Vec::new();
     let mut i = 0;
@@ -195,7 +230,10 @@ fn splice_text_to_dna(text: &str) -> Dna {
         // We try to match token to OpCode.
 
         // Remove trailing punctuation for better matching (already done by replace above mostly)
-        let clean_token: String = token.chars().filter(|c| c.is_alphabetic() || *c == '_').collect();
+        let clean_token: String = token
+            .chars()
+            .filter(|c| c.is_alphabetic() || *c == '_')
+            .collect();
 
         if let Ok(op) = OpCode::from_str(&clean_token) {
             let mut args = Vec::new();
@@ -208,15 +246,15 @@ fn splice_text_to_dna(text: &str) -> Dna {
             // If the *next* token is a number or string, we take it as an arg.
 
             if i + 1 < tokens.len() {
-                let next_token = tokens[i+1];
+                let next_token = tokens[i + 1];
                 if let Ok(n) = next_token.parse::<i64>() {
                     args.push(Nucleotide::Number(n));
                     i += 1;
                 } else if next_token.starts_with('"') && next_token.ends_with('"') {
                     // String literal
-                     let s = next_token.trim_matches('"').to_string();
-                     args.push(Nucleotide::String(s));
-                     i += 1;
+                    let s = next_token.trim_matches('"').to_string();
+                    args.push(Nucleotide::String(s));
+                    i += 1;
                 }
             }
 
@@ -250,7 +288,11 @@ fn main() -> Result<()> {
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -260,7 +302,10 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, state: &mut AppState) -> Result<()> {
+fn run_app(
+    terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
+    state: &mut AppState,
+) -> Result<()> {
     loop {
         terminal.draw(|f| draw(f, state))?;
 
@@ -273,10 +318,10 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, state: &mut Ap
             // Global keys
             match key.code {
                 KeyCode::Tab => {
-                     state.active_pane = match state.active_pane {
-                         ActivePane::Fossil => ActivePane::Chimera,
-                         ActivePane::Chimera => ActivePane::Fossil,
-                     };
+                    state.active_pane = match state.active_pane {
+                        ActivePane::Fossil => ActivePane::Chimera,
+                        ActivePane::Chimera => ActivePane::Fossil,
+                    };
                 }
                 KeyCode::Char('q') => return Ok(()),
                 _ => {}
@@ -287,33 +332,31 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, state: &mut Ap
 
 fn handle_fossil_input(key: event::KeyEvent, state: &mut AppState) -> Result<()> {
     match state.fossil_mode {
-        FossilMode::CommitSelect => {
-            match key.code {
-                KeyCode::Down | KeyCode::Char('j') => state.next_commit(),
-                KeyCode::Up | KeyCode::Char('k') => state.previous_commit(),
-                KeyCode::Enter | KeyCode::Right | KeyCode::Char('l') => state.fossil_mode = FossilMode::FileSelect,
-                _ => {}
+        FossilMode::CommitSelect => match key.code {
+            KeyCode::Down | KeyCode::Char('j') => state.next_commit(),
+            KeyCode::Up | KeyCode::Char('k') => state.previous_commit(),
+            KeyCode::Enter | KeyCode::Right | KeyCode::Char('l') => {
+                state.fossil_mode = FossilMode::FileSelect
             }
-        }
-        FossilMode::FileSelect => {
-            match key.code {
-                KeyCode::Left | KeyCode::Char('h') => state.fossil_mode = FossilMode::CommitSelect,
-                KeyCode::Down | KeyCode::Char('j') => state.next_file(),
-                KeyCode::Up | KeyCode::Char('k') => state.previous_file(),
-                KeyCode::Enter | KeyCode::Right | KeyCode::Char('l') => {
-                    state.load_fossil();
-                    state.fossil_mode = FossilMode::Excavation;
-                }
-                _ => {}
+            _ => {}
+        },
+        FossilMode::FileSelect => match key.code {
+            KeyCode::Left | KeyCode::Char('h') => state.fossil_mode = FossilMode::CommitSelect,
+            KeyCode::Down | KeyCode::Char('j') => state.next_file(),
+            KeyCode::Up | KeyCode::Char('k') => state.previous_file(),
+            KeyCode::Enter | KeyCode::Right | KeyCode::Char('l') => {
+                state.load_fossil();
+                state.fossil_mode = FossilMode::Excavation;
             }
-        }
-        FossilMode::Excavation => {
-             match key.code {
-                 KeyCode::Left | KeyCode::Char('h') | KeyCode::Esc => state.fossil_mode = FossilMode::FileSelect,
-                 KeyCode::Enter => state.splice_dna(),
-                 _ => {}
-             }
-        }
+            _ => {}
+        },
+        FossilMode::Excavation => match key.code {
+            KeyCode::Left | KeyCode::Char('h') | KeyCode::Esc => {
+                state.fossil_mode = FossilMode::FileSelect
+            }
+            KeyCode::Enter => state.splice_dna(),
+            _ => {}
+        },
     }
     Ok(())
 }
@@ -341,9 +384,16 @@ fn draw(f: &mut Frame, state: &mut AppState) {
 
 fn draw_fossil_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout::Rect) {
     let active = state.active_pane == ActivePane::Fossil;
-    let block_style = if active { Style::default().fg(Color::Green) } else { Style::default().fg(Color::DarkGray) };
+    let block_style = if active {
+        Style::default().fg(Color::Green)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
 
-    let container = Block::default().borders(Borders::ALL).title("Fossil Record").border_style(block_style);
+    let container = Block::default()
+        .borders(Borders::ALL)
+        .title("Fossil Record")
+        .border_style(block_style);
     f.render_widget(container.clone(), area);
 
     let inner_area = container.inner(area);
@@ -359,27 +409,66 @@ fn draw_fossil_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout::
         .split(chunks[0]);
 
     // Commits
-    let commits: Vec<ListItem> = state.commits.iter().map(|c| {
-        ListItem::new(format!("{} - {}", &c.hash[0..7], c.message))
-    }).collect();
+    let commits: Vec<ListItem> = state
+        .commits
+        .iter()
+        .map(|c| ListItem::new(format!("{} - {}", &c.hash[0..7], c.message)))
+        .collect();
 
-    let commit_style = if state.fossil_mode == FossilMode::CommitSelect { Style::default().fg(Color::Cyan) } else { Style::default() };
+    let commit_style = if state.fossil_mode == FossilMode::CommitSelect {
+        Style::default().fg(Color::Cyan)
+    } else {
+        Style::default()
+    };
     let commit_list = List::new(commits)
-        .block(Block::default().borders(Borders::ALL).title("Strata").border_style(commit_style))
-        .highlight_style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Yellow));
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Strata")
+                .border_style(commit_style),
+        )
+        .highlight_style(
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Yellow),
+        );
     f.render_stateful_widget(commit_list, top_chunks[0], &mut state.commit_list_state);
 
     // Files
-    let files: Vec<ListItem> = state.files.iter().map(|s| ListItem::new(s.clone())).collect();
-    let file_style = if state.fossil_mode == FossilMode::FileSelect { Style::default().fg(Color::Cyan) } else { Style::default() };
+    let files: Vec<ListItem> = state
+        .files
+        .iter()
+        .map(|s| ListItem::new(s.clone()))
+        .collect();
+    let file_style = if state.fossil_mode == FossilMode::FileSelect {
+        Style::default().fg(Color::Cyan)
+    } else {
+        Style::default()
+    };
     let file_list = List::new(files)
-        .block(Block::default().borders(Borders::ALL).title("Artifacts").border_style(file_style))
-        .highlight_style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Yellow));
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Artifacts")
+                .border_style(file_style),
+        )
+        .highlight_style(
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Yellow),
+        );
     f.render_stateful_widget(file_list, top_chunks[1], &mut state.file_list_state);
 
     // Content
-    let content_style = if state.fossil_mode == FossilMode::Excavation { Style::default().fg(Color::Cyan) } else { Style::default() };
-    let content_block = Block::default().borders(Borders::ALL).title("Excavation Site").border_style(content_style);
+    let content_style = if state.fossil_mode == FossilMode::Excavation {
+        Style::default().fg(Color::Cyan)
+    } else {
+        Style::default()
+    };
+    let content_block = Block::default()
+        .borders(Borders::ALL)
+        .title("Excavation Site")
+        .border_style(content_style);
 
     if let Some(fossil) = &state.current_fossil {
         let mut spans = Vec::new();
@@ -420,9 +509,16 @@ fn draw_fossil_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout::
 
 fn draw_chimera_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout::Rect) {
     let active = state.active_pane == ActivePane::Chimera;
-    let block_style = if active { Style::default().fg(Color::Green) } else { Style::default().fg(Color::DarkGray) };
+    let block_style = if active {
+        Style::default().fg(Color::Green)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
 
-    let container = Block::default().borders(Borders::ALL).title("Reanimation Chamber").border_style(block_style);
+    let container = Block::default()
+        .borders(Borders::ALL)
+        .title("Reanimation Chamber")
+        .border_style(block_style);
     f.render_widget(container.clone(), area);
     let inner_area = container.inner(area);
 
@@ -439,26 +535,33 @@ fn draw_chimera_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout:
             for x in 0..16 {
                 let val = &vm.grid[y][x];
                 let (s, style) = match val {
-                     chimera_lang::vm::Value::Int(0) => (".", Style::default().fg(Color::DarkGray)),
-                     chimera_lang::vm::Value::Int(_) => ("#", Style::default().fg(Color::Green)),
-                     _ => ("?", Style::default().fg(Color::Yellow)),
+                    chimera_lang::vm::Value::Int(0) => (".", Style::default().fg(Color::DarkGray)),
+                    chimera_lang::vm::Value::Int(_) => ("#", Style::default().fg(Color::Green)),
+                    _ => ("?", Style::default().fg(Color::Yellow)),
                 };
                 spans.push(Span::styled(s, style));
                 spans.push(Span::raw(" "));
             }
             grid_lines.push(Line::from(spans));
         }
-        let grid = Paragraph::new(grid_lines).block(Block::default().borders(Borders::ALL).title("Grid"));
+        let grid =
+            Paragraph::new(grid_lines).block(Block::default().borders(Borders::ALL).title("Grid"));
         f.render_widget(grid, chunks[0]);
 
         // Stack & Info
         let bottom_chunks = Layout::default()
-             .direction(Direction::Horizontal)
-             .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-             .split(chunks[1]);
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+            .split(chunks[1]);
 
-        let stack_items: Vec<ListItem> = vm.stack.iter().rev().map(|v| ListItem::new(format!("{}", v))).collect();
-        let stack = List::new(stack_items).block(Block::default().borders(Borders::ALL).title("Stack"));
+        let stack_items: Vec<ListItem> = vm
+            .stack
+            .iter()
+            .rev()
+            .map(|v| ListItem::new(format!("{}", v)))
+            .collect();
+        let stack =
+            List::new(stack_items).block(Block::default().borders(Borders::ALL).title("Stack"));
         f.render_widget(stack, bottom_chunks[0]);
 
         let info_text = vec![
@@ -466,9 +569,9 @@ fn draw_chimera_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout:
             Line::from(format!("IP: {:?}", vm.ip)),
             Line::from(format!("Strands: {}", vm.dna.helix.strands.len())),
         ];
-        let info = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL).title("Vital Signs"));
+        let info = Paragraph::new(info_text)
+            .block(Block::default().borders(Borders::ALL).title("Vital Signs"));
         f.render_widget(info, bottom_chunks[1]);
-
     } else {
         let p = Paragraph::new("Awaiting genetic material...").block(Block::default());
         f.render_widget(p, inner_area);
@@ -484,10 +587,14 @@ fn draw_chimera_view(f: &mut Frame, state: &mut AppState, area: ratatui::layout:
             height: log_height,
         };
         // Clear background
-        f.render_widget(Block::default().style(Style::default().bg(Color::Black)), log_area);
+        f.render_widget(
+            Block::default().style(Style::default().bg(Color::Black)),
+            log_area,
+        );
 
         let msg = state.log_messages.last().unwrap();
-        let p = Paragraph::new(Span::styled(msg, Style::default().fg(Color::Yellow))).block(Block::default().borders(Borders::TOP));
+        let p = Paragraph::new(Span::styled(msg, Style::default().fg(Color::Yellow)))
+            .block(Block::default().borders(Borders::TOP));
         f.render_widget(p, log_area);
     }
 }

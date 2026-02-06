@@ -1,13 +1,13 @@
 mod etym;
 mod ui;
 
+use crate::etym::EtymologyTracer;
+use crate::ui::{draw_ui, AppMode, AppState};
 use anyhow::{Context, Result};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use git2::Repository;
 use std::{env, path::Path, time::Duration};
 use tui_shared::Tui;
-use crate::etym::EtymologyTracer;
-use crate::ui::{AppState, AppMode, draw_ui};
 
 fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -26,14 +26,19 @@ fn main() -> Result<()> {
     let tracer = EtymologyTracer::new(repo_path)?;
 
     // Read file content from HEAD
-    let repo = Repository::discover(repo_path).context("Failed to open repository for reading HEAD")?;
+    let repo =
+        Repository::discover(repo_path).context("Failed to open repository for reading HEAD")?;
     let head = repo.head().context("HEAD not found")?;
     let commit = head.peel_to_commit().context("HEAD is not a commit")?;
     let tree = commit.tree()?;
-    let entry = tree.get_path(Path::new(file_path)).context("File not found in HEAD")?;
+    let entry = tree
+        .get_path(Path::new(file_path))
+        .context("File not found in HEAD")?;
     let object = entry.to_object(&repo)?;
     let blob = object.as_blob().context("Not a blob")?;
-    let content = std::str::from_utf8(blob.content()).context("File is not UTF-8")?.to_string();
+    let content = std::str::from_utf8(blob.content())
+        .context("File is not UTF-8")?
+        .to_string();
     let lines: Vec<String> = content.lines().map(|s| s.to_string()).collect();
 
     // Init TUI
@@ -58,11 +63,11 @@ fn run_app(tui: &mut Tui, app: &mut AppState, tracer: &EtymologyTracer) -> Resul
                         KeyCode::Up | KeyCode::Char('k') => app.prev_line(),
                         KeyCode::Char(' ') => {
                             // Toggle mode
-                             if app.mode == AppMode::Browsing {
-                                 app.mode = AppMode::Tracing;
-                             } else {
-                                 app.mode = AppMode::Browsing;
-                             }
+                            if app.mode == AppMode::Browsing {
+                                app.mode = AppMode::Tracing;
+                            } else {
+                                app.mode = AppMode::Browsing;
+                            }
                         }
                         KeyCode::Enter => {
                             if app.mode == AppMode::Browsing {

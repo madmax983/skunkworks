@@ -16,13 +16,23 @@ fn make_dna(genes: Vec<Gene>) -> Dna {
 fn test_meme_spreading() {
     let s0 = Strand {
         genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-            Gene { op: OpCode::Meme, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(42)],
+            },
+            Gene {
+                op: OpCode::Meme,
+                args: vec![],
+            },
         ],
     };
     let s1 = Strand { genes: vec![] }; // Empty target
 
-    let dna = Dna { helix: Helix { strands: vec![s0, s1] } };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![s0, s1],
+        },
+    };
     let mut vm = ChimeraVM::new(dna);
 
     // Step 1: Push(42)
@@ -61,12 +71,21 @@ fn test_meme_spreading() {
 #[test]
 fn test_poly_int() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Poly, args: vec![
-            Nucleotide::String("add".to_string()),
-            Nucleotide::String("sub".to_string())
-        ]},
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Poly,
+            args: vec![
+                Nucleotide::String("add".to_string()),
+                Nucleotide::String("sub".to_string()),
+            ],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -81,12 +100,21 @@ fn test_poly_int() {
 #[test]
 fn test_poly_str() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("foo".to_string())] },
-        Gene { op: OpCode::Poly, args: vec![
-            Nucleotide::String("add".to_string()),
-            Nucleotide::String("drop".to_string())
-        ]},
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("foo".to_string())],
+        },
+        Gene {
+            op: OpCode::Poly,
+            args: vec![
+                Nucleotide::String("add".to_string()),
+                Nucleotide::String("drop".to_string()),
+            ],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -101,10 +129,22 @@ fn test_poly_str() {
 #[test]
 fn test_drift() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Noise
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Noise
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // Prob
-        Gene { op: OpCode::Drift, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // Noise
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // Noise
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // Prob
+        Gene {
+            op: OpCode::Drift,
+            args: vec![],
+        },
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));

@@ -1,8 +1,8 @@
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::{ChimeraVM, Value};
 use macroquad::prelude::*;
 use rapier2d::prelude::*;
-use chimera_lang::vm::{ChimeraVM, Value};
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-use chimera_lang::opcode::OpCode;
 
 mod physics;
 mod vehicle;
@@ -14,19 +14,44 @@ fn create_dna() -> Dna {
     // Registers: Grid[0][0] = Left Motor, Grid[0][1] = Right Motor
     let genes = vec![
         // Left Motor = 15
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // X
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(15)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // Y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // X
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Right Motor = 15
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // X
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(15)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // Y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // X
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Consume to avoid starvation (logic included in step, but good to be explicit/safe or just loop)
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        },
     ];
 
     Dna {
@@ -43,10 +68,14 @@ async fn main() {
 
     // Setup Ground
     let ground_size = 100.0;
-    let ground_rb = RigidBodyBuilder::fixed().translation(vector![0.0, -2.0]).build();
+    let ground_rb = RigidBodyBuilder::fixed()
+        .translation(vector![0.0, -2.0])
+        .build();
     let ground = world.rigid_body_set.insert(ground_rb);
     let ground_coll = ColliderBuilder::cuboid(ground_size, 1.0).build();
-    world.collider_set.insert_with_parent(ground_coll, ground, &mut world.rigid_body_set);
+    world
+        .collider_set
+        .insert_with_parent(ground_coll, ground, &mut world.rigid_body_set);
 
     // Spawn Vehicle
     let vehicle = Vehicle::spawn(&mut world, 0.0, 5.0);
@@ -110,17 +139,23 @@ async fn main() {
                         draw_circle(c_pos.x, c_pos.y, ball.radius, BLACK);
                         draw_circle_lines(c_pos.x, c_pos.y, ball.radius, 0.1, WHITE);
                         // Rotation marker
-                         let end_x = c_pos.x + ball.radius * rot.cos();
-                         let end_y = c_pos.y + ball.radius * rot.sin();
-                         draw_line(c_pos.x, c_pos.y, end_x, end_y, 0.1, WHITE);
+                        let end_x = c_pos.x + ball.radius * rot.cos();
+                        let end_y = c_pos.y + ball.radius * rot.sin();
+                        draw_line(c_pos.x, c_pos.y, end_x, end_y, 0.1, WHITE);
                     } else if let Some(cuboid) = shape.as_cuboid() {
                         let w = cuboid.half_extents.x * 2.0;
                         let h = cuboid.half_extents.y * 2.0;
-                        draw_rectangle_ex(c_pos.x, c_pos.y, w, h, DrawRectangleParams {
-                            offset: vec2(0.5, 0.5),
-                            rotation: rot,
-                            color: BLUE,
-                        });
+                        draw_rectangle_ex(
+                            c_pos.x,
+                            c_pos.y,
+                            w,
+                            h,
+                            DrawRectangleParams {
+                                offset: vec2(0.5, 0.5),
+                                rotation: rot,
+                                color: BLUE,
+                            },
+                        );
                     }
                 }
             }
@@ -129,7 +164,13 @@ async fn main() {
         // Draw HUD
         set_default_camera();
         draw_text("Chimera Automaton", 20.0, 30.0, 30.0, BLACK);
-        draw_text(&format!("Motor L: {:.1} R: {:.1}", left_speed, right_speed), 20.0, 60.0, 20.0, DARKGRAY);
+        draw_text(
+            &format!("Motor L: {:.1} R: {:.1}", left_speed, right_speed),
+            20.0,
+            60.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }

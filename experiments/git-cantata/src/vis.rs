@@ -1,9 +1,9 @@
 use crate::git::CommitData;
+use rand::Rng;
 use ratatui::{
     style::Color,
     widgets::canvas::{Context, Line, Points},
 };
-use rand::Rng;
 
 pub enum StrokeKind {
     Spray,
@@ -40,7 +40,12 @@ impl VisualState {
         let mut rng = rand::thread_rng();
 
         // Start position based on hash (roughly)
-        let hash_val = commit.hash.as_bytes().iter().map(|&b| b as usize).sum::<usize>();
+        let hash_val = commit
+            .hash
+            .as_bytes()
+            .iter()
+            .map(|&b| b as usize)
+            .sum::<usize>();
         let center_x = (hash_val % (self.width as usize)) as f64;
         let center_y = ((hash_val / 100) % (self.height as usize)) as f64;
 
@@ -69,7 +74,11 @@ impl VisualState {
                     color,
                     age: 0.0,
                     max_age: rng.gen_range(20.0..100.0),
-                    kind: if rng.gen_bool(0.7) { StrokeKind::Spray } else { StrokeKind::Line },
+                    kind: if rng.gen_bool(0.7) {
+                        StrokeKind::Spray
+                    } else {
+                        StrokeKind::Line
+                    },
                 });
             }
         }
@@ -86,10 +95,18 @@ impl VisualState {
             stroke.vy += 10.0 * dt; // Stronger upward flow
 
             // Wrap
-            if stroke.x < 0.0 { stroke.x += self.width; }
-            if stroke.x > self.width { stroke.x -= self.width; }
-            if stroke.y < 0.0 { stroke.y += self.height; }
-            if stroke.y > self.height { stroke.y -= self.height; }
+            if stroke.x < 0.0 {
+                stroke.x += self.width;
+            }
+            if stroke.x > self.width {
+                stroke.x -= self.width;
+            }
+            if stroke.y < 0.0 {
+                stroke.y += self.height;
+            }
+            if stroke.y > self.height {
+                stroke.y -= self.height;
+            }
         }
 
         self.strokes.retain(|s| s.age < s.max_age);
@@ -99,19 +116,19 @@ impl VisualState {
         for stroke in &self.strokes {
             match stroke.kind {
                 StrokeKind::Spray => {
-                     ctx.draw(&Points {
-                         coords: &[(stroke.x, stroke.y)],
-                         color: stroke.color,
-                     });
+                    ctx.draw(&Points {
+                        coords: &[(stroke.x, stroke.y)],
+                        color: stroke.color,
+                    });
                 }
                 StrokeKind::Line => {
-                     ctx.draw(&Line {
-                         x1: stroke.x,
-                         y1: stroke.y,
-                         x2: stroke.x + stroke.vx * 2.0,
-                         y2: stroke.y + stroke.vy * 2.0,
-                         color: stroke.color,
-                     });
+                    ctx.draw(&Line {
+                        x1: stroke.x,
+                        y1: stroke.y,
+                        x2: stroke.x + stroke.vx * 2.0,
+                        y2: stroke.y + stroke.vy * 2.0,
+                        color: stroke.color,
+                    });
                 }
             }
         }

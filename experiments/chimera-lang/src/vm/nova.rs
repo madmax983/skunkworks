@@ -503,10 +503,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             ));
                         }
                     } else {
-                        vm.output.push("Error: Invalid ticks for prophecy".to_string());
+                        vm.output
+                            .push("Error: Invalid ticks for prophecy".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for prophecy".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for prophecy".to_string());
                 }
             } else {
                 vm.output
@@ -543,7 +545,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     ));
                 }
             } else {
-                vm.output.push("MEME: No previous gene to spread".to_string());
+                vm.output
+                    .push("MEME: No previous gene to spread".to_string());
             }
             None
         }
@@ -556,11 +559,24 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     let mut changes = 0;
 
                     let enzymes = [
-                        OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
-                        OpCode::Dup, OpCode::Print, OpCode::Swap, OpCode::Drop,
-                        OpCode::Jump, OpCode::Brz, OpCode::Photosynthesize, OpCode::Consume,
-                        OpCode::GRead, OpCode::GWrite, OpCode::Genome,
-                        OpCode::Meme, OpCode::Poly, // Self-reference!
+                        OpCode::Push,
+                        OpCode::Add,
+                        OpCode::Sub,
+                        OpCode::Mul,
+                        OpCode::Div,
+                        OpCode::Dup,
+                        OpCode::Print,
+                        OpCode::Swap,
+                        OpCode::Drop,
+                        OpCode::Jump,
+                        OpCode::Brz,
+                        OpCode::Photosynthesize,
+                        OpCode::Consume,
+                        OpCode::GRead,
+                        OpCode::GWrite,
+                        OpCode::Genome,
+                        OpCode::Meme,
+                        OpCode::Poly, // Self-reference!
                     ];
 
                     for strand in &mut vm.dna.helix.strands {
@@ -579,7 +595,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.output.push("Error: Type mismatch for drift".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for drift".to_string());
+                vm.output
+                    .push("Error: Stack underflow for drift".to_string());
             }
             None
         }
@@ -609,14 +626,16 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.output.push(format!("POLY: Invalid OpCode {}", s));
                             }
                         } else {
-                            vm.output.push("POLY: Arg must be String or Identifier".to_string());
+                            vm.output
+                                .push("POLY: Arg must be String or Identifier".to_string());
                         }
                     }
                 } else {
                     vm.output.push("POLY: Requires 2 arguments".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for poly".to_string());
+                vm.output
+                    .push("Error: Stack underflow for poly".to_string());
             }
             None
         }
@@ -711,15 +730,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.chronostasis_timer = ticks as usize;
                         let cost = 50 + ticks;
                         vm.energy = vm.energy.saturating_sub(cost);
-                        vm.output.push(format!("CHRONOSTASIS: Time frozen for {} ticks", ticks));
+                        vm.output
+                            .push(format!("CHRONOSTASIS: Time frozen for {} ticks", ticks));
                     } else {
-                        vm.output.push("Error: Invalid ticks for chronostasis".to_string());
+                        vm.output
+                            .push("Error: Invalid ticks for chronostasis".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for chronostasis".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for chronostasis".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for chronostasis".to_string());
+                vm.output
+                    .push("Error: Stack underflow for chronostasis".to_string());
             }
             None
         }
@@ -1371,10 +1394,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         new_genes.push(genes_b[i].clone());
                                     }
                                 }
-                                vm.output.push(format!(
-                                    "SPLICE: Crossover strands {} and {}",
-                                    s_a, s_b
-                                ));
+                                vm.output
+                                    .push(format!("SPLICE: Crossover strands {} and {}", s_a, s_b));
                             }
                             2 => {
                                 // Midpoint Split (Head A + Tail B)
@@ -1411,8 +1432,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             vm.stack.push(Value::Int(new_idx as i64));
                             vm.energy = vm.energy.saturating_sub(30);
                         } else if method <= 2 {
-                             // If result empty but method valid (e.g. empty parents)
-                             vm.stack.push(Value::Int(-1));
+                            // If result empty but method valid (e.g. empty parents)
+                            vm.stack.push(Value::Int(-1));
                         }
                     } else {
                         vm.output
@@ -1767,6 +1788,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     Value::Int(idx) => {
                         let s_idx = idx as usize;
                         if s_idx < vm.dna.helix.strands.len() {
+                            // Backup to graveyard
+                            let strand = vm.dna.helix.strands[s_idx].clone();
+                            vm.graveyard.push(strand);
+
                             vm.dna.helix.strands[s_idx].genes.clear();
 
                             // Remove associated epigenetics
@@ -3223,6 +3248,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Supernova => {
             let s_idx = vm.ip.0;
             if s_idx < vm.dna.helix.strands.len() {
+                // Backup to graveyard
+                let strand = vm.dna.helix.strands[s_idx].clone();
+                vm.graveyard.push(strand);
+
                 // Remove genes from strand
                 let genes = std::mem::take(&mut vm.dna.helix.strands[s_idx].genes);
                 let mut rng = rand::thread_rng();
@@ -3885,8 +3914,88 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.output.push("Error: Type mismatch for match".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for match".to_string());
+                vm.output
+                    .push("Error: Stack underflow for match".to_string());
             }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Bury => {
+            // stack: strand_idx
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Int(idx) => {
+                        let s_idx = idx as usize;
+                        if s_idx < vm.dna.helix.strands.len() {
+                            // Copy to graveyard
+                            let strand = vm.dna.helix.strands[s_idx].clone();
+                            vm.graveyard.push(strand);
+
+                            // Clear original
+                            vm.dna.helix.strands[s_idx].genes.clear();
+                            // Remove associated epigenetics
+                            vm.epigenome.retain(|(s, _)| *s != s_idx);
+
+                            vm.energy = vm.energy.saturating_sub(10);
+                            vm.output
+                                .push(format!("BURY: Buried strand {} in graveyard", s_idx));
+                        } else {
+                            vm.output
+                                .push("Error: Strand index out of bounds for bury".to_string());
+                        }
+                    }
+                    _ => vm.output.push("Error: Type mismatch for bury".to_string()),
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for bury".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Exhume => {
+            if let Some(strand) = vm.graveyard.pop() {
+                vm.dna.helix.strands.push(strand);
+                vm.telomeres.push(50);
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
+
+                let new_idx = vm.dna.helix.strands.len() - 1;
+                vm.stack.push(Value::Int(new_idx as i64));
+                vm.energy = vm.energy.saturating_sub(25);
+                vm.output
+                    .push(format!("EXHUME: Resurrected strand as {}", new_idx));
+            } else {
+                vm.stack.push(Value::Int(-1));
+                vm.output.push("EXHUME: Graveyard empty".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Seance => {
+            if let Some(strand) = vm.graveyard.last() {
+                let ghost_strand = strand.clone();
+                execute_ephemeral_strand(vm, &ghost_strand);
+                vm.energy = vm.energy.saturating_sub(15);
+                vm.output.push("SEANCE: Communed with the dead".to_string());
+            } else {
+                vm.output.push("SEANCE: Graveyard empty".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Mourn => {
+            let count = vm.graveyard.len() as i64;
+            let energy_gain = count * 2;
+            vm.energy = vm.energy.saturating_add(energy_gain);
+            vm.stack.push(Value::Int(energy_gain));
+            vm.output.push(format!(
+                "MOURN: Gained {} energy from {} ancestors",
+                energy_gain, count
+            ));
             None
         }
         _ => None,
@@ -3900,7 +4009,9 @@ fn glob_match(pattern: &str, target: &str) -> bool {
             return false;
         }
         let t_rest = &target[p_head.len()..];
-        if p_tail.is_empty() { return true; }
+        if p_tail.is_empty() {
+            return true;
+        }
 
         for i in 0..=t_rest.len() {
             // Optimization: if p_tail doesn't have *, we can check ends_with directly?
