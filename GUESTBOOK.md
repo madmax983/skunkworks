@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/compost-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
 ### [Concentration Level: WARNING] - Location: experiments/neuro-chimera
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Evolutionary stagnation detected (`Value::Junction`). High entropy.
