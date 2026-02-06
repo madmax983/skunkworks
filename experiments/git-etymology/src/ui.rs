@@ -2,7 +2,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph, Wrap, ListState},
+    widgets::{Block, Borders, List, ListItem, Paragraph, Wrap, ListState, Table, Row, Cell, TableState},
     Frame,
 };
 use crate::etym::{TraceEntry, ChangeType};
@@ -19,7 +19,7 @@ pub struct AppState {
     pub list_state: ListState,
 
     pub trace: Vec<TraceEntry>,
-    pub trace_state: ListState,
+    pub trace_state: TableState,
 
     pub mode: AppMode,
     pub status_msg: String,
@@ -35,7 +35,7 @@ impl AppState {
             file_lines: lines,
             list_state,
             trace: Vec::new(),
-            trace_state: ListState::default(),
+            trace_state: TableState::default(),
             mode: AppMode::Browsing,
             status_msg: "Use Up/Down to select line, Enter to trace.".to_string(),
         }
@@ -134,7 +134,7 @@ fn draw_file_viewer(f: &mut Frame, app: &mut AppState, area: Rect) {
         )
         .highlight_style(
             Style::default()
-                .bg(Color::DarkGray)
+                .bg(Color::Rgb(40, 44, 52))
                 .add_modifier(Modifier::BOLD),
         );
 
@@ -159,52 +159,36 @@ fn draw_trace_viewer(f: &mut Frame, app: &mut AppState, area: Rect) {
         return;
     }
 
-    let items: Vec<ListItem> = app.trace.iter().map(|entry| {
-        let header = Line::from(vec![
-            Span::styled(format!("{} ", &entry.short_hash), Style::default().fg(Color::Yellow)),
-            Span::styled(format!("{} ", entry.date.format("%Y-%m-%d")), Style::default().fg(Color::Blue)),
-            Span::styled(format!("{} ", entry.author), Style::default().fg(Color::Green)),
-        ]);
-
-        let change_style = match entry.change_type {
-            ChangeType::Genesis => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-            ChangeType::Shift => Style::default().fg(Color::Magenta),
-            ChangeType::Inertia => Style::default().fg(Color::DarkGray),
+    let rows: Vec<Row> = app.trace.iter().map(|entry| {
+        let (type_str, type_color) = match entry.change_type {
+            ChangeType::Genesis => ("★ GENESIS", Color::Yellow),
+            ChangeType::Shift => ("⚡ SHIFT", Color::Cyan),
+            ChangeType::Inertia => ("⬇ INERTIA", Color::DarkGray),
         };
 
-        let type_str = match entry.change_type {
-            ChangeType::Genesis => "★ GENESIS",
-            ChangeType::Shift => "⚡ SHIFT",
-            ChangeType::Inertia => "⬇ INERTIA",
-        };
-
-        let meta = Line::from(vec![
-            Span::styled(type_str, change_style),
-            Span::raw(format!(" (Line {})", entry.line_num)),
-        ]);
-
-        let content = Line::from(Span::styled(format!("  {}", entry.line_content), Style::default().fg(Color::White)));
-        let msg = Line::from(Span::styled(format!("  \"{}\"", entry.message), Style::default().fg(Color::Gray).add_modifier(Modifier::ITALIC)));
-
-        // Multiline items are hard in List, so we cheat by just doing lines?
-        // Or we use a simple representation.
-        // Let's stick to 2 lines per entry if possible, or just the content.
-
-        // Actually ListItems can be height 1+.
-        // But let's keep it compact.
-
-        ListItem::new(vec![
-            header,
-            meta,
-            content,
-            msg,
-            Line::from(""), // Spacer
+        Row::new(vec![
+            Cell::from(Span::styled(type_str, Style::default().fg(type_color).add_modifier(Modifier::BOLD))),
+            Cell::from(Span::styled(entry.short_hash.clone(), Style::default().fg(Color::Yellow))),
+            Cell::from(Span::styled(entry.date.format("%Y-%m-%d").to_string(), Style::default().fg(Color::Blue))),
+            Cell::from(Span::styled(entry.author.clone(), Style::default().fg(Color::Green))),
+            Cell::from(Span::raw(entry.line_content.clone())),
         ])
     }).collect();
 
-    let list = List::new(items)
-        .block(block)
-        .highlight_style(Style::default().bg(Color::Rgb(50, 50, 50)));
+    let table = Table::new(rows, [
+        Constraint::Length(12),
+        Constraint::Length(8),
+        Constraint::Length(11),
+        Constraint::Length(15),
+        Constraint::Min(0),
+    ])
+    .header(
+        Row::new(vec!["Type", "Hash", "Date", "Author", "Content"])
+            .style(Style::default().fg(Color::DarkGray).add_modifier(Modifier::UNDERLINED))
+            .bottom_margin(1)
+    )
+    .block(block)
+    .row_highlight_style(Style::default().bg(Color::Rgb(40, 44, 52)).add_modifier(Modifier::BOLD));
 
-    f.render_stateful_widget(list, area, &mut app.trace_state);
+    f.render_stateful_widget(table, area, &mut app.trace_state);
 }
