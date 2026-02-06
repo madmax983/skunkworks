@@ -48,6 +48,8 @@ pub mod cortex;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
+#[cfg(feature = "nova")]
+pub mod nova_semantic;
 pub mod oracle;
 pub mod resonance;
 

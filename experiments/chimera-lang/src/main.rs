@@ -15,6 +15,11 @@ struct Cli {
     /// Run in headless mode (no TUI)
     #[arg(long)]
     headless: bool,
+
+    /// Dump semantic snapshot to stdout (JSON) after execution (if headless)
+    #[cfg(feature = "nova")]
+    #[arg(long)]
+    dump_semantic: bool,
 }
 
 fn main() -> Result<()> {
@@ -50,6 +55,13 @@ fn main() -> Result<()> {
     if cli.headless {
         while !vm.halted {
             vm.step();
+        }
+
+        #[cfg(feature = "nova")]
+        if cli.dump_semantic {
+            let snap = chimera_lang::vm::nova_semantic::snapshot(&vm);
+            println!("{}", snap.to_json_pretty());
+            return Ok(());
         }
 
         println!("Execution complete.");

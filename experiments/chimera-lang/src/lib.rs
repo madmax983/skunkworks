@@ -95,6 +95,8 @@ mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_reflex_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_semantic_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sonar_test;
