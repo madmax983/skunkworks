@@ -1504,6 +1504,10 @@ where
                                 _ => {}
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Topology => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();

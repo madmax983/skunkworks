@@ -61,6 +61,9 @@ pub mod nova;
 #[cfg(test)]
 mod nova_chronos_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chronos_local_test;
+#[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_security;
@@ -206,6 +209,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub time_grid: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -302,6 +307,8 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
+        let time_grid = vec![vec![1; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
@@ -337,6 +344,8 @@ impl ChimeraVM {
             mutagen_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            time_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -785,7 +794,24 @@ impl ChimeraVM {
         let mut next_organelles = Vec::new();
 
         for mut organelle in active_organelles {
-            if self.tick_organelle(&mut organelle) {
+            let (cy, cx) = organelle.context_loc;
+            let dilation = self.time_grid[cy][cx];
+
+            // 0 = Stasis (Skip tick)
+            if dilation == 0 {
+                next_organelles.push(organelle);
+                continue;
+            }
+
+            let ticks = dilation as usize;
+            let mut keep = true;
+            for _ in 0..ticks {
+                if !self.tick_organelle(&mut organelle) {
+                    keep = false;
+                    break;
+                }
+            }
+            if keep {
                 next_organelles.push(organelle);
             }
         }
@@ -1609,6 +1635,8 @@ impl ChimeraVM {
             | OpCode::Exhume
             | OpCode::Seance
             | OpCode::Mourn
+            | OpCode::TimeWarp
+            | OpCode::Chronos
             | OpCode::Reincarnate => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

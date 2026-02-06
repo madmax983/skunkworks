@@ -655,6 +655,19 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronostasis,
 
+    /// **[Nova]** Sets the local time dilation factor in a radius.
+    ///
+    /// **Stack:** `[ ..., factor, radius ] -> [ ... ]`
+    /// **Factor:** 0=Stasis, 1=Normal, >1=Accelerated.
+    #[cfg(feature = "nova")]
+    TimeWarp,
+
+    /// **[Nova]** Reads the local time dilation factor at the current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., factor ]`
+    #[cfg(feature = "nova")]
+    Chronos,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`

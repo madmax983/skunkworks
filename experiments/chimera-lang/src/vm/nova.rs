@@ -1127,6 +1127,51 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Prophecy => exec_prophecy(vm),
         #[cfg(feature = "nova")]
+        OpCode::TimeWarp => {
+            // stack: radius, factor (top)
+            if vm.stack.len() >= 2 {
+                let factor_val = vm.stack.pop().unwrap();
+                let radius_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(r), Value::Int(f)) = (radius_val, factor_val) {
+                    if r > 0 {
+                        let factor = f.clamp(0, 10) as u8;
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+                        let count = coords.len();
+
+                        for (tx, ty) in coords {
+                            vm.time_grid[ty][tx] = factor;
+                        }
+
+                        // Cost depends on area and factor magnitude
+                        let cost_multiplier = if factor == 0 { 2 } else { factor as i64 };
+                        vm.energy = vm
+                            .energy
+                            .saturating_sub((count as i64 * cost_multiplier) / 2);
+                        vm.output.push(format!(
+                            "TIME_WARP: Set time factor {} at {},{} r={}",
+                            factor, cx, cy, r
+                        ));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for time_warp".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for time_warp".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Chronos => {
+            let (cy, cx) = vm.context_loc;
+            let factor = vm.time_grid[cy][cx];
+            vm.stack.push(Value::Int(factor as i64));
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Alchemy => {
             let (cy, cx) = vm.context_loc;
             perform_alchemy(vm, cy, cx);
