@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 use std::f64::consts::PI;
 use std::fs;
 use std::path::{Path, PathBuf};
-use tui_shared::math::Vec2;
 use std::time::SystemTime;
+use tui_shared::math::Vec2;
 
 #[derive(Debug, Clone)]
 pub enum EntityType {

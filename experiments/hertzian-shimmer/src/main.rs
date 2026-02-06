@@ -2,14 +2,14 @@ use anyhow::Result;
 use crossbeam_channel::{bounded, Sender};
 use crossterm::event::{self, Event, KeyCode, MouseEvent, MouseEventKind};
 use ratatui::{
+    backend::CrosstermBackend,
     buffer::Buffer,
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color},
-    widgets::{Block, Borders, Widget, Paragraph},
+    style::Color,
+    widgets::{Block, Borders, Paragraph, Widget},
     Terminal,
-    backend::CrosstermBackend,
 };
-use std::{io, path::PathBuf, time::Duration, thread};
+use std::{io, path::PathBuf, thread, time::Duration};
 use tui_shared::Tui;
 
 use resonance_audio::audio::{AudioCommand, AudioModel};
@@ -140,13 +140,21 @@ impl<'a> Widget for HeatmapWidget<'a> {
                     ('█', Color::White)
                 } else {
                     let v = *val;
-                    if v > 0.5 { ('@', Color::Red) }
-                    else if v > 0.2 { ('%', Color::LightRed) }
-                    else if v > 0.05 { ('.', Color::DarkGray) }
-                    else if v < -0.5 { ('@', Color::Blue) }
-                    else if v < -0.2 { ('%', Color::LightBlue) }
-                    else if v < -0.05 { ('.', Color::DarkGray) }
-                    else { (' ', Color::Black) }
+                    if v > 0.5 {
+                        ('@', Color::Red)
+                    } else if v > 0.2 {
+                        ('%', Color::LightRed)
+                    } else if v > 0.05 {
+                        ('.', Color::DarkGray)
+                    } else if v < -0.5 {
+                        ('@', Color::Blue)
+                    } else if v < -0.2 {
+                        ('%', Color::LightBlue)
+                    } else if v < -0.05 {
+                        ('.', Color::DarkGray)
+                    } else {
+                        (' ', Color::Black)
+                    }
                 };
 
                 if let Some(cell) = buf.cell_mut((area.left() + x as u16, area.top() + y as u16)) {
@@ -214,20 +222,31 @@ fn run_app(
                     }
                     if key.code == KeyCode::Char(' ') {
                         // Random pluck
-                         let x = SIM_WIDTH / 2;
-                         let y = SIM_HEIGHT / 2;
-                         let _ = cmd_tx.send(AudioCommand::Pluck { x, y, strength: 1.0 });
+                        let x = SIM_WIDTH / 2;
+                        let y = SIM_HEIGHT / 2;
+                        let _ = cmd_tx.send(AudioCommand::Pluck {
+                            x,
+                            y,
+                            strength: 1.0,
+                        });
                     }
                 }
-                Event::Mouse(MouseEvent { kind: MouseEventKind::Down(_), .. }) => {
-                     // Try to map mouse to grid
-                     // This is hard without knowing the calculated 'centered_area' from the draw loop.
-                     // But we can approximate or just ignore mouse for MVP.
-                     // Let's ignore mouse precision for now to save complexity, Space is enough.
-                     // Or, just pluck at center.
-                     let x = SIM_WIDTH / 2;
-                     let y = SIM_HEIGHT / 2;
-                     let _ = cmd_tx.send(AudioCommand::Pluck { x, y, strength: 1.0 });
+                Event::Mouse(MouseEvent {
+                    kind: MouseEventKind::Down(_),
+                    ..
+                }) => {
+                    // Try to map mouse to grid
+                    // This is hard without knowing the calculated 'centered_area' from the draw loop.
+                    // But we can approximate or just ignore mouse for MVP.
+                    // Let's ignore mouse precision for now to save complexity, Space is enough.
+                    // Or, just pluck at center.
+                    let x = SIM_WIDTH / 2;
+                    let y = SIM_HEIGHT / 2;
+                    let _ = cmd_tx.send(AudioCommand::Pluck {
+                        x,
+                        y,
+                        strength: 1.0,
+                    });
                 }
                 _ => {}
             }

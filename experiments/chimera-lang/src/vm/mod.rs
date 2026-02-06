@@ -49,6 +49,8 @@ pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
+#[cfg(feature = "nova")]
+pub mod nova_sigil;
 pub mod oracle;
 pub mod resonance;
 
@@ -1224,6 +1226,9 @@ impl ChimeraVM {
                 self.stack.push(Value::Str(dump));
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy

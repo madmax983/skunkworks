@@ -43,6 +43,8 @@ mod cortex_test;
 mod cortex_view_test;
 mod havoc_repro;
 #[cfg(all(test, feature = "nova"))]
+mod microscope_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
@@ -79,8 +81,6 @@ mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
-mod microscope_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_mutagen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_organelle_test;
@@ -96,6 +96,8 @@ mod nova_quantum_test;
 mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_reflex_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_sigil_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_simulate_test;
 #[cfg(all(test, feature = "nova"))]

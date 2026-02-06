@@ -63,7 +63,7 @@ impl Default for Director {
 
 impl Director {
     pub fn update(&mut self, dt_seconds: f32) {
-         // Interpolate towards target
+        // Interpolate towards target
         // The speed depends on the "Time" factor of the TARGET (Self-referential logic)
         // If target is "Sudden" (Time -> 0.0), we move fast.
         // If target is "Sustained" (Time -> 1.0), we move slow.
@@ -72,10 +72,17 @@ impl Director {
 
         // Simple lerp with clamping
         let t = dt.clamp(0.0, 1.0);
-        self.current_effort = self.current_effort.interpolate(&self.target_effort, t * 0.1); // Smooth damping
+        self.current_effort = self
+            .current_effort
+            .interpolate(&self.target_effort, t * 0.1); // Smooth damping
     }
 
-    pub fn set_target_from_environment(&mut self, size_factor: f32, age_factor: f32, depth_factor: f32) {
+    pub fn set_target_from_environment(
+        &mut self,
+        size_factor: f32,
+        age_factor: f32,
+        depth_factor: f32,
+    ) {
         // Map Environment to Laban Efforts
 
         // Weight: Heavy (0.0) if size is large, Light (1.0) if small
@@ -93,6 +100,7 @@ impl Director {
         // For now, let's make it random or based on hidden files?
         // Let's randomize it slightly for "life"
         let mut rng = rand::thread_rng();
-        self.target_effort.flow = (self.target_effort.flow + rng.gen_range(-0.05..0.05)).clamp(0.0, 1.0);
+        self.target_effort.flow =
+            (self.target_effort.flow + rng.gen_range(-0.05..0.05)).clamp(0.0, 1.0);
     }
 }
