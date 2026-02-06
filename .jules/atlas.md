@@ -41,3 +41,9 @@
 **Blueprint:** Extracted shared geometry to `crates/poincare-disk`.
 **Stability:** Single source of truth for complex hyperbolic math.
 **Verification:** Verified via `cargo check` on all consumers.
+
+## [Poincare Disk Extraction Phase 2]
+**Tangle:** The Copy-Paste - `hyperbolic-fs` contained a local `hyperbolic.rs` module duplicating Möbius transformation logic found in `crates/poincare-disk`.
+**Blueprint:** Refactored `hyperbolic-fs` to depend on `poincare-disk` and removed the duplicate local module.
+**Stability:** Reduced code duplication, enforcing single source of truth for hyperbolic geometry.
+**Verification:** Verified with `cargo check` and `cargo test`.
