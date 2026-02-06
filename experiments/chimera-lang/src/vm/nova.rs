@@ -279,6 +279,88 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
+#[cfg(feature = "nova")]
+pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
+    let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
+    let len = buffer.len();
+    if len < 2 {
+        return false;
+    }
+
+    // Magic Chords (Spells)
+    // Checks from end of buffer (most recent)
+
+    // "Vitality": Mi Re Do -> Energy + 50
+    if len >= 3 && buffer[len - 3..] == ["Mi", "Re", "Do"] {
+        vm.energy = vm.energy.saturating_add(50);
+        vm.chorus_buffer.clear();
+        vm.output
+            .push("CHORUS: Vitality Chord! Energy restored.".to_string());
+        return true;
+    }
+
+    // "Genesis": Do Mi Sol -> Spawn Worker
+    if len >= 3 && buffer[len - 3..] == ["Do", "Mi", "Sol"] {
+        // Spawn at random location
+        if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+            let mut rng = rand::thread_rng();
+            let rx = rng.gen_range(0..crate::vm::GRID_SIZE);
+            let ry = rng.gen_range(0..crate::vm::GRID_SIZE);
+
+            let organelle = Organelle {
+                stack: Vec::new(),
+                ip: (0, 0),
+                context_loc: (ry, rx),
+                call_stack: Vec::new(),
+                recursion_depth: 0,
+                halted: false,
+                kind: OrganelleType::Worker,
+                direction: (0, 0),
+                ttl: None,
+            };
+            vm.organelles.push(organelle);
+            vm.chorus_buffer.clear();
+            vm.output
+                .push("CHORUS: Genesis Chord! Life created.".to_string());
+            return true;
+        }
+    }
+
+    // "Apocalypse": La Sol Fa Mi Re Do -> Kill random organelle
+    if len >= 6 && buffer[len - 6..] == ["La", "Sol", "Fa", "Mi", "Re", "Do"] {
+        if !vm.organelles.is_empty() {
+            let mut rng = rand::thread_rng();
+            let idx = rng.gen_range(0..vm.organelles.len());
+            vm.organelles.remove(idx);
+            vm.chorus_buffer.clear();
+            vm.output
+                .push("CHORUS: Apocalypse Chord! A life was taken.".to_string());
+            return true;
+        }
+    }
+
+    // "Transmute": Lead Gold -> Transmute Grid
+    if len >= 2 && buffer[len - 2..] == ["Lead", "Gold"] {
+        let mut count = 0;
+        for row in vm.grid.iter_mut() {
+            for cell in row.iter_mut() {
+                if let Value::Str(s) = cell {
+                    if s == "Lead" {
+                        *cell = Value::Str("Gold".to_string());
+                        count += 1;
+                    }
+                }
+            }
+        }
+        vm.chorus_buffer.clear();
+        vm.output
+            .push(format!("CHORUS: Transmute Chord! {} Lead became Gold.", count));
+        return true;
+    }
+
+    false
+}
+
 pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
     // Recipes:
     // "fire" + "water" -> "steam"
@@ -440,6 +522,39 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 vm.output
                     .push("Error: Stack underflow for simulate".to_string());
             }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Sing => {
+            // stack: note (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(note) = val {
+                    vm.chorus_buffer.push_back(note.clone());
+                    if vm.chorus_buffer.len() > crate::vm::MAX_CHORUS_SIZE {
+                        vm.chorus_buffer.pop_front();
+                    }
+                    vm.energy = vm.energy.saturating_sub(2);
+                    vm.output.push(format!("SING: {}", note));
+
+                    check_chorus_chords(vm);
+                } else {
+                    vm.output.push("Error: Type mismatch for sing".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for sing".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Listen => {
+            let notes: Vec<Value> = vm
+                .chorus_buffer
+                .iter()
+                .map(|s| Value::Str(s.clone()))
+                .collect();
+            vm.stack
+                .push(Value::Junction(crate::ast::JunctionType::All, notes));
             None
         }
         #[cfg(feature = "nova")]

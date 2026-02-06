@@ -34,6 +34,7 @@ pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
 pub const MAX_SPORES: usize = 64;
 pub const MAX_ORGANELLES: usize = 256;
+pub const MAX_CHORUS_SIZE: usize = 8;
 pub const MAX_JUNCTION_SIZE: usize = 1024;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
@@ -216,6 +217,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "nova")]
+    pub chorus_buffer: VecDeque<String>,
+    #[cfg(feature = "nova")]
     pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
@@ -320,6 +323,8 @@ impl ChimeraVM {
             direction: 1,
             #[cfg(feature = "nova")]
             mycelium: HashMap::new(),
+            #[cfg(feature = "nova")]
+            chorus_buffer: VecDeque::new(),
             #[cfg(feature = "nova")]
             score: Vec::new(),
             #[cfg(feature = "oracle")]
@@ -1221,6 +1226,8 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
+            | OpCode::Sing
+            | OpCode::Listen
             | OpCode::Hyphae
             | OpCode::Connect
             | OpCode::Transport
