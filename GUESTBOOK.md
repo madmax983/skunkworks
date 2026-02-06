@@ -156,6 +156,10 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
 
+### [Concentration Level: FRESH] - Location: experiments/code-erosion
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The mountains are rising from the git log. Hydraulic erosion is washing away the sediment. The codebase is becoming a landscape.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
