@@ -5,12 +5,12 @@ use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     symbols,
-    text::Span,
+    text::{Line, Span},
     widgets::{
         canvas::{Canvas, Line as CanvasLine},
-        Block, Borders, Paragraph,
+        Block, Borders, Gauge, List, ListItem, Paragraph,
     },
     Frame,
 };
@@ -24,8 +24,7 @@ struct App {
     world: World,
     running: bool,
     view_radius: f64,
-    message: String,
-    message_timer: usize,
+    logs: Vec<String>,
 }
 
 impl App {
@@ -39,23 +38,19 @@ impl App {
             world,
             running: true,
             view_radius: 60.0,
-            message: String::from("Welcome to Repo Rover! Use Arrow Keys to move."),
-            message_timer: 100,
+            logs: vec![String::from("Welcome to Repo Rover!"), String::from("Use Arrow Keys to move.")],
         })
     }
 
     fn update(&mut self) {
         self.rover.update();
-        if self.message_timer > 0 {
-            self.message_timer -= 1;
-        } else {
-            self.message = String::new();
-        }
     }
 
-    fn set_message(&mut self, msg: String) {
-        self.message = msg;
-        self.message_timer = 180;
+    fn add_log(&mut self, msg: String) {
+        self.logs.push(msg);
+        if self.logs.len() > 10 {
+            self.logs.remove(0);
+        }
     }
 
     fn scan_action(&mut self) {
@@ -76,14 +71,14 @@ impl App {
             if dist < 5.0 {
                 match kind {
                     EntityType::File { size } => {
-                        self.set_message(format!("File: {} | Size: {} bytes", name, size));
+                        self.add_log(format!("File: {} | Size: {} bytes", name, size));
                     }
                     EntityType::Directory => {
-                        self.set_message(format!("Directory: {} | Use ENTER to enter", name));
+                        self.add_log(format!("Directory: {} | Use ENTER to enter", name));
                     }
                 }
             } else {
-                self.set_message("No target in range.".to_string());
+                self.add_log("No target in range.".to_string());
             }
         }
     }
@@ -110,10 +105,10 @@ impl App {
                         self.world.scan_path(&path)?;
                         self.rover.pos = Vec2::zero();
                         self.rover.vel = Vec2::zero();
-                        self.set_message(format!("Entered: {}", name));
+                        self.add_log(format!("Entered: {}", name));
                     }
                     EntityType::File { .. } => {
-                        self.set_message("Cannot enter a file.".to_string());
+                        self.add_log("Cannot enter a file.".to_string());
                     }
                 }
             }
@@ -177,12 +172,12 @@ fn ui(f: &mut Frame, app: &mut App) {
         .direction(Direction::Vertical)
         .constraints([
             Constraint::Min(0),
-            Constraint::Length(1), // HUD
+            Constraint::Length(8), // Dashboard
         ])
         .split(f.area());
 
     draw_canvas(f, app, chunks[0]);
-    draw_hud(f, app, chunks[1]);
+    draw_dashboard(f, app, chunks[1]);
 }
 
 fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
@@ -191,8 +186,8 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
     let r = app.view_radius;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Sector Map"))
-        .x_bounds([view_x - r * 1.5, view_x + r * 1.5]) // Aspect ratio correction attempt
+        .block(Block::default().borders(Borders::ALL).title(" Sector Map ").border_style(Style::default().fg(Color::Cyan)))
+        .x_bounds([view_x - r * 1.5, view_x + r * 1.5])
         .y_bounds([view_y - r, view_y + r])
         .marker(symbols::Marker::Braille)
         .paint(|ctx| {
@@ -200,10 +195,10 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
             for entity in &app.world.entities {
                 let color = match entity.kind {
                     EntityType::Directory => Color::Yellow,
-                    EntityType::File { .. } => Color::Blue,
+                    EntityType::File { .. } => Color::LightBlue,
                 };
 
-                // Culling for performance (simple box check)
+                // Culling
                 if (entity.pos.x - view_x).abs() > r * 2.0
                     || (entity.pos.y - view_y).abs() > r * 2.0
                 {
@@ -222,17 +217,17 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
                     ),
                 );
 
-                // If close, draw label
+                // Label
                 if entity.pos.distance(app.rover.pos) < 5.0 {
                     ctx.print(
                         entity.pos.x,
                         entity.pos.y + 1.0,
-                        Span::raw(entity.name.clone()),
+                        Span::styled(entity.name.clone(), Style::default().fg(Color::White).add_modifier(Modifier::BOLD)),
                     );
                 }
             }
 
-            // Draw Rover manually using lines
+            // Draw Rover
             let angle = app.rover.angle;
             let pos = app.rover.pos;
 
@@ -259,35 +254,82 @@ fn draw_canvas(f: &mut Frame, app: &App, area: Rect) {
                 y1: p2.y,
                 x2: p3.x,
                 y2: p3.y,
-                color: Color::Red,
+                color: Color::LightRed,
             });
             ctx.draw(&CanvasLine {
                 x1: p3.x,
                 y1: p3.y,
                 x2: p1.x,
                 y2: p1.y,
-                color: Color::Red,
+                color: Color::LightRed,
             });
         });
 
     f.render_widget(canvas, area);
 }
 
-fn draw_hud(f: &mut Frame, app: &App, area: Rect) {
-    let hud_text = format!(
-        "POS: {:.1},{:.1} | VEL: {:.1} | DIR: {:?} | {}",
-        app.rover.pos.x,
-        app.rover.pos.y,
-        app.rover.vel.magnitude(),
-        app.world
-            .current_path
-            .file_name()
-            .unwrap_or_default()
-            .to_string_lossy(),
-        app.message
-    );
-    f.render_widget(
-        Paragraph::new(hud_text).style(Style::default().fg(Color::Green)),
-        area,
-    );
+fn draw_dashboard(f: &mut Frame, app: &App, area: Rect) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage(20), // Status
+            Constraint::Percentage(50), // Logs
+            Constraint::Percentage(30), // Info
+        ])
+        .split(area);
+
+    // 1. Status Panel
+    let velocity = app.rover.vel.magnitude();
+    let velocity_ratio = (velocity / app.rover.max_speed).min(1.0);
+
+    let gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title(" Thrusters ").border_style(Style::default().fg(Color::Cyan)))
+        .gauge_style(Style::default().fg(Color::LightGreen).bg(Color::DarkGray))
+        .ratio(velocity_ratio)
+        .label(format!("{:.1} m/s", velocity));
+
+    f.render_widget(gauge, chunks[0]);
+
+    // 2. Logs Panel
+    let items: Vec<ListItem> = app
+        .logs
+        .iter()
+        .rev() // Show newest at top
+        .map(|m| ListItem::new(Span::raw(m)))
+        .collect();
+
+    let list = List::new(items)
+        .block(Block::default().borders(Borders::ALL).title(" Scanner Log ").border_style(Style::default().fg(Color::Cyan)));
+
+    f.render_widget(list, chunks[1]);
+
+    // 3. Info Panel
+    let path_str = app.world.current_path.to_string_lossy();
+    let path_len = path_str.chars().count();
+    let display_path = if path_len > 20 {
+        let truncated: String = path_str.chars().skip(path_len - 18).collect();
+        format!("...{}", truncated)
+    } else {
+        path_str.into_owned()
+    };
+
+    let info_text = vec![
+        Line::from(vec![
+            Span::styled("SECTOR: ", Style::default().fg(Color::Yellow)),
+            Span::raw(app.world.current_path.file_name().unwrap_or_default().to_string_lossy()),
+        ]),
+        Line::from(vec![
+            Span::styled("PATH:   ", Style::default().fg(Color::Yellow)),
+            Span::raw(display_path),
+        ]),
+        Line::from(vec![
+            Span::styled("POS:    ", Style::default().fg(Color::Yellow)),
+            Span::raw(format!("{:.1}, {:.1}", app.rover.pos.x, app.rover.pos.y)),
+        ]),
+    ];
+
+    let info = Paragraph::new(info_text)
+        .block(Block::default().borders(Borders::ALL).title(" Nav Computer ").border_style(Style::default().fg(Color::Cyan)));
+
+    f.render_widget(info, chunks[2]);
 }
