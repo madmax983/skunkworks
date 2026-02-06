@@ -100,7 +100,7 @@ members = [
     "crates/resonance-audio", "crates/poincare-disk", "experiments/hive-mind-dependencies", "experiments/syntax-evolution",
     "experiments/clockwork-chimera", "experiments/schrodingers-beat",
     "experiments/colony-concerto", "experiments/rhizome-radar", "experiments/hyperbolic-roots",
-    "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor", "experiments/laban-machine",
+    "experiments/trace-tardis", "experiments/biophysical-synth", "experiments/glyph-wave", "experiments/beat-reactor", "experiments/laban-machine", "experiments/code-erosion",
 ]
 resolver = "2"
 
