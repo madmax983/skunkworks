@@ -1294,27 +1294,32 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('r') => {
                         if let ViewMode::Graveyard = app_state.view_mode {
-                             match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
-                                 Ok(idx) => {
-                                     app_state.status_msg = format!("Resurrected strand {}!", idx);
-                                     if app_state.selected_graveyard_strand >= vm.graveyard.len() && !vm.graveyard.is_empty() {
-                                         app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
-                                     }
-                                 }
-                                 Err(e) => app_state.status_msg = format!("Error: {}", e),
-                             }
+                            match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
+                                Ok(idx) => {
+                                    app_state.status_msg = format!("Resurrected strand {}!", idx);
+                                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                                        && !vm.graveyard.is_empty()
+                                    {
+                                        app_state.selected_graveyard_strand =
+                                            vm.graveyard.len() - 1;
+                                    }
+                                }
+                                Err(e) => app_state.status_msg = format!("Error: {}", e),
+                            }
                         }
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('x') => {
                         if let ViewMode::Graveyard = app_state.view_mode {
-                             if app_state.selected_graveyard_strand < vm.graveyard.len() {
-                                 vm.graveyard.remove(app_state.selected_graveyard_strand);
-                                 app_state.status_msg = "Exterminated strand.".to_string();
-                                 if app_state.selected_graveyard_strand >= vm.graveyard.len() && !vm.graveyard.is_empty() {
-                                     app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
-                                 }
-                             }
+                            if app_state.selected_graveyard_strand < vm.graveyard.len() {
+                                vm.graveyard.remove(app_state.selected_graveyard_strand);
+                                app_state.status_msg = "Exterminated strand.".to_string();
+                                if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                                    && !vm.graveyard.is_empty()
+                                {
+                                    app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+                                }
+                            }
                         }
                     }
                     #[cfg(feature = "biophysics")]

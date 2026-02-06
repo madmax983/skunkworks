@@ -1,7 +1,7 @@
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use ringbuf::{HeapRb, Consumer};
-use std::sync::Arc;
 use crate::neuron::Izhikevich;
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use ringbuf::{Consumer, HeapRb};
+use std::sync::Arc;
 
 #[derive(Clone, Copy, Debug)]
 pub struct NeuronHit {
@@ -24,7 +24,9 @@ pub struct AudioEngine {
 impl AudioEngine {
     pub fn new(neuron_count: usize) -> anyhow::Result<Self> {
         let host = cpal::default_host();
-        let device = host.default_output_device().expect("no output device available");
+        let device = host
+            .default_output_device()
+            .expect("no output device available");
         let config = device.default_output_config()?;
         let sample_rate = config.sample_rate().0 as f32;
         let channels = config.channels() as usize;
@@ -70,7 +72,8 @@ impl AudioEngine {
 
                     // Snapshot logic
                     snapshot_timer += 1;
-                    if snapshot_timer > 700 { // ~60Hz
+                    if snapshot_timer > 700 {
+                        // ~60Hz
                         snapshot_timer = 0;
                         let voltages: Vec<f32> = neurons.iter().map(|n| n.v).collect();
                         let _ = snapshot_tx.push(Snapshot {

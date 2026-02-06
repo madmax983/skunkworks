@@ -37,15 +37,15 @@ impl Izhikevich {
                 d: 8.0,
             }
         } else if r < 0.8 {
-             // Fast Spiking
-             Self {
-                 v: -65.0,
-                 u: -13.0,
-                 a: 0.1,
-                 b: 0.2,
-                 c: -65.0,
-                 d: 2.0,
-             }
+            // Fast Spiking
+            Self {
+                v: -65.0,
+                u: -13.0,
+                a: 0.1,
+                b: 0.2,
+                c: -65.0,
+                d: 2.0,
+            }
         } else {
             // Chattering
             Self {

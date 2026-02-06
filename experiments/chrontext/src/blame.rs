@@ -33,8 +33,8 @@ impl BlameAnalyzer {
             Path::new(&self.start_path)
         };
 
-        let repo = Repository::discover(discover_path)
-            .context("Failed to discover git repository")?;
+        let repo =
+            Repository::discover(discover_path).context("Failed to discover git repository")?;
 
         // Resolve path relative to repo root
         // We need absolute path of file first
@@ -49,8 +49,10 @@ impl BlameAnalyzer {
         let workdir = repo.workdir().context("Repository has no workdir")?;
         let workdir = std::fs::canonicalize(workdir).unwrap_or(workdir.to_path_buf());
 
-        let path_relative = abs_file_path.strip_prefix(&workdir)
-            .context(format!("File {:?} is not in repository {:?}", abs_file_path, workdir))?;
+        let path_relative = abs_file_path.strip_prefix(&workdir).context(format!(
+            "File {:?} is not in repository {:?}",
+            abs_file_path, workdir
+        ))?;
 
         let mut opts = BlameOptions::new();
         let blame = repo
@@ -83,8 +85,8 @@ impl BlameAnalyzer {
 
         // Ensure range is valid
         if min_time > max_time {
-             min_time = now;
-             max_time = now;
+            min_time = now;
+            max_time = now;
         }
 
         // Avoid division by zero if all commits have same timestamp
@@ -104,7 +106,7 @@ impl BlameAnalyzer {
                     "Uncommitted changes".to_string(),
                     now,
                     Utc::now(),
-                    "00000000".to_string()
+                    "00000000".to_string(),
                 )
             } else if let Ok(commit) = repo.find_commit(commit_id) {
                 let author = commit.author();
@@ -117,7 +119,7 @@ impl BlameAnalyzer {
                     message,
                     time,
                     date,
-                    commit_id.to_string()[..8].to_string()
+                    commit_id.to_string()[..8].to_string(),
                 )
             } else {
                 (
@@ -125,7 +127,7 @@ impl BlameAnalyzer {
                     "Unknown commit".to_string(),
                     now,
                     Utc::now(),
-                    "????????".to_string()
+                    "????????".to_string(),
                 )
             };
 
