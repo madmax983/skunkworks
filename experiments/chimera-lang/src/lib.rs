@@ -135,6 +135,8 @@ mod oracle_test;
 mod prion_test;
 #[cfg(all(test, feature = "resonance"))]
 mod resonance_test;
+#[cfg(all(test, feature = "resonance"))]
+mod nova_resonance_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribosome_test;
 #[cfg(all(test, feature = "nova"))]
