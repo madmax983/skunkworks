@@ -1,30 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
-    use crate::opcode::OpCode;
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::vm::ChimeraVM;
+    use crate::opcode::OpCode;
 
-    fn make_nested_junction_dna(depth: usize) -> Dna {
-        let mut nuc = Nucleotide::Number(1);
-        for _ in 0..depth {
-            nuc = Nucleotide::Junction(JunctionType::Any, vec![nuc]);
-        }
-
-        let genes = vec![
-            Gene {
-                op: OpCode::Push,
-                args: vec![nuc],
-            },
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(1)],
-            },
-            Gene {
-                op: OpCode::Add,
-                args: vec![],
-            },
-        ];
-
+    fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
             helix: Helix {
                 strands: vec![Strand { genes }],
@@ -33,31 +13,48 @@ mod tests {
     }
 
     #[test]
-    fn test_stack_overflow() {
-        // 🧨 Havoc: Trigger recursion bomb via Junctions
-        // We use depth 500.
-        // - Safe for Rust default stack (Nucleotide Drop won't crash).
-        // - Sufficient to trigger our new safety limits (100).
-        let depth = 500;
-        let mut vm = ChimeraVM::new(make_nested_junction_dna(depth));
+    fn test_junction_blowup() {
+        // Attack: Exponential Junction Blowup via OpCode::Add (Cross Product)
+        // 1. Create a Junction of size 2: [1, 1]
+        // 2. Loop: Dup, Add.
+        // Size sequence: 2 -> 4 -> 16 -> 256 -> 65536 -> 4,294,967,296 (4B) -> OOM
 
-        // Push Junction -> Should fail now! (complexity limit in nuc_to_val)
-        vm.step();
+        let genes = vec![
+            // Init: Push(1)
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+            // Make it [1, 1] using Map("[ dup() ]")
+            Gene { op: OpCode::Push, args: vec![Nucleotide::String("[ dup() ]".to_string())] },
+            Gene { op: OpCode::Map, args: vec![] },
 
-        // Push 1 -> Stack has [1]
-        vm.step();
+            // Iteration 1: 2 -> 4
+            Gene { op: OpCode::Dup, args: vec![] },
+            Gene { op: OpCode::Add, args: vec![] },
 
-        // Add -> Stack has [1]. Add needs 2. -> Stack underflow.
-        // If Push succeeded (it shouldn't), Add would fail with complexity limit.
-        vm.step();
+            // Iteration 2: 4 -> 16
+            Gene { op: OpCode::Dup, args: vec![] },
+            Gene { op: OpCode::Add, args: vec![] },
 
-        // Check for ANY of our safety nets
-        let has_safety = vm.output.iter().any(|s| {
-            s.contains("complexity limit")
-                || s.contains("Invalid arg")
-                || s.contains("Stack underflow")
-        });
+            // Iteration 3: 16 -> 256
+            Gene { op: OpCode::Dup, args: vec![] },
+            Gene { op: OpCode::Add, args: vec![] },
 
-        assert!(has_safety, "Expected VM to safely handle complexity bomb");
+            // Iteration 4: 256 -> 65536 (Wait, 65536 is > 1024, so it should be blocked here)
+            Gene { op: OpCode::Dup, args: vec![] },
+            Gene { op: OpCode::Add, args: vec![] },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        let mut steps = 0;
+        while !vm.halted && steps < 1000 {
+            vm.step();
+            steps += 1;
+        }
+
+        // Verify we hit the complexity limit
+        let has_error = vm.output.iter().any(|s|
+            s.contains("complexity limit") || s.contains("limit exceeded")
+        );
+        assert!(has_error, "Expected complexity/size limit error, got: {:?}", vm.output);
     }
 }
