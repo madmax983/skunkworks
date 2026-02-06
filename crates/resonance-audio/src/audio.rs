@@ -1,9 +1,12 @@
 /// Shared Audio Model Logic for Resonance Experiments
 use crate::physics::PhysicsGrid;
 use crossbeam_channel::{Receiver, Sender};
+use std::collections::HashMap;
+use std::f32::consts::PI;
 
 pub enum AudioCommand {
     Pluck { x: usize, y: usize, strength: f32 },
+    Oscillate { x: usize, y: usize, frequency: f32, strength: f32 },
     AddWall { x: usize, y: usize },
     MoveListener { x: usize, y: usize },
 }
@@ -15,6 +18,8 @@ pub struct AudioModel {
     pub command_rx: Receiver<AudioCommand>,
     pub snapshot_tx: Sender<Vec<f32>>,
     pub sample_counter: usize,
+    /// Map of (x, y) -> (phase, frequency, strength)
+    pub oscillators: HashMap<(usize, usize), (f32, f32, f32)>,
 }
 
 impl AudioModel {
@@ -31,6 +36,7 @@ impl AudioModel {
             command_rx,
             snapshot_tx,
             sample_counter: 0,
+            oscillators: HashMap::new(),
         }
     }
 
@@ -40,12 +46,41 @@ impl AudioModel {
             while let Ok(cmd) = self.command_rx.try_recv() {
                 match cmd {
                     AudioCommand::Pluck { x, y, strength } => self.grid.pluck(x, y, strength),
+                    AudioCommand::Oscillate { x, y, frequency, strength } => {
+                        if strength.abs() < 0.001 {
+                            self.oscillators.remove(&(x, y));
+                        } else {
+                            // Reset phase if new? Or keep phase to avoid clicking?
+                            // Let's keep phase if exists, else 0.0.
+                            let entry = self.oscillators.entry((x, y)).or_insert((0.0, frequency, strength));
+                            entry.1 = frequency;
+                            entry.2 = strength;
+                        }
+                    }
                     AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
                     AudioCommand::MoveListener { x, y } => {
                         if x < self.grid.width && y < self.grid.height {
                             self.listener_x = x;
                             self.listener_y = y;
                         }
+                    }
+                }
+            }
+
+            // Apply oscillators
+            for ((x, y), (phase, freq, strength)) in self.oscillators.iter_mut() {
+                // frequency is Hz. Sample rate assumed 44100.
+                *phase += *freq * 2.0 * PI / 44100.0;
+                if *phase > 2.0 * PI {
+                    *phase -= 2.0 * PI;
+                }
+                let val = phase.sin() * *strength;
+
+                // Inject into grid
+                if *x < self.grid.width && *y < self.grid.height {
+                    let idx = *y * self.grid.width + *x;
+                    if !self.grid.walls[idx] {
+                         self.grid.u[idx] += val;
                     }
                 }
             }

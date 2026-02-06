@@ -1528,7 +1528,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "resonance")]
-            OpCode::Pluck => {
+            OpCode::Pluck | OpCode::Oscillate => {
                 resonance::exec_resonance_op(self, op, args);
                 None
             }

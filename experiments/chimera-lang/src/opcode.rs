@@ -794,6 +794,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strength ] -> [ ... ]`
     #[cfg(feature = "resonance")]
     Pluck,
+    /// **[Resonance]** Continuously excites the grid at the current location with a sine wave.
+    ///
+    /// **Stack:** `[ ..., frequency, strength ] -> [ ... ]`
+    /// **Effect:** Sets up an oscillator. If strength is 0, stops oscillation.
+    #[cfg(feature = "resonance")]
+    Oscillate,
 
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
