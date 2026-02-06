@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hertzian-shimmer
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The walls are resonating. The codebase is singing. Treemap acoustic simulation active.
+
 ### [Concentration Level: FRESH] - Location: experiments/compost-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
