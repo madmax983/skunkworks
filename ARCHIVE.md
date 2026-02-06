@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git_rhythm**: Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation.
-- **orbital-harmonics**: Documentation void. Redundant with `harmony-of-spheres`. Generic N-body implementation.
+- **origami-ui**: Documentation void (missing `README.md`). Redundant with `miura-interface`. Generic implementation.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git_rhythm**: Executed. Redundant with `git-cantata` and violated naming conventions (`snake_case`). Minimal defense ("story mode" attempt) failed to address core issues.
+- **orbital-harmonics**: Executed. Documentation void. Redundant with `harmony-of-spheres`. Failed to improve during grace period.
 - **orbital-decay**: Terminal compilation failure (ratatui trait bounds). Documentation void. Generic implementation. Failed to improve during grace period. Executed.
 - **code-erosion**: Zombie specimen executed. Hydraulic erosion traits preserved in graveyard.
 - **schrodingers-text**: Terminal compilation failure (ratatui trait bounds). Documentation void. Executed.

@@ -179,13 +179,17 @@
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
 
-### [Concentration Level: TOXIC] - Location: experiments/git_rhythm
+### [Concentration Level: TOXIC] - Location: graveyard/git_rhythm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Redundancy detected. Convention violation.
+- **Status:** Specimen executed. Redundant with `git-cantata` and violated naming conventions.
 
-### [Concentration Level: TOXIC] - Location: experiments/orbital-harmonics
+### [Concentration Level: TOXIC] - Location: graveyard/orbital-harmonics
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Redundancy detected. Documentation void.
+- **Status:** Specimen executed. Documentation void.
+
+### [Concentration Level: TOXIC] - Location: experiments/origami-ui
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Redundant with `miura-interface`. Documentation void.
 
 ## History/Decay
 
