@@ -580,6 +580,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     AkashicRead,
 
+    /// **[Nova]** Dumps the flight recorder (blackbox) to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dump_string ]`
+    #[cfg(feature = "nova")]
+    Blackbox,
+
     // Ribozyme Features (Functional Programming)
     /// **[Nova]** Evaluates a string as code.
     ///
@@ -696,6 +702,9 @@ impl FromStr for OpCode {
             "akashic_write" => Ok(OpCode::AkashicWrite),
             #[cfg(feature = "nova")]
             "akashic_read" => Ok(OpCode::AkashicRead),
+
+            #[cfg(feature = "nova")]
+            "blackbox" => Ok(OpCode::Blackbox),
 
             #[cfg(feature = "nova")]
             "eval" => Ok(OpCode::Eval),
@@ -1095,6 +1104,9 @@ impl fmt::Display for OpCode {
             OpCode::AkashicWrite => write!(f, "akashic_write"),
             #[cfg(feature = "nova")]
             OpCode::AkashicRead => write!(f, "akashic_read"),
+
+            #[cfg(feature = "nova")]
+            OpCode::Blackbox => write!(f, "blackbox"),
 
             #[cfg(feature = "nova")]
             OpCode::Eval => write!(f, "eval"),

@@ -41,6 +41,8 @@ pub const INITIAL_ENERGY: i64 = 50;
 #[cfg(feature = "nova")]
 pub mod akashic;
 pub mod bard;
+#[cfg(feature = "nova")]
+pub mod blackbox;
 pub mod cortex;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
@@ -221,6 +223,8 @@ pub struct ChimeraVM {
     pub audio_tx: Option<Sender<AudioCommand>>,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
+    #[cfg(feature = "nova")]
+    pub blackbox: blackbox::Blackbox,
 }
 
 impl ChimeraVM {
@@ -324,6 +328,8 @@ impl ChimeraVM {
             audio_tx: None,
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
+            #[cfg(feature = "nova")]
+            blackbox: blackbox::Blackbox::new(),
         }
     }
 
@@ -935,6 +941,15 @@ impl ChimeraVM {
             return;
         }
 
+        #[cfg(feature = "nova")]
+        self.blackbox.record(
+            &self.dna,
+            self.ip,
+            &self.stack,
+            self.energy,
+            self.context_loc,
+        );
+
         self.energy -= 1;
 
         #[cfg(feature = "nova")]
@@ -1194,6 +1209,13 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::AkashicWrite | OpCode::AkashicRead => {
                 akashic::exec_akashic_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Blackbox => {
+                let dump = self.blackbox.dump();
+                self.stack.push(Value::Str(dump));
                 None
             }
 
