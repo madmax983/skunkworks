@@ -12,3 +12,7 @@
 ## 2024-05-22 - Binary Crate Doc Tests
 **Confusion:** Doc tests in `src/main.rs` (or modules of a binary crate) fail to compile because they cannot link against the binary itself.
 **Clarification:** Use ````rust,ignore` for examples in binary crates, or structure the app as a library + thin binary wrapper if runnable examples are critical.
+
+## 2024-05-23 - Hyperbolic to Euclidean Conversion
+**Confusion:** It's easy to mistake hyperbolic radius $R$ for Euclidean radius $r$ when visualizing.
+**Clarification:** In the Poincaré disk model, the conversion is $r = \tanh(R/2)$, not $\tanh(R)$. Using the wrong formula distorts the tiling near the boundary.
