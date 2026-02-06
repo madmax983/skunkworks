@@ -4,9 +4,13 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** The lattice is fractured. Multiple versions of `glam` (v0.25, v0.27) and `bevy` (v0.13, v0.14) detected. The organism survives but is unstable.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/origami-ui
+### [Concentration Level: TOXIC] - Location: graveyard/origami-ui
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant tissue (`miura-interface`) verified. Execution scheduled.
+- **Status:** Specimen executed. Redundant tissue (`miura-interface`) verified. Decay process initiated.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/type-oscillator
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant waveform patterns detected. Trivial topology. Execution scheduled.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
