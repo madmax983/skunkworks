@@ -52,6 +52,9 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chronos_test;
+#[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
@@ -243,6 +246,8 @@ pub struct ChimeraVM {
     pub silicon_mode: bool,
     #[cfg(feature = "nova")]
     pub last_gene: Option<crate::ast::Gene>,
+    #[cfg(feature = "nova")]
+    pub chronostasis_timer: usize,
 }
 
 impl ChimeraVM {
@@ -356,6 +361,8 @@ impl ChimeraVM {
             silicon_mode: false,
             #[cfg(feature = "nova")]
             last_gene: None,
+            #[cfg(feature = "nova")]
+            chronostasis_timer: 0,
         }
     }
 
@@ -990,6 +997,16 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
+        let time_frozen = if self.chronostasis_timer > 0 {
+            self.chronostasis_timer -= 1;
+            true
+        } else {
+            false
+        };
+        #[cfg(not(feature = "nova"))]
+        let time_frozen = false;
+
+        #[cfg(feature = "nova")]
         self.blackbox.record(
             &self.dna,
             self.ip,
@@ -1004,24 +1021,28 @@ impl ChimeraVM {
         self.handle_input_interrupts();
 
         #[cfg(feature = "cortex")]
-        self.update_cortex_state();
+        if !time_frozen {
+            self.update_cortex_state();
+        }
 
         #[cfg(feature = "nova")]
-        self.process_environment();
+        if !time_frozen {
+            self.process_environment();
+        }
 
         #[cfg(feature = "biophysics")]
-        {
+        if !time_frozen {
             for neuron in self.neurons.values_mut() {
                 neuron.step(0.1);
             }
         }
 
         #[cfg(feature = "silicon")]
-        if self.silicon_mode {
+        if !time_frozen && self.silicon_mode {
             silicon::step_wireworld(self);
         }
 
-        if self.chaos_mode {
+        if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
                 self.mutate();
@@ -1058,7 +1079,7 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             {
-                if self.check_telomeres() {
+                if !time_frozen && self.check_telomeres() {
                     return;
                 }
                 if self.epigenome.contains(&self.ip) {
@@ -1117,10 +1138,14 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
-        self.process_symbiotes();
+        if !time_frozen {
+            self.process_symbiotes();
+        }
 
         #[cfg(feature = "nova")]
-        self.process_organelles();
+        if !time_frozen {
+            self.process_organelles();
+        }
     }
 
     /// Executes a single gene operation.
@@ -1298,6 +1323,7 @@ impl ChimeraVM {
             | OpCode::Meme
             | OpCode::Drift
             | OpCode::Poly
+            | OpCode::Chronostasis
             | OpCode::Prophecy
             | OpCode::Sing
             | OpCode::Listen
