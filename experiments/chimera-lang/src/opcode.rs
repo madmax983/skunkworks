@@ -793,6 +793,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Match,
 
+    // Fractal Features (Holographic Memory)
+    /// **[Nova]** Defines an L-System rule.
+    ///
+    /// **Stack:** `[ ..., rule_char, expansion_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Fractal,
+    /// **[Nova]** Sets the L-System axiom.
+    ///
+    /// **Stack:** `[ ..., axiom_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    LSystem,
+    /// **[Nova]** Grows the L-System and generates lines.
+    ///
+    /// **Stack:** `[ ..., iterations ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Grow,
+
     // IPC Features (Ether Link)
     /// **[Nova]** Sends a value to an external Ether channel.
     ///

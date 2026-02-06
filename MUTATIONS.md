@@ -407,3 +407,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Deterministic Chaos driven by System State. The computer's effort shapes the attractor's orbit.
 - **Status**: experiments/chaos-monitor
 - **Evaluation**: Compiles.
+
+### fractal-chimera
+- **Parents**: experiments/chimera-lang + experiments/l-system-garden
+- **Concept**: A Chimera VM that can "Dream" in fractals, generating L-System structures based on its DNA execution.
+- **Novel trait**: Holographic Memory. The organism projects its internal state as a growing, recursive geometric structure.
+- **Status**: experiments/chimera-lang (feature: nova, hologram)
+- **Evaluation**: Compiles. TUI operational. Test verified.

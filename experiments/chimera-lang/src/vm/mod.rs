@@ -49,10 +49,12 @@ pub mod bard;
 pub mod blackbox;
 pub mod cortex;
 #[cfg(feature = "nova")]
+pub mod fractal;
+#[cfg(feature = "nova")]
 pub mod ipc;
-pub mod microscope;
 #[cfg(feature = "nova")]
 pub mod meta;
+pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
@@ -274,6 +276,12 @@ pub struct ChimeraVM {
     pub graveyard: Vec<crate::ast::Strand>,
     #[cfg(feature = "nova")]
     pub dictionary: HashMap<String, usize>,
+    #[cfg(feature = "nova")]
+    pub fractal_axiom: String,
+    #[cfg(feature = "nova")]
+    pub fractal_rules: HashMap<char, String>,
+    #[cfg(feature = "nova")]
+    pub fractal_lines: Vec<fractal::Line>,
 }
 
 impl ChimeraVM {
@@ -401,6 +409,12 @@ impl ChimeraVM {
             graveyard: Vec::new(),
             #[cfg(feature = "nova")]
             dictionary: HashMap::new(),
+            #[cfg(feature = "nova")]
+            fractal_axiom: String::new(),
+            #[cfg(feature = "nova")]
+            fractal_rules: HashMap::new(),
+            #[cfg(feature = "nova")]
+            fractal_lines: Vec::new(),
         }
     }
 
@@ -1445,6 +1459,11 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
                 meta::exec_meta_op(self, op, args)
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Fractal | OpCode::LSystem | OpCode::Grow => {
+                fractal::exec_fractal_op(self, op, args)
             }
 
             #[cfg(feature = "nova")]

@@ -13,7 +13,10 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
+    widgets::{
+        canvas::{Canvas, Line as CanvasLine},
+        Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table,
+    },
     Terminal,
 };
 use std::io;
@@ -29,6 +32,8 @@ pub(crate) enum ViewMode {
     Metaphysics,
     #[cfg(feature = "nova")]
     Laboratory,
+    #[cfg(feature = "nova")]
+    Hologram,
 }
 
 enum InputMode {
@@ -231,6 +236,58 @@ where
                 return;
             }
 
+            // Handle Hologram View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Hologram = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+                    .split(f.area());
+
+                let canvas = Canvas::default()
+                    .block(Block::default().borders(Borders::ALL).title("Holographic Memory"))
+                    .x_bounds([-100.0, 100.0])
+                    .y_bounds([-100.0, 100.0])
+                    .paint(|ctx| {
+                        // Axis
+                        ctx.draw(&CanvasLine {
+                            x1: -100.0, y1: 0.0, x2: 100.0, y2: 0.0, color: Color::DarkGray,
+                        });
+                        ctx.draw(&CanvasLine {
+                            x1: 0.0, y1: -100.0, x2: 0.0, y2: 100.0, color: Color::DarkGray,
+                        });
+
+                        // Draw Lines
+                        for line in &vm.fractal_lines {
+                            ctx.draw(&CanvasLine {
+                                x1: line.x1,
+                                y1: line.y1,
+                                x2: line.x2,
+                                y2: line.y2,
+                                color: Color::Cyan,
+                            });
+                        }
+                    });
+                f.render_widget(canvas, chunks[0]);
+
+                // Info Panel
+                let mut info_text = vec![
+                    ListItem::new(Span::styled("Hologram Info", Style::default().add_modifier(Modifier::BOLD).fg(Color::Cyan))),
+                    ListItem::new(format!("Axiom: {}", vm.fractal_axiom)),
+                    ListItem::new(format!("Lines: {}", vm.fractal_lines.len())),
+                    ListItem::new("Rules:"),
+                ];
+                for (k, v) in &vm.fractal_rules {
+                    info_text.push(ListItem::new(format!(" {} -> {}", k, v)));
+                }
+
+                let info_list = List::new(info_text)
+                    .block(Block::default().borders(Borders::ALL).title("Fractal State"));
+                f.render_widget(info_list, chunks[1]);
+
+                return;
+            }
+
             // Handle Cortex View
             #[cfg(feature = "biophysics")]
             if let ViewMode::Cortex = app_state.view_mode {
@@ -352,8 +409,8 @@ where
                 #[cfg(not(feature = "oracle"))]
                 {
                     let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
-                    f.render_widget(oracle_list, chunks[1]);
-                    f.render_widget(oracle_list.clone(), chunks[2]);
+                    f.render_widget(oracle_list.clone(), chunks[1]);
+                    f.render_widget(oracle_list, chunks[2]);
                 }
 
                 // Bard (Score)
@@ -566,6 +623,8 @@ where
                 ViewMode::Metaphysics => "METAPHYSICS",
                 #[cfg(feature = "nova")]
                 ViewMode::Laboratory => "LABORATORY",
+                #[cfg(feature = "nova")]
+                ViewMode::Hologram => "HOLOGRAM",
             };
 
             let title = match app_state.input_mode {
@@ -644,27 +703,27 @@ where
                                     "virus" => "V",
                                     "incubate" => "I",
                                     "push" => "^",
-                                "add" => "+",
-                                "sub" => "-",
-                                "mul" => "*",
-                                "div" => "/",
-                                "jump" | "jump_s" => "J",
-                                "brz" | "brz_s" => "?",
-                                "photosynthesize" => "P",
-                                "consume" => "C",
-                                "g_read" => "R",
-                                "g_write" => "W",
-                                "mitosis" => "M",
-                                "apoptosis" => "X",
-                                "fire" => "F",
-                                "water" => "W",
-                                "earth" => "E",
-                                "air" => "A",
-                                "steam" => "S",
-                                "lava" => "L",
-                                "cloud" => "C",
-                                "spirit" => "S",
-                                "gold" => "G",
+                                    "add" => "+",
+                                    "sub" => "-",
+                                    "mul" => "*",
+                                    "div" => "/",
+                                    "jump" | "jump_s" => "J",
+                                    "brz" | "brz_s" => "?",
+                                    "photosynthesize" => "P",
+                                    "consume" => "C",
+                                    "g_read" => "R",
+                                    "g_write" => "W",
+                                    "mitosis" => "M",
+                                    "apoptosis" => "X",
+                                    "fire" => "F",
+                                    "water" => "W",
+                                    "earth" => "E",
+                                    "air" => "A",
+                                    "steam" => "S",
+                                    "lava" => "L",
+                                    "cloud" => "C",
+                                    "spirit" => "S",
+                                    "gold" => "G",
                                     "lead" => "L",
                                     _ => &s[0..1],
                                 }
@@ -989,6 +1048,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Hologram => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -1050,11 +1114,15 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Metaphysics => ViewMode::Laboratory,
                             #[cfg(feature = "nova")]
-                            ViewMode::Laboratory => ViewMode::Genome,
+                            ViewMode::Laboratory => ViewMode::Hologram,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hologram => ViewMode::Genome,
                         };
                     }
                     #[cfg(feature = "biophysics")]
                     KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('h') => app_state.view_mode = ViewMode::Hologram,
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
@@ -1103,6 +1171,8 @@ where
                                 _ => {}
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -1168,6 +1238,8 @@ where
                                 _ => {}
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -1207,6 +1279,8 @@ where
                                 app_state.selected_strand = 0;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1228,6 +1302,8 @@ where
                                 app_state.selected_strand = 2;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1332,6 +1408,10 @@ where
                                     app_state.lab_parent_b,
                                     app_state.lab_method
                                 );
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hologram => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                         }
                     }

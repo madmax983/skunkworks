@@ -1,4 +1,4 @@
-use sysinfo::{System, RefreshKind, MemoryRefreshKind, CpuRefreshKind};
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 pub struct LorenzSystem {
     pub x: f64,
@@ -30,9 +30,18 @@ impl LorenzSystem {
     // RK4 integration for better stability
     pub fn update_rk4(&mut self, dt: f64) {
         let (k1_x, k1_y, k1_z) = self.derivatives(self.x, self.y, self.z);
-        let (k2_x, k2_y, k2_z) = self.derivatives(self.x + k1_x * dt * 0.5, self.y + k1_y * dt * 0.5, self.z + k1_z * dt * 0.5);
-        let (k3_x, k3_y, k3_z) = self.derivatives(self.x + k2_x * dt * 0.5, self.y + k2_y * dt * 0.5, self.z + k2_z * dt * 0.5);
-        let (k4_x, k4_y, k4_z) = self.derivatives(self.x + k3_x * dt, self.y + k3_y * dt, self.z + k3_z * dt);
+        let (k2_x, k2_y, k2_z) = self.derivatives(
+            self.x + k1_x * dt * 0.5,
+            self.y + k1_y * dt * 0.5,
+            self.z + k1_z * dt * 0.5,
+        );
+        let (k3_x, k3_y, k3_z) = self.derivatives(
+            self.x + k2_x * dt * 0.5,
+            self.y + k2_y * dt * 0.5,
+            self.z + k2_z * dt * 0.5,
+        );
+        let (k4_x, k4_y, k4_z) =
+            self.derivatives(self.x + k3_x * dt, self.y + k3_y * dt, self.z + k3_z * dt);
 
         self.x += (k1_x + 2.0 * k2_x + 2.0 * k3_x + k4_x) * dt / 6.0;
         self.y += (k1_y + 2.0 * k2_y + 2.0 * k3_y + k4_y) * dt / 6.0;
@@ -57,7 +66,7 @@ impl SystemMonitor {
         let sys = System::new_with_specifics(
             RefreshKind::new()
                 .with_cpu(CpuRefreshKind::everything())
-                .with_memory(MemoryRefreshKind::everything())
+                .with_memory(MemoryRefreshKind::everything()),
         );
         Self { sys }
     }
@@ -73,12 +82,20 @@ impl SystemMonitor {
         // Memory usage
         let total_mem = self.sys.total_memory() as f64;
         let used_mem = self.sys.used_memory() as f64;
-        let mem_usage = if total_mem > 0.0 { used_mem / total_mem } else { 0.0 };
+        let mem_usage = if total_mem > 0.0 {
+            used_mem / total_mem
+        } else {
+            0.0
+        };
 
         // Swap usage
         let total_swap = self.sys.total_swap() as f64;
         let used_swap = self.sys.used_swap() as f64;
-        let swap_usage = if total_swap > 0.0 { used_swap / total_swap } else { 0.0 };
+        let swap_usage = if total_swap > 0.0 {
+            used_swap / total_swap
+        } else {
+            0.0
+        };
 
         (cpu_usage, mem_usage, swap_usage)
     }

@@ -2,36 +2,13 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value};
+    use crate::vm::ChimeraVM;
 
     #[test]
     #[cfg(feature = "nova")]
     fn test_chronostasis() {
         // [ push(5) chronostasis() push(10) consume() jump(2) ]
         // Loop to keep VM alive while timer ticks.
-
-        let genes = vec![
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(5)],
-            },
-            Gene {
-                op: OpCode::Chronostasis,
-                args: vec![],
-            },
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(10)],
-            },
-            Gene {
-                op: OpCode::Consume,
-                args: vec![],
-            },
-            Gene {
-                op: OpCode::Jump,
-                args: vec![Nucleotide::Number(0)], // Jump to strand 0
-            },
-        ];
 
         // Wait, Jump(0) jumps to (0,0).
         // That re-executes Push(5) and Chronostasis!

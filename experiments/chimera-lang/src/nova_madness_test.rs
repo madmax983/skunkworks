@@ -52,7 +52,7 @@ fn test_meme_spreading() {
         // ip is (0, 1) now
         vm.step();
 
-        if vm.dna.helix.strands[1].genes.len() > 0 {
+        if !vm.dna.helix.strands[1].genes.is_empty() {
             infected = true;
             break;
         }
