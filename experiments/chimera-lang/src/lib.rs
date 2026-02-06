@@ -80,6 +80,8 @@ mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_isomer_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;

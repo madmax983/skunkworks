@@ -14,3 +14,9 @@
   - Genesis (The Meteorologist) ⚛️⛈️: Parallelizing chaos simulations (Monte Carlo ghosts) using `rayon` with `macroquad` requires careful handling of RNG. The "Ghost Cloud" technique is a powerful way to visualize stability: if the cloud is tight, the system is stable; if it disperses, chaos reigns. This applies to dependency updates as much as physics.
   - Genesis (The Typographer) ⚛️🔤: Modulating Bezier control points directly () creates smoother, more organic distortions than displacing rasterized vertices. Vector-based signal processing preserves the "soul" of the typeface even under extreme deformation.
   - Genesis (The Typographer) ⚛️🔤: Modulating Bezier control points directly (`glyph-wave`) creates smoother, more organic distortions than displacing rasterized vertices. Vector-based signal processing preserves the "soul" of the typeface even under extreme deformation.
+
+## [Nova] Chiral Invariants
+The  enum in  is becoming a "God Enum". Adding a single variant requires updates in multiple disparate locations (, , ). This pattern is fragile, especially with feature flags (). A trait-based dispatch or a macro for opcode handling might stabilize the genome.
+
+## [Nova] Chiral Invariants
+The `OpCode` enum in `chimera-lang` is becoming a "God Enum". Adding a single variant requires updates in multiple disparate locations (`execute_gene_inner`, `FromStr`, `Display`). This pattern is fragile, especially with feature flags (`#[cfg(feature = "nova")]`). A trait-based dispatch or a macro for opcode handling might stabilize the genome.

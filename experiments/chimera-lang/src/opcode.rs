@@ -708,6 +708,21 @@ pub enum OpCode {
     /// **Stack:** `[ ..., bpm ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Tempo,
+
+    /// **[Nova]** Toggles the chiral state of a strand (Isomerism).
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    /// **Effect:** Inverts arithmetic and logic for that strand.
+    #[cfg(feature = "nova")]
+    Isomerize,
+    /// **[Nova]** Branches if Not Zero.
+    ///
+    /// **Args:** `[Nucleotide::Number(strand_idx)]`
+    /// **Stack:** `[ ..., val ] -> [ ... ]`
+    /// **Effect:** If `val != 0`, jump to `(strand_idx, 0)`.
+    #[cfg(feature = "nova")]
+    Brnz,
+
     /// **[Nova]** Exports the score as ABC Notation to the stack.
     ///
     /// **Stack:** `[ ... ] -> [ ..., abc_string ]`
@@ -814,6 +829,12 @@ impl FromStr for OpCode {
             "rest" => Ok(OpCode::Rest),
             #[cfg(feature = "nova")]
             "tempo" => Ok(OpCode::Tempo),
+
+            #[cfg(feature = "nova")]
+            "isomerize" => Ok(OpCode::Isomerize),
+            #[cfg(feature = "nova")]
+            "brnz" => Ok(OpCode::Brnz),
+
             #[cfg(feature = "nova")]
             "perform" => Ok(OpCode::Perform),
 
@@ -1262,6 +1283,10 @@ impl fmt::Display for OpCode {
             OpCode::Rest => write!(f, "rest"),
             #[cfg(feature = "nova")]
             OpCode::Tempo => write!(f, "tempo"),
+            #[cfg(feature = "nova")]
+            OpCode::Isomerize => write!(f, "isomerize"),
+            #[cfg(feature = "nova")]
+            OpCode::Brnz => write!(f, "brnz"),
             #[cfg(feature = "nova")]
             OpCode::Perform => write!(f, "perform"),
 

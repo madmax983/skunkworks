@@ -50,6 +50,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_isomer;
+#[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
@@ -172,6 +174,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub epigenome: HashSet<(usize, usize)>,
     #[cfg(feature = "nova")]
+    pub isomers: HashSet<usize>,
+    #[cfg(feature = "nova")]
     pub telomeres: Vec<i64>,
     #[cfg(feature = "nova")]
     pub hormone_grid: Vec<Vec<[i64; 3]>>,
@@ -282,6 +286,8 @@ impl ChimeraVM {
             phase: nova::Phase::default(),
             #[cfg(feature = "nova")]
             epigenome: HashSet::new(),
+            #[cfg(feature = "nova")]
+            isomers: HashSet::new(),
             #[cfg(feature = "nova")]
             telomeres: vec![50; strand_count],
             #[cfg(feature = "nova")]
@@ -1134,9 +1140,16 @@ impl ChimeraVM {
         self.recursion_depth += 1;
 
         #[cfg(feature = "nova")]
-        let effective_op = self.remap_table.get(&op).unwrap_or(&op).clone();
+        let mut effective_op = self.remap_table.get(&op).unwrap_or(&op).clone();
         #[cfg(not(feature = "nova"))]
         let effective_op = op;
+
+        #[cfg(feature = "nova")]
+        {
+            if self.isomers.contains(&self.ip.0) {
+                effective_op = nova_isomer::transform_op(effective_op);
+            }
+        }
 
         let result = self.execute_gene_inner(effective_op, args);
         self.recursion_depth -= 1;
@@ -1236,6 +1249,8 @@ impl ChimeraVM {
                 None
             }
             OpCode::Jump | OpCode::Brz => self.exec_flow_op(op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Brnz => self.exec_flow_op(op, args),
             OpCode::Photosynthesize | OpCode::Consume => self.exec_bio_op(op, args),
             OpCode::GRead | OpCode::GWrite | OpCode::Radiate | OpCode::Siphon => {
                 self.exec_grid_op(op)
@@ -1247,6 +1262,12 @@ impl ChimeraVM {
             #[cfg(feature = "cortex")]
             OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
                 cortex::exec_cortex_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Isomerize => {
+                nova_isomer::exec_isomer_op(self, op, args);
                 None
             }
 
@@ -1631,6 +1652,33 @@ impl ChimeraVM {
                 }
                 None
             }
+            #[cfg(feature = "nova")]
+            OpCode::Brnz => {
+                if let Some(Nucleotide::Number(n)) = args.first() {
+                    if let Some(val) = self.stack.pop() {
+                        fn check_zero(v: &Value) -> bool {
+                            match v {
+                                Value::Int(i) => *i == 0,
+                                Value::Junction(t, vals) => match t {
+                                    JunctionType::Any => vals.iter().any(check_zero),
+                                    JunctionType::All => vals.iter().all(check_zero),
+                                },
+                                _ => false,
+                            }
+                        }
+
+                        if !check_zero(&val) {
+                            return Some((*n as usize, 0));
+                        }
+                    } else {
+                        self.output
+                            .push("Error: Stack underflow for brnz".to_string());
+                    }
+                } else {
+                    self.output.push("Error: Invalid arg for brnz".to_string());
+                }
+                None
+            }
             OpCode::JumpS => {
                 if let Some(val) = self.stack.pop() {
                     match val {
@@ -1686,7 +1734,12 @@ impl ChimeraVM {
                 if self.stack.len() >= 2 {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
-                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                    if let (Value::Int(y), Value::Int(mut x)) = (y_val, x_val) {
+                        #[cfg(feature = "nova")]
+                        if self.isomers.contains(&self.ip.0) {
+                            x = (GRID_SIZE as i64) - 1 - x;
+                        }
+
                         if self.is_valid_coord(y, x) {
                             self.stack.push(self.grid[y as usize][x as usize].clone());
                         } else {
@@ -1714,7 +1767,12 @@ impl ChimeraVM {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
                     let val = self.stack.pop().unwrap();
-                    if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                    if let (Value::Int(y), Value::Int(mut x)) = (y_val, x_val) {
+                        #[cfg(feature = "nova")]
+                        if self.isomers.contains(&self.ip.0) {
+                            x = (GRID_SIZE as i64) - 1 - x;
+                        }
+
                         if self.is_valid_coord(y, x) {
                             self.grid[y as usize][x as usize] = val;
                         } else {
@@ -1737,7 +1795,12 @@ impl ChimeraVM {
                     let r_val = self.stack.pop().unwrap();
                     let val = self.stack.pop().unwrap();
 
-                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                    if let (Value::Int(mut x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                        #[cfg(feature = "nova")]
+                        if self.isomers.contains(&self.ip.0) {
+                            x = (GRID_SIZE as i64) - 1 - x;
+                        }
+
                         let coords = self.get_circular_coords(x, y, r);
                         let count = coords.len();
                         for (cx, cy) in coords {
@@ -1763,7 +1826,12 @@ impl ChimeraVM {
                     let y_val = self.stack.pop().unwrap();
                     let r_val = self.stack.pop().unwrap();
 
-                    if let (Value::Int(x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                    if let (Value::Int(mut x), Value::Int(y), Value::Int(r)) = (x_val, y_val, r_val) {
+                        #[cfg(feature = "nova")]
+                        if self.isomers.contains(&self.ip.0) {
+                            x = (GRID_SIZE as i64) - 1 - x;
+                        }
+
                         let coords = self.get_circular_coords(x, y, r);
                         let count = coords.len();
                         let mut sum: i64 = 0;
@@ -1791,9 +1859,14 @@ impl ChimeraVM {
                     let x_val = self.stack.pop().unwrap();
                     let y_val = self.stack.pop().unwrap();
 
-                    let coords = if let (Value::Int(y), Value::Int(x)) = (&y_val, &x_val) {
-                        if self.is_valid_coord(*y, *x) {
-                            Some((*y, *x))
+                    let coords = if let (Value::Int(y), Value::Int(mut x)) = (&y_val, &x_val) {
+                        #[cfg(feature = "nova")]
+                        if self.isomers.contains(&self.ip.0) {
+                            x = (GRID_SIZE as i64) - 1 - x;
+                        }
+
+                        if self.is_valid_coord(*y, x) {
+                            Some((*y, x))
                         } else {
                             self.output
                                 .push("Error: Grid index out of bounds".to_string());
