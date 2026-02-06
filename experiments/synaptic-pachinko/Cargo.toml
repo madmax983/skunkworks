@@ -12,3 +12,4 @@ tui-shared = { workspace = true }
 cpal = "0.15"
 ringbuf = "0.3"
 crossbeam-channel = "0.5"
+synaptic-physics = { workspace = true }

@@ -59,7 +59,7 @@ impl AudioEngine {
                 for frame in data.chunks_mut(channels) {
                     let mut sum_v = 0.0;
                     for neuron in &mut neurons {
-                        sum_v += neuron.update(dt);
+                        sum_v += neuron.update(dt, 0.0);
                     }
                     let mean_field = sum_v / neurons.len() as f32;
 
