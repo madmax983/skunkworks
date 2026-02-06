@@ -121,7 +121,7 @@ members = [
     "experiments/hyperbolic-browser",  
     "experiments/chimera-fossil",
     "experiments/cam-automaton", "experiments/git-cantata",
-    "experiments/chimera-automaton",
+    "experiments/chimera-automaton", "experiments/miller-fs",
 ]
 resolver = "2"
 
