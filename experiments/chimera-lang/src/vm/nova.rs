@@ -18,8 +18,6 @@ use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use crate::{ChimeraParser, Rule};
 #[cfg(feature = "nova")]
-use poincare_disk;
-#[cfg(feature = "nova")]
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::seq::SliceRandom;

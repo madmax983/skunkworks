@@ -953,8 +953,6 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -997,8 +995,6 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
-                        #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
