@@ -711,6 +711,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Zip,
 
+    // IPC Features (Ether Link)
+    /// **[Nova]** Sends a value to an external Ether channel.
+    ///
+    /// **Stack:** `[ ..., channel, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Signal,
+    /// **[Nova]** Receives a value from an external Ether channel.
+    ///
+    /// **Stack:** `[ ..., channel ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    Receive,
+
     // Bard Features (Music)
     /// **[Nova]** Adds a note to the musical score.
     ///
@@ -826,6 +838,11 @@ impl FromStr for OpCode {
             "filter" => Ok(OpCode::Filter),
             #[cfg(feature = "nova")]
             "zip" => Ok(OpCode::Zip),
+
+            #[cfg(feature = "nova")]
+            "signal" => Ok(OpCode::Signal),
+            #[cfg(feature = "nova")]
+            "receive" => Ok(OpCode::Receive),
 
             #[cfg(feature = "nova")]
             "note" => Ok(OpCode::Note),
@@ -1286,6 +1303,11 @@ impl fmt::Display for OpCode {
             OpCode::Filter => write!(f, "filter"),
             #[cfg(feature = "nova")]
             OpCode::Zip => write!(f, "zip"),
+
+            #[cfg(feature = "nova")]
+            OpCode::Signal => write!(f, "signal"),
+            #[cfg(feature = "nova")]
+            OpCode::Receive => write!(f, "receive"),
 
             #[cfg(feature = "nova")]
             OpCode::Note => write!(f, "note"),

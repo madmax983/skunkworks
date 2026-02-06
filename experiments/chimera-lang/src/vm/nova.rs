@@ -3703,6 +3703,16 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Signal => {
+            super::ipc::signal(vm);
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Receive => {
+            super::ipc::receive(vm);
+            None
+        }
         _ => None,
     }
 }
