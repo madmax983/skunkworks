@@ -27,3 +27,7 @@
 **2026-03-01 - Chimera-Lang Resource DoS Hardening**
 **Threat:** Denial of Service (DoS) via unbounded resource allocation (infinite Spore/Organelle creation) and call stack exhaustion (Reflex loops) in `chimera-lang`.
 **Defense:** Enforced hard caps (`MAX_SPORES`, `MAX_ORGANELLES`, `MAX_CALL_STACK_DEPTH`) on resource vectors and reflex recursion.
+
+**2026-03-05 - Chimera-Lang Parser Panic Hardening**
+**Threat:** DoS via panic in `chimera-lang` parser when parsing DNA strands with integer overflow (numbers > i64::MAX).
+**Defense:** Refactored `from_pair` to `try_from_pair` returning `Result`, ensuring parsing errors are propagated and handled safely without crashing the VM.

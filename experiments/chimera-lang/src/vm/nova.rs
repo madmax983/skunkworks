@@ -2798,18 +2798,24 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     match ChimeraParser::parse(Rule::strand, &s) {
                         Ok(mut pairs) => {
                             let pair = pairs.next().unwrap();
-                            let strand = crate::ast::Strand::from_pair(pair);
-                            vm.dna.helix.strands.push(strand);
-                            vm.telomeres.push(50);
-                            #[cfg(feature = "cortex")]
-                            {
-                                vm.activation_levels.push(0);
-                                vm.synapse_map.push(Vec::new());
+                            match crate::ast::Strand::try_from_pair(pair) {
+                                Ok(strand) => {
+                                    vm.dna.helix.strands.push(strand);
+                                    vm.telomeres.push(50);
+                                    #[cfg(feature = "cortex")]
+                                    {
+                                        vm.activation_levels.push(0);
+                                        vm.synapse_map.push(Vec::new());
+                                    }
+                                    vm.stack
+                                        .push(Value::Int((vm.dna.helix.strands.len() - 1) as i64));
+                                    vm.energy = vm.energy.saturating_sub(50);
+                                    vm.output.push("COMPILE: Success".to_string());
+                                }
+                                Err(e) => {
+                                    vm.output.push(format!("COMPILE ERROR: {}", e));
+                                }
                             }
-                            vm.stack
-                                .push(Value::Int((vm.dna.helix.strands.len() - 1) as i64));
-                            vm.energy = vm.energy.saturating_sub(50);
-                            vm.output.push("COMPILE: Success".to_string());
                         }
                         Err(e) => {
                             vm.output.push(format!("COMPILE ERROR: {}", e));
@@ -3058,9 +3064,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     match ChimeraParser::parse(Rule::strand, &s) {
                         Ok(mut pairs) => {
                             let pair = pairs.next().unwrap();
-                            let strand = crate::ast::Strand::from_pair(pair);
-                            execute_ephemeral_strand(vm, &strand);
-                            vm.output.push("EVAL: Success".to_string());
+                            match crate::ast::Strand::try_from_pair(pair) {
+                                Ok(strand) => {
+                                    execute_ephemeral_strand(vm, &strand);
+                                    vm.output.push("EVAL: Success".to_string());
+                                }
+                                Err(e) => {
+                                    vm.output.push(format!("EVAL ERROR: {}", e));
+                                }
+                            }
                         }
                         Err(e) => {
                             vm.output.push(format!("EVAL ERROR: {}", e));
@@ -3098,8 +3110,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Parse and eval
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
-                                let strand = crate::ast::Strand::from_pair(pair);
-                                execute_ephemeral_strand(vm, &strand);
+                                match crate::ast::Strand::try_from_pair(pair) {
+                                    Ok(strand) => execute_ephemeral_strand(vm, &strand),
+                                    Err(e) => vm.output.push(format!("MAP ERROR: {}", e)),
+                                }
                             } else {
                                 vm.output.push(format!("MAP ERROR: Parse failed for {}", s));
                             }
@@ -3156,8 +3170,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         Value::Str(s) => {
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
-                                let strand = crate::ast::Strand::from_pair(pair);
-                                execute_ephemeral_strand(vm, &strand);
+                                if let Ok(strand) = crate::ast::Strand::try_from_pair(pair) {
+                                    execute_ephemeral_strand(vm, &strand);
+                                }
                             }
                         }
                         Value::Int(idx) => {
@@ -3201,8 +3216,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         Value::Str(s) => {
                             if let Ok(mut pairs) = ChimeraParser::parse(Rule::strand, s) {
                                 let pair = pairs.next().unwrap();
-                                let strand = crate::ast::Strand::from_pair(pair);
-                                execute_ephemeral_strand(vm, &strand);
+                                if let Ok(strand) = crate::ast::Strand::try_from_pair(pair) {
+                                    execute_ephemeral_strand(vm, &strand);
+                                }
                             }
                         }
                         Value::Int(idx) => {

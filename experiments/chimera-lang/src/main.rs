@@ -42,7 +42,7 @@ fn main() -> Result<()> {
         let dna_pair = ChimeraParser::parse(Rule::dna, &unparsed_file)?
             .next()
             .ok_or_else(|| anyhow::anyhow!("No DNA found"))?;
-        Dna::from_pair(dna_pair)
+        Dna::try_from_pair(dna_pair).map_err(|e| anyhow::anyhow!("DNA parse error: {}", e))?
     };
 
     let mut vm = ChimeraVM::new(dna);
