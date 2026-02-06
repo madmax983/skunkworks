@@ -135,6 +135,8 @@ mod ribosome_test;
 mod ribozyme_test;
 #[cfg(all(test, feature = "nova"))]
 mod sentry_brainfuck_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_security_test;
 #[cfg(test)]
 mod sentry_nova_test;
 #[cfg(all(test, feature = "silicon"))]

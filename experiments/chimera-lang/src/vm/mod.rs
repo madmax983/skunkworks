@@ -50,6 +50,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_security;
+#[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
 pub mod resonance;
@@ -222,6 +224,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "nova")]
+    pub immune_system: HashSet<u64>,
+    #[cfg(feature = "nova")]
     pub chorus_buffer: VecDeque<String>,
     #[cfg(feature = "nova")]
     pub score: Vec<bard::Note>,
@@ -330,6 +334,8 @@ impl ChimeraVM {
             direction: 1,
             #[cfg(feature = "nova")]
             mycelium: HashMap::new(),
+            #[cfg(feature = "nova")]
+            immune_system: HashSet::new(),
             #[cfg(feature = "nova")]
             chorus_buffer: VecDeque::new(),
             #[cfg(feature = "nova")]
@@ -1240,6 +1246,11 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
+                nova_security::exec_security_op(self, op, args)
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
