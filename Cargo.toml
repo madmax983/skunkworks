@@ -127,7 +127,7 @@ members = [
     "experiments/git-etymology",
     "experiments/chimera-tardis",
     "experiments/hyperbolic-git", 
-    "experiments/klein-fs",
+    "experiments/klein-fs", "experiments/fractal-stack",
 ]
 resolver = "2"
 
