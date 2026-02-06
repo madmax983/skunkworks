@@ -544,6 +544,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Mourn,
 
+    /// **[Nova]** Kills the target strand and spawns a mutated copy.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Reincarnate,
+
     /// **[Nova]** Compiles a string into a strand.
     ///
     /// **Stack:** `[ ..., source_string ] -> [ ..., new_strand_idx ]`
