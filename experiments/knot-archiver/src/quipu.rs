@@ -2,9 +2,9 @@ use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Knot {
-    Simple,       // Value 1 (Tens+)
-    Long(u8),     // Value 2-9 (Units)
-    FigureEight,  // Value 1 (Units)
+    Simple,      // Value 1 (Tens+)
+    Long(u8),    // Value 2-9 (Units)
+    FigureEight, // Value 1 (Units)
 }
 
 impl Knot {
@@ -94,7 +94,7 @@ impl Cord {
         let padding = " ".repeat(indent * 4);
 
         if self.clusters.is_empty() {
-             writeln!(f, "{}| (Empty/0)", padding)?;
+            writeln!(f, "{}| (Empty/0)", padding)?;
         } else {
             for (_i, cluster) in self.clusters.iter().enumerate().rev() {
                 write!(f, "{}| ", padding)?;
@@ -114,10 +114,15 @@ impl Cord {
         }
 
         if !self.subsidiaries.is_empty() {
-             writeln!(f, "{}|-- Subsidiaries: {}", padding, self.subsidiaries.len())?;
-             for sub in &self.subsidiaries {
-                 sub.fmt_recursive(f, indent + 1)?;
-             }
+            writeln!(
+                f,
+                "{}|-- Subsidiaries: {}",
+                padding,
+                self.subsidiaries.len()
+            )?;
+            for sub in &self.subsidiaries {
+                sub.fmt_recursive(f, indent + 1)?;
+            }
         }
         Ok(())
     }
@@ -144,7 +149,7 @@ mod tests {
         // Check units (Index 0)
         assert_eq!(cord.clusters[0].len(), 1);
         match cord.clusters[0][0] {
-            Knot::Long(3) => {},
+            Knot::Long(3) => {}
             _ => panic!("Expected Long(3) in units"),
         }
 

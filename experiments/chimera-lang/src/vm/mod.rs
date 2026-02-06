@@ -1258,6 +1258,8 @@ impl ChimeraVM {
             | OpCode::Scramble
             | OpCode::Pigment
             | OpCode::Glyph
+            | OpCode::SensePigment
+            | OpCode::SenseGlyph
             | OpCode::Rift
             | OpCode::Seal
             | OpCode::Shape

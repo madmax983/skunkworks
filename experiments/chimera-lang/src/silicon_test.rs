@@ -1,11 +1,13 @@
 #[cfg(feature = "silicon")]
-use crate::vm::{ChimeraVM, Value};
-#[cfg(feature = "silicon")]
 use crate::ast::{Dna, Helix};
+#[cfg(feature = "silicon")]
+use crate::vm::{ChimeraVM, Value};
 
 #[cfg(feature = "silicon")]
 fn make_vm() -> ChimeraVM {
-    let dna = Dna { helix: Helix { strands: vec![] } };
+    let dna = Dna {
+        helix: Helix { strands: vec![] },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.silicon_mode = true;
     vm

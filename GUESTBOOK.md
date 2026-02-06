@@ -181,9 +181,9 @@
 
 ## History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Chromatician)
-- **Status:** The organism is dreaming in color. Chromatophores are active. The TUI is now a canvas.
+- **Status:** Camouflage verified. The organism can now see and mimic the colors of its environment. `SensePigment` and `SenseGlyph` enzymes synthesized.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
 - **Scent Origin:** The Splice Surgeon 🧬

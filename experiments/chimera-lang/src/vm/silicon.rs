@@ -23,7 +23,8 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     vm.output.push("Error: Type mismatch for wire".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for wire".to_string());
+                vm.output
+                    .push("Error: Stack underflow for wire".to_string());
             }
         }
         OpCode::Pulse => {
@@ -39,13 +40,15 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     vm.output.push("Error: Type mismatch for pulse".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pulse".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pulse".to_string());
             }
         }
         OpCode::Silicon => {
             vm.silicon_mode = !vm.silicon_mode;
             let status = if vm.silicon_mode { "ON" } else { "OFF" };
-            vm.output.push(format!("SILICON: Auto-conduction {}", status));
+            vm.output
+                .push(format!("SILICON: Auto-conduction {}", status));
         }
         _ => {}
     }
@@ -81,7 +84,7 @@ pub fn step_wireworld(vm: &mut ChimeraVM) {
                 Value::Int(1) => 1, // Conductor
                 Value::Int(2) => 2, // Head
                 Value::Int(3) => 3, // Tail
-                _ => 0,             // Empty or other (treated as Empty for evolution, but we preserve them if not part of wireworld)
+                _ => 0, // Empty or other (treated as Empty for evolution, but we preserve them if not part of wireworld)
             };
 
             if state == 0 {
@@ -100,7 +103,9 @@ pub fn step_wireworld(vm: &mut ChimeraVM) {
                                 continue;
                             }
                             // Using normalize_coords handles topology (Torus, etc)
-                            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                            {
                                 if let Value::Int(2) = vm.grid[ny][nx] {
                                     head_neighbors += 1;
                                 }
