@@ -103,6 +103,7 @@ fn run_app<B: ratatui::backend::Backend>(
 ) -> Result<()>
 where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
+    std::io::Error: From<<B as ratatui::backend::Backend>::Error>,
 {
     loop {
         #[cfg(feature = "biophysics")]
@@ -381,6 +382,9 @@ where
                                 "spirit" => Style::default().fg(Color::Magenta),
                                 "gold" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
                                 "lead" => Style::default().fg(Color::DarkGray),
+                                "~" => Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                                "@" => Style::default().fg(Color::DarkGray).add_modifier(Modifier::BOLD),
+                                "$" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
                                 _ => Style::default().fg(Color::Cyan),
                             };
                             (symbol.to_string(), style)

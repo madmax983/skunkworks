@@ -8,7 +8,7 @@ nova = []
 cortex = []
 biophysics = []
 oracle = []
-resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
+resonance = ["dep:resonance-audio", "dep:crossbeam-channel", "dep:cpal"]
 
 [dependencies]
 pest = "2.7"
@@ -20,3 +20,4 @@ crossterm = { workspace = true }
 rand = "0.8"
 crossbeam-channel = { version = "0.5", optional = true }
 resonance-audio = { workspace = true, optional = true }
+cpal = { version = "0.15", optional = true }

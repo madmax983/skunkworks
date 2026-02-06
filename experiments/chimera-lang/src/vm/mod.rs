@@ -743,6 +743,15 @@ impl ChimeraVM {
                 "-" => self.ribosome_binary_op(|a, b| Some(a.wrapping_sub(b))),
                 "*" => {
                     // Bang: Trigger all neighbors
+                    #[cfg(feature = "resonance")]
+                    if let Some(tx) = &self.audio_tx {
+                        let _ = tx.send(AudioCommand::Pluck {
+                            x: cx,
+                            y: cy,
+                            strength: 0.8,
+                        });
+                    }
+
                     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                     for (dy, dx) in neighbors {
                         if let Some((ny, nx)) =
@@ -865,6 +874,67 @@ impl ChimeraVM {
                             {
                                 self.grid[ny][nx] = val;
                             }
+                        }
+                    }
+                }
+                "~" => {
+                    if self.stack.len() >= 2 {
+                        let x_off = self.stack.pop().unwrap();
+                        let y_off = self.stack.pop().unwrap();
+                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                            if let Some((ny, nx)) =
+                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
+                                let mut rng = rand::thread_rng();
+                                if rng.gen_bool(0.5) {
+                                    self.grid[ny][nx] = Value::Int(rng.gen_range(0..10));
+                                } else {
+                                    let symbols = [
+                                        "+", "-", "*", "/", ">", "<", "^", "v", "o", "x", ":", ";",
+                                        "?", "!", "=", "~", "@", "$",
+                                    ];
+                                    let s = symbols[rng.gen_range(0..symbols.len())];
+                                    self.grid[ny][nx] = Value::Str(s.to_string());
+                                }
+                                self.output
+                                    .push(format!("ALCHEMY: Transmuted {},{}", nx, ny));
+                            }
+                        }
+                    }
+                }
+                "@" => {
+                    if self.stack.len() >= 2 {
+                        let x_off = self.stack.pop().unwrap();
+                        let y_off = self.stack.pop().unwrap();
+                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                            if let Some((ny, nx)) =
+                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                            {
+                                let val = &self.grid[ny][nx];
+                                let gain = match val {
+                                    Value::Int(n) => n.abs(),
+                                    Value::Str(s) => s.len() as i64,
+                                    _ => 0,
+                                };
+                                self.energy = self.energy.saturating_add(gain);
+                                self.grid[ny][nx] = Value::Int(0);
+                                self.output
+                                    .push(format!("VOID: Consumed {},{} (+{})", nx, ny, gain));
+                            }
+                        }
+                    }
+                }
+                "$" => {
+                    if self.energy >= 10 {
+                        self.energy -= 10;
+                        self.output.push("GOLD: +100 Points".to_string());
+                        #[cfg(feature = "resonance")]
+                        if let Some(tx) = &self.audio_tx {
+                            let _ = tx.send(AudioCommand::Pluck {
+                                x: 8,
+                                y: 8,
+                                strength: 0.5,
+                            });
                         }
                     }
                 }

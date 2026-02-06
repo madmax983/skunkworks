@@ -47,6 +47,53 @@ fn main() -> Result<()> {
 
     let mut vm = ChimeraVM::new(dna);
 
+    #[cfg(feature = "resonance")]
+    let _stream = (|| {
+        use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+        use crossbeam_channel::unbounded;
+        use resonance_audio::audio::{AudioCommand, AudioModel};
+
+        let host = cpal::default_host();
+        let device = host.default_output_device()?;
+        let config = device.default_output_config().ok()?;
+
+        if config.sample_format() != cpal::SampleFormat::F32 {
+            eprintln!("Unsupported sample format: {:?}", config.sample_format());
+            return None;
+        }
+
+        let channels = config.channels() as usize;
+        let (cmd_tx, cmd_rx) = unbounded::<AudioCommand>();
+        let (snap_tx, _snap_rx) = unbounded::<Vec<f32>>();
+
+        let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx);
+
+        let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
+
+        let stream = device
+            .build_output_stream(
+                &config.into(),
+                move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                    let frame_count = data.len() / channels;
+                    let mut mono_buf = vec![0.0; frame_count];
+                    model.process(&mut mono_buf);
+
+                    for (i, frame) in mono_buf.iter().enumerate() {
+                        for ch in 0..channels {
+                            data[i * channels + ch] = *frame;
+                        }
+                    }
+                },
+                err_fn,
+                None,
+            )
+            .ok()?;
+
+        stream.play().ok()?;
+        vm.set_audio_tx(cmd_tx);
+        Some(stream)
+    })();
+
     if cli.headless {
         while !vm.halted {
             vm.step();
