@@ -399,4 +399,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Recursive visualization of the call stack of an evolving VM.
 - **Novel trait**: Infinite zoom debugger. Fly into the code execution.
 - **Status**: experiments/chimera-tardis
+- **Evaluation**: Compiles. Verified.
+
+### fractal-stack
+- **Parents**: experiments/l-system-garden + experiments/trace-fold
+- **Concept**: Visualizing call stacks as L-System plant growth.
+- **Novel trait**: Recursion depth mapped to branch generation.
+- **Status**: experiments/fractal-stack
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### chimera-sculpt
+- **Parents**: experiments/sculpt-term + experiments/chimera-lang
+- **Concept**: Genetic Sculpture. A 3D SDF defined by the bytecode of a ChimeraVM organism.
+- **Novel trait**: Executable Geometry. The "DNA" of the organism is the mathematical definition of its shape.
+- **Status**: experiments/chimera-sculpt
 - **Evaluation**: Compiles. Implemented by Splice Surgeon.
