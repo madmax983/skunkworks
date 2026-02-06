@@ -26,6 +26,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Experiments that resulted from cross-pollination -->
 
+**NOTE:** Automated workspace verification failed due to `glam`/`bevy` version conflicts in `hive-mind-dependencies`. Verification was performed partially.
+
 ### code-bio-dome
 - **Parents**: experiments/code-crawler + experiments/biomorph-flow
 - **Concept**: Code functions harvested from disk become organisms in a simulation.
@@ -435,3 +437,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Sonified Neural Physics. The sound of data colliding with the network.
 - **Status**: experiments/synaptic-pachinko
 - **Evaluation**: Compiles. Created by The Splice Surgeon.
+
+### klein-magnetron
+- **Parents**: experiments/klein-fs + experiments/magnetron-decay
+- **Concept**: "Topological Bit Rot". A filesystem mapped onto a Klein Bottle surface where sectors decay and radiation flips bits.
+- **Novel trait**: Non-orientable decay patterns. Radiation inverts its effect when wrapping around the manifold twist.
+- **Status**: experiments/klein-magnetron
+- **Evaluation**: Compiles. Verified.
