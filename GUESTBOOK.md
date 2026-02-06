@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hydro-phonics
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The water is singing. Ripple synthesis tank active. Probe sensors modulating audio frequencies based on wave height.
+
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Mosaic sensed a lack of hierarchy in the CLI; reinforcement required.
