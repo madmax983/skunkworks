@@ -239,6 +239,8 @@ pub struct ChimeraVM {
     pub blackbox: blackbox::Blackbox,
     #[cfg(feature = "silicon")]
     pub silicon_mode: bool,
+    #[cfg(feature = "nova")]
+    pub last_gene: Option<crate::ast::Gene>,
 }
 
 impl ChimeraVM {
@@ -350,6 +352,8 @@ impl ChimeraVM {
             blackbox: blackbox::Blackbox::new(),
             #[cfg(feature = "silicon")]
             silicon_mode: false,
+            #[cfg(feature = "nova")]
+            last_gene: None,
         }
     }
 
@@ -1138,8 +1142,18 @@ impl ChimeraVM {
         #[cfg(not(feature = "nova"))]
         let effective_op = op;
 
-        let result = self.execute_gene_inner(effective_op, args);
+        let result = self.execute_gene_inner(effective_op.clone(), args);
         self.recursion_depth -= 1;
+
+        // Track last executed gene for Memetics
+        #[cfg(feature = "nova")]
+        {
+            self.last_gene = Some(crate::ast::Gene {
+                op,
+                args: args.to_vec(),
+            });
+        }
+
         result
     }
 
@@ -1276,6 +1290,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Alchemy
+            | OpCode::Meme
+            | OpCode::Drift
+            | OpCode::Poly
             | OpCode::Prophecy
             | OpCode::Sing
             | OpCode::Listen
