@@ -25,6 +25,8 @@ pub(crate) enum ViewMode {
     Microscope,
     #[cfg(feature = "biophysics")]
     Cortex,
+    #[cfg(feature = "resonance")]
+    Resonance,
     #[cfg(feature = "nova")]
     Metaphysics,
     #[cfg(feature = "nova")]
@@ -325,6 +327,63 @@ where
                 }
 
                 return; // Skip normal rendering
+            }
+
+            // Handle Resonance View
+            #[cfg(feature = "resonance")]
+            if let ViewMode::Resonance = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                    .split(f.area());
+
+                // Wave Grid
+                let mut lines = Vec::new();
+                for y in 0..16 {
+                    let mut spans = Vec::new();
+                    for x in 0..16 {
+                        let idx = y * 16 + x;
+                        let val = if idx < vm.audio_snapshot.len() {
+                            vm.audio_snapshot[idx]
+                        } else {
+                            0.0
+                        };
+
+                        // Visualizing -1.0 to 1.0
+                        let abs_val = val.abs();
+                        let ch = if abs_val < 0.1 {
+                            "·"
+                        } else if abs_val < 0.3 {
+                            "~"
+                        } else if abs_val < 0.6 {
+                            "*"
+                        } else {
+                            "@"
+                        };
+
+                        let color = if val > 0.0 {
+                             if val > 0.5 { Color::Cyan } else { Color::Blue }
+                        } else if val < 0.0 {
+                             if val < -0.5 { Color::Red } else { Color::Magenta }
+                        } else {
+                             Color::DarkGray
+                        };
+
+                        spans.push(Span::styled(ch, Style::default().fg(color)));
+                        spans.push(Span::raw(" "));
+                    }
+                    lines.push(Line::from(spans));
+                }
+
+                let wave_grid = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Resonance Wave Function"));
+                f.render_widget(wave_grid, chunks[0]);
+
+                // Help / Status
+                let help_text = "Physics Simulation Active.\nUse Pluck(str), Oscillate(freq, str), Hear() ops.\n\nLeft: Wavefront Visualization\nRight: (Reserved for Spectrum Analysis)";
+                let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
+                f.render_widget(help, chunks[1]);
+
+                return;
             }
 
             // Handle Metaphysics View
@@ -691,6 +750,8 @@ where
                 ViewMode::Microscope => "MICROSCOPE",
                 #[cfg(feature = "biophysics")]
                 ViewMode::Cortex => "CORTEX",
+                #[cfg(feature = "resonance")]
+                ViewMode::Resonance => "RESONANCE",
                 #[cfg(feature = "nova")]
                 ViewMode::Metaphysics => "METAPHYSICS",
                 #[cfg(feature = "nova")]
@@ -1112,6 +1173,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "resonance")]
+                                ViewMode::Resonance => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Metaphysics => {
                                     app_state.input_mode = InputMode::Normal;
@@ -1169,6 +1235,31 @@ where
                                 }
                                 #[cfg(not(feature = "biophysics"))]
                                 {
+                                    #[cfg(feature = "resonance")]
+                                    {
+                                        ViewMode::Resonance
+                                    }
+                                    #[cfg(not(feature = "resonance"))]
+                                    {
+                                        #[cfg(feature = "nova")]
+                                        {
+                                            ViewMode::Metaphysics
+                                        }
+                                        #[cfg(not(feature = "nova"))]
+                                        {
+                                            ViewMode::Genome
+                                        }
+                                    }
+                                }
+                            }
+                            #[cfg(feature = "biophysics")]
+                            ViewMode::Cortex => {
+                                #[cfg(feature = "resonance")]
+                                {
+                                    ViewMode::Resonance
+                                }
+                                #[cfg(not(feature = "resonance"))]
+                                {
                                     #[cfg(feature = "nova")]
                                     {
                                         ViewMode::Metaphysics
@@ -1179,8 +1270,8 @@ where
                                     }
                                 }
                             }
-                            #[cfg(feature = "biophysics")]
-                            ViewMode::Cortex => {
+                            #[cfg(feature = "resonance")]
+                            ViewMode::Resonance => {
                                 #[cfg(feature = "nova")]
                                 {
                                     ViewMode::Metaphysics
@@ -1252,10 +1343,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Topology => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {
                             if app_state.selected_graveyard_strand + 1 < vm.graveyard.len() {
@@ -1324,6 +1413,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
                         #[cfg(feature = "nova")]
@@ -1384,6 +1475,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
@@ -1409,6 +1502,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
@@ -1507,6 +1602,10 @@ where
                             #[cfg(feature = "biophysics")]
                             ViewMode::Cortex => {
                                 // Prevent entering edit mode for Cortex
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "resonance")]
+                            ViewMode::Resonance => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]

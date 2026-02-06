@@ -856,6 +856,11 @@ pub enum OpCode {
     /// **Effect:** Sets up an oscillator. If strength is 0, stops oscillation.
     #[cfg(feature = "resonance")]
     Oscillate,
+    /// **[Resonance]** Reads the amplitude of the physics grid at the current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., amplitude ]`
+    #[cfg(feature = "resonance")]
+    Hear,
 
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.

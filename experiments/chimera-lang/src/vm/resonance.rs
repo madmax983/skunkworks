@@ -68,5 +68,19 @@ pub fn exec_resonance_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             vm.output
                 .push("Error: Stack underflow for oscillate".to_string());
         }
+    } else if op == OpCode::Hear {
+        // stack: [ ... ] -> [ ..., amplitude ]
+        let (cy, cx) = vm.context_loc;
+        let width = 16; // GRID_SIZE
+        let idx = cy * width + cx;
+        let val = if idx < vm.audio_snapshot.len() {
+            vm.audio_snapshot[idx]
+        } else {
+            0.0
+        };
+        // Scale f32 (-1.0 to 1.0) to Int (approx -100 to 100)
+        let int_val = (val * 100.0) as i64;
+        vm.stack.push(Value::Int(int_val));
+        vm.energy = vm.energy.saturating_sub(1);
     }
 }
