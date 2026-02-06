@@ -416,6 +416,19 @@ pub enum OpCode {
     /// **Stack:** `[ ..., channel ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     Tune,
+
+    /// **[Nova]** Sings a note into the Chorus Buffer.
+    ///
+    /// **Stack:** `[ ..., note_string ] -> [ ... ]`
+    /// **Effect:** Checks for Chords (magic spells).
+    #[cfg(feature = "nova")]
+    Sing,
+    /// **[Nova]** Listens to the Chorus Buffer.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., chorus_junction ]`
+    #[cfg(feature = "nova")]
+    Listen,
+
     /// **[Nova]** Shifts the organism's phase of matter.
     ///
     /// **Stack:** `[ ..., phase_id ] -> [ ... ]`
@@ -866,6 +879,10 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "tune" => Ok(OpCode::Tune),
             #[cfg(feature = "nova")]
+            "sing" => Ok(OpCode::Sing),
+            #[cfg(feature = "nova")]
+            "listen" => Ok(OpCode::Listen),
+            #[cfg(feature = "nova")]
             "phase_shift" => Ok(OpCode::PhaseShift),
             #[cfg(feature = "nova")]
             "membrane" => Ok(OpCode::Membrane),
@@ -1044,6 +1061,10 @@ impl fmt::Display for OpCode {
             OpCode::Broadcast => write!(f, "broadcast"),
             #[cfg(feature = "nova")]
             OpCode::Tune => write!(f, "tune"),
+            #[cfg(feature = "nova")]
+            OpCode::Sing => write!(f, "sing"),
+            #[cfg(feature = "nova")]
+            OpCode::Listen => write!(f, "listen"),
             #[cfg(feature = "nova")]
             OpCode::PhaseShift => write!(f, "phase_shift"),
             #[cfg(feature = "nova")]

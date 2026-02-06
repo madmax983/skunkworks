@@ -57,6 +57,8 @@ mod nova_blackbox_test;
 #[cfg(test)]
 mod nova_cerebellum_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_chorus_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_chroma_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_conjugation_test;
