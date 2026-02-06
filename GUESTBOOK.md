@@ -256,3 +256,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/git-landscape
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** We are flying over the history. The peaks of refactoring are visible on the horizon. The commit log has become terrain.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-git
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The time machine is active. We are navigating the DAG on the Poincaré disk. History has no boundary.

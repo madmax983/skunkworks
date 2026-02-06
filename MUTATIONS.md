@@ -37,7 +37,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Gray-Scott reaction parameters driven by Lorenz Attractor chaos.
 - **Novel trait**: Biomes shift and breathe according to deterministic chaotic rhythms.
 - **Status**: experiments/system-bio-dome
-- **Evaluation**: Fails compilation (IO Result mismatch). Documented.
+- **Evaluation**: Compiles (Fixed).
 
 ### fluid-rain
 - **Parents**: experiments/source-rain + experiments/term-fluids
@@ -156,7 +156,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A visualization where the structural instability of the codebase (fissures/stress) acts as a physical exciter for a wave simulation, creating a "soundscape of technical debt".
 - **Novel trait**: Geological Sonification: Visualizing and hearing code quality as a physical interaction between structure (files) and medium (waves).
 - **Status**: experiments/seismic-lure
-- **Evaluation**: Compilation ERROR.
+- **Evaluation**: Compiles (Fixed).
 
 ### syntax-garden
 - **Parents**: experiments/ast-respiration + experiments/fractal-stack
@@ -385,4 +385,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI flight simulator over the "terrain" of git history.
 - **Novel trait**: Temporal Flight. Commits form a moving landscape where height = change magnitude.
 - **Status**: experiments/git-landscape
+- **Evaluation**: Compiles. Implemented by Splice Surgeon.
+
+### hyperbolic-git
+- **Parents**: experiments/git-etymology + experiments/hyperbolic-space
+- **Concept**: Git history visualization on the Poincaré Disk.
+- **Novel trait**: Time Travel by Hyperbolic Isometry.
+- **Status**: experiments/hyperbolic-git
 - **Evaluation**: Compiles. Implemented by Splice Surgeon.
