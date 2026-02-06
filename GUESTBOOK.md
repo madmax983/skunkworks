@@ -4,14 +4,6 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** The lattice is fractured. Multiple versions of `glam` (v0.25, v0.27) and `bevy` (v0.13, v0.14) detected. The organism survives but is unstable.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/git_rhythm
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Zombie detected. Specimen was condemned but pulse remains. Double-tap required.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/orbital-harmonics
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Zombie detected. Specimen was condemned but pulse remains. Double-tap required.
-
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/origami-ui
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Zombie detected. Redundant tissue (`miura-interface`) found. Specimen marked for execution.
@@ -201,17 +193,21 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Glam version conflict detected (v0.25 vs v0.27). The crystal lattice is fracturing.
 
+### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
+- **Scent Origin:** The Reaper ☠️
+- **Status:** CONDEMNED. Naming convention violation (`snake_case`). Redundancy detected.
+
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Stereochemist)
 - **Status:** Chiral Symmetry Breaking implemented. The universe can now be mirrored. Isomers are stable.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/git_rhythm
+### [Concentration Level: TOXIC] - Location: graveyard/git_rhythm
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Redundancy detected. Convention violation.
+- **Status:** Specimen executed. Redundancy detected. Convention violation.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/orbital-harmonics
+### [Concentration Level: TOXIC] - Location: graveyard/orbital-harmonics
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Redundancy detected. Documentation void.
+- **Status:** Specimen executed. Redundancy detected. Documentation void.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/system-bio-dome
 - **Scent Origin:** Mycelium 🍄
