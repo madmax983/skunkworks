@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **alloc-tardis**: Documentation void (missing `README.md`). Functional ZUI prototype, but silent. Grace period ends in 24h.
+- **schrodingers-text**: Terminal compilation failure (ratatui trait bounds). Documentation void. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **alloc-tardis**: Documentation void (missing `README.md`). Functional ZUI prototype, but silent. Failed to improve during grace period. Moved to graveyard.
 - **ast-respiration**: Documentation void (missing `README.md`). Failed to improve during grace period. Moved to graveyard.
 - **neuro-chimera**: Terminal compilation failure (trait bounds). Fails to handle `Value::Junction`. Failed to improve during grace period. Moved to graveyard.
 - **code-concerto**: Terminal compilation failure (trait bounds). Failed to improve during grace period. Moved to graveyard.
