@@ -6,6 +6,26 @@
 //!
 //! The resulting score can be exported as [ABC Notation](https://abcnotation.com/), allowing
 //! the organism's "song" to be played by external tools.
+//!
+//! ## Example
+//!
+//! ```
+//! use chimera_lang::vm::bard::{Note, score_to_abc};
+//!
+//! // Simulate a simple melody (Twinkle Twinkle Little Star)
+//! let score = vec![
+//!     Note::new(60, 4, 100), // C4
+//!     Note::new(60, 4, 100), // C4
+//!     Note::new(67, 4, 100), // G4
+//!     Note::new(67, 4, 100), // G4
+//!     Note::new(69, 4, 100), // A4
+//!     Note::new(69, 4, 100), // A4
+//!     Note::new(67, 8, 100), // G4 (Half note)
+//! ];
+//!
+//! let abc = score_to_abc(&score);
+//! assert!(abc.contains("c4 c4 g4 g4 a4 a4 g8"));
+//! ```
 
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
@@ -125,9 +145,9 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 ///
 /// # Format Details
 ///
-/// - Header: Fixed X:1, T:Chimera Composition, M:4/4, L:1/16, K:C.
-/// - Pitch: Mapped from MIDI to ABC (e.g., 60 -> C).
-/// - Duration: Mapped to ABC duration multipliers.
+/// - Header: Fixed `X:1`, `T:Chimera Composition`, `M:4/4`, `L:1/16`, `K:C`.
+/// - Pitch: Mapped from MIDI to ABC (e.g., 60 -> c).
+/// - Duration: Mapped to ABC duration multipliers (relative to L:1/16).
 ///
 /// # Examples
 ///
@@ -135,13 +155,15 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 /// use chimera_lang::vm::bard::{Note, score_to_abc};
 ///
 /// let score = vec![
-///     Note::new(60, 4, 100), // Middle C, quarter note
+///     Note::new(60, 4, 100), // Middle C, quarter note (4 * 1/16)
 ///     Note::new(64, 4, 100), // E, quarter note
 /// ];
 /// let abc = score_to_abc(&score);
+///
+/// assert!(abc.starts_with("X:1\nT:Chimera Composition"));
 /// // Middle C (60) is "c" in ABC. E4 (64) is "e".
-/// assert!(abc.contains("c4"));
-/// assert!(abc.contains("e4"));
+/// // Duration 4 becomes "4".
+/// assert!(abc.contains("c4 e4"));
 /// ```
 pub fn score_to_abc(score: &[Note]) -> String {
     let mut s = String::from("X:1\nT:Chimera Composition\nM:4/4\nL:1/16\nK:C\n");
