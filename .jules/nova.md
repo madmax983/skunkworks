@@ -7,3 +7,8 @@
 **Concept:** Persistent global key-value storage for Chimera VMs using JSON.
 **Fate:** Merged
 **Lesson:** Serialization of recursive enums in Rust is easy with Serde. Global state across runs adds a new dimension to the "Evolution" simulation.
+
+## [The Chimera Microscope]
+**Concept:** Added `ViewMode::Microscope` to `chimera-lang` TUI. This view provides a detailed dashboard of the currently selected grid cell, visualizing hormone levels (RGB), waste, mutagen, light, and inspecting resident Organelles (Stack, IP). Implemented via a new `vm::microscope` module that scans the VM state.
+**Fate:** Merged
+**Lesson:** Adding specialized views to a TUI significantly improves debuggability of complex simulations. Handling feature flags (`#[cfg(feature = "nova")]`) in UI rendering requires careful block management.
