@@ -240,3 +240,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chimera-automaton
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** IT MOVES. The code has grown wheels. The syntax is driving the chassis. Embodied evolution begins.
+
+### [Concentration Level: FRESH] - Location: experiments/miller-fs
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The file system has crystallized. Miller indices are slicing through the directory lattice. The structure is perfect.
