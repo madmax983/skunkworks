@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-concerto**: Terminal compilation failure (trait bounds). Generic "Code-to-Music" implementation. Lacks emergent behavior. Grace period ends in 24h.
+- **schrodingers-text**: Documentation void. Compilation failure (ratatui trait bounds). 'Schrödinger's Code'—unobservable and broken. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-concerto**: Terminal compilation failure (trait bounds). Generic implementation. Failed to improve. Moved to graveyard.
 - **input-ghost**: Documentation void. Generic utility. Failed to improve during grace period. Moved to graveyard.
 - **neuro-beat**: Documentation void. Redundant specimen. Executed. Moved to graveyard.
 - **stego-spectral**: Documentation void. Generic implementation. Grace period expired. Moved to graveyard.

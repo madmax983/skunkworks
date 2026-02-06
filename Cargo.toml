@@ -4,7 +4,6 @@ members = [
     "crates/tui-shared",
     "experiments/ast-respiration",
     "experiments/code-bio-dome",
-    "experiments/code-concerto",
     "experiments/crystal-structure",
     "experiments/cymatic-lure",
     "experiments/digital-compost",
