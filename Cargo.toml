@@ -122,7 +122,7 @@ members = [
     "experiments/chimera-fossil",
     "experiments/cam-automaton", "experiments/git-cantata",
     "experiments/chimera-automaton", "experiments/miller-fs", "experiments/git-landscape", "experiments/git-etymology",
-    "experiments/hyperbolic-git",
+    "experiments/hyperbolic-git", "experiments/chimera_test",
 ]
 resolver = "2"
 

@@ -29,7 +29,9 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
-use poincare_disk::{Point, mobius_add, mobius_sub, hyperbolic_dist};
+use poincare_disk::Point;
+#[cfg(feature = "nova")]
+use poincare_disk::hyperbolic_dist;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -1428,7 +1430,6 @@ impl ChimeraVM {
             | OpCode::Spirit
             | OpCode::Alchemy
             | OpCode::Meme
-            | OpCode::Spirit
             | OpCode::Drift
             | OpCode::Poly
             | OpCode::Chronostasis
