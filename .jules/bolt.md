@@ -15,3 +15,7 @@
 **[Vec::with_capacity in vec![] macro]**
 **Learning:** `vec![Vec::with_capacity(n); m]` creates one vector with capacity and clones it `m-1` times. `Vec::clone` does not preserve capacity (it creates a fit-to-size clone).
 **Action:** Use `(0..m).map(|_| Vec::with_capacity(n)).collect()` to ensure all vectors have reserved capacity.
+
+**[Allocation-Free Diffusion]**
+**Learning:** Collecting iterators into `Vec` inside hot loops (e.g., 256 cells/frame) causes massive allocator pressure.
+**Action:** Inverted loop nesting (iterate neighbors once, update multiple channels) to use stack-based arrays instead of heap allocations.

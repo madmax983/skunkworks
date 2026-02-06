@@ -34,6 +34,7 @@ pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
 pub const MAX_SPORES: usize = 64;
 pub const MAX_ORGANELLES: usize = 256;
+pub const MAX_CHORUS_SIZE: usize = 8;
 pub const MAX_JUNCTION_SIZE: usize = 1024;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
@@ -41,12 +42,19 @@ pub const INITIAL_ENERGY: i64 = 50;
 #[cfg(feature = "nova")]
 pub mod akashic;
 pub mod bard;
+#[cfg(feature = "nova")]
+pub mod blackbox;
 pub mod cortex;
+pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
+#[cfg(feature = "nova")]
+pub mod nova_sigil;
 pub mod oracle;
 pub mod resonance;
+#[cfg(feature = "silicon")]
+pub mod silicon;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::Sender;
@@ -63,7 +71,7 @@ pub struct ChromaCell {
     pub fg: Option<(u8, u8, u8)>,
 }
 
-#[cfg(feature = "nova")]
+#[cfg(any(feature = "nova", feature = "silicon"))]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Topology {
     Plane,     // 0: Bounded. Edges are walls.
@@ -197,7 +205,7 @@ pub struct ChimeraVM {
     pub sonar_target: Option<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub symbiotes: Vec<(usize, usize)>,
-    #[cfg(feature = "nova")]
+    #[cfg(any(feature = "nova", feature = "silicon"))]
     pub topology: Topology,
     #[cfg(feature = "nova")]
     pub ether: HashMap<i64, VecDeque<Value>>,
@@ -214,6 +222,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     #[cfg(feature = "nova")]
+    pub chorus_buffer: VecDeque<String>,
+    #[cfg(feature = "nova")]
     pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
@@ -221,6 +231,10 @@ pub struct ChimeraVM {
     pub audio_tx: Option<Sender<AudioCommand>>,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
+    #[cfg(feature = "nova")]
+    pub blackbox: blackbox::Blackbox,
+    #[cfg(feature = "silicon")]
+    pub silicon_mode: bool,
 }
 
 impl ChimeraVM {
@@ -300,7 +314,7 @@ impl ChimeraVM {
             sonar_target: None,
             #[cfg(feature = "nova")]
             symbiotes: Vec::new(),
-            #[cfg(feature = "nova")]
+            #[cfg(any(feature = "nova", feature = "silicon"))]
             topology: Topology::Torus,
             #[cfg(feature = "nova")]
             ether: HashMap::new(),
@@ -317,6 +331,8 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             mycelium: HashMap::new(),
             #[cfg(feature = "nova")]
+            chorus_buffer: VecDeque::new(),
+            #[cfg(feature = "nova")]
             score: Vec::new(),
             #[cfg(feature = "oracle")]
             knowledge_base: Vec::new(),
@@ -324,6 +340,10 @@ impl ChimeraVM {
             audio_tx: None,
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
+            #[cfg(feature = "nova")]
+            blackbox: blackbox::Blackbox::new(),
+            #[cfg(feature = "silicon")]
+            silicon_mode: false,
         }
     }
 
@@ -369,7 +389,7 @@ impl ChimeraVM {
     }
 
     /// Helper to normalize coordinates based on topology
-    #[cfg(feature = "nova")]
+    #[cfg(any(feature = "nova", feature = "silicon"))]
     pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
         let size = GRID_SIZE as i64;
         match self.topology {
@@ -935,6 +955,15 @@ impl ChimeraVM {
             return;
         }
 
+        #[cfg(feature = "nova")]
+        self.blackbox.record(
+            &self.dna,
+            self.ip,
+            &self.stack,
+            self.energy,
+            self.context_loc,
+        );
+
         self.energy -= 1;
 
         #[cfg(feature = "nova")]
@@ -951,6 +980,11 @@ impl ChimeraVM {
             for neuron in self.neurons.values_mut() {
                 neuron.step(0.1);
             }
+        }
+
+        #[cfg(feature = "silicon")]
+        if self.silicon_mode {
+            silicon::step_wireworld(self);
         }
 
         if self.chaos_mode {
@@ -1198,7 +1232,19 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::Blackbox => {
+                let dump = self.blackbox.dump();
+                self.stack.push(Value::Str(dump));
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Alchemy
+            | OpCode::Sing
+            | OpCode::Listen
             | OpCode::Hyphae
             | OpCode::Connect
             | OpCode::Transport
@@ -1212,6 +1258,8 @@ impl ChimeraVM {
             | OpCode::Scramble
             | OpCode::Pigment
             | OpCode::Glyph
+            | OpCode::SensePigment
+            | OpCode::SenseGlyph
             | OpCode::Rift
             | OpCode::Seal
             | OpCode::Shape
@@ -1294,6 +1342,12 @@ impl ChimeraVM {
             #[cfg(feature = "biophysics")]
             OpCode::NeuroGenesis | OpCode::Stimulate | OpCode::Dendrite | OpCode::Axon => {
                 neuron::exec_biophysics_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "silicon")]
+            OpCode::Conduct | OpCode::Wire | OpCode::Pulse | OpCode::Silicon => {
+                silicon::exec_silicon_op(self, op, args);
                 None
             }
 

@@ -172,6 +172,28 @@ pub enum OpCode {
     #[cfg(feature = "biophysics")]
     Axon,
 
+    // Silicon Features
+    /// **[Silicon]** Runs one step of Wireworld on the grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Conduct,
+    /// **[Silicon]** Writes a conductor (1) to the grid.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Wire,
+    /// **[Silicon]** Writes an electron head (2) to the grid (Pulse).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Pulse,
+    /// **[Silicon]** Toggles automatic conduction mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Silicon,
+
     // Nova Features
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
     ///
@@ -416,6 +438,19 @@ pub enum OpCode {
     /// **Stack:** `[ ..., channel ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     Tune,
+
+    /// **[Nova]** Sings a note into the Chorus Buffer.
+    ///
+    /// **Stack:** `[ ..., note_string ] -> [ ... ]`
+    /// **Effect:** Checks for Chords (magic spells).
+    #[cfg(feature = "nova")]
+    Sing,
+    /// **[Nova]** Listens to the Chorus Buffer.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., chorus_junction ]`
+    #[cfg(feature = "nova")]
+    Listen,
+
     /// **[Nova]** Shifts the organism's phase of matter.
     ///
     /// **Stack:** `[ ..., phase_id ] -> [ ... ]`
@@ -538,6 +573,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., char_code, y, x ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Glyph,
+    /// **[Nova]** Reads the foreground color of a grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., r, g, b ]`
+    #[cfg(feature = "nova")]
+    SensePigment,
+    /// **[Nova]** Reads the character representation of a grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., char_code ]`
+    #[cfg(feature = "nova")]
+    SenseGlyph,
 
     // Fungi Features (Mycelial Network)
     /// **[Nova]** Spawns a fungal node (Hyphae) at the current grid location.
@@ -580,6 +625,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     AkashicRead,
 
+    /// **[Nova]** Dumps the flight recorder (blackbox) to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dump_string ]`
+    #[cfg(feature = "nova")]
+    Blackbox,
+
     // Ribozyme Features (Functional Programming)
     /// **[Nova]** Evaluates a string as code.
     ///
@@ -591,6 +642,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., junction, function ] -> [ ..., new_junction ]`
     #[cfg(feature = "nova")]
     Map,
+    /// **[Nova]** Invokes a magical Sigil based on a spatial pattern.
+    ///
+    /// **Stack:** `[ ..., sigil_name ] -> [ ... ]`
+    /// **Effect:** Checks grid for pattern and applies effect.
+    #[cfg(feature = "nova")]
+    Invoke,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -680,6 +737,10 @@ impl FromStr for OpCode {
             "pigment" => Ok(OpCode::Pigment),
             #[cfg(feature = "nova")]
             "glyph" => Ok(OpCode::Glyph),
+            #[cfg(feature = "nova")]
+            "sense_pigment" => Ok(OpCode::SensePigment),
+            #[cfg(feature = "nova")]
+            "sense_glyph" => Ok(OpCode::SenseGlyph),
 
             #[cfg(feature = "nova")]
             "hyphae" => Ok(OpCode::Hyphae),
@@ -698,9 +759,14 @@ impl FromStr for OpCode {
             "akashic_read" => Ok(OpCode::AkashicRead),
 
             #[cfg(feature = "nova")]
+            "blackbox" => Ok(OpCode::Blackbox),
+
+            #[cfg(feature = "nova")]
             "eval" => Ok(OpCode::Eval),
             #[cfg(feature = "nova")]
             "map" => Ok(OpCode::Map),
+            #[cfg(feature = "nova")]
+            "invoke" => Ok(OpCode::Invoke),
             #[cfg(feature = "nova")]
             "fold" => Ok(OpCode::Fold),
             #[cfg(feature = "nova")]
@@ -765,6 +831,15 @@ impl FromStr for OpCode {
             "dendrite" => Ok(OpCode::Dendrite),
             #[cfg(feature = "biophysics")]
             "axon" => Ok(OpCode::Axon),
+
+            #[cfg(feature = "silicon")]
+            "conduct" => Ok(OpCode::Conduct),
+            #[cfg(feature = "silicon")]
+            "wire" => Ok(OpCode::Wire),
+            #[cfg(feature = "silicon")]
+            "pulse" => Ok(OpCode::Pulse),
+            #[cfg(feature = "silicon")]
+            "silicon" => Ok(OpCode::Silicon),
 
             #[cfg(feature = "nova")]
             "sporulate" => Ok(OpCode::Sporulate),
@@ -857,6 +932,10 @@ impl FromStr for OpCode {
             #[cfg(feature = "nova")]
             "tune" => Ok(OpCode::Tune),
             #[cfg(feature = "nova")]
+            "sing" => Ok(OpCode::Sing),
+            #[cfg(feature = "nova")]
+            "listen" => Ok(OpCode::Listen),
+            #[cfg(feature = "nova")]
             "phase_shift" => Ok(OpCode::PhaseShift),
             #[cfg(feature = "nova")]
             "membrane" => Ok(OpCode::Membrane),
@@ -944,6 +1023,15 @@ impl fmt::Display for OpCode {
             OpCode::Dendrite => write!(f, "dendrite"),
             #[cfg(feature = "biophysics")]
             OpCode::Axon => write!(f, "axon"),
+
+            #[cfg(feature = "silicon")]
+            OpCode::Conduct => write!(f, "conduct"),
+            #[cfg(feature = "silicon")]
+            OpCode::Wire => write!(f, "wire"),
+            #[cfg(feature = "silicon")]
+            OpCode::Pulse => write!(f, "pulse"),
+            #[cfg(feature = "silicon")]
+            OpCode::Silicon => write!(f, "silicon"),
 
             #[cfg(feature = "nova")]
             OpCode::Sporulate => write!(f, "sporulate"),
@@ -1036,6 +1124,10 @@ impl fmt::Display for OpCode {
             #[cfg(feature = "nova")]
             OpCode::Tune => write!(f, "tune"),
             #[cfg(feature = "nova")]
+            OpCode::Sing => write!(f, "sing"),
+            #[cfg(feature = "nova")]
+            OpCode::Listen => write!(f, "listen"),
+            #[cfg(feature = "nova")]
             OpCode::PhaseShift => write!(f, "phase_shift"),
             #[cfg(feature = "nova")]
             OpCode::Membrane => write!(f, "membrane"),
@@ -1079,6 +1171,10 @@ impl fmt::Display for OpCode {
             OpCode::Pigment => write!(f, "pigment"),
             #[cfg(feature = "nova")]
             OpCode::Glyph => write!(f, "glyph"),
+            #[cfg(feature = "nova")]
+            OpCode::SensePigment => write!(f, "sense_pigment"),
+            #[cfg(feature = "nova")]
+            OpCode::SenseGlyph => write!(f, "sense_glyph"),
 
             #[cfg(feature = "nova")]
             OpCode::Hyphae => write!(f, "hyphae"),
@@ -1097,9 +1193,14 @@ impl fmt::Display for OpCode {
             OpCode::AkashicRead => write!(f, "akashic_read"),
 
             #[cfg(feature = "nova")]
+            OpCode::Blackbox => write!(f, "blackbox"),
+
+            #[cfg(feature = "nova")]
             OpCode::Eval => write!(f, "eval"),
             #[cfg(feature = "nova")]
             OpCode::Map => write!(f, "map"),
+            #[cfg(feature = "nova")]
+            OpCode::Invoke => write!(f, "invoke"),
             #[cfg(feature = "nova")]
             OpCode::Fold => write!(f, "fold"),
             #[cfg(feature = "nova")]

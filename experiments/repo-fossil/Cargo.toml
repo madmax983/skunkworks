@@ -1,0 +1,12 @@
+[package]
+name = "repo-fossil"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+chrono = "0.4.43"
+crossterm.workspace = true
+rand.workspace = true
+ratatui.workspace = true
+textwrap = "0.16.2"
