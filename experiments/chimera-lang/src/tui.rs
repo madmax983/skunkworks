@@ -29,6 +29,8 @@ pub(crate) enum ViewMode {
     Metaphysics,
     #[cfg(feature = "nova")]
     Laboratory,
+    #[cfg(feature = "nova")]
+    Topology,
 }
 
 enum InputMode {
@@ -364,6 +366,73 @@ where
                 return;
             }
 
+            // Handle Topology View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Topology = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+                    .split(f.area());
+
+                let left_chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(33)].as_ref())
+                    .split(chunks[0]);
+
+                // Portals
+                let portal_items: Vec<ListItem> = vm.portals.iter().map(|(k, v)| {
+                    ListItem::new(format!("Portal: ({},{}) -> ({},{})", k.1, k.0, v.1, v.0))
+                }).collect();
+                let portal_list = List::new(portal_items).block(Block::default().borders(Borders::ALL).title("Wormholes"));
+                f.render_widget(portal_list, left_chunks[0]);
+
+                // Entanglements
+                let ent_items: Vec<ListItem> = vm.entangled_pairs.iter().map(|(k, v)| {
+                    ListItem::new(format!("Entangled: Strand {} <-> {}", k, v))
+                }).collect();
+                let ent_list = List::new(ent_items).block(Block::default().borders(Borders::ALL).title("Spooky Action"));
+                f.render_widget(ent_list, left_chunks[1]);
+
+                // Mycelium
+                let myc_items: Vec<ListItem> = vm.mycelium.iter().map(|(k, v)| {
+                    let neighbors: Vec<String> = v.iter().map(|n| format!("({},{})", n.1, n.0)).collect();
+                    ListItem::new(format!("Hyphae ({},{}): {:?}", k.1, k.0, neighbors))
+                }).collect();
+                let myc_list = List::new(myc_items).block(Block::default().borders(Borders::ALL).title("Fungal Network"));
+                f.render_widget(myc_list, left_chunks[2]);
+
+                // Topology Map
+                let mut map_lines = Vec::new();
+                for y in 0..16 {
+                    let mut spans = Vec::new();
+                    for x in 0..16 {
+                        let mut ch = "·".to_string();
+                        let mut style = Style::default().fg(Color::DarkGray);
+
+                        if vm.mycelium.contains_key(&(y, x)) {
+                            ch = "*".to_string();
+                            style = style.fg(Color::Green);
+                        }
+                        if vm.portals.contains_key(&(y, x)) {
+                            ch = "@".to_string();
+                            style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
+                        }
+                        if vm.organelles.iter().any(|o| o.context_loc == (y, x)) {
+                            ch = "O".to_string();
+                            style = style.fg(Color::Yellow);
+                        }
+
+                        spans.push(Span::styled(ch, style));
+                        spans.push(Span::raw(" "));
+                    }
+                    map_lines.push(Line::from(spans));
+                }
+                let map = Paragraph::new(map_lines).block(Block::default().borders(Borders::ALL).title("Topology Map"));
+                f.render_widget(map, chunks[1]);
+
+                return;
+            }
+
             // Handle Laboratory View
             #[cfg(feature = "nova")]
             if let ViewMode::Laboratory = app_state.view_mode {
@@ -566,6 +635,8 @@ where
                 ViewMode::Metaphysics => "METAPHYSICS",
                 #[cfg(feature = "nova")]
                 ViewMode::Laboratory => "LABORATORY",
+                #[cfg(feature = "nova")]
+                ViewMode::Topology => "TOPOLOGY",
             };
 
             let title = match app_state.input_mode {
@@ -989,6 +1060,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Topology => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -1048,7 +1124,9 @@ where
                                 }
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Metaphysics => ViewMode::Laboratory,
+                            ViewMode::Metaphysics => ViewMode::Topology,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Topology => ViewMode::Laboratory,
                             #[cfg(feature = "nova")]
                             ViewMode::Laboratory => ViewMode::Genome,
                         };
@@ -1081,6 +1159,8 @@ where
                         ViewMode::Microscope => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -1186,6 +1266,8 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Topology => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1199,6 +1281,8 @@ where
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
@@ -1220,6 +1304,8 @@ where
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Metaphysics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
@@ -1332,6 +1418,10 @@ where
                                     app_state.lab_parent_b,
                                     app_state.lab_method
                                 );
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Topology => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                         }
                     }

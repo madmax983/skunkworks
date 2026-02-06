@@ -1553,7 +1553,8 @@ impl ChimeraVM {
             | OpCode::Bury
             | OpCode::Exhume
             | OpCode::Seance
-            | OpCode::Mourn => nova::exec_nova_op(self, op, args),
+            | OpCode::Mourn
+            | OpCode::Reincarnate => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {

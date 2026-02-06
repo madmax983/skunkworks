@@ -43,6 +43,7 @@ Chimera is a bio-inspired, stack-based esoteric programming language. It simulat
 ### Cell Cycle (Nova Feature)
 *   `mitosis(strand_idx)`: Clones the target strand and appends it to the Helix. Inherits epigenetic state. Costs 30 Energy.
 *   `apoptosis(strand_idx)`: Clears all genes in the target strand, effectively killing it. Removes epigenetic state. Costs 10 Energy.
+*   `reincarnate(strand_idx)`: Kills the target strand and immediately spawns a mutated copy of it at the end of the helix. Costs 50 Energy.
 *   `s_index()`: Pushes the current strand index to the stack. Useful for self-reference in `mitosis`.
 
 ### Telomeres (Nova Feature)
@@ -82,10 +83,11 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 
 ### Experimental Nova Enzymes (Undocumented)
 The following enzymes are available in the Nova feature set but are currently experimental:
-`Rift`, `Seal`, `Shape`, `Simulate`, `Dream`, `Chemotaxis`, `Identity`, `Differentiate`, `Sporulate`, `Germinate`, `CrisprScan`, `Cas9Cut`, `Ligase`, `Integrase`, `Excision`, `Secrete`, `Detect`, `Absorb`, `Migrate`, `Detox`, `WRead`, `Call`, `Ret`, `Bind`, `Unbind`, `Conjugate`, `Gravitate`, `Lumine`, `SenseLight`, `Broadcast`, `Tune`, `Membrane`, `Osmosis`, `Symbiosis`, `Lysis`, `Reflex`, `Compile`, `Decompile`, `Sonar`.
+`Rift`, `Seal`, `Shape`, `Simulate`, `Dream`, `Chemotaxis`, `Identity`, `Differentiate`, `Sporulate`, `Germinate`, `CrisprScan`, `Cas9Cut`, `Ligase`, `Integrase`, `Excision`, `Secrete`, `Detect`, `Absorb`, `Migrate`, `Detox`, `WRead`, `Call`, `Ret`, `Bind`, `Unbind`, `Conjugate`, `Gravitate`, `Lumine`, `SenseLight`, `Broadcast`, `Tune`, `Membrane`, `Osmosis`, `Symbiosis`, `Lysis`, `Reflex`, `Compile`, `Decompile`, `Sonar`, `Reincarnate`.
 
 ## Controls (TUI)
 *   `Space`: Step execution.
+*   `Tab`: Cycle Views (Genome -> Grid -> Microscope -> Cortex -> Metaphysics -> Topology -> Laboratory).
 *   `M`: Manually mutate a random gene.
 *   `C`: Toggle Chaos Mode (Auto-Mutation).
 *   `Q`: Quit.

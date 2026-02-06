@@ -4001,6 +4001,88 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             ));
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Reincarnate => {
+            // stack: strand_idx
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Int(idx) => {
+                        let s_idx = idx as usize;
+                        if s_idx < vm.dna.helix.strands.len() {
+                            // 1. Clone strand
+                            let mut new_strand = vm.dna.helix.strands[s_idx].clone();
+                            let mut rng = rand::thread_rng();
+
+                            // 2. Drift Mutations
+                            let enzymes = [
+                                OpCode::Push,
+                                OpCode::Add,
+                                OpCode::Sub,
+                                OpCode::Mul,
+                                OpCode::Div,
+                                OpCode::Dup,
+                                OpCode::Print,
+                                OpCode::Swap,
+                                OpCode::Drop,
+                                OpCode::Jump,
+                                OpCode::Brz,
+                                OpCode::Photosynthesize,
+                                OpCode::Consume,
+                                OpCode::GRead,
+                                OpCode::GWrite,
+                                OpCode::Genome,
+                                OpCode::Meme,
+                                OpCode::Poly,
+                            ];
+
+                            // Higher mutation rate for reincarnation (e.g. 10%)
+                            for gene in &mut new_strand.genes {
+                                if rng.gen_bool(0.1) {
+                                    let new_op = enzymes[rng.gen_range(0..enzymes.len())].clone();
+                                    gene.op = new_op;
+                                }
+                            }
+
+                            // 3. Push new strand
+                            vm.dna.helix.strands.push(new_strand);
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.telomeres.push(50);
+                            #[cfg(feature = "cortex")]
+                            {
+                                vm.activation_levels.push(0);
+                                vm.synapse_map.push(Vec::new());
+                            }
+
+                            // 4. Apoptosis of old strand
+                            // Clear original
+                            vm.dna.helix.strands[s_idx].genes.clear();
+                            // Remove associated epigenetics
+                            vm.epigenome.retain(|(s, _)| *s != s_idx);
+
+                            // 5. Push new index
+                            vm.stack.push(Value::Int(new_idx as i64));
+
+                            vm.energy = vm.energy.saturating_sub(50);
+                            vm.output.push(format!(
+                                "REINCARNATE: Strand {} reborn as {}",
+                                s_idx, new_idx
+                            ));
+                        } else {
+                            vm.output.push(
+                                "Error: Strand index out of bounds for reincarnate".to_string(),
+                            );
+                        }
+                    }
+                    _ => vm
+                        .output
+                        .push("Error: Type mismatch for reincarnate".to_string()),
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for reincarnate".to_string());
+            }
+            None
+        }
         _ => None,
     }
 }

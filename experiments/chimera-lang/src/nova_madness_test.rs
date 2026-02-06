@@ -14,17 +14,18 @@ fn make_dna(genes: Vec<Gene>) -> Dna {
 
 #[test]
 fn test_meme_spreading() {
+    let genes = vec![
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        },
+        Gene {
+            op: OpCode::Meme,
+            args: vec![],
+        },
+    ];
     let s0 = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(42)],
-            },
-            Gene {
-                op: OpCode::Meme,
-                args: vec![],
-            },
-        ],
+        genes: genes.clone(),
     };
     let s1 = Strand { genes: vec![] }; // Empty target
 
@@ -44,6 +45,11 @@ fn test_meme_spreading() {
     // Loop until s1 has genes to ensure infection
     let mut infected = false;
     for _ in 0..100 {
+        // Reset strand 0 to ensure stability (prevent self-infection from breaking offsets)
+        vm.dna.helix.strands[0] = Strand {
+            genes: genes.clone(),
+        };
+
         // Run Push(42) to set last_gene
         vm.ip = (0, 0);
         vm.step();
