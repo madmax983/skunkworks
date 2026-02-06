@@ -872,6 +872,10 @@ where
                             "J".to_string(),
                             Style::default().fg(Color::Yellow),
                         ),
+                        crate::vm::Value::Superposition(_) => (
+                            "Ψ".to_string(),
+                            Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
+                        ),
                         crate::vm::Value::Str(s) => {
                             let symbol = if s.starts_with("G:") {
                                 let parts: Vec<&str> = s.split(':').collect();

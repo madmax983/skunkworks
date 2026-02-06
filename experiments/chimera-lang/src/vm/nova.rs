@@ -461,6 +461,7 @@ fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
             }
             Some(Nucleotide::Junction(*t, nuc_vals))
         }
+        Value::Superposition(_) => None, // Cannot compile superposition to static AST
     }
 }
 
@@ -565,6 +566,9 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         args: vec![crate::ast::Nucleotide::Junction(*t, nuc_vals)],
                     });
                     x += 1;
+                }
+                Value::Superposition(_) => {
+                    x += 1; // Skip
                 }
                 Value::Str(s) => {
                     let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
@@ -1615,6 +1619,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                             )],
                                         });
                                         k += 1;
+                                    }
+                                    Value::Superposition(_) => {
+                                        k += 1; // Skip
                                     }
                                     Value::Str(s) => {
                                         let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
@@ -4221,6 +4228,83 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for reincarnate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Superpose => {
+            if vm.stack.len() >= 2 {
+                let b = vm.stack.pop().unwrap();
+                let a = vm.stack.pop().unwrap();
+                // 50/50 split
+                vm.stack.push(Value::Superposition(vec![
+                    (a, 0.5),
+                    (b, 0.5),
+                ]));
+                vm.energy = vm.energy.saturating_sub(10);
+            } else {
+                vm.output.push("Error: Stack underflow for superpose".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Collapse => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Superposition(states) => {
+                        let mut rng = rand::thread_rng();
+                        let r: f64 = rng.gen();
+                        let mut sum = 0.0;
+                        let mut collapsed = states[0].0.clone(); // Default
+
+                        for (v, p) in states {
+                            sum += p;
+                            if r <= sum {
+                                collapsed = v;
+                                break;
+                            }
+                        }
+                        vm.stack.push(collapsed);
+                        vm.energy = vm.energy.saturating_sub(5);
+                    }
+                    other => {
+                        // Scalar stays scalar
+                        vm.stack.push(other);
+                    }
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for collapse".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Observe => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Superposition(states) => {
+                        let mut rng = rand::thread_rng();
+                        let r: f64 = rng.gen();
+                        let mut sum = 0.0;
+                        let mut collapsed = states[0].0.clone();
+
+                        for (v, p) in states {
+                            sum += p;
+                            if r <= sum {
+                                collapsed = v;
+                                break;
+                            }
+                        }
+                        vm.stack.push(collapsed.clone());
+                        vm.energy = vm.energy.saturating_sub(5);
+                        vm.output.push(format!("OBSERVED: {}", collapsed));
+                    }
+                    other => {
+                        vm.stack.push(other.clone());
+                        vm.output.push(format!("OBSERVED: {}", other));
+                    }
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for observe".to_string());
             }
             None
         }

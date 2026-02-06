@@ -469,6 +469,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tune,
 
+    // Quantum Features (Superposition)
+    /// **[Nova]** Creates a quantum superposition of the top two values.
+    ///
+    /// **Stack:** `[ ..., val_a, val_b ] -> [ ..., Ψ(val_a:0.5, val_b:0.5) ]`
+    #[cfg(feature = "nova")]
+    Superpose,
+    /// **[Nova]** Collapses a superposition into a single value based on probability.
+    ///
+    /// **Stack:** `[ ..., superposition ] -> [ ..., collapsed_val ]`
+    #[cfg(feature = "nova")]
+    Collapse,
+    /// **[Nova]** Observes the value, collapsing it and logging the result.
+    ///
+    /// **Stack:** `[ ..., superposition ] -> [ ..., collapsed_val ]`
+    #[cfg(feature = "nova")]
+    Observe,
+
     /// **[Nova]** Sings a note into the Chorus Buffer.
     ///
     /// **Stack:** `[ ..., note_string ] -> [ ... ]`

@@ -114,6 +114,7 @@ pub enum Value {
     Int(i64),
     Str(String),
     Junction(JunctionType, Vec<Value>),
+    Superposition(Vec<(Value, f64)>),
 }
 
 impl std::fmt::Display for Value {
@@ -132,6 +133,16 @@ impl std::fmt::Display for Value {
                         write!(f, ", ")?;
                     }
                     write!(f, "{}", v)?;
+                }
+                write!(f, ")")
+            }
+            Value::Superposition(states) => {
+                write!(f, "Ψ(")?;
+                for (i, (v, p)) in states.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, " | ")?;
+                    }
+                    write!(f, "{}:{:.2}", v, p)?;
                 }
                 write!(f, ")")
             }
@@ -960,6 +971,7 @@ impl ChimeraVM {
         match val {
             Value::Int(n) => self.stack.push(Value::Int(n)),
             Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
+            Value::Superposition(s) => self.stack.push(Value::Superposition(s)),
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
@@ -1543,6 +1555,9 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::Superpose | OpCode::Collapse | OpCode::Observe => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Splice
             | OpCode::Isomerize
             | OpCode::Spirit
@@ -1758,6 +1773,42 @@ impl ChimeraVM {
                     }
                     Some(Value::Junction(ta, res))
                 }
+                (Value::Superposition(states), scalar @ Value::Int(_)) => {
+                    let mut res = Vec::new();
+                    for (v, p) in states {
+                        if let Some(r) = apply(v, scalar.clone(), op, depth + 1) {
+                            res.push((r, p));
+                        } else {
+                            return None;
+                        }
+                    }
+                    Some(Value::Superposition(res))
+                }
+                (scalar @ Value::Int(_), Value::Superposition(states)) => {
+                    let mut res = Vec::new();
+                    for (v, p) in states {
+                        if let Some(r) = apply(scalar.clone(), v, op, depth + 1) {
+                            res.push((r, p));
+                        } else {
+                            return None;
+                        }
+                    }
+                    Some(Value::Superposition(res))
+                }
+                (Value::Superposition(states_a), Value::Superposition(states_b)) => {
+                    let mut res = Vec::new();
+                    for (va, pa) in states_a {
+                        for (vb, pb) in &states_b {
+                            if res.len() >= MAX_JUNCTION_SIZE { // Use same limit
+                                return None;
+                            }
+                            if let Some(r) = apply(va.clone(), vb.clone(), op, depth + 1) {
+                                res.push((r, pa * pb));
+                            }
+                        }
+                    }
+                    Some(Value::Superposition(res))
+                }
                 _ => None,
             }
         }
@@ -1932,6 +1983,7 @@ impl ChimeraVM {
                                     JunctionType::Any => vals.iter().any(check_zero),
                                     JunctionType::All => vals.iter().all(check_zero),
                                 },
+                                Value::Superposition(states) => states.iter().any(|(v, _)| check_zero(v)),
                                 _ => false,
                             }
                         }
@@ -2149,6 +2201,10 @@ impl ChimeraVM {
                                 self.output
                                     .push("Error: Virus cannot execute junction".to_string());
                             }
+                            Value::Superposition(_) => {
+                                self.output
+                                    .push("Error: Virus cannot execute superposition".to_string());
+                            }
                         }
                     }
                 } else {
@@ -2174,6 +2230,17 @@ impl ChimeraVM {
                         Value::Junction(_, _) => {
                             self.output
                                 .push("Error: Cannot consume junction".to_string());
+                        }
+                        Value::Superposition(states) => {
+                            let mut total = 0.0;
+                            for (v, p) in states {
+                                match v {
+                                    Value::Int(n) => total += (n as f64) * p,
+                                    Value::Str(s) => total += (s.len() as f64) * p,
+                                    _ => {}
+                                }
+                            }
+                            self.energy = self.energy.saturating_add(total as i64);
                         }
                     }
                 } else {
