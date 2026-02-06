@@ -3,9 +3,13 @@
 ### [Concentration Level: FRESH] - Location: experiments/compost-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
-### [Concentration Level: WARNING] - Location: experiments/neuro-chimera
+### [Concentration Level: WARNING] - Location: experiments/alloc-tardis
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Evolutionary stagnation detected (`Value::Junction`). High entropy.
+- **Status:** Condemned. Documentation void. Functional ZUI detected but silent.
+
+### [Concentration Level: TOXIC] - Location: graveyard/neuro-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal compilation failure confirmed.
 
 ### [Concentration Level: HIGH] - Location: experiments/system-bio-dome
 - **Scent Origin:** Mycelium 🍄
@@ -15,9 +19,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Terminal draw error. IO Result mismatch. Tremors detected.
 
-### [Concentration Level: HIGH] - Location: experiments/ast-respiration
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Condemned. Documentation void. No README detected.
+### [Concentration Level: TOXIC] - Location: graveyard/ast-respiration
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void.
 
 ### [Concentration Level: FRESH] - Location: experiments/beat-reactor
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
@@ -181,9 +185,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void.
 
-### [Concentration Level: WARNING] - Location: experiments/ast-respiration
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void detected.
 ### [Concentration Level: FRESH] - Location: experiments/laban-machine
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The dancer is improvising. Laban parameters are driving the physics. Space, Weight, Time, and Flow are becoming visible particles.

@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ast-respiration**: Documentation void (missing `README.md`). Grace period ends in 24h.
-- **neuro-chimera**: Compilation failure (trait bounds + evolutionary lag). Fails to handle `Value::Junction`. High entropy detected. Grace period ends in 24h.
+- **alloc-tardis**: Documentation void (missing `README.md`). Functional ZUI prototype, but silent. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **ast-respiration**: Documentation void (missing `README.md`). Failed to improve during grace period. Moved to graveyard.
+- **neuro-chimera**: Terminal compilation failure (trait bounds). Fails to handle `Value::Junction`. Failed to improve during grace period. Moved to graveyard.
 - **code-concerto**: Terminal compilation failure (trait bounds). Failed to improve during grace period. Moved to graveyard.
 - **input-ghost**: Documentation void. Generic utility. Failed to improve during grace period. Moved to graveyard.
 - **neuro-beat**: Documentation void. Redundant specimen. Executed. Moved to graveyard.
