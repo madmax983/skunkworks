@@ -13,7 +13,6 @@ members = [
     "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-rogue",
-    "experiments/git_galaxy",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",

@@ -4,9 +4,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** The lattice is fractured. Multiple versions of `glam` (v0.25, v0.27) and `bevy` (v0.13, v0.14) detected. The organism survives but is unstable.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/origami-ui
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Zombie detected. Redundant tissue (`miura-interface`) found. Specimen marked for execution.
+### [Concentration Level: CONDEMNED] - Location: experiments/origami-ui
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant tissue (`miura-interface`) verified. Execution scheduled.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
@@ -193,9 +193,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Glam version conflict detected (v0.25 vs v0.27). The crystal lattice is fracturing.
 
-### [Concentration Level: EVAPORATING] - Location: experiments/git_galaxy
+### [Concentration Level: TOXIC] - Location: graveyard/git_galaxy
 - **Scent Origin:** The Reaper ☠️
-- **Status:** CONDEMNED. Naming convention violation (`snake_case`). Redundancy detected.
+- **Status:** Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`).
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Stereochemist)

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git_galaxy**: Naming convention violation (`snake_case`). Redundant with `git-landscape`/`hyperbolic-git`. Generic implementation.
+- **origami-ui**: Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
 - **git_rhythm**: Specimen executed. Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation. Moved to graveyard.
 - **orbital-harmonics**: Specimen executed. Documentation void. Redundant with `harmony-of-spheres`. Generic N-body implementation. Moved to graveyard.
 - **orbital-decay**: Terminal compilation failure (ratatui trait bounds). Documentation void. Generic implementation. Failed to improve during grace period. Executed.
