@@ -121,6 +121,7 @@ members = [
     "experiments/knot-archiver", 
     "experiments/hyperbolic-browser",  
     "experiments/chimera-fossil",
+    "experiments/cam-automaton",
 ]
 resolver = "2"
 
