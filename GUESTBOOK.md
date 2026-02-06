@@ -179,6 +179,10 @@
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-knot
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The quipu is tied. The knots are instructions. Execution is sliding down the cords.
+
 ## History/Decay
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang

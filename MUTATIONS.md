@@ -338,3 +338,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: "Choreographic Navigation". Data texture (size, age) becomes physical texture (weight, time).
 - **Status**: experiments/laban-rover
 - **Evaluation**: Compiles. Implemented by Splice Surgeon.
+
+### chimera-knot
+- **Parents**: experiments/knot-archiver + experiments/chimera-lang
+- **Concept**: A VM where the program is a physical Quipu knot structure. Execution involves traversing the knotted cords.
+- **Novel trait**: Tangible Control Flow. The physical topology of the knots dictates the execution path.
+- **Status**: experiments/chimera-knot
+- **Evaluation**: Compiles. TUI verified.
