@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
@@ -5,7 +6,7 @@ use std::str::FromStr;
 ///
 /// Each opcode represents a fundamental action that the organism can perform,
 /// ranging from basic arithmetic to genetic engineering and inter-dimensional travel.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum OpCode {
     /// Pushes a value onto the stack.
     ///
@@ -488,6 +489,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Devour,
 
+    /// **[Nova]** Runs a cellular automaton step on the Grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Evolve,
+    /// **[Nova]** Randomly corrupts the Grid or Stack.
+    ///
+    /// **Stack:** `[ ..., severity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Glitch,
+    /// **[Nova]** Shuffles the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Scramble,
+
+    /// **[Nova]** Transmutes the current grid cell based on neighbors (Alchemy).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Alchemy,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -515,6 +538,47 @@ pub enum OpCode {
     /// **Stack:** `[ ..., char_code, y, x ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Glyph,
+
+    // Fungi Features (Mycelial Network)
+    /// **[Nova]** Spawns a fungal node (Hyphae) at the current grid location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Hyphae,
+    /// **[Nova]** Connects the current Hyphae to another at target coordinates.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Connect,
+    /// **[Nova]** Transport a value instantly to a connected Hyphae.
+    ///
+    /// **Stack:** `[ ..., val, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Transport,
+    /// **[Nova]** Release spores to randomly spawn Hyphae nearby.
+    ///
+    /// **Stack:** `[ ..., radius, density ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    SporeCloud,
+
+    // Polyglot Features
+    /// **[Nova]** Executes a string as Brainfuck code.
+    ///
+    /// **Stack:** `[ ..., bf_code_string, input_string ] -> [ ..., output_string ]`
+    #[cfg(feature = "nova")]
+    Brainfuck,
+
+    // Akashic Features (Persistent Storage)
+    /// **[Nova]** Writes a key-value pair to the persistent Akashic Record.
+    ///
+    /// **Stack:** `[ ..., key, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    AkashicWrite,
+    /// **[Nova]** Reads a value from the persistent Akashic Record.
+    ///
+    /// **Stack:** `[ ..., key ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    AkashicRead,
 
     // Ribozyme Features (Functional Programming)
     /// **[Nova]** Evaluates a string as code.
@@ -616,6 +680,23 @@ impl FromStr for OpCode {
             "pigment" => Ok(OpCode::Pigment),
             #[cfg(feature = "nova")]
             "glyph" => Ok(OpCode::Glyph),
+
+            #[cfg(feature = "nova")]
+            "hyphae" => Ok(OpCode::Hyphae),
+            #[cfg(feature = "nova")]
+            "connect" => Ok(OpCode::Connect),
+            #[cfg(feature = "nova")]
+            "transport" => Ok(OpCode::Transport),
+            #[cfg(feature = "nova")]
+            "spore_cloud" => Ok(OpCode::SporeCloud),
+            #[cfg(feature = "nova")]
+            "brainfuck" => Ok(OpCode::Brainfuck),
+
+            #[cfg(feature = "nova")]
+            "akashic_write" => Ok(OpCode::AkashicWrite),
+            #[cfg(feature = "nova")]
+            "akashic_read" => Ok(OpCode::AkashicRead),
+
             #[cfg(feature = "nova")]
             "eval" => Ok(OpCode::Eval),
             #[cfg(feature = "nova")]
@@ -801,6 +882,14 @@ impl FromStr for OpCode {
             "devour" => Ok(OpCode::Devour),
             #[cfg(feature = "nova")]
             "decompile" => Ok(OpCode::Decompile),
+            #[cfg(feature = "nova")]
+            "evolve" => Ok(OpCode::Evolve),
+            #[cfg(feature = "nova")]
+            "glitch" => Ok(OpCode::Glitch),
+            #[cfg(feature = "nova")]
+            "scramble" => Ok(OpCode::Scramble),
+            #[cfg(feature = "nova")]
+            "alchemy" => Ok(OpCode::Alchemy),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -961,6 +1050,14 @@ impl fmt::Display for OpCode {
             #[cfg(feature = "nova")]
             OpCode::Decompile => write!(f, "decompile"),
             #[cfg(feature = "nova")]
+            OpCode::Evolve => write!(f, "evolve"),
+            #[cfg(feature = "nova")]
+            OpCode::Glitch => write!(f, "glitch"),
+            #[cfg(feature = "nova")]
+            OpCode::Scramble => write!(f, "scramble"),
+            #[cfg(feature = "nova")]
+            OpCode::Alchemy => write!(f, "alchemy"),
+            #[cfg(feature = "nova")]
             OpCode::Void => write!(f, "void"),
             #[cfg(feature = "nova")]
             OpCode::Supernova => write!(f, "supernova"),
@@ -982,6 +1079,23 @@ impl fmt::Display for OpCode {
             OpCode::Pigment => write!(f, "pigment"),
             #[cfg(feature = "nova")]
             OpCode::Glyph => write!(f, "glyph"),
+
+            #[cfg(feature = "nova")]
+            OpCode::Hyphae => write!(f, "hyphae"),
+            #[cfg(feature = "nova")]
+            OpCode::Connect => write!(f, "connect"),
+            #[cfg(feature = "nova")]
+            OpCode::Transport => write!(f, "transport"),
+            #[cfg(feature = "nova")]
+            OpCode::SporeCloud => write!(f, "spore_cloud"),
+            #[cfg(feature = "nova")]
+            OpCode::Brainfuck => write!(f, "brainfuck"),
+
+            #[cfg(feature = "nova")]
+            OpCode::AkashicWrite => write!(f, "akashic_write"),
+            #[cfg(feature = "nova")]
+            OpCode::AkashicRead => write!(f, "akashic_read"),
+
             #[cfg(feature = "nova")]
             OpCode::Eval => write!(f, "eval"),
             #[cfg(feature = "nova")]

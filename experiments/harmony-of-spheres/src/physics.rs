@@ -59,7 +59,9 @@ impl Universe {
         let mut forces = vec![Vec2::ZERO; n];
         for i in 0..n {
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let r_vec = self.bodies[j].pos - self.bodies[i].pos;
                 let r_sq = r_vec.length_squared();
                 if r_sq > 1e-4 {
@@ -78,7 +80,7 @@ impl Universe {
             body.vel += acc * 0.5 * dt;
             body.pos += body.vel * dt;
 
-             // Update trail
+            // Update trail
             if body.trail.len() >= TRAIL_LENGTH {
                 body.trail.pop_front();
             }
@@ -89,7 +91,9 @@ impl Universe {
         let mut new_forces = vec![Vec2::ZERO; n];
         for i in 0..n {
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let r_vec = self.bodies[j].pos - self.bodies[i].pos;
                 let r_sq = r_vec.length_squared();
                 if r_sq > 1e-4 {
@@ -108,14 +112,16 @@ impl Universe {
     }
 
     pub fn total_energy(&self) -> f32 {
-         let mut kinetic = 0.0;
+        let mut kinetic = 0.0;
         let mut potential = 0.0;
 
         for (i, body) in self.bodies.iter().enumerate() {
             kinetic += 0.5 * body.mass * body.vel.length_squared();
 
             for (j, other) in self.bodies.iter().enumerate() {
-                if i >= j { continue; }
+                if i >= j {
+                    continue;
+                }
                 let r = body.pos.distance(other.pos);
                 if r > 1e-6 {
                     potential -= G * body.mass * other.mass / r;
@@ -150,7 +156,10 @@ mod tests {
         let final_energy = universe.total_energy();
         let diff = (final_energy - initial_energy).abs();
 
-        println!("Initial E: {}, Final E: {}, Diff: {}", initial_energy, final_energy, diff);
+        println!(
+            "Initial E: {}, Final E: {}, Diff: {}",
+            initial_energy, final_energy, diff
+        );
 
         // Explicit Euler is horrible for orbits, energy should increase.
         // We assert strictly that energy is conserved to FAIL the test.

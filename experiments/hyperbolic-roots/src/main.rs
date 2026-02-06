@@ -1,4 +1,3 @@
-mod geometry;
 mod simulation;
 
 use macroquad::prelude::*;

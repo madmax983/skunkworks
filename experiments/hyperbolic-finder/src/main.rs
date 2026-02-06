@@ -1,12 +1,11 @@
 mod fs;
-mod hyperbolic;
 mod layout;
 
 use fs::scan_dir;
-use hyperbolic::{inverse_mobius_transform, mobius_transform, Point};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;
 use num_complex::Complex;
+use poincare_disk::{mobius_add, mobius_sub, Point};
 
 const DISK_SCALE: f32 = 0.45;
 
@@ -97,7 +96,7 @@ fn find_closest_node(
     click_z: Point, // point in transformed space (screen)
     hit_radius: f64,
 ) -> Option<Point> {
-    let z_prime = mobius_transform(node.pos, view_center);
+    let z_prime = mobius_sub(node.pos, view_center);
     let dist = (z_prime - click_z).norm();
 
     let mut best_match = None;
@@ -116,7 +115,7 @@ fn find_closest_node(
                 // We found a better match in children
                 // Re-evaluate distance to be sure?
                 // The recursive call uses the updated min_dist, so it only returns if better.
-                let child_prime = mobius_transform(match_pos, view_center);
+                let child_prime = mobius_sub(match_pos, view_center);
                 let child_dist = (child_prime - click_z).norm();
                 min_dist = child_dist;
                 best_match = Some(match_pos);
@@ -133,7 +132,7 @@ fn draw_node_recursive(
     screen_center: Vec2,
     disk_radius: f32,
 ) {
-    let z_prime = mobius_transform(node.pos, view_center);
+    let z_prime = mobius_sub(node.pos, view_center);
     if z_prime.norm_sqr() > 1.001 {
         return;
     }
@@ -141,7 +140,7 @@ fn draw_node_recursive(
     let screen_pos = to_screen(z_prime, screen_center, disk_radius);
 
     for child in &node.children {
-        let child_z_prime = mobius_transform(child.pos, view_center);
+        let child_z_prime = mobius_sub(child.pos, view_center);
         draw_geodesic(
             z_prime,
             child_z_prime,
@@ -171,14 +170,16 @@ fn draw_node_recursive(
 
 fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: Color) {
     let steps = 10;
-    let m_p2 = mobius_transform(p2, p1);
+    // Map p1 to 0 (mobius_sub), p2 to m_p2
+    let m_p2 = mobius_sub(p2, p1);
 
     let mut last_pos = to_screen(p1, screen_center, radius);
 
     for i in 1..=steps {
         let t = i as f64 / steps as f64;
-        let q = m_p2 * t;
-        let world_pos = inverse_mobius_transform(q, p1);
+        let q = m_p2 * t; // Straight line in disk model if origin
+                          // Map back: mobius_add
+        let world_pos = mobius_add(q, p1);
         let screen_pos = to_screen(world_pos, screen_center, radius);
         draw_line(
             last_pos.x,

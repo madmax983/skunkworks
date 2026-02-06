@@ -1,6 +1,5 @@
 mod ant;
 mod dungeon;
-mod geometry;
 mod render;
 
 use anyhow::Result;
@@ -22,7 +21,7 @@ use tui_shared::Tui;
 
 use ant::Ant;
 use dungeon::{Dungeon, Path};
-use geometry::{mobius_add, neighbor_transform_a, Mobius, Point, TilingConsts};
+use poincare_disk::{mobius_add, neighbor_transform_a, Mobius, Point, TilingConsts};
 
 struct App {
     dungeon: Dungeon,

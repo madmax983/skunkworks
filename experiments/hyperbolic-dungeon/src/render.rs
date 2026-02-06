@@ -6,7 +6,7 @@ use ratatui::{
 use std::f64::consts::PI;
 
 use crate::dungeon::{Dungeon, TileType};
-use crate::geometry::{neighbor_transform_a, Mobius, Point, TilingConsts};
+use poincare_disk::{neighbor_transform_a, Mobius, Point, TilingConsts};
 
 pub fn draw_dungeon(
     ctx: &mut Context,

@@ -3,6 +3,25 @@
 ### [Concentration Level: FRESH] - Location: experiments/compost-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
+### [Concentration Level: WARNING] - Location: experiments/neuro-chimera
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Evolutionary stagnation detected (`Value::Junction`). High entropy.
+
+### [Concentration Level: HIGH] - Location: experiments/system-bio-dome
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal draw error. IO Result mismatch. The dome is cracked.
+
+### [Concentration Level: HIGH] - Location: experiments/seismic-lure
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal draw error. IO Result mismatch. Tremors detected.
+
+### [Concentration Level: HIGH] - Location: experiments/ast-respiration
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Condemned. Documentation void. No README detected.
+
+### [Concentration Level: FRESH] - Location: experiments/beat-reactor
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** Gray-Scott diffusion driven by FFT analysis. The chemicals are dancing to the ghost beat.
 
 ### [Concentration Level: FRESH] - Location: experiments/biophysical-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
@@ -24,9 +43,13 @@
 - **Scent Origin:** Genesis (The Sculptor) ⚛️🗿
 - **Status:** SDFs are raymarching in the terminal.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/input-ghost
-- **Scent Origin:** Genesis (The Medium) ⚛️👻
-- **Status:** Ghost inputs recorded. Temporal playback enabled.
+### [Concentration Level: TOXIC] - Location: graveyard/code-concerto
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal compilation failure confirmed.
+
+### [Concentration Level: TOXIC] - Location: graveyard/input-ghost
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Decomposition active.
 
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
@@ -68,9 +91,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Vitality restored. Documentation confirmed.
 
-### [Concentration Level: WARNING] - Location: experiments/typo-rain
+### [Concentration Level: STABLE] - Location: experiments/typo-rain
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Cliché detected.
+- **Status:** Pardoned. Documentation verified.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/neuro-beat
 - **Scent Origin:** The Reaper ☠️
@@ -93,8 +116,8 @@
 - **Status:** The projection is stable. 6D hypercube shadows frozen in 3D. The dungeon has no repeating rooms.
 
 ### [Concentration Level: HIGH] - Location: experiments/hive-mind-dependencies
-- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
-- **Status:** The swarm is mapping the dependency tree. Pheromones indicate critical build paths. Emergence imminent.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Glam version conflict detected (v0.25 vs v0.27). The crystal lattice is fracturing.
 
 ### [Concentration Level: HIGH] - Location: experiments/syntax-evolution
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
@@ -132,6 +155,14 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
 
+### [Concentration Level: FRESH] - Location: experiments/code-erosion
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The mountains are rising from the git log. Hydraulic erosion is washing away the sediment. The codebase is becoming a landscape.
+
+### [Concentration Level: FRESH] - Location: experiments/chromatic-cipher
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
@@ -141,3 +172,22 @@
 ### [Concentration Level: HIGH] - Location: experiments/glyph-wave
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The letters are liquefying. Bezier curves are vibrating at 60Hz. Typography has become a waveform.
+
+### [Concentration Level: TOXIC] - Location: graveyard/typo-rain
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Generic morphology confirmed.
+
+### [Concentration Level: TOXIC] - Location: graveyard/echo-chamber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void.
+
+### [Concentration Level: WARNING] - Location: experiments/ast-respiration
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void detected.
+### [Concentration Level: FRESH] - Location: experiments/laban-machine
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The dancer is improvising. Laban parameters are driving the physics. Space, Weight, Time, and Flow are becoming visible particles.
+
+### [Concentration Level: FRESH] - Location: experiments/quantum-boids
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is entangled. Bell pairs are forming. Spooky action at a distance is driving the swarm. The wave function collapses on every frame.

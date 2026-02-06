@@ -7,6 +7,9 @@ pub type Point = Complex<f64>;
 /// This maps 0 -> a.
 /// This is a translation in hyperbolic space that moves the origin to 'a'.
 pub fn mobius_add(z: Point, a: Point) -> Point {
+    if a.norm_sqr() >= 1.0 {
+        return z;
+    }
     (z + a) / (1.0 + a.conj() * z)
 }
 
@@ -14,6 +17,9 @@ pub fn mobius_add(z: Point, a: Point) -> Point {
 /// This maps a -> 0.
 /// This is the inverse of `mobius_add`.
 pub fn mobius_sub(z: Point, a: Point) -> Point {
+    if a.norm_sqr() >= 1.0 {
+        return z;
+    }
     (z - a) / (1.0 - a.conj() * z)
 }
 
@@ -169,5 +175,28 @@ mod tests {
         assert!(c.neighbor_offset < 1.0);
         // Approx check: ~0.485
         assert!((c.neighbor_offset - 0.485).abs() < 0.01);
+    }
+
+    #[test]
+    fn test_mobius_origin() {
+        let a = Point::new(0.5, 0.0);
+        // Transforming 'a' by 'a' (via sub) should map it to the origin.
+        let result = mobius_sub(a, a);
+        assert!(result.norm() < 1e-9);
+    }
+
+    #[test]
+    fn test_hyperbolic_dist_zero() {
+        let a = Point::new(0.2, 0.2);
+        assert!(hyperbolic_dist(a, a) < 1e-9);
+    }
+
+    #[test]
+    fn test_disk_boundary_preservation() {
+        // Points inside the disk should stay inside
+        let a = Point::new(0.5, 0.0);
+        let z = Point::new(0.0, 0.9);
+        let t = mobius_sub(z, a);
+        assert!(t.norm() < 1.0);
     }
 }

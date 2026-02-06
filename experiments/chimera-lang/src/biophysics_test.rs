@@ -74,11 +74,22 @@ fn test_stimulation_and_response() {
         },
         // Wait a few ticks for voltage to rise (simulation runs in vm.step())
         // Dummy pushes to waste time/cycles
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-        Gene { op: OpCode::Drop, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-        Gene { op: OpCode::Drop, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        },
         // Read Dendrite
         Gene {
             op: OpCode::Push,

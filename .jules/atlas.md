@@ -10,7 +10,7 @@
 **Tangle:** The Sprawl - Widespread duplication of terminal setup/teardown code in `code-metropolis`, `git_galaxy`, `karman-text-street`, and `term-fluids`.
 **Blueprint:** Refactored these experiments to use `tui-shared`, which centralizes the TUI lifecycle (initialization, cleanup, event handling setup).
 **Stability:** Reduced lines of code, enforced consistent terminal behavior (e.g. mouse capture), and simplified `main` functions.
-**Verification:** Ran `cargo check` and `cargo test` for all affected crates.
+**Verification:** Verified with `cargo check` and `cargo test` for all affected crates.
 
 ## [Standardize TUI Lifecycle Phase 2]
 **Tangle:** The Sprawl - Manual terminal setup found in `sculpt-term` and `l-system-garden`. `epicycle-draw` had inconsistent dependency paths and redundant mouse capture calls.
@@ -35,3 +35,9 @@
 **Blueprint:** Extracted `crates/resonance-audio` to house shared logic.
 **Stability:** Reduced duplication, enforced single source of truth for physics and audio logic.
 **Verification:** Verified with `cargo test`. Fixed `chimera-lang` feature compilation errors.
+
+## [Poincare Disk Extraction]
+**Tangle:** The Copy-Paste - Identical hyperbolic geometry logic duplicated across `hyperbolic-dungeon`, `hyperbolic-ants`, `hyperbolic-roots`, and `hyperbolic-finder`.
+**Blueprint:** Extracted shared geometry to `crates/poincare-disk`.
+**Stability:** Single source of truth for complex hyperbolic math.
+**Verification:** Verified via `cargo check` on all consumers.

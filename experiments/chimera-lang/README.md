@@ -128,9 +128,11 @@ strand end {
 You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
+# Basic usage with standard DNA files
 cargo run --release -- --input sample.dna
-# OR
-cargo run --release -- --input examples/genesis.chs
+
+# Running complex examples like Genesis (requires Nova features)
+cargo run --release --features nova -- --input examples/genesis.chs
 ```
 
 To run in headless mode (no TUI), use the `--headless` flag:

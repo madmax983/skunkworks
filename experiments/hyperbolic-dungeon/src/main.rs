@@ -1,5 +1,4 @@
 pub mod dungeon;
-pub mod geometry;
 pub mod render;
 
 use anyhow::Result;
@@ -18,7 +17,7 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 use dungeon::Dungeon;
-use geometry::{neighbor_transform_a, Mobius, Point, TilingConsts};
+use poincare_disk::{mobius_add, neighbor_transform_a, Mobius, Point, TilingConsts};
 use render::draw_dungeon;
 
 struct App {
@@ -60,7 +59,7 @@ impl App {
             return;
         }
 
-        let candidate_offset = geometry::mobius_add(self.player_offset, delta);
+        let candidate_offset = mobius_add(self.player_offset, delta);
 
         // Check for tile transition
         // Find closest cell center among current (0) and neighbors.

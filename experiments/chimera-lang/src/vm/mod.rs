@@ -26,6 +26,7 @@
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -33,9 +34,12 @@ pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
 pub const MAX_SPORES: usize = 64;
 pub const MAX_ORGANELLES: usize = 256;
+pub const MAX_JUNCTION_SIZE: usize = 1024;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
 
+#[cfg(feature = "nova")]
+pub mod akashic;
 pub mod bard;
 pub mod cortex;
 #[cfg(feature = "biophysics")]
@@ -70,7 +74,7 @@ pub enum Topology {
     Mobius,    // 5: Wraps X with twist, Bounded Y.
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Int(i64),
     Str(String),
@@ -208,6 +212,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub direction: isize,
     #[cfg(feature = "nova")]
+    pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
+    #[cfg(feature = "nova")]
     pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
@@ -308,6 +314,8 @@ impl ChimeraVM {
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
             direction: 1,
+            #[cfg(feature = "nova")]
+            mycelium: HashMap::new(),
             #[cfg(feature = "nova")]
             score: Vec::new(),
             #[cfg(feature = "oracle")]
@@ -543,10 +551,8 @@ impl ChimeraVM {
         if self.ip.1 == 0 && self.ip.0 < self.telomeres.len() {
             let degrade = self.phase != nova::Phase::Crystalline;
 
-            if degrade {
-                if self.telomeres[self.ip.0] > 0 {
-                    self.telomeres[self.ip.0] -= 1;
-                }
+            if degrade && self.telomeres[self.ip.0] > 0 {
+                self.telomeres[self.ip.0] -= 1;
             }
 
             if self.telomeres[self.ip.0] <= 0 {
@@ -664,12 +670,26 @@ impl ChimeraVM {
                 let dx = rng.gen_range(-1..=1);
                 organelle.direction = (dy, dx);
             }
+            nova::OrganelleType::Alchemist => {
+                let (cy, cx) = self.context_loc;
+                if nova::perform_alchemy(self, cy, cx) {
+                    self.energy = self.energy.saturating_sub(5);
+                }
+
+                // Brownian Motion
+                let mut rng = rand::thread_rng();
+                let dy = rng.gen_range(-1..=1);
+                let dx = rng.gen_range(-1..=1);
+                organelle.direction = (dy, dx);
+            }
             nova::OrganelleType::Worker => {}
         }
 
         if !matches!(
             organelle.kind,
-            nova::OrganelleType::Ribosome | nova::OrganelleType::Void
+            nova::OrganelleType::Ribosome
+                | nova::OrganelleType::Void
+                | nova::OrganelleType::Alchemist
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -757,8 +777,8 @@ impl ChimeraVM {
                     }
                 }
                 "o" => {
-                     // Offset Read: [dy, dx] -> [val]
-                     if self.stack.len() >= 2 {
+                    // Offset Read: [dy, dx] -> [val]
+                    if self.stack.len() >= 2 {
                         let x_off = self.stack.pop().unwrap();
                         let y_off = self.stack.pop().unwrap();
                         if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
@@ -1172,9 +1192,24 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Irradiate
+            OpCode::AkashicWrite | OpCode::AkashicRead => {
+                akashic::exec_akashic_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Alchemy
+            | OpCode::Hyphae
+            | OpCode::Connect
+            | OpCode::Transport
+            | OpCode::SporeCloud
+            | OpCode::Brainfuck
+            | OpCode::Irradiate
             | OpCode::SenseMutagen
             | OpCode::Devour
+            | OpCode::Evolve
+            | OpCode::Glitch
+            | OpCode::Scramble
             | OpCode::Pigment
             | OpCode::Glyph
             | OpCode::Rift
@@ -1292,6 +1327,9 @@ impl ChimeraVM {
                 (Value::Junction(t, vals), scalar @ Value::Int(_)) => {
                     let mut res = Vec::new();
                     for v in vals {
+                        if res.len() >= MAX_JUNCTION_SIZE {
+                            return None;
+                        }
                         if let Some(r) = apply(v, scalar.clone(), op, depth + 1) {
                             res.push(r);
                         } else {
@@ -1303,6 +1341,9 @@ impl ChimeraVM {
                 (scalar @ Value::Int(_), Value::Junction(t, vals)) => {
                     let mut res = Vec::new();
                     for v in vals {
+                        if res.len() >= MAX_JUNCTION_SIZE {
+                            return None;
+                        }
                         if let Some(r) = apply(scalar.clone(), v, op, depth + 1) {
                             res.push(r);
                         } else {
@@ -1316,6 +1357,9 @@ impl ChimeraVM {
                     let mut res = Vec::new();
                     for xa in va {
                         for xb in &vb {
+                            if res.len() >= MAX_JUNCTION_SIZE {
+                                return None;
+                            }
                             if let Some(r) = apply(xa.clone(), xb.clone(), op, depth + 1) {
                                 res.push(r);
                             }
