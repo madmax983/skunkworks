@@ -250,6 +250,8 @@ pub struct ChimeraVM {
     pub score: Vec<bard::Note>,
     #[cfg(feature = "oracle")]
     pub knowledge_base: Vec<Value>,
+    #[cfg(feature = "oracle")]
+    pub omens: Vec<oracle::Omen>,
     #[cfg(feature = "resonance")]
     pub audio_tx: Option<Sender<AudioCommand>>,
     #[cfg(feature = "biophysics")]
@@ -373,6 +375,8 @@ impl ChimeraVM {
             score: Vec::new(),
             #[cfg(feature = "oracle")]
             knowledge_base: Vec::new(),
+            #[cfg(feature = "oracle")]
+            omens: Vec::new(),
             #[cfg(feature = "resonance")]
             audio_tx: None,
             #[cfg(feature = "biophysics")]
@@ -1533,7 +1537,11 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "oracle")]
-            OpCode::Assert | OpCode::Retract | OpCode::Query => {
+            OpCode::Assert
+            | OpCode::Retract
+            | OpCode::Query
+            | OpCode::Augury
+            | OpCode::Divinate => {
                 oracle::exec_oracle_op(self, op, args);
                 None
             }

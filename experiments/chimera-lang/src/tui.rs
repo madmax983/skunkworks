@@ -324,7 +324,7 @@ where
             if let ViewMode::Metaphysics = app_state.view_mode {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
-                    .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(34)].as_ref())
+                    .constraints([Constraint::Percentage(25), Constraint::Percentage(25), Constraint::Percentage(25), Constraint::Percentage(25)].as_ref())
                     .split(f.area());
 
                 // Ether (IPC)
@@ -342,17 +342,24 @@ where
                     }).collect();
                     let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).title("Oracle (Knowledge Base)"));
                     f.render_widget(oracle_list, chunks[1]);
+
+                    let omen_items: Vec<ListItem> = vm.omens.iter().take(20).map(|omen| {
+                        ListItem::new(format!("If {} Then {}", omen.condition, omen.effect))
+                    }).collect();
+                    let omen_list = List::new(omen_items).block(Block::default().borders(Borders::ALL).title("Oracle (Omens)"));
+                    f.render_widget(omen_list, chunks[2]);
                 }
                 #[cfg(not(feature = "oracle"))]
                 {
                     let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
                     f.render_widget(oracle_list, chunks[1]);
+                    f.render_widget(oracle_list.clone(), chunks[2]);
                 }
 
                 // Bard (Score)
                 let score_text: String = crate::vm::bard::score_to_abc(&vm.score);
                 let bard_paragraph = Paragraph::new(score_text).block(Block::default().borders(Borders::ALL).title("Bard (Score)"));
-                f.render_widget(bard_paragraph, chunks[2]);
+                f.render_widget(bard_paragraph, chunks[3]);
 
                 return;
             }
