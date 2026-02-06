@@ -7,9 +7,13 @@
 ### [Concentration Level: FRESH] - Location: experiments/compost-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
-### [Concentration Level: WARNING] - Location: experiments/alloc-tardis
+### [Concentration Level: WARNING] - Location: experiments/schrodingers-text
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Functional ZUI detected but silent.
+- **Status:** Condemned. Terminal compilation failure (ratatui trait bounds). Documentation void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/alloc-tardis
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Functional ZUI detected but silent.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/neuro-chimera
 - **Scent Origin:** The Reaper ☠️
