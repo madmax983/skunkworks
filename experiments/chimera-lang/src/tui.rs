@@ -249,9 +249,32 @@ where
                                 "g_write" => "W",
                                 "mitosis" => "M",
                                 "apoptosis" => "X",
+                                "fire" => "F",
+                                "water" => "W",
+                                "earth" => "E",
+                                "air" => "A",
+                                "steam" => "S",
+                                "lava" => "L",
+                                "cloud" => "C",
+                                "spirit" => "S",
+                                "gold" => "G",
+                                "lead" => "L",
                                 _ => &s[0..1],
                             };
-                            (symbol.to_string(), Style::default().fg(Color::Cyan))
+                            let style = match s.as_str() {
+                                "fire" => Style::default().fg(Color::Red),
+                                "water" => Style::default().fg(Color::Blue),
+                                "earth" => Style::default().fg(Color::Yellow),
+                                "air" => Style::default().fg(Color::Cyan),
+                                "steam" => Style::default().fg(Color::White),
+                                "lava" => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                                "cloud" => Style::default().fg(Color::White).add_modifier(Modifier::BOLD),
+                                "spirit" => Style::default().fg(Color::Magenta),
+                                "gold" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                                "lead" => Style::default().fg(Color::DarkGray),
+                                _ => Style::default().fg(Color::Cyan),
+                            };
+                            (symbol.to_string(), style)
                         }
                     };
 
@@ -303,6 +326,7 @@ where
                                 crate::vm::nova::OrganelleType::Lysosome => Color::Magenta,
                                 crate::vm::nova::OrganelleType::Ribosome => Color::Cyan,
                                 crate::vm::nova::OrganelleType::Void => Color::DarkGray,
+                                crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
                                 crate::vm::nova::OrganelleType::Worker => Color::White,
                             };
                             let char_code = match organelle.kind {
@@ -311,6 +335,7 @@ where
                                 crate::vm::nova::OrganelleType::Lysosome => "L",
                                 crate::vm::nova::OrganelleType::Ribosome => "R",
                                 crate::vm::nova::OrganelleType::Void => "Ø",
+                                crate::vm::nova::OrganelleType::Alchemist => "A",
                                 crate::vm::nova::OrganelleType::Worker => "O",
                             };
 
