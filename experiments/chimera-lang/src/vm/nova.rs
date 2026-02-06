@@ -4164,3 +4164,23 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
         _ => None,
     }
 }
+
+#[cfg(feature = "nova")]
+impl ChimeraVM {
+    pub fn resurrect_from_graveyard(&mut self, index: usize) -> Result<usize, String> {
+        if index < self.graveyard.len() {
+            let strand = self.graveyard.remove(index);
+            self.dna.helix.strands.push(strand);
+            self.telomeres.push(50);
+            #[cfg(feature = "cortex")]
+            {
+                self.activation_levels.push(0);
+                self.synapse_map.push(Vec::new());
+            }
+            let new_idx = self.dna.helix.strands.len() - 1;
+            Ok(new_idx)
+        } else {
+            Err("Invalid graveyard index".to_string())
+        }
+    }
+}

@@ -31,6 +31,8 @@ pub(crate) enum ViewMode {
     Laboratory,
     #[cfg(feature = "nova")]
     Topology,
+    #[cfg(feature = "nova")]
+    Graveyard,
 }
 
 enum InputMode {
@@ -56,6 +58,8 @@ pub(crate) struct AppState {
     pub(crate) lab_parent_b: usize,
     #[cfg(feature = "nova")]
     pub(crate) lab_method: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) selected_graveyard_strand: usize,
 }
 
 impl AppState {
@@ -78,6 +82,8 @@ impl AppState {
             lab_parent_b: 0,
             #[cfg(feature = "nova")]
             lab_method: 0,
+            #[cfg(feature = "nova")]
+            selected_graveyard_strand: 0,
         }
     }
 }
@@ -539,6 +545,60 @@ where
                 return;
             }
 
+            // Handle Graveyard View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Graveyard = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+                    .split(f.area());
+
+                let top_chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+                    .split(chunks[0]);
+
+                // Graveyard List
+                let mut grave_items = Vec::new();
+                if vm.graveyard.is_empty() {
+                    grave_items.push(ListItem::new("The Graveyard is empty."));
+                } else {
+                    for (i, strand) in vm.graveyard.iter().enumerate() {
+                        let is_selected = i == app_state.selected_graveyard_strand;
+                        let style = if is_selected {
+                            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                        } else {
+                            Style::default().fg(Color::White)
+                        };
+                        grave_items.push(ListItem::new(format!("Strand {} (Len: {})", i, strand.genes.len())).style(style));
+                    }
+                }
+                let grave_list = List::new(grave_items).block(Block::default().borders(Borders::ALL).title("Graveyard (Necropolis)"));
+                f.render_widget(grave_list, top_chunks[0]);
+
+                // Strand Preview
+                let mut gene_items = Vec::new();
+                if !vm.graveyard.is_empty() && app_state.selected_graveyard_strand < vm.graveyard.len() {
+                    let strand = &vm.graveyard[app_state.selected_graveyard_strand];
+                    for gene in &strand.genes {
+                        gene_items.push(ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Cyan)));
+                    }
+                } else if !vm.graveyard.is_empty() {
+                     gene_items.push(ListItem::new("Invalid Selection"));
+                } else {
+                     gene_items.push(ListItem::new("No souls to display."));
+                }
+                let preview_list = List::new(gene_items).block(Block::default().borders(Borders::ALL).title("Genome of the Departed"));
+                f.render_widget(preview_list, top_chunks[1]);
+
+                // Help / Status
+                let help_text = "Controls:\n↑/↓: Navigate\nR: Resurrect (Exhume to Helix)\nX: Exterminate (Permanent Deletion)\nTab: Switch View";
+                let help_para = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Necromancy"));
+                f.render_widget(help_para, chunks[1]);
+
+                return;
+            }
+
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
@@ -637,6 +697,8 @@ where
                 ViewMode::Laboratory => "LABORATORY",
                 #[cfg(feature = "nova")]
                 ViewMode::Topology => "TOPOLOGY",
+                #[cfg(feature = "nova")]
+                ViewMode::Graveyard => "GRAVEYARD",
             };
 
             let title = match app_state.input_mode {
@@ -1065,6 +1127,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Graveyard => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -1126,10 +1193,38 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Metaphysics => ViewMode::Topology,
                             #[cfg(feature = "nova")]
-                            ViewMode::Topology => ViewMode::Laboratory,
+                            ViewMode::Topology => ViewMode::Graveyard,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Graveyard => ViewMode::Laboratory,
                             #[cfg(feature = "nova")]
                             ViewMode::Laboratory => ViewMode::Genome,
                         };
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('r') => {
+                        if let ViewMode::Graveyard = app_state.view_mode {
+                             match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
+                                 Ok(idx) => {
+                                     app_state.status_msg = format!("Resurrected strand {}!", idx);
+                                     if app_state.selected_graveyard_strand >= vm.graveyard.len() && !vm.graveyard.is_empty() {
+                                         app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+                                     }
+                                 }
+                                 Err(e) => app_state.status_msg = format!("Error: {}", e),
+                             }
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('x') => {
+                        if let ViewMode::Graveyard = app_state.view_mode {
+                             if app_state.selected_graveyard_strand < vm.graveyard.len() {
+                                 vm.graveyard.remove(app_state.selected_graveyard_strand);
+                                 app_state.status_msg = "Exterminated strand.".to_string();
+                                 if app_state.selected_graveyard_strand >= vm.graveyard.len() && !vm.graveyard.is_empty() {
+                                     app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+                                 }
+                             }
+                        }
                     }
                     #[cfg(feature = "biophysics")]
                     KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
@@ -1161,6 +1256,12 @@ where
                         ViewMode::Metaphysics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Graveyard => {
+                            if app_state.selected_graveyard_strand + 1 < vm.graveyard.len() {
+                                app_state.selected_graveyard_strand += 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -1267,6 +1368,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Graveyard => {
+                            if app_state.selected_graveyard_strand > 0 {
+                                app_state.selected_graveyard_strand -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
@@ -1283,6 +1390,8 @@ where
                         ViewMode::Metaphysics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Graveyard => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
@@ -1306,6 +1415,8 @@ where
                         ViewMode::Metaphysics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Graveyard => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
@@ -1421,6 +1532,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Topology => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Graveyard => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
