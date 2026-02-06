@@ -1256,6 +1256,7 @@ impl ChimeraVM {
             | OpCode::Evolve
             | OpCode::Glitch
             | OpCode::Scramble
+            | OpCode::Metamorphosis
             | OpCode::Pigment
             | OpCode::Glyph
             | OpCode::SensePigment

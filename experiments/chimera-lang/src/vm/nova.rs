@@ -467,6 +467,89 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Metamorphosis => {
+            let rows = vm.grid.len();
+            let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+
+            let mut new_strands = Vec::new();
+
+            for y in 0..rows {
+                let mut genes = Vec::new();
+                let mut x = 0;
+                while x < cols {
+                    let val = &vm.grid[y][x];
+                    match val {
+                        Value::Int(n) => {
+                            genes.push(crate::ast::Gene {
+                                op: OpCode::Push,
+                                args: vec![crate::ast::Nucleotide::Number(*n)],
+                            });
+                            x += 1;
+                        }
+                        Value::Junction(t, vals) => {
+                            genes.push(crate::ast::Gene {
+                                op: OpCode::Push,
+                                args: vec![crate::ast::Nucleotide::Junction(
+                                    *t,
+                                    vals.iter().map(value_to_nucleotide).collect(),
+                                )],
+                            });
+                            x += 1;
+                        }
+                        Value::Str(s) => {
+                            let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                            let mut args = Vec::new();
+                            match op {
+                                OpCode::Push | OpCode::Jump | OpCode::Brz | OpCode::Call => {
+                                    if x + 1 < cols {
+                                        args.push(value_to_nucleotide(&vm.grid[y][x + 1]));
+                                        x += 1;
+                                    }
+                                }
+                                #[cfg(feature = "cortex")]
+                                OpCode::Gate => {
+                                    if x + 1 < cols {
+                                        args.push(value_to_nucleotide(&vm.grid[y][x + 1]));
+                                        x += 1;
+                                    }
+                                }
+                                _ => {}
+                            }
+                            genes.push(crate::ast::Gene { op, args });
+                            x += 1;
+                        }
+                    }
+                }
+                if !genes.is_empty() {
+                    new_strands.push(crate::ast::Strand { genes });
+                }
+            }
+
+            if !new_strands.is_empty() {
+                vm.dna.helix.strands = new_strands;
+
+                // Reset State
+                vm.energy = 50;
+                vm.ip = (0, 0);
+                vm.stack.clear();
+                vm.telomeres = vec![50; vm.dna.helix.strands.len()];
+                vm.epigenome.clear();
+                vm.receptors.clear();
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels = vec![0; vm.dna.helix.strands.len()];
+                    vm.synapse_map = vec![Vec::new(); vm.dna.helix.strands.len()];
+                }
+
+                vm.output
+                    .push("METAMORPHOSIS: The chrysalis breaks...".to_string());
+            } else {
+                vm.output
+                    .push("METAMORPHOSIS: Failed (Grid empty/invalid)".to_string());
+            }
+            Some((0, 0))
+        }
+        #[cfg(feature = "nova")]
         OpCode::Simulate => {
             // stack: ticks, strand_idx (bottom)
             if vm.stack.len() >= 2 {

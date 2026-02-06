@@ -546,6 +546,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    /// **[Nova]** Reshuffles the entire DNA based on the current Grid state.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0), Stack to [].
+    #[cfg(feature = "nova")]
+    Metamorphosis,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -969,6 +976,8 @@ impl FromStr for OpCode {
             "scramble" => Ok(OpCode::Scramble),
             #[cfg(feature = "nova")]
             "alchemy" => Ok(OpCode::Alchemy),
+            #[cfg(feature = "nova")]
+            "metamorphosis" => Ok(OpCode::Metamorphosis),
 
             _ => Ok(OpCode::Unknown(s.to_string())),
         }
@@ -1149,6 +1158,8 @@ impl fmt::Display for OpCode {
             OpCode::Scramble => write!(f, "scramble"),
             #[cfg(feature = "nova")]
             OpCode::Alchemy => write!(f, "alchemy"),
+            #[cfg(feature = "nova")]
+            OpCode::Metamorphosis => write!(f, "metamorphosis"),
             #[cfg(feature = "nova")]
             OpCode::Void => write!(f, "void"),
             #[cfg(feature = "nova")]
