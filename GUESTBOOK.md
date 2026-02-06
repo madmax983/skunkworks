@@ -280,3 +280,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/fractal-stack
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The recursion is growing leaves. The stack frames are blooming. L-system interpreter successfully traced as a biological structure.
+
+### [Concentration Level: FRESH] - Location: experiments/chaos-monitor
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The Lorenz attractor is sensing system load. The butterfly is flapping its wings in the CPU.

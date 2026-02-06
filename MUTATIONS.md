@@ -400,3 +400,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Infinite zoom debugger. Fly into the code execution.
 - **Status**: experiments/chimera-tardis
 - **Evaluation**: Compiles. Implemented by Splice Surgeon.
+
+### chaos-monitor
+- **Parents**: experiments/chaos-pendulum + experiments/storm-monitor
+- **Concept**: Visualizing system load metrics (CPU, Memory, IO) as perturbations in a Lorenz Attractor.
+- **Novel trait**: Deterministic Chaos driven by System State. The computer's effort shapes the attractor's orbit.
+- **Status**: experiments/chaos-monitor
+- **Evaluation**: Compiles.
