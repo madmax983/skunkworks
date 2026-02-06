@@ -81,6 +81,7 @@ pub struct Spore {
     pub direction: isize,
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     pub immune_system: HashSet<u64>,
+    pub dictionary: HashMap<String, usize>,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -1059,6 +1060,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 direction: vm.direction,
                 mycelium: vm.mycelium.clone(),
                 immune_system: vm.immune_system.clone(),
+                dictionary: vm.dictionary.clone(),
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -1114,6 +1116,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.direction = spore.direction;
                         vm.mycelium = spore.mycelium.clone();
                         vm.immune_system = spore.immune_system.clone();
+                        vm.dictionary = spore.dictionary.clone();
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
