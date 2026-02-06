@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **typo-rain**: Generic 'Matrix Rain' implementation. Low emergence. Grace period ends in 24h.
+- **input-ghost**: Documentation void (no `README.md`). Generic utility implementation. Grace period ends in 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
