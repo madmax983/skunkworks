@@ -400,4 +400,26 @@ mod tests {
         let t = mobius_sub(z, a);
         assert!(t.norm() < 1.0);
     }
+
+    #[test]
+    fn test_havoc_singularity() {
+        // 👺 HAVOC: Attempting to create a singularity at the edge of the disk.
+        // We want 1 + a.conj() * z to be 0.
+        // Let a = -r, z = r.
+        // 1 + (-r)(r) = 1 - r^2.
+        // If r -> 1, 1 - r^2 -> 0.
+        // Result = (r - (-r)) / (1 - r^2) = 2r / (1 - r^2) -> Infinity.
+
+        let r = 0.9999999999999999; // Very close to 1.0
+        let z = Point::new(r, 0.0);
+        let a = Point::new(-r, 0.0); // -r is a valid point inside disk (barely)
+
+        let res = mobius_add(z, a);
+        println!("Havoc Result: {:?}", res);
+
+        // This SHOULD fail if we are properly paranoid, but the current impl doesn't check for Inf/NaN output.
+        // We assert that it IS a valid point (norm < 1.0), which it mathematically isn't (it escapes to infinity).
+        // If the library claims to implement the Poincaré disk, the result MUST be in the disk.
+        assert!(res.norm() < 1.0, "Singularity breach! Point escaped the disk: {:?}", res);
+    }
 }
