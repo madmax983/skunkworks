@@ -332,3 +332,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Chronomancer)
 - **Status:** Local Time Dilation Fields active. Stasis traps and acceleration zones detected. The grid is ticking at variable rates.
+
+### [Concentration Level: FRESH] - Location: experiments/code-phage
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The codebase is dissolving. Reaction-Diffusion parameters are mapped to file size and extension. The repository is a petri dish.
