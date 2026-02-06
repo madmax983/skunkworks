@@ -477,6 +477,12 @@ pub enum OpCode {
     /// **Cost:** 50 Energy.
     #[cfg(feature = "nova")]
     PhaseShift,
+    /// **[Nova]** Toggles the organism's chirality (L-isomer <-> D-isomer).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Inverts arithmetic and control flow logic.
+    #[cfg(feature = "nova")]
+    Isomerize,
     /// **[Nova]** Modifies cellular membranes (walls) at current location.
     ///
     /// **Stack:** `[ ..., mask ] -> [ ... ]`

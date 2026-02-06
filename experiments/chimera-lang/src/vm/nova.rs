@@ -51,6 +51,7 @@ pub enum Phase {
 #[derive(Clone)]
 pub struct Spore {
     pub phase: Phase,
+    pub chirality: crate::vm::Chirality,
     pub dna: Dna,
     pub stack: Vec<Value>,
     pub ip: (usize, usize),
@@ -1005,6 +1006,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             // Create snapshot
             let spore = Spore {
                 phase: vm.phase,
+                chirality: vm.chirality,
                 dna: vm.dna.clone(),
                 stack: vm.stack.clone(),
                 ip: vm.ip,
@@ -1059,6 +1061,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         let spore = &vm.spores[idx];
                         // Restore state
                         vm.phase = spore.phase;
+                        vm.chirality = spore.chirality;
                         vm.dna = spore.dna.clone();
                         vm.stack = spore.stack.clone();
                         vm.ip = spore.ip;
@@ -1911,7 +1914,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if vm.stack.len() >= 2 {
                 let dx_val = vm.stack.pop().unwrap();
                 let dy_val = vm.stack.pop().unwrap();
-                if let (Value::Int(dy), Value::Int(dx)) = (dy_val, dx_val) {
+                if let (Value::Int(mut dy), Value::Int(mut dx)) = (dy_val, dx_val) {
+                    if vm.chirality == crate::vm::Chirality::Right {
+                        dy = -dy;
+                        dx = -dx;
+                    }
+
                     if vm.phase == Phase::Crystalline {
                         vm.output
                             .push("Error: Crystalline phase is immobile".to_string());
@@ -2693,6 +2701,16 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Isomerize => {
+            vm.chirality = match vm.chirality {
+                crate::vm::Chirality::Left => crate::vm::Chirality::Right,
+                crate::vm::Chirality::Right => crate::vm::Chirality::Left,
+            };
+            vm.output
+                .push(format!("ISOMERIZE: Switched to {:?}", vm.chirality));
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::PhaseShift => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(id) = val {
@@ -3038,7 +3056,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         let mut s = String::from("[ ");
                         for gene in &strand.genes {
-                            s.push_str(&gene.op.to_string());
+                            s.push_str(gene.op.as_ref());
                             s.push('(');
                             for (i, arg) in gene.args.iter().enumerate() {
                                 if i > 0 {
@@ -3121,7 +3139,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
 
                     for gene in genes {
-                        let mut s = gene.op.to_string();
+                        let mut s = gene.op.as_ref().to_string();
                         if !gene.args.is_empty() {
                             s.push('(');
                             for (i, arg) in gene.args.iter().enumerate() {
@@ -3780,10 +3798,8 @@ fn glob_match(pattern: &str, target: &str) -> bool {
             // split_once uses byte indices but string slicing requires char boundaries.
             // split_once returns valid &str so p_head is valid.
             // t_rest slicing [i..] needs to be on char boundary.
-            if t_rest.is_char_boundary(i) {
-                if glob_match(p_tail, &t_rest[i..]) {
-                    return true;
-                }
+            if t_rest.is_char_boundary(i) && glob_match(p_tail, &t_rest[i..]) {
+                return true;
             }
         }
         false

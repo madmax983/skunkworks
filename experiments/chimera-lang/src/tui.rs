@@ -933,6 +933,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -975,6 +977,8 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Metaphysics => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
