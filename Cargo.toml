@@ -14,7 +14,6 @@ members = [
     "experiments/git-harmony",
     "experiments/git-rogue",
     "experiments/git_galaxy",
-    "experiments/git_rhythm",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
@@ -24,7 +23,6 @@ members = [
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",
-    "experiments/orbital-harmonics",
     "experiments/origami-ui",
     "experiments/packet-pachinko",
     "experiments/pidgin-mesh",
@@ -130,7 +128,7 @@ members = [
     "experiments/hyperbolic-git", 
     "experiments/klein-fs", "experiments/fractal-stack",
     "experiments/syntax-fold", "experiments/market-scheduler",
-    "experiments/chrontext", "experiments/synaptic-choir",
+    "experiments/chrontext", "experiments/synaptic-choir", "experiments/text-erosion",
 ]
 resolver = "2"
 
