@@ -1316,6 +1316,119 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Splice => {
+            // stack: method, strand_b, strand_a (bottom)
+            if vm.stack.len() >= 3 {
+                let method_val = vm.stack.pop().unwrap();
+                let strand_b_val = vm.stack.pop().unwrap();
+                let strand_a_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(s_a), Value::Int(s_b), Value::Int(method)) =
+                    (strand_a_val, strand_b_val, method_val)
+                {
+                    let idx_a = s_a as usize;
+                    let idx_b = s_b as usize;
+                    let helix_len = vm.dna.helix.strands.len();
+
+                    if s_a >= 0 && s_b >= 0 && idx_a < helix_len && idx_b < helix_len {
+                        let genes_a = &vm.dna.helix.strands[idx_a].genes;
+                        let genes_b = &vm.dna.helix.strands[idx_b].genes;
+                        let len_a = genes_a.len();
+                        let len_b = genes_b.len();
+                        let max_len = len_a.max(len_b);
+
+                        let mut new_genes = Vec::new();
+                        let mut rng = rand::thread_rng();
+
+                        match method {
+                            0 => {
+                                // Interleave
+                                for i in 0..max_len {
+                                    if i < len_a {
+                                        new_genes.push(genes_a[i].clone());
+                                    }
+                                    if i < len_b {
+                                        new_genes.push(genes_b[i].clone());
+                                    }
+                                }
+                                vm.output.push(format!(
+                                    "SPLICE: Interleaved strands {} and {}",
+                                    s_a, s_b
+                                ));
+                            }
+                            1 => {
+                                // Uniform Crossover
+                                for i in 0..max_len {
+                                    if i < len_a && i < len_b {
+                                        if rng.gen_bool(0.5) {
+                                            new_genes.push(genes_a[i].clone());
+                                        } else {
+                                            new_genes.push(genes_b[i].clone());
+                                        }
+                                    } else if i < len_a {
+                                        new_genes.push(genes_a[i].clone());
+                                    } else if i < len_b {
+                                        new_genes.push(genes_b[i].clone());
+                                    }
+                                }
+                                vm.output.push(format!(
+                                    "SPLICE: Crossover strands {} and {}",
+                                    s_a, s_b
+                                ));
+                            }
+                            2 => {
+                                // Midpoint Split (Head A + Tail B)
+                                let mid_a = len_a / 2;
+                                let mid_b = len_b / 2;
+                                for i in 0..mid_a {
+                                    new_genes.push(genes_a[i].clone());
+                                }
+                                for i in mid_b..len_b {
+                                    new_genes.push(genes_b[i].clone());
+                                }
+                                vm.output.push(format!(
+                                    "SPLICE: Hybridized strands {} and {}",
+                                    s_a, s_b
+                                ));
+                            }
+                            _ => {
+                                vm.output.push("Error: Invalid splice method".to_string());
+                            }
+                        }
+
+                        if !new_genes.is_empty() {
+                            vm.dna
+                                .helix
+                                .strands
+                                .push(crate::ast::Strand { genes: new_genes });
+                            vm.telomeres.push(50);
+                            #[cfg(feature = "cortex")]
+                            {
+                                vm.activation_levels.push(0);
+                                vm.synapse_map.push(Vec::new());
+                            }
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.stack.push(Value::Int(new_idx as i64));
+                            vm.energy = vm.energy.saturating_sub(30);
+                        } else if method <= 2 {
+                             // If result empty but method valid (e.g. empty parents)
+                             vm.stack.push(Value::Int(-1));
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Strand index out of bounds for splice".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for splice".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for splice".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Recombine => {
             // stack: split_point, strand_b, strand_a (bottom)
             if vm.stack.len() >= 3 {

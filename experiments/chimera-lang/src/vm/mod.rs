@@ -1426,7 +1426,8 @@ impl ChimeraVM {
             OpCode::Signal | OpCode::Receive => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Isomerize
+            OpCode::Splice
+            | OpCode::Isomerize
             | OpCode::Spirit
             | OpCode::Alchemy
             | OpCode::Meme

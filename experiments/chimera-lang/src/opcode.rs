@@ -253,6 +253,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_a, strand_b, split_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Recombine,
+    /// **[Nova]** Slices and recombines two strands into a new one (Laboratory Splicing).
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b, method ] -> [ ..., new_strand_idx ]`
+    /// **Methods:** 0=Interleave, 1=Uniform Crossover, 2=Midpoint Split.
+    #[cfg(feature = "nova")]
+    Splice,
     /// **[Nova]** Pushes the index of the currently executing strand.
     ///
     /// **Stack:** `[ ... ] -> [ ..., current_strand_idx ]`
