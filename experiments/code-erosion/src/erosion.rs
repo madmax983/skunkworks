@@ -61,7 +61,11 @@ pub fn erode(terrain: &mut Terrain, iterations: usize) {
             if sediment > capacity || diff < 0.0 {
                 // Deposit
                 let amount = (sediment - capacity) * DEPOSITION_RATE;
-                let amount = if diff < 0.0 { amount.max(sediment.min(-diff)) } else { amount };
+                let amount = if diff < 0.0 {
+                    amount.max(sediment.min(-diff))
+                } else {
+                    amount
+                };
 
                 sediment -= amount;
                 deposit(terrain, node_x, node_y, amount);
@@ -77,7 +81,9 @@ pub fn erode(terrain: &mut Terrain, iterations: usize) {
             speed = (speed * speed + diff.max(0.0) * GRAVITY).sqrt();
             water *= 1.0 - EVAPORATION;
 
-            if water < 0.01 { break; }
+            if water < 0.01 {
+                break;
+            }
         }
     }
 }
@@ -85,8 +91,16 @@ pub fn erode(terrain: &mut Terrain, iterations: usize) {
 fn calculate_gradient(terrain: &Terrain, u: usize, v: usize) -> (f32, f32) {
     let idx = v * GRID_SIZE + u;
     let h00 = terrain.heightmap[idx];
-    let h10 = if u + 1 < GRID_SIZE { terrain.heightmap[idx + 1] } else { h00 };
-    let h01 = if v + 1 < GRID_SIZE { terrain.heightmap[idx + GRID_SIZE] } else { h00 };
+    let h10 = if u + 1 < GRID_SIZE {
+        terrain.heightmap[idx + 1]
+    } else {
+        h00
+    };
+    let h01 = if v + 1 < GRID_SIZE {
+        terrain.heightmap[idx + GRID_SIZE]
+    } else {
+        h00
+    };
     // let h_10 = if u > 0 { terrain.heightmap[idx - 1] } else { h00 };
     // let h_01 = if v > 0 { terrain.heightmap[idx - GRID_SIZE] } else { h00 };
 

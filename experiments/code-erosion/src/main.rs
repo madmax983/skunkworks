@@ -1,6 +1,6 @@
+mod erosion;
 mod git_history;
 mod terrain;
-mod erosion;
 
 use macroquad::prelude::*;
 use terrain::{Terrain, GRID_SIZE};
@@ -26,13 +26,27 @@ async fn main() {
 
     loop {
         // --- Input ---
-        if is_key_down(KeyCode::W) { cam_target.z -= 1.0; }
-        if is_key_down(KeyCode::S) { cam_target.z += 1.0; }
-        if is_key_down(KeyCode::A) { cam_target.x -= 1.0; }
-        if is_key_down(KeyCode::D) { cam_target.x += 1.0; }
-        if is_key_down(KeyCode::Q) { zoom *= 1.01; }
-        if is_key_down(KeyCode::E) { zoom *= 0.99; }
-        if is_key_pressed(KeyCode::Space) { auto_rotate = !auto_rotate; }
+        if is_key_down(KeyCode::W) {
+            cam_target.z -= 1.0;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_target.z += 1.0;
+        }
+        if is_key_down(KeyCode::A) {
+            cam_target.x -= 1.0;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_target.x += 1.0;
+        }
+        if is_key_down(KeyCode::Q) {
+            zoom *= 1.01;
+        }
+        if is_key_down(KeyCode::E) {
+            zoom *= 0.99;
+        }
+        if is_key_pressed(KeyCode::Space) {
+            auto_rotate = !auto_rotate;
+        }
 
         if auto_rotate {
             rot_angle += 0.005;
@@ -95,15 +109,21 @@ async fn main() {
         // 65k points.
         // Let's draw vertical lines for non-zero height
 
-        for y in (0..GRID_SIZE).step_by(2) { // Skip every other for perf
+        for y in (0..GRID_SIZE).step_by(2) {
+            // Skip every other for perf
             for x in (0..GRID_SIZE).step_by(2) {
                 let h = terrain.get_height(x, y);
                 if h > 0.1 {
                     let pos = vec3(x as f32, 0.0, y as f32);
-                    let color = if h > 10.0 { WHITE }
-                               else if h > 5.0 { GRAY }
-                               else if h > 2.0 { BROWN }
-                               else { GREEN };
+                    let color = if h > 10.0 {
+                        WHITE
+                    } else if h > 5.0 {
+                        GRAY
+                    } else if h > 2.0 {
+                        BROWN
+                    } else {
+                        GREEN
+                    };
 
                     // Draw a box or line
                     draw_cube(vec3(pos.x, h / 2.0, pos.z), vec3(1.0, h, 1.0), None, color);
@@ -114,13 +134,25 @@ async fn main() {
         set_default_camera();
 
         // HUD
-        draw_text(&format!("Commit: {}/{}", history_index, history.len()), 10.0, 30.0, 30.0, WHITE);
+        draw_text(
+            &format!("Commit: {}/{}", history_index, history.len()),
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
         if history_index < history.len() {
             let date = history[history_index].date.to_string();
-             draw_text(&format!("Date: {}", date), 10.0, 60.0, 20.0, LIGHTGRAY);
+            draw_text(&format!("Date: {}", date), 10.0, 60.0, 20.0, LIGHTGRAY);
         }
 
-        draw_text("WASD: Pan | QE: Zoom | SPACE: Rotate", 10.0, screen_height() - 20.0, 20.0, DARKGRAY);
+        draw_text(
+            "WASD: Pan | QE: Zoom | SPACE: Rotate",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }

@@ -2,10 +2,10 @@ mod fs;
 mod layout;
 
 use fs::scan_dir;
-use poincare_disk::{mobius_add, mobius_sub, Point};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;
 use num_complex::Complex;
+use poincare_disk::{mobius_add, mobius_sub, Point};
 
 const DISK_SCALE: f32 = 0.45;
 
@@ -178,7 +178,7 @@ fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: 
     for i in 1..=steps {
         let t = i as f64 / steps as f64;
         let q = m_p2 * t; // Straight line in disk model if origin
-        // Map back: mobius_add
+                          // Map back: mobius_add
         let world_pos = mobius_add(q, p1);
         let screen_pos = to_screen(world_pos, screen_center, radius);
         draw_line(

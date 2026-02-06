@@ -22,26 +22,58 @@ mod tests {
 
         let genes = vec![
             // Sprout at start (8,8)
-            Gene { op: OpCode::Hyphae, args: vec![] },
-
+            Gene {
+                op: OpCode::Hyphae,
+                args: vec![],
+            },
             // Move to (8,9)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // dy
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dx
-            Gene { op: OpCode::Migrate, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // dy
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // dx
+            Gene {
+                op: OpCode::Migrate,
+                args: vec![],
+            },
             // Sprout at (8,9)
-            Gene { op: OpCode::Hyphae, args: vec![] },
-
+            Gene {
+                op: OpCode::Hyphae,
+                args: vec![],
+            },
             // Connect to (8,8)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // x
-            Gene { op: OpCode::Connect, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // x
+            Gene {
+                op: OpCode::Connect,
+                args: vec![],
+            },
             // Transport 42 to (8,8)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] }, // val
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // x
-            Gene { op: OpCode::Transport, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(42)],
+            }, // val
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // x
+            Gene {
+                op: OpCode::Transport,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -56,7 +88,9 @@ mod tests {
         // 5. Push, Push, Push, Transport (4 steps)
         // Total ~12 steps
         for _ in 0..20 {
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
 
@@ -64,11 +98,11 @@ mod tests {
         assert_eq!(vm.grid[8][8], Value::Int(42));
 
         // Check Mycelium
-        assert!(vm.mycelium.contains_key(&(8,8)));
-        assert!(vm.mycelium.contains_key(&(8,9)));
+        assert!(vm.mycelium.contains_key(&(8, 8)));
+        assert!(vm.mycelium.contains_key(&(8, 9)));
         // Check connection
-        let neighbors = vm.mycelium.get(&(8,9)).unwrap();
-        assert!(neighbors.contains(&(8,8)));
+        let neighbors = vm.mycelium.get(&(8, 9)).unwrap();
+        assert!(neighbors.contains(&(8, 8)));
     }
 
     #[test]
@@ -78,16 +112,27 @@ mod tests {
         // Output on stack: "A"
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String(",.".to_string())] }, // Code
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("A".to_string())] }, // Input
-            Gene { op: OpCode::Brainfuck, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String(",.".to_string())],
+            }, // Code
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("A".to_string())],
+            }, // Input
+            Gene {
+                op: OpCode::Brainfuck,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 100;
 
         for _ in 0..10 {
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
 

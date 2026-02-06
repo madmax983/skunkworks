@@ -159,18 +159,16 @@ impl<'a> State<'a> {
         let compute_bind_group_layout =
             device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: Some("Compute Bind Group Layout"),
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Uniform,
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::COMPUTE,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
                     },
-                ],
+                    count: None,
+                }],
             });
 
         let storage_bind_group_layout =
@@ -306,30 +304,33 @@ impl<'a> State<'a> {
                 },
                 wgpu::BindGroupEntry {
                     binding: 2,
-                    resource: wgpu::BindingResource::Sampler(&device.create_sampler(&wgpu::SamplerDescriptor::default())),
+                    resource: wgpu::BindingResource::Sampler(
+                        &device.create_sampler(&wgpu::SamplerDescriptor::default()),
+                    ),
                 },
             ],
         });
 
         let display_uniform_bind_group_b = device.create_bind_group(&wgpu::BindGroupDescriptor {
-             label: Some("Display Uniform Bind Group B"),
-             layout: &render_bind_group_layout,
-             entries: &[
-                 wgpu::BindGroupEntry {
-                     binding: 0,
-                     resource: uniform_buffer.as_entire_binding(),
-                 },
-                 wgpu::BindGroupEntry {
-                     binding: 1,
-                     resource: wgpu::BindingResource::TextureView(&texture_view_b),
-                 },
-                 wgpu::BindGroupEntry {
-                     binding: 2,
-                     resource: wgpu::BindingResource::Sampler(&device.create_sampler(&wgpu::SamplerDescriptor::default())),
-                 },
-             ],
-         });
-
+            label: Some("Display Uniform Bind Group B"),
+            layout: &render_bind_group_layout,
+            entries: &[
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: uniform_buffer.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 1,
+                    resource: wgpu::BindingResource::TextureView(&texture_view_b),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: wgpu::BindingResource::Sampler(
+                        &device.create_sampler(&wgpu::SamplerDescriptor::default()),
+                    ),
+                },
+            ],
+        });
 
         let bind_group_a = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Compute Bind Group A"),
@@ -434,7 +435,7 @@ impl<'a> State<'a> {
     }
 
     fn input(&mut self, event: &WindowEvent) -> bool {
-         match event {
+        match event {
             WindowEvent::CursorMoved { position, .. } => {
                 self.cursor_pos = *position;
                 true
@@ -453,7 +454,9 @@ impl<'a> State<'a> {
     fn add_catalyst(&mut self) {
         let w = self.size.width as f64;
         let h = self.size.height as f64;
-        if w == 0.0 || h == 0.0 { return; }
+        if w == 0.0 || h == 0.0 {
+            return;
+        }
 
         let cx = self.cursor_pos.x.clamp(0.0, w - 1.0);
         let cy = self.cursor_pos.y.clamp(0.0, h - 1.0);
@@ -465,13 +468,13 @@ impl<'a> State<'a> {
         let mut data = vec![0u8; (diameter * diameter * 16) as usize];
         for dy in 0..diameter {
             for dx in 0..diameter {
-                 let val: f32 = 0.9;
-                 let bytes = val.to_ne_bytes();
-                 let idx = ((dy * diameter + dx) * 16) as usize;
-                 data[idx + 4] = bytes[0];
-                 data[idx + 5] = bytes[1];
-                 data[idx + 6] = bytes[2];
-                 data[idx + 7] = bytes[3];
+                let val: f32 = 0.9;
+                let bytes = val.to_ne_bytes();
+                let idx = ((dy * diameter + dx) * 16) as usize;
+                data[idx + 4] = bytes[0];
+                data[idx + 5] = bytes[1];
+                data[idx + 6] = bytes[2];
+                data[idx + 7] = bytes[3];
             }
         }
         let origin_x = tx.saturating_sub(radius);
@@ -479,14 +482,33 @@ impl<'a> State<'a> {
         let copy_width = diameter.min(WIDTH - origin_x);
         let copy_height = diameter.min(HEIGHT - origin_y);
 
-        if copy_width == 0 || copy_height == 0 { return; }
+        if copy_width == 0 || copy_height == 0 {
+            return;
+        }
 
         for texture in [&self.texture_a, &self.texture_b] {
             self.queue.write_texture(
-                wgpu::ImageCopyTexture { texture, mip_level: 0, origin: wgpu::Origin3d { x: origin_x, y: origin_y, z: 0 }, aspect: wgpu::TextureAspect::All },
+                wgpu::ImageCopyTexture {
+                    texture,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d {
+                        x: origin_x,
+                        y: origin_y,
+                        z: 0,
+                    },
+                    aspect: wgpu::TextureAspect::All,
+                },
                 &data,
-                wgpu::ImageDataLayout { offset: 0, bytes_per_row: Some(diameter * 16), rows_per_image: Some(diameter) },
-                wgpu::Extent3d { width: copy_width, height: copy_height, depth_or_array_layers: 1 },
+                wgpu::ImageDataLayout {
+                    offset: 0,
+                    bytes_per_row: Some(diameter * 16),
+                    rows_per_image: Some(diameter),
+                },
+                wgpu::Extent3d {
+                    width: copy_width,
+                    height: copy_height,
+                    depth_or_array_layers: 1,
+                },
             );
         }
     }

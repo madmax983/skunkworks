@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
-use image::{RgbaImage, Rgba};
 use ::rand::Rng;
+use image::{Rgba, RgbaImage};
+use macroquad::prelude::*;
 
 mod stega;
 
@@ -14,12 +14,7 @@ async fn main() {
 
     // Create a noise pattern that looks like static
     for pixel in cover.pixels_mut() {
-        *pixel = Rgba([
-            rng.gen(),
-            rng.gen(),
-            rng.gen(),
-            255
-        ]);
+        *pixel = Rgba([rng.gen(), rng.gen(), rng.gen(), 255]);
     }
 
     // 2. Embed Payload (Source Code)
@@ -27,7 +22,9 @@ async fn main() {
     let payload_path = "experiments/chromatic-cipher/src/main.rs";
     let payload_string = std::fs::read_to_string(payload_path)
         .or_else(|_| std::fs::read_to_string("src/main.rs")) // Fallback if running from crate root
-        .unwrap_or_else(|_| "Genesis: Source code not found. Using placeholder payload.".to_string());
+        .unwrap_or_else(|_| {
+            "Genesis: Source code not found. Using placeholder payload.".to_string()
+        });
 
     let seed = 1337; // Fixed seed for this demo
 
@@ -71,13 +68,13 @@ async fn main() {
 
         if is_key_pressed(KeyCode::Enter) {
             // Decrypt
-             match stega::extract(&stego_image, seed) {
+            match stega::extract(&stego_image, seed) {
                 Ok(bytes) => {
                     if let Ok(s) = String::from_utf8(bytes) {
                         decoded_text = Some(s);
                         show_help = false;
                     } else {
-                         decoded_text = Some("Error: Decoded data is not valid UTF-8".to_string());
+                        decoded_text = Some("Error: Decoded data is not valid UTF-8".to_string());
                     }
                 }
                 Err(e) => {
@@ -122,12 +119,18 @@ async fn main() {
         }
 
         if show_lsb {
-             draw_text("MODE: CIPHER VIEW (LSB)", 20.0, screen_h - 20.0, 30.0, RED);
+            draw_text("MODE: CIPHER VIEW (LSB)", 20.0, screen_h - 20.0, 30.0, RED);
         }
 
         if let Some(text) = &decoded_text {
             // Draw semi-transparent background
-            draw_rectangle(50.0, 50.0, screen_w - 100.0, screen_h - 100.0, Color::new(0.0, 0.0, 0.0, 0.95));
+            draw_rectangle(
+                50.0,
+                50.0,
+                screen_w - 100.0,
+                screen_h - 100.0,
+                Color::new(0.0, 0.0, 0.0, 0.95),
+            );
             draw_rectangle_lines(50.0, 50.0, screen_w - 100.0, screen_h - 100.0, 2.0, GREEN);
 
             draw_text("DECODED PAYLOAD (Source Code):", 70.0, 80.0, 30.0, GREEN);
@@ -140,9 +143,15 @@ async fn main() {
                 draw_text(line, 70.0, 110.0 + i as f32 * line_height, 16.0, GREEN);
             }
             if lines.len() > max_lines {
-                draw_text("... (scrolling not implemented) ...", 70.0, 110.0 + max_lines as f32 * line_height, 16.0, GREEN);
+                draw_text(
+                    "... (scrolling not implemented) ...",
+                    70.0,
+                    110.0 + max_lines as f32 * line_height,
+                    16.0,
+                    GREEN,
+                );
             }
-             draw_text("[ESC] Close Overlay", 70.0, screen_h - 70.0, 20.0, GRAY);
+            draw_text("[ESC] Close Overlay", 70.0, screen_h - 70.0, 20.0, GRAY);
         }
 
         next_frame().await

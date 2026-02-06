@@ -41,16 +41,28 @@ mod tests {
     #[test]
     fn test_circadian_phases() {
         // Night: 02:00
-        assert_eq!(CircadianPhase::from_timestamp(2 * 3600), CircadianPhase::Night);
+        assert_eq!(
+            CircadianPhase::from_timestamp(2 * 3600),
+            CircadianPhase::Night
+        );
 
         // Dawn: 06:00
-        assert_eq!(CircadianPhase::from_timestamp(6 * 3600), CircadianPhase::Dawn);
+        assert_eq!(
+            CircadianPhase::from_timestamp(6 * 3600),
+            CircadianPhase::Dawn
+        );
 
         // Day: 12:00
-        assert_eq!(CircadianPhase::from_timestamp(12 * 3600), CircadianPhase::Day);
+        assert_eq!(
+            CircadianPhase::from_timestamp(12 * 3600),
+            CircadianPhase::Day
+        );
 
         // Dusk: 20:00
-        assert_eq!(CircadianPhase::from_timestamp(20 * 3600), CircadianPhase::Dusk);
+        assert_eq!(
+            CircadianPhase::from_timestamp(20 * 3600),
+            CircadianPhase::Dusk
+        );
     }
 
     #[test]

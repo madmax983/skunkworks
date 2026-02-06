@@ -103,7 +103,8 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                             ));
                         }
                     } else {
-                         vm.output.push("Error: Invalid coordinate for neurogenesis".to_string());
+                        vm.output
+                            .push("Error: Invalid coordinate for neurogenesis".to_string());
                     }
                 } else {
                     vm.output
@@ -124,10 +125,13 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                     let coord = (y as usize, x as usize);
                     if let Some(neuron) = vm.neurons.get_mut(&coord) {
                         neuron.i_inj += amt as f32;
-                        vm.output
-                            .push(format!("STIMULATE: Injected {} into neuron at {},{}", amt, x, y));
+                        vm.output.push(format!(
+                            "STIMULATE: Injected {} into neuron at {},{}",
+                            amt, x, y
+                        ));
                     } else {
-                         vm.output.push(format!("STIMULATE: No neuron at {},{}", x, y));
+                        vm.output
+                            .push(format!("STIMULATE: No neuron at {},{}", x, y));
                     }
                 } else {
                     vm.output
@@ -160,8 +164,8 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
             }
         }
         OpCode::Axon => {
-             // Placeholder
-             vm.output.push("AXON: Not implemented yet".to_string());
+            // Placeholder
+            vm.output.push("AXON: Not implemented yet".to_string());
         }
         _ => {}
     }

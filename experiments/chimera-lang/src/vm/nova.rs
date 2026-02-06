@@ -20,9 +20,9 @@ use crate::{ChimeraParser, Rule};
 #[cfg(feature = "nova")]
 use pest::Parser;
 #[cfg(feature = "nova")]
-use rand::Rng;
-#[cfg(feature = "nova")]
 use rand::seq::SliceRandom;
+#[cfg(feature = "nova")]
+use rand::Rng;
 #[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
 
@@ -299,7 +299,9 @@ pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
     }
 
     let has_ingredient = |s: &str| -> bool {
-        ingredients.iter().any(|v| matches!(v, Value::Str(val) if val == s))
+        ingredients
+            .iter()
+            .any(|v| matches!(v, Value::Str(val) if val == s))
     };
 
     let center_val = vm.grid[y][x].clone();
@@ -331,7 +333,8 @@ pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
         for (ny, nx) in coords {
             vm.grid[ny][nx] = Value::Int(0);
         }
-        vm.output.push(format!("ALCHEMY: Transmutation occurred at {},{}", x, y));
+        vm.output
+            .push(format!("ALCHEMY: Transmutation occurred at {},{}", x, y));
         return true;
     }
 
@@ -358,6 +361,7 @@ fn value_to_nucleotide(v: &Value) -> Nucleotide {
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
@@ -473,33 +477,39 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     while pc < code_chars.len() && cycles < max_cycles {
                         match code_chars[pc] {
                             '>' => {
-                                if ptr < tape.len() - 1 { ptr += 1; }
-                                else { ptr = 0; } // Wrap
-                            },
+                                if ptr < tape.len() - 1 {
+                                    ptr += 1;
+                                } else {
+                                    ptr = 0;
+                                } // Wrap
+                            }
                             '<' => {
-                                if ptr > 0 { ptr -= 1; }
-                                else { ptr = tape.len() - 1; } // Wrap
-                            },
+                                if ptr > 0 {
+                                    ptr -= 1;
+                                } else {
+                                    ptr = tape.len() - 1;
+                                } // Wrap
+                            }
                             '+' => tape[ptr] = tape[ptr].wrapping_add(1),
                             '-' => tape[ptr] = tape[ptr].wrapping_sub(1),
                             '.' => output_bytes.push(tape[ptr]),
                             ',' => {
                                 tape[ptr] = input_chars.pop_front().unwrap_or(0);
-                            },
+                            }
                             '[' => {
                                 if tape[ptr] == 0 {
                                     if let Some(&target) = jumps.get(&pc) {
                                         pc = target;
                                     }
                                 }
-                            },
+                            }
                             ']' => {
                                 if tape[ptr] != 0 {
                                     if let Some(&target) = jumps.get(&pc) {
                                         pc = target;
                                     }
                                 }
-                            },
+                            }
                             _ => {} // Ignore non-BF chars
                         }
                         pc += 1;
@@ -511,10 +521,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.energy = vm.energy.saturating_sub((cycles / 100) as i64);
                     vm.output.push(format!("BRAINFUCK: Ran {} cycles", cycles));
                 } else {
-                    vm.output.push("Error: Type mismatch for brainfuck".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for brainfuck".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for brainfuck".to_string());
+                vm.output
+                    .push("Error: Stack underflow for brainfuck".to_string());
             }
             None
         }
@@ -2814,7 +2826,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if vm.stack.len() > stack_depth {
                         let new_items = vm.stack.split_off(stack_depth);
                         if results.len() + new_items.len() > crate::vm::MAX_JUNCTION_SIZE {
-                            vm.output.push("Error: Junction size limit exceeded in Map".to_string());
+                            vm.output
+                                .push("Error: Junction size limit exceeded in Map".to_string());
                             return None;
                         }
                         results.extend(new_items);
@@ -2915,7 +2928,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         };
                         if keep {
                             if results.len() >= crate::vm::MAX_JUNCTION_SIZE {
-                                vm.output.push("Error: Junction size limit exceeded in Filter".to_string());
+                                vm.output.push(
+                                    "Error: Junction size limit exceeded in Filter".to_string(),
+                                );
                                 return None;
                             }
                             results.push(input);
@@ -2950,7 +2965,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 let len = inputs_a.len().min(inputs_b.len());
                 if len > crate::vm::MAX_JUNCTION_SIZE {
-                    vm.output.push("Error: Junction size limit exceeded in Zip".to_string());
+                    vm.output
+                        .push("Error: Junction size limit exceeded in Zip".to_string());
                     return None;
                 }
 
@@ -3058,7 +3074,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             if dy == 0 && dx == 0 {
                                 continue;
                             }
-                            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                            {
                                 if !matches!(vm.grid[ny][nx], Value::Int(0)) {
                                     neighbors += 1;
                                 }
@@ -3070,7 +3088,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if !is_alive && neighbors == 3 {
                         // Birth: Becomes 1
                         next_grid[y][x] = Value::Int(1);
-                    } else if is_alive && (neighbors < 2 || neighbors > 3) {
+                    } else if is_alive && !(2..=3).contains(&neighbors) {
                         // Death
                         next_grid[y][x] = Value::Int(0);
                     }
@@ -3106,23 +3124,25 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                     // Corrupt stack
                     if !vm.stack.is_empty() {
-                         let changes = sev.min(vm.stack.len());
-                         for _ in 0..changes {
-                             let idx = rng.gen_range(0..vm.stack.len());
-                             if rng.gen_bool(0.3) {
-                                 // Mutate value
-                                 vm.stack[idx] = Value::Int(rng.gen_range(0..100));
-                             }
-                         }
+                        let changes = sev.min(vm.stack.len());
+                        for _ in 0..changes {
+                            let idx = rng.gen_range(0..vm.stack.len());
+                            if rng.gen_bool(0.3) {
+                                // Mutate value
+                                vm.stack[idx] = Value::Int(rng.gen_range(0..100));
+                            }
+                        }
                     }
 
-                    vm.energy = vm.energy.saturating_sub(severity as i64);
+                    vm.energy = vm.energy.saturating_sub(severity);
                     vm.output.push(format!("GLITCH: Severity {}", severity));
                 } else {
-                    vm.output.push("Error: Type mismatch for glitch".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for glitch".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for glitch".to_string());
+                vm.output
+                    .push("Error: Stack underflow for glitch".to_string());
             }
             None
         }
@@ -3137,12 +3157,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Hyphae => {
             let (cy, cx) = vm.context_loc;
-            if vm.mycelium.contains_key(&(cy, cx)) {
-                vm.output.push(format!("HYPHAE: Node already exists at {},{}", cx, cy));
-            } else {
-                vm.mycelium.insert((cy, cx), Vec::new());
+            if let std::collections::hash_map::Entry::Vacant(e) = vm.mycelium.entry((cy, cx)) {
+                e.insert(Vec::new());
                 vm.energy = vm.energy.saturating_sub(20);
                 vm.output.push(format!("HYPHAE: Sprouted at {},{}", cx, cy));
+            } else {
+                vm.output
+                    .push(format!("HYPHAE: Node already exists at {},{}", cx, cy));
             }
             None
         }
@@ -3155,23 +3176,32 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
                     if let Some((ty, tx)) = vm.normalize_coords(y, x) {
                         let (cy, cx) = vm.context_loc;
-                        if vm.mycelium.contains_key(&(cy, cx)) && vm.mycelium.contains_key(&(ty, tx)) {
+                        if vm.mycelium.contains_key(&(cy, cx))
+                            && vm.mycelium.contains_key(&(ty, tx))
+                        {
                             // Add undirected edge
                             vm.mycelium.get_mut(&(cy, cx)).unwrap().push((ty, tx));
                             vm.mycelium.get_mut(&(ty, tx)).unwrap().push((cy, cx));
                             vm.energy = vm.energy.saturating_sub(10);
-                            vm.output.push(format!("CONNECT: Mycelium linked {},{} <-> {},{}", cx, cy, tx, ty));
+                            vm.output.push(format!(
+                                "CONNECT: Mycelium linked {},{} <-> {},{}",
+                                cx, cy, tx, ty
+                            ));
                         } else {
-                            vm.output.push("CONNECT: Both ends must be Hyphae".to_string());
+                            vm.output
+                                .push("CONNECT: Both ends must be Hyphae".to_string());
                         }
                     } else {
-                        vm.output.push("Error: Coordinates out of bounds for connect".to_string());
+                        vm.output
+                            .push("Error: Coordinates out of bounds for connect".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for connect".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for connect".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for connect".to_string());
+                vm.output
+                    .push("Error: Stack underflow for connect".to_string());
             }
             None
         }
@@ -3212,18 +3242,23 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         if found {
                             vm.grid[ty][tx] = val;
                             vm.energy = vm.energy.saturating_sub(5);
-                            vm.output.push(format!("TRANSPORT: Sent value to {},{}", tx, ty));
+                            vm.output
+                                .push(format!("TRANSPORT: Sent value to {},{}", tx, ty));
                         } else {
-                            vm.output.push("TRANSPORT: No mycelial path found".to_string());
+                            vm.output
+                                .push("TRANSPORT: No mycelial path found".to_string());
                         }
                     } else {
-                        vm.output.push("Error: Coordinates out of bounds for transport".to_string());
+                        vm.output
+                            .push("Error: Coordinates out of bounds for transport".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for transport".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for transport".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for transport".to_string());
+                vm.output
+                    .push("Error: Stack underflow for transport".to_string());
             }
             None
         }
@@ -3241,19 +3276,24 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     let mut count = 0;
                     for (tx, ty) in coords {
                         if rng.gen_range(0..100) < d {
-                            if !vm.mycelium.contains_key(&(ty, tx)) {
-                                vm.mycelium.insert((ty, tx), Vec::new());
+                            if let std::collections::hash_map::Entry::Vacant(e) =
+                                vm.mycelium.entry((ty, tx))
+                            {
+                                e.insert(Vec::new());
                                 count += 1;
                             }
                         }
                     }
                     vm.energy = vm.energy.saturating_sub(count * 5);
-                    vm.output.push(format!("SPORE_CLOUD: Sprouted {} hyphae", count));
+                    vm.output
+                        .push(format!("SPORE_CLOUD: Sprouted {} hyphae", count));
                 } else {
-                    vm.output.push("Error: Type mismatch for spore_cloud".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for spore_cloud".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for spore_cloud".to_string());
+                vm.output
+                    .push("Error: Stack underflow for spore_cloud".to_string());
             }
             None
         }

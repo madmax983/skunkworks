@@ -82,10 +82,7 @@ fn setup(mut commands: Commands) {
     ));
 }
 
-fn update_ui(
-    director: Res<Director>,
-    mut query: Query<&mut Text, With<LabanText>>,
-) {
+fn update_ui(director: Res<Director>, mut query: Query<&mut Text, With<LabanText>>) {
     let e = &director.current_effort;
 
     for mut text in query.iter_mut() {
@@ -101,5 +98,9 @@ fn update_ui(
 }
 
 fn label(val: f32, low: &'static str, high: &'static str) -> &'static str {
-    if val < 0.5 { low } else { high }
+    if val < 0.5 {
+        low
+    } else {
+        high
+    }
 }

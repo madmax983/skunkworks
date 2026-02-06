@@ -11,7 +11,10 @@ pub fn embed(image: &mut RgbaImage, data: &[u8], seed: u64) -> Result<(), String
 
     let needed_bits = 32 + data.len() * 8;
     if needed_bits > total_channels {
-        return Err(format!("Payload too large for image. Needed {} bits, have {} slots.", needed_bits, total_channels));
+        return Err(format!(
+            "Payload too large for image. Needed {} bits, have {} slots.",
+            needed_bits, total_channels
+        ));
     }
 
     let mut rng = StdRng::seed_from_u64(seed);
@@ -91,7 +94,7 @@ pub fn extract(image: &RgbaImage, seed: u64) -> Result<Vec<u8>, String> {
                     }
                     // If we just finished reading the last bit, we can stop early inside the channel loop
                     if data_bits.len() == len * 8 {
-                         break;
+                        break;
                     }
                 }
             }
@@ -107,16 +110,16 @@ pub fn extract(image: &RgbaImage, seed: u64) -> Result<Vec<u8>, String> {
 
     if let Some(len) = data_len {
         if data_bits.len() < len * 8 {
-             return Err("Incomplete data or corrupted length header".to_string());
+            return Err("Incomplete data or corrupted length header".to_string());
         }
 
         let mut result = Vec::with_capacity(len);
         for chunk in data_bits.chunks(8) {
-             let mut byte = 0u8;
-             for (i, &bit) in chunk.iter().enumerate() {
-                 byte |= bit << i;
-             }
-             result.push(byte);
+            let mut byte = 0u8;
+            for (i, &bit) in chunk.iter().enumerate() {
+                byte |= bit << i;
+            }
+            result.push(byte);
         }
         Ok(result)
     } else {
@@ -176,8 +179,8 @@ mod tests {
     #[test]
     fn test_capacity_check() {
         let mut image = RgbaImage::new(10, 10); // 100 pixels = 300 channels = 300 bits max
-        // payload len requires 32 bits.
-        // remaining 268 bits / 8 = 33 bytes max.
+                                                // payload len requires 32 bits.
+                                                // remaining 268 bits / 8 = 33 bytes max.
 
         let payload = vec![0u8; 50]; // 50 bytes = 400 bits > 300
         let seed = 42;

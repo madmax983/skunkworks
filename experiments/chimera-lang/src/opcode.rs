@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
 
@@ -5,7 +6,7 @@ use std::str::FromStr;
 ///
 /// Each opcode represents a fundamental action that the organism can perform,
 /// ranging from basic arithmetic to genetic engineering and inter-dimensional travel.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum OpCode {
     /// Pushes a value onto the stack.
     ///
@@ -567,6 +568,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Brainfuck,
 
+    // Akashic Features (Persistent Storage)
+    /// **[Nova]** Writes a key-value pair to the persistent Akashic Record.
+    ///
+    /// **Stack:** `[ ..., key, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    AkashicWrite,
+    /// **[Nova]** Reads a value from the persistent Akashic Record.
+    ///
+    /// **Stack:** `[ ..., key ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    AkashicRead,
+
     // Ribozyme Features (Functional Programming)
     /// **[Nova]** Evaluates a string as code.
     ///
@@ -678,6 +691,11 @@ impl FromStr for OpCode {
             "spore_cloud" => Ok(OpCode::SporeCloud),
             #[cfg(feature = "nova")]
             "brainfuck" => Ok(OpCode::Brainfuck),
+
+            #[cfg(feature = "nova")]
+            "akashic_write" => Ok(OpCode::AkashicWrite),
+            #[cfg(feature = "nova")]
+            "akashic_read" => Ok(OpCode::AkashicRead),
 
             #[cfg(feature = "nova")]
             "eval" => Ok(OpCode::Eval),
@@ -1072,6 +1090,11 @@ impl fmt::Display for OpCode {
             OpCode::SporeCloud => write!(f, "spore_cloud"),
             #[cfg(feature = "nova")]
             OpCode::Brainfuck => write!(f, "brainfuck"),
+
+            #[cfg(feature = "nova")]
+            OpCode::AkashicWrite => write!(f, "akashic_write"),
+            #[cfg(feature = "nova")]
+            OpCode::AkashicRead => write!(f, "akashic_read"),
 
             #[cfg(feature = "nova")]
             OpCode::Eval => write!(f, "eval"),

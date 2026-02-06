@@ -52,12 +52,22 @@ async fn main() {
             cam_zoom *= 1.02;
         }
 
-        if is_key_down(KeyCode::Left) { cam_target.x -= 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Right) { cam_target.x += 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Up) { cam_target.y += 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Down) { cam_target.y -= 10.0 / cam_zoom / 60.0; }
+        if is_key_down(KeyCode::Left) {
+            cam_target.x -= 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_target.x += 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_target.y += 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_target.y -= 10.0 / cam_zoom / 60.0;
+        }
 
-        if is_key_pressed(KeyCode::Space) { paused = !paused; }
+        if is_key_pressed(KeyCode::Space) {
+            paused = !paused;
+        }
 
         if is_key_pressed(KeyCode::R) {
             universe = Universe::new();
@@ -76,7 +86,8 @@ async fn main() {
                 target: cam_target,
                 zoom: Vec2::splat(cam_zoom),
                 ..Default::default()
-            }.screen_to_world(Vec2::new(mpos.0, mpos.1));
+            }
+            .screen_to_world(Vec2::new(mpos.0, mpos.1));
 
             let dist = world_pos.length();
             if dist > 10.0 {
@@ -112,12 +123,17 @@ async fn main() {
         if let Ok(mut state) = audio_state.write() {
             state.oscillators.clear();
             for (i, body) in universe.bodies.iter().enumerate() {
-                if i == 0 { continue; }
+                if i == 0 {
+                    continue;
+                }
                 let speed = body.vel.length();
                 let dist = body.pos.length();
                 let freq = 50.0 + speed * 10.0;
                 let vol = (1000.0 / (dist + 100.0)).clamp(0.0, 0.5);
-                state.oscillators.push(Oscillator { frequency: freq, amplitude: vol });
+                state.oscillators.push(Oscillator {
+                    frequency: freq,
+                    amplitude: vol,
+                });
             }
         }
 
@@ -129,12 +145,21 @@ async fn main() {
         });
 
         for body in &universe.bodies {
-            if body.trail.len() < 2 { continue; }
+            if body.trail.len() < 2 {
+                continue;
+            }
             for i in 0..body.trail.len() - 1 {
                 let p1 = body.trail[i];
-                let p2 = body.trail[i+1];
+                let p2 = body.trail[i + 1];
                 let alpha = (i as f32 / body.trail.len() as f32).powf(2.0);
-                draw_line(p1.x, p1.y, p2.x, p2.y, 2.0 * alpha, Color::new(body.color.r, body.color.g, body.color.b, alpha));
+                draw_line(
+                    p1.x,
+                    p1.y,
+                    p2.x,
+                    p2.y,
+                    2.0 * alpha,
+                    Color::new(body.color.r, body.color.g, body.color.b, alpha),
+                );
             }
         }
 
@@ -144,8 +169,20 @@ async fn main() {
 
         set_default_camera();
         draw_text("Harmony of Spheres", 10.0, 20.0, 30.0, GOLD);
-        draw_text("Controls: Arrows (Pan), +/- (Zoom), Click (Spawn), Space (Pause), R (Reset)", 10.0, 50.0, 20.0, GRAY);
-        draw_text(&format!("Bodies: {}", universe.bodies.len()), 10.0, screen_height() - 40.0, 20.0, WHITE);
+        draw_text(
+            "Controls: Arrows (Pan), +/- (Zoom), Click (Spawn), Space (Pause), R (Reset)",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Bodies: {}", universe.bodies.len()),
+            10.0,
+            screen_height() - 40.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }
