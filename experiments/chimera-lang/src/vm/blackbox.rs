@@ -1,10 +1,11 @@
 use super::Value;
+use crate::opcode::OpCode;
 use std::collections::VecDeque;
 
 #[derive(Debug, Clone)]
 pub struct Frame {
     pub ip: (usize, usize),
-    pub op: String,
+    pub op: OpCode,
     pub stack_top: Option<Value>,
     pub energy: i64,
     pub context_loc: (usize, usize),
@@ -36,20 +37,20 @@ impl Blackbox {
         energy: i64,
         context_loc: (usize, usize),
     ) {
-        let op_str = if ip.0 < dna.helix.strands.len() {
+        let op = if ip.0 < dna.helix.strands.len() {
             let strand = &dna.helix.strands[ip.0];
             if ip.1 < strand.genes.len() {
-                strand.genes[ip.1].op.to_string()
+                strand.genes[ip.1].op.clone()
             } else {
-                "EOS".to_string()
+                OpCode::Unknown("EOS".to_string())
             }
         } else {
-            "EOF".to_string()
+            OpCode::Unknown("EOF".to_string())
         };
 
         let frame = Frame {
             ip,
-            op: op_str,
+            op,
             stack_top: stack.last().cloned(),
             energy,
             context_loc,
