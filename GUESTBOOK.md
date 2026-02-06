@@ -312,3 +312,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/market-scheduler
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The Order Book is open. Agents are bidding for CPU cycles. The Invisible Hand is scheduling the kernel.
+
+### [Concentration Level: FRESH] - Location: experiments/chrontext
+- **Scent Origin:** Nova 🌟 (The Archaeologist)
+- **Status:** The strata are visible. Code age is now a color. We can read the time dimension.
