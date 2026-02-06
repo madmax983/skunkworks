@@ -128,7 +128,7 @@ members = [
     "experiments/klein-fs", "experiments/fractal-stack",
     "experiments/syntax-fold", "experiments/market-scheduler",
     "experiments/chrontext", "experiments/synaptic-choir",
-    "experiments/synaptic-pachinko",
+    "experiments/synaptic-pachinko", "experiments/lagrange-balancer",
 ]
 resolver = "2"
 
