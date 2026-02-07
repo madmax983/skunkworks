@@ -27,7 +27,6 @@ members = [
     "experiments/packet-pachinko",
     "experiments/pidgin-mesh",
     "experiments/resonance-chamber",
-    "experiments/rhizome-seeker",
     "experiments/semantic-spy",
     "experiments/stigmergy-hub",
     "experiments/storm-monitor",

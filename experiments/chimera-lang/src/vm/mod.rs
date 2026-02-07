@@ -63,6 +63,8 @@ pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
+pub mod nova_market;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
@@ -325,6 +327,8 @@ pub struct ChimeraVM {
     pub gravity_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub relativity_mode: bool,
+    #[cfg(feature = "nova")]
+    pub market: nova_market::MarketState,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
 }
@@ -478,6 +482,8 @@ impl ChimeraVM {
             gravity_grid,
             #[cfg(feature = "nova")]
             relativity_mode: false,
+            #[cfg(feature = "nova")]
+            market: nova_market::MarketState::new(),
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
         }
@@ -1617,7 +1623,13 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Splice
+            OpCode::Offer
+            | OpCode::Buy
+            | OpCode::Invest
+            | OpCode::Divest
+            | OpCode::Balance
+            | OpCode::Ticker
+            | OpCode::Splice
             | OpCode::Relativity
             | OpCode::Graviton
             | OpCode::EventHorizon

@@ -18,6 +18,7 @@ pub struct DreamTrace {
 }
 
 impl DreamTrace {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         timestamp: usize,
         strand_idx: usize,

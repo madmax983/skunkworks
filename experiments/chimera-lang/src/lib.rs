@@ -92,6 +92,8 @@ mod nova_isomer_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_market_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_madness_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;

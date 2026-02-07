@@ -717,6 +717,40 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    // Market Features
+    /// **[Nova]** Places a Sell Order (Ask) on the Market.
+    ///
+    /// **Stack:** `[ ..., price, item ] -> [ ..., order_id ]`
+    /// **Effect:** Adds item to market. If sold, funds are credited.
+    #[cfg(feature = "nova")]
+    Offer,
+    /// **[Nova]** Places a Buy Order (Bid) on the Market.
+    ///
+    /// **Stack:** `[ ..., max_price, query ] -> [ ..., item, cost ]`
+    /// **Effect:** Purchases item if available. Returns item and cost. If failed, returns 0.
+    #[cfg(feature = "nova")]
+    Buy,
+    /// **[Nova]** Converts global Energy into local Credits.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Invest,
+    /// **[Nova]** Converts local Credits into global Energy.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Divest,
+    /// **[Nova]** Pushes current Credit balance to stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., balance ]`
+    #[cfg(feature = "nova")]
+    Balance,
+    /// **[Nova]** Pushes last trade price to stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., price ]`
+    #[cfg(feature = "nova")]
+    Ticker,
+
     // Relativity Features
     /// **[Nova]** Toggles General Relativity simulation (Time Dilation).
     ///
