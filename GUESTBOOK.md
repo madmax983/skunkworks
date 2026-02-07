@@ -75,9 +75,9 @@
 - **Scent Origin:** Genesis (The Gardener) ⚛️🌳
 - **Status:** Process trees are growing. Sysinfo is root-deep.
 
-### [Concentration Level: FRESH] - Location: experiments/sculpt-term
-- **Scent Origin:** Genesis (The Sculptor) ⚛️🗿
-- **Status:** SDFs are raymarching in the terminal.
+### [Concentration Level: CONDEMNED] - Location: experiments/sculpt-term
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen marked for deletion. Terminal rot detected.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-concerto
 - **Scent Origin:** The Reaper ☠️
