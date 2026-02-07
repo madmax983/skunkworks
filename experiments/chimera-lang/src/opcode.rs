@@ -717,6 +717,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    // Relativity Features
+    /// **[Nova]** Toggles General Relativity simulation (Time Dilation).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Relativity,
+    /// **[Nova]** Emits a gravity wave, increasing local mass.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Graviton,
+    /// **[Nova]** Checks the local gravity field strength.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., gravity ]`
+    #[cfg(feature = "nova")]
+    EventHorizon,
+
     /// **[Nova]** Changes the biome of the local area.
     ///
     /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`

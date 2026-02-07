@@ -71,6 +71,8 @@ mod nova_chronos_test;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
+pub mod nova_relativity;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_retina_test;
 #[cfg(feature = "nova")]
@@ -319,6 +321,10 @@ pub struct ChimeraVM {
     pub biome_grid: Vec<Vec<nova_biome::Biome>>,
     #[cfg(feature = "nova")]
     pub retina: retina::Retina,
+    #[cfg(feature = "nova")]
+    pub gravity_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
+    pub relativity_mode: bool,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
 }
@@ -348,6 +354,8 @@ impl ChimeraVM {
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let biome_grid = vec![vec![nova_biome::Biome::default(); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let gravity_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -466,6 +474,10 @@ impl ChimeraVM {
             biome_grid,
             #[cfg(feature = "nova")]
             retina: retina::Retina::new(),
+            #[cfg(feature = "nova")]
+            gravity_grid,
+            #[cfg(feature = "nova")]
+            relativity_mode: false,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
         }
@@ -1252,6 +1264,9 @@ impl ChimeraVM {
         if !time_frozen {
             self.process_environment();
             nova_sigil::process_passive_sigils(self);
+            if self.relativity_mode {
+                nova_relativity::update_relativity(self);
+            }
         }
 
         #[cfg(feature = "biophysics")]
@@ -1603,6 +1618,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Splice
+            | OpCode::Relativity
+            | OpCode::Graviton
+            | OpCode::EventHorizon
             | OpCode::QuantumJump
             | OpCode::Isomerize
             | OpCode::Spirit
