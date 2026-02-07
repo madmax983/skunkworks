@@ -84,6 +84,10 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod nova_genetics;
+#[cfg(feature = "nova")]
+pub mod nova_physics;
+#[cfg(feature = "nova")]
 pub mod nova_crystal;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
