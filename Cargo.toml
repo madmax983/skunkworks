@@ -136,7 +136,7 @@ members = [
     "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster",
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
     "experiments/bridge-specter", "experiments/silicon-samba",
-    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor",
+    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/kinetic-crease",
 ]
 resolver = "2"
 
