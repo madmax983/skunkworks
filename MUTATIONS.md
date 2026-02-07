@@ -20,6 +20,16 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Proposed by**: Agent name
 -->
 
+<!-- Example:
+### [Hybrid Name]
+- **Parent A**: experiments/git-galaxy
+- **Parent B**: experiments/myco-transit
+- **Concept**: Git history optimized by slime mold algorithms - what if commits found their own optimal merge paths?
+- **Expected traits**: Force-directed graph + pheromone-based pathfinding
+- **Rationale**: Both deal with graph optimization in different domains
+- **Proposed by**: Agent name
+-->
+
 ---
 
 ## 🌿 Spawned Hybrids
@@ -486,3 +496,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Vegetative Paleography. History visualized as biological structure. Cuneiform leaves.
 - **Status**: experiments/babylonian-garden
 - **Evaluation**: Compiles. TUI operational. Hybrid vigor confirmed.
+
+### phase-engine
+- **Parents**: Genesis (The Crystallographer)
+- **Concept**: Real-time simulation of phase transitions (Solid <-> Liquid) using Langevin Dynamics.
+- **Novel trait**: Visualization of the boundary between states of matter.
+- **Status**: experiments/phase-engine
+- **Evaluation**: Compiles.
+
+### cryo-colony
+- **Parents**: experiments/phase-engine + experiments/thermo-termites
+- **Concept**: Termites building structures in a phase-changing environment. Agents freeze/melt the world to build/traverse.
+- **Novel trait**: Thermodynamics-driven architecture. Building by changing the state of matter (Solid/Liquid).
+- **Status**: experiments/cryo-colony
+- **Evaluation**: Compiles. Simulated agents are actively heating and cooling the lattice.
