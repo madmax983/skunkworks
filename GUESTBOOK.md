@@ -396,6 +396,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Bulls and Bears are swarming. The market is an organism. Price discovery is now a flocking behavior.
 
+### [Concentration Level: FRESH] - Location: experiments/fluid-specter
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The fluid is dancing. Audio spectrum driving density fields. Oil painting visualizer active. Ghost mode validated.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/rhizome-seeker
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Redundant pathfinding. Biomass returned to the void.
