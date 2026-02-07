@@ -1,12 +1,12 @@
-mod neuron;
-mod network;
 mod audio;
+mod network;
+mod neuron;
 
-use macroquad::prelude::*;
-use crate::network::Network;
 use crate::audio::{AudioEngine, Command, Snapshot};
-use std::thread;
+use crate::network::Network;
+use macroquad::prelude::*;
 use std::collections::VecDeque;
+use std::thread;
 
 const HISTORY_LEN: usize = 600;
 
@@ -65,21 +65,24 @@ async fn main() {
 
                 if index < num_neurons {
                     // Inject current
-                    let _ = cmd_tx.send(Command::Inject { index, current: 20.0 });
+                    let _ = cmd_tx.send(Command::Inject {
+                        index,
+                        current: 20.0,
+                    });
                 }
             }
         }
 
         if is_key_pressed(KeyCode::R) {
-             for i in 0..num_neurons {
-                  let _ = cmd_tx.send(Command::SetParams {
-                      index: i,
-                      a: 0.02,
-                      b: 0.2,
-                      c: -50.0,
-                      d: 2.0
-                  });
-             }
+            for i in 0..num_neurons {
+                let _ = cmd_tx.send(Command::SetParams {
+                    index: i,
+                    a: 0.02,
+                    b: 0.2,
+                    c: -50.0,
+                    d: 2.0,
+                });
+            }
         }
 
         // 3. Receive Data
@@ -96,22 +99,22 @@ async fn main() {
 
         // Draw Synapses first (background layer)
         for syn in &last_snapshot.synapses {
-             let pre = syn.pre;
-             let post = syn.post;
-             let weight = syn.weight;
+            let pre = syn.pre;
+            let post = syn.post;
+            let weight = syn.weight;
 
-             let c1 = pre % grid_size;
-             let r1 = pre / grid_size;
-             let x1 = c1 as f32 * cell_w + cell_w * 0.5;
-             let y1 = r1 as f32 * cell_h + cell_h * 0.5;
+            let c1 = pre % grid_size;
+            let r1 = pre / grid_size;
+            let x1 = c1 as f32 * cell_w + cell_w * 0.5;
+            let y1 = r1 as f32 * cell_h + cell_h * 0.5;
 
-             let c2 = post % grid_size;
-             let r2 = post / grid_size;
-             let x2 = c2 as f32 * cell_w + cell_w * 0.5;
-             let y2 = r2 as f32 * cell_h + cell_h * 0.5;
+            let c2 = post % grid_size;
+            let r2 = post / grid_size;
+            let x2 = c2 as f32 * cell_w + cell_w * 0.5;
+            let y2 = r2 as f32 * cell_h + cell_h * 0.5;
 
-             let alpha = (weight / 20.0).clamp(0.05, 0.4);
-             draw_line(x1, y1, x2, y2, 1.0, Color::new(0.4, 0.4, 0.4, alpha));
+            let alpha = (weight / 20.0).clamp(0.05, 0.4);
+            draw_line(x1, y1, x2, y2, 1.0, Color::new(0.4, 0.4, 0.4, alpha));
         }
 
         // Draw Neurons
@@ -142,7 +145,7 @@ async fn main() {
             draw_rectangle(x + 2.0, y + 2.0, cell_w - 4.0, cell_h - 4.0, color);
 
             if spiked {
-                 draw_rectangle_lines(x, y, cell_w, cell_h, 2.0, YELLOW);
+                draw_rectangle_lines(x, y, cell_w, cell_h, 2.0, YELLOW);
             }
         }
 
@@ -173,7 +176,13 @@ async fn main() {
 
         // Info Text
         draw_text("BIOMIMETIC SYNTH", 10.0, 20.0, 30.0, WHITE);
-        draw_text("Click to Stimulate | R: Set to Chattering", 10.0, sh - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Click to Stimulate | R: Set to Chattering",
+            10.0,
+            sh - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

@@ -1,5 +1,5 @@
-pub mod mechanism;
 pub mod audio;
+pub mod mechanism;
 
 #[cfg(test)]
 mod tests {

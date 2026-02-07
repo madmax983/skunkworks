@@ -46,9 +46,7 @@ impl AudioEngine {
         #[cfg(not(feature = "audio"))]
         {
             // Drain receiver
-            std::thread::spawn(move || {
-                while let Ok(_) = rx.recv() {}
-            });
+            std::thread::spawn(move || while let Ok(_) = rx.recv() {});
             Ok(Self {})
         }
     }
@@ -82,9 +80,9 @@ impl Synthesizer {
                 AudioEvent::Kick => self.voices.push(Voice::new_kick(self.sample_rate)),
                 AudioEvent::Snare => self.voices.push(Voice::new_snare(self.sample_rate)),
                 AudioEvent::HiHat => self.voices.push(Voice::new_hihat(self.sample_rate)),
-                AudioEvent::Perc(pitch) => self
-                    .voices
-                    .push(Voice::new_perc(self.sample_rate, pitch)),
+                AudioEvent::Perc(pitch) => {
+                    self.voices.push(Voice::new_perc(self.sample_rate, pitch))
+                }
             }
         }
 
@@ -121,10 +119,21 @@ struct Voice {
 
 #[cfg(feature = "audio")]
 enum VoiceKind {
-    Kick { freq_start: f32, freq_end: f32, decay: f32 },
-    Snare { decay: f32 },
-    HiHat { decay: f32 },
-    Perc { freq: f32, decay: f32 },
+    Kick {
+        freq_start: f32,
+        freq_end: f32,
+        decay: f32,
+    },
+    Snare {
+        decay: f32,
+    },
+    HiHat {
+        decay: f32,
+    },
+    Perc {
+        freq: f32,
+        decay: f32,
+    },
 }
 
 #[cfg(feature = "audio")]
@@ -183,7 +192,11 @@ impl Voice {
         self.t += dt;
 
         match self.kind {
-            VoiceKind::Kick { freq_start, freq_end, decay } => {
+            VoiceKind::Kick {
+                freq_start,
+                freq_end,
+                decay,
+            } => {
                 if self.t > decay {
                     self.finished = true;
                     return None;
@@ -216,7 +229,7 @@ impl Voice {
                 Some(noise * amp * 0.3)
             }
             VoiceKind::Perc { freq, decay } => {
-                 if self.t > decay {
+                if self.t > decay {
                     self.finished = true;
                     return None;
                 }

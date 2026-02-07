@@ -127,23 +127,62 @@ fn test_anneal() {
     // Radius 2 includes these points.
 
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(30)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // x
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(9)] }, // x
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(9)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // x
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-        Gene { op: OpCode::Anneal, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(30)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }, // x
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(9)],
+        }, // x
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(9)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }, // x
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        },
+        Gene {
+            op: OpCode::Anneal,
+            args: vec![],
+        },
     ];
 
     let mut vm = make_vm(genes);

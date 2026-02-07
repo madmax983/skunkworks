@@ -1,4 +1,4 @@
-use system_attractor::simulation::{Particle, LorenzParams, update_particles};
+use system_attractor::simulation::{update_particles, LorenzParams, Particle};
 
 #[test]
 fn test_lorenz_update() {

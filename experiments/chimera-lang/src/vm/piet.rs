@@ -584,5 +584,6 @@ pub fn exec_piet(vm: &mut ChimeraVM, max_steps: i64) {
     }
 
     vm.energy = vm.energy.saturating_sub(state.steps as i64 / 10);
-    vm.output.push(format!("PIET: Executed {} steps", state.steps));
+    vm.output
+        .push(format!("PIET: Executed {} steps", state.steps));
 }

@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use system_attractor::simulation::{Particle, SystemMonitor, update_particles};
+use system_attractor::simulation::{update_particles, Particle, SystemMonitor};
 
 #[macroquad::main("System Attractor")]
 async fn main() {
@@ -38,20 +38,36 @@ async fn main() {
         }
 
         // Camera Controls
-        if is_key_down(KeyCode::Left) { cam_yaw -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_yaw += 0.02; }
-        if is_key_down(KeyCode::Up) { cam_pitch = (cam_pitch + 0.02).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::Down) { cam_pitch = (cam_pitch - 0.02).clamp(-1.5, 1.5); }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch = (cam_pitch + 0.02).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch = (cam_pitch - 0.02).clamp(-1.5, 1.5);
+        }
         // Zoom
-        if is_key_down(KeyCode::W) { cam_dist -= 0.5; }
-        if is_key_down(KeyCode::S) { cam_dist += 0.5; }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 0.5;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 0.5;
+        }
 
         // Reset
         if is_key_pressed(KeyCode::R) {
-             particles.iter_mut().for_each(|p| {
-                p.pos = vec3(rand::gen_range(-10.0, 10.0), rand::gen_range(-10.0, 10.0), rand::gen_range(10.0, 40.0));
-                p.vel = vec3(0.,0.,0.);
-             });
+            particles.iter_mut().for_each(|p| {
+                p.pos = vec3(
+                    rand::gen_range(-10.0, 10.0),
+                    rand::gen_range(-10.0, 10.0),
+                    rand::gen_range(10.0, 40.0),
+                );
+                p.vel = vec3(0., 0., 0.);
+            });
         }
 
         clear_background(BLACK);
@@ -78,28 +94,58 @@ async fn main() {
         // I'll render them as short lines based on velocity direction for "flow" look.
         // Actually, just points (tiny lines) is faster.
         for p in &particles {
-             // Simple point
-             // draw_line_3d is creating geometry every call.
-             // Ideally we use a mesh, but macroquad doesn't expose point primitive easily in high level.
-             // We can use `draw_line_3d` with length 0.05.
-             draw_line_3d(p.pos, p.pos + vec3(0.05, 0.05, 0.05), p.color);
+            // Simple point
+            // draw_line_3d is creating geometry every call.
+            // Ideally we use a mesh, but macroquad doesn't expose point primitive easily in high level.
+            // We can use `draw_line_3d` with length 0.05.
+            draw_line_3d(p.pos, p.pos + vec3(0.05, 0.05, 0.05), p.color);
         }
 
         // Draw Axis
-        draw_line_3d(vec3(0.,0.,0.), vec3(10.,0.,0.), RED);
-        draw_line_3d(vec3(0.,0.,0.), vec3(0.,10.,0.), GREEN);
-        draw_line_3d(vec3(0.,0.,0.), vec3(0.,0.,10.), BLUE);
+        draw_line_3d(vec3(0., 0., 0.), vec3(10., 0., 0.), RED);
+        draw_line_3d(vec3(0., 0., 0.), vec3(0., 10., 0.), GREEN);
+        draw_line_3d(vec3(0., 0., 0.), vec3(0., 0., 10.), BLUE);
 
         set_default_camera();
 
         // HUD
         draw_text("System Attractor", 10.0, 30.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Particles: {}", num_particles), 10.0, 80.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Sigma (CPU): {:.2}", monitor.params.sigma), 10.0, 110.0, 20.0, RED);
-        draw_text(&format!("Rho (RAM): {:.2}", monitor.params.rho), 10.0, 130.0, 20.0, BLUE);
-        draw_text(&format!("Beta: {:.2}", monitor.params.beta), 10.0, 150.0, 20.0, GREEN);
-        draw_text("Controls: Arrows to rotate, W/S zoom, R reset", 10.0, screen_height() - 20.0, 20.0, GRAY);
+        draw_text(
+            &format!("Particles: {}", num_particles),
+            10.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Sigma (CPU): {:.2}", monitor.params.sigma),
+            10.0,
+            110.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            &format!("Rho (RAM): {:.2}", monitor.params.rho),
+            10.0,
+            130.0,
+            20.0,
+            BLUE,
+        );
+        draw_text(
+            &format!("Beta: {:.2}", monitor.params.beta),
+            10.0,
+            150.0,
+            20.0,
+            GREEN,
+        );
+        draw_text(
+            "Controls: Arrows to rotate, W/S zoom, R reset",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

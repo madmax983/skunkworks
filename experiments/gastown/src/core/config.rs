@@ -1,9 +1,9 @@
+use anyhow::{Context, Result};
+use dirs::home_dir;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use anyhow::{Context, Result};
-use dirs::home_dir;
 
 #[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Config {

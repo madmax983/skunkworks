@@ -89,7 +89,8 @@ impl Cladistics {
 
     // For rendering, we might want to get roots (nodes with no parents)
     pub fn get_roots(&self) -> Vec<usize> {
-        self.nodes.values()
+        self.nodes
+            .values()
             .filter(|n| n.parent_id.is_none())
             .map(|n| n.id)
             .collect()

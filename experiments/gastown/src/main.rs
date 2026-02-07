@@ -1,12 +1,12 @@
 mod cli;
 mod core;
 
+use anyhow::Result;
 use clap::Parser;
-use cli::{Cli, Commands, RigCommands, CrewCommands, ConvoyCommands, MayorCommands};
+use cli::{Cli, Commands, ConvoyCommands, CrewCommands, MayorCommands, RigCommands};
+use core::agent::list_agents;
 use core::config::{Config, Convoy, Task};
 use core::task::generate_id;
-use core::agent::list_agents;
-use anyhow::Result;
 use std::process::Command;
 
 fn main() -> Result<()> {
@@ -20,10 +20,13 @@ fn main() -> Result<()> {
             println!("Initializing Gas Town workspace at {}", path);
             std::fs::create_dir_all(&path)?;
             if git {
-                 let status = Command::new("git").arg("init").current_dir(&path).status()?;
-                 if !status.success() {
-                     eprintln!("Failed to initialize git repository");
-                 }
+                let status = Command::new("git")
+                    .arg("init")
+                    .current_dir(&path)
+                    .status()?;
+                if !status.success() {
+                    eprintln!("Failed to initialize git repository");
+                }
             }
             // Ensure config exists
             config.save()?;
@@ -76,8 +79,8 @@ fn main() -> Result<()> {
                         break;
                     }
                     if !input.is_empty() {
-                         println!("Mayor received: {}", input);
-                         // Here we would parse natural language or commands
+                        println!("Mayor received: {}", input);
+                        // Here we would parse natural language or commands
                     }
                 }
             }
@@ -86,7 +89,12 @@ fn main() -> Result<()> {
             }
         },
         Commands::Convoy { command } => match command {
-            ConvoyCommands::Create { name, issues, notify: _, human: _ } => {
+            ConvoyCommands::Create {
+                name,
+                issues,
+                notify: _,
+                human: _,
+            } => {
                 let id = generate_id();
                 let convoy = Convoy {
                     id: id.clone(),
@@ -101,11 +109,14 @@ fn main() -> Result<()> {
                 // Or we generate task objects for them.
                 for issue in issues {
                     if !config.tasks.contains_key(&issue) {
-                        config.tasks.insert(issue.clone(), Task {
-                            id: issue.clone(),
-                            description: format!("Task {}", issue),
-                            status: "pending".into(),
-                        });
+                        config.tasks.insert(
+                            issue.clone(),
+                            Task {
+                                id: issue.clone(),
+                                description: format!("Task {}", issue),
+                                status: "pending".into(),
+                            },
+                        );
                     }
                 }
 
@@ -118,7 +129,12 @@ fn main() -> Result<()> {
                 } else {
                     println!("Convoys:");
                     for convoy in config.convoys.values() {
-                        println!("  - {} ({}) [{} tasks]", convoy.name, convoy.id, convoy.tasks.len());
+                        println!(
+                            "  - {} ({}) [{} tasks]",
+                            convoy.name,
+                            convoy.id,
+                            convoy.tasks.len()
+                        );
                     }
                 }
             }
@@ -127,8 +143,12 @@ fn main() -> Result<()> {
                     println!("Convoy: {} ({})", convoy.name, convoy.id);
                     println!("Tasks:");
                     for task_id in &convoy.tasks {
-                         let status = config.tasks.get(task_id).map(|t| t.status.as_str()).unwrap_or("unknown");
-                         println!("  - {} [{}]", task_id, status);
+                        let status = config
+                            .tasks
+                            .get(task_id)
+                            .map(|t| t.status.as_str())
+                            .unwrap_or("unknown");
+                        println!("  - {} [{}]", task_id, status);
                     }
                 } else {
                     eprintln!("Convoy '{}' not found", id);
@@ -138,12 +158,15 @@ fn main() -> Result<()> {
                 if let Some(convoy) = config.convoys.get_mut(&convoy_id) {
                     for issue in issues {
                         convoy.tasks.push(issue.clone());
-                         if !config.tasks.contains_key(&issue) {
-                            config.tasks.insert(issue.clone(), Task {
-                                id: issue.clone(),
-                                description: format!("Task {}", issue),
-                                status: "pending".into(),
-                            });
+                        if !config.tasks.contains_key(&issue) {
+                            config.tasks.insert(
+                                issue.clone(),
+                                Task {
+                                    id: issue.clone(),
+                                    description: format!("Task {}", issue),
+                                    status: "pending".into(),
+                                },
+                            );
                         }
                     }
                     println!("Added tasks to convoy '{}'", convoy.name);
@@ -153,24 +176,34 @@ fn main() -> Result<()> {
                 }
             }
         },
-        Commands::Sling { bead_id, rig, agent } => {
-             // Find a free agent or use specified
-             let agent_name = agent.unwrap_or_else(|| "default".to_string());
-             println!("Slung bead '{}' to agent '{}' on rig '{}'", bead_id, agent_name, rig);
+        Commands::Sling {
+            bead_id,
+            rig,
+            agent,
+        } => {
+            // Find a free agent or use specified
+            let agent_name = agent.unwrap_or_else(|| "default".to_string());
+            println!(
+                "Slung bead '{}' to agent '{}' on rig '{}'",
+                bead_id, agent_name, rig
+            );
 
-             // Update task status
-             if let Some(task) = config.tasks.get_mut(&bead_id) {
-                 task.status = "in-progress".into();
-                 config.save()?;
-             } else {
-                 // Create if not exists
-                 config.tasks.insert(bead_id.clone(), Task {
-                     id: bead_id.clone(),
-                     description: format!("Task {}", bead_id),
-                     status: "in-progress".into(),
-                 });
-                 config.save()?;
-             }
+            // Update task status
+            if let Some(task) = config.tasks.get_mut(&bead_id) {
+                task.status = "in-progress".into();
+                config.save()?;
+            } else {
+                // Create if not exists
+                config.tasks.insert(
+                    bead_id.clone(),
+                    Task {
+                        id: bead_id.clone(),
+                        description: format!("Task {}", bead_id),
+                        status: "in-progress".into(),
+                    },
+                );
+                config.save()?;
+            }
         }
         Commands::Agents => {
             let agents = list_agents();

@@ -1,5 +1,5 @@
+use glyph_terrain::{apply_terrain, glyph_mesh, load_font, GlyphMesh};
 use macroquad::prelude::*;
-use glyph_terrain::{load_font, glyph_mesh, apply_terrain, GlyphMesh};
 
 #[macroquad::main("Glyph Terrain")]
 async fn main() {
@@ -17,11 +17,11 @@ async fn main() {
 
     loop {
         if is_key_pressed(KeyCode::Space) {
-             current_char = match current_char {
-                 'Z' => 'A',
-                 c => ((c as u8) + 1) as char,
-             };
-             mesh_mq = generate_mesh(&font, current_char);
+            current_char = match current_char {
+                'Z' => 'A',
+                c => ((c as u8) + 1) as char,
+            };
+            mesh_mq = generate_mesh(&font, current_char);
         }
 
         if is_mouse_button_down(MouseButton::Left) {
@@ -42,7 +42,7 @@ async fn main() {
             position: vec3(
                 cam_dist * cam_rot_x.cos() * cam_rot_y.sin(),
                 cam_dist * cam_rot_y.cos(),
-                cam_dist * cam_rot_x.sin() * cam_rot_y.sin()
+                cam_dist * cam_rot_x.sin() * cam_rot_y.sin(),
             ),
             target: vec3(0.0, 0.0, 0.0),
             up: vec3(0.0, 1.0, 0.0),
@@ -59,7 +59,13 @@ async fn main() {
         set_default_camera();
 
         draw_text(&format!("Char: {}", current_char), 20.0, 30.0, 30.0, WHITE);
-        draw_text("Drag to rotate, Scroll to zoom, Space to cycle", 20.0, 60.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Drag to rotate, Scroll to zoom, Space to cycle",
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }
@@ -89,10 +95,12 @@ fn to_mq_mesh(gm: &GlyphMesh) -> Mesh {
     // Calculate flat normals for triangles and accumulate to vertices
     for i in (0..gm.indices.len()).step_by(3) {
         let i0 = gm.indices[i] as usize;
-        let i1 = gm.indices[i+1] as usize;
-        let i2 = gm.indices[i+2] as usize;
+        let i1 = gm.indices[i + 1] as usize;
+        let i2 = gm.indices[i + 2] as usize;
 
-        if i0 >= vertices.len() || i1 >= vertices.len() || i2 >= vertices.len() { continue; }
+        if i0 >= vertices.len() || i1 >= vertices.len() || i2 >= vertices.len() {
+            continue;
+        }
 
         let v0 = vertices[i0].position;
         let v1 = vertices[i1].position;
@@ -114,7 +122,7 @@ fn to_mq_mesh(gm: &GlyphMesh) -> Mesh {
     // Normalize accumulated normals
     for v in &mut vertices {
         let n = v.normal;
-        let len_sq = n.x*n.x + n.y*n.y + n.z*n.z;
+        let len_sq = n.x * n.x + n.y * n.y + n.z * n.z;
         if len_sq > 0.0 {
             v.normal = n / len_sq.sqrt();
         } else {
@@ -124,11 +132,11 @@ fn to_mq_mesh(gm: &GlyphMesh) -> Mesh {
         // Apply color based on height (y)
         let height = v.position.y;
         let color: Color = if height < 0.2 {
-             Color::new(0.8, 0.7, 0.5, 1.0) // Sand
+            Color::new(0.8, 0.7, 0.5, 1.0) // Sand
         } else if height > 0.8 {
-             WHITE // Snow
+            WHITE // Snow
         } else {
-             Color::new(0.1, 0.6, 0.1, 1.0) // Grass
+            Color::new(0.1, 0.6, 0.1, 1.0) // Grass
         };
         v.color = color.into();
     }

@@ -105,10 +105,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("PIN_IN: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for pin_in".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for pin_in".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pin_in".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pin_in".to_string());
             }
         }
         OpCode::PinOut => {
@@ -122,10 +124,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("PIN_OUT: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for pin_out".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for pin_out".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pin_out".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pin_out".to_string());
             }
         }
         OpCode::Emitter => {
@@ -140,10 +144,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("EMITTER: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for emitter".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for emitter".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for emitter".to_string());
+                vm.output
+                    .push("Error: Stack underflow for emitter".to_string());
             }
         }
         OpCode::Receiver => {
@@ -155,13 +161,16 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 if let (Value::Int(y), Value::Int(x), Value::Int(s)) = (y_val, x_val, s_val) {
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                         vm.grid[ny][nx] = Value::Str(format!("RECV:{}", s));
-                        vm.output.push(format!("RECEIVER: Created at {},{}", nx, ny));
+                        vm.output
+                            .push(format!("RECEIVER: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for receiver".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for receiver".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for receiver".to_string());
+                vm.output
+                    .push("Error: Stack underflow for receiver".to_string());
             }
         }
         OpCode::Latch => {
@@ -174,13 +183,15 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                         let state = if s != 0 { 1 } else { 0 };
                         vm.grid[ny][nx] = Value::Str(format!("LATCH:{}", state));
-                        vm.output.push(format!("LATCH: Created at {},{} state {}", nx, ny, state));
+                        vm.output
+                            .push(format!("LATCH: Created at {},{} state {}", nx, ny, state));
                     }
                 } else {
                     vm.output.push("Error: Type mismatch for latch".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for latch".to_string());
+                vm.output
+                    .push("Error: Stack underflow for latch".to_string());
             }
         }
         OpCode::DAC => {
@@ -197,16 +208,20 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     let active = match cell {
                         Value::Int(2) => true, // Electron Head
                         Value::Str(s) if s.starts_with("EMIT:") => {
-                             // Check if firing (phase == 0)
-                             let parts: Vec<&str> = s.split(':').collect();
-                             if parts.len() == 3 {
-                                 if let Ok(phase) = parts[2].parse::<i64>() {
-                                     phase == 0
-                                 } else { false }
-                             } else { false }
-                        },
+                            // Check if firing (phase == 0)
+                            let parts: Vec<&str> = s.split(':').collect();
+                            if parts.len() == 3 {
+                                if let Ok(phase) = parts[2].parse::<i64>() {
+                                    phase == 0
+                                } else {
+                                    false
+                                }
+                            } else {
+                                false
+                            }
+                        }
                         Value::Str(s) if s == "LATCH:1" => true,
-                        _ => false
+                        _ => false,
                     };
 
                     if active {
@@ -225,7 +240,8 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 
                 for (dy, dx, bit) in neighbors {
                     if (val & bit) != 0 {
-                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
+                        {
                             // Only energize wires, don't overwrite components
                             if let Value::Int(1) = vm.grid[ny][nx] {
                                 vm.grid[ny][nx] = Value::Int(2);
@@ -235,7 +251,8 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 }
                 vm.output.push(format!("ADC: Wrote {}", val));
             } else {
-                vm.output.push("Error: Stack underflow or type mismatch for ADC".to_string());
+                vm.output
+                    .push("Error: Stack underflow or type mismatch for ADC".to_string());
             }
         }
         _ => {}
@@ -273,23 +290,31 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                     if s.starts_with("EMIT:") {
                         let parts: Vec<&str> = s.split(':').collect();
                         if parts.len() == 3 {
-                            if let (Ok(freq), Ok(phase)) = (parts[1].parse::<i64>(), parts[2].parse::<i64>()) {
+                            if let (Ok(freq), Ok(phase)) =
+                                (parts[1].parse::<i64>(), parts[2].parse::<i64>())
+                            {
                                 let mut new_phase = phase + 1;
                                 if new_phase >= freq {
                                     new_phase = 0;
                                 }
-                                next_grid[y][x] = Value::Str(format!("EMIT:{}:{}", freq, new_phase));
+                                next_grid[y][x] =
+                                    Value::Str(format!("EMIT:{}:{}", freq, new_phase));
                             }
                         }
                         // Emitter handles its own next state, doesn't evolve via WW rules
                         0
-                    } else if s.starts_with("RECV:") || s == "PIN:IN" || s == "PIN:OUT" || s.starts_with("G:") || s.starts_with("LATCH:") {
+                    } else if s.starts_with("RECV:")
+                        || s == "PIN:IN"
+                        || s == "PIN:OUT"
+                        || s.starts_with("G:")
+                        || s.starts_with("LATCH:")
+                    {
                         // Static components (physically)
                         0
                     } else {
                         0
                     }
-                },
+                }
                 _ => 0,
             };
 
@@ -322,8 +347,12 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                                 // Check if Emitter is firing
                                                 let parts: Vec<&str> = s.split(':').collect();
                                                 if parts.len() == 3 {
-                                                    if let (Ok(_freq), Ok(phase)) = (parts[1].parse::<i64>(), parts[2].parse::<i64>()) {
-                                                        if phase == 0 { // Firing phase
+                                                    if let (Ok(_freq), Ok(phase)) = (
+                                                        parts[1].parse::<i64>(),
+                                                        parts[2].parse::<i64>(),
+                                                    ) {
+                                                        if phase == 0 {
+                                                            // Firing phase
                                                             head_neighbors += 1;
                                                         }
                                                     }
@@ -331,7 +360,7 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                             } else if s == "LATCH:1" {
                                                 head_neighbors += 1;
                                             }
-                                        },
+                                        }
                                         _ => {}
                                     }
                                 }
@@ -366,7 +395,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                     let mut triggered = false;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if dy == 0 && dx == 0 { continue; }
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
                             if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
                                 // Check for Head (2) or Firing Emitter
                                 if let Value::Int(2) = vm.grid[ny][nx] {
@@ -376,7 +407,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                         let parts: Vec<&str> = es.split(':').collect();
                                         if parts.len() == 3 {
                                             if let Ok(phase) = parts[2].parse::<i64>() {
-                                                if phase == 0 { triggered = true; }
+                                                if phase == 0 {
+                                                    triggered = true;
+                                                }
                                             }
                                         }
                                     } else if es == "LATCH:1" {
@@ -396,7 +429,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                         let mut triggered = false;
                         for dy in -1..=1 {
                             for dx in -1..=1 {
-                                if dy == 0 && dx == 0 { continue; }
+                                if dy == 0 && dx == 0 {
+                                    continue;
+                                }
                                 if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
                                     if let Value::Int(2) = vm.grid[ny][nx] {
                                         triggered = true;
@@ -405,7 +440,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                             let parts: Vec<&str> = es.split(':').collect();
                                             if parts.len() == 3 {
                                                 if let Ok(phase) = parts[2].parse::<i64>() {
-                                                    if phase == 0 { triggered = true; }
+                                                    if phase == 0 {
+                                                        triggered = true;
+                                                    }
                                                 }
                                             }
                                         } else if es == "LATCH:1" {
@@ -475,37 +512,43 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                         // Clock: South (1, 0), Data: North (-1, 0)
                         let mut clock_high = false;
                         if let Some((cy, cx)) = get_neighbor(vm, y, x, 1, 0) {
-                             if let Value::Int(2) = vm.grid[cy][cx] { clock_high = true; }
-                             else if let Value::Str(es) = &vm.grid[cy][cx] {
-                                 if es.starts_with("EMIT:") {
-                                     let parts: Vec<&str> = es.split(':').collect();
-                                     if parts.len() == 3 {
-                                         if let Ok(phase) = parts[2].parse::<i64>() {
-                                             if phase == 0 { clock_high = true; }
-                                         }
-                                     }
-                                 } else if es == "LATCH:1" {
-                                     clock_high = true;
-                                 }
-                             }
+                            if let Value::Int(2) = vm.grid[cy][cx] {
+                                clock_high = true;
+                            } else if let Value::Str(es) = &vm.grid[cy][cx] {
+                                if es.starts_with("EMIT:") {
+                                    let parts: Vec<&str> = es.split(':').collect();
+                                    if parts.len() == 3 {
+                                        if let Ok(phase) = parts[2].parse::<i64>() {
+                                            if phase == 0 {
+                                                clock_high = true;
+                                            }
+                                        }
+                                    }
+                                } else if es == "LATCH:1" {
+                                    clock_high = true;
+                                }
+                            }
                         }
 
                         let mut next_state = state;
                         if clock_high {
                             let mut data_high = 0;
                             if let Some((ny, nx)) = get_neighbor(vm, y, x, -1, 0) {
-                                if let Value::Int(2) = vm.grid[ny][nx] { data_high = 1; }
-                                else if let Value::Str(es) = &vm.grid[ny][nx] {
-                                     if es.starts_with("EMIT:") {
-                                         let parts: Vec<&str> = es.split(':').collect();
-                                         if parts.len() == 3 {
-                                             if let Ok(phase) = parts[2].parse::<i64>() {
-                                                 if phase == 0 { data_high = 1; }
-                                             }
-                                         }
-                                     } else if es == "LATCH:1" {
-                                         data_high = 1;
-                                     }
+                                if let Value::Int(2) = vm.grid[ny][nx] {
+                                    data_high = 1;
+                                } else if let Value::Str(es) = &vm.grid[ny][nx] {
+                                    if es.starts_with("EMIT:") {
+                                        let parts: Vec<&str> = es.split(':').collect();
+                                        if parts.len() == 3 {
+                                            if let Ok(phase) = parts[2].parse::<i64>() {
+                                                if phase == 0 {
+                                                    data_high = 1;
+                                                }
+                                            }
+                                        }
+                                    } else if es == "LATCH:1" {
+                                        data_high = 1;
+                                    }
                                 }
                             }
                             next_state = data_high;

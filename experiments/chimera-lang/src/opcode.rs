@@ -891,6 +891,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Pray,
 
+    // Astrology Features (Nova)
+    /// **[Nova]** Gazes at the sky to measure star intensity and color.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., intensity, color ]`
+    #[cfg(feature = "nova")]
+    Gaze,
+    /// **[Nova]** Summons a meteor strike if a star is overhead.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Cost:** 50 Energy.
+    #[cfg(feature = "nova")]
+    Starfall,
+    /// **[Nova]** Checks alignment with the nearest star.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., angle_to_nearest ]`
+    #[cfg(feature = "nova")]
+    Align,
+
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.
     ///

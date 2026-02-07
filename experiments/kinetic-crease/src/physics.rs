@@ -78,7 +78,6 @@ impl Solver {
         });
     }
 
-
     pub fn step(&mut self, dt: f32, substeps: usize) {
         let dt_sub = dt / substeps as f32;
 
@@ -130,7 +129,13 @@ impl Solver {
     }
 }
 
-fn solve_distance(particles: &mut [Particle], p1_idx: usize, p2_idx: usize, target_len: f32, stiffness: f32) {
+fn solve_distance(
+    particles: &mut [Particle],
+    p1_idx: usize,
+    p2_idx: usize,
+    target_len: f32,
+    stiffness: f32,
+) {
     let p1 = particles[p1_idx].pos;
     let p2 = particles[p2_idx].pos;
     let w1 = particles[p1_idx].inv_mass;

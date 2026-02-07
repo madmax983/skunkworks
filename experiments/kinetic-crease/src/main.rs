@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
-use kinetic_crease::physics::Solver;
 use kinetic_crease::mesh;
+use kinetic_crease::physics::Solver;
+use macroquad::prelude::*;
 
 #[macroquad::main("Kinetic Crease")]
 async fn main() {
@@ -26,10 +26,18 @@ async fn main() {
         }
 
         // Camera Input
-        if is_key_down(KeyCode::A) { cam_yaw += 0.02; }
-        if is_key_down(KeyCode::D) { cam_yaw -= 0.02; }
-        if is_key_down(KeyCode::W) { cam_pitch += 0.02; }
-        if is_key_down(KeyCode::S) { cam_pitch -= 0.02; }
+        if is_key_down(KeyCode::A) {
+            cam_yaw += 0.02;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_yaw -= 0.02;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_pitch += 0.02;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_pitch -= 0.02;
+        }
         cam_dist = (cam_dist + mouse_wheel().1 * -1.0).clamp(5.0, 100.0);
 
         // Physics Update
@@ -63,8 +71,8 @@ async fn main() {
 
         for i in (0..crease_mesh.indices.len()).step_by(3) {
             let idx0 = crease_mesh.indices[i] as usize;
-            let idx1 = crease_mesh.indices[i+1] as usize;
-            let idx2 = crease_mesh.indices[i+2] as usize;
+            let idx1 = crease_mesh.indices[i + 1] as usize;
+            let idx2 = crease_mesh.indices[i + 2] as usize;
 
             let p0 = solver.particles[idx0].pos;
             let p1 = solver.particles[idx1].pos;
@@ -85,7 +93,7 @@ async fn main() {
                 base_color.r * brightness,
                 base_color.g * brightness,
                 base_color.b * brightness,
-                1.0
+                1.0,
             );
 
             let color_u8: [u8; 4] = [
@@ -96,9 +104,24 @@ async fn main() {
             ];
 
             let base_idx = mq_vertices.len() as u16;
-            mq_vertices.push(Vertex { position: v0, uv: vec2(0., 0.), color: color_u8, normal: normal_v4 });
-            mq_vertices.push(Vertex { position: v1, uv: vec2(1., 0.), color: color_u8, normal: normal_v4 });
-            mq_vertices.push(Vertex { position: v2, uv: vec2(0., 1.), color: color_u8, normal: normal_v4 });
+            mq_vertices.push(Vertex {
+                position: v0,
+                uv: vec2(0., 0.),
+                color: color_u8,
+                normal: normal_v4,
+            });
+            mq_vertices.push(Vertex {
+                position: v1,
+                uv: vec2(1., 0.),
+                color: color_u8,
+                normal: normal_v4,
+            });
+            mq_vertices.push(Vertex {
+                position: v2,
+                uv: vec2(0., 1.),
+                color: color_u8,
+                normal: normal_v4,
+            });
 
             mq_indices.push(base_idx);
             mq_indices.push(base_idx + 1);
@@ -115,8 +138,20 @@ async fn main() {
 
         set_default_camera();
 
-        draw_text(&format!("Fold Factor: {:.2}", fold_factor), 10.0, 30.0, 30.0, WHITE);
-        draw_text("Controls: Left/Right to Fold, WASD+MouseWheel to Move Camera", 10.0, 60.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Fold Factor: {:.2}", fold_factor),
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Controls: Left/Right to Fold, WASD+MouseWheel to Move Camera",
+            10.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 80.0, 20.0, LIGHTGRAY);
 
         next_frame().await

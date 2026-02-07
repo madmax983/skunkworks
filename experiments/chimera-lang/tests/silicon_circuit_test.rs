@@ -112,6 +112,10 @@ mod tests {
             }
         }
 
-        assert!(success, "Circuit failed to trigger payload. Output: {:?}", vm.output);
+        assert!(
+            success,
+            "Circuit failed to trigger payload. Output: {:?}",
+            vm.output
+        );
     }
 }
