@@ -869,6 +869,36 @@ pub enum OpCode {
     // Atmosphere Features
     /// **[Nova]** Sets the local wind vector.
     ///
+    // Sovereignty Features (Territory Control)
+    /// **[Nova]** Claims the local area as territory.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    /// **Effect:** Sets the owner of the grid cells.
+    #[cfg(feature = "nova")]
+    Claim,
+    /// **[Nova]** Sets the tax rate for the current territory (if owner).
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tax,
+    /// **[Nova]** Grants free passage to another strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Grant,
+    /// **[Nova]** Revokes free passage from another strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Revoke,
+    /// **[Nova]** Checks the owner of a grid cell.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., owner_id ]`
+    #[cfg(feature = "nova")]
+    Survey,
+
+    /// **[Nova]** Sets the local wind vector.
+    ///
     /// **Stack:** `[ ..., angle, strength ] -> [ ... ]`
     /// **Angle:** 0=N, 1=NE, 2=E, 3=SE, 4=S, 5=SW, 6=W, 7=NW.
     #[cfg(feature = "nova")]

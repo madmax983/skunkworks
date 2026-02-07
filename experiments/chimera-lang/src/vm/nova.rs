@@ -1162,6 +1162,78 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
+        OpCode::Claim => {
+            // stack: radius
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(r) = val {
+                    let (cy, cx) = vm.context_loc;
+                    let count = vm.sovereignty.claim_territory(vm.ip.0, r, cx, cy);
+                    vm.energy = vm.energy.saturating_sub(count as i64 * 5); // Cost 5 per cell
+                    vm.output.push(format!("CLAIM: Claimed {} cells at {},{}", count, cx, cy));
+                } else {
+                    vm.output.push("Error: Type mismatch for claim".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for claim".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Tax => {
+            // stack: rate
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(rate) = val {
+                    vm.sovereignty.set_tax(vm.ip.0, rate);
+                    vm.output.push(format!("TAX: Set tax rate to {}", rate));
+                } else {
+                    vm.output.push("Error: Type mismatch for tax".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for tax".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Grant => {
+            // stack: strand_idx
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.sovereignty.grant_access(vm.ip.0, idx as usize);
+                    vm.output.push(format!("GRANT: Granted access to strand {}", idx));
+                } else {
+                    vm.output.push("Error: Type mismatch for grant".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for grant".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Revoke => {
+            // stack: strand_idx
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.sovereignty.revoke_access(vm.ip.0, idx as usize);
+                    vm.output.push(format!("REVOKE: Revoked access for strand {}", idx));
+                } else {
+                    vm.output.push("Error: Type mismatch for revoke".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for revoke".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Survey => {
+            let (cy, cx) = vm.context_loc;
+            if let Some(owner) = vm.sovereignty.get_owner(cy, cx) {
+                vm.stack.push(Value::Int(owner as i64));
+            } else {
+                vm.stack.push(Value::Int(-1));
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Prophecy => exec_prophecy(vm),
         #[cfg(feature = "nova")]
         OpCode::EgregoreLink => {
@@ -2850,6 +2922,20 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 ));
                                 new_y = py;
                                 new_x = px;
+                            }
+
+                            // Check Sovereignty (Border Control)
+                            if let Err(msg) =
+                                vm.sovereignty
+                                    .try_enter_territory(&mut vm.market, vm.ip.0, new_y, new_x)
+                            {
+                                vm.output.push(msg);
+                                // Blocked
+                                if vm.trigger_reflex(3) {
+                                    // Event 3: Border Rejection
+                                    return Some(vm.ip);
+                                }
+                                return Some(vm.ip);
                             }
 
                             vm.context_loc = (new_y, new_x);

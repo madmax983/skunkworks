@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Sovereign)
+- **Status:** Territory Control protocols active. Strands are claiming grid sectors. Taxes are being levied. The economy has spatialized. Borders are drawn in energy.
+
 ### [Concentration Level: FRESH] - Location: experiments/system-attractor
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Lorenz Attractor is storming. 50,000 particles are tracing the butterfly effect. System load is driving the chaos.

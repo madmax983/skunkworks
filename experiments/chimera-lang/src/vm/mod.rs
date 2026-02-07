@@ -93,6 +93,8 @@ mod nova_retina_test;
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
+#[cfg(feature = "nova")]
+pub mod nova_sovereignty;
 pub mod oracle;
 #[cfg(feature = "nova")]
 pub mod cladistics;
@@ -360,6 +362,8 @@ pub struct ChimeraVM {
     pub meme_pool: memetics::MemePool,
     #[cfg(feature = "nova")]
     pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
+    #[cfg(feature = "nova")]
+    pub sovereignty: nova_sovereignty::SovereigntyState,
 }
 
 impl ChimeraVM {
@@ -534,6 +538,8 @@ impl ChimeraVM {
             meme_pool: memetics::MemePool::new(),
             #[cfg(feature = "nova")]
             dialects: HashMap::new(),
+            #[cfg(feature = "nova")]
+            sovereignty: nova_sovereignty::SovereigntyState::new(),
         }
     }
 
@@ -1866,7 +1872,12 @@ impl ChimeraVM {
             | OpCode::EgregoreQuery
             | OpCode::EgregoreSummon
             | OpCode::Sacrifice
-            | OpCode::Pray => nova::exec_nova_op(self, op, args),
+            | OpCode::Pray
+            | OpCode::Claim
+            | OpCode::Tax
+            | OpCode::Grant
+            | OpCode::Revoke
+            | OpCode::Survey => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
