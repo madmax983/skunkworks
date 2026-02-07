@@ -1,3 +1,47 @@
+//! # The Genetic Alphabet 🧬
+//!
+//! This module defines the `OpCode` enum, which represents the set of all possible enzymes (instructions)
+//! in the Chimera language.
+//!
+//! ## Categories
+//!
+//! The genetic alphabet is divided into several domains:
+//!
+//! ### 1. Primary Metabolism (Core)
+//! Basic stack manipulation, arithmetic, and control flow.
+//! - `Push`, `Pop`, `Add`, `Sub`
+//! - `Jump`, `Brz`
+//! - `Photosynthesize`, `Consume`
+//!
+//! ### 2. Spatial Interaction (Grid)
+//! Interacting with the 2D Petri Dish environment.
+//! - `GRead`, `GWrite` (Cell access)
+//! - `Radiate`, `Siphon` (Area of Effect)
+//! - `Migrate`, `Osmosis` (Movement)
+//!
+//! ### 3. Genetics & Evolution (Nova)
+//! Self-modification and reproduction.
+//! - `Mitosis` (Cloning), `Apoptosis` (Death)
+//! - `Transcribe`, `Methylate` (Epigenetics)
+//! - `Splice`, `Recombine`, `CrisprScan` (Gene editing)
+//!
+//! ### 4. Physics & Reality (Nova)
+//! Manipulating the simulation constants.
+//! - `Gravity`, `Lumine` (Fields)
+//! - `Relativity`, `TimeWarp` (Time dilation)
+//! - `PhaseShift`, `Isomerize` (State changes)
+//!
+//! ### 5. Metaphysics (Nova)
+//! Interactions with the "Spirit" (User) and "Egregore" (Collective).
+//! - `Spirit` (Input)
+//! - `Pray`, `Sacrifice` (Egregore)
+//! - `Simulate`, `Dream`, `Prophecy` (Future prediction)
+//!
+//! ### 6. Specialized Systems
+//! - **Cortex**: Neural networks (`Link`, `Spark`).
+//! - **Silicon**: Logic gates (`Wire`, `NAND`).
+//! - **Market**: Economic transactions (`Buy`, `Sell`).
+
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::{AsRefStr, EnumString};

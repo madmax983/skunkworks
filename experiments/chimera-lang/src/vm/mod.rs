@@ -227,18 +227,28 @@ impl std::fmt::Display for Value {
 #[derive(Clone)]
 pub struct ChimeraVM {
     /// The read-only DNA program.
+    ///
+    /// Contains a `Helix` of `Strands`, each containing `Genes` (OpCodes).
     pub dna: Dna,
     /// The LIFO stack for data manipulation.
+    ///
+    /// Stores `Value::Int`, `Value::Str`, or `Value::Junction` types.
     pub stack: Vec<Value>,
     /// Instruction Pointer: `(strand_index, gene_index)`.
     pub ip: (usize, usize),
     /// Standard Output buffer (silent, accumulates strings).
     pub output: Vec<String>,
     /// Execution flag. If true, `step()` does nothing.
+    ///
+    /// Set when energy runs out or explicit halt occurs.
     pub halted: bool,
     /// Biological fuel. Starts at 50. Decreases by 1 per step.
+    ///
+    /// If energy drops to 0 or below, the organism dies (halts).
     pub energy: i64,
     /// 16x16 2D memory grid.
+    ///
+    /// Cells can store any `Value`, including OpCodes (Strings) or Integers.
     pub grid: Vec<Vec<Value>>,
     /// If true, random mutations occur frequently.
     pub chaos_mode: bool,
@@ -1343,6 +1353,17 @@ impl ChimeraVM {
     }
 
     /// Advances the simulation by one tick.
+    ///
+    /// The execution order is:
+    /// 1.  **Spirit Input**: Process external user input if requested (`OpCode::Spirit`).
+    /// 2.  **Egregore**: Global collective consciousness updates (if Nova enabled).
+    /// 3.  **Environment**: Diffusion of light, waste, hormones, and entropy.
+    /// 4.  **Physics**: Signal propagation, relativity, and ballistics.
+    /// 5.  **Circuitry**: Wireworld simulation (if Silicon enabled).
+    /// 6.  **Mutation**: Random bitflips if Chaos Mode is active.
+    /// 7.  **Metabolism**: Energy decay (-1 per tick) and starvation check.
+    /// 8.  **Gene Execution**: Execute the instruction at the current IP.
+    /// 9.  **Organelles**: Update all sub-processes (organelles/symbiotes).
     pub fn step(&mut self) {
         if self.halted {
             return;
