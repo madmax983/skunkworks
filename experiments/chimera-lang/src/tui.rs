@@ -742,6 +742,7 @@ where
                             crate::vm::alchemy::transmute_crucible(vm);
                         }
                     }
+                    #[cfg(feature = "nova")]
                     KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {

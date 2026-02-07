@@ -530,4 +530,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
 - **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
 - **Status**: experiments/quipu-chimera
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional). Verified 2026-02-19.
+
+### klein-chimera
+- **Parents**: experiments/chimera-lang + experiments/klein-flock
+- **Concept**: Chimera organisms living on a non-orientable Klein Bottle surface.
+- **Novel trait**: Chiral Inversion. Agents flip their internal "handedness" (Left/Right) and velocity when traversing the topological twist.
+- **Status**: experiments/klein-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
