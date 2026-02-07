@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The neurons are singing. Izhikevich dynamics are driving the audio buffer. STDP is shaping the melody. The brain is the instrument.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/silicon-samba
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Euclidean rhythms driven by system metrics. Polyrhythmic heartbeat detected.

@@ -32,7 +32,6 @@ members = [
     "experiments/storm-monitor",
     "experiments/struct-soup",
     "experiments/system-bio-dome",
-    "experiments/terra-fluid",
     "experiments/thermo-termites",
     "experiments/trace-fold",
     "experiments/venation-vines",
@@ -135,7 +134,7 @@ members = [
     "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster",
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
     "experiments/bridge-specter", "experiments/silicon-samba",
-    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/kinetic-crease", "experiments/bandwidth-bazaar", "experiments/gastown",
+    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/kinetic-crease", "experiments/bandwidth-bazaar", "experiments/gastown", "experiments/biomimetic-synth",
 ]
 resolver = "2"
 
