@@ -1176,6 +1176,61 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::RetinaDraw => {
+            // Stack: [ ..., packed_color, char_code, y, x ]
+            if vm.stack.len() >= 4 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let char_val = vm.stack.pop().unwrap();
+                let color_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(x), Value::Int(y), Value::Int(c), Value::Int(rgb)) =
+                    (x_val, y_val, char_val, color_val)
+                {
+                    let r = ((rgb >> 16) & 0xFF) as u8;
+                    let g = ((rgb >> 8) & 0xFF) as u8;
+                    let b = (rgb & 0xFF) as u8;
+                    let ch = (c as u8) as char;
+
+                    vm.retina.draw(y as usize, x as usize, ch, r, g, b);
+                    vm.energy = vm.energy.saturating_sub(1);
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for retina_draw".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for retina_draw".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::RetinaClear => {
+            // Stack: [ ..., packed_color ]
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(rgb) = val {
+                    let r = ((rgb >> 16) & 0xFF) as u8;
+                    let g = ((rgb >> 8) & 0xFF) as u8;
+                    let b = (rgb & 0xFF) as u8;
+                    vm.retina.clear(r, g, b);
+                    vm.energy = vm.energy.saturating_sub(10);
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for retina_clear".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for retina_clear".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::RetinaSize => {
+            vm.stack.push(Value::Int(vm.retina.width as i64));
+            vm.stack.push(Value::Int(vm.retina.height as i64));
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Chronos => {
             let (cy, cx) = vm.context_loc;
             let factor = vm.time_grid[cy][cx];

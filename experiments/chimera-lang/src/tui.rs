@@ -39,6 +39,8 @@ pub(crate) enum ViewMode {
     Graveyard,
     #[cfg(feature = "nova")]
     PianoRoll,
+    #[cfg(feature = "nova")]
+    Retina,
     Heatmap,
 }
 
@@ -681,6 +683,42 @@ where
                 return;
             }
 
+            // Handle Retina View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Retina = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+                    .split(f.area());
+
+                // Retina Display
+                let mut lines = Vec::new();
+                for row in &vm.retina.buffer {
+                    let mut spans = Vec::new();
+                    for (ch, (r, g, b)) in row {
+                        spans.push(Span::styled(
+                            ch.to_string(),
+                            Style::default().fg(Color::Rgb(*r, *g, *b)),
+                        ));
+                    }
+                    lines.push(Line::from(spans));
+                }
+
+                let retina_widget = Paragraph::new(lines).block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(format!("Retina ({}x{})", vm.retina.width, vm.retina.height)),
+                );
+                f.render_widget(retina_widget, chunks[0]);
+
+                let help = Paragraph::new(
+                    "Retina Display Active.\nControl via `retina_draw`, `retina_clear` opcodes.",
+                )
+                .block(Block::default().borders(Borders::ALL));
+                f.render_widget(help, chunks[1]);
+                return;
+            }
+
             // Handle Piano Roll View
             #[cfg(feature = "nova")]
             if let ViewMode::PianoRoll = app_state.view_mode {
@@ -906,6 +944,8 @@ where
                 ViewMode::Graveyard => "GRAVEYARD",
                 #[cfg(feature = "nova")]
                 ViewMode::PianoRoll => "PIANO ROLL",
+                #[cfg(feature = "nova")]
+                ViewMode::Retina => "RETINA",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -1408,6 +1448,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Retina => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Heatmap => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1502,7 +1547,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Graveyard => ViewMode::PianoRoll,
                             #[cfg(feature = "nova")]
-                            ViewMode::PianoRoll => ViewMode::Heatmap,
+                            ViewMode::PianoRoll => ViewMode::Retina,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Retina => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -1591,6 +1638,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::PianoRoll => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Retina => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1719,6 +1768,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::PianoRoll => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Retina => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -1743,6 +1794,8 @@ where
                         ViewMode::Graveyard => {}
                         #[cfg(feature = "nova")]
                         ViewMode::PianoRoll => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Retina => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1773,6 +1826,8 @@ where
                         ViewMode::Graveyard => {}
                         #[cfg(feature = "nova")]
                         ViewMode::PianoRoll => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Retina => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1911,6 +1966,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::PianoRoll => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Retina => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Heatmap => {
