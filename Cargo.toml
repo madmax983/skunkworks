@@ -58,6 +58,7 @@ members = [
     "experiments/miura-interface",
     "experiments/routing-market",
     "experiments/tectonic-git",
+    "experiments/retinal-glitch",
     "experiments/type-oscillator",
     "experiments/struct-harmonics",
     "experiments/symphonic-terrain",

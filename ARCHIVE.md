@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **retinal-glitch**: Documentation void. Generic implementation (toy neural network). Suspicious logic (`input.rs`). Grace period: 24h.
 - **fractal-stack**: Specimen exhibits zombie characteristics. Previously executed but persisted in `experiments/` without documentation. Redundant with `l-system-garden`. Grace period: 24h.
 
 ## Abandoned Work
@@ -66,3 +67,4 @@
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
 - **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
+- **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.

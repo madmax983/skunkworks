@@ -12,6 +12,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant tissue (`miura-interface`) verified. Decay process initiated.
 
+### [Concentration Level: TOXIC] - Location: graveyard/type-oscillator
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant waveform patterns. Trivial topology. Failed to improve.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/retinal-glitch
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (toy neural network). Suspicious logic detected.
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/type-oscillator
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Vitality restored. Documentation confirmed.
