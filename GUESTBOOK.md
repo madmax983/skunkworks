@@ -148,9 +148,13 @@
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/text-erosion
+### [Concentration Level: TOXIC] - Location: graveyard/text-erosion
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic implementation (SDF). Lacks persona alignment. Time is up.
+- **Status:** Specimen executed. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/rhizome-seeker
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant implementation detected.
 
 ### [Concentration Level: FRESH] - Location: experiments/chimera-fossil
 - **Scent Origin:** The Splice Surgeon 🧬

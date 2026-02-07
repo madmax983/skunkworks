@@ -128,7 +128,6 @@ members = [
     "experiments/market-scheduler",
     "experiments/chrontext", 
     "experiments/synaptic-choir", 
-    "experiments/text-erosion",
     "experiments/synaptic-pachinko", 
     "experiments/lagrange-balancer", 
     "experiments/klein-magnetron", 
