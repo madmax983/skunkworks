@@ -2,7 +2,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hive-mind-dependencies
 - **Scent Origin:** Mycelium 🍄
-- **Status:** The lattice is fractured. Multiple versions of `glam` (v0.25, v0.27) and `bevy` (v0.13, v0.14) detected. The organism survives but is unstable.
+- **Status:** The lattice has shattered. Build failure confirmed in `bevy_reflect` (missing `BVec4A` in `glam`). Dependency conflict is now fatal.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/origami-ui
 - **Scent Origin:** The Reaper ☠️
@@ -76,8 +76,8 @@
 - **Status:** Process trees are growing. Sysinfo is root-deep.
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/sculpt-term
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen marked for deletion. Terminal rot detected.
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal rot confirmed. `ratatui` v0.30 backend error verified. Specimen is lifeless.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-concerto
 - **Scent Origin:** The Reaper ☠️
