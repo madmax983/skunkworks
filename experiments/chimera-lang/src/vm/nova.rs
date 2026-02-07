@@ -687,6 +687,12 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.dna.helix.strands = new_strands;
 
         // Reset State
+        vm.cladistics = crate::vm::cladistics::Cladistics::new();
+        // Register new strands as roots
+        for i in 0..vm.dna.helix.strands.len() {
+            vm.cladistics.register_strand(i, None, vm.tick_counter, "Metamorphosis".to_string());
+        }
+
         vm.energy = 50;
         vm.ip = (0, 0);
         vm.stack.clear();
@@ -958,6 +964,14 @@ fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         vm.synapse_map.push(Vec::new());
                     }
                     let new_idx = vm.dna.helix.strands.len() - 1;
+
+                    vm.cladistics.register_strand(
+                        new_idx,
+                        Some(idx_a),
+                        vm.tick_counter,
+                        format!("Splice({}, {})", idx_a, idx_b)
+                    );
+
                     vm.stack.push(Value::Int(new_idx as i64));
                     vm.energy = vm.energy.saturating_sub(30);
                 } else if method <= 2 {
@@ -1160,6 +1174,13 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
 
                     let new_strand_idx = vm.dna.helix.strands.len() - 1;
+
+                    vm.cladistics.register_strand(
+                        new_strand_idx,
+                        Some(s_idx),
+                        vm.tick_counter,
+                        "Cas9Cut".to_string()
+                    );
 
                     vm.stack.push(Value::Int(new_strand_idx as i64));
                     vm.energy = vm.energy.saturating_sub(10);
@@ -2147,10 +2168,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.activation_levels.push(0);
                                 vm.synapse_map.push(Vec::new());
                             }
+
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.cladistics.register_strand(
+                                new_idx,
+                                Some(vm.ip.0),
+                                vm.tick_counter,
+                                "Incubate".to_string()
+                            );
+
                             vm.energy = vm.energy.saturating_sub(20); // Cost
                             vm.output.push(format!(
                                 "INCUBATE: Created new strand {} from grid",
-                                vm.dna.helix.strands.len() - 1
+                                new_idx
                             ));
                         }
                     } else {
@@ -2336,6 +2366,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Inherit epigenetics
                             // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
                             let new_s_idx = vm.dna.helix.strands.len() - 1;
+
+                            vm.cladistics.register_strand(
+                                new_s_idx,
+                                Some(s_idx),
+                                vm.tick_counter,
+                                "Mitosis".to_string()
+                            );
+
                             let genes_to_methylate: Vec<usize> = vm
                                 .epigenome
                                 .iter()
@@ -2381,6 +2419,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
+
+                            vm.cladistics.kill_strand(s_idx, vm.tick_counter);
 
                             vm.energy = vm.energy.saturating_sub(10);
                             vm.output
@@ -3727,8 +3767,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         vm.activation_levels.push(0);
                                         vm.synapse_map.push(Vec::new());
                                     }
+                                    let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                    vm.cladistics.register_strand(
+                                        new_idx,
+                                        Some(vm.ip.0),
+                                        vm.tick_counter,
+                                        "Compile".to_string()
+                                    );
+
                                     vm.stack
-                                        .push(Value::Int((vm.dna.helix.strands.len() - 1) as i64));
+                                        .push(Value::Int(new_idx as i64));
                                     vm.energy = vm.energy.saturating_sub(50);
                                     vm.output.push("COMPILE: Success".to_string());
                                 }
@@ -3952,6 +4001,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
 
+                vm.cladistics.kill_strand(s_idx, vm.tick_counter);
                 vm.output
                     .push(format!("SUPERNOVA: Strand {} exploded", s_idx));
                 vm.halted = true; // Suicide
@@ -4626,6 +4676,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
 
+                            vm.cladistics.kill_strand(s_idx, vm.tick_counter);
+
                             vm.energy = vm.energy.saturating_sub(10);
                             vm.output
                                 .push(format!("BURY: Buried strand {} in graveyard", s_idx));
@@ -4654,6 +4706,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 let new_idx = vm.dna.helix.strands.len() - 1;
+
+                vm.cladistics.register_strand(
+                    new_idx,
+                    Some(vm.ip.0),
+                    vm.tick_counter,
+                    "Exhume".to_string()
+                );
+
                 vm.stack.push(Value::Int(new_idx as i64));
                 vm.energy = vm.energy.saturating_sub(25);
                 vm.output
@@ -4740,11 +4800,20 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.synapse_map.push(Vec::new());
                             }
 
+                            vm.cladistics.register_strand(
+                                new_idx,
+                                Some(s_idx),
+                                vm.tick_counter,
+                                "Reincarnate".to_string()
+                            );
+
                             // 4. Apoptosis of old strand
                             // Clear original
                             vm.dna.helix.strands[s_idx].genes.clear();
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
+
+                            vm.cladistics.kill_strand(s_idx, vm.tick_counter);
 
                             // 5. Push new index
                             vm.stack.push(Value::Int(new_idx as i64));

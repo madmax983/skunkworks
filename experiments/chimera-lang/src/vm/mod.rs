@@ -84,6 +84,8 @@ pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
+#[cfg(feature = "nova")]
+pub mod cladistics;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
 #[cfg(feature = "nova")]
@@ -338,6 +340,9 @@ pub struct ChimeraVM {
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
+    pub tick_counter: u64,
+    #[cfg(feature = "nova")]
+    pub cladistics: cladistics::Cladistics,
 }
 
 impl ChimeraVM {
@@ -502,6 +507,9 @@ impl ChimeraVM {
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
+            tick_counter: 0,
+            #[cfg(feature = "nova")]
+            cladistics: cladistics::Cladistics::new(),
         }
     }
 
@@ -1255,6 +1263,8 @@ impl ChimeraVM {
         if self.halted {
             return;
         }
+
+        self.tick_counter += 1;
 
         #[cfg(feature = "nova")]
         if self.spirit_request {
@@ -2562,6 +2572,7 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             {
+                self.cladistics.mutate_strand(strand_idx);
                 self.trigger_reflex(1); // Event 1: Mutation
             }
 
@@ -2596,6 +2607,7 @@ impl ChimeraVM {
 
                 #[cfg(feature = "nova")]
                 {
+                    self.cladistics.mutate_strand(strand_idx);
                     self.trigger_reflex(1); // Event 1: Mutation
                 }
 

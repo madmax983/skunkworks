@@ -37,6 +37,8 @@ pub mod vm;
 mod biophysics_test;
 #[cfg(all(test, feature = "nova"))]
 mod chaos_test;
+#[cfg(all(test, feature = "nova"))]
+mod cladistics_test;
 #[cfg(test)]
 mod cortex_test;
 #[cfg(all(test, feature = "biophysics"))]
