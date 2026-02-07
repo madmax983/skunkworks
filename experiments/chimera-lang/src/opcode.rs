@@ -696,6 +696,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scramble,
 
+    /// **[Nova]** Pushes local entropy level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., entropy_level ]`
+    #[cfg(feature = "nova")]
+    Entropy,
+    /// **[Nova]** Reduces local entropy.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    /// **Cost:** Energy proportional to amount.
+    #[cfg(feature = "nova")]
+    Stabilize,
+    /// **[Nova]** Instantly converts a grid cell to high entropy.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Disintegrate,
+
     /// **[Nova]** Predicts if the current execution path leads to death within `ticks`.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ..., 1(Death)|0(Life) ]`

@@ -355,6 +355,8 @@ pub struct ChimeraVM {
     pub wind_grid: Vec<Vec<(i8, i8)>>,
     #[cfg(feature = "nova")]
     pub moisture_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
+    pub entropy_grid: Vec<Vec<i64>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -402,6 +404,8 @@ impl ChimeraVM {
         let wind_grid = vec![vec![(0, 0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let moisture_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -531,6 +535,8 @@ impl ChimeraVM {
             wind_grid,
             #[cfg(feature = "nova")]
             moisture_grid,
+            #[cfg(feature = "nova")]
+            entropy_grid,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -826,6 +832,7 @@ impl ChimeraVM {
         nova::diffuse_waste(self);
         nova::diffuse_light(self);
         nova::diffuse_mutagen(self);
+        nova::diffuse_entropy(self);
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -853,6 +860,20 @@ impl ChimeraVM {
                 self.output
                     .push(format!("MUTATION: RADIATION at {},{}", cx, cy));
                 self.mutate();
+            }
+        }
+
+        // Reality Decay (Entropy)
+        if self.entropy_grid[cy][cx] > 50 {
+            let mut rng = rand::thread_rng();
+            // 20% chance of Glitch per tick if high entropy
+            if rng.gen_bool(0.20) {
+                self.output.push(format!("REALITY DECAY at {},{}", cx, cy));
+                // Simulate Glitch(1)
+                self.stack.push(Value::Int(1)); // Severity 1
+                if let Some(_) = nova::exec_nova_op(self, OpCode::Glitch, &[]) {
+                    // Jump occurred (unlikely for Glitch but possible if we extended it)
+                }
             }
         }
     }
@@ -999,6 +1020,10 @@ impl ChimeraVM {
             }
             nova::OrganelleType::Void => {
                 let (cy, cx) = self.context_loc;
+
+                // Entropy Trail
+                self.entropy_grid[cy][cx] = self.entropy_grid[cy][cx].saturating_add(10).min(100);
+
                 // Void consumes grid cell if not 0
                 let val = self.grid[cy][cx].clone();
                 if !matches!(val, Value::Int(0)) {
@@ -1880,6 +1905,9 @@ impl ChimeraVM {
             | OpCode::EgregoreQuery
             | OpCode::EgregoreSummon
             | OpCode::Sacrifice
+            | OpCode::Entropy
+            | OpCode::Stabilize
+            | OpCode::Disintegrate
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

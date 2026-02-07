@@ -57,6 +57,8 @@ pub(crate) enum ViewMode {
     Bestiary,
     #[cfg(feature = "nova")]
     Kaleidoscope,
+    #[cfg(feature = "nova")]
+    Void,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -305,6 +307,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Void = app_state.view_mode {
+                render_void(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -528,6 +536,11 @@ where
                                 app_state.input_mode = InputMode::Normal;
                                 app_state.input_buffer.clear();
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Void => {
+                                app_state.input_mode = InputMode::Normal;
+                                app_state.input_buffer.clear();
+                            }
                             }
                         }
                         KeyCode::Esc => {
@@ -636,7 +649,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Bestiary => ViewMode::Kaleidoscope,
                             #[cfg(feature = "nova")]
-                            ViewMode::Kaleidoscope => ViewMode::Heatmap,
+                            ViewMode::Kaleidoscope => ViewMode::Void,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Void => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -843,6 +858,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Void => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -1074,6 +1095,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Void => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1130,6 +1157,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Void => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1182,6 +1215,12 @@ where
                         ViewMode::Bestiary => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Void => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -1379,6 +1418,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Kaleidoscope => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Void => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1649,6 +1692,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Bestiary => "BESTIARY",
                 #[cfg(feature = "nova")]
                 ViewMode::Kaleidoscope => "KALEIDOSCOPE",
+                #[cfg(feature = "nova")]
+                ViewMode::Void => "VOID (ENTROPY)",
                 ViewMode::Heatmap => "HEATMAP",
                 #[cfg(feature = "silicon")]
                 ViewMode::Schematic => "SCHEMATIC",
@@ -3158,6 +3203,96 @@ fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
 
     let info_widget = Paragraph::new(info_lines).block(Block::default().borders(Borders::ALL).title("Interpreter State"));
     f.render_widget(info_widget, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Void Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let entropy = vm.entropy_grid[y][x];
+            let mut style = Style::default();
+
+            // Entropy visualization
+            // 0-10: Space
+            // 10-30: Light Shade
+            // 30-60: Medium Shade
+            // 60-80: Dark Shade
+            // 80+: Full Block
+            let ch = if entropy < 10 {
+                " ".to_string()
+            } else if entropy < 30 {
+                "░".to_string()
+            } else if entropy < 60 {
+                "▒".to_string()
+            } else if entropy < 80 {
+                "▓".to_string()
+            } else {
+                "█".to_string()
+            };
+
+            // Color: Dark Gray to White to Red
+            if entropy < 30 {
+                style = style.fg(Color::DarkGray);
+            } else if entropy < 60 {
+                style = style.fg(Color::Gray);
+            } else if entropy < 80 {
+                style = style.fg(Color::White);
+            } else {
+                style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+            }
+
+            // Overlay Void Organelles
+            let mut is_void = false;
+            if let Some(org) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
+                if org.kind == crate::vm::nova::OrganelleType::Void {
+                    is_void = true;
+                }
+            }
+
+            if is_void {
+                style = style.bg(Color::Red).fg(Color::Black).add_modifier(Modifier::BOLD);
+                line_spans.push(Span::styled("Ø", style));
+            } else {
+                // If cursor
+                if app_state.grid_cursor == (x, y) {
+                    style = style.bg(Color::White).fg(Color::Black);
+                }
+                line_spans.push(Span::styled(ch, style));
+            }
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(Block::default().borders(Borders::ALL).title("Entropy Grid"));
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let local_entropy = vm.entropy_grid[cy][cx];
+
+    let info_text = vec![
+        Line::from("THE VOID"),
+        Line::from(" "),
+        Line::from(format!("Local Entropy: {} / 100", local_entropy)),
+        Line::from(" "),
+        Line::from("Mechanics:"),
+        Line::from("  - Entropy > 50 causes Reality Decay (Glitches)"),
+        Line::from("  - Void Organelles (Ø) generate Entropy"),
+        Line::from("  - stabilize(n) reduces Entropy"),
+        Line::from("  - disintegrate(y, x) creates Entropy"),
+    ];
+
+    let info_widget = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL).title("Status"));
+    f.render_widget(info_widget, chunks[1]);
 }
 
 #[cfg(feature = "silicon")]
