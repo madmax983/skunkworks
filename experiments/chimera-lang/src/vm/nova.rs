@@ -533,14 +533,10 @@ fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
     }
 }
 
-/// Executes a Nova-specific OpCode.
+/// Runs a predictive simulation to see if the current path leads to death.
 ///
-/// This function handles the dispatch for all biological and advanced physics operations.
-///
-/// # Returns
-///
-/// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
-/// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
+/// **OpCode:** `Prophecy`
+/// **Stack:** `[ ..., ticks ] -> [ ..., result (1=Death, 0=Life) ]`
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
@@ -598,6 +594,10 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Reshuffles the entire DNA based on the current Grid state.
+///
+/// **OpCode:** `Metamorphosis`
+/// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0).
 #[cfg(feature = "nova")]
 fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
@@ -714,6 +714,10 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
 }
 
+/// Runs a sandboxed simulation of a specific strand.
+///
+/// **OpCode:** `Simulate`
+/// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
 #[cfg(feature = "nova")]
 fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
@@ -786,6 +790,10 @@ fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Executes a Brainfuck program string with input.
+///
+/// **OpCode:** `Brainfuck`
+/// **Stack:** `[ ..., bf_code, input ] -> [ ..., output ]`
 #[cfg(feature = "nova")]
 fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: bf_code_string, input_string (top)
@@ -875,6 +883,11 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Combines two strands using a genetic splicing method.
+///
+/// **OpCode:** `Splice`
+/// **Stack:** `[ ..., method, strand_b, strand_a ] -> [ ..., new_strand_idx ]`
+/// **Methods:** 0=Interleave, 1=Crossover, 2=Merge.
 #[cfg(feature = "nova")]
 fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: method, strand_b, strand_a (bottom)
@@ -991,6 +1004,10 @@ fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Swaps the tails of two strands at a specific index.
+///
+/// **OpCode:** `Recombine`
+/// **Stack:** `[ ..., split_point, strand_b, strand_a ] -> [ ... ]`
 #[cfg(feature = "nova")]
 fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: split_point, strand_b, strand_a (bottom)
@@ -1074,6 +1091,10 @@ fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Scans a target strand for a pattern matching a guide strand.
+///
+/// **OpCode:** `CrisprScan`
+/// **Stack:** `[ ..., guide_idx, target_idx ] -> [ ..., match_index ]`
 #[cfg(feature = "nova")]
 fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: guide_idx, target_idx (bottom)
@@ -1138,6 +1159,10 @@ fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Cuts a strand at a specific index, creating a new strand from the tail.
+///
+/// **OpCode:** `Cas9Cut`
+/// **Stack:** `[ ..., cut_index, strand_idx ] -> [ ..., new_strand_idx ]`
 #[cfg(feature = "nova")]
 fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: cut_index, strand_idx (bottom)
@@ -1214,6 +1239,15 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Executes a Nova-specific OpCode.
+///
+/// This function acts as the central dispatcher for all advanced features:
+/// Biology, Physics, Metaphysics, Market, and more.
+///
+/// # Returns
+///
+/// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
+/// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
