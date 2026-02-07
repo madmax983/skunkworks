@@ -73,6 +73,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
+pub mod nova_geology;
+#[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -1907,6 +1909,12 @@ impl ChimeraVM {
             | OpCode::Infect
             | OpCode::Shell => {
                 phylogeny::exec_phylogeny_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Quake | OpCode::Erode | OpCode::Sediment | OpCode::Tectonics | OpCode::Volcano => {
+                nova_geology::exec_geology_op(self, op, args);
                 None
             }
 
