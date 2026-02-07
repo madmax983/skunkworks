@@ -1706,7 +1706,7 @@ impl ChimeraVM {
             | OpCode::RetinaSize => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
+            OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
                 bard::exec_bard_op(self, op, args);
                 None
             }

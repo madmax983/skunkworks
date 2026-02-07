@@ -934,6 +934,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Perform,
 
+    /// **[Nova]** Converts the musical score into a new DNA strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Maps notes to OpCodes and creates a new strand.
+    #[cfg(feature = "nova")]
+    Compose,
+
     // Resonance Features (Audio Physics)
     /// **[Resonance]** Plucks the underlying physics grid at the current location.
     ///

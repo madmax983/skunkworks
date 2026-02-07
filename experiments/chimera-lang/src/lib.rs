@@ -60,6 +60,8 @@ mod nova_blackbox_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_camouflage_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_compose_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_cerebellum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_chorus_test;
