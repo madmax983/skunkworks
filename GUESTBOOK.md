@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CONDEMNED] - Location: experiments/text-terra
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Static implementation. Lack of evolution.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
@@ -23,10 +27,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/phase-engine
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** Langevin Dynamics active. Solid-Liquid boundaries simulating correctly.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
 
 ## History/Decay
 
@@ -464,3 +464,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/quipu-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
+
+### [Concentration Level: TOXIC] - Location: graveyard/turing-terra
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `reaction-monitor`. Biomass returned to the void.

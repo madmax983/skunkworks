@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **turing-terra**: Redundant with `reaction-monitor`. Manual input vs Environmental sensing. Code duplication. Grace period: 24h.
+- **text-terra**: Generic implementation (static text terrain). Hardcoded "GENESIS". Redundant with `text-erosion`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Moved to graveyard.
 - **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.
 - **rhizome-seeker**: Specimen executed. Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period expired. Moved to graveyard.
