@@ -35,7 +35,7 @@ impl Sector {
 
         // Radiation damage
         if radiation_intensity > 0.0 {
-             self.magnetization -= radiation_intensity * dt * 0.5;
+            self.magnetization -= radiation_intensity * dt * 0.5;
         }
 
         self.magnetization = self.magnetization.max(0.0);
@@ -50,12 +50,12 @@ impl Sector {
             for i in 0..64 {
                 if rng.gen::<f32>() < prob {
                     if polarity {
-                         // Standard bit flip
-                         let bit = rng.gen_range(0..8);
-                         self.data[i] ^= 1 << bit;
+                        // Standard bit flip
+                        let bit = rng.gen_range(0..8);
+                        self.data[i] ^= 1 << bit;
                     } else {
-                         // Inverted topology effect: Flip the whole byte (invert)
-                         self.data[i] = !self.data[i];
+                        // Inverted topology effect: Flip the whole byte (invert)
+                        self.data[i] = !self.data[i];
                     }
                 }
             }

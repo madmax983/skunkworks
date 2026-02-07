@@ -20,31 +20,64 @@ mod tests {
         let s0 = Strand {
             genes: vec![
                 // Move to 5,5 (Start is 8,8)
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-3)] }, // dx
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-3)] }, // dy
-                Gene { op: OpCode::Migrate, args: vec![] }, // context_loc is now 5,5
-
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(-3)],
+                }, // dx
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(-3)],
+                }, // dy
+                Gene {
+                    op: OpCode::Migrate,
+                    args: vec![],
+                }, // context_loc is now 5,5
                 // Spawn Organelle (Type 0=Worker) running Strand 1
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Strand 1
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Type 0
-                Gene { op: OpCode::Spawn, args: vec![] },
-
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Strand 1
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                }, // Type 0
+                Gene {
+                    op: OpCode::Spawn,
+                    args: vec![],
+                },
                 // Set TimeWarp(2) radius 1 at 5,5
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Radius
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // Factor
-                Gene { op: OpCode::TimeWarp, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Radius
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                }, // Factor
+                Gene {
+                    op: OpCode::TimeWarp,
+                    args: vec![],
+                },
             ],
         };
 
         let s1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] }, // Loop
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Loop
             ],
         };
 
         let mut vm = ChimeraVM::new(Dna {
-            helix: Helix { strands: vec![s0, s1] },
+            helix: Helix {
+                strands: vec![s0, s1],
+            },
         });
         vm.energy = 1000;
 
@@ -117,31 +150,64 @@ mod tests {
         let s0 = Strand {
             genes: vec![
                 // Move to 5,5
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-3)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-3)] },
-                Gene { op: OpCode::Migrate, args: vec![] },
-
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(-3)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(-3)],
+                },
+                Gene {
+                    op: OpCode::Migrate,
+                    args: vec![],
+                },
                 // Spawn Organelle
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::Spawn, args: vec![] },
-
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Spawn,
+                    args: vec![],
+                },
                 // Set TimeWarp(0)
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::TimeWarp, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::TimeWarp,
+                    args: vec![],
+                },
             ],
         };
 
         let s1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(99)],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
             ],
         };
 
         let mut vm = ChimeraVM::new(Dna {
-            helix: Helix { strands: vec![s0, s1] },
+            helix: Helix {
+                strands: vec![s0, s1],
+            },
         });
         vm.energy = 1000;
 

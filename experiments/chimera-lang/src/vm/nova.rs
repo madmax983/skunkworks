@@ -4237,13 +4237,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let b = vm.stack.pop().unwrap();
                 let a = vm.stack.pop().unwrap();
                 // 50/50 split
-                vm.stack.push(Value::Superposition(vec![
-                    (a, 0.5),
-                    (b, 0.5),
-                ]));
+                vm.stack
+                    .push(Value::Superposition(vec![(a, 0.5), (b, 0.5)]));
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
-                vm.output.push("Error: Stack underflow for superpose".to_string());
+                vm.output
+                    .push("Error: Stack underflow for superpose".to_string());
             }
             None
         }
@@ -4273,7 +4272,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
             } else {
-                vm.output.push("Error: Stack underflow for collapse".to_string());
+                vm.output
+                    .push("Error: Stack underflow for collapse".to_string());
             }
             None
         }
@@ -4304,7 +4304,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
             } else {
-                vm.output.push("Error: Stack underflow for observe".to_string());
+                vm.output
+                    .push("Error: Stack underflow for observe".to_string());
             }
             None
         }

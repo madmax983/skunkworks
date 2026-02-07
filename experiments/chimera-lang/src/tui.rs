@@ -1198,7 +1198,8 @@ where
                                         vm.inject_genes(strand.genes.clone());
                                         app_state.status_msg = "Injection Successful".to_string();
                                     } else {
-                                        app_state.status_msg = "Injection Failed: No genes".to_string();
+                                        app_state.status_msg =
+                                            "Injection Failed: No genes".to_string();
                                     }
                                 }
                                 Err(e) => {
