@@ -195,9 +195,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Terminal compilation failure confirmed.
 
-### [Concentration Level: FRESH] - Location: experiments/chromatic-cipher
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
-- **Status:** Visual noise contains the payload. The pixels are lying. Steganography engine active.
+- **Status:** The image is a computer. Lua VM embedded in the noise. Steganographic execution vector confirmed.
 
 ### [Concentration Level: FRESH] - Location: experiments/lagrange-balancer
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
