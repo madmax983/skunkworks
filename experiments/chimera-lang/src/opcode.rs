@@ -206,6 +206,16 @@ pub enum OpCode {
     /// **Args:** `[Nucleotide::String(type), Nucleotide::Number(dir)]`
     #[cfg(feature = "silicon")]
     LogicGate,
+    /// **[Silicon]** Creates an Input Pin (Reads from Stack -> Grid).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    PinIn,
+    /// **[Silicon]** Creates an Output Pin (Reads from Grid -> Stack).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    PinOut,
 
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
@@ -353,6 +363,11 @@ pub enum OpCode {
     /// **Effect:** Pushes return address to `call_stack` and jumps.
     #[cfg(feature = "nova")]
     Call,
+    /// **[Nova]** Calls a strand index popped from the stack.
+    ///
+    /// **Stack:** `[ ..., strand_idx ]`
+    #[cfg(feature = "nova")]
+    Exec,
     /// **[Nova]** Returns from a subroutine.
     ///
     /// **Effect:** Pops address from `call_stack` and jumps.
@@ -1016,6 +1031,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., fact ] -> [ ... ]`
     #[cfg(feature = "oracle")]
     Assert,
+    /// **[Oracle]** Adds a rule to the Knowledge Base.
+    ///
+    /// **Stack:** `[ ..., rule_junction ] -> [ ... ]`
+    #[cfg(feature = "oracle")]
+    Rule,
     /// **[Oracle]** Removes a fact or rule from the Knowledge Base.
     ///
     /// **Stack:** `[ ..., fact ] -> [ ... ]`

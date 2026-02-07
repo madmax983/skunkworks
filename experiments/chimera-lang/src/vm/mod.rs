@@ -1697,6 +1697,7 @@ impl ChimeraVM {
             | OpCode::Detox
             | OpCode::WRead
             | OpCode::Call
+            | OpCode::Exec
             | OpCode::Ret
             | OpCode::Bind
             | OpCode::Unbind
@@ -1745,6 +1746,7 @@ impl ChimeraVM {
 
             #[cfg(feature = "oracle")]
             OpCode::Assert
+            | OpCode::Rule
             | OpCode::Retract
             | OpCode::Query
             | OpCode::Augury
@@ -1771,7 +1773,9 @@ impl ChimeraVM {
             | OpCode::Pulse
             | OpCode::Silicon
             | OpCode::Construct
-            | OpCode::LogicGate => {
+            | OpCode::LogicGate
+            | OpCode::PinIn
+            | OpCode::PinOut => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }

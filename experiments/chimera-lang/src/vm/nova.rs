@@ -2620,6 +2620,29 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Exec => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    let strand_idx = idx as usize;
+                    if strand_idx < vm.dna.helix.strands.len() {
+                        if vm.call_stack.len() >= crate::vm::MAX_CALL_STACK_DEPTH {
+                            vm.output.push("Error: Call stack overflow".to_string());
+                            return None;
+                        }
+                        vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
+                        return Some((strand_idx, 0));
+                    } else {
+                        vm.output.push("Error: Invalid strand index for exec".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for exec".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for exec".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Ret => {
             if let Some(ret_addr) = vm.call_stack.pop() {
                 return Some(ret_addr);
