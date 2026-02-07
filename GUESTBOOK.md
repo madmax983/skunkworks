@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/system-attractor
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The Lorenz Attractor is storming. 50,000 particles are tracing the butterfly effect. System load is driving the chaos.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
