@@ -258,7 +258,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Chromatician)
-- **Status:** Camouflage verified. The organism can now see and mimic the colors of its environment. `SensePigment` and `SenseGlyph` enzymes synthesized.
+- **Status:** Camouflage verified. The organism can now be mirrored and mimic the colors of its environment. `SensePigment` and `SenseGlyph` enzymes synthesized.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/sonar-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -384,3 +384,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/text-erosion
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Generic implementation (SDF). Lacks persona alignment.
+
+### [Concentration Level: FRESH] - Location: experiments/sono-scapes
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The room IS the instrument. FDTD wave simulation active. Impossible acoustics verified.

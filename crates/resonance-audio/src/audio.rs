@@ -27,6 +27,12 @@ pub enum AudioCommand {
         x: usize,
         y: usize,
     },
+    RemoveWall {
+        x: usize,
+        y: usize,
+    },
+    ClearWaves,
+    ClearWalls,
     MoveListener {
         x: usize,
         y: usize,
@@ -108,6 +114,9 @@ impl AudioModel {
                         ));
                     }
                     AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
+                    AudioCommand::RemoveWall { x, y } => self.grid.remove_wall(x, y),
+                    AudioCommand::ClearWaves => self.grid.clear_waves(),
+                    AudioCommand::ClearWalls => self.grid.clear_walls(),
                     AudioCommand::MoveListener { x, y } => {
                         if x < self.grid.width && y < self.grid.height {
                             self.listener_x = x;
