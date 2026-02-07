@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The alphabet is becoming a mountain range. Bezier curves are extruding into cliffs. The letters are a place to live.
+
 ### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The neurons are singing. Izhikevich dynamics are driving the audio buffer. STDP is shaping the melody. The brain is the instrument.
