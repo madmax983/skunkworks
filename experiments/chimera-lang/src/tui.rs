@@ -2243,23 +2243,22 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                              current_time += note.duration as u64;
 
                              // Only draw if in window
-                             if end > window_start && start < window_end {
-                                 if note.pitch > 0 { // Not a rest
-                                     let color = match note.velocity {
-                                         0..=40 => Color::Blue,
-                                         41..=80 => Color::Cyan,
-                                         81..=100 => Color::Green,
-                                         _ => Color::Yellow, // Loud
-                                     };
+                             if end > window_start && start < window_end && note.pitch > 0 {
+                                 // Not a rest
+                                 let color = match note.velocity {
+                                     0..=40 => Color::Blue,
+                                     41..=80 => Color::Cyan,
+                                     81..=100 => Color::Green,
+                                     _ => Color::Yellow, // Loud
+                                 };
 
-                                     ctx.draw(&Rectangle {
-                                         x: start,
-                                         y: note.pitch as f64,
-                                         width: note.duration as f64,
-                                         height: 1.0,
-                                         color,
-                                     });
-                                 }
+                                 ctx.draw(&Rectangle {
+                                     x: start,
+                                     y: note.pitch as f64,
+                                     width: note.duration as f64,
+                                     height: 1.0,
+                                     color,
+                                 });
                              }
                         }
                     });

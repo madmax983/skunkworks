@@ -12,6 +12,7 @@ pub struct Retina {
     pub width: usize,
     pub height: usize,
     /// Buffer stores (character, (r, g, b))
+    #[allow(clippy::type_complexity)]
     pub buffer: Vec<Vec<(char, (u8, u8, u8))>>,
 }
 

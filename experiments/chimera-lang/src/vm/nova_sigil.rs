@@ -259,6 +259,7 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
     let (cy, cx) = vm.context_loc;
 
     // Extract active sigils to avoid borrow conflicts
+    #[allow(clippy::type_complexity)]
     let sigils: Vec<(String, Vec<(i64, i64, Value)>, usize)> = vm
         .sigil_registry
         .iter()
