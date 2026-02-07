@@ -11,6 +11,7 @@ members = [
     "experiments/fabric-limb",
     "experiments/fissure-tracker",
     "experiments/fluid-rain",
+    "experiments/fluid-specter",
     "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-rogue",
