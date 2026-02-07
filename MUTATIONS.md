@@ -524,3 +524,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hydro-acoustic stress testing of biological structures. Bridges break when the bass drops.
 - **Status**: experiments/bridge-specter
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### quipu-chimera
+- **Parents**: experiments/quipu-symphony + experiments/chimera-lang
+- **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
+- **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
+- **Status**: experiments/quipu-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).

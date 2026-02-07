@@ -460,3 +460,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/biomimetic-bridge
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridges are alive. Army ants are linking bodies to span gaps based on traffic density. Dynamic load balancing emerging from swarm stupidity.
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
