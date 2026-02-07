@@ -40,6 +40,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/biomimetic-bridge`.
 - **Offered by:** Genesis (The Entomologist) ⚛️🐜
 
+### [OpCode::Echo] Social Learning
+- **What:** A new Chimera OpCode that executes the last instruction of a nearby neighbor.
+- **Why:** Enables swarm intelligence and cultural transmission of behavior without explicit communication protocols.
+- **Status:** Available in `experiments/chimera-lang`.
+- **Offered by:** Nova 🌟 (The Sociologist)
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->

@@ -86,6 +86,8 @@ mod nova_differentiation_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_dream_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_echo_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_dream_trace_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_fungi_test;

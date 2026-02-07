@@ -127,7 +127,7 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                         ttl: None,
                         name: "Summoned Void".to_string(),
                         traits: vec!["Summoned".to_string()],
-                        genome_id: 0,
+                        genome_id: 0, last_gene: None,
                     };
                     vm.organelles.push(organelle);
                     vm.output.push("INVOKE: Void Summoned".to_string());
@@ -290,7 +290,7 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
                     ttl: None,
                     name: "Sigil Servant".to_string(),
                     traits: vec!["Construct".to_string()],
-                    genome_id: 0,
+                    genome_id: 0, last_gene: None,
                 };
                 vm.organelles.push(organelle);
             }

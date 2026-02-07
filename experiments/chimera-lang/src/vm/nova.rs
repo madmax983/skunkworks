@@ -150,6 +150,14 @@ pub struct Organelle {
     pub name: String,
     pub traits: Vec<String>,
     pub genome_id: u64,
+    pub last_gene: Option<crate::ast::Gene>,
+}
+
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone)]
+pub struct OrganelleInfo {
+    pub loc: (usize, usize),
+    pub last_gene: Option<crate::ast::Gene>,
 }
 
 #[cfg(feature = "nova")]
@@ -461,7 +469,7 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
                 ttl: None,
                 name: "Genesis Wisp".to_string(),
                 traits: vec!["Summoned".to_string()],
-                genome_id: 0,
+                genome_id: 0, last_gene: None,
             };
             vm.organelles.push(organelle);
             vm.chorus_buffer.clear();
@@ -1257,6 +1265,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Echo => super::nova_echo::exec_echo(vm),
         #[cfg(feature = "nova")]
         OpCode::Pray => {
             if let Some(val) = vm.stack.pop() {
@@ -2109,7 +2119,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             ttl: None,
                             name,
                             traits,
-                            genome_id,
+                            genome_id, last_gene: None,
                         };
                         vm.organelles.push(organelle);
                         vm.energy = vm.energy.saturating_sub(20);
@@ -4026,7 +4036,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     ttl: None,
                     name: "Symbiote Spawn".to_string(),
                     traits: vec!["Ejected".to_string()],
-                    genome_id: 0,
+                    genome_id: 0, last_gene: None,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(10);
@@ -4224,7 +4234,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 ttl: None,
                 name: "Voidwalker".to_string(),
                 traits: vec!["Nihilistic".to_string()],
-                genome_id: 0,
+                genome_id: 0, last_gene: None,
             };
             vm.organelles.push(organelle);
             vm.energy = vm.energy.saturating_sub(50);

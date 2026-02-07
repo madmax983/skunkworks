@@ -775,6 +775,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Metamorphosis,
 
+    /// **[Nova]** Executes the last instruction of a nearby neighbor (Social Learning).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    /// **Effect:** Finds nearest organelle, reads its last gene, and executes it.
+    #[cfg(feature = "nova")]
+    Echo,
+
     /// **[Nova]** Executes the Grid Colors as a Piet program.
     ///
     /// **Stack:** `[ ..., steps ] -> [ ... ]`

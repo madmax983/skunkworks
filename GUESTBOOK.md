@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Sociologist)
+- **Status:** The organelles are learning from each other. Social learning enabled via `Echo` opcode. Swarm intelligence is emerging from mimetic resonance.
+
 ### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The alphabet is becoming a mountain range. Bezier curves are extruding into cliffs. The letters are a place to live.

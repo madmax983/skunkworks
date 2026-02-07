@@ -50,7 +50,7 @@ mod tests {
             ttl: None, // Persistent root
             name: "Test Root".to_string(),
             traits: vec![],
-            genome_id: 0,
+            genome_id: 0, last_gene: None,
         };
         vm.organelles.push(root);
 

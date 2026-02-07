@@ -73,6 +73,8 @@ pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
+pub mod nova_echo;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
@@ -379,6 +381,8 @@ pub struct ChimeraVM {
     pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
     #[cfg(feature = "nova")]
     pub piet_state: Option<piet::PietState>,
+    #[cfg(feature = "nova")]
+    pub census: Vec<nova::OrganelleInfo>,
 }
 
 impl ChimeraVM {
@@ -565,6 +569,8 @@ impl ChimeraVM {
             dialects: HashMap::new(),
             #[cfg(feature = "nova")]
             piet_state: None,
+            #[cfg(feature = "nova")]
+            census: Vec::new(),
         }
     }
 
@@ -966,6 +972,11 @@ impl ChimeraVM {
 
     #[cfg(feature = "nova")]
     fn process_organelles(&mut self) {
+        self.census = self.organelles.iter().map(|o| nova::OrganelleInfo {
+            loc: o.context_loc,
+            last_gene: o.last_gene.clone(),
+        }).collect();
+
         let active_organelles = std::mem::take(&mut self.organelles);
         let mut next_organelles = Vec::new();
 
@@ -1005,6 +1016,7 @@ impl ChimeraVM {
         std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
         std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
         std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+        std::mem::swap(&mut self.last_gene, &mut organelle.last_gene);
 
         self.active_organelle_kind = Some(organelle.kind.clone());
         self.energy = self.energy.saturating_sub(1);
@@ -1112,6 +1124,7 @@ impl ChimeraVM {
         std::mem::swap(&mut self.context_loc, &mut organelle.context_loc);
         std::mem::swap(&mut self.call_stack, &mut organelle.call_stack);
         std::mem::swap(&mut self.recursion_depth, &mut organelle.recursion_depth);
+        std::mem::swap(&mut self.last_gene, &mut organelle.last_gene);
 
         if let Some(ttl) = organelle.ttl {
             if ttl <= 1 {
@@ -1182,7 +1195,7 @@ impl ChimeraVM {
                                     ttl: Some(1),
                                     name: "Spark".to_string(),
                                     traits: vec!["Ephemeral".to_string()],
-                                    genome_id: 0,
+                                    genome_id: 0, last_gene: None,
                                 };
                                 self.organelles.push(new_org);
                             }
@@ -1837,6 +1850,7 @@ impl ChimeraVM {
             | OpCode::Glitch
             | OpCode::Scramble
             | OpCode::Metamorphosis
+            | OpCode::Echo
             | OpCode::Pigment
             | OpCode::Glyph
             | OpCode::SensePigment

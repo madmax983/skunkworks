@@ -44,7 +44,7 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 ttl: Some(1000), // Finite life
                 name: "Procedural Seed".to_string(),
                 traits: vec!["Fractal".to_string()],
-                genome_id: 0,
+                genome_id: 0, last_gene: None,
             };
 
             vm.organelles.push(organelle);
