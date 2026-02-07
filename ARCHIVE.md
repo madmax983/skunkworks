@@ -1,6 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Generic tech demo. Grace period: 24h.
 - **sculpt-term**: Compilation failure (`ratatui` backend). Documentation void. Generic SDF implementation. Grace period: 24h.
+- **retinal-glitch**: Documentation void. Generic visual stimulus generator. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
