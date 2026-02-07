@@ -86,7 +86,6 @@ members = [
     "experiments/text-terra", 
     "experiments/harmony-of-spheres", 
     "experiments/bio-chain",
-    "experiments/turing-terra", 
     "experiments/walker-filesystem", 
     "experiments/primordial-soup", 
     "experiments/hyperbolic-finder", 
