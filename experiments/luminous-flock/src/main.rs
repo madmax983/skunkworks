@@ -49,6 +49,7 @@ impl App {
     }
 }
 
+#[allow(clippy::collapsible_if)]
 fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result<()> {
     // Canvas dimensions (virtual units)
     let world_width = 200.0;
@@ -121,8 +122,8 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                 };
 
                 ctx.print(
-                    boid.position.0,
-                    boid.position.1,
+                    boid.position.x,
+                    boid.position.y,
                     Span::styled(char_str, Style::default().fg(color)),
                 );
             }
