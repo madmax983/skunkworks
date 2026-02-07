@@ -71,6 +71,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
+pub mod nova_egregore;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
@@ -337,6 +339,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub market: nova_market::MarketState,
     #[cfg(feature = "nova")]
+    pub egregore: nova_egregore::Egregore,
+    #[cfg(feature = "nova")]
     pub wind_grid: Vec<Vec<(i8, i8)>>,
     #[cfg(feature = "nova")]
     pub moisture_grid: Vec<Vec<i64>>,
@@ -504,6 +508,8 @@ impl ChimeraVM {
             relativity_mode: false,
             #[cfg(feature = "nova")]
             market: nova_market::MarketState::new(),
+            #[cfg(feature = "nova")]
+            egregore: nova_egregore::Egregore::new(),
             #[cfg(feature = "nova")]
             wind_grid,
             #[cfg(feature = "nova")]
@@ -1800,7 +1806,13 @@ impl ChimeraVM {
             | OpCode::SenseBiome
             | OpCode::RetinaDraw
             | OpCode::RetinaClear
-            | OpCode::RetinaSize => nova::exec_nova_op(self, op, args),
+            | OpCode::RetinaSize
+            | OpCode::EgregoreLink
+            | OpCode::EgregoreTithe
+            | OpCode::EgregoreChannel
+            | OpCode::EgregoreDictate
+            | OpCode::EgregoreQuery
+            | OpCode::EgregoreSummon => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
