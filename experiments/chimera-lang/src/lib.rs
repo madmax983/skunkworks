@@ -179,3 +179,5 @@ mod warden_exploit_test;
 mod warden_memory_test;
 #[cfg(test)]
 mod warden_parser_test;
+#[cfg(test)]
+mod warden_phylogeny_test;
