@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/gradient-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Army ants are climbing the mathematical landscape. Bridges are forming over local minima. The swarm is optimizing the function.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.

@@ -531,3 +531,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
 - **Status**: experiments/quipu-chimera
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).
+
+### gradient-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/gradient-garden
+- **Concept**: Army ants foraging for the global maximum in a mathematical optimization landscape. Bridges allow them to cross "local optima valleys" (gaps) to reach higher peaks.
+- **Novel trait**: Swarm Optimization with Structural Cooperation. Agents build their own shortcuts across the fitness landscape.
+- **Status**: experiments/gradient-bridge
+- **Evaluation**: In progress.
