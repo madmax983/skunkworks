@@ -456,3 +456,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/biomimetic-bridge
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridges are alive. Army ants are linking bodies to span gaps based on traffic density. Dynamic load balancing emerging from swarm stupidity.
+
+### [Concentration Level: FRESH] - Location: experiments/morpho-synth
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The reaction-diffusion grid is active. Chemical waves are triggering pentatonic sensors. Fluid dynamics is now a sequencer.
