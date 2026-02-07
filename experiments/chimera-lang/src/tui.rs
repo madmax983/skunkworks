@@ -15,7 +15,7 @@ use ratatui::{Frame,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
+    widgets::{Block, Borders, BorderType, Gauge, List, ListItem, Paragraph, Row, Table},
     Terminal,
 };
 use std::io;
@@ -182,89 +182,98 @@ where
         }
 
         terminal.draw(|f| {
+            let chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Min(0), Constraint::Length(1)].as_ref())
+                .split(f.area());
+            let main_area = chunks[0];
+            let status_area = chunks[1];
+
+            render_status_bar(f, status_area, app_state, vm);
+
             if let ViewMode::Microscope = app_state.view_mode {
-                render_microscope(f, vm, app_state);
+                render_microscope(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "biophysics")]
             if let ViewMode::Cortex = app_state.view_mode {
-                render_cortex(f, vm, app_state);
+                render_cortex(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "resonance")]
             if let ViewMode::Resonance = app_state.view_mode {
-                render_resonance(f, vm, app_state);
+                render_resonance(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Grimoire = app_state.view_mode {
-                render_grimoire(f, vm, app_state);
+                render_grimoire(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Topology = app_state.view_mode {
-                render_topology(f, vm, app_state);
+                render_topology(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Laboratory = app_state.view_mode {
-                render_laboratory(f, vm, app_state);
+                render_laboratory(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Graveyard = app_state.view_mode {
-                render_graveyard(f, vm, app_state);
+                render_graveyard(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Retina = app_state.view_mode {
-                render_retina(f, vm, app_state);
+                render_retina(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Quantum = app_state.view_mode {
-                render_quantum(f, vm, app_state);
+                render_quantum(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Dream = app_state.view_mode {
-                render_dream(f, vm, app_state);
+                render_dream(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Phylogeny = app_state.view_mode {
-                render_phylogeny(f, vm, app_state);
+                render_phylogeny(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::Alchemy = app_state.view_mode {
-                render_alchemy(f, vm, app_state);
+                render_alchemy(f, main_area, vm, app_state);
                 return;
             }
 
             #[cfg(feature = "nova")]
             if let ViewMode::PianoRoll = app_state.view_mode {
-                render_piano_roll(f, vm, app_state);
+                render_piano_roll(f, main_area, vm, app_state);
                 return;
             }
 
             if let ViewMode::Heatmap = app_state.view_mode {
-                render_heatmap(f, vm, app_state);
+                render_heatmap(f, main_area, vm, app_state);
                 return;
             }
 
-            render_genome_and_grid(f, vm, app_state);
+            render_genome_and_grid(f, main_area, vm, app_state);
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
@@ -1116,46 +1125,39 @@ where
     }
 }
 
-fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_microscope(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
-        .split(f.area());
+        .constraints([Constraint::Length(3), Constraint::Length(3), Constraint::Min(0)].as_ref())
+        .split(area);
 
-    // Scan Data
+    // Header (chunks[0])
     let (cx, cy) = app_state.grid_cursor;
     let data = crate::vm::microscope::scan(vm, cy, cx);
-
-    // Header
     let header = Paragraph::new(format!(
         "Microscope: Cell ({}, {}) - Value: {}",
         cx, cy, data.value
     ))
-    .block(Block::default().borders(Borders::ALL).title("Inspection"));
+    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Inspection"));
     f.render_widget(header, chunks[0]);
 
-    let main_split = Layout::default()
+    // Environment (chunks[1]) - Horizontal split for gauges
+    let env_chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .constraints([
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
+            Constraint::Percentage(25),
+        ].as_ref())
         .split(chunks[1]);
 
-    // Left: Environment
-    let env_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(3), // Hormones
-            Constraint::Length(3), // Waste
-            Constraint::Length(3), // Mutagen
-            Constraint::Length(3), // Light
-        ].as_ref())
-        .split(main_split[0]);
-
-    // Hormones (RGB)
+    // Hormones
     let h = data.hormone_levels;
-    let h_label = format!("Hormones [R:{} G:{} B:{}]", h[0], h[1], h[2]);
+    let h_label = format!("Hormones [{},{},{}]", h[0], h[1], h[2]);
     let h_ratio = ((h[0] + h[1] + h[2]) as f64 / 765.0).clamp(0.0, 1.0);
     let h_gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Hormones"))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Hormones"))
         .gauge_style(Style::default().fg(Color::Magenta))
         .ratio(h_ratio)
         .label(h_label);
@@ -1164,7 +1166,7 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Waste
     let w_ratio = (data.waste_level as f64 / 100.0).clamp(0.0, 1.0);
     let w_gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Waste"))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Waste"))
         .gauge_style(Style::default().fg(Color::Green))
         .ratio(w_ratio)
         .label(format!("{} / 100", data.waste_level));
@@ -1173,7 +1175,7 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Mutagen
     let m_ratio = (data.mutagen_level as f64 / 100.0).clamp(0.0, 1.0);
     let m_gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Mutagen"))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Mutagen"))
         .gauge_style(Style::default().fg(Color::Red))
         .ratio(m_ratio)
         .label(format!("{} / 100", data.mutagen_level));
@@ -1182,16 +1184,16 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Light
     let l_ratio = (data.light_level as f64 / 100.0).clamp(0.0, 1.0);
     let l_gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Light"))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Light"))
         .gauge_style(Style::default().fg(Color::Yellow))
         .ratio(l_ratio)
         .label(format!("{} / 100", data.light_level));
     f.render_widget(l_gauge, env_chunks[3]);
 
-    // Right: Organelles
+    // Inhabitants (chunks[2])
     let rows: Vec<Row> = data.organelles.iter().map(|org| {
         Row::new(vec![
-            org.kind.clone(),
+            format!("{:?}", org.kind),
             format!("{:?}", org.ip),
             org.stack_depth.to_string(),
         ])
@@ -1203,16 +1205,16 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Constraint::Percentage(30),
     ])
     .header(Row::new(vec!["Type", "IP", "Stack"]))
-    .block(Block::default().borders(Borders::ALL).title("Inhabitants"));
+    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Inhabitants"));
 
-    f.render_widget(table, main_split[1]);
+    f.render_widget(table, chunks[2]);
 }
 
-fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_heatmap(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
      let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(100)].as_ref())
-        .split(f.area());
+        .split(area);
 
      let mut max_count = 1;
      for count in vm.gene_execution_counts.values() {
@@ -1249,14 +1251,14 @@ fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
          items.push(ListItem::new(""));
      }
 
-     let list = List::new(items).block(Block::default().borders(Borders::ALL).title(format!("Gene Expression Heatmap (Max: {})", max_count)));
+     let list = List::new(items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(format!("Gene Expression Heatmap (Max: {})", max_count)));
      f.render_widget(list, chunks[0]);
 }
-fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_genome_and_grid(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                .split(f.area());
+                .split(area);
 
             let left_chunks = Layout::default()
                 .direction(Direction::Vertical)
@@ -1328,7 +1330,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                               style = style.bg(Color::Red).fg(Color::White);
                               prefix = "E ";
                          } else {
-                              style = style.bg(Color::White).fg(Color::Black);
+                              style = style.add_modifier(Modifier::REVERSED);
                               prefix = "* ";
                          }
                     }
@@ -1382,7 +1384,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
             };
 
-            let genome_block = Block::default().borders(Borders::ALL).title("Genome");
+            let genome_block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Genome");
             let genome_style = if app_state.view_mode == ViewMode::Genome {
                  Style::default().fg(Color::White).add_modifier(Modifier::BOLD)
             } else {
@@ -1615,7 +1617,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                              // But input buffer might be long string "add".
                              // Let's just highlight the cell.
                         } else {
-                             style = style.bg(Color::White).fg(Color::Black);
+                             style = style.add_modifier(Modifier::REVERSED);
                         }
                     }
 
@@ -1646,11 +1648,21 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
 
             let grid_paragraph = Paragraph::new(grid_lines).block(
                 Block::default()
-                    .borders(Borders::ALL)
+                    .borders(Borders::ALL).border_type(BorderType::Rounded)
                     .title(grid_title)
                     .border_style(grid_style),
             );
-            f.render_widget(grid_paragraph, left_chunks[1]);
+
+            let grid_layout = Layout::default()
+                 .direction(Direction::Vertical)
+                 .constraints([Constraint::Min(0), Constraint::Length(1)].as_ref())
+                 .split(left_chunks[1]);
+
+            f.render_widget(grid_paragraph, grid_layout[0]);
+
+            let legend = Paragraph::new("Legend: @ Head, ~ Tail, V Virus, # Wall, . Empty")
+                .style(Style::default().fg(Color::DarkGray));
+            f.render_widget(legend, grid_layout[1]);
 
             // Cytoplasm (Stack)
             let stack_items: Vec<ListItem> = vm
@@ -1662,7 +1674,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
 
             let stack_list = List::new(stack_items).block(
                 Block::default()
-                    .borders(Borders::ALL)
+                    .borders(Borders::ALL).border_type(BorderType::Rounded)
                     .title(format!("Cytoplasm (Stack) - Energy: {}", vm.energy)),
             );
             f.render_widget(stack_list, right_chunks[0]);
@@ -1691,12 +1703,12 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             }
 
             let output_list = List::new(output_items)
-                .block(Block::default().borders(Borders::ALL).title("Output"));
+                .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Output"));
             f.render_widget(output_list, right_chunks[1]);
 
             // Draw Injection Popup
             if let InputMode::Injection = app_state.input_mode {
-                let area = f.area();
+                let area = area;
                 let popup_area = ratatui::layout::Rect {
                     x: area.width / 4,
                     y: area.height / 3,
@@ -1705,7 +1717,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 };
                 f.render_widget(ratatui::widgets::Clear, popup_area);
 
-                let block = Block::default().borders(Borders::ALL).title("Viral Injection Vector (ChimeraScript)").style(Style::default().fg(Color::Green));
+                let block = Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Viral Injection Vector (ChimeraScript)").style(Style::default().fg(Color::Green));
                 let text = Paragraph::new(app_state.input_buffer.clone()).block(block).wrap(ratatui::widgets::Wrap { trim: true });
                 f.render_widget(text, popup_area);
             }
@@ -1713,7 +1725,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             // Draw Spirit Popup on top
             #[cfg(feature = "nova")]
             if vm.spirit_request {
-                let area = f.area();
+                let area = area;
                 let popup_area = ratatui::layout::Rect {
                     x: area.width / 4,
                     y: area.height / 3,
@@ -1725,16 +1737,16 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 let prompt = vm.spirit_message.as_deref().unwrap_or("SPIRIT SUMMONING");
                 let text = format!("{}\n\n> {}", prompt, app_state.input_buffer);
                 let popup = Paragraph::new(text)
-                    .block(Block::default().borders(Borders::ALL).title("Spirit Communication").style(Style::default().fg(Color::Cyan)));
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Spirit Communication").style(Style::default().fg(Color::Cyan)));
                 f.render_widget(popup, popup_area);
             }
 }
 #[cfg(feature = "biophysics")]
-fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
+fn render_cortex(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &mut AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
-        .split(f.area());
+        .split(area);
 
     let right_split = Layout::default()
         .direction(Direction::Vertical)
@@ -1771,7 +1783,7 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
 
     let neuron_list = List::new(neuron_items).block(
         Block::default()
-            .borders(Borders::ALL)
+            .borders(Borders::ALL).border_type(BorderType::Rounded)
             .title("Neurons (Cortex)"),
     );
     f.render_widget(neuron_list, chunks[0]);
@@ -1789,7 +1801,7 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
                 .block(
                     Block::default()
                         .title("Voltage Trace")
-                        .borders(Borders::ALL),
+                        .borders(Borders::ALL).border_type(BorderType::Rounded),
                 )
                 .data(history)
                 .style(Style::default().fg(Color::Cyan));
@@ -1806,7 +1818,7 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
             ];
             let info = Paragraph::new(details).block(
                 Block::default()
-                    .borders(Borders::ALL)
+                    .borders(Borders::ALL).border_type(BorderType::Rounded)
                     .title(format!("Neuron Details [{}, {}]", coord.1, coord.0)),
             );
             f.render_widget(info, right_split[0]);
@@ -1814,11 +1826,11 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
     }
 }
 #[cfg(feature = "resonance")]
-fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_resonance(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-        .split(f.area());
+        .split(area);
 
     // Wave Grid
     let mut lines = Vec::new();
@@ -1858,17 +1870,17 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         lines.push(Line::from(spans));
     }
 
-    let wave_grid = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Resonance Wave Function"));
+    let wave_grid = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Resonance Wave Function"));
     f.render_widget(wave_grid, chunks[0]);
 
     // Help / Status
     let help_text = "Physics Simulation Active.\nUse Pluck(str), Oscillate(freq, str), Hear() ops.\n\nLeft: Wavefront Visualization\nRight: (Reserved for Spectrum Analysis)";
-    let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
+    let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Cymatics"));
     f.render_widget(help, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
-fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_alchemy(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
@@ -1876,7 +1888,7 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Constraint::Percentage(40), // Crucible
             Constraint::Percentage(40), // Strands
         ].as_ref())
-        .split(f.area());
+        .split(area);
 
     // Shelf
     let elements = vec!["Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy"];
@@ -1897,7 +1909,7 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let shelf_list = List::new(shelf_items).block(
         Block::default()
-            .borders(Borders::ALL)
+            .borders(Borders::ALL).border_type(BorderType::Rounded)
             .title("Reagent Shelf")
             .border_style(shelf_border_style)
     );
@@ -1910,7 +1922,7 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let crucible_list = List::new(crucible_items).block(
         Block::default()
-            .borders(Borders::ALL)
+            .borders(Borders::ALL).border_type(BorderType::Rounded)
             .title("Crucible (A: Add, X: Clear, T: Transmute)")
     );
     f.render_widget(crucible_list, chunks[1]);
@@ -1933,24 +1945,24 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let strand_list = List::new(strand_items).block(
         Block::default()
-            .borders(Borders::ALL)
+            .borders(Borders::ALL).border_type(BorderType::Rounded)
             .title("DNA Inventory")
             .border_style(strand_border_style)
     );
     f.render_widget(strand_list, chunks[2]);
 }
 #[cfg(feature = "nova")]
-fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_grimoire(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
                     .constraints([Constraint::Percentage(20), Constraint::Percentage(20), Constraint::Percentage(40), Constraint::Percentage(20)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 // Ether (IPC)
                 let ether_items: Vec<ListItem> = vm.ether.iter().map(|(ch, queue)| {
                     ListItem::new(format!("Channel {}: {} msgs", ch, queue.len()))
                 }).collect();
-                let ether_list = List::new(ether_items).block(Block::default().borders(Borders::ALL).title("Ether (IPC)"));
+                let ether_list = List::new(ether_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Ether (IPC)"));
                 f.render_widget(ether_list, chunks[0]);
 
                 // Oracle (KB)
@@ -1959,12 +1971,12 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     let kb_items: Vec<ListItem> = vm.knowledge_base.iter().take(20).map(|fact| {
                         ListItem::new(format!("{}", fact))
                     }).collect();
-                    let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).title("Oracle (Knowledge Base)"));
+                    let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Oracle (Knowledge Base)"));
                     f.render_widget(oracle_list, chunks[1]);
                 }
                 #[cfg(not(feature = "oracle"))]
                 {
-                    let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
+                    let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Oracle"));
                     f.render_widget(&oracle_list, chunks[1]);
                 }
 
@@ -1984,23 +1996,23 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         ListItem::new(format!("{} | {} ({} cells) -> Strand {}", status, name, sigil.pattern.len(), sigil.strand_idx)).style(style)
                     }).collect();
 
-                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("The Grimoire (Select & Enter to Toggle Auto-Cast)"));
+                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("The Grimoire (Select & Enter to Toggle Auto-Cast)"));
                     f.render_widget(sigil_list, chunks[2]);
                 }
 
                 // Bard (Score)
                 let score_text: String = crate::vm::bard::score_to_abc(&vm.score);
-                let bard_paragraph = Paragraph::new(score_text).block(Block::default().borders(Borders::ALL).title("Bard (Score)"));
+                let bard_paragraph = Paragraph::new(score_text).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Bard (Score)"));
                 f.render_widget(bard_paragraph, chunks[3]);
 
 }
 
 #[cfg(feature = "nova")]
-fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_topology(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Horizontal)
                     .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 let left_chunks = Layout::default()
                     .direction(Direction::Vertical)
@@ -2011,14 +2023,14 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let portal_items: Vec<ListItem> = vm.portals.iter().map(|(k, v)| {
                     ListItem::new(format!("Portal: ({},{}) -> ({},{})", k.1, k.0, v.1, v.0))
                 }).collect();
-                let portal_list = List::new(portal_items).block(Block::default().borders(Borders::ALL).title("Wormholes"));
+                let portal_list = List::new(portal_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Wormholes"));
                 f.render_widget(portal_list, left_chunks[0]);
 
                 // Entanglements
                 let ent_items: Vec<ListItem> = vm.entangled_pairs.iter().map(|(k, v)| {
                     ListItem::new(format!("Entangled: Strand {} <-> {}", k, v))
                 }).collect();
-                let ent_list = List::new(ent_items).block(Block::default().borders(Borders::ALL).title("Spooky Action"));
+                let ent_list = List::new(ent_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Spooky Action"));
                 f.render_widget(ent_list, left_chunks[1]);
 
                 // Mycelium
@@ -2026,7 +2038,7 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                     let neighbors: Vec<String> = v.iter().map(|n| format!("({},{})", n.1, n.0)).collect();
                     ListItem::new(format!("Hyphae ({},{}): {:?}", k.1, k.0, neighbors))
                 }).collect();
-                let myc_list = List::new(myc_items).block(Block::default().borders(Borders::ALL).title("Fungal Network"));
+                let myc_list = List::new(myc_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Fungal Network"));
                 f.render_widget(myc_list, left_chunks[2]);
 
                 // Topology Map
@@ -2055,13 +2067,13 @@ fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                     }
                     map_lines.push(Line::from(spans));
                 }
-                let map = Paragraph::new(map_lines).block(Block::default().borders(Borders::ALL).title("Topology Map"));
+                let map = Paragraph::new(map_lines).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Topology Map"));
                 f.render_widget(map, chunks[1]);
 
 }
 
 #[cfg(feature = "nova")]
-fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_laboratory(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Horizontal)
                     .constraints([
@@ -2069,7 +2081,7 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         Constraint::Percentage(30),
                         Constraint::Percentage(40),
                     ].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 // Helper to render strand preview
                 let render_strand = |idx: usize, title: &str, is_focused: bool| {
@@ -2089,7 +2101,7 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         Style::default().fg(Color::White)
                     };
 
-                    List::new(items).block(Block::default().borders(Borders::ALL).title(format!("{} (Idx: {})", title, idx)).border_style(border_style))
+                    List::new(items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title(format!("{} (Idx: {})", title, idx)).border_style(border_style))
                 };
 
                 // Parent A
@@ -2118,7 +2130,7 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 };
 
                 let method_widget = Paragraph::new(method_name)
-                    .block(Block::default().borders(Borders::ALL).title("Splice Method").border_style(method_border));
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Splice Method").border_style(method_border));
                 f.render_widget(method_widget, right_chunks[0]);
 
                 // Preview Child
@@ -2159,17 +2171,17 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 }
 
                 let preview_list = List::new(preview_items)
-                    .block(Block::default().borders(Borders::ALL).title("Child Preview (Enter to Splice)"));
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Child Preview (Enter to Splice)"));
                 f.render_widget(preview_list, right_chunks[1]);
 
 }
 
 #[cfg(feature = "nova")]
-fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_graveyard(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
                     .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 let top_chunks = Layout::default()
                     .direction(Direction::Horizontal)
@@ -2191,7 +2203,7 @@ fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         grave_items.push(ListItem::new(format!("Strand {} (Len: {})", i, strand.genes.len())).style(style));
                     }
                 }
-                let grave_list = List::new(grave_items).block(Block::default().borders(Borders::ALL).title("Graveyard (Necropolis)"));
+                let grave_list = List::new(grave_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Graveyard (Necropolis)"));
                 f.render_widget(grave_list, top_chunks[0]);
 
                 // Strand Preview
@@ -2206,22 +2218,22 @@ fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 } else {
                      gene_items.push(ListItem::new("No souls to display."));
                 }
-                let preview_list = List::new(gene_items).block(Block::default().borders(Borders::ALL).title("Genome of the Departed"));
+                let preview_list = List::new(gene_items).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Genome of the Departed"));
                 f.render_widget(preview_list, top_chunks[1]);
 
                 // Help / Status
                 let help_text = "Controls:\n↑/↓: Navigate\nR: Resurrect (Exhume to Helix)\nX: Exterminate (Permanent Deletion)\nTab: Switch View";
-                let help_para = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Necromancy"));
+                let help_para = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Necromancy"));
                 f.render_widget(help_para, chunks[1]);
 
 }
 
 #[cfg(feature = "nova")]
-fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_retina(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
                     .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 // Retina Display
                 let mut lines = Vec::new();
@@ -2238,7 +2250,7 @@ fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
                 let retina_widget = Paragraph::new(lines).block(
                     Block::default()
-                        .borders(Borders::ALL)
+                        .borders(Borders::ALL).border_type(BorderType::Rounded)
                         .title(format!("Retina ({}x{})", vm.retina.width, vm.retina.height)),
                 );
                 f.render_widget(retina_widget, chunks[0]);
@@ -2246,16 +2258,16 @@ fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let help = Paragraph::new(
                     "Retina Display Active.\nControl via `retina_draw`, `retina_clear` opcodes.",
                 )
-                .block(Block::default().borders(Borders::ALL));
+                .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded));
                 f.render_widget(help, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
-fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_quantum(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Horizontal)
                     .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 // Left: Entanglements
                 let mut ent_items = Vec::new();
@@ -2280,7 +2292,7 @@ fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 }
 
                 let ent_list = List::new(ent_items)
-                    .block(Block::default().borders(Borders::ALL).title("Quantum Entanglement State"));
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Quantum Entanglement State"));
                 f.render_widget(ent_list, chunks[0]);
 
                 // Right: Superpositions
@@ -2304,17 +2316,17 @@ fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 }
 
                 let sup_list = List::new(sup_items)
-                    .block(Block::default().borders(Borders::ALL).title("Superpositions"));
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Superpositions"));
                 f.render_widget(sup_list, chunks[1]);
 
 }
 
 #[cfg(feature = "nova")]
-fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_dream(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Horizontal)
                     .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 // Trace List
                 let mut trace_items = Vec::new();
@@ -2353,7 +2365,7 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 }
 
                 let trace_list = List::new(trace_items)
-                    .block(Block::default().borders(Borders::ALL).title("Dream Log"));
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Dream Log"));
                 f.render_widget(trace_list, chunks[0]);
 
                 // Details
@@ -2388,7 +2400,7 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     ];
 
                     let info = Paragraph::new(info_text)
-                        .block(Block::default().borders(Borders::ALL).title("Dream Details"));
+                        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Dream Details"));
                     f.render_widget(info, right_chunks[0]);
 
                     // Output Log
@@ -2401,22 +2413,22 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         .collect();
 
                     let log_list = List::new(log_items)
-                        .block(Block::default().borders(Borders::ALL).title("Dream Output"));
+                        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Dream Output"));
                     f.render_widget(log_list, right_chunks[1]);
                 } else {
                     let info = Paragraph::new("Select a dream to view details.")
-                        .block(Block::default().borders(Borders::ALL).title("Details"));
+                        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Details"));
                     f.render_widget(info, chunks[1]);
                 }
 
 }
 
 #[cfg(feature = "nova")]
-fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_piano_roll(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
                     .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-                    .split(f.area());
+                    .split(area);
 
                 // Calculate total duration to define the time window
                 let mut total_duration = 0;
@@ -2429,7 +2441,7 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let window_start = (total_duration as f64 - window_size as f64).max(0.0);
 
                 let canvas = Canvas::default()
-                    .block(Block::default().borders(Borders::ALL).title("Piano Roll (MIDI Visualization)"))
+                    .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Piano Roll (MIDI Visualization)"))
                     .x_bounds([window_start, window_end.max(window_start + 1.0)])
                     .y_bounds([20.0, 108.0]) // MIDI 21 (A0) to 108 (C8) covers most piano range
                     .paint(|ctx| {
@@ -2477,7 +2489,7 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
                 f.render_widget(canvas, chunks[0]);
 
-                let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
+                let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded));
                 f.render_widget(help, chunks[1]);
 }
 
@@ -2511,11 +2523,11 @@ fn layout_tree_node(
 }
 
 #[cfg(feature = "nova")]
-fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_phylogeny(f: &mut Frame, area: ratatui::layout::Rect, vm: &mut ChimeraVM, _app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-        .split(f.area());
+        .split(area);
 
     use ratatui::widgets::canvas::{Canvas, Line, Rectangle};
 
@@ -2533,7 +2545,7 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let max_height = current_y;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Phylogeny (Tree of Life)"))
+        .block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded).title("Phylogeny (Tree of Life)"))
         .x_bounds([-1.0, max_depth + 5.0])
         .y_bounds([-1.0, max_height + 1.0])
         .paint(|ctx| {
@@ -2576,6 +2588,57 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         vm.cladistics.nodes.len(),
         vm.cladistics.get_roots().len(),
         max_depth
-    )).block(Block::default().borders(Borders::ALL));
+    )).block(Block::default().borders(Borders::ALL).border_type(BorderType::Rounded));
     f.render_widget(help, chunks[1]);
+}
+
+
+fn render_status_bar(f: &mut Frame, area: ratatui::layout::Rect, app_state: &AppState, vm: &ChimeraVM) {
+    let mode_str = match app_state.view_mode {
+        ViewMode::Genome => "GENOME",
+        ViewMode::Grid => "GRID",
+        ViewMode::Microscope => "MICROSCOPE",
+        #[cfg(feature = "biophysics")]
+        ViewMode::Cortex => "CORTEX",
+        #[cfg(feature = "resonance")]
+        ViewMode::Resonance => "RESONANCE",
+        #[cfg(feature = "nova")]
+        ViewMode::Grimoire => "GRIMOIRE",
+        #[cfg(feature = "nova")]
+        ViewMode::Laboratory => "LABORATORY",
+        #[cfg(feature = "nova")]
+        ViewMode::Topology => "TOPOLOGY",
+        #[cfg(feature = "nova")]
+        ViewMode::Graveyard => "GRAVEYARD",
+        #[cfg(feature = "nova")]
+        ViewMode::PianoRoll => "PIANO ROLL",
+        #[cfg(feature = "nova")]
+        ViewMode::Retina => "RETINA",
+        #[cfg(feature = "nova")]
+        ViewMode::Quantum => "QUANTUM",
+        #[cfg(feature = "nova")]
+        ViewMode::Dream => "DREAM CATCHER",
+        #[cfg(feature = "nova")]
+        ViewMode::Phylogeny => "PHYLOGENY",
+        #[cfg(feature = "nova")]
+        ViewMode::Alchemy => "ALCHEMIST'S TABLE",
+        ViewMode::Heatmap => "HEATMAP",
+    };
+
+    let chaos = if vm.chaos_mode { "CHAOS: ON" } else { "CHAOS: OFF" };
+    let status = format!("{} | Energy: {} | Step: {}", chaos, vm.energy, vm.tick_counter);
+    let output = vm.output.last().map(|s| s.as_str()).unwrap_or("");
+
+    let layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage(20),
+            Constraint::Percentage(40),
+            Constraint::Percentage(40),
+        ].as_ref())
+        .split(area);
+
+    f.render_widget(Paragraph::new(mode_str).style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)), layout[0]);
+    f.render_widget(Paragraph::new(status).style(Style::default().fg(Color::Yellow)), layout[1]);
+    f.render_widget(Paragraph::new(output).style(Style::default().fg(Color::DarkGray)), layout[2]);
 }
