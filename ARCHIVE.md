@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **jpeg-garden**: Documentation void (missing `README.md`). Implementation obscure. Grace period: 24h.
+- **fractal-stack**: Specimen exhibits zombie characteristics. Previously executed but persisted in `experiments/` without documentation. Redundant with `l-system-garden`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
 - **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
