@@ -1301,6 +1301,24 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Metamorphosis => exec_metamorphosis(vm),
         #[cfg(feature = "nova")]
+        OpCode::Piet => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(steps) = val {
+                    if steps > 0 {
+                        super::piet::exec_piet(vm, steps);
+                    } else {
+                        vm.output.push("PIET: Steps must be positive".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for piet".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for piet".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Chronostasis => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(ticks) = val {

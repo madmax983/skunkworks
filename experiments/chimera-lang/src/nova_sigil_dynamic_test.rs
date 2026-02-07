@@ -14,25 +14,44 @@ mod tests {
                         genes: vec![
                             // Stack order needed: [strand, radius, name] (Top)
                             // So push strand, then radius, then name.
-                            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Target Strand 1
-                            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Radius
-                            Gene { op: OpCode::Push, args: vec![Nucleotide::String("TestSigil".to_string())] }, // Name
-                            Gene { op: OpCode::Inscribe, args: vec![] },
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![Nucleotide::Number(1)],
+                            }, // Target Strand 1
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![Nucleotide::Number(1)],
+                            }, // Radius
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![Nucleotide::String("TestSigil".to_string())],
+                            }, // Name
+                            Gene {
+                                op: OpCode::Inscribe,
+                                args: vec![],
+                            },
                         ],
                     },
                     // Strand 1: Effect (Push 999)
                     Strand {
-                        genes: vec![
-                            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-                        ],
+                        genes: vec![Gene {
+                            op: OpCode::Push,
+                            args: vec![Nucleotide::Number(999)],
+                        }],
                     },
                     // Strand 2: Invoke "TestSigil"
                     Strand {
                         genes: vec![
-                            Gene { op: OpCode::Push, args: vec![Nucleotide::String("TestSigil".to_string())] },
-                            Gene { op: OpCode::Invoke, args: vec![] },
+                            Gene {
+                                op: OpCode::Push,
+                                args: vec![Nucleotide::String("TestSigil".to_string())],
+                            },
+                            Gene {
+                                op: OpCode::Invoke,
+                                args: vec![],
+                            },
                         ],
-                    }
+                    },
                 ],
             },
         };
@@ -62,17 +81,23 @@ mod tests {
 
         // Check Registry
         if !vm.sigil_registry.contains_key("TestSigil") {
-             // Print output to debug if failed
-             println!("VM Output: {:?}", vm.output);
+            // Print output to debug if failed
+            println!("VM Output: {:?}", vm.output);
         }
-        assert!(vm.sigil_registry.contains_key("TestSigil"), "Sigil not registered");
+        assert!(
+            vm.sigil_registry.contains_key("TestSigil"),
+            "Sigil not registered"
+        );
 
         let sigil = vm.sigil_registry.get("TestSigil").unwrap();
         assert_eq!(sigil.strand_idx, 1);
 
         // Depending on iteration order, verify content.
         assert!(!sigil.pattern.is_empty());
-        let found = sigil.pattern.iter().any(|(dy, dx, val)| *dy == 0 && *dx == 1 && *val == Value::Int(42));
+        let found = sigil
+            .pattern
+            .iter()
+            .any(|(dy, dx, val)| *dy == 0 && *dx == 1 && *val == Value::Int(42));
         assert!(found, "Pattern not captured correctly: {:?}", sigil.pattern);
 
         // Step 2: Invoke (Strand 2)
@@ -106,7 +131,10 @@ mod tests {
         vm.grid[8][9] = Value::Int(42);
 
         // Inscribe
-        vm.step(); vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
 
         // Change Grid (Break Pattern)
         vm.grid[8][9] = Value::Int(0);

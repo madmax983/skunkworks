@@ -70,6 +70,8 @@ pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
+#[cfg(feature = "nova")]
+pub mod piet;
 pub mod resonance;
 #[cfg(feature = "silicon")]
 pub mod silicon;
@@ -1662,7 +1664,8 @@ impl ChimeraVM {
             | OpCode::Mourn
             | OpCode::TimeWarp
             | OpCode::Chronos
-            | OpCode::Reincarnate => nova::exec_nova_op(self, op, args),
+            | OpCode::Reincarnate
+            | OpCode::Piet => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {

@@ -21,7 +21,7 @@ impl Skeleton {
                 length: 0.0,
                 angle: 0.0,
                 children: vec![],
-            }
+            },
         }
     }
 
@@ -33,7 +33,13 @@ impl Skeleton {
         bones
     }
 
-    fn solve_recursive(&self, joint: &Joint, start_pos: Vec2, parent_angle: f64, bones: &mut Vec<(Vec2, Vec2)>) {
+    fn solve_recursive(
+        &self,
+        joint: &Joint,
+        start_pos: Vec2,
+        parent_angle: f64,
+        bones: &mut Vec<(Vec2, Vec2)>,
+    ) {
         let global_angle = parent_angle + joint.angle;
 
         let offset = Vec2::new(global_angle.cos(), global_angle.sin()) * joint.length;
@@ -41,7 +47,7 @@ impl Skeleton {
 
         // Only add bone if it has length (visual purposes)
         if joint.length > 0.001 {
-             bones.push((start_pos, end_pos));
+            bones.push((start_pos, end_pos));
         }
 
         for child in &joint.children {

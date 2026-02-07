@@ -665,6 +665,14 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Metamorphosis,
 
+    /// **[Nova]** Executes the Grid Colors as a Piet program.
+    ///
+    /// **Stack:** `[ ..., steps ] -> [ ... ]`
+    /// **Effect:** Runs a Piet interpreter on the ChromaGrid.
+    /// **Interaction:** 'In' pops from Chimera Stack, 'Out' pushes to Chimera Stack.
+    #[cfg(feature = "nova")]
+    Piet,
+
     /// **[Nova]** Freezes the environment and other organisms for a duration.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ... ]`
