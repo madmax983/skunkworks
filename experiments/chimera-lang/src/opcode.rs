@@ -469,6 +469,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tune,
 
+    // Retina Features (Vision)
+    /// **[Nova]** Draws a pixel to the Retina buffer.
+    ///
+    /// **Stack:** `[ ..., packed_color, char_code, y, x ] -> [ ... ]`
+    /// **Packed Color:** `(R << 16) | (G << 8) | B`.
+    #[cfg(feature = "nova")]
+    RetinaDraw,
+    /// **[Nova]** Clears the Retina buffer with a color.
+    ///
+    /// **Stack:** `[ ..., packed_color ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    RetinaClear,
+    /// **[Nova]** Pushes the dimensions of the Retina buffer.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., width, height ]`
+    #[cfg(feature = "nova")]
+    RetinaSize,
+
     // Quantum Features (Superposition)
     /// **[Nova]** Creates a quantum superposition of the top two values.
     ///

@@ -60,11 +60,16 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod retina;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_retina_test;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
@@ -309,6 +314,8 @@ pub struct ChimeraVM {
     pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
     #[cfg(feature = "nova")]
     pub biome_grid: Vec<Vec<nova_biome::Biome>>,
+    #[cfg(feature = "nova")]
+    pub retina: retina::Retina,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
@@ -451,6 +458,8 @@ impl ChimeraVM {
             sigil_registry: HashMap::new(),
             #[cfg(feature = "nova")]
             biome_grid,
+            #[cfg(feature = "nova")]
+            retina: retina::Retina::new(),
             gene_execution_counts: HashMap::new(),
         }
     }
@@ -1683,7 +1692,10 @@ impl ChimeraVM {
             | OpCode::Reincarnate
             | OpCode::Piet
             | OpCode::Terraform
-            | OpCode::SenseBiome => nova::exec_nova_op(self, op, args),
+            | OpCode::SenseBiome
+            | OpCode::RetinaDraw
+            | OpCode::RetinaClear
+            | OpCode::RetinaSize => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
