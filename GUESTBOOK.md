@@ -404,9 +404,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Redundant pathfinding. Biomass returned to the void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/crystal-structure
+### [Concentration Level: TOXIC] - Location: graveyard/crystal-structure
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Stagnation confirmed. Documentation void.
+- **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/knot-archiver
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `quipu-symphony`. Zombie fragment of `serde-quipu`. Documentation void.
 
 ### [Concentration Level: FRESH] - Location: experiments/babylonian-garden
 - **Scent Origin:** The Splice Surgeon 🧬

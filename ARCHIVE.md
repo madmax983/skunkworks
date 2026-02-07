@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **crystal-structure**: Documentation void. Generic visualization. Stagnant. Grace period: 24h.
+- **knot-archiver**: Documentation void. Redundant with `quipu-symphony`. Zombie fragment of `serde-quipu`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.
 - **rhizome-seeker**: Specimen executed. Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period expired. Moved to graveyard.
 - **text-erosion**: Specimen executed. Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
