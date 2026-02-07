@@ -9,7 +9,9 @@ pub fn rasterize_text(text: &str, font_data: &[u8], width: usize, height: usize)
 
     // Layout to measure width
     let v_metrics = font.v_metrics(initial_scale);
-    let glyphs: Vec<_> = font.layout(text, initial_scale, point(0.0, v_metrics.ascent)).collect();
+    let glyphs: Vec<_> = font
+        .layout(text, initial_scale, point(0.0, v_metrics.ascent))
+        .collect();
 
     let width_px = if let Some(last) = glyphs.last() {
         last.position().x + last.unpositioned().h_metrics().advance_width

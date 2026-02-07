@@ -43,10 +43,10 @@ async fn main() {
         // Handle global inputs (File Drops handled in specific updates or here?)
         // Better here to switch states.
         if dropped_file_count() > 0 {
-             if let Some(path) = dropped_file_path(0) {
+            if let Some(path) = dropped_file_path(0) {
                 println!("File dropped: {:?}", path);
                 handle_file_drop(&mut state, path);
-             }
+            }
         }
 
         let mut next_state: Option<AppState> = None;
@@ -138,34 +138,37 @@ fn handle_file_drop(state: &mut AppState, path: PathBuf) {
                     // Try to extract payload first
                     if let Ok(bytes) = stega::extract(&img, seed) {
                         if let Ok(s) = String::from_utf8(bytes) {
-                             // Check if it looks like Lua
-                             if s.contains("function update") || s.contains("draw_text") || s.contains("macroquad") {
-                                 println!("Lua payload detected!");
-                                 if let Ok(runtime) = LuaRuntime::new() {
-                                     if runtime.load_script(&s).is_ok() {
-                                         *state = AppState::Running(RunningState {
-                                             runtime,
-                                             script_source: s,
-                                         });
-                                         return;
-                                     }
-                                 }
-                             }
+                            // Check if it looks like Lua
+                            if s.contains("function update")
+                                || s.contains("draw_text")
+                                || s.contains("macroquad")
+                            {
+                                println!("Lua payload detected!");
+                                if let Ok(runtime) = LuaRuntime::new() {
+                                    if runtime.load_script(&s).is_ok() {
+                                        *state = AppState::Running(RunningState {
+                                            runtime,
+                                            script_source: s,
+                                        });
+                                        return;
+                                    }
+                                }
+                            }
 
-                             // If not Lua or failed to load, open in Editor with extracted payload
-                             let (texture, lsb_texture) = create_textures(&img);
-                             *state = AppState::Editor(EditorState {
-                                 cover_image: img.clone(),
-                                 stego_image: img,
-                                 payload: s,
-                                 texture,
-                                 lsb_texture,
-                                 show_lsb: false,
-                                 seed,
-                                 message: "Payload Extracted".to_string(),
-                                 message_timer: 3.0,
-                             });
-                             return;
+                            // If not Lua or failed to load, open in Editor with extracted payload
+                            let (texture, lsb_texture) = create_textures(&img);
+                            *state = AppState::Editor(EditorState {
+                                cover_image: img.clone(),
+                                stego_image: img,
+                                payload: s,
+                                texture,
+                                lsb_texture,
+                                show_lsb: false,
+                                seed,
+                                message: "Payload Extracted".to_string(),
+                                message_timer: 3.0,
+                            });
+                            return;
                         }
                     }
 
@@ -174,15 +177,15 @@ fn handle_file_drop(state: &mut AppState, path: PathBuf) {
                     let (texture, lsb_texture) = create_textures(&img);
 
                     *state = AppState::Editor(EditorState {
-                         cover_image: img.clone(),
-                         stego_image: img,
-                         payload,
-                         texture,
-                         lsb_texture,
-                         show_lsb: false,
-                         seed,
-                         message: "Cover Image Loaded".to_string(),
-                         message_timer: 3.0,
+                        cover_image: img.clone(),
+                        stego_image: img,
+                        payload,
+                        texture,
+                        lsb_texture,
+                        show_lsb: false,
+                        seed,
+                        message: "Cover Image Loaded".to_string(),
+                        message_timer: 3.0,
                     });
 
                     // Embed initial payload into new cover
@@ -192,25 +195,25 @@ fn handle_file_drop(state: &mut AppState, path: PathBuf) {
                 }
             }
             "lua" | "txt" | "rs" => {
-                 if let Ok(content) = std::fs::read_to_string(&path) {
-                     match state {
-                         AppState::Editor(editor) => {
-                             editor.payload = content;
-                             update_stego_image(editor);
-                             editor.message = "Script Loaded".to_string();
-                             editor.message_timer = 3.0;
-                         }
-                         AppState::Running(_) => {
-                             // Switch to editor with default cover
-                             *state = initialize_default_editor();
-                             if let AppState::Editor(editor) = state {
-                                 editor.payload = content;
-                                 update_stego_image(editor);
-                                 editor.message = "Script Loaded (New Editor)".to_string();
-                             }
-                         }
-                     }
-                 }
+                if let Ok(content) = std::fs::read_to_string(&path) {
+                    match state {
+                        AppState::Editor(editor) => {
+                            editor.payload = content;
+                            update_stego_image(editor);
+                            editor.message = "Script Loaded".to_string();
+                            editor.message_timer = 3.0;
+                        }
+                        AppState::Running(_) => {
+                            // Switch to editor with default cover
+                            *state = initialize_default_editor();
+                            if let AppState::Editor(editor) = state {
+                                editor.payload = content;
+                                update_stego_image(editor);
+                                editor.message = "Script Loaded (New Editor)".to_string();
+                            }
+                        }
+                    }
+                }
             }
             _ => {}
         }
@@ -249,22 +252,26 @@ fn update_editor(editor: &mut EditorState) {
     if is_key_pressed(KeyCode::R) {
         // Try to run current payload
         if let Ok(runtime) = LuaRuntime::new() {
-             if let Err(e) = runtime.load_script(&editor.payload) {
-                 editor.message = format!("Lua Error: {}", e);
-                 editor.message_timer = 5.0;
-             } else {
-                 // We can't switch state here easily because we have &mut EditorState, not &mut AppState.
-                 // We need to handle this in the main loop or use a flag.
-                 // But for now, user must drag and drop the saved image or I need to refactor update_editor to return transition.
-                 editor.message = "Drag/Drop output.png to Run!".to_string();
-                 editor.message_timer = 5.0;
-             }
+            if let Err(e) = runtime.load_script(&editor.payload) {
+                editor.message = format!("Lua Error: {}", e);
+                editor.message_timer = 5.0;
+            } else {
+                // We can't switch state here easily because we have &mut EditorState, not &mut AppState.
+                // We need to handle this in the main loop or use a flag.
+                // But for now, user must drag and drop the saved image or I need to refactor update_editor to return transition.
+                editor.message = "Drag/Drop output.png to Run!".to_string();
+                editor.message_timer = 5.0;
+            }
         }
     }
 }
 
 fn draw_editor(editor: &EditorState) {
-    let tex = if editor.show_lsb { &editor.lsb_texture } else { &editor.texture };
+    let tex = if editor.show_lsb {
+        &editor.lsb_texture
+    } else {
+        &editor.texture
+    };
 
     let screen_w = screen_width();
     let screen_h = screen_height();
@@ -313,7 +320,11 @@ fn draw_running(running: &RunningState) {
 
 fn update_stego_image(editor: &mut EditorState) {
     editor.stego_image = editor.cover_image.clone();
-    if let Err(e) = stega::embed(&mut editor.stego_image, editor.payload.as_bytes(), editor.seed) {
+    if let Err(e) = stega::embed(
+        &mut editor.stego_image,
+        editor.payload.as_bytes(),
+        editor.seed,
+    ) {
         editor.message = format!("Embed Error: {}", e);
         editor.message_timer = 5.0;
     } else {
@@ -325,7 +336,7 @@ fn update_stego_image(editor: &mut EditorState) {
     editor.texture = Texture2D::from_rgba8(
         editor.stego_image.width() as u16,
         editor.stego_image.height() as u16,
-        editor.stego_image.as_raw()
+        editor.stego_image.as_raw(),
     );
     editor.texture.set_filter(FilterMode::Nearest);
 
@@ -333,7 +344,7 @@ fn update_stego_image(editor: &mut EditorState) {
 }
 
 fn update_lsb_texture(editor: &mut EditorState) {
-     let mut lsb_view_img = editor.stego_image.clone();
+    let mut lsb_view_img = editor.stego_image.clone();
     for pixel in lsb_view_img.pixels_mut() {
         pixel[0] = (pixel[0] & 1) * 255;
         pixel[1] = (pixel[1] & 1) * 255;
@@ -343,7 +354,7 @@ fn update_lsb_texture(editor: &mut EditorState) {
     editor.lsb_texture = Texture2D::from_rgba8(
         lsb_view_img.width() as u16,
         lsb_view_img.height() as u16,
-        lsb_view_img.as_raw()
+        lsb_view_img.as_raw(),
     );
     editor.lsb_texture.set_filter(FilterMode::Nearest);
 }

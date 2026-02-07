@@ -15,14 +15,14 @@ use std::io::Stdout;
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-mod lattice;
-mod render;
 mod audio;
 mod brain;
+mod lattice;
+mod render;
 
+use brain::Brain;
 use lattice::LatticeType;
 use render::Camera;
-use brain::Brain;
 
 struct App {
     brain: Brain,
@@ -66,7 +66,8 @@ impl App {
         // Wait, `Brain::change_lattice` signature in `brain.rs` was:
         // pub fn change_lattice(&mut self, l_type: LatticeType, size: usize)
 
-        self.brain.change_lattice(self.lattice_type, self.lattice_size);
+        self.brain
+            .change_lattice(self.lattice_type, self.lattice_size);
     }
 
     fn run(mut self, terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
@@ -110,9 +111,9 @@ impl App {
             KeyCode::Char('-') => self.camera.zoom /= 1.1,
             KeyCode::Char(' ') => self.change_lattice(),
             KeyCode::Char('i') => {
-                 // Inject current into random neuron
-                 let idx = rand::random::<usize>() % self.brain.neurons.len();
-                 self.brain.inject(idx, 20.0);
+                // Inject current into random neuron
+                let idx = rand::random::<usize>() % self.brain.neurons.len();
+                self.brain.inject(idx, 20.0);
             }
             _ => {}
         }
@@ -169,9 +170,10 @@ impl App {
         // Limit to first 2 neighbors?
         for (u, neighbors) in self.brain.adj.iter().enumerate() {
             let u_pos = &self.brain.lattice.points[u];
-             if let Some((x1, y1, z1)) = self.camera.project(u_pos, width, height) {
+            if let Some((x1, y1, z1)) = self.camera.project(u_pos, width, height) {
                 for (j_idx, &v) in neighbors.iter().enumerate() {
-                    if u < v { // Undirected drawing
+                    if u < v {
+                        // Undirected drawing
                         let v_pos = &self.brain.lattice.points[v];
                         if let Some((x2, y2, z2)) = self.camera.project(v_pos, width, height) {
                             let avg_z = (z1 + z2) / 2.0;
@@ -219,11 +221,7 @@ impl App {
                                 Color::Blue // Resting
                             };
 
-                            ctx.print(
-                                *x,
-                                *y,
-                                Span::styled("●", Style::default().fg(color)),
-                            );
+                            ctx.print(*x, *y, Span::styled("●", Style::default().fg(color)));
                         }
                         Item::Edge {
                             x1,

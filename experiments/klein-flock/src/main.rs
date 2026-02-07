@@ -122,7 +122,11 @@ fn ui(f: &mut Frame, app: &mut App) {
         sync_index
     ))
     .block(Block::default().borders(Borders::ALL).title("Status"))
-    .style(Style::default().fg(if sync_index > 0.8 { Color::Green } else { Color::Cyan }));
+    .style(Style::default().fg(if sync_index > 0.8 {
+        Color::Green
+    } else {
+        Color::Cyan
+    }));
     f.render_widget(title, chunks[0]);
 
     // Canvas
@@ -150,9 +154,7 @@ fn ui(f: &mut Frame, app: &mut App) {
     f.render_widget(canvas, chunks[1]);
 
     // Footer
-    let help = Paragraph::new(
-        "Arrows: Rotate/Zoom | W/S: Height | P: Pause | R: Reset | Q: Quit",
-    )
-    .block(Block::default().borders(Borders::ALL));
+    let help = Paragraph::new("Arrows: Rotate/Zoom | W/S: Height | P: Pause | R: Reset | Q: Quit")
+        .block(Block::default().borders(Borders::ALL));
     f.render_widget(help, chunks[2]);
 }

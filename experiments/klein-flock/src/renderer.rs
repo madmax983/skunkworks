@@ -1,5 +1,5 @@
-use crate::world::World;
 use crate::topology::figure_8_klein;
+use crate::world::World;
 use glam::{Mat4, Vec3, Vec4Swizzles};
 use ratatui::style::Color;
 use ratatui::widgets::canvas::{Context, Line};
@@ -38,12 +38,7 @@ pub fn project(p: Vec3, view_proj: Mat4) -> Option<(f64, f64)> {
     Some((ndc.x as f64, ndc.y as f64))
 }
 
-pub fn draw_boids(
-    ctx: &mut Context<'_>,
-    camera: &Camera,
-    aspect_ratio: f32,
-    world: &World,
-) {
+pub fn draw_boids(ctx: &mut Context<'_>, camera: &Camera, aspect_ratio: f32, world: &World) {
     let view_proj = camera.projection_matrix(aspect_ratio) * camera.view_matrix();
     let radius = 2.0;
 
@@ -80,14 +75,14 @@ pub fn draw_boids(
     // Vertical lines (along V) - Optional, adds structure
     for i in (0..=u_steps).step_by(5) {
         let u = (i as f32 / u_steps as f32) * TAU;
-         let mut prev_point: Option<(f64, f64)> = None;
-         for j in 0..=v_steps {
+        let mut prev_point: Option<(f64, f64)> = None;
+        for j in 0..=v_steps {
             let v = (j as f32 / v_steps as f32) * TAU;
             let p = figure_8_klein(u, v, radius);
             if let Some((x, y)) = project(p, view_proj) {
                 if let Some((px, py)) = prev_point {
                     if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
-                         ctx.draw(&Line {
+                        ctx.draw(&Line {
                             x1: px,
                             y1: py,
                             x2: x,
@@ -96,11 +91,11 @@ pub fn draw_boids(
                         });
                     }
                 }
-                 prev_point = Some((x, y));
+                prev_point = Some((x, y));
             } else {
                 prev_point = None;
             }
-         }
+        }
     }
 
     // 2. Draw Boids
@@ -117,7 +112,7 @@ pub fn draw_boids(
             ctx.print(
                 x,
                 y,
-                ratatui::text::Span::styled(char_str, ratatui::style::Style::default().fg(color))
+                ratatui::text::Span::styled(char_str, ratatui::style::Style::default().fg(color)),
             );
         }
     }

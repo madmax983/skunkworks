@@ -1,6 +1,6 @@
 mod distance;
-mod text;
 mod terrain;
+mod text;
 
 use macroquad::prelude::*;
 
@@ -50,7 +50,11 @@ async fn main() {
         // Update SDF if needed
         if needs_sdf_update {
             // Avoid empty string causing issues
-            let text_to_render = if current_text.is_empty() { " " } else { &current_text };
+            let text_to_render = if current_text.is_empty() {
+                " "
+            } else {
+                &current_text
+            };
             let grid = text::rasterize_text(text_to_render, font_data, MAP_WIDTH, MAP_HEIGHT);
             sdf_grid = distance::compute_sdf(MAP_WIDTH, MAP_HEIGHT, &grid);
             needs_sdf_update = false;
@@ -64,12 +68,24 @@ async fn main() {
         clear_background(SKYBLUE);
 
         // Camera Controls
-        if is_key_down(KeyCode::Left) { cam_angle_y -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_angle_y += 0.02; }
-        if is_key_down(KeyCode::Up) { cam_angle_x = (cam_angle_x + 0.02).min(1.5); }
-        if is_key_down(KeyCode::Down) { cam_angle_x = (cam_angle_x - 0.02).max(0.1); }
-        if is_key_down(KeyCode::W) { cam_dist -= 1.0; }
-        if is_key_down(KeyCode::S) { cam_dist += 1.0; }
+        if is_key_down(KeyCode::Left) {
+            cam_angle_y -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_angle_y += 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_angle_x = (cam_angle_x + 0.02).min(1.5);
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_angle_x = (cam_angle_x - 0.02).max(0.1);
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 1.0;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 1.0;
+        }
 
         let cam_pos = vec3(
             cam_dist * cam_angle_x.cos() * cam_angle_y.sin(),
@@ -90,7 +106,13 @@ async fn main() {
         set_default_camera();
 
         draw_text("Type to Erode Terrain", 10.0, 30.0, 30.0, BLACK);
-        draw_text(&format!("Current: {}", current_text), 10.0, 60.0, 20.0, DARKGRAY);
+        draw_text(
+            &format!("Current: {}", current_text),
+            10.0,
+            60.0,
+            20.0,
+            DARKGRAY,
+        );
         draw_text("ARROWS/WASD to move camera", 10.0, 80.0, 20.0, DARKGRAY);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 100.0, 20.0, DARKGRAY);
 

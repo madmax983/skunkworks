@@ -2,7 +2,10 @@ use macroquad::prelude::*;
 use noise::{NoiseFn, Perlin};
 
 pub fn generate_mesh(width: usize, height: usize, sdf: &[f32], time: f64) -> Mesh {
-    assert!(width * height < 65536, "Mesh too large for u16 indices. Reduce resolution.");
+    assert!(
+        width * height < 65536,
+        "Mesh too large for u16 indices. Reduce resolution."
+    );
 
     let mut vertices = Vec::with_capacity(width * height);
     let mut indices = Vec::with_capacity((width - 1) * (height - 1) * 6);
@@ -56,7 +59,11 @@ pub fn generate_mesh(width: usize, height: usize, sdf: &[f32], time: f64) -> Mes
             let h_l = if x > 0 { heights[idx - 1] } else { h };
             let h_r = if x < width - 1 { heights[idx + 1] } else { h };
             let h_u = if y > 0 { heights[idx - width] } else { h };
-            let h_d = if y < height - 1 { heights[idx + width] } else { h };
+            let h_d = if y < height - 1 {
+                heights[idx + width]
+            } else {
+                h
+            };
 
             // Vector along X: (2, h_r - h_l, 0) - wait, X step is 1?
             // If grid step is 1.0.
@@ -78,9 +85,17 @@ pub fn generate_mesh(width: usize, height: usize, sdf: &[f32], time: f64) -> Mes
             } else if h < 0.0 {
                 Color::new(0.2, 0.6, 0.2, 1.0) // Grass
             } else if h < 10.0 {
-                if slope > 0.8 { Color::new(0.4, 0.8, 0.4, 1.0) } else { Color::new(0.5, 0.4, 0.3, 1.0) } // Green or Dirt
+                if slope > 0.8 {
+                    Color::new(0.4, 0.8, 0.4, 1.0)
+                } else {
+                    Color::new(0.5, 0.4, 0.3, 1.0)
+                } // Green or Dirt
             } else if h < 20.0 {
-                if slope > 0.6 { DARKGRAY } else { GRAY } // Rock
+                if slope > 0.6 {
+                    DARKGRAY
+                } else {
+                    GRAY
+                } // Rock
             } else {
                 WHITE // Snow
             };

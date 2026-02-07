@@ -3,9 +3,9 @@
 use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::{ChimeraVM, Value};
+use rand::Rng;
 use std::fs;
 use std::path::PathBuf;
-use rand::Rng;
 
 fn make_dna(genes: Vec<Gene>) -> Dna {
     Dna {
@@ -101,7 +101,16 @@ fn test_crawl() {
     if let Some(result) = vm.stack.pop() {
         if let Value::Junction(_, files) = result {
             assert_eq!(files.len(), 2);
-            let names: Vec<String> = files.iter().map(|v| if let Value::Str(s) = v { s.clone() } else { "".to_string() }).collect();
+            let names: Vec<String> = files
+                .iter()
+                .map(|v| {
+                    if let Value::Str(s) = v {
+                        s.clone()
+                    } else {
+                        "".to_string()
+                    }
+                })
+                .collect();
             assert!(names.contains(&"f1.txt".to_string()));
             assert!(names.contains(&"f2.txt".to_string()));
         } else {
