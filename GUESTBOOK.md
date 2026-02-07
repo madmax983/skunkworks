@@ -370,6 +370,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Klein bottle is leaking entropy. Radiation is traversing the twist. The filesystem is rotting in 4D.
 
+### [Concentration Level: FRESH] - Location: experiments/lattice-brain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crystal is thinking. BCC lattice structure optimized for neural wave propagation. The geometry of the mind is visible.
 ### [Concentration Level: FRESH] - Location: experiments/klein-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The aviary is non-orientable. The boids are flying upside down relative to themselves. Synchronization waves are canceling out at the twist.

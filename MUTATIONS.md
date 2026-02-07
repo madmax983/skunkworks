@@ -415,7 +415,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Population of Izhikevich neurons coupled via gap junctions, generating synchronized rhythms.
 - **Novel trait**: Emergent audio synchronization from spiking neural networks.
 - **Status**: experiments/synaptic-choir
-- **Evaluation**: Compiles. "The population is singing."
+- **Evaluation**: Fails compilation (missing alsa-sys dependencies in current env).
 
 ### chrontext
 - **Parents**: experiments/git-cantata + experiments/text-terra
@@ -436,6 +436,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: TUI Pachinko where pins are Izhikevich neurons that spike when hit by packets.
 - **Novel trait**: Sonified Neural Physics. The sound of data colliding with the network.
 - **Status**: experiments/synaptic-pachinko
+- **Evaluation**: Fails compilation (missing alsa-sys dependencies in current env).
 - **Evaluation**: Compiles (Environment Failure: alsa-sys missing in sandbox). Created by The Splice Surgeon.
 
 ### klein-magnetron
@@ -443,6 +444,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: "Topological Bit Rot". A filesystem mapped onto a Klein Bottle surface where sectors decay and radiation flips bits.
 - **Novel trait**: Non-orientable decay patterns. Radiation inverts its effect when wrapping around the manifold twist.
 - **Status**: experiments/klein-magnetron
+- **Evaluation**: Compiles. Verified.
+
+### lattice-brain
+- **Parents**: experiments/lattice-hunter + experiments/synaptic-pachinko
+- **Concept**: A "Crystallized Brain" where Izhikevich neurons are arranged in 3D crystal lattices (SC, BCC, FCC).
+- **Novel trait**: Crystallographic Neuroscience. Hearing the difference between a Simple Cubic brain and a Face-Centered Cubic brain.
+- **Status**: experiments/lattice-brain
+- **Evaluation**: Compiles. Audio disabled by default due to missing ALSA libraries.
 - **Evaluation**: Compiles. Verified (Warnings observed).
 
 ### klein-flock
