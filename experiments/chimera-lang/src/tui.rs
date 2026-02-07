@@ -41,6 +41,8 @@ pub(crate) enum ViewMode {
     PianoRoll,
     #[cfg(feature = "nova")]
     Retina,
+    #[cfg(feature = "nova")]
+    Quantum,
     Heatmap,
 }
 
@@ -719,6 +721,67 @@ where
                 return;
             }
 
+            // Handle Quantum View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Quantum = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                    .split(f.area());
+
+                // Left: Entanglements
+                let mut ent_items = Vec::new();
+                if vm.entangled_pairs.is_empty() {
+                    ent_items.push(ListItem::new("No entanglement detected."));
+                } else {
+                    let mut pairs: Vec<_> = vm.entangled_pairs.iter().collect();
+                    pairs.sort_by_key(|(k, _)| **k);
+
+                    // Deduplicate pairs (A<->B is same as B<->A) for display
+                    let mut seen = std::collections::HashSet::new();
+
+                    for (k, v) in pairs {
+                        let min = std::cmp::min(*k, *v);
+                        let max = std::cmp::max(*k, *v);
+                        if !seen.contains(&(min, max)) {
+                            seen.insert((min, max));
+                            ent_items.push(ListItem::new(format!("Strand {} <===> Strand {}", min, max))
+                                .style(Style::default().fg(Color::Cyan)));
+                        }
+                    }
+                }
+
+                let ent_list = List::new(ent_items)
+                    .block(Block::default().borders(Borders::ALL).title("Quantum Entanglement State"));
+                f.render_widget(ent_list, chunks[0]);
+
+                // Right: Superpositions
+                let mut sup_items = Vec::new();
+                let mut found_sup = false;
+                for (i, val) in vm.stack.iter().enumerate() {
+                    if let crate::vm::Value::Superposition(states) = val {
+                        found_sup = true;
+                        let mut desc = format!("Stack[{}]: Ψ = {{ ", i);
+                        for (j, (v, p)) in states.iter().enumerate() {
+                            if j > 0 { desc.push_str(" | "); }
+                            desc.push_str(&format!("{}: {:.2}", v, p));
+                        }
+                        desc.push_str(" }");
+                        sup_items.push(ListItem::new(desc).style(Style::default().fg(Color::Magenta)));
+                    }
+                }
+
+                if !found_sup {
+                    sup_items.push(ListItem::new("Wavefunction has collapsed (No superpositions)."));
+                }
+
+                let sup_list = List::new(sup_items)
+                    .block(Block::default().borders(Borders::ALL).title("Superpositions"));
+                f.render_widget(sup_list, chunks[1]);
+
+                return;
+            }
+
             // Handle Piano Roll View
             #[cfg(feature = "nova")]
             if let ViewMode::PianoRoll = app_state.view_mode {
@@ -946,6 +1009,8 @@ where
                 ViewMode::PianoRoll => "PIANO ROLL",
                 #[cfg(feature = "nova")]
                 ViewMode::Retina => "RETINA",
+                #[cfg(feature = "nova")]
+                ViewMode::Quantum => "QUANTUM",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -1282,13 +1347,14 @@ where
                     x: area.width / 4,
                     y: area.height / 3,
                     width: area.width / 2,
-                    height: 3,
+                    height: 5,
                 };
                 f.render_widget(ratatui::widgets::Clear, popup_area);
 
-                let text = format!("SPIRIT SUMMONING: {}", app_state.input_buffer);
+                let prompt = vm.spirit_message.as_deref().unwrap_or("SPIRIT SUMMONING");
+                let text = format!("{}\n\n> {}", prompt, app_state.input_buffer);
                 let popup = Paragraph::new(text)
-                    .block(Block::default().borders(Borders::ALL).title("Enter Value").style(Style::default().fg(Color::Cyan)));
+                    .block(Block::default().borders(Borders::ALL).title("Spirit Communication").style(Style::default().fg(Color::Cyan)));
                 f.render_widget(popup, popup_area);
             }
         })?;
@@ -1453,6 +1519,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Quantum => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Heatmap => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1549,7 +1620,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::PianoRoll => ViewMode::Retina,
                             #[cfg(feature = "nova")]
-                            ViewMode::Retina => ViewMode::Heatmap,
+                            ViewMode::Retina => ViewMode::Quantum,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Quantum => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -1640,6 +1713,8 @@ where
                         ViewMode::PianoRoll => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quantum => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1770,6 +1845,8 @@ where
                         ViewMode::PianoRoll => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quantum => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -1796,6 +1873,8 @@ where
                         ViewMode::PianoRoll => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quantum => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1837,6 +1916,8 @@ where
                                 app_state.selected_strand = 2;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quantum => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1976,6 +2057,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Retina => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Quantum => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Heatmap => {

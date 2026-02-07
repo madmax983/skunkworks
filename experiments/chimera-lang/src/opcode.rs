@@ -488,6 +488,12 @@ pub enum OpCode {
     RetinaSize,
 
     // Quantum Features (Superposition)
+    /// **[Nova]** Instantly jumps to the entangled partner strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Sets IP to partner strand at current gene index.
+    #[cfg(feature = "nova")]
+    QuantumJump,
     /// **[Nova]** Creates a quantum superposition of the top two values.
     ///
     /// **Stack:** `[ ..., val_a, val_b ] -> [ ..., Ψ(val_a:0.5, val_b:0.5) ]`
