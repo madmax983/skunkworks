@@ -1265,6 +1265,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Volcano,
 
+    // Crystallography Features (Nova)
+    /// **[Nova]** Turns the current cell into a crystal seed.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Nucleate,
+    /// **[Nova]** Grows the crystal by absorbing value from neighbors.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Accrete,
+    /// **[Nova]** Explodes the crystal, scattering value to neighbors.
+    ///
+    /// **Stack:** `[ ..., force ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shatter,
+    /// **[Nova]** Sorts the values in a local window (Annealing).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Anneal,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),
