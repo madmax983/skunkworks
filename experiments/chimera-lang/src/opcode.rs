@@ -226,6 +226,21 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     Receiver,
+    /// **[Silicon]** Creates a stateful D-Latch on the grid.
+    ///
+    /// **Stack:** `[ ..., state, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Latch,
+    /// **[Silicon]** Reads 4-bit signal from neighbors and pushes value to stack (Digital-to-Analog).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., val ]`
+    #[cfg(feature = "silicon")]
+    DAC,
+    /// **[Silicon]** Pops value and writes 4-bit signal to neighbors (Analog-to-Digital).
+    ///
+    /// **Stack:** `[ ..., val ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    ADC,
 
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.

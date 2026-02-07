@@ -56,6 +56,8 @@ pub(crate) enum ViewMode {
     #[cfg(feature = "nova")]
     Bestiary,
     Heatmap,
+    #[cfg(feature = "silicon")]
+    Schematic,
 }
 
 enum InputMode {
@@ -292,6 +294,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "silicon")]
+            if let ViewMode::Schematic = app_state.view_mode {
+                render_schematic(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
         })?;
 
@@ -464,6 +472,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "silicon")]
+                                ViewMode::Schematic => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Dream => {
                                     app_state.input_mode = InputMode::Normal;
@@ -602,6 +615,24 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Bestiary => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
+                                #[cfg(feature = "silicon")]
+                                {
+                                    ViewMode::Schematic
+                                }
+                                #[cfg(not(feature = "silicon"))]
+                                {
+                                    #[cfg(feature = "nova")]
+                                    {
+                                        ViewMode::Laboratory
+                                    }
+                                    #[cfg(not(feature = "nova"))]
+                                    {
+                                        ViewMode::Genome
+                                    }
+                                }
+                            }
+                            #[cfg(feature = "silicon")]
+                            ViewMode::Schematic => {
                                 #[cfg(feature = "nova")]
                                 {
                                     ViewMode::Laboratory
@@ -616,6 +647,8 @@ where
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
+                    #[cfg(feature = "silicon")]
+                    KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
                     #[cfg(feature = "nova")]
@@ -745,6 +778,8 @@ where
                             }
                         }
                         ViewMode::Heatmap => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Schematic => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -909,6 +944,8 @@ where
                             }
                         }
                         ViewMode::Heatmap => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Schematic => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -946,6 +983,8 @@ where
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Quantum => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -992,6 +1031,8 @@ where
                         ViewMode::PianoRoll => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1190,6 +1231,10 @@ where
                                 }
                             }
                             ViewMode::Heatmap => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "silicon")]
+                            ViewMode::Schematic => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -1471,6 +1516,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 #[cfg(feature = "nova")]
                 ViewMode::Bestiary => "BESTIARY",
                 ViewMode::Heatmap => "HEATMAP",
+                #[cfg(feature = "silicon")]
+                ViewMode::Schematic => "SCHEMATIC",
             };
 
             let title = match app_state.input_mode {
@@ -2851,4 +2898,91 @@ fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         let info = Paragraph::new("Select an organelle to inspect.").block(Block::default().borders(Borders::ALL));
         f.render_widget(info, chunks[1]);
     }
+}
+
+#[cfg(feature = "silicon")]
+fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Schematic Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let (ch, style) = match val {
+                crate::vm::Value::Int(0) => (" ".to_string(), Style::default().fg(Color::DarkGray)),
+                crate::vm::Value::Int(1) => ("┼".to_string(), Style::default().fg(Color::DarkGray)), // Wire
+                crate::vm::Value::Int(2) => ("⚡".to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)), // Head
+                crate::vm::Value::Int(3) => (".".to_string(), Style::default().fg(Color::Red)), // Tail
+                crate::vm::Value::Str(s) => {
+                    if s.starts_with("G:") {
+                        let parts: Vec<&str> = s.split(':').collect();
+                        let sym = if parts.len() >= 2 {
+                            match parts[1] {
+                                "AND" => "&",
+                                "OR" => "≥",
+                                "XOR" => "=",
+                                "NAND" => "!",
+                                "NOT" => "¬",
+                                _ => "?",
+                            }
+                        } else { "G" };
+                        (sym.to_string(), Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+                    } else if s.starts_with("LATCH:") {
+                        let state = s.trim_start_matches("LATCH:");
+                        (format!("L{}", state), Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD))
+                    } else if s.starts_with("EMIT:") {
+                        ("E".to_string(), Style::default().fg(Color::Green).add_modifier(Modifier::BOLD))
+                    } else if s.starts_with("RECV:") {
+                        ("R".to_string(), Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD))
+                    } else if s == "PIN:IN" {
+                        ("I".to_string(), Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+                    } else if s == "PIN:OUT" {
+                        ("O".to_string(), Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+                    } else {
+                        ("?".to_string(), Style::default().fg(Color::White))
+                    }
+                },
+                _ => ("?".to_string(), Style::default().fg(Color::White)),
+            };
+
+            let mut final_style = style;
+            if app_state.grid_cursor == (x, y) {
+                final_style = final_style.bg(Color::White).fg(Color::Black);
+            }
+
+            line_spans.push(Span::styled(ch, final_style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines)
+        .block(Block::default().borders(Borders::ALL).title("Silicon Schematic"));
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Help / Info
+    let info_text = vec![
+        Line::from("Silicon Mode Active."),
+        Line::from("Components:"),
+        Line::from("  ┼ (Wire)"),
+        Line::from("  ⚡ (Signal)"),
+        Line::from("  L0/L1 (Latch)"),
+        Line::from("  &, ≥, =, !, ¬ (Gates)"),
+        Line::from("  E (Emitter), R (Receiver)"),
+        Line::from("  I/O (Pins)"),
+        Line::from(""),
+        Line::from("Opcodes:"),
+        Line::from("  latch(state) - Place Latch"),
+        Line::from("  dac - Read neighbors -> Stack"),
+        Line::from("  adc - Stack -> Write neighbors"),
+    ];
+
+    let info = Paragraph::new(info_text)
+        .block(Block::default().borders(Borders::ALL).title("Schematic Info"));
+    f.render_widget(info, chunks[1]);
 }
