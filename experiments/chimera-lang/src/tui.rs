@@ -55,6 +55,8 @@ pub(crate) enum ViewMode {
     Egregore,
     #[cfg(feature = "nova")]
     Bestiary,
+    #[cfg(feature = "nova")]
+    Kaleidoscope,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -98,6 +100,10 @@ pub(crate) struct AppState {
     pub(crate) alchemy_strand_idx: usize,
     #[cfg(feature = "nova")]
     pub(crate) selected_organelle_index: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) kaleidoscope_hue_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) kaleidoscope_light_idx: usize,
 }
 
 impl AppState {
@@ -134,6 +140,10 @@ impl AppState {
             alchemy_strand_idx: 0,
             #[cfg(feature = "nova")]
             selected_organelle_index: 0,
+            #[cfg(feature = "nova")]
+            kaleidoscope_hue_idx: 0,
+            #[cfg(feature = "nova")]
+            kaleidoscope_light_idx: 1, // Normal
         }
     }
 }
@@ -286,6 +296,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Bestiary = app_state.view_mode {
                 render_bestiary(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Kaleidoscope = app_state.view_mode {
+                render_kaleidoscope(f, vm, app_state);
                 return;
             }
 
@@ -507,6 +523,11 @@ where
                                 app_state.input_mode = InputMode::Normal;
                                 app_state.input_buffer.clear();
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Kaleidoscope => {
+                                app_state.input_mode = InputMode::Normal;
+                                app_state.input_buffer.clear();
+                            }
                             }
                         }
                         KeyCode::Esc => {
@@ -613,7 +634,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Egregore => ViewMode::Bestiary,
                             #[cfg(feature = "nova")]
-                            ViewMode::Bestiary => ViewMode::Heatmap,
+                            ViewMode::Bestiary => ViewMode::Kaleidoscope,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Kaleidoscope => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -719,8 +742,89 @@ where
                             crate::vm::alchemy::transmute_crucible(vm);
                         }
                     }
+                    KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
                     KeyCode::Char('q') => return Ok(()),
-                    KeyCode::Char(' ') => vm.step(),
+                    KeyCode::Char(' ') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            // Paint
+                            let (x, y) = app_state.grid_cursor;
+                            let r = match app_state.kaleidoscope_hue_idx {
+                                0 => 255, 1 => 255, 2 => 0, 3 => 0, 4 => 0, 5 => 255, _ => 255
+                            };
+                            let g = match app_state.kaleidoscope_hue_idx {
+                                0 => 0, 1 => 255, 2 => 255, 3 => 255, 4 => 0, 5 => 0, _ => 255
+                            };
+                            let b = match app_state.kaleidoscope_hue_idx {
+                                0 => 0, 1 => 0, 2 => 0, 3 => 255, 4 => 255, 5 => 255, _ => 255
+                            };
+
+                            // Adjust for lightness (Light=0, Normal=1, Dark=2)
+                            let (r, g, b) = match app_state.kaleidoscope_light_idx {
+                                0 => (r + (255-r)/2, g + (255-g)/2, b + (255-b)/2), // Light
+                                2 => (r/2, g/2, b/2), // Dark
+                                _ => (r, g, b), // Normal
+                            };
+
+                            vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
+                        } else {
+                            vm.step();
+                        }
+                        #[cfg(not(feature = "nova"))]
+                        vm.step();
+                    },
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('s') => {
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            // Step Piet
+                            if vm.piet_state.is_none() {
+                                vm.piet_state = Some(crate::vm::piet::init_piet(vm));
+                            }
+                            if let Some(mut state) = vm.piet_state.take() {
+                                crate::vm::piet::step_piet_once(vm, &mut state);
+                                vm.piet_state = Some(state);
+                            }
+                        }
+                    },
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('R') => {
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            vm.piet_state = None;
+                            app_state.status_msg = "Piet State Reset".to_string();
+                        }
+                    },
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('[') => {
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            if app_state.kaleidoscope_hue_idx > 0 {
+                                app_state.kaleidoscope_hue_idx -= 1;
+                            } else {
+                                app_state.kaleidoscope_hue_idx = 5;
+                            }
+                        }
+                    },
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char(']') => {
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            app_state.kaleidoscope_hue_idx = (app_state.kaleidoscope_hue_idx + 1) % 6;
+                        }
+                    },
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('{') => {
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            if app_state.kaleidoscope_light_idx > 0 {
+                                app_state.kaleidoscope_light_idx -= 1;
+                            } else {
+                                app_state.kaleidoscope_light_idx = 2;
+                            }
+                        }
+                    },
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('}') => {
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            app_state.kaleidoscope_light_idx = (app_state.kaleidoscope_light_idx + 1) % 3;
+                        }
+                    },
                     KeyCode::Char('m') => vm.mutate(),
                     KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
                     KeyCode::Down => match app_state.view_mode {
@@ -735,6 +839,12 @@ where
                                     app_state.selected_strand += 1;
                                     app_state.selected_gene = 0;
                                 }
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
                             }
                         }
                         ViewMode::Grid => {
@@ -958,6 +1068,12 @@ where
                                 app_state.selected_organelle_index -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1008,6 +1124,12 @@ where
                         ViewMode::Egregore => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Bestiary => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1058,6 +1180,12 @@ where
                         ViewMode::Egregore => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Bestiary => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Kaleidoscope => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1247,6 +1375,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Bestiary => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Kaleidoscope => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1515,6 +1647,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Egregore => "THE EGREGORE",
                 #[cfg(feature = "nova")]
                 ViewMode::Bestiary => "BESTIARY",
+                #[cfg(feature = "nova")]
+                ViewMode::Kaleidoscope => "KALEIDOSCOPE",
                 ViewMode::Heatmap => "HEATMAP",
                 #[cfg(feature = "silicon")]
                 ViewMode::Schematic => "SCHEMATIC",
@@ -2898,6 +3032,132 @@ fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         let info = Paragraph::new("Select an organelle to inspect.").block(Block::default().borders(Borders::ALL));
         f.render_widget(info, chunks[1]);
     }
+}
+
+#[cfg(feature = "nova")]
+fn render_kaleidoscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Left: Grid (Piet Canvas)
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+
+            // Background Color from Chroma
+            let chroma = &vm.chroma_grid[y][x];
+            if let Some((r, g, b)) = chroma.fg {
+                style = style.bg(Color::Rgb(r, g, b));
+            } else {
+                style = style.bg(Color::White); // Default white canvas
+            }
+
+            // Cursor
+            let mut ch = "  ".to_string();
+            if app_state.grid_cursor == (x, y) {
+                ch = "[]".to_string();
+                style = style.fg(Color::Black).add_modifier(Modifier::BOLD);
+            }
+
+            // Piet DP/CC if active
+            if let Some(state) = &vm.piet_state {
+                if state.y == y && state.x == x {
+                    let arrow = match state.dp {
+                        crate::vm::piet::Direction::Right => ">",
+                        crate::vm::piet::Direction::Down => "v",
+                        crate::vm::piet::Direction::Left => "<",
+                        crate::vm::piet::Direction::Up => "^",
+                    };
+                    ch = format!("{}{}", arrow, if state.cc == crate::vm::piet::CodelChooser::Left { "L" } else { "R" });
+                    style = style.fg(Color::Black).add_modifier(Modifier::BOLD);
+                }
+            }
+
+            line_spans.push(Span::styled(ch, style));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(Block::default().borders(Borders::ALL).title("Kaleidoscope (Piet Canvas)"));
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Palette & State
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(10), Constraint::Min(0)].as_ref())
+        .split(chunks[1]);
+
+    // Palette
+    let mut palette_lines = Vec::new();
+    let hues = ["Red", "Yellow", "Green", "Cyan", "Blue", "Magenta"];
+    let lights = ["Light", "Normal", "Dark"];
+
+    for (l_idx, light) in lights.iter().enumerate() {
+        let mut spans = Vec::new();
+        spans.push(Span::raw(format!("{:<8}", light)));
+
+        for (h_idx, _hue) in hues.iter().enumerate() {
+            let r = match h_idx { 0 => 255, 1 => 255, 2 => 0, 3 => 0, 4 => 0, 5 => 255, _ => 0 };
+            let g = match h_idx { 0 => 0, 1 => 255, 2 => 255, 3 => 255, 4 => 0, 5 => 0, _ => 0 };
+            let b = match h_idx { 0 => 0, 1 => 0, 2 => 0, 3 => 255, 4 => 255, 5 => 255, _ => 0 };
+
+            let (r, g, b) = match l_idx {
+                0 => (r + (255-r)/2, g + (255-g)/2, b + (255-b)/2),
+                2 => (r/2, g/2, b/2),
+                _ => (r, g, b),
+            };
+
+            let mut style = Style::default().bg(Color::Rgb(r as u8, g as u8, b as u8));
+            let mut text = "  ".to_string();
+
+            if app_state.kaleidoscope_hue_idx == h_idx && app_state.kaleidoscope_light_idx == l_idx {
+                style = style.fg(Color::Black).add_modifier(Modifier::BOLD);
+                text = "XX".to_string();
+            }
+
+            spans.push(Span::styled(text, style));
+            spans.push(Span::raw(" "));
+        }
+        palette_lines.push(Line::from(spans));
+    }
+
+    // Black & White
+    let mut bw_spans = Vec::new();
+    bw_spans.push(Span::raw("Special:  "));
+    bw_spans.push(Span::styled("  ", Style::default().bg(Color::White))); // White
+    bw_spans.push(Span::raw(" "));
+    bw_spans.push(Span::styled("  ", Style::default().bg(Color::Black))); // Black
+    palette_lines.push(Line::from(bw_spans));
+
+    let palette_widget = Paragraph::new(palette_lines).block(Block::default().borders(Borders::ALL).title("Palette (Space: Paint, []: Hue, {}: Light)"));
+    f.render_widget(palette_widget, right_chunks[0]);
+
+    // State Info
+    let mut info_lines = Vec::new();
+    info_lines.push(Line::from("Controls: S: Step, R: Reset, Arrows: Move"));
+
+    if let Some(state) = &vm.piet_state {
+        info_lines.push(Line::from(""));
+        info_lines.push(Line::from(format!("Steps: {}", state.steps)));
+        info_lines.push(Line::from(format!("DP: {:?} | CC: {:?}", state.dp, state.cc)));
+        info_lines.push(Line::from(format!("Pos: {},{}", state.x, state.y)));
+
+        info_lines.push(Line::from(""));
+        info_lines.push(Line::from("Stack (Top):"));
+        for val in state.stack.iter().rev().take(10) {
+            info_lines.push(Line::from(format!("  {}", val)));
+        }
+    } else {
+        info_lines.push(Line::from(""));
+        info_lines.push(Line::from("Piet Interpreter Inactive. Press 'S' to start."));
+    }
+
+    let info_widget = Paragraph::new(info_lines).block(Block::default().borders(Borders::ALL).title("Interpreter State"));
+    f.render_widget(info_widget, right_chunks[1]);
 }
 
 #[cfg(feature = "silicon")]
