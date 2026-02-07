@@ -1,0 +1,12 @@
+[package]
+name = "glyph-terrain"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+ab_glyph = "0.2"
+lyon = "1.0"
+noise = "0.9"
+
+[dev-dependencies]
