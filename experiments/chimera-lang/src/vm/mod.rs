@@ -65,6 +65,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_signals;
+#[cfg(feature = "nova")]
 pub mod nova_ballistics;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
@@ -361,6 +363,8 @@ pub struct ChimeraVM {
     pub moisture_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub entropy_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
+    pub signal_grid: Vec<Vec<u8>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -410,6 +414,8 @@ impl ChimeraVM {
         let moisture_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let signal_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -543,6 +549,8 @@ impl ChimeraVM {
             moisture_grid,
             #[cfg(feature = "nova")]
             entropy_grid,
+            #[cfg(feature = "nova")]
+            signal_grid,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -1414,6 +1422,7 @@ impl ChimeraVM {
             }
 
             self.process_environment();
+            nova_signals::process_signals(self);
             nova_sigil::process_passive_sigils(self);
             if self.relativity_mode {
                 nova_relativity::update_relativity(self);

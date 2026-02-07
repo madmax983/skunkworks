@@ -142,6 +142,8 @@ mod nova_cymatics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_security_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_signals_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_sigil_dynamic_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sigil_test;

@@ -1852,6 +1852,11 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                             }
                         }
 
+                        if vm.signal_grid[y][x] > 0 {
+                            // Signal active!
+                            style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                        }
+
                     // Chromatophores (Nova)
                     let chroma = &vm.chroma_grid[y][x];
                     if let Some(c) = chroma.char {
