@@ -819,6 +819,12 @@ pub enum OpCode {
     /// **Effect:** Checks grid for pattern and applies effect.
     #[cfg(feature = "nova")]
     Invoke,
+    /// **[Nova]** Inscribes a new Sigil from the local environment.
+    ///
+    /// **Stack:** `[ ..., strand_idx, radius, sigil_name ] -> [ ... ]`
+    /// **Effect:** Learns a new Sigil pattern and binds it to the strand.
+    #[cfg(feature = "nova")]
+    Inscribe,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
