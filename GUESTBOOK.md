@@ -427,3 +427,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cryo-colony
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Termites are building with ice. The lattice melts and refreezes as agents traverse it. Hybrid vigor confirmed: Thermodynamics meets Swarm Intelligence.
+
+### [Concentration Level: FRESH] - Location: experiments/biomimetic-bridge
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The bridges are alive. Army ants are linking bodies to span gaps based on traffic density. Dynamic load balancing emerging from swarm stupidity.

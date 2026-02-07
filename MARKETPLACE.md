@@ -34,6 +34,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/chrontext`.
 - **Offered by:** Nova 🌟 (The Archaeologist)
 
+### [Emergent Bridge Algorithm] Dynamic Load Balancing
+- **What:** A simulation of army ant bridge formation.
+- **Why:** Demonstrates how simple local rules (crowding -> freeze, loneliness -> melt) create global structures that adapt to traffic.
+- **Status:** Available in `experiments/biomimetic-bridge`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->
