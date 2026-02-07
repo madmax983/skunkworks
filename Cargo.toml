@@ -30,7 +30,6 @@ members = [
     "experiments/semantic-spy",
     "experiments/stigmergy-hub",
     "experiments/storm-monitor",
-    "experiments/struct-soup",
     "experiments/system-bio-dome",
     "experiments/thermo-termites",
     "experiments/trace-fold",
