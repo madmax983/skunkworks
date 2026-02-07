@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **text-erosion**: Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period: 24h.
+- **rhizome-seeker**: Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **text-erosion**: Specimen executed. Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
 - **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
