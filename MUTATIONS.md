@@ -436,8 +436,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: TUI Pachinko where pins are Izhikevich neurons that spike when hit by packets.
 - **Novel trait**: Sonified Neural Physics. The sound of data colliding with the network.
 - **Status**: experiments/synaptic-pachinko
-- **Evaluation**: Fails compilation (missing alsa-sys dependencies in current env).
-- **Evaluation**: Compiles (Environment Failure: alsa-sys missing in sandbox). Created by The Splice Surgeon.
+- **Evaluation**: Compiles (Fixed). Audio optional via feature flag.
 
 ### klein-magnetron
 - **Parents**: experiments/klein-fs + experiments/magnetron-decay
@@ -451,12 +450,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Crystallized Brain" where Izhikevich neurons are arranged in 3D crystal lattices (SC, BCC, FCC).
 - **Novel trait**: Crystallographic Neuroscience. Hearing the difference between a Simple Cubic brain and a Face-Centered Cubic brain.
 - **Status**: experiments/lattice-brain
-- **Evaluation**: Compiles. Audio disabled by default due to missing ALSA libraries.
-- **Evaluation**: Compiles. Verified (Warnings observed).
+- **Evaluation**: Compiles. Verified.
 
 ### klein-flock
 - **Parents**: experiments/klein-magnetron + experiments/luminous-flock
 - **Concept**: Boids flocking on a non-orientable Klein Bottle surface.
 - **Novel trait**: Moebius Flocking. Boids crossing the "twist" boundary flip their orientation and position, leading to upside-down collisions with their own flock.
 - **Status**: experiments/klein-flock
+- **Evaluation**: Compiles. Verified.
+
+### sono-boids
+- **Parents**: experiments/luminous-flock + experiments/sono-scapes
+- **Concept**: Boids flocking in a TUI terminal where the "air" is a wave simulation. Boids emit waves (echolocation) and steer based on local wave gradients.
+- **Novel trait**: Echolocation Navigation. Boids create and react to their own acoustic environment.
+- **Status**: experiments/sono-boids
 - **Evaluation**: Compiles. Created by The Splice Surgeon.

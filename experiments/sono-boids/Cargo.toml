@@ -1,11 +1,7 @@
 [package]
-name = "synaptic-pachinko"
+name = "sono-boids"
 version = "0.1.0"
 edition = "2021"
-
-[features]
-default = ["audio"]
-audio = ["dep:cpal"]
 
 [dependencies]
 ratatui = { workspace = true }
@@ -13,7 +9,5 @@ crossterm = { workspace = true }
 anyhow = { workspace = true }
 rand = { workspace = true }
 tui-shared = { workspace = true }
-cpal = { version = "0.15", optional = true }
-ringbuf = "0.3"
+resonance-audio = { path = "../../crates/resonance-audio" }
 crossbeam-channel = "0.5"
-synaptic-physics = { workspace = true }
