@@ -795,6 +795,11 @@ impl ChimeraVM {
         self.sonar_target = None;
         if let Some(key) = self.input_buffer.pop_front() {
             if let Some(&strand_idx) = self.receptors.get(&key) {
+                if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
+                    self.output
+                        .push("Error: Call stack overflow during interrupt".to_string());
+                    return;
+                }
                 self.call_stack.push(self.ip);
 
                 if strand_idx < self.dna.helix.strands.len() {

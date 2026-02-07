@@ -486,6 +486,16 @@ fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
     }
 }
 
+#[cfg(feature = "nova")]
+fn estimate_nucleotide_size(n: &Nucleotide) -> usize {
+    match n {
+        Nucleotide::Number(_) => 8,
+        Nucleotide::String(s) => s.len(),
+        Nucleotide::Identifier(s) => s.len(),
+        Nucleotide::Junction(_, args) => args.iter().map(estimate_nucleotide_size).sum(),
+    }
+}
+
 /// Executes a Nova-specific OpCode.
 ///
 /// This function handles the dispatch for all biological and advanced physics operations.
@@ -2235,7 +2245,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         if valid {
                             let mut k = 0;
+                            let mut total_size = 0;
+                            const MAX_INCUBATE_SIZE: usize = 1024 * 1024; // 1MB
+
                             while k < sequence.len() {
+                                if total_size >= MAX_INCUBATE_SIZE {
+                                    vm.output
+                                        .push("INCUBATE: Aborted, strand too large".to_string());
+                                    valid = false;
+                                    break;
+                                }
+
                                 match &sequence[k] {
                                     Value::Int(n) => {
                                         // Treated as push(n)
@@ -2243,6 +2263,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                             op: OpCode::Push,
                                             args: vec![crate::ast::Nucleotide::Number(*n)],
                                         });
+                                        total_size += 8;
                                         k += 1;
                                     }
                                     Value::Junction(t, vals) => {
@@ -2250,6 +2271,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         let mut nuc_vals = Vec::new();
                                         for v in vals {
                                             if let Some(n) = value_to_nucleotide(v, 0) {
+                                                total_size += estimate_nucleotide_size(&n);
                                                 nuc_vals.push(n);
                                             } else {
                                                 vm.output.push(
@@ -2270,6 +2292,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         k += 1; // Skip
                                     }
                                     Value::Str(s) => {
+                                        total_size += s.len();
                                         let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
                                         let mut args = Vec::new();
                                         match op {
@@ -2298,6 +2321,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                                     if let Some(arg) =
                                                         value_to_nucleotide(&sequence[k + 1], 0)
                                                     {
+                                                        total_size += estimate_nucleotide_size(&arg);
                                                         args.push(arg);
                                                     } else {
                                                         vm.output.push(
@@ -2316,6 +2340,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                                     if let Some(arg) =
                                                         value_to_nucleotide(&sequence[k + 1], 0)
                                                     {
+                                                        total_size += estimate_nucleotide_size(&arg);
                                                         args.push(arg);
                                                     } else {
                                                         vm.output.push(
@@ -2334,27 +2359,29 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 }
                             }
 
-                            vm.dna.helix.strands.push(crate::ast::Strand { genes });
-                            vm.telomeres.push(50);
-                            #[cfg(feature = "cortex")]
-                            {
-                                vm.activation_levels.push(0);
-                                vm.synapse_map.push(Vec::new());
+                            if valid {
+                                vm.dna.helix.strands.push(crate::ast::Strand { genes });
+                                vm.telomeres.push(50);
+                                #[cfg(feature = "cortex")]
+                                {
+                                    vm.activation_levels.push(0);
+                                    vm.synapse_map.push(Vec::new());
+                                }
+
+                                let new_idx = vm.dna.helix.strands.len() - 1;
+                                vm.cladistics.register_strand(
+                                    new_idx,
+                                    Some(vm.ip.0),
+                                    vm.tick_counter,
+                                    "Incubate".to_string(),
+                                );
+
+                                vm.energy = vm.energy.saturating_sub(20); // Cost
+                                vm.output.push(format!(
+                                    "INCUBATE: Created new strand {} from grid",
+                                    new_idx
+                                ));
                             }
-
-                            let new_idx = vm.dna.helix.strands.len() - 1;
-                            vm.cladistics.register_strand(
-                                new_idx,
-                                Some(vm.ip.0),
-                                vm.tick_counter,
-                                "Incubate".to_string()
-                            );
-
-                            vm.energy = vm.energy.saturating_sub(20); // Cost
-                            vm.output.push(format!(
-                                "INCUBATE: Created new strand {} from grid",
-                                new_idx
-                            ));
                         }
                     } else {
                         vm.output

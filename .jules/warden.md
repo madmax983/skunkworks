@@ -39,3 +39,7 @@
 **2026-03-12 - Chimera-Lang Phylogeny Sandboxing**
 **Threat:** Path Traversal and Arbitrary Command Execution in `phylogeny` feature. Opcodes `Crawl`, `Sequencing`, `Synthesize`, `Infect` allowed access to files outside the VM environment (e.g. `../../etc/passwd`). `Shell` opcode allowed arbitrary command execution.
 **Defense:** Implemented `sandbox_root` in `ChimeraVM` and strict `sanitize_path` helper to enforce confinement using canonicalization and prefix checking. Disabled `Shell` opcode completely ("SHELL DISABLED").
+
+**2026-03-13 - Chimera-Lang Input DoS & Incubate Bomb Hardening**
+**Threat:** DoS via call stack overflow in interrupt handling (`handle_input_interrupts` unchecked recursion) and memory exhaustion in `Incubate` (unbounded string replication).
+**Defense:** Added `MAX_CALL_STACK_DEPTH` check to input handler and enforced 1MB limit on strands created by `Incubate`.
