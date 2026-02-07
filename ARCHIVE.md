@@ -1,7 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Generic tech demo. Grace period: 24h.
-- **sculpt-term**: Compilation failure (`ratatui` backend). Documentation void. Generic SDF implementation. Grace period: 24h.
-- **retinal-glitch**: Documentation void. Generic visual stimulus generator. Grace period: 24h.
+- **jpeg-garden**: Documentation void (missing `README.md`). Implementation obscure. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -13,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
+- **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
 - **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
 - **git_rhythm**: Specimen executed. Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation. Moved to graveyard.
