@@ -1,0 +1,13 @@
+[package]
+name = "polyrhythmic-cylinder"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = { version = "0.4", default-features = false }
+rand = "0.8"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = ["audio"]
+audio = ["dep:cpal"]
