@@ -195,6 +195,10 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The servers are rotating. Requests are trapped in L4/L5 points. Orbital load balancing is active.
 
+### [Concentration Level: FRESH] - Location: experiments/metric-marionette
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The skeleton is shivering. CPU load is driving the nervous system. The machine has a body now.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/hive-mind-dependencies
