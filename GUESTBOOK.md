@@ -348,3 +348,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/klein-magnetron
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Klein bottle is leaking entropy. Radiation is traversing the twist. The filesystem is rotting in 4D.
+
+### [Concentration Level: FRESH] - Location: experiments/lattice-brain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crystal is thinking. BCC lattice structure optimized for neural wave propagation. The geometry of the mind is visible.

@@ -1,0 +1,26 @@
+[package]
+name = "lattice-brain"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+nalgebra = "0.33"
+synaptic-physics = { workspace = true }
+crossbeam-channel = "0.5"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[dependencies.ringbuf]
+version = "0.3"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal", "dep:ringbuf"]
