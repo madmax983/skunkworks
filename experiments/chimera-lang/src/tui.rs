@@ -53,6 +53,8 @@ pub(crate) enum ViewMode {
     Memetics,
     #[cfg(feature = "nova")]
     Egregore,
+    #[cfg(feature = "nova")]
+    Bestiary,
     Heatmap,
 }
 
@@ -92,6 +94,8 @@ pub(crate) struct AppState {
     pub(crate) alchemy_shelf_idx: usize,
     #[cfg(feature = "nova")]
     pub(crate) alchemy_strand_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) selected_organelle_index: usize,
 }
 
 impl AppState {
@@ -126,6 +130,8 @@ impl AppState {
             alchemy_shelf_idx: 0,
             #[cfg(feature = "nova")]
             alchemy_strand_idx: 0,
+            #[cfg(feature = "nova")]
+            selected_organelle_index: 0,
         }
     }
 }
@@ -272,6 +278,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Egregore = app_state.view_mode {
                 render_egregore(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Bestiary = app_state.view_mode {
+                render_bestiary(f, vm, app_state);
                 return;
             }
 
@@ -477,6 +489,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Bestiary => {
+                                app_state.input_mode = InputMode::Normal;
+                                app_state.input_buffer.clear();
+                            }
                             }
                         }
                         KeyCode::Esc => {
@@ -581,7 +598,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Memetics => ViewMode::Egregore,
                             #[cfg(feature = "nova")]
-                            ViewMode::Egregore => ViewMode::Heatmap,
+                            ViewMode::Egregore => ViewMode::Bestiary,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Bestiary => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -599,6 +618,8 @@ where
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
                     KeyCode::Char('i') => {
                         app_state.input_mode = InputMode::Injection;
                         app_state.input_buffer.clear();
@@ -758,6 +779,14 @@ where
                         ViewMode::Memetics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Egregore => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Bestiary => {
+                            if !vm.organelles.is_empty() {
+                                if app_state.selected_organelle_index + 1 < vm.organelles.len() {
+                                    app_state.selected_organelle_index += 1;
+                                }
+                            }
+                        }
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -886,6 +915,12 @@ where
                         ViewMode::Memetics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Egregore => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Bestiary => {
+                            if app_state.selected_organelle_index > 0 {
+                                app_state.selected_organelle_index -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -932,6 +967,8 @@ where
                         ViewMode::Memetics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Egregore => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Bestiary => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -978,6 +1015,8 @@ where
                         ViewMode::Memetics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Egregore => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Bestiary => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1159,6 +1198,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Egregore => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Bestiary => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1425,6 +1468,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Memetics => "MEMETICS",
                 #[cfg(feature = "nova")]
                 ViewMode::Egregore => "THE EGREGORE",
+                #[cfg(feature = "nova")]
+                ViewMode::Bestiary => "BESTIARY",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -2744,4 +2789,66 @@ fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     let info = Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("The Covenant"));
     f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .split(f.area());
+
+    // Organelle List
+    let mut items = Vec::new();
+    if vm.organelles.is_empty() {
+        items.push(ListItem::new("No active organelles."));
+    } else {
+        for (i, org) in vm.organelles.iter().enumerate() {
+            let style = if i == app_state.selected_organelle_index {
+                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::White)
+            };
+            items.push(ListItem::new(format!("{} [{:?}]", org.name, org.kind)).style(style));
+        }
+    }
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Bestiary (Active Agents)"));
+    f.render_widget(list, chunks[0]);
+
+    // Details
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(8), Constraint::Min(0)].as_ref())
+        .split(chunks[1]);
+
+    if !vm.organelles.is_empty() && app_state.selected_organelle_index < vm.organelles.len() {
+        let org = &vm.organelles[app_state.selected_organelle_index];
+
+        // Face
+        let face_lines = crate::vm::nova_bestiary::generate_face(org.genome_id, &org.traits);
+        let mut face_text = Vec::new();
+        for line in face_lines {
+            face_text.push(Line::from(Span::styled(line, Style::default().fg(Color::Cyan))));
+        }
+        let face_widget = Paragraph::new(face_text).block(Block::default().borders(Borders::ALL).title("Portrait"));
+        f.render_widget(face_widget, right_chunks[0]);
+
+        // Stats
+        let stats = vec![
+            Line::from(format!("Name: {}", org.name)),
+            Line::from(format!("Type: {:?}", org.kind)),
+            Line::from(format!("Genome ID: {:x}", org.genome_id)),
+            Line::from(format!("Traits: {:?}", org.traits)),
+            Line::from(format!("Location: {:?}", org.context_loc)),
+            Line::from(format!("Stack Depth: {}", org.stack.len())),
+            Line::from(format!("IP: {:?}", org.ip)),
+            Line::from(format!("Direction: {:?}", org.direction)),
+        ];
+
+        let stats_widget = Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("Vitals"));
+        f.render_widget(stats_widget, right_chunks[1]);
+    } else {
+        let info = Paragraph::new("Select an organelle to inspect.").block(Block::default().borders(Borders::ALL));
+        f.render_widget(info, chunks[1]);
+    }
 }

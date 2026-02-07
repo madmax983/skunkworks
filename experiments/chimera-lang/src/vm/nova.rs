@@ -12,7 +12,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{nova_biome::Biome, ChimeraVM, ChromaCell, Value};
+use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, ChromaCell, Value};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -24,7 +24,11 @@ use rand::seq::SliceRandom;
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]
+use std::collections::hash_map::DefaultHasher;
+#[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+#[cfg(feature = "nova")]
+use std::hash::{Hash, Hasher};
 
 const MAX_EPIGENOME_SIZE: usize = 1024;
 const MAX_INCUBATE_LENGTH: usize = 1024;
@@ -142,6 +146,9 @@ pub struct Organelle {
     /// Movement vector (dy, dx) used by some organelles (e.g. Ribosome, Void).
     pub direction: (i8, i8),
     pub ttl: Option<usize>,
+    pub name: String,
+    pub traits: Vec<String>,
+    pub genome_id: u64,
 }
 
 #[cfg(feature = "nova")]
@@ -405,6 +412,9 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
                 kind: OrganelleType::Worker,
                 direction: (0, 0),
                 ttl: None,
+                name: "Genesis Wisp".to_string(),
+                traits: vec!["Summoned".to_string()],
+                genome_id: 0,
             };
             vm.organelles.push(organelle);
             vm.chorus_buffer.clear();
@@ -2007,6 +2017,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             _ => (OrganelleType::Worker, (0, 0)),
                         };
 
+                        let strand = &vm.dna.helix.strands[s_idx];
+                        let mut hasher = DefaultHasher::new();
+                        strand.hash(&mut hasher);
+                        let genome_id = hasher.finish();
+                        let traits = nova_bestiary::analyze_traits(strand);
+                        let name = nova_bestiary::generate_name(genome_id, &traits);
+
                         let organelle = Organelle {
                             stack: Vec::new(),
                             ip: (s_idx, 0),
@@ -2017,6 +2034,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             kind: kind.clone(),
                             direction,
                             ttl: None,
+                            name,
+                            traits,
+                            genome_id,
                         };
                         vm.organelles.push(organelle);
                         vm.energy = vm.energy.saturating_sub(20);
@@ -3875,6 +3895,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     kind: OrganelleType::Worker, // Default
                     direction: (0, 0),
                     ttl: None,
+                    name: "Symbiote Spawn".to_string(),
+                    traits: vec!["Ejected".to_string()],
+                    genome_id: 0,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(10);
@@ -4070,6 +4093,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 kind: OrganelleType::Void,
                 direction: (0, 0),
                 ttl: None,
+                name: "Voidwalker".to_string(),
+                traits: vec!["Nihilistic".to_string()],
+                genome_id: 0,
             };
             vm.organelles.push(organelle);
             vm.energy = vm.energy.saturating_sub(50);
