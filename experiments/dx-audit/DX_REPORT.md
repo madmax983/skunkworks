@@ -2,7 +2,7 @@
 
 **Auditor:** Echo 🗣️
 **Target:** `experiments/chimera-lang`
-**Date:** 2025-05-18
+**Date:** 2024-05-18
 
 ## 1. The "README Run" 🏃‍♂️
 
@@ -28,37 +28,52 @@ fn main() {
 The README points to `examples/story_demo.rs` for a full programmatic example.
 
 **Friction Point 1: Feature Flag Confusion** 🚧
-The example file is heavily guarded with `#[cfg(feature = "nova")]`.
-- **Confusion:** If a user copies this code into their project (which might not have a `nova` feature defined in its `Cargo.toml`), the code will not compile or will warn about unexpected `cfg` conditions.
-- **Reality:** The user likely enabled the `nova` feature in the *dependency*, not their own crate. The example code assumes it's running *inside* the `chimera-lang` crate or a crate that mirrors its feature flags.
-- **Fix Suggestion:** Examples intended for external usage should either assume the feature is enabled or explain that the `cfg` guards are for internal testing.
+The example file was heavily guarded with `#[cfg(feature = "nova")]`.
+- **Confusion:** A user copying this code into their project (which likely enables `nova` via dependency but doesn't define it as a crate feature) faced compilation warnings and errors because the guards checked the *local* crate's features.
+- **Fix:** I updated `experiments/chimera-lang/Cargo.toml` to declare that `story_demo` requires the `nova` feature, and removed all `#[cfg]` guards from `examples/story_demo.rs`. The example is now clean and copy-paste friendly.
 
-**Result:** ✅ **Passed** (with modifications to remove `cfg` guards).
+**Result:** ✅ **Fixed**.
 
-## 3. The "Error Check" 💥
+## 3. The "Compilation Check" 🐛
+
+**Friction Point 2: Library Compilation Error** 🚧
+- **Observation:** Running `cargo check -p chimera-lang` (default features) failed.
+- **Error:** `no field call_stack on type &mut ChimeraVM`.
+- **Cause:** The `interrupt` method in `vm/mod.rs` used `self.call_stack`, but `call_stack` was guarded by `#[cfg(any(feature = "nova", feature = "silicon"))]`.
+- **Fix:** I guarded the `interrupt` method with the same `cfg` condition.
+
+**Result:** ✅ **Fixed**.
+
+## 4. The "Error Check" 💥
 
 I attempted to misuse the API by providing an `Add` opcode with an empty stack.
 
 **Code Tested:**
 ```rust
-    let add_gene = Gene {
-        op: OpCode::Add,
-        args: vec![],
+    let bad_strand = Strand {
+        genes: vec![
+            Gene {
+                op: OpCode::Add, // Needs 2 items
+                args: vec![],
+            },
+        ],
     };
     // ... load into VM ...
     vm.step();
 ```
 
-**Friction Point 2: Silent-ish Failures** 🚧
+**Friction Point 3: Silent-ish Failures** 🚧
 - **Observation:** `vm.step()` returns `()`. It does not return a `Result`.
 - **Behavior:** The error "Error: Stack underflow" was pushed to `vm.output` as a string.
 - **Complaint:** This makes programmatic error handling difficult. I have to parse strings in `vm.output` to know if my step succeeded.
-- **Recommendation:** `vm.step()` should return `Result<(), VMError>`.
+- **Recommendation:** `vm.step()` should return `Result<(), VMError>`. (Not fixed in this audit, just reported).
 
 ## Summary
 
-The `chimera-lang` crate is functional and the documentation is accurate enough to get started. The main friction points are:
-1.  Copy-pasting examples with internal `cfg` guards is confusing.
-2.  Error handling via string output is "slangy" and non-idiomatic for Rust.
+The `chimera-lang` crate had some rough edges regarding default feature compilation and example usability.
 
-**Verdict:** 🟢 **Passable** (but could be friendlier).
+**Fixes Applied:**
+1.  Fixed compilation of `chimera-lang` with default features.
+2.  Cleaned up `examples/story_demo.rs` to be usable as a reference without modification.
+
+**Verdict:** 🟢 **Passed** (after fixes).

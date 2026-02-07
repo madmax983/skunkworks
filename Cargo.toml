@@ -111,7 +111,6 @@ members = [
     "experiments/chromatic-cipher", 
     "experiments/repo-fossil", 
     "experiments/hertzian-shimmer", 
-    "experiments/knot-archiver", 
     "experiments/hyperbolic-browser",  
     "experiments/chimera-fossil",
     "experiments/cam-automaton", 
