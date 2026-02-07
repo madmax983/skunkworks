@@ -1,11 +1,12 @@
+mod flock;
 mod market;
 mod synth;
-mod flock;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use rand::Rng;
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
@@ -15,14 +16,13 @@ use ratatui::{
         Block, Borders, Paragraph, Sparkline,
         canvas::{Canvas, Points},
     },
-    Terminal,
 };
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
+use flock::Flock;
 use market::{Grid, Particle};
 use synth::SynthState;
-use flock::Flock;
 
 struct App {
     grid: Grid,
@@ -95,7 +95,8 @@ impl App {
         }
 
         self.grid.update();
-        self.synth.update(self.grid.center_of_mass, self.grid.trade_count);
+        self.synth
+            .update(self.grid.center_of_mass, self.grid.trade_count);
 
         // Update Flock
         // Price Y in TUI coordinates = (height - price - 1)?
@@ -179,13 +180,16 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         for x in 0..app.grid.width {
             match app.grid.get(x, y) {
                 Particle::Bid => {
-                    app.bids_buf.push((x as f64, (app.grid.height - y - 1) as f64));
+                    app.bids_buf
+                        .push((x as f64, (app.grid.height - y - 1) as f64));
                 }
                 Particle::Ask => {
-                    app.asks_buf.push((x as f64, (app.grid.height - y - 1) as f64));
+                    app.asks_buf
+                        .push((x as f64, (app.grid.height - y - 1) as f64));
                 }
                 Particle::Trade { .. } => {
-                    app.trades_buf.push((x as f64, (app.grid.height - y - 1) as f64));
+                    app.trades_buf
+                        .push((x as f64, (app.grid.height - y - 1) as f64));
                 }
                 Particle::Empty => {}
             }
@@ -194,7 +198,11 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
 
     // Render Canvas
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Market Swarm "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Market Swarm "),
+        )
         .x_bounds([0.0, app.grid.width as f64])
         .y_bounds([0.0, app.grid.height as f64])
         .marker(Marker::Block)
@@ -244,7 +252,11 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
         let spark_data: Vec<u64> = data.iter().map(|v| ((v + 1.0) * 10.0) as u64).collect();
 
         let sparkline = Sparkline::default()
-            .block(Block::default().borders(Borders::ALL).title(" Market Synth "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Market Synth "),
+            )
             .data(&spark_data)
             .style(Style::default().fg(Color::Cyan));
         f.render_widget(sparkline, chunks[1]);
@@ -254,8 +266,7 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     let sync_idx = app.flock.synchronization_index();
     let status = Paragraph::new(format!(
         "Price: {:.2} | Sync: {:.3} | Bulls/Bears Swarming | 'q': Quit",
-        app.market_price,
-        sync_idx
+        app.market_price, sync_idx
     ))
     .style(Style::default().bg(Color::Blue).fg(Color::White));
     f.render_widget(status, chunks[2]);

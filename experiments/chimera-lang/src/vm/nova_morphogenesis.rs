@@ -98,8 +98,7 @@ pub fn exec_grow(vm: &mut ChimeraVM) {
     let y_val = vm.stack.pop().unwrap();
     let instr_val = vm.stack.pop().unwrap();
 
-    if let (Value::Int(start_x), Value::Int(start_y), Value::Str(instr)) =
-        (x_val, y_val, instr_val)
+    if let (Value::Int(start_x), Value::Int(start_y), Value::Str(instr)) = (x_val, y_val, instr_val)
     {
         let mut x = start_x;
         let mut y = start_y;

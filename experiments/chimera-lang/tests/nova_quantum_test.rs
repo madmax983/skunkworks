@@ -12,36 +12,34 @@ fn test_quantum_jump() {
         genes: vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(1)] // Partner
+                args: vec![Nucleotide::Number(1)], // Partner
             },
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::Number(0)] // Self
+                args: vec![Nucleotide::Number(0)], // Self
             },
             Gene {
                 op: OpCode::Entangle,
-                args: vec![]
+                args: vec![],
             },
             Gene {
                 op: OpCode::QuantumJump,
-                args: vec![]
-            }
-        ]
+                args: vec![],
+            },
+        ],
     };
 
     let strand1 = Strand {
-        genes: vec![
-            Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(999)]
-            }
-        ]
+        genes: vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(999)],
+        }],
     };
 
     let dna = Dna {
         helix: Helix {
-            strands: vec![strand0, strand1]
-        }
+            strands: vec![strand0, strand1],
+        },
     };
 
     let mut vm = ChimeraVM::new(dna);
@@ -98,19 +96,19 @@ fn test_spirit_message() {
         genes: vec![
             Gene {
                 op: OpCode::Push,
-                args: vec![Nucleotide::String("Hello Spirit".to_string())]
+                args: vec![Nucleotide::String("Hello Spirit".to_string())],
             },
             Gene {
                 op: OpCode::Spirit,
-                args: vec![]
-            }
-        ]
+                args: vec![],
+            },
+        ],
     };
 
     let dna = Dna {
         helix: Helix {
-            strands: vec![strand0]
-        }
+            strands: vec![strand0],
+        },
     };
 
     let mut vm = ChimeraVM::new(dna);

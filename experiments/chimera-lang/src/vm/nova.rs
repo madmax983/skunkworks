@@ -1245,11 +1245,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     };
 
                     vm.energy = vm.energy.saturating_sub(10);
-                    vm.output.push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
+                    vm.output
+                        .push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
                     return Some((partner_idx, target_gene));
                 }
             } else {
-                vm.output.push("QUANTUM_JUMP: No entangled partner".to_string());
+                vm.output
+                    .push("QUANTUM_JUMP: No entangled partner".to_string());
             }
             None
         }

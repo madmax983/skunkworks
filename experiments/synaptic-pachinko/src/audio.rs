@@ -110,14 +110,15 @@ impl AudioEngine {
 
         #[cfg(not(feature = "audio"))]
         {
-             let handle = std::thread::spawn(move || {
+            let handle = std::thread::spawn(move || {
                 let sample_rate = 44100.0;
                 let time_scale = 10.0;
                 let dt = (1000.0 / sample_rate) * time_scale;
                 let mut snapshot_timer = 0;
 
                 // Simulate roughly 44100Hz
-                let frame_duration = std::time::Duration::from_micros((1_000_000.0 / sample_rate * 256.0) as u64); // processing in chunks of 256
+                let frame_duration =
+                    std::time::Duration::from_micros((1_000_000.0 / sample_rate * 256.0) as u64); // processing in chunks of 256
 
                 loop {
                     let start = std::time::Instant::now();

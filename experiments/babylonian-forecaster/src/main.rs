@@ -1,5 +1,5 @@
-pub mod sexagesimal;
 pub mod forecaster;
+pub mod sexagesimal;
 
 #[cfg(test)]
 mod tests;
@@ -15,8 +15,8 @@ use crossterm::{
 };
 use ratatui::{prelude::*, symbols::Marker, widgets::*};
 
-use crate::sexagesimal::Sexagesimal;
 use crate::forecaster::TimeSeries;
+use crate::sexagesimal::Sexagesimal;
 use rand::Rng;
 
 fn main() -> Result<()> {
@@ -46,7 +46,9 @@ fn run_app(mut terminal: Terminal<CrosstermBackend<Stdout>>) -> io::Result<()> {
 
     for _ in 0..100 {
         current += rng.gen_range(-5..=5);
-        if current < 1 { current = 1; }
+        if current < 1 {
+            current = 1;
+        }
         data.push(Sexagesimal::from_u64(current as u64));
     }
 
@@ -54,12 +56,18 @@ fn run_app(mut terminal: Terminal<CrosstermBackend<Stdout>>) -> io::Result<()> {
     let ma = ts.moving_average(5);
 
     // Convert for plotting
-    let raw_data_points: Vec<(f64, f64)> = ts.data.iter().enumerate()
+    let raw_data_points: Vec<(f64, f64)> = ts
+        .data
+        .iter()
+        .enumerate()
         .map(|(i, v)| (i as f64, v.to_f64()))
         .collect();
 
     let window_size = 5;
-    let ma_points: Vec<(f64, f64)> = ma.data.iter().enumerate()
+    let ma_points: Vec<(f64, f64)> = ma
+        .data
+        .iter()
+        .enumerate()
         .map(|(i, v)| ((i + window_size - 1) as f64, v.to_f64()))
         .collect();
 
@@ -76,18 +84,36 @@ fn run_app(mut terminal: Terminal<CrosstermBackend<Stdout>>) -> io::Result<()> {
             // X Axis: 0 to 100
             // We want labels every 10 steps.
             // 0, 10, 20... 100
-            let x_labels: Vec<Span> = (0..11).map(|i| {
-                let val = i * 10;
-                let s = if val == 0 { Sexagesimal::zero() } else { Sexagesimal::from_u64(val as u64) };
-                Span::styled(format!("{}", s), Style::default().add_modifier(Modifier::BOLD))
-            }).collect();
+            let x_labels: Vec<Span> = (0..11)
+                .map(|i| {
+                    let val = i * 10;
+                    let s = if val == 0 {
+                        Sexagesimal::zero()
+                    } else {
+                        Sexagesimal::from_u64(val as u64)
+                    };
+                    Span::styled(
+                        format!("{}", s),
+                        Style::default().add_modifier(Modifier::BOLD),
+                    )
+                })
+                .collect();
 
             // Y Axis: 0 to 100 (assuming data stays in range)
-            let y_labels: Vec<Span> = (0..11).map(|i| {
-                let val = i * 10;
-                let s = if val == 0 { Sexagesimal::zero() } else { Sexagesimal::from_u64(val as u64) };
-                Span::styled(format!("{}", s), Style::default().add_modifier(Modifier::BOLD))
-            }).collect();
+            let y_labels: Vec<Span> = (0..11)
+                .map(|i| {
+                    let val = i * 10;
+                    let s = if val == 0 {
+                        Sexagesimal::zero()
+                    } else {
+                        Sexagesimal::from_u64(val as u64)
+                    };
+                    Span::styled(
+                        format!("{}", s),
+                        Style::default().add_modifier(Modifier::BOLD),
+                    )
+                })
+                .collect();
 
             let datasets = vec![
                 Dataset::default()
@@ -103,17 +129,25 @@ fn run_app(mut terminal: Terminal<CrosstermBackend<Stdout>>) -> io::Result<()> {
             ];
 
             let chart = Chart::new(datasets)
-                .block(Block::default().title("Babylonian Forecast (base-60)").borders(Borders::ALL))
-                .x_axis(Axis::default()
-                    .title("Time")
-                    .style(Style::default().fg(Color::Gray))
-                    .bounds([0.0, 100.0])
-                    .labels(x_labels))
-                .y_axis(Axis::default()
-                    .title("Value")
-                    .style(Style::default().fg(Color::Gray))
-                    .bounds([0.0, 150.0]) // Increased bound slightly
-                    .labels(y_labels));
+                .block(
+                    Block::default()
+                        .title("Babylonian Forecast (base-60)")
+                        .borders(Borders::ALL),
+                )
+                .x_axis(
+                    Axis::default()
+                        .title("Time")
+                        .style(Style::default().fg(Color::Gray))
+                        .bounds([0.0, 100.0])
+                        .labels(x_labels),
+                )
+                .y_axis(
+                    Axis::default()
+                        .title("Value")
+                        .style(Style::default().fg(Color::Gray))
+                        .bounds([0.0, 150.0]) // Increased bound slightly
+                        .labels(y_labels),
+                );
 
             f.render_widget(chart, chunks[0]);
         })?;
