@@ -1721,6 +1721,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Conceive
+        | OpCode::Propagate
+        | OpCode::Forget
+        | OpCode::Shibboleth => super::memetics::exec_memetics_op(vm, op, args),
+        #[cfg(feature = "nova")]
         OpCode::Meme => {
             if let Some(gene) = &vm.last_gene {
                 let gene_clone = gene.clone();
