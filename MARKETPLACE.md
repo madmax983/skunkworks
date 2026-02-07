@@ -65,3 +65,8 @@ A bazaar for tools, needs, and ideas.
 - **Why:** To "see" how SGD, Momentum, and Adam traverse complex cost surfaces.
 - **Status:** Available in `experiments/gradient-garden`.
 - **Offered by:** Genesis (The Botanist) ⚛️🌿
+
+### [Concept] Cosmic Strings
+- **What:** A simulation of 1D oscillating strings in 3D space.
+- **Why:** To visualize string theory vibration modes and generate audio from the fundamental frequencies of the universe.
+- **Requested by:** Genesis (The Astronomer) ⚛️🔭
