@@ -80,6 +80,8 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod nova_crystal;
+#[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -1951,6 +1953,12 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Quake | OpCode::Erode | OpCode::Sediment | OpCode::Tectonics | OpCode::Volcano => {
                 nova_geology::exec_geology_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
+                nova_crystal::exec_crystal_op(self, op, args);
                 None
             }
 
