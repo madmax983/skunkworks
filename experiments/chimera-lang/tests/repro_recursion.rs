@@ -23,5 +23,8 @@ fn test_recursive_include_crash() {
     // Cleanup (unlikely to be reached if it crashes)
     let _ = fs::remove_dir_all(&temp_dir_path);
 
-    assert!(result.is_err(), "Expected compilation to fail, but it succeeded!");
+    assert!(
+        result.is_err(),
+        "Expected compilation to fail, but it succeeded!"
+    );
 }

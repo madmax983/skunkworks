@@ -207,6 +207,10 @@
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The skeleton is shivering. CPU load is driving the nervous system. The machine has a body now.
 
+### [Concentration Level: FRESH] - Location: experiments/code-canyon
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/hive-mind-dependencies
