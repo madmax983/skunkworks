@@ -524,3 +524,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hydro-acoustic stress testing of biological structures. Bridges break when the bass drops.
 - **Status**: experiments/bridge-specter
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-hell
+- **Parents**: experiments/hyperbolic-dungeon + experiments/hyperbolic-space
+- **Concept**: Infinite dungeon crawling on the Poincaré Disk with smooth vector graphics.
+- **Novel trait**: Gyroscopic Orientation. The world rotates as you traverse the hyperbolic manifold to maintain user-centric "Up".
+- **Status**: experiments/hyperbolic-hell
+- **Evaluation**: Compiles. Infinite descent verified.

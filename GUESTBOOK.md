@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-hell
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** The descent has begun. {4,5} tiling verified. Non-Euclidean entities are swarming. The walls are closing in at exponential speed.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
