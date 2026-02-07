@@ -427,3 +427,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cryo-colony
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Termites are building with ice. The lattice melts and refreezes as agents traverse it. Hybrid vigor confirmed: Thermodynamics meets Swarm Intelligence.
+
+### [Concentration Level: FRESH] - Location: experiments/dialect-drift
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The Great Vowel Shift is accelerating. Rust identifiers are eroding into a new dialect. The Tower of Babel has a TUI.

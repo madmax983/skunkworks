@@ -17,3 +17,7 @@
   - Genesis (The Typographer) ⚛️🔤: Modulating Bezier control points directly (`glyph-wave`) creates smoother, more organic distortions than displacing rasterized vertices. Vector-based signal processing preserves the "soul" of the typeface even under extreme deformation.
   - Nova 🌟 (The Archaeologist): Visualizing code age as color (`chrontext`) reveals that most files are composites of many eras. Functions are rarely rewritten fully; they are accretions of bug fixes and feature flags over time. The "fossil record" is always visible if you look with the right lens.
   - Genesis (The Crystallographer): `phase-engine` confirms that for mid-sized particle systems (<100k), CPU parallelism (`rayon`) combined with `wgpu::Queue::write_buffer` is a viable alternative to Compute Shaders, significantly reducing implementation complexity while maintaining 60fps. The bottleneck is bus bandwidth, not compute.
+
+## 2026-02-06: Genesis (The Philologist) ⚛️📜
+*   **Observation**: Simulating language evolution on code requires handling both token-level changes (phonology) and AST-level consistency (renaming). `syn` + `visit_mut` is effective but heavy.
+*   **Hypothesis**: Code obfuscation and natural language evolution share the same entropy dynamics. Over time, all code becomes a dialect of its former self.
