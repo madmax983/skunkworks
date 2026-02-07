@@ -16,9 +16,9 @@ pub struct Order {
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Default)]
 pub struct MarketState {
-    pub asks: Vec<Order>, // Sell orders
-    pub bids: Vec<Order>, // Buy orders (future use)
-    pub wallets: Vec<i64>, // Credits per strand
+    pub asks: Vec<Order>,                 // Sell orders
+    pub bids: Vec<Order>,                 // Buy orders (future use)
+    pub wallets: Vec<i64>,                // Credits per strand
     pub history: VecDeque<(String, i64)>, // (Item, Price)
     pub next_order_id: u64,
 }
@@ -82,7 +82,12 @@ impl MarketState {
         id
     }
 
-    pub fn match_buy(&mut self, buyer_id: usize, query: String, max_price: i64) -> Option<(String, i64)> {
+    pub fn match_buy(
+        &mut self,
+        buyer_id: usize,
+        query: String,
+        max_price: i64,
+    ) -> Option<(String, i64)> {
         // Sort asks by price ascending (cheapest first)
         self.asks.sort_by_key(|o| o.price);
 

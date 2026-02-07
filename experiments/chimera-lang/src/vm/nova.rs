@@ -303,10 +303,10 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 
             // Blur and strong decay (50% base + cloud)
             let transmission = 50 - cloud_opacity; // 50% -> 0% transmission relative to input
-            // Wait, previous was / 2 (50%).
-            // New logic: (sum / count) * transmission / 100?
-            // If transmission is 50 (clear sky), it matches previous.
-            // If transmission is 0 (thick cloud), light dies.
+                                                   // Wait, previous was / 2 (50%).
+                                                   // New logic: (sum / count) * transmission / 100?
+                                                   // If transmission is 50 (clear sky), it matches previous.
+                                                   // If transmission is 0 (thick cloud), light dies.
 
             buffer[y][x] = ((sum / count as i128) * transmission as i128 / 100) as i64;
         }
@@ -1271,7 +1271,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.output.push("INVEST: Insufficient energy".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for invest".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for invest".to_string());
                 }
             } else {
                 vm.output
@@ -1294,7 +1295,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for divest".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for divest".to_string());
                 }
             } else {
                 vm.output
@@ -1455,7 +1457,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             let (cy, cx) = vm.context_loc;
             vm.gravity_grid[cy][cx] = vm.gravity_grid[cy][cx].saturating_add(50);
             vm.energy = vm.energy.saturating_sub(10);
-            vm.output.push(format!("GRAVITON: Emitted at {},{}", cx, cy));
+            vm.output
+                .push(format!("GRAVITON: Emitted at {},{}", cx, cy));
             None
         }
         #[cfg(feature = "nova")]
@@ -2776,13 +2779,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
                         return Some((strand_idx, 0));
                     } else {
-                        vm.output.push("Error: Invalid strand index for exec".to_string());
+                        vm.output
+                            .push("Error: Invalid strand index for exec".to_string());
                     }
                 } else {
                     vm.output.push("Error: Type mismatch for exec".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for exec".to_string());
+                vm.output
+                    .push("Error: Stack underflow for exec".to_string());
             }
             None
         }

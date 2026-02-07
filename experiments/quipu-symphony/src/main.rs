@@ -171,24 +171,18 @@ fn main() -> Result<()> {
                         continue;
                     }
 
-                    // Calculate Y position of this cluster
-                    // Rev index: Top cluster has index `len-1`.
-                    // We want Top cluster at Y = spacing.
-                    // Bottom cluster (idx 0) at Y = 1.0 - spacing.
+                    // Same Y logic as main loop
+                    // cluster_y (0-1, 0 is top) = 1.0 - ((c_idx + 1) * spacing)
+                    // Canvas Y (0 bottom, 1 top) = 1.0 - cluster_y
+                    //                            = ((c_idx + 1) * spacing)
 
-                    // Visual position (0.0 is top)
-                    // let visual_idx = (num_clusters - 1) - c_idx; // 0 for top
-                    // let cluster_y = (visual_idx as f32 + 1.0) * spacing;
-
-                    // Actually, let's just map index directly to Y for simplicity in generic cords
-                    // Let's say index 0 is top. (Reverse of Quipu logic but easier for sequencer).
-                    // No, let's stick to Quipu logic: Index 0 is Bottom (Units).
-
-                    let cluster_y = 1.0 - ((c_idx as f32 + 1.0) * spacing);
+                    let canvas_y = ((c_idx as f32 + 1.0) * spacing) as f64;
 
                     // Check if playhead crossed this Y
                     // Since playhead moves down (increasing Y), we check if old < y <= new
                     // Or if we wrapped around
+
+                    let cluster_y = 1.0 - canvas_y as f32;
 
                     let hit = if state.playhead_y < old_y {
                         // Wrapped
@@ -198,39 +192,37 @@ fn main() -> Result<()> {
                         cluster_y > old_y && cluster_y <= state.playhead_y
                     };
 
-                    if hit {
-                        if !state.triggered_clusters.contains(&(t_idx, c_idx)) {
-                            state.triggered_clusters.insert((t_idx, c_idx));
+                    if hit && !state.triggered_clusters.contains(&(t_idx, c_idx)) {
+                        state.triggered_clusters.insert((t_idx, c_idx));
 
-                            // Trigger Sound
-                            match track.sound_type {
-                                TrackSound::Percussion => {
-                                    // Use first knot type to decide
-                                    if let Some(k) = cluster.first() {
-                                        match k {
-                                            Knot::Simple => {
-                                                let _ = tx.send(AudioEvent::Kick);
-                                            }
-                                            Knot::Long(_) => {
-                                                let _ = tx.send(AudioEvent::Snare);
-                                            }
-                                            Knot::FigureEight => {
-                                                let _ = tx.send(AudioEvent::HiHat);
-                                            }
+                        // Trigger Sound
+                        match track.sound_type {
+                            TrackSound::Percussion => {
+                                // Use first knot type to decide
+                                if let Some(k) = cluster.first() {
+                                    match k {
+                                        Knot::Simple => {
+                                            let _ = tx.send(AudioEvent::Kick);
+                                        }
+                                        Knot::Long(_) => {
+                                            let _ = tx.send(AudioEvent::Snare);
+                                        }
+                                        Knot::FigureEight => {
+                                            let _ = tx.send(AudioEvent::HiHat);
                                         }
                                     }
                                 }
-                                TrackSound::Melodic => {
-                                    // Sum values for pitch offset
-                                    let mut val = 0;
-                                    for k in cluster {
-                                        val += k.value();
-                                    }
-                                    // scale: pentatonic?
-                                    // simple chromatic for now: base * 2^(val/12)
-                                    let pitch = track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
-                                    let _ = tx.send(AudioEvent::Pluck(pitch));
+                            }
+                            TrackSound::Melodic => {
+                                // Sum values for pitch offset
+                                let mut val = 0;
+                                for k in cluster {
+                                    val += k.value();
                                 }
+                                // scale: pentatonic?
+                                // simple chromatic for now: base * 2^(val/12)
+                                let pitch = track.base_freq * 2.0_f32.powf(val as f32 / 12.0);
+                                let _ = tx.send(AudioEvent::Pluck(pitch));
                             }
                         }
                     }

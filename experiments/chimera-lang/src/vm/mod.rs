@@ -63,13 +63,13 @@ pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
-pub mod nova_market;
-#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
+#[cfg(feature = "nova")]
+pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]

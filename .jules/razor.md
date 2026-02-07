@@ -56,3 +56,8 @@
 **Bloat:** Re-implementation of `Vec2` logic and tuple-based math in `luminous-flock`.
 **Cut:** Replaced with `tui_shared::math::Vec2`. Fixed `DNA` naming.
 **Saved:** ~30 lines of boilerplate math, improved type safety and readability.
+
+## [Reduction]
+**Bloat:** `experiments/knot-archiver` was a zombie fragment of `serde-quipu`, redundant with `quipu-symphony`, and lacked documentation.
+**Cut:** Deleted the entire experiment.
+**Saved:** Removed 3 files of dead code and build configuration overhead.

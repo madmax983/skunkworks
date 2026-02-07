@@ -105,10 +105,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("PIN_IN: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for pin_in".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for pin_in".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pin_in".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pin_in".to_string());
             }
         }
         OpCode::PinOut => {
@@ -122,10 +124,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("PIN_OUT: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for pin_out".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for pin_out".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pin_out".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pin_out".to_string());
             }
         }
         _ => {}
@@ -154,9 +158,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
 
             // Map values to Wireworld states
             let state = match current_cell {
-                Value::Int(1) => 1, // Conductor
-                Value::Int(2) => 2, // Head
-                Value::Int(3) => 3, // Tail
+                Value::Int(1) => 1,                  // Conductor
+                Value::Int(2) => 2,                  // Head
+                Value::Int(3) => 3,                  // Tail
                 Value::Str(s) if s == "PIN:IN" => 4, // Input Pin (Acts as Conductor/Head)
                 _ => 0,
             };
@@ -199,7 +203,7 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                                 head_neighbors += 1;
                                             }
                                         }
-                                    },
+                                    }
                                     _ => {}
                                 }
                             }
@@ -230,7 +234,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                     let mut triggered = false;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if dy == 0 && dx == 0 { continue; }
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
                             if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
                                 if let Value::Int(2) = vm.grid[ny][nx] {
                                     triggered = true;

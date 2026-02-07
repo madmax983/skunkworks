@@ -5,12 +5,12 @@ use std::time::Duration;
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    Frame, Terminal,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize},
     text::{Line as TextLine, Span},
     widgets::canvas::{Canvas, Line as CanvasLine},
     widgets::{Block, Borders, Paragraph},
+    Frame, Terminal,
 };
 use tui_shared::Tui;
 
@@ -49,9 +49,9 @@ impl App {
         // Ensure plants have initial lines
         for plant in &mut plants {
             if plant.lines.is_empty() {
-                 let instructions = plant.lsystem.expand(4);
-                 let mut turtle = Turtle::new(0.0, -50.0, -90.0_f64.to_radians(), 2.0, plant.angle);
-                 plant.lines = turtle.interpret(&instructions);
+                let instructions = plant.lsystem.expand(4);
+                let mut turtle = Turtle::new(0.0, -50.0, -90.0_f64.to_radians(), 2.0, plant.angle);
+                plant.lines = turtle.interpret(&instructions);
             }
         }
 
@@ -101,7 +101,7 @@ impl App {
                         _ => {}
                     }
                     if digit > 30 {
-                       rule_str.push_str("F");
+                        rule_str.push_str("F");
                     }
                 }
 
@@ -138,26 +138,26 @@ impl App {
         }
 
         if plants.is_empty() {
-             let val = 123456789;
-             let sexagesimal = Sexagesimal::from_u64(val);
-             let rules = vec![('X', "F-[[X]+X]+F[+FX]-X"), ('F', "FF")];
-             let lsystem = LSystem::new("X", rules);
-             let angle = 25.0_f64.to_radians();
+            let val = 123456789;
+            let sexagesimal = Sexagesimal::from_u64(val);
+            let rules = vec![('X', "F-[[X]+X]+F[+FX]-X"), ('F', "FF")];
+            let lsystem = LSystem::new("X", rules);
+            let angle = 25.0_f64.to_radians();
 
-             let instructions = lsystem.expand(4);
-             let mut turtle = Turtle::new(0.0, -50.0, -90.0_f64.to_radians(), 2.0, angle);
-             let lines = turtle.interpret(&instructions);
+            let instructions = lsystem.expand(4);
+            let mut turtle = Turtle::new(0.0, -50.0, -90.0_f64.to_radians(), 2.0, angle);
+            let lines = turtle.interpret(&instructions);
 
-             plants.push(CommitPlant {
-                 hash: "000000".to_string(),
-                 message: "No Git History Found".to_string(),
-                 author: "System".to_string(),
-                 date: "Now".to_string(),
-                 sexagesimal,
-                 lsystem,
-                 lines,
-                 angle,
-             });
+            plants.push(CommitPlant {
+                hash: "000000".to_string(),
+                message: "No Git History Found".to_string(),
+                author: "System".to_string(),
+                date: "Now".to_string(),
+                sexagesimal,
+                lsystem,
+                lines,
+                angle,
+            });
         }
 
         Ok(plants)
@@ -174,10 +174,12 @@ impl App {
     }
 
     fn run<B: ratatui::backend::Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<()>
-    where B::Error: std::fmt::Debug
+    where
+        B::Error: std::fmt::Debug,
     {
         while !self.exit {
-            terminal.draw(|frame| self.ui(frame))
+            terminal
+                .draw(|frame| self.ui(frame))
                 .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{:?}", e)))?;
             self.handle_events()?;
         }
@@ -191,18 +193,19 @@ impl App {
                     match key.code {
                         KeyCode::Char('q') | KeyCode::Esc => self.exit = true,
                         KeyCode::Tab => {
-                            self.current_plant_index = (self.current_plant_index + 1) % self.plants.len();
+                            self.current_plant_index =
+                                (self.current_plant_index + 1) % self.plants.len();
                             self.iterations = 4;
                             self.regenerate();
                         }
                         KeyCode::BackTab => {
-                             if self.current_plant_index == 0 {
-                                 self.current_plant_index = self.plants.len() - 1;
-                             } else {
-                                 self.current_plant_index -= 1;
-                             }
-                             self.iterations = 4;
-                             self.regenerate();
+                            if self.current_plant_index == 0 {
+                                self.current_plant_index = self.plants.len() - 1;
+                            } else {
+                                self.current_plant_index -= 1;
+                            }
+                            self.iterations = 4;
+                            self.regenerate();
                         }
                         KeyCode::Char(' ') => {
                             self.iterations += 1;
@@ -211,7 +214,7 @@ impl App {
                             }
                             self.regenerate();
                         }
-                         KeyCode::Char('r') => {
+                        KeyCode::Char('r') => {
                             self.iterations = 0;
                             self.regenerate();
                         }
@@ -230,7 +233,7 @@ impl App {
     }
 
     fn ui(&self, frame: &mut Frame) {
-         let chunks = Layout::default()
+        let chunks = Layout::default()
             .direction(Direction::Horizontal)
             .constraints([Constraint::Percentage(40), Constraint::Percentage(60)])
             .split(frame.area());
@@ -242,9 +245,18 @@ impl App {
         let info = vec![
             TextLine::from(vec![Span::raw("🧬 Babylonian Garden 🌿").bold().green()]),
             TextLine::from(""),
-            TextLine::from(vec![Span::raw("Commit: ").bold(), Span::raw(&plant.hash).yellow()]),
-            TextLine::from(vec![Span::raw("Author: ").bold(), Span::raw(&plant.author).cyan()]),
-            TextLine::from(vec![Span::raw("Date:   ").bold(), Span::raw(&plant.date).blue()]),
+            TextLine::from(vec![
+                Span::raw("Commit: ").bold(),
+                Span::raw(&plant.hash).yellow(),
+            ]),
+            TextLine::from(vec![
+                Span::raw("Author: ").bold(),
+                Span::raw(&plant.author).cyan(),
+            ]),
+            TextLine::from(vec![
+                Span::raw("Date:   ").bold(),
+                Span::raw(&plant.date).blue(),
+            ]),
             TextLine::from(""),
             TextLine::from(vec![Span::raw("Message:").bold()]),
             TextLine::from(Span::raw(&plant.message).italic()),
@@ -252,13 +264,13 @@ impl App {
             TextLine::from(vec![Span::raw("Sexagesimal DNA:").bold().magenta()]),
             TextLine::from(sexagesimal_str),
             TextLine::from(""),
-             TextLine::from(vec![Span::raw("L-System Rules:").bold()]),
-             TextLine::from(format!("Axiom: {}", plant.lsystem.axiom)),
+            TextLine::from(vec![Span::raw("L-System Rules:").bold()]),
+            TextLine::from(format!("Axiom: {}", plant.lsystem.axiom)),
         ];
 
         let mut rules_text = Vec::new();
         for (k, v) in &plant.lsystem.rules {
-             rules_text.push(TextLine::from(format!("{} -> {}", k, v)));
+            rules_text.push(TextLine::from(format!("{} -> {}", k, v)));
         }
 
         let mut full_info = info;
@@ -278,7 +290,11 @@ impl App {
         ]);
 
         let info_block = Paragraph::new(full_info)
-            .block(Block::default().borders(Borders::ALL).title("Cuneiform Chronicle"))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Cuneiform Chronicle"),
+            )
             .wrap(ratatui::widgets::Wrap { trim: true });
 
         frame.render_widget(info_block, chunks[0]);

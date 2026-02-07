@@ -16,23 +16,36 @@ mod tests {
 
     #[test]
     fn test_relativity_toggle() {
-        let genes = vec![
-            Gene { op: OpCode::Relativity, args: vec![] },
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Relativity,
+            args: vec![],
+        }];
         let mut vm = make_vm(genes);
         assert!(!vm.relativity_mode);
         vm.step();
         assert!(vm.relativity_mode);
-        assert!(vm.output.iter().any(|s| s.contains("RELATIVITY: Physics engine ON")));
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("RELATIVITY: Physics engine ON")));
     }
 
     #[test]
     fn test_gravity_accretion() {
         // Turn on relativity, emit graviton, check horizon
         let genes = vec![
-            Gene { op: OpCode::Relativity, args: vec![] },
-            Gene { op: OpCode::Graviton, args: vec![] },
-            Gene { op: OpCode::EventHorizon, args: vec![] },
+            Gene {
+                op: OpCode::Relativity,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Graviton,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::EventHorizon,
+                args: vec![],
+            },
         ];
         let mut vm = make_vm(genes);
         let (cy, cx) = vm.context_loc;
@@ -41,11 +54,11 @@ mod tests {
         assert!(vm.relativity_mode);
 
         vm.step(); // Graviton
-        // Expect mass at context_loc
-        // Base accretion is 5 per tick. Graviton adds 50.
-        // Tick 1: +5.
-        // Tick 2: +5 + 50 = 55 (plus previous diffusions/decay).
-        // Let's check grid directly or via EventHorizon.
+                   // Expect mass at context_loc
+                   // Base accretion is 5 per tick. Graviton adds 50.
+                   // Tick 1: +5.
+                   // Tick 2: +5 + 50 = 55 (plus previous diffusions/decay).
+                   // Let's check grid directly or via EventHorizon.
         let g = vm.gravity_grid[cy][cx];
         assert!(g >= 50, "Gravity should increase significantly");
 
@@ -66,11 +79,26 @@ mod tests {
         // 4. Check time_grid
 
         let genes = vec![
-            Gene { op: OpCode::Relativity, args: vec![] },
-            Gene { op: OpCode::Graviton, args: vec![] },
-            Gene { op: OpCode::Graviton, args: vec![] },
-            Gene { op: OpCode::Graviton, args: vec![] },
-            Gene { op: OpCode::Graviton, args: vec![] }, // More mass to overcome decay
+            Gene {
+                op: OpCode::Relativity,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Graviton,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Graviton,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Graviton,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Graviton,
+                args: vec![],
+            }, // More mass to overcome decay
         ];
         let mut vm = make_vm(genes);
         let (cy, cx) = vm.context_loc;
