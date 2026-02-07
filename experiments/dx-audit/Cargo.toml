@@ -6,4 +6,5 @@ edition = "2021"
 [dependencies]
 tui-shared = { workspace = true }
 ratatui = { workspace = true }
-crossterm = { workspace = true } # implied by tui-shared, but good to have if we use its types
+crossterm = { workspace = true }
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }

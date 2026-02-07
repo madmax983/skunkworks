@@ -1,8 +1,8 @@
+use crate::model::{Platter, Sector};
 use anyhow::Result;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use crate::model::{Platter, Sector};
 
 pub fn scan_and_populate(path: &Path, platter: &mut Platter) -> Result<()> {
     let mut files = Vec::new();
@@ -32,7 +32,11 @@ pub fn scan_and_populate(path: &Path, platter: &mut Platter) -> Result<()> {
         // v spirals 3 times
         let v = t * std::f32::consts::PI * 2.0 * 3.0;
 
-        let name = file_path.file_name().unwrap_or_default().to_string_lossy().to_string();
+        let name = file_path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
 
         // Read data
         let mut data = [0u8; 64];
@@ -41,10 +45,10 @@ pub fn scan_and_populate(path: &Path, platter: &mut Platter) -> Result<()> {
                 let _ = f.read_exact(&mut data); // Ignore error (partial read is fine, it leaves 0s)
             }
         } else {
-             // Fill with some pattern for directories
-             for j in 0..64 {
-                 data[j] = (j as u8).wrapping_mul(i as u8);
-             }
+            // Fill with some pattern for directories
+            for j in 0..64 {
+                data[j] = (j as u8).wrapping_mul(i as u8);
+            }
         }
 
         let sector = Sector::new(u, v, data, name);

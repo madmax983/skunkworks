@@ -1,7 +1,7 @@
-mod model;
-mod topology;
-mod renderer;
 mod fs;
+mod model;
+mod renderer;
+mod topology;
 
 use anyhow::Result;
 use crossterm::{
@@ -16,9 +16,9 @@ use ratatui::{
 };
 use std::time::{Duration, Instant};
 
+use fs::scan_and_populate;
 use model::Platter;
 use renderer::{draw_platter, Camera};
-use fs::scan_and_populate;
 
 struct App {
     platter: Platter,
@@ -94,10 +94,10 @@ fn main() -> Result<()> {
                     KeyCode::Char('a') => app.move_selection(-1),
                     KeyCode::Char('d') => app.move_selection(1),
                     KeyCode::Char(' ') => {
-                         if let Some(sector) = app.platter.sectors.get_mut(app.selected_idx) {
-                             sector.scrub();
-                         }
-                    },
+                        if let Some(sector) = app.platter.sectors.get_mut(app.selected_idx) {
+                            sector.scrub();
+                        }
+                    }
                     KeyCode::Char('+') => app.time_scale *= 2.0,
                     KeyCode::Char('-') => app.time_scale *= 0.5,
                     _ => {}
@@ -137,10 +137,18 @@ fn ui(f: &mut Frame, app: &mut App) {
     let title = Paragraph::new(format!(
         "KLEIN-MAGNETRON | Time: {:.1}x | Polarity: {}",
         app.time_scale,
-        if app.platter.radiation_polarity { "NORMAL" } else { "INVERTED" }
+        if app.platter.radiation_polarity {
+            "NORMAL"
+        } else {
+            "INVERTED"
+        }
     ))
     .block(Block::default().borders(Borders::ALL).title("Status"))
-    .style(Style::default().fg(if app.platter.radiation_polarity { Color::Green } else { Color::Magenta }));
+    .style(Style::default().fg(if app.platter.radiation_polarity {
+        Color::Green
+    } else {
+        Color::Magenta
+    }));
     f.render_widget(title, chunks[0]);
 
     // Content
@@ -164,7 +172,11 @@ fn ui(f: &mut Frame, app: &mut App) {
     let selected_idx = app.selected_idx;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Topological Platter"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Topological Platter"),
+        )
         .x_bounds([-2.0, 2.0])
         .y_bounds([-1.5, 1.5])
         .paint(move |ctx| {
@@ -181,29 +193,51 @@ fn ui(f: &mut Frame, app: &mut App) {
         ]));
         lines.push(Line::from(vec![
             Span::raw("Signal: "),
-            Span::styled(format!("{:.1}%", sector.magnetization * 100.0),
-                Style::default().fg(if sector.magnetization > 0.8 { Color::Green } else { Color::Red })),
+            Span::styled(
+                format!("{:.1}%", sector.magnetization * 100.0),
+                Style::default().fg(if sector.magnetization > 0.8 {
+                    Color::Green
+                } else {
+                    Color::Red
+                }),
+            ),
         ]));
         lines.push(Line::from(vec![
             Span::raw("Coercivity: "),
-            Span::styled(format!("{:.1}%", sector.coercivity * 100.0), Style::default().fg(Color::Blue)),
+            Span::styled(
+                format!("{:.1}%", sector.coercivity * 100.0),
+                Style::default().fg(Color::Blue),
+            ),
         ]));
         lines.push(Line::from(""));
 
         // Hex Dump
         for chunk in sector.data.chunks(8).take(4) {
-             let hex: String = chunk.iter().map(|b| format!("{:02X} ", b)).collect();
-             let ascii: String = chunk.iter().map(|b| if *b >= 32 && *b <= 126 { *b as char } else { '.' }).collect();
-             lines.push(Line::from(format!("{} | {}", hex, ascii)));
+            let hex: String = chunk.iter().map(|b| format!("{:02X} ", b)).collect();
+            let ascii: String = chunk
+                .iter()
+                .map(|b| {
+                    if *b >= 32 && *b <= 126 {
+                        *b as char
+                    } else {
+                        '.'
+                    }
+                })
+                .collect();
+            lines.push(Line::from(format!("{} | {}", hex, ascii)));
         }
     } else {
         lines.push(Line::from("No Data"));
     }
 
-    let inspector = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Inspector"));
+    let inspector =
+        Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Inspector"));
     f.render_widget(inspector, content_chunks[1]);
 
     // Help
-    let help = Paragraph::new("Arrows: Rotate Cam (L/R), Select (A/D) | W/S: Cam Height | Space: Scrub | +/-: Time").block(Block::default().borders(Borders::ALL));
+    let help = Paragraph::new(
+        "Arrows: Rotate Cam (L/R), Select (A/D) | W/S: Cam Height | Space: Scrub | +/-: Time",
+    )
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(help, chunks[2]);
 }

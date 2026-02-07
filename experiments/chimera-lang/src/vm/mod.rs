@@ -48,6 +48,8 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod nova_biome;
 pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
@@ -59,10 +61,10 @@ pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_chronos_test;
+mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_chronos_local_test;
+mod nova_chronos_test;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
@@ -70,9 +72,13 @@ pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
+#[cfg(feature = "nova")]
+pub mod piet;
 pub mod resonance;
 #[cfg(feature = "silicon")]
 pub mod silicon;
+#[cfg(feature = "git")]
+pub mod git;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
@@ -297,6 +303,10 @@ pub struct ChimeraVM {
     pub graveyard: Vec<crate::ast::Strand>,
     #[cfg(feature = "nova")]
     pub dictionary: HashMap<String, usize>,
+    #[cfg(feature = "nova")]
+    pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
+    #[cfg(feature = "nova")]
+    pub biome_grid: Vec<Vec<nova_biome::Biome>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
@@ -323,6 +333,8 @@ impl ChimeraVM {
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let biome_grid = vec![vec![nova_biome::Biome::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -433,6 +445,10 @@ impl ChimeraVM {
             graveyard: Vec::new(),
             #[cfg(feature = "nova")]
             dictionary: HashMap::new(),
+            #[cfg(feature = "nova")]
+            sigil_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            biome_grid,
             gene_execution_counts: HashMap::new(),
         }
     }
@@ -451,7 +467,8 @@ impl ChimeraVM {
                 count, self.ip.0, insert_idx
             ));
         } else {
-            self.output.push("INJECTION ERROR: Invalid strand index".to_string());
+            self.output
+                .push("INJECTION ERROR: Invalid strand index".to_string());
         }
     }
 
@@ -1216,6 +1233,7 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         if !time_frozen {
             self.process_environment();
+            nova_sigil::process_passive_sigils(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1530,6 +1548,12 @@ impl ChimeraVM {
             OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
                 nova_security::exec_security_op(self, op, args)
             }
@@ -1555,7 +1579,9 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Superpose | OpCode::Collapse | OpCode::Observe => nova::exec_nova_op(self, op, args),
+            OpCode::Superpose | OpCode::Collapse | OpCode::Observe => {
+                nova::exec_nova_op(self, op, args)
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Splice
@@ -1652,7 +1678,10 @@ impl ChimeraVM {
             | OpCode::Mourn
             | OpCode::TimeWarp
             | OpCode::Chronos
-            | OpCode::Reincarnate => nova::exec_nova_op(self, op, args),
+            | OpCode::Reincarnate
+            | OpCode::Piet
+            | OpCode::Terraform
+            | OpCode::SenseBiome => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
@@ -1690,6 +1719,12 @@ impl ChimeraVM {
             | OpCode::Construct
             | OpCode::LogicGate => {
                 silicon::exec_silicon_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "git")]
+            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
+                git::exec_git_op(self, op, args);
                 None
             }
 
@@ -1799,7 +1834,8 @@ impl ChimeraVM {
                     let mut res = Vec::new();
                     for (va, pa) in states_a {
                         for (vb, pb) in &states_b {
-                            if res.len() >= MAX_JUNCTION_SIZE { // Use same limit
+                            if res.len() >= MAX_JUNCTION_SIZE {
+                                // Use same limit
                                 return None;
                             }
                             if let Some(r) = apply(va.clone(), vb.clone(), op, depth + 1) {
@@ -1983,7 +2019,9 @@ impl ChimeraVM {
                                     JunctionType::Any => vals.iter().any(check_zero),
                                     JunctionType::All => vals.iter().all(check_zero),
                                 },
-                                Value::Superposition(states) => states.iter().any(|(v, _)| check_zero(v)),
+                                Value::Superposition(states) => {
+                                    states.iter().any(|(v, _)| check_zero(v))
+                                }
                                 _ => false,
                             }
                         }

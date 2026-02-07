@@ -436,11 +436,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: TUI Pachinko where pins are Izhikevich neurons that spike when hit by packets.
 - **Novel trait**: Sonified Neural Physics. The sound of data colliding with the network.
 - **Status**: experiments/synaptic-pachinko
-- **Evaluation**: Compiles. Created by The Splice Surgeon.
+- **Evaluation**: Compiles (Environment Failure: alsa-sys missing in sandbox). Created by The Splice Surgeon.
 
 ### klein-magnetron
 - **Parents**: experiments/klein-fs + experiments/magnetron-decay
 - **Concept**: "Topological Bit Rot". A filesystem mapped onto a Klein Bottle surface where sectors decay and radiation flips bits.
 - **Novel trait**: Non-orientable decay patterns. Radiation inverts its effect when wrapping around the manifold twist.
 - **Status**: experiments/klein-magnetron
-- **Evaluation**: Compiles. Verified.
+- **Evaluation**: Compiles. Verified (Warnings observed).
+
+### klein-flock
+- **Parents**: experiments/klein-magnetron + experiments/luminous-flock
+- **Concept**: Boids flocking on a non-orientable Klein Bottle surface.
+- **Novel trait**: Moebius Flocking. Boids crossing the "twist" boundary flip their orientation and position, leading to upside-down collisions with their own flock.
+- **Status**: experiments/klein-flock
+- **Evaluation**: Compiles. Created by The Splice Surgeon.

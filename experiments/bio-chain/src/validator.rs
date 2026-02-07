@@ -5,6 +5,9 @@ use chimera_lang::{
     vm::ChimeraVM,
 };
 
+#[cfg(feature = "nova")]
+use crate::virus::{ViralEffect, Virus};
+
 pub struct Validator {
     pub id: ValidatorId,
     pub vm: ChimeraVM,
@@ -15,6 +18,8 @@ pub struct Validator {
     pub correct_votes: usize,
     pub total_votes: usize,
     pub is_malicious: bool, // Byzantine validator
+    #[cfg(feature = "nova")]
+    pub infections: Vec<Virus>,
 }
 
 impl Validator {
@@ -33,6 +38,8 @@ impl Validator {
             correct_votes: 0,
             total_votes: 0,
             is_malicious: false,
+            #[cfg(feature = "nova")]
+            infections: vec![],
         }
     }
 
@@ -51,6 +58,8 @@ impl Validator {
             correct_votes: 0,
             total_votes: 0,
             is_malicious: true,
+            #[cfg(feature = "nova")]
+            infections: vec![],
         }
     }
 
@@ -60,6 +69,9 @@ impl Validator {
         let mut child_dna = parent.vm.dna.clone();
         Self::mutate_dna(&mut child_dna, 0.05); // 5% mutation rate
         let child_vm = ChimeraVM::new(child_dna);
+
+        #[cfg(feature = "nova")]
+        let child_infections = parent.infections.clone(); // Pass infections to child
 
         Validator {
             id: new_id,
@@ -71,6 +83,8 @@ impl Validator {
             correct_votes: 0,
             total_votes: 0,
             is_malicious: parent.is_malicious, // Children inherit behavior
+            #[cfg(feature = "nova")]
+            infections: child_infections,
         }
     }
 
@@ -186,6 +200,10 @@ impl Validator {
 
     /// Check if validator can reproduce
     pub fn can_reproduce(&self, threshold: i64) -> bool {
+        #[cfg(feature = "nova")]
+        if self.has_infection(&ViralEffect::Sterility) {
+            return false;
+        }
         self.energy > threshold
     }
 
@@ -201,5 +219,18 @@ impl Validator {
             let productivity = self.blocks_validated as f64;
             self.fitness = accuracy * productivity.ln().max(1.0);
         }
+    }
+
+    #[cfg(feature = "nova")]
+    pub fn infect(&mut self, virus: Virus) {
+        // Check if already infected with this virus (by name)
+        if !self.infections.iter().any(|v| v.name == virus.name) {
+            self.infections.push(virus);
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    pub fn has_infection(&self, effect: &ViralEffect) -> bool {
+        self.infections.iter().any(|v| v.effect == *effect)
     }
 }

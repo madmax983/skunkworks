@@ -2,6 +2,11 @@ use crate::types::*;
 use crate::validator::Validator;
 use std::collections::HashMap;
 
+#[cfg(feature = "nova")]
+use crate::virus::{ViralEffect, Virus};
+#[cfg(feature = "nova")]
+use chimera_lang::ast::{Dna, Helix};
+
 /// Consensus threshold: % of total stake needed to finalize
 const CONSENSUS_THRESHOLD: f64 = 0.67;
 
@@ -27,6 +32,8 @@ pub struct Network {
     pub next_validator_id: ValidatorId,
     pub births: usize,
     pub deaths: usize,
+    #[cfg(feature = "nova")]
+    pub viral_pool: Vec<Virus>,
 }
 
 impl Network {
@@ -41,6 +48,37 @@ impl Network {
             next_validator_id: 0,
             births: 0,
             deaths: 0,
+            #[cfg(feature = "nova")]
+            viral_pool: Self::genesis_viruses(),
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn genesis_viruses() -> Vec<Virus> {
+        let dummy_dna = Dna {
+            helix: Helix { strands: vec![] },
+        };
+        vec![
+            Virus::new(
+                "V-12 Energy Leech",
+                dummy_dna.clone(),
+                ViralEffect::EnergyDrain(2),
+                0.05,
+            ),
+            Virus::new("V-99 Chaos", dummy_dna, ViralEffect::ByzantineFlip, 0.01),
+        ]
+    }
+
+    #[cfg(feature = "nova")]
+    fn spread_infection(&mut self) {
+        let pool = self.viral_pool.clone();
+        for validator in &mut self.validators {
+            for virus in &pool {
+                use rand::Rng;
+                if rand::thread_rng().r#gen::<f64>() < virus.infectivity {
+                    validator.infect(virus.clone());
+                }
+            }
         }
     }
 
@@ -122,6 +160,16 @@ impl Network {
                 let actual_validity = !block.transactions.is_empty();
 
                 // Malicious validators vote OPPOSITE of validity
+                #[cfg(feature = "nova")]
+                let vote_valid = if is_malicious
+                    || self.validators[i].has_infection(&ViralEffect::ByzantineFlip)
+                {
+                    !actual_validity
+                } else {
+                    actual_validity
+                };
+
+                #[cfg(not(feature = "nova"))]
                 let vote_valid = if is_malicious {
                     !actual_validity
                 } else {
@@ -284,7 +332,15 @@ impl Network {
     /// Metabolism: validators burn energy each tick
     pub fn metabolism(&mut self) {
         for validator in &mut self.validators {
-            validator.consume_energy(METABOLISM_COST);
+            #[allow(unused_mut)]
+            let mut extra_cost = 0;
+            #[cfg(feature = "nova")]
+            for virus in &validator.infections {
+                if let ViralEffect::EnergyDrain(amount) = virus.effect {
+                    extra_cost += amount;
+                }
+            }
+            validator.consume_energy(METABOLISM_COST + extra_cost);
         }
     }
 
@@ -387,6 +443,9 @@ impl Network {
     pub fn step(&mut self) {
         self.tick += 1;
 
+        #[cfg(feature = "nova")]
+        self.spread_infection();
+
         // Metabolism (validators burn energy)
         self.metabolism();
 
@@ -410,6 +469,8 @@ impl Network {
     /// Step without output (for TUI)
     pub fn step_silent(&mut self) {
         self.tick += 1;
+        #[cfg(feature = "nova")]
+        self.spread_infection();
         self.metabolism();
         self.decay_hormones();
         self.auto_propose_silent();
@@ -488,6 +549,17 @@ impl Network {
                 }
                 let is_malicious = self.validators[i].is_malicious;
                 let actual_validity = !block.transactions.is_empty();
+
+                #[cfg(feature = "nova")]
+                let vote_valid = if is_malicious
+                    || self.validators[i].has_infection(&ViralEffect::ByzantineFlip)
+                {
+                    !actual_validity
+                } else {
+                    actual_validity
+                };
+
+                #[cfg(not(feature = "nova"))]
                 let vote_valid = if is_malicious {
                     !actual_validity
                 } else {

@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 const G: f32 = 1000.0;
 const SOFTENING: f32 = 5.0; // Prevent singularities
@@ -150,7 +150,7 @@ impl Simulation {
         // Let's skip for now and focus on particles.
 
         // Draw Center (Gateway)
-        draw_circle(screen_width()/2.0, screen_height()/2.0, 5.0, WHITE);
+        draw_circle(screen_width() / 2.0, screen_height() / 2.0, 5.0, WHITE);
 
         // Camera transform (Center is 0,0)
         // We render relative to screen center
@@ -169,7 +169,7 @@ impl Simulation {
                 ((1.0 - load_ratio) * 0.0 + load_ratio * 255.0) as u8,
                 ((1.0 - load_ratio) * 255.0 + load_ratio * 0.0) as u8,
                 100,
-                255
+                255,
             );
 
             draw_circle(screen_pos.x, screen_pos.y, body.radius, color);
@@ -184,8 +184,20 @@ impl Simulation {
 
         // UI
         draw_text("Lagrange Balancer", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Requests: {}", self.particles.len()), 10.0, 50.0, 20.0, GRAY);
-        draw_text(&format!("Omega: {:.2} (Left/Right to change)", self.omega), 10.0, 70.0, 20.0, GRAY);
+        draw_text(
+            &format!("Requests: {}", self.particles.len()),
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Omega: {:.2} (Left/Right to change)", self.omega),
+            10.0,
+            70.0,
+            20.0,
+            GRAY,
+        );
         draw_text("Click to add server", 10.0, 90.0, 20.0, GRAY);
     }
 }

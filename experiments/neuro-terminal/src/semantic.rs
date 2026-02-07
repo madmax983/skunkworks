@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
-use tui_semantic::{Snapshot, Entity, Region, Action};
-#[cfg(feature = "nova")]
 use crate::App;
+#[cfg(feature = "nova")]
+use tui_semantic::{Action, Entity, Region, Snapshot};
 
 #[cfg(feature = "nova")]
 pub fn create_snapshot(app: &App) -> Snapshot {
@@ -12,13 +12,16 @@ pub fn create_snapshot(app: &App) -> Snapshot {
         .with_viewport(100, 100); // Approximate viewport
 
     if let Some(last_loss) = app.loss_history.last() {
-         snap = snap.with_metric("last_loss", *last_loss as f64 / 1000.0);
+        snap = snap.with_metric("last_loss", *last_loss as f64 / 1000.0);
     }
 
     // Regions
     snap = snap
         .with_region(Region::new("header", 0, 0, 100, 3).describe("Title and stats"))
-        .with_region(Region::new("decision_boundary", 0, 3, 50, 50).describe("Visualization of the network's classification"))
+        .with_region(
+            Region::new("decision_boundary", 0, 3, 50, 50)
+                .describe("Visualization of the network's classification"),
+        )
         .with_region(Region::new("network_graph", 50, 3, 50, 50).describe("Neurons and weights"))
         .with_region(Region::new("footer", 0, 53, 100, 1).describe("Controls"));
 
@@ -32,7 +35,7 @@ pub fn create_snapshot(app: &App) -> Snapshot {
     // Entities: Neurons
     for (layer_idx, &neuron_count) in app.network.layers.iter().enumerate() {
         for n in 0..neuron_count {
-             let mut entity = Entity::new("neuron")
+            let mut entity = Entity::new("neuron")
                 .with_id(format!("l{}_n{}", layer_idx, n))
                 .with_prop("layer", layer_idx)
                 .with_prop("index", n);
@@ -40,7 +43,7 @@ pub fn create_snapshot(app: &App) -> Snapshot {
             if let Some(layer_data) = app.network.data.get(layer_idx) {
                 // If we have activation data
                 let activation = layer_data.get(n, 0);
-                 entity = entity.with_prop("activation", activation);
+                entity = entity.with_prop("activation", activation);
             }
             snap = snap.with_entity(entity);
         }
@@ -49,10 +52,12 @@ pub fn create_snapshot(app: &App) -> Snapshot {
     // Entities: Weights
     // Iterate over weights matrices
     for (layer_idx, weights) in app.network.weights.iter().enumerate() {
-        for r in 0..weights.rows { // To (next layer)
-            for c in 0..weights.cols { // From (current layer)
+        for r in 0..weights.rows {
+            // To (next layer)
+            for c in 0..weights.cols {
+                // From (current layer)
                 let val = weights.get(r, c);
-                 let entity = Entity::new("weight")
+                let entity = Entity::new("weight")
                     .with_id(format!("w_{}_{}_{}", layer_idx, c, r)) // layer, from, to
                     .with_prop("layer", layer_idx)
                     .with_prop("from_neuron", c)

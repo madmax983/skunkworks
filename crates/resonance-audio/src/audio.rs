@@ -16,6 +16,13 @@ pub enum AudioCommand {
         frequency: f32,
         strength: f32,
     },
+    Tone {
+        x: usize,
+        y: usize,
+        frequency: f32,
+        strength: f32,
+        duration_ms: u64,
+    },
     AddWall {
         x: usize,
         y: usize,
@@ -35,6 +42,8 @@ pub struct AudioModel {
     pub sample_counter: usize,
     /// Map of (x, y) -> (phase, frequency, strength)
     pub oscillators: HashMap<(usize, usize), (f32, f32, f32)>,
+    /// List of (x, y, freq, strength, remaining_samples, phase)
+    pub active_tones: Vec<(usize, usize, f32, f32, usize, f32)>,
 }
 
 impl AudioModel {
@@ -52,6 +61,7 @@ impl AudioModel {
             snapshot_tx,
             sample_counter: 0,
             oscillators: HashMap::new(),
+            active_tones: Vec::new(),
         }
     }
 
@@ -80,6 +90,23 @@ impl AudioModel {
                             entry.2 = strength;
                         }
                     }
+                    AudioCommand::Tone {
+                        x,
+                        y,
+                        frequency,
+                        strength,
+                        duration_ms,
+                    } => {
+                        let duration_samples = (duration_ms as f64 * 44100.0 / 1000.0) as usize;
+                        self.active_tones.push((
+                            x,
+                            y,
+                            frequency,
+                            strength,
+                            duration_samples,
+                            0.0, // Initial phase
+                        ));
+                    }
                     AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
                     AudioCommand::MoveListener { x, y } => {
                         if x < self.grid.width && y < self.grid.height {
@@ -107,6 +134,28 @@ impl AudioModel {
                     }
                 }
             }
+
+            // Apply active tones
+            self.active_tones.retain_mut(|(x, y, freq, strength, remaining, phase)| {
+                if *remaining == 0 {
+                    return false;
+                }
+                *remaining -= 1;
+
+                *phase += *freq * 2.0 * PI / 44100.0;
+                if *phase > 2.0 * PI {
+                    *phase -= 2.0 * PI;
+                }
+                let val = phase.sin() * *strength;
+
+                if *x < self.grid.width && *y < self.grid.height {
+                     let idx = *y * self.grid.width + *x;
+                     if !self.grid.walls[idx] {
+                         self.grid.u[idx] += val;
+                     }
+                }
+                true
+            });
 
             self.grid.step();
 

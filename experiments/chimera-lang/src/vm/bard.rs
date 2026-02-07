@@ -24,12 +24,14 @@
 //! ];
 //!
 //! let abc = score_to_abc(&score);
-//! assert!(abc.contains("c4 c4 g4 g4 a4 a4 g8"));
+//! assert!(abc.contains("c4 c4 g4 g4 | a4 a4 g8"));
 //! ```
 
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
+#[cfg(feature = "resonance")]
+use resonance_audio::audio::AudioCommand;
 
 /// Represents a single musical event (Note or Rest).
 #[derive(Debug, Clone, PartialEq)]
@@ -86,6 +88,31 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     let velocity = v.clamp(0, 127) as u8;
 
                     vm.score.push(Note::new(pitch, duration, velocity));
+
+                    #[cfg(feature = "resonance")]
+                    {
+                        if let Some(tx) = &vm.audio_tx {
+                            let freq = 440.0 * 2.0f32.powf((pitch as f32 - 69.0) / 12.0);
+                            let strength = (velocity as f32) / 127.0;
+                            // Duration in ms.
+                            // Assuming 120 BPM.
+                            // Quarter note = 60000 / 120 = 500ms.
+                            // Note duration is 1/16th.
+                            // Quarter note = 4 * 16th.
+                            // So 1 unit = 500 / 4 = 125ms.
+                            let duration_ms = duration as u64 * 125;
+                            let (cy, cx) = vm.context_loc;
+
+                            let _ = tx.send(AudioCommand::Tone {
+                                x: cx,
+                                y: cy,
+                                frequency: freq,
+                                strength,
+                                duration_ms,
+                            });
+                        }
+                    }
+
                     vm.energy = vm.energy.saturating_sub(1);
                     vm.output
                         .push(format!("NOTE: {} d={} v={}", pitch, duration, velocity));

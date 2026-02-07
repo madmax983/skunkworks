@@ -106,6 +106,8 @@ mod nova_organelle_types_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_phase_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_piet_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_probabilistic_test;
@@ -119,6 +121,8 @@ mod nova_reflex_test;
 mod nova_resonance_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_security_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_sigil_dynamic_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sigil_test;
 #[cfg(all(test, feature = "nova"))]

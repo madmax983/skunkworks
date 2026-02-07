@@ -37,7 +37,13 @@ pub fn project(p: Vec3, view_proj: Mat4) -> Option<(f64, f64)> {
     Some((ndc.x as f64, ndc.y as f64))
 }
 
-pub fn draw_platter(ctx: &mut Context<'_>, camera: &Camera, aspect_ratio: f32, platter: &Platter, selected_idx: usize) {
+pub fn draw_platter(
+    ctx: &mut Context<'_>,
+    camera: &Camera,
+    aspect_ratio: f32,
+    platter: &Platter,
+    selected_idx: usize,
+) {
     let view_proj = camera.projection_matrix(aspect_ratio) * camera.view_matrix();
     let radius = 2.0;
 
@@ -50,21 +56,24 @@ pub fn draw_platter(ctx: &mut Context<'_>, camera: &Camera, aspect_ratio: f32, p
         let v = (j as f32 / v_steps as f32) * 2.0 * std::f32::consts::PI;
         let mut prev_point: Option<(f64, f64)> = None;
         for i in 0..=u_steps {
-             let u = (i as f32 / u_steps as f32) * 2.0 * std::f32::consts::PI;
-             let p = figure_8_klein(u, v, radius);
-             if let Some((x, y)) = project(p, view_proj) {
-                 if let Some((px, py)) = prev_point {
-                      if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
-                          ctx.draw(&Line {
-                              x1: px, y1: py, x2: x, y2: y,
-                              color: Color::DarkGray,
-                          });
-                      }
-                 }
-                 prev_point = Some((x, y));
-             } else {
-                 prev_point = None;
-             }
+            let u = (i as f32 / u_steps as f32) * 2.0 * std::f32::consts::PI;
+            let p = figure_8_klein(u, v, radius);
+            if let Some((x, y)) = project(p, view_proj) {
+                if let Some((px, py)) = prev_point {
+                    if (px - x).abs() < 1.0 && (py - y).abs() < 1.0 {
+                        ctx.draw(&Line {
+                            x1: px,
+                            y1: py,
+                            x2: x,
+                            y2: y,
+                            color: Color::DarkGray,
+                        });
+                    }
+                }
+                prev_point = Some((x, y));
+            } else {
+                prev_point = None;
+            }
         }
     }
 
@@ -89,15 +98,25 @@ pub fn draw_platter(ctx: &mut Context<'_>, camera: &Camera, aspect_ratio: f32, p
 
             // Draw as a small circle or symbol
             // Ratatui canvas symbols are limited resolution
-            ctx.print(x, y, ratatui::text::Span::styled("■", ratatui::style::Style::default().fg(color)));
+            ctx.print(
+                x,
+                y,
+                ratatui::text::Span::styled("■", ratatui::style::Style::default().fg(color)),
+            );
 
             if i == selected_idx {
                 // Clone label to avoid lifetime issues
                 let label = sector.label.clone();
-                ctx.print(x, y + 0.1, ratatui::text::Span::styled(
-                    label,
-                    ratatui::style::Style::default().fg(Color::White).bg(Color::Black)
-                ));
+                ctx.print(
+                    x,
+                    y + 0.1,
+                    ratatui::text::Span::styled(
+                        label,
+                        ratatui::style::Style::default()
+                            .fg(Color::White)
+                            .bg(Color::Black),
+                    ),
+                );
             }
         }
     }
