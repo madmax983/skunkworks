@@ -472,3 +472,11 @@
 ### [Concentration Level: FRESH] - Location: experiments/gradient-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The garden is growing. Optimization algorithms are blooming. The landscape is a function.
+
+### [Concentration Level: TOXIC] - Location: graveyard/turing-terra
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/terra-fluid
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `fluid-specter`. Documentation void. Grace period: 24h.

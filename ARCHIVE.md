@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **turing-terra**: Redundant with `reaction-monitor`. Manual input vs Environmental sensing. Code duplication. Grace period: 24h.
+- **terra-fluid**: Redundant with `fluid-specter`. Documentation void (`README.md` missing). Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 - **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.
 - **rhizome-seeker**: Specimen executed. Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period expired. Moved to graveyard.
