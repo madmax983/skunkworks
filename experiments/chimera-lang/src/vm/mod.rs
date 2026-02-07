@@ -77,6 +77,8 @@ pub mod piet;
 pub mod resonance;
 #[cfg(feature = "silicon")]
 pub mod silicon;
+#[cfg(feature = "git")]
+pub mod git;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
@@ -1717,6 +1719,12 @@ impl ChimeraVM {
             | OpCode::Construct
             | OpCode::LogicGate => {
                 silicon::exec_silicon_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "git")]
+            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
+                git::exec_git_op(self, op, args);
                 None
             }
 

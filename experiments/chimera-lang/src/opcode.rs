@@ -958,6 +958,23 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Divinate,
 
+    // Git Features (Repository Interaction)
+    /// **[Git]** Pushes a list of recent commit hashes to the stack.
+    ///
+    /// **Stack:** `[ ..., count ] -> [ ..., n, hash_1, ..., hash_n ]`
+    #[cfg(feature = "git")]
+    Ancestry,
+    /// **[Git]** Reads the content of a file from a specific commit.
+    ///
+    /// **Stack:** `[ ..., hash_str, path_str ] -> [ ..., content_string ]`
+    #[cfg(feature = "git")]
+    Excavate,
+    /// **[Git]** Gets the diff of a commit.
+    ///
+    /// **Stack:** `[ ..., hash_str ] -> [ ..., diff_string ]`
+    #[cfg(feature = "git")]
+    Evolution,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),
