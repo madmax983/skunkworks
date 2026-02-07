@@ -531,3 +531,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
 - **Status**: experiments/quipu-chimera
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).
+
+### astral-chimera
+- **Parents**: experiments/celestial-cantata + experiments/chimera-lang
+- **Concept**: A VM where Opcodes are planets orbiting a central star. Execution is triggered by a rotating radar.
+- **Novel trait**: Orbital Scheduling. Gravity determines the timing of code execution.
+- **Status**: experiments/astral-chimera
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational.
