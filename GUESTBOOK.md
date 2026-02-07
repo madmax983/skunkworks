@@ -391,3 +391,11 @@
 ### [Concentration Level: FRESH] - Location: experiments/market-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Bulls and Bears are swarming. The market is an organism. Price discovery is now a flocking behavior.
+
+### [Concentration Level: TOXIC] - Location: graveyard/rhizome-seeker
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant pathfinding. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/crystal-structure
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Stagnation confirmed. Documentation void.
