@@ -833,6 +833,12 @@ pub enum OpCode {
     /// **Effect:** Learns a new Sigil pattern and binds it to the strand.
     #[cfg(feature = "nova")]
     Inscribe,
+    /// **[Nova]** Toggles the Auto-Cast (Passive) state of a Sigil.
+    ///
+    /// **Stack:** `[ ..., sigil_name, state ] -> [ ... ]`
+    /// **State:** 1=On, 0=Off.
+    #[cfg(feature = "nova")]
+    AutoCast,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`

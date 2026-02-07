@@ -28,7 +28,7 @@ pub(crate) enum ViewMode {
     #[cfg(feature = "resonance")]
     Resonance,
     #[cfg(feature = "nova")]
-    Metaphysics,
+    Grimoire,
     #[cfg(feature = "nova")]
     Laboratory,
     #[cfg(feature = "nova")]
@@ -64,6 +64,8 @@ pub(crate) struct AppState {
     pub(crate) lab_method: usize,
     #[cfg(feature = "nova")]
     pub(crate) selected_graveyard_strand: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) selected_sigil_index: usize,
 }
 
 impl AppState {
@@ -88,6 +90,8 @@ impl AppState {
             lab_method: 0,
             #[cfg(feature = "nova")]
             selected_graveyard_strand: 0,
+            #[cfg(feature = "nova")]
+            selected_sigil_index: 0,
         }
     }
 }
@@ -388,12 +392,12 @@ where
                 return;
             }
 
-            // Handle Metaphysics View
+            // Handle Grimoire View
             #[cfg(feature = "nova")]
-            if let ViewMode::Metaphysics = app_state.view_mode {
+            if let ViewMode::Grimoire = app_state.view_mode {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
-                    .constraints([Constraint::Percentage(25), Constraint::Percentage(25), Constraint::Percentage(25), Constraint::Percentage(25)].as_ref())
+                    .constraints([Constraint::Percentage(20), Constraint::Percentage(20), Constraint::Percentage(40), Constraint::Percentage(20)].as_ref())
                     .split(f.area());
 
                 // Ether (IPC)
@@ -411,38 +415,30 @@ where
                     }).collect();
                     let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).title("Oracle (Knowledge Base)"));
                     f.render_widget(oracle_list, chunks[1]);
-
-                    let omen_items: Vec<ListItem> = vm.omens.iter().take(20).map(|omen| {
-                        ListItem::new(format!("If {} Then {}", omen.condition, omen.effect))
-                    }).collect();
-                    let omen_list = List::new(omen_items).block(Block::default().borders(Borders::ALL).title("Oracle (Omens)"));
-                    f.render_widget(omen_list, chunks[2]);
                 }
                 #[cfg(not(feature = "oracle"))]
                 {
                     let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
                     f.render_widget(&oracle_list, chunks[1]);
-
-                    // Show Sigil Registry if Oracle is disabled or just as fallback?
-                    // Actually, let's override Omens with Sigils if Nova is active, as per plan.
-                    // But wait, the plan said "Update ViewMode::Metaphysics".
-                    // The code above is inside `if let ViewMode::Metaphysics`.
-                    // The existing code has an `if feature = oracle` block.
-                    // I want to show Sigils.
                 }
 
-                // Sigil Registry (replaces/augments Omens slot if we want, or add new chunk?)
-                // Let's replace the 3rd chunk (Omens) with Sigils if Nova is on.
+                // Sigil Registry (The Grimoire)
                 #[cfg(feature = "nova")]
                 {
                     let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
                     registry.sort_by_key(|(k, _)| *k);
 
-                    let sigil_items: Vec<ListItem> = registry.into_iter().map(|(name, sigil)| {
-                        ListItem::new(format!("{} ({} cells) -> Strand {}", name, sigil.pattern.len(), sigil.strand_idx))
+                    let sigil_items: Vec<ListItem> = registry.iter().enumerate().map(|(i, (name, sigil))| {
+                        let status = if sigil.auto_cast { "[AUTO]" } else { "[    ]" };
+                        let style = if i == app_state.selected_sigil_index {
+                            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                        } else {
+                            Style::default().fg(Color::White)
+                        };
+                        ListItem::new(format!("{} {} ({} cells) -> Strand {}", status, name, sigil.pattern.len(), sigil.strand_idx)).style(style)
                     }).collect();
 
-                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("Sigil Registry"));
+                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("The Grimoire (Select & Enter to Toggle Auto-Cast)"));
                     f.render_widget(sigil_list, chunks[2]);
                 }
 
@@ -824,7 +820,7 @@ where
                 #[cfg(feature = "resonance")]
                 ViewMode::Resonance => "RESONANCE",
                 #[cfg(feature = "nova")]
-                ViewMode::Metaphysics => "METAPHYSICS",
+                ViewMode::Grimoire => "GRIMOIRE",
                 #[cfg(feature = "nova")]
                 ViewMode::Laboratory => "LABORATORY",
                 #[cfg(feature = "nova")]
@@ -1309,7 +1305,7 @@ where
                                     app_state.input_buffer.clear();
                                 }
                                 #[cfg(feature = "nova")]
-                                ViewMode::Metaphysics => {
+                                ViewMode::Grimoire => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1377,7 +1373,7 @@ where
                                     {
                                         #[cfg(feature = "nova")]
                                         {
-                                            ViewMode::Metaphysics
+                                            ViewMode::Grimoire
                                         }
                                         #[cfg(not(feature = "nova"))]
                                         {
@@ -1396,7 +1392,7 @@ where
                                 {
                                     #[cfg(feature = "nova")]
                                     {
-                                        ViewMode::Metaphysics
+                                        ViewMode::Grimoire
                                     }
                                     #[cfg(not(feature = "nova"))]
                                     {
@@ -1408,7 +1404,7 @@ where
                             ViewMode::Resonance => {
                                 #[cfg(feature = "nova")]
                                 {
-                                    ViewMode::Metaphysics
+                                    ViewMode::Grimoire
                                 }
                                 #[cfg(not(feature = "nova"))]
                                 {
@@ -1416,7 +1412,7 @@ where
                                 }
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Metaphysics => ViewMode::Topology,
+                            ViewMode::Grimoire => ViewMode::Topology,
                             #[cfg(feature = "nova")]
                             ViewMode::Topology => ViewMode::Graveyard,
                             #[cfg(feature = "nova")]
@@ -1529,7 +1525,11 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {
+                            if app_state.selected_sigil_index + 1 < vm.sigil_registry.len() {
+                                app_state.selected_sigil_index += 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "biophysics")]
@@ -1575,7 +1575,11 @@ where
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {
+                            if app_state.selected_sigil_index > 0 {
+                                app_state.selected_sigil_index -= 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
@@ -1640,7 +1644,7 @@ where
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -1668,7 +1672,7 @@ where
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -1771,8 +1775,18 @@ where
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Metaphysics => {
+                            ViewMode::Grimoire => {
                                 app_state.input_mode = InputMode::Normal;
+                                let mut registry: Vec<_> = vm.sigil_registry.keys().cloned().collect();
+                                registry.sort();
+                                if app_state.selected_sigil_index < registry.len() {
+                                    let key = &registry[app_state.selected_sigil_index];
+                                    if let Some(sigil) = vm.sigil_registry.get_mut(key) {
+                                        sigil.auto_cast = !sigil.auto_cast;
+                                        let status = if sigil.auto_cast { "ENABLED" } else { "DISABLED" };
+                                        app_state.status_msg = format!("{} Auto-Cast: {}", key, status);
+                                    }
+                                }
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Laboratory => {
