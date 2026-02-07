@@ -4,55 +4,115 @@ use crossbeam_channel::{Receiver, Sender};
 use std::collections::HashMap;
 use std::f32::consts::PI;
 
+/// Commands to control the audio simulation state.
+///
+/// These commands are typically sent from the main thread (UI/Input) to the audio thread.
+#[derive(Debug, Clone)]
 pub enum AudioCommand {
+    /// Injects a sudden burst of energy at the specified coordinates.
+    ///
+    /// This acts like plucking a string or striking a drum at a specific point.
     Pluck {
+        /// The X coordinate of the pluck.
         x: usize,
+        /// The Y coordinate of the pluck.
         y: usize,
+        /// The intensity of the pluck (amplitude).
         strength: f32,
     },
+    /// Adds or updates a continuous oscillator at the specified coordinates.
+    ///
+    /// The oscillator will inject energy into the grid at the given frequency and strength
+    /// on every simulation step until it is removed (by setting strength to 0).
     Oscillate {
+        /// The X coordinate of the oscillator.
         x: usize,
+        /// The Y coordinate of the oscillator.
         y: usize,
+        /// The frequency of the oscillation in Hz.
         frequency: f32,
+        /// The amplitude of the oscillation. Set to 0.0 to remove the oscillator.
         strength: f32,
     },
+    /// Plays a tone for a specific duration.
+    ///
+    /// This is a "fire and forget" version of `Oscillate` that automatically removes itself
+    /// after `duration_ms`.
     Tone {
+        /// The X coordinate of the source.
         x: usize,
+        /// The Y coordinate of the source.
         y: usize,
+        /// The frequency of the tone in Hz.
         frequency: f32,
+        /// The amplitude of the tone.
         strength: f32,
+        /// The duration of the tone in milliseconds.
         duration_ms: u64,
     },
+    /// Places a reflective wall at the specified coordinates.
+    ///
+    /// Waves will reflect off this cell, and no energy will pass through it.
     AddWall {
+        /// The X coordinate of the wall.
         x: usize,
+        /// The Y coordinate of the wall.
         y: usize,
     },
+    /// Removes a wall from the specified coordinates, allowing waves to pass through again.
     RemoveWall {
+        /// The X coordinate to clear.
         x: usize,
+        /// The Y coordinate to clear.
         y: usize,
     },
+    /// Instantly zeroes out all energy in the simulation grid.
     ClearWaves,
+    /// Removes all walls from the simulation grid.
     ClearWalls,
+    /// Moves the listener to a new position.
+    ///
+    /// The listener's position determines where the audio samples are read from the grid.
     MoveListener {
+        /// The new X coordinate of the listener.
         x: usize,
+        /// The new Y coordinate of the listener.
         y: usize,
     },
 }
 
+/// The main audio simulation engine.
+///
+/// This struct runs on the audio thread and manages the physics grid, processes commands,
+/// and generates audio samples.
 pub struct AudioModel {
+    /// The underlying physics simulation grid.
     pub grid: PhysicsGrid,
+    /// The X coordinate of the listener (microphone).
     pub listener_x: usize,
+    /// The Y coordinate of the listener (microphone).
     pub listener_y: usize,
+    /// Receiver for incoming commands from the main thread.
     pub command_rx: Receiver<AudioCommand>,
+    /// Sender for simulation snapshots (for visualization).
     pub snapshot_tx: Sender<Vec<f32>>,
+    /// Counter for generated samples, used for snapshot timing.
     pub sample_counter: usize,
-    /// Map of (x, y) -> (phase, frequency, strength)
+    /// Active continuous oscillators: Map of (x, y) -> (phase, frequency, strength).
     pub oscillators: HashMap<(usize, usize), (f32, f32, f32)>,
-    /// List of (x, y, freq, strength, remaining_samples, phase)
+    /// Active transient tones: List of (x, y, freq, strength, remaining_samples, phase).
     pub active_tones: Vec<(usize, usize, f32, f32, usize, f32)>,
 }
 
 impl AudioModel {
+    /// Creates a new `AudioModel`.
+    ///
+    /// # Arguments
+    ///
+    /// * `width` - The width of the simulation grid.
+    /// * `height` - The height of the simulation grid.
+    /// * `command_rx` - The channel receiver for `AudioCommand`s.
+    /// * `snapshot_tx` - The channel sender for grid snapshots (visualization).
     pub fn new(
         width: usize,
         height: usize,
@@ -71,6 +131,15 @@ impl AudioModel {
         }
     }
 
+    /// Processes audio and fills the output buffer.
+    ///
+    /// This method performs the following steps for each sample in the buffer:
+    /// 1. Processes any pending `AudioCommand`s.
+    /// 2. Updates the state of all active oscillators and tones, injecting energy into the grid.
+    /// 3. Advances the physics simulation by one step (`grid.step()`).
+    /// 4. Samples the grid at the listener's position.
+    /// 5. Clamps the sample and writes it to the output buffer.
+    /// 6. Periodically sends a snapshot of the grid to the visualization thread.
     pub fn process(&mut self, output: &mut [f32]) {
         for sample in output.iter_mut() {
             // Check commands
