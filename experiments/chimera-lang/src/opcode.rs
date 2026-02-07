@@ -216,6 +216,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     PinOut,
+    /// **[Silicon]** Creates an Emitter cell that pulses periodically.
+    ///
+    /// **Stack:** `[ ..., freq, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Emitter,
+    /// **[Silicon]** Creates a Receiver cell that triggers a strand when powered.
+    ///
+    /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Receiver,
 
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
