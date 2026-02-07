@@ -464,3 +464,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/quipu-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
+
+### [Concentration Level: FRESH] - Location: experiments/gradient-garden
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The garden is growing. Optimization algorithms are blooming. The landscape is a function.
