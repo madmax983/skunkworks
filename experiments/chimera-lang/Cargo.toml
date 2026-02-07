@@ -10,6 +10,7 @@ biophysics = []
 oracle = []
 silicon = []
 git = []
+phylogeny = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
 
 [dependencies]

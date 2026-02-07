@@ -79,6 +79,8 @@ pub mod resonance;
 pub mod silicon;
 #[cfg(feature = "git")]
 pub mod git;
+#[cfg(feature = "phylogeny")]
+pub mod phylogeny;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
@@ -1725,6 +1727,16 @@ impl ChimeraVM {
             #[cfg(feature = "git")]
             OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
                 git::exec_git_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "phylogeny")]
+            OpCode::Crawl
+            | OpCode::Sequencing
+            | OpCode::Synthesize
+            | OpCode::Infect
+            | OpCode::Shell => {
+                phylogeny::exec_phylogeny_op(self, op, args);
                 None
             }
 
