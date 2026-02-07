@@ -57,6 +57,8 @@ pub mod git;
 #[cfg(feature = "nova")]
 pub mod ipc;
 #[cfg(feature = "nova")]
+pub mod memetics;
+#[cfg(feature = "nova")]
 pub mod meta;
 pub mod microscope;
 #[cfg(feature = "biophysics")]
@@ -352,6 +354,10 @@ pub struct ChimeraVM {
     pub cladistics: cladistics::Cladistics,
     #[cfg(feature = "nova")]
     pub crucible: alchemy::Crucible,
+    #[cfg(feature = "nova")]
+    pub meme_pool: memetics::MemePool,
+    #[cfg(feature = "nova")]
+    pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
 }
 
 impl ChimeraVM {
@@ -522,6 +528,10 @@ impl ChimeraVM {
             cladistics: cladistics::Cladistics::new(),
             #[cfg(feature = "nova")]
             crucible: alchemy::Crucible::new(),
+            #[cfg(feature = "nova")]
+            meme_pool: memetics::MemePool::new(),
+            #[cfg(feature = "nova")]
+            dialects: HashMap::new(),
         }
     }
 
@@ -1479,7 +1489,17 @@ impl ChimeraVM {
         self.recursion_depth += 1;
 
         #[cfg(feature = "nova")]
-        let effective_op = self.remap_table.get(&op).unwrap_or(&op).clone();
+        let effective_op = {
+            if let Some(dialect) = self.dialects.get(&self.ip.0) {
+                if let Some(mapped) = dialect.get(&op) {
+                    mapped.clone()
+                } else {
+                    self.remap_table.get(&op).unwrap_or(&op).clone()
+                }
+            } else {
+                self.remap_table.get(&op).unwrap_or(&op).clone()
+            }
+        };
         #[cfg(not(feature = "nova"))]
         let effective_op = op;
 
@@ -1710,6 +1730,10 @@ impl ChimeraVM {
             | OpCode::Spirit
             | OpCode::Alchemy
             | OpCode::Meme
+            | OpCode::Conceive
+            | OpCode::Propagate
+            | OpCode::Forget
+            | OpCode::Shibboleth
             | OpCode::Drift
             | OpCode::Poly
             | OpCode::Chronostasis

@@ -49,6 +49,8 @@ pub(crate) enum ViewMode {
     Phylogeny,
     #[cfg(feature = "nova")]
     Alchemy,
+    #[cfg(feature = "nova")]
+    Memetics,
     Heatmap,
 }
 
@@ -259,6 +261,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Memetics = app_state.view_mode {
+                render_memetics(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -451,6 +459,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Memetics => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -551,7 +564,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Phylogeny => ViewMode::Alchemy,
                             #[cfg(feature = "nova")]
-                            ViewMode::Alchemy => ViewMode::Heatmap,
+                            ViewMode::Alchemy => ViewMode::Memetics,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Memetics => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -724,6 +739,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Memetics => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -848,6 +865,8 @@ where
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Memetics => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -890,6 +909,8 @@ where
                         ViewMode::Alchemy => {
                             app_state.alchemy_selection = 1;
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Memetics => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -932,6 +953,8 @@ where
                         ViewMode::Alchemy => {
                             app_state.alchemy_selection = 0;
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Memetics => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1105,6 +1128,10 @@ where
                                 }
                             }
                             ViewMode::Heatmap => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Memetics => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1367,6 +1394,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Phylogeny => "PHYLOGENY",
                 #[cfg(feature = "nova")]
                 ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
+                #[cfg(feature = "nova")]
+                ViewMode::Memetics => "MEMETICS",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -1865,6 +1894,51 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let help_text = "Physics Simulation Active.\nUse Pluck(str), Oscillate(freq, str), Hear() ops.\n\nLeft: Wavefront Visualization\nRight: (Reserved for Spectrum Analysis)";
     let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
     f.render_widget(help, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Left: Meme Pool
+    let mut meme_items = Vec::new();
+    if vm.meme_pool.memes.is_empty() {
+        meme_items.push(ListItem::new("No memes in the pool."));
+    } else {
+        for (i, meme) in vm.meme_pool.memes.iter().enumerate() {
+            let content = format!(
+                "Meme #{}: {} (Vir: {} Fid: {}) [{} genes]",
+                i, meme.description, meme.virulence, meme.fidelity, meme.genes.len()
+            );
+            meme_items.push(ListItem::new(content).style(Style::default().fg(Color::Cyan)));
+        }
+    }
+    let meme_list = List::new(meme_items).block(Block::default().borders(Borders::ALL).title("Meme Pool"));
+    f.render_widget(meme_list, chunks[0]);
+
+    // Right: Dialect (Shibboleths)
+    // Show dialect for CURRENT strand (ip.0)
+    let s_idx = vm.ip.0;
+    let mut dialect_items = Vec::new();
+
+    if let Some(dialect) = vm.dialects.get(&s_idx) {
+        if dialect.is_empty() {
+             dialect_items.push(ListItem::new("Standard Dialect (No deviations)"));
+        } else {
+             for (from, to) in dialect {
+                 dialect_items.push(ListItem::new(format!("{} -> {}", from, to)).style(Style::default().fg(Color::Yellow)));
+             }
+        }
+    } else {
+        dialect_items.push(ListItem::new("Standard Dialect"));
+    }
+
+    let dialect_list = List::new(dialect_items)
+        .block(Block::default().borders(Borders::ALL).title(format!("Dialect (Strand {})", s_idx)));
+    f.render_widget(dialect_list, chunks[1]);
 }
 
 #[cfg(feature = "nova")]

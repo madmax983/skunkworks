@@ -699,6 +699,30 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Meme,
 
+    /// **[Nova]** Creates a Meme from the current strand's genes.
+    ///
+    /// **Stack:** `[ ..., len, virulence, fidelity ] -> [ ..., meme_id ]`
+    #[cfg(feature = "nova")]
+    Conceive,
+
+    /// **[Nova]** Spreads a specific Meme to a target strand.
+    ///
+    /// **Stack:** `[ ..., meme_id, target_strand ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Propagate,
+
+    /// **[Nova]** Removes a Meme from the pool.
+    ///
+    /// **Stack:** `[ ..., meme_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Forget,
+
+    /// **[Nova]** Modifies the dialect of the current strand (OpCode Remapping).
+    ///
+    /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shibboleth,
+
     /// **[Nova]** Randomly mutates the genome with a given probability (Linguistic Drift).
     ///
     /// **Stack:** `[ ..., probability ] -> [ ... ]`
