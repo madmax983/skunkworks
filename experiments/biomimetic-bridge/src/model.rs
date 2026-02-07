@@ -84,9 +84,13 @@ impl World {
         // 2. Build Ant Grid for O(1) neighbor checks
         let mut ant_grid = vec![0; self.width * self.height];
         for ant in &self.ants {
-             if ant.x >= 0 && ant.y >= 0 && (ant.x as usize) < self.width && (ant.y as usize) < self.height {
-                 ant_grid[(ant.y as usize) * self.width + (ant.x as usize)] += 1;
-             }
+            if ant.x >= 0
+                && ant.y >= 0
+                && (ant.x as usize) < self.width
+                && (ant.y as usize) < self.height
+            {
+                ant_grid[(ant.y as usize) * self.width + (ant.x as usize)] += 1;
+            }
         }
 
         let width = self.width;
@@ -100,12 +104,16 @@ impl World {
                     let nx = x + dx;
                     let ny = y + dy;
                     if nx >= 0 && ny >= 0 && (nx as usize) < width && (ny as usize) < height {
-                         count += ant_grid_ref[(ny as usize) * width + (nx as usize)];
+                        count += ant_grid_ref[(ny as usize) * width + (nx as usize)];
                     }
                 }
             }
             // Subtract self from count
-            if count > 0 { count - 1 } else { 0 }
+            if count > 0 {
+                count - 1
+            } else {
+                0
+            }
         };
 
         // 3. Determine updates
@@ -130,8 +138,8 @@ impl World {
                     if neighbors < 2 {
                         updates.push((i, x, y, State::Foraging, Some((x, y, Terrain::Gap))));
                     } else {
-                         // Reinforce bridge
-                         updates.push((i, x, y, State::Bridging, Some((x, y, Terrain::Bridge))));
+                        // Reinforce bridge
+                        updates.push((i, x, y, State::Bridging, Some((x, y, Terrain::Bridge))));
                     }
                 }
                 State::Foraging | State::Returning => {
@@ -141,12 +149,18 @@ impl World {
                     // Look at neighbors
                     for dx in -1..=1 {
                         for dy in -1..=1 {
-                            if dx == 0 && dy == 0 { continue; }
+                            if dx == 0 && dy == 0 {
+                                continue;
+                            }
                             let nx = x + dx;
                             let ny = y + dy;
 
                             // Check terrain
-                            let t = if nx >= 0 && ny >= 0 && (nx as usize) < width && (ny as usize) < height {
+                            let t = if nx >= 0
+                                && ny >= 0
+                                && (nx as usize) < width
+                                && (ny as usize) < height
+                            {
                                 self.terrain[(ny as usize) * width + (nx as usize)]
                             } else {
                                 Terrain::Gap
@@ -170,15 +184,21 @@ impl World {
 
                         if bridging {
                             // Become bridge at NEW location (falling into gap to bridge it)
-                             updates.push((i, nx, ny, State::Bridging, Some((nx, ny, Terrain::Bridge))));
+                            updates.push((
+                                i,
+                                nx,
+                                ny,
+                                State::Bridging,
+                                Some((nx, ny, Terrain::Bridge)),
+                            ));
                         } else {
                             // Just move
-                             updates.push((i, nx, ny, state, None));
+                            updates.push((i, nx, ny, state, None));
 
-                             // TODO: Leave pheromone (handled separately or here?)
-                             // We can't mutate pheromones here easily without RefCell or splitting borrows.
-                             // But we handled evaporation earlier.
-                             // Let's just update position.
+                            // TODO: Leave pheromone (handled separately or here?)
+                            // We can't mutate pheromones here easily without RefCell or splitting borrows.
+                            // But we handled evaporation earlier.
+                            // Let's just update position.
                         }
                     } else {
                         // Stay put
@@ -194,7 +214,7 @@ impl World {
             self.ants[i].state = nstate;
 
             if let Some((tx, ty, t)) = terrain_change {
-                 self.set_terrain_safe(tx, ty, t);
+                self.set_terrain_safe(tx, ty, t);
             }
 
             // Apply pheromone at new position

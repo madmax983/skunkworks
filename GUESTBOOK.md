@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Crystallographer)
+- **Status:** The grid is nucleating. Crystals are accreting and shattering. Entropy is being annealed.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.

@@ -197,7 +197,8 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.energy = vm.energy.saturating_sub(20);
             } else {
                 vm.stack.push(Value::Int(-1));
-                vm.output.push("COMPOSE: No valid genes produced".to_string());
+                vm.output
+                    .push("COMPOSE: No valid genes produced".to_string());
             }
         }
         _ => {}
@@ -232,7 +233,7 @@ fn note_to_gene(note: &Note) -> Option<Gene> {
         8 => (OpCode::Print, vec![]),                           // G#
         9 => (OpCode::Jump, vec![Nucleotide::Number(arg_val)]), // A
         10 => (OpCode::Brz, vec![Nucleotide::Number(arg_val)]), // A#
-        11 => (OpCode::Call, vec![Nucleotide::Number(arg_val)]),// B
+        11 => (OpCode::Call, vec![Nucleotide::Number(arg_val)]), // B
         _ => return None,
     };
 

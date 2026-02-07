@@ -113,7 +113,8 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             let mut genes = Vec::new();
 
             for instr in inner {
-                let generated = parse_instructions(instr, &strand_map, &macro_map, &mut anonymous_strands, 0)?;
+                let generated =
+                    parse_instructions(instr, &strand_map, &macro_map, &mut anonymous_strands, 0)?;
                 genes.extend(generated);
             }
             strands_ast.push(Strand { genes });
@@ -147,7 +148,8 @@ fn parse_instructions(
         Rule::block => {
             let mut genes = Vec::new();
             for instr in inner.into_inner() {
-                let sub = parse_instructions(instr, strand_map, macro_map, anonymous_strands, depth + 1)?;
+                let sub =
+                    parse_instructions(instr, strand_map, macro_map, anonymous_strands, depth + 1)?;
                 genes.extend(sub);
             }
             // Create new strand
@@ -173,7 +175,13 @@ fn parse_instructions(
             if let Some(body) = macro_map.get(name) {
                 let mut macro_genes = Vec::new();
                 for instr in body.clone() {
-                    let sub = parse_instructions(instr, strand_map, macro_map, anonymous_strands, depth + 1)?;
+                    let sub = parse_instructions(
+                        instr,
+                        strand_map,
+                        macro_map,
+                        anonymous_strands,
+                        depth + 1,
+                    )?;
                     macro_genes.extend(sub);
                 }
                 return Ok(macro_genes);

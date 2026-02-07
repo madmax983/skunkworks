@@ -61,26 +61,71 @@ impl App {
 
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::Dup, args: vec![] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Add, args: vec![] },
-                Gene { op: OpCode::Dup, args: vec![] }, // Stack: [..., N, N]
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-                Gene { op: OpCode::Sub, args: vec![] }, // Stack: [..., N, N-10]
-                Gene { op: OpCode::Brz, args: vec![Nucleotide::Number(1)] }, // If 0, jump to strand 1
-                Gene { op: OpCode::Drop, args: vec![] }, // Drop the difference
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Loop
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Dup,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Add,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Dup,
+                    args: vec![],
+                }, // Stack: [..., N, N]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(10)],
+                },
+                Gene {
+                    op: OpCode::Sub,
+                    args: vec![],
+                }, // Stack: [..., N, N-10]
+                Gene {
+                    op: OpCode::Brz,
+                    args: vec![Nucleotide::Number(1)],
+                }, // If 0, jump to strand 1
+                Gene {
+                    op: OpCode::Drop,
+                    args: vec![],
+                }, // Drop the difference
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                }, // Loop
             ],
         };
 
         let strand1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-                Gene { op: OpCode::Print, args: vec![] },
-                Gene { op: OpCode::Drop, args: vec![] },
-                Gene { op: OpCode::Drop, args: vec![] }, // Clean up
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Restart
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(999)],
+                },
+                Gene {
+                    op: OpCode::Print,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Drop,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Drop,
+                    args: vec![],
+                }, // Clean up
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                }, // Restart
             ],
         };
 
@@ -127,7 +172,7 @@ impl App {
                         let _ = self.audio_tx.send(AudioEvent::Kick);
                     }
                     OpCode::Print => {
-                         let _ = self.audio_tx.send(AudioEvent::Snare);
+                        let _ = self.audio_tx.send(AudioEvent::Snare);
                     }
                     _ => {
                         let _ = self.audio_tx.send(AudioEvent::HiHat);
@@ -161,12 +206,14 @@ fn main() -> Result<()> {
                         KeyCode::Char('q') | KeyCode::Esc => break,
                         KeyCode::Char(' ') => app.paused = !app.paused,
                         KeyCode::Char('r') => {
-                             app.vm = ChimeraVM::new(App::generate_dna());
-                             app.last_pc = (0, 0);
+                            app.vm = ChimeraVM::new(App::generate_dna());
+                            app.last_pc = (0, 0);
                         }
                         KeyCode::Up => {
                             if app.gravity_interval.as_millis() > 10 {
-                                app.gravity_interval = app.gravity_interval.saturating_sub(Duration::from_millis(10));
+                                app.gravity_interval = app
+                                    .gravity_interval
+                                    .saturating_sub(Duration::from_millis(10));
                             }
                         }
                         KeyCode::Down => {
@@ -207,7 +254,15 @@ fn ui(f: &mut Frame, app: &App) {
     // Genes are knots on the lines.
 
     let strand_count = app.vm.dna.helix.strands.len();
-    let max_genes = app.vm.dna.helix.strands.iter().map(|s| s.genes.len()).max().unwrap_or(0);
+    let max_genes = app
+        .vm
+        .dna
+        .helix
+        .strands
+        .iter()
+        .map(|s| s.genes.len())
+        .max()
+        .unwrap_or(0);
 
     let canvas = Canvas::default()
         .block(Block::default().borders(Borders::ALL).title(" Quipu Code "))
@@ -270,22 +325,32 @@ fn ui(f: &mut Frame, app: &App) {
 
     // Stack and Stats
     let mut stats_text = vec![
-        Line::from(Span::styled("Instruction Pointer (IP):", Style::default().fg(Color::Yellow))),
+        Line::from(Span::styled(
+            "Instruction Pointer (IP):",
+            Style::default().fg(Color::Yellow),
+        )),
         Line::from(format!("{:?}", app.vm.ip)),
         Line::from(""),
         Line::from(Span::styled("Stack:", Style::default().fg(Color::Green))),
     ];
 
     for (i, val) in app.vm.stack.iter().rev().take(10).enumerate() {
-        stats_text.push(Line::from(format!("{}: {:?}", app.vm.stack.len() - 1 - i, val)));
+        stats_text.push(Line::from(format!(
+            "{}: {:?}",
+            app.vm.stack.len() - 1 - i,
+            val
+        )));
     }
 
     stats_text.push(Line::from(""));
     stats_text.push(Line::from(format!("Energy: {}", app.vm.energy)));
-    stats_text.push(Line::from(format!("Speed: {}ms", app.gravity_interval.as_millis())));
+    stats_text.push(Line::from(format!(
+        "Speed: {}ms",
+        app.gravity_interval.as_millis()
+    )));
 
-    let stats_block = Paragraph::new(stats_text)
-        .block(Block::default().borders(Borders::ALL).title(" State "));
+    let stats_block =
+        Paragraph::new(stats_text).block(Block::default().borders(Borders::ALL).title(" State "));
     f.render_widget(stats_block, main_chunks[1]);
 
     let footer = Paragraph::new("Space: Pause | Up/Down: Speed | R: Reset | Q: Quit")

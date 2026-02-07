@@ -48,11 +48,26 @@ fn test_egregore_channel() {
     // query() -> pops "comms", pushes 42. stack: [42]
 
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("comms".to_string())] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-        Gene { op: OpCode::EgregoreChannel, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("comms".to_string())] },
-        Gene { op: OpCode::EgregoreQuery, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("comms".to_string())],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        },
+        Gene {
+            op: OpCode::EgregoreChannel,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("comms".to_string())],
+        },
+        Gene {
+            op: OpCode::EgregoreQuery,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
 
@@ -68,8 +83,14 @@ fn test_egregore_channel() {
 fn test_egregore_summon_fail() {
     // [ push("Rain") summon() ]
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("Rain".to_string())] },
-        Gene { op: OpCode::EgregoreSummon, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("Rain".to_string())],
+        },
+        Gene {
+            op: OpCode::EgregoreSummon,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
 
@@ -84,8 +105,14 @@ fn test_egregore_summon_fail() {
 fn test_egregore_summon_success() {
     // [ push("Rain") summon() ] but with faith hacked in
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("Rain".to_string())] },
-        Gene { op: OpCode::EgregoreSummon, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("Rain".to_string())],
+        },
+        Gene {
+            op: OpCode::EgregoreSummon,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     vm.egregore.faith = 200;

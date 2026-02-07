@@ -51,7 +51,8 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.knowledge_base.push(rule.clone());
                 vm.output.push(format!("RULE: Added {}", rule));
             } else {
-                vm.output.push("Error: Stack underflow for rule".to_string());
+                vm.output
+                    .push("Error: Stack underflow for rule".to_string());
             }
         }
         OpCode::Retract => {
@@ -77,7 +78,13 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output.push(format!("QUERY: Solving {:?}", goals));
 
                 let mut solutions = Vec::new();
-                solve(&goals, HashMap::new(), &vm.knowledge_base, &mut solutions, 0);
+                solve(
+                    &goals,
+                    HashMap::new(),
+                    &vm.knowledge_base,
+                    &mut solutions,
+                    0,
+                );
 
                 if solutions.is_empty() {
                     vm.stack.push(Value::Int(0));
@@ -98,10 +105,14 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     if let Some(first_sol) = solutions.first() {
                         let mut binding_list = Vec::new();
                         for (k, v) in first_sol {
-                            let pair = Value::Junction(JunctionType::All, vec![Value::Str(k.clone()), v.clone()]);
+                            let pair = Value::Junction(
+                                JunctionType::All,
+                                vec![Value::Str(k.clone()), v.clone()],
+                            );
                             binding_list.push(pair);
                         }
-                        vm.stack.push(Value::Junction(JunctionType::All, binding_list));
+                        vm.stack
+                            .push(Value::Junction(JunctionType::All, binding_list));
                     }
                 }
             } else {
@@ -237,7 +248,9 @@ fn bind(var: &str, val: &Value, subst: &Subst) -> Option<Subst> {
 }
 
 fn solve(goals: &[Value], subst: Subst, kb: &[Value], solutions: &mut Vec<Subst>, depth: usize) {
-    if depth > 50 { return; } // Prevent infinite recursion
+    if depth > 50 {
+        return;
+    } // Prevent infinite recursion
 
     if goals.is_empty() {
         solutions.push(subst);
@@ -282,9 +295,7 @@ fn parse_kb_entry(entry: &Value) -> (Value, Vec<Value>) {
 
 fn rename_vars(val: &Value, suffix: usize) -> Value {
     match val {
-        Value::Str(s) if s.starts_with('?') => {
-            Value::Str(format!("{}_{}", s, suffix))
-        }
+        Value::Str(s) if s.starts_with('?') => Value::Str(format!("{}_{}", s, suffix)),
         Value::Junction(t, args) => {
             Value::Junction(*t, args.iter().map(|a| rename_vars(a, suffix)).collect())
         }

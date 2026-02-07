@@ -1,4 +1,4 @@
-use crate::simulation::{Simulation, State as SimState, AgentType};
+use crate::simulation::{AgentType, Simulation, State as SimState};
 use bytemuck::{Pod, Zeroable};
 use cgmath::prelude::*;
 use cgmath::{Deg, Matrix4, Point3, Vector3};
@@ -68,30 +68,102 @@ pub struct State {
 
 const VERTICES: &[Vertex] = &[
     // Cube vertices (same as before)
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
 ];
 
 const INDICES: &[u16] = &[
@@ -114,8 +186,8 @@ impl State {
             // Color based on State
             // Solid = Blue-ish, Liquid = Red-ish
             let (r, g, b) = match p.state {
-                 SimState::Solid => (0.1, 0.1 + t * 0.4, 0.8 + t * 0.2), // Icy Blue
-                 SimState::Liquid => (0.8 + t * 0.2, 0.1 + t * 0.5, 0.1), // Molten Red
+                SimState::Solid => (0.1, 0.1 + t * 0.4, 0.8 + t * 0.2), // Icy Blue
+                SimState::Liquid => (0.8 + t * 0.2, 0.1 + t * 0.5, 0.1), // Molten Red
             };
 
             instances.push(InstanceRaw {
@@ -126,12 +198,12 @@ impl State {
 
         // Agents
         for agent in &sim.agents {
-             let (r, g, b) = match agent.kind {
-                 AgentType::Cooler => (0.0, 1.0, 1.0), // Cyan
-                 AgentType::Heater => (1.0, 1.0, 0.0), // Yellow
-             };
+            let (r, g, b) = match agent.kind {
+                AgentType::Cooler => (0.0, 1.0, 1.0), // Cyan
+                AgentType::Heater => (1.0, 1.0, 0.0), // Yellow
+            };
 
-             instances.push(InstanceRaw {
+            instances.push(InstanceRaw {
                 model_pos: [agent.pos.x, agent.pos.y, agent.pos.z],
                 color: [r, g, b],
             });
@@ -426,11 +498,8 @@ impl State {
         let instances = Self::create_instances(sim);
         // Important: this assumes instances count doesn't change, or buffer is big enough.
         // Simulation grid size is fixed, so this is safe.
-        self.queue.write_buffer(
-            &self.instance_buffer,
-            0,
-            bytemuck::cast_slice(&instances),
-        );
+        self.queue
+            .write_buffer(&self.instance_buffer, 0, bytemuck::cast_slice(&instances));
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {

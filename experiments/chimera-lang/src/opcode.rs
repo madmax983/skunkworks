@@ -727,6 +727,29 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Piet,
 
+    // Crystal Features (Crystallography)
+    /// **[Nova]** Spawns a crystal seed at the current location.
+    ///
+    /// **Stack:** `[ ..., type ] -> [ ... ]`
+    /// **Type:** 0=Salt (Cubic), 1=Quartz (Hex), 2=Bismuth (Spiral).
+    #[cfg(feature = "nova")]
+    Nucleate,
+    /// **[Nova]** Expands existing crystals based on neighbor rules.
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Accrete,
+    /// **[Nova]** Shatters crystals into random values.
+    ///
+    /// **Stack:** `[ ..., force ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shatter,
+    /// **[Nova]** Sorts values in a local area to reduce entropy.
+    ///
+    /// **Stack:** `[ ..., iterations, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Anneal,
+
     /// **[Nova]** Freezes the environment and other organisms for a duration.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ... ]`

@@ -50,11 +50,11 @@ mod microscope_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_atmosphere_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_botany_test;
+mod nova_alchemy_crucible_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_atmosphere_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_bang_test;
 #[cfg(all(test, feature = "nova"))]
@@ -64,9 +64,9 @@ mod nova_biolum_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_blackbox_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_camouflage_test;
+mod nova_botany_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_compose_test;
+mod nova_camouflage_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_cerebellum_test;
 #[cfg(all(test, feature = "nova"))]
@@ -74,9 +74,15 @@ mod nova_chorus_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_chroma_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_compose_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_conjugation_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_crispr_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_crystal_test;
+#[cfg(all(test, feature = "nova", feature = "resonance"))]
+mod nova_cymatics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_differentiation_test;
 #[cfg(all(test, feature = "nova"))]
@@ -88,8 +94,6 @@ mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_relativity_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_ipc_test;
@@ -98,9 +102,9 @@ mod nova_isomer_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_market_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_madness_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_market_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
@@ -131,10 +135,10 @@ mod nova_quantum_test;
 mod nova_radio_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_reflex_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_relativity_test;
 #[cfg(all(test, feature = "resonance"))]
 mod nova_resonance_test;
-#[cfg(all(test, feature = "nova", feature = "resonance"))]
-mod nova_cymatics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_security_test;
 #[cfg(all(test, feature = "nova"))]
@@ -161,8 +165,6 @@ mod nova_test;
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_true_alchemy_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_alchemy_crucible_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(all(test, feature = "nova"))]

@@ -105,10 +105,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("PIN_IN: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for pin_in".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for pin_in".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pin_in".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pin_in".to_string());
             }
         }
         OpCode::PinOut => {
@@ -122,10 +124,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("PIN_OUT: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for pin_out".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for pin_out".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for pin_out".to_string());
+                vm.output
+                    .push("Error: Stack underflow for pin_out".to_string());
             }
         }
         OpCode::Emitter => {
@@ -140,10 +144,12 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.output.push(format!("EMITTER: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for emitter".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for emitter".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for emitter".to_string());
+                vm.output
+                    .push("Error: Stack underflow for emitter".to_string());
             }
         }
         OpCode::Receiver => {
@@ -155,13 +161,16 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 if let (Value::Int(y), Value::Int(x), Value::Int(s)) = (y_val, x_val, s_val) {
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                         vm.grid[ny][nx] = Value::Str(format!("RECV:{}", s));
-                        vm.output.push(format!("RECEIVER: Created at {},{}", nx, ny));
+                        vm.output
+                            .push(format!("RECEIVER: Created at {},{}", nx, ny));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for receiver".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for receiver".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for receiver".to_string());
+                vm.output
+                    .push("Error: Stack underflow for receiver".to_string());
             }
         }
         _ => {}
@@ -199,23 +208,30 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                     if s.starts_with("EMIT:") {
                         let parts: Vec<&str> = s.split(':').collect();
                         if parts.len() == 3 {
-                            if let (Ok(freq), Ok(phase)) = (parts[1].parse::<i64>(), parts[2].parse::<i64>()) {
+                            if let (Ok(freq), Ok(phase)) =
+                                (parts[1].parse::<i64>(), parts[2].parse::<i64>())
+                            {
                                 let mut new_phase = phase + 1;
                                 if new_phase >= freq {
                                     new_phase = 0;
                                 }
-                                next_grid[y][x] = Value::Str(format!("EMIT:{}:{}", freq, new_phase));
+                                next_grid[y][x] =
+                                    Value::Str(format!("EMIT:{}:{}", freq, new_phase));
                             }
                         }
                         // Emitter handles its own next state, doesn't evolve via WW rules
                         0
-                    } else if s.starts_with("RECV:") || s == "PIN:IN" || s == "PIN:OUT" || s.starts_with("G:") {
+                    } else if s.starts_with("RECV:")
+                        || s == "PIN:IN"
+                        || s == "PIN:OUT"
+                        || s.starts_with("G:")
+                    {
                         // Static components (physically)
                         0
                     } else {
                         0
                     }
-                },
+                }
                 _ => 0,
             };
 
@@ -255,14 +271,18 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                                 // Let's say Emitter fires when phase == freq-1 (end of cycle).
                                                 let parts: Vec<&str> = s.split(':').collect();
                                                 if parts.len() == 3 {
-                                                    if let (Ok(_freq), Ok(phase)) = (parts[1].parse::<i64>(), parts[2].parse::<i64>()) {
-                                                        if phase == 0 { // Firing phase
+                                                    if let (Ok(_freq), Ok(phase)) = (
+                                                        parts[1].parse::<i64>(),
+                                                        parts[2].parse::<i64>(),
+                                                    ) {
+                                                        if phase == 0 {
+                                                            // Firing phase
                                                             head_neighbors += 1;
                                                         }
                                                     }
                                                 }
                                             }
-                                        },
+                                        }
                                         _ => {}
                                     }
                                 }
@@ -297,7 +317,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                     let mut triggered = false;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if dy == 0 && dx == 0 { continue; }
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
                             if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
                                 // Check for Head (2) or Firing Emitter
                                 if let Value::Int(2) = vm.grid[ny][nx] {
@@ -307,7 +329,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                         let parts: Vec<&str> = es.split(':').collect();
                                         if parts.len() == 3 {
                                             if let Ok(phase) = parts[2].parse::<i64>() {
-                                                if phase == 0 { triggered = true; }
+                                                if phase == 0 {
+                                                    triggered = true;
+                                                }
                                             }
                                         }
                                     }
@@ -325,7 +349,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                         let mut triggered = false;
                         for dy in -1..=1 {
                             for dx in -1..=1 {
-                                if dy == 0 && dx == 0 { continue; }
+                                if dy == 0 && dx == 0 {
+                                    continue;
+                                }
                                 if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
                                     if let Value::Int(2) = vm.grid[ny][nx] {
                                         triggered = true;
@@ -334,7 +360,9 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                                             let parts: Vec<&str> = es.split(':').collect();
                                             if parts.len() == 3 {
                                                 if let Ok(phase) = parts[2].parse::<i64>() {
-                                                    if phase == 0 { triggered = true; }
+                                                    if phase == 0 {
+                                                        triggered = true;
+                                                    }
                                                 }
                                             }
                                         }

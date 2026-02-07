@@ -1,5 +1,5 @@
 use anyhow::Result;
-use rustfft::{FftPlanner, num_complex::Complex};
+use rustfft::{num_complex::Complex, FftPlanner};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
@@ -31,9 +31,13 @@ impl AudioSystem {
             let samples_clone = samples.clone();
 
             if let Some(device) = device {
-                log::info!("Found input device: {}", device.name().unwrap_or("Unknown".to_string()));
+                log::info!(
+                    "Found input device: {}",
+                    device.name().unwrap_or("Unknown".to_string())
+                );
 
-                let config: cpal::StreamConfig = device.default_input_config()
+                let config: cpal::StreamConfig = device
+                    .default_input_config()
                     .map(|c| c.into())
                     .unwrap_or_else(|_| cpal::StreamConfig {
                         channels: 1,
@@ -59,7 +63,7 @@ impl AudioSystem {
                     move |err| {
                         log::error!("Stream error: {}", err);
                     },
-                    None
+                    None,
                 );
 
                 match stream_result {
@@ -67,9 +71,12 @@ impl AudioSystem {
                         s.play().ok();
                         log::info!("Audio stream started successfully");
                         (Some(s), false)
-                    },
+                    }
                     Err(e) => {
-                        log::warn!("Failed to build input stream: {}, falling back to Ghost Mode", e);
+                        log::warn!(
+                            "Failed to build input stream: {}, falling back to Ghost Mode",
+                            e
+                        );
                         (None, true)
                     }
                 }
@@ -142,21 +149,20 @@ impl AudioSystem {
     fn compute_fft(&mut self, samples: &[f32]) -> Vec<f32> {
         let fft = self.planner.plan_fft_forward(FFT_SIZE);
 
-        let mut buffer: Vec<Complex<f32>> = samples.iter()
+        let mut buffer: Vec<Complex<f32>> = samples
+            .iter()
             .map(|&s| Complex { re: s, im: 0.0 })
             .collect();
 
         for (i, sample) in buffer.iter_mut().enumerate() {
-            let window = 0.5 * (1.0 - (2.0 * std::f32::consts::PI * i as f32 / (FFT_SIZE as f32 - 1.0)).cos());
+            let window = 0.5
+                * (1.0 - (2.0 * std::f32::consts::PI * i as f32 / (FFT_SIZE as f32 - 1.0)).cos());
             sample.re *= window;
         }
 
         fft.process(&mut buffer);
 
-        buffer.iter()
-            .take(FFT_SIZE / 2)
-            .map(|c| c.norm())
-            .collect()
+        buffer.iter().take(FFT_SIZE / 2).map(|c| c.norm()).collect()
     }
 }
 
