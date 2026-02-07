@@ -2817,6 +2817,18 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         // Force a mutation
                         dream_vm.mutate();
+                        let mutation_desc = dream_vm
+                            .output
+                            .last()
+                            .cloned()
+                            .unwrap_or_else(|| "Unknown Mutation".to_string());
+
+                        // Capture mutated strand
+                        let mutated_strand = if idx < dream_vm.dna.helix.strands.len() {
+                            Some(dream_vm.dna.helix.strands[idx].clone())
+                        } else {
+                            None
+                        };
 
                         // Run simulation
                         dream_vm.ip = (idx, 0);
@@ -2833,6 +2845,24 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         // Evaluate
                         let success = dream_vm.energy > vm.energy;
 
+                        // Pay Cost (Base 50 + ticks/2)
+                        let cost = 50 + (safe_ticks / 2);
+
+                        let trace = crate::vm::dream::DreamTrace::new(
+                            0,
+                            idx,
+                            safe_ticks as usize,
+                            cost,
+                            dream_vm.energy,
+                            if dream_vm.halted { 0 } else { 1 },
+                            mutation_desc,
+                            mutated_strand,
+                            success,
+                            dream_vm.output.clone(),
+                            None,
+                        );
+                        vm.dream_traces.push(trace);
+
                         if success {
                             // Adopt DNA
                             vm.dna = dream_vm.dna;
@@ -2843,8 +2873,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             vm.output.push("DREAM: Mutation discarded".to_string());
                         }
 
-                        // Pay Cost (Base 50 + ticks/2)
-                        let cost = 50 + (safe_ticks / 2);
                         vm.energy = vm.energy.saturating_sub(cost);
                     } else {
                         vm.output.push("Error: Invalid args for dream".to_string());

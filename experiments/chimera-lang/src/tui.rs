@@ -43,6 +43,8 @@ pub(crate) enum ViewMode {
     Retina,
     #[cfg(feature = "nova")]
     Quantum,
+    #[cfg(feature = "nova")]
+    Dream,
     Heatmap,
 }
 
@@ -74,6 +76,8 @@ pub(crate) struct AppState {
     pub(crate) selected_graveyard_strand: usize,
     #[cfg(feature = "nova")]
     pub(crate) selected_sigil_index: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) selected_dream_trace: usize,
 }
 
 impl AppState {
@@ -100,6 +104,8 @@ impl AppState {
             selected_graveyard_strand: 0,
             #[cfg(feature = "nova")]
             selected_sigil_index: 0,
+            #[cfg(feature = "nova")]
+            selected_dream_trace: 0,
         }
     }
 }
@@ -782,6 +788,110 @@ where
                 return;
             }
 
+            // Handle Dream View
+            #[cfg(feature = "nova")]
+            if let ViewMode::Dream = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+                    .split(f.area());
+
+                // Trace List
+                let mut trace_items = Vec::new();
+                if vm.dream_traces.is_empty() {
+                    trace_items.push(ListItem::new("No dreams recorded."));
+                } else {
+                    for (i, trace) in vm.dream_traces.iter().enumerate() {
+                        let is_selected = i == app_state.selected_dream_trace;
+                        let mut style = if is_selected {
+                            Style::default()
+                                .fg(Color::Yellow)
+                                .add_modifier(Modifier::BOLD)
+                        } else {
+                            Style::default().fg(Color::White)
+                        };
+
+                        if trace.accepted {
+                            style = style.fg(Color::Green);
+                        } else {
+                            style = style.fg(Color::Magenta); // Discarded dreams
+                        }
+
+                        if is_selected {
+                            style = style.add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
+                        }
+
+                        let icon = if trace.accepted { "✔" } else { "✖" };
+                        trace_items.push(
+                            ListItem::new(format!(
+                                "{} Dream #{} (Strand {}) - {} Ticks",
+                                icon, i, trace.strand_idx, trace.duration
+                            ))
+                            .style(style),
+                        );
+                    }
+                }
+
+                let trace_list = List::new(trace_items)
+                    .block(Block::default().borders(Borders::ALL).title("Dream Log"));
+                f.render_widget(trace_list, chunks[0]);
+
+                // Details
+                if !vm.dream_traces.is_empty()
+                    && app_state.selected_dream_trace < vm.dream_traces.len()
+                {
+                    let trace = &vm.dream_traces[app_state.selected_dream_trace];
+
+                    let right_chunks = Layout::default()
+                        .direction(Direction::Vertical)
+                        .constraints([Constraint::Length(8), Constraint::Min(0)].as_ref())
+                        .split(chunks[1]);
+
+                    let info_text = vec![
+                        Line::from(format!("Mutation: {}", trace.mutation_desc)),
+                        Line::from(format!(
+                            "Energy: {} -> {} (Cost: {})",
+                            trace.result_energy + trace.energy_cost, // Approx start
+                            trace.result_energy,
+                            trace.energy_cost
+                        )),
+                        Line::from(format!(
+                            "Status: {}",
+                            if trace.status == 1 { "Alive" } else { "Dead" }
+                        )),
+                        Line::from(format!("Accepted: {}", trace.accepted)),
+                        Line::from(""),
+                        Line::from(Span::styled(
+                            "Press ENTER to Realize (Lucid Dreaming)",
+                            Style::default().fg(Color::Cyan),
+                        )),
+                    ];
+
+                    let info = Paragraph::new(info_text)
+                        .block(Block::default().borders(Borders::ALL).title("Dream Details"));
+                    f.render_widget(info, right_chunks[0]);
+
+                    // Output Log
+                    let log_items: Vec<ListItem> = trace
+                        .output_log
+                        .iter()
+                        .map(|s| {
+                            ListItem::new(s.clone()).style(Style::default().fg(Color::DarkGray))
+                        })
+                        .collect();
+
+                    let log_list = List::new(log_items)
+                        .block(Block::default().borders(Borders::ALL).title("Dream Output"));
+                    f.render_widget(log_list, right_chunks[1]);
+                } else {
+                    let info = Paragraph::new("Select a dream to view details.")
+                        .block(Block::default().borders(Borders::ALL).title("Details"));
+                    f.render_widget(info, chunks[1]);
+                }
+
+                return;
+            }
+
             // Handle Piano Roll View
             #[cfg(feature = "nova")]
             if let ViewMode::PianoRoll = app_state.view_mode {
@@ -1011,6 +1121,8 @@ where
                 ViewMode::Retina => "RETINA",
                 #[cfg(feature = "nova")]
                 ViewMode::Quantum => "QUANTUM",
+                #[cfg(feature = "nova")]
+                ViewMode::Dream => "DREAM CATCHER",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -1528,6 +1640,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Dream => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -1622,7 +1739,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Retina => ViewMode::Quantum,
                             #[cfg(feature = "nova")]
-                            ViewMode::Quantum => ViewMode::Heatmap,
+                            ViewMode::Quantum => ViewMode::Dream,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Dream => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -1715,6 +1834,12 @@ where
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Quantum => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Dream => {
+                            if app_state.selected_dream_trace + 1 < vm.dream_traces.len() {
+                                app_state.selected_dream_trace += 1;
+                            }
+                        }
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1847,6 +1972,12 @@ where
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Quantum => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Dream => {
+                            if app_state.selected_dream_trace > 0 {
+                                app_state.selected_dream_trace -= 1;
+                            }
+                        }
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -1884,6 +2015,8 @@ where
                                 app_state.selected_strand = 0;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Dream => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1918,6 +2051,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Quantum => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Dream => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -2062,6 +2197,24 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Quantum => {
                                 app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Dream => {
+                                app_state.input_mode = InputMode::Normal;
+                                if app_state.selected_dream_trace < vm.dream_traces.len() {
+                                    let (target_idx, mutated_strand) = {
+                                        let trace = &vm.dream_traces[app_state.selected_dream_trace];
+                                        (trace.strand_idx, trace.mutated_strand.clone())
+                                    };
+
+                                    if let Some(strand) = mutated_strand {
+                                        // Lucid Dreaming: Inject the strand
+                                        if target_idx < vm.dna.helix.strands.len() {
+                                            vm.dna.helix.strands[target_idx] = strand;
+                                            app_state.status_msg = format!("LUCID DREAM: Realized mutations for strand {}", target_idx);
+                                        }
+                                    }
+                                }
                             }
                             ViewMode::Heatmap => {
                                 app_state.input_mode = InputMode::Normal;

@@ -49,6 +49,7 @@ pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod cortex;
+pub mod dream;
 #[cfg(feature = "git")]
 pub mod git;
 #[cfg(feature = "nova")]
@@ -319,6 +320,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub retina: retina::Retina,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
+    pub dream_traces: Vec<dream::DreamTrace>,
 }
 
 impl ChimeraVM {
@@ -465,6 +467,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             retina: retina::Retina::new(),
             gene_execution_counts: HashMap::new(),
+            dream_traces: Vec::new(),
         }
     }
 
