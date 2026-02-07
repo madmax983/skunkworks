@@ -383,3 +383,7 @@
 *   **Observation**: `rand::Rng::gen` conflicts with Rust 2024 `gen` keyword.
 *   **Action**: Downgraded to 2021.
 *   **Status**: Excavation site open. Audio sensors offline (hardware failure).
+
+### [Concentration Level: FRESH] - Location: experiments/babylonian-forecaster
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Cuneiform is flowing. Time series predicted in base-60.
