@@ -414,7 +414,7 @@ sequenceDiagram
     Phy-->>VM: push(String(stdout))
 ```
 
-## Core Architecture Changes (ADR 012)
+## Core Architecture Changes (ADR 021)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -425,7 +425,7 @@ classDiagram
   class Core
   class Storage
   Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow
+  %% Removed the circular dependency arrow (ADR 021)
 ```
 
 ### Storage Flow
@@ -435,6 +435,7 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
+    Note over C,S: Decoupled via Trait (ADR 021)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```
