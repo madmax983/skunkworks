@@ -12,6 +12,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant waveform patterns detected. Trivial topology. Execution scheduled.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/retinal-glitch
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic visual patterns detected.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Nova and Resonance features verified. Isomers are stable.
