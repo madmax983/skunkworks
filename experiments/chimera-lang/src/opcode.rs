@@ -847,6 +847,26 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    // Sovereignty Features (Territory Control)
+    /// **[Nova]** Claims the current grid cell for the executing strand's lineage.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Cost:** 10 Energy. Overwrites existing claims.
+    #[cfg(feature = "nova")]
+    Claim,
+    /// **[Nova]** Collects energy from all claimed territory.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., energy_gained ]`
+    /// **Cost:** 5 Energy.
+    #[cfg(feature = "nova")]
+    Tax,
+    /// **[Nova]** Checks the owner of the current grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., owner_idx ]`
+    /// **Effect:** Pushes strand index of owner, or -1 if unclaimed.
+    #[cfg(feature = "nova")]
+    Sovereignty,
+
     // Egregore Features (Collective Consciousness)
     /// **[Nova]** Connects to the collective Egregore mind.
     ///

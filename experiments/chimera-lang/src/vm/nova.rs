@@ -1685,6 +1685,42 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.push(Value::Int(factor as i64));
             None
         }
+    #[cfg(feature = "nova")]
+    OpCode::Claim => {
+        let (cy, cx) = vm.context_loc;
+        vm.sovereignty_grid[cy][cx] = Some(vm.ip.0);
+        vm.energy = vm.energy.saturating_sub(10);
+        vm.output.push(format!("CLAIM: Strand {} claimed {},{}", vm.ip.0, cx, cy));
+        None
+    }
+    #[cfg(feature = "nova")]
+    OpCode::Tax => {
+        let s_idx = vm.ip.0;
+        let mut gained: i64 = 0;
+        for row in &vm.sovereignty_grid {
+            for cell in row {
+                if let Some(owner) = cell {
+                    if *owner == s_idx {
+                        gained += 1;
+                    }
+                }
+            }
+        }
+        vm.energy = vm.energy.saturating_sub(5).saturating_add(gained);
+        vm.stack.push(Value::Int(gained));
+        vm.output.push(format!("TAX: Strand {} collected {} energy", s_idx, gained));
+        None
+    }
+    #[cfg(feature = "nova")]
+    OpCode::Sovereignty => {
+        let (cy, cx) = vm.context_loc;
+        if let Some(owner) = vm.sovereignty_grid[cy][cx] {
+            vm.stack.push(Value::Int(owner as i64));
+        } else {
+            vm.stack.push(Value::Int(-1));
+        }
+        None
+    }
         #[cfg(feature = "nova")]
         OpCode::Relativity => {
             vm.relativity_mode = !vm.relativity_mode;

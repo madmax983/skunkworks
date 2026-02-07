@@ -59,6 +59,8 @@ pub(crate) enum ViewMode {
     Kaleidoscope,
     #[cfg(feature = "nova")]
     Void,
+    #[cfg(feature = "nova")]
+    Sovereignty,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -313,6 +315,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Sovereignty = app_state.view_mode {
+                render_sovereignty(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -541,6 +549,11 @@ where
                                 app_state.input_mode = InputMode::Normal;
                                 app_state.input_buffer.clear();
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Sovereignty => {
+                                app_state.input_mode = InputMode::Normal;
+                                app_state.input_buffer.clear();
+                            }
                             }
                         }
                         KeyCode::Esc => {
@@ -651,7 +664,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Kaleidoscope => ViewMode::Void,
                             #[cfg(feature = "nova")]
-                            ViewMode::Void => ViewMode::Heatmap,
+                            ViewMode::Void => ViewMode::Sovereignty,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Sovereignty => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -864,6 +879,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Void => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -1101,6 +1122,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1163,6 +1190,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1221,6 +1254,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Void => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -1422,6 +1461,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Void => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Sovereignty => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1694,6 +1737,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Kaleidoscope => "KALEIDOSCOPE",
                 #[cfg(feature = "nova")]
                 ViewMode::Void => "VOID (ENTROPY)",
+                #[cfg(feature = "nova")]
+                ViewMode::Sovereignty => "SOVEREIGNTY (TERRITORY)",
                 ViewMode::Heatmap => "HEATMAP",
                 #[cfg(feature = "silicon")]
                 ViewMode::Schematic => "SCHEMATIC",
@@ -3298,6 +3343,95 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let info_widget = Paragraph::new(info_text).block(Block::default().borders(Borders::ALL).title("Status"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Territory Grid
+    let mut grid_lines = Vec::new();
+    let rows = vm.sovereignty_grid.len();
+    let cols = if rows > 0 { vm.sovereignty_grid[0].len() } else { 0 };
+
+    for y in 0..rows {
+        let mut line_spans = Vec::new();
+        for x in 0..cols {
+            let owner = vm.sovereignty_grid[y][x];
+            let mut style = Style::default();
+            let mut ch = " .".to_string();
+
+            if let Some(idx) = owner {
+                // Color based on strand index (Hue mapping)
+                // idx % 6: 0=Red, 1=Yellow, 2=Green, 3=Cyan, 4=Blue, 5=Magenta
+                let color = match idx % 6 {
+                    0 => Color::Red,
+                    1 => Color::Yellow,
+                    2 => Color::Green,
+                    3 => Color::Cyan,
+                    4 => Color::Blue,
+                    5 => Color::Magenta,
+                    _ => Color::White,
+                };
+                style = style.bg(color).fg(Color::Black);
+                ch = format!("{:2}", idx); // Show strand index
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(Block::default().borders(Borders::ALL).title("Territory Map"));
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Leaderboard / Stats
+    let mut counts = std::collections::HashMap::new();
+    for row in &vm.sovereignty_grid {
+        for cell in row {
+            if let Some(owner) = cell {
+                *counts.entry(*owner).or_insert(0) += 1;
+            }
+        }
+    }
+
+    let mut leaderboard: Vec<_> = counts.into_iter().collect();
+    leaderboard.sort_by_key(|&(_, count)| std::cmp::Reverse(count));
+
+    let mut stats_lines = Vec::new();
+    stats_lines.push(ListItem::new("Dominance Hierarchy:"));
+    for (idx, count) in leaderboard {
+        let color = match idx % 6 {
+            0 => Color::Red,
+            1 => Color::Yellow,
+            2 => Color::Green,
+            3 => Color::Cyan,
+            4 => Color::Blue,
+            5 => Color::Magenta,
+            _ => Color::White,
+        };
+        stats_lines.push(ListItem::new(Span::styled(
+            format!("Strand {}: {} cells", idx, count),
+            Style::default().fg(color)
+        )));
+    }
+
+    if stats_lines.len() == 1 {
+        stats_lines.push(ListItem::new("No claims established."));
+    }
+
+    let stats_list = List::new(stats_lines).block(Block::default().borders(Borders::ALL).title("The Crown"));
+    f.render_widget(stats_list, chunks[1]);
 }
 
 #[cfg(feature = "silicon")]

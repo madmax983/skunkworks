@@ -375,6 +375,8 @@ pub struct ChimeraVM {
     pub entropy_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub signal_grid: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
+    pub sovereignty_grid: Vec<Vec<Option<usize>>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -426,6 +428,8 @@ impl ChimeraVM {
         let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let signal_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -561,6 +565,8 @@ impl ChimeraVM {
             entropy_grid,
             #[cfg(feature = "nova")]
             signal_grid,
+            #[cfg(feature = "nova")]
+            sovereignty_grid,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -1947,6 +1953,9 @@ impl ChimeraVM {
             | OpCode::Entropy
             | OpCode::Stabilize
             | OpCode::Disintegrate
+            | OpCode::Claim
+            | OpCode::Tax
+            | OpCode::Sovereignty
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
