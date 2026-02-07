@@ -48,6 +48,9 @@ mod tests {
             kind: OrganelleType::Ribosome,
             direction: (0, 1),
             ttl: None, // Persistent root
+            name: "Test Root".to_string(),
+            traits: vec![],
+            genome_id: 0,
         };
         vm.organelles.push(root);
 

@@ -42,6 +42,9 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 kind: crate::vm::nova::OrganelleType::Seed,
                 direction: (0, 1), // Default East
                 ttl: Some(1000), // Finite life
+                name: "Procedural Seed".to_string(),
+                traits: vec!["Fractal".to_string()],
+                genome_id: 0,
             };
 
             vm.organelles.push(organelle);

@@ -43,6 +43,9 @@ mod tests {
             kind: OrganelleType::Chloroplast,
             direction: (0, 0),
             ttl: None,
+            name: "Test Mito".to_string(),
+            traits: vec![],
+            genome_id: 0,
         };
         vm.organelles.push(organelle);
 

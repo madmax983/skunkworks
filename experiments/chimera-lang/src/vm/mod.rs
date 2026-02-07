@@ -67,6 +67,11 @@ pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
+pub mod nova_bestiary;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_bestiary_test;
+#[cfg(feature = "nova")]
 pub mod nova_botany;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;
@@ -1130,6 +1135,9 @@ impl ChimeraVM {
                                     kind: nova::OrganelleType::Ribosome,
                                     direction: (dy as i8, dx as i8),
                                     ttl: Some(1),
+                                    name: "Spark".to_string(),
+                                    traits: vec!["Ephemeral".to_string()],
+                                    genome_id: 0,
                                 };
                                 self.organelles.push(new_org);
                             }
