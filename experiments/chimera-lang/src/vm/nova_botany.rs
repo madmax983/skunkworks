@@ -41,7 +41,7 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 halted: false,
                 kind: crate::vm::nova::OrganelleType::Seed,
                 direction: (0, 1), // Default East
-                ttl: Some(1000), // Finite life
+                ttl: Some(1000),   // Finite life
                 name: "Procedural Seed".to_string(),
                 traits: vec!["Fractal".to_string()],
                 genome_id: 0,
@@ -49,9 +49,11 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             vm.organelles.push(organelle);
             vm.energy = vm.energy.saturating_sub(20);
-            vm.output.push(format!("PLANT: Sowed seed at {},{}", cx, cy));
+            vm.output
+                .push(format!("PLANT: Sowed seed at {},{}", cx, cy));
         } else {
-             vm.output.push("Error: Rules must be String or Junction".to_string());
+            vm.output
+                .push("Error: Rules must be String or Junction".to_string());
         }
     } else {
         vm.output.push("Error: Axiom must be a String".to_string());
@@ -89,7 +91,7 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
             match &rules_val {
                 Value::Str(rule_s) => {
                     expansion = check_rule(c, rule_s);
-                },
+                }
                 Value::Junction(_, vals) => {
                     for v in vals {
                         if let Value::Str(rule_s) = v {
@@ -108,7 +110,7 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
                     let mut new_s = String::new();
                     new_s.push_str(&s[0..i]);
                     new_s.push_str(&replacement);
-                    new_s.push_str(&s[i+1..]);
+                    new_s.push_str(&s[i + 1..]);
                     *s = new_s;
 
                     next_idx = i;
@@ -154,21 +156,30 @@ fn check_rule(c: char, rule_s: &str) -> Option<String> {
 }
 
 #[cfg(feature = "nova")]
-fn interpret_char(vm: &mut ChimeraVM, organelle: &mut Organelle, c: char, turtle_stack: &mut Value) {
+fn interpret_char(
+    vm: &mut ChimeraVM,
+    organelle: &mut Organelle,
+    c: char,
+    turtle_stack: &mut Value,
+) {
     let (cy, cx) = vm.context_loc;
     let (dy, dx) = organelle.direction;
 
     match c {
         'F' | 'G' => {
             vm.grid[cy][cx] = Value::Str("#".to_string());
-            if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64) {
+            if let Some((ny, nx)) =
+                vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64)
+            {
                 if matches!(vm.grid[ny][nx], Value::Int(0)) {
                     vm.context_loc = (ny, nx);
                 }
             }
         }
         'f' => {
-             if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64) {
+            if let Some((ny, nx)) =
+                vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64)
+            {
                 vm.context_loc = (ny, nx);
             }
         }

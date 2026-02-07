@@ -141,7 +141,10 @@ mod tests {
 
         // Assert that the Earth has moved
         let earth = &universe.bodies[1];
-        assert!(earth.pos.x != 100.0 || earth.pos.y != 0.0, "Body did not move!");
+        assert!(
+            earth.pos.x != 100.0 || earth.pos.y != 0.0,
+            "Body did not move!"
+        );
 
         // Then assert energy conservation
         assert!(diff < 1.0, "Energy drifted too much: {}", diff);

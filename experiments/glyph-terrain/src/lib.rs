@@ -1,9 +1,7 @@
 use ab_glyph::{Font, FontRef, Point};
-use lyon::path::Path;
 use lyon::math::point;
-use lyon::tessellation::{
-    BuffersBuilder, FillOptions, FillTessellator, VertexBuffers, FillVertex,
-};
+use lyon::path::Path;
+use lyon::tessellation::{BuffersBuilder, FillOptions, FillTessellator, FillVertex, VertexBuffers};
 use macroquad::prelude::*;
 use noise::{NoiseFn, Perlin};
 
@@ -50,38 +48,42 @@ pub fn extract_outline(font: &impl Font, c: char) -> Option<Path> {
         let mut last_end: Option<Point> = None;
 
         for curve in outline.curves {
-             let (p0, p1_end) = match curve {
-                 ab_glyph::OutlineCurve::Line(p0, p1) => (p0, p1),
-                 ab_glyph::OutlineCurve::Quad(p0, _, p2) => (p0, p2),
-                 ab_glyph::OutlineCurve::Cubic(p0, _, _, p3) => (p0, p3),
-             };
+            let (p0, p1_end) = match curve {
+                ab_glyph::OutlineCurve::Line(p0, p1) => (p0, p1),
+                ab_glyph::OutlineCurve::Quad(p0, _, p2) => (p0, p2),
+                ab_glyph::OutlineCurve::Cubic(p0, _, _, p3) => (p0, p3),
+            };
 
-             let start_new = if let Some(le) = last_end {
-                 (p0.x - le.x).abs() > 0.001 || (p0.y - le.y).abs() > 0.001
-             } else {
-                 true
-             };
+            let start_new = if let Some(le) = last_end {
+                (p0.x - le.x).abs() > 0.001 || (p0.y - le.y).abs() > 0.001
+            } else {
+                true
+            };
 
-             if start_new {
-                 if last_end.is_some() {
-                     builder.end(true);
-                 }
-                 builder.begin(point(p0.x, p0.y));
-             }
+            if start_new {
+                if last_end.is_some() {
+                    builder.end(true);
+                }
+                builder.begin(point(p0.x, p0.y));
+            }
 
-             match curve {
-                 ab_glyph::OutlineCurve::Line(_, p1) => {
-                     builder.line_to(point(p1.x, p1.y));
-                 }
-                 ab_glyph::OutlineCurve::Quad(_, p1, p2) => {
-                     builder.quadratic_bezier_to(point(p1.x, p1.y), point(p2.x, p2.y));
-                 }
-                 ab_glyph::OutlineCurve::Cubic(_, p1, p2, p3) => {
-                     builder.cubic_bezier_to(point(p1.x, p1.y), point(p2.x, p2.y), point(p3.x, p3.y));
-                 }
-             }
+            match curve {
+                ab_glyph::OutlineCurve::Line(_, p1) => {
+                    builder.line_to(point(p1.x, p1.y));
+                }
+                ab_glyph::OutlineCurve::Quad(_, p1, p2) => {
+                    builder.quadratic_bezier_to(point(p1.x, p1.y), point(p2.x, p2.y));
+                }
+                ab_glyph::OutlineCurve::Cubic(_, p1, p2, p3) => {
+                    builder.cubic_bezier_to(
+                        point(p1.x, p1.y),
+                        point(p2.x, p2.y),
+                        point(p3.x, p3.y),
+                    );
+                }
+            }
 
-             last_end = Some(p1_end);
+            last_end = Some(p1_end);
         }
 
         if last_end.is_some() {
@@ -102,14 +104,16 @@ pub fn tessellate_path(path: &Path) -> GlyphMesh {
     // Scaling factor to bring font units (e.g. 2048) down to reasonable world units (e.g. 10.0)
     let scale = 0.01;
 
-    tessellator.tessellate_path(
-        path,
-        &options,
-        &mut BuffersBuilder::new(&mut geometry, |vertex: FillVertex| {
-             let p = vertex.position();
-             Vec3::new(p.x * scale, 0.0, -p.y * scale)
-        }),
-    ).unwrap();
+    tessellator
+        .tessellate_path(
+            path,
+            &options,
+            &mut BuffersBuilder::new(&mut geometry, |vertex: FillVertex| {
+                let p = vertex.position();
+                Vec3::new(p.x * scale, 0.0, -p.y * scale)
+            }),
+        )
+        .unwrap();
 
     let mut mesh = GlyphMesh {
         vertices: geometry.vertices,

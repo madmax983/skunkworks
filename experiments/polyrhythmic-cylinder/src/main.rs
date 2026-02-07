@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
-use polyrhythmic_cylinder::mechanism::{Cylinder, Comb, PluckEvent};
 use polyrhythmic_cylinder::audio::{start_audio, AudioCommand};
+use polyrhythmic_cylinder::mechanism::{Comb, Cylinder, PluckEvent};
 
 const CYLINDER_RADIUS: f32 = 150.0;
 const PIN_LENGTH: f32 = 20.0;
@@ -25,11 +25,11 @@ async fn main() {
         }
         // Track 1 (Mid) - 3 against 4?
         if i % 3 == 0 {
-             cylinder.add_pin(i as f32 * std::f32::consts::PI / 8.0, 1);
+            cylinder.add_pin(i as f32 * std::f32::consts::PI / 8.0, 1);
         }
         // Track 2 (High) - Random
         if rand::gen_range(0, 10) < 3 {
-             cylinder.add_pin(i as f32 * std::f32::consts::PI / 8.0, 2);
+            cylinder.add_pin(i as f32 * std::f32::consts::PI / 8.0, 2);
         }
     }
 
@@ -52,7 +52,7 @@ async fn main() {
             cylinder.wind(dt * 0.5); // Wind up
         }
         if is_key_down(KeyCode::S) || is_key_down(KeyCode::Down) {
-             cylinder.angular_velocity *= 0.9; // Brake
+            cylinder.angular_velocity *= 0.9; // Brake
         }
 
         let events = cylinder.tick(dt, &mut comb);
@@ -121,22 +121,44 @@ async fn main() {
             draw_rectangle(comb_x + wiggle, ty, 40.0, TOOTH_WIDTH, color);
 
             // Draw String/Tine visual
-            draw_line(comb_x + 40.0, ty + TOOTH_WIDTH/2.0, comb_x + 100.0, ty + TOOTH_WIDTH/2.0, 2.0, GRAY);
+            draw_line(
+                comb_x + 40.0,
+                ty + TOOTH_WIDTH / 2.0,
+                comb_x + 100.0,
+                ty + TOOTH_WIDTH / 2.0,
+                2.0,
+                GRAY,
+            );
         }
 
         // UI
         draw_text("Polyrhythmic Cylinder", 20.0, 20.0, 30.0, WHITE);
         draw_text("Hold SPACE/W to Wind", 20.0, 50.0, 20.0, GRAY);
-        draw_text(&format!("RPM: {:.2}", cylinder.angular_velocity * 60.0 / (2.0 * std::f32::consts::PI)), 20.0, 70.0, 20.0, YELLOW);
+        draw_text(
+            &format!(
+                "RPM: {:.2}",
+                cylinder.angular_velocity * 60.0 / (2.0 * std::f32::consts::PI)
+            ),
+            20.0,
+            70.0,
+            20.0,
+            YELLOW,
+        );
 
         // Tension Bar
         draw_text("Mainspring Tension:", 20.0, 100.0, 20.0, WHITE);
         draw_rectangle(20.0, 110.0, 200.0, 20.0, GRAY);
-        draw_rectangle(20.0, 110.0, 200.0 * cylinder.mainspring.tension, 20.0, match cylinder.mainspring.tension {
-            t if t > 0.8 => RED,
-            t if t > 0.4 => YELLOW,
-            _ => GREEN,
-        });
+        draw_rectangle(
+            20.0,
+            110.0,
+            200.0 * cylinder.mainspring.tension,
+            20.0,
+            match cylinder.mainspring.tension {
+                t if t > 0.8 => RED,
+                t if t > 0.4 => YELLOW,
+                _ => GREEN,
+            },
+        );
 
         next_frame().await
     }

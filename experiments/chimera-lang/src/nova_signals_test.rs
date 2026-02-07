@@ -1,17 +1,30 @@
 #[cfg(test)]
 mod tests {
-    use crate::vm::{ChimeraVM, Value};
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_empty_vm() -> ChimeraVM {
         // Create a dummy strand so VM doesn't halt
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Drop, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Infinite loop
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Drop,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            }, // Infinite loop
         ];
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.phase = crate::vm::nova::Phase::Corporeal;
         vm

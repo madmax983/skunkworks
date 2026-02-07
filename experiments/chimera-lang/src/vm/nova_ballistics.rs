@@ -39,18 +39,22 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
         if !matches!(vm.grid[iy][ix], Value::Int(0)) {
             // Impact!
             vm.grid[iy][ix] = Value::Int(0); // Destroy block
-            vm.output.push(format!("IMPACT: Projectile hit {},{}", ix, iy));
+            vm.output
+                .push(format!("IMPACT: Projectile hit {},{}", ix, iy));
 
             // Explosion effect (damage neighbors if power is high)
             if p.power > 1 {
                 for dy in -1..=1 {
                     for dx in -1..=1 {
-                        if dy == 0 && dx == 0 { continue; }
-                        if let Some((ny, nx)) = vm.normalize_coords(iy as i64 + dy, ix as i64 + dx) {
-                             if !matches!(vm.grid[ny][nx], Value::Int(0)) {
-                                 // Simple damage model: reduce value or clear
-                                 vm.grid[ny][nx] = Value::Int(0);
-                             }
+                        if dy == 0 && dx == 0 {
+                            continue;
+                        }
+                        if let Some((ny, nx)) = vm.normalize_coords(iy as i64 + dy, ix as i64 + dx)
+                        {
+                            if !matches!(vm.grid[ny][nx], Value::Int(0)) {
+                                // Simple damage model: reduce value or clear
+                                vm.grid[ny][nx] = Value::Int(0);
+                            }
                         }
                     }
                 }
@@ -61,10 +65,13 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
         // Check collision with Organelles
         let mut hit_organelle = false;
         vm.organelles.retain(|org| {
-            if hit_organelle { return true; } // Already hit something this tick
+            if hit_organelle {
+                return true;
+            } // Already hit something this tick
             if org.context_loc == (iy, ix) {
                 hit_organelle = true;
-                vm.output.push(format!("IMPACT: Organelle hit at {},{}", ix, iy));
+                vm.output
+                    .push(format!("IMPACT: Organelle hit at {},{}", ix, iy));
                 false // Kill organelle
             } else {
                 true
@@ -92,7 +99,7 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let (cy, cx) = vm.context_loc;
 
             // Normalize direction vector
-            let len = ((dx*dx + dy*dy) as f64).sqrt();
+            let len = ((dx * dx + dy * dy) as f64).sqrt();
             let (vx, vy) = if len > 0.0 {
                 ((dx as f64) / len, (dy as f64) / len)
             } else {
@@ -111,12 +118,14 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             vm.projectiles.push(p);
             vm.energy = vm.energy.saturating_sub(5 + pow);
-            vm.output.push(format!("FIRE: Vector ({:.1}, {:.1})", vx, vy));
+            vm.output
+                .push(format!("FIRE: Vector ({:.1}, {:.1})", vx, vy));
         } else {
             vm.output.push("Error: Type mismatch for fire".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for fire".to_string());
+        vm.output
+            .push("Error: Stack underflow for fire".to_string());
     }
     None
 }
@@ -155,7 +164,8 @@ pub fn exec_salvo(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for salvo".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for salvo".to_string());
+        vm.output
+            .push("Error: Stack underflow for salvo".to_string());
     }
     None
 }

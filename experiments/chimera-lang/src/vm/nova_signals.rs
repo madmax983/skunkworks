@@ -25,9 +25,12 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                             // Bang: Propagate to all neighbors
                             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                             for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
                                     // Saturating add to prevent overflow
-                                    next_signals[ny][nx] = next_signals[ny][nx].saturating_add(signal);
+                                    next_signals[ny][nx] =
+                                        next_signals[ny][nx].saturating_add(signal);
                                 }
                             }
                         }
@@ -41,8 +44,11 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                             // For now, same as Bang.
                             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                             for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                                    next_signals[ny][nx] = next_signals[ny][nx].saturating_add(signal);
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
+                                    next_signals[ny][nx] =
+                                        next_signals[ny][nx].saturating_add(signal);
                                 }
                             }
                         }
@@ -92,7 +98,7 @@ fn propagate_directional(
     dy: i64,
     dx: i64,
     signal: u8,
-    next_signals: &mut Vec<Vec<u8>>
+    next_signals: &mut Vec<Vec<u8>>,
 ) {
     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
         next_signals[ny][nx] = next_signals[ny][nx].saturating_add(signal);

@@ -55,15 +55,15 @@ mod tests {
 
         if let Some(Value::Str(content)) = vm.stack.pop() {
             if content == "TOP SECRET DATA" {
-                 panic!("VULNERABILITY CONFIRMED: Managed to read ../secret.txt");
+                panic!("VULNERABILITY CONFIRMED: Managed to read ../secret.txt");
             } else {
-                 println!("Read content: '{}'", content);
-                 println!("VM Output: {:?}", vm.output);
-                 // If content is empty, maybe read failed?
+                println!("Read content: '{}'", content);
+                println!("VM Output: {:?}", vm.output);
+                // If content is empty, maybe read failed?
             }
         } else {
-             println!("Stack empty or not string");
-             println!("VM Output: {:?}", vm.output);
+            println!("Stack empty or not string");
+            println!("VM Output: {:?}", vm.output);
         }
     }
 
@@ -108,7 +108,7 @@ mod tests {
         if exists {
             panic!("VULNERABILITY CONFIRMED: Managed to write ../pwned.txt");
         } else {
-             println!("VM Output: {:?}", vm.output);
+            println!("VM Output: {:?}", vm.output);
         }
     }
 }

@@ -134,7 +134,11 @@ mod tests {
             }
         }
 
-        assert!(spiked_at.is_some(), "Neuron 0 did not spike. Voltage: {}", net.neurons[0].v);
+        assert!(
+            spiked_at.is_some(),
+            "Neuron 0 did not spike. Voltage: {}",
+            net.neurons[0].v
+        );
 
         // Step 2: Continue simulation without input.
         // Neuron 1 should receive current 1 tick after spike.
@@ -151,7 +155,13 @@ mod tests {
                 // Current was added.
                 // Verify v increased significantly
                 let v_curr = net.neurons[1].v;
-                assert!(v_curr > v_prev + 5.0, "Synapse transmission failed at tick {}. v_prev: {}, v_curr: {}", net.tick, v_prev, v_curr);
+                assert!(
+                    v_curr > v_prev + 5.0,
+                    "Synapse transmission failed at tick {}. v_prev: {}, v_curr: {}",
+                    net.tick,
+                    v_prev,
+                    v_curr
+                );
             }
         }
     }

@@ -78,8 +78,7 @@ fn exec_erode(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
         vm.energy = vm.energy.saturating_sub(count / 2 + 5);
-        vm.output
-            .push(format!("ERODE: Weathered {} cells", count));
+        vm.output.push(format!("ERODE: Weathered {} cells", count));
     } else {
         vm.output.push("Error: Type mismatch for erode".to_string());
     }
@@ -152,12 +151,15 @@ fn exec_tectonics(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
 
             vm.energy = vm.energy.saturating_sub(20);
-            vm.output.push(format!("TECTONICS: Shifted plate by {},{}", dx, dy));
+            vm.output
+                .push(format!("TECTONICS: Shifted plate by {},{}", dx, dy));
         } else {
-            vm.output.push("Error: Type mismatch for tectonics".to_string());
+            vm.output
+                .push("Error: Type mismatch for tectonics".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for tectonics".to_string());
+        vm.output
+            .push("Error: Stack underflow for tectonics".to_string());
     }
     None
 }
@@ -183,7 +185,8 @@ fn exec_volcano(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.energy = vm.energy.saturating_sub(p * 5);
         vm.output.push(format!("VOLCANO: Erupted at {},{}", cx, cy));
     } else {
-        vm.output.push("Error: Type mismatch for volcano".to_string());
+        vm.output
+            .push("Error: Type mismatch for volcano".to_string());
     }
     None
 }

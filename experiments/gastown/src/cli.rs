@@ -55,10 +55,7 @@ pub enum Commands {
 
 #[derive(Subcommand)]
 pub enum RigCommands {
-    Add {
-        name: String,
-        repo: String,
-    },
+    Add { name: String, repo: String },
     List,
 }
 

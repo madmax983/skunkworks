@@ -1,6 +1,6 @@
-use std::process::Command;
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use std::path::Path;
+use std::process::Command;
 
 #[allow(dead_code)]
 pub fn clone_repo(url: &str, path: &Path) -> Result<()> {

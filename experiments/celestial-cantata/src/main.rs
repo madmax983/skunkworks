@@ -1,9 +1,9 @@
-pub mod physics;
 pub mod audio;
+pub mod physics;
 
+use audio::{AudioEngine, AudioEvent};
 use macroquad::prelude::*;
 use physics::{Body, Universe, G};
-use audio::{AudioEngine, AudioEvent};
 use std::collections::VecDeque;
 
 #[macroquad::main("Celestial Cantata")]
@@ -63,17 +63,27 @@ async fn main() {
             cam_zoom *= 1.02;
         }
 
-        if is_key_down(KeyCode::Left) { cam_target.x -= 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Right) { cam_target.x += 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Up) { cam_target.y += 10.0 / cam_zoom / 60.0; }
-        if is_key_down(KeyCode::Down) { cam_target.y -= 10.0 / cam_zoom / 60.0; }
+        if is_key_down(KeyCode::Left) {
+            cam_target.x -= 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_target.x += 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_target.y += 10.0 / cam_zoom / 60.0;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_target.y -= 10.0 / cam_zoom / 60.0;
+        }
 
-        if is_key_pressed(KeyCode::Space) { paused = !paused; }
+        if is_key_pressed(KeyCode::Space) {
+            paused = !paused;
+        }
         if is_key_pressed(KeyCode::R) {
-             // Reset logic could go here, but for now just respawn random planets?
-             // Or reload the scene. Simplest is to clear bodies except sun.
-             universe.bodies.truncate(1);
-             for i in 1..8 {
+            // Reset logic could go here, but for now just respawn random planets?
+            // Or reload the scene. Simplest is to clear bodies except sun.
+            universe.bodies.truncate(1);
+            for i in 1..8 {
                 let r = 150.0 + i as f32 * 60.0;
                 let v = (G * 5000.0 / r).sqrt();
                 let angle = rand::gen_range(0.0, std::f32::consts::PI * 2.0);
@@ -93,7 +103,7 @@ async fn main() {
                     ),
                     trail: VecDeque::new(),
                 });
-             }
+            }
         }
 
         if is_mouse_button_pressed(MouseButton::Left) {
@@ -110,7 +120,7 @@ async fn main() {
             let v_mag = (G * 5000.0 / r).sqrt();
             let v_dir = Vec2::new(-world_pos.y, world_pos.x).normalize();
 
-             universe.add_body(Body {
+            universe.add_body(Body {
                 pos: world_pos,
                 vel: v_dir * v_mag,
                 mass: rand::gen_range(5.0, 15.0),
@@ -138,11 +148,15 @@ async fn main() {
 
             // Check Crossings
             for (i, body) in universe.bodies.iter().enumerate() {
-                if i == 0 { continue; } // Skip Sun
+                if i == 0 {
+                    continue;
+                } // Skip Sun
 
                 // Calculate body angle in [0, 2PI)
                 let mut body_angle = body.pos.y.atan2(body.pos.x);
-                if body_angle < 0.0 { body_angle += std::f32::consts::PI * 2.0; }
+                if body_angle < 0.0 {
+                    body_angle += std::f32::consts::PI * 2.0;
+                }
 
                 // Check if radar crossed body
                 // We need to handle wrapping.
@@ -179,12 +193,21 @@ async fn main() {
 
         // Draw Orbits/Trails
         for body in &universe.bodies {
-            if body.trail.len() < 2 { continue; }
+            if body.trail.len() < 2 {
+                continue;
+            }
             for i in 0..body.trail.len() - 1 {
                 let p1 = body.trail[i];
-                let p2 = body.trail[i+1];
+                let p2 = body.trail[i + 1];
                 let alpha = (i as f32 / body.trail.len() as f32).powf(2.0) * 0.5;
-                draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(body.color.r, body.color.g, body.color.b, alpha));
+                draw_line(
+                    p1.x,
+                    p1.y,
+                    p2.x,
+                    p2.y,
+                    1.0,
+                    Color::new(body.color.r, body.color.g, body.color.b, alpha),
+                );
             }
         }
 
@@ -200,12 +223,23 @@ async fn main() {
             draw_circle(body.pos.x, body.pos.y, body.radius, color);
 
             // Glow (simulated)
-            draw_circle(body.pos.x, body.pos.y, body.radius * 2.0, Color::new(color.r, color.g, color.b, 0.2));
+            draw_circle(
+                body.pos.x,
+                body.pos.y,
+                body.radius * 2.0,
+                Color::new(color.r, color.g, color.b, 0.2),
+            );
         }
 
         set_default_camera();
         draw_text("Celestial Cantata", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Controls: Arrows (Pan), +/- (Zoom), Space (Pause), R (Reset), Click (Spawn)", 20.0, 60.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Controls: Arrows (Pan), +/- (Zoom), Space (Pause), R (Reset), Click (Spawn)",
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

@@ -1,9 +1,9 @@
 #[cfg(feature = "silicon")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -16,17 +16,31 @@ mod tests {
     #[test]
     fn test_latch_creation() {
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // State
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // X
-            Gene { op: OpCode::Latch, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // State
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // X
+            Gene {
+                op: OpCode::Latch,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.silicon_mode = true;
 
         // Execute until halted
         for _ in 0..10 {
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
 
@@ -40,13 +54,27 @@ mod tests {
         let genes = vec![
             // Place wire at 7,8
             // Stack order for Wire: [y, x]
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(7)] }, // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // X
-            Gene { op: OpCode::Wire, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(7)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // X
+            Gene {
+                op: OpCode::Wire,
+                args: vec![],
+            },
             // Push 8 (North bit)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::ADC, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::ADC,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -56,7 +84,9 @@ mod tests {
         vm.silicon_mode = false;
 
         for _ in 0..10 {
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
 
@@ -68,11 +98,22 @@ mod tests {
         // Place Head at North (7,8). Execute DAC at 8,8. Should push 8.
         let genes = vec![
             // Stack order for Pulse: [y, x]
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(7)] }, // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // X
-            Gene { op: OpCode::Pulse, args: vec![] }, // Head
-
-            Gene { op: OpCode::DAC, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(7)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // X
+            Gene {
+                op: OpCode::Pulse,
+                args: vec![],
+            }, // Head
+            Gene {
+                op: OpCode::DAC,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -81,7 +122,9 @@ mod tests {
         vm.silicon_mode = false;
 
         for _ in 0..10 {
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
             vm.step();
         }
 

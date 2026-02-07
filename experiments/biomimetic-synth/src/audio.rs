@@ -1,5 +1,5 @@
-use crossbeam_channel::{unbounded, Receiver, Sender};
 use crate::network::Network;
+use crossbeam_channel::{unbounded, Receiver, Sender};
 use std::thread;
 use std::time::{Duration, Instant};
 
@@ -22,8 +22,17 @@ pub struct Snapshot {
 }
 
 pub enum Command {
-    Inject { index: usize, current: f32 },
-    SetParams { index: usize, a: f32, b: f32, c: f32, d: f32 },
+    Inject {
+        index: usize,
+        current: f32,
+    },
+    SetParams {
+        index: usize,
+        a: f32,
+        b: f32,
+        c: f32,
+        d: f32,
+    },
 }
 
 pub struct AudioEngine {
@@ -67,12 +76,12 @@ impl AudioEngine {
                     }
                 }
                 Command::SetParams { index, a, b, c, d } => {
-                     if index < self.network.neurons.len() {
-                         self.network.neurons[index].a = a;
-                         self.network.neurons[index].b = b;
-                         self.network.neurons[index].c = c;
-                         self.network.neurons[index].d = d;
-                     }
+                    if index < self.network.neurons.len() {
+                        self.network.neurons[index].a = a;
+                        self.network.neurons[index].b = b;
+                        self.network.neurons[index].c = c;
+                        self.network.neurons[index].d = d;
+                    }
                 }
             }
         }
@@ -105,11 +114,16 @@ impl AudioEngine {
             self.sample_count = 0;
 
             let voltages: Vec<f32> = self.network.neurons.iter().map(|n| n.v).collect();
-            let synapses: Vec<SynapseData> = self.network.synapses.iter().map(|s| SynapseData {
-                pre: s.pre,
-                post: s.post,
-                weight: s.weight,
-            }).collect();
+            let synapses: Vec<SynapseData> = self
+                .network
+                .synapses
+                .iter()
+                .map(|s| SynapseData {
+                    pre: s.pre,
+                    post: s.post,
+                    weight: s.weight,
+                })
+                .collect();
 
             let _ = self.snap_tx.try_send(Snapshot {
                 voltages,
@@ -133,7 +147,7 @@ impl AudioEngine {
             let elapsed = start.elapsed();
             let target_batch = target_frame_time * 100;
             if elapsed < target_batch {
-                 thread::sleep(target_batch - elapsed);
+                thread::sleep(target_batch - elapsed);
             }
         }
     }
@@ -151,20 +165,18 @@ impl AudioEngine {
 
         if let Ok((_stream, stream_handle)) = stream_result {
             if let Ok(sink) = Sink::try_new(&stream_handle) {
-                let source = SynthSource {
-                    engine: self,
-                };
+                let source = SynthSource { engine: self };
                 sink.append(source);
                 sink.sleep_until_end();
             } else {
                 eprintln!("Sink creation failed. Running fallback.");
-                 // Can't run fallback because self moved. Panic is acceptable or just exit.
-                 // Ideally we'd recover self but conditional compilation makes it hard.
-                 // Just exit thread.
+                // Can't run fallback because self moved. Panic is acceptable or just exit.
+                // Ideally we'd recover self but conditional compilation makes it hard.
+                // Just exit thread.
             }
         } else {
-             eprintln!("Audio output failed. Running in fallback mode.");
-             self.run_fallback();
+            eprintln!("Audio output failed. Running in fallback mode.");
+            self.run_fallback();
         }
     }
 }
@@ -176,10 +188,18 @@ struct SynthSource {
 
 #[cfg(feature = "audio")]
 impl rodio::Source for SynthSource {
-    fn current_frame_len(&self) -> Option<usize> { None }
-    fn channels(&self) -> u16 { 1 }
-    fn sample_rate(&self) -> u32 { SAMPLE_RATE }
-    fn total_duration(&self) -> Option<Duration> { None }
+    fn current_frame_len(&self) -> Option<usize> {
+        None
+    }
+    fn channels(&self) -> u16 {
+        1
+    }
+    fn sample_rate(&self) -> u32 {
+        SAMPLE_RATE
+    }
+    fn total_duration(&self) -> Option<Duration> {
+        None
+    }
 }
 
 #[cfg(feature = "audio")]

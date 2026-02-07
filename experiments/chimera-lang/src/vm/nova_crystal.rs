@@ -21,7 +21,8 @@ fn exec_nucleate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     vm.grid[cy][cx] = Value::Int(100);
     vm.energy = vm.energy.saturating_sub(10);
-    vm.output.push(format!("NUCLEATE: Crystal seed at {},{}", cx, cy));
+    vm.output
+        .push(format!("NUCLEATE: Crystal seed at {},{}", cx, cy));
     None
 }
 
@@ -33,7 +34,9 @@ fn exec_accrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         for (x, y) in coords {
             // Don't absorb self
-            if x == cx && y == cy { continue; }
+            if x == cx && y == cy {
+                continue;
+            }
 
             if let Value::Int(n) = &mut vm.grid[y][x] {
                 if *n > 0 {
@@ -44,15 +47,19 @@ fn exec_accrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
 
         if let Value::Int(current) = &mut vm.grid[cy][cx] {
-             *current = current.saturating_add(absorbed_sum);
+            *current = current.saturating_add(absorbed_sum);
         } else {
-             vm.grid[cy][cx] = Value::Int(absorbed_sum);
+            vm.grid[cy][cx] = Value::Int(absorbed_sum);
         }
 
         vm.energy = vm.energy.saturating_sub(r.abs() + 5);
-        vm.output.push(format!("ACCRETE: Absorbed {} from radius {}", absorbed_sum, r));
+        vm.output.push(format!(
+            "ACCRETE: Absorbed {} from radius {}",
+            absorbed_sum, r
+        ));
     } else {
-        vm.output.push("Error: Type mismatch for accrete".to_string());
+        vm.output
+            .push("Error: Type mismatch for accrete".to_string());
     }
     None
 }
@@ -76,43 +83,45 @@ fn exec_shatter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let dy = rng.gen_range(-1..=1);
                 let dx = rng.gen_range(-1..=1);
                 if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
-                     if let Value::Int(n) = &mut vm.grid[ny][nx] {
-                         *n = n.saturating_add(fragments);
-                     } else {
-                         vm.grid[ny][nx] = Value::Int(fragments);
-                     }
+                    if let Value::Int(n) = &mut vm.grid[ny][nx] {
+                        *n = n.saturating_add(fragments);
+                    } else {
+                        vm.grid[ny][nx] = Value::Int(fragments);
+                    }
                 }
             }
-            vm.output.push(format!("SHATTER: Scattered {} with force {}", center_val, f));
+            vm.output.push(format!(
+                "SHATTER: Scattered {} with force {}",
+                center_val, f
+            ));
         }
 
         vm.energy = vm.energy.saturating_sub(force * 2);
     } else {
-        vm.output.push("Error: Type mismatch for shatter".to_string());
+        vm.output
+            .push("Error: Type mismatch for shatter".to_string());
     }
     None
 }
 
 fn exec_anneal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-     if let Some(Value::Int(r)) = vm.stack.pop() {
+    if let Some(Value::Int(r)) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
         let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
 
         // 1. Collect values
         let mut values = Vec::new();
         for &(x, y) in &coords {
-             values.push(vm.grid[y][x].clone());
+            values.push(vm.grid[y][x].clone());
         }
 
         // 2. Sort values
-        values.sort_by(|a, b| {
-            match (a, b) {
-                (Value::Int(ia), Value::Int(ib)) => ia.cmp(ib),
-                (Value::Str(sa), Value::Str(sb)) => sa.cmp(sb),
-                (Value::Int(_), Value::Str(_)) => std::cmp::Ordering::Less,
-                (Value::Str(_), Value::Int(_)) => std::cmp::Ordering::Greater,
-                _ => std::cmp::Ordering::Equal,
-            }
+        values.sort_by(|a, b| match (a, b) {
+            (Value::Int(ia), Value::Int(ib)) => ia.cmp(ib),
+            (Value::Str(sa), Value::Str(sb)) => sa.cmp(sb),
+            (Value::Int(_), Value::Str(_)) => std::cmp::Ordering::Less,
+            (Value::Str(_), Value::Int(_)) => std::cmp::Ordering::Greater,
+            _ => std::cmp::Ordering::Equal,
         });
 
         // 3. Write back
@@ -123,9 +132,14 @@ fn exec_anneal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
 
         vm.energy = vm.energy.saturating_sub(r.abs() * 2);
-        vm.output.push(format!("ANNEAL: Sorted {} cells radius {}", values.len(), r));
-     } else {
-        vm.output.push("Error: Type mismatch for anneal".to_string());
-     }
-     None
+        vm.output.push(format!(
+            "ANNEAL: Sorted {} cells radius {}",
+            values.len(),
+            r
+        ));
+    } else {
+        vm.output
+            .push("Error: Type mismatch for anneal".to_string());
+    }
+    None
 }

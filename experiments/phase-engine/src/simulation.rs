@@ -60,7 +60,7 @@ impl Simulation {
             let random_force = Vector3::new(
                 rng.gen_range(-1.0..1.0),
                 rng.gen_range(-1.0..1.0),
-                rng.gen_range(-1.0..1.0)
+                rng.gen_range(-1.0..1.0),
             ) * noise_mag;
 
             let force = spring_force + random_force;
@@ -91,6 +91,9 @@ mod tests {
         // Assert position changed due to thermal noise
         // Since temperature is high and random force is random, it *should* move.
         // There is a tiny chance it sums to zero but unlikely with floats.
-        assert_ne!(sim.particles[0].pos, initial_pos, "Particle should move due to temperature");
+        assert_ne!(
+            sim.particles[0].pos, initial_pos,
+            "Particle should move due to temperature"
+        );
     }
 }

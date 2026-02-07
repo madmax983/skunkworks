@@ -68,30 +68,102 @@ pub struct State {
 
 const VERTICES: &[Vertex] = &[
     // Cube vertices (same as before)
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
 ];
 
 const INDICES: &[u16] = &[
@@ -105,25 +177,28 @@ const INDICES: &[u16] = &[
 
 impl State {
     fn create_instances(sim: &Simulation) -> Vec<InstanceRaw> {
-        sim.particles.iter().map(|p| {
-            let displacement = (p.pos - p.lattice_pos).magnitude();
-            // Map displacement to color: Blue -> Red
-            // Typical displacement is small, max ~2.0
-            let t = (displacement / 1.5).clamp(0.0, 1.0);
+        sim.particles
+            .iter()
+            .map(|p| {
+                let displacement = (p.pos - p.lattice_pos).magnitude();
+                // Map displacement to color: Blue -> Red
+                // Typical displacement is small, max ~2.0
+                let t = (displacement / 1.5).clamp(0.0, 1.0);
 
-            // Cold (Blue) -> Hot (Red)
-            // Blue: 0.0, 0.0, 1.0
-            // Red: 1.0, 0.0, 0.0
-            // Lerp
-            let r = t;
-            let g = 0.2 * (1.0 - t); // Slight green for visibility
-            let b = 1.0 - t;
+                // Cold (Blue) -> Hot (Red)
+                // Blue: 0.0, 0.0, 1.0
+                // Red: 1.0, 0.0, 0.0
+                // Lerp
+                let r = t;
+                let g = 0.2 * (1.0 - t); // Slight green for visibility
+                let b = 1.0 - t;
 
-            InstanceRaw {
-                model_pos: [p.pos.x, p.pos.y, p.pos.z],
-                color: [r, g, b],
-            }
-        }).collect()
+                InstanceRaw {
+                    model_pos: [p.pos.x, p.pos.y, p.pos.z],
+                    color: [r, g, b],
+                }
+            })
+            .collect()
     }
 
     pub async fn new(
@@ -412,11 +487,8 @@ impl State {
         let instances = Self::create_instances(sim);
         // Important: this assumes instances count doesn't change, or buffer is big enough.
         // Simulation grid size is fixed, so this is safe.
-        self.queue.write_buffer(
-            &self.instance_buffer,
-            0,
-            bytemuck::cast_slice(&instances),
-        );
+        self.queue
+            .write_buffer(&self.instance_buffer, 0, bytemuck::cast_slice(&instances));
     }
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {

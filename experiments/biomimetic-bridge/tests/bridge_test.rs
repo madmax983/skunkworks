@@ -1,4 +1,4 @@
-use biomimetic_bridge::model::{World, Terrain, State};
+use biomimetic_bridge::model::{State, Terrain, World};
 
 #[test]
 fn test_ant_bridge_formation() {
@@ -22,5 +22,8 @@ fn test_ant_bridge_formation() {
 
     // Assert that at least one ant has become a bridge
     let bridge_formed = world.ants.iter().any(|a| a.state == State::Bridging);
-    assert!(bridge_formed, "Ants should have formed a bridge due to crowding near the gap");
+    assert!(
+        bridge_formed,
+        "Ants should have formed a bridge due to crowding near the gap"
+    );
 }
