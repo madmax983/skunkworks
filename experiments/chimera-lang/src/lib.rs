@@ -82,6 +82,8 @@ mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_relativity_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_ipc_test;

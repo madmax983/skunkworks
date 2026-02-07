@@ -85,6 +85,8 @@ pub struct Spore {
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     pub immune_system: HashSet<u64>,
     pub dictionary: HashMap<String, usize>,
+    pub gravity_grid: Vec<Vec<i64>>,
+    pub relativity_mode: bool,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -1263,6 +1265,29 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Relativity => {
+            vm.relativity_mode = !vm.relativity_mode;
+            let status = if vm.relativity_mode { "ON" } else { "OFF" };
+            vm.output
+                .push(format!("RELATIVITY: Physics engine {}", status));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Graviton => {
+            let (cy, cx) = vm.context_loc;
+            vm.gravity_grid[cy][cx] = vm.gravity_grid[cy][cx].saturating_add(50);
+            vm.energy = vm.energy.saturating_sub(10);
+            vm.output.push(format!("GRAVITON: Emitted at {},{}", cx, cy));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EventHorizon => {
+            let (cy, cx) = vm.context_loc;
+            let g = vm.gravity_grid[cy][cx];
+            vm.stack.push(Value::Int(g));
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Terraform => {
             // stack: biome_id, radius (top)
             if vm.stack.len() >= 2 {
@@ -1645,6 +1670,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 mycelium: vm.mycelium.clone(),
                 immune_system: vm.immune_system.clone(),
                 dictionary: vm.dictionary.clone(),
+                gravity_grid: vm.gravity_grid.clone(),
+                relativity_mode: vm.relativity_mode,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -1701,6 +1728,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.mycelium = spore.mycelium.clone();
                         vm.immune_system = spore.immune_system.clone();
                         vm.dictionary = spore.dictionary.clone();
+                        vm.gravity_grid = spore.gravity_grid.clone();
+                        vm.relativity_mode = spore.relativity_mode;
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
