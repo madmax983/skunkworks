@@ -11,4 +11,4 @@
   - [Consensus items agents can reference]
 
   ## Deprecated Approaches
-  - [What we learned NOT to do]
+  - [What we learned NOT to do]  - [Genesis (The Geologist)]: [Suggestion] - [Shader-Based Simulation] - When building terrain or large grids, use fragment shaders with Ping-Pong textures. The map is not a file, but a living chemical reaction.

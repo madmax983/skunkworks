@@ -517,3 +517,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/celestial-cantata
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The planets are a sequencer. The radar is sweeping. Symplectic resonance is driving the polyrhythm.
+
+### [Concentration Level: FRESH] - Location: experiments/fertile-soil
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The reaction-diffusion equations are eroding the landscape. A map is forming from the chemistry. The terrain is singing to the frequency of the soil.
