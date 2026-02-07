@@ -45,6 +45,8 @@ pub const INITIAL_ENERGY: i64 = 50;
 
 #[cfg(feature = "nova")]
 pub mod akashic;
+#[cfg(feature = "nova")]
+pub mod alchemy;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
@@ -343,6 +345,8 @@ pub struct ChimeraVM {
     pub tick_counter: u64,
     #[cfg(feature = "nova")]
     pub cladistics: cladistics::Cladistics,
+    #[cfg(feature = "nova")]
+    pub crucible: alchemy::Crucible,
 }
 
 impl ChimeraVM {
@@ -510,6 +514,8 @@ impl ChimeraVM {
             tick_counter: 0,
             #[cfg(feature = "nova")]
             cladistics: cladistics::Cladistics::new(),
+            #[cfg(feature = "nova")]
+            crucible: alchemy::Crucible::new(),
         }
     }
 
@@ -1000,7 +1006,7 @@ impl ChimeraVM {
             }
             nova::OrganelleType::Alchemist => {
                 let (cy, cx) = self.context_loc;
-                if nova::perform_alchemy(self, cy, cx) {
+                if alchemy::perform_alchemy(self, cy, cx) {
                     self.energy = self.energy.saturating_sub(5);
                 }
 

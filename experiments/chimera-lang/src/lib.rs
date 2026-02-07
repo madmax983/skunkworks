@@ -160,6 +160,8 @@ mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_true_alchemy_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_alchemy_crucible_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_waste_test;

@@ -450,67 +450,6 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
     false
 }
 
-pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
-    // Recipes:
-    // "fire" + "water" -> "steam"
-    // "earth" + "fire" -> "lava"
-    // "air" + "water" -> "cloud"
-    // "life" + "death" -> "spirit"
-    // "lead" + "energy" (center=lead) -> "gold"
-
-    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-    let mut ingredients = Vec::new();
-    let mut coords = Vec::new();
-
-    for (dy, dx) in neighbors {
-        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-            ingredients.push(vm.grid[ny][nx].clone());
-            coords.push((ny, nx));
-        }
-    }
-
-    let has_ingredient = |s: &str| -> bool {
-        ingredients
-            .iter()
-            .any(|v| matches!(v, Value::Str(val) if val == s))
-    };
-
-    let center_val = vm.grid[y][x].clone();
-    let mut transmuted = false;
-    let mut result = Value::Int(0);
-
-    if has_ingredient("fire") && has_ingredient("water") {
-        result = Value::Str("steam".to_string());
-        transmuted = true;
-    } else if has_ingredient("earth") && has_ingredient("fire") {
-        result = Value::Str("lava".to_string());
-        transmuted = true;
-    } else if has_ingredient("air") && has_ingredient("water") {
-        result = Value::Str("cloud".to_string());
-        transmuted = true;
-    } else if has_ingredient("life") && has_ingredient("death") {
-        result = Value::Str("spirit".to_string());
-        transmuted = true;
-    } else if let Value::Str(c) = center_val {
-        if c == "lead" && has_ingredient("energy") {
-            result = Value::Str("gold".to_string());
-            transmuted = true;
-        }
-    }
-
-    if transmuted {
-        vm.grid[y][x] = result;
-        // Consume ingredients (set to 0/void)
-        for (ny, nx) in coords {
-            vm.grid[ny][nx] = Value::Int(0);
-        }
-        vm.output
-            .push(format!("ALCHEMY: Transmutation occurred at {},{}", x, y));
-        return true;
-    }
-
-    false
-}
 
 #[cfg(feature = "nova")]
 fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
@@ -1625,7 +1564,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Alchemy => {
             let (cy, cx) = vm.context_loc;
-            perform_alchemy(vm, cy, cx);
+            crate::vm::alchemy::perform_alchemy(vm, cy, cx);
             vm.energy = vm.energy.saturating_sub(5);
             None
         }

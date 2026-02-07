@@ -47,6 +47,8 @@ pub(crate) enum ViewMode {
     Dream,
     #[cfg(feature = "nova")]
     Phylogeny,
+    #[cfg(feature = "nova")]
+    Alchemy,
     Heatmap,
 }
 
@@ -80,6 +82,12 @@ pub(crate) struct AppState {
     pub(crate) selected_sigil_index: usize,
     #[cfg(feature = "nova")]
     pub(crate) selected_dream_trace: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) alchemy_selection: usize, // 0=Shelf, 1=Strands
+    #[cfg(feature = "nova")]
+    pub(crate) alchemy_shelf_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) alchemy_strand_idx: usize,
 }
 
 impl AppState {
@@ -108,6 +116,12 @@ impl AppState {
             selected_sigil_index: 0,
             #[cfg(feature = "nova")]
             selected_dream_trace: 0,
+            #[cfg(feature = "nova")]
+            alchemy_selection: 0,
+            #[cfg(feature = "nova")]
+            alchemy_shelf_idx: 0,
+            #[cfg(feature = "nova")]
+            alchemy_strand_idx: 0,
         }
     }
 }
@@ -230,6 +244,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Phylogeny = app_state.view_mode {
                 render_phylogeny(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Alchemy = app_state.view_mode {
+                render_alchemy(f, vm, app_state);
                 return;
             }
 
@@ -426,6 +446,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Alchemy => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -524,7 +549,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Dream => ViewMode::Phylogeny,
                             #[cfg(feature = "nova")]
-                            ViewMode::Phylogeny => ViewMode::Heatmap,
+                            ViewMode::Phylogeny => ViewMode::Alchemy,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Alchemy => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -563,6 +590,28 @@ where
                             }
                         }
                     }
+                    #[cfg(feature = "biophysics")]
+                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('a') => {
+                        if let ViewMode::Alchemy = app_state.view_mode {
+                            // Add to Crucible
+                            match app_state.alchemy_selection {
+                                0 => { // Shelf
+                                    let elements = vec!["Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy"];
+                                    if app_state.alchemy_shelf_idx < elements.len() {
+                                        vm.crucible.add(crate::vm::Value::Str(elements[app_state.alchemy_shelf_idx].to_string()));
+                                    }
+                                }
+                                1 => { // Strands
+                                    if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
+                                        vm.crucible.add(crate::vm::Value::Int(app_state.alchemy_strand_idx as i64));
+                                    }
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('x') => {
                         if let ViewMode::Graveyard = app_state.view_mode {
@@ -575,10 +624,17 @@ where
                                     app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
                                 }
                             }
+                        } else if let ViewMode::Alchemy = app_state.view_mode {
+                            vm.crucible.clear();
+                            app_state.status_msg = "Crucible emptied.".to_string();
                         }
                     }
-                    #[cfg(feature = "biophysics")]
-                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('t') => {
+                        if let ViewMode::Alchemy = app_state.view_mode {
+                            crate::vm::alchemy::transmute_crucible(vm);
+                        }
+                    }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => vm.step(),
                     KeyCode::Char('m') => vm.mutate(),
@@ -625,6 +681,18 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Phylogeny => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Alchemy => {
+                            if app_state.alchemy_selection == 0 {
+                                if app_state.alchemy_shelf_idx < 7 { // 8 items
+                                    app_state.alchemy_shelf_idx += 1;
+                                }
+                            } else {
+                                if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len() {
+                                    app_state.alchemy_strand_idx += 1;
+                                }
+                            }
+                        }
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -765,6 +833,18 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Phylogeny => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Alchemy => {
+                            if app_state.alchemy_selection == 0 {
+                                if app_state.alchemy_shelf_idx > 0 {
+                                    app_state.alchemy_shelf_idx -= 1;
+                                }
+                            } else {
+                                if app_state.alchemy_strand_idx > 0 {
+                                    app_state.alchemy_strand_idx -= 1;
+                                }
+                            }
+                        }
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -806,6 +886,10 @@ where
                         ViewMode::Dream => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Phylogeny => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Alchemy => {
+                            app_state.alchemy_selection = 1;
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -844,12 +928,21 @@ where
                         ViewMode::Dream => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Phylogeny => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Alchemy => {
+                            app_state.alchemy_selection = 0;
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
                         match app_state.view_mode {
                             #[cfg(feature = "nova")]
                             ViewMode::Phylogeny => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Alchemy => {
+                                // Prevent entering edit mode for Alchemy (uses keys instead)
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -1272,6 +1365,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Dream => "DREAM CATCHER",
                 #[cfg(feature = "nova")]
                 ViewMode::Phylogeny => "PHYLOGENY",
+                #[cfg(feature = "nova")]
+                ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -1768,6 +1863,79 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let help_text = "Physics Simulation Active.\nUse Pluck(str), Oscillate(freq, str), Hear() ops.\n\nLeft: Wavefront Visualization\nRight: (Reserved for Spectrum Analysis)";
     let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
     f.render_widget(help, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Percentage(20), // Shelf
+            Constraint::Percentage(40), // Crucible
+            Constraint::Percentage(40), // Strands
+        ].as_ref())
+        .split(f.area());
+
+    // Shelf
+    let elements = vec!["Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy"];
+    let mut shelf_items = Vec::new();
+    for (i, elem) in elements.iter().enumerate() {
+        let mut style = Style::default().fg(Color::Cyan);
+        if app_state.alchemy_selection == 0 && i == app_state.alchemy_shelf_idx {
+            style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+        }
+        shelf_items.push(ListItem::new(Span::styled(*elem, style)));
+    }
+
+    let shelf_border_style = if app_state.alchemy_selection == 0 {
+        Style::default().fg(Color::Yellow)
+    } else {
+        Style::default().fg(Color::White)
+    };
+
+    let shelf_list = List::new(shelf_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Reagent Shelf")
+            .border_style(shelf_border_style)
+    );
+    f.render_widget(shelf_list, chunks[0]);
+
+    // Crucible
+    let crucible_items: Vec<ListItem> = vm.crucible.contents.iter().map(|v| {
+        ListItem::new(format!("{}", v)).style(Style::default().fg(Color::Magenta))
+    }).collect();
+
+    let crucible_list = List::new(crucible_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Crucible (A: Add, X: Clear, T: Transmute)")
+    );
+    f.render_widget(crucible_list, chunks[1]);
+
+    // Strands
+    let mut strand_items = Vec::new();
+    for (i, strand) in vm.dna.helix.strands.iter().enumerate() {
+        let mut style = Style::default().fg(Color::White);
+        if app_state.alchemy_selection == 1 && i == app_state.alchemy_strand_idx {
+            style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+        }
+        strand_items.push(ListItem::new(format!("Strand {} ({} genes)", i, strand.genes.len())).style(style));
+    }
+
+    let strand_border_style = if app_state.alchemy_selection == 1 {
+        Style::default().fg(Color::Yellow)
+    } else {
+        Style::default().fg(Color::White)
+    };
+
+    let strand_list = List::new(strand_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("DNA Inventory")
+            .border_style(strand_border_style)
+    );
+    f.render_widget(strand_list, chunks[2]);
 }
 #[cfg(feature = "nova")]
 fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
