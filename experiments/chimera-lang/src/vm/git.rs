@@ -27,7 +27,8 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                                     vm.stack.push(Value::Str(hash.to_string()));
                                 }
                                 vm.energy = vm.energy.saturating_sub(5);
-                                vm.output.push(format!("ANCESTRY: Retrieved {} commits", len));
+                                vm.output
+                                    .push(format!("ANCESTRY: Retrieved {} commits", len));
                             } else {
                                 let stderr = String::from_utf8_lossy(&output.stderr);
                                 vm.output.push(format!("ANCESTRY ERROR: {}", stderr.trim()));
@@ -40,10 +41,12 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                         }
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for ancestry".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for ancestry".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for ancestry".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ancestry".to_string());
             }
             None
         }
@@ -55,16 +58,18 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
 
                 if let (Value::Str(hash), Value::Str(path)) = (hash_val, path_val) {
                     let spec = format!("{}:{}", hash, path);
-                    match Command::new("git")
-                        .args(&["show", &spec])
-                        .output()
-                    {
+                    match Command::new("git").args(&["show", &spec]).output() {
                         Ok(output) => {
                             if output.status.success() {
                                 let content = String::from_utf8_lossy(&output.stdout).to_string();
                                 vm.stack.push(Value::Str(content.clone()));
                                 vm.energy = vm.energy.saturating_sub(10);
-                                vm.output.push(format!("EXCAVATE: Read {} bytes from {}:{}", content.len(), hash, path));
+                                vm.output.push(format!(
+                                    "EXCAVATE: Read {} bytes from {}:{}",
+                                    content.len(),
+                                    hash,
+                                    path
+                                ));
                             } else {
                                 let stderr = String::from_utf8_lossy(&output.stderr);
                                 vm.output.push(format!("EXCAVATE ERROR: {}", stderr.trim()));
@@ -77,10 +82,12 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                         }
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for excavate".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for excavate".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for excavate".to_string());
+                vm.output
+                    .push("Error: Stack underflow for excavate".to_string());
             }
             None
         }
@@ -97,10 +104,15 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                                 let diff = String::from_utf8_lossy(&output.stdout).to_string();
                                 vm.stack.push(Value::Str(diff.clone()));
                                 vm.energy = vm.energy.saturating_sub(10);
-                                vm.output.push(format!("EVOLUTION: Retrieved diff for {} ({} bytes)", hash, diff.len()));
+                                vm.output.push(format!(
+                                    "EVOLUTION: Retrieved diff for {} ({} bytes)",
+                                    hash,
+                                    diff.len()
+                                ));
                             } else {
                                 let stderr = String::from_utf8_lossy(&output.stderr);
-                                vm.output.push(format!("EVOLUTION ERROR: {}", stderr.trim()));
+                                vm.output
+                                    .push(format!("EVOLUTION ERROR: {}", stderr.trim()));
                                 vm.stack.push(Value::Str(String::new()));
                             }
                         }
@@ -110,10 +122,12 @@ pub fn exec_git_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Opti
                         }
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for evolution".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for evolution".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for evolution".to_string());
+                vm.output
+                    .push("Error: Stack underflow for evolution".to_string());
             }
             None
         }
@@ -153,11 +167,11 @@ mod tests {
         assert!(!vm.stack.is_empty());
 
         if let Some(val) = vm.stack.last() {
-             // It should be a string (hash) or 0 (error count)
-             // If we are in a git repo, it should be a hash.
-             // If not, 0.
-             // Given the environment has git, we expect success.
-             // But to be robust, we just check no panic.
+            // It should be a string (hash) or 0 (error count)
+            // If we are in a git repo, it should be a hash.
+            // If not, 0.
+            // Given the environment has git, we expect success.
+            // But to be robust, we just check no panic.
         }
     }
 }

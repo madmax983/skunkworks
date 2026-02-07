@@ -11,22 +11,37 @@ mod tests {
         // genes: [ Push("TestSigil"), Push(1), AutoCast, Jump(0) ]
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::String("TestSigil".to_string())] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::AutoCast, args: vec![] },
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String("TestSigil".to_string())],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::AutoCast,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
+            ],
         };
 
         // Strand 1: The Spell (Push 777)
         let strand1 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(777)] },
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(777)],
+            }],
         };
 
         let dna = Dna {
-            helix: Helix { strands: vec![strand0, strand1] }
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
         };
 
         let mut vm = ChimeraVM::new(dna);
@@ -62,7 +77,10 @@ mod tests {
         vm.step();
 
         // Verify
-        assert!(vm.output.iter().any(|s| s.contains("AUTO_CAST: Triggered 'TestSigil'")));
+        assert!(vm
+            .output
+            .iter()
+            .any(|s| s.contains("AUTO_CAST: Triggered 'TestSigil'")));
         assert!(!vm.organelles.is_empty());
         assert_eq!(vm.organelles[0].ip.0, 1);
 

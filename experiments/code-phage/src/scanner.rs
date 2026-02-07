@@ -56,7 +56,11 @@ pub fn scan_codebase(root: &Path) -> Result<Vec<FileGene>> {
 
             // Calculate Kill Rate from Extension (or just random stable range)
             // Range: 0.045 to 0.07
-            let ext = entry.path().extension().and_then(|s| s.to_str()).unwrap_or("");
+            let ext = entry
+                .path()
+                .extension()
+                .and_then(|s| s.to_str())
+                .unwrap_or("");
             let mut ext_hasher = DefaultHasher::new();
             ext.hash(&mut ext_hasher);
             let ext_hash = ext_hasher.finish();

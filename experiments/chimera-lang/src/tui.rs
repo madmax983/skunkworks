@@ -8,6 +8,8 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use pest::Parser;
+#[cfg(feature = "nova")]
+use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -16,8 +18,6 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
     Terminal,
 };
-#[cfg(feature = "nova")]
-use ratatui::widgets::canvas::{Canvas, Rectangle};
 use std::io;
 
 #[derive(Debug, PartialEq)]
@@ -1928,14 +1928,20 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Grimoire => {
                                 app_state.input_mode = InputMode::Normal;
-                                let mut registry: Vec<_> = vm.sigil_registry.keys().cloned().collect();
+                                let mut registry: Vec<_> =
+                                    vm.sigil_registry.keys().cloned().collect();
                                 registry.sort();
                                 if app_state.selected_sigil_index < registry.len() {
                                     let key = &registry[app_state.selected_sigil_index];
                                     if let Some(sigil) = vm.sigil_registry.get_mut(key) {
                                         sigil.auto_cast = !sigil.auto_cast;
-                                        let status = if sigil.auto_cast { "ENABLED" } else { "DISABLED" };
-                                        app_state.status_msg = format!("{} Auto-Cast: {}", key, status);
+                                        let status = if sigil.auto_cast {
+                                            "ENABLED"
+                                        } else {
+                                            "DISABLED"
+                                        };
+                                        app_state.status_msg =
+                                            format!("{} Auto-Cast: {}", key, status);
                                     }
                                 }
                             }

@@ -48,9 +48,9 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
-#[cfg(feature = "nova")]
-pub mod nova_biome;
 pub mod cortex;
+#[cfg(feature = "git")]
+pub mod git;
 #[cfg(feature = "nova")]
 pub mod ipc;
 #[cfg(feature = "nova")]
@@ -60,7 +60,7 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
-pub mod retina;
+pub mod nova_biome;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
@@ -68,24 +68,24 @@ mod nova_chronos_local_test;
 #[cfg(test)]
 mod nova_chronos_test;
 #[cfg(feature = "nova")]
+pub mod nova_morphogenesis;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_retina_test;
-#[cfg(feature = "nova")]
-pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
+#[cfg(feature = "phylogeny")]
+pub mod phylogeny;
 #[cfg(feature = "nova")]
 pub mod piet;
 pub mod resonance;
+#[cfg(feature = "nova")]
+pub mod retina;
 #[cfg(feature = "silicon")]
 pub mod silicon;
-#[cfg(feature = "git")]
-pub mod git;
-#[cfg(feature = "phylogeny")]
-pub mod phylogeny;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};

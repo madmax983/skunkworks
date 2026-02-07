@@ -145,26 +145,27 @@ impl AudioModel {
             }
 
             // Apply active tones
-            self.active_tones.retain_mut(|(x, y, freq, strength, remaining, phase)| {
-                if *remaining == 0 {
-                    return false;
-                }
-                *remaining -= 1;
+            self.active_tones
+                .retain_mut(|(x, y, freq, strength, remaining, phase)| {
+                    if *remaining == 0 {
+                        return false;
+                    }
+                    *remaining -= 1;
 
-                *phase += *freq * 2.0 * PI / 44100.0;
-                if *phase > 2.0 * PI {
-                    *phase -= 2.0 * PI;
-                }
-                let val = phase.sin() * *strength;
+                    *phase += *freq * 2.0 * PI / 44100.0;
+                    if *phase > 2.0 * PI {
+                        *phase -= 2.0 * PI;
+                    }
+                    let val = phase.sin() * *strength;
 
-                if *x < self.grid.width && *y < self.grid.height {
-                     let idx = *y * self.grid.width + *x;
-                     if !self.grid.walls[idx] {
-                         self.grid.u[idx] += val;
-                     }
-                }
-                true
-            });
+                    if *x < self.grid.width && *y < self.grid.height {
+                        let idx = *y * self.grid.width + *x;
+                        if !self.grid.walls[idx] {
+                            self.grid.u[idx] += val;
+                        }
+                    }
+                    true
+                });
 
             self.grid.step();
 

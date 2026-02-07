@@ -27,19 +27,23 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                                     }
                                 }
                             }
-                            vm.stack.push(Value::Junction(crate::ast::JunctionType::All, files));
+                            vm.stack
+                                .push(Value::Junction(crate::ast::JunctionType::All, files));
                             vm.output.push(format!("CRAWL: Scanned {}", path));
                         }
                         Err(e) => {
                             vm.output.push(format!("CRAWL ERROR: {}", e));
-                            vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, vec![])); // Empty junction on error
+                            vm.stack
+                                .push(Value::Junction(crate::ast::JunctionType::Any, vec![]));
+                            // Empty junction on error
                         }
                     }
                 } else {
                     vm.output.push("Error: Type mismatch for crawl".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for crawl".to_string());
+                vm.output
+                    .push("Error: Stack underflow for crawl".to_string());
             }
         }
         OpCode::Sequencing => {
@@ -56,10 +60,12 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         }
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for sequencing".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for sequencing".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for sequencing".to_string());
+                vm.output
+                    .push("Error: Stack underflow for sequencing".to_string());
             }
         }
         OpCode::Synthesize => {
@@ -72,10 +78,12 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         Err(e) => vm.output.push(format!("SYNTHESIZE ERROR: {}", e)),
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for synthesize".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for synthesize".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for synthesize".to_string());
+                vm.output
+                    .push("Error: Stack underflow for synthesize".to_string());
             }
         }
         OpCode::Infect => {
@@ -83,23 +91,26 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 let content_val = vm.stack.pop().unwrap();
                 let path_val = vm.stack.pop().unwrap();
                 if let (Value::Str(path), Value::Str(content)) = (path_val, content_val) {
-                    let mut file = match fs::OpenOptions::new().append(true).create(true).open(&path) {
-                        Ok(f) => f,
-                        Err(e) => {
-                            vm.output.push(format!("INFECT ERROR: {}", e));
-                            return;
-                        }
-                    };
+                    let mut file =
+                        match fs::OpenOptions::new().append(true).create(true).open(&path) {
+                            Ok(f) => f,
+                            Err(e) => {
+                                vm.output.push(format!("INFECT ERROR: {}", e));
+                                return;
+                            }
+                        };
                     if let Err(e) = write!(file, "{}", content) {
-                         vm.output.push(format!("INFECT ERROR: {}", e));
+                        vm.output.push(format!("INFECT ERROR: {}", e));
                     } else {
-                         vm.output.push(format!("INFECT: Appended to {}", path));
+                        vm.output.push(format!("INFECT: Appended to {}", path));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for infect".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for infect".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for infect".to_string());
+                vm.output
+                    .push("Error: Stack underflow for infect".to_string());
             }
         }
         OpCode::Shell => {
@@ -119,7 +130,10 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         Ok(output) => {
                             let stdout = String::from_utf8_lossy(&output.stdout).to_string();
                             if !output.stderr.is_empty() {
-                                vm.output.push(format!("SHELL STDERR: {}", String::from_utf8_lossy(&output.stderr)));
+                                vm.output.push(format!(
+                                    "SHELL STDERR: {}",
+                                    String::from_utf8_lossy(&output.stderr)
+                                ));
                             }
                             vm.stack.push(Value::Str(stdout));
                             vm.output.push(format!("SHELL: Executed {}", cmd_str));
@@ -133,7 +147,8 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     vm.output.push("Error: Type mismatch for shell".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for shell".to_string());
+                vm.output
+                    .push("Error: Stack underflow for shell".to_string());
             }
         }
         _ => {}

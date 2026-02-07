@@ -4,6 +4,10 @@
 - **Scent Origin:** Nova 🌟 (The Artist)
 - **Status:** The organism is painting code. Piet interpreter integrated. Visual logic is active.
 
+### [Concentration Level: FRESH] - Location: experiments/photon-racer
+- **Scent Origin:** Nova 🌟 (The Optician)
+- **Status:** The speed of light is simulated. Mirrors are aligned. The photon has a path.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hive-mind-dependencies
 - **Scent Origin:** Mycelium 🍄
 - **Status:** The lattice has shattered. Build failure confirmed in `bevy_reflect` (missing `BVec4A` in `glam`). Dependency conflict is now fatal.

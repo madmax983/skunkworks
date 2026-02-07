@@ -1,6 +1,6 @@
+use crossbeam_channel::{bounded, Receiver, Sender};
 use macroquad::prelude::*;
 use resonance_audio::audio::{AudioCommand, AudioModel};
-use crossbeam_channel::{bounded, Sender, Receiver};
 use std::thread;
 use std::time::Duration;
 
@@ -52,17 +52,30 @@ async fn main() {
     texture.set_filter(FilterMode::Nearest);
 
     let mut listener_pos = (SIM_WIDTH / 2, SIM_HEIGHT / 2);
-    let _ = cmd_tx.send(AudioCommand::MoveListener { x: listener_pos.0, y: listener_pos.1 });
+    let _ = cmd_tx.send(AudioCommand::MoveListener {
+        x: listener_pos.0,
+        y: listener_pos.1,
+    });
 
     loop {
         clear_background(BLACK);
 
         // 1. Process Input
-        if is_key_pressed(KeyCode::Key1) { tool = Tool::Pluck; }
-        if is_key_pressed(KeyCode::Key2) { tool = Tool::Wall; }
-        if is_key_pressed(KeyCode::Key3) { tool = Tool::Listener; }
-        if is_key_pressed(KeyCode::Key4) { tool = Tool::Source; }
-        if is_key_pressed(KeyCode::Key5) { tool = Tool::Erase; }
+        if is_key_pressed(KeyCode::Key1) {
+            tool = Tool::Pluck;
+        }
+        if is_key_pressed(KeyCode::Key2) {
+            tool = Tool::Wall;
+        }
+        if is_key_pressed(KeyCode::Key3) {
+            tool = Tool::Listener;
+        }
+        if is_key_pressed(KeyCode::Key4) {
+            tool = Tool::Source;
+        }
+        if is_key_pressed(KeyCode::Key5) {
+            tool = Tool::Erase;
+        }
         if is_key_pressed(KeyCode::Space) {
             let _ = cmd_tx.send(AudioCommand::ClearWaves);
         }
@@ -87,7 +100,11 @@ async fn main() {
                         // Only pluck on press or drag?
                         // Pluck is continuous excitation if held
                         if is_mouse_button_pressed(MouseButton::Left) {
-                             let _ = cmd_tx.send(AudioCommand::Pluck { x: gx, y: gy, strength: 1.0 });
+                            let _ = cmd_tx.send(AudioCommand::Pluck {
+                                x: gx,
+                                y: gy,
+                                strength: 1.0,
+                            });
                         }
                     }
                     Tool::Wall => {
@@ -101,11 +118,16 @@ async fn main() {
                         let _ = cmd_tx.send(AudioCommand::MoveListener { x: gx, y: gy });
                     }
                     Tool::Source => {
-                         // Add a tone source
-                         if is_mouse_button_pressed(MouseButton::Left) {
-                             let freq = 220.0 + (gy as f32 / SIM_HEIGHT as f32) * 880.0;
-                             let _ = cmd_tx.send(AudioCommand::Oscillate { x: gx, y: gy, frequency: freq, strength: 0.5 });
-                         }
+                        // Add a tone source
+                        if is_mouse_button_pressed(MouseButton::Left) {
+                            let freq = 220.0 + (gy as f32 / SIM_HEIGHT as f32) * 880.0;
+                            let _ = cmd_tx.send(AudioCommand::Oscillate {
+                                x: gx,
+                                y: gy,
+                                frequency: freq,
+                                strength: 0.5,
+                            });
+                        }
                     }
                 }
             }
@@ -113,23 +135,27 @@ async fn main() {
 
         // Right click to erase/stop source
         if is_mouse_button_down(MouseButton::Right) {
-             let (mx, my) = mouse_position();
+            let (mx, my) = mouse_position();
             let sw = screen_width();
             let sh = screen_height();
             let gx = (mx / sw * SIM_WIDTH as f32) as usize;
             let gy = (my / sh * SIM_HEIGHT as f32) as usize;
-             if gx < SIM_WIDTH && gy < SIM_HEIGHT {
-                 match tool {
-                     Tool::Source => {
-                         let _ = cmd_tx.send(AudioCommand::Oscillate { x: gx, y: gy, frequency: 0.0, strength: 0.0 });
-                     }
-                     _ => {
-                         let _ = cmd_tx.send(AudioCommand::RemoveWall { x: gx, y: gy });
-                     }
-                 }
-             }
+            if gx < SIM_WIDTH && gy < SIM_HEIGHT {
+                match tool {
+                    Tool::Source => {
+                        let _ = cmd_tx.send(AudioCommand::Oscillate {
+                            x: gx,
+                            y: gy,
+                            frequency: 0.0,
+                            strength: 0.0,
+                        });
+                    }
+                    _ => {
+                        let _ = cmd_tx.send(AudioCommand::RemoveWall { x: gx, y: gy });
+                    }
+                }
+            }
         }
-
 
         // 2. Receive Snapshot
         while let Ok(snap) = snap_rx.try_recv() {
@@ -192,7 +218,13 @@ async fn main() {
 
         // UI
         draw_text("SONO-SCAPES", 10.0, 20.0, 30.0, WHITE);
-        draw_text(&format!("Tool: {:?} (1-5)", tool_name(&tool)), 10.0, 50.0, 20.0, WHITE);
+        draw_text(
+            &format!("Tool: {:?} (1-5)", tool_name(&tool)),
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
         draw_text("LMB: Action, RMB: Erase", 10.0, 70.0, 20.0, GRAY);
         draw_text("Space: Clear Waves, C: Clear Walls", 10.0, 90.0, 20.0, GRAY);
 
@@ -211,10 +243,7 @@ fn tool_name(t: &Tool) -> &str {
 }
 
 #[cfg(feature = "audio")]
-fn setup_audio(
-    cmd_rx: Receiver<AudioCommand>,
-    snap_tx: Sender<Vec<f32>>,
-) -> Option<cpal::Stream> {
+fn setup_audio(cmd_rx: Receiver<AudioCommand>, snap_tx: Sender<Vec<f32>>) -> Option<cpal::Stream> {
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
     let host = cpal::default_host();

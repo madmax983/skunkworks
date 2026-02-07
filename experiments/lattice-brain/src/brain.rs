@@ -1,5 +1,5 @@
+use crate::audio::{AudioCommand, AudioEngine, Snapshot};
 use crate::lattice::{Lattice, LatticeType};
-use crate::audio::{AudioEngine, AudioCommand, Snapshot};
 use nalgebra::Point3;
 use rand::prelude::*;
 use synaptic_physics::Izhikevich;
@@ -101,7 +101,7 @@ impl Brain {
 
         #[cfg(not(feature = "audio"))]
         {
-             while let Ok(snap) = self.audio_engine.snapshot_rx.try_recv() {
+            while let Ok(snap) = self.audio_engine.snapshot_rx.try_recv() {
                 if snap.voltages.len() == self.neurons.len() {
                     for (i, v) in snap.voltages.iter().enumerate() {
                         self.neurons[i].v = *v;
@@ -120,7 +120,10 @@ impl Brain {
 
     pub fn inject(&mut self, index: usize, current: f32) {
         // Send injection command
-        let _ = self.audio_engine.cmd_tx.send(AudioCommand::Inject { index, current });
+        let _ = self
+            .audio_engine
+            .cmd_tx
+            .send(AudioCommand::Inject { index, current });
 
         // Also update local state for immediate feedback if laggy?
         // No, let snapshot handle it.

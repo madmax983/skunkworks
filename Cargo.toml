@@ -52,6 +52,7 @@ members = [
     "experiments/git-harmonograph",
     "experiments/poincare-crawl",
     "experiments/phonetic-flock",
+    "experiments/photon-racer",
     "experiments/voronoi-ants",
     "experiments/miura-interface",
     "experiments/routing-market",

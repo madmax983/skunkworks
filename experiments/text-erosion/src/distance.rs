@@ -151,11 +151,7 @@ mod tests {
         // F F F
         // F T F
         // F F F
-        let grid = vec![
-            false, false, false,
-            false, true, false,
-            false, false, false
-        ];
+        let grid = vec![false, false, false, false, true, false, false, false, false];
 
         let sdf = compute_sdf(width, height, &grid);
 
