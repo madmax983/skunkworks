@@ -48,6 +48,8 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod nova_biome;
 pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
@@ -301,6 +303,8 @@ pub struct ChimeraVM {
     pub dictionary: HashMap<String, usize>,
     #[cfg(feature = "nova")]
     pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
+    #[cfg(feature = "nova")]
+    pub biome_grid: Vec<Vec<nova_biome::Biome>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
@@ -327,6 +331,8 @@ impl ChimeraVM {
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let biome_grid = vec![vec![nova_biome::Biome::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -439,6 +445,8 @@ impl ChimeraVM {
             dictionary: HashMap::new(),
             #[cfg(feature = "nova")]
             sigil_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            biome_grid,
             gene_execution_counts: HashMap::new(),
         }
     }
@@ -1669,7 +1677,9 @@ impl ChimeraVM {
             | OpCode::TimeWarp
             | OpCode::Chronos
             | OpCode::Reincarnate
-            | OpCode::Piet => nova::exec_nova_op(self, op, args),
+            | OpCode::Piet
+            | OpCode::Terraform
+            | OpCode::SenseBiome => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {

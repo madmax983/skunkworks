@@ -91,7 +91,6 @@ members = [
     "experiments/walker-filesystem", 
     "experiments/primordial-soup", 
     "experiments/hyperbolic-finder", 
-    "experiments/jpeg-garden",
     "experiments/luminous-flock-web", 
     "experiments/fairy-consensus",
     "experiments/chimera-resonance",

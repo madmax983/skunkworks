@@ -693,6 +693,19 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    /// **[Nova]** Changes the biome of the local area.
+    ///
+    /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`
+    /// **Biome IDs:** 0=Plains, 1=Swamp, 2=Desert, 3=Tundra, 4=Volcanic.
+    #[cfg(feature = "nova")]
+    Terraform,
+
+    /// **[Nova]** Reads the current biome ID.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., biome_id ]`
+    #[cfg(feature = "nova")]
+    SenseBiome,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
