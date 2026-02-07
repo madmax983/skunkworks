@@ -297,6 +297,8 @@ pub struct ChimeraVM {
     pub graveyard: Vec<crate::ast::Strand>,
     #[cfg(feature = "nova")]
     pub dictionary: HashMap<String, usize>,
+    #[cfg(feature = "nova")]
+    pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
@@ -433,6 +435,8 @@ impl ChimeraVM {
             graveyard: Vec::new(),
             #[cfg(feature = "nova")]
             dictionary: HashMap::new(),
+            #[cfg(feature = "nova")]
+            sigil_registry: HashMap::new(),
             gene_execution_counts: HashMap::new(),
         }
     }
@@ -1528,6 +1532,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {

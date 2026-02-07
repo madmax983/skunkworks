@@ -422,7 +422,28 @@ where
                 {
                     let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
                     f.render_widget(&oracle_list, chunks[1]);
-                    f.render_widget(&oracle_list, chunks[2]);
+
+                    // Show Sigil Registry if Oracle is disabled or just as fallback?
+                    // Actually, let's override Omens with Sigils if Nova is active, as per plan.
+                    // But wait, the plan said "Update ViewMode::Metaphysics".
+                    // The code above is inside `if let ViewMode::Metaphysics`.
+                    // The existing code has an `if feature = oracle` block.
+                    // I want to show Sigils.
+                }
+
+                // Sigil Registry (replaces/augments Omens slot if we want, or add new chunk?)
+                // Let's replace the 3rd chunk (Omens) with Sigils if Nova is on.
+                #[cfg(feature = "nova")]
+                {
+                    let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
+                    registry.sort_by_key(|(k, _)| *k);
+
+                    let sigil_items: Vec<ListItem> = registry.into_iter().map(|(name, sigil)| {
+                        ListItem::new(format!("{} ({} cells) -> Strand {}", name, sigil.pattern.len(), sigil.strand_idx))
+                    }).collect();
+
+                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("Sigil Registry"));
+                    f.render_widget(sigil_list, chunks[2]);
                 }
 
                 // Bard (Score)
