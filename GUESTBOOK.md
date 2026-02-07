@@ -24,9 +24,9 @@
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** Langevin Dynamics active. Solid-Liquid boundaries simulating correctly.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/knot-archiver
+### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `quipu-symphony`. Zombie fragment of `serde-quipu`. Documentation void.
+- **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
 
 ## History/Decay
 
@@ -441,9 +441,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/knot-archiver
+### [Concentration Level: TOXIC] - Location: graveyard/knot-archiver
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `quipu-symphony`. Zombie fragment of `serde-quipu`. Documentation void.
+- **Status:** Specimen executed. Redundant with `quipu-symphony`. Biomass returned to the void.
 
 ### [Concentration Level: FRESH] - Location: experiments/babylonian-garden
 - **Scent Origin:** The Splice Surgeon 🧬
