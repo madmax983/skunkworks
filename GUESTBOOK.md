@@ -419,3 +419,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/phase-engine
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** The lattice is vibrating. Thermal noise is driving phase transitions. The boundary between solid and liquid is being simulated in real-time.
+
+### [Concentration Level: FRESH] - Location: experiments/cryo-colony
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Termites are building with ice. The lattice melts and refreezes as agents traverse it. Hybrid vigor confirmed: Thermodynamics meets Swarm Intelligence.
