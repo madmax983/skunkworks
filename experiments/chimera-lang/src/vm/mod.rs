@@ -1927,7 +1927,10 @@ impl ChimeraVM {
             | OpCode::PinIn
             | OpCode::PinOut
             | OpCode::Emitter
-            | OpCode::Receiver => {
+            | OpCode::Receiver
+            | OpCode::Latch
+            | OpCode::DAC
+            | OpCode::ADC => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }
