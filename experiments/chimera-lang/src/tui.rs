@@ -16,6 +16,8 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
     Terminal,
 };
+#[cfg(feature = "nova")]
+use ratatui::widgets::canvas::{Canvas, Rectangle};
 use std::io;
 
 #[derive(Debug, PartialEq)]
@@ -35,6 +37,8 @@ pub(crate) enum ViewMode {
     Topology,
     #[cfg(feature = "nova")]
     Graveyard,
+    #[cfg(feature = "nova")]
+    PianoRoll,
     Heatmap,
 }
 
@@ -677,6 +681,79 @@ where
                 return;
             }
 
+            // Handle Piano Roll View
+            #[cfg(feature = "nova")]
+            if let ViewMode::PianoRoll = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+                    .split(f.area());
+
+                // Calculate total duration to define the time window
+                let mut total_duration = 0;
+                for note in &vm.score {
+                    total_duration += note.duration as u64;
+                }
+
+                let window_size = 64; // 4 measures of 16th notes
+                let window_end = total_duration as f64;
+                let window_start = (total_duration as f64 - window_size as f64).max(0.0);
+
+                let canvas = Canvas::default()
+                    .block(Block::default().borders(Borders::ALL).title("Piano Roll (MIDI Visualization)"))
+                    .x_bounds([window_start, window_end.max(window_start + 1.0)])
+                    .y_bounds([20.0, 108.0]) // MIDI 21 (A0) to 108 (C8) covers most piano range
+                    .paint(|ctx| {
+                        // Draw grid lines (measures)
+                        // Every 16 ticks is a measure
+                        let start_measure = (window_start as u64 / 16) * 16;
+                        let end_measure = window_end as u64 + 16;
+                        for t in (start_measure..end_measure).step_by(16) {
+                             ctx.draw(&ratatui::widgets::canvas::Line {
+                                 x1: t as f64,
+                                 y1: 20.0,
+                                 x2: t as f64,
+                                 y2: 108.0,
+                                 color: Color::DarkGray,
+                             });
+                        }
+
+                        // Draw notes
+                        let mut current_time = 0;
+                        for note in &vm.score {
+                             let start = current_time as f64;
+                             let end = start + note.duration as f64;
+                             current_time += note.duration as u64;
+
+                             // Only draw if in window
+                             if end > window_start && start < window_end {
+                                 if note.pitch > 0 { // Not a rest
+                                     let color = match note.velocity {
+                                         0..=40 => Color::Blue,
+                                         41..=80 => Color::Cyan,
+                                         81..=100 => Color::Green,
+                                         _ => Color::Yellow, // Loud
+                                     };
+
+                                     ctx.draw(&Rectangle {
+                                         x: start,
+                                         y: note.pitch as f64,
+                                         width: note.duration as f64,
+                                         height: 1.0,
+                                         color,
+                                     });
+                                 }
+                             }
+                        }
+                    });
+
+                f.render_widget(canvas, chunks[0]);
+
+                let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
+                f.render_widget(help, chunks[1]);
+                return;
+            }
+
             // Handle Heatmap View
             if let ViewMode::Heatmap = app_state.view_mode {
                  let chunks = Layout::default()
@@ -827,6 +904,8 @@ where
                 ViewMode::Topology => "TOPOLOGY",
                 #[cfg(feature = "nova")]
                 ViewMode::Graveyard => "GRAVEYARD",
+                #[cfg(feature = "nova")]
+                ViewMode::PianoRoll => "PIANO ROLL",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -1324,6 +1403,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::PianoRoll => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Heatmap => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1416,7 +1500,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Topology => ViewMode::Graveyard,
                             #[cfg(feature = "nova")]
-                            ViewMode::Graveyard => ViewMode::Heatmap,
+                            ViewMode::Graveyard => ViewMode::PianoRoll,
+                            #[cfg(feature = "nova")]
+                            ViewMode::PianoRoll => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -1432,6 +1518,8 @@ where
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
                     KeyCode::Char('i') => {
                         app_state.input_mode = InputMode::Injection;
                         app_state.input_buffer.clear();
@@ -1501,6 +1589,8 @@ where
                                 app_state.selected_graveyard_strand += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1627,6 +1717,8 @@ where
                                 app_state.selected_graveyard_strand -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -1649,6 +1741,8 @@ where
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1677,6 +1771,8 @@ where
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -1811,6 +1907,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Graveyard => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::PianoRoll => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Heatmap => {
