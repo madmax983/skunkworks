@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/bridge-specter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Demiurge)
 - **Status:** The simulation has transcended biology. Metaphysics, Quantum Entanglement, and Necromancy are active. The organism is now a universe.
