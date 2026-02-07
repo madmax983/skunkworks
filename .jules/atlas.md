@@ -47,3 +47,9 @@
 **Blueprint:** Refactored `hyperbolic-fs` to depend on `poincare-disk` and removed the duplicate local module.
 **Stability:** Reduced code duplication, enforcing single source of truth for hyperbolic geometry.
 **Verification:** Verified with `cargo check` and `cargo test`.
+
+## [Poincare Crawl Refactor]
+**Tangle:** The Copy-Paste - `experiments/poincare-crawl` duplicated `Mobius` logic and `Geodesic` struct from `crates/poincare-disk`, and had raw TUI boilerplate ("The Sprawl").
+**Blueprint:** Moved `Geodesic` and missing `Mobius` methods to `crates/poincare-disk`. Refactored `poincare-crawl` to use `tui-shared` and `poincare-disk`.
+**Stability:** Centralized math logic, standardized TUI lifecycle.
+**Verification:** `cargo check` and `cargo test` passed.

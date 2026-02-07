@@ -1,10 +1,7 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use num_complex::Complex;
+use poincare_disk::{Geodesic, Mobius};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -16,13 +13,12 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::f64::consts::PI;
-use std::io::{self, Stdout};
+use std::io::Stdout;
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
-mod math;
 mod tiling;
 
-use math::{Geodesic, Mobius};
 use tiling::Tiling;
 
 struct App {
@@ -83,28 +79,28 @@ impl App {
             // Moving forward (up): z -> z + i*step (approx)
             KeyCode::Char('w') | KeyCode::Up => {
                 let m = Mobius::translation(Complex::new(0.0, move_step));
-                self.player_pos = self.player_pos.compose(&m);
+                self.player_pos = self.player_pos.then(&m);
             }
             KeyCode::Char('s') | KeyCode::Down => {
                 let m = Mobius::translation(Complex::new(0.0, -move_step));
-                self.player_pos = self.player_pos.compose(&m);
+                self.player_pos = self.player_pos.then(&m);
             }
             KeyCode::Char('a') | KeyCode::Left => {
                 let m = Mobius::translation(Complex::new(-move_step, 0.0));
-                self.player_pos = self.player_pos.compose(&m);
+                self.player_pos = self.player_pos.then(&m);
             }
             KeyCode::Char('d') | KeyCode::Right => {
                 let m = Mobius::translation(Complex::new(move_step, 0.0));
-                self.player_pos = self.player_pos.compose(&m);
+                self.player_pos = self.player_pos.then(&m);
             }
             // Rotation:
             KeyCode::Char('e') => {
                 let m = Mobius::rotation(-rot_step);
-                self.player_pos = self.player_pos.compose(&m);
+                self.player_pos = self.player_pos.then(&m);
             }
             KeyCode::Char('r') => {
                 let m = Mobius::rotation(rot_step);
-                self.player_pos = self.player_pos.compose(&m);
+                self.player_pos = self.player_pos.then(&m);
             }
 
             _ => {}
@@ -243,18 +239,12 @@ fn draw_hyperbolic_segment(ctx: &mut Context, p1: Complex<f64>, p2: Complex<f64>
 }
 
 fn main() -> Result<()> {
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     let app = App::new();
-    let res = app.run(&mut terminal);
+    let res = app.run(&mut tui.terminal);
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    tui.exit()?;
 
     if let Err(e) = res {
         eprintln!("Error: {:?}", e);

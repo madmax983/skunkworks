@@ -92,7 +92,7 @@ impl Tiling {
                 // We need the circle of the geodesic v1-v2.
                 // We can reuse Geodesic::euclidean_circle
 
-                let geo = crate::math::Geodesic::new(v1, v2);
+                let geo = poincare_disk::Geodesic::new(v1, v2);
                 let reflected_verts: Vec<Complex<f64>> = current_poly
                     .vertices
                     .iter()
