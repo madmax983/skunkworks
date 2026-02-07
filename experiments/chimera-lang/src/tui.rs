@@ -1368,6 +1368,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                                     "lead" => Style::default().fg(Color::DarkGray),
                                     "PIN:IN" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
                                     "PIN:OUT" => Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
+                                    s if s.starts_with("EMIT:") => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                                    s if s.starts_with("RECV:") => Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
                                     _ => Style::default().fg(Color::Cyan),
                                 }
                             };
@@ -1375,6 +1377,10 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                                 symbol = "I";
                             } else if s == "PIN:OUT" {
                                 symbol = "O";
+                            } else if s.starts_with("EMIT:") {
+                                symbol = "E";
+                            } else if s.starts_with("RECV:") {
+                                symbol = "R";
                             }
                             (symbol.to_string(), style)
                         }

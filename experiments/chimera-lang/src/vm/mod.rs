@@ -241,7 +241,7 @@ pub struct ChimeraVM {
     pub time_grid: Vec<Vec<u8>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
-    #[cfg(feature = "nova")]
+    #[cfg(any(feature = "nova", feature = "silicon"))]
     pub call_stack: Vec<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub input_buffer: VecDeque<char>,
@@ -405,7 +405,7 @@ impl ChimeraVM {
             time_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
-            #[cfg(feature = "nova")]
+            #[cfg(any(feature = "nova", feature = "silicon"))]
             call_stack: Vec::new(),
             #[cfg(feature = "nova")]
             input_buffer: VecDeque::new(),
@@ -574,6 +574,23 @@ impl ChimeraVM {
             }
         }
         false
+    }
+
+    /// Interrupts current execution to run a specific strand.
+    ///
+    /// Pushes the current IP to the call stack and jumps to the target strand.
+    pub fn interrupt(&mut self, strand_idx: usize) {
+        if strand_idx < self.dna.helix.strands.len() {
+            if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
+                self.output.push("Error: Interrupt ignored, call stack full".to_string());
+                return;
+            }
+            self.call_stack.push(self.ip);
+            self.ip = (strand_idx, 0);
+            self.output.push(format!("INTERRUPT: Triggered strand {}", strand_idx));
+        } else {
+            self.output.push(format!("INTERRUPT ERROR: Invalid strand {}", strand_idx));
+        }
     }
 
     #[inline]
@@ -1791,7 +1808,9 @@ impl ChimeraVM {
             | OpCode::Construct
             | OpCode::LogicGate
             | OpCode::PinIn
-            | OpCode::PinOut => {
+            | OpCode::PinOut
+            | OpCode::Emitter
+            | OpCode::Receiver => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }

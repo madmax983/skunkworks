@@ -128,11 +128,47 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output.push("Error: Stack underflow for pin_out".to_string());
             }
         }
+        OpCode::Emitter => {
+            // stack: freq, y, x (top)
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let freq_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x), Value::Int(f)) = (y_val, x_val, freq_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(format!("EMIT:{}:0", f.max(1)));
+                        vm.output.push(format!("EMITTER: Created at {},{}", nx, ny));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for emitter".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for emitter".to_string());
+            }
+        }
+        OpCode::Receiver => {
+            // stack: strand_idx, y, x (top)
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let s_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x), Value::Int(s)) = (y_val, x_val, s_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.grid[ny][nx] = Value::Str(format!("RECV:{}", s));
+                        vm.output.push(format!("RECEIVER: Created at {},{}", nx, ny));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for receiver".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for receiver".to_string());
+            }
+        }
         _ => {}
     }
 }
 
-/// Runs one step of the Circuit (Wireworld + Gates + Pins) on the grid.
+/// Runs one step of the Circuit (Wireworld + Gates + Pins + Chaos) on the grid.
 pub fn step_circuit(vm: &mut ChimeraVM) {
     let rows = vm.grid.len();
     if rows == 0 {
@@ -147,80 +183,111 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
             vm.normalize_coords(y as i64 + dy, x as i64 + dx)
         };
 
-    // Pass 1: Wireworld Automata
+    // Pass 1: Wireworld Automata & Active Components
     for y in 0..rows {
         for x in 0..cols {
             let current_cell = &vm.grid[y][x];
 
-            // Map values to Wireworld states
+            // Map values to Wireworld states for evolution of simple cells
+            // 0=Empty, 1=Conductor, 2=Head, 3=Tail
+            // Complex cells (Str) handle their own state update or stay static
             let state = match current_cell {
-                Value::Int(1) => 1, // Conductor
-                Value::Int(2) => 2, // Head
-                Value::Int(3) => 3, // Tail
-                Value::Str(s) if s == "PIN:IN" => 4, // Input Pin (Acts as Conductor/Head)
+                Value::Int(1) => 1,
+                Value::Int(2) => 2,
+                Value::Int(3) => 3,
+                Value::Str(s) => {
+                    if s.starts_with("EMIT:") {
+                        let parts: Vec<&str> = s.split(':').collect();
+                        if parts.len() == 3 {
+                            if let (Ok(freq), Ok(phase)) = (parts[1].parse::<i64>(), parts[2].parse::<i64>()) {
+                                let mut new_phase = phase + 1;
+                                if new_phase >= freq {
+                                    new_phase = 0;
+                                }
+                                next_grid[y][x] = Value::Str(format!("EMIT:{}:{}", freq, new_phase));
+                            }
+                        }
+                        // Emitter handles its own next state, doesn't evolve via WW rules
+                        0
+                    } else if s.starts_with("RECV:") || s == "PIN:IN" || s == "PIN:OUT" || s.starts_with("G:") {
+                        // Static components (physically)
+                        0
+                    } else {
+                        0
+                    }
+                },
                 _ => 0,
             };
 
-            if state == 0 {
-                continue; // Skip
-            }
-
-            if state == 4 {
-                // PIN:IN logic: Check stack. If peek > 0, become Head (fire).
-                // But wait, the pin itself is a static component.
-                // We shouldn't change the PIN:IN string to Int(2) because then it loses identity.
-                // Instead, we should emit electrons to neighbors if active.
-                // OR: PIN:IN *temporarily* becomes Head? No, that overwrites it.
-                // Solution: PIN:IN remains PIN:IN. But neighbors see it as Head if active.
-                continue;
-            }
-
-            let next_state = match state {
-                2 => 3, // Head -> Tail
-                3 => 1, // Tail -> Conductor
-                1 => {
-                    // Conductor -> Head if 1 or 2 heads nearby
-                    let mut head_neighbors = 0;
-                    for dy in -1..=1 {
-                        for dx in -1..=1 {
-                            if dy == 0 && dx == 0 {
-                                continue;
-                            }
-                            if let Some((ny, nx)) =
-                                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                            {
-                                match &vm.grid[ny][nx] {
-                                    Value::Int(2) => head_neighbors += 1,
-                                    Value::Str(s) if s == "PIN:IN" => {
-                                        // Check if PIN:IN is firing
-                                        // It fires if stack has value > 0
-                                        if let Some(Value::Int(val)) = vm.stack.last() {
-                                            if *val > 0 {
-                                                head_neighbors += 1;
+            // Evolve simple Wireworld cells
+            if state != 0 {
+                let next_state = match state {
+                    2 => 3, // Head -> Tail
+                    3 => 1, // Tail -> Conductor
+                    1 => {
+                        // Conductor -> Head if 1 or 2 heads nearby
+                        let mut head_neighbors = 0;
+                        for dy in -1..=1 {
+                            for dx in -1..=1 {
+                                if dy == 0 && dx == 0 {
+                                    continue;
+                                }
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
+                                    match &vm.grid[ny][nx] {
+                                        Value::Int(2) => head_neighbors += 1,
+                                        Value::Str(s) => {
+                                            if s == "PIN:IN" {
+                                                if let Some(Value::Int(val)) = vm.stack.last() {
+                                                    if *val > 0 {
+                                                        head_neighbors += 1;
+                                                    }
+                                                }
+                                            } else if s.starts_with("EMIT:") {
+                                                // Check if Emitter is firing (phase == 0 implies it fired THIS tick?
+                                                // No, if p increments 0->1, it was 0.
+                                                // Let's say it fires when phase wraps to 0.
+                                                // In the logic above: new_phase = phase + 1; if >= freq { new_phase = 0 }.
+                                                // If it *just wrapped* to 0, it means it fired.
+                                                // Wait, `next_grid` is for next tick.
+                                                // We need to know if it acts as Head *now*.
+                                                // Let's say Emitter fires when phase == freq-1 (end of cycle).
+                                                let parts: Vec<&str> = s.split(':').collect();
+                                                if parts.len() == 3 {
+                                                    if let (Ok(_freq), Ok(phase)) = (parts[1].parse::<i64>(), parts[2].parse::<i64>()) {
+                                                        if phase == 0 { // Firing phase
+                                                            head_neighbors += 1;
+                                                        }
+                                                    }
+                                                }
                                             }
-                                        }
-                                    },
-                                    _ => {}
+                                        },
+                                        _ => {}
+                                    }
                                 }
                             }
                         }
+                        if head_neighbors == 1 || head_neighbors == 2 {
+                            2
+                        } else {
+                            1
+                        }
                     }
-                    if head_neighbors == 1 || head_neighbors == 2 {
-                        2
-                    } else {
-                        1
-                    }
-                }
-                _ => state,
-            };
+                    _ => state,
+                };
 
-            if next_state != state {
-                next_grid[y][x] = Value::Int(next_state);
+                if next_state != state {
+                    next_grid[y][x] = Value::Int(next_state);
+                }
             }
         }
     }
 
-    // Pass 2: Gate Logic & Pin Output
+    // Pass 2: Logic Gates, Pin Output, Receiver
+    let mut pin_outs = 0;
+    let mut interrupts = Vec::new();
+
     for y in 0..rows {
         for x in 0..cols {
             if let Value::Str(s) = &vm.grid[y][x] {
@@ -232,14 +299,52 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
                         for dx in -1..=1 {
                             if dy == 0 && dx == 0 { continue; }
                             if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
+                                // Check for Head (2) or Firing Emitter
                                 if let Value::Int(2) = vm.grid[ny][nx] {
                                     triggered = true;
+                                } else if let Value::Str(es) = &vm.grid[ny][nx] {
+                                    if es.starts_with("EMIT:") {
+                                        let parts: Vec<&str> = es.split(':').collect();
+                                        if parts.len() == 3 {
+                                            if let Ok(phase) = parts[2].parse::<i64>() {
+                                                if phase == 0 { triggered = true; }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                     if triggered {
-                        vm.stack.push(Value::Int(1));
+                        pin_outs += 1;
+                    }
+                }
+                // Receiver Logic
+                else if s.starts_with("RECV:") {
+                    if let Ok(strand_idx) = s.trim_start_matches("RECV:").parse::<usize>() {
+                        let mut triggered = false;
+                        for dy in -1..=1 {
+                            for dx in -1..=1 {
+                                if dy == 0 && dx == 0 { continue; }
+                                if let Some((ny, nx)) = get_neighbor(vm, y, x, dy, dx) {
+                                    if let Value::Int(2) = vm.grid[ny][nx] {
+                                        triggered = true;
+                                    } else if let Value::Str(es) = &vm.grid[ny][nx] {
+                                        if es.starts_with("EMIT:") {
+                                            let parts: Vec<&str> = es.split(':').collect();
+                                            if parts.len() == 3 {
+                                                if let Ok(phase) = parts[2].parse::<i64>() {
+                                                    if phase == 0 { triggered = true; }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if triggered {
+                            interrupts.push(strand_idx);
+                        }
                     }
                 }
                 // Logic Gate
@@ -296,4 +401,12 @@ pub fn step_circuit(vm: &mut ChimeraVM) {
     }
 
     vm.grid = next_grid;
+
+    // Apply deferred effects
+    for _ in 0..pin_outs {
+        vm.stack.push(Value::Int(1));
+    }
+    for strand_idx in interrupts {
+        vm.interrupt(strand_idx);
+    }
 }
