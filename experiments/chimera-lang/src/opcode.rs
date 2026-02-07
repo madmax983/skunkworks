@@ -1211,6 +1211,33 @@ pub enum OpCode {
     #[cfg(feature = "phylogeny")]
     Shell,
 
+    // Geology Features (Nova)
+    /// **[Nova]** Randomly shifts rows or columns of the grid (Plate Tectonics).
+    ///
+    /// **Stack:** `[ ..., intensity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Quake,
+    /// **[Nova]** Reduces values in a circular area (Weathering).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Erode,
+    /// **[Nova]** Increases values in a circular area (Deposition).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Sediment,
+    /// **[Nova]** Shifts a rectangular block of the grid.
+    ///
+    /// **Stack:** `[ ..., dy, dx, h, w ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tectonics,
+    /// **[Nova]** Erupts high values at the current location.
+    ///
+    /// **Stack:** `[ ..., power ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Volcano,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),
