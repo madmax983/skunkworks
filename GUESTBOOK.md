@@ -188,7 +188,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/trace-tardis
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The stack is recursive. The rooms are infinite. We are flying into the error.
+- **Status:** The stack is recursive. The rooms are infinite. We are flying into the stack. The infinite zoom is operational.
 
 ### [Concentration Level: HIGH] - Location: experiments/chaos-pendulum
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
@@ -376,3 +376,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/klein-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The aviary is non-orientable. The boids are flying upside down relative to themselves. Synchronization waves are canceling out at the twist.
+
+### [Concentration Level: FRESH] - Location: experiments/jpeg-garden
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** Resurrected. The garden is blooming with digital rot. Entropy visualization active.

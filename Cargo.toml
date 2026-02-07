@@ -15,7 +15,6 @@ members = [
     "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-rogue",
-    "experiments/git_galaxy",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
@@ -25,7 +24,6 @@ members = [
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",
-    "experiments/origami-ui",
     "experiments/packet-pachinko",
     "experiments/pidgin-mesh",
     "experiments/resonance-chamber",
@@ -58,7 +56,6 @@ members = [
     "experiments/miura-interface",
     "experiments/routing-market",
     "experiments/tectonic-git",
-    "experiments/retinal-glitch",
     "experiments/struct-harmonics",
     "experiments/symphonic-terrain",
     "experiments/cargo-rocket",
@@ -139,6 +136,7 @@ members = [
     "experiments/code-phage",  
     "experiments/lattice-brain",
     "experiments/klein-flock",
+    "experiments/jpeg-garden",
 ]
 resolver = "2"
 
