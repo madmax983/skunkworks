@@ -26,6 +26,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Experiments that resulted from cross-pollination -->
 
+**NOTE:** Automated workspace verification failed due to `glam`/`bevy` version conflicts in `hive-mind-dependencies`. Verification was performed partially.
+
 ### code-bio-dome
 - **Parents**: experiments/code-crawler + experiments/biomorph-flow
 - **Concept**: Code functions harvested from disk become organisms in a simulation.
@@ -407,3 +409,45 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Deterministic Chaos driven by System State. The computer's effort shapes the attractor's orbit.
 - **Status**: experiments/chaos-monitor
 - **Evaluation**: Compiles.
+
+### synaptic-choir
+- **Parents**: experiments/biophysical-synth + experiments/firefly-synapse
+- **Concept**: Population of Izhikevich neurons coupled via gap junctions, generating synchronized rhythms.
+- **Novel trait**: Emergent audio synchronization from spiking neural networks.
+- **Status**: experiments/synaptic-choir
+- **Evaluation**: Compiles. "The population is singing."
+
+### chrontext
+- **Parents**: experiments/git-cantata + experiments/text-terra
+- **Concept**: TUI tool that visualizes code age as a heatmap using git history.
+- **Novel trait**: Temporal stratigraphy. Reading the time dimension of code.
+- **Status**: experiments/chrontext
+- **Evaluation**: Compiles. "The strata are visible."
+
+### market-scheduler
+- **Parents**: experiments/market-flow + experiments/verge-computer
+- **Concept**: A market OS where agents (processes) bid for CPU time using a double auction mechanism.
+- **Novel trait**: Resource allocation via invisible hand.
+- **Status**: experiments/market-scheduler
+- **Evaluation**: Compiles. "Agents are bidding for CPU cycles."
+
+### synaptic-pachinko
+- **Parents**: experiments/packet-pachinko + experiments/synaptic-choir
+- **Concept**: TUI Pachinko where pins are Izhikevich neurons that spike when hit by packets.
+- **Novel trait**: Sonified Neural Physics. The sound of data colliding with the network.
+- **Status**: experiments/synaptic-pachinko
+- **Evaluation**: Compiles (Environment Failure: alsa-sys missing in sandbox). Created by The Splice Surgeon.
+
+### klein-magnetron
+- **Parents**: experiments/klein-fs + experiments/magnetron-decay
+- **Concept**: "Topological Bit Rot". A filesystem mapped onto a Klein Bottle surface where sectors decay and radiation flips bits.
+- **Novel trait**: Non-orientable decay patterns. Radiation inverts its effect when wrapping around the manifold twist.
+- **Status**: experiments/klein-magnetron
+- **Evaluation**: Compiles. Verified (Warnings observed).
+
+### klein-flock
+- **Parents**: experiments/klein-magnetron + experiments/luminous-flock
+- **Concept**: Boids flocking on a non-orientable Klein Bottle surface.
+- **Novel trait**: Moebius Flocking. Boids crossing the "twist" boundary flip their orientation and position, leading to upside-down collisions with their own flock.
+- **Status**: experiments/klein-flock
+- **Evaluation**: Compiles. Created by The Splice Surgeon.

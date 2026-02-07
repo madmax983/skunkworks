@@ -1,7 +1,7 @@
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use ringbuf::{HeapRb, Producer, Consumer};
-use std::sync::Arc;
 use crate::population::Population;
+use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use ringbuf::{Consumer, HeapRb, Producer};
+use std::sync::Arc;
 
 pub const POP_SIZE: usize = 100;
 
@@ -26,7 +26,9 @@ pub struct AudioEngine {
 impl AudioEngine {
     pub fn new() -> anyhow::Result<Self> {
         let host = cpal::default_host();
-        let device = host.default_output_device().expect("no output device available");
+        let device = host
+            .default_output_device()
+            .expect("no output device available");
         let config = device.default_output_config()?;
 
         let sample_rate = config.sample_rate().0 as f32;
@@ -41,7 +43,10 @@ impl AudioEngine {
 
         // Audio State
         let mut population = Population::new(POP_SIZE);
-        let mut current_params = ControlParams { current: 0.0, coupling: 0.0 };
+        let mut current_params = ControlParams {
+            current: 0.0,
+            coupling: 0.0,
+        };
 
         // Time scaling: Real neurons fire ~10-100Hz.
         // We speed up 20x to make it audible and richer.
@@ -74,7 +79,8 @@ impl AudioEngine {
 
                     // Snapshot logic
                     snapshot_timer += 1;
-                    if snapshot_timer > 700 { // Approx 60Hz
+                    if snapshot_timer > 700 {
+                        // Approx 60Hz
                         snapshot_timer = 0;
                         let mut voltages = [0.0; POP_SIZE];
                         for (i, n) in population.neurons.iter().enumerate() {
@@ -83,7 +89,7 @@ impl AudioEngine {
                             }
                         }
                         // Only push if space available
-                         let _ = snapshot_tx.push(Snapshot {
+                        let _ = snapshot_tx.push(Snapshot {
                             voltages,
                             mean_field: val,
                         });

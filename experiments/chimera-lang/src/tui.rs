@@ -16,6 +16,8 @@ use ratatui::{
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
     Terminal,
 };
+#[cfg(feature = "nova")]
+use ratatui::widgets::canvas::{Canvas, Rectangle};
 use std::io;
 
 #[derive(Debug, PartialEq)]
@@ -25,19 +27,25 @@ pub(crate) enum ViewMode {
     Microscope,
     #[cfg(feature = "biophysics")]
     Cortex,
+    #[cfg(feature = "resonance")]
+    Resonance,
     #[cfg(feature = "nova")]
-    Metaphysics,
+    Grimoire,
     #[cfg(feature = "nova")]
     Laboratory,
     #[cfg(feature = "nova")]
     Topology,
     #[cfg(feature = "nova")]
     Graveyard,
+    #[cfg(feature = "nova")]
+    PianoRoll,
+    Heatmap,
 }
 
 enum InputMode {
     Normal,
     Editing,
+    Injection,
 }
 
 pub(crate) struct AppState {
@@ -60,6 +68,8 @@ pub(crate) struct AppState {
     pub(crate) lab_method: usize,
     #[cfg(feature = "nova")]
     pub(crate) selected_graveyard_strand: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) selected_sigil_index: usize,
 }
 
 impl AppState {
@@ -84,6 +94,8 @@ impl AppState {
             lab_method: 0,
             #[cfg(feature = "nova")]
             selected_graveyard_strand: 0,
+            #[cfg(feature = "nova")]
+            selected_sigil_index: 0,
         }
     }
 }
@@ -327,12 +339,69 @@ where
                 return; // Skip normal rendering
             }
 
-            // Handle Metaphysics View
+            // Handle Resonance View
+            #[cfg(feature = "resonance")]
+            if let ViewMode::Resonance = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+                    .split(f.area());
+
+                // Wave Grid
+                let mut lines = Vec::new();
+                for y in 0..16 {
+                    let mut spans = Vec::new();
+                    for x in 0..16 {
+                        let idx = y * 16 + x;
+                        let val = if idx < vm.audio_snapshot.len() {
+                            vm.audio_snapshot[idx]
+                        } else {
+                            0.0
+                        };
+
+                        // Visualizing -1.0 to 1.0
+                        let abs_val = val.abs();
+                        let ch = if abs_val < 0.1 {
+                            "·"
+                        } else if abs_val < 0.3 {
+                            "~"
+                        } else if abs_val < 0.6 {
+                            "*"
+                        } else {
+                            "@"
+                        };
+
+                        let color = if val > 0.0 {
+                             if val > 0.5 { Color::Cyan } else { Color::Blue }
+                        } else if val < 0.0 {
+                             if val < -0.5 { Color::Red } else { Color::Magenta }
+                        } else {
+                             Color::DarkGray
+                        };
+
+                        spans.push(Span::styled(ch, Style::default().fg(color)));
+                        spans.push(Span::raw(" "));
+                    }
+                    lines.push(Line::from(spans));
+                }
+
+                let wave_grid = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Resonance Wave Function"));
+                f.render_widget(wave_grid, chunks[0]);
+
+                // Help / Status
+                let help_text = "Physics Simulation Active.\nUse Pluck(str), Oscillate(freq, str), Hear() ops.\n\nLeft: Wavefront Visualization\nRight: (Reserved for Spectrum Analysis)";
+                let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
+                f.render_widget(help, chunks[1]);
+
+                return;
+            }
+
+            // Handle Grimoire View
             #[cfg(feature = "nova")]
-            if let ViewMode::Metaphysics = app_state.view_mode {
+            if let ViewMode::Grimoire = app_state.view_mode {
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
-                    .constraints([Constraint::Percentage(25), Constraint::Percentage(25), Constraint::Percentage(25), Constraint::Percentage(25)].as_ref())
+                    .constraints([Constraint::Percentage(20), Constraint::Percentage(20), Constraint::Percentage(40), Constraint::Percentage(20)].as_ref())
                     .split(f.area());
 
                 // Ether (IPC)
@@ -350,18 +419,31 @@ where
                     }).collect();
                     let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).title("Oracle (Knowledge Base)"));
                     f.render_widget(oracle_list, chunks[1]);
-
-                    let omen_items: Vec<ListItem> = vm.omens.iter().take(20).map(|omen| {
-                        ListItem::new(format!("If {} Then {}", omen.condition, omen.effect))
-                    }).collect();
-                    let omen_list = List::new(omen_items).block(Block::default().borders(Borders::ALL).title("Oracle (Omens)"));
-                    f.render_widget(omen_list, chunks[2]);
                 }
                 #[cfg(not(feature = "oracle"))]
                 {
                     let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
                     f.render_widget(&oracle_list, chunks[1]);
-                    f.render_widget(&oracle_list, chunks[2]);
+                }
+
+                // Sigil Registry (The Grimoire)
+                #[cfg(feature = "nova")]
+                {
+                    let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
+                    registry.sort_by_key(|(k, _)| *k);
+
+                    let sigil_items: Vec<ListItem> = registry.iter().enumerate().map(|(i, (name, sigil))| {
+                        let status = if sigil.auto_cast { "[AUTO]" } else { "[    ]" };
+                        let style = if i == app_state.selected_sigil_index {
+                            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                        } else {
+                            Style::default().fg(Color::White)
+                        };
+                        ListItem::new(format!("{} {} ({} cells) -> Strand {}", status, name, sigil.pattern.len(), sigil.strand_idx)).style(style)
+                    }).collect();
+
+                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("The Grimoire (Select & Enter to Toggle Auto-Cast)"));
+                    f.render_widget(sigil_list, chunks[2]);
                 }
 
                 // Bard (Score)
@@ -599,6 +681,127 @@ where
                 return;
             }
 
+            // Handle Piano Roll View
+            #[cfg(feature = "nova")]
+            if let ViewMode::PianoRoll = app_state.view_mode {
+                let chunks = Layout::default()
+                    .direction(Direction::Vertical)
+                    .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+                    .split(f.area());
+
+                // Calculate total duration to define the time window
+                let mut total_duration = 0;
+                for note in &vm.score {
+                    total_duration += note.duration as u64;
+                }
+
+                let window_size = 64; // 4 measures of 16th notes
+                let window_end = total_duration as f64;
+                let window_start = (total_duration as f64 - window_size as f64).max(0.0);
+
+                let canvas = Canvas::default()
+                    .block(Block::default().borders(Borders::ALL).title("Piano Roll (MIDI Visualization)"))
+                    .x_bounds([window_start, window_end.max(window_start + 1.0)])
+                    .y_bounds([20.0, 108.0]) // MIDI 21 (A0) to 108 (C8) covers most piano range
+                    .paint(|ctx| {
+                        // Draw grid lines (measures)
+                        // Every 16 ticks is a measure
+                        let start_measure = (window_start as u64 / 16) * 16;
+                        let end_measure = window_end as u64 + 16;
+                        for t in (start_measure..end_measure).step_by(16) {
+                             ctx.draw(&ratatui::widgets::canvas::Line {
+                                 x1: t as f64,
+                                 y1: 20.0,
+                                 x2: t as f64,
+                                 y2: 108.0,
+                                 color: Color::DarkGray,
+                             });
+                        }
+
+                        // Draw notes
+                        let mut current_time = 0;
+                        for note in &vm.score {
+                             let start = current_time as f64;
+                             let end = start + note.duration as f64;
+                             current_time += note.duration as u64;
+
+                             // Only draw if in window
+                             if end > window_start && start < window_end {
+                                 if note.pitch > 0 { // Not a rest
+                                     let color = match note.velocity {
+                                         0..=40 => Color::Blue,
+                                         41..=80 => Color::Cyan,
+                                         81..=100 => Color::Green,
+                                         _ => Color::Yellow, // Loud
+                                     };
+
+                                     ctx.draw(&Rectangle {
+                                         x: start,
+                                         y: note.pitch as f64,
+                                         width: note.duration as f64,
+                                         height: 1.0,
+                                         color,
+                                     });
+                                 }
+                             }
+                        }
+                    });
+
+                f.render_widget(canvas, chunks[0]);
+
+                let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
+                f.render_widget(help, chunks[1]);
+                return;
+            }
+
+            // Handle Heatmap View
+            if let ViewMode::Heatmap = app_state.view_mode {
+                 let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .constraints([Constraint::Percentage(100)].as_ref())
+                    .split(f.area());
+
+                 let mut max_count = 1;
+                 for count in vm.gene_execution_counts.values() {
+                     if *count > max_count {
+                         max_count = *count;
+                     }
+                 }
+
+                 let mut items = Vec::new();
+                 for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                     items.push(ListItem::new(Span::styled(
+                         format!("Strand {}", s_idx),
+                         Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)
+                     )));
+
+                     for (g_idx, gene) in strand.genes.iter().enumerate() {
+                         let count = vm.gene_execution_counts.get(&(s_idx, g_idx)).unwrap_or(&0);
+                         let ratio = (*count as f64) / (max_count as f64);
+                         let color = if ratio < 0.01 {
+                             Color::DarkGray
+                         } else if ratio < 0.3 {
+                             Color::Blue
+                         } else if ratio < 0.6 {
+                             Color::Green
+                         } else if ratio < 0.9 {
+                             Color::Yellow
+                         } else {
+                             Color::Red
+                         };
+
+                         let content = format!("  {}({:?}) - Exec: {}", gene.op, gene.args, count);
+                         items.push(ListItem::new(Span::styled(content, Style::default().fg(color))));
+                     }
+                     items.push(ListItem::new(""));
+                 }
+
+                 let list = List::new(items).block(Block::default().borders(Borders::ALL).title(format!("Gene Expression Heatmap (Max: {})", max_count)));
+                 f.render_widget(list, chunks[0]);
+
+                 return;
+            }
+
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
@@ -691,25 +894,31 @@ where
                 ViewMode::Microscope => "MICROSCOPE",
                 #[cfg(feature = "biophysics")]
                 ViewMode::Cortex => "CORTEX",
+                #[cfg(feature = "resonance")]
+                ViewMode::Resonance => "RESONANCE",
                 #[cfg(feature = "nova")]
-                ViewMode::Metaphysics => "METAPHYSICS",
+                ViewMode::Grimoire => "GRIMOIRE",
                 #[cfg(feature = "nova")]
                 ViewMode::Laboratory => "LABORATORY",
                 #[cfg(feature = "nova")]
                 ViewMode::Topology => "TOPOLOGY",
                 #[cfg(feature = "nova")]
                 ViewMode::Graveyard => "GRAVEYARD",
+                #[cfg(feature = "nova")]
+                ViewMode::PianoRoll => "PIANO ROLL",
+                ViewMode::Heatmap => "HEATMAP",
             };
 
             let title = match app_state.input_mode {
                 InputMode::Normal => format!(
-                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], Arrows: Nav, Enter: Edit, Q: Quit)",
+                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
                     mode_str, chaos_status
                 ),
                 InputMode::Editing => format!(
                     "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
                     mode_str, app_state.input_buffer
                 ),
+                InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
             };
 
             let genome_block = Block::default().borders(Borders::ALL).title("Genome");
@@ -756,6 +965,10 @@ where
                         crate::vm::Value::Junction(_, _) => (
                             "J".to_string(),
                             Style::default().fg(Color::Yellow),
+                        ),
+                        crate::vm::Value::Superposition(_) => (
+                            "Ψ".to_string(),
+                            Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
                         ),
                         crate::vm::Value::Str(s) => {
                             let symbol = if s.starts_with("G:") {
@@ -1005,6 +1218,22 @@ where
                 .block(Block::default().borders(Borders::ALL).title("Output"));
             f.render_widget(output_list, right_chunks[1]);
 
+            // Draw Injection Popup
+            if let InputMode::Injection = app_state.input_mode {
+                let area = f.area();
+                let popup_area = ratatui::layout::Rect {
+                    x: area.width / 4,
+                    y: area.height / 3,
+                    width: area.width / 2,
+                    height: 5,
+                };
+                f.render_widget(ratatui::widgets::Clear, popup_area);
+
+                let block = Block::default().borders(Borders::ALL).title("Viral Injection Vector (ChimeraScript)").style(Style::default().fg(Color::Green));
+                let text = Paragraph::new(app_state.input_buffer.clone()).block(block).wrap(ratatui::widgets::Wrap { trim: true });
+                f.render_widget(text, popup_area);
+            }
+
             // Draw Spirit Popup on top
             #[cfg(feature = "nova")]
             if vm.spirit_request {
@@ -1039,6 +1268,43 @@ where
                         KeyCode::Esc => {
                             vm.spirit_value = Some(crate::vm::Value::Int(0));
                             vm.step();
+                            app_state.input_buffer.clear();
+                        }
+                        KeyCode::Char(c) => {
+                            app_state.input_buffer.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.input_buffer.pop();
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                // Handle Injection Mode
+                if let InputMode::Injection = app_state.input_mode {
+                    match key.code {
+                        KeyCode::Enter => {
+                            let src = format!("strand injection {{ {} }}", app_state.input_buffer);
+                            match crate::compiler::compile(&src, None) {
+                                Ok(dna) => {
+                                    if let Some(strand) = dna.helix.strands.first() {
+                                        vm.inject_genes(strand.genes.clone());
+                                        app_state.status_msg = "Injection Successful".to_string();
+                                    } else {
+                                        app_state.status_msg =
+                                            "Injection Failed: No genes".to_string();
+                                    }
+                                }
+                                Err(e) => {
+                                    app_state.status_msg = format!("Injection Error: {}", e);
+                                }
+                            }
+                            app_state.input_mode = InputMode::Normal;
+                            app_state.input_buffer.clear();
+                        }
+                        KeyCode::Esc => {
+                            app_state.input_mode = InputMode::Normal;
                             app_state.input_buffer.clear();
                         }
                         KeyCode::Char(c) => {
@@ -1112,8 +1378,13 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "resonance")]
+                                ViewMode::Resonance => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 #[cfg(feature = "nova")]
-                                ViewMode::Metaphysics => {
+                                ViewMode::Grimoire => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1129,6 +1400,15 @@ where
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Graveyard => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::PianoRoll => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                ViewMode::Heatmap => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1169,21 +1449,64 @@ where
                                 }
                                 #[cfg(not(feature = "biophysics"))]
                                 {
-                                    #[cfg(feature = "nova")]
+                                    #[cfg(feature = "resonance")]
                                     {
-                                        ViewMode::Metaphysics
+                                        ViewMode::Resonance
                                     }
-                                    #[cfg(not(feature = "nova"))]
+                                    #[cfg(not(feature = "resonance"))]
                                     {
-                                        ViewMode::Genome
+                                        #[cfg(feature = "nova")]
+                                        {
+                                            ViewMode::Grimoire
+                                        }
+                                        #[cfg(not(feature = "nova"))]
+                                        {
+                                            ViewMode::Heatmap
+                                        }
                                     }
                                 }
                             }
                             #[cfg(feature = "biophysics")]
                             ViewMode::Cortex => {
+                                #[cfg(feature = "resonance")]
+                                {
+                                    ViewMode::Resonance
+                                }
+                                #[cfg(not(feature = "resonance"))]
+                                {
+                                    #[cfg(feature = "nova")]
+                                    {
+                                        ViewMode::Grimoire
+                                    }
+                                    #[cfg(not(feature = "nova"))]
+                                    {
+                                        ViewMode::Heatmap
+                                    }
+                                }
+                            }
+                            #[cfg(feature = "resonance")]
+                            ViewMode::Resonance => {
                                 #[cfg(feature = "nova")]
                                 {
-                                    ViewMode::Metaphysics
+                                    ViewMode::Grimoire
+                                }
+                                #[cfg(not(feature = "nova"))]
+                                {
+                                    ViewMode::Heatmap
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Grimoire => ViewMode::Topology,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Topology => ViewMode::Graveyard,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Graveyard => ViewMode::PianoRoll,
+                            #[cfg(feature = "nova")]
+                            ViewMode::PianoRoll => ViewMode::Heatmap,
+                            ViewMode::Heatmap => {
+                                #[cfg(feature = "nova")]
+                                {
+                                    ViewMode::Laboratory
                                 }
                                 #[cfg(not(feature = "nova"))]
                                 {
@@ -1191,39 +1514,45 @@ where
                                 }
                             }
                             #[cfg(feature = "nova")]
-                            ViewMode::Metaphysics => ViewMode::Topology,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Topology => ViewMode::Graveyard,
-                            #[cfg(feature = "nova")]
-                            ViewMode::Graveyard => ViewMode::Laboratory,
-                            #[cfg(feature = "nova")]
                             ViewMode::Laboratory => ViewMode::Genome,
                         };
+                    }
+                    KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
+                    KeyCode::Char('i') => {
+                        app_state.input_mode = InputMode::Injection;
+                        app_state.input_buffer.clear();
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('r') => {
                         if let ViewMode::Graveyard = app_state.view_mode {
-                             match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
-                                 Ok(idx) => {
-                                     app_state.status_msg = format!("Resurrected strand {}!", idx);
-                                     if app_state.selected_graveyard_strand >= vm.graveyard.len() && !vm.graveyard.is_empty() {
-                                         app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
-                                     }
-                                 }
-                                 Err(e) => app_state.status_msg = format!("Error: {}", e),
-                             }
+                            match vm.resurrect_from_graveyard(app_state.selected_graveyard_strand) {
+                                Ok(idx) => {
+                                    app_state.status_msg = format!("Resurrected strand {}!", idx);
+                                    if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                                        && !vm.graveyard.is_empty()
+                                    {
+                                        app_state.selected_graveyard_strand =
+                                            vm.graveyard.len() - 1;
+                                    }
+                                }
+                                Err(e) => app_state.status_msg = format!("Error: {}", e),
+                            }
                         }
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('x') => {
                         if let ViewMode::Graveyard = app_state.view_mode {
-                             if app_state.selected_graveyard_strand < vm.graveyard.len() {
-                                 vm.graveyard.remove(app_state.selected_graveyard_strand);
-                                 app_state.status_msg = "Exterminated strand.".to_string();
-                                 if app_state.selected_graveyard_strand >= vm.graveyard.len() && !vm.graveyard.is_empty() {
-                                     app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
-                                 }
-                             }
+                            if app_state.selected_graveyard_strand < vm.graveyard.len() {
+                                vm.graveyard.remove(app_state.selected_graveyard_strand);
+                                app_state.status_msg = "Exterminated strand.".to_string();
+                                if app_state.selected_graveyard_strand >= vm.graveyard.len()
+                                    && !vm.graveyard.is_empty()
+                                {
+                                    app_state.selected_graveyard_strand = vm.graveyard.len() - 1;
+                                }
+                            }
                         }
                     }
                     #[cfg(feature = "biophysics")]
@@ -1252,16 +1581,17 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
-                        #[cfg(feature = "nova")]
-                        ViewMode::Topology => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {
                             if app_state.selected_graveyard_strand + 1 < vm.graveyard.len() {
                                 app_state.selected_graveyard_strand += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -1284,6 +1614,14 @@ where
                                 _ => {}
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Grimoire => {
+                            if app_state.selected_sigil_index + 1 < vm.sigil_registry.len() {
+                                app_state.selected_sigil_index += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Topology => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -1324,8 +1662,14 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {
+                            if app_state.selected_sigil_index > 0 {
+                                app_state.selected_sigil_index -= 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
@@ -1374,6 +1718,9 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
+                        ViewMode::Heatmap => {}
+                        #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
@@ -1384,14 +1731,19 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
@@ -1409,14 +1761,19 @@ where
                             }
                         }
                         ViewMode::Microscope => {}
+                        #[cfg(feature = "resonance")]
+                        ViewMode::Resonance => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Metaphysics => {}
+                        ViewMode::Grimoire => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::PianoRoll => {}
+                        ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
@@ -1509,9 +1866,23 @@ where
                                 // Prevent entering edit mode for Cortex
                                 app_state.input_mode = InputMode::Normal;
                             }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Metaphysics => {
+                            #[cfg(feature = "resonance")]
+                            ViewMode::Resonance => {
                                 app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Grimoire => {
+                                app_state.input_mode = InputMode::Normal;
+                                let mut registry: Vec<_> = vm.sigil_registry.keys().cloned().collect();
+                                registry.sort();
+                                if app_state.selected_sigil_index < registry.len() {
+                                    let key = &registry[app_state.selected_sigil_index];
+                                    if let Some(sigil) = vm.sigil_registry.get_mut(key) {
+                                        sigil.auto_cast = !sigil.auto_cast;
+                                        let status = if sigil.auto_cast { "ENABLED" } else { "DISABLED" };
+                                        app_state.status_msg = format!("{} Auto-Cast: {}", key, status);
+                                    }
+                                }
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Laboratory => {
@@ -1536,6 +1907,13 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Graveyard => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::PianoRoll => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            ViewMode::Heatmap => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }

@@ -52,19 +52,28 @@ fn draw_content(f: &mut Frame, app: &App, area: Rect) {
         };
 
         let style = if line_idx == app.selected_line {
-            Style::default().fg(Color::Black).bg(color).add_modifier(Modifier::BOLD)
+            Style::default()
+                .fg(Color::Black)
+                .bg(color)
+                .add_modifier(Modifier::BOLD)
         } else {
             Style::default().fg(color)
         };
 
         let line_widget = Line::from(vec![
-            Span::styled(format!("{:4} ", line_num), Style::default().fg(Color::DarkGray)),
+            Span::styled(
+                format!("{:4} ", line_num),
+                Style::default().fg(Color::DarkGray),
+            ),
             Span::styled(content, style),
         ]);
 
         let y = inner_area.y + i as u16;
         if y < inner_area.bottom() {
-             f.render_widget(Paragraph::new(line_widget), Rect::new(inner_area.x, y, inner_area.width, 1));
+            f.render_widget(
+                Paragraph::new(line_widget),
+                Rect::new(inner_area.x, y, inner_area.width, 1),
+            );
         }
     }
 }
@@ -90,5 +99,8 @@ fn draw_status(f: &mut Frame, app: &App, area: Rect) {
         "No blame info".to_string()
     };
 
-    f.render_widget(Paragraph::new(text).style(Style::default().fg(Color::White)), inner);
+    f.render_widget(
+        Paragraph::new(text).style(Style::default().fg(Color::White)),
+        inner,
+    );
 }

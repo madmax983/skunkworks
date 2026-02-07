@@ -34,13 +34,16 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+#[cfg(feature = "nova")]
+mod semantic;
+
 struct App {
-    network: Network,
-    inputs: Vec<Vec<f64>>,
-    targets: Vec<Vec<f64>>,
-    steps: usize,
-    loss_history: Vec<u64>,
-    paused: bool,
+    pub(crate) network: Network,
+    pub(crate) inputs: Vec<Vec<f64>>,
+    pub(crate) targets: Vec<Vec<f64>>,
+    pub(crate) steps: usize,
+    pub(crate) loss_history: Vec<u64>,
+    pub(crate) paused: bool,
 }
 
 impl App {
@@ -101,7 +104,9 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
     let mut last_tick = Instant::now();
 
     loop {
-        terminal.draw(|f| ui(f, app))?;
+        terminal
+            .draw(|f| ui(f, app))
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
@@ -116,6 +121,14 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                         app.network = Network::new(vec![2, 5, 4, 1], 0.1);
                         app.steps = 0;
                         app.loss_history.clear();
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('S') => {
+                        let snap = semantic::create_snapshot(app);
+                        let json = snap.to_json_pretty();
+                        if let Err(e) = std::fs::write("neuro_snapshot.json", json) {
+                            eprintln!("Failed to save snapshot: {}", e);
+                        }
                     }
                     _ => {}
                 }
@@ -221,6 +234,12 @@ fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
         Span::raw("  "),
         Span::styled(" R ", btn_style),
         Span::styled(" Reset ", desc_style),
+        #[cfg(feature = "nova")]
+        Span::raw("  "),
+        #[cfg(feature = "nova")]
+        Span::styled(" S ", btn_style),
+        #[cfg(feature = "nova")]
+        Span::styled(" Snapshot ", desc_style),
     ];
     let line = ratatui::text::Line::from(keys);
     let paragraph = Paragraph::new(line)

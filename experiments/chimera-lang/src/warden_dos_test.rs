@@ -53,19 +53,20 @@ mod tests {
     #[test]
     fn test_dos_organelle_swarm() {
         // Spawn costs 20.
-        let mut genes = Vec::new();
-        genes.push(Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(0)],
-        }); // strand
-        genes.push(Gene {
-            op: OpCode::Push,
-            args: vec![Nucleotide::Number(0)],
-        }); // type
-        genes.push(Gene {
-            op: OpCode::Spawn,
-            args: vec![],
-        });
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // strand
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // type
+            Gene {
+                op: OpCode::Spawn,
+                args: vec![],
+            },
+        ];
 
         let mut vm = make_vm(genes);
 

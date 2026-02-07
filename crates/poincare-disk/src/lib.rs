@@ -440,10 +440,14 @@ mod sentry_tests {
         for _ in 0..count {
             // LCG: x_{n+1} = (a * x_n + c) % m
             // Using values from MMIX (Knuth)
-            s = s.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            s = s
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
             let u1 = (s >> 32) as f64 / 4294967296.0;
 
-            s = s.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            s = s
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(1442695040888963407);
             let u2 = (s >> 32) as f64 / 4294967296.0;
 
             // Random point in unit disk: r = sqrt(u1), theta = 2*pi*u2
@@ -489,8 +493,8 @@ mod sentry_tests {
 
         for i in 0..(transforms.len() - 2) {
             let a = transforms[i];
-            let b = transforms[i+1];
-            let c = transforms[i+2];
+            let b = transforms[i + 1];
+            let c = transforms[i + 2];
 
             // (A * B) * C
             let ab = a.then(&b);
@@ -506,10 +510,26 @@ mod sentry_tests {
             let diff_c = (lhs.c - rhs.c).norm();
             let diff_d = (lhs.d - rhs.d).norm();
 
-            assert!(diff_a < 1e-9, "Associativity failed A component: {}", diff_a);
-            assert!(diff_b < 1e-9, "Associativity failed B component: {}", diff_b);
-            assert!(diff_c < 1e-9, "Associativity failed C component: {}", diff_c);
-            assert!(diff_d < 1e-9, "Associativity failed D component: {}", diff_d);
+            assert!(
+                diff_a < 1e-9,
+                "Associativity failed A component: {}",
+                diff_a
+            );
+            assert!(
+                diff_b < 1e-9,
+                "Associativity failed B component: {}",
+                diff_b
+            );
+            assert!(
+                diff_c < 1e-9,
+                "Associativity failed C component: {}",
+                diff_c
+            );
+            assert!(
+                diff_d < 1e-9,
+                "Associativity failed D component: {}",
+                diff_d
+            );
         }
     }
 
@@ -523,9 +543,9 @@ mod sentry_tests {
             // Note: mobius_add(z, a) is translation of z by a.
             // But distance isometry is usually d(z1, z2) = d(T(z1), T(z2))
 
-            for i in 0..points.len()-1 {
+            for i in 0..points.len() - 1 {
                 let p1 = points[i];
-                let p2 = points[i+1];
+                let p2 = points[i + 1];
 
                 let dist_orig = hyperbolic_dist(p1, p2);
 
@@ -552,18 +572,18 @@ mod sentry_tests {
         // a = -r, z = r, r->1
         let r_vals = [0.9, 0.99, 0.999, 0.9999, 0.99999999];
         for &r in &r_vals {
-             let z = Point::new(r, 0.0);
-             let a = Point::new(-r, 0.0);
-             let res = mobius_add(z, a);
+            let z = Point::new(r, 0.0);
+            let a = Point::new(-r, 0.0);
+            let res = mobius_add(z, a);
 
-             // We don't necessarily assert it's a valid point inside the disk (since math breaks down),
-             // but we assert it doesn't panic.
-             // And we check if it is finite (unless we hit absolute precision limit)
-             if res.re.is_finite() && res.im.is_finite() {
-                 // Good
-             } else {
-                 println!("Got non-finite result for r={}: {:?}", r, res);
-             }
+            // We don't necessarily assert it's a valid point inside the disk (since math breaks down),
+            // but we assert it doesn't panic.
+            // And we check if it is finite (unless we hit absolute precision limit)
+            if res.re.is_finite() && res.im.is_finite() {
+                // Good
+            } else {
+                println!("Got non-finite result for r={}: {:?}", r, res);
+            }
         }
     }
 

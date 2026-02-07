@@ -9,3 +9,4 @@ cpal = "0.15"
 ringbuf = "0.3"
 anyhow = { workspace = true }
 rand = { workspace = true }
+synaptic-physics = { workspace = true }

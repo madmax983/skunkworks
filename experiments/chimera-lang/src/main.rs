@@ -6,6 +6,15 @@ use std::fs;
 use chimera_lang::{ast::Dna, compiler, tui::run_tui, vm::ChimeraVM, ChimeraParser, Rule};
 use std::path::Path;
 
+#[cfg(feature = "resonance")]
+use crossbeam_channel::unbounded;
+#[cfg(feature = "resonance")]
+use resonance_audio::audio::AudioModel;
+#[cfg(feature = "resonance")]
+use std::thread;
+#[cfg(feature = "resonance")]
+use std::time::Duration;
+
 #[derive(ClapParser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
@@ -46,6 +55,28 @@ fn main() -> Result<()> {
     };
 
     let mut vm = ChimeraVM::new(dna);
+
+    #[cfg(feature = "resonance")]
+    {
+        let (cmd_tx, cmd_rx) = unbounded();
+        let (snap_tx, snap_rx) = unbounded();
+
+        vm.set_audio_tx(cmd_tx);
+        vm.set_snapshot_rx(snap_rx);
+
+        // Spawn Audio Simulation Thread
+        thread::spawn(move || {
+            let mut model = AudioModel::new(16, 16, cmd_rx, snap_tx);
+            // Simulate 44100Hz audio in chunks
+            // Process 735 samples (approx 16.6ms of audio) every ~16ms to keep real-time speed.
+            let chunk_size = 735;
+            let mut buffer = vec![0.0; chunk_size];
+            loop {
+                model.process(&mut buffer);
+                thread::sleep(Duration::from_millis(16));
+            }
+        });
+    }
 
     if cli.headless {
         while !vm.halted {

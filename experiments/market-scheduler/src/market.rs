@@ -26,13 +26,17 @@ impl OrderBook {
     pub fn match_orders(&mut self) -> Vec<Transaction> {
         // Bids: Highest Price first
         self.bids.sort_by(|a, b| {
-            b.price.partial_cmp(&a.price).unwrap_or(Ordering::Equal)
+            b.price
+                .partial_cmp(&a.price)
+                .unwrap_or(Ordering::Equal)
                 .then(a.timestamp.cmp(&b.timestamp))
         });
 
         // Asks: Lowest Price first
         self.asks.sort_by(|a, b| {
-            a.price.partial_cmp(&b.price).unwrap_or(Ordering::Equal)
+            a.price
+                .partial_cmp(&b.price)
+                .unwrap_or(Ordering::Equal)
                 .then(a.timestamp.cmp(&b.timestamp))
         });
 
@@ -44,38 +48,38 @@ impl OrderBook {
         // Let's loop while we have potential matches.
 
         while bid_idx < self.bids.len() && ask_idx < self.asks.len() {
-             // We need to re-check this inside the loop because indices might be invalidated if we removed?
-             // No, let's process and then remove empty ones later.
+            // We need to re-check this inside the loop because indices might be invalidated if we removed?
+            // No, let's process and then remove empty ones later.
 
-             let bid = &mut self.bids[bid_idx];
-             let ask = &mut self.asks[ask_idx];
+            let bid = &mut self.bids[bid_idx];
+            let ask = &mut self.asks[ask_idx];
 
-             if bid.price >= ask.price {
-                 let trade_price = (bid.price + ask.price) / 2.0;
-                 let trade_qty = bid.quantity.min(ask.quantity);
+            if bid.price >= ask.price {
+                let trade_price = (bid.price + ask.price) / 2.0;
+                let trade_qty = bid.quantity.min(ask.quantity);
 
-                 transactions.push(Transaction {
-                     price: trade_price,
-                     quantity: trade_qty,
-                     buyer_id: bid.owner_id,
-                     seller_id: ask.owner_id,
-                     timestamp: bid.timestamp,
-                 });
+                transactions.push(Transaction {
+                    price: trade_price,
+                    quantity: trade_qty,
+                    buyer_id: bid.owner_id,
+                    seller_id: ask.owner_id,
+                    timestamp: bid.timestamp,
+                });
 
-                 self.last_price = trade_price;
+                self.last_price = trade_price;
 
-                 bid.quantity -= trade_qty;
-                 ask.quantity -= trade_qty;
+                bid.quantity -= trade_qty;
+                ask.quantity -= trade_qty;
 
-                 if bid.quantity == 0 {
-                     bid_idx += 1;
-                 }
-                 if ask.quantity == 0 {
-                     ask_idx += 1;
-                 }
-             } else {
-                 break; // Spread not crossed
-             }
+                if bid.quantity == 0 {
+                    bid_idx += 1;
+                }
+                if ask.quantity == 0 {
+                    ask_idx += 1;
+                }
+            } else {
+                break; // Spread not crossed
+            }
         }
 
         // Remove filled orders
