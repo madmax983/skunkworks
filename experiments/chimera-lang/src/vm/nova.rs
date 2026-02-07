@@ -114,6 +114,8 @@ pub enum OrganelleType {
     Void,
     /// Transmutes neighbors based on elemental recipes.
     Alchemist,
+    /// Grows procedurally based on L-System rules.
+    Seed,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -3228,6 +3230,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Ribosome) => 4,
                 Some(OrganelleType::Void) => 5,
                 Some(OrganelleType::Alchemist) => 6,
+                Some(OrganelleType::Seed) => 7,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -3244,6 +3247,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             4 => Some(OrganelleType::Ribosome),
                             5 => Some(OrganelleType::Void),
                             6 => Some(OrganelleType::Alchemist),
+                            7 => Some(OrganelleType::Seed),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 

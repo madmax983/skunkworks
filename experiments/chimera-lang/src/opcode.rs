@@ -238,6 +238,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., instruction_string, start_y, start_x ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Grow,
+    /// **[Nova]** Spawns a Seed organelle that grows procedurally over time (The Garden).
+    ///
+    /// **Stack:** `[ ..., rules, axiom ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Plant,
 
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
     ///
