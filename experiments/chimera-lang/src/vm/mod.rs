@@ -30,8 +30,9 @@ use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 #[cfg(feature = "nova")]
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -47,6 +48,8 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod nova_biome;
 pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
@@ -58,6 +61,9 @@ pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod nova_chronos_local_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod nova_chronos_test;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
@@ -66,6 +72,8 @@ pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
+#[cfg(feature = "nova")]
+pub mod piet;
 pub mod resonance;
 #[cfg(feature = "silicon")]
 pub mod silicon;
@@ -73,7 +81,7 @@ pub mod silicon;
 pub mod git;
 
 #[cfg(feature = "resonance")]
-use crossbeam_channel::Sender;
+use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioCommand;
 
@@ -112,6 +120,7 @@ pub enum Value {
     Int(i64),
     Str(String),
     Junction(JunctionType, Vec<Value>),
+    Superposition(Vec<(Value, f64)>),
 }
 
 impl std::fmt::Display for Value {
@@ -130,6 +139,16 @@ impl std::fmt::Display for Value {
                         write!(f, ", ")?;
                     }
                     write!(f, "{}", v)?;
+                }
+                write!(f, ")")
+            }
+            Value::Superposition(states) => {
+                write!(f, "Ψ(")?;
+                for (i, (v, p)) in states.iter().enumerate() {
+                    if i > 0 {
+                        write!(f, " | ")?;
+                    }
+                    write!(f, "{}:{:.2}", v, p)?;
                 }
                 write!(f, ")")
             }
@@ -207,6 +226,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub time_grid: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     #[cfg(feature = "nova")]
     pub call_stack: Vec<(usize, usize)>,
@@ -260,6 +281,10 @@ pub struct ChimeraVM {
     pub omens: Vec<oracle::Omen>,
     #[cfg(feature = "resonance")]
     pub audio_tx: Option<Sender<AudioCommand>>,
+    #[cfg(feature = "resonance")]
+    pub snapshot_rx: Option<Receiver<Vec<f32>>>,
+    #[cfg(feature = "resonance")]
+    pub audio_snapshot: Vec<f32>,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
     #[cfg(feature = "nova")]
@@ -278,6 +303,11 @@ pub struct ChimeraVM {
     pub graveyard: Vec<crate::ast::Strand>,
     #[cfg(feature = "nova")]
     pub dictionary: HashMap<String, usize>,
+    #[cfg(feature = "nova")]
+    pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
+    #[cfg(feature = "nova")]
+    pub biome_grid: Vec<Vec<nova_biome::Biome>>,
+    pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
 impl ChimeraVM {
@@ -298,9 +328,13 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         let light_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
+        let time_grid = vec![vec![1; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let biome_grid = vec![vec![nova_biome::Biome::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -333,6 +367,8 @@ impl ChimeraVM {
             mutagen_grid,
             #[cfg(feature = "nova")]
             light_grid,
+            #[cfg(feature = "nova")]
+            time_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             #[cfg(feature = "nova")]
@@ -387,6 +423,10 @@ impl ChimeraVM {
             omens: Vec::new(),
             #[cfg(feature = "resonance")]
             audio_tx: None,
+            #[cfg(feature = "resonance")]
+            snapshot_rx: None,
+            #[cfg(feature = "resonance")]
+            audio_snapshot: vec![0.0; GRID_SIZE * GRID_SIZE],
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
             #[cfg(feature = "nova")]
@@ -405,12 +445,55 @@ impl ChimeraVM {
             graveyard: Vec::new(),
             #[cfg(feature = "nova")]
             dictionary: HashMap::new(),
+            #[cfg(feature = "nova")]
+            sigil_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            biome_grid,
+            gene_execution_counts: HashMap::new(),
+        }
+    }
+
+    pub fn inject_genes(&mut self, genes: Vec<crate::ast::Gene>) {
+        if self.ip.0 < self.dna.helix.strands.len() {
+            let count = genes.len();
+            let insert_idx = self.ip.1;
+            for (i, gene) in genes.into_iter().enumerate() {
+                self.dna.helix.strands[self.ip.0]
+                    .genes
+                    .insert(insert_idx + i, gene);
+            }
+            self.output.push(format!(
+                "INJECTION: Spliced {} genes at strand {} index {}",
+                count, self.ip.0, insert_idx
+            ));
+        } else {
+            self.output
+                .push("INJECTION ERROR: Invalid strand index".to_string());
         }
     }
 
     #[cfg(feature = "resonance")]
     pub fn set_audio_tx(&mut self, tx: Sender<AudioCommand>) {
         self.audio_tx = Some(tx);
+    }
+
+    #[cfg(feature = "resonance")]
+    pub fn set_snapshot_rx(&mut self, rx: Receiver<Vec<f32>>) {
+        self.snapshot_rx = Some(rx);
+    }
+
+    #[cfg(feature = "resonance")]
+    pub fn update_audio_state(&mut self) {
+        if let Some(rx) = &self.snapshot_rx {
+            // Drain receiver, keeping only the latest snapshot
+            let mut last_snapshot = None;
+            while let Ok(snap) = rx.try_recv() {
+                last_snapshot = Some(snap);
+            }
+            if let Some(snap) = last_snapshot {
+                self.audio_snapshot = snap;
+            }
+        }
     }
 
     /// Triggers an internal reflex event (interrupt).
@@ -739,7 +822,24 @@ impl ChimeraVM {
         let mut next_organelles = Vec::new();
 
         for mut organelle in active_organelles {
-            if self.tick_organelle(&mut organelle) {
+            let (cy, cx) = organelle.context_loc;
+            let dilation = self.time_grid[cy][cx];
+
+            // 0 = Stasis (Skip tick)
+            if dilation == 0 {
+                next_organelles.push(organelle);
+                continue;
+            }
+
+            let ticks = dilation as usize;
+            let mut keep = true;
+            for _ in 0..ticks {
+                if !self.tick_organelle(&mut organelle) {
+                    keep = false;
+                    break;
+                }
+            }
+            if keep {
                 next_organelles.push(organelle);
             }
         }
@@ -888,6 +988,7 @@ impl ChimeraVM {
         match val {
             Value::Int(n) => self.stack.push(Value::Int(n)),
             Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
+            Value::Superposition(s) => self.stack.push(Value::Superposition(s)),
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
@@ -1132,6 +1233,7 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         if !time_frozen {
             self.process_environment();
+            nova_sigil::process_passive_sigils(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1139,6 +1241,11 @@ impl ChimeraVM {
             for neuron in self.neurons.values_mut() {
                 neuron.step(0.1);
             }
+        }
+
+        #[cfg(feature = "resonance")]
+        if !time_frozen {
+            self.update_audio_state();
         }
 
         #[cfg(feature = "silicon")]
@@ -1261,6 +1368,8 @@ impl ChimeraVM {
     /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+        *self.gene_execution_counts.entry(self.ip).or_insert(0) += 1;
+
         if self.recursion_depth > MAX_RECURSION_DEPTH {
             self.output
                 .push("Error: Recursion limit exceeded".to_string());
@@ -1439,6 +1548,12 @@ impl ChimeraVM {
             OpCode::Invoke => nova_sigil::exec_invoke(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
                 nova_security::exec_security_op(self, op, args)
             }
@@ -1461,6 +1576,11 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
                 meta::exec_meta_op(self, op, args)
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Superpose | OpCode::Collapse | OpCode::Observe => {
+                nova::exec_nova_op(self, op, args)
             }
 
             #[cfg(feature = "nova")]
@@ -1556,7 +1676,12 @@ impl ChimeraVM {
             | OpCode::Exhume
             | OpCode::Seance
             | OpCode::Mourn
-            | OpCode::Reincarnate => nova::exec_nova_op(self, op, args),
+            | OpCode::TimeWarp
+            | OpCode::Chronos
+            | OpCode::Reincarnate
+            | OpCode::Piet
+            | OpCode::Terraform
+            | OpCode::SenseBiome => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
@@ -1575,7 +1700,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "resonance")]
-            OpCode::Pluck | OpCode::Oscillate => {
+            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
                 resonance::exec_resonance_op(self, op, args);
                 None
             }
@@ -1682,6 +1807,43 @@ impl ChimeraVM {
                         }
                     }
                     Some(Value::Junction(ta, res))
+                }
+                (Value::Superposition(states), scalar @ Value::Int(_)) => {
+                    let mut res = Vec::new();
+                    for (v, p) in states {
+                        if let Some(r) = apply(v, scalar.clone(), op, depth + 1) {
+                            res.push((r, p));
+                        } else {
+                            return None;
+                        }
+                    }
+                    Some(Value::Superposition(res))
+                }
+                (scalar @ Value::Int(_), Value::Superposition(states)) => {
+                    let mut res = Vec::new();
+                    for (v, p) in states {
+                        if let Some(r) = apply(scalar.clone(), v, op, depth + 1) {
+                            res.push((r, p));
+                        } else {
+                            return None;
+                        }
+                    }
+                    Some(Value::Superposition(res))
+                }
+                (Value::Superposition(states_a), Value::Superposition(states_b)) => {
+                    let mut res = Vec::new();
+                    for (va, pa) in states_a {
+                        for (vb, pb) in &states_b {
+                            if res.len() >= MAX_JUNCTION_SIZE {
+                                // Use same limit
+                                return None;
+                            }
+                            if let Some(r) = apply(va.clone(), vb.clone(), op, depth + 1) {
+                                res.push((r, pa * pb));
+                            }
+                        }
+                    }
+                    Some(Value::Superposition(res))
                 }
                 _ => None,
             }
@@ -1857,6 +2019,9 @@ impl ChimeraVM {
                                     JunctionType::Any => vals.iter().any(check_zero),
                                     JunctionType::All => vals.iter().all(check_zero),
                                 },
+                                Value::Superposition(states) => {
+                                    states.iter().any(|(v, _)| check_zero(v))
+                                }
                                 _ => false,
                             }
                         }
@@ -2074,6 +2239,10 @@ impl ChimeraVM {
                                 self.output
                                     .push("Error: Virus cannot execute junction".to_string());
                             }
+                            Value::Superposition(_) => {
+                                self.output
+                                    .push("Error: Virus cannot execute superposition".to_string());
+                            }
                         }
                     }
                 } else {
@@ -2099,6 +2268,17 @@ impl ChimeraVM {
                         Value::Junction(_, _) => {
                             self.output
                                 .push("Error: Cannot consume junction".to_string());
+                        }
+                        Value::Superposition(states) => {
+                            let mut total = 0.0;
+                            for (v, p) in states {
+                                match v {
+                                    Value::Int(n) => total += (n as f64) * p,
+                                    Value::Str(s) => total += (s.len() as f64) * p,
+                                    _ => {}
+                                }
+                            }
+                            self.energy = self.energy.saturating_add(total as i64);
                         }
                     }
                 } else {

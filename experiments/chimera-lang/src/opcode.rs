@@ -469,6 +469,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tune,
 
+    // Quantum Features (Superposition)
+    /// **[Nova]** Creates a quantum superposition of the top two values.
+    ///
+    /// **Stack:** `[ ..., val_a, val_b ] -> [ ..., Ψ(val_a:0.5, val_b:0.5) ]`
+    #[cfg(feature = "nova")]
+    Superpose,
+    /// **[Nova]** Collapses a superposition into a single value based on probability.
+    ///
+    /// **Stack:** `[ ..., superposition ] -> [ ..., collapsed_val ]`
+    #[cfg(feature = "nova")]
+    Collapse,
+    /// **[Nova]** Observes the value, collapsing it and logging the result.
+    ///
+    /// **Stack:** `[ ..., superposition ] -> [ ..., collapsed_val ]`
+    #[cfg(feature = "nova")]
+    Observe,
+
     /// **[Nova]** Sings a note into the Chorus Buffer.
     ///
     /// **Stack:** `[ ..., note_string ] -> [ ... ]`
@@ -648,12 +665,46 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Metamorphosis,
 
+    /// **[Nova]** Executes the Grid Colors as a Piet program.
+    ///
+    /// **Stack:** `[ ..., steps ] -> [ ... ]`
+    /// **Effect:** Runs a Piet interpreter on the ChromaGrid.
+    /// **Interaction:** 'In' pops from Chimera Stack, 'Out' pushes to Chimera Stack.
+    #[cfg(feature = "nova")]
+    Piet,
+
     /// **[Nova]** Freezes the environment and other organisms for a duration.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ... ]`
     /// **Cost:** 50 + ticks Energy.
     #[cfg(feature = "nova")]
     Chronostasis,
+
+    /// **[Nova]** Sets the local time dilation factor in a radius.
+    ///
+    /// **Stack:** `[ ..., factor, radius ] -> [ ... ]`
+    /// **Factor:** 0=Stasis, 1=Normal, >1=Accelerated.
+    #[cfg(feature = "nova")]
+    TimeWarp,
+
+    /// **[Nova]** Reads the local time dilation factor at the current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., factor ]`
+    #[cfg(feature = "nova")]
+    Chronos,
+
+    /// **[Nova]** Changes the biome of the local area.
+    ///
+    /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`
+    /// **Biome IDs:** 0=Plains, 1=Swamp, 2=Desert, 3=Tundra, 4=Volcanic.
+    #[cfg(feature = "nova")]
+    Terraform,
+
+    /// **[Nova]** Reads the current biome ID.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., biome_id ]`
+    #[cfg(feature = "nova")]
+    SenseBiome,
 
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
@@ -789,6 +840,18 @@ pub enum OpCode {
     /// **Effect:** Checks grid for pattern and applies effect.
     #[cfg(feature = "nova")]
     Invoke,
+    /// **[Nova]** Inscribes a new Sigil from the local environment.
+    ///
+    /// **Stack:** `[ ..., strand_idx, radius, sigil_name ] -> [ ... ]`
+    /// **Effect:** Learns a new Sigil pattern and binds it to the strand.
+    #[cfg(feature = "nova")]
+    Inscribe,
+    /// **[Nova]** Toggles the Auto-Cast (Passive) state of a Sigil.
+    ///
+    /// **Stack:** `[ ..., sigil_name, state ] -> [ ... ]`
+    /// **State:** 1=On, 0=Off.
+    #[cfg(feature = "nova")]
+    AutoCast,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -835,6 +898,9 @@ pub enum OpCode {
     Rest,
     /// **[Nova]** Sets the tempo of the composition.
     ///
+    /// This instruction logs the tempo change as metadata for the score (e.g., for ABC export).
+    /// It does **not** affect the VM's execution speed.
+    ///
     /// **Stack:** `[ ..., bpm ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Tempo,
@@ -856,6 +922,11 @@ pub enum OpCode {
     /// **Effect:** Sets up an oscillator. If strength is 0, stops oscillation.
     #[cfg(feature = "resonance")]
     Oscillate,
+    /// **[Resonance]** Reads the amplitude of the physics grid at the current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., amplitude ]`
+    #[cfg(feature = "resonance")]
+    Hear,
 
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.

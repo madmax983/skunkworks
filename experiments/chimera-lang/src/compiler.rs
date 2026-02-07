@@ -3,16 +3,20 @@ use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
 use pest_derive::Parser;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 #[derive(Parser)]
 #[grammar = "script_grammar.pest"]
 pub struct ScriptParser;
 
-fn preprocess(source: &str, base_path: Option<&Path>) -> Result<String> {
+fn preprocess(
+    source: &str,
+    base_path: Option<&Path>,
+    visited: &mut HashSet<PathBuf>,
+) -> Result<String> {
     let mut expanded = String::new();
     for line in source.lines() {
         let trimmed = line.trim();
@@ -27,12 +31,32 @@ fn preprocess(source: &str, base_path: Option<&Path>) -> Result<String> {
 
                 if let Some(bp) = base_path {
                     let path = bp.join(filename);
+
+                    // Canonicalize to detect cycles accurately (resolves symlinks, .., etc.)
+                    // Note: This requires the file to exist.
+                    let abs_path = if path.exists() {
+                        path.canonicalize()?
+                    } else {
+                        // If file doesn't exist, read_to_string will fail later with a good message.
+                        // But for cycle detection, we use the best path we have.
+                        path.clone()
+                    };
+
+                    if !visited.insert(abs_path.clone()) {
+                        return Err(anyhow!("Recursive include detected: {:?}", abs_path));
+                    }
+
                     let content = fs::read_to_string(&path)
                         .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
+
                     // Recursive preprocess
-                    let sub_expanded = preprocess(&content, Some(bp))?;
+                    let sub_expanded = preprocess(&content, Some(bp), visited)?;
                     expanded.push_str(&sub_expanded);
                     expanded.push('\n');
+
+                    // Remove from visited set to allow inclusion in sibling branches (diamond problem)
+                    // but prevent cycles in the current recursion stack.
+                    visited.remove(&abs_path);
                 } else {
                     return Err(anyhow!("Cannot include files without a base path"));
                 }
@@ -48,7 +72,8 @@ fn preprocess(source: &str, base_path: Option<&Path>) -> Result<String> {
 }
 
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
-    let expanded_source = preprocess(source, base_path)?;
+    let mut visited = HashSet::new();
+    let expanded_source = preprocess(source, base_path, &mut visited)?;
 
     let mut pairs = ScriptParser::parse(Rule::program, &expanded_source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;

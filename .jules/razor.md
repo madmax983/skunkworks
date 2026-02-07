@@ -51,3 +51,8 @@
 **Bloat:** Massive manual `impl FromStr` and `impl Display` for `OpCode` in `chimera-lang` (~600 lines).
 **Cut:** Replaced with `strum` derives: `EnumString` and `AsRefStr`.
 **Saved:** ~550 lines of brittle boilerplate code.
+
+## [Reduction]
+**Bloat:** Re-implementation of `Vec2` logic and tuple-based math in `luminous-flock`.
+**Cut:** Replaced with `tui_shared::math::Vec2`. Fixed `DNA` naming.
+**Saved:** ~30 lines of boilerplate math, improved type safety and readability.

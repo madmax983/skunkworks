@@ -52,8 +52,20 @@ impl Simulation {
         // Kernel Asks (Selling CPU)
         // Price adjusts slightly around last price to provide anchor
         let anchor_price = self.market.last_price;
-        new_orders.push(Order::new(Side::Ask, anchor_price * 1.1, 20, kernel_id, self.tick_count));
-        new_orders.push(Order::new(Side::Ask, anchor_price * 1.2, 20, kernel_id, self.tick_count));
+        new_orders.push(Order::new(
+            Side::Ask,
+            anchor_price * 1.1,
+            20,
+            kernel_id,
+            self.tick_count,
+        ));
+        new_orders.push(Order::new(
+            Side::Ask,
+            anchor_price * 1.2,
+            20,
+            kernel_id,
+            self.tick_count,
+        ));
 
         // Kernel Bids (Buying Back / Sink) - rare, maybe for "GC"?
         // No, Kernel only sells in this model.

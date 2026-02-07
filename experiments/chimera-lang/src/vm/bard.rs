@@ -6,10 +6,32 @@
 //!
 //! The resulting score can be exported as [ABC Notation](https://abcnotation.com/), allowing
 //! the organism's "song" to be played by external tools.
+//!
+//! ## Example
+//!
+//! ```
+//! use chimera_lang::vm::bard::{Note, score_to_abc};
+//!
+//! // Simulate a simple melody (Twinkle Twinkle Little Star)
+//! let score = vec![
+//!     Note::new(60, 4, 100), // C4
+//!     Note::new(60, 4, 100), // C4
+//!     Note::new(67, 4, 100), // G4
+//!     Note::new(67, 4, 100), // G4
+//!     Note::new(69, 4, 100), // A4
+//!     Note::new(69, 4, 100), // A4
+//!     Note::new(67, 8, 100), // G4 (Half note)
+//! ];
+//!
+//! let abc = score_to_abc(&score);
+//! assert!(abc.contains("c4 c4 g4 g4 | a4 a4 g8"));
+//! ```
 
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
+#[cfg(feature = "resonance")]
+use resonance_audio::audio::AudioCommand;
 
 /// Represents a single musical event (Note or Rest).
 #[derive(Debug, Clone, PartialEq)]
@@ -66,6 +88,31 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     let velocity = v.clamp(0, 127) as u8;
 
                     vm.score.push(Note::new(pitch, duration, velocity));
+
+                    #[cfg(feature = "resonance")]
+                    {
+                        if let Some(tx) = &vm.audio_tx {
+                            let freq = 440.0 * 2.0f32.powf((pitch as f32 - 69.0) / 12.0);
+                            let strength = (velocity as f32) / 127.0;
+                            // Duration in ms.
+                            // Assuming 120 BPM.
+                            // Quarter note = 60000 / 120 = 500ms.
+                            // Note duration is 1/16th.
+                            // Quarter note = 4 * 16th.
+                            // So 1 unit = 500 / 4 = 125ms.
+                            let duration_ms = duration as u64 * 125;
+                            let (cy, cx) = vm.context_loc;
+
+                            let _ = tx.send(AudioCommand::Tone {
+                                x: cx,
+                                y: cy,
+                                frequency: freq,
+                                strength,
+                                duration_ms,
+                            });
+                        }
+                    }
+
                     vm.energy = vm.energy.saturating_sub(1);
                     vm.output
                         .push(format!("NOTE: {} d={} v={}", pitch, duration, velocity));
@@ -125,9 +172,9 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 ///
 /// # Format Details
 ///
-/// - Header: Fixed X:1, T:Chimera Composition, M:4/4, L:1/16, K:C.
-/// - Pitch: Mapped from MIDI to ABC (e.g., 60 -> C).
-/// - Duration: Mapped to ABC duration multipliers.
+/// - Header: Fixed `X:1`, `T:Chimera Composition`, `M:4/4`, `L:1/16`, `K:C`.
+/// - Pitch: Mapped from MIDI to ABC (e.g., 60 -> c).
+/// - Duration: Mapped to ABC duration multipliers (relative to L:1/16).
 ///
 /// # Examples
 ///
@@ -135,13 +182,15 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 /// use chimera_lang::vm::bard::{Note, score_to_abc};
 ///
 /// let score = vec![
-///     Note::new(60, 4, 100), // Middle C, quarter note
+///     Note::new(60, 4, 100), // Middle C, quarter note (4 * 1/16)
 ///     Note::new(64, 4, 100), // E, quarter note
 /// ];
 /// let abc = score_to_abc(&score);
+///
+/// assert!(abc.starts_with("X:1\nT:Chimera Composition"));
 /// // Middle C (60) is "c" in ABC. E4 (64) is "e".
-/// assert!(abc.contains("c4"));
-/// assert!(abc.contains("e4"));
+/// // Duration 4 becomes "4".
+/// assert!(abc.contains("c4 e4"));
 /// ```
 pub fn score_to_abc(score: &[Note]) -> String {
     let mut s = String::from("X:1\nT:Chimera Composition\nM:4/4\nL:1/16\nK:C\n");

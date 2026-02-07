@@ -1,9 +1,10 @@
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
+use tui_shared::math::Vec2;
 
 #[derive(Clone, Debug)]
-pub struct DNA {
+pub struct Dna {
     pub max_speed: f64,
     pub max_force: f64,
     pub view_radius: f64,
@@ -17,7 +18,7 @@ pub struct DNA {
     pub char_representation: char,
 }
 
-impl DNA {
+impl Dna {
     pub fn random() -> Self {
         let mut rng = rand::thread_rng();
         // Variety in traits creates "species" within the flock
@@ -39,10 +40,10 @@ impl DNA {
 
 #[derive(Clone, Debug)]
 pub struct Boid {
-    pub position: (f64, f64),
-    pub velocity: (f64, f64),
-    pub acceleration: (f64, f64),
-    pub dna: DNA,
+    pub position: Vec2,
+    pub velocity: Vec2,
+    pub acceleration: Vec2,
+    pub dna: Dna,
     // Firefly state
     pub phase: f64,
     pub flash_timer: usize,
@@ -52,52 +53,45 @@ impl Boid {
     pub fn new(x: f64, y: f64) -> Self {
         let mut rng = rand::thread_rng();
         let angle = rng.gen_range(0.0..TAU);
-        let dna = DNA::random();
+        let dna = Dna::random();
 
         Self {
-            position: (x, y),
-            velocity: (angle.cos() * dna.max_speed, angle.sin() * dna.max_speed),
-            acceleration: (0.0, 0.0),
+            position: Vec2::new(x, y),
+            velocity: Vec2::new(angle.cos() * dna.max_speed, angle.sin() * dna.max_speed),
+            acceleration: Vec2::zero(),
             dna,
             phase: rng.r#gen::<f64>(),
             flash_timer: 0,
         }
     }
 
-    pub fn apply_force(&mut self, force: (f64, f64)) {
-        self.acceleration.0 += force.0;
-        self.acceleration.1 += force.1;
+    pub fn apply_force(&mut self, force: Vec2) {
+        self.acceleration += force;
     }
 
     pub fn update_physics(&mut self, width: f64, height: f64) {
-        self.velocity.0 += self.acceleration.0;
-        self.velocity.1 += self.acceleration.1;
+        self.velocity += self.acceleration;
 
         // Limit speed
-        let speed = (self.velocity.0.powi(2) + self.velocity.1.powi(2)).sqrt();
-        if speed > self.dna.max_speed {
-            self.velocity.0 = (self.velocity.0 / speed) * self.dna.max_speed;
-            self.velocity.1 = (self.velocity.1 / speed) * self.dna.max_speed;
-        }
+        self.velocity = self.velocity.limit(self.dna.max_speed);
 
-        self.position.0 += self.velocity.0;
-        self.position.1 += self.velocity.1;
+        self.position += self.velocity;
 
         // Reset acceleration
-        self.acceleration = (0.0, 0.0);
+        self.acceleration = Vec2::zero();
 
         // Wrap around edges
-        if self.position.0 < 0.0 {
-            self.position.0 += width;
+        if self.position.x < 0.0 {
+            self.position.x += width;
         }
-        if self.position.0 >= width {
-            self.position.0 -= width;
+        if self.position.x >= width {
+            self.position.x -= width;
         }
-        if self.position.1 < 0.0 {
-            self.position.1 += height;
+        if self.position.y < 0.0 {
+            self.position.y += height;
         }
-        if self.position.1 >= height {
-            self.position.1 -= height;
+        if self.position.y >= height {
+            self.position.y -= height;
         }
     }
 
@@ -114,19 +108,5 @@ impl Boid {
             self.phase -= 1.0;
             self.flash_timer = 5; // Flash lasts 5 ticks
         }
-    }
-}
-
-pub fn distance_squared(p1: (f64, f64), p2: (f64, f64)) -> f64 {
-    (p1.0 - p2.0).powi(2) + (p1.1 - p2.1).powi(2)
-}
-
-pub fn limit(vector: (f64, f64), max: f64) -> (f64, f64) {
-    let len_sq = vector.0.powi(2) + vector.1.powi(2);
-    if len_sq > max.powi(2) {
-        let len = len_sq.sqrt();
-        ((vector.0 / len) * max, (vector.1 / len) * max)
-    } else {
-        vector
     }
 }

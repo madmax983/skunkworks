@@ -81,9 +81,79 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 *   `jump_s()`: Pop target index from stack and jump to that strand.
 *   `brz_s()`: Pop target index and condition. If condition is 0, jump to target strand.
 
-### Experimental Nova Enzymes (Undocumented)
-The following enzymes are available in the Nova feature set but are currently experimental:
-`Rift`, `Seal`, `Shape`, `Simulate`, `Dream`, `Chemotaxis`, `Identity`, `Differentiate`, `Sporulate`, `Germinate`, `CrisprScan`, `Cas9Cut`, `Ligase`, `Integrase`, `Excision`, `Secrete`, `Detect`, `Absorb`, `Migrate`, `Detox`, `WRead`, `Call`, `Ret`, `Bind`, `Unbind`, `Conjugate`, `Gravitate`, `Lumine`, `SenseLight`, `Broadcast`, `Tune`, `Membrane`, `Osmosis`, `Symbiosis`, `Lysis`, `Reflex`, `Compile`, `Decompile`, `Sonar`, `Reincarnate`.
+### Metaphysics (Nova)
+*   `rift(y2, x2, y1, x1)`: Opens a spatial portal from `(x1, y1)` to `(x2, y2)`.
+*   `seal(y, x)`: Closes a portal at `(x, y)`.
+*   `shape(topology_id)`: Warps grid topology. 0=Plane, 1=Torus, 2=CylinderH, 3=CylinderV, 4=Klein, 5=Mobius, 6=Hyperbolic. Cost: 100.
+*   `phase_shift(phase_id)`: Changes matter state. 0=Corporeal, 1=Ethereal (pass walls), 2=Crystalline (immobile), 3=Flux (fast). Cost: 50.
+*   `isomerize()`: Toggles chirality (Left <-> Right). Inverts math and logic directions.
+*   `spirit()`: Pauses execution and waits for external user input.
+
+### Simulation (Nova)
+*   `simulate(ticks, strand_idx)`: Runs a sandboxed simulation of `strand_idx` for `ticks`. Pushes `[result, energy, status]`. Cost: 50 + ticks.
+*   `dream(ticks, strand_idx)`: Simulates a mutated version of `strand_idx`. If energy outcome is positive, adopts the mutation. Cost: 50 + ticks/2.
+*   `prophecy(ticks)`: Predicts if current execution leads to death within `ticks`. Pushes 1 (Death) or 0 (Life).
+
+### Physics (Nova)
+*   `gravitate(radius)`: Pulls all objects within `radius` towards the center. Cost: Variable.
+*   `lumine(intensity, radius)`: Emits light. Chloroplasts harvest energy from this.
+*   `sense_light()`: Pushes local light level.
+*   `osmosis(dy, dx)`: Moves through membranes/walls. High energy cost.
+*   `membrane(mask)`: Toggles wall boundaries (1=N, 2=S, 4=E, 8=W).
+*   `broadcast(channel, value)`: Sends value to global ether channel.
+*   `tune(channel)`: Receives value from global ether channel.
+*   `signal(channel, value)`: IPC Send (External).
+*   `receive(channel)`: IPC Receive (External).
+
+### Chemistry (Nova)
+*   `alchemy()`: Transmutes grid cells based on neighbors (e.g., Fire + Water = Steam). Cost: 5.
+*   `secrete(channel, amount)`: Releases hormones at current location.
+*   `detect(channel)`: Reads hormone level.
+*   `absorb(channel, amount)`: Consumes hormones.
+*   `detox(radius)`: Clears waste within radius.
+*   `w_read()`: Reads local waste level.
+
+### Microbiology (Nova)
+*   `spawn(type, strand_idx)`: Spawns an organelle. Types: 1=Chloroplast, 2=Mitochondria, 3=Lysosome, 4=Ribosome, 6=Alchemist.
+*   `identity()`: Pushes current organelle type ID.
+*   `differentiate(type)`: Changes organelle type. Cost: 50.
+*   `symbiosis(dy, dx)`: Merges with an organelle at target, absorbing its stack and IP.
+*   `lysis()`: Ejects the last absorbed symbiote as a new organelle.
+*   `chemotaxis(channel)`: Pushes `dy, dx` towards highest hormone concentration.
+*   `hyphae()`: Spawns a fungal network node.
+*   `connect(y, x)`: Links current hyphae to another.
+*   `transport(val, y, x)`: Sends value instantly across mycelium.
+*   `spore_cloud(radius, density)`: Randomly spawns hyphae nearby.
+
+### Genetics II (Nova)
+*   `splice(strand_a, strand_b, method)`: Combines two strands. 0=Interleave, 1=Crossover, 2=Merge.
+*   `recombine(strand_a, strand_b, split)`: Swaps tails of two strands.
+*   `crispr_scan(target, guide)`: Scans target strand for pattern matching guide. Returns index.
+*   `cas9_cut(strand, index)`: Cuts strand at index. Tail becomes new strand.
+*   `ligase(recipient, donor)`: Appends donor strand to recipient.
+*   `integrase(strand, gene_idx, name, arg)`: Inserts a new gene.
+*   `excision(strand, gene_idx)`: Removes a gene.
+*   `conjugate(strand, y, x, dir)`: Writes DNA sequence onto the grid.
+*   `incubate(len, y, x)`: Reads grid sequence into new DNA.
+*   `compile(string)`: Compiles string to DNA.
+*   `decompile(strand)`: Decompiles DNA to string.
+
+### Necromancy (Nova)
+*   `bury(strand)`: Moves strand to graveyard.
+*   `exhume()`: Restores last buried strand.
+*   `seance()`: Executes last buried strand as a ghost (ephemeral).
+*   `mourn()`: Gains energy from graveyard size.
+*   `reincarnate(strand)`: Kills strand, spawns mutated copy.
+
+### Functional (Nova)
+*   `eval(string)`: Executes string as code.
+*   `map(junction, function)`: Applies function (strand/string) to each item.
+*   `fold(junction, init, function)`: Reduces junction.
+*   `filter(junction, predicate)`: Filters items.
+*   `zip(j1, j2)`: Combines two junctions.
+*   `match(pattern, target)`: Glob matching.
+*   `supernova()`: Explodes current strand, scattering genes on grid.
+*   `singularity()`: Merges all strands into one.
 
 ## Controls (TUI)
 *   `Space`: Step execution.

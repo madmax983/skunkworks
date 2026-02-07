@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git_galaxy**: Naming convention violation (`snake_case`). Redundant with `git-landscape`/`hyperbolic-git`. Generic implementation.
+- **fractal-stack**: Specimen exhibits zombie characteristics. Previously executed but persisted in `experiments/` without documentation. Redundant with `l-system-garden`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,11 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
+- **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
+- **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
+- **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
+- **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
 - **git_rhythm**: Specimen executed. Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation. Moved to graveyard.
 - **orbital-harmonics**: Specimen executed. Documentation void. Redundant with `harmony-of-spheres`. Generic N-body implementation. Moved to graveyard.
 - **orbital-decay**: Terminal compilation failure (ratatui trait bounds). Documentation void. Generic implementation. Failed to improve during grace period. Executed.

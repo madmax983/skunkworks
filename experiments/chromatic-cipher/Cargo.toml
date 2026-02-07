@@ -8,3 +8,4 @@ macroquad = "0.4"
 image = "0.25"
 rand = { workspace = true }
 anyhow = { workspace = true }
+mlua = { version = "0.9", features = ["lua54", "vendored", "macros"] }

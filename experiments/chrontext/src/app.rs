@@ -37,7 +37,9 @@ impl App {
     }
 
     pub fn update_scroll(&mut self, height: usize) {
-        if height == 0 { return; }
+        if height == 0 {
+            return;
+        }
         // Keep selected_line in view [scroll, scroll + height)
         if self.selected_line >= self.scroll + height {
             self.scroll = self.selected_line + 1 - height;
