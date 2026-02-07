@@ -45,6 +45,8 @@ pub(crate) enum ViewMode {
     Quantum,
     #[cfg(feature = "nova")]
     Dream,
+    #[cfg(feature = "nova")]
+    Phylogeny,
     Heatmap,
 }
 
@@ -222,6 +224,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Dream = app_state.view_mode {
                 render_dream(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Phylogeny = app_state.view_mode {
+                render_phylogeny(f, vm, app_state);
                 return;
             }
 
@@ -413,6 +421,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Phylogeny => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -509,7 +522,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Quantum => ViewMode::Dream,
                             #[cfg(feature = "nova")]
-                            ViewMode::Dream => ViewMode::Heatmap,
+                            ViewMode::Dream => ViewMode::Phylogeny,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Phylogeny => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -608,6 +623,8 @@ where
                                 app_state.selected_dream_trace += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Phylogeny => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -746,6 +763,8 @@ where
                                 app_state.selected_dream_trace -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Phylogeny => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -785,6 +804,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Dream => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Phylogeny => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -821,10 +842,16 @@ where
                         ViewMode::Quantum => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Dream => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Phylogeny => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
                         match app_state.view_mode {
+                            #[cfg(feature = "nova")]
+                            ViewMode::Phylogeny => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
                             ViewMode::Genome => {
                                 if app_state.selected_strand < vm.dna.helix.strands.len() {
                                     let g_len =
@@ -1243,6 +1270,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Quantum => "QUANTUM",
                 #[cfg(feature = "nova")]
                 ViewMode::Dream => "DREAM CATCHER",
+                #[cfg(feature = "nova")]
+                ViewMode::Phylogeny => "PHYLOGENY",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -2280,4 +2309,103 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
                 let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
                 f.render_widget(help, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn layout_tree_node(
+    node_id: usize,
+    depth: f64,
+    current_y: &mut f64,
+    positions: &mut std::collections::HashMap<usize, (f64, f64)>,
+    vm: &ChimeraVM,
+    max_depth: &mut f64,
+) -> f64 {
+    if depth > *max_depth { *max_depth = depth; }
+
+    let mut my_y = *current_y;
+
+    if let Some(node) = vm.cladistics.nodes.get(&node_id) {
+        if node.children.is_empty() {
+            *current_y += 1.0;
+        } else {
+            let mut sum_y = 0.0;
+            let count = node.children.len() as f64;
+            for child_id in &node.children {
+                sum_y += layout_tree_node(*child_id, depth + 1.0, current_y, positions, vm, max_depth);
+            }
+            my_y = sum_y / count;
+        }
+        positions.insert(node_id, (depth, my_y));
+    }
+    my_y
+}
+
+#[cfg(feature = "nova")]
+fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    use ratatui::widgets::canvas::{Canvas, Line, Rectangle};
+
+    // Layout Calculation
+    // Map node_id -> (x, y)
+    let mut positions: std::collections::HashMap<usize, (f64, f64)> = std::collections::HashMap::new();
+    let mut max_depth = 0.0;
+
+    let roots = vm.cladistics.get_roots();
+    let mut current_y = 0.0;
+
+    for root in roots {
+        layout_tree_node(root, 0.0, &mut current_y, &mut positions, vm, &mut max_depth);
+    }
+    let max_height = current_y;
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Phylogeny (Tree of Life)"))
+        .x_bounds([-1.0, max_depth + 5.0])
+        .y_bounds([-1.0, max_height + 1.0])
+        .paint(|ctx| {
+            for (id, (x, y)) in &positions {
+                if let Some(node) = vm.cladistics.nodes.get(id) {
+                    // Draw node
+                    let color = if node.death_tick.is_some() {
+                        Color::DarkGray
+                    } else {
+                        Color::Green
+                    };
+
+                    ctx.draw(&Rectangle {
+                        x: *x - 0.2,
+                        y: *y - 0.2,
+                        width: 0.4,
+                        height: 0.4,
+                        color,
+                    });
+
+                    // Draw link to parent
+                    if let Some(pid) = node.parent_id {
+                        if let Some((px, py)) = positions.get(&pid) {
+                            ctx.draw(&Line {
+                                x1: *px,
+                                y1: *py,
+                                x2: *x,
+                                y2: *y,
+                                color: Color::White,
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    let help = Paragraph::new(format!("Nodes: {} | Roots: {} | Generations: {}",
+        vm.cladistics.nodes.len(),
+        vm.cladistics.get_roots().len(),
+        max_depth
+    )).block(Block::default().borders(Borders::ALL));
+    f.render_widget(help, chunks[1]);
 }
