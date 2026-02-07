@@ -10,12 +10,15 @@ macro_def = { "macro" ~ identifier ~ "{" ~ instruction* ~ "}" }
 strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 instruction = {
+    block |
     literal |
     call |
     arrow_jump |
     question_branch |
     simple_op
 }
+
+block = { "{" ~ instruction* ~ "}" }
 
 literal = { number | string }
 call = { identifier ~ "(" ~ argument_list ~ ")" }
@@ -26,7 +29,10 @@ question_branch = { "?" ~ identifier }
 simple_op = { identifier }
 
 argument_list = { argument ~ ("," ~ argument)* }
-argument = { literal | identifier }
+argument = { literal | junction | identifier }
+
+junction = { junction_type ~ "(" ~ argument_list ~ ")" }
+junction_type = { "any" | "all" }
 
 identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
 number = @{ "-"? ~ ASCII_DIGIT+ }

@@ -1308,7 +1308,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                             Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
                         ),
                         crate::vm::Value::Str(s) => {
-                            let symbol = if s.starts_with("G:") {
+                            let mut symbol = if s.starts_with("G:") {
                                 let parts: Vec<&str> = s.split(':').collect();
                                 if parts.len() >= 2 {
                                     match parts[1] {
@@ -1366,9 +1366,16 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                                 "spirit" => Style::default().fg(Color::Magenta),
                                 "gold" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
                                     "lead" => Style::default().fg(Color::DarkGray),
+                                    "PIN:IN" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                                    "PIN:OUT" => Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
                                     _ => Style::default().fg(Color::Cyan),
                                 }
                             };
+                            if s == "PIN:IN" {
+                                symbol = "I";
+                            } else if s == "PIN:OUT" {
+                                symbol = "O";
+                            }
                             (symbol.to_string(), style)
                         }
                     };
