@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **retinal-glitch**: Documentation void. Generic implementation (toy neural network). Suspicious logic (`input.rs`). Grace period: 24h.
-- **fractal-stack**: Specimen exhibits zombie characteristics. Previously executed but persisted in `experiments/` without documentation. Redundant with `l-system-garden`. Grace period: 24h.
+- **text-erosion**: Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]

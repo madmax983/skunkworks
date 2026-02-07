@@ -376,3 +376,11 @@
 ### [Concentration Level: FRESH] - Location: experiments/klein-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The aviary is non-orientable. The boids are flying upside down relative to themselves. Synchronization waves are canceling out at the twist.
+
+### [Concentration Level: TOXIC] - Location: experiments/fractal-stack
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Zombie characteristics confirmed. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/text-erosion
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (SDF). Lacks persona alignment.
