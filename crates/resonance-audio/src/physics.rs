@@ -82,6 +82,23 @@ impl PhysicsGrid {
         }
     }
 
+    pub fn remove_wall(&mut self, x: usize, y: usize) {
+        if x < self.width && y < self.height {
+            let idx = y * self.width + x;
+            self.walls[idx] = false;
+        }
+    }
+
+    pub fn clear_waves(&mut self) {
+        self.u.fill(0.0);
+        self.u_prev.fill(0.0);
+        self.u_next.fill(0.0);
+    }
+
+    pub fn clear_walls(&mut self) {
+        self.walls.fill(false);
+    }
+
     pub fn get(&self, x: usize, y: usize) -> f32 {
         if x < self.width && y < self.height {
             self.u[y * self.width + x]
