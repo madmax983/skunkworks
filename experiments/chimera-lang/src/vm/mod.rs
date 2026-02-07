@@ -62,6 +62,8 @@ pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
+#[cfg(all(feature = "nova", feature = "resonance"))]
+pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
@@ -1774,6 +1776,18 @@ impl ChimeraVM {
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
                 resonance::exec_resonance_op(self, op, args);
+                None
+            }
+
+            #[cfg(all(feature = "nova", feature = "resonance"))]
+            OpCode::Sift => {
+                nova_cymatics::exec_sift(self, op, args);
+                None
+            }
+
+            #[cfg(all(feature = "nova", feature = "resonance"))]
+            OpCode::Reshape => {
+                nova_cymatics::exec_reshape(self, op, args);
                 None
             }
 
