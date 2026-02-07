@@ -129,6 +129,8 @@ mod nova_radio_test;
 mod nova_reflex_test;
 #[cfg(all(test, feature = "resonance"))]
 mod nova_resonance_test;
+#[cfg(all(test, feature = "nova", feature = "resonance"))]
+mod nova_cymatics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_security_test;
 #[cfg(all(test, feature = "nova"))]

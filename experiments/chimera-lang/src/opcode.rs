@@ -1058,6 +1058,19 @@ pub enum OpCode {
     #[cfg(feature = "resonance")]
     Hear,
 
+    // Cymatics Features (Nova + Resonance)
+    /// **[Cymatics]** Moves matter on the grid towards nodal points (low amplitude).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(all(feature = "nova", feature = "resonance"))]
+    Sift,
+    /// **[Cymatics]** Modifies walls (membranes) based on sound amplitude.
+    ///
+    /// **Stack:** `[ ..., threshold, mode ] -> [ ... ]`
+    /// **Mode:** 0=Solidify (High Amp -> Wall), 1=Liquefy (High Amp -> No Wall).
+    #[cfg(all(feature = "nova", feature = "resonance"))]
+    Reshape,
+
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
     ///
