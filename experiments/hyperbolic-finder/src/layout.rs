@@ -1,10 +1,10 @@
 use crate::fs::DirNode;
-use num_complex::Complex;
+use poincare_disk::Point;
 use std::f64::consts::PI;
 
 #[derive(Debug, Clone)]
 pub struct LayoutNode {
-    pub pos: Complex<f64>,
+    pub pos: Point,
     pub node: DirNode,
     pub children: Vec<LayoutNode>,
 }
@@ -21,16 +21,16 @@ fn layout_recursive(
 ) -> LayoutNode {
     let step_h = 1.5;
     let r_h = depth as f64 * step_h;
-    let r_e = (r_h / 2.0).tanh();
+    let r_e = (r_h / 2.0).tanh(); // r_euclidean = tanh(r_hyperbolic / 2)
 
     let angle_center = (angle_start + angle_end) / 2.0;
     let pos = if depth == 0 {
-        Complex::new(0.0, 0.0)
+        Point::new(0.0, 0.0)
     } else {
-        Complex::from_polar(r_e, angle_center)
+        Point::from_polar(r_e, angle_center)
     };
 
-    // Extract children to iterate, leaving `node` with empty children
+    // Extract children
     let children = std::mem::take(&mut node.children);
     let child_count = children.len();
 
@@ -50,7 +50,7 @@ fn layout_recursive(
 
     LayoutNode {
         pos,
-        node, // node now has empty children
+        node,
         children: children_layout,
     }
 }
@@ -61,10 +61,11 @@ mod tests {
     use std::path::PathBuf;
 
     fn mock_node(depth: usize) -> DirNode {
+        let path = PathBuf::from("node");
         if depth == 0 {
-            DirNode::new(PathBuf::from("leaf"), false, 0)
+            DirNode::new(path, false, 0)
         } else {
-            let mut node = DirNode::new(PathBuf::from("root"), true, 0);
+            let mut node = DirNode::new(path, true, 0);
             node.children.push(mock_node(depth - 1));
             node.children.push(mock_node(depth - 1));
             node

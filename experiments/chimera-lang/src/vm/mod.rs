@@ -48,6 +48,8 @@ pub mod akashic;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod nova_biome;
 pub mod cortex;
 #[cfg(feature = "nova")]
 pub mod ipc;
@@ -75,6 +77,8 @@ pub mod piet;
 pub mod resonance;
 #[cfg(feature = "silicon")]
 pub mod silicon;
+#[cfg(feature = "git")]
+pub mod git;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
@@ -301,6 +305,8 @@ pub struct ChimeraVM {
     pub dictionary: HashMap<String, usize>,
     #[cfg(feature = "nova")]
     pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
+    #[cfg(feature = "nova")]
+    pub biome_grid: Vec<Vec<nova_biome::Biome>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
 }
 
@@ -327,6 +333,8 @@ impl ChimeraVM {
         let membranes = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let chroma_grid = vec![vec![ChromaCell::default(); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let biome_grid = vec![vec![nova_biome::Biome::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -439,6 +447,8 @@ impl ChimeraVM {
             dictionary: HashMap::new(),
             #[cfg(feature = "nova")]
             sigil_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            biome_grid,
             gene_execution_counts: HashMap::new(),
         }
     }
@@ -1223,6 +1233,7 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         if !time_frozen {
             self.process_environment();
+            nova_sigil::process_passive_sigils(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1540,6 +1551,9 @@ impl ChimeraVM {
             OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
                 nova_security::exec_security_op(self, op, args)
             }
@@ -1665,7 +1679,9 @@ impl ChimeraVM {
             | OpCode::TimeWarp
             | OpCode::Chronos
             | OpCode::Reincarnate
-            | OpCode::Piet => nova::exec_nova_op(self, op, args),
+            | OpCode::Piet
+            | OpCode::Terraform
+            | OpCode::SenseBiome => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform => {
@@ -1703,6 +1719,12 @@ impl ChimeraVM {
             | OpCode::Construct
             | OpCode::LogicGate => {
                 silicon::exec_silicon_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "git")]
+            OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
+                git::exec_git_op(self, op, args);
                 None
             }
 

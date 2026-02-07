@@ -1,0 +1,10 @@
+[package]
+name = "code-phage"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+walkdir = "2.3"
+rand = "0.8"
+anyhow = "1.0"

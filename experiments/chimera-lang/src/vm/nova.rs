@@ -12,7 +12,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{ChimeraVM, ChromaCell, Value};
+use super::{nova_biome::Biome, ChimeraVM, ChromaCell, Value};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -184,12 +184,13 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     let mut buffer = [[[0i64; 3]; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
+            let inertia = vm.biome_grid[y][x].diffusion_inertia();
             let mut sums = [
-                (vm.hormone_grid[y][x][0] as i128) * 4,
-                (vm.hormone_grid[y][x][1] as i128) * 4,
-                (vm.hormone_grid[y][x][2] as i128) * 4,
+                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128),
+                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128),
+                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128),
             ];
-            let mut count = 4;
+            let mut count = inertia;
 
             for (ny, nx) in get_open_neighbors(vm, y, x) {
                 for c in 0..3 {
@@ -199,7 +200,7 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
             }
 
             for c in 0..3 {
-                buffer[y][x][c] = (sums[c] / count) as i64;
+                buffer[y][x][c] = (sums[c] / count as i128) as i64;
             }
         }
     }
@@ -219,15 +220,17 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
     let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let mut sum = (vm.waste_grid[y][x] as i128) * 4;
-            let mut count = 4;
+            let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let mut sum = (vm.waste_grid[y][x] as i128) * (inertia as i128);
+            let mut count = inertia;
 
             for (ny, nx) in get_open_neighbors(vm, y, x) {
                 sum += vm.waste_grid[ny][nx] as i128;
                 count += 1;
             }
 
-            buffer[y][x] = (sum / count) as i64;
+            let decay = vm.biome_grid[y][x].decay_rate() as i128;
+            buffer[y][x] = ((sum / count as i128) * decay / 100) as i64;
         }
     }
     for y in 0..16 {
@@ -247,8 +250,9 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
     let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let mut sum = (vm.light_grid[y][x] as i128) * 4;
-            let mut count = 4;
+            let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let mut sum = (vm.light_grid[y][x] as i128) * (inertia as i128);
+            let mut count = inertia;
 
             for (ny, nx) in get_open_neighbors(vm, y, x) {
                 sum += vm.light_grid[ny][nx] as i128;
@@ -256,7 +260,7 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
             }
 
             // Blur and strong decay (50%)
-            buffer[y][x] = ((sum / count) / 2) as i64;
+            buffer[y][x] = ((sum / count as i128) / 2) as i64;
         }
     }
     for y in 0..16 {
@@ -276,16 +280,19 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
     let mut buffer = [[0i64; 16]; 16];
     for y in 0..16 {
         for x in 0..16 {
-            let mut sum = (vm.mutagen_grid[y][x] as i128) * 4;
-            let mut count = 4;
+            let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let mut sum = (vm.mutagen_grid[y][x] as i128) * (inertia as i128);
+            let mut count = inertia;
 
             for (ny, nx) in get_open_neighbors(vm, y, x) {
                 sum += vm.mutagen_grid[ny][nx] as i128;
                 count += 1;
             }
 
-            // Blur and slow decay (90%)
-            buffer[y][x] = ((sum / count) * 9 / 10) as i64;
+            // Blur and slow decay (based on biome)
+            // Mutagen naturally decays faster than waste (90% base retention)
+            let decay = vm.biome_grid[y][x].decay_rate() as i128;
+            buffer[y][x] = ((sum / count as i128) * decay / 100 * 9 / 10) as i64;
         }
     }
     for y in 0..16 {
@@ -1173,6 +1180,63 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             let (cy, cx) = vm.context_loc;
             let factor = vm.time_grid[cy][cx];
             vm.stack.push(Value::Int(factor as i64));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Terraform => {
+            // stack: biome_id, radius (top)
+            if vm.stack.len() >= 2 {
+                let radius_val = vm.stack.pop().unwrap();
+                let id_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(r), Value::Int(id)) = (radius_val, id_val) {
+                    if r > 0 {
+                        let biome = match id {
+                            0 => Biome::Plains,
+                            1 => Biome::Swamp,
+                            2 => Biome::Desert,
+                            3 => Biome::Tundra,
+                            4 => Biome::Volcanic,
+                            _ => Biome::Plains,
+                        };
+
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+                        let count = coords.len();
+
+                        for (tx, ty) in coords {
+                            vm.biome_grid[ty][tx] = biome;
+                        }
+
+                        // Terraforming is expensive
+                        vm.energy = vm.energy.saturating_sub(count as i64 * 5);
+                        vm.output.push(format!(
+                            "TERRAFORM: Changed {} cells to {:?} at {},{}",
+                            count, biome, cx, cy
+                        ));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for terraform".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for terraform".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseBiome => {
+            let (cy, cx) = vm.context_loc;
+            let biome = vm.biome_grid[cy][cx];
+            let id = match biome {
+                Biome::Plains => 0,
+                Biome::Swamp => 1,
+                Biome::Desert => 2,
+                Biome::Tundra => 3,
+                Biome::Volcanic => 4,
+            };
+            vm.stack.push(Value::Int(id));
             None
         }
         #[cfg(feature = "nova")]
@@ -3816,6 +3880,32 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         #[cfg(feature = "nova")]
         OpCode::Evolve => {
+            let mut birth_rules = vec![3];
+            let mut survival_rules = vec![2, 3];
+            let mut used_custom_rule = false;
+
+            // Check if top of stack is a rule string
+            if let Some(val) = vm.stack.last() {
+                if let Value::Str(s) = val {
+                    if let Some((b, s)) = parse_life_rule(s) {
+                        birth_rules = b;
+                        survival_rules = s;
+                        used_custom_rule = true;
+                    }
+                }
+            }
+
+            if used_custom_rule {
+                vm.stack.pop(); // Consume the rule string
+                vm.output.push(format!(
+                    "EVOLVE: Using rule B{:?}/S{:?}",
+                    birth_rules, survival_rules
+                ));
+            } else {
+                vm.output
+                    .push("EVOLVE: Using default rule B3/S23".to_string());
+            }
+
             // Cellular Automata (Game of Life variant)
             let rows = vm.grid.len();
             let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
@@ -3841,11 +3931,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
 
                     let is_alive = !matches!(vm.grid[y][x], Value::Int(0));
-                    if !is_alive && neighbors == 3 {
+
+                    if !is_alive && birth_rules.contains(&neighbors) {
                         // Birth: Becomes 1
                         next_grid[y][x] = Value::Int(1);
-                    } else if is_alive && !(2..=3).contains(&neighbors) {
-                        // Death
+                    } else if is_alive && !survival_rules.contains(&neighbors) {
+                        // Death (Overpopulation or Underpopulation)
                         next_grid[y][x] = Value::Int(0);
                     }
                     // Else survive (keep value)
@@ -3853,7 +3944,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             vm.grid = next_grid;
             vm.energy = vm.energy.saturating_sub(20);
-            vm.output.push("EVOLVE: Grid updated".to_string());
             None
         }
         #[cfg(feature = "nova")]
@@ -4329,6 +4419,32 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         _ => None,
     }
+}
+
+#[cfg(feature = "nova")]
+fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
+    let parts: Vec<&str> = rule.split('/').collect();
+    if parts.len() != 2 {
+        return None;
+    }
+
+    let parse_part = |s: &str, prefix: char| -> Vec<u8> {
+        let s = s.trim();
+        let nums = if s.starts_with(prefix) { &s[1..] } else { s };
+
+        let mut digits = Vec::new();
+        for c in nums.chars() {
+            if let Some(d) = c.to_digit(10) {
+                digits.push(d as u8);
+            }
+        }
+        digits
+    };
+
+    let birth = parse_part(parts[0], 'B');
+    let survival = parse_part(parts[1], 'S');
+
+    Some((birth, survival))
 }
 
 #[cfg(feature = "nova")]

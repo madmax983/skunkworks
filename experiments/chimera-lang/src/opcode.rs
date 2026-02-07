@@ -693,6 +693,19 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    /// **[Nova]** Changes the biome of the local area.
+    ///
+    /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`
+    /// **Biome IDs:** 0=Plains, 1=Swamp, 2=Desert, 3=Tundra, 4=Volcanic.
+    #[cfg(feature = "nova")]
+    Terraform,
+
+    /// **[Nova]** Reads the current biome ID.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., biome_id ]`
+    #[cfg(feature = "nova")]
+    SenseBiome,
+
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
     /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
@@ -833,6 +846,12 @@ pub enum OpCode {
     /// **Effect:** Learns a new Sigil pattern and binds it to the strand.
     #[cfg(feature = "nova")]
     Inscribe,
+    /// **[Nova]** Toggles the Auto-Cast (Passive) state of a Sigil.
+    ///
+    /// **Stack:** `[ ..., sigil_name, state ] -> [ ... ]`
+    /// **State:** 1=On, 0=Off.
+    #[cfg(feature = "nova")]
+    AutoCast,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -938,6 +957,23 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., triggered_count ]`
     #[cfg(feature = "oracle")]
     Divinate,
+
+    // Git Features (Repository Interaction)
+    /// **[Git]** Pushes a list of recent commit hashes to the stack.
+    ///
+    /// **Stack:** `[ ..., count ] -> [ ..., n, hash_1, ..., hash_n ]`
+    #[cfg(feature = "git")]
+    Ancestry,
+    /// **[Git]** Reads the content of a file from a specific commit.
+    ///
+    /// **Stack:** `[ ..., hash_str, path_str ] -> [ ..., content_string ]`
+    #[cfg(feature = "git")]
+    Excavate,
+    /// **[Git]** Gets the diff of a commit.
+    ///
+    /// **Stack:** `[ ..., hash_str ] -> [ ..., diff_string ]`
+    #[cfg(feature = "git")]
+    Evolution,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

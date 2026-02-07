@@ -437,6 +437,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Sonified Neural Physics. The sound of data colliding with the network.
 - **Status**: experiments/synaptic-pachinko
 - **Evaluation**: Fails compilation (missing alsa-sys dependencies in current env).
+- **Evaluation**: Compiles (Environment Failure: alsa-sys missing in sandbox). Created by The Splice Surgeon.
 
 ### klein-magnetron
 - **Parents**: experiments/klein-fs + experiments/magnetron-decay
@@ -451,3 +452,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Crystallographic Neuroscience. Hearing the difference between a Simple Cubic brain and a Face-Centered Cubic brain.
 - **Status**: experiments/lattice-brain
 - **Evaluation**: Compiles. Audio disabled by default due to missing ALSA libraries.
+- **Evaluation**: Compiles. Verified (Warnings observed).
+
+### klein-flock
+- **Parents**: experiments/klein-magnetron + experiments/luminous-flock
+- **Concept**: Boids flocking on a non-orientable Klein Bottle surface.
+- **Novel trait**: Moebius Flocking. Boids crossing the "twist" boundary flip their orientation and position, leading to upside-down collisions with their own flock.
+- **Status**: experiments/klein-flock
+- **Evaluation**: Compiles. Created by The Splice Surgeon.

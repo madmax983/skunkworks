@@ -17,11 +17,21 @@ fn test_recursive_include_crash() {
 
     println!("Created recursive include files at {:?}", temp_dir_path);
 
-    // This should crash with a stack overflow
+    // This should NOT crash, but return an error
     let result = compile("include \"a.chs\"", Some(&temp_dir_path));
 
-    // Cleanup (unlikely to be reached if it crashes)
+    // Cleanup
     let _ = fs::remove_dir_all(&temp_dir_path);
 
-    assert!(result.is_err(), "Expected compilation to fail, but it succeeded!");
+    assert!(
+        result.is_err(),
+        "Expected compilation to fail with recursive include error"
+    );
+
+    let err_msg = result.err().unwrap().to_string();
+    assert!(
+        err_msg.contains("Recursive include detected"),
+        "Expected recursion error message, got: {}",
+        err_msg
+    );
 }

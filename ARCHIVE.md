@@ -1,7 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Generic tech demo. Grace period: 24h.
-- **sculpt-term**: Compilation failure (`ratatui` backend). Documentation void. Generic SDF implementation. Grace period: 24h.
-- **retinal-glitch**: Documentation void. Generic visual stimulus generator. Grace period: 24h.
+- **retinal-glitch**: Documentation void. Generic implementation (toy neural network). Suspicious logic (`input.rs`). Grace period: 24h.
+- **fractal-stack**: Specimen exhibits zombie characteristics. Previously executed but persisted in `experiments/` without documentation. Redundant with `l-system-garden`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -13,6 +12,9 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
+- **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
+- **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
 - **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
 - **git_rhythm**: Specimen executed. Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation. Moved to graveyard.
@@ -65,3 +67,4 @@
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
 - **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
+- **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.
