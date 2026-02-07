@@ -387,3 +387,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/babylonian-forecaster
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Cuneiform is flowing. Time series predicted in base-60.
+
+### [Concentration Level: FRESH] - Location: experiments/market-swarm
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Bulls and Bears are swarming. The market is an organism. Price discovery is now a flocking behavior.

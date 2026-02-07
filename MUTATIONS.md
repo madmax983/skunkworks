@@ -464,4 +464,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking in a TUI terminal where the "air" is a wave simulation. Boids emit waves (echolocation) and steer based on local wave gradients.
 - **Novel trait**: Echolocation Navigation. Boids create and react to their own acoustic environment.
 - **Status**: experiments/sono-boids
-- **Evaluation**: Compiles. Created by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
+
+### babylonian-forecaster
+- **Parents**: experiments/git-history + experiments/sexagesimal-math
+- **Concept**: Time series forecasting of code activity using the Babylonian Sexagesimal (Base-60) number system and Cuneiform rendering.
+- **Novel trait**: Ancient-Future Forecasting. Predicting the future of code using the math of the first civilizations.
+- **Status**: experiments/babylonian-forecaster
+- **Evaluation**: Compiles. Verified.
+
+### market-swarm
+- **Parents**: experiments/market-flow + experiments/luminous-flock
+- **Concept**: A market visualization where traders are boids (Bulls/Bears) flocking around the price.
+- **Novel trait**: Behavioral Economics Physics. Market sentiment visualized as swarm dynamics.
+- **Status**: experiments/market-swarm
+- **Evaluation**: Compiles. Tests passed. Implemented by The Splice Surgeon.

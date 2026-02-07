@@ -136,6 +136,7 @@ members = [
     "experiments/code-phage",  
     "experiments/lattice-brain",
     "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster",
+    "experiments/market-swarm",
 ]
 resolver = "2"
 
