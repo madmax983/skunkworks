@@ -92,6 +92,7 @@ pub struct Spore {
     pub gravity_grid: Vec<Vec<i64>>,
     pub wind_grid: Vec<Vec<(i8, i8)>>,
     pub moisture_grid: Vec<Vec<i64>>,
+    pub entropy_grid: Vec<Vec<i64>>,
     pub relativity_mode: bool,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
@@ -370,6 +371,52 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             vm.mutagen_grid[y][x] = buffer[y][x];
+        }
+    }
+}
+
+/// Simulates the diffusion of entropy.
+///
+/// Entropy spreads and decays slowly.
+/// High levels cause Reality Decay (glitches).
+#[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
+pub fn diffuse_entropy(vm: &mut ChimeraVM) {
+    let mut buffer = [[0i64; 16]; 16];
+    for y in 0..16 {
+        for x in 0..16 {
+            let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let weight_center = 10;
+            let mut sum = (vm.entropy_grid[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
+
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    // Entropy follows wind too? Sure.
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (vm.entropy_grid[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
+            }
+
+            // Decay: 95% retention (persistent)
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * 95 / 100) as i64;
+            }
+        }
+    }
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.entropy_grid[y][x] = buffer[y][x];
         }
     }
 }
@@ -2034,6 +2081,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             2 => (OrganelleType::Mitochondria, (0, 0)),
                             3 => (OrganelleType::Lysosome, (0, 0)),
                             4 => (OrganelleType::Ribosome, (0, 1)), // Default East
+                            5 => (OrganelleType::Void, (0, 0)),
                             6 => (OrganelleType::Alchemist, (0, 0)),
                             _ => (OrganelleType::Worker, (0, 0)),
                         };
@@ -2075,6 +2123,60 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for spawn".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Entropy => {
+            let (cy, cx) = vm.context_loc;
+            let level = vm.entropy_grid[cy][cx];
+            vm.stack.push(Value::Int(level));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Stabilize => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 {
+                        let cost = amount; // 1:1 energy cost
+                        if vm.energy >= cost {
+                            vm.energy -= cost;
+                            let (cy, cx) = vm.context_loc;
+                            vm.entropy_grid[cy][cx] = vm.entropy_grid[cy][cx].saturating_sub(amount);
+                            vm.output.push(format!("STABILIZE: Reduced entropy by {} at {},{}", amount, cx, cy));
+                        } else {
+                            vm.output.push("STABILIZE: Insufficient energy".to_string());
+                        }
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for stabilize".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for stabilize".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Disintegrate => {
+            // stack: y, x (top)
+            if vm.stack.len() >= 2 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.entropy_grid[ny][nx] = 100; // Max entropy
+                        vm.grid[ny][nx] = Value::Int(0); // Destroy value
+                        vm.energy = vm.energy.saturating_sub(10);
+                        vm.output.push(format!("DISINTEGRATE: Cell at {},{}", nx, ny));
+                    } else {
+                        vm.output.push("Error: Coordinates out of bounds for disintegrate".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for disintegrate".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for disintegrate".to_string());
             }
             None
         }
@@ -2124,6 +2226,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 gravity_grid: vm.gravity_grid.clone(),
                 wind_grid: vm.wind_grid.clone(),
                 moisture_grid: vm.moisture_grid.clone(),
+                entropy_grid: vm.entropy_grid.clone(),
                 relativity_mode: vm.relativity_mode,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
@@ -2184,6 +2287,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.gravity_grid = spore.gravity_grid.clone();
                         vm.wind_grid = spore.wind_grid.clone();
                         vm.moisture_grid = spore.moisture_grid.clone();
+                        vm.entropy_grid = spore.entropy_grid.clone();
                         vm.relativity_mode = spore.relativity_mode;
                         #[cfg(feature = "cortex")]
                         {
