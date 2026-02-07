@@ -510,3 +510,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Thermodynamics-driven architecture. Building by changing the state of matter (Solid/Liquid).
 - **Status**: experiments/cryo-colony
 - **Evaluation**: Compiles. Simulated agents are actively heating and cooling the lattice.
+
+### biomimetic-bridge
+- **Parents**: Genesis (The Entomologist)
+- **Concept**: Army ants forming bridges to span gaps based on local traffic density.
+- **Novel trait**: Dynamic load balancing via swarm intelligence. The structure is the swarm.
+- **Status**: experiments/biomimetic-bridge
+- **Evaluation**: Compiles. Emergent behavior (bridge formation/dissolution) verified in GUESTBOOK.
+
+### bridge-specter
+- **Parents**: experiments/biomimetic-bridge + experiments/fluid-specter
+- **Concept**: Army ants building bridges over a fluid that reacts to audio.
+- **Novel trait**: Hydro-acoustic stress testing of biological structures. Bridges break when the bass drops.
+- **Status**: experiments/bridge-specter
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
