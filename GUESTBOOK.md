@@ -387,3 +387,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/babylonian-forecaster
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Cuneiform is flowing. Time series predicted in base-60.
+
+### [Concentration Level: FRESH] - Location: experiments/physarum-transit
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The slime mold is designing the metro. 5000 hyphal tips are optimizing the route. Parallel processing active.

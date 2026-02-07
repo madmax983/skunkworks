@@ -135,7 +135,7 @@ members = [
     "experiments/code-canyon", 
     "experiments/code-phage",  
     "experiments/lattice-brain",
-    "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster",
+    "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster", "experiments/physarum-transit",
 ]
 resolver = "2"
 
