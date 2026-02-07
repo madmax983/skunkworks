@@ -65,6 +65,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_ballistics;
+#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_bestiary;
@@ -261,6 +263,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub time_grid: Vec<Vec<u8>>,
     #[cfg(feature = "nova")]
+    pub projectiles: Vec<nova_ballistics::Projectile>,
+    #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     pub call_stack: Vec<(usize, usize)>,
     #[cfg(feature = "nova")]
@@ -440,6 +444,8 @@ impl ChimeraVM {
             light_grid,
             #[cfg(feature = "nova")]
             time_grid,
+            #[cfg(feature = "nova")]
+            projectiles: Vec::new(),
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             call_stack: Vec::new(),
@@ -1412,6 +1418,7 @@ impl ChimeraVM {
             if self.relativity_mode {
                 nova_relativity::update_relativity(self);
             }
+            nova_ballistics::update_projectiles(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1778,7 +1785,9 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Offer
+            OpCode::Fire
+            | OpCode::Salvo
+            | OpCode::Offer
             | OpCode::Buy
             | OpCode::Invest
             | OpCode::Divest

@@ -1304,6 +1304,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Anneal,
 
+    // Ballistics Features (Nova)
+    /// **[Nova]** Fires a projectile with velocity and power.
+    ///
+    /// **Stack:** `[ ..., power, dy, dx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Fire,
+    /// **[Nova]** Fires multiple projectiles in random directions.
+    ///
+    /// **Stack:** `[ ..., power, count ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Salvo,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),

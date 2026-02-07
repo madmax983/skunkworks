@@ -56,6 +56,8 @@ mod nova_botany_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_ballistics_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_bang_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_bard_test;
