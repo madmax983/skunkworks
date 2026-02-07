@@ -1,8 +1,8 @@
-# DX Audit
+# DX Audit: Chimera Lang 🧬
 
-This experiment exists solely to audit the Developer Experience (DX) of the `skunkworks` repository.
+This experiment audits the Developer Experience (DX) of the `chimera-lang` crate.
 
-It was created by "Echo" (the DX Audit Agent) to verify that the core infrastructure (`tui-shared`) works as documented (or rather, to verify the documentation I wrote for it).
+It attempts to compile and run the examples provided in `experiments/chimera-lang/README.md`.
 
 ## How to Run
 
@@ -10,4 +10,6 @@ It was created by "Echo" (the DX Audit Agent) to verify that the core infrastruc
 cargo run -p dx-audit
 ```
 
-If you see a TUI box saying "tui-shared works!", then the `tui-shared` crate is correctly initializing the terminal.
+## Results
+
+See `DX_REPORT.md` for detailed findings.
