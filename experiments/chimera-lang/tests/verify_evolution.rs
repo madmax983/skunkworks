@@ -14,10 +14,22 @@ fn make_dna(genes: Vec<Gene>) -> Dna {
 fn test_heatmap_tracking() {
     // [ push(1) push(1) add() jump(0) ]
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -39,9 +51,10 @@ fn test_heatmap_tracking() {
 #[test]
 fn test_viral_injection() {
     // [ push(10) ]
-    let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-    ];
+    let genes = vec![Gene {
+        op: OpCode::Push,
+        args: vec![Nucleotide::Number(10)],
+    }];
     let mut vm = ChimeraVM::new(make_dna(genes));
 
     // Step once to execute push(10)
@@ -50,8 +63,14 @@ fn test_viral_injection() {
 
     // Inject [ push(20) add() ]
     let injected_genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-        Gene { op: OpCode::Add, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
     ];
 
     vm.inject_genes(injected_genes);

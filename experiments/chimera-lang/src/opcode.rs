@@ -469,6 +469,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tune,
 
+    // Quantum Features (Superposition)
+    /// **[Nova]** Creates a quantum superposition of the top two values.
+    ///
+    /// **Stack:** `[ ..., val_a, val_b ] -> [ ..., Ψ(val_a:0.5, val_b:0.5) ]`
+    #[cfg(feature = "nova")]
+    Superpose,
+    /// **[Nova]** Collapses a superposition into a single value based on probability.
+    ///
+    /// **Stack:** `[ ..., superposition ] -> [ ..., collapsed_val ]`
+    #[cfg(feature = "nova")]
+    Collapse,
+    /// **[Nova]** Observes the value, collapsing it and logging the result.
+    ///
+    /// **Stack:** `[ ..., superposition ] -> [ ..., collapsed_val ]`
+    #[cfg(feature = "nova")]
+    Observe,
+
     /// **[Nova]** Sings a note into the Chorus Buffer.
     ///
     /// **Stack:** `[ ..., note_string ] -> [ ... ]`
@@ -648,6 +665,14 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Metamorphosis,
 
+    /// **[Nova]** Executes the Grid Colors as a Piet program.
+    ///
+    /// **Stack:** `[ ..., steps ] -> [ ... ]`
+    /// **Effect:** Runs a Piet interpreter on the ChromaGrid.
+    /// **Interaction:** 'In' pops from Chimera Stack, 'Out' pushes to Chimera Stack.
+    #[cfg(feature = "nova")]
+    Piet,
+
     /// **[Nova]** Freezes the environment and other organisms for a duration.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ... ]`
@@ -667,6 +692,19 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., factor ]`
     #[cfg(feature = "nova")]
     Chronos,
+
+    /// **[Nova]** Changes the biome of the local area.
+    ///
+    /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`
+    /// **Biome IDs:** 0=Plains, 1=Swamp, 2=Desert, 3=Tundra, 4=Volcanic.
+    #[cfg(feature = "nova")]
+    Terraform,
+
+    /// **[Nova]** Reads the current biome ID.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., biome_id ]`
+    #[cfg(feature = "nova")]
+    SenseBiome,
 
     /// **[Nova]** Remaps an OpCode to another OpCode at runtime.
     ///
@@ -802,6 +840,18 @@ pub enum OpCode {
     /// **Effect:** Checks grid for pattern and applies effect.
     #[cfg(feature = "nova")]
     Invoke,
+    /// **[Nova]** Inscribes a new Sigil from the local environment.
+    ///
+    /// **Stack:** `[ ..., strand_idx, radius, sigil_name ] -> [ ... ]`
+    /// **Effect:** Learns a new Sigil pattern and binds it to the strand.
+    #[cfg(feature = "nova")]
+    Inscribe,
+    /// **[Nova]** Toggles the Auto-Cast (Passive) state of a Sigil.
+    ///
+    /// **Stack:** `[ ..., sigil_name, state ] -> [ ... ]`
+    /// **State:** 1=On, 0=Off.
+    #[cfg(feature = "nova")]
+    AutoCast,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -907,6 +957,23 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., triggered_count ]`
     #[cfg(feature = "oracle")]
     Divinate,
+
+    // Git Features (Repository Interaction)
+    /// **[Git]** Pushes a list of recent commit hashes to the stack.
+    ///
+    /// **Stack:** `[ ..., count ] -> [ ..., n, hash_1, ..., hash_n ]`
+    #[cfg(feature = "git")]
+    Ancestry,
+    /// **[Git]** Reads the content of a file from a specific commit.
+    ///
+    /// **Stack:** `[ ..., hash_str, path_str ] -> [ ..., content_string ]`
+    #[cfg(feature = "git")]
+    Excavate,
+    /// **[Git]** Gets the diff of a commit.
+    ///
+    /// **Stack:** `[ ..., hash_str ] -> [ ..., diff_string ]`
+    #[cfg(feature = "git")]
+    Evolution,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

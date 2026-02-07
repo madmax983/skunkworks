@@ -180,7 +180,8 @@ fn render_stats(f: &mut Frame, area: Rect, app: &App) {
         .count();
     let total = app.network.validators.len();
 
-    let items = vec![
+    #[allow(unused_mut)]
+    let mut items = vec![
         ListItem::new(format!("🟢 Honest: {} validators", honest))
             .style(Style::default().fg(Color::Green)),
         ListItem::new(format!("🔴 Malicious: {} validators", malicious))
@@ -205,6 +206,15 @@ fn render_stats(f: &mut Frame, area: Rect, app: &App) {
             (app.network.total_stake() as f64 * 0.67) as i64
         )),
     ];
+
+    #[cfg(feature = "nova")]
+    {
+        items.push(ListItem::new(""));
+        items.push(ListItem::new(format!(
+            "🦠 Active Viruses: {}",
+            app.network.viral_pool.len()
+        )));
+    }
 
     let list = List::new(items).block(
         Block::default()
@@ -291,15 +301,44 @@ fn render_validators(f: &mut Frame, area: Rect, app: &App) {
         .iter()
         .take(15)
         .map(|v| {
-            let marker = if v.is_malicious { "🔴" } else { "🟢" };
+            #[allow(unused_mut)]
+            let mut marker = if v.is_malicious { "🔴" } else { "🟢" };
+
+            #[cfg(feature = "nova")]
+            let mut status_text = String::new();
+            #[cfg(not(feature = "nova"))]
+            let status_text = "";
+
+            #[cfg(feature = "nova")]
+            if !v.infections.is_empty() {
+                marker = "☣️";
+                let names: Vec<String> = v
+                    .infections
+                    .iter()
+                    .map(|virus| virus.name.clone())
+                    .collect();
+                status_text = format!(" [INFECTED: {}]", names.join(", "));
+            }
+
             let energy_bar = "█".repeat((v.energy / 100).min(10) as usize);
-            ListItem::new(format!("{} V{}: {} {}", marker, v.id, energy_bar, v.energy)).style(
-                if v.is_malicious {
-                    Style::default().fg(Color::Red)
-                } else {
-                    Style::default().fg(Color::Green)
-                },
-            )
+
+            #[allow(unused_mut)]
+            let mut style = if v.is_malicious {
+                Style::default().fg(Color::Red)
+            } else {
+                Style::default().fg(Color::Green)
+            };
+
+            #[cfg(feature = "nova")]
+            if !v.infections.is_empty() {
+                style = Style::default().fg(Color::Magenta);
+            }
+
+            ListItem::new(format!(
+                "{} V{}: {} {}{}",
+                marker, v.id, energy_bar, v.energy, status_text
+            ))
+            .style(style)
         })
         .collect();
 

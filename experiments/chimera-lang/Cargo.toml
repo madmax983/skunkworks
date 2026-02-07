@@ -9,6 +9,7 @@ cortex = []
 biophysics = []
 oracle = []
 silicon = []
+git = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
 
 [dependencies]
