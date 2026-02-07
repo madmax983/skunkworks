@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **packet-pachinko**: Ancestral redundancy with `synaptic-pachinko`. Stagnant implementation. Grace period: 24h.
+- **market-scheduler**: Specimen condemned. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]

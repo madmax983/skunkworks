@@ -56,6 +56,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/market-scheduler
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `market-flow`/`market-rogue`. Generic order book implementation. Documentation void.
+
 ## History/Decay
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
