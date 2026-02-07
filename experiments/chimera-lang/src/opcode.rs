@@ -1084,6 +1084,35 @@ pub enum OpCode {
     #[cfg(feature = "phylogeny")]
     Shell,
 
+    // Cymatics Features (Sound Physics)
+    /// **[Cymatics]** Toggles the wave simulation.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "cymatics")]
+    Cymatics,
+    /// **[Cymatics]** Strikes the grid at current location (Impulse).
+    ///
+    /// **Stack:** `[ ..., strength ] -> [ ... ]`
+    #[cfg(feature = "cymatics")]
+    Strike,
+    /// **[Cymatics]** Adds a continuous standing wave oscillator.
+    ///
+    /// **Stack:** `[ ..., frequency, strength ] -> [ ... ]`
+    #[cfg(feature = "cymatics")]
+    Tone,
+    /// **[Cymatics]** Moves matter on the grid towards wave nodes (zero amplitude).
+    ///
+    /// **Stack:** `[ ..., threshold ] -> [ ... ]`
+    /// **Effect:** Items move if local amplitude > threshold.
+    #[cfg(feature = "cymatics")]
+    Sift,
+    /// **[Cymatics]** Modifies walls based on wave intensity.
+    ///
+    /// **Stack:** `[ ..., threshold ] -> [ ... ]`
+    /// **Effect:** Destroys walls where amplitude > threshold.
+    #[cfg(feature = "cymatics")]
+    Reshape,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),

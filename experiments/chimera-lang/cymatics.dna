@@ -1,0 +1,7 @@
+strand cymatics_demo {
+    cymatics()
+    push(100) strike()
+    push(50) push(15) tone()
+    push(10) sift()
+    push(5) reshape()
+}

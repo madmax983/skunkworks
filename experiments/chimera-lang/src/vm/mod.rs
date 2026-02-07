@@ -91,11 +91,15 @@ pub mod resonance;
 pub mod retina;
 #[cfg(feature = "silicon")]
 pub mod silicon;
+#[cfg(feature = "cymatics")]
+pub mod cymatics;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioCommand;
+#[cfg(feature = "cymatics")]
+use resonance_audio::physics::PhysicsGrid;
 
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
@@ -329,6 +333,10 @@ pub struct ChimeraVM {
     pub relativity_mode: bool,
     #[cfg(feature = "nova")]
     pub market: nova_market::MarketState,
+    #[cfg(feature = "cymatics")]
+    pub cymatics_grid: Option<PhysicsGrid>,
+    #[cfg(feature = "cymatics")]
+    pub cymatics_mode: bool,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -485,6 +493,10 @@ impl ChimeraVM {
             relativity_mode: false,
             #[cfg(feature = "nova")]
             market: nova_market::MarketState::new(),
+            #[cfg(feature = "cymatics")]
+            cymatics_grid: Some(PhysicsGrid::new(GRID_SIZE, GRID_SIZE)),
+            #[cfg(feature = "cymatics")]
+            cymatics_mode: false,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -1294,6 +1306,15 @@ impl ChimeraVM {
             silicon::step_circuit(self);
         }
 
+        #[cfg(feature = "cymatics")]
+        if !time_frozen && self.cymatics_mode {
+            if let Some(grid) = &mut self.cymatics_grid {
+                grid.step();
+            }
+            // Sift matter
+            cymatics::sift_matter(self);
+        }
+
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
@@ -1789,6 +1810,12 @@ impl ChimeraVM {
             | OpCode::Infect
             | OpCode::Shell => {
                 phylogeny::exec_phylogeny_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "cymatics")]
+            OpCode::Cymatics | OpCode::Strike | OpCode::Tone | OpCode::Sift | OpCode::Reshape => {
+                cymatics::exec_cymatics_op(self, op, args);
                 None
             }
 

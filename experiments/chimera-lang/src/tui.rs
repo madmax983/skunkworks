@@ -45,6 +45,8 @@ pub(crate) enum ViewMode {
     Quantum,
     #[cfg(feature = "nova")]
     Dream,
+    #[cfg(feature = "cymatics")]
+    Cymatics,
     Heatmap,
 }
 
@@ -231,6 +233,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "cymatics")]
+            if let ViewMode::Cymatics = app_state.view_mode {
+                render_cymatics(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -404,6 +412,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "cymatics")]
+                                ViewMode::Cymatics => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Heatmap => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -509,7 +522,18 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Quantum => ViewMode::Dream,
                             #[cfg(feature = "nova")]
-                            ViewMode::Dream => ViewMode::Heatmap,
+                            ViewMode::Dream => {
+                                #[cfg(feature = "cymatics")]
+                                {
+                                    ViewMode::Cymatics
+                                }
+                                #[cfg(not(feature = "cymatics"))]
+                                {
+                                    ViewMode::Heatmap
+                                }
+                            }
+                            #[cfg(feature = "cymatics")]
+                            ViewMode::Cymatics => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -608,6 +632,8 @@ where
                                 app_state.selected_dream_trace += 1;
                             }
                         }
+                        #[cfg(feature = "cymatics")]
+                        ViewMode::Cymatics => {},
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -746,6 +772,8 @@ where
                                 app_state.selected_dream_trace -= 1;
                             }
                         }
+                        #[cfg(feature = "cymatics")]
+                        ViewMode::Cymatics => {},
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -774,6 +802,8 @@ where
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Quantum => {}
+                        #[cfg(feature = "cymatics")]
+                        ViewMode::Cymatics => {},
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -808,6 +838,8 @@ where
                         ViewMode::PianoRoll => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
+                        #[cfg(feature = "cymatics")]
+                        ViewMode::Cymatics => {},
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -983,6 +1015,10 @@ where
                                         }
                                     }
                                 }
+                            }
+                            #[cfg(feature = "cymatics")]
+                            ViewMode::Cymatics => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Heatmap => {
                                 app_state.input_mode = InputMode::Normal;
@@ -1243,6 +1279,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Quantum => "QUANTUM",
                 #[cfg(feature = "nova")]
                 ViewMode::Dream => "DREAM CATCHER",
+                #[cfg(feature = "cymatics")]
+                ViewMode::Cymatics => "CYMATICS",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -2267,4 +2305,45 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
                 let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
                 f.render_widget(help, chunks[1]);
+}
+
+#[cfg(feature = "cymatics")]
+fn render_cymatics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    let mut lines = Vec::new();
+    if let Some(grid) = &vm.cymatics_grid {
+        for y in 0..16 {
+            let mut spans = Vec::new();
+            for x in 0..16 {
+                let val = grid.get(x, y);
+                let abs_val = val.abs();
+                let (ch, color) = if abs_val < 0.1 {
+                    ("·", Color::DarkGray)
+                } else if abs_val < 0.3 {
+                    ("~", Color::Blue)
+                } else if abs_val < 0.6 {
+                    ("*", Color::Cyan)
+                } else if abs_val < 1.0 {
+                    ("@", Color::Green)
+                } else {
+                    ("#", Color::Red)
+                };
+                spans.push(Span::styled(ch, Style::default().fg(color)));
+                spans.push(Span::raw(" "));
+            }
+            lines.push(Line::from(spans));
+        }
+    } else {
+        lines.push(Line::from("Cymatics grid not initialized."));
+    }
+
+    let widget = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Chladni Plate"));
+    f.render_widget(widget, chunks[0]);
+
+    let help = Paragraph::new("Physics Simulation.\nStrike(str), Tone(freq, str), Sift(th), Reshape(th)\nMatter moves to Nodes (Dark areas).").block(Block::default().borders(Borders::ALL).title("Controls"));
+    f.render_widget(help, chunks[1]);
 }

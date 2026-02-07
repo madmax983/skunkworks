@@ -12,6 +12,7 @@ silicon = []
 git = []
 phylogeny = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
+cymatics = ["dep:resonance-audio"]
 
 [dependencies]
 pest = "2.7"
