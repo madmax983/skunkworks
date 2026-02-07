@@ -59,10 +59,10 @@ pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_chronos_test;
+mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_chronos_local_test;
+mod nova_chronos_test;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
@@ -455,7 +455,8 @@ impl ChimeraVM {
                 count, self.ip.0, insert_idx
             ));
         } else {
-            self.output.push("INJECTION ERROR: Invalid strand index".to_string());
+            self.output
+                .push("INJECTION ERROR: Invalid strand index".to_string());
         }
     }
 
@@ -1562,7 +1563,9 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Superpose | OpCode::Collapse | OpCode::Observe => nova::exec_nova_op(self, op, args),
+            OpCode::Superpose | OpCode::Collapse | OpCode::Observe => {
+                nova::exec_nova_op(self, op, args)
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Splice
@@ -1806,7 +1809,8 @@ impl ChimeraVM {
                     let mut res = Vec::new();
                     for (va, pa) in states_a {
                         for (vb, pb) in &states_b {
-                            if res.len() >= MAX_JUNCTION_SIZE { // Use same limit
+                            if res.len() >= MAX_JUNCTION_SIZE {
+                                // Use same limit
                                 return None;
                             }
                             if let Some(r) = apply(va.clone(), vb.clone(), op, depth + 1) {
@@ -1990,7 +1994,9 @@ impl ChimeraVM {
                                     JunctionType::Any => vals.iter().any(check_zero),
                                     JunctionType::All => vals.iter().all(check_zero),
                                 },
-                                Value::Superposition(states) => states.iter().any(|(v, _)| check_zero(v)),
+                                Value::Superposition(states) => {
+                                    states.iter().any(|(v, _)| check_zero(v))
+                                }
                                 _ => false,
                             }
                         }

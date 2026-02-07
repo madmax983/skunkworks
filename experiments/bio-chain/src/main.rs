@@ -1,8 +1,12 @@
 mod byzantine_test;
 mod network;
+#[cfg(all(test, feature = "nova"))]
+mod tests_virus;
 mod types;
 mod ui;
 mod validator;
+#[cfg(feature = "nova")]
+mod virus;
 
 use byzantine_test::run_byzantine_test;
 use network::Network;
