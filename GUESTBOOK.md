@@ -411,3 +411,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/babylonian-garden
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Hanging Gardens are blooming. History is growing in Sexagesimal spirals. The Cuneiform leaves are rustling.
+
+### [Concentration Level: FRESH] - Location: experiments/phase-engine
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The lattice is vibrating. Thermal noise is driving phase transitions. The boundary between solid and liquid is being simulated in real-time.
