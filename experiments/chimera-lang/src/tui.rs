@@ -433,13 +433,13 @@ where
                     registry.sort_by_key(|(k, _)| *k);
 
                     let sigil_items: Vec<ListItem> = registry.iter().enumerate().map(|(i, (name, sigil))| {
-                        let status = if sigil.auto_cast { "[AUTO]" } else { "[    ]" };
+                        let status = if sigil.auto_cast { "⚡ AUTO" } else { "○ MANU" };
                         let style = if i == app_state.selected_sigil_index {
                             Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
                         } else {
                             Style::default().fg(Color::White)
                         };
-                        ListItem::new(format!("{} {} ({} cells) -> Strand {}", status, name, sigil.pattern.len(), sigil.strand_idx)).style(style)
+                        ListItem::new(format!("{} | {} ({} cells) -> Strand {}", status, name, sigil.pattern.len(), sigil.strand_idx)).style(style)
                     }).collect();
 
                     let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("The Grimoire (Select & Enter to Toggle Auto-Cast)"));
@@ -498,15 +498,15 @@ where
                         let mut style = Style::default().fg(Color::DarkGray);
 
                         if vm.mycelium.contains_key(&(y, x)) {
-                            ch = "*".to_string();
+                            ch = "▓".to_string();
                             style = style.fg(Color::Green);
                         }
                         if vm.portals.contains_key(&(y, x)) {
-                            ch = "@".to_string();
+                            ch = "Ω".to_string();
                             style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
                         }
                         if vm.organelles.iter().any(|o| o.context_loc == (y, x)) {
-                            ch = "O".to_string();
+                            ch = "o".to_string();
                             style = style.fg(Color::Yellow);
                         }
 
