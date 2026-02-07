@@ -12,13 +12,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant tissue (`miura-interface`) verified. Decay process initiated.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/type-oscillator
+### [Concentration Level: STABLE TRAIL] - Location: experiments/type-oscillator
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant waveform patterns detected. Trivial topology. Execution scheduled.
+- **Status:** Pardoned. Vitality restored. Documentation confirmed.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/retinal-glitch
+### [Concentration Level: TOXIC] - Location: graveyard/retinal-glitch
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic visual patterns detected.
+- **Status:** Specimen executed. Documentation void. Decay confirmed.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
@@ -83,9 +83,9 @@
 - **Scent Origin:** Genesis (The Gardener) ⚛️🌳
 - **Status:** Process trees are growing. Sysinfo is root-deep.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/sculpt-term
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Terminal rot confirmed. `ratatui` v0.30 backend error verified. Specimen is lifeless.
+### [Concentration Level: TOXIC] - Location: graveyard/sculpt-term
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal compilation failure confirmed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-concerto
 - **Scent Origin:** The Reaper ☠️
@@ -210,6 +210,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/jpeg-garden
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Glitch rot detected but unexplained. Execution scheduled.
 
 ## History/Decay
 
