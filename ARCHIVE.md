@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **terra-fluid**: Redundant with `fluid-specter`. Documentation void (`README.md` missing). Grace period: 24h.
+- **struct-soup**: Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
 - **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 - **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.

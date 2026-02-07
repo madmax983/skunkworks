@@ -489,6 +489,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/terra-fluid
+### [Concentration Level: CONDEMNED] - Location: experiments/struct-soup
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `fluid-specter`. Documentation void. Grace period: 24h.
+- **Status:** Specimen condemned. Redundant ancestor of `struct-harmonics`. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/terra-fluid
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
