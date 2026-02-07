@@ -12,7 +12,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{nova_biome::Biome, ChimeraVM, ChromaCell, Value};
+use super::{nova_biome::Biome, nova_egregore::Egregore, ChimeraVM, ChromaCell, Value};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -1199,6 +1199,173 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 #[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreSummon => {
+            // stack: name
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(name) = val {
+                    // Find or Create
+                    let id = if let Some(idx) = vm.egregores.iter().position(|e| e.name == name) {
+                        idx
+                    } else {
+                        let idx = vm.egregores.len();
+                        let mut egregore = Egregore::new(idx, name.clone());
+                        // Auto-link summoner?
+                        egregore.join(vm.ip.0);
+                        vm.egregores.push(egregore);
+                        idx
+                    };
+                    vm.stack.push(Value::Int(id as i64));
+                    vm.output.push(format!("EGREGORE: Summoned '{}' (ID {})", name, id));
+                } else {
+                    vm.output.push("Error: Type mismatch for EgregoreSummon".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for EgregoreSummon".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreLink => {
+            // stack: id
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(id) = val {
+                    let idx = id as usize;
+                    if idx < vm.egregores.len() {
+                        vm.egregores[idx].join(vm.ip.0);
+                        vm.output.push(format!("EGREGORE: Linked strand {} to ID {}", vm.ip.0, idx));
+                    } else {
+                        vm.output.push("Error: Invalid Egregore ID".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for EgregoreLink".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for EgregoreLink".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreTithe => {
+            // stack: id, amount
+            if vm.stack.len() >= 2 {
+                let amt_val = vm.stack.pop().unwrap();
+                let id_val = vm.stack.pop().unwrap();
+                if let (Value::Int(id), Value::Int(amount)) = (id_val, amt_val) {
+                    let idx = id as usize;
+                    if idx < vm.egregores.len() {
+                        if amount > 0 {
+                            if vm.market.debit(vm.ip.0, amount) {
+                                vm.egregores[idx].tithe(amount);
+                                vm.output.push(format!("EGREGORE: Tithed {} credits to ID {}", amount, idx));
+                            } else {
+                                vm.output.push("EGREGORE: Insufficient credits to tithe".to_string());
+                            }
+                        } else {
+                            vm.output.push("EGREGORE: Invalid amount".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid Egregore ID".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for EgregoreTithe".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for EgregoreTithe".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreChannel => {
+            // stack: id, amount
+            if vm.stack.len() >= 2 {
+                let amt_val = vm.stack.pop().unwrap();
+                let id_val = vm.stack.pop().unwrap();
+                if let (Value::Int(id), Value::Int(amount)) = (id_val, amt_val) {
+                    let idx = id as usize;
+                    if idx < vm.egregores.len() {
+                        // Check membership
+                        if vm.egregores[idx].is_member(vm.ip.0) {
+                            if vm.egregores[idx].channel(amount) {
+                                vm.market.credit(vm.ip.0, amount);
+                                vm.output.push(format!("EGREGORE: Channeled {} credits from ID {}", amount, idx));
+                            } else {
+                                vm.output.push("EGREGORE: Insufficient funds in Egregore".to_string());
+                            }
+                        } else {
+                            vm.output.push("EGREGORE: Must be a member to channel".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid Egregore ID".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for EgregoreChannel".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for EgregoreChannel".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreDictate => {
+            // stack: id, key, value
+            if vm.stack.len() >= 3 {
+                let val = vm.stack.pop().unwrap();
+                let key_val = vm.stack.pop().unwrap();
+                let id_val = vm.stack.pop().unwrap();
+                if let (Value::Int(id), Value::Str(key)) = (id_val, key_val) {
+                    let idx = id as usize;
+                    if idx < vm.egregores.len() {
+                        if vm.egregores[idx].is_member(vm.ip.0) {
+                            vm.egregores[idx].set_memory(key.clone(), val.clone());
+                            vm.energy = vm.energy.saturating_sub(5); // Cost
+                            vm.output.push(format!("EGREGORE: Dictated '{}' to ID {}", key, idx));
+                        } else {
+                            vm.output.push("EGREGORE: Must be a member to dictate".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid Egregore ID".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for EgregoreDictate".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for EgregoreDictate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreQuery => {
+            // stack: id, key
+            if vm.stack.len() >= 2 {
+                let key_val = vm.stack.pop().unwrap();
+                let id_val = vm.stack.pop().unwrap();
+                if let (Value::Int(id), Value::Str(key)) = (id_val, key_val) {
+                    let idx = id as usize;
+                    if idx < vm.egregores.len() {
+                        // Anyone can query? Or just members? Let's say members.
+                        if vm.egregores[idx].is_member(vm.ip.0) {
+                            if let Some(v) = vm.egregores[idx].get_memory(&key) {
+                                vm.stack.push(v);
+                            } else {
+                                vm.stack.push(Value::Int(0)); // Default
+                            }
+                            vm.energy = vm.energy.saturating_sub(1);
+                        } else {
+                            vm.stack.push(Value::Int(0));
+                            vm.output.push("EGREGORE: Must be a member to query".to_string());
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid Egregore ID".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for EgregoreQuery".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for EgregoreQuery".to_string());
+            }
+            None
+        }
         #[cfg(feature = "nova")]
         OpCode::Prophecy => exec_prophecy(vm),
         #[cfg(feature = "nova")]

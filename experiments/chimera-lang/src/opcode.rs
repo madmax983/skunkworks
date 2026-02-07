@@ -742,6 +742,38 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    // Egregore Features (Collective Consciousness)
+    /// **[Nova]** Summons a new Egregore (Collective) or retrieves an existing one.
+    ///
+    /// **Stack:** `[ ..., name_str ] -> [ ..., egregore_id ]`
+    #[cfg(feature = "nova")]
+    EgregoreSummon,
+    /// **[Nova]** Links the current strand to an Egregore.
+    ///
+    /// **Stack:** `[ ..., egregore_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreLink,
+    /// **[Nova]** Tithes Credits from the strand's wallet to the Egregore.
+    ///
+    /// **Stack:** `[ ..., egregore_id, amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreTithe,
+    /// **[Nova]** Channels Credits from the Egregore to the strand's wallet.
+    ///
+    /// **Stack:** `[ ..., egregore_id, amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreChannel,
+    /// **[Nova]** Sets a key-value pair in the Egregore's shared memory.
+    ///
+    /// **Stack:** `[ ..., egregore_id, key, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreDictate,
+    /// **[Nova]** Reads a value from the Egregore's shared memory.
+    ///
+    /// **Stack:** `[ ..., egregore_id, key ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    EgregoreQuery,
+
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.
     ///

@@ -65,6 +65,8 @@ pub mod nova_biome;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;
 #[cfg(feature = "nova")]
+pub mod nova_egregore;
+#[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -332,6 +334,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub market: nova_market::MarketState,
     #[cfg(feature = "nova")]
+    pub egregores: Vec<nova_egregore::Egregore>,
+    #[cfg(feature = "nova")]
     pub wind_grid: Vec<Vec<(i8, i8)>>,
     #[cfg(feature = "nova")]
     pub moisture_grid: Vec<Vec<i64>>,
@@ -495,6 +499,8 @@ impl ChimeraVM {
             relativity_mode: false,
             #[cfg(feature = "nova")]
             market: nova_market::MarketState::new(),
+            #[cfg(feature = "nova")]
+            egregores: Vec::new(),
             #[cfg(feature = "nova")]
             wind_grid,
             #[cfg(feature = "nova")]
@@ -1656,7 +1662,13 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Offer
+            OpCode::EgregoreSummon
+            | OpCode::EgregoreLink
+            | OpCode::EgregoreTithe
+            | OpCode::EgregoreChannel
+            | OpCode::EgregoreDictate
+            | OpCode::EgregoreQuery
+            | OpCode::Offer
             | OpCode::Buy
             | OpCode::Invest
             | OpCode::Divest

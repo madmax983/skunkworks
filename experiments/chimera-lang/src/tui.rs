@@ -45,6 +45,8 @@ pub(crate) enum ViewMode {
     Quantum,
     #[cfg(feature = "nova")]
     Dream,
+    #[cfg(feature = "nova")]
+    Egregore,
     Heatmap,
 }
 
@@ -231,6 +233,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Egregore = app_state.view_mode {
+                render_egregore(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -413,6 +421,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Egregore => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -509,7 +522,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Quantum => ViewMode::Dream,
                             #[cfg(feature = "nova")]
-                            ViewMode::Dream => ViewMode::Heatmap,
+                            ViewMode::Dream => ViewMode::Egregore,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Egregore => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -608,6 +623,8 @@ where
                                 app_state.selected_dream_trace += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -746,6 +763,8 @@ where
                                 app_state.selected_dream_trace -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
@@ -785,6 +804,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Dream => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -821,6 +842,8 @@ where
                         ViewMode::Quantum => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Dream => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -983,6 +1006,10 @@ where
                                         }
                                     }
                                 }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Egregore => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Heatmap => {
                                 app_state.input_mode = InputMode::Normal;
@@ -1243,6 +1270,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Quantum => "QUANTUM",
                 #[cfg(feature = "nova")]
                 ViewMode::Dream => "DREAM CATCHER",
+                #[cfg(feature = "nova")]
+                ViewMode::Egregore => "EGREGORE (SOCIOLOGY)",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -2280,4 +2309,50 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
                 let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
                 f.render_widget(help, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(f.area());
+
+    // Left: Egregore List
+    let mut eg_items = Vec::new();
+    if vm.egregores.is_empty() {
+        eg_items.push(ListItem::new("No Egregores summoned."));
+    } else {
+        for (i, eg) in vm.egregores.iter().enumerate() {
+            eg_items.push(ListItem::new(Span::styled(
+                format!("ID {}: {} (Energy: {})", i, eg.name, eg.energy),
+                Style::default().fg(Color::Cyan),
+            )));
+            eg_items.push(ListItem::new(format!("  Members: {}", eg.members.len())));
+        }
+    }
+
+    let eg_list = List::new(eg_items)
+        .block(Block::default().borders(Borders::ALL).title("Egregore Registry"));
+    f.render_widget(eg_list, chunks[0]);
+
+    // Right: Details (just show memory of first one for now, or all)
+    // TUI is getting complex, let's just show memory dump of all
+    let mut mem_items = Vec::new();
+    for (_i, eg) in vm.egregores.iter().enumerate() {
+        mem_items.push(ListItem::new(Span::styled(
+            format!("--- Memory of {} ---", eg.name),
+            Style::default().fg(Color::Yellow),
+        )));
+        for (k, v) in &eg.memory {
+            mem_items.push(ListItem::new(format!("  {}: {}", k, v)));
+        }
+        if eg.memory.is_empty() {
+            mem_items.push(ListItem::new("  (Empty)"));
+        }
+    }
+
+    let mem_list = List::new(mem_items)
+        .block(Block::default().borders(Borders::ALL).title("Collective Memory"));
+    f.render_widget(mem_list, chunks[1]);
 }
