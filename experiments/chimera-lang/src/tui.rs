@@ -843,9 +843,7 @@ where
                     "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
                     mode_str, app_state.input_buffer
                 ),
-                InputMode::Injection => format!(
-                    "INJECTION (Enter: Splice, Esc: Cancel)"
-                ),
+                InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
             };
 
             let genome_block = Block::default().borders(Borders::ALL).title("Genome");

@@ -1,27 +1,25 @@
-mod skeleton;
 mod monitor;
 mod puppeteer;
+mod skeleton;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
+    Frame,
     layout::{Constraint, Direction, Layout},
     style::Color,
     text::Span,
     widgets::{
-        canvas::{Canvas, Line, Circle},
         Block, Borders, Paragraph,
+        canvas::{Canvas, Circle, Line},
     },
-    Frame,
 };
-use std::{
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-use skeleton::Skeleton;
 use monitor::Monitor;
 use puppeteer::Puppeteer;
+use skeleton::Skeleton;
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
@@ -41,11 +39,11 @@ fn main() -> Result<()> {
 
         // Poll events
         if event::poll(Duration::from_millis(30))? {
-             if let Event::Key(key) = event::read()? {
-                 if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
-                     break;
-                 }
-             }
+            if let Event::Key(key) = event::read()? {
+                if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
+                    break;
+                }
+            }
         }
 
         // Update
@@ -64,14 +62,15 @@ fn main() -> Result<()> {
 fn ui(f: &mut Frame, skeleton: &Skeleton, monitor: &Monitor) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ])
+        .constraints([Constraint::Min(0), Constraint::Length(3)])
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Metric Marionette ⚛️💃"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Metric Marionette ⚛️💃"),
+        )
         .x_bounds([-20.0, 20.0])
         .y_bounds([-20.0, 20.0])
         .paint(|ctx| {
@@ -104,7 +103,6 @@ fn ui(f: &mut Frame, skeleton: &Skeleton, monitor: &Monitor) {
         monitor.ram_usage * 100.0
     );
 
-    let p = Paragraph::new(Span::raw(status))
-        .block(Block::default().borders(Borders::ALL));
+    let p = Paragraph::new(Span::raw(status)).block(Block::default().borders(Borders::ALL));
     f.render_widget(p, chunks[1]);
 }

@@ -52,11 +52,12 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                 vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
                 return Some((sigil.strand_idx, 0));
             } else {
-                vm.output.push("Error: Call stack overflow during invoke".to_string());
+                vm.output
+                    .push("Error: Call stack overflow during invoke".to_string());
                 return None;
             }
         } else {
-             // Fallthrough to hardcoded or fail
+            // Fallthrough to hardcoded or fail
         }
     }
 
@@ -203,7 +204,12 @@ fn consume_pattern(vm: &mut ChimeraVM, cy: usize, cx: usize, offsets: &[(i64, i6
 }
 
 #[cfg(feature = "nova")]
-fn consume_dynamic_pattern(vm: &mut ChimeraVM, cy: usize, cx: usize, pattern: &[(i64, i64, Value)]) {
+fn consume_dynamic_pattern(
+    vm: &mut ChimeraVM,
+    cy: usize,
+    cx: usize,
+    pattern: &[(i64, i64, Value)],
+) {
     for (dy, dx, _) in pattern {
         if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + *dy, cx as i64 + *dx) {
             vm.grid[ny][nx] = Value::Int(0);
@@ -223,7 +229,9 @@ pub fn exec_inscribe(
         let radius_val = vm.stack.pop().unwrap();
         let strand_val = vm.stack.pop().unwrap();
 
-        if let (Value::Str(name), Value::Int(radius), Value::Int(s_idx)) = (name_val, radius_val, strand_val) {
+        if let (Value::Str(name), Value::Int(radius), Value::Int(s_idx)) =
+            (name_val, radius_val, strand_val)
+        {
             if radius > 0 {
                 let (cy, cx) = vm.context_loc;
                 let mut pattern = Vec::new();
@@ -273,19 +281,26 @@ pub fn exec_inscribe(
                         strand_idx: s_idx as usize,
                     };
                     vm.sigil_registry.insert(name.clone(), sigil);
-                    vm.output.push(format!("INSCRIBE: Learned '{}' with radius {}", name, radius));
+                    vm.output.push(format!(
+                        "INSCRIBE: Learned '{}' with radius {}",
+                        name, radius
+                    ));
                     vm.energy = vm.energy.saturating_sub(25);
                 } else {
-                    vm.output.push("INSCRIBE: No pattern found (empty space)".to_string());
+                    vm.output
+                        .push("INSCRIBE: No pattern found (empty space)".to_string());
                 }
             } else {
-                vm.output.push("Error: Invalid radius for inscribe".to_string());
+                vm.output
+                    .push("Error: Invalid radius for inscribe".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for inscribe".to_string());
+            vm.output
+                .push("Error: Type mismatch for inscribe".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for inscribe".to_string());
+        vm.output
+            .push("Error: Stack underflow for inscribe".to_string());
     }
     None
 }

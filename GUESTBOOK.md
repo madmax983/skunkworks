@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Artist)
+- **Status:** The organism is painting code. Piet interpreter integrated. Visual logic is active.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/hive-mind-dependencies
 - **Scent Origin:** Mycelium 🍄
 - **Status:** The lattice has shattered. Build failure confirmed in `bevy_reflect` (missing `BVec4A` in `glam`). Dependency conflict is now fatal.
