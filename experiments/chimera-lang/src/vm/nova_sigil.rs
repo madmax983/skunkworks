@@ -14,6 +14,8 @@ use serde::{Deserialize, Serialize};
 pub struct Sigil {
     pub pattern: Vec<(i64, i64, Value)>,
     pub strand_idx: usize,
+    #[serde(default)]
+    pub auto_cast: bool,
 }
 
 #[cfg(feature = "nova")]
@@ -212,6 +214,71 @@ fn consume_dynamic_pattern(vm: &mut ChimeraVM, cy: usize, cx: usize, pattern: &[
 }
 
 #[cfg(feature = "nova")]
+pub fn exec_auto_cast(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    // Stack: [ ..., sigil_name, state ]
+    if vm.stack.len() >= 2 {
+        let state_val = vm.stack.pop().unwrap();
+        let name_val = vm.stack.pop().unwrap();
+
+        if let (Value::Str(name), Value::Int(state)) = (name_val, state_val) {
+            if let Some(sigil) = vm.sigil_registry.get_mut(&name) {
+                sigil.auto_cast = state != 0;
+                let status = if sigil.auto_cast { "ENABLED" } else { "DISABLED" };
+                vm.output.push(format!("AUTO_CAST: {} -> {}", name, status));
+            } else {
+                vm.output.push(format!("AUTO_CAST: Unknown sigil '{}'", name));
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for auto_cast".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for auto_cast".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn process_passive_sigils(vm: &mut ChimeraVM) {
+    let (cy, cx) = vm.context_loc;
+
+    // Extract active sigils to avoid borrow conflicts
+    let sigils: Vec<(String, Vec<(i64, i64, Value)>, usize)> = vm.sigil_registry.iter()
+        .filter(|(_, s)| s.auto_cast)
+        .map(|(k, s)| (k.clone(), s.pattern.clone(), s.strand_idx))
+        .collect();
+
+    for (name, pattern, strand_idx) in sigils {
+        if check_dynamic_pattern(vm, cy, cx, &pattern) {
+            consume_dynamic_pattern(vm, cy, cx, &pattern);
+            vm.energy = vm.energy.saturating_sub(5);
+            vm.output.push(format!("AUTO_CAST: Triggered '{}'", name));
+
+            // Spawn Worker to execute
+            if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+                 let organelle = Organelle {
+                    stack: Vec::new(),
+                    ip: (strand_idx, 0),
+                    context_loc: (cy, cx),
+                    call_stack: Vec::new(),
+                    recursion_depth: 0,
+                    halted: false,
+                    kind: OrganelleType::Worker,
+                    direction: (0, 0),
+                    ttl: None,
+                };
+                vm.organelles.push(organelle);
+            }
+        }
+    }
+}
+
+#[cfg(feature = "nova")]
 pub fn exec_inscribe(
     vm: &mut ChimeraVM,
     _op: OpCode,
@@ -271,6 +338,7 @@ pub fn exec_inscribe(
                     let sigil = Sigil {
                         pattern,
                         strand_idx: s_idx as usize,
+                        auto_cast: false,
                     };
                     vm.sigil_registry.insert(name.clone(), sigil);
                     vm.output.push(format!("INSCRIBE: Learned '{}' with radius {}", name, radius));

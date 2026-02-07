@@ -1221,6 +1221,7 @@ impl ChimeraVM {
         #[cfg(feature = "nova")]
         if !time_frozen {
             self.process_environment();
+            nova_sigil::process_passive_sigils(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1536,6 +1537,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Vaccinate | OpCode::Verify | OpCode::Audit => {
