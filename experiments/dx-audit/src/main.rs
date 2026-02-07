@@ -3,8 +3,11 @@ use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::{ChimeraVM, Value};
 
 fn main() {
-    println!("🗣️ Echo's Audit: Chimera Lang (Story Demo)");
+    println!("🗣️ Echo's Story Demo");
+    run_demo();
+}
 
+fn run_demo() {
     // 1. Initialize empty VM
     let dna = Dna {
         helix: Helix { strands: vec![] },
@@ -12,12 +15,17 @@ fn main() {
     let mut vm = ChimeraVM::new(dna);
 
     // 2. Write "Story Elements" to the Petri Dish
+    // We'll put them in a row at y=0
     println!("✍️  Writing story elements to Petri Dish...");
+    // Let's create a story: "Once upon a time, there were 10 dragons."
+    // In Chimera: push(10) print()
     vm.grid[0][0] = Value::Str("push".to_string());
     vm.grid[0][1] = Value::Int(10); // Argument for push
     vm.grid[0][2] = Value::Str("print".to_string());
 
     // 3. Create a "Reader" strand that incubates the story
+    // incubate(len, y, x) -> creates new strand from grid cells
+    // We push args in reverse order because stack: len, y, x (top)
     let reader_strand = Strand {
         genes: vec![
             Gene {

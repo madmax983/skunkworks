@@ -589,6 +589,7 @@ impl ChimeraVM {
     /// Interrupts current execution to run a specific strand.
     ///
     /// Pushes the current IP to the call stack and jumps to the target strand.
+    #[cfg(any(feature = "nova", feature = "silicon"))]
     pub fn interrupt(&mut self, strand_idx: usize) {
         if strand_idx < self.dna.helix.strands.len() {
             if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
