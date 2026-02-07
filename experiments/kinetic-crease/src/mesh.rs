@@ -1,4 +1,4 @@
-use crate::physics::{Solver, Particle, Constraint};
+use crate::physics::{Constraint, Particle, Solver};
 use nalgebra::Vector3;
 use std::f32::consts::PI;
 
@@ -27,7 +27,9 @@ impl CreaseMesh {
     pub fn update_constraints(&self, solver: &mut Solver, fold_factor: f32) {
         // fold_factor: 0.0 (Flat) -> 1.0 (Fully Folded)
         for hinge in &self.hinges {
-            if let Some(Constraint::Hinge { target_len, .. }) = solver.constraints.get_mut(hinge.constraint_idx) {
+            if let Some(Constraint::Hinge { target_len, .. }) =
+                solver.constraints.get_mut(hinge.constraint_idx)
+            {
                 // Flat = PI (180 degrees).
                 // We map fold_factor to an angle deviation from PI.
 
@@ -47,14 +49,21 @@ impl CreaseMesh {
                 let h2 = hinge.h2;
 
                 // Law of cosines
-                let d_sq = h1*h1 + h2*h2 - 2.0*h1*h2 * target_angle.cos();
+                let d_sq = h1 * h1 + h2 * h2 - 2.0 * h1 * h2 * target_angle.cos();
                 *target_len = d_sq.sqrt();
             }
         }
     }
 }
 
-pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w: f32, cell_h: f32, angle_deg: f32) -> CreaseMesh {
+pub fn generate_miura_ori(
+    solver: &mut Solver,
+    rows: usize,
+    cols: usize,
+    cell_w: f32,
+    cell_h: f32,
+    angle_deg: f32,
+) -> CreaseMesh {
     let mut indices = Vec::new();
     let mut hinges = Vec::new();
 
@@ -82,7 +91,12 @@ pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w:
             // We use a checkerboard perturbation
             let z_perturb = if (r + c) % 2 == 0 { 0.1 } else { -0.1 };
 
-            let p = Particle::new(x - (cols as f32 * cell_w)/2.0, y - (rows as f32 * cell_h)/2.0, z_perturb, 1.0);
+            let p = Particle::new(
+                x - (cols as f32 * cell_w) / 2.0,
+                y - (rows as f32 * cell_h) / 2.0,
+                z_perturb,
+                1.0,
+            );
             grid_ids[r][c] = solver.add_particle(p);
         }
     }
@@ -99,9 +113,9 @@ pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w:
     for r in 0..rows {
         for c in 0..cols {
             let p00 = grid_ids[r][c];
-            let p10 = grid_ids[r][c+1];
-            let p01 = grid_ids[r+1][c];
-            let p11 = grid_ids[r+1][c+1];
+            let p10 = grid_ids[r][c + 1];
+            let p01 = grid_ids[r + 1][c];
+            let p11 = grid_ids[r + 1][c + 1];
 
             // Quad Faces: (p00, p10, p11, p01)
             // Edges
@@ -141,9 +155,9 @@ pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w:
     for r in 0..rows {
         for c in 0..cols {
             let p00 = grid_ids[r][c];
-            let p10 = grid_ids[r][c+1];
-            let p01 = grid_ids[r+1][c];
-            let p11 = grid_ids[r+1][c+1];
+            let p10 = grid_ids[r][c + 1];
+            let p01 = grid_ids[r + 1][c];
+            let p11 = grid_ids[r + 1][c + 1];
             // Cross-brace
             add_edge(solver, p10, p01);
         }
@@ -178,15 +192,23 @@ pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w:
             // Wing is (r+1, c+1).
 
             let p_shared1 = grid_ids[r][c];
-            let p_shared2 = grid_ids[r][c+1];
-            let p_wing1 = grid_ids[r-1][c];
-            let p_wing2 = grid_ids[r+1][c+1];
+            let p_shared2 = grid_ids[r][c + 1];
+            let p_wing1 = grid_ids[r - 1][c];
+            let p_wing2 = grid_ids[r + 1][c + 1];
 
             // Compute altitudes for hinge constraint
             // Need perpendicular distance from wing to axis.
             // Since faces are rigid and we initialized them, we can compute this from initial pos.
-            let h1 = point_line_distance(solver.particles[p_wing1].pos, solver.particles[p_shared1].pos, solver.particles[p_shared2].pos);
-            let h2 = point_line_distance(solver.particles[p_wing2].pos, solver.particles[p_shared1].pos, solver.particles[p_shared2].pos);
+            let h1 = point_line_distance(
+                solver.particles[p_wing1].pos,
+                solver.particles[p_shared1].pos,
+                solver.particles[p_shared2].pos,
+            );
+            let h2 = point_line_distance(
+                solver.particles[p_wing2].pos,
+                solver.particles[p_shared1].pos,
+                solver.particles[p_shared2].pos,
+            );
 
             solver.add_hinge_constraint(p_wing1, p_wing2, stiffness_hinge);
             let c_idx = solver.constraints.len() - 1;
@@ -195,7 +217,11 @@ pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w:
                 constraint_idx: c_idx,
                 h1,
                 h2,
-                assignment: if r % 2 == 0 { FoldAssignment::Mountain } else { FoldAssignment::Valley },
+                assignment: if r % 2 == 0 {
+                    FoldAssignment::Mountain
+                } else {
+                    FoldAssignment::Valley
+                },
                 max_angle: 0.1,
             });
         }
@@ -218,12 +244,20 @@ pub fn generate_miura_ori(solver: &mut Solver, rows: usize, cols: usize, cell_w:
             // Wing: (r+1, c+1).
 
             let p_shared1 = grid_ids[r][c];
-            let p_shared2 = grid_ids[r+1][c];
-            let p_wing1 = grid_ids[r][c-1];
-            let p_wing2 = grid_ids[r+1][c+1];
+            let p_shared2 = grid_ids[r + 1][c];
+            let p_wing1 = grid_ids[r][c - 1];
+            let p_wing2 = grid_ids[r + 1][c + 1];
 
-            let h1 = point_line_distance(solver.particles[p_wing1].pos, solver.particles[p_shared1].pos, solver.particles[p_shared2].pos);
-            let h2 = point_line_distance(solver.particles[p_wing2].pos, solver.particles[p_shared1].pos, solver.particles[p_shared2].pos);
+            let h1 = point_line_distance(
+                solver.particles[p_wing1].pos,
+                solver.particles[p_shared1].pos,
+                solver.particles[p_shared2].pos,
+            );
+            let h2 = point_line_distance(
+                solver.particles[p_wing2].pos,
+                solver.particles[p_shared1].pos,
+                solver.particles[p_shared2].pos,
+            );
 
             solver.add_hinge_constraint(p_wing1, p_wing2, stiffness_hinge);
             let c_idx = solver.constraints.len() - 1;

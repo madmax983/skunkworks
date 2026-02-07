@@ -1,9 +1,7 @@
-#![cfg(feature = "nova")]
-
 use crate::vm::Value;
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, VecDeque};
-use rand::Rng;
 
 const MAX_CHANNEL_SIZE: usize = 100;
 const MAX_FAITH: u64 = 1_000_000;
@@ -74,7 +72,11 @@ impl Egregore {
                 if self.alignment > 80 {
                     Manifestation::Bless
                 } else {
-                    let msgs = ["Order prevails.", "Light guides you.", "Align with the grid."];
+                    let msgs = [
+                        "Order prevails.",
+                        "Light guides you.",
+                        "Align with the grid.",
+                    ];
                     let msg = msgs[rng.gen_range(0..msgs.len())];
                     Manifestation::Whisper(msg.to_string())
                 }
@@ -90,13 +92,19 @@ impl Egregore {
     }
 
     pub fn sacrifice(&mut self, amount: i64) {
-        self.faith = self.faith.saturating_add(amount.abs() as u64).min(MAX_FAITH);
+        self.faith = self
+            .faith
+            .saturating_add(amount.unsigned_abs())
+            .min(MAX_FAITH);
         // Sacrifice drives Chaos strongly
         self.alignment = (self.alignment - 10).max(-100);
     }
 
     pub fn pray(&mut self, amount: i64) {
-        self.faith = self.faith.saturating_add(amount.abs() as u64).min(MAX_FAITH);
+        self.faith = self
+            .faith
+            .saturating_add(amount.unsigned_abs())
+            .min(MAX_FAITH);
         // Prayer drives Order moderately
         self.alignment = (self.alignment + 5).min(100);
     }

@@ -71,52 +71,64 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
         result = Some(Value::Str("Gold".to_string()));
         cost = 50;
     } else if ingredients.len() == 2 {
-            // Genetic Splicing Recipe: Two Strand Indices
-            if let (Value::Int(a), Value::Int(b)) = (&ingredients[0], &ingredients[1]) {
-                let idx_a = *a as usize;
-                let idx_b = *b as usize;
-                if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
-                    // Splice logic (Interleave)
-                    let genes_a = &vm.dna.helix.strands[idx_a].genes;
-                    let genes_b = &vm.dna.helix.strands[idx_b].genes;
-                    let mut new_genes = Vec::new();
-                    let max_len = genes_a.len().max(genes_b.len());
-                    for i in 0..max_len {
-                        if i < genes_a.len() { new_genes.push(genes_a[i].clone()); }
-                        if i < genes_b.len() { new_genes.push(genes_b[i].clone()); }
+        // Genetic Splicing Recipe: Two Strand Indices
+        if let (Value::Int(a), Value::Int(b)) = (&ingredients[0], &ingredients[1]) {
+            let idx_a = *a as usize;
+            let idx_b = *b as usize;
+            if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
+                // Splice logic (Interleave)
+                let genes_a = &vm.dna.helix.strands[idx_a].genes;
+                let genes_b = &vm.dna.helix.strands[idx_b].genes;
+                let mut new_genes = Vec::new();
+                let max_len = genes_a.len().max(genes_b.len());
+                for i in 0..max_len {
+                    if i < genes_a.len() {
+                        new_genes.push(genes_a[i].clone());
                     }
-
-                    vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes });
-                    vm.telomeres.push(50);
-                    #[cfg(feature = "cortex")]
-                    {
-                        vm.activation_levels.push(0);
-                        vm.synapse_map.push(Vec::new());
+                    if i < genes_b.len() {
+                        new_genes.push(genes_b[i].clone());
                     }
-                    let new_idx = vm.dna.helix.strands.len() - 1;
+                }
 
-                    vm.cladistics.register_strand(
+                vm.dna
+                    .helix
+                    .strands
+                    .push(crate::ast::Strand { genes: new_genes });
+                vm.telomeres.push(50);
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
+                let new_idx = vm.dna.helix.strands.len() - 1;
+
+                vm.cladistics.register_strand(
                     new_idx,
                     Some(idx_a), // Primary parent
                     vm.tick_counter,
-                    "Alchemy".to_string()
-                    );
+                    "Alchemy".to_string(),
+                );
 
-                    result = Some(Value::Int(new_idx as i64));
-                    cost = 30;
-                    vm.output.push(format!("ALCHEMY: Spliced Strand {} & {} -> {}", idx_a, idx_b, new_idx));
-                }
+                result = Some(Value::Int(new_idx as i64));
+                cost = 30;
+                vm.output.push(format!(
+                    "ALCHEMY: Spliced Strand {} & {} -> {}",
+                    idx_a, idx_b, new_idx
+                ));
             }
+        }
     }
 
     if let Some(res) = result {
         vm.crucible.contents.push(res);
         vm.energy = vm.energy.saturating_sub(cost);
-        vm.output.push("ALCHEMY: Transmutation successful!".to_string());
+        vm.output
+            .push("ALCHEMY: Transmutation successful!".to_string());
     } else {
         // Restore ingredients if failed
         vm.crucible.contents = ingredients;
-        vm.output.push("ALCHEMY: Fizzle. Nothing happened.".to_string());
+        vm.output
+            .push("ALCHEMY: Fizzle. Nothing happened.".to_string());
     }
 }
 

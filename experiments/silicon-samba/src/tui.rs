@@ -108,10 +108,7 @@ fn ui(
     );
 
     // Tracks
-    let constraints: Vec<Constraint> = generators
-        .iter()
-        .map(|_| Constraint::Length(3))
-        .collect();
+    let constraints: Vec<Constraint> = generators.iter().map(|_| Constraint::Length(3)).collect();
 
     let track_chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -158,8 +155,5 @@ fn ui(
         );
     }
 
-    f.render_widget(
-        Paragraph::new("Press 'q' or 'ESC' to quit"),
-        chunks[2]
-    );
+    f.render_widget(Paragraph::new("Press 'q' or 'ESC' to quit"), chunks[2]);
 }

@@ -111,7 +111,9 @@ mod tests {
         let dna = Dna {
             helix: Helix {
                 strands: vec![
-                    Strand { genes: seller_genes },
+                    Strand {
+                        genes: seller_genes,
+                    },
                     Strand { genes: buyer_genes },
                 ],
             },

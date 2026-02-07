@@ -1,7 +1,7 @@
 #[cfg(test)]
 #[cfg(feature = "nova")]
 mod tests {
-    use crate::ast::{Strand, Gene};
+    use crate::ast::{Gene, Strand};
     use crate::opcode::OpCode;
     use crate::vm::nova_bestiary;
 
@@ -14,9 +14,9 @@ mod tests {
         let genes = vec![
             make_gene(OpCode::Consume),
             make_gene(OpCode::Consume),
-            make_gene(OpCode::Consume), // 3 Consumes -> Voracious
+            make_gene(OpCode::Consume),         // 3 Consumes -> Voracious
             make_gene(OpCode::Photosynthesize), // -> Autotrophic
-            make_gene(OpCode::Migrate), // -> Nomadic
+            make_gene(OpCode::Migrate),         // -> Nomadic
         ];
         let strand = Strand { genes };
 

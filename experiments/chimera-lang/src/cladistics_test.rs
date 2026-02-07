@@ -28,7 +28,8 @@ mod tests {
         let mut vm = ChimeraVM::new(make_dna(genes));
 
         // Register strand 0 manually for test accuracy
-        vm.cladistics.register_strand(0, None, 0, "Genesis".to_string());
+        vm.cladistics
+            .register_strand(0, None, 0, "Genesis".to_string());
 
         vm.step(); // push
         vm.step(); // mitosis
@@ -61,7 +62,8 @@ mod tests {
             },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
-        vm.cladistics.register_strand(0, None, 0, "Genesis".to_string());
+        vm.cladistics
+            .register_strand(0, None, 0, "Genesis".to_string());
 
         let old_node_id = *vm.cladistics.active_map.get(&0).unwrap();
 

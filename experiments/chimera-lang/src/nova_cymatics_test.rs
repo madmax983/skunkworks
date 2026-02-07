@@ -55,7 +55,11 @@ fn test_cymatics_sift() {
     // Original should be empty
     assert_eq!(vm.grid[8][8], Value::Int(0), "Center should be empty");
     // Neighbor should have value
-    assert_eq!(vm.grid[8][9], Value::Int(10), "Neighbor should receive value");
+    assert_eq!(
+        vm.grid[8][9],
+        Value::Int(10),
+        "Neighbor should receive value"
+    );
 
     // Check output
     assert!(vm.output.iter().any(|s| s.contains("SIFT: Moved 1")));

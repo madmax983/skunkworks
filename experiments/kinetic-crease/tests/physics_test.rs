@@ -1,4 +1,4 @@
-use kinetic_crease::physics::{Solver, Particle};
+use kinetic_crease::physics::{Particle, Solver};
 use nalgebra::Vector3;
 
 #[test]
@@ -29,7 +29,11 @@ fn test_distance_constraint() {
     let dist = (solver.particles[id1].pos - solver.particles[id2].pos).magnitude();
 
     // Should be close to 1.0
-    assert!((dist - 1.0).abs() < 0.1, "Distance {} not close to 1.0", dist);
+    assert!(
+        (dist - 1.0).abs() < 0.1,
+        "Distance {} not close to 1.0",
+        dist
+    );
 }
 
 #[test]
@@ -43,7 +47,7 @@ fn test_hinge_geometry() {
     let h1 = 1.0;
     let h2 = 1.0;
 
-    let d_sq = h1*h1 + h2*h2 - 2.0*h1*h2 * target_angle.cos();
+    let d_sq = h1 * h1 + h2 * h2 - 2.0 * h1 * h2 * target_angle.cos();
     let d = d_sq.sqrt();
 
     // For 0.5 fold factor, angle is ~PI/2 (90 deg) if we map fully linear.

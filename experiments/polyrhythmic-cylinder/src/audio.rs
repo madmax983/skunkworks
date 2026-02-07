@@ -1,7 +1,7 @@
-use std::collections::VecDeque;
-use std::sync::{Arc, Mutex};
 use rand::Rng;
-use std::sync::mpsc::{Sender, Receiver, channel};
+use std::collections::VecDeque;
+use std::sync::mpsc::{channel, Receiver, Sender};
+use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
 pub enum AudioCommand {
@@ -28,12 +28,16 @@ impl Voice {
     }
 
     fn pluck(&mut self, frequency: f32, volume: f32) {
-        if frequency <= 0.0 { return; }
+        if frequency <= 0.0 {
+            return;
+        }
         self.frequency = frequency;
 
         // Karplus-Strong period
         let period = (self.sample_rate / frequency).round() as usize;
-        if period < 2 { return; }
+        if period < 2 {
+            return;
+        }
 
         // Resize buffer
         self.buffer.resize(period, 0.0);
@@ -57,7 +61,11 @@ impl Voice {
         let current_val = self.buffer[self.index];
 
         // Previous value (wrapping)
-        let prev_index = if self.index == 0 { len - 1 } else { self.index - 1 };
+        let prev_index = if self.index == 0 {
+            len - 1
+        } else {
+            self.index - 1
+        };
         let prev_val = self.buffer[prev_index];
 
         // Filter
@@ -170,24 +178,25 @@ pub fn start_audio() -> (Sender<AudioCommand>, AudioHandle) {
 
                 if let Ok(stream) = stream {
                     stream.play().unwrap();
-                    return (tx, AudioHandle { _stream: Some(stream) });
+                    return (
+                        tx,
+                        AudioHandle {
+                            _stream: Some(stream),
+                        },
+                    );
                 }
             }
         }
 
         // Fallback if audio init failed but feature is enabled
         // Spawn a thread to drain channel
-        std::thread::spawn(move || {
-            while let Ok(_) = rx.recv() {}
-        });
+        std::thread::spawn(move || while let Ok(_) = rx.recv() {});
         return (tx, AudioHandle { _stream: None });
     }
 
     #[cfg(not(feature = "audio"))]
     {
-        std::thread::spawn(move || {
-            while let Ok(_) = rx.recv() {}
-        });
+        std::thread::spawn(move || while let Ok(_) = rx.recv() {});
         (tx, AudioHandle {})
     }
 }

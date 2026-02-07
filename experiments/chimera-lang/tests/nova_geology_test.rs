@@ -15,8 +15,14 @@ fn make_vm_with_genes(genes: Vec<Gene>) -> ChimeraVM {
 fn test_quake() {
     // Fill grid column 0 with 1s
     let mut vm = make_vm_with_genes(vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // Intensity
-        Gene { op: OpCode::Quake, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // Intensity
+        Gene {
+            op: OpCode::Quake,
+            args: vec![],
+        },
     ]);
 
     // Setup initial state: Diagonal line
@@ -43,8 +49,14 @@ fn test_quake() {
 #[test]
 fn test_erode() {
     let mut vm = make_vm_with_genes(vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // Radius
-        Gene { op: OpCode::Erode, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // Radius
+        Gene {
+            op: OpCode::Erode,
+            args: vec![],
+        },
     ]);
 
     // Set center to 10
@@ -67,8 +79,14 @@ fn test_erode() {
 #[test]
 fn test_sediment() {
     let mut vm = make_vm_with_genes(vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // Radius
-        Gene { op: OpCode::Sediment, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(2)],
+        }, // Radius
+        Gene {
+            op: OpCode::Sediment,
+            args: vec![],
+        },
     ]);
 
     vm.grid[8][8] = Value::Int(10);
@@ -83,11 +101,26 @@ fn test_sediment() {
 fn test_tectonics() {
     // Stack expected: [dy, dx, h, w] (w is top)
     let mut vm = make_vm_with_genes(vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dy
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dx
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] }, // h
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] }, // w
-        Gene { op: OpCode::Tectonics, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // dy
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // dx
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        }, // h
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        }, // w
+        Gene {
+            op: OpCode::Tectonics,
+            args: vec![],
+        },
     ]);
 
     // Plate center is 8,8. 4x4 around it.
@@ -105,8 +138,14 @@ fn test_tectonics() {
 #[test]
 fn test_volcano() {
     let mut vm = make_vm_with_genes(vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // Power
-        Gene { op: OpCode::Volcano, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // Power
+        Gene {
+            op: OpCode::Volcano,
+            args: vec![],
+        },
     ]);
 
     vm.step();

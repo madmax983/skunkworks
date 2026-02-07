@@ -44,8 +44,14 @@ impl OptimizerState {
     pub fn new(opt_type: OptimizerType) -> Self {
         match opt_type {
             OptimizerType::SGD => OptimizerState::SGD,
-            OptimizerType::Momentum => OptimizerState::Momentum { velocity: Vec2::ZERO },
-            OptimizerType::Adam => OptimizerState::Adam { m: Vec2::ZERO, v: Vec2::ZERO, t: 1 },
+            OptimizerType::Momentum => OptimizerState::Momentum {
+                velocity: Vec2::ZERO,
+            },
+            OptimizerType::Adam => OptimizerState::Adam {
+                m: Vec2::ZERO,
+                v: Vec2::ZERO,
+                t: 1,
+            },
         }
     }
 
@@ -54,9 +60,7 @@ impl OptimizerState {
     /// To minimize, subtract this step. To maximize, add it.
     pub fn compute_step(&mut self, gradient: Vec2, learning_rate: f32) -> Vec2 {
         match self {
-            OptimizerState::SGD => {
-                gradient * learning_rate
-            }
+            OptimizerState::SGD => gradient * learning_rate,
             OptimizerState::Momentum { velocity } => {
                 let momentum_factor = 0.9;
                 *velocity = *velocity * momentum_factor + gradient * learning_rate;

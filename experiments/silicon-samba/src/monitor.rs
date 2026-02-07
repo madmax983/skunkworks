@@ -21,7 +21,11 @@ impl SystemMonitor {
     }
 
     pub fn get_cpu_usage_per_core(&self) -> Vec<f32> {
-        self.sys.cpus().iter().map(|cpu| cpu.cpu_usage() / 100.0).collect()
+        self.sys
+            .cpus()
+            .iter()
+            .map(|cpu| cpu.cpu_usage() / 100.0)
+            .collect()
     }
 
     pub fn get_global_cpu_usage(&self) -> f32 {
@@ -55,7 +59,7 @@ mod tests {
         let cpu = monitor.get_global_cpu_usage();
         println!("CPU: {}", cpu);
         assert!(cpu >= 0.0 && cpu <= 1.0); // Assuming 0-100 is normalized to 0-1 by get_global_cpu_usage dividing by 100.
-        // Wait, sysinfo returns 0-100 usually. My method divides by 100.0.
+                                           // Wait, sysinfo returns 0-100 usually. My method divides by 100.0.
 
         let mem = monitor.get_memory_usage();
         println!("Memory: {}", mem);

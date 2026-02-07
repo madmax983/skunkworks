@@ -135,12 +135,18 @@ async fn run_window() -> Result<()> {
                             KeyCode::ArrowUp => {
                                 temperature += 0.05;
                                 info!("Temperature: {:.2}", temperature);
-                                window.set_title(&format!("Genesis: Phase Engine (Temp: {:.2})", temperature));
+                                window.set_title(&format!(
+                                    "Genesis: Phase Engine (Temp: {:.2})",
+                                    temperature
+                                ));
                             }
                             KeyCode::ArrowDown => {
                                 temperature = (temperature - 0.05).max(0.0);
                                 info!("Temperature: {:.2}", temperature);
-                                window.set_title(&format!("Genesis: Phase Engine (Temp: {:.2})", temperature));
+                                window.set_title(&format!(
+                                    "Genesis: Phase Engine (Temp: {:.2})",
+                                    temperature
+                                ));
                             }
                             KeyCode::KeyR => {
                                 info!("Resetting simulation");

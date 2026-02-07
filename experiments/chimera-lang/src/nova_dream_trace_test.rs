@@ -39,7 +39,10 @@ mod tests {
         vm.step();
 
         // Check if trace was recorded
-        assert!(!vm.dream_traces.is_empty(), "Dream traces should not be empty");
+        assert!(
+            !vm.dream_traces.is_empty(),
+            "Dream traces should not be empty"
+        );
         let trace = &vm.dream_traces[0];
 
         assert_eq!(trace.strand_idx, 0);
@@ -56,13 +59,13 @@ mod tests {
     fn test_lucid_dreaming_injection() {
         // We can't easily test TUI interaction here, but we can verify the data structures allow it.
         // Create a fake trace with a mutated strand
-        let mutated_genes = vec![
-            Gene {
-                op: OpCode::Photosynthesize,
-                args: vec![],
-            }
-        ];
-        let mutated_strand = Strand { genes: mutated_genes };
+        let mutated_genes = vec![Gene {
+            op: OpCode::Photosynthesize,
+            args: vec![],
+        }];
+        let mutated_strand = Strand {
+            genes: mutated_genes,
+        };
 
         let trace = crate::vm::dream::DreamTrace::new(
             0,
@@ -75,7 +78,7 @@ mod tests {
             Some(mutated_strand.clone()),
             false, // Discarded originally
             vec![],
-            None
+            None,
         );
 
         // In TUI logic:
@@ -83,7 +86,10 @@ mod tests {
         //     vm.dna.helix.strands[trace.strand_idx] = strand.clone();
         // }
 
-        let genes = vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }];
+        let genes = vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
         // "Realize" the dream

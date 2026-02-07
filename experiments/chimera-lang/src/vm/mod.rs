@@ -50,6 +50,8 @@ pub mod alchemy;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod cladistics;
 pub mod cortex;
 pub mod dream;
 #[cfg(feature = "git")]
@@ -65,28 +67,28 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
-pub mod nova_biome;
-#[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
+pub mod nova_biome;
+#[cfg(feature = "nova")]
 pub mod nova_botany;
-#[cfg(all(feature = "nova", feature = "resonance"))]
-pub mod nova_cymatics;
-#[cfg(feature = "nova")]
-pub mod nova_market;
-#[cfg(feature = "nova")]
-pub mod nova_geology;
-#[cfg(feature = "nova")]
-pub mod nova_egregore;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
+#[cfg(all(feature = "nova", feature = "resonance"))]
+pub mod nova_cymatics;
+#[cfg(feature = "nova")]
+pub mod nova_egregore;
+#[cfg(feature = "nova")]
+pub mod nova_geology;
+#[cfg(feature = "nova")]
+pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
@@ -99,8 +101,6 @@ pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 pub mod oracle;
-#[cfg(feature = "nova")]
-pub mod cladistics;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
 #[cfg(feature = "nova")]
@@ -622,14 +622,17 @@ impl ChimeraVM {
     pub fn interrupt(&mut self, strand_idx: usize) {
         if strand_idx < self.dna.helix.strands.len() {
             if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
-                self.output.push("Error: Interrupt ignored, call stack full".to_string());
+                self.output
+                    .push("Error: Interrupt ignored, call stack full".to_string());
                 return;
             }
             self.call_stack.push(self.ip);
             self.ip = (strand_idx, 0);
-            self.output.push(format!("INTERRUPT: Triggered strand {}", strand_idx));
+            self.output
+                .push(format!("INTERRUPT: Triggered strand {}", strand_idx));
         } else {
-            self.output.push(format!("INTERRUPT ERROR: Invalid strand {}", strand_idx));
+            self.output
+                .push(format!("INTERRUPT ERROR: Invalid strand {}", strand_idx));
         }
     }
 
@@ -1358,7 +1361,8 @@ impl ChimeraVM {
                         let mut rng = rand::thread_rng();
                         let idx = rng.gen_range(0..self.dna.helix.strands.len());
                         self.dna.helix.strands[idx].genes.clear();
-                        self.output.push(format!("EGREGORE: Struck down strand {}", idx));
+                        self.output
+                            .push(format!("EGREGORE: Struck down strand {}", idx));
                     }
                 }
                 nova_egregore::Manifestation::Bless => {
@@ -1949,7 +1953,11 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Quake | OpCode::Erode | OpCode::Sediment | OpCode::Tectonics | OpCode::Volcano => {
+            OpCode::Quake
+            | OpCode::Erode
+            | OpCode::Sediment
+            | OpCode::Tectonics
+            | OpCode::Volcano => {
                 nova_geology::exec_geology_op(self, op, args);
                 None
             }

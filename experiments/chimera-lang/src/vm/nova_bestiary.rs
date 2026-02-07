@@ -3,7 +3,7 @@ use crate::ast::Strand;
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
-use rand::{Rng, SeedableRng, rngs::StdRng};
+use rand::{rngs::StdRng, Rng, SeedableRng};
 
 #[cfg(feature = "nova")]
 pub fn analyze_traits(strand: &Strand) -> Vec<String> {
@@ -15,40 +15,64 @@ pub fn analyze_traits(strand: &Strand) -> Vec<String> {
     }
 
     if let Some(&count) = op_counts.get(&OpCode::Consume) {
-        if count > 2 { traits.push("Voracious".to_string()); }
+        if count > 2 {
+            traits.push("Voracious".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Photosynthesize) {
-        if count > 0 { traits.push("Autotrophic".to_string()); }
+        if count > 0 {
+            traits.push("Autotrophic".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Migrate) {
-        if count > 0 { traits.push("Nomadic".to_string()); }
+        if count > 0 {
+            traits.push("Nomadic".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::GWrite) {
-        if count > 0 { traits.push("Constructive".to_string()); }
+        if count > 0 {
+            traits.push("Constructive".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Virus) {
-        if count > 0 { traits.push("Parasitic".to_string()); }
+        if count > 0 {
+            traits.push("Parasitic".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::SporeCloud) {
-        if count > 0 { traits.push("Fungal".to_string()); }
+        if count > 0 {
+            traits.push("Fungal".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::EgregoreSummon) {
-        if count > 0 { traits.push("Cultist".to_string()); }
+        if count > 0 {
+            traits.push("Cultist".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Sacrifice) {
-        if count > 0 { traits.push("Zealot".to_string()); }
+        if count > 0 {
+            traits.push("Zealot".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Piet) {
-        if count > 0 { traits.push("Artistic".to_string()); }
+        if count > 0 {
+            traits.push("Artistic".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Sing) {
-        if count > 0 { traits.push("Melodic".to_string()); }
+        if count > 0 {
+            traits.push("Melodic".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::Dream) {
-        if count > 0 { traits.push("Dreamer".to_string()); }
+        if count > 0 {
+            traits.push("Dreamer".to_string());
+        }
     }
     if let Some(&count) = op_counts.get(&OpCode::QuantumJump) {
-        if count > 0 { traits.push("Phased".to_string()); }
+        if count > 0 {
+            traits.push("Phased".to_string());
+        }
     }
 
     if traits.is_empty() {
@@ -63,13 +87,25 @@ pub fn generate_name(seed: u64, traits: &[String]) -> String {
     let mut rng = StdRng::seed_from_u64(seed);
 
     let prefixes = [
-        "Greater", "Lesser", "Ancient", "Neon", "Void", "Star", "Cyber",
-        "Fungal", "Crystal", "Shadow", "Radiant", "Toxic", "Quantum", "Echo"
+        "Greater", "Lesser", "Ancient", "Neon", "Void", "Star", "Cyber", "Fungal", "Crystal",
+        "Shadow", "Radiant", "Toxic", "Quantum", "Echo",
     ];
 
     let nouns = [
-        "Slime", "Wisp", "Golem", "Spore", "Drone", "Spirit", "Beast",
-        "Construct", "Virus", "Echo", "Wraith", "Titan", "Larva", "Wyrm"
+        "Slime",
+        "Wisp",
+        "Golem",
+        "Spore",
+        "Drone",
+        "Spirit",
+        "Beast",
+        "Construct",
+        "Virus",
+        "Echo",
+        "Wraith",
+        "Titan",
+        "Larva",
+        "Wyrm",
     ];
 
     let suffix = if traits.contains(&"Voracious".to_string()) {
@@ -121,7 +157,12 @@ pub fn generate_face(seed: u64, traits: &[String]) -> Vec<String> {
 
     vec![
         format!("  {}  ", horns),
-        format!(" ({}{}{}) ", eyes[0], if rng.gen_bool(0.1) { "*" } else { " " }, eyes[1]),
+        format!(
+            " ({}{}{}) ",
+            eyes[0],
+            if rng.gen_bool(0.1) { "*" } else { " " },
+            eyes[1]
+        ),
         format!("  \\{}/  ", mouth),
         format!("   --   "),
     ]

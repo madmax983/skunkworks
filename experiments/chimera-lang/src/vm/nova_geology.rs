@@ -1,5 +1,3 @@
-#![cfg(feature = "nova")]
-
 use super::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
@@ -78,8 +76,7 @@ fn exec_erode(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
         vm.energy = vm.energy.saturating_sub(count / 2 + 5);
-        vm.output
-            .push(format!("ERODE: Weathered {} cells", count));
+        vm.output.push(format!("ERODE: Weathered {} cells", count));
     } else {
         vm.output.push("Error: Type mismatch for erode".to_string());
     }
@@ -130,34 +127,40 @@ fn exec_tectonics(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             // Collect cells to move
             let mut moving_cells = Vec::new();
+            let mut cells_to_clear = Vec::new();
+
             for y in start_y..end_y {
                 for x in start_x..end_x {
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                         moving_cells.push(((ny, nx), vm.grid[ny][nx].clone()));
-                        // Clear old pos (will be overwritten if overlap, but we clear first to simulate "lift")
-                        vm.grid[ny][nx] = Value::Int(0);
+                        cells_to_clear.push((ny, nx));
                     }
                 }
+            }
+
+            // Clear old positions (must be done after reading ALL values to handle overlapping/wrapping plates)
+            for (cy, cx) in cells_to_clear {
+                vm.grid[cy][cx] = Value::Int(0);
             }
 
             // Place cells in new location
             for ((oy, ox), val) in moving_cells {
                 // Apply delta
-                // Note: we calculate new pos based on ORIGINAL coordinates, not normalized, to maintain relative structure
-                // But since we stored (ny, nx), we must approximate.
-                // Better: recalculate new pos from oy, ox with delta.
                 if let Some((ty, tx)) = vm.normalize_coords(oy as i64 + dy, ox as i64 + dx) {
                     vm.grid[ty][tx] = val;
                 }
             }
 
             vm.energy = vm.energy.saturating_sub(20);
-            vm.output.push(format!("TECTONICS: Shifted plate by {},{}", dx, dy));
+            vm.output
+                .push(format!("TECTONICS: Shifted plate by {},{}", dx, dy));
         } else {
-            vm.output.push("Error: Type mismatch for tectonics".to_string());
+            vm.output
+                .push("Error: Type mismatch for tectonics".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for tectonics".to_string());
+        vm.output
+            .push("Error: Stack underflow for tectonics".to_string());
     }
     None
 }
@@ -183,7 +186,8 @@ fn exec_volcano(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.energy = vm.energy.saturating_sub(p * 5);
         vm.output.push(format!("VOLCANO: Erupted at {},{}", cx, cy));
     } else {
-        vm.output.push("Error: Type mismatch for volcano".to_string());
+        vm.output
+            .push("Error: Type mismatch for volcano".to_string());
     }
     None
 }

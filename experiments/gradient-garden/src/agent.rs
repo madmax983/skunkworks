@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
-use crate::optimizer::{OptimizerState, OptimizerType};
 use crate::landscape::ObjectiveFunction;
+use crate::optimizer::{OptimizerState, OptimizerType};
+use macroquad::prelude::*;
 
 pub struct Tip {
     pub pos: Vec2,
@@ -30,7 +30,9 @@ impl Tip {
     }
 
     pub fn grow(&mut self, landscape: &dyn ObjectiveFunction, learning_rate: f32, bounds: Rect) {
-        if !self.active { return; }
+        if !self.active {
+            return;
+        }
 
         let grad = landscape.gradient(self.pos.x, self.pos.y);
 
@@ -74,7 +76,9 @@ impl Tip {
     }
 
     pub fn draw(&self, _offset: Vec2) {
-        if self.history.len() < 2 { return; }
+        if self.history.len() < 2 {
+            return;
+        }
 
         // We only draw if active or history exists.
         // Transforming points to screen space should happen in main, but here we can use passed transforms.
@@ -83,18 +87,20 @@ impl Tip {
         // Since we are doing a 2D top-down view, we can just draw lines.
 
         // Optimization: draw as line strip
-        for i in 0..self.history.len()-1 {
+        for i in 0..self.history.len() - 1 {
             let p1 = self.history[i];
-            let p2 = self.history[i+1];
+            let p2 = self.history[i + 1];
 
             // Apply simple transform if needed, but macroquad has Camera2D.
             // Let's assume Camera2D is active.
 
             draw_line(
-                p1.x, p1.y,
-                p2.x, p2.y,
+                p1.x,
+                p1.y,
+                p2.x,
+                p2.y,
                 if self.is_root { 0.15 } else { 0.1 }, // Fixed world thickness (scales with zoom)
-                self.color
+                self.color,
             );
         }
 
@@ -113,7 +119,7 @@ impl Plant {
     pub fn new(pos: Vec2, opt_type: OptimizerType) -> Self {
         Self {
             tips: vec![
-                Tip::new(pos, opt_type, true), // Root
+                Tip::new(pos, opt_type, true),  // Root
                 Tip::new(pos, opt_type, false), // Stem
             ],
         }

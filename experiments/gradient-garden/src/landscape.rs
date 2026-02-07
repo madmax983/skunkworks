@@ -18,10 +18,12 @@ pub trait ObjectiveFunction {
 
 pub struct GaussianHills;
 impl ObjectiveFunction for GaussianHills {
-    fn name(&self) -> &str { "Gaussian Hills" }
+    fn name(&self) -> &str {
+        "Gaussian Hills"
+    }
     fn value(&self, x: f32, y: f32) -> f32 {
         // A nice mix of peaks and valleys
-        let v1 = (-(x*x + y*y) * 0.1).exp() * 5.0; // Central peak
+        let v1 = (-(x * x + y * y) * 0.1).exp() * 5.0; // Central peak
         let v2 = (x * 0.8).sin() * (y * 0.8).cos() * 2.0; // Waves
         v1 + v2
     }
@@ -29,15 +31,18 @@ impl ObjectiveFunction for GaussianHills {
 
 pub struct Rastrigin;
 impl ObjectiveFunction for Rastrigin {
-    fn name(&self) -> &str { "Rastrigin" }
+    fn name(&self) -> &str {
+        "Rastrigin"
+    }
     fn value(&self, x: f32, y: f32) -> f32 {
         let a = 10.0;
         // Standard Rastrigin is a minimization problem with min at 0.
         // We invert it so the "Global Minimum" becomes a "Global Maximum" (Peak) if we want stems to find it?
         // Or we keep it standard: Roots find the min (0).
         // Let's return the standard value, but maybe scaled.
-        let val = a * 2.0 + (x.powi(2) - a * (2.0 * PI * x).cos())
-                          + (y.powi(2) - a * (2.0 * PI * y).cos());
+        let val = a * 2.0
+            + (x.powi(2) - a * (2.0 * PI * x).cos())
+            + (y.powi(2) - a * (2.0 * PI * y).cos());
         // Invert it so "deep valleys" are low values
         -val * 0.2
     }
@@ -45,7 +50,9 @@ impl ObjectiveFunction for Rastrigin {
 
 pub struct Rosenbrock;
 impl ObjectiveFunction for Rosenbrock {
-    fn name(&self) -> &str { "Rosenbrock" }
+    fn name(&self) -> &str {
+        "Rosenbrock"
+    }
     fn value(&self, x: f32, y: f32) -> f32 {
         let a = 1.0;
         let b = 100.0;
@@ -56,7 +63,9 @@ impl ObjectiveFunction for Rosenbrock {
 
 pub struct Ackley;
 impl ObjectiveFunction for Ackley {
-    fn name(&self) -> &str { "Ackley" }
+    fn name(&self) -> &str {
+        "Ackley"
+    }
     fn value(&self, x: f32, y: f32) -> f32 {
         let term1 = -20.0 * (-0.2 * (0.5 * (x.powi(2) + y.powi(2))).sqrt()).exp();
         let term2 = -(0.5 * ((2.0 * PI * x).cos() + (2.0 * PI * y).cos())).exp();
@@ -67,12 +76,14 @@ impl ObjectiveFunction for Ackley {
 
 pub struct EggHolder;
 impl ObjectiveFunction for EggHolder {
-    fn name(&self) -> &str { "Egg Holder" }
+    fn name(&self) -> &str {
+        "Egg Holder"
+    }
     fn value(&self, x: f32, y: f32) -> f32 {
         // Typically defined on larger range [-512, 512], scale input
         let sx = x * 50.0;
         let sy = y * 50.0;
-        let val = -(sy + 47.0) * ((sx/2.0 + sx + 47.0).sin()) - sx * ((sx - (sy + 47.0)).sin());
+        let val = -(sy + 47.0) * ((sx / 2.0 + sx + 47.0).sin()) - sx * ((sx - (sy + 47.0)).sin());
         val * 0.01
     }
 }

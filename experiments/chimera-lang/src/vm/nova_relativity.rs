@@ -24,8 +24,8 @@ pub fn update_relativity(vm: &mut ChimeraVM) {
             for (dy, dx) in neighbors {
                 // Gravity passes through everything, ignoring membranes
                 if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                     sum += vm.gravity_grid[ny][nx] as i128;
-                     count += 1;
+                    sum += vm.gravity_grid[ny][nx] as i128;
+                    count += 1;
                 }
             }
 

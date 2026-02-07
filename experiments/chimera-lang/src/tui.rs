@@ -10,13 +10,13 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
-use ratatui::{Frame,
+use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
-    Terminal,
+    Frame, Terminal,
 };
 use std::io;
 
@@ -489,11 +489,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Bestiary => {
-                                app_state.input_mode = InputMode::Normal;
-                                app_state.input_buffer.clear();
-                            }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Bestiary => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -648,15 +648,24 @@ where
                         if let ViewMode::Alchemy = app_state.view_mode {
                             // Add to Crucible
                             match app_state.alchemy_selection {
-                                0 => { // Shelf
-                                    let elements = vec!["Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy"];
+                                0 => {
+                                    // Shelf
+                                    let elements = [
+                                        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead",
+                                        "Energy",
+                                    ];
                                     if app_state.alchemy_shelf_idx < elements.len() {
-                                        vm.crucible.add(crate::vm::Value::Str(elements[app_state.alchemy_shelf_idx].to_string()));
+                                        vm.crucible.add(crate::vm::Value::Str(
+                                            elements[app_state.alchemy_shelf_idx].to_string(),
+                                        ));
                                     }
                                 }
-                                1 => { // Strands
+                                1 => {
+                                    // Strands
                                     if app_state.alchemy_strand_idx < vm.dna.helix.strands.len() {
-                                        vm.crucible.add(crate::vm::Value::Int(app_state.alchemy_strand_idx as i64));
+                                        vm.crucible.add(crate::vm::Value::Int(
+                                            app_state.alchemy_strand_idx as i64,
+                                        ));
                                     }
                                 }
                                 _ => {}
@@ -735,13 +744,13 @@ where
                         #[cfg(feature = "nova")]
                         ViewMode::Alchemy => {
                             if app_state.alchemy_selection == 0 {
-                                if app_state.alchemy_shelf_idx < 7 { // 8 items
+                                if app_state.alchemy_shelf_idx < 7 {
+                                    // 8 items
                                     app_state.alchemy_shelf_idx += 1;
                                 }
-                            } else {
-                                if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len() {
-                                    app_state.alchemy_strand_idx += 1;
-                                }
+                            } else if app_state.alchemy_strand_idx + 1 < vm.dna.helix.strands.len()
+                            {
+                                app_state.alchemy_strand_idx += 1;
                             }
                         }
                         ViewMode::Heatmap => {}
@@ -781,10 +790,10 @@ where
                         ViewMode::Egregore => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Bestiary => {
-                            if !vm.organelles.is_empty() {
-                                if app_state.selected_organelle_index + 1 < vm.organelles.len() {
-                                    app_state.selected_organelle_index += 1;
-                                }
+                            if !vm.organelles.is_empty()
+                                && app_state.selected_organelle_index + 1 < vm.organelles.len()
+                            {
+                                app_state.selected_organelle_index += 1;
                             }
                         }
                         #[cfg(feature = "biophysics")]
@@ -902,10 +911,8 @@ where
                                 if app_state.alchemy_shelf_idx > 0 {
                                     app_state.alchemy_shelf_idx -= 1;
                                 }
-                            } else {
-                                if app_state.alchemy_strand_idx > 0 {
-                                    app_state.alchemy_strand_idx -= 1;
-                                }
+                            } else if app_state.alchemy_strand_idx > 0 {
+                                app_state.alchemy_strand_idx -= 1;
                             }
                         }
                         ViewMode::Heatmap => {}
@@ -1176,7 +1183,8 @@ where
                                 app_state.input_mode = InputMode::Normal;
                                 if app_state.selected_dream_trace < vm.dream_traces.len() {
                                     let (target_idx, mutated_strand) = {
-                                        let trace = &vm.dream_traces[app_state.selected_dream_trace];
+                                        let trace =
+                                            &vm.dream_traces[app_state.selected_dream_trace];
                                         (trace.strand_idx, trace.mutated_strand.clone())
                                     };
 
@@ -1184,7 +1192,10 @@ where
                                         // Lucid Dreaming: Inject the strand
                                         if target_idx < vm.dna.helix.strands.len() {
                                             vm.dna.helix.strands[target_idx] = strand;
-                                            app_state.status_msg = format!("LUCID DREAM: Realized mutations for strand {}", target_idx);
+                                            app_state.status_msg = format!(
+                                                "LUCID DREAM: Realized mutations for strand {}",
+                                                target_idx
+                                            );
                                         }
                                     }
                                 }
@@ -1239,12 +1250,15 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Left: Environment
     let env_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(3), // Hormones
-            Constraint::Length(3), // Waste
-            Constraint::Length(3), // Mutagen
-            Constraint::Length(3), // Light
-        ].as_ref())
+        .constraints(
+            [
+                Constraint::Length(3), // Hormones
+                Constraint::Length(3), // Waste
+                Constraint::Length(3), // Mutagen
+                Constraint::Length(3), // Light
+            ]
+            .as_ref(),
+        )
         .split(main_split[0]);
 
     // Hormones (RGB)
@@ -1286,19 +1300,26 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(l_gauge, env_chunks[3]);
 
     // Right: Organelles
-    let rows: Vec<Row> = data.organelles.iter().map(|org| {
-        Row::new(vec![
-            org.kind.clone(),
-            format!("{:?}", org.ip),
-            org.stack_depth.to_string(),
-        ])
-    }).collect();
+    let rows: Vec<Row> = data
+        .organelles
+        .iter()
+        .map(|org| {
+            Row::new(vec![
+                org.kind.clone(),
+                format!("{:?}", org.ip),
+                org.stack_depth.to_string(),
+            ])
+        })
+        .collect();
 
-    let table = Table::new(rows, [
-        Constraint::Percentage(40),
-        Constraint::Percentage(30),
-        Constraint::Percentage(30),
-    ])
+    let table = Table::new(
+        rows,
+        [
+            Constraint::Percentage(40),
+            Constraint::Percentage(30),
+            Constraint::Percentage(30),
+        ],
+    )
     .header(Row::new(vec!["Type", "IP", "Stack"]))
     .block(Block::default().borders(Borders::ALL).title("Inhabitants"));
 
@@ -1306,174 +1327,188 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
-     let chunks = Layout::default()
+    let chunks = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([Constraint::Percentage(100)].as_ref())
         .split(f.area());
 
-     let mut max_count = 1;
-     for count in vm.gene_execution_counts.values() {
-         if *count > max_count {
-             max_count = *count;
-         }
-     }
+    let mut max_count = 1;
+    for count in vm.gene_execution_counts.values() {
+        if *count > max_count {
+            max_count = *count;
+        }
+    }
 
-     let mut items = Vec::new();
-     for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
-         items.push(ListItem::new(Span::styled(
-             format!("Strand {}", s_idx),
-             Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)
-         )));
+    let mut items = Vec::new();
+    for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+        items.push(ListItem::new(Span::styled(
+            format!("Strand {}", s_idx),
+            Style::default()
+                .fg(Color::Magenta)
+                .add_modifier(Modifier::BOLD),
+        )));
 
-         for (g_idx, gene) in strand.genes.iter().enumerate() {
-             let count = vm.gene_execution_counts.get(&(s_idx, g_idx)).unwrap_or(&0);
-             let ratio = (*count as f64) / (max_count as f64);
-             let color = if ratio < 0.01 {
-                 Color::DarkGray
-             } else if ratio < 0.3 {
-                 Color::Blue
-             } else if ratio < 0.6 {
-                 Color::Green
-             } else if ratio < 0.9 {
-                 Color::Yellow
-             } else {
-                 Color::Red
-             };
-
-             let content = format!("  {}({:?}) - Exec: {}", gene.op, gene.args, count);
-             items.push(ListItem::new(Span::styled(content, Style::default().fg(color))));
-         }
-         items.push(ListItem::new(""));
-     }
-
-     let list = List::new(items).block(Block::default().borders(Borders::ALL).title(format!("Gene Expression Heatmap (Max: {})", max_count)));
-     f.render_widget(list, chunks[0]);
-}
-fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-            let main_chunks = Layout::default()
-                .direction(Direction::Horizontal)
-                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                .split(f.area());
-
-            let left_chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
-                .split(main_chunks[0]);
-
-            let right_chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                .split(main_chunks[1]);
-
-            // Genome View
-            let helix = &vm.dna.helix;
-            let mut strand_items = Vec::new();
-
-            for (s_idx, strand) in helix.strands.iter().enumerate() {
-                #[cfg(feature = "cortex")]
-                {
-                    let mut header = format!("Strand {}", s_idx);
-                    if s_idx < vm.activation_levels.len() {
-                        header.push_str(&format!(" ⚡{}", vm.activation_levels[s_idx]));
-                    }
-                    if s_idx < vm.synapse_map.len() && !vm.synapse_map[s_idx].is_empty() {
-                        header.push_str(&format!(" -> {:?}", vm.synapse_map[s_idx]));
-                    }
-                    strand_items.push(ListItem::new(Span::styled(
-                        header,
-                        Style::default()
-                            .fg(Color::Magenta)
-                            .add_modifier(Modifier::BOLD),
-                    )));
-                }
-
-                #[cfg(not(feature = "cortex"))]
-                {
-                    strand_items.push(ListItem::new(Span::styled(
-                         format!("Strand {}", s_idx),
-                         Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
-                    )));
-                }
-
-                for (g_idx, gene) in strand.genes.iter().enumerate() {
-                    let content = format!("{}({:?})", gene.op, gene.args);
-                    let mut style = Style::default();
-                    let mut prefix = "  ";
-
-                    // Logic for execution highlighting
-                    #[cfg(feature = "nova")]
-                    if vm.epigenome.contains(&(s_idx, g_idx)) {
-                        style = style.fg(Color::Blue);
-                    }
-
-                    if s_idx == vm.ip.0 && g_idx == vm.ip.1 {
-                        style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
-                        #[cfg(feature = "nova")]
-                        if vm.epigenome.contains(&(s_idx, g_idx)) {
-                            style = style.bg(Color::Blue);
-                        }
-                        prefix = "> ";
-                    } else if (s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1))
-                        && style.fg != Some(Color::Blue)
-                    {
-                        style = style.fg(Color::DarkGray);
-                    }
-
-                    // Logic for Editor Selection highlighting (Only if ViewMode::Genome)
-                    if app_state.view_mode == ViewMode::Genome && s_idx == app_state.selected_strand && g_idx == app_state.selected_gene {
-                         if let InputMode::Editing = app_state.input_mode {
-                              style = style.bg(Color::Red).fg(Color::White);
-                              prefix = "E ";
-                         } else {
-                              style = style.bg(Color::White).fg(Color::Black);
-                              prefix = "* ";
-                         }
-                    }
-
-                    strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
-                }
-                strand_items.push(ListItem::new("-------------------"));
-            }
-
-            let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
-            let mode_str = match app_state.view_mode {
-                ViewMode::Genome => "GENOME",
-                ViewMode::Grid => "GRID",
-                ViewMode::Microscope => "MICROSCOPE",
-                #[cfg(feature = "biophysics")]
-                ViewMode::Cortex => "CORTEX",
-                #[cfg(feature = "resonance")]
-                ViewMode::Resonance => "RESONANCE",
-                #[cfg(feature = "nova")]
-                ViewMode::Grimoire => "GRIMOIRE",
-                #[cfg(feature = "nova")]
-                ViewMode::Laboratory => "LABORATORY",
-                #[cfg(feature = "nova")]
-                ViewMode::Topology => "TOPOLOGY",
-                #[cfg(feature = "nova")]
-                ViewMode::Graveyard => "GRAVEYARD",
-                #[cfg(feature = "nova")]
-                ViewMode::PianoRoll => "PIANO ROLL",
-                #[cfg(feature = "nova")]
-                ViewMode::Retina => "RETINA",
-                #[cfg(feature = "nova")]
-                ViewMode::Quantum => "QUANTUM",
-                #[cfg(feature = "nova")]
-                ViewMode::Dream => "DREAM CATCHER",
-                #[cfg(feature = "nova")]
-                ViewMode::Phylogeny => "PHYLOGENY",
-                #[cfg(feature = "nova")]
-                ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
-                #[cfg(feature = "nova")]
-                ViewMode::Memetics => "MEMETICS",
-                #[cfg(feature = "nova")]
-                ViewMode::Egregore => "THE EGREGORE",
-                #[cfg(feature = "nova")]
-                ViewMode::Bestiary => "BESTIARY",
-                ViewMode::Heatmap => "HEATMAP",
+        for (g_idx, gene) in strand.genes.iter().enumerate() {
+            let count = vm.gene_execution_counts.get(&(s_idx, g_idx)).unwrap_or(&0);
+            let ratio = (*count as f64) / (max_count as f64);
+            let color = if ratio < 0.01 {
+                Color::DarkGray
+            } else if ratio < 0.3 {
+                Color::Blue
+            } else if ratio < 0.6 {
+                Color::Green
+            } else if ratio < 0.9 {
+                Color::Yellow
+            } else {
+                Color::Red
             };
 
-            let title = match app_state.input_mode {
+            let content = format!("  {}({:?}) - Exec: {}", gene.op, gene.args, count);
+            items.push(ListItem::new(Span::styled(
+                content,
+                Style::default().fg(color),
+            )));
+        }
+        items.push(ListItem::new(""));
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Gene Expression Heatmap (Max: {})", max_count)),
+    );
+    f.render_widget(list, chunks[0]);
+}
+fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let main_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    let left_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(main_chunks[0]);
+
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(main_chunks[1]);
+
+    // Genome View
+    let helix = &vm.dna.helix;
+    let mut strand_items = Vec::new();
+
+    for (s_idx, strand) in helix.strands.iter().enumerate() {
+        #[cfg(feature = "cortex")]
+        {
+            let mut header = format!("Strand {}", s_idx);
+            if s_idx < vm.activation_levels.len() {
+                header.push_str(&format!(" ⚡{}", vm.activation_levels[s_idx]));
+            }
+            if s_idx < vm.synapse_map.len() && !vm.synapse_map[s_idx].is_empty() {
+                header.push_str(&format!(" -> {:?}", vm.synapse_map[s_idx]));
+            }
+            strand_items.push(ListItem::new(Span::styled(
+                header,
+                Style::default()
+                    .fg(Color::Magenta)
+                    .add_modifier(Modifier::BOLD),
+            )));
+        }
+
+        #[cfg(not(feature = "cortex"))]
+        {
+            strand_items.push(ListItem::new(Span::styled(
+                format!("Strand {}", s_idx),
+                Style::default()
+                    .fg(Color::Magenta)
+                    .add_modifier(Modifier::BOLD),
+            )));
+        }
+
+        for (g_idx, gene) in strand.genes.iter().enumerate() {
+            let content = format!("{}({:?})", gene.op, gene.args);
+            let mut style = Style::default();
+            let mut prefix = "  ";
+
+            // Logic for execution highlighting
+            #[cfg(feature = "nova")]
+            if vm.epigenome.contains(&(s_idx, g_idx)) {
+                style = style.fg(Color::Blue);
+            }
+
+            if s_idx == vm.ip.0 && g_idx == vm.ip.1 {
+                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                #[cfg(feature = "nova")]
+                if vm.epigenome.contains(&(s_idx, g_idx)) {
+                    style = style.bg(Color::Blue);
+                }
+                prefix = "> ";
+            } else if (s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1))
+                && style.fg != Some(Color::Blue)
+            {
+                style = style.fg(Color::DarkGray);
+            }
+
+            // Logic for Editor Selection highlighting (Only if ViewMode::Genome)
+            if app_state.view_mode == ViewMode::Genome
+                && s_idx == app_state.selected_strand
+                && g_idx == app_state.selected_gene
+            {
+                if let InputMode::Editing = app_state.input_mode {
+                    style = style.bg(Color::Red).fg(Color::White);
+                    prefix = "E ";
+                } else {
+                    style = style.bg(Color::White).fg(Color::Black);
+                    prefix = "* ";
+                }
+            }
+
+            strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
+        }
+        strand_items.push(ListItem::new("-------------------"));
+    }
+
+    let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
+    let mode_str = match app_state.view_mode {
+        ViewMode::Genome => "GENOME",
+        ViewMode::Grid => "GRID",
+        ViewMode::Microscope => "MICROSCOPE",
+        #[cfg(feature = "biophysics")]
+        ViewMode::Cortex => "CORTEX",
+        #[cfg(feature = "resonance")]
+        ViewMode::Resonance => "RESONANCE",
+        #[cfg(feature = "nova")]
+        ViewMode::Grimoire => "GRIMOIRE",
+        #[cfg(feature = "nova")]
+        ViewMode::Laboratory => "LABORATORY",
+        #[cfg(feature = "nova")]
+        ViewMode::Topology => "TOPOLOGY",
+        #[cfg(feature = "nova")]
+        ViewMode::Graveyard => "GRAVEYARD",
+        #[cfg(feature = "nova")]
+        ViewMode::PianoRoll => "PIANO ROLL",
+        #[cfg(feature = "nova")]
+        ViewMode::Retina => "RETINA",
+        #[cfg(feature = "nova")]
+        ViewMode::Quantum => "QUANTUM",
+        #[cfg(feature = "nova")]
+        ViewMode::Dream => "DREAM CATCHER",
+        #[cfg(feature = "nova")]
+        ViewMode::Phylogeny => "PHYLOGENY",
+        #[cfg(feature = "nova")]
+        ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
+        #[cfg(feature = "nova")]
+        ViewMode::Memetics => "MEMETICS",
+        #[cfg(feature = "nova")]
+        ViewMode::Egregore => "THE EGREGORE",
+        #[cfg(feature = "nova")]
+        ViewMode::Bestiary => "BESTIARY",
+        ViewMode::Heatmap => "HEATMAP",
+    };
+
+    let title = match app_state.input_mode {
                 InputMode::Normal => format!(
                     "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
                     mode_str, chaos_status
@@ -1485,352 +1520,397 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
             };
 
-            let genome_block = Block::default().borders(Borders::ALL).title("Genome");
-            let genome_style = if app_state.view_mode == ViewMode::Genome {
-                 Style::default().fg(Color::White).add_modifier(Modifier::BOLD)
-            } else {
-                 Style::default().fg(Color::DarkGray)
-            };
+    let genome_block = Block::default().borders(Borders::ALL).title("Genome");
+    let genome_style = if app_state.view_mode == ViewMode::Genome {
+        Style::default()
+            .fg(Color::White)
+            .add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
 
-            // Highlight the active block borders/title
-            let genome_list = List::new(strand_items).block(
-                genome_block.border_style(genome_style).title(title.clone()) // Show controls in main title usually
-            );
-            f.render_widget(genome_list, left_chunks[0]);
+    // Highlight the active block borders/title
+    let genome_list = List::new(strand_items).block(
+        genome_block.border_style(genome_style).title(title.clone()), // Show controls in main title usually
+    );
+    f.render_widget(genome_list, left_chunks[0]);
 
-            // Petri Dish (Grid)
-            let mut grid_lines = Vec::new();
+    // Petri Dish (Grid)
+    let mut grid_lines = Vec::new();
 
-            for y in 0..16 {
-                let mut line_spans = Vec::new();
-                for x in 0..16 {
-                    let val = &vm.grid[y][x];
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
 
-                    #[allow(unused_mut)]
-                    let (mut char_rep, mut style) = match val {
-                        crate::vm::Value::Int(0) => {
-                            (".".to_string(), Style::default().fg(Color::DarkGray))
+            #[allow(unused_mut)]
+            let (mut char_rep, mut style) = match val {
+                crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
+                crate::vm::Value::Int(n) => {
+                    #[cfg(feature = "silicon")]
+                    if vm.silicon_mode {
+                        match n {
+                            1 => ("#".to_string(), Style::default().fg(Color::Yellow)), // Conductor
+                            2 => (
+                                "@".to_string(),
+                                Style::default().fg(Color::White).bg(Color::Cyan),
+                            ), // Head
+                            3 => ("~".to_string(), Style::default().fg(Color::Red)),    // Tail
+                            _ => (
+                                format!("{}", (n.abs() % 10)),
+                                Style::default().fg(Color::Green),
+                            ),
                         }
-                        crate::vm::Value::Int(n) => {
-                            #[cfg(feature = "silicon")]
-                            if vm.silicon_mode {
-                                match n {
-                                    1 => ("#".to_string(), Style::default().fg(Color::Yellow)), // Conductor
-                                    2 => ("@".to_string(), Style::default().fg(Color::White).bg(Color::Cyan)), // Head
-                                    3 => ("~".to_string(), Style::default().fg(Color::Red)), // Tail
-                                    _ => (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green)),
-                                }
-                            } else {
-                                (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                    } else {
+                        (
+                            format!("{}", (n.abs() % 10)),
+                            Style::default().fg(Color::Green),
+                        )
+                    }
+                    #[cfg(not(feature = "silicon"))]
+                    (
+                        format!("{}", (n.abs() % 10)),
+                        Style::default().fg(Color::Green),
+                    )
+                }
+                crate::vm::Value::Junction(_, _) => {
+                    ("J".to_string(), Style::default().fg(Color::Yellow))
+                }
+                crate::vm::Value::Superposition(_) => (
+                    "Ψ".to_string(),
+                    Style::default()
+                        .fg(Color::Magenta)
+                        .add_modifier(Modifier::BOLD),
+                ),
+                crate::vm::Value::Str(s) => {
+                    let mut symbol = if s.starts_with("G:") {
+                        let parts: Vec<&str> = s.split(':').collect();
+                        if parts.len() >= 2 {
+                            match parts[1] {
+                                "AND" => "&",
+                                "OR" => "|",
+                                "XOR" => "^",
+                                "NAND" => "!",
+                                "NOT" => "~",
+                                _ => "G",
                             }
-                            #[cfg(not(feature = "silicon"))]
-                            (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
-                        },
-                        crate::vm::Value::Junction(_, _) => (
-                            "J".to_string(),
-                            Style::default().fg(Color::Yellow),
-                        ),
-                        crate::vm::Value::Superposition(_) => (
-                            "Ψ".to_string(),
-                            Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
-                        ),
-                        crate::vm::Value::Str(s) => {
-                            let mut symbol = if s.starts_with("G:") {
-                                let parts: Vec<&str> = s.split(':').collect();
-                                if parts.len() >= 2 {
-                                    match parts[1] {
-                                        "AND" => "&",
-                                        "OR" => "|",
-                                        "XOR" => "^",
-                                        "NAND" => "!",
-                                        "NOT" => "~",
-                                        _ => "G",
-                                    }
-                                } else {
-                                    "G"
-                                }
-                            } else {
-                                match s.as_str() {
-                                    "virus" => "V",
-                                    "incubate" => "I",
-                                    "push" => "^",
-                                "add" => "+",
-                                "sub" => "-",
-                                "mul" => "*",
-                                "div" => "/",
-                                "jump" | "jump_s" => "J",
-                                "brz" | "brz_s" => "?",
-                                "photosynthesize" => "P",
-                                "consume" => "C",
-                                "g_read" => "R",
-                                "g_write" => "W",
-                                "mitosis" => "M",
-                                "apoptosis" => "X",
-                                "fire" => "F",
-                                "water" => "W",
-                                "earth" => "E",
-                                "air" => "A",
-                                "steam" => "S",
-                                "lava" => "L",
-                                "cloud" => "C",
-                                "spirit" => "S",
-                                "gold" => "G",
-                                    "lead" => "L",
-                                    _ => &s[0..1],
-                                }
-                            };
-                            let style = if s.starts_with("G:") {
-                                Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)
-                            } else {
-                                match s.as_str() {
-                                    "fire" => Style::default().fg(Color::Red),
-                                    "water" => Style::default().fg(Color::Blue),
-                                "earth" => Style::default().fg(Color::Yellow),
-                                "air" => Style::default().fg(Color::Cyan),
-                                "steam" => Style::default().fg(Color::White),
-                                "lava" => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                                "cloud" => Style::default().fg(Color::White).add_modifier(Modifier::BOLD),
-                                "spirit" => Style::default().fg(Color::Magenta),
-                                "gold" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
-                                    "lead" => Style::default().fg(Color::DarkGray),
-                                    "PIN:IN" => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
-                                    "PIN:OUT" => Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD),
-                                    s if s.starts_with("EMIT:") => Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
-                                    s if s.starts_with("RECV:") => Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD),
-                                    _ => Style::default().fg(Color::Cyan),
-                                }
-                            };
-                            if s == "PIN:IN" {
-                                symbol = "I";
-                            } else if s == "PIN:OUT" {
-                                symbol = "O";
-                            } else if s.starts_with("EMIT:") {
-                                symbol = "E";
-                            } else if s.starts_with("RECV:") {
-                                symbol = "R";
-                            }
-                            (symbol.to_string(), style)
+                        } else {
+                            "G"
+                        }
+                    } else {
+                        match s.as_str() {
+                            "virus" => "V",
+                            "incubate" => "I",
+                            "push" => "^",
+                            "add" => "+",
+                            "sub" => "-",
+                            "mul" => "*",
+                            "div" => "/",
+                            "jump" | "jump_s" => "J",
+                            "brz" | "brz_s" => "?",
+                            "photosynthesize" => "P",
+                            "consume" => "C",
+                            "g_read" => "R",
+                            "g_write" => "W",
+                            "mitosis" => "M",
+                            "apoptosis" => "X",
+                            "fire" => "F",
+                            "water" => "W",
+                            "earth" => "E",
+                            "air" => "A",
+                            "steam" => "S",
+                            "lava" => "L",
+                            "cloud" => "C",
+                            "spirit" => "S",
+                            "gold" => "G",
+                            "lead" => "L",
+                            _ => &s[0..1],
                         }
                     };
-
-                    #[cfg(feature = "nova")]
-                    {
-                        let h = vm.hormone_grid[y][x];
-                        let r = h[0].clamp(0, 255) as u8;
-                        let g = h[1].clamp(0, 255) as u8;
-                        let b = h[2].clamp(0, 255) as u8;
-                        if r > 0 || g > 0 || b > 0 {
-                            style = style.bg(Color::Rgb(r, g, b));
-                            if (r as u16 + g as u16 + b as u16) > 300 {
-                                style = style.fg(Color::Black);
-                            }
-                        }
-
-                    // Chromatophores (Nova)
-                    let chroma = &vm.chroma_grid[y][x];
-                    if let Some(c) = chroma.char {
-                        char_rep = c.to_string();
-                    }
-                    if let Some((r, g, b)) = chroma.fg {
-                        style = style.fg(Color::Rgb(r, g, b));
-                    }
-
-                        if vm.waste_grid[y][x] > 50 {
-                            style = style.add_modifier(Modifier::CROSSED_OUT);
-                            if vm.waste_grid[y][x] > 100 {
-                                style = style.fg(Color::Red);
-                            }
-                        }
-
-                        #[cfg(feature = "nova")]
-                        if vm.mutagen_grid[y][x] > 20 {
-                            // Purple haze for radiation
-                            if vm.mutagen_grid[y][x] > 50 {
-                                style = style.bg(Color::Magenta).fg(Color::White);
-                            } else {
-                                style = style.fg(Color::Magenta);
-                            }
-                        }
-
-                        if let Some(organelle) =
-                            vm.organelles.iter().find(|o| o.context_loc == (y, x))
-                        {
-                            let mut color = match organelle.kind {
-                                crate::vm::nova::OrganelleType::Chloroplast => Color::Green,
-                                crate::vm::nova::OrganelleType::Mitochondria => Color::Red,
-                                crate::vm::nova::OrganelleType::Lysosome => Color::Magenta,
-                                crate::vm::nova::OrganelleType::Ribosome => Color::Cyan,
-                                crate::vm::nova::OrganelleType::Void => Color::DarkGray,
-                                crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
-                                crate::vm::nova::OrganelleType::Seed => Color::Green,
-                                crate::vm::nova::OrganelleType::Worker => Color::White,
-                            };
-                            let char_code = match organelle.kind {
-                                crate::vm::nova::OrganelleType::Chloroplast => "C",
-                                crate::vm::nova::OrganelleType::Mitochondria => "M",
-                                crate::vm::nova::OrganelleType::Lysosome => "L",
-                                crate::vm::nova::OrganelleType::Ribosome => "R",
-                                crate::vm::nova::OrganelleType::Void => "Ø",
-                                crate::vm::nova::OrganelleType::Alchemist => "A",
-                                crate::vm::nova::OrganelleType::Seed => "S",
-                                crate::vm::nova::OrganelleType::Worker => "O",
-                            };
-
-                            if organelle.ttl.is_some() {
-                                color = Color::Yellow;
-                            }
-
-                            style = style
-                                .bg(color)
-                                .fg(Color::Black)
-                                .add_modifier(Modifier::BOLD);
-                            if char_rep == "." {
-                                char_rep = char_code.to_string();
-                            }
-                        }
-
-                        if let Some(target) = vm.sonar_target {
-                            if target == (y, x) {
-                                style = style
-                                    .bg(Color::Yellow)
-                                    .fg(Color::Black)
-                                    .add_modifier(Modifier::SLOW_BLINK);
-                            }
-                        }
-
-                        if vm.portals.contains_key(&(y, x)) {
-                            char_rep = "@".to_string();
-                            style = style
+                    let style = if s.starts_with("G:") {
+                        Style::default()
+                            .fg(Color::Cyan)
+                            .add_modifier(Modifier::BOLD)
+                    } else {
+                        match s.as_str() {
+                            "fire" => Style::default().fg(Color::Red),
+                            "water" => Style::default().fg(Color::Blue),
+                            "earth" => Style::default().fg(Color::Yellow),
+                            "air" => Style::default().fg(Color::Cyan),
+                            "steam" => Style::default().fg(Color::White),
+                            "lava" => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+                            "cloud" => Style::default()
+                                .fg(Color::White)
+                                .add_modifier(Modifier::BOLD),
+                            "spirit" => Style::default().fg(Color::Magenta),
+                            "gold" => Style::default()
+                                .fg(Color::Yellow)
+                                .add_modifier(Modifier::BOLD),
+                            "lead" => Style::default().fg(Color::DarkGray),
+                            "PIN:IN" => Style::default()
+                                .fg(Color::Yellow)
+                                .add_modifier(Modifier::BOLD),
+                            "PIN:OUT" => Style::default()
+                                .fg(Color::Cyan)
+                                .add_modifier(Modifier::BOLD),
+                            s if s.starts_with("EMIT:") => Style::default()
+                                .fg(Color::Yellow)
+                                .add_modifier(Modifier::BOLD),
+                            s if s.starts_with("RECV:") => Style::default()
                                 .fg(Color::Magenta)
-                                .add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
+                                .add_modifier(Modifier::BOLD),
+                            _ => Style::default().fg(Color::Cyan),
                         }
-
-                        if (vm.membranes[y][x] & 2) != 0 {
-                            style = style.add_modifier(Modifier::UNDERLINED);
-                        }
+                    };
+                    if s == "PIN:IN" {
+                        symbol = "I";
+                    } else if s == "PIN:OUT" {
+                        symbol = "O";
+                    } else if s.starts_with("EMIT:") {
+                        symbol = "E";
+                    } else if s.starts_with("RECV:") {
+                        symbol = "R";
                     }
-
-                    // Highlight Cursor in Grid Mode
-                    if app_state.view_mode == ViewMode::Grid && app_state.grid_cursor == (x, y) {
-                        if let InputMode::Editing = app_state.input_mode {
-                             style = style.bg(Color::Red).fg(Color::White);
-                             // If editing, maybe show first char of input buffer?
-                             // But input buffer might be long string "add".
-                             // Let's just highlight the cell.
-                        } else {
-                             style = style.bg(Color::White).fg(Color::Black);
-                        }
-                    }
-
-                    line_spans.push(Span::styled(char_rep, style));
-
-                    #[allow(unused_mut)]
-                    let mut spacer = " ";
-                    #[cfg(feature = "nova")]
-                    if (vm.membranes[y][x] & 4) != 0 {
-                        spacer = "|";
-                    }
-                    line_spans.push(Span::raw(spacer));
+                    (symbol.to_string(), style)
                 }
-                grid_lines.push(Line::from(line_spans));
-            }
-
-            #[cfg(feature = "nova")]
-            let topology_name = format!("{:?}", vm.topology);
-            #[cfg(not(feature = "nova"))]
-            let topology_name = "Classic";
-
-            let grid_title = format!("Petri Dish (16x16) - {}", topology_name);
-            let grid_style = if app_state.view_mode == ViewMode::Grid {
-                 Style::default().fg(Color::White).add_modifier(Modifier::BOLD)
-            } else {
-                 Style::default().fg(Color::DarkGray)
             };
 
-            let grid_paragraph = Paragraph::new(grid_lines).block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title(grid_title)
-                    .border_style(grid_style),
-            );
-            f.render_widget(grid_paragraph, left_chunks[1]);
-
-            // Cytoplasm (Stack)
-            let stack_items: Vec<ListItem> = vm
-                .stack
-                .iter()
-                .rev()
-                .map(|val| ListItem::new(format!("{}", val)))
-                .collect();
-
-            let stack_list = List::new(stack_items).block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title(format!("Cytoplasm (Stack) - Energy: {}", vm.energy)),
-            );
-            f.render_widget(stack_list, right_chunks[0]);
-
-            // Output
-            let mut output_items: Vec<ListItem> = vm
-                .output
-                .iter()
-                .rev()
-                .map(|val| ListItem::new(val.clone()))
-                .collect();
-
-            if !app_state.status_msg.is_empty() {
-                output_items.insert(0, ListItem::new(Span::styled(
-                    format!("STATUS: {}", app_state.status_msg),
-                    Style::default().fg(Color::Yellow)
-                )));
-            }
-            if let InputMode::Editing = app_state.input_mode {
-                 if app_state.view_mode == ViewMode::Grid {
-                      output_items.insert(0, ListItem::new(Span::styled(
-                           format!("EDIT GRID [{},{}]: {}", app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer),
-                           Style::default().fg(Color::Cyan)
-                      )));
-                 }
-            }
-
-            let output_list = List::new(output_items)
-                .block(Block::default().borders(Borders::ALL).title("Output"));
-            f.render_widget(output_list, right_chunks[1]);
-
-            // Draw Injection Popup
-            if let InputMode::Injection = app_state.input_mode {
-                let area = f.area();
-                let popup_area = ratatui::layout::Rect {
-                    x: area.width / 4,
-                    y: area.height / 3,
-                    width: area.width / 2,
-                    height: 5,
-                };
-                f.render_widget(ratatui::widgets::Clear, popup_area);
-
-                let block = Block::default().borders(Borders::ALL).title("Viral Injection Vector (ChimeraScript)").style(Style::default().fg(Color::Green));
-                let text = Paragraph::new(app_state.input_buffer.clone()).block(block).wrap(ratatui::widgets::Wrap { trim: true });
-                f.render_widget(text, popup_area);
-            }
-
-            // Draw Spirit Popup on top
             #[cfg(feature = "nova")]
-            if vm.spirit_request {
-                let area = f.area();
-                let popup_area = ratatui::layout::Rect {
-                    x: area.width / 4,
-                    y: area.height / 3,
-                    width: area.width / 2,
-                    height: 5,
-                };
-                f.render_widget(ratatui::widgets::Clear, popup_area);
+            {
+                let h = vm.hormone_grid[y][x];
+                let r = h[0].clamp(0, 255) as u8;
+                let g = h[1].clamp(0, 255) as u8;
+                let b = h[2].clamp(0, 255) as u8;
+                if r > 0 || g > 0 || b > 0 {
+                    style = style.bg(Color::Rgb(r, g, b));
+                    if (r as u16 + g as u16 + b as u16) > 300 {
+                        style = style.fg(Color::Black);
+                    }
+                }
 
-                let prompt = vm.spirit_message.as_deref().unwrap_or("SPIRIT SUMMONING");
-                let text = format!("{}\n\n> {}", prompt, app_state.input_buffer);
-                let popup = Paragraph::new(text)
-                    .block(Block::default().borders(Borders::ALL).title("Spirit Communication").style(Style::default().fg(Color::Cyan)));
-                f.render_widget(popup, popup_area);
+                // Chromatophores (Nova)
+                let chroma = &vm.chroma_grid[y][x];
+                if let Some(c) = chroma.char {
+                    char_rep = c.to_string();
+                }
+                if let Some((r, g, b)) = chroma.fg {
+                    style = style.fg(Color::Rgb(r, g, b));
+                }
+
+                if vm.waste_grid[y][x] > 50 {
+                    style = style.add_modifier(Modifier::CROSSED_OUT);
+                    if vm.waste_grid[y][x] > 100 {
+                        style = style.fg(Color::Red);
+                    }
+                }
+
+                #[cfg(feature = "nova")]
+                if vm.mutagen_grid[y][x] > 20 {
+                    // Purple haze for radiation
+                    if vm.mutagen_grid[y][x] > 50 {
+                        style = style.bg(Color::Magenta).fg(Color::White);
+                    } else {
+                        style = style.fg(Color::Magenta);
+                    }
+                }
+
+                if let Some(organelle) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
+                    let mut color = match organelle.kind {
+                        crate::vm::nova::OrganelleType::Chloroplast => Color::Green,
+                        crate::vm::nova::OrganelleType::Mitochondria => Color::Red,
+                        crate::vm::nova::OrganelleType::Lysosome => Color::Magenta,
+                        crate::vm::nova::OrganelleType::Ribosome => Color::Cyan,
+                        crate::vm::nova::OrganelleType::Void => Color::DarkGray,
+                        crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
+                        crate::vm::nova::OrganelleType::Seed => Color::Green,
+                        crate::vm::nova::OrganelleType::Worker => Color::White,
+                    };
+                    let char_code = match organelle.kind {
+                        crate::vm::nova::OrganelleType::Chloroplast => "C",
+                        crate::vm::nova::OrganelleType::Mitochondria => "M",
+                        crate::vm::nova::OrganelleType::Lysosome => "L",
+                        crate::vm::nova::OrganelleType::Ribosome => "R",
+                        crate::vm::nova::OrganelleType::Void => "Ø",
+                        crate::vm::nova::OrganelleType::Alchemist => "A",
+                        crate::vm::nova::OrganelleType::Seed => "S",
+                        crate::vm::nova::OrganelleType::Worker => "O",
+                    };
+
+                    if organelle.ttl.is_some() {
+                        color = Color::Yellow;
+                    }
+
+                    style = style
+                        .bg(color)
+                        .fg(Color::Black)
+                        .add_modifier(Modifier::BOLD);
+                    if char_rep == "." {
+                        char_rep = char_code.to_string();
+                    }
+                }
+
+                if let Some(target) = vm.sonar_target {
+                    if target == (y, x) {
+                        style = style
+                            .bg(Color::Yellow)
+                            .fg(Color::Black)
+                            .add_modifier(Modifier::SLOW_BLINK);
+                    }
+                }
+
+                if vm.portals.contains_key(&(y, x)) {
+                    char_rep = "@".to_string();
+                    style = style
+                        .fg(Color::Magenta)
+                        .add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
+                }
+
+                if (vm.membranes[y][x] & 2) != 0 {
+                    style = style.add_modifier(Modifier::UNDERLINED);
+                }
             }
+
+            // Highlight Cursor in Grid Mode
+            if app_state.view_mode == ViewMode::Grid && app_state.grid_cursor == (x, y) {
+                if let InputMode::Editing = app_state.input_mode {
+                    style = style.bg(Color::Red).fg(Color::White);
+                    // If editing, maybe show first char of input buffer?
+                    // But input buffer might be long string "add".
+                    // Let's just highlight the cell.
+                } else {
+                    style = style.bg(Color::White).fg(Color::Black);
+                }
+            }
+
+            line_spans.push(Span::styled(char_rep, style));
+
+            #[allow(unused_mut)]
+            let mut spacer = " ";
+            #[cfg(feature = "nova")]
+            if (vm.membranes[y][x] & 4) != 0 {
+                spacer = "|";
+            }
+            line_spans.push(Span::raw(spacer));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    #[cfg(feature = "nova")]
+    let topology_name = format!("{:?}", vm.topology);
+    #[cfg(not(feature = "nova"))]
+    let topology_name = "Classic";
+
+    let grid_title = format!("Petri Dish (16x16) - {}", topology_name);
+    let grid_style = if app_state.view_mode == ViewMode::Grid {
+        Style::default()
+            .fg(Color::White)
+            .add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
+    let grid_paragraph = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(grid_title)
+            .border_style(grid_style),
+    );
+    f.render_widget(grid_paragraph, left_chunks[1]);
+
+    // Cytoplasm (Stack)
+    let stack_items: Vec<ListItem> = vm
+        .stack
+        .iter()
+        .rev()
+        .map(|val| ListItem::new(format!("{}", val)))
+        .collect();
+
+    let stack_list = List::new(stack_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Cytoplasm (Stack) - Energy: {}", vm.energy)),
+    );
+    f.render_widget(stack_list, right_chunks[0]);
+
+    // Output
+    let mut output_items: Vec<ListItem> = vm
+        .output
+        .iter()
+        .rev()
+        .map(|val| ListItem::new(val.clone()))
+        .collect();
+
+    if !app_state.status_msg.is_empty() {
+        output_items.insert(
+            0,
+            ListItem::new(Span::styled(
+                format!("STATUS: {}", app_state.status_msg),
+                Style::default().fg(Color::Yellow),
+            )),
+        );
+    }
+    if let InputMode::Editing = app_state.input_mode {
+        if app_state.view_mode == ViewMode::Grid {
+            output_items.insert(
+                0,
+                ListItem::new(Span::styled(
+                    format!(
+                        "EDIT GRID [{},{}]: {}",
+                        app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer
+                    ),
+                    Style::default().fg(Color::Cyan),
+                )),
+            );
+        }
+    }
+
+    let output_list =
+        List::new(output_items).block(Block::default().borders(Borders::ALL).title("Output"));
+    f.render_widget(output_list, right_chunks[1]);
+
+    // Draw Injection Popup
+    if let InputMode::Injection = app_state.input_mode {
+        let area = f.area();
+        let popup_area = ratatui::layout::Rect {
+            x: area.width / 4,
+            y: area.height / 3,
+            width: area.width / 2,
+            height: 5,
+        };
+        f.render_widget(ratatui::widgets::Clear, popup_area);
+
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .title("Viral Injection Vector (ChimeraScript)")
+            .style(Style::default().fg(Color::Green));
+        let text = Paragraph::new(app_state.input_buffer.clone())
+            .block(block)
+            .wrap(ratatui::widgets::Wrap { trim: true });
+        f.render_widget(text, popup_area);
+    }
+
+    // Draw Spirit Popup on top
+    #[cfg(feature = "nova")]
+    if vm.spirit_request {
+        let area = f.area();
+        let popup_area = ratatui::layout::Rect {
+            x: area.width / 4,
+            y: area.height / 3,
+            width: area.width / 2,
+            height: 5,
+        };
+        f.render_widget(ratatui::widgets::Clear, popup_area);
+
+        let prompt = vm.spirit_message.as_deref().unwrap_or("SPIRIT SUMMONING");
+        let text = format!("{}\n\n> {}", prompt, app_state.input_buffer);
+        let popup = Paragraph::new(text).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Spirit Communication")
+                .style(Style::default().fg(Color::Cyan)),
+        );
+        f.render_widget(popup, popup_area);
+    }
 }
 #[cfg(feature = "biophysics")]
 fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
@@ -1948,11 +2028,19 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             };
 
             let color = if val > 0.0 {
-                 if val > 0.5 { Color::Cyan } else { Color::Blue }
+                if val > 0.5 {
+                    Color::Cyan
+                } else {
+                    Color::Blue
+                }
             } else if val < 0.0 {
-                 if val < -0.5 { Color::Red } else { Color::Magenta }
+                if val < -0.5 {
+                    Color::Red
+                } else {
+                    Color::Magenta
+                }
             } else {
-                 Color::DarkGray
+                Color::DarkGray
             };
 
             spans.push(Span::styled(ch, Style::default().fg(color)));
@@ -1961,12 +2049,17 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         lines.push(Line::from(spans));
     }
 
-    let wave_grid = Paragraph::new(lines).block(Block::default().borders(Borders::ALL).title("Resonance Wave Function"));
+    let wave_grid = Paragraph::new(lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Resonance Wave Function"),
+    );
     f.render_widget(wave_grid, chunks[0]);
 
     // Help / Status
     let help_text = "Physics Simulation Active.\nUse Pluck(str), Oscillate(freq, str), Hear() ops.\n\nLeft: Wavefront Visualization\nRight: (Reserved for Spectrum Analysis)";
-    let help = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
+    let help =
+        Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Cymatics"));
     f.render_widget(help, chunks[1]);
 }
 
@@ -1985,12 +2078,17 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         for (i, meme) in vm.meme_pool.memes.iter().enumerate() {
             let content = format!(
                 "Meme #{}: {} (Vir: {} Fid: {}) [{} genes]",
-                i, meme.description, meme.virulence, meme.fidelity, meme.genes.len()
+                i,
+                meme.description,
+                meme.virulence,
+                meme.fidelity,
+                meme.genes.len()
             );
             meme_items.push(ListItem::new(content).style(Style::default().fg(Color::Cyan)));
         }
     }
-    let meme_list = List::new(meme_items).block(Block::default().borders(Borders::ALL).title("Meme Pool"));
+    let meme_list =
+        List::new(meme_items).block(Block::default().borders(Borders::ALL).title("Meme Pool"));
     f.render_widget(meme_list, chunks[0]);
 
     // Right: Dialect (Shibboleths)
@@ -2000,18 +2098,24 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     if let Some(dialect) = vm.dialects.get(&s_idx) {
         if dialect.is_empty() {
-             dialect_items.push(ListItem::new("Standard Dialect (No deviations)"));
+            dialect_items.push(ListItem::new("Standard Dialect (No deviations)"));
         } else {
-             for (from, to) in dialect {
-                 dialect_items.push(ListItem::new(format!("{} -> {}", from, to)).style(Style::default().fg(Color::Yellow)));
-             }
+            for (from, to) in dialect {
+                dialect_items.push(
+                    ListItem::new(format!("{} -> {}", from, to))
+                        .style(Style::default().fg(Color::Yellow)),
+                );
+            }
         }
     } else {
         dialect_items.push(ListItem::new("Standard Dialect"));
     }
 
-    let dialect_list = List::new(dialect_items)
-        .block(Block::default().borders(Borders::ALL).title(format!("Dialect (Strand {})", s_idx)));
+    let dialect_list = List::new(dialect_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Dialect (Strand {})", s_idx)),
+    );
     f.render_widget(dialect_list, chunks[1]);
 }
 
@@ -2019,15 +2123,20 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(20), // Shelf
-            Constraint::Percentage(40), // Crucible
-            Constraint::Percentage(40), // Strands
-        ].as_ref())
+        .constraints(
+            [
+                Constraint::Percentage(20), // Shelf
+                Constraint::Percentage(40), // Crucible
+                Constraint::Percentage(40), // Strands
+            ]
+            .as_ref(),
+        )
         .split(f.area());
 
     // Shelf
-    let elements = vec!["Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy"];
+    let elements = [
+        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
+    ];
     let mut shelf_items = Vec::new();
     for (i, elem) in elements.iter().enumerate() {
         let mut style = Style::default().fg(Color::Cyan);
@@ -2047,19 +2156,22 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Reagent Shelf")
-            .border_style(shelf_border_style)
+            .border_style(shelf_border_style),
     );
     f.render_widget(shelf_list, chunks[0]);
 
     // Crucible
-    let crucible_items: Vec<ListItem> = vm.crucible.contents.iter().map(|v| {
-        ListItem::new(format!("{}", v)).style(Style::default().fg(Color::Magenta))
-    }).collect();
+    let crucible_items: Vec<ListItem> = vm
+        .crucible
+        .contents
+        .iter()
+        .map(|v| ListItem::new(format!("{}", v)).style(Style::default().fg(Color::Magenta)))
+        .collect();
 
     let crucible_list = List::new(crucible_items).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("Crucible (A: Add, X: Clear, T: Transmute)")
+            .title("Crucible (A: Add, X: Clear, T: Transmute)"),
     );
     f.render_widget(crucible_list, chunks[1]);
 
@@ -2070,7 +2182,9 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         if app_state.alchemy_selection == 1 && i == app_state.alchemy_strand_idx {
             style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
         }
-        strand_items.push(ListItem::new(format!("Strand {} ({} genes)", i, strand.genes.len())).style(style));
+        strand_items.push(
+            ListItem::new(format!("Strand {} ({} genes)", i, strand.genes.len())).style(style),
+        );
     }
 
     let strand_border_style = if app_state.alchemy_selection == 1 {
@@ -2083,550 +2197,699 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("DNA Inventory")
-            .border_style(strand_border_style)
+            .border_style(strand_border_style),
     );
     f.render_widget(strand_list, chunks[2]);
 }
 #[cfg(feature = "nova")]
 fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Vertical)
-                    .constraints([Constraint::Percentage(20), Constraint::Percentage(20), Constraint::Percentage(40), Constraint::Percentage(20)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Percentage(20),
+                Constraint::Percentage(20),
+                Constraint::Percentage(40),
+                Constraint::Percentage(20),
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
 
-                // Ether (IPC)
-                let ether_items: Vec<ListItem> = vm.ether.iter().map(|(ch, queue)| {
-                    ListItem::new(format!("Channel {}: {} msgs", ch, queue.len()))
-                }).collect();
-                let ether_list = List::new(ether_items).block(Block::default().borders(Borders::ALL).title("Ether (IPC)"));
-                f.render_widget(ether_list, chunks[0]);
+    // Ether (IPC)
+    let ether_items: Vec<ListItem> = vm
+        .ether
+        .iter()
+        .map(|(ch, queue)| ListItem::new(format!("Channel {}: {} msgs", ch, queue.len())))
+        .collect();
+    let ether_list =
+        List::new(ether_items).block(Block::default().borders(Borders::ALL).title("Ether (IPC)"));
+    f.render_widget(ether_list, chunks[0]);
 
-                // Oracle (KB)
-                #[cfg(feature = "oracle")]
-                {
-                    let kb_items: Vec<ListItem> = vm.knowledge_base.iter().take(20).map(|fact| {
-                        ListItem::new(format!("{}", fact))
-                    }).collect();
-                    let oracle_list = List::new(kb_items).block(Block::default().borders(Borders::ALL).title("Oracle (Knowledge Base)"));
-                    f.render_widget(oracle_list, chunks[1]);
-                }
-                #[cfg(not(feature = "oracle"))]
-                {
-                    let oracle_list = Paragraph::new("Oracle feature disabled").block(Block::default().borders(Borders::ALL).title("Oracle"));
-                    f.render_widget(&oracle_list, chunks[1]);
-                }
+    // Oracle (KB)
+    #[cfg(feature = "oracle")]
+    {
+        let kb_items: Vec<ListItem> = vm
+            .knowledge_base
+            .iter()
+            .take(20)
+            .map(|fact| ListItem::new(format!("{}", fact)))
+            .collect();
+        let oracle_list = List::new(kb_items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Oracle (Knowledge Base)"),
+        );
+        f.render_widget(oracle_list, chunks[1]);
+    }
+    #[cfg(not(feature = "oracle"))]
+    {
+        let oracle_list = Paragraph::new("Oracle feature disabled")
+            .block(Block::default().borders(Borders::ALL).title("Oracle"));
+        f.render_widget(&oracle_list, chunks[1]);
+    }
 
-                // Sigil Registry (The Grimoire)
-                #[cfg(feature = "nova")]
-                {
-                    let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
-                    registry.sort_by_key(|(k, _)| *k);
+    // Sigil Registry (The Grimoire)
+    #[cfg(feature = "nova")]
+    {
+        let mut registry: Vec<_> = vm.sigil_registry.iter().collect();
+        registry.sort_by_key(|(k, _)| *k);
 
-                    let sigil_items: Vec<ListItem> = registry.iter().enumerate().map(|(i, (name, sigil))| {
-                        let status = if sigil.auto_cast { "⚡ AUTO" } else { "○ MANU" };
-                        let style = if i == app_state.selected_sigil_index {
-                            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-                        } else {
-                            Style::default().fg(Color::White)
-                        };
-                        ListItem::new(format!("{} | {} ({} cells) -> Strand {}", status, name, sigil.pattern.len(), sigil.strand_idx)).style(style)
-                    }).collect();
+        let sigil_items: Vec<ListItem> = registry
+            .iter()
+            .enumerate()
+            .map(|(i, (name, sigil))| {
+                let status = if sigil.auto_cast {
+                    "⚡ AUTO"
+                } else {
+                    "○ MANU"
+                };
+                let style = if i == app_state.selected_sigil_index {
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD)
+                } else {
+                    Style::default().fg(Color::White)
+                };
+                ListItem::new(format!(
+                    "{} | {} ({} cells) -> Strand {}",
+                    status,
+                    name,
+                    sigil.pattern.len(),
+                    sigil.strand_idx
+                ))
+                .style(style)
+            })
+            .collect();
 
-                    let sigil_list = List::new(sigil_items).block(Block::default().borders(Borders::ALL).title("The Grimoire (Select & Enter to Toggle Auto-Cast)"));
-                    f.render_widget(sigil_list, chunks[2]);
-                }
+        let sigil_list = List::new(sigil_items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("The Grimoire (Select & Enter to Toggle Auto-Cast)"),
+        );
+        f.render_widget(sigil_list, chunks[2]);
+    }
 
-                // Bard (Score)
-                let score_text: String = crate::vm::bard::score_to_abc(&vm.score);
-                let bard_paragraph = Paragraph::new(score_text).block(Block::default().borders(Borders::ALL).title("Bard (Score)"));
-                f.render_widget(bard_paragraph, chunks[3]);
-
+    // Bard (Score)
+    let score_text: String = crate::vm::bard::score_to_abc(&vm.score);
+    let bard_paragraph = Paragraph::new(score_text)
+        .block(Block::default().borders(Borders::ALL).title("Bard (Score)"));
+    f.render_widget(bard_paragraph, chunks[3]);
 }
 
 #[cfg(feature = "nova")]
 fn render_topology(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(f.area());
 
-                let left_chunks = Layout::default()
-                    .direction(Direction::Vertical)
-                    .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(33)].as_ref())
-                    .split(chunks[0]);
+    let left_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Percentage(33),
+                Constraint::Percentage(33),
+                Constraint::Percentage(33),
+            ]
+            .as_ref(),
+        )
+        .split(chunks[0]);
 
-                // Portals
-                let portal_items: Vec<ListItem> = vm.portals.iter().map(|(k, v)| {
-                    ListItem::new(format!("Portal: ({},{}) -> ({},{})", k.1, k.0, v.1, v.0))
-                }).collect();
-                let portal_list = List::new(portal_items).block(Block::default().borders(Borders::ALL).title("Wormholes"));
-                f.render_widget(portal_list, left_chunks[0]);
+    // Portals
+    let portal_items: Vec<ListItem> = vm
+        .portals
+        .iter()
+        .map(|(k, v)| ListItem::new(format!("Portal: ({},{}) -> ({},{})", k.1, k.0, v.1, v.0)))
+        .collect();
+    let portal_list =
+        List::new(portal_items).block(Block::default().borders(Borders::ALL).title("Wormholes"));
+    f.render_widget(portal_list, left_chunks[0]);
 
-                // Entanglements
-                let ent_items: Vec<ListItem> = vm.entangled_pairs.iter().map(|(k, v)| {
-                    ListItem::new(format!("Entangled: Strand {} <-> {}", k, v))
-                }).collect();
-                let ent_list = List::new(ent_items).block(Block::default().borders(Borders::ALL).title("Spooky Action"));
-                f.render_widget(ent_list, left_chunks[1]);
+    // Entanglements
+    let ent_items: Vec<ListItem> = vm
+        .entangled_pairs
+        .iter()
+        .map(|(k, v)| ListItem::new(format!("Entangled: Strand {} <-> {}", k, v)))
+        .collect();
+    let ent_list = List::new(ent_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Spooky Action"),
+    );
+    f.render_widget(ent_list, left_chunks[1]);
 
-                // Mycelium
-                let myc_items: Vec<ListItem> = vm.mycelium.iter().map(|(k, v)| {
-                    let neighbors: Vec<String> = v.iter().map(|n| format!("({},{})", n.1, n.0)).collect();
-                    ListItem::new(format!("Hyphae ({},{}): {:?}", k.1, k.0, neighbors))
-                }).collect();
-                let myc_list = List::new(myc_items).block(Block::default().borders(Borders::ALL).title("Fungal Network"));
-                f.render_widget(myc_list, left_chunks[2]);
+    // Mycelium
+    let myc_items: Vec<ListItem> = vm
+        .mycelium
+        .iter()
+        .map(|(k, v)| {
+            let neighbors: Vec<String> = v.iter().map(|n| format!("({},{})", n.1, n.0)).collect();
+            ListItem::new(format!("Hyphae ({},{}): {:?}", k.1, k.0, neighbors))
+        })
+        .collect();
+    let myc_list = List::new(myc_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Fungal Network"),
+    );
+    f.render_widget(myc_list, left_chunks[2]);
 
-                // Topology Map
-                let mut map_lines = Vec::new();
-                for y in 0..16 {
-                    let mut spans = Vec::new();
-                    for x in 0..16 {
-                        let mut ch = "·".to_string();
-                        let mut style = Style::default().fg(Color::DarkGray);
+    // Topology Map
+    let mut map_lines = Vec::new();
+    for y in 0..16 {
+        let mut spans = Vec::new();
+        for x in 0..16 {
+            let mut ch = "·".to_string();
+            let mut style = Style::default().fg(Color::DarkGray);
 
-                        if vm.mycelium.contains_key(&(y, x)) {
-                            ch = "▓".to_string();
-                            style = style.fg(Color::Green);
-                        }
-                        if vm.portals.contains_key(&(y, x)) {
-                            ch = "Ω".to_string();
-                            style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
-                        }
-                        if vm.organelles.iter().any(|o| o.context_loc == (y, x)) {
-                            ch = "o".to_string();
-                            style = style.fg(Color::Yellow);
-                        }
+            if vm.mycelium.contains_key(&(y, x)) {
+                ch = "▓".to_string();
+                style = style.fg(Color::Green);
+            }
+            if vm.portals.contains_key(&(y, x)) {
+                ch = "Ω".to_string();
+                style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
+            }
+            if vm.organelles.iter().any(|o| o.context_loc == (y, x)) {
+                ch = "o".to_string();
+                style = style.fg(Color::Yellow);
+            }
 
-                        spans.push(Span::styled(ch, style));
-                        spans.push(Span::raw(" "));
-                    }
-                    map_lines.push(Line::from(spans));
-                }
-                let map = Paragraph::new(map_lines).block(Block::default().borders(Borders::ALL).title("Topology Map"));
-                f.render_widget(map, chunks[1]);
-
+            spans.push(Span::styled(ch, style));
+            spans.push(Span::raw(" "));
+        }
+        map_lines.push(Line::from(spans));
+    }
+    let map = Paragraph::new(map_lines)
+        .block(Block::default().borders(Borders::ALL).title("Topology Map"));
+    f.render_widget(map, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
 fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .constraints([
-                        Constraint::Percentage(30),
-                        Constraint::Percentage(30),
-                        Constraint::Percentage(40),
-                    ].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(30),
+                Constraint::Percentage(30),
+                Constraint::Percentage(40),
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
 
-                // Helper to render strand preview
-                let render_strand = |idx: usize, title: &str, is_focused: bool| {
-                    let mut items = Vec::new();
-                    if idx < vm.dna.helix.strands.len() {
-                        let strand = &vm.dna.helix.strands[idx];
-                        for gene in &strand.genes {
-                            items.push(ListItem::new(format!("{}", gene.op)));
-                        }
-                    } else {
-                        items.push(ListItem::new("Invalid Strand"));
+    // Helper to render strand preview
+    let render_strand = |idx: usize, title: &str, is_focused: bool| {
+        let mut items = Vec::new();
+        if idx < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[idx];
+            for gene in &strand.genes {
+                items.push(ListItem::new(format!("{}", gene.op)));
+            }
+        } else {
+            items.push(ListItem::new("Invalid Strand"));
+        }
+
+        let border_style = if is_focused {
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::White)
+        };
+
+        List::new(items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(format!("{} (Idx: {})", title, idx))
+                .border_style(border_style),
+        )
+    };
+
+    // Parent A
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_a,
+            "Parent A",
+            app_state.selected_strand == 0,
+        ),
+        chunks[0],
+    );
+
+    // Parent B
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_b,
+            "Parent B",
+            app_state.selected_strand == 1,
+        ),
+        chunks[1],
+    );
+
+    // Child / Method
+    let method_name = match app_state.lab_method {
+        0 => "Interleave",
+        1 => "Uniform Crossover",
+        2 => "Midpoint Split",
+        _ => "Unknown",
+    };
+
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+        .split(chunks[2]);
+
+    let method_border = if app_state.selected_strand == 2 {
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::White)
+    };
+
+    let method_widget = Paragraph::new(method_name).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Splice Method")
+            .border_style(method_border),
+    );
+    f.render_widget(method_widget, right_chunks[0]);
+
+    // Preview Child
+    // We simulate the splice to show preview
+    // This is a bit expensive to do every frame but OK for TUI.
+    let mut preview_items = Vec::new();
+
+    let idx_a = app_state.lab_parent_a;
+    let idx_b = app_state.lab_parent_b;
+    let helix_len = vm.dna.helix.strands.len();
+
+    if idx_a < helix_len && idx_b < helix_len {
+        let genes_a = &vm.dna.helix.strands[idx_a].genes;
+        let genes_b = &vm.dna.helix.strands[idx_b].genes;
+        let len_a = genes_a.len();
+        let len_b = genes_b.len();
+        let max_len = len_a.max(len_b);
+
+        // Simple simulation for preview (deterministic only)
+        match app_state.lab_method {
+            0 => {
+                // Interleave
+                for i in 0..max_len {
+                    if i < len_a {
+                        preview_items.push(
+                            ListItem::new(format!("{}", genes_a[i].op))
+                                .style(Style::default().fg(Color::Cyan)),
+                        );
                     }
-
-                    let border_style = if is_focused {
-                        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-                    } else {
-                        Style::default().fg(Color::White)
-                    };
-
-                    List::new(items).block(Block::default().borders(Borders::ALL).title(format!("{} (Idx: {})", title, idx)).border_style(border_style))
-                };
-
-                // Parent A
-                f.render_widget(render_strand(app_state.lab_parent_a, "Parent A", app_state.selected_strand == 0), chunks[0]);
-
-                // Parent B
-                f.render_widget(render_strand(app_state.lab_parent_b, "Parent B", app_state.selected_strand == 1), chunks[1]);
-
-                // Child / Method
-                let method_name = match app_state.lab_method {
-                    0 => "Interleave",
-                    1 => "Uniform Crossover",
-                    2 => "Midpoint Split",
-                    _ => "Unknown",
-                };
-
-                let right_chunks = Layout::default()
-                    .direction(Direction::Vertical)
-                    .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
-                    .split(chunks[2]);
-
-                let method_border = if app_state.selected_strand == 2 {
-                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-                } else {
-                    Style::default().fg(Color::White)
-                };
-
-                let method_widget = Paragraph::new(method_name)
-                    .block(Block::default().borders(Borders::ALL).title("Splice Method").border_style(method_border));
-                f.render_widget(method_widget, right_chunks[0]);
-
-                // Preview Child
-                // We simulate the splice to show preview
-                // This is a bit expensive to do every frame but OK for TUI.
-                let mut preview_items = Vec::new();
-
-                let idx_a = app_state.lab_parent_a;
-                let idx_b = app_state.lab_parent_b;
-                let helix_len = vm.dna.helix.strands.len();
-
-                if idx_a < helix_len && idx_b < helix_len {
-                    let genes_a = &vm.dna.helix.strands[idx_a].genes;
-                    let genes_b = &vm.dna.helix.strands[idx_b].genes;
-                    let len_a = genes_a.len();
-                    let len_b = genes_b.len();
-                    let max_len = len_a.max(len_b);
-
-                    // Simple simulation for preview (deterministic only)
-                    match app_state.lab_method {
-                        0 => { // Interleave
-                            for i in 0..max_len {
-                                if i < len_a { preview_items.push(ListItem::new(format!("{}", genes_a[i].op)).style(Style::default().fg(Color::Cyan))); }
-                                if i < len_b { preview_items.push(ListItem::new(format!("{}", genes_b[i].op)).style(Style::default().fg(Color::Magenta))); }
-                            }
-                        }
-                        1 => { // Uniform
-                            preview_items.push(ListItem::new("Randomized Result").style(Style::default().fg(Color::DarkGray)));
-                        }
-                        2 => { // Midpoint
-                            let mid_a = len_a / 2;
-                            let mid_b = len_b / 2;
-                            for gene in genes_a.iter().take(mid_a) { preview_items.push(ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Cyan))); }
-                            for gene in genes_b.iter().skip(mid_b) { preview_items.push(ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Magenta))); }
-                        }
-                        _ => {}
+                    if i < len_b {
+                        preview_items.push(
+                            ListItem::new(format!("{}", genes_b[i].op))
+                                .style(Style::default().fg(Color::Magenta)),
+                        );
                     }
                 }
+            }
+            1 => {
+                // Uniform
+                preview_items.push(
+                    ListItem::new("Randomized Result").style(Style::default().fg(Color::DarkGray)),
+                );
+            }
+            2 => {
+                // Midpoint
+                let mid_a = len_a / 2;
+                let mid_b = len_b / 2;
+                for gene in genes_a.iter().take(mid_a) {
+                    preview_items.push(
+                        ListItem::new(format!("{}", gene.op))
+                            .style(Style::default().fg(Color::Cyan)),
+                    );
+                }
+                for gene in genes_b.iter().skip(mid_b) {
+                    preview_items.push(
+                        ListItem::new(format!("{}", gene.op))
+                            .style(Style::default().fg(Color::Magenta)),
+                    );
+                }
+            }
+            _ => {}
+        }
+    }
 
-                let preview_list = List::new(preview_items)
-                    .block(Block::default().borders(Borders::ALL).title("Child Preview (Enter to Splice)"));
-                f.render_widget(preview_list, right_chunks[1]);
-
+    let preview_list = List::new(preview_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Child Preview (Enter to Splice)"),
+    );
+    f.render_widget(preview_list, right_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
 fn render_graveyard(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Vertical)
-                    .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
 
-                let top_chunks = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-                    .split(chunks[0]);
+    let top_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(chunks[0]);
 
-                // Graveyard List
-                let mut grave_items = Vec::new();
-                if vm.graveyard.is_empty() {
-                    grave_items.push(ListItem::new("The Graveyard is empty."));
-                } else {
-                    for (i, strand) in vm.graveyard.iter().enumerate() {
-                        let is_selected = i == app_state.selected_graveyard_strand;
-                        let style = if is_selected {
-                            Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-                        } else {
-                            Style::default().fg(Color::White)
-                        };
-                        grave_items.push(ListItem::new(format!("Strand {} (Len: {})", i, strand.genes.len())).style(style));
-                    }
-                }
-                let grave_list = List::new(grave_items).block(Block::default().borders(Borders::ALL).title("Graveyard (Necropolis)"));
-                f.render_widget(grave_list, top_chunks[0]);
+    // Graveyard List
+    let mut grave_items = Vec::new();
+    if vm.graveyard.is_empty() {
+        grave_items.push(ListItem::new("The Graveyard is empty."));
+    } else {
+        for (i, strand) in vm.graveyard.iter().enumerate() {
+            let is_selected = i == app_state.selected_graveyard_strand;
+            let style = if is_selected {
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::White)
+            };
+            grave_items.push(
+                ListItem::new(format!("Strand {} (Len: {})", i, strand.genes.len())).style(style),
+            );
+        }
+    }
+    let grave_list = List::new(grave_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Graveyard (Necropolis)"),
+    );
+    f.render_widget(grave_list, top_chunks[0]);
 
-                // Strand Preview
-                let mut gene_items = Vec::new();
-                if !vm.graveyard.is_empty() && app_state.selected_graveyard_strand < vm.graveyard.len() {
-                    let strand = &vm.graveyard[app_state.selected_graveyard_strand];
-                    for gene in &strand.genes {
-                        gene_items.push(ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Cyan)));
-                    }
-                } else if !vm.graveyard.is_empty() {
-                     gene_items.push(ListItem::new("Invalid Selection"));
-                } else {
-                     gene_items.push(ListItem::new("No souls to display."));
-                }
-                let preview_list = List::new(gene_items).block(Block::default().borders(Borders::ALL).title("Genome of the Departed"));
-                f.render_widget(preview_list, top_chunks[1]);
+    // Strand Preview
+    let mut gene_items = Vec::new();
+    if !vm.graveyard.is_empty() && app_state.selected_graveyard_strand < vm.graveyard.len() {
+        let strand = &vm.graveyard[app_state.selected_graveyard_strand];
+        for gene in &strand.genes {
+            gene_items.push(
+                ListItem::new(format!("{}", gene.op)).style(Style::default().fg(Color::Cyan)),
+            );
+        }
+    } else if !vm.graveyard.is_empty() {
+        gene_items.push(ListItem::new("Invalid Selection"));
+    } else {
+        gene_items.push(ListItem::new("No souls to display."));
+    }
+    let preview_list = List::new(gene_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Genome of the Departed"),
+    );
+    f.render_widget(preview_list, top_chunks[1]);
 
-                // Help / Status
-                let help_text = "Controls:\n↑/↓: Navigate\nR: Resurrect (Exhume to Helix)\nX: Exterminate (Permanent Deletion)\nTab: Switch View";
-                let help_para = Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Necromancy"));
-                f.render_widget(help_para, chunks[1]);
-
+    // Help / Status
+    let help_text = "Controls:\n↑/↓: Navigate\nR: Resurrect (Exhume to Helix)\nX: Exterminate (Permanent Deletion)\nTab: Switch View";
+    let help_para =
+        Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Necromancy"));
+    f.render_widget(help_para, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
 fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Vertical)
-                    .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
 
-                // Retina Display
-                let mut lines = Vec::new();
-                for row in &vm.retina.buffer {
-                    let mut spans = Vec::new();
-                    for (ch, (r, g, b)) in row {
-                        spans.push(Span::styled(
-                            ch.to_string(),
-                            Style::default().fg(Color::Rgb(*r, *g, *b)),
-                        ));
-                    }
-                    lines.push(Line::from(spans));
-                }
+    // Retina Display
+    let mut lines = Vec::new();
+    for row in &vm.retina.buffer {
+        let mut spans = Vec::new();
+        for (ch, (r, g, b)) in row {
+            spans.push(Span::styled(
+                ch.to_string(),
+                Style::default().fg(Color::Rgb(*r, *g, *b)),
+            ));
+        }
+        lines.push(Line::from(spans));
+    }
 
-                let retina_widget = Paragraph::new(lines).block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title(format!("Retina ({}x{})", vm.retina.width, vm.retina.height)),
-                );
-                f.render_widget(retina_widget, chunks[0]);
+    let retina_widget = Paragraph::new(lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Retina ({}x{})", vm.retina.width, vm.retina.height)),
+    );
+    f.render_widget(retina_widget, chunks[0]);
 
-                let help = Paragraph::new(
-                    "Retina Display Active.\nControl via `retina_draw`, `retina_clear` opcodes.",
-                )
-                .block(Block::default().borders(Borders::ALL));
-                f.render_widget(help, chunks[1]);
+    let help = Paragraph::new(
+        "Retina Display Active.\nControl via `retina_draw`, `retina_clear` opcodes.",
+    )
+    .block(Block::default().borders(Borders::ALL));
+    f.render_widget(help, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
 fn render_quantum(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
 
-                // Left: Entanglements
-                let mut ent_items = Vec::new();
-                if vm.entangled_pairs.is_empty() {
-                    ent_items.push(ListItem::new("No entanglement detected."));
-                } else {
-                    let mut pairs: Vec<_> = vm.entangled_pairs.iter().collect();
-                    pairs.sort_by_key(|(k, _)| **k);
+    // Left: Entanglements
+    let mut ent_items = Vec::new();
+    if vm.entangled_pairs.is_empty() {
+        ent_items.push(ListItem::new("No entanglement detected."));
+    } else {
+        let mut pairs: Vec<_> = vm.entangled_pairs.iter().collect();
+        pairs.sort_by_key(|(k, _)| **k);
 
-                    // Deduplicate pairs (A<->B is same as B<->A) for display
-                    let mut seen = std::collections::HashSet::new();
+        // Deduplicate pairs (A<->B is same as B<->A) for display
+        let mut seen = std::collections::HashSet::new();
 
-                    for (k, v) in pairs {
-                        let min = std::cmp::min(*k, *v);
-                        let max = std::cmp::max(*k, *v);
-                        if !seen.contains(&(min, max)) {
-                            seen.insert((min, max));
-                            ent_items.push(ListItem::new(format!("Strand {} <===> Strand {}", min, max))
-                                .style(Style::default().fg(Color::Cyan)));
-                        }
-                    }
+        for (k, v) in pairs {
+            let min = std::cmp::min(*k, *v);
+            let max = std::cmp::max(*k, *v);
+            if !seen.contains(&(min, max)) {
+                seen.insert((min, max));
+                ent_items.push(
+                    ListItem::new(format!("Strand {} <===> Strand {}", min, max))
+                        .style(Style::default().fg(Color::Cyan)),
+                );
+            }
+        }
+    }
+
+    let ent_list = List::new(ent_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Quantum Entanglement State"),
+    );
+    f.render_widget(ent_list, chunks[0]);
+
+    // Right: Superpositions
+    let mut sup_items = Vec::new();
+    let mut found_sup = false;
+    for (i, val) in vm.stack.iter().enumerate() {
+        if let crate::vm::Value::Superposition(states) = val {
+            found_sup = true;
+            let mut desc = format!("Stack[{}]: Ψ = {{ ", i);
+            for (j, (v, p)) in states.iter().enumerate() {
+                if j > 0 {
+                    desc.push_str(" | ");
                 }
+                desc.push_str(&format!("{}: {:.2}", v, p));
+            }
+            desc.push_str(" }");
+            sup_items.push(ListItem::new(desc).style(Style::default().fg(Color::Magenta)));
+        }
+    }
 
-                let ent_list = List::new(ent_items)
-                    .block(Block::default().borders(Borders::ALL).title("Quantum Entanglement State"));
-                f.render_widget(ent_list, chunks[0]);
+    if !found_sup {
+        sup_items.push(ListItem::new(
+            "Wavefunction has collapsed (No superpositions).",
+        ));
+    }
 
-                // Right: Superpositions
-                let mut sup_items = Vec::new();
-                let mut found_sup = false;
-                for (i, val) in vm.stack.iter().enumerate() {
-                    if let crate::vm::Value::Superposition(states) = val {
-                        found_sup = true;
-                        let mut desc = format!("Stack[{}]: Ψ = {{ ", i);
-                        for (j, (v, p)) in states.iter().enumerate() {
-                            if j > 0 { desc.push_str(" | "); }
-                            desc.push_str(&format!("{}: {:.2}", v, p));
-                        }
-                        desc.push_str(" }");
-                        sup_items.push(ListItem::new(desc).style(Style::default().fg(Color::Magenta)));
-                    }
-                }
-
-                if !found_sup {
-                    sup_items.push(ListItem::new("Wavefunction has collapsed (No superpositions)."));
-                }
-
-                let sup_list = List::new(sup_items)
-                    .block(Block::default().borders(Borders::ALL).title("Superpositions"));
-                f.render_widget(sup_list, chunks[1]);
-
+    let sup_list = List::new(sup_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Superpositions"),
+    );
+    f.render_widget(sup_list, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
 fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(f.area());
 
-                // Trace List
-                let mut trace_items = Vec::new();
-                if vm.dream_traces.is_empty() {
-                    trace_items.push(ListItem::new("No dreams recorded."));
-                } else {
-                    for (i, trace) in vm.dream_traces.iter().enumerate() {
-                        let is_selected = i == app_state.selected_dream_trace;
-                        let mut style = if is_selected {
-                            Style::default()
-                                .fg(Color::Yellow)
-                                .add_modifier(Modifier::BOLD)
-                        } else {
-                            Style::default().fg(Color::White)
-                        };
+    // Trace List
+    let mut trace_items = Vec::new();
+    if vm.dream_traces.is_empty() {
+        trace_items.push(ListItem::new("No dreams recorded."));
+    } else {
+        for (i, trace) in vm.dream_traces.iter().enumerate() {
+            let is_selected = i == app_state.selected_dream_trace;
+            let mut style = if is_selected {
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::White)
+            };
 
-                        if trace.accepted {
-                            style = style.fg(Color::Green);
-                        } else {
-                            style = style.fg(Color::Magenta); // Discarded dreams
-                        }
+            if trace.accepted {
+                style = style.fg(Color::Green);
+            } else {
+                style = style.fg(Color::Magenta); // Discarded dreams
+            }
 
-                        if is_selected {
-                            style = style.add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
-                        }
+            if is_selected {
+                style = style.add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
+            }
 
-                        let icon = if trace.accepted { "✔" } else { "✖" };
-                        trace_items.push(
-                            ListItem::new(format!(
-                                "{} Dream #{} (Strand {}) - {} Ticks",
-                                icon, i, trace.strand_idx, trace.duration
-                            ))
-                            .style(style),
-                        );
-                    }
-                }
+            let icon = if trace.accepted { "✔" } else { "✖" };
+            trace_items.push(
+                ListItem::new(format!(
+                    "{} Dream #{} (Strand {}) - {} Ticks",
+                    icon, i, trace.strand_idx, trace.duration
+                ))
+                .style(style),
+            );
+        }
+    }
 
-                let trace_list = List::new(trace_items)
-                    .block(Block::default().borders(Borders::ALL).title("Dream Log"));
-                f.render_widget(trace_list, chunks[0]);
+    let trace_list =
+        List::new(trace_items).block(Block::default().borders(Borders::ALL).title("Dream Log"));
+    f.render_widget(trace_list, chunks[0]);
 
-                // Details
-                if !vm.dream_traces.is_empty()
-                    && app_state.selected_dream_trace < vm.dream_traces.len()
-                {
-                    let trace = &vm.dream_traces[app_state.selected_dream_trace];
+    // Details
+    if !vm.dream_traces.is_empty() && app_state.selected_dream_trace < vm.dream_traces.len() {
+        let trace = &vm.dream_traces[app_state.selected_dream_trace];
 
-                    let right_chunks = Layout::default()
-                        .direction(Direction::Vertical)
-                        .constraints([Constraint::Length(8), Constraint::Min(0)].as_ref())
-                        .split(chunks[1]);
+        let right_chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Length(8), Constraint::Min(0)].as_ref())
+            .split(chunks[1]);
 
-                    let info_text = vec![
-                        Line::from(format!("Mutation: {}", trace.mutation_desc)),
-                        Line::from(format!(
-                            "Energy: {} -> {} (Cost: {})",
-                            trace.result_energy + trace.energy_cost, // Approx start
-                            trace.result_energy,
-                            trace.energy_cost
-                        )),
-                        Line::from(format!(
-                            "Status: {}",
-                            if trace.status == 1 { "Alive" } else { "Dead" }
-                        )),
-                        Line::from(format!("Accepted: {}", trace.accepted)),
-                        Line::from(""),
-                        Line::from(Span::styled(
-                            "Press ENTER to Realize (Lucid Dreaming)",
-                            Style::default().fg(Color::Cyan),
-                        )),
-                    ];
+        let info_text = vec![
+            Line::from(format!("Mutation: {}", trace.mutation_desc)),
+            Line::from(format!(
+                "Energy: {} -> {} (Cost: {})",
+                trace.result_energy + trace.energy_cost, // Approx start
+                trace.result_energy,
+                trace.energy_cost
+            )),
+            Line::from(format!(
+                "Status: {}",
+                if trace.status == 1 { "Alive" } else { "Dead" }
+            )),
+            Line::from(format!("Accepted: {}", trace.accepted)),
+            Line::from(""),
+            Line::from(Span::styled(
+                "Press ENTER to Realize (Lucid Dreaming)",
+                Style::default().fg(Color::Cyan),
+            )),
+        ];
 
-                    let info = Paragraph::new(info_text)
-                        .block(Block::default().borders(Borders::ALL).title("Dream Details"));
-                    f.render_widget(info, right_chunks[0]);
+        let info = Paragraph::new(info_text).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Dream Details"),
+        );
+        f.render_widget(info, right_chunks[0]);
 
-                    // Output Log
-                    let log_items: Vec<ListItem> = trace
-                        .output_log
-                        .iter()
-                        .map(|s| {
-                            ListItem::new(s.clone()).style(Style::default().fg(Color::DarkGray))
-                        })
-                        .collect();
+        // Output Log
+        let log_items: Vec<ListItem> = trace
+            .output_log
+            .iter()
+            .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::DarkGray)))
+            .collect();
 
-                    let log_list = List::new(log_items)
-                        .block(Block::default().borders(Borders::ALL).title("Dream Output"));
-                    f.render_widget(log_list, right_chunks[1]);
-                } else {
-                    let info = Paragraph::new("Select a dream to view details.")
-                        .block(Block::default().borders(Borders::ALL).title("Details"));
-                    f.render_widget(info, chunks[1]);
-                }
-
+        let log_list = List::new(log_items)
+            .block(Block::default().borders(Borders::ALL).title("Dream Output"));
+        f.render_widget(log_list, right_chunks[1]);
+    } else {
+        let info = Paragraph::new("Select a dream to view details.")
+            .block(Block::default().borders(Borders::ALL).title("Details"));
+        f.render_widget(info, chunks[1]);
+    }
 }
 
 #[cfg(feature = "nova")]
 fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
-                let chunks = Layout::default()
-                    .direction(Direction::Vertical)
-                    .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
-                    .split(f.area());
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
 
-                // Calculate total duration to define the time window
-                let mut total_duration = 0;
-                for note in &vm.score {
-                    total_duration += note.duration as u64;
-                }
+    // Calculate total duration to define the time window
+    let mut total_duration = 0;
+    for note in &vm.score {
+        total_duration += note.duration as u64;
+    }
 
-                let window_size = 64; // 4 measures of 16th notes
-                let window_end = total_duration as f64;
-                let window_start = (total_duration as f64 - window_size as f64).max(0.0);
+    let window_size = 64; // 4 measures of 16th notes
+    let window_end = total_duration as f64;
+    let window_start = (total_duration as f64 - window_size as f64).max(0.0);
 
-                let canvas = Canvas::default()
-                    .block(Block::default().borders(Borders::ALL).title("Piano Roll (MIDI Visualization)"))
-                    .x_bounds([window_start, window_end.max(window_start + 1.0)])
-                    .y_bounds([20.0, 108.0]) // MIDI 21 (A0) to 108 (C8) covers most piano range
-                    .paint(|ctx| {
-                        // Draw grid lines (measures)
-                        // Every 16 ticks is a measure
-                        let start_measure = (window_start as u64 / 16) * 16;
-                        let end_measure = window_end as u64 + 16;
-                        for t in (start_measure..end_measure).step_by(16) {
-                             ctx.draw(&ratatui::widgets::canvas::Line {
-                                 x1: t as f64,
-                                 y1: 20.0,
-                                 x2: t as f64,
-                                 y2: 108.0,
-                                 color: Color::DarkGray,
-                             });
-                        }
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Piano Roll (MIDI Visualization)"),
+        )
+        .x_bounds([window_start, window_end.max(window_start + 1.0)])
+        .y_bounds([20.0, 108.0]) // MIDI 21 (A0) to 108 (C8) covers most piano range
+        .paint(|ctx| {
+            // Draw grid lines (measures)
+            // Every 16 ticks is a measure
+            let start_measure = (window_start as u64 / 16) * 16;
+            let end_measure = window_end as u64 + 16;
+            for t in (start_measure..end_measure).step_by(16) {
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: t as f64,
+                    y1: 20.0,
+                    x2: t as f64,
+                    y2: 108.0,
+                    color: Color::DarkGray,
+                });
+            }
 
-                        // Draw notes
-                        let mut current_time = 0;
-                        for note in &vm.score {
-                             let start = current_time as f64;
-                             let end = start + note.duration as f64;
-                             current_time += note.duration as u64;
+            // Draw notes
+            let mut current_time = 0;
+            for note in &vm.score {
+                let start = current_time as f64;
+                let end = start + note.duration as f64;
+                current_time += note.duration as u64;
 
-                             // Only draw if in window
-                             if end > window_start && start < window_end && note.pitch > 0 {
-                                 // Not a rest
-                                 let color = match note.velocity {
-                                     0..=40 => Color::Blue,
-                                     41..=80 => Color::Cyan,
-                                     81..=100 => Color::Green,
-                                     _ => Color::Yellow, // Loud
-                                 };
+                // Only draw if in window
+                if end > window_start && start < window_end && note.pitch > 0 {
+                    // Not a rest
+                    let color = match note.velocity {
+                        0..=40 => Color::Blue,
+                        41..=80 => Color::Cyan,
+                        81..=100 => Color::Green,
+                        _ => Color::Yellow, // Loud
+                    };
 
-                                 ctx.draw(&Rectangle {
-                                     x: start,
-                                     y: note.pitch as f64,
-                                     width: note.duration as f64,
-                                     height: 1.0,
-                                     color,
-                                 });
-                             }
-                        }
+                    ctx.draw(&Rectangle {
+                        x: start,
+                        y: note.pitch as f64,
+                        width: note.duration as f64,
+                        height: 1.0,
+                        color,
                     });
+                }
+            }
+        });
 
-                f.render_widget(canvas, chunks[0]);
+    f.render_widget(canvas, chunks[0]);
 
-                let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch").block(Block::default().borders(Borders::ALL));
-                f.render_widget(help, chunks[1]);
+    let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(help, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
@@ -2638,7 +2901,9 @@ fn layout_tree_node(
     vm: &ChimeraVM,
     max_depth: &mut f64,
 ) -> f64 {
-    if depth > *max_depth { *max_depth = depth; }
+    if depth > *max_depth {
+        *max_depth = depth;
+    }
 
     let mut my_y = *current_y;
 
@@ -2649,7 +2914,8 @@ fn layout_tree_node(
             let mut sum_y = 0.0;
             let count = node.children.len() as f64;
             for child_id in &node.children {
-                sum_y += layout_tree_node(*child_id, depth + 1.0, current_y, positions, vm, max_depth);
+                sum_y +=
+                    layout_tree_node(*child_id, depth + 1.0, current_y, positions, vm, max_depth);
             }
             my_y = sum_y / count;
         }
@@ -2669,19 +2935,31 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     // Layout Calculation
     // Map node_id -> (x, y)
-    let mut positions: std::collections::HashMap<usize, (f64, f64)> = std::collections::HashMap::new();
+    let mut positions: std::collections::HashMap<usize, (f64, f64)> =
+        std::collections::HashMap::new();
     let mut max_depth = 0.0;
 
     let roots = vm.cladistics.get_roots();
     let mut current_y = 0.0;
 
     for root in roots {
-        layout_tree_node(root, 0.0, &mut current_y, &mut positions, vm, &mut max_depth);
+        layout_tree_node(
+            root,
+            0.0,
+            &mut current_y,
+            &mut positions,
+            vm,
+            &mut max_depth,
+        );
     }
     let max_height = current_y;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Phylogeny (Tree of Life)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Phylogeny (Tree of Life)"),
+        )
         .x_bounds([-1.0, max_depth + 5.0])
         .y_bounds([-1.0, max_height + 1.0])
         .paint(|ctx| {
@@ -2720,11 +2998,13 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     f.render_widget(canvas, chunks[0]);
 
-    let help = Paragraph::new(format!("Nodes: {} | Roots: {} | Generations: {}",
+    let help = Paragraph::new(format!(
+        "Nodes: {} | Roots: {} | Generations: {}",
         vm.cladistics.nodes.len(),
         vm.cladistics.get_roots().len(),
         max_depth
-    )).block(Block::default().borders(Borders::ALL));
+    ))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(help, chunks[1]);
 }
 
@@ -2763,12 +3043,20 @@ fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let face_style = if vm.egregore.alignment < -20 {
         Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)
     } else if vm.egregore.alignment > 20 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::Cyan)
     };
 
-    let face = Paragraph::new(face_str).block(Block::default().borders(Borders::ALL).title("Manifestation")).style(face_style);
+    let face = Paragraph::new(face_str)
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Manifestation"),
+        )
+        .style(face_style);
     f.render_widget(face, chunks[0]);
 
     // Stats
@@ -2787,7 +3075,8 @@ fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         Line::from("  egregore_summon(s) - Global Effect"),
     ];
 
-    let info = Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("The Covenant"));
+    let info =
+        Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("The Covenant"));
     f.render_widget(info, chunks[1]);
 }
 
@@ -2805,14 +3094,20 @@ fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     } else {
         for (i, org) in vm.organelles.iter().enumerate() {
             let style = if i == app_state.selected_organelle_index {
-                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
             } else {
                 Style::default().fg(Color::White)
             };
             items.push(ListItem::new(format!("{} [{:?}]", org.name, org.kind)).style(style));
         }
     }
-    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Bestiary (Active Agents)"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Bestiary (Active Agents)"),
+    );
     f.render_widget(list, chunks[0]);
 
     // Details
@@ -2828,9 +3123,13 @@ fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         let face_lines = crate::vm::nova_bestiary::generate_face(org.genome_id, &org.traits);
         let mut face_text = Vec::new();
         for line in face_lines {
-            face_text.push(Line::from(Span::styled(line, Style::default().fg(Color::Cyan))));
+            face_text.push(Line::from(Span::styled(
+                line,
+                Style::default().fg(Color::Cyan),
+            )));
         }
-        let face_widget = Paragraph::new(face_text).block(Block::default().borders(Borders::ALL).title("Portrait"));
+        let face_widget = Paragraph::new(face_text)
+            .block(Block::default().borders(Borders::ALL).title("Portrait"));
         f.render_widget(face_widget, right_chunks[0]);
 
         // Stats
@@ -2845,10 +3144,12 @@ fn render_bestiary(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Line::from(format!("Direction: {:?}", org.direction)),
         ];
 
-        let stats_widget = Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("Vitals"));
+        let stats_widget =
+            Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("Vitals"));
         f.render_widget(stats_widget, right_chunks[1]);
     } else {
-        let info = Paragraph::new("Select an organelle to inspect.").block(Block::default().borders(Borders::ALL));
+        let info = Paragraph::new("Select an organelle to inspect.")
+            .block(Block::default().borders(Borders::ALL));
         f.render_widget(info, chunks[1]);
     }
 }

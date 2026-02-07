@@ -1,11 +1,11 @@
+mod agent;
 mod landscape;
 mod optimizer;
-mod agent;
 
-use macroquad::prelude::*;
-use landscape::*;
-use optimizer::OptimizerType;
 use agent::Plant;
+use landscape::*;
+use macroquad::prelude::*;
+use optimizer::OptimizerType;
 
 fn window_conf() -> Conf {
     Conf {
@@ -94,7 +94,8 @@ async fn main() {
         // We generate for -10 to 10 range.
         draw_texture_ex(
             &heatmap_texture,
-            -10.0, -10.0,
+            -10.0,
+            -10.0,
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(20.0, 20.0)),
@@ -108,7 +109,7 @@ async fn main() {
                 // If we see it flipped, we can flip here.
                 flip_y: true, // Often needed with macroquad cameras
                 ..Default::default()
-            }
+            },
         );
 
         // Draw Grid Lines
@@ -122,10 +123,34 @@ async fn main() {
         set_default_camera();
 
         // UI
-        draw_text(&format!("Function: {}", current_func.name()), 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Optimizer: {} (Press O)", optimizer_type.name()), 20.0, 60.0, 30.0, optimizer_type.color());
-        draw_text(&format!("Plants: {}", plants.len()), 20.0, 90.0, 20.0, WHITE);
-        draw_text("Click to Plant | Tab: Next Map | C: Clear | Scroll: Zoom", 20.0, screen_height() - 30.0, 20.0, GRAY);
+        draw_text(
+            &format!("Function: {}", current_func.name()),
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Optimizer: {} (Press O)", optimizer_type.name()),
+            20.0,
+            60.0,
+            30.0,
+            optimizer_type.color(),
+        );
+        draw_text(
+            &format!("Plants: {}", plants.len()),
+            20.0,
+            90.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Click to Plant | Tab: Next Map | C: Clear | Scroll: Zoom",
+            20.0,
+            screen_height() - 30.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -165,15 +190,15 @@ fn color_map(t: f32) -> Color {
     // Dark Blue (Deep) -> Cyan -> Green (Ground) -> Yellow -> Red (Peak)
     if t < 0.25 {
         // Deep Blue to Blue
-        Color::new(0.0, 0.0, 0.5 + t*2.0, 0.8)
+        Color::new(0.0, 0.0, 0.5 + t * 2.0, 0.8)
     } else if t < 0.5 {
         // Blue to Green
-        Color::new(0.0, (t-0.25)*4.0, 1.0 - (t-0.25)*2.0, 0.8)
+        Color::new(0.0, (t - 0.25) * 4.0, 1.0 - (t - 0.25) * 2.0, 0.8)
     } else if t < 0.75 {
         // Green to Yellow
-        Color::new((t-0.5)*4.0, 1.0, 0.0, 0.8)
+        Color::new((t - 0.5) * 4.0, 1.0, 0.0, 0.8)
     } else {
         // Yellow to Red
-        Color::new(1.0, 1.0 - (t-0.75)*4.0, 0.0, 0.8)
+        Color::new(1.0, 1.0 - (t - 0.75) * 4.0, 0.0, 0.8)
     }
 }

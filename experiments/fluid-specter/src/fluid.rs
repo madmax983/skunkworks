@@ -84,15 +84,15 @@ impl FluidSolver {
         let c_recip = 1.0 / c;
 
         for _ in 0..4 {
-            for j in 1..n-1 {
-                for i in 1..n-1 {
+            for j in 1..n - 1 {
+                for i in 1..n - 1 {
                     let idx = Self::ix(i, j, n);
                     x[idx] = (x0[idx]
                         + a * (x[Self::ix(i + 1, j, n)]
-                             + x[Self::ix(i - 1, j, n)]
-                             + x[Self::ix(i, j + 1, n)]
-                             + x[Self::ix(i, j - 1, n)]
-                        )) * c_recip;
+                            + x[Self::ix(i - 1, j, n)]
+                            + x[Self::ix(i, j + 1, n)]
+                            + x[Self::ix(i, j - 1, n)]))
+                        * c_recip;
                 }
             }
             Self::set_bnd(n, b, x);
@@ -102,15 +102,14 @@ impl FluidSolver {
     fn project(n: usize, veloc_x: &mut [f32], veloc_y: &mut [f32], p: &mut [f32], div: &mut [f32]) {
         let h = 1.0 / n as f32;
 
-        for j in 1..n-1 {
-            for i in 1..n-1 {
+        for j in 1..n - 1 {
+            for i in 1..n - 1 {
                 let idx = Self::ix(i, j, n);
-                div[idx] = -0.5 * h * (
-                      veloc_x[Self::ix(i + 1, j, n)]
-                    - veloc_x[Self::ix(i - 1, j, n)]
-                    + veloc_y[Self::ix(i, j + 1, n)]
-                    - veloc_y[Self::ix(i, j - 1, n)]
-                );
+                div[idx] = -0.5
+                    * h
+                    * (veloc_x[Self::ix(i + 1, j, n)] - veloc_x[Self::ix(i - 1, j, n)]
+                        + veloc_y[Self::ix(i, j + 1, n)]
+                        - veloc_y[Self::ix(i, j - 1, n)]);
                 p[idx] = 0.0;
             }
         }
@@ -120,8 +119,8 @@ impl FluidSolver {
 
         Self::lin_solve(n, 0, p, div, 1.0, 4.0);
 
-        for j in 1..n-1 {
-            for i in 1..n-1 {
+        for j in 1..n - 1 {
+            for i in 1..n - 1 {
                 let idx = Self::ix(i, j, n);
                 veloc_x[idx] -= 0.5 * (p[Self::ix(i + 1, j, n)] - p[Self::ix(i - 1, j, n)]) / h;
                 veloc_y[idx] -= 0.5 * (p[Self::ix(i, j + 1, n)] - p[Self::ix(i, j - 1, n)]) / h;
@@ -132,19 +131,35 @@ impl FluidSolver {
         Self::set_bnd(n, 2, veloc_y);
     }
 
-    fn advect(n: usize, b: i32, d: &mut [f32], d0: &[f32], veloc_x: &[f32], veloc_y: &[f32], dt: f32) {
+    fn advect(
+        n: usize,
+        b: i32,
+        d: &mut [f32],
+        d0: &[f32],
+        veloc_x: &[f32],
+        veloc_y: &[f32],
+        dt: f32,
+    ) {
         let dt0 = dt * (n - 2) as f32;
 
-        for j in 1..n-1 {
-            for i in 1..n-1 {
+        for j in 1..n - 1 {
+            for i in 1..n - 1 {
                 let idx = Self::ix(i, j, n);
                 let mut x = i as f32 - dt0 * veloc_x[idx];
                 let mut y = j as f32 - dt0 * veloc_y[idx];
 
-                if x < 0.5 { x = 0.5; }
-                if x > n as f32 - 1.5 { x = n as f32 - 1.5; }
-                if y < 0.5 { y = 0.5; }
-                if y > n as f32 - 1.5 { y = n as f32 - 1.5; }
+                if x < 0.5 {
+                    x = 0.5;
+                }
+                if x > n as f32 - 1.5 {
+                    x = n as f32 - 1.5;
+                }
+                if y < 0.5 {
+                    y = 0.5;
+                }
+                if y > n as f32 - 1.5 {
+                    y = n as f32 - 1.5;
+                }
 
                 let i0 = x as usize;
                 let i1 = i0 + 1;
@@ -156,9 +171,8 @@ impl FluidSolver {
                 let t1 = y - j0 as f32;
                 let t0 = 1.0 - t1;
 
-                d[idx] =
-                    s0 * (t0 * d0[Self::ix(i0, j0, n)] + t1 * d0[Self::ix(i0, j1, n)]) +
-                    s1 * (t0 * d0[Self::ix(i1, j0, n)] + t1 * d0[Self::ix(i1, j1, n)]);
+                d[idx] = s0 * (t0 * d0[Self::ix(i0, j0, n)] + t1 * d0[Self::ix(i0, j1, n)])
+                    + s1 * (t0 * d0[Self::ix(i1, j0, n)] + t1 * d0[Self::ix(i1, j1, n)]);
             }
         }
 
@@ -166,20 +180,37 @@ impl FluidSolver {
     }
 
     fn set_bnd(n: usize, b: i32, x: &mut [f32]) {
-        for i in 1..n-1 {
-            x[Self::ix(i, 0, n)]   = if b == 2 { -x[Self::ix(i, 1, n)] } else { x[Self::ix(i, 1, n)] };
-            x[Self::ix(i, n-1, n)] = if b == 2 { -x[Self::ix(i, n-2, n)] } else { x[Self::ix(i, n-2, n)] };
+        for i in 1..n - 1 {
+            x[Self::ix(i, 0, n)] = if b == 2 {
+                -x[Self::ix(i, 1, n)]
+            } else {
+                x[Self::ix(i, 1, n)]
+            };
+            x[Self::ix(i, n - 1, n)] = if b == 2 {
+                -x[Self::ix(i, n - 2, n)]
+            } else {
+                x[Self::ix(i, n - 2, n)]
+            };
         }
 
-        for j in 1..n-1 {
-            x[Self::ix(0, j, n)]   = if b == 1 { -x[Self::ix(1, j, n)] } else { x[Self::ix(1, j, n)] };
-            x[Self::ix(n-1, j, n)] = if b == 1 { -x[Self::ix(n-2, j, n)] } else { x[Self::ix(n-2, j, n)] };
+        for j in 1..n - 1 {
+            x[Self::ix(0, j, n)] = if b == 1 {
+                -x[Self::ix(1, j, n)]
+            } else {
+                x[Self::ix(1, j, n)]
+            };
+            x[Self::ix(n - 1, j, n)] = if b == 1 {
+                -x[Self::ix(n - 2, j, n)]
+            } else {
+                x[Self::ix(n - 2, j, n)]
+            };
         }
 
-        x[Self::ix(0, 0, n)]     = 0.5 * (x[Self::ix(1, 0, n)] + x[Self::ix(0, 1, n)]);
-        x[Self::ix(0, n-1, n)]   = 0.5 * (x[Self::ix(1, n-1, n)] + x[Self::ix(0, n-2, n)]);
-        x[Self::ix(n-1, 0, n)]   = 0.5 * (x[Self::ix(n-2, 0, n)] + x[Self::ix(n-1, 1, n)]);
-        x[Self::ix(n-1, n-1, n)] = 0.5 * (x[Self::ix(n-2, n-1, n)] + x[Self::ix(n-1, n-2, n)]);
+        x[Self::ix(0, 0, n)] = 0.5 * (x[Self::ix(1, 0, n)] + x[Self::ix(0, 1, n)]);
+        x[Self::ix(0, n - 1, n)] = 0.5 * (x[Self::ix(1, n - 1, n)] + x[Self::ix(0, n - 2, n)]);
+        x[Self::ix(n - 1, 0, n)] = 0.5 * (x[Self::ix(n - 2, 0, n)] + x[Self::ix(n - 1, 1, n)]);
+        x[Self::ix(n - 1, n - 1, n)] =
+            0.5 * (x[Self::ix(n - 2, n - 1, n)] + x[Self::ix(n - 1, n - 2, n)]);
     }
 }
 

@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use rayon::prelude::*;
-use sysinfo::{System, RefreshKind, CpuRefreshKind, MemoryRefreshKind};
+use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
 #[derive(Clone, Copy)]
 pub struct Particle {
@@ -45,7 +45,7 @@ impl SystemMonitor {
         let sys = System::new_with_specifics(
             RefreshKind::new()
                 .with_cpu(CpuRefreshKind::everything())
-                .with_memory(MemoryRefreshKind::everything())
+                .with_memory(MemoryRefreshKind::everything()),
         );
         Self {
             sys,
@@ -60,7 +60,11 @@ impl SystemMonitor {
         let cpu_usage = self.sys.global_cpu_info().cpu_usage(); // 0-100
         let total_mem = self.sys.total_memory() as f32;
         let used_mem = self.sys.used_memory() as f32;
-        let mem_usage = if total_mem > 0.0 { used_mem / total_mem } else { 0.0 };
+        let mem_usage = if total_mem > 0.0 {
+            used_mem / total_mem
+        } else {
+            0.0
+        };
 
         // Map to Lorenz Params
         // Sigma (Prandtl): 10.0 base.
@@ -96,19 +100,25 @@ pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f
             x + k1_x * dt * 0.5,
             y + k1_y * dt * 0.5,
             z + k1_z * dt * 0.5,
-            sigma, rho, beta
+            sigma,
+            rho,
+            beta,
         );
         let (k3_x, k3_y, k3_z) = derivatives(
             x + k2_x * dt * 0.5,
             y + k2_y * dt * 0.5,
             z + k2_z * dt * 0.5,
-            sigma, rho, beta
+            sigma,
+            rho,
+            beta,
         );
         let (k4_x, k4_y, k4_z) = derivatives(
             x + k3_x * dt,
             y + k3_y * dt,
             z + k3_z * dt,
-            sigma, rho, beta
+            sigma,
+            rho,
+            beta,
         );
 
         let dx = (k1_x + 2.0 * k2_x + 2.0 * k3_x + k4_x) / 6.0;
