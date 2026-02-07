@@ -200,7 +200,7 @@ impl Vec2 {
 
     /// Reflects the vector off a surface with the given normal.
     ///
-    /// The normal vector does not need to be normalized, as the function will normalize it internally.
+    /// The normal vector does not need to be normalized.
     ///
     /// # Examples
     ///
@@ -212,13 +212,16 @@ impl Vec2 {
     /// assert_eq!(reflected, Vec2::new(1.0, 1.0));
     /// ```
     pub fn reflect(&self, normal: Vec2) -> Self {
-        let n = normal.normalize();
-        let d = *self;
-        let dot = d.dot(n);
-        // r = d - 2(d . n)n
+        let n_sq = normal.magnitude_squared();
+        if n_sq == 0.0 {
+            return *self;
+        }
+        let dot = self.dot(normal);
+        // r = d - 2 * (d . n) / (n . n) * n
+        let factor = 2.0 * dot / n_sq;
         Self {
-            x: d.x - 2.0 * dot * n.x,
-            y: d.y - 2.0 * dot * n.y,
+            x: self.x - factor * normal.x,
+            y: self.y - factor * normal.y,
         }
     }
 
@@ -354,5 +357,25 @@ mod tests {
         let r = v.reflect(n);
         assert!((r.x - -1.0).abs() < 1e-6);
         assert!((r.y - 0.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_vec2_reflect_non_normalized() {
+        let v = Vec2::new(1.0, 0.0);
+        // Normal is (-5, 0), which is parallel to (-1, 0)
+        let n = Vec2::new(-5.0, 0.0);
+        let r = v.reflect(n);
+        // Should be same as normalized case
+        assert!((r.x - -1.0).abs() < 1e-6);
+        assert!((r.y - 0.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_vec2_reflect_zero_normal() {
+        let v = Vec2::new(1.0, 0.0);
+        let n = Vec2::zero();
+        let r = v.reflect(n);
+        // Should return original vector (no reflection off nothing)
+        assert_eq!(r, v);
     }
 }
