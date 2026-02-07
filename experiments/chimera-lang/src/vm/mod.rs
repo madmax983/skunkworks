@@ -305,6 +305,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub spirit_request: bool,
     #[cfg(feature = "nova")]
+    pub spirit_message: Option<String>,
+    #[cfg(feature = "nova")]
     pub spirit_value: Option<Value>,
     #[cfg(feature = "nova")]
     pub graveyard: Vec<crate::ast::Strand>,
@@ -448,6 +450,8 @@ impl ChimeraVM {
             chronostasis_timer: 0,
             #[cfg(feature = "nova")]
             spirit_request: false,
+            #[cfg(feature = "nova")]
+            spirit_message: None,
             #[cfg(feature = "nova")]
             spirit_value: None,
             #[cfg(feature = "nova")]
@@ -1596,6 +1600,7 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Splice
+            | OpCode::QuantumJump
             | OpCode::Isomerize
             | OpCode::Spirit
             | OpCode::Alchemy

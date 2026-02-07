@@ -1231,6 +1231,29 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::QuantumJump => {
+            let s_idx = vm.ip.0;
+            if let Some(&partner_idx) = vm.entangled_pairs.get(&s_idx) {
+                if partner_idx < vm.dna.helix.strands.len() {
+                    let gene_idx = vm.ip.1;
+                    // Check if partner has enough genes
+                    let p_len = vm.dna.helix.strands[partner_idx].genes.len();
+                    let target_gene = if gene_idx < p_len {
+                        gene_idx
+                    } else {
+                        p_len.saturating_sub(1)
+                    };
+
+                    vm.energy = vm.energy.saturating_sub(10);
+                    vm.output.push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
+                    return Some((partner_idx, target_gene));
+                }
+            } else {
+                vm.output.push("QUANTUM_JUMP: No entangled partner".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Chronos => {
             let (cy, cx) = vm.context_loc;
             let factor = vm.time_grid[cy][cx];
@@ -4210,6 +4233,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         #[cfg(feature = "nova")]
         OpCode::Spirit => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(msg) = val {
+                    vm.spirit_message = Some(msg);
+                } else {
+                    // Put it back if not a string (optional prompt)
+                    vm.stack.push(val);
+                    vm.spirit_message = None;
+                }
+            } else {
+                vm.spirit_message = None;
+            }
             vm.spirit_request = true;
             None
         }
