@@ -30,14 +30,13 @@ fn setup_temp_dir() -> PathBuf {
 #[test]
 fn test_synthesize_and_sequencing() {
     let temp_dir = setup_temp_dir();
-    let file_path = temp_dir.join("test_dna.txt");
-    let path_str = file_path.to_str().unwrap().to_string();
+    let file_name = "test_dna.txt";
     let content = "ATGC".to_string();
 
     let genes = vec![
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::String(path_str.clone())],
+            args: vec![Nucleotide::String(file_name.to_string())],
         },
         Gene {
             op: OpCode::Push,
@@ -49,7 +48,7 @@ fn test_synthesize_and_sequencing() {
         },
         Gene {
             op: OpCode::Push,
-            args: vec![Nucleotide::String(path_str.clone())],
+            args: vec![Nucleotide::String(file_name.to_string())],
         },
         Gene {
             op: OpCode::Sequencing,
@@ -58,6 +57,7 @@ fn test_synthesize_and_sequencing() {
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));
+    vm.sandbox_root = temp_dir.clone(); // Set sandbox root
     while !vm.halted {
         vm.step();
     }
@@ -80,7 +80,9 @@ fn test_crawl() {
     let file2 = temp_dir.join("f2.txt");
     fs::write(&file1, "A").unwrap();
     fs::write(&file2, "B").unwrap();
-    let path_str = temp_dir.to_str().unwrap().to_string();
+
+    // Scan current dir (relative to sandbox root)
+    let path_str = ".".to_string();
 
     let genes = vec![
         Gene {
@@ -94,6 +96,7 @@ fn test_crawl() {
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));
+    vm.sandbox_root = temp_dir.clone();
     while !vm.halted {
         vm.step();
     }
@@ -143,7 +146,7 @@ fn test_shell() {
 
     if let Some(result) = vm.stack.pop() {
         if let Value::Str(s) = result {
-            assert!(s.contains("hello"));
+            assert_eq!(s, "SHELL DISABLED");
         } else {
             panic!("Expected String, got {:?}", result);
         }
@@ -157,7 +160,7 @@ fn test_infect() {
     let temp_dir = setup_temp_dir();
     let file_path = temp_dir.join("host.txt");
     fs::write(&file_path, "HostCode\n").unwrap();
-    let path_str = file_path.to_str().unwrap().to_string();
+    let path_str = "host.txt".to_string(); // Relative path
     let viral_code = "ViralCode";
 
     let genes = vec![
@@ -176,6 +179,7 @@ fn test_infect() {
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));
+    vm.sandbox_root = temp_dir.clone();
     while !vm.halted {
         vm.step();
     }

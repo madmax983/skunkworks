@@ -327,6 +327,7 @@ pub struct ChimeraVM {
     pub relativity_mode: bool,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
+    pub sandbox_root: std::path::PathBuf,
 }
 
 impl ChimeraVM {
@@ -480,6 +481,7 @@ impl ChimeraVM {
             relativity_mode: false,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
+            sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
         }
     }
 
