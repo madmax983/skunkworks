@@ -86,6 +86,8 @@ pub struct Spore {
     pub immune_system: HashSet<u64>,
     pub dictionary: HashMap<String, usize>,
     pub gravity_grid: Vec<Vec<i64>>,
+    pub wind_grid: Vec<Vec<(i8, i8)>>,
+    pub moisture_grid: Vec<Vec<i64>>,
     pub relativity_mode: bool,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
@@ -187,22 +189,41 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let weight_center = 10;
             let mut sums = [
-                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128),
-                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128),
-                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128),
+                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128) * weight_center,
+                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128) * weight_center,
+                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128) * weight_center,
             ];
-            let mut count = inertia;
+            let mut total_weight = (inertia as i128) * weight_center;
 
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                for c in 0..3 {
-                    sums[c] += vm.hormone_grid[ny][nx][c] as i128;
+            // Manual neighbor iteration to calculate wind bias
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
                 }
-                count += 1;
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    // Wind flow from neighbor (ny, nx) to here (y, x).
+                    // Vector from neighbor to here is (-dy, -dx).
+                    // Dot product: w_dy * (-dy) + w_dx * (-dx)
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0); // Base 10
+
+                    for c in 0..3 {
+                        sums[c] += (vm.hormone_grid[ny][nx][c] as i128) * weight;
+                    }
+                    total_weight += weight;
+                }
             }
 
-            for c in 0..3 {
-                buffer[y][x][c] = (sums[c] / count as i128) as i64;
+            if total_weight > 0 {
+                for c in 0..3 {
+                    buffer[y][x][c] = (sums[c] / total_weight) as i64;
+                }
             }
         }
     }
@@ -223,16 +244,31 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let mut sum = (vm.waste_grid[y][x] as i128) * (inertia as i128);
-            let mut count = inertia;
+            let weight_center = 10;
+            let mut sum = (vm.waste_grid[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
 
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                sum += vm.waste_grid[ny][nx] as i128;
-                count += 1;
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (vm.waste_grid[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
             }
 
             let decay = vm.biome_grid[y][x].decay_rate() as i128;
-            buffer[y][x] = ((sum / count as i128) * decay / 100) as i64;
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * decay / 100) as i64;
+            }
         }
     }
     for y in 0..16 {
@@ -261,8 +297,18 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
                 count += 1;
             }
 
-            // Blur and strong decay (50%)
-            buffer[y][x] = ((sum / count as i128) / 2) as i64;
+            // Light interacts with Clouds (Moisture)
+            let moisture = vm.moisture_grid[y][x];
+            let cloud_opacity = (moisture as i64).clamp(0, 50); // Up to 50% block
+
+            // Blur and strong decay (50% base + cloud)
+            let transmission = 50 - cloud_opacity; // 50% -> 0% transmission relative to input
+            // Wait, previous was / 2 (50%).
+            // New logic: (sum / count) * transmission / 100?
+            // If transmission is 50 (clear sky), it matches previous.
+            // If transmission is 0 (thick cloud), light dies.
+
+            buffer[y][x] = ((sum / count as i128) * transmission as i128 / 100) as i64;
         }
     }
     for y in 0..16 {
@@ -283,18 +329,33 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let mut sum = (vm.mutagen_grid[y][x] as i128) * (inertia as i128);
-            let mut count = inertia;
+            let weight_center = 10;
+            let mut sum = (vm.mutagen_grid[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
 
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                sum += vm.mutagen_grid[ny][nx] as i128;
-                count += 1;
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (vm.mutagen_grid[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
             }
 
             // Blur and slow decay (based on biome)
             // Mutagen naturally decays faster than waste (90% base retention)
             let decay = vm.biome_grid[y][x].decay_rate() as i128;
-            buffer[y][x] = ((sum / count as i128) * decay / 100 * 9 / 10) as i64;
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * decay / 100 * 9 / 10) as i64;
+            }
         }
     }
     for y in 0..16 {
@@ -1405,6 +1466,85 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Aeolus => {
+            // Stack: [ ..., angle, strength ]
+            if vm.stack.len() >= 2 {
+                let str_val = vm.stack.pop().unwrap();
+                let ang_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(ang), Value::Int(str)) = (ang_val, str_val) {
+                    let strength = str.clamp(0, 10) as i8;
+                    let (dy, dx) = match ang.rem_euclid(8) {
+                        0 => (-1, 0),  // N
+                        1 => (-1, 1),  // NE
+                        2 => (0, 1),   // E
+                        3 => (1, 1),   // SE
+                        4 => (1, 0),   // S
+                        5 => (1, -1),  // SW
+                        6 => (0, -1),  // W
+                        7 => (-1, -1), // NW
+                        _ => (0, 0),
+                    };
+
+                    let vec = (dy * strength, dx * strength);
+                    let (cy, cx) = vm.context_loc;
+                    vm.wind_grid[cy][cx] = vec;
+
+                    vm.energy = vm.energy.saturating_sub(5);
+                    vm.output
+                        .push(format!("AEOLUS: Wind set to {:?} at {},{}", vec, cx, cy));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for Aeolus".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Aeolus".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Storm => {
+            // Stack: [ ..., intensity, radius ]
+            if vm.stack.len() >= 2 {
+                let rad_val = vm.stack.pop().unwrap();
+                let int_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(int), Value::Int(rad)) = (int_val, rad_val) {
+                    if rad > 0 && int > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, rad);
+                        for (tx, ty) in coords {
+                            vm.moisture_grid[ty][tx] = vm.moisture_grid[ty][tx].saturating_add(int);
+                        }
+                        vm.energy = vm.energy.saturating_sub(int / 2 + rad);
+                        vm.output
+                            .push(format!("STORM: Rain intensity {} at {},{}", int, cx, cy));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for Storm".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Storm".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseWind => {
+            let (cy, cx) = vm.context_loc;
+            let (dy, dx) = vm.wind_grid[cy][cx];
+            vm.stack.push(Value::Int(dy as i64));
+            vm.stack.push(Value::Int(dx as i64));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseMoisture => {
+            let (cy, cx) = vm.context_loc;
+            vm.stack.push(Value::Int(vm.moisture_grid[cy][cx]));
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Terraform => {
             // stack: biome_id, radius (top)
             if vm.stack.len() >= 2 {
@@ -1788,6 +1928,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 immune_system: vm.immune_system.clone(),
                 dictionary: vm.dictionary.clone(),
                 gravity_grid: vm.gravity_grid.clone(),
+                wind_grid: vm.wind_grid.clone(),
+                moisture_grid: vm.moisture_grid.clone(),
                 relativity_mode: vm.relativity_mode,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
@@ -1846,6 +1988,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.immune_system = spore.immune_system.clone();
                         vm.dictionary = spore.dictionary.clone();
                         vm.gravity_grid = spore.gravity_grid.clone();
+                        vm.wind_grid = spore.wind_grid.clone();
+                        vm.moisture_grid = spore.moisture_grid.clone();
                         vm.relativity_mode = spore.relativity_mode;
                         #[cfg(feature = "cortex")]
                         {

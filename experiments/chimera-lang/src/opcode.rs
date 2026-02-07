@@ -783,6 +783,29 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     EventHorizon,
 
+    // Atmosphere Features
+    /// **[Nova]** Sets the local wind vector.
+    ///
+    /// **Stack:** `[ ..., angle, strength ] -> [ ... ]`
+    /// **Angle:** 0=N, 1=NE, 2=E, 3=SE, 4=S, 5=SW, 6=W, 7=NW.
+    #[cfg(feature = "nova")]
+    Aeolus,
+    /// **[Nova]** Creates moisture (clouds/rain) at the current location.
+    ///
+    /// **Stack:** `[ ..., intensity, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Storm,
+    /// **[Nova]** Reads the local wind vector.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dy, dx ]`
+    #[cfg(feature = "nova")]
+    SenseWind,
+    /// **[Nova]** Reads the local moisture level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., moisture ]`
+    #[cfg(feature = "nova")]
+    SenseMoisture,
+
     /// **[Nova]** Changes the biome of the local area.
     ///
     /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`
