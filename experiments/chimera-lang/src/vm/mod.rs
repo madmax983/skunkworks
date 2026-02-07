@@ -329,6 +329,10 @@ pub struct ChimeraVM {
     pub relativity_mode: bool,
     #[cfg(feature = "nova")]
     pub market: nova_market::MarketState,
+    #[cfg(feature = "nova")]
+    pub wind_grid: Vec<Vec<(i8, i8)>>,
+    #[cfg(feature = "nova")]
+    pub moisture_grid: Vec<Vec<i64>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -361,6 +365,10 @@ impl ChimeraVM {
         let biome_grid = vec![vec![nova_biome::Biome::default(); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let gravity_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let wind_grid = vec![vec![(0, 0); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let moisture_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -485,6 +493,10 @@ impl ChimeraVM {
             relativity_mode: false,
             #[cfg(feature = "nova")]
             market: nova_market::MarketState::new(),
+            #[cfg(feature = "nova")]
+            wind_grid,
+            #[cfg(feature = "nova")]
+            moisture_grid,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -1635,6 +1647,10 @@ impl ChimeraVM {
             | OpCode::Relativity
             | OpCode::Graviton
             | OpCode::EventHorizon
+            | OpCode::Aeolus
+            | OpCode::Storm
+            | OpCode::SenseWind
+            | OpCode::SenseMoisture
             | OpCode::QuantumJump
             | OpCode::Isomerize
             | OpCode::Spirit
