@@ -1894,7 +1894,28 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(steps) = val {
                     if steps > 0 {
-                        super::piet::exec_piet(vm, steps);
+                        if vm.piet_state.is_none() {
+                            vm.piet_state = Some(super::piet::init_piet(vm));
+                        }
+
+                        let mut remaining = steps;
+                        let mut active = true;
+
+                        if let Some(mut state) = vm.piet_state.take() {
+                            while remaining > 0 {
+                                if !super::piet::step_piet_once(vm, &mut state) {
+                                    active = false;
+                                    break;
+                                }
+                                remaining -= 1;
+                            }
+
+                            if active {
+                                vm.piet_state = Some(state);
+                            } else {
+                                vm.piet_state = None;
+                            }
+                        }
                     } else {
                         vm.output.push("PIET: Steps must be positive".to_string());
                     }

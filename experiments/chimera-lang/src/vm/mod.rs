@@ -367,6 +367,8 @@ pub struct ChimeraVM {
     pub meme_pool: memetics::MemePool,
     #[cfg(feature = "nova")]
     pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
+    #[cfg(feature = "nova")]
+    pub piet_state: Option<piet::PietState>,
 }
 
 impl ChimeraVM {
@@ -541,6 +543,8 @@ impl ChimeraVM {
             meme_pool: memetics::MemePool::new(),
             #[cfg(feature = "nova")]
             dialects: HashMap::new(),
+            #[cfg(feature = "nova")]
+            piet_state: None,
         }
     }
 
