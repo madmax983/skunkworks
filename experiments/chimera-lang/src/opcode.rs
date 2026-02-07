@@ -975,6 +975,33 @@ pub enum OpCode {
     #[cfg(feature = "git")]
     Evolution,
 
+    // Phylogeny Features (Filesystem Genetics)
+    /// **[Phylogeny]** Lists files in a directory.
+    ///
+    /// **Stack:** `[ ..., path_string ] -> [ ..., junction_of_filenames ]`
+    #[cfg(feature = "phylogeny")]
+    Crawl,
+    /// **[Phylogeny]** Reads a file's content (Sequencing).
+    ///
+    /// **Stack:** `[ ..., path_string ] -> [ ..., content_string ]`
+    #[cfg(feature = "phylogeny")]
+    Sequencing,
+    /// **[Phylogeny]** Writes content to a file (Synthesizing DNA).
+    ///
+    /// **Stack:** `[ ..., path_string, content_string ] -> [ ... ]`
+    #[cfg(feature = "phylogeny")]
+    Synthesize,
+    /// **[Phylogeny]** Appends content to a file (Infection).
+    ///
+    /// **Stack:** `[ ..., path_string, content_string ] -> [ ... ]`
+    #[cfg(feature = "phylogeny")]
+    Infect,
+    /// **[Phylogeny]** Executes a system command (Shell).
+    ///
+    /// **Stack:** `[ ..., command_string ] -> [ ..., output_string ]`
+    #[cfg(feature = "phylogeny")]
+    Shell,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),
