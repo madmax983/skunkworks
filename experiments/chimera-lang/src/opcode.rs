@@ -747,6 +747,38 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    // Egregore Features (Collective Consciousness)
+    /// **[Nova]** Connects to the collective Egregore mind.
+    ///
+    /// **Stack:** `[ ..., channel_name ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreLink,
+    /// **[Nova]** Sacrifices energy (faith) to the Egregore.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreTithe,
+    /// **[Nova]** Sends a message to a shared Egregore channel.
+    ///
+    /// **Stack:** `[ ..., channel_name, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreChannel,
+    /// **[Nova]** Casts a vote on a global parameter.
+    ///
+    /// **Stack:** `[ ..., parameter_name, vote_value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreDictate,
+    /// **[Nova]** Queries a value from the Egregore (channel or parameter).
+    ///
+    /// **Stack:** `[ ..., key ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    EgregoreQuery,
+    /// **[Nova]** Attempts to summon a global effect using collective faith.
+    ///
+    /// **Stack:** `[ ..., ritual_name ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreSummon,
+
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.
     ///
