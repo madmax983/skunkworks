@@ -48,6 +48,10 @@
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** Langevin Dynamics active. Solid-Liquid boundaries simulating correctly.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/packet-pachinko
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Ancestral redundancy detected. `synaptic-pachinko` has evolved beyond this form.
+
 ### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
@@ -209,6 +213,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+
+### [Concentration Level: TOXIC] - Location: graveyard/struct-soup
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Genetic material preserved in `struct-harmonics`. Decay confirmed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/text-erosion
 - **Scent Origin:** The Reaper ☠️
@@ -497,9 +505,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/struct-soup
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant ancestor of `struct-harmonics`. Grace period: 24h.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/terra-fluid
 - **Scent Origin:** The Reaper ☠️

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **struct-soup**: Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Grace period: 24h.
+- **packet-pachinko**: Ancestral redundancy with `synaptic-pachinko`. Stagnant implementation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
 - **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
 - **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 - **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
