@@ -62,6 +62,8 @@ pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
+#[cfg(feature = "nova")]
+pub mod nova_botany;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;
 #[cfg(feature = "nova")]
@@ -243,7 +245,6 @@ pub struct ChimeraVM {
     pub time_grid: Vec<Vec<u8>>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
-    #[cfg(any(feature = "nova", feature = "silicon"))]
     pub call_stack: Vec<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub input_buffer: VecDeque<char>,
@@ -407,7 +408,6 @@ impl ChimeraVM {
             time_grid,
             #[cfg(feature = "nova")]
             spores: Vec::new(),
-            #[cfg(any(feature = "nova", feature = "silicon"))]
             call_stack: Vec::new(),
             #[cfg(feature = "nova")]
             input_buffer: VecDeque::new(),
@@ -1002,6 +1002,11 @@ impl ChimeraVM {
                 let dx = rng.gen_range(-1..=1);
                 organelle.direction = (dy, dx);
             }
+            nova::OrganelleType::Seed => {
+                if !nova_botany::tick_seed(self, organelle) {
+                    organelle.halted = true;
+                }
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1010,6 +1015,7 @@ impl ChimeraVM {
             nova::OrganelleType::Ribosome
                 | nova::OrganelleType::Void
                 | nova::OrganelleType::Alchemist
+                | nova::OrganelleType::Seed
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1639,6 +1645,12 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Grow => {
                 nova_morphogenesis::exec_grow(self);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Plant => {
+                nova_botany::exec_plant(self);
                 None
             }
 
