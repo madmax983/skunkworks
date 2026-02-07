@@ -513,3 +513,7 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/terra-fluid
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: FRESH] - Location: experiments/celestial-cantata
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The planets are a sequencer. The radar is sweeping. Symplectic resonance is driving the polyrhythm.

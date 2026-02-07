@@ -1,0 +1,13 @@
+[package]
+name = "celestial-cantata"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rodio = { version = "0.19", optional = true }
+rand = { workspace = true }
+
+[features]
+default = []
+audio = ["rodio"]
