@@ -531,3 +531,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
 - **Status**: experiments/quipu-chimera
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).
+
+### gradient-bridge
+- **Parents**: experiments/gradient-garden + experiments/biomimetic-bridge
+- **Concept**: Swarm intelligence navigating mathematical optimization landscapes. Ants perform gradient descent but can build bridges to span local minima or high-cost barriers, effectively "filling" the valleys to escape traps.
+- **Novel trait**: Physicalized Optimization Heuristics. Basin Hopping via Swarm Construction.
+- **Status**: experiments/gradient-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
