@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 
@@ -49,6 +49,35 @@ mod tests {
     }
 
     #[test]
+    fn test_morphogenesis_expansion_junction() {
+        // Axiom: "A"
+        // Rules: Junction ["A->AB", "B->A"]
+        // Iterations: 2
+        // Expansion: A -> AB -> ABA
+
+        let mut vm = ChimeraVM::new(Dna { helix: Helix { strands: vec![] } });
+
+        let rules = Value::Junction(JunctionType::Any, vec![
+            Value::Str("A->AB".to_string()),
+            Value::Str("B->A".to_string())
+        ]);
+
+        vm.stack.push(Value::Str("A".to_string()));
+        vm.stack.push(rules);
+        vm.stack.push(Value::Int(2));
+
+        let gene = Gene {
+            op: OpCode::Morph,
+            args: vec![],
+        };
+        vm.dna.helix.strands.push(Strand { genes: vec![gene] });
+
+        vm.step();
+
+        assert_eq!(vm.stack.pop(), Some(Value::Str("ABA".to_string())));
+    }
+
+    #[test]
     fn test_morphogenesis_grow() {
         // Simple Square: F+F+F+F
         // Start at 8,8
@@ -78,34 +107,21 @@ mod tests {
 
         // Check if grid was written to
         // F moves and writes. Start 8,8.
-        // F (8,8) -> (8,9)
+        // Direction 0 = East (default)
+        // F (8,8) -> Draw, Move to (8,9)
         // + (turn right -> South)
-        // F (8,9) -> (9,9)
+        // F (8,9) -> Draw, Move to (9,9)
         // + (turn right -> West)
-        // F (9,9) -> (9,8)
+        // F (9,9) -> Draw, Move to (9,8)
         // + (turn right -> North)
-        // F (9,8) -> (8,8)
+        // F (9,8) -> Draw, Move to (8,8)
 
-        // We expect these cells to be non-zero (or specifically marked)
-        // Let's assume Grow writes a "Structure" value, maybe String "Structure" or Int(100).
-        // For now, just check non-zero.
+        // Expected cells to be "#":
+        // (8,8), (8,9), (9,9), (9,8)
 
-        // Note: The implementation detail of what Grow writes needs to be decided.
-        // Let's assume it writes Value::Str("#") for now.
-
-        // Verify path
-        // Start 8,8. Dir N (-Y).
-        // F -> Draw 8,8. Move 8,7.
-        // + -> E.
-        // F -> Draw 8,7. Move 9,7.
-        // + -> S.
-        // F -> Draw 9,7. Move 9,8.
-        // + -> W.
-        // F -> Draw 9,8. Move 8,8.
-
-        assert!(matches!(vm.grid[8][8], Value::Str(ref s) if s == "#"));
-        assert!(matches!(vm.grid[7][8], Value::Str(ref s) if s == "#"));
-        assert!(matches!(vm.grid[7][9], Value::Str(ref s) if s == "#"));
-        assert!(matches!(vm.grid[8][9], Value::Str(ref s) if s == "#"));
+        assert!(matches!(vm.grid[8][8], Value::Str(ref s) if s == "#"), "Grid(8,8)");
+        assert!(matches!(vm.grid[8][9], Value::Str(ref s) if s == "#"), "Grid(8,9)");
+        assert!(matches!(vm.grid[9][9], Value::Str(ref s) if s == "#"), "Grid(9,9)");
+        assert!(matches!(vm.grid[9][8], Value::Str(ref s) if s == "#"), "Grid(9,8)");
     }
 }
