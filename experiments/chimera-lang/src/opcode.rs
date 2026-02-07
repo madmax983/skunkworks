@@ -786,6 +786,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    // Constellation Features (Geometric Execution)
+    /// **[Nova]** Pushes the number of active Constellations to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., count ]`
+    #[cfg(feature = "nova")]
+    Stargaze,
+    /// **[Nova]** Consumes all active Constellations for a burst of Energy.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., energy_gained ]`
+    #[cfg(feature = "nova")]
+    Zenith,
+
     // Egregore Features (Collective Consciousness)
     /// **[Nova]** Connects to the collective Egregore mind.
     ///

@@ -82,6 +82,8 @@ pub mod nova_geology;
 #[cfg(feature = "nova")]
 pub mod nova_crystal;
 #[cfg(feature = "nova")]
+pub mod nova_constellation;
+#[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -369,6 +371,8 @@ pub struct ChimeraVM {
     pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
     #[cfg(feature = "nova")]
     pub piet_state: Option<piet::PietState>,
+    #[cfg(feature = "nova")]
+    pub star_map: nova_constellation::StarMap,
 }
 
 impl ChimeraVM {
@@ -545,6 +549,8 @@ impl ChimeraVM {
             dialects: HashMap::new(),
             #[cfg(feature = "nova")]
             piet_state: None,
+            #[cfg(feature = "nova")]
+            star_map: nova_constellation::StarMap::new(),
         }
     }
 
@@ -1356,6 +1362,14 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         if !time_frozen {
+            if self.star_map.history.back() != Some(&self.ip.0) {
+                self.star_map.record_jump(self.ip.0);
+            }
+            let constellation_energy = self.star_map.tick(self.tick_counter);
+            if constellation_energy > 0 {
+                self.energy = self.energy.saturating_add(constellation_energy);
+            }
+
             let manifestation = self.egregore.tick();
             match manifestation {
                 nova_egregore::Manifestation::Smite => {
@@ -1881,6 +1895,21 @@ impl ChimeraVM {
             | OpCode::EgregoreSummon
             | OpCode::Sacrifice
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Stargaze => {
+                self.stack
+                    .push(Value::Int(self.star_map.active_constellations.len() as i64));
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Zenith => {
+                let gain = self.star_map.consume_all();
+                self.energy = self.energy.saturating_add(gain);
+                self.stack.push(Value::Int(gain));
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {

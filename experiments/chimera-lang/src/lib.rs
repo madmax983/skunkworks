@@ -76,6 +76,8 @@ mod nova_chroma_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_conjugation_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_constellation_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_crystal_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_crispr_test;
