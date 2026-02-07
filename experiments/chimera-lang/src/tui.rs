@@ -51,6 +51,8 @@ pub(crate) enum ViewMode {
     Alchemy,
     #[cfg(feature = "nova")]
     Memetics,
+    #[cfg(feature = "nova")]
+    Egregore,
     Heatmap,
 }
 
@@ -267,6 +269,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Egregore = app_state.view_mode {
+                render_egregore(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -464,6 +472,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Egregore => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -566,7 +579,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Alchemy => ViewMode::Memetics,
                             #[cfg(feature = "nova")]
-                            ViewMode::Memetics => ViewMode::Heatmap,
+                            ViewMode::Memetics => ViewMode::Egregore,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Egregore => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "nova")]
                                 {
@@ -741,6 +756,8 @@ where
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Memetics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                         #[cfg(feature = "biophysics")]
                         ViewMode::Cortex => {
                             let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
@@ -867,6 +884,8 @@ where
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Memetics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -911,6 +930,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Memetics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -955,6 +976,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Memetics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Egregore => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1132,6 +1155,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Memetics => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Egregore => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1396,6 +1423,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
                 #[cfg(feature = "nova")]
                 ViewMode::Memetics => "MEMETICS",
+                #[cfg(feature = "nova")]
+                ViewMode::Egregore => "THE EGREGORE",
                 ViewMode::Heatmap => "HEATMAP",
             };
 
@@ -2652,4 +2681,67 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         max_depth
     )).block(Block::default().borders(Borders::ALL));
     f.render_widget(help, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let face_str = if vm.egregore.alignment < -20 {
+        // Demon
+        r#"
+      / \
+     |o o|
+      \=/
+        "#
+    } else if vm.egregore.alignment > 20 {
+        // Angel
+        r#"
+      O
+    .-^-.
+   (o   o)
+    \ - /
+        "#
+    } else {
+        // Neutral
+        r#"
+      .
+     .-.
+    ( - )
+     '-'
+        "#
+    };
+
+    let face_style = if vm.egregore.alignment < -20 {
+        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)
+    } else if vm.egregore.alignment > 20 {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::Cyan)
+    };
+
+    let face = Paragraph::new(face_str).block(Block::default().borders(Borders::ALL).title("Manifestation")).style(face_style);
+    f.render_widget(face, chunks[0]);
+
+    // Stats
+    let faith = vm.egregore.faith;
+    let alignment = vm.egregore.alignment;
+    let timer = vm.egregore.manifestation_timer;
+
+    let stats = vec![
+        Line::from(format!("Faith: {}", faith)),
+        Line::from(format!("Alignment: {} (Chaos <-> Order)", alignment)),
+        Line::from(format!("Manifestation: {} ticks", timer)),
+        Line::from(" "),
+        Line::from("Rituals:"),
+        Line::from("  pray(n) - Order"),
+        Line::from("  sacrifice - Chaos"),
+        Line::from("  egregore_summon(s) - Global Effect"),
+    ];
+
+    let info = Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("The Covenant"));
+    f.render_widget(info, chunks[1]);
 }
