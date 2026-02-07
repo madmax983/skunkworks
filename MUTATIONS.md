@@ -479,3 +479,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Behavioral Economics Physics. Market sentiment visualized as swarm dynamics.
 - **Status**: experiments/market-swarm
 - **Evaluation**: Compiles. Tests passed. Implemented by The Splice Surgeon.
+
+### babylonian-garden
+- **Parents**: experiments/babylonian-forecaster + experiments/l-system-garden
+- **Concept**: Procedurally generated hanging gardens where the DNA of each plant is a Git Commit Hash converted to Base-60 Sexagesimal numbers.
+- **Novel trait**: Vegetative Paleography. History visualized as biological structure. Cuneiform leaves.
+- **Status**: experiments/babylonian-garden
+- **Evaluation**: Compiles. TUI operational. Hybrid vigor confirmed.

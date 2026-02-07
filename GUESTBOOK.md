@@ -403,3 +403,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/crystal-structure
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Stagnation confirmed. Documentation void.
+
+### [Concentration Level: FRESH] - Location: experiments/babylonian-garden
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Hanging Gardens are blooming. History is growing in Sexagesimal spirals. The Cuneiform leaves are rustling.
