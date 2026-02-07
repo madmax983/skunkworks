@@ -114,10 +114,25 @@ impl Vec2 {
         if mag == 0.0 {
             Self::zero()
         } else if mag.is_infinite() {
-            // If magnitude is infinite, scale components down to be finite
-            let max_comp = self.x.abs().max(self.y.abs());
-            let scaled = Vec2::new(self.x / max_comp, self.y / max_comp);
-            scaled.normalize()
+            if self.x.is_infinite() || self.y.is_infinite() {
+                // If components are infinite, normalize by treating infinite components as +/- 1.0
+                let x = if self.x.is_infinite() {
+                    self.x.signum()
+                } else {
+                    0.0
+                };
+                let y = if self.y.is_infinite() {
+                    self.y.signum()
+                } else {
+                    0.0
+                };
+                Vec2::new(x, y).normalize()
+            } else {
+                // If magnitude is infinite but components are finite (overflow), scale down
+                let max_comp = self.x.abs().max(self.y.abs());
+                let scaled = Vec2::new(self.x / max_comp, self.y / max_comp);
+                scaled.normalize()
+            }
         } else {
             *self / mag
         }
@@ -377,5 +392,87 @@ mod tests {
         let r = v.reflect(n);
         // Should return original vector (no reflection off nothing)
         assert_eq!(r, v);
+    }
+
+    #[test]
+    fn test_normalize_infinite() {
+        // (inf, 0) -> (1, 0)
+        let v = Vec2::new(f64::INFINITY, 0.0);
+        let n = v.normalize();
+        assert!(!n.x.is_nan());
+        assert!(!n.y.is_nan());
+        assert_eq!(n, Vec2::new(1.0, 0.0));
+
+        // (inf, inf) -> (0.707, 0.707)
+        let v = Vec2::new(f64::INFINITY, f64::INFINITY);
+        let n = v.normalize();
+        assert!(!n.x.is_nan());
+        assert!(!n.y.is_nan());
+        assert!((n.x - 0.70710678).abs() < 1e-6);
+        assert!((n.y - 0.70710678).abs() < 1e-6);
+
+        // (-inf, 500) -> (-1, 0)
+        let v = Vec2::new(f64::NEG_INFINITY, 500.0);
+        let n = v.normalize();
+        assert_eq!(n, Vec2::new(-1.0, 0.0));
+    }
+
+    #[test]
+    fn test_normalize_nan() {
+        let v = Vec2::new(f64::NAN, 0.0);
+        let n = v.normalize();
+        assert!(n.x.is_nan());
+        // n.y could be NaN or something else depending on implementation, but likely NaN
+        assert!(n.y.is_nan());
+    }
+
+    #[test]
+    fn test_normalize_max() {
+        // (f64::MAX, 0) -> (1, 0)
+        let v = Vec2::new(f64::MAX, 0.0);
+        let n = v.normalize();
+        assert!((n.x - 1.0).abs() < 1e-6);
+        assert!((n.y - 0.0).abs() < 1e-6);
+
+        // (f64::MAX, f64::MAX) -> (0.707, 0.707)
+        let v = Vec2::new(f64::MAX, f64::MAX);
+        let n = v.normalize();
+        assert!((n.x - 0.70710678).abs() < 1e-6);
+        assert!((n.y - 0.70710678).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_limit_infinite() {
+        let v = Vec2::new(f64::INFINITY, 0.0);
+        let l = v.limit(5.0);
+        // Should be (5.0, 0.0)
+        assert!((l.x - 5.0).abs() < 1e-6);
+        assert!((l.y - 0.0).abs() < 1e-6);
+
+        let v2 = Vec2::new(f64::INFINITY, f64::INFINITY);
+        let l2 = v2.limit(10.0);
+        // Magnitude should be 10.0
+        assert!((l2.magnitude() - 10.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn test_rotate() {
+        use std::f64::consts::PI;
+        let v = Vec2::new(1.0, 0.0);
+
+        // 90 degrees
+        let r90 = v.rotate(PI / 2.0);
+        assert!((r90.x - 0.0).abs() < 1e-6);
+        assert!((r90.y - 1.0).abs() < 1e-6);
+
+        // 180 degrees
+        let r180 = v.rotate(PI);
+        assert!((r180.x - -1.0).abs() < 1e-6);
+        assert!((r180.y - 0.0).abs() < 1e-6);
+
+        // 270 degrees (-90)
+        let r270 = v.rotate(-PI / 2.0);
+        assert!((r270.x - 0.0).abs() < 1e-6);
+        assert!((r270.y - -1.0).abs() < 1e-6);
     }
 }

@@ -1,7 +1,7 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 
@@ -55,12 +55,17 @@ mod tests {
         // Iterations: 2
         // Expansion: A -> AB -> ABA
 
-        let mut vm = ChimeraVM::new(Dna { helix: Helix { strands: vec![] } });
+        let mut vm = ChimeraVM::new(Dna {
+            helix: Helix { strands: vec![] },
+        });
 
-        let rules = Value::Junction(JunctionType::Any, vec![
-            Value::Str("A->AB".to_string()),
-            Value::Str("B->A".to_string())
-        ]);
+        let rules = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("A->AB".to_string()),
+                Value::Str("B->A".to_string()),
+            ],
+        );
 
         vm.stack.push(Value::Str("A".to_string()));
         vm.stack.push(rules);
@@ -119,9 +124,21 @@ mod tests {
         // Expected cells to be "#":
         // (8,8), (8,9), (9,9), (9,8)
 
-        assert!(matches!(vm.grid[8][8], Value::Str(ref s) if s == "#"), "Grid(8,8)");
-        assert!(matches!(vm.grid[8][9], Value::Str(ref s) if s == "#"), "Grid(8,9)");
-        assert!(matches!(vm.grid[9][9], Value::Str(ref s) if s == "#"), "Grid(9,9)");
-        assert!(matches!(vm.grid[9][8], Value::Str(ref s) if s == "#"), "Grid(9,8)");
+        assert!(
+            matches!(vm.grid[8][8], Value::Str(ref s) if s == "#"),
+            "Grid(8,8)"
+        );
+        assert!(
+            matches!(vm.grid[8][9], Value::Str(ref s) if s == "#"),
+            "Grid(8,9)"
+        );
+        assert!(
+            matches!(vm.grid[9][9], Value::Str(ref s) if s == "#"),
+            "Grid(9,9)"
+        );
+        assert!(
+            matches!(vm.grid[9][8], Value::Str(ref s) if s == "#"),
+            "Grid(9,8)"
+        );
     }
 }

@@ -1,8 +1,8 @@
-use std::fmt;
-use std::str::FromStr;
-use std::ops::{Add, Sub, Div};
 use anyhow::{anyhow, Result};
 use std::cmp::max;
+use std::fmt;
+use std::ops::{Add, Div, Sub};
+use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Sexagesimal {
@@ -113,8 +113,8 @@ impl fmt::Display for Sexagesimal {
                 // Let's use U+1224C (SIGN NU) "NOT". Or just print nothing if 0 is leading?
                 // But I'm normalizing.
                 if digit == 0 {
-                     write!(f, "''")?;
-                     continue;
+                    write!(f, "''")?;
+                    continue;
                 }
             }
 

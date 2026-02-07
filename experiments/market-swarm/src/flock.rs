@@ -29,7 +29,11 @@ pub struct Dna {
 impl Dna {
     pub fn random() -> Self {
         let mut rng = rand::thread_rng();
-        let strategy = if rng.gen_bool(0.5) { Strategy::Bull } else { Strategy::Bear };
+        let strategy = if rng.gen_bool(0.5) {
+            Strategy::Bull
+        } else {
+            Strategy::Bear
+        };
 
         let color = match strategy {
             Strategy::Bull => Color::Green,
@@ -91,8 +95,12 @@ impl Boid {
         self.acceleration = Vec2::zero();
 
         // Wrap around edges
-        if self.position.x < 0.0 { self.position.x += width; }
-        if self.position.x >= width { self.position.x -= width; }
+        if self.position.x < 0.0 {
+            self.position.x += width;
+        }
+        if self.position.x >= width {
+            self.position.x -= width;
+        }
 
         // Bounce off top/bottom
         if self.position.y < 0.0 {
@@ -176,18 +184,21 @@ impl Flock {
                 price_seek = steer.limit(dna.max_force);
             }
 
-
             let view_radius_sq = dna.view_radius.powi(2);
             let coupling_radius_sq = dna.coupling_radius.powi(2);
             let separation_radius_sq = (dna.view_radius / 2.0).powi(2);
 
             for j in 0..count {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let b2 = &self.boids[j];
                 let d_sq = p1.distance_squared(b2.position);
 
-                if d_sq == 0.0 { continue; }
+                if d_sq == 0.0 {
+                    continue;
+                }
 
                 if d_sq < view_radius_sq {
                     if d_sq < separation_radius_sq {
@@ -261,7 +272,9 @@ impl Flock {
             sum_cos += theta.cos();
         }
         let n = self.boids.len() as f64;
-        if n == 0.0 { return 0.0; }
+        if n == 0.0 {
+            return 0.0;
+        }
         ((sum_sin / n).powi(2) + (sum_cos / n).powi(2)).sqrt()
     }
 }

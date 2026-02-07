@@ -1,5 +1,7 @@
 use anyhow::Result;
+use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style, Stylize},
@@ -12,10 +14,8 @@ use ratatui::{
 };
 use resonance_audio::audio::{AudioCommand, AudioModel};
 use std::time::{Duration, Instant};
-use tui_shared::Tui;
 use tui_shared::math::Vec2;
-use crossbeam_channel::{bounded, Sender, Receiver};
-use rand::Rng;
+use tui_shared::Tui;
 
 const WIDTH: usize = 80;
 const HEIGHT: usize = 40;
@@ -38,10 +38,18 @@ impl Boid {
 
     fn update(&mut self, width: f64, height: f64, wave_grid: &[f32], grid_w: usize, grid_h: usize) {
         // Wrap around
-        if self.pos.x < 0.0 { self.pos.x += width; }
-        if self.pos.x >= width { self.pos.x -= width; }
-        if self.pos.y < 0.0 { self.pos.y += height; }
-        if self.pos.y >= height { self.pos.y -= height; }
+        if self.pos.x < 0.0 {
+            self.pos.x += width;
+        }
+        if self.pos.x >= width {
+            self.pos.x -= width;
+        }
+        if self.pos.y < 0.0 {
+            self.pos.y += height;
+        }
+        if self.pos.y >= height {
+            self.pos.y -= height;
+        }
 
         self.vel += self.acc;
         if self.vel.magnitude() > 1.0 {
@@ -60,8 +68,8 @@ impl Boid {
                 let wave_val = wave_grid[idx].abs();
                 if wave_val > 0.2 {
                     // Turn randomly if in high wave
-                     let mut rng = rand::thread_rng();
-                     self.acc += Vec2::new(rng.gen_range(-0.5..0.5), rng.gen_range(-0.5..0.5));
+                    let mut rng = rand::thread_rng();
+                    self.acc += Vec2::new(rng.gen_range(-0.5..0.5), rng.gen_range(-0.5..0.5));
                 }
             }
         }
@@ -115,13 +123,15 @@ impl App {
 
         let mut forces = Vec::with_capacity(self.boids.len());
         for i in 0..self.boids.len() {
-             let mut align = Vec2::new(0.0, 0.0);
+            let mut align = Vec2::new(0.0, 0.0);
             let mut coh = Vec2::new(0.0, 0.0);
             let mut sep = Vec2::new(0.0, 0.0);
             let mut count = 0;
 
             for j in 0..self.boids.len() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let pos_j = boids_state[j].0;
                 let vel_j = boids_state[j].1;
                 let d = boids_state[i].0.distance(pos_j);
@@ -157,7 +167,11 @@ impl App {
                 let gx = (boid.pos.x) as usize;
                 let gy = (boid.pos.y) as usize;
                 if gx < WIDTH && gy < HEIGHT {
-                     let _ = self.cmd_tx.send(AudioCommand::Pluck { x: gx, y: gy, strength: 0.5 });
+                    let _ = self.cmd_tx.send(AudioCommand::Pluck {
+                        x: gx,
+                        y: gy,
+                        strength: 0.5,
+                    });
                 }
             }
         }
@@ -180,16 +194,20 @@ fn main() -> Result<()> {
         if event::poll(timeout)? {
             match event::read()? {
                 Event::Key(key) => {
-                     if key.kind == KeyEventKind::Press {
+                    if key.kind == KeyEventKind::Press {
                         match key.code {
                             KeyCode::Esc | KeyCode::Char('q') => app.running = false,
                             KeyCode::Char(' ') => {
                                 // Big splash
-                                let _ = app.cmd_tx.send(AudioCommand::Pluck { x: WIDTH/2, y: HEIGHT/2, strength: 2.0 });
+                                let _ = app.cmd_tx.send(AudioCommand::Pluck {
+                                    x: WIDTH / 2,
+                                    y: HEIGHT / 2,
+                                    strength: 2.0,
+                                });
                             }
                             _ => {}
                         }
-                     }
+                    }
                 }
                 _ => {}
             }
@@ -225,24 +243,28 @@ fn ui(f: &mut Frame, app: &mut App) {
                     let idx = y * WIDTH + x;
                     if idx < app.wave_grid.len() {
                         let val = app.wave_grid[idx];
-                         if val > 0.1 {
-                             ctx.draw(&Points {
-                                 coords: &[(x as f64, (HEIGHT - y) as f64)],
-                                 color: Color::Red,
-                             });
-                         } else if val < -0.1 {
-                             ctx.draw(&Points {
-                                 coords: &[(x as f64, (HEIGHT - y) as f64)],
-                                 color: Color::Blue,
-                             });
-                         }
+                        if val > 0.1 {
+                            ctx.draw(&Points {
+                                coords: &[(x as f64, (HEIGHT - y) as f64)],
+                                color: Color::Red,
+                            });
+                        } else if val < -0.1 {
+                            ctx.draw(&Points {
+                                coords: &[(x as f64, (HEIGHT - y) as f64)],
+                                color: Color::Blue,
+                            });
+                        }
                     }
                 }
             }
 
             // Draw Boids
             for boid in &app.boids {
-                ctx.print(boid.pos.x, HEIGHT as f64 - boid.pos.y, Span::styled("*", Style::default().fg(Color::Yellow)));
+                ctx.print(
+                    boid.pos.x,
+                    HEIGHT as f64 - boid.pos.y,
+                    Span::styled("*", Style::default().fg(Color::Yellow)),
+                );
             }
         });
 
@@ -255,6 +277,7 @@ fn ui(f: &mut Frame, app: &mut App) {
         Span::styled("Blue: Trough", Style::default().fg(Color::Blue)),
         Span::raw(" | "),
         Span::styled("Yellow: Boid", Style::default().fg(Color::Yellow)),
-    ])]).block(Block::default().borders(Borders::ALL));
+    ])])
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(status, chunks[1]);
 }
