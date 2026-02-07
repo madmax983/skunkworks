@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Generic tech demo. Grace period: 24h.
+- **retinal-glitch**: Documentation void. Generic implementation (toy neural network). Suspicious logic (`input.rs`). Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -63,3 +63,4 @@
 - **particle-life**: Failed to improve during grace period. Generic implementation with no documentation or unique traits.
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
 - **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
+- **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.
