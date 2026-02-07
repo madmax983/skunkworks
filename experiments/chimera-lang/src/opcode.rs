@@ -802,6 +802,18 @@ pub enum OpCode {
     /// **Stack:** `[ ..., ritual_name ] -> [ ... ]`
     #[cfg(feature = "nova")]
     EgregoreSummon,
+    /// **[Nova]** Sacrifices the current strand to feed the Chaos of the Egregore.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Kills strand, shifts Alignment towards Chaos (-), gains Faith.
+    #[cfg(feature = "nova")]
+    Sacrifice,
+    /// **[Nova]** Prays to the Egregore for Order.
+    ///
+    /// **Stack:** `[ ..., energy_amount ] -> [ ... ]`
+    /// **Effect:** Consumes Energy, shifts Alignment towards Order (+), gains Faith.
+    #[cfg(feature = "nova")]
+    Pray,
 
     // Market Features
     /// **[Nova]** Places a Sell Order (Ask) on the Market.

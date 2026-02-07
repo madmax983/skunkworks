@@ -1180,6 +1180,42 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Sacrifice => {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                vm.egregore.sacrifice(100);
+
+                // Kill strand
+                vm.dna.helix.strands[s_idx].genes.clear();
+                vm.epigenome.retain(|(s, _)| *s != s_idx);
+                vm.cladistics.kill_strand(s_idx, vm.tick_counter);
+
+                vm.output
+                    .push(format!("SACRIFICE: Strand {} given to the Void", s_idx));
+                vm.halted = true; // Suicide
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Pray => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.egregore.pray(amount);
+                        vm.output.push(format!("PRAY: Donated {} energy", amount));
+                    } else {
+                        vm.output.push("PRAY: Insufficient energy".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for pray".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for pray".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::EgregoreTithe => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {

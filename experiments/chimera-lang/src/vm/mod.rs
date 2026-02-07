@@ -1342,6 +1342,32 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         if !time_frozen {
+            let manifestation = self.egregore.tick();
+            match manifestation {
+                nova_egregore::Manifestation::Smite => {
+                    self.output.push("EGREGORE: SMITE!".to_string());
+                    if !self.dna.helix.strands.is_empty() {
+                        let mut rng = rand::thread_rng();
+                        let idx = rng.gen_range(0..self.dna.helix.strands.len());
+                        self.dna.helix.strands[idx].genes.clear();
+                        self.output.push(format!("EGREGORE: Struck down strand {}", idx));
+                    }
+                }
+                nova_egregore::Manifestation::Bless => {
+                    self.output.push("EGREGORE: BLESSING!".to_string());
+                    self.energy = self.energy.saturating_add(100);
+                }
+                nova_egregore::Manifestation::Whisper(msg) => {
+                    self.output.push(format!("EGREGORE: Whisper '{}'", msg));
+                    self.stack.push(Value::Str(msg));
+                }
+                nova_egregore::Manifestation::Corrupt => {
+                    self.output.push("EGREGORE: CORRUPTION!".to_string());
+                    self.mutate();
+                }
+                nova_egregore::Manifestation::None => {}
+            }
+
             self.process_environment();
             nova_sigil::process_passive_sigils(self);
             if self.relativity_mode {
@@ -1838,7 +1864,9 @@ impl ChimeraVM {
             | OpCode::EgregoreChannel
             | OpCode::EgregoreDictate
             | OpCode::EgregoreQuery
-            | OpCode::EgregoreSummon => nova::exec_nova_op(self, op, args),
+            | OpCode::EgregoreSummon
+            | OpCode::Sacrifice
+            | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
