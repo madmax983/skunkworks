@@ -388,3 +388,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/sono-scapes
 - **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
 - **Status:** The room IS the instrument. FDTD wave simulation active. Impossible acoustics verified.
+
+### [Concentration Level: FRESH] - Location: experiments/sono-boids
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is screaming. Echolocation waves are interfering. Navigation by sound confirmed.
