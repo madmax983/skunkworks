@@ -123,10 +123,11 @@ members = [
     "experiments/git-etymology",
     "experiments/chimera-tardis",
     "experiments/hyperbolic-git", 
-    "experiments/klein-fs", "experiments/fractal-stack",
+    "experiments/klein-fs",
     "experiments/syntax-fold", "experiments/market-scheduler",
     "experiments/chrontext", "experiments/synaptic-choir",
     "experiments/synaptic-pachinko", "experiments/lagrange-balancer", "experiments/klein-magnetron", "experiments/metric-marionette", "experiments/code-canyon",
+    "experiments/klein-flock",
 ]
 resolver = "2"
 
