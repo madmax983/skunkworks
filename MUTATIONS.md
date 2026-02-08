@@ -600,3 +600,31 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hydrodynamic Flocking. Boids create turbulence and are pushed by fluid currents.
 - **Status**: experiments/hydro-boids
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### ink-jet
+- **Parents**: Genesis (The Oceanographer)
+- **Concept**: Fluid simulation where text acts as physical obstacles.
+- **Novel trait**: Liquid Typography.
+- **Status**: experiments/ink-jet
+- **Evaluation**: Compiles. Verified.
+
+### morph-physics
+- **Parents**: Genesis (The Philologist)
+- **Concept**: Phonetic drift simulated via particle physics.
+- **Novel trait**: Linguistic Mechanics.
+- **Status**: experiments/morph-physics
+- **Evaluation**: Compiles. Verified.
+
+### hyperbolic-raymarcher
+- **Parents**: Genesis (The Topologist)
+- **Concept**: Raymarching/Rendering on the Poincaré Disk.
+- **Novel trait**: Non-Euclidean Navigation.
+- **Status**: experiments/hyperbolic-raymarcher
+- **Evaluation**: Compiles. Verified.
+
+### hyperbolic-lexicon
+- **Parents**: experiments/hyperbolic-raymarcher + experiments/morph-physics
+- **Concept**: Linguistic divergence visualized on the Poincaré Disk. Words are particle swarms that drift apart in hyperbolic space.
+- **Novel trait**: Linguistic drift in infinite space. The phoneme map is hyperbolic.
+- **Status**: experiments/hyperbolic-lexicon
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
