@@ -176,6 +176,8 @@ mod nova_ipc_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_isomer_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_planes_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_logistics_test;

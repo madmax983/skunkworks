@@ -121,6 +121,8 @@ pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod nova_planes;
+#[cfg(feature = "nova")]
 pub mod nova_linguistics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -476,6 +478,10 @@ pub struct ChimeraVM {
     pub virus_library: Vec<memetics::Virus>,
     #[cfg(feature = "nova")]
     pub arena: Option<nova_arena::ArenaState>,
+    #[cfg(feature = "nova")]
+    pub planes: HashMap<i64, Vec<Vec<Value>>>,
+    #[cfg(feature = "nova")]
+    pub current_plane: i64,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -711,6 +717,10 @@ impl ChimeraVM {
             virus_library,
             #[cfg(feature = "nova")]
             arena: Some(nova_arena::ArenaState::new()),
+            #[cfg(feature = "nova")]
+            planes: HashMap::new(),
+            #[cfg(feature = "nova")]
+            current_plane: 0,
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -2286,6 +2296,12 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Form | OpCode::Sign | OpCode::Permit | OpCode::RedTape => {
                 nova_bureaucracy::exec_bureaucracy_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Dimension | OpCode::DRead | OpCode::DWrite | OpCode::DMerge | OpCode::DView => {
+                nova_planes::exec_planes_op(self, op, args);
                 None
             }
 

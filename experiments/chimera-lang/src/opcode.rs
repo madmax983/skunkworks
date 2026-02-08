@@ -1500,6 +1500,35 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Volcano,
 
+    // Dimension Features (Nova)
+    /// **[Nova]** Switches to a different Grid Dimension (Plane).
+    ///
+    /// **Stack:** `[ ..., dimension_id ] -> [ ... ]`
+    /// **Effect:** Swaps the current grid with the target dimension's grid.
+    #[cfg(feature = "nova")]
+    Dimension,
+    /// **[Nova]** Reads a value from a specific dimension.
+    ///
+    /// **Stack:** `[ ..., y, x, dimension_id ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    DRead,
+    /// **[Nova]** Writes a value to a specific dimension.
+    ///
+    /// **Stack:** `[ ..., value, y, x, dimension_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    DWrite,
+    /// **[Nova]** Merges a dimension into the current one.
+    ///
+    /// **Stack:** `[ ..., method, dimension_id ] -> [ ... ]`
+    /// **Method:** 0=Add, 1=Max, 2=Overwrite.
+    #[cfg(feature = "nova")]
+    DMerge,
+    /// **[Nova]** Pushes the current dimension ID to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dimension_id ]`
+    #[cfg(feature = "nova")]
+    DView,
+
     // Paleontology Features (Nova)
     /// **[Nova]** Fossilizes a strand into a compressed string on the grid.
     ///
