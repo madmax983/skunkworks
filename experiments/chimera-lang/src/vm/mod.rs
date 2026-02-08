@@ -125,6 +125,8 @@ mod nova_linguistics_test;
 #[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
+pub mod nova_metamorphism;
+#[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_optics;
@@ -1541,6 +1543,7 @@ impl ChimeraVM {
             }
 
             self.process_environment();
+            nova_metamorphism::process_metamorphism(self);
             nova_signals::process_signals(self);
             nova_sigil::process_passive_sigils(self);
             if self.relativity_mode {
