@@ -99,6 +99,8 @@ mod cortex_view_test;
 #[cfg(all(test, feature = "nova"))]
 mod havoc_repro;
 #[cfg(all(test, feature = "nova"))]
+mod havoc_poly_crash;
+#[cfg(all(test, feature = "nova"))]
 mod microscope_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
