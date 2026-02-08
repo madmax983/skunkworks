@@ -663,3 +663,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/morph-physics
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The phonemes are particles. Words are molecules held together by springs. Lenition is simulated as thermal decay. The "pater" is becoming "fader" in real-time.
+
+### [Concentration Level: FRESH] - Location: experiments/neuro-speech
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Neuromuscular Phonology verified. Hodgkin-Huxley neurons are pulling the strings of speech. Babbling mode active.

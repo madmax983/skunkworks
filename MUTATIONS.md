@@ -559,12 +559,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/flesh-and-code
 - **Evaluation**: Compiles. Verified.
 
-### cipher-clock
-- **Parents**: experiments/enigma-machine + experiments/clockwork-chimera
-- **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
-- **Novel trait**: Cryptography as physical mechanics.
-- **Status**: experiments/cipher-clock
-- **Evaluation**: Compiles. Verified by Splice Surgeon.
 
 ### lichen-mesh
 - **Parents**: experiments/cellular-automata + experiments/microservices-demo
@@ -592,11 +586,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
 - **Novel trait**: Cryptography as physical mechanics.
 - **Status**: experiments/cipher-clock
-- **Evaluation**: FAILS (Dependency Hell: Bevy/Glam conflict).
+- **Evaluation**: Compiles (Isolated build verified).
 
 ### synaptic-trace
 - **Parents**: experiments/trace-fold + experiments/biomimetic-synth
 - **Concept**: Stack trace visualized as a spiking neural network. Functions are neurons, calls are synapses.
 - **Novel trait**: Execution as Cognition. The program's run structure forms a transient brain.
 - **Status**: experiments/synaptic-trace
-- **Evaluation**: WIP.
+- **Evaluation**: Compiles. Verified by The Splice Surgeon.
+
+### morph-physics
+- **Parents**: Genesis (The Philologist)
+- **Concept**: Language evolution simulation using particle physics.
+- **Novel trait**: Phonemes as particles. Sound laws as forces.
+- **Status**: experiments/morph-physics
+- **Evaluation**: Compiles. Verified by The Splice Surgeon.
+
+### neuro-speech
+- **Parents**: experiments/morph-physics + experiments/biophysical-synth
+- **Concept**: Neuromuscular simulation of speech where Hodgkin-Huxley neurons drive phoneme particles.
+- **Novel trait**: Neuromuscular Phonology. Neurons pull strings to make sounds.
+- **Status**: experiments/neuro-speech
+- **Evaluation**: Compiles. Tests passed. Implemented by The Splice Surgeon.
