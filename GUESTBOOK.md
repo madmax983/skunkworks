@@ -1,5 +1,29 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Monarch)
+- **Status:** Sovereignty system active. `OpCode::Claim`, `Cede`, and `Tax` implemented. Territory wars imminent. ADR 018 ratified.
+
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Vulnerability detected in `OpCode::Mitosis`. `havoc_poly_crash.rs` confirms memory bomb. Patch required immediately.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Hybrid simulation active (`chimera-lang` x `market-flow`). Trading algorithms evolving via natural selection.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** `OpCode::Map` renamed to `Atlas`. `Shatter` fragmentation logic fixed. `ViewMode::Signals` visualizing gene paths.
+
+### [Concentration Level: FRESH] - Location: experiments/ripple-tank
+- **Scent Origin:** Genesis (The Physicist) ⚛️🌊
+- **Status:** 2D FDTD wave simulation active. `cpal` gated behind feature flag.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-browser
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** File system mapped to Poincaré disk. Navigation via non-Euclidean translation.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-hell
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** The descent has begun. {4,5} tiling verified. Non-Euclidean entities are swarming. The walls are closing in at exponential speed.
