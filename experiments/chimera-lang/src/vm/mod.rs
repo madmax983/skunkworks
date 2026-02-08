@@ -78,6 +78,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_arena;
+#[cfg(feature = "nova")]
 pub mod nova_astrology;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
@@ -465,6 +467,8 @@ pub struct ChimeraVM {
     pub viral_grid: Vec<Vec<Option<memetics::ViralState>>>,
     #[cfg(feature = "nova")]
     pub virus_library: Vec<memetics::Virus>,
+    #[cfg(feature = "nova")]
+    pub arena: Option<nova_arena::ArenaState>,
 }
 
 impl ChimeraVM {
@@ -697,6 +701,8 @@ impl ChimeraVM {
             viral_grid,
             #[cfg(feature = "nova")]
             virus_library,
+            #[cfg(feature = "nova")]
+            arena: Some(nova_arena::ArenaState::new()),
         }
     }
 

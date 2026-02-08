@@ -167,3 +167,67 @@ pub fn generate_face(seed: u64, traits: &[String]) -> Vec<String> {
         format!("   --   "),
     ]
 }
+
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone)]
+pub struct CombatStats {
+    pub hp: i64,
+    pub max_hp: i64,
+    pub attack: i64,
+    pub defense: i64,
+    pub speed: i64,
+}
+
+#[cfg(feature = "nova")]
+pub fn generate_combat_stats(traits: &[String]) -> CombatStats {
+    let mut hp = 100;
+    let mut attack = 10;
+    let mut defense = 5;
+    let mut speed = 5;
+
+    for t in traits {
+        match t.as_str() {
+            "Voracious" => {
+                hp += 20;
+                attack += 2;
+            }
+            "Parasitic" => {
+                attack += 5;
+                defense -= 2;
+            }
+            "Constructive" => {
+                defense += 5;
+                speed -= 1;
+            }
+            "Nomadic" => {
+                speed += 5;
+            }
+            "Phased" => {
+                defense += 10;
+                hp -= 10;
+            }
+            "Zealot" => {
+                attack += 10;
+                defense -= 5;
+            }
+            "Fungal" => {
+                hp += 50;
+                speed -= 2;
+            }
+            "Dreamer" => {
+                // Glass cannon
+                attack += 15;
+                hp -= 20;
+            }
+            _ => {}
+        }
+    }
+
+    CombatStats {
+        hp,
+        max_hp: hp,
+        attack,
+        defense,
+        speed,
+    }
+}
