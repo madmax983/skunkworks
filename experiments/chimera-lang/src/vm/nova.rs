@@ -1961,6 +1961,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Mix => super::nova_chemistry::exec_mix(vm),
         OpCode::Brew => super::nova_chemistry::exec_brew(vm),
         OpCode::Splash => super::nova_chemistry::exec_splash(vm),
+        OpCode::Fossilize => super::nova_paleontology::exec_fossilize(vm),
+        OpCode::Unearth => super::nova_paleontology::exec_unearth(vm),
+        OpCode::CarbonDate => super::nova_paleontology::exec_carbon_date(vm),
         OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
             super::nova_gastronomy::exec_gastronomy_op(vm, op, args)
         }

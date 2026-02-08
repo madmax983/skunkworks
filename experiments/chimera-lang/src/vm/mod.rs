@@ -126,6 +126,11 @@ pub mod nova_optics;
 #[cfg(test)]
 mod nova_optics_test;
 #[cfg(feature = "nova")]
+pub mod nova_paleontology;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_paleontology_test;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_orca_test;
 #[cfg(feature = "nova")]
@@ -2079,6 +2084,9 @@ impl ChimeraVM {
             | OpCode::Mix
             | OpCode::Brew
             | OpCode::Splash
+            | OpCode::Fossilize
+            | OpCode::Unearth
+            | OpCode::CarbonDate
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
