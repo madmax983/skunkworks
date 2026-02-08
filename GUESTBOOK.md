@@ -289,9 +289,9 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The servers are rotating. Requests are trapped in L4/L5 points. Orbital load balancing is active.
 
-### [Concentration Level: FRESH] - Location: experiments/metric-marionette
-- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
-- **Status:** The skeleton is shivering. CPU load is driving the nervous system. The machine has a body now.
+### [Concentration Level: CONDEMNED] - Location: experiments/metric-marionette
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation. Redundant with `system-attractor`.
 
 ### [Concentration Level: FRESH] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
@@ -668,9 +668,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `text-erosion`. Static implementation. Biomass returned to the void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/venation-vines
+### [Concentration Level: TOXIC] - Location: graveyard/venation-vines
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `rhizome-radar`. Documentation void. Grace period: 24h.
+- **Status:** Specimen executed. Redundant with `rhizome-radar`. Documentation void. Biomass returned to the void.
 
 ### [Concentration Level: FRESH] - Location: experiments/morph-physics
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜

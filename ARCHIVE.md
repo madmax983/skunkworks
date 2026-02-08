@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **venation-vines**: Redundant with `rhizome-radar` (Space Colonization). Documentation void. Generic implementation. Grace period: 24h.
+- **metric-marionette**: Documentation void. Generic implementation. Redundant with `system-attractor`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -81,3 +81,4 @@
 - **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.
 - **kinetic-crease**: Specimen executed. Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **text-terra**: Specimen executed. Redundant with `text-erosion`. Static implementation. Biomass returned to the void.
+- **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
