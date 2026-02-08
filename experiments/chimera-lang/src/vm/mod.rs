@@ -63,6 +63,8 @@ pub mod blackbox;
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
+#[cfg(feature = "elektra")]
+pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
 #[cfg(feature = "nova")]
@@ -448,6 +450,10 @@ pub struct ChimeraVM {
     pub viral_grid: Vec<Vec<Option<memetics::ViralState>>>,
     #[cfg(feature = "nova")]
     pub virus_library: Vec<memetics::Virus>,
+    #[cfg(feature = "elektra")]
+    pub voltage_grid: Vec<Vec<f32>>,
+    #[cfg(feature = "elektra")]
+    pub current_grid: Vec<Vec<f32>>,
 }
 
 impl ChimeraVM {
@@ -497,6 +503,10 @@ impl ChimeraVM {
         let viral_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let virus_library = Vec::new();
+        #[cfg(feature = "elektra")]
+        let voltage_grid = vec![vec![0.0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "elektra")]
+        let current_grid = vec![vec![0.0; GRID_SIZE]; GRID_SIZE];
         let execution_trail = vec![0; GRID_SIZE * GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -670,6 +680,10 @@ impl ChimeraVM {
             viral_grid,
             #[cfg(feature = "nova")]
             virus_library,
+            #[cfg(feature = "elektra")]
+            voltage_grid,
+            #[cfg(feature = "elektra")]
+            current_grid,
         }
     }
 
@@ -1536,6 +1550,11 @@ impl ChimeraVM {
             silicon::step_circuit(self);
         }
 
+        #[cfg(feature = "elektra")]
+        if !time_frozen {
+            elektra::update_circuitry(self);
+        }
+
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
@@ -2137,6 +2156,12 @@ impl ChimeraVM {
             | OpCode::DAC
             | OpCode::ADC => {
                 silicon::exec_silicon_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "elektra")]
+            OpCode::Battery | OpCode::Ground | OpCode::SenseVolt | OpCode::Shock | OpCode::Lightning => {
+                elektra::exec_elektra_op(self, op, args);
                 None
             }
 

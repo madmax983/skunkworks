@@ -11,6 +11,7 @@ oracle = []
 silicon = []
 git = []
 phylogeny = []
+elektra = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
 
 [dependencies]

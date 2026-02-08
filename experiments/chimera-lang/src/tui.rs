@@ -74,6 +74,8 @@ pub(crate) enum ViewMode {
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
+    #[cfg(feature = "elektra")]
+    Elektra,
 }
 
 enum InputMode {
@@ -372,6 +374,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "elektra")]
+            if let ViewMode::Elektra = app_state.view_mode {
+                render_elektra(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
         })?;
 
@@ -546,6 +554,11 @@ where
                                 }
                                 #[cfg(feature = "silicon")]
                                 ViewMode::Schematic => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "elektra")]
+                                ViewMode::Elektra => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -761,6 +774,21 @@ where
                             }
                             #[cfg(feature = "silicon")]
                             ViewMode::Schematic => {
+                                #[cfg(feature = "elektra")]
+                                {
+                                    ViewMode::Elektra
+                                }
+                                #[cfg(all(feature = "nova", not(feature = "elektra")))]
+                                {
+                                    ViewMode::Laboratory
+                                }
+                                #[cfg(all(not(feature = "nova"), not(feature = "elektra")))]
+                                {
+                                    ViewMode::Genome
+                                }
+                            }
+                            #[cfg(feature = "elektra")]
+                            ViewMode::Elektra => {
                                 #[cfg(feature = "nova")]
                                 {
                                     ViewMode::Laboratory
@@ -777,6 +805,8 @@ where
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
                     KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
+                    #[cfg(feature = "elektra")]
+                    KeyCode::Char('e') => app_state.view_mode = ViewMode::Elektra,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
                     #[cfg(feature = "nova")]
@@ -1018,6 +1048,12 @@ where
                         ViewMode::Ballistics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Scent => {}
+                        #[cfg(feature = "elektra")]
+                        ViewMode::Elektra => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1124,6 +1160,12 @@ where
                         }
                     },
                     KeyCode::Up => match app_state.view_mode {
+                        #[cfg(feature = "elektra")]
+                        ViewMode::Elektra => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         ViewMode::Genome => {
                             if app_state.selected_gene > 0 {
                                 app_state.selected_gene -= 1;
@@ -1278,6 +1320,12 @@ where
                         ViewMode::Scent => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
+                        #[cfg(feature = "elektra")]
+                        ViewMode::Elektra => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 < 15 {
@@ -1364,6 +1412,12 @@ where
                         ViewMode::Scent => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
+                        #[cfg(feature = "elektra")]
+                        ViewMode::Elektra => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 > 0 {
@@ -1452,6 +1506,10 @@ where
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
                         match app_state.view_mode {
+                            #[cfg(feature = "elektra")]
+                            ViewMode::Elektra => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
                             #[cfg(feature = "nova")]
                             ViewMode::Phylogeny => {
                                 app_state.input_mode = InputMode::Normal;
@@ -2268,6 +2326,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
+        #[cfg(feature = "elektra")]
+        ViewMode::Elektra => "ELEKTRA",
     };
 
     let title = match app_state.input_mode {
@@ -4460,6 +4520,102 @@ fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Schematic Info"),
+    );
+    f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "elektra")]
+fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Voltage Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let voltage = vm.voltage_grid[y][x];
+            let current = vm.current_grid[y][x];
+
+            let mut char_rep;
+            let mut style = Style::default();
+
+            // Background for Voltage
+            if voltage > 0.0 {
+                // Yellow intensity based on voltage
+                let intensity = (voltage * 20.0).clamp(50.0, 255.0) as u8;
+                style = style.fg(Color::Rgb(255, 255, 255)).bg(Color::Rgb(intensity, intensity, 0));
+                char_rep = format!("{:.0}", voltage);
+            } else {
+                style = style.fg(Color::DarkGray);
+                char_rep = "·".to_string();
+            }
+
+            // Foreground for Components
+            let val = &vm.grid[y][x];
+            if let crate::vm::Value::Str(s) = val {
+                if s.starts_with("BAT:") {
+                    char_rep = "B".to_string();
+                    style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+                } else if s == "GND" {
+                    char_rep = "G".to_string();
+                    style = style.fg(Color::Blue).add_modifier(Modifier::BOLD);
+                } else if s == "WR" || s == "|" || s == "-" || s == "+" {
+                    char_rep = "+".to_string();
+                    style = style.fg(Color::Yellow);
+                }
+            } else if let crate::vm::Value::Int(1) = val {
+                 char_rep = "#".to_string();
+                 style = style.fg(Color::Yellow);
+            }
+
+            // High Current -> Spark
+            if current > 0.0 {
+                style = style.bg(Color::Cyan).fg(Color::White).add_modifier(Modifier::RAPID_BLINK);
+                char_rep = "⚡".to_string();
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(char_rep, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Elektra Grid (Voltage/Current)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info
+    let (cx, cy) = app_state.grid_cursor;
+    let v = vm.voltage_grid[cy][cx];
+    let c = vm.current_grid[cy][cx];
+
+    let info_text = vec![
+        Line::from("ELEKTRA SYSTEM"),
+        Line::from(" "),
+        Line::from(format!("Voltage: {:.1} V", v)),
+        Line::from(format!("Current: {:.1} A", c)),
+        Line::from(" "),
+        Line::from("Components:"),
+        Line::from("  battery(v) - Source"),
+        Line::from("  ground - Sink"),
+        Line::from("  1 / WR - Wire"),
+        Line::from("  shock(dmg) - Discharge"),
+    ];
+
+    let info = Paragraph::new(info_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Multimeter"),
     );
     f.render_widget(info, chunks[1]);
 }
