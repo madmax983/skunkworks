@@ -261,7 +261,9 @@ pub fn exec_memetics_op(
                         if state.infection_level > 20 {
                             let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                             for (dy, dx) in neighbors {
-                                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
                                     // Check if neighbor matches pattern
                                     let content = match &vm.grid[ny][nx] {
                                         Value::Str(s) => s.clone(),
@@ -312,9 +314,11 @@ pub fn exec_memetics_op(
 
                         if let Some(new_state) = &mut next_viral_grid[y][x] {
                             if content.contains(&virus.pattern) {
-                                new_state.infection_level = new_state.infection_level.saturating_add(10);
+                                new_state.infection_level =
+                                    new_state.infection_level.saturating_add(10);
                             } else {
-                                new_state.infection_level = new_state.infection_level.saturating_sub(5);
+                                new_state.infection_level =
+                                    new_state.infection_level.saturating_sub(5);
                             }
 
                             if new_state.infection_level == 0 {

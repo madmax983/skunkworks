@@ -138,6 +138,8 @@ mod nova_cartography_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_cerebellum_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_chemistry_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_chorus_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_chroma_test;
@@ -236,19 +238,17 @@ mod nova_symbiosis_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_taxis_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_chemistry_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_true_alchemy_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_virus_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_waste_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_virus_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;
 #[cfg(all(test, feature = "nova"))]

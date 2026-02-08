@@ -5,8 +5,15 @@ mod tests {
     use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
-        let genes = vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }];
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let genes = vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }];
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         ChimeraVM::new(dna)
     }
 

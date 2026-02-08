@@ -20,7 +20,9 @@ pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 // Collect and Clear neighbors (excluding center for now)
                 for &(tx, ty) in &coords {
-                    if tx == cx && ty == cy { continue; } // Skip center for a moment
+                    if tx == cx && ty == cy {
+                        continue;
+                    } // Skip center for a moment
 
                     let val = vm.grid[ty][tx].clone();
                     if !matches!(val, Value::Int(0)) {
@@ -40,7 +42,8 @@ pub fn exec_mix(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if !ingredients.is_empty() {
                     // Create Dish
                     vm.grid[cy][cx] = Value::Junction(JunctionType::Dish, ingredients);
-                    vm.output.push(format!("MIX: Created mixture at {},{}", cx, cy));
+                    vm.output
+                        .push(format!("MIX: Created mixture at {},{}", cx, cy));
                 } else {
                     vm.output.push("MIX: Nothing to mix".to_string());
                 }
@@ -66,58 +69,73 @@ pub fn exec_brew(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             if let Value::Junction(JunctionType::Dish, ingredients) = center_val {
                 // Check recipes
-                let mut ingredient_names: Vec<String> = ingredients.iter().filter_map(|v| {
-                    match v {
+                let mut ingredient_names: Vec<String> = ingredients
+                    .iter()
+                    .filter_map(|v| match v {
                         Value::Str(s) => Some(s.clone()),
-                        _ => None
-                    }
-                }).collect();
+                        _ => None,
+                    })
+                    .collect();
                 ingredient_names.sort();
 
                 let mut product = None;
                 let mut potency = heat;
 
                 // Recipes
-                if ingredient_names.contains(&"Water".to_string()) && ingredient_names.contains(&"Fire".to_string()) {
+                if ingredient_names.contains(&"Water".to_string())
+                    && ingredient_names.contains(&"Fire".to_string())
+                {
                     if heat >= 10 {
                         product = Some("Acid");
                         potency += 10;
                     } else {
                         product = Some("Steam");
                     }
-                } else if ingredient_names.contains(&"Life".to_string()) && ingredient_names.contains(&"Energy".to_string()) {
+                } else if ingredient_names.contains(&"Life".to_string())
+                    && ingredient_names.contains(&"Energy".to_string())
+                {
                     if heat >= 5 {
                         product = Some("Elixir");
                         potency += 20;
                     }
-                } else if ingredient_names.contains(&"Chaos".to_string()) && ingredient_names.contains(&"Entropy".to_string()) {
+                } else if ingredient_names.contains(&"Chaos".to_string())
+                    && ingredient_names.contains(&"Entropy".to_string())
+                {
                     product = Some("Mutagen");
                     potency += 30;
-                } else if ingredient_names.contains(&"Earth".to_string()) && ingredient_names.contains(&"Water".to_string()) {
+                } else if ingredient_names.contains(&"Earth".to_string())
+                    && ingredient_names.contains(&"Water".to_string())
+                {
                     product = Some("Mud");
                 }
 
                 if let Some(name) = product {
                     // Create Solution: [ "Solution", Name, Potency ]
-                    let solution = Value::Junction(JunctionType::Dish, vec![
-                        Value::Str("Solution".to_string()),
-                        Value::Str(name.to_string()),
-                        Value::Int(potency)
-                    ]);
+                    let solution = Value::Junction(
+                        JunctionType::Dish,
+                        vec![
+                            Value::Str("Solution".to_string()),
+                            Value::Str(name.to_string()),
+                            Value::Int(potency),
+                        ],
+                    );
                     vm.grid[cy][cx] = solution;
-                    vm.output.push(format!("BREW: Created {} (Potency {})", name, potency));
+                    vm.output
+                        .push(format!("BREW: Created {} (Potency {})", name, potency));
                     vm.energy = vm.energy.saturating_sub(10);
                 } else {
                     vm.output.push("BREW: Failed (Inert mixture)".to_string());
                 }
             } else {
-                vm.output.push("BREW: Current cell is not a mixture".to_string());
+                vm.output
+                    .push("BREW: Current cell is not a mixture".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for brew".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for brew".to_string());
+        vm.output
+            .push("Error: Stack underflow for brew".to_string());
     }
     None
 }
@@ -163,16 +181,18 @@ pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if let Some((ty, tx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
                     let targets = vm.get_circular_coords(tx as i64, ty as i64, r);
 
-                    vm.output.push(format!("SPLASH: Threw {} at {},{}", solution_name, tx, ty));
+                    vm.output
+                        .push(format!("SPLASH: Threw {} at {},{}", solution_name, tx, ty));
 
                     match solution_name.as_str() {
                         "Acid" => {
                             for (tx, ty) in targets {
                                 vm.grid[ty][tx] = Value::Int(0); // Destroy
-                                // Damage walls?
+                                                                 // Damage walls?
                                 vm.membranes[ty][tx] = 0;
                             }
-                            vm.output.push("SPLASH: Acid melted everything!".to_string());
+                            vm.output
+                                .push("SPLASH: Acid melted everything!".to_string());
                         }
                         "Elixir" => {
                             for (tx, ty) in targets {
@@ -181,19 +201,22 @@ pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 }
                             }
                             vm.energy = vm.energy.saturating_add(potency);
-                            vm.output.push("SPLASH: Elixir revitalized the area!".to_string());
+                            vm.output
+                                .push("SPLASH: Elixir revitalized the area!".to_string());
                         }
                         "Mutagen" => {
                             for (tx, ty) in targets {
-                                vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(potency);
+                                vm.mutagen_grid[ty][tx] =
+                                    vm.mutagen_grid[ty][tx].saturating_add(potency);
                             }
                             // Trigger mutation?
                             vm.mutate();
                             vm.output.push("SPLASH: Mutagen released!".to_string());
                         }
                         "Steam" => {
-                             for (tx, ty) in targets {
-                                vm.moisture_grid[ty][tx] = vm.moisture_grid[ty][tx].saturating_add(potency);
+                            for (tx, ty) in targets {
+                                vm.moisture_grid[ty][tx] =
+                                    vm.moisture_grid[ty][tx].saturating_add(potency);
                             }
                             vm.output.push("SPLASH: Steam cloud formed!".to_string());
                         }
@@ -210,10 +233,12 @@ pub fn exec_splash(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.output.push("SPLASH: Not a solution".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for splash".to_string());
+            vm.output
+                .push("Error: Type mismatch for splash".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for splash".to_string());
+        vm.output
+            .push("Error: Stack underflow for splash".to_string());
     }
     None
 }

@@ -89,9 +89,9 @@ pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
 #[cfg(feature = "nova")]
-pub mod nova_chemistry;
-#[cfg(feature = "nova")]
 pub mod nova_cartography;
+#[cfg(feature = "nova")]
+pub mod nova_chemistry;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
