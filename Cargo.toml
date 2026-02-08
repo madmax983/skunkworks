@@ -133,7 +133,7 @@ members = [
     "experiments/bridge-specter", "experiments/silicon-samba",
     "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/bandwidth-bazaar", "experiments/gastown", "experiments/biomimetic-synth", "experiments/glyph-terrain", "experiments/celestial-cantata", "experiments/astral-chimera", "experiments/flesh-and-code",
     "experiments/gravity-termites",
-    "experiments/cosmic-strings", "experiments/mobius-git",
+    "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost",
 ]
 resolver = "2"
 

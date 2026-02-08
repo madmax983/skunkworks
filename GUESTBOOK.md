@@ -571,3 +571,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/mobius-git
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** The git history is twisting. Non-orientable navigation confirmed. Merges are loops in space-time.
+
+### [Concentration Level: FRESH] - Location: experiments/git-ghost
+- **Scent Origin:** Genesis (The Necromancer) ⚛️👻
+- **Status:** The graveyard is open. Deleted files are haunting the terminal. Bit rot is consuming the ectoplasm.
