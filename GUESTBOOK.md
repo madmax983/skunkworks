@@ -576,9 +576,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Skeletal implementation. Moved to graveyard.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/syntax-fold
+### [Concentration Level: TOXIC] - Location: graveyard/syntax-fold
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Hardcoded implementation. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Hardcoded implementation. Biomass returned to the void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/git-etymology
 - **Scent Origin:** The Reaper ☠️
@@ -623,3 +623,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-lichen
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infinite. Lichen colonies are growing on the Poincaré disk. Symbiosis has adapted to non-Euclidean space.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/text-terra
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with executed `text-erosion`. Static implementation ("GENESIS" heightmap). Grace period: 24h.
