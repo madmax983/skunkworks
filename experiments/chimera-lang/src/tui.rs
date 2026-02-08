@@ -80,6 +80,7 @@ pub(crate) struct AppState {
     grid_cursor: (usize, usize),
     input_buffer: String,
     status_msg: String,
+    pub(crate) show_help: bool,
     #[cfg(feature = "biophysics")]
     pub(crate) voltage_history: Vec<u64>,
     #[cfg(feature = "biophysics")]
@@ -120,6 +121,7 @@ impl AppState {
             grid_cursor: (0, 0),
             input_buffer: String::new(),
             status_msg: String::new(),
+            show_help: false,
             #[cfg(feature = "biophysics")]
             voltage_history: Vec::with_capacity(100),
             #[cfg(feature = "biophysics")]
@@ -329,14 +331,25 @@ where
             #[cfg(feature = "silicon")]
             if let ViewMode::Schematic = app_state.view_mode {
                 render_schematic(f, vm, app_state);
-                return;
+            } else {
+                render_genome_and_grid(f, vm, app_state);
             }
 
+            #[cfg(not(feature = "silicon"))]
             render_genome_and_grid(f, vm, app_state);
+
+            if app_state.show_help {
+                render_help_modal(f, app_state);
+            }
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
+                // Toggle Help
+                if let KeyCode::Char('?') = key.code {
+                    app_state.show_help = !app_state.show_help;
+                    continue;
+                }
                 // Handle Spirit Request
                 #[cfg(feature = "nova")]
                 if vm.spirit_request {
@@ -1776,539 +1789,19 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         .split(main_chunks[1]);
 
     // Genome View
-    let helix = &vm.dna.helix;
-    let mut strand_items = Vec::new();
-
-    for (s_idx, strand) in helix.strands.iter().enumerate() {
-        #[cfg(feature = "cortex")]
-        {
-            let mut header = format!("Strand {}", s_idx);
-            if s_idx < vm.activation_levels.len() {
-                header.push_str(&format!(" ⚡{}", vm.activation_levels[s_idx]));
-            }
-            if s_idx < vm.synapse_map.len() && !vm.synapse_map[s_idx].is_empty() {
-                header.push_str(&format!(" -> {:?}", vm.synapse_map[s_idx]));
-            }
-            strand_items.push(ListItem::new(Span::styled(
-                header,
-                Style::default()
-                    .fg(Color::Magenta)
-                    .add_modifier(Modifier::BOLD),
-            )));
-        }
-
-        #[cfg(not(feature = "cortex"))]
-        {
-            strand_items.push(ListItem::new(Span::styled(
-                format!("Strand {}", s_idx),
-                Style::default()
-                    .fg(Color::Magenta)
-                    .add_modifier(Modifier::BOLD),
-            )));
-        }
-
-        for (g_idx, gene) in strand.genes.iter().enumerate() {
-            let content = format!("{}({:?})", gene.op, gene.args);
-            let mut style = Style::default();
-            let mut prefix = "  ";
-
-            // Logic for execution highlighting
-            #[cfg(feature = "nova")]
-            if vm.epigenome.contains(&(s_idx, g_idx)) {
-                style = style.fg(Color::Blue);
-            }
-
-            if s_idx == vm.ip.0 && g_idx == vm.ip.1 {
-                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
-                #[cfg(feature = "nova")]
-                if vm.epigenome.contains(&(s_idx, g_idx)) {
-                    style = style.bg(Color::Blue);
-                }
-                prefix = "> ";
-            } else if (s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1))
-                && style.fg != Some(Color::Blue)
-            {
-                style = style.fg(Color::DarkGray);
-            }
-
-            // Logic for Editor Selection highlighting (Only if ViewMode::Genome)
-            if app_state.view_mode == ViewMode::Genome
-                && s_idx == app_state.selected_strand
-                && g_idx == app_state.selected_gene
-            {
-                if let InputMode::Editing = app_state.input_mode {
-                    style = style.bg(Color::Red).fg(Color::White);
-                    prefix = "E ";
-                } else {
-                    style = style.bg(Color::White).fg(Color::Black);
-                    prefix = "* ";
-                }
-            }
-
-            strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
-        }
-        strand_items.push(ListItem::new("-------------------"));
-    }
-
-    let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
-    let mode_str = match app_state.view_mode {
-        ViewMode::Genome => "GENOME",
-        ViewMode::Grid => "GRID",
-        ViewMode::Microscope => "MICROSCOPE",
-        #[cfg(feature = "biophysics")]
-        ViewMode::Cortex => "CORTEX",
-        #[cfg(feature = "resonance")]
-        ViewMode::Resonance => "RESONANCE",
-        #[cfg(feature = "nova")]
-        ViewMode::Grimoire => "GRIMOIRE",
-        #[cfg(feature = "nova")]
-        ViewMode::Laboratory => "LABORATORY",
-        #[cfg(feature = "nova")]
-        ViewMode::Topology => "TOPOLOGY",
-        #[cfg(feature = "nova")]
-        ViewMode::Graveyard => "GRAVEYARD",
-        #[cfg(feature = "nova")]
-        ViewMode::PianoRoll => "PIANO ROLL",
-        #[cfg(feature = "nova")]
-        ViewMode::Retina => "RETINA",
-        #[cfg(feature = "nova")]
-        ViewMode::Quantum => "QUANTUM",
-        #[cfg(feature = "nova")]
-        ViewMode::Dream => "DREAM CATCHER",
-        #[cfg(feature = "nova")]
-        ViewMode::Phylogeny => "PHYLOGENY",
-        #[cfg(feature = "nova")]
-        ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
-        #[cfg(feature = "nova")]
-        ViewMode::Memetics => "MEMETICS",
-        #[cfg(feature = "nova")]
-        ViewMode::Egregore => "THE EGREGORE",
-        #[cfg(feature = "nova")]
-        ViewMode::Bestiary => "BESTIARY",
-        #[cfg(feature = "nova")]
-        ViewMode::Kaleidoscope => "KALEIDOSCOPE",
-        #[cfg(feature = "nova")]
-        ViewMode::Void => "VOID (ENTROPY)",
-        #[cfg(feature = "nova")]
-        ViewMode::Signals => "SIGNALS & TRAILS",
-        ViewMode::Heatmap => "HEATMAP",
-        #[cfg(feature = "silicon")]
-        ViewMode::Schematic => "SCHEMATIC",
-    };
-
-    let title = match app_state.input_mode {
-                InputMode::Normal => format!(
-                    "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit)",
-                    mode_str, chaos_status
-                ),
-                InputMode::Editing => format!(
-                    "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
-                    mode_str, app_state.input_buffer
-                ),
-                InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
-            };
-
-    let genome_block = Block::default().borders(Borders::ALL).title("Genome");
-    let genome_style = if app_state.view_mode == ViewMode::Genome {
-        Style::default()
-            .fg(Color::White)
-            .add_modifier(Modifier::BOLD)
-    } else {
-        Style::default().fg(Color::DarkGray)
-    };
-
-    // Highlight the active block borders/title
-    let genome_list = List::new(strand_items).block(
-        genome_block.border_style(genome_style).title(title.clone()), // Show controls in main title usually
-    );
-    f.render_widget(genome_list, left_chunks[0]);
+    render_genome_panel(f, vm, app_state, left_chunks[0]);
 
     // Petri Dish (Grid)
-    let mut grid_lines = Vec::new();
-
-    for y in 0..16 {
-        let mut line_spans = Vec::new();
-        for x in 0..16 {
-            let val = &vm.grid[y][x];
-
-            #[allow(unused_mut)]
-            let (mut char_rep, mut style) = match val {
-                crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
-                crate::vm::Value::Int(n) => {
-                    #[cfg(feature = "silicon")]
-                    if vm.silicon_mode {
-                        match n {
-                            1 => ("#".to_string(), Style::default().fg(Color::Yellow)), // Conductor
-                            2 => (
-                                "@".to_string(),
-                                Style::default().fg(Color::White).bg(Color::Cyan),
-                            ), // Head
-                            3 => ("~".to_string(), Style::default().fg(Color::Red)),    // Tail
-                            _ => (
-                                format!("{}", (n.abs() % 10)),
-                                Style::default().fg(Color::Green),
-                            ),
-                        }
-                    } else {
-                        (
-                            format!("{}", (n.abs() % 10)),
-                            Style::default().fg(Color::Green),
-                        )
-                    }
-                    #[cfg(not(feature = "silicon"))]
-                    (
-                        format!("{}", (n.abs() % 10)),
-                        Style::default().fg(Color::Green),
-                    )
-                }
-                crate::vm::Value::Junction(_, _) => {
-                    ("J".to_string(), Style::default().fg(Color::Yellow))
-                }
-                crate::vm::Value::Superposition(_) => (
-                    "Ψ".to_string(),
-                    Style::default()
-                        .fg(Color::Magenta)
-                        .add_modifier(Modifier::BOLD),
-                ),
-                crate::vm::Value::Str(s) => {
-                    let mut symbol = if s.starts_with("G:") {
-                        let parts: Vec<&str> = s.split(':').collect();
-                        if parts.len() >= 2 {
-                            match parts[1] {
-                                "AND" => "&",
-                                "OR" => "|",
-                                "XOR" => "^",
-                                "NAND" => "!",
-                                "NOT" => "~",
-                                _ => "G",
-                            }
-                        } else {
-                            "G"
-                        }
-                    } else {
-                        match s.as_str() {
-                            "virus" => "V",
-                            "incubate" => "I",
-                            "push" => "^",
-                            "add" => "+",
-                            "sub" => "-",
-                            "mul" => "*",
-                            "div" => "/",
-                            "jump" | "jump_s" => "J",
-                            "brz" | "brz_s" => "?",
-                            "photosynthesize" => "P",
-                            "consume" => "C",
-                            "g_read" => "R",
-                            "g_write" => "W",
-                            "mitosis" => "M",
-                            "apoptosis" => "X",
-                            "fire" => "F",
-                            "water" => "W",
-                            "earth" => "E",
-                            "air" => "A",
-                            "steam" => "S",
-                            "lava" => "L",
-                            "cloud" => "C",
-                            "spirit" => "S",
-                            "gold" => "G",
-                            "lead" => "L",
-                            _ => &s[0..1],
-                        }
-                    };
-                    let style = if s.starts_with("G:") {
-                        Style::default()
-                            .fg(Color::Cyan)
-                            .add_modifier(Modifier::BOLD)
-                    } else {
-                        match s.as_str() {
-                            "fire" => Style::default().fg(Color::Red),
-                            "water" => Style::default().fg(Color::Blue),
-                            "earth" => Style::default().fg(Color::Yellow),
-                            "air" => Style::default().fg(Color::Cyan),
-                            "steam" => Style::default().fg(Color::White),
-                            "lava" => Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
-                            "cloud" => Style::default()
-                                .fg(Color::White)
-                                .add_modifier(Modifier::BOLD),
-                            "spirit" => Style::default().fg(Color::Magenta),
-                            "gold" => Style::default()
-                                .fg(Color::Yellow)
-                                .add_modifier(Modifier::BOLD),
-                            "lead" => Style::default().fg(Color::DarkGray),
-                            "PIN:IN" => Style::default()
-                                .fg(Color::Yellow)
-                                .add_modifier(Modifier::BOLD),
-                            "PIN:OUT" => Style::default()
-                                .fg(Color::Cyan)
-                                .add_modifier(Modifier::BOLD),
-                            s if s.starts_with("EMIT:") => Style::default()
-                                .fg(Color::Yellow)
-                                .add_modifier(Modifier::BOLD),
-                            s if s.starts_with("RECV:") => Style::default()
-                                .fg(Color::Magenta)
-                                .add_modifier(Modifier::BOLD),
-                            _ => Style::default().fg(Color::Cyan),
-                        }
-                    };
-                    if s == "PIN:IN" {
-                        symbol = "I";
-                    } else if s == "PIN:OUT" {
-                        symbol = "O";
-                    } else if s.starts_with("EMIT:") {
-                        symbol = "E";
-                    } else if s.starts_with("RECV:") {
-                        symbol = "R";
-                    }
-                    (symbol.to_string(), style)
-                }
-            };
-
-            #[cfg(feature = "nova")]
-            {
-                let h = vm.hormone_grid[y][x];
-                let r = h[0].clamp(0, 255) as u8;
-                let g = h[1].clamp(0, 255) as u8;
-                let b = h[2].clamp(0, 255) as u8;
-                if r > 0 || g > 0 || b > 0 {
-                    style = style.bg(Color::Rgb(r, g, b));
-                    if (r as u16 + g as u16 + b as u16) > 300 {
-                        style = style.fg(Color::Black);
-                    }
-                }
-
-                if vm.signal_grid[y][x] > 0 {
-                    // Signal active!
-                    style = style
-                        .bg(Color::White)
-                        .fg(Color::Black)
-                        .add_modifier(Modifier::BOLD);
-                }
-
-                // Chromatophores (Nova)
-                let chroma = &vm.chroma_grid[y][x];
-                if let Some(c) = chroma.char {
-                    char_rep = c.to_string();
-                }
-                if let Some((r, g, b)) = chroma.fg {
-                    style = style.fg(Color::Rgb(r, g, b));
-                }
-
-                if vm.waste_grid[y][x] > 50 {
-                    style = style.add_modifier(Modifier::CROSSED_OUT);
-                    if vm.waste_grid[y][x] > 100 {
-                        style = style.fg(Color::Red);
-                    }
-                }
-
-                #[cfg(feature = "nova")]
-                if vm.mutagen_grid[y][x] > 20 {
-                    // Purple haze for radiation
-                    if vm.mutagen_grid[y][x] > 50 {
-                        style = style.bg(Color::Magenta).fg(Color::White);
-                    } else {
-                        style = style.fg(Color::Magenta);
-                    }
-                }
-
-                if let Some(organelle) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
-                    let mut color = match organelle.kind {
-                        crate::vm::nova::OrganelleType::Chloroplast => Color::Green,
-                        crate::vm::nova::OrganelleType::Mitochondria => Color::Red,
-                        crate::vm::nova::OrganelleType::Lysosome => Color::Magenta,
-                        crate::vm::nova::OrganelleType::Ribosome => Color::Cyan,
-                        crate::vm::nova::OrganelleType::Void => Color::DarkGray,
-                        crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
-                        crate::vm::nova::OrganelleType::Seed => Color::Green,
-                        crate::vm::nova::OrganelleType::Choir => Color::Blue,
-                        crate::vm::nova::OrganelleType::Worker => Color::White,
-                    };
-                    let char_code = match organelle.kind {
-                        crate::vm::nova::OrganelleType::Chloroplast => "C",
-                        crate::vm::nova::OrganelleType::Mitochondria => "M",
-                        crate::vm::nova::OrganelleType::Lysosome => "L",
-                        crate::vm::nova::OrganelleType::Ribosome => "R",
-                        crate::vm::nova::OrganelleType::Void => "Ø",
-                        crate::vm::nova::OrganelleType::Alchemist => "A",
-                        crate::vm::nova::OrganelleType::Seed => "S",
-                        crate::vm::nova::OrganelleType::Choir => "♫",
-                        crate::vm::nova::OrganelleType::Worker => "O",
-                    };
-
-                    if organelle.ttl.is_some() {
-                        color = Color::Yellow;
-                    }
-
-                    style = style
-                        .bg(color)
-                        .fg(Color::Black)
-                        .add_modifier(Modifier::BOLD);
-                    if char_rep == "." {
-                        char_rep = char_code.to_string();
-                    }
-                }
-
-                if let Some(target) = vm.sonar_target {
-                    if target == (y, x) {
-                        style = style
-                            .bg(Color::Yellow)
-                            .fg(Color::Black)
-                            .add_modifier(Modifier::SLOW_BLINK);
-                    }
-                }
-
-                if vm.portals.contains_key(&(y, x)) {
-                    char_rep = "@".to_string();
-                    style = style
-                        .fg(Color::Magenta)
-                        .add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
-                }
-
-                if (vm.membranes[y][x] & 2) != 0 {
-                    style = style.add_modifier(Modifier::UNDERLINED);
-                }
-            }
-
-            // Highlight Cursor in Grid Mode
-            if app_state.view_mode == ViewMode::Grid && app_state.grid_cursor == (x, y) {
-                if let InputMode::Editing = app_state.input_mode {
-                    style = style.bg(Color::Red).fg(Color::White);
-                    // If editing, maybe show first char of input buffer?
-                    // But input buffer might be long string "add".
-                    // Let's just highlight the cell.
-                } else {
-                    style = style.bg(Color::White).fg(Color::Black);
-                }
-            }
-
-            line_spans.push(Span::styled(char_rep, style));
-
-            #[allow(unused_mut)]
-            let mut spacer = " ";
-            #[cfg(feature = "nova")]
-            if (vm.membranes[y][x] & 4) != 0 {
-                spacer = "|";
-            }
-            line_spans.push(Span::raw(spacer));
-        }
-        grid_lines.push(Line::from(line_spans));
-    }
-
-    #[cfg(feature = "nova")]
-    let topology_name = format!("{:?}", vm.topology);
-    #[cfg(not(feature = "nova"))]
-    let topology_name = "Classic";
-
-    let grid_title = format!("Petri Dish (16x16) - {}", topology_name);
-    let grid_style = if app_state.view_mode == ViewMode::Grid {
-        Style::default()
-            .fg(Color::White)
-            .add_modifier(Modifier::BOLD)
-    } else {
-        Style::default().fg(Color::DarkGray)
-    };
-
-    let grid_paragraph = Paragraph::new(grid_lines).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title(grid_title)
-            .border_style(grid_style),
-    );
-    f.render_widget(grid_paragraph, left_chunks[1]);
+    render_grid_panel(f, vm, app_state, left_chunks[1]);
 
     // Cytoplasm (Stack)
-    let stack_items: Vec<ListItem> = vm
-        .stack
-        .iter()
-        .rev()
-        .map(|val| ListItem::new(format!("{}", val)))
-        .collect();
-
-    let stack_list = List::new(stack_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title(format!("Cytoplasm (Stack) - Energy: {}", vm.energy)),
-    );
-    f.render_widget(stack_list, right_chunks[0]);
+    render_stack_panel(f, vm, right_chunks[0]);
 
     // Output
-    let mut output_items: Vec<ListItem> = vm
-        .output
-        .iter()
-        .rev()
-        .map(|val| ListItem::new(val.clone()))
-        .collect();
+    render_output_panel(f, vm, app_state, right_chunks[1]);
 
-    if !app_state.status_msg.is_empty() {
-        output_items.insert(
-            0,
-            ListItem::new(Span::styled(
-                format!("STATUS: {}", app_state.status_msg),
-                Style::default().fg(Color::Yellow),
-            )),
-        );
-    }
-    if let InputMode::Editing = app_state.input_mode {
-        if app_state.view_mode == ViewMode::Grid {
-            output_items.insert(
-                0,
-                ListItem::new(Span::styled(
-                    format!(
-                        "EDIT GRID [{},{}]: {}",
-                        app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer
-                    ),
-                    Style::default().fg(Color::Cyan),
-                )),
-            );
-        }
-    }
-
-    let output_list =
-        List::new(output_items).block(Block::default().borders(Borders::ALL).title("Output"));
-    f.render_widget(output_list, right_chunks[1]);
-
-    // Draw Injection Popup
-    if let InputMode::Injection = app_state.input_mode {
-        let area = f.area();
-        let popup_area = ratatui::layout::Rect {
-            x: area.width / 4,
-            y: area.height / 3,
-            width: area.width / 2,
-            height: 5,
-        };
-        f.render_widget(ratatui::widgets::Clear, popup_area);
-
-        let block = Block::default()
-            .borders(Borders::ALL)
-            .title("Viral Injection Vector (ChimeraScript)")
-            .style(Style::default().fg(Color::Green));
-        let text = Paragraph::new(app_state.input_buffer.clone())
-            .block(block)
-            .wrap(ratatui::widgets::Wrap { trim: true });
-        f.render_widget(text, popup_area);
-    }
-
-    // Draw Spirit Popup on top
-    #[cfg(feature = "nova")]
-    if vm.spirit_request {
-        let area = f.area();
-        let popup_area = ratatui::layout::Rect {
-            x: area.width / 4,
-            y: area.height / 3,
-            width: area.width / 2,
-            height: 5,
-        };
-        f.render_widget(ratatui::widgets::Clear, popup_area);
-
-        let prompt = vm.spirit_message.as_deref().unwrap_or("SPIRIT SUMMONING");
-        let text = format!("{}\n\n> {}", prompt, app_state.input_buffer);
-        let popup = Paragraph::new(text).block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Spirit Communication")
-                .style(Style::default().fg(Color::Cyan)),
-        );
-        f.render_widget(popup, popup_area);
-    }
+    // Overlays
+    render_overlays(f, vm, app_state);
 }
 #[cfg(feature = "biophysics")]
 fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
@@ -3949,4 +3442,538 @@ fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Schematic Info"),
     );
     f.render_widget(info, chunks[1]);
+}
+
+fn render_genome_panel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState, area: ratatui::layout::Rect) {
+    let helix = &vm.dna.helix;
+    let mut strand_items = Vec::new();
+
+    for (s_idx, strand) in helix.strands.iter().enumerate() {
+        #[cfg(feature = "cortex")]
+        {
+            let mut header = format!("Strand {}", s_idx);
+            if s_idx < vm.activation_levels.len() {
+                header.push_str(&format!(" ⚡{}", vm.activation_levels[s_idx]));
+            }
+            if s_idx < vm.synapse_map.len() && !vm.synapse_map[s_idx].is_empty() {
+                header.push_str(&format!(" -> {:?}", vm.synapse_map[s_idx]));
+            }
+            strand_items.push(ListItem::new(Span::styled(
+                header,
+                Style::default()
+                    .fg(Color::Magenta)
+                    .add_modifier(Modifier::BOLD),
+            )));
+        }
+
+        #[cfg(not(feature = "cortex"))]
+        {
+            strand_items.push(ListItem::new(Span::styled(
+                format!("Strand {}", s_idx),
+                Style::default()
+                    .fg(Color::Magenta)
+                    .add_modifier(Modifier::BOLD),
+            )));
+        }
+
+        for (g_idx, gene) in strand.genes.iter().enumerate() {
+            let content = format!("{}({:?})", gene.op, gene.args);
+            let mut style = Style::default();
+            let mut prefix = "  ";
+
+            #[cfg(feature = "nova")]
+            if vm.epigenome.contains(&(s_idx, g_idx)) {
+                style = style.fg(Color::Blue);
+            }
+
+            if s_idx == vm.ip.0 && g_idx == vm.ip.1 {
+                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                #[cfg(feature = "nova")]
+                if vm.epigenome.contains(&(s_idx, g_idx)) {
+                    style = style.bg(Color::Blue);
+                }
+                prefix = "> ";
+            } else if (s_idx < vm.ip.0 || (s_idx == vm.ip.0 && g_idx < vm.ip.1))
+                && style.fg != Some(Color::Blue)
+            {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.view_mode == ViewMode::Genome
+                && s_idx == app_state.selected_strand
+                && g_idx == app_state.selected_gene
+            {
+                if let InputMode::Editing = app_state.input_mode {
+                    style = style.bg(Color::Red).fg(Color::White);
+                    prefix = "E ";
+                } else {
+                    style = style.bg(Color::White).fg(Color::Black);
+                    prefix = "* ";
+                }
+            }
+
+            strand_items.push(ListItem::new(format!("{}{}", prefix, content)).style(style));
+        }
+        strand_items.push(ListItem::new("-------------------"));
+    }
+
+    let chaos_status = if vm.chaos_mode { "ON" } else { "OFF" };
+    let mode_str = match app_state.view_mode {
+        ViewMode::Genome => "GENOME",
+        ViewMode::Grid => "GRID",
+        ViewMode::Microscope => "MICROSCOPE",
+        #[cfg(feature = "biophysics")]
+        ViewMode::Cortex => "CORTEX",
+        #[cfg(feature = "resonance")]
+        ViewMode::Resonance => "RESONANCE",
+        #[cfg(feature = "nova")]
+        ViewMode::Grimoire => "GRIMOIRE",
+        #[cfg(feature = "nova")]
+        ViewMode::Laboratory => "LABORATORY",
+        #[cfg(feature = "nova")]
+        ViewMode::Topology => "TOPOLOGY",
+        #[cfg(feature = "nova")]
+        ViewMode::Graveyard => "GRAVEYARD",
+        #[cfg(feature = "nova")]
+        ViewMode::PianoRoll => "PIANO ROLL",
+        #[cfg(feature = "nova")]
+        ViewMode::Retina => "RETINA",
+        #[cfg(feature = "nova")]
+        ViewMode::Quantum => "QUANTUM",
+        #[cfg(feature = "nova")]
+        ViewMode::Dream => "DREAM CATCHER",
+        #[cfg(feature = "nova")]
+        ViewMode::Phylogeny => "PHYLOGENY",
+        #[cfg(feature = "nova")]
+        ViewMode::Alchemy => "THE ALCHEMIST'S TABLE",
+        #[cfg(feature = "nova")]
+        ViewMode::Memetics => "MEMETICS",
+        #[cfg(feature = "nova")]
+        ViewMode::Egregore => "THE EGREGORE",
+        #[cfg(feature = "nova")]
+        ViewMode::Bestiary => "BESTIARY",
+        #[cfg(feature = "nova")]
+        ViewMode::Kaleidoscope => "KALEIDOSCOPE",
+        #[cfg(feature = "nova")]
+        ViewMode::Void => "VOID (ENTROPY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Signals => "SIGNALS & TRAILS",
+        ViewMode::Heatmap => "HEATMAP",
+        #[cfg(feature = "silicon")]
+        ViewMode::Schematic => "SCHEMATIC",
+    };
+
+    let title = match app_state.input_mode {
+        InputMode::Normal => format!(
+            "{} (Tab: Switch View, Space: Step, M: Mutate, C: Chaos[{}], I: Inject, Arrows: Nav, Enter: Edit, Q: Quit, ?: Help)",
+            mode_str, chaos_status
+        ),
+        InputMode::Editing => format!(
+            "EDITING {} (Enter: Commit, Esc: Cancel) - {}",
+            mode_str, app_state.input_buffer
+        ),
+        InputMode::Injection => "INJECTION (Enter: Splice, Esc: Cancel)".to_string(),
+    };
+
+    let genome_block = Block::default().borders(Borders::ALL).title("Genome");
+    let genome_style = if app_state.view_mode == ViewMode::Genome {
+        Style::default()
+            .fg(Color::White)
+            .add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
+    let genome_list = List::new(strand_items).block(
+        genome_block.border_style(genome_style).title(title),
+    );
+    f.render_widget(genome_list, area);
+}
+
+fn render_grid_panel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState, area: ratatui::layout::Rect) {
+    let mut grid_lines = Vec::new();
+
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+
+            #[allow(unused_mut)]
+            let (mut char_rep, mut style) = match val {
+                crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
+                crate::vm::Value::Int(n) => {
+                    #[cfg(feature = "silicon")]
+                    if vm.silicon_mode {
+                        match n {
+                            1 => ("#".to_string(), Style::default().fg(Color::Yellow)),
+                            2 => ("@".to_string(), Style::default().fg(Color::White).bg(Color::Cyan)),
+                            3 => ("~".to_string(), Style::default().fg(Color::Red)),
+                            _ => (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green)),
+                        }
+                    } else {
+                        (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                    }
+                    #[cfg(not(feature = "silicon"))]
+                    (format!("{}", (n.abs() % 10)), Style::default().fg(Color::Green))
+                }
+                crate::vm::Value::Junction(_, _) => ("J".to_string(), Style::default().fg(Color::Yellow)),
+                crate::vm::Value::Superposition(_) => ("Ψ".to_string(), Style::default().fg(Color::Magenta).add_modifier(Modifier::BOLD)),
+                crate::vm::Value::Str(s) => {
+                    let mut symbol = if s.starts_with("G:") { "G" } else { &s[0..1] };
+                    let mut s_style = Style::default().fg(Color::Cyan);
+
+                    if s.starts_with("G:") {
+                        s_style = s_style.add_modifier(Modifier::BOLD);
+                        let parts: Vec<&str> = s.split(':').collect();
+                         if parts.len() >= 2 {
+                            symbol = match parts[1] {
+                                "AND" => "&",
+                                "OR" => "|",
+                                "XOR" => "^",
+                                "NAND" => "!",
+                                "NOT" => "~",
+                                _ => "G",
+                            };
+                        }
+                    } else {
+                         match s.as_str() {
+                            "virus" => symbol = "V",
+                            "incubate" => symbol = "I",
+                            "push" => symbol = "^",
+                            "add" => symbol = "+",
+                            "sub" => symbol = "-",
+                            "mul" => symbol = "*",
+                            "div" => symbol = "/",
+                            "jump" | "jump_s" => symbol = "J",
+                            "brz" | "brz_s" => symbol = "?",
+                            "photosynthesize" => symbol = "P",
+                            "consume" => symbol = "C",
+                            "g_read" => symbol = "R",
+                            "g_write" => symbol = "W",
+                            "mitosis" => symbol = "M",
+                            "apoptosis" => symbol = "X",
+                            "fire" => { symbol = "F"; s_style = s_style.fg(Color::Red); },
+                            "water" => { symbol = "W"; s_style = s_style.fg(Color::Blue); },
+                            "earth" => { symbol = "E"; s_style = s_style.fg(Color::Yellow); },
+                            "air" => { symbol = "A"; s_style = s_style.fg(Color::Cyan); },
+                            "steam" => { symbol = "S"; s_style = s_style.fg(Color::White); },
+                            "lava" => { symbol = "L"; s_style = s_style.fg(Color::Red).add_modifier(Modifier::BOLD); },
+                            "cloud" => { symbol = "C"; s_style = s_style.fg(Color::White).add_modifier(Modifier::BOLD); },
+                            "spirit" => { symbol = "S"; s_style = s_style.fg(Color::Magenta); },
+                            "gold" => { symbol = "G"; s_style = s_style.fg(Color::Yellow).add_modifier(Modifier::BOLD); },
+                            "lead" => { symbol = "L"; s_style = s_style.fg(Color::DarkGray); },
+                            "PIN:IN" => { symbol = "I"; s_style = s_style.fg(Color::Yellow).add_modifier(Modifier::BOLD); },
+                            "PIN:OUT" => { symbol = "O"; s_style = s_style.fg(Color::Cyan).add_modifier(Modifier::BOLD); },
+                            s if s.starts_with("EMIT:") => { symbol = "E"; s_style = s_style.fg(Color::Yellow).add_modifier(Modifier::BOLD); },
+                            s if s.starts_with("RECV:") => { symbol = "R"; s_style = s_style.fg(Color::Magenta).add_modifier(Modifier::BOLD); },
+                            _ => {},
+                        }
+                    }
+                    (symbol.to_string(), s_style)
+                }
+            };
+
+            #[cfg(feature = "nova")]
+            {
+                let h = vm.hormone_grid[y][x];
+                let r = h[0].clamp(0, 255) as u8;
+                let g = h[1].clamp(0, 255) as u8;
+                let b = h[2].clamp(0, 255) as u8;
+                if r > 0 || g > 0 || b > 0 {
+                    style = style.bg(Color::Rgb(r, g, b));
+                    if (r as u16 + g as u16 + b as u16) > 300 {
+                        style = style.fg(Color::Black);
+                    }
+                }
+
+                if vm.signal_grid[y][x] > 0 {
+                    style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                }
+
+                let chroma = &vm.chroma_grid[y][x];
+                if let Some(c) = chroma.char {
+                    char_rep = c.to_string();
+                }
+                if let Some((r, g, b)) = chroma.fg {
+                    style = style.fg(Color::Rgb(r, g, b));
+                }
+
+                if vm.waste_grid[y][x] > 50 {
+                    style = style.add_modifier(Modifier::CROSSED_OUT);
+                    if vm.waste_grid[y][x] > 100 {
+                        style = style.fg(Color::Red);
+                    }
+                }
+
+                #[cfg(feature = "nova")]
+                if vm.mutagen_grid[y][x] > 20 {
+                    if vm.mutagen_grid[y][x] > 50 {
+                        style = style.bg(Color::Magenta).fg(Color::White);
+                    } else {
+                        style = style.fg(Color::Magenta);
+                    }
+                }
+
+                if let Some(organelle) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
+                    let mut color = match organelle.kind {
+                        crate::vm::nova::OrganelleType::Chloroplast => Color::Green,
+                        crate::vm::nova::OrganelleType::Mitochondria => Color::Red,
+                        crate::vm::nova::OrganelleType::Lysosome => Color::Magenta,
+                        crate::vm::nova::OrganelleType::Ribosome => Color::Cyan,
+                        crate::vm::nova::OrganelleType::Void => Color::DarkGray,
+                        crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
+                        crate::vm::nova::OrganelleType::Seed => Color::Green,
+                        crate::vm::nova::OrganelleType::Choir => Color::Blue,
+                        crate::vm::nova::OrganelleType::Worker => Color::White,
+                    };
+                    let char_code = match organelle.kind {
+                        crate::vm::nova::OrganelleType::Chloroplast => "C",
+                        crate::vm::nova::OrganelleType::Mitochondria => "M",
+                        crate::vm::nova::OrganelleType::Lysosome => "L",
+                        crate::vm::nova::OrganelleType::Ribosome => "R",
+                        crate::vm::nova::OrganelleType::Void => "Ø",
+                        crate::vm::nova::OrganelleType::Alchemist => "A",
+                        crate::vm::nova::OrganelleType::Seed => "S",
+                        crate::vm::nova::OrganelleType::Choir => "♫",
+                        crate::vm::nova::OrganelleType::Worker => "O",
+                    };
+
+                    if organelle.ttl.is_some() {
+                        color = Color::Yellow;
+                    }
+
+                    style = style.bg(color).fg(Color::Black).add_modifier(Modifier::BOLD);
+                    if char_rep == "." {
+                        char_rep = char_code.to_string();
+                    }
+                }
+
+                if let Some(target) = vm.sonar_target {
+                    if target == (y, x) {
+                        style = style.bg(Color::Yellow).fg(Color::Black).add_modifier(Modifier::SLOW_BLINK);
+                    }
+                }
+
+                if vm.portals.contains_key(&(y, x)) {
+                    char_rep = "@".to_string();
+                    style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
+                }
+
+                if (vm.membranes[y][x] & 2) != 0 {
+                    style = style.add_modifier(Modifier::UNDERLINED);
+                }
+            }
+
+            if app_state.view_mode == ViewMode::Grid && app_state.grid_cursor == (x, y) {
+                if let InputMode::Editing = app_state.input_mode {
+                    style = style.bg(Color::Red).fg(Color::White);
+                } else {
+                    style = style.bg(Color::White).fg(Color::Black);
+                }
+            }
+
+            line_spans.push(Span::styled(char_rep, style));
+
+            #[allow(unused_mut)]
+            let mut spacer = " ";
+            #[cfg(feature = "nova")]
+            if (vm.membranes[y][x] & 4) != 0 {
+                spacer = "|";
+            }
+            line_spans.push(Span::raw(spacer));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    #[cfg(feature = "nova")]
+    let topology_name = format!("{:?}", vm.topology);
+    #[cfg(not(feature = "nova"))]
+    let topology_name = "Classic";
+
+    let grid_title = format!("Petri Dish (16x16) - {}", topology_name);
+    let grid_style = if app_state.view_mode == ViewMode::Grid {
+        Style::default().fg(Color::White).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
+    let grid_paragraph = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(grid_title)
+            .border_style(grid_style),
+    );
+    f.render_widget(grid_paragraph, area);
+}
+
+fn render_stack_panel(f: &mut Frame, vm: &mut ChimeraVM, area: ratatui::layout::Rect) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+        .split(area);
+
+    // Energy Gauge
+    let energy_ratio = (vm.energy as f64 / 100.0).clamp(0.0, 1.0);
+    let gauge_color = if energy_ratio > 0.6 {
+        Color::Green
+    } else if energy_ratio > 0.3 {
+        Color::Yellow
+    } else {
+        Color::Red
+    };
+
+    let energy_gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title("Metabolism"))
+        .gauge_style(Style::default().fg(gauge_color))
+        .ratio(energy_ratio)
+        .label(format!("Energy: {}", vm.energy));
+    f.render_widget(energy_gauge, chunks[0]);
+
+    // Stack List
+    let stack_items: Vec<ListItem> = vm
+        .stack
+        .iter()
+        .rev()
+        .map(|val| ListItem::new(format!("{}", val)))
+        .collect();
+
+    let stack_list = List::new(stack_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Cytoplasm (Stack)"),
+    );
+    f.render_widget(stack_list, chunks[1]);
+}
+
+fn render_output_panel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState, area: ratatui::layout::Rect) {
+    let mut output_items: Vec<ListItem> = vm
+        .output
+        .iter()
+        .rev()
+        .map(|val| ListItem::new(val.clone()))
+        .collect();
+
+    if !app_state.status_msg.is_empty() {
+        let status_color = if app_state.status_msg.to_lowercase().contains("error") || app_state.status_msg.to_lowercase().contains("failed") {
+            Color::Red
+        } else if app_state.status_msg.to_lowercase().contains("success") {
+            Color::Green
+        } else {
+            Color::Yellow
+        };
+
+        output_items.insert(
+            0,
+            ListItem::new(Span::styled(
+                format!("STATUS: {}", app_state.status_msg),
+                Style::default().fg(status_color).add_modifier(Modifier::BOLD),
+            )),
+        );
+    }
+
+    if let InputMode::Editing = app_state.input_mode {
+        if app_state.view_mode == ViewMode::Grid {
+            output_items.insert(
+                0,
+                ListItem::new(Span::styled(
+                    format!(
+                        "EDIT GRID [{},{}]: {}",
+                        app_state.grid_cursor.0, app_state.grid_cursor.1, app_state.input_buffer
+                    ),
+                    Style::default().fg(Color::Cyan),
+                )),
+            );
+        }
+    }
+
+    let output_list =
+        List::new(output_items).block(Block::default().borders(Borders::ALL).title("Output Log"));
+    f.render_widget(output_list, area);
+}
+
+fn render_overlays(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    if let InputMode::Injection = app_state.input_mode {
+        let area = f.area();
+        let popup_area = ratatui::layout::Rect {
+            x: area.width / 4,
+            y: area.height / 3,
+            width: area.width / 2,
+            height: 5,
+        };
+        f.render_widget(ratatui::widgets::Clear, popup_area);
+
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .title("Viral Injection Vector (ChimeraScript)")
+            .style(Style::default().fg(Color::Green));
+        let text = Paragraph::new(app_state.input_buffer.clone())
+            .block(block)
+            .wrap(ratatui::widgets::Wrap { trim: true });
+        f.render_widget(text, popup_area);
+    }
+
+    #[cfg(feature = "nova")]
+    if vm.spirit_request {
+        let area = f.area();
+        let popup_area = ratatui::layout::Rect {
+            x: area.width / 4,
+            y: area.height / 3,
+            width: area.width / 2,
+            height: 5,
+        };
+        f.render_widget(ratatui::widgets::Clear, popup_area);
+
+        let prompt = vm.spirit_message.as_deref().unwrap_or("SPIRIT SUMMONING");
+        let text = format!("{}\n\n> {}", prompt, app_state.input_buffer);
+        let popup = Paragraph::new(text).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Spirit Communication")
+                .style(Style::default().fg(Color::Cyan)),
+        );
+        f.render_widget(popup, popup_area);
+    }
+}
+
+fn render_help_modal(f: &mut Frame, _app_state: &AppState) {
+    let area = f.area();
+    let popup_area = ratatui::layout::Rect {
+        x: area.width / 6,
+        y: area.height / 6,
+        width: (area.width / 3) * 2,
+        height: (area.height / 3) * 2,
+    };
+
+    f.render_widget(ratatui::widgets::Clear, popup_area);
+
+    let help_text = vec![
+        Line::from(Span::styled("CHIMERA UI CONTROLS", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+        Line::from(""),
+        Line::from(vec![Span::styled("Tab", Style::default().fg(Color::Cyan)), Span::raw(": Cycle Views")]),
+        Line::from(vec![Span::styled("Space", Style::default().fg(Color::Cyan)), Span::raw(": Step Execution")]),
+        Line::from(vec![Span::styled("M", Style::default().fg(Color::Cyan)), Span::raw(": Mutate Random Gene")]),
+        Line::from(vec![Span::styled("C", Style::default().fg(Color::Cyan)), Span::raw(": Toggle Chaos Mode")]),
+        Line::from(vec![Span::styled("I", Style::default().fg(Color::Cyan)), Span::raw(": Inject Code")]),
+        Line::from(vec![Span::styled("Arrows", Style::default().fg(Color::Cyan)), Span::raw(": Navigate Grid/Genome")]),
+        Line::from(vec![Span::styled("Enter", Style::default().fg(Color::Cyan)), Span::raw(": Edit Selection")]),
+        Line::from(vec![Span::styled("?", Style::default().fg(Color::Cyan)), Span::raw(": Toggle This Help")]),
+        Line::from(vec![Span::styled("Q", Style::default().fg(Color::Cyan)), Span::raw(": Quit")]),
+        Line::from(""),
+        Line::from(Span::styled("Mode Specific:", Style::default().fg(Color::Yellow))),
+        Line::from("  Grid: Edit values directly"),
+        Line::from("  Kaleidoscope: Paint with Space, adjust Hue/Light with []/{}"),
+        Line::from("  Graveyard: R to Resurrect, X to Exterminate"),
+        Line::from("  Alchemy: A to Add, T to Transmute, X to Clear"),
+    ];
+
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title("Help & Keybindings")
+        .style(Style::default().bg(Color::DarkGray));
+
+    let p = Paragraph::new(help_text)
+        .block(block)
+        .wrap(ratatui::widgets::Wrap { trim: true });
+
+    f.render_widget(p, popup_area);
 }
