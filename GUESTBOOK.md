@@ -671,3 +671,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/ink-jet
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The ink is flowing. Navier-Stokes equations are solving around the text. Vortices are shedding off the typography.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Alchemist)
+- **Status:** The laboratory is open. `Mix`, `Brew`, and `Splash` opcodes implemented. Ingredients are reacting on the grid. "Acid" and "Elixir" recipes confirmed.

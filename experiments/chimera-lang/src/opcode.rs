@@ -784,6 +784,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    // Chemistry Features (Nova)
+    /// **[Nova]** Mixes neighbors into a solution in the current cell.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Mix,
+    /// **[Nova]** Brews the current cell's mixture into a Potion.
+    ///
+    /// **Stack:** `[ ..., heat ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Brew,
+    /// **[Nova]** Splashes a Potion to a target location.
+    ///
+    /// **Stack:** `[ ..., radius, dy, dx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Splash,
+
     /// **[Nova]** Spreads the last executed instruction to a random strand (Memetics).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

@@ -229,6 +229,8 @@ mod nova_symbiosis_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_taxis_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_chemistry_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;

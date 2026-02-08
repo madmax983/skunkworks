@@ -1958,6 +1958,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.energy = vm.energy.saturating_sub(5);
             None
         }
+        OpCode::Mix => super::nova_chemistry::exec_mix(vm),
+        OpCode::Brew => super::nova_chemistry::exec_brew(vm),
+        OpCode::Splash => super::nova_chemistry::exec_splash(vm),
         OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
             super::nova_gastronomy::exec_gastronomy_op(vm, op, args)
         }

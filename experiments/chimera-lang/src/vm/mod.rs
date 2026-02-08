@@ -89,6 +89,8 @@ pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
 #[cfg(feature = "nova")]
+pub mod nova_chemistry;
+#[cfg(feature = "nova")]
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -2059,6 +2061,9 @@ impl ChimeraVM {
             | OpCode::Align
             | OpCode::Harmonize
             | OpCode::Choir
+            | OpCode::Mix
+            | OpCode::Brew
+            | OpCode::Splash
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
