@@ -1,6 +1,8 @@
 #[cfg(feature = "nova")]
 use super::{ChimeraVM, Value, GRID_SIZE};
 #[cfg(feature = "nova")]
+use crate::ast::Nucleotide;
+#[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use rand::Rng;
@@ -52,11 +54,20 @@ struct GridWrite {
 }
 
 #[cfg(feature = "nova")]
+struct DnaWrite {
+    strand_idx: usize,
+    gene_idx: usize,
+    val: Nucleotide,
+}
+
+#[cfg(feature = "nova")]
 pub fn process_signals(vm: &mut ChimeraVM) {
     let size = GRID_SIZE;
     let mut next_signals = vec![vec![0u8; size]; size];
     let mut grid_writes: Vec<GridWrite> = Vec::new();
-    let mut executions = Vec::new();
+    let mut dna_writes: Vec<DnaWrite> = Vec::new();
+    // Executions now store (OpCode, Args)
+    let mut executions: Vec<(OpCode, Vec<Nucleotide>)> = Vec::new();
 
     // 1. Scan Phase
     for y in 0..size {
@@ -190,11 +201,64 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         }
                     }
                 }
+                'G' | 'g' => {
+                    // Gene Read: West (Strand), East (Gene) -> South (OpCode)
+                    if let (Some(s_idx), Some(g_idx)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
+                        let s = s_idx as usize;
+                        let g = g_idx as usize;
+                        if s < vm.dna.helix.strands.len() {
+                            let strand = &vm.dna.helix.strands[s];
+                            if g < strand.genes.len() {
+                                let op_str = strand.genes[g].op.to_string();
+                                if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                                    grid_writes.push(GridWrite {
+                                        y: sy,
+                                        x: sx,
+                                        val: Value::Str(op_str),
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                'P' | 'p' => {
+                    // Play: West (Strand) -> Execute Call(Strand)
+                    if let Some(s_idx) = peek(vm, y, x, 0, -1) {
+                        if signal > 0 {
+                            executions.push((OpCode::Call, vec![Nucleotide::Number(s_idx)]));
+                        }
+                    }
+                }
+                'K' | 'k' => {
+                    // Kill: West (Strand) -> Execute Push(Strand), Apoptosis
+                    if let Some(s_idx) = peek(vm, y, x, 0, -1) {
+                         if signal > 0 {
+                             executions.push((OpCode::Push, vec![Nucleotide::Number(s_idx)]));
+                             executions.push((OpCode::Apoptosis, vec![]));
+                         }
+                    }
+                }
+                'Y' | 'y' => {
+                    // Synthesize: West (Strand), East (Gene), North (Value) -> DNA
+                    if let (Some(s_idx), Some(g_idx), Some(val)) = (
+                        peek(vm, y, x, 0, -1),
+                        peek(vm, y, x, 0, 1),
+                        peek(vm, y, x, -1, 0)
+                    ) {
+                        if signal > 0 {
+                             dna_writes.push(DnaWrite {
+                                 strand_idx: s_idx as usize,
+                                 gene_idx: g_idx as usize,
+                                 val: Nucleotide::Number(val)
+                             });
+                        }
+                    }
+                }
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
                             if signal > 0 {
-                                executions.push((op, signal));
+                                executions.push((op, vec![]));
                             }
                         }
                     }
@@ -208,12 +272,27 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         vm.grid[w.y][w.x] = w.val;
     }
 
+    // 2.5 Apply DNA Writes
+    for w in dna_writes {
+        if w.strand_idx < vm.dna.helix.strands.len() {
+            let strand = &mut vm.dna.helix.strands[w.strand_idx];
+            if w.gene_idx < strand.genes.len() {
+                let gene = &mut strand.genes[w.gene_idx];
+                if !gene.args.is_empty() {
+                    gene.args[0] = w.val;
+                } else {
+                    gene.args.push(w.val);
+                }
+            }
+        }
+    }
+
     // 3. Update Signal State
     vm.signal_grid = next_signals;
 
     // 4. Execution Phase
-    for (op, _signal_strength) in executions {
-        vm.execute_gene_inner(op.clone(), &[]);
+    for (op, args) in executions {
+        vm.execute_gene_inner(op.clone(), &args);
     }
 }
 
