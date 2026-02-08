@@ -750,3 +750,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/retinal-chaos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The eye has opened. The retina is staring into the abyss of the Lorenz Attractor. Neural spikes are driving the Rayleigh number. The Observer Effect is active.
+
+### [Concentration Level: FRESH] - Location: experiments/event-horizon
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The singularity is forming. Text is bending around the event horizon. Symplectic integration is holding the orbits stable.

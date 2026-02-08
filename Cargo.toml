@@ -25,7 +25,6 @@ members = [
     "experiments/neuro-terminal",
     "experiments/packet-pachinko",
     "experiments/pidgin-mesh",
-    "experiments/resonance-chamber",
     "experiments/semantic-spy",
     "experiments/stigmergy-hub",
     "experiments/storm-monitor",
@@ -135,7 +134,7 @@ members = [
     "experiments/cipher-clock",
     "experiments/hyperbolic-lichen",
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
-    "experiments/chaotic-conservatory", "experiments/retinal-glitch", "experiments/retinal-chaos",
+    "experiments/chaotic-conservatory", "experiments/retinal-glitch", "experiments/retinal-chaos", "experiments/event-horizon",
 ]
 resolver = "2"
 
