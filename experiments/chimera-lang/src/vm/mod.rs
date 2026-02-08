@@ -444,6 +444,10 @@ pub struct ChimeraVM {
     pub resonance_grid: Vec<Vec<(f32, f32)>>,
     #[cfg(feature = "nova")]
     pub buffs: HashMap<String, usize>,
+    #[cfg(feature = "nova")]
+    pub viral_grid: Vec<Vec<Option<memetics::ViralState>>>,
+    #[cfg(feature = "nova")]
+    pub virus_library: Vec<memetics::Virus>,
 }
 
 impl ChimeraVM {
@@ -489,6 +493,10 @@ impl ChimeraVM {
         let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let buffs = HashMap::new();
+        #[cfg(feature = "nova")]
+        let viral_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let virus_library = Vec::new();
         let execution_trail = vec![0; GRID_SIZE * GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -658,6 +666,10 @@ impl ChimeraVM {
             resonance_grid,
             #[cfg(feature = "nova")]
             buffs,
+            #[cfg(feature = "nova")]
+            viral_grid,
+            #[cfg(feature = "nova")]
+            virus_library,
         }
     }
 
@@ -1948,6 +1960,9 @@ impl ChimeraVM {
             | OpCode::Propagate
             | OpCode::Forget
             | OpCode::Shibboleth
+            | OpCode::Infect
+            | OpCode::Outbreak
+            | OpCode::Sanitize
             | OpCode::Drift
             | OpCode::Poly
             | OpCode::Chronostasis

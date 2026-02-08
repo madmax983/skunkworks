@@ -2541,6 +2541,22 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                     style = style.add_modifier(Modifier::UNDERLINED);
                 }
 
+                // Viral Infection
+                if let Some(state) = &vm.viral_grid[y][x] {
+                    if state.virus_id < vm.virus_library.len() {
+                        let virus = &vm.virus_library[state.virus_id];
+                        let (r, g, b) = virus.color;
+                        style = style.bg(Color::Rgb(r, g, b)).fg(Color::Black);
+
+                        if state.infection_level > 150 {
+                            let chars = ['@', '#', '$', '%', '&', '!', '?', 'X'];
+                            let idx = (x + y + vm.tick_counter as usize) % chars.len();
+                            char_rep = chars[idx].to_string();
+                            style = style.add_modifier(Modifier::RAPID_BLINK);
+                        }
+                    }
+                }
+
                 // Projectiles (Top Layer)
                 for p in &vm.projectiles {
                     if (p.x as usize) == x && (p.y as usize) == y {
