@@ -750,3 +750,11 @@
 ### [Concentration Level: FRESH] - Location: experiments/retinal-chaos
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The eye has opened. The retina is staring into the abyss of the Lorenz Attractor. Neural spikes are driving the Rayleigh number. The Observer Effect is active.
+
+### [Concentration Level: TOXIC] - Location: graveyard/thread-frequency
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `schrodingers-beat`. Documentation void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/cipher-clock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Contributes to workspace dependency conflicts (`bevy` vs `macroquad`). Grace period: 24h.
