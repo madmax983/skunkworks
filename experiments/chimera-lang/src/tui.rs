@@ -1574,12 +1574,6 @@ where
                         ViewMode::Fishing => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Arena => {}
-                        #[cfg(feature = "elektra")]
-                        ViewMode::Elektra => {
-                            if app_state.grid_cursor.0 < 15 {
-                                app_state.grid_cursor.0 += 1;
-                            }
-                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}

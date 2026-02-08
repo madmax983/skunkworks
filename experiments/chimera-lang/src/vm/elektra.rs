@@ -87,6 +87,7 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     }
 }
 
+#[allow(clippy::needless_range_loop)]
 pub fn update_circuit(vm: &mut ChimeraVM) {
     // Iterative solver for potential
     // V[new] = avg(V[neighbors])
@@ -119,6 +120,7 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 // We trust grid content more for wiring.
                 let cell_val = &vm.grid[y][x];
                 let conductivity = match cell_val {
+                    Value::Int(0) => 0.0,                                  // Air
                     Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
                     Value::Int(_) => 0.01,                                 // Other matter
                     _ => 0.0,                                              // Air
@@ -143,14 +145,19 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
 
                         let neighbor_val = &vm.grid[ny][nx];
                         let neighbor_cond = match neighbor_val {
+                            Value::Int(0) => 0.0,
                             Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
                             Value::Int(_) => 0.01,
                             _ => 0.0,
                         };
 
-                        // Harmonic mean of conductivity? Or just avg?
-                        // Simple averaging
-                        let coupling = (conductivity + neighbor_cond) / 2.0;
+                        // Harmonic mean of conductivity (Series conductance)
+                        // If either is 0 (Air), no coupling.
+                        let coupling = if conductivity == 0.0 || neighbor_cond == 0.0 {
+                            0.0
+                        } else {
+                            (conductivity * neighbor_cond) / (conductivity + neighbor_cond)
+                        };
 
                         v_sum += vm.voltage_grid[ny][nx] * coupling;
                         weight_sum += coupling;
@@ -173,6 +180,7 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
         for x in 0..grid_size {
             let cell_val = &vm.grid[y][x];
             let conductivity = match cell_val {
+                Value::Int(0) => 0.0,
                 Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
                 Value::Int(_) => 0.01,
                 _ => 0.0,
