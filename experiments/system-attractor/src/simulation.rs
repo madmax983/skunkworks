@@ -84,6 +84,45 @@ impl SystemMonitor {
     }
 }
 
+pub struct Simulation {
+    pub particles: Vec<Particle>,
+    pub monitor: SystemMonitor,
+}
+
+impl Simulation {
+    pub fn new(count: usize) -> Self {
+        let mut particles = Vec::with_capacity(count);
+        for _ in 0..count {
+            let x = rand::gen_range(-10.0, 10.0);
+            let y = rand::gen_range(-10.0, 10.0);
+            let z = rand::gen_range(10.0, 40.0);
+            particles.push(Particle::new(x, y, z));
+        }
+
+        Self {
+            particles,
+            monitor: SystemMonitor::new(),
+        }
+    }
+
+    pub fn update(&mut self, dt: f32) {
+        self.monitor.update();
+        update_particles(&mut self.particles, &self.monitor.params, dt);
+    }
+
+    pub fn reset(&mut self) {
+        self.particles.par_iter_mut().for_each(|p| {
+             p.pos = vec3(
+                rand::gen_range(-10.0, 10.0),
+                rand::gen_range(-10.0, 10.0),
+                rand::gen_range(10.0, 40.0),
+            );
+            p.vel = vec3(0., 0., 0.);
+            p.color = WHITE;
+        });
+    }
+}
+
 pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f32) {
     let sigma = params.sigma;
     let rho = params.rho;
@@ -145,7 +184,7 @@ pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f
     });
 }
 
-fn derivatives(x: f32, y: f32, z: f32, sigma: f32, rho: f32, beta: f32) -> (f32, f32, f32) {
+pub fn derivatives(x: f32, y: f32, z: f32, sigma: f32, rho: f32, beta: f32) -> (f32, f32, f32) {
     let dx = sigma * (y - x);
     let dy = x * (rho - z) - y;
     let dz = x * y - beta * z;
