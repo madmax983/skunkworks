@@ -113,6 +113,11 @@ pub mod nova_security;
 pub mod nova_sigil;
 #[cfg(feature = "nova")]
 pub mod nova_signals;
+#[cfg(feature = "nova")]
+pub mod nova_sovereignty;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_sovereignty_test;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -403,6 +408,10 @@ pub struct ChimeraVM {
     pub chord_registry: HashMap<Vec<String>, usize>,
     #[cfg(feature = "nova")]
     pub cartography_grid: Vec<Vec<Value>>,
+    #[cfg(feature = "nova")]
+    pub sovereignty_grid: Vec<Vec<Option<usize>>>,
+    #[cfg(feature = "nova")]
+    pub tax_rates: HashMap<usize, i64>,
 }
 
 impl ChimeraVM {
@@ -442,6 +451,8 @@ impl ChimeraVM {
         let signal_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let cartography_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         let execution_trail = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -599,6 +610,10 @@ impl ChimeraVM {
             chord_registry: HashMap::new(),
             #[cfg(feature = "nova")]
             cartography_grid,
+            #[cfg(feature = "nova")]
+            sovereignty_grid,
+            #[cfg(feature = "nova")]
+            tax_rates: HashMap::new(),
         }
     }
 
@@ -1524,6 +1539,7 @@ impl ChimeraVM {
                 nova_relativity::update_relativity(self);
             }
             nova_ballistics::update_projectiles(self);
+            nova_sovereignty::process_territory(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1898,6 +1914,10 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Fire
             | OpCode::Salvo
+            | OpCode::Claim
+            | OpCode::Cede
+            | OpCode::Sovereignty
+            | OpCode::Tax
             | OpCode::Offer
             | OpCode::Buy
             | OpCode::Invest

@@ -1290,6 +1290,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Claim => super::nova_sovereignty::exec_claim(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Cede => super::nova_sovereignty::exec_cede(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Sovereignty => super::nova_sovereignty::exec_sovereignty(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Tax => super::nova_sovereignty::exec_tax(vm),
+        #[cfg(feature = "nova")]
         OpCode::Harmonize => {
             if vm.stack.len() >= 2 {
                 let s_val = vm.stack.pop().unwrap();

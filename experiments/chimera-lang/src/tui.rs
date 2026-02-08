@@ -61,6 +61,8 @@ pub(crate) enum ViewMode {
     Void,
     #[cfg(feature = "nova")]
     Signals,
+    #[cfg(feature = "nova")]
+    Sovereignty,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -321,6 +323,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Sovereignty = app_state.view_mode {
+                render_sovereignty(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -554,6 +562,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Sovereignty => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -666,7 +679,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Void => ViewMode::Signals,
                             #[cfg(feature = "nova")]
-                            ViewMode::Signals => ViewMode::Heatmap,
+                            ViewMode::Signals => ViewMode::Sovereignty,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Sovereignty => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -919,6 +934,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1159,6 +1180,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1227,6 +1254,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1291,6 +1324,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Signals => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Sovereignty => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -1502,6 +1541,10 @@ where
                             ViewMode::Signals => {
                                 app_state.input_mode = InputMode::Normal;
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Sovereignty => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
                         }
                     }
                     _ => {}
@@ -1602,6 +1645,92 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Legend"),
     );
     f.render_widget(legend_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // Left: Sovereignty Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let owner = vm.sovereignty_grid[y][x];
+            let mut style = Style::default();
+            let mut ch = " ".to_string();
+
+            if let Some(id) = owner {
+                // Generate color from id
+                let colors = [
+                    Color::Red,
+                    Color::Green,
+                    Color::Blue,
+                    Color::Yellow,
+                    Color::Magenta,
+                    Color::Cyan,
+                    Color::White,
+                ];
+                let bg = colors[id % colors.len()];
+                style = style.bg(bg).fg(Color::Black);
+                ch = format!("{:X}", id % 16);
+            } else {
+                style = style.fg(Color::DarkGray);
+                ch = "·".to_string();
+            }
+
+            // Highlight cursor
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Sovereignty Map (Territory)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Tax Rates & Info
+    let (cx, cy) = app_state.grid_cursor;
+    let owner = vm.sovereignty_grid[cy][cx];
+
+    let mut info_lines = Vec::new();
+
+    if let Some(id) = owner {
+        info_lines.push(Line::from(format!("Owner: Strand {}", id)));
+        if let Some(rate) = vm.tax_rates.get(&id) {
+            info_lines.push(Line::from(format!("Tax Rate: {} Energy/tick", rate)));
+        } else {
+            info_lines.push(Line::from("Tax Rate: 0 (Free)"));
+        }
+    } else {
+        info_lines.push(Line::from("Owner: None (Wilderness)"));
+        info_lines.push(Line::from("Tax Rate: 0"));
+    }
+
+    info_lines.push(Line::from(""));
+    info_lines.push(Line::from("Mechanics:"));
+    info_lines.push(Line::from("  - claim(radius): Claim empty cells"));
+    info_lines.push(Line::from("  - cede(y, x): Release cells"));
+    info_lines.push(Line::from("  - tax(rate): Set tax for your land"));
+    info_lines.push(Line::from("  - sovereignty(y, x): Check owner"));
+
+    let info_widget = Paragraph::new(info_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Territory Info"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
@@ -1891,6 +2020,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Void => "VOID (ENTROPY)",
         #[cfg(feature = "nova")]
         ViewMode::Signals => "SIGNALS & TRAILS",
+        #[cfg(feature = "nova")]
+        ViewMode::Sovereignty => "SOVEREIGNTY (TERRITORY)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
