@@ -1,4 +1,4 @@
-use crate::simulation::Particle;
+use market_sim::Particle;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Position {
@@ -36,25 +36,25 @@ impl Trader {
     /// Modifies trader position (y) and balance.
     pub fn interact(&mut self, particle: Particle) -> bool {
         match (self.position, particle) {
-            (Position::Long, Particle::Bid) => {
+            (Position::Long, Particle::Bid(_)) => {
                 // Profit + Up
                 self.balance += 100.0;
                 self.y -= 1.0;
                 true
             }
-            (Position::Long, Particle::Ask) => {
+            (Position::Long, Particle::Ask(_)) => {
                 // Loss + Down
                 self.balance -= 100.0;
                 self.y += 1.0;
                 true
             }
-            (Position::Short, Particle::Bid) => {
+            (Position::Short, Particle::Bid(_)) => {
                 // Loss + Up
                 self.balance -= 100.0;
                 self.y -= 1.0;
                 true
             }
-            (Position::Short, Particle::Ask) => {
+            (Position::Short, Particle::Ask(_)) => {
                 // Profit + Down
                 self.balance += 100.0;
                 self.y += 1.0;
@@ -73,12 +73,12 @@ mod tests {
     fn test_long_interaction() {
         let mut trader = Trader::new(10.0, 10.0);
         // Long + Bid = Profit + Up (y decreases)
-        trader.interact(Particle::Bid);
+        trader.interact(Particle::Bid(0));
         assert_eq!(trader.balance, 10100.0);
         assert_eq!(trader.y, 9.0);
 
         // Long + Ask = Loss + Down (y increases)
-        trader.interact(Particle::Ask);
+        trader.interact(Particle::Ask(0));
         assert_eq!(trader.balance, 10000.0);
         assert_eq!(trader.y, 10.0);
     }
@@ -89,12 +89,12 @@ mod tests {
         trader.toggle_position(); // Switch to Short
 
         // Short + Bid = Loss + Up (y decreases)
-        trader.interact(Particle::Bid);
+        trader.interact(Particle::Bid(0));
         assert_eq!(trader.balance, 9900.0);
         assert_eq!(trader.y, 9.0);
 
         // Short + Ask = Profit + Down (y increases)
-        trader.interact(Particle::Ask);
+        trader.interact(Particle::Ask(0));
         assert_eq!(trader.balance, 10000.0);
         assert_eq!(trader.y, 10.0);
     }

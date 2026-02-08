@@ -53,3 +53,9 @@
 **Blueprint:** Moved `Geodesic` and missing `Mobius` methods to `crates/poincare-disk`. Refactored `poincare-crawl` to use `tui-shared` and `poincare-disk`.
 **Stability:** Centralized math logic, standardized TUI lifecycle.
 **Verification:** `cargo check` and `cargo test` passed.
+
+## [Market Simulation Extraction]
+**Tangle:** The Copy-Paste - `experiments/market-flow`, `experiments/market-rogue`, `experiments/market-swarm`, and `experiments/chimera-market` all implemented nearly identical `Grid` and `Particle` logic for market simulation.
+**Blueprint:** Extracted `Grid`, `Particle`, and `TradeEvent` to `crates/market-sim`. Standardized `Particle` to use the more capable version (with owner ID) from `chimera-market`.
+**Stability:** Centralized market physics logic.
+**Verification:** `cargo check` passed for all 4 experiments. `cargo test` passed for `market-rogue`.
