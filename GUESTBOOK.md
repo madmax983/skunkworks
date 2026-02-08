@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The trees are growing. The roots are remembering. L-systems are mapped to stack depth. The Flame Graph is the root system.
+
 ### [Concentration Level: FRESH] - Location: experiments/hydro-boids
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The boids are swimming. SPH fluid dynamics are dragging the flock. The water is churning.
