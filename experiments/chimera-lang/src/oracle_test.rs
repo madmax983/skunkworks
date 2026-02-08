@@ -246,4 +246,96 @@ mod tests {
             panic!("Invalid bindings format");
         }
     }
+
+    #[test]
+    fn test_opcode_predicate() {
+        // query(opcode("push", ?X))
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Nucleotide::String("opcode".to_string()),
+                        Nucleotide::String("push".to_string()),
+                        Nucleotide::String("?X".to_string()),
+                    ],
+                )],
+            },
+            Gene {
+                op: OpCode::Query,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.step(); // push
+        vm.step(); // query
+
+        let _bindings = vm.stack.pop().unwrap();
+        let result = vm.stack.pop().unwrap();
+        assert_eq!(result, Value::Int(1)); // Should find it
+    }
+
+    #[test]
+    fn test_past_cell_predicate() {
+        #[cfg(feature = "nova")]
+        {
+            // Write 100, wait, query past
+            let genes = vec![
+                // Write 100 at 0,0
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+                Gene { op: OpCode::GWrite, args: vec![] },
+
+                // Wait (step to push to history)
+                // Grid history is updated at START of step.
+                // So if we write, then next step starts, history is pushed.
+                // So T=0 should see the write.
+                Gene { op: OpCode::Photosynthesize, args: vec![] },
+
+                // Query past_cell(0, 0, 0, ?X)
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Junction(
+                        JunctionType::Any,
+                        vec![
+                            Nucleotide::String("past_cell".to_string()),
+                            Nucleotide::Number(0), // Ticks back
+                            Nucleotide::Number(0), // X
+                            Nucleotide::Number(0), // Y
+                            Nucleotide::String("?X".to_string()), // Val
+                        ],
+                    )],
+                },
+                Gene { op: OpCode::Query, args: vec![] },
+            ];
+
+            let mut vm = ChimeraVM::new(make_dna(genes));
+            // Run until done
+            for _ in 0..10 {
+                vm.step();
+                if vm.stack.len() >= 2 && matches!(vm.stack.last(), Some(Value::Junction(_, _))) {
+                     break;
+                }
+            }
+
+            let bindings = vm.stack.pop().unwrap();
+            let result = vm.stack.pop().unwrap();
+
+            assert_eq!(result, Value::Int(1));
+
+            // Check ?X = 100
+            if let Value::Junction(_, list) = bindings {
+                let found = list.iter().any(|b| {
+                    if let Value::Junction(_, pair) = b {
+                        pair[0] == Value::Str("?X".to_string()) && pair[1] == Value::Int(100)
+                    } else {
+                        false
+                    }
+                });
+                assert!(found, "Binding ?X=100 not found in history");
+            }
+        }
+    }
 }

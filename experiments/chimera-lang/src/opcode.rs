@@ -44,13 +44,13 @@
 
 use serde::{Deserialize, Serialize};
 use std::fmt;
-use strum_macros::{AsRefStr, EnumString};
+use strum_macros::{AsRefStr, EnumIter, EnumString};
 
 /// Instructions for the Chimera Virtual Machine.
 ///
 /// Each opcode represents a fundamental action that the organism can perform,
 /// ranging from basic arithmetic to genetic engineering and inter-dimensional travel.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter)]
 #[strum(serialize_all = "snake_case")]
 pub enum OpCode {
     /// Pushes a value onto the stack.

@@ -4,6 +4,7 @@ use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use strum::IntoEnumIterator;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Omen {
@@ -249,7 +250,7 @@ fn bind(var: &str, val: &Value, subst: &Subst) -> Option<Subst> {
     Some(new_subst)
 }
 
-fn solve(
+pub fn solve(
     goals: &[Value],
     subst: Subst,
     kb: &[Value],
@@ -396,6 +397,184 @@ fn check_dynamic_predicates(
                                             );
                                         }
                                     }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "past_cell" => {
+                    // past_cell(Ticks, X, Y, Val)
+                    #[cfg(feature = "nova")]
+                    if args.len() == 5 {
+                        let arg_t = &args[1];
+                        let arg_x = &args[2];
+                        let arg_y = &args[3];
+                        let arg_val = &args[4];
+
+                        let r_t = resolve(arg_t, subst);
+                        let r_x = resolve(arg_x, subst);
+                        let r_y = resolve(arg_y, subst);
+
+                        let history_len = vm.grid_history.len();
+                        let t_range = if let Value::Int(t) = r_t {
+                            if t >= 0 && (t as usize) < history_len {
+                                (t as usize)..(t as usize + 1)
+                            } else {
+                                0..0
+                            }
+                        } else {
+                            0..history_len
+                        };
+
+                        let x_range = if let Value::Int(x) = r_x {
+                            if x >= 0 && (x as usize) < crate::vm::GRID_SIZE {
+                                (x as usize)..(x as usize + 1)
+                            } else {
+                                0..0
+                            }
+                        } else {
+                            0..crate::vm::GRID_SIZE
+                        };
+
+                        let y_range = if let Value::Int(y) = r_y {
+                            if y >= 0 && (y as usize) < crate::vm::GRID_SIZE {
+                                (y as usize)..(y as usize + 1)
+                            } else {
+                                0..0
+                            }
+                        } else {
+                            0..crate::vm::GRID_SIZE
+                        };
+
+                        for t in t_range {
+                            let idx = history_len.saturating_sub(1).saturating_sub(t);
+                            let grid_snapshot = &vm.grid_history[idx];
+                            let fact_t = Value::Int(t as i64);
+
+                            for y in y_range.clone() {
+                                for x in x_range.clone() {
+                                    let fact_x = Value::Int(x as i64);
+                                    let fact_y = Value::Int(y as i64);
+                                    let fact_val = grid_snapshot[y][x].clone();
+
+                                    let mut current_subst = subst.clone();
+                                    if let Some(s1) = unify(arg_t, &fact_t, &current_subst) {
+                                        current_subst = s1;
+                                        if let Some(s2) = unify(arg_x, &fact_x, &current_subst) {
+                                            current_subst = s2;
+                                            if let Some(s3) = unify(arg_y, &fact_y, &current_subst) {
+                                                current_subst = s3;
+                                                if let Some(s4) = unify(arg_val, &fact_val, &current_subst) {
+                                                    solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "neighbor" => {
+                    // neighbor(X, Y, Dir, NX, NY)
+                    if args.len() == 6 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_dir = &args[3];
+                        let arg_nx = &args[4];
+                        let arg_ny = &args[5];
+
+                        let r_x = resolve(arg_x, subst);
+                        let r_y = resolve(arg_y, subst);
+
+                        let x_range = if let Value::Int(x) = r_x {
+                            if x >= 0 && (x as usize) < crate::vm::GRID_SIZE {
+                                (x as usize)..(x as usize + 1)
+                            } else {
+                                0..0
+                            }
+                        } else {
+                            0..crate::vm::GRID_SIZE
+                        };
+
+                        let y_range = if let Value::Int(y) = r_y {
+                            if y >= 0 && (y as usize) < crate::vm::GRID_SIZE {
+                                (y as usize)..(y as usize + 1)
+                            } else {
+                                0..0
+                            }
+                        } else {
+                            0..crate::vm::GRID_SIZE
+                        };
+
+                        for y in y_range {
+                            for x in x_range.clone() {
+                                // 0=N, 1=E, 2=S, 3=W
+                                let dirs = [(-1, 0, 0), (0, 1, 1), (1, 0, 2), (0, -1, 3)];
+                                for (dy, dx, d_code) in dirs {
+                                    #[allow(unused_assignments)]
+                                    let mut neighbor_opt = None;
+
+                                    #[cfg(any(feature = "nova", feature = "silicon"))]
+                                    {
+                                        neighbor_opt = vm.normalize_coords(y as i64 + dy, x as i64 + dx);
+                                    }
+                                    #[cfg(not(any(feature = "nova", feature = "silicon")))]
+                                    {
+                                        let ny = y as i64 + dy;
+                                        let nx = x as i64 + dx;
+                                        if ny >= 0 && ny < crate::vm::GRID_SIZE as i64 && nx >= 0 && nx < crate::vm::GRID_SIZE as i64 {
+                                            neighbor_opt = Some((ny as usize, nx as usize));
+                                        }
+                                    }
+
+                                    if let Some((ny, nx)) = neighbor_opt {
+                                        let fact_x = Value::Int(x as i64);
+                                        let fact_y = Value::Int(y as i64);
+                                        let fact_dir = Value::Int(d_code);
+                                        let fact_nx = Value::Int(nx as i64);
+                                        let fact_ny = Value::Int(ny as i64);
+
+                                        let mut current_subst = subst.clone();
+                                        if let Some(s1) = unify(arg_x, &fact_x, &current_subst) {
+                                            current_subst = s1;
+                                            if let Some(s2) = unify(arg_y, &fact_y, &current_subst) {
+                                                current_subst = s2;
+                                                if let Some(s3) = unify(arg_dir, &fact_dir, &current_subst) {
+                                                    current_subst = s3;
+                                                    if let Some(s4) = unify(arg_nx, &fact_nx, &current_subst) {
+                                                        current_subst = s4;
+                                                        if let Some(s5) = unify(arg_ny, &fact_ny, &current_subst) {
+                                                            solve(remaining_goals, s5, kb, vm, solutions, depth + 1);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "opcode" => {
+                    // opcode(Name, OpVal)
+                    if args.len() == 3 {
+                        let arg_name = &args[1];
+                        let arg_val = &args[2];
+
+                        for op in OpCode::iter() {
+                            let op_name = op.to_string();
+                            let fact_name = Value::Str(op_name.clone());
+                            let fact_val = Value::Str(op_name); // For now, Val is same as Name
+
+                            let mut current_subst = subst.clone();
+                            if let Some(s1) = unify(arg_name, &fact_name, &current_subst) {
+                                if let Some(s2) = unify(arg_val, &fact_val, &s1) {
+                                    solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
                                 }
                             }
                         }
