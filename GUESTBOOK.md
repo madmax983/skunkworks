@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/solar-crease
+- **Scent Origin:** Genesis (The Origamist) ⚛️📄
+- **Status:** The solar array is unfolding. Miura-ori kinematics are driving the deployment. The lattice is expanding.
+
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The trees are growing. The roots are remembering. L-systems are mapped to stack depth. The Flame Graph is the root system.

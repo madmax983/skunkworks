@@ -1,0 +1,9 @@
+[package]
+name = "solar-crease"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+glam = "0.29" # Using version consistent with macroquad
+nalgebra = "0.33"
