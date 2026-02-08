@@ -78,6 +78,8 @@ pub(crate) enum ViewMode {
     Elektra,
     #[cfg(feature = "nova")]
     Fishing,
+    #[cfg(feature = "nova")]
+    Arena,
 }
 
 enum InputMode {
@@ -421,6 +423,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Arena = app_state.view_mode {
+                render_arena(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -695,6 +703,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Arena => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -819,7 +832,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Scent => ViewMode::Fishing,
                             #[cfg(feature = "nova")]
-                            ViewMode::Fishing => ViewMode::Heatmap,
+                            ViewMode::Fishing => ViewMode::Arena,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Arena => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -971,10 +986,16 @@ where
                     KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('f') => app_state.view_mode = ViewMode::Fishing,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
                         #[cfg(feature = "nova")]
-                        if let ViewMode::Fishing = app_state.view_mode {
+                        if let ViewMode::Arena = app_state.view_mode {
+                            if let Some(arena) = &mut vm.arena {
+                                arena.tick();
+                            }
+                        } else if let ViewMode::Fishing = app_state.view_mode {
                             if app_state.fishing_cast {
                                 // Reel
                                 if app_state.fishing_hooked {
@@ -1065,6 +1086,32 @@ where
                         if let ViewMode::Kaleidoscope = app_state.view_mode {
                             vm.piet_state = None;
                             app_state.status_msg = "Piet State Reset".to_string();
+                        } else if let ViewMode::Arena = app_state.view_mode {
+                            if let Some(arena) = &mut vm.arena {
+                                arena.reset();
+                                app_state.status_msg = "Arena Reset".to_string();
+                            }
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('S') => {
+                        if let ViewMode::Arena = app_state.view_mode {
+                            if let Some(arena) = &mut vm.arena {
+                                // Add random gladiators if empty
+                                if arena.combatants.is_empty() {
+                                    // Use some existing strands or random
+                                    let mut rng = rand::thread_rng();
+                                    use rand::Rng;
+                                    if !vm.dna.helix.strands.is_empty() {
+                                        let s1 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+                                        let s2 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+                                        arena.add_gladiator(s1, rng.gen());
+                                        arena.add_gladiator(s2, rng.gen());
+                                    }
+                                }
+                                arena.start();
+                                app_state.status_msg = "Arena Started!".to_string();
+                            }
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1155,6 +1202,8 @@ where
                         ViewMode::Scent => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Fishing => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Arena => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1421,6 +1470,8 @@ where
                         ViewMode::Scent => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Fishing => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Arena => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1521,6 +1572,8 @@ where
                         ViewMode::Scent => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Fishing => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Arena => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -1621,6 +1674,8 @@ where
                         ViewMode::Scent => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Fishing => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Arena => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1851,6 +1906,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Fishing => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Arena => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "elektra")]
@@ -2553,6 +2612,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Scent => "SCENT (OLFACTORY)",
         #[cfg(feature = "nova")]
         ViewMode::Fishing => "FISHING (MINIGAME)",
+        #[cfg(feature = "nova")]
+        ViewMode::Arena => "ARENA (COLOSSEUM)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -4914,4 +4975,72 @@ fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Schematic Info"),
     );
     f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Top: Combatants
+    let arena = match &vm.arena {
+        Some(a) => a,
+        None => return,
+    };
+
+    let combat_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[0]);
+
+    for (i, gladiator) in arena.combatants.iter().enumerate() {
+        if i >= 2 { break; } // Only show first 2 for now
+
+        let hp_percent = (gladiator.stats.hp as f64 / gladiator.stats.max_hp as f64).clamp(0.0, 1.0);
+
+        let stats_text = vec![
+            Line::from(vec![
+                Span::styled(format!("{} ", gladiator.name), Style::default().add_modifier(Modifier::BOLD).fg(Color::Yellow)),
+                Span::raw(format!("(HP: {}/{})", gladiator.stats.hp, gladiator.stats.max_hp)),
+            ]),
+            Line::from(format!("ATK: {} | DEF: {} | SPD: {}", gladiator.stats.attack, gladiator.stats.defense, gladiator.stats.speed)),
+            Line::from(format!("Traits: {:?}", gladiator.traits)),
+            Line::from(""),
+            Line::from(format!("Action: {}", if arena.turn > 0 { "Fighting" } else { "Waiting" })),
+        ];
+
+        let block = Block::default().borders(Borders::ALL).title(format!("Fighter {}", i + 1));
+        let paragraph = Paragraph::new(stats_text).block(block);
+
+        f.render_widget(paragraph, combat_chunks[i]);
+
+        // HP Bar gauge?
+        // Overlay gauge on top? No, paragraph supports text.
+        // Let's render gauge below.
+
+        let gauge_area = ratatui::layout::Rect {
+            x: combat_chunks[i].x + 1,
+            y: combat_chunks[i].y + 5,
+            width: combat_chunks[i].width - 2,
+            height: 1,
+        };
+
+        let gauge = Gauge::default()
+            .gauge_style(Style::default().fg(if hp_percent > 0.5 { Color::Green } else { Color::Red }))
+            .ratio(hp_percent);
+
+        f.render_widget(gauge, gauge_area);
+    }
+
+    if arena.combatants.is_empty() {
+        let center = Paragraph::new("Press 'S' to Start (Auto-Draft)").alignment(ratatui::layout::Alignment::Center);
+        f.render_widget(center, chunks[0]);
+    }
+
+    // Bottom: Logs
+    let log_items: Vec<ListItem> = arena.logs.iter().rev().map(|s| ListItem::new(s.clone())).collect();
+    let logs_list = List::new(log_items).block(Block::default().borders(Borders::ALL).title("Battle Log (Space: Tick, R: Reset)"));
+    f.render_widget(logs_list, chunks[1]);
 }
