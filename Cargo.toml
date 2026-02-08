@@ -70,7 +70,6 @@ members = [
     "experiments/fungal-balancer",
     "experiments/hyperbolic-ants", 
     "experiments/klein-life",
-    "experiments/aperiodic-citadel", 
     "experiments/firefly-synapse",
     "experiments/chimera-market",
     "experiments/compost-chimera",
