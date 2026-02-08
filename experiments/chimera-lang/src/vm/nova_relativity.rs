@@ -1,5 +1,45 @@
 #[cfg(feature = "nova")]
-use super::ChimeraVM;
+use super::{ChimeraVM, Value};
+
+#[cfg(feature = "nova")]
+pub fn exec_retroscope(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: ticks, y, x (top)
+    if vm.stack.len() >= 3 {
+        let x_val = vm.stack.pop().unwrap();
+        let y_val = vm.stack.pop().unwrap();
+        let ticks_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(x), Value::Int(y), Value::Int(t)) = (x_val, y_val, ticks_val) {
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                if t >= 0 {
+                    let ticks = t as usize;
+                    if ticks < vm.grid_history.len() {
+                        // Index from back: len - 1 is most recent (start of current tick)
+                        let idx = vm.grid_history.len().saturating_sub(1).saturating_sub(ticks);
+                        let val = vm.grid_history[idx][ny][nx].clone();
+                        vm.stack.push(val);
+                    } else {
+                        // Too far back, return 0 (Void)
+                        vm.stack.push(Value::Int(0));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Negative ticks for retroscope".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Coordinates out of bounds for retroscope".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for retroscope".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for retroscope".to_string());
+    }
+    None
+}
 
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]

@@ -862,6 +862,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chronos,
 
+    /// **[Nova]** Accesses the state of a grid cell from `ticks` ago.
+    ///
+    /// **Stack:** `[ ..., ticks, y, x ] -> [ ..., past_value ]`
+    /// **Effect:** Allows looking back in time.
+    #[cfg(feature = "nova")]
+    Retroscope,
+
     // Egregore Features (Collective Consciousness)
     /// **[Nova]** Connects to the collective Egregore mind.
     ///
