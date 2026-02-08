@@ -1414,6 +1414,19 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Atlas,
 
+    /// **[Nova]** Compresses a grid area into a value on the stack.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ..., pocket_val ]`
+    /// **Effect:** Clears the area.
+    #[cfg(feature = "nova")]
+    Pocket,
+    /// **[Nova]** Decompresses a pocket value onto the grid.
+    ///
+    /// **Stack:** `[ ..., pocket_val ] -> [ ... ]`
+    /// **Effect:** Overwrites the area.
+    #[cfg(feature = "nova")]
+    Unpocket,
+
     // Sovereignty Features (Territory)
     /// **[Nova]** Claims ownership of grid cells within a radius.
     ///

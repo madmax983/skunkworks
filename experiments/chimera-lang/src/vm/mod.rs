@@ -103,6 +103,11 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
+pub mod nova_pocket;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_pocket_test;
+#[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
 pub mod nova_resonance_war;
@@ -2146,6 +2151,9 @@ impl ChimeraVM {
                 nova_cartography::exec_cartography_op(self, op, args);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Pocket | OpCode::Unpocket => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Quake
