@@ -1,6 +1,5 @@
 mod crawler;
 mod mechanics;
-mod simulation;
 
 use anyhow::Result;
 use crawler::{crawl, Node};
@@ -9,7 +8,7 @@ use mechanics::{Position, Trader};
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style, Stylize},
+    style::{Color, Style},
     symbols::Marker,
     text::{Line, Span},
     widgets::{
@@ -18,7 +17,7 @@ use ratatui::{
     },
     Frame,
 };
-use simulation::{Grid, Particle};
+use market_sim::{Grid, Particle};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
@@ -110,7 +109,7 @@ impl App {
             let bid_y = (self.market_price + offset) as usize;
             let x = self.rng.gen_range(5..self.grid.width); // Don't spawn on spawn point
             if bid_y < self.grid.height {
-                self.grid.set(x, bid_y, Particle::Bid);
+                self.grid.set(x, bid_y, Particle::Bid(0));
             }
         }
         // Asks above price
@@ -119,7 +118,7 @@ impl App {
             let ask_y = (self.market_price - offset) as isize;
             let x = self.rng.gen_range(5..self.grid.width);
             if ask_y >= 0 {
-                self.grid.set(x, ask_y as usize, Particle::Ask);
+                self.grid.set(x, ask_y as usize, Particle::Ask(0));
             }
         }
 
@@ -288,11 +287,11 @@ fn draw(f: &mut Frame, app: &mut App) {
     for y in 0..app.grid.height {
         for x in 0..app.grid.width {
             match app.grid.get(x, y) {
-                Particle::Bid => {
+                Particle::Bid(_) => {
                     app.bids_buf
                         .push((x as f64, (app.grid.height - 1 - y) as f64));
                 }
-                Particle::Ask => {
+                Particle::Ask(_) => {
                     app.asks_buf
                         .push((x as f64, (app.grid.height - 1 - y) as f64));
                 }
