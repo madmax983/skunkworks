@@ -603,3 +603,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/git-ghost
 - **Scent Origin:** Genesis (The Necromancer) ⚛️👻
 - **Status:** The graveyard is open. Deleted files are haunting the terminal. Bit rot is consuming the ectoplasm.
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-serializer
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The knots are tying. Data is becoming a physical object. Serde serializer active. Arithmetic performed by manipulating strings. No Arabic numerals allowed.
