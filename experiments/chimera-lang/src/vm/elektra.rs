@@ -78,8 +78,8 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
-                     vm.output.push(format!("LIGHTNING: Strike at {},{}", x, y));
-                     // Could trigger neighbors
+                    vm.output.push(format!("LIGHTNING: Strike at {},{}", x, y));
+                    // Could trigger neighbors
                 }
             }
         }
@@ -120,8 +120,8 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 let cell_val = &vm.grid[y][x];
                 let conductivity = match cell_val {
                     Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
-                    Value::Int(_) => 0.01, // Other matter
-                    _ => 0.0, // Air
+                    Value::Int(_) => 0.01,                                 // Other matter
+                    _ => 0.0,                                              // Air
                 };
 
                 if conductivity <= 0.001 {
@@ -171,8 +171,8 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
     // We'll store magnitude of current flow
     for y in 0..grid_size {
         for x in 0..grid_size {
-             let cell_val = &vm.grid[y][x];
-             let conductivity = match cell_val {
+            let cell_val = &vm.grid[y][x];
+            let conductivity = match cell_val {
                 Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
                 Value::Int(_) => 0.01,
                 _ => 0.0,

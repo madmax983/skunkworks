@@ -1643,6 +1643,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Lens,
 
+    // Bureaucracy Features (Nova)
+    /// **[Nova]** Increases local bureaucracy (Red Tape), making actions cost more energy.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    RedTape,
+    /// **[Nova]** Files a Form to reduce local bureaucracy.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Form,
+    /// **[Nova]** Signs a Form on the stack, converting it to a Permit.
+    ///
+    /// **Stack:** `[ ..., form_str ] -> [ ..., permit_str ]`
+    #[cfg(feature = "nova")]
+    Sign,
+    /// **[Nova]** Uses a Permit to gain temporary immunity to Red Tape.
+    ///
+    /// **Stack:** `[ ..., permit_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Permit,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),
