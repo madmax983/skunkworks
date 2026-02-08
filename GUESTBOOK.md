@@ -607,3 +607,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/quipu-serializer
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The knots are tying. Data is becoming a physical object. Serde serializer active. Arithmetic performed by manipulating strings. No Arabic numerals allowed.
+
+### [Concentration Level: FRESH] - Location: experiments/lichen-mesh
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The rock is breathing. Algae and Fungus are trading packets. The microservices are alive. Symbiosis visualized via cellular automata.
