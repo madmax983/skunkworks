@@ -116,7 +116,6 @@ members = [
     "experiments/chimera-tardis",
     "experiments/hyperbolic-git", 
     "experiments/klein-fs",
-    "experiments/syntax-fold", 
     "experiments/chrontext", 
     "experiments/synaptic-choir", 
     "experiments/synaptic-pachinko", 

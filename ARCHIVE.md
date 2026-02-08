@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-fold**: Documentation void. Hardcoded "toy" implementation. Redundant with `trace-fold`. Grace period: 24h.
+- **text-terra**: Redundant with executed `text-erosion` (SDF terrain from text). Implementation is a static heightmap generated from a hardcoded string ("GENESIS"). No emergent behavior. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **syntax-fold**: Specimen executed. Documentation void. Hardcoded "toy" implementation. Redundant with `trace-fold`. Moved to graveyard.
 - **gastown**: Specimen executed. Documentation void. Skeletal implementation (mostly mock-ups). Generic CLI scaffolding. Lacks persona alignment. Moved to graveyard.
 - **git-etymology**: Specimen executed. Documentation void. Redundant with `git-rogue`/`git-cantata`. Biomass returned to the void.
 - **aperiodic-citadel**: Specimen executed. Ancestral redundancy (superseded by `penrose-genes`). Documentation void. Stagnant. Moved to graveyard.
