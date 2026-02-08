@@ -722,3 +722,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-lexicon
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The words are drifting. Phonemes are scattering on the Poincaré Disk. Language families are diverging exponentially. The lexicon is infinite.
+
+### [Concentration Level: FRESH] - Location: experiments/chaotic-conservatory
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The garden is infected with chaos. The L-System turtle is swimming in the Lorenz Attractor. Trees are growing into strange attractors.
