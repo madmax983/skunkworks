@@ -120,7 +120,6 @@ members = [
     "experiments/hyperbolic-git", 
     "experiments/klein-fs",
     "experiments/syntax-fold", 
-    "experiments/market-scheduler",
     "experiments/chrontext", 
     "experiments/synaptic-choir", 
     "experiments/synaptic-pachinko", 
