@@ -1272,6 +1272,12 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
+        OpCode::Resonate => super::nova_resonance_war::exec_resonate(vm),
+        #[cfg(feature = "nova")]
+        OpCode::SonicClaim => super::nova_resonance_war::exec_sonic_claim(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Dampen => super::nova_resonance_war::exec_dampen(vm),
+        #[cfg(feature = "nova")]
         OpCode::Prophecy => exec_prophecy(vm),
         #[cfg(feature = "nova")]
         OpCode::EgregoreLink => {

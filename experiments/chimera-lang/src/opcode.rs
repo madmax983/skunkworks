@@ -1248,6 +1248,22 @@ pub enum OpCode {
     #[cfg(all(feature = "nova", feature = "resonance"))]
     Reshape,
 
+    /// **[Cymatics]** Emits a resonant frequency and amplitude at the current location.
+    ///
+    /// **Stack:** `[ ..., frequency, amplitude ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Resonate,
+    /// **[Cymatics]** Claims territory if the local resonance matches the strand's frequency.
+    ///
+    /// **Stack:** `[ ..., target_frequency ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    SonicClaim,
+    /// **[Cymatics]** Reduces resonance amplitude in an area.
+    ///
+    /// **Stack:** `[ ..., radius, amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Dampen,
+
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
     ///

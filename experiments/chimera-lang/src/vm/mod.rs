@@ -105,6 +105,8 @@ pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
+pub mod nova_resonance_war;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_retina_test;
 #[cfg(feature = "nova")]
@@ -412,6 +414,8 @@ pub struct ChimeraVM {
     pub sovereignty_grid: Vec<Vec<Option<usize>>>,
     #[cfg(feature = "nova")]
     pub tax_rates: HashMap<usize, i64>,
+    #[cfg(feature = "nova")]
+    pub resonance_grid: Vec<Vec<(f32, f32)>>,
 }
 
 impl ChimeraVM {
@@ -453,6 +457,8 @@ impl ChimeraVM {
         let cartography_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
         let execution_trail = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -614,6 +620,8 @@ impl ChimeraVM {
             sovereignty_grid,
             #[cfg(feature = "nova")]
             tax_rates: HashMap::new(),
+            #[cfg(feature = "nova")]
+            resonance_grid,
         }
     }
 
@@ -1912,7 +1920,10 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Fire
+            OpCode::Resonate
+            | OpCode::SonicClaim
+            | OpCode::Dampen
+            | OpCode::Fire
             | OpCode::Salvo
             | OpCode::Claim
             | OpCode::Cede
