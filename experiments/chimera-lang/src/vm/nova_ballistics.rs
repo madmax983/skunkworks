@@ -12,6 +12,7 @@ pub struct Projectile {
     pub power: i64,
     pub ttl: usize,
     pub owner: usize, // Strand index
+    pub last_hit: Option<(usize, usize)>,
 }
 
 pub fn update_projectiles(vm: &mut ChimeraVM) {
@@ -37,7 +38,94 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
 
         // Check collision with Grid
         if !matches!(vm.grid[iy][ix], Value::Int(0)) {
-            // Impact!
+            // Avoid re-triggering same optical component
+            if let Some(last) = p.last_hit {
+                if last == (iy, ix) {
+                    surviving_projectiles.push(p);
+                    continue;
+                }
+            }
+
+            if let Value::Str(s) = &vm.grid[iy][ix] {
+                if s.starts_with("MIRROR:") || s.starts_with("REFLECTOR:") {
+                    // MIRROR prefix kept for backward compat if any, but new opcode uses REFLECTOR
+                    let val_str = if s.starts_with("MIRROR:") {
+                        s.trim_start_matches("MIRROR:")
+                    } else {
+                        s.trim_start_matches("REFLECTOR:")
+                    };
+
+                    if let Ok(ori) = val_str.parse::<i32>() {
+                        match ori {
+                            0 => p.vx = -p.vx, // | Vertical: Reflect X
+                            1 => p.vy = -p.vy, // - Horizontal: Reflect Y
+                            2 => {
+                                // / Diagonal: Swap and negate
+                                let temp = p.vx;
+                                p.vx = -p.vy;
+                                p.vy = -temp;
+                            }
+                            3 => {
+                                // \ Diagonal: Swap
+                                std::mem::swap(&mut p.vx, &mut p.vy);
+                            }
+                            _ => {}
+                        }
+                        p.last_hit = Some((iy, ix));
+                        surviving_projectiles.push(p);
+                        continue;
+                    }
+                } else if s.starts_with("PRISM:") {
+                    // Split!
+                    let angle_offset = 0.5; // radians approx 30 deg
+                    let base_angle = p.vy.atan2(p.vx);
+                    let speed = (p.vx * p.vx + p.vy * p.vy).sqrt();
+
+                    // 1. Center (Original)
+                    let mut p_center = p.clone();
+                    p_center.last_hit = Some((iy, ix));
+                    surviving_projectiles.push(p_center);
+
+                    // 2. Left
+                    let a1 = base_angle - angle_offset;
+                    let p1 = Projectile {
+                        x: p.x,
+                        y: p.y,
+                        vx: speed * a1.cos(),
+                        vy: speed * a1.sin(),
+                        power: p.power,
+                        ttl: p.ttl,
+                        owner: p.owner,
+                        last_hit: Some((iy, ix)),
+                    };
+                    surviving_projectiles.push(p1);
+
+                    // 3. Right
+                    let a2 = base_angle + angle_offset;
+                    let p2 = Projectile {
+                        x: p.x,
+                        y: p.y,
+                        vx: speed * a2.cos(),
+                        vy: speed * a2.sin(),
+                        power: p.power,
+                        ttl: p.ttl,
+                        owner: p.owner,
+                        last_hit: Some((iy, ix)),
+                    };
+                    surviving_projectiles.push(p2);
+                    continue;
+                } else if s.starts_with("LENS:") {
+                    if let Ok(pow) = s.trim_start_matches("LENS:").parse::<i64>() {
+                        p.power = p.power.max(pow); // Amplify
+                        p.ttl += 10; // Refocus/Extend range
+                        p.last_hit = Some((iy, ix));
+                        surviving_projectiles.push(p);
+                        continue;
+                    }
+                }
+            }
+
+            // Impact! (Non-optical or failed optical parse)
             vm.grid[iy][ix] = Value::Int(0); // Destroy block
             vm.output
                 .push(format!("IMPACT: Projectile hit {},{}", ix, iy));
@@ -114,6 +202,7 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 power: pow.clamp(1, 5),
                 ttl: 20,
                 owner: vm.ip.0,
+                last_hit: None,
             };
 
             vm.projectiles.push(p);
@@ -154,6 +243,7 @@ pub fn exec_salvo(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     power: pow.clamp(1, 5),
                     ttl: 20,
                     owner: vm.ip.0,
+                    last_hit: None,
                 };
                 vm.projectiles.push(p);
             }

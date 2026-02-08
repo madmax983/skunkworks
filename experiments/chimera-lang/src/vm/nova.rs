@@ -1460,6 +1460,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Salvo => super::nova_ballistics::exec_salvo(vm),
         #[cfg(feature = "nova")]
+        OpCode::Reflector => super::nova_optics::exec_reflector(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Prism => super::nova_optics::exec_prism(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Lens => super::nova_optics::exec_lens(vm),
+        #[cfg(feature = "nova")]
         OpCode::Sacrifice => {
             let s_idx = vm.ip.0;
             if s_idx < vm.dna.helix.strands.len() {

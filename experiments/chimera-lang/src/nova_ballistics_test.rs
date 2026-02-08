@@ -50,6 +50,7 @@ fn test_projectile_collision() {
         power: 1,
         ttl: 10,
         owner: 0,
+        last_hit: None,
     });
 
     // Step 1: Moves to (8, 9)

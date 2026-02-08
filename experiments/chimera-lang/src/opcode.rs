@@ -1494,6 +1494,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Salvo,
 
+    // Optics Features (Nova)
+    /// **[Nova]** Creates a reflective surface on the grid.
+    ///
+    /// **Stack:** `[ ..., orientation, y, x ] -> [ ... ]`
+    /// **Orientation:** 0=|, 1=-, 2=/, 3=\.
+    #[cfg(feature = "nova")]
+    Reflector,
+    /// **[Nova]** Creates a prism that splits projectiles.
+    ///
+    /// **Stack:** `[ ..., orientation, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Prism,
+    /// **[Nova]** Creates a lens that modifies projectile properties.
+    ///
+    /// **Stack:** `[ ..., power, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Lens,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),

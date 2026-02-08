@@ -105,6 +105,11 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
+pub mod nova_optics;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_optics_test;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_orca_test;
 #[cfg(feature = "nova")]
@@ -1947,6 +1952,9 @@ impl ChimeraVM {
             | OpCode::ChronosSplice
             | OpCode::Fire
             | OpCode::Salvo
+            | OpCode::Reflector
+            | OpCode::Prism
+            | OpCode::Lens
             | OpCode::Claim
             | OpCode::Cede
             | OpCode::Sovereignty
