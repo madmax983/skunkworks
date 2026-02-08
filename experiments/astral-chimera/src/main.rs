@@ -8,14 +8,17 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    text::{Span, Line},
+    text::{Line, Span},
     widgets::{
         canvas::{Canvas, Line as CanvasLine},
         Block, Borders, Paragraph,
     },
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 mod physics;
 mod simulation;
@@ -38,10 +41,7 @@ fn main() -> Result<()> {
 
     // Restore terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -79,7 +79,11 @@ where
 
             // Left: Simulation Canvas
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Astral Chimera System"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Astral Chimera System"),
+                )
                 .paint(|ctx| {
                     // Draw Radar
                     let radar_end_x = simulation.radar.angle.cos() * simulation.radar.length;
@@ -96,12 +100,20 @@ where
                     for body in &simulation.universe.bodies {
                         // Draw orbit trail
                         for point in &body.trail {
-                            ctx.print(point.x as f64, point.y as f64, Span::styled(".", Style::default().fg(Color::DarkGray)));
+                            ctx.print(
+                                point.x as f64,
+                                point.y as f64,
+                                Span::styled(".", Style::default().fg(Color::DarkGray)),
+                            );
                         }
 
                         // Draw Body
                         let char = if body.mass > 100.0 { "O" } else { "o" };
-                        ctx.print(body.pos.x as f64, body.pos.y as f64, Span::styled(char, Style::default().fg(body.color)));
+                        ctx.print(
+                            body.pos.x as f64,
+                            body.pos.y as f64,
+                            Span::styled(char, Style::default().fg(body.color)),
+                        );
                     }
                 })
                 .x_bounds([-150.0, 150.0])
@@ -111,7 +123,10 @@ where
 
             // Right: VM Status
             let mut lines = vec![
-                Line::from(Span::styled("Astral Chimera", Style::default().fg(Color::Yellow))),
+                Line::from(Span::styled(
+                    "Astral Chimera",
+                    Style::default().fg(Color::Yellow),
+                )),
                 Line::from("Orbital Code Execution"),
                 Line::from(""),
             ];

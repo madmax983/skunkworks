@@ -86,6 +86,9 @@ mod nova_chronos_local_test;
 #[cfg(test)]
 mod nova_chronos_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_orca_test;
+#[cfg(feature = "nova")]
 pub mod nova_crystal;
 #[cfg(all(feature = "nova", feature = "resonance"))]
 pub mod nova_cymatics;

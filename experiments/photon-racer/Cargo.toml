@@ -9,4 +9,3 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 tui-shared.workspace = true
-locus.workspace = true

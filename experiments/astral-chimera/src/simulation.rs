@@ -48,7 +48,13 @@ impl Simulation {
 
         // Planets
         let mut rng = rand::thread_rng();
-        let colors = [Color::Red, Color::Green, Color::Blue, Color::Cyan, Color::Magenta];
+        let colors = [
+            Color::Red,
+            Color::Green,
+            Color::Blue,
+            Color::Cyan,
+            Color::Magenta,
+        ];
         let opcodes = [
             OpCode::Photosynthesize,
             OpCode::Incubate,
@@ -68,13 +74,22 @@ impl Simulation {
             // Create a simple VM for each planet
             // DNA: [Push(1), OpCode, Photosynthesize, Jump(0)]
             let genes = vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
                 Gene {
                     op: opcodes[i % opcodes.len()].clone(),
                     args: vec![Nucleotide::Number(1)], // Some ops ignore this
                 },
-                Gene { op: OpCode::Photosynthesize, args: vec![] }, // Gain energy
-                Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+                Gene {
+                    op: OpCode::Photosynthesize,
+                    args: vec![],
+                }, // Gain energy
+                Gene {
+                    op: OpCode::Jump,
+                    args: vec![Nucleotide::Number(0)],
+                },
             ];
 
             let dna = Dna {
@@ -115,7 +130,11 @@ impl Simulation {
 
         let normalize = |a: f32| -> f32 {
             let m = a % (2.0 * PI);
-            if m < 0.0 { m + 2.0 * PI } else { m }
+            if m < 0.0 {
+                m + 2.0 * PI
+            } else {
+                m
+            }
         };
 
         let start = normalize(old_angle);
@@ -133,7 +152,9 @@ impl Simulation {
         };
 
         for (i, body) in self.universe.bodies.iter_mut().enumerate() {
-            if i == 0 { continue; } // Skip Sun
+            if i == 0 {
+                continue;
+            } // Skip Sun
 
             let body_angle = normalize(body.pos.y.atan2(body.pos.x));
 

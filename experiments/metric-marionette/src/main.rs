@@ -1,5 +1,4 @@
 mod monitor;
-mod puppeteer;
 mod skeleton;
 
 use anyhow::Result;
@@ -18,15 +17,13 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 use monitor::Monitor;
-use puppeteer::Puppeteer;
 use skeleton::Skeleton;
 
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
 
     let mut monitor = Monitor::new();
-    let mut puppeteer = Puppeteer::new();
-    let mut skeleton = Puppeteer::build_skeleton();
+    let mut skeleton = Skeleton::new_humanoid();
 
     let mut last_tick = Instant::now();
 
@@ -38,17 +35,19 @@ fn main() -> Result<()> {
         last_tick = now;
 
         // Poll events
+        #[allow(clippy::collapsible_if)]
         if event::poll(Duration::from_millis(30))? {
             if let Event::Key(key) = event::read()? {
-                if key.code == KeyCode::Char('q') || key.code == KeyCode::Esc {
-                    break;
+                match key.code {
+                    KeyCode::Char('q') | KeyCode::Esc => break,
+                    _ => {}
                 }
             }
         }
 
         // Update
         monitor.refresh();
-        puppeteer.update(&mut skeleton, &monitor, dt);
+        skeleton.animate(&monitor, dt);
 
         // Draw
         tui.terminal.draw(|f| {
