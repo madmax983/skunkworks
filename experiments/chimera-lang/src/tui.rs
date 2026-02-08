@@ -59,6 +59,8 @@ pub(crate) enum ViewMode {
     Kaleidoscope,
     #[cfg(feature = "nova")]
     Void,
+    #[cfg(feature = "nova")]
+    Signals,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -313,6 +315,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Signals = app_state.view_mode {
+                render_signals(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -541,6 +549,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Signals => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -651,7 +664,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Kaleidoscope => ViewMode::Void,
                             #[cfg(feature = "nova")]
-                            ViewMode::Void => ViewMode::Heatmap,
+                            ViewMode::Void => ViewMode::Signals,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Signals => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -898,6 +913,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Signals => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1132,6 +1153,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Signals => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1194,6 +1221,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Signals => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1252,6 +1285,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Void => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Signals => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -1459,6 +1498,10 @@ where
                             ViewMode::Void => {
                                 app_state.input_mode = InputMode::Normal;
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Signals => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
                         }
                     }
                     _ => {}
@@ -1466,6 +1509,99 @@ where
             }
         }
     }
+}
+
+#[cfg(feature = "nova")]
+fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Signal Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let signal = vm.signal_grid[y][x];
+            let trail = vm.execution_trail[y][x];
+            let mut style = Style::default();
+
+            // Background for Execution Trail
+            if trail > 0 {
+                let intensity = trail as u8;
+                // Fade from white (255) to dark blue
+                style = style.bg(Color::Rgb(0, 0, intensity.min(150)));
+            }
+
+            // Foreground for Signal
+            let ch = if signal > 0 {
+                // Directional hint? No simple way without storing direction in signal_grid.
+                // Just use intensity.
+                if signal < 50 {
+                    "·"
+                } else if signal < 100 {
+                    "+"
+                } else if signal < 200 {
+                    "*"
+                } else {
+                    "#"
+                }
+            } else {
+                " "
+            };
+
+            if signal > 0 {
+                if signal < 50 {
+                    style = style.fg(Color::Cyan);
+                } else if signal < 150 {
+                    style = style.fg(Color::Yellow);
+                } else {
+                    style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            // Cursor
+            if app_state.grid_cursor == (x, y) {
+                style = style.bg(Color::White).fg(Color::Black);
+            }
+
+            line_spans.push(Span::styled(ch.to_string(), style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Signal & Execution Heatmap"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Legend
+    let legend_text = vec![
+        Line::from("SIGNALS"),
+        Line::from(Span::styled("· Low Intensity", Style::default().fg(Color::Cyan))),
+        Line::from(Span::styled("+ Med Intensity", Style::default().fg(Color::Yellow))),
+        Line::from(Span::styled("* High Intensity", Style::default().fg(Color::Red))),
+        Line::from(" "),
+        Line::from("EXECUTION TRAIL"),
+        Line::from(Span::styled("Background (Blue Fade)", Style::default().bg(Color::Blue))),
+        Line::from(" "),
+        Line::from("Mechanics:"),
+        Line::from("  - Signals propagate via 'nova_signals.rs'"),
+        Line::from("  - Trail marks recent gene execution sites"),
+    ];
+
+    let legend_widget = Paragraph::new(legend_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Legend"),
+    );
+    f.render_widget(legend_widget, chunks[1]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
@@ -1753,6 +1889,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Kaleidoscope => "KALEIDOSCOPE",
         #[cfg(feature = "nova")]
         ViewMode::Void => "VOID (ENTROPY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Signals => "SIGNALS & TRAILS",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",

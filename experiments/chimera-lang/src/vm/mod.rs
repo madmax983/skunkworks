@@ -380,6 +380,7 @@ pub struct ChimeraVM {
     pub entropy_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub signal_grid: Vec<Vec<u8>>,
+    pub execution_trail: Vec<Vec<u8>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -435,6 +436,7 @@ impl ChimeraVM {
         let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let signal_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        let execution_trail = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -570,6 +572,7 @@ impl ChimeraVM {
             entropy_grid,
             #[cfg(feature = "nova")]
             signal_grid,
+            execution_trail,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -1459,6 +1462,15 @@ impl ChimeraVM {
 
         self.energy -= 1;
 
+        // Decay execution trail
+        for row in self.execution_trail.iter_mut() {
+            for val in row.iter_mut() {
+                if *val > 0 {
+                    *val = val.saturating_sub(5);
+                }
+            }
+        }
+
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();
 
@@ -1639,6 +1651,12 @@ impl ChimeraVM {
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         *self.gene_execution_counts.entry(self.ip).or_insert(0) += 1;
+
+        // Mark trail
+        let (cy, cx) = self.context_loc;
+        if cy < GRID_SIZE && cx < GRID_SIZE {
+            self.execution_trail[cy][cx] = 255;
+        }
 
         if self.recursion_depth > MAX_RECURSION_DEPTH {
             self.output

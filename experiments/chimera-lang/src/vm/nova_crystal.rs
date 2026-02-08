@@ -80,8 +80,16 @@ fn exec_shatter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             let mut rng = rand::thread_rng();
             for _ in 0..f {
-                let dy = rng.gen_range(-1..=1);
-                let dx = rng.gen_range(-1..=1);
+                let mut dy;
+                let mut dx;
+                loop {
+                    dy = rng.gen_range(-1..=1);
+                    dx = rng.gen_range(-1..=1);
+                    if dy != 0 || dx != 0 {
+                        break;
+                    }
+                }
+
                 if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
                     if let Value::Int(n) = &mut vm.grid[ny][nx] {
                         *n = n.saturating_add(fragments);
