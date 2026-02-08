@@ -623,3 +623,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-lichen
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infinite. Lichen colonies are growing on the Poincaré disk. Symbiosis has adapted to non-Euclidean space.
+
+### [Concentration Level: FRESH] - Location: experiments/bismuth-fs
+- **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
+- **Status:** The Hopper Crystal is growing. Files are spiraling into iridescent staircases. Miller indices determine the color of the data.
