@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hydro-boids
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The boids are swimming. SPH fluid dynamics are dragging the flock. The water is churning.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Perfumer)
 - **Status:** The simulation now has a nose. Olfactory system implemented with `Emit`, `Smell`, and `Track` opcodes. Pheromone clouds drift and decay in the void. Stigmergy is active.
