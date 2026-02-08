@@ -48,17 +48,21 @@
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** Langevin Dynamics active. Solid-Liquid boundaries simulating correctly.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/packet-pachinko
+### [Concentration Level: PARDONED] - Location: experiments/packet-pachinko
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Ancestral redundancy detected. `synaptic-pachinko` has evolved beyond this form.
+- **Status:** Pardoned. Vitality restored. Documentation confirmed.
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/market-scheduler
+### [Concentration Level: EXECUTED] - Location: graveyard/market-scheduler
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `market-flow`/`market-rogue`. Generic order book implementation. Documentation void.
+- **Status:** Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/kinetic-crease
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Stagnant implementation.
 
 ## History/Decay
 
