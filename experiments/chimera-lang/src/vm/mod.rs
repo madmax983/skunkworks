@@ -126,6 +126,8 @@ pub mod nova_linguistics;
 #[cfg(test)]
 mod nova_linguistics_test;
 #[cfg(feature = "nova")]
+pub mod nova_logistics;
+#[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_metamorphism;
@@ -1547,6 +1549,7 @@ impl ChimeraVM {
                 nova_egregore::Manifestation::None => {}
             }
 
+            nova_logistics::process_logistics(self);
             self.process_environment();
             nova_metamorphism::process_metamorphism(self);
             nova_signals::process_signals(self);
@@ -2167,6 +2170,7 @@ impl ChimeraVM {
             | OpCode::Fossilize
             | OpCode::Unearth
             | OpCode::CarbonDate
+            | OpCode::Logistics
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
