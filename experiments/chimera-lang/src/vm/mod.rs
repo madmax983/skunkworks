@@ -2129,7 +2129,51 @@ impl ChimeraVM {
                     return Some((strand_idx, 0));
                 }
 
-                self.output.push(format!("Unknown enzyme: {}", name));
+                let mut hint = "";
+                let n = name.as_str();
+
+                // Nova Features
+                if matches!(
+                    n,
+                    "mitosis"
+                        | "apoptosis"
+                        | "spawn"
+                        | "incubate"
+                        | "telomerase"
+                        | "methylate"
+                        | "demethylate"
+                        | "recombine"
+                        | "splice"
+                        | "crispr_scan"
+                        | "cas9_cut"
+                        | "ligase"
+                        | "entangle"
+                        | "decohere"
+                        | "simulate"
+                        | "dream"
+                ) {
+                    hint = " (Hint: Nova feature. Enable 'nova' feature?)";
+                }
+
+                // Cortex Features
+                if matches!(n, "link" | "sever" | "spark" | "sense" | "gate") {
+                    hint = " (Hint: Cortex feature. Enable 'cortex' feature?)";
+                }
+
+                // Biophysics Features
+                if matches!(n, "neuro_genesis" | "stimulate" | "dendrite" | "axon") {
+                    hint = " (Hint: Biophysics feature. Enable 'biophysics' feature?)";
+                }
+
+                // Silicon Features
+                if matches!(
+                    n,
+                    "conduct" | "wire" | "pulse" | "silicon" | "construct" | "logic_gate"
+                ) {
+                    hint = " (Hint: Silicon feature. Enable 'silicon' feature?)";
+                }
+
+                self.output.push(format!("Unknown enzyme: {}{}", name, hint));
                 None
             }
         }
