@@ -191,6 +191,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/symphonic-terrain
 - **Evaluation**: Compiles. Audio feature-gated.
 
+### gravity-termites
+- **Parents**: experiments/thermo-termites + experiments/celestial-cantata
+- **Concept**: Termites building structures in a self-generated gravity field.
+- **Novel trait**: Self-Gravitating Architecture. The colony's mass creates the potential well that binds it together.
+- **Status**: experiments/gravity-termites
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
 ### primordial-soup
 - **Parents**: experiments/fluid-rain + experiments/chimera-lang
 - **Concept**: TUI fluid simulation where particles are biological entities (Algae, Grazer, Predator) with metabolic rules.
@@ -538,3 +545,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Orbital Scheduling. Gravity determines the timing of code execution.
 - **Status**: experiments/astral-chimera
 - **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational.
+
+### flesh-and-code
+- **Parents**: Genesis (The Choreographer)
+- **Concept**: Inverse Kinematics creature navigating source code tokens.
+- **Novel trait**: Code navigation via biomechanical limb movement.
+- **Status**: experiments/flesh-and-code
+- **Evaluation**: Compiles. Verified.
