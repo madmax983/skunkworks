@@ -113,7 +113,6 @@ members = [
     "experiments/chimera-automaton", 
     "experiments/miller-fs", 
     "experiments/git-landscape", 
-    "experiments/git-etymology",
     "experiments/chimera-tardis",
     "experiments/hyperbolic-git", 
     "experiments/klein-fs",
