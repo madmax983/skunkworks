@@ -1,0 +1,21 @@
+[package]
+name = "spectral-loading"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.5"
+rustfft = "6.2.0"
+hound = "3.5.1"
+mlua = { version = "0.9", features = ["lua54", "vendored", "async", "macros"] }
+num-complex = "0.4.6"
+rand = "0.8"
+anyhow = "1.0"
+
+[dependencies.rodio]
+version = "0.19.0"
+optional = true
+
+[features]
+default = []
+audio_playback = ["rodio"]
