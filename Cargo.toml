@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "crates/locus",
+    "crates/market-sim",
     "crates/synaptic-physics",
     "crates/tui-semantic",
     "crates/tui-shared",
@@ -147,4 +148,5 @@ tui-shared = { path = "crates/tui-shared" }
 resonance-audio = { path = "crates/resonance-audio" }
 poincare-disk = { path = "crates/poincare-disk" }
 locus = { path = "crates/locus" }
+market-sim = { path = "crates/market-sim" }
 synaptic-physics = { path = "crates/synaptic-physics" }

@@ -16,11 +16,10 @@ use std::time::Duration;
 use tui_shared::Tui;
 
 mod ast;
-mod market;
 mod vm;
 
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-use crate::market::{Grid, Particle};
+use market_sim::{Grid, Particle};
 use crate::vm::{ChimeraVM, Value};
 
 #[derive(Parser)]
