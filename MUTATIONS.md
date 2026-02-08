@@ -628,3 +628,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Linguistic drift in infinite space. The phoneme map is hyperbolic.
 - **Status**: experiments/hyperbolic-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chaotic-conservatory
+- **Parents**: experiments/recursive-conservatory + experiments/system-attractor
+- **Concept**: L-Systems where the "Turtle" swims in the vector field of a Lorenz Attractor.
+- **Novel trait**: Chaotic Morphology. Trees that grow into strange attractors, visualizing chaos as organic structure.
+- **Status**: experiments/chaotic-conservatory
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
