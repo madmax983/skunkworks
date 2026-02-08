@@ -26,6 +26,14 @@
 
 ## History/Decay
 
+### [Concentration Level: EXECUTED] - Location: graveyard/system-bonsai
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with recursive-conservatory. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/resonance-chamber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with ripple-tank. Grace period: 24h.
+
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The trees are growing. The roots are remembering. L-systems are mapped to stack depth. The Flame Graph is the root system.

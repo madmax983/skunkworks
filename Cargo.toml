@@ -39,7 +39,6 @@ members = [
     "experiments/luminous-flock",
     "experiments/heap-arena",
     "experiments/heap-auction",
-    "experiments/system-bonsai",
     "experiments/lattice-hunter",
     "experiments/crate-radar",
     "experiments/quantum-garden",
