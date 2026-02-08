@@ -521,3 +521,15 @@
 ### [Concentration Level: FRESH] - Location: experiments/astral-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/kinetic-crease
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic mesh implementation. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/market-scheduler
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: STABLE] - Location: experiments/packet-pachinko
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Pardoned. Vitality restored. Documentation confirmed.
