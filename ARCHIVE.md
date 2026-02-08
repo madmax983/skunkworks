@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **rhizome-seeker**: Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period: 24h.
+- **kinetic-crease**: Documentation void. Generic implementation. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,13 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **market-scheduler**: Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation.
+- **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
+- **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
+- **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
+- **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
+- **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.
+- **rhizome-seeker**: Specimen executed. Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period expired. Moved to graveyard.
 - **text-erosion**: Specimen executed. Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.

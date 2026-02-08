@@ -1,8 +1,9 @@
 use super::{ChimeraVM, Value};
 use crate::vm::GRID_SIZE;
+use serde::{Deserialize, Serialize};
 use std::collections::{HashSet, VecDeque};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Hue {
     Red = 0,
     Yellow = 1,
@@ -12,21 +13,21 @@ pub enum Hue {
     Magenta = 5,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Lightness {
     Light = 0,
     Normal = 1,
     Dark = 2,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PietColor {
     Color(Hue, Lightness),
     White,
     Black,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Direction {
     Right = 0,
     Down = 1,
@@ -34,19 +35,20 @@ pub enum Direction {
     Up = 3,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CodelChooser {
     Left = 0,
     Right = 1,
 }
 
-struct PietState {
-    stack: Vec<i64>,
-    dp: Direction,
-    cc: CodelChooser,
-    y: usize,
-    x: usize,
-    steps: usize,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PietState {
+    pub stack: Vec<i64>,
+    pub dp: Direction,
+    pub cc: CodelChooser,
+    pub y: usize,
+    pub x: usize,
+    pub steps: usize,
 }
 
 fn rgb_dist(c1: (u8, u8, u8), c2: (u8, u8, u8)) -> i32 {
@@ -445,161 +447,143 @@ fn execute_op(vm: &mut ChimeraVM, state: &mut PietState, dh: i32, dl: i32, block
     }
 }
 
-pub fn exec_piet(vm: &mut ChimeraVM, max_steps: i64) {
-    let grid = get_piet_grid(vm);
-
-    // Start at top left (or current context loc?)
-    // Piet spec starts at 0,0.
-    // If 0,0 is Black, it terminates immediately?
-    // Let's assume standard Piet.
-
-    let mut state = PietState {
+pub fn init_piet(_vm: &ChimeraVM) -> PietState {
+    // Piet always starts at 0,0
+    PietState {
         stack: Vec::new(),
         dp: Direction::Right,
         cc: CodelChooser::Left,
         y: 0,
         x: 0,
         steps: 0,
-    };
+    }
+}
 
-    if grid[0][0] == PietColor::Black {
+pub fn step_piet_once(vm: &mut ChimeraVM, state: &mut PietState) -> bool {
+    let grid = get_piet_grid(vm);
+
+    // Initial check on first step or just check current pos?
+    if state.steps == 0 && grid[state.y][state.x] == PietColor::Black {
         vm.output
             .push("PIET: Terminated (Start is Black)".to_string());
-        return;
+        return false;
     }
 
-    // Slide through white loop?
-    // Piet Logic:
-    // 1. Determine current block.
-    // 2. Determine exit edge/codel.
-    // 3. Attempt to move.
+    state.steps += 1;
+    let curr_color = grid[state.y][state.x];
 
-    while state.steps < max_steps as usize {
-        state.steps += 1;
-
-        let curr_color = grid[state.y][state.x];
-
-        // Handle White Space handling (sliding)
-        // If current is white, we just move straight until we hit non-white or black/edge.
-        // But transition FROM color TO white is Op(No-op).
-        // Transition FROM white TO color is no-op.
-
-        // Simpler model: treat White as a special 1-cell block or implement slide logic.
-        // Spec: "Slide through white codels in straight line".
-
-        if curr_color == PietColor::White {
-            // Slide
-            let mut next = next_coord(state.y, state.x, state.dp);
-            while let Some((ny, nx)) = next {
-                if grid[ny][nx] == PietColor::White {
-                    state.y = ny;
-                    state.x = nx;
-                    next = next_coord(state.y, state.x, state.dp);
-                } else if grid[ny][nx] == PietColor::Black {
-                    // Hit black/edge while sliding -> Rotate DP/CC toggles...
-                    // "If it hits a restriction, the CC is toggled. If still restricted, DP rotated..."
-                    // This is complex for white sliding.
-                    // Simplified: White acts like a no-op path. If blocked, it stops?
-                    // Actually, if we hit Black from White, we retrace?
-                    // Let's implement full White logic if possible, else simplified.
-                    // Simplified: Treat White cells as normal blocks but with no ops on transition?
-                    // No, that breaks sliding.
-
-                    // Let's stick to "Current cell is Color".
-                    break;
-                } else {
-                    // Hit Color. Move there. No Op executed (White -> Color).
-                    state.y = ny;
-                    state.x = nx;
-                    break; // Loop continues with this new color
-                }
-            }
-            if next.is_none() {
-                // Hit edge while sliding
-                // "Behaves as if it hit a black block"
-                state.cc = match state.cc {
-                    CodelChooser::Left => CodelChooser::Right,
-                    CodelChooser::Right => CodelChooser::Left,
-                };
-                state.dp = match state.dp {
-                    Direction::Right => Direction::Down,
-                    Direction::Down => Direction::Left,
-                    Direction::Left => Direction::Up,
-                    Direction::Up => Direction::Right,
-                };
-                // We are stuck on white?
-                // We need to re-evaluate sliding from current white cell with new DP.
-                continue;
-            }
-            // Check if we are still on White (stuck?)
-            if grid[state.y][state.x] == PietColor::White {
-                // We hit black/edge and didn't move off white.
-                continue;
-            }
-        }
-
-        // Current cell is Colored (not White).
-        let (block, color) = get_block(&grid, state.y, state.x);
-        let block_size = block.len() as i64;
-
-        let mut attempts = 0;
-        let mut moved = false;
-
-        while attempts < 8 {
-            let (ey, ex) = find_exit_edge(&block, state.dp, state.cc);
-            let next = next_coord(ey, ex, state.dp);
-
-            if let Some((ny, nx)) = next {
-                let next_color = grid[ny][nx];
-                if next_color == PietColor::Black {
-                    // Blocked
-                } else {
-                    // Move
-                    // Calculate Delta
-                    if next_color != PietColor::White {
-                        // Color -> Color: Execute Op
-                        if let (PietColor::Color(h1, l1), PietColor::Color(h2, l2)) =
-                            (color, next_color)
-                        {
-                            let dh = ((h2 as i32) - (h1 as i32)).rem_euclid(6);
-                            let dl = ((l2 as i32) - (l1 as i32)).rem_euclid(3);
-                            execute_op(vm, &mut state, dh, dl, block_size);
-                        }
-                    }
-                    // If next is White, we just move (no Op).
-
-                    state.y = ny;
-                    state.x = nx;
-                    moved = true;
-                    break;
-                }
-            }
-
-            // Toggle CC / Rotate DP
-            if attempts % 2 == 0 {
-                state.cc = match state.cc {
-                    CodelChooser::Left => CodelChooser::Right,
-                    CodelChooser::Right => CodelChooser::Left,
-                };
+    if curr_color == PietColor::White {
+        // Slide Logic
+        let mut next = next_coord(state.y, state.x, state.dp);
+        while let Some((ny, nx)) = next {
+            if grid[ny][nx] == PietColor::White {
+                state.y = ny;
+                state.x = nx;
+                next = next_coord(state.y, state.x, state.dp);
+            } else if grid[ny][nx] == PietColor::Black {
+                // Blocked by black/edge while on white
+                // "If it hits a restriction, the CC is toggled. If still restricted, DP rotated..."
+                // For white sliding, hitting a restriction means we stop and turn.
+                // But we are on white.
+                // Let's implement the turn logic here for white sliding?
+                // Spec says: "sliding through white codels... if it hits a restriction, the interpreter toggles CC..."
+                // This implies the standard retry loop applies even while sliding?
+                // Actually, the retry loop is for LEAVING a block.
+                // White codels are not blocks?
+                // "The interpreter slides across the white block in a straight line... until it hits a non-white codel or edge/black."
+                // If it hits edge/black, it is "restricted".
+                break; // Break inner loop to trigger rotation logic
             } else {
-                state.dp = match state.dp {
-                    Direction::Right => Direction::Down,
-                    Direction::Down => Direction::Left,
-                    Direction::Left => Direction::Up,
-                    Direction::Up => Direction::Right,
-                };
+                // Hit Color. Move there. No Op.
+                state.y = ny;
+                state.x = nx;
+                return true; // Successfully moved
             }
-            attempts += 1;
         }
 
-        if !moved {
-            // Trapped
-            vm.output.push("PIET: Terminated (Trapped)".to_string());
+        // If we broke out, it means we hit a restriction (or were already restricted)
+        // Check if we are still on white
+        if grid[state.y][state.x] == PietColor::White {
+            // We are stuck on white against a wall/black.
+            state.cc = match state.cc {
+                CodelChooser::Left => CodelChooser::Right,
+                CodelChooser::Right => CodelChooser::Left,
+            };
+            state.dp = match state.dp {
+                Direction::Right => Direction::Down,
+                Direction::Down => Direction::Left,
+                Direction::Left => Direction::Up,
+                Direction::Up => Direction::Right,
+            };
+            // Return true to retry next step?
+            // Yes, rotation takes a step effectively in this discrete sim
+            return true;
+        }
+    }
+
+    // Color Block Logic
+    let (block, color) = get_block(&grid, state.y, state.x);
+    let block_size = block.len() as i64;
+
+    let mut attempts = 0;
+    while attempts < 8 {
+        let (ey, ex) = find_exit_edge(&block, state.dp, state.cc);
+        let next = next_coord(ey, ex, state.dp);
+
+        if let Some((ny, nx)) = next {
+            let next_color = grid[ny][nx];
+            if next_color == PietColor::Black {
+                // Blocked
+            } else {
+                // Move
+                if next_color != PietColor::White {
+                    if let (PietColor::Color(h1, l1), PietColor::Color(h2, l2)) =
+                        (color, next_color)
+                    {
+                        let dh = ((h2 as i32) - (h1 as i32)).rem_euclid(6);
+                        let dl = ((l2 as i32) - (l1 as i32)).rem_euclid(3);
+                        execute_op(vm, state, dh, dl, block_size);
+                    }
+                }
+                state.y = ny;
+                state.x = nx;
+                return true;
+            }
+        }
+
+        // Rotate
+        if attempts % 2 == 0 {
+            state.cc = match state.cc {
+                CodelChooser::Left => CodelChooser::Right,
+                CodelChooser::Right => CodelChooser::Left,
+            };
+        } else {
+            state.dp = match state.dp {
+                Direction::Right => Direction::Down,
+                Direction::Down => Direction::Left,
+                Direction::Left => Direction::Up,
+                Direction::Up => Direction::Right,
+            };
+        }
+        attempts += 1;
+    }
+
+    // Trapped
+    vm.output.push("PIET: Terminated (Trapped)".to_string());
+    false
+}
+
+pub fn exec_piet(vm: &mut ChimeraVM, max_steps: i64) {
+    let mut state = init_piet(vm);
+    let mut steps = 0;
+    while steps < max_steps {
+        if !step_piet_once(vm, &mut state) {
             break;
         }
+        steps += 1;
     }
 
-    vm.energy = vm.energy.saturating_sub((state.steps / 10) as i64);
+    vm.energy = vm.energy.saturating_sub(state.steps as i64 / 10);
     vm.output
         .push(format!("PIET: Executed {} steps", state.steps));
 }

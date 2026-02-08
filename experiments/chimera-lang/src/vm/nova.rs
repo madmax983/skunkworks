@@ -12,7 +12,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{nova_biome::Biome, ChimeraVM, ChromaCell, Value};
+use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, ChromaCell, Value};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -24,7 +24,11 @@ use rand::seq::SliceRandom;
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]
+use std::collections::hash_map::DefaultHasher;
+#[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
+#[cfg(feature = "nova")]
+use std::hash::{Hash, Hasher};
 
 const MAX_EPIGENOME_SIZE: usize = 1024;
 const MAX_INCUBATE_LENGTH: usize = 1024;
@@ -85,6 +89,11 @@ pub struct Spore {
     pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
     pub immune_system: HashSet<u64>,
     pub dictionary: HashMap<String, usize>,
+    pub gravity_grid: Vec<Vec<i64>>,
+    pub wind_grid: Vec<Vec<(i8, i8)>>,
+    pub moisture_grid: Vec<Vec<i64>>,
+    pub entropy_grid: Vec<Vec<i64>>,
+    pub relativity_mode: bool,
     #[cfg(feature = "cortex")]
     pub synapse_map: Vec<Vec<usize>>,
     #[cfg(feature = "cortex")]
@@ -110,6 +119,8 @@ pub enum OrganelleType {
     Void,
     /// Transmutes neighbors based on elemental recipes.
     Alchemist,
+    /// Grows procedurally based on L-System rules.
+    Seed,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -136,6 +147,9 @@ pub struct Organelle {
     /// Movement vector (dy, dx) used by some organelles (e.g. Ribosome, Void).
     pub direction: (i8, i8),
     pub ttl: Option<usize>,
+    pub name: String,
+    pub traits: Vec<String>,
+    pub genome_id: u64,
 }
 
 #[cfg(feature = "nova")]
@@ -185,22 +199,41 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let weight_center = 10;
             let mut sums = [
-                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128),
-                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128),
-                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128),
+                (vm.hormone_grid[y][x][0] as i128) * (inertia as i128) * weight_center,
+                (vm.hormone_grid[y][x][1] as i128) * (inertia as i128) * weight_center,
+                (vm.hormone_grid[y][x][2] as i128) * (inertia as i128) * weight_center,
             ];
-            let mut count = inertia;
+            let mut total_weight = (inertia as i128) * weight_center;
 
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                for c in 0..3 {
-                    sums[c] += vm.hormone_grid[ny][nx][c] as i128;
+            // Manual neighbor iteration to calculate wind bias
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
                 }
-                count += 1;
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    // Wind flow from neighbor (ny, nx) to here (y, x).
+                    // Vector from neighbor to here is (-dy, -dx).
+                    // Dot product: w_dy * (-dy) + w_dx * (-dx)
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0); // Base 10
+
+                    for c in 0..3 {
+                        sums[c] += (vm.hormone_grid[ny][nx][c] as i128) * weight;
+                    }
+                    total_weight += weight;
+                }
             }
 
-            for c in 0..3 {
-                buffer[y][x][c] = (sums[c] / count as i128) as i64;
+            if total_weight > 0 {
+                for c in 0..3 {
+                    buffer[y][x][c] = (sums[c] / total_weight) as i64;
+                }
             }
         }
     }
@@ -221,16 +254,31 @@ pub fn diffuse_waste(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let mut sum = (vm.waste_grid[y][x] as i128) * (inertia as i128);
-            let mut count = inertia;
+            let weight_center = 10;
+            let mut sum = (vm.waste_grid[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
 
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                sum += vm.waste_grid[ny][nx] as i128;
-                count += 1;
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (vm.waste_grid[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
             }
 
             let decay = vm.biome_grid[y][x].decay_rate() as i128;
-            buffer[y][x] = ((sum / count as i128) * decay / 100) as i64;
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * decay / 100) as i64;
+            }
         }
     }
     for y in 0..16 {
@@ -259,8 +307,18 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
                 count += 1;
             }
 
-            // Blur and strong decay (50%)
-            buffer[y][x] = ((sum / count as i128) / 2) as i64;
+            // Light interacts with Clouds (Moisture)
+            let moisture = vm.moisture_grid[y][x];
+            let cloud_opacity = (moisture as i64).clamp(0, 50); // Up to 50% block
+
+            // Blur and strong decay (50% base + cloud)
+            let transmission = 50 - cloud_opacity; // 50% -> 0% transmission relative to input
+                                                   // Wait, previous was / 2 (50%).
+                                                   // New logic: (sum / count) * transmission / 100?
+                                                   // If transmission is 50 (clear sky), it matches previous.
+                                                   // If transmission is 0 (thick cloud), light dies.
+
+            buffer[y][x] = ((sum / count as i128) * transmission as i128 / 100) as i64;
         }
     }
     for y in 0..16 {
@@ -281,23 +339,84 @@ pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
     for y in 0..16 {
         for x in 0..16 {
             let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let mut sum = (vm.mutagen_grid[y][x] as i128) * (inertia as i128);
-            let mut count = inertia;
+            let weight_center = 10;
+            let mut sum = (vm.mutagen_grid[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
 
-            for (ny, nx) in get_open_neighbors(vm, y, x) {
-                sum += vm.mutagen_grid[ny][nx] as i128;
-                count += 1;
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (vm.mutagen_grid[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
             }
 
             // Blur and slow decay (based on biome)
             // Mutagen naturally decays faster than waste (90% base retention)
             let decay = vm.biome_grid[y][x].decay_rate() as i128;
-            buffer[y][x] = ((sum / count as i128) * decay / 100 * 9 / 10) as i64;
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * decay / 100 * 9 / 10) as i64;
+            }
         }
     }
     for y in 0..16 {
         for x in 0..16 {
             vm.mutagen_grid[y][x] = buffer[y][x];
+        }
+    }
+}
+
+/// Simulates the diffusion of entropy.
+///
+/// Entropy spreads and decays slowly.
+/// High levels cause Reality Decay (glitches).
+#[cfg(feature = "nova")]
+#[allow(clippy::needless_range_loop)]
+pub fn diffuse_entropy(vm: &mut ChimeraVM) {
+    let mut buffer = [[0i64; 16]; 16];
+    for y in 0..16 {
+        for x in 0..16 {
+            let inertia = vm.biome_grid[y][x].diffusion_inertia();
+            let weight_center = 10;
+            let mut sum = (vm.entropy_grid[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
+
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (vm.membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                    // Entropy follows wind too? Sure.
+                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (vm.entropy_grid[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
+            }
+
+            // Decay: 95% retention (persistent)
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * 95 / 100) as i64;
+            }
+        }
+    }
+    for y in 0..16 {
+        for x in 0..16 {
+            vm.entropy_grid[y][x] = buffer[y][x];
         }
     }
 }
@@ -340,6 +459,9 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
                 kind: OrganelleType::Worker,
                 direction: (0, 0),
                 ttl: None,
+                name: "Genesis Wisp".to_string(),
+                traits: vec!["Summoned".to_string()],
+                genome_id: 0,
             };
             vm.organelles.push(organelle);
             vm.chorus_buffer.clear();
@@ -387,68 +509,6 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
     false
 }
 
-pub fn perform_alchemy(vm: &mut ChimeraVM, y: usize, x: usize) -> bool {
-    // Recipes:
-    // "fire" + "water" -> "steam"
-    // "earth" + "fire" -> "lava"
-    // "air" + "water" -> "cloud"
-    // "life" + "death" -> "spirit"
-    // "lead" + "energy" (center=lead) -> "gold"
-
-    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-    let mut ingredients = Vec::new();
-    let mut coords = Vec::new();
-
-    for (dy, dx) in neighbors {
-        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-            ingredients.push(vm.grid[ny][nx].clone());
-            coords.push((ny, nx));
-        }
-    }
-
-    let has_ingredient = |s: &str| -> bool {
-        ingredients
-            .iter()
-            .any(|v| matches!(v, Value::Str(val) if val == s))
-    };
-
-    let center_val = vm.grid[y][x].clone();
-    let mut transmuted = false;
-    let mut result = Value::Int(0);
-
-    if has_ingredient("fire") && has_ingredient("water") {
-        result = Value::Str("steam".to_string());
-        transmuted = true;
-    } else if has_ingredient("earth") && has_ingredient("fire") {
-        result = Value::Str("lava".to_string());
-        transmuted = true;
-    } else if has_ingredient("air") && has_ingredient("water") {
-        result = Value::Str("cloud".to_string());
-        transmuted = true;
-    } else if has_ingredient("life") && has_ingredient("death") {
-        result = Value::Str("spirit".to_string());
-        transmuted = true;
-    } else if let Value::Str(c) = center_val {
-        if c == "lead" && has_ingredient("energy") {
-            result = Value::Str("gold".to_string());
-            transmuted = true;
-        }
-    }
-
-    if transmuted {
-        vm.grid[y][x] = result;
-        // Consume ingredients (set to 0/void)
-        for (ny, nx) in coords {
-            vm.grid[ny][nx] = Value::Int(0);
-        }
-        vm.output
-            .push(format!("ALCHEMY: Transmutation occurred at {},{}", x, y));
-        return true;
-    }
-
-    false
-}
-
 #[cfg(feature = "nova")]
 fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
     if depth > crate::vm::MAX_RECURSION_DEPTH {
@@ -472,14 +532,10 @@ fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
     }
 }
 
-/// Executes a Nova-specific OpCode.
+/// Runs a predictive simulation to see if the current path leads to death.
 ///
-/// This function handles the dispatch for all biological and advanced physics operations.
-///
-/// # Returns
-///
-/// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
-/// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
+/// **OpCode:** `Prophecy`
+/// **Stack:** `[ ..., ticks ] -> [ ..., result (1=Death, 0=Life) ]`
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
@@ -537,6 +593,10 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Reshuffles the entire DNA based on the current Grid state.
+///
+/// **OpCode:** `Metamorphosis`
+/// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0).
 #[cfg(feature = "nova")]
 fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
@@ -624,6 +684,13 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.dna.helix.strands = new_strands;
 
         // Reset State
+        vm.cladistics = crate::vm::cladistics::Cladistics::new();
+        // Register new strands as roots
+        for i in 0..vm.dna.helix.strands.len() {
+            vm.cladistics
+                .register_strand(i, None, vm.tick_counter, "Metamorphosis".to_string());
+        }
+
         vm.energy = 50;
         vm.ip = (0, 0);
         vm.stack.clear();
@@ -635,6 +702,7 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.activation_levels = vec![0; vm.dna.helix.strands.len()];
             vm.synapse_map = vec![Vec::new(); vm.dna.helix.strands.len()];
         }
+        vm.market.clear();
 
         vm.output
             .push("METAMORPHOSIS: The chrysalis breaks...".to_string());
@@ -646,6 +714,10 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
 }
 
+/// Runs a sandboxed simulation of a specific strand.
+///
+/// **OpCode:** `Simulate`
+/// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
 #[cfg(feature = "nova")]
 fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
@@ -718,6 +790,10 @@ fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Executes a Brainfuck program string with input.
+///
+/// **OpCode:** `Brainfuck`
+/// **Stack:** `[ ..., bf_code, input ] -> [ ..., output ]`
 #[cfg(feature = "nova")]
 fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: bf_code_string, input_string (top)
@@ -807,6 +883,11 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Combines two strands using a genetic splicing method.
+///
+/// **OpCode:** `Splice`
+/// **Stack:** `[ ..., method, strand_b, strand_a ] -> [ ..., new_strand_idx ]`
+/// **Methods:** 0=Interleave, 1=Crossover, 2=Merge.
 #[cfg(feature = "nova")]
 fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: method, strand_b, strand_a (bottom)
@@ -894,6 +975,14 @@ fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         vm.synapse_map.push(Vec::new());
                     }
                     let new_idx = vm.dna.helix.strands.len() - 1;
+
+                    vm.cladistics.register_strand(
+                        new_idx,
+                        Some(idx_a),
+                        vm.tick_counter,
+                        format!("Splice({}, {})", idx_a, idx_b),
+                    );
+
                     vm.stack.push(Value::Int(new_idx as i64));
                     vm.energy = vm.energy.saturating_sub(30);
                 } else if method <= 2 {
@@ -915,6 +1004,10 @@ fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Swaps the tails of two strands at a specific index.
+///
+/// **OpCode:** `Recombine`
+/// **Stack:** `[ ..., split_point, strand_b, strand_a ] -> [ ... ]`
 #[cfg(feature = "nova")]
 fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: split_point, strand_b, strand_a (bottom)
@@ -998,6 +1091,10 @@ fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Scans a target strand for a pattern matching a guide strand.
+///
+/// **OpCode:** `CrisprScan`
+/// **Stack:** `[ ..., guide_idx, target_idx ] -> [ ..., match_index ]`
 #[cfg(feature = "nova")]
 fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: guide_idx, target_idx (bottom)
@@ -1062,6 +1159,10 @@ fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Cuts a strand at a specific index, creating a new strand from the tail.
+///
+/// **OpCode:** `Cas9Cut`
+/// **Stack:** `[ ..., cut_index, strand_idx ] -> [ ..., new_strand_idx ]`
 #[cfg(feature = "nova")]
 fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: cut_index, strand_idx (bottom)
@@ -1097,6 +1198,13 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                     let new_strand_idx = vm.dna.helix.strands.len() - 1;
 
+                    vm.cladistics.register_strand(
+                        new_strand_idx,
+                        Some(s_idx),
+                        vm.tick_counter,
+                        "Cas9Cut".to_string(),
+                    );
+
                     vm.stack.push(Value::Int(new_strand_idx as i64));
                     vm.energy = vm.energy.saturating_sub(10);
 
@@ -1131,12 +1239,336 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Executes a Nova-specific OpCode.
+///
+/// This function acts as the central dispatcher for all advanced features:
+/// Biology, Physics, Metaphysics, Market, and more.
+///
+/// # Returns
+///
+/// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
+/// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
 #[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         #[cfg(feature = "nova")]
         OpCode::Prophecy => exec_prophecy(vm),
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreLink => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(name) = val {
+                    vm.egregore.link(vm.ip.0);
+                    vm.output.push(format!("EGREGORE: Linked to {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_link".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_link".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Fire => super::nova_ballistics::exec_fire(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Salvo => super::nova_ballistics::exec_salvo(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Sacrifice => {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                vm.egregore.sacrifice(100);
+
+                // Kill strand
+                vm.dna.helix.strands[s_idx].genes.clear();
+                vm.epigenome.retain(|(s, _)| *s != s_idx);
+                vm.cladistics.kill_strand(s_idx, vm.tick_counter);
+
+                vm.output
+                    .push(format!("SACRIFICE: Strand {} given to the Void", s_idx));
+                vm.halted = true; // Suicide
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Gaze => super::nova_astrology::exec_gaze(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Starfall => super::nova_astrology::exec_starfall(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Align => super::nova_astrology::exec_align(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Pray => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.egregore.pray(amount);
+                        vm.output.push(format!("PRAY: Donated {} energy", amount));
+                    } else {
+                        vm.output.push("PRAY: Insufficient energy".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for pray".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for pray".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreTithe => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.egregore.tithe(amount);
+                        vm.output.push(format!("EGREGORE: Tithed {}", amount));
+                    } else {
+                        vm.output
+                            .push("EGREGORE: Insufficient energy to tithe".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_tithe".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_tithe".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreChannel => {
+            // stack: channel_name, value (top)
+            if vm.stack.len() >= 2 {
+                let val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+                if let Value::Str(name) = name_val {
+                    vm.egregore.push_channel(name.clone(), val.clone());
+                    vm.output
+                        .push(format!("EGREGORE: Sent to channel {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_channel".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_channel".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreDictate => {
+            // stack: parameter_name, vote_value (top)
+            if vm.stack.len() >= 2 {
+                let val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+                if let Value::Str(name) = name_val {
+                    vm.egregore.vote(name.clone(), val.clone());
+                    vm.output.push(format!("EGREGORE: Voted on {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_dictate".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_dictate".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreQuery => {
+            // stack: key (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(key) = val {
+                    // check param first
+                    if let Some(v) = vm.egregore.get_param(&key) {
+                        vm.stack.push(v);
+                    } else if let Some(v) = vm.egregore.read_channel(&key) {
+                        vm.stack.push(v);
+                    } else {
+                        vm.stack.push(Value::Int(0)); // Not found
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_query".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_query".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EgregoreSummon => {
+            // stack: ritual_name
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(ritual) = val {
+                    let cost = 100; // Base cost
+                    if vm.egregore.faith >= cost {
+                        vm.egregore.faith -= cost;
+                        match ritual.as_str() {
+                            "Rain" => {
+                                for row in vm.moisture_grid.iter_mut() {
+                                    for cell in row.iter_mut() {
+                                        *cell = cell.saturating_add(50);
+                                    }
+                                }
+                                vm.output.push("EGREGORE: Summoned RAIN".to_string());
+                            }
+                            "Dawn" => {
+                                for row in vm.light_grid.iter_mut() {
+                                    for cell in row.iter_mut() {
+                                        *cell = 100;
+                                    }
+                                }
+                                vm.output.push("EGREGORE: Summoned DAWN".to_string());
+                            }
+                            "Apocalypse" => {
+                                // Randomly kill half of organelles
+                                vm.organelles.retain(|_| rand::random::<bool>());
+                                vm.output.push("EGREGORE: Summoned APOCALYPSE".to_string());
+                            }
+                            _ => {
+                                vm.egregore.faith += cost; // Refund
+                                vm.output
+                                    .push(format!("EGREGORE: Unknown ritual {}", ritual));
+                            }
+                        }
+                    } else {
+                        vm.output.push("EGREGORE: Insufficient faith".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_summon".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_summon".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Offer => {
+            // stack: price, item
+            if vm.stack.len() >= 2 {
+                let item_val = vm.stack.pop().unwrap();
+                let price_val = vm.stack.pop().unwrap();
+                if let Value::Int(price) = price_val {
+                    if price > 0 {
+                        // Store item as string representation for now
+                        let item_str = match &item_val {
+                            Value::Str(s) => s.clone(),
+                            _ => format!("{}", item_val),
+                        };
+                        let order_id = vm.market.place_ask(vm.ip.0, item_str, price);
+                        vm.stack.push(Value::Int(order_id as i64));
+                        vm.output
+                            .push(format!("OFFER: Sell '{}' for {}", item_val, price));
+                    } else {
+                        vm.output.push("OFFER: Price must be positive".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for offer".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for offer".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Buy => {
+            // stack: max_price, query
+            if vm.stack.len() >= 2 {
+                let query_val = vm.stack.pop().unwrap();
+                let max_price_val = vm.stack.pop().unwrap();
+                if let (Value::Int(max_price), Value::Str(query)) = (max_price_val, query_val) {
+                    if let Some((item_str, cost)) =
+                        vm.market.match_buy(vm.ip.0, query.clone(), max_price)
+                    {
+                        vm.stack.push(Value::Str(item_str));
+                        vm.stack.push(Value::Int(cost));
+                        vm.output
+                            .push(format!("BUY: Bought '{}' for {}", query, cost));
+                    } else {
+                        vm.stack.push(Value::Int(0)); // Failed
+                        vm.output
+                            .push(format!("BUY: No match for '{}' <= {}", query, max_price));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for buy".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for buy".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Invest => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.market.credit(vm.ip.0, amount);
+                        vm.output
+                            .push(format!("INVEST: Converted {} Energy to Credits", amount));
+                    } else {
+                        vm.output.push("INVEST: Insufficient energy".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for invest".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for invest".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Divest => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 {
+                        if vm.market.debit(vm.ip.0, amount) {
+                            vm.energy = vm.energy.saturating_add(amount);
+                            vm.output
+                                .push(format!("DIVEST: Converted {} Credits to Energy", amount));
+                        } else {
+                            vm.output.push("DIVEST: Insufficient credits".to_string());
+                        }
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for divest".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for divest".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Balance => {
+            let bal = vm.market.get_balance(vm.ip.0);
+            vm.stack.push(Value::Int(bal));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Ticker => {
+            if let Some((_, price)) = vm.market.history.back() {
+                vm.stack.push(Value::Int(*price));
+            } else {
+                vm.stack.push(Value::Int(0));
+            }
+            None
+        }
         #[cfg(feature = "nova")]
         OpCode::TimeWarp => {
             // stack: radius, factor (top)
@@ -1245,11 +1677,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     };
 
                     vm.energy = vm.energy.saturating_sub(10);
-                    vm.output.push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
+                    vm.output
+                        .push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
                     return Some((partner_idx, target_gene));
                 }
             } else {
-                vm.output.push("QUANTUM_JUMP: No entangled partner".to_string());
+                vm.output
+                    .push("QUANTUM_JUMP: No entangled partner".to_string());
             }
             None
         }
@@ -1258,6 +1692,109 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             let (cy, cx) = vm.context_loc;
             let factor = vm.time_grid[cy][cx];
             vm.stack.push(Value::Int(factor as i64));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Relativity => {
+            vm.relativity_mode = !vm.relativity_mode;
+            let status = if vm.relativity_mode { "ON" } else { "OFF" };
+            vm.output
+                .push(format!("RELATIVITY: Physics engine {}", status));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Graviton => {
+            let (cy, cx) = vm.context_loc;
+            vm.gravity_grid[cy][cx] = vm.gravity_grid[cy][cx].saturating_add(50);
+            vm.energy = vm.energy.saturating_sub(10);
+            vm.output
+                .push(format!("GRAVITON: Emitted at {},{}", cx, cy));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::EventHorizon => {
+            let (cy, cx) = vm.context_loc;
+            let g = vm.gravity_grid[cy][cx];
+            vm.stack.push(Value::Int(g));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Aeolus => {
+            // Stack: [ ..., angle, strength ]
+            if vm.stack.len() >= 2 {
+                let str_val = vm.stack.pop().unwrap();
+                let ang_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(ang), Value::Int(str)) = (ang_val, str_val) {
+                    let strength = str.clamp(0, 10) as i8;
+                    let (dy, dx) = match ang.rem_euclid(8) {
+                        0 => (-1, 0),  // N
+                        1 => (-1, 1),  // NE
+                        2 => (0, 1),   // E
+                        3 => (1, 1),   // SE
+                        4 => (1, 0),   // S
+                        5 => (1, -1),  // SW
+                        6 => (0, -1),  // W
+                        7 => (-1, -1), // NW
+                        _ => (0, 0),
+                    };
+
+                    let vec = (dy * strength, dx * strength);
+                    let (cy, cx) = vm.context_loc;
+                    vm.wind_grid[cy][cx] = vec;
+
+                    vm.energy = vm.energy.saturating_sub(5);
+                    vm.output
+                        .push(format!("AEOLUS: Wind set to {:?} at {},{}", vec, cx, cy));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for Aeolus".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Aeolus".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Storm => {
+            // Stack: [ ..., intensity, radius ]
+            if vm.stack.len() >= 2 {
+                let rad_val = vm.stack.pop().unwrap();
+                let int_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(int), Value::Int(rad)) = (int_val, rad_val) {
+                    if rad > 0 && int > 0 {
+                        let (cy, cx) = vm.context_loc;
+                        let coords = vm.get_circular_coords(cx as i64, cy as i64, rad);
+                        for (tx, ty) in coords {
+                            vm.moisture_grid[ty][tx] = vm.moisture_grid[ty][tx].saturating_add(int);
+                        }
+                        vm.energy = vm.energy.saturating_sub(int / 2 + rad);
+                        vm.output
+                            .push(format!("STORM: Rain intensity {} at {},{}", int, cx, cy));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for Storm".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Storm".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseWind => {
+            let (cy, cx) = vm.context_loc;
+            let (dy, dx) = vm.wind_grid[cy][cx];
+            vm.stack.push(Value::Int(dy as i64));
+            vm.stack.push(Value::Int(dx as i64));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::SenseMoisture => {
+            let (cy, cx) = vm.context_loc;
+            vm.stack.push(Value::Int(vm.moisture_grid[cy][cx]));
             None
         }
         #[cfg(feature = "nova")]
@@ -1320,9 +1857,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Alchemy => {
             let (cy, cx) = vm.context_loc;
-            perform_alchemy(vm, cy, cx);
+            crate::vm::alchemy::perform_alchemy(vm, cy, cx);
             vm.energy = vm.energy.saturating_sub(5);
             None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Conceive | OpCode::Propagate | OpCode::Forget | OpCode::Shibboleth => {
+            super::memetics::exec_memetics_op(vm, op, args)
         }
         #[cfg(feature = "nova")]
         OpCode::Meme => {
@@ -1447,7 +1988,28 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(steps) = val {
                     if steps > 0 {
-                        super::piet::exec_piet(vm, steps);
+                        if vm.piet_state.is_none() {
+                            vm.piet_state = Some(super::piet::init_piet(vm));
+                        }
+
+                        let mut remaining = steps;
+                        let mut active = true;
+
+                        if let Some(mut state) = vm.piet_state.take() {
+                            while remaining > 0 {
+                                if !super::piet::step_piet_once(vm, &mut state) {
+                                    active = false;
+                                    break;
+                                }
+                                remaining -= 1;
+                            }
+
+                            if active {
+                                vm.piet_state = Some(state);
+                            } else {
+                                vm.piet_state = None;
+                            }
+                        }
                     } else {
                         vm.output.push("PIET: Steps must be positive".to_string());
                     }
@@ -1566,9 +2128,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             2 => (OrganelleType::Mitochondria, (0, 0)),
                             3 => (OrganelleType::Lysosome, (0, 0)),
                             4 => (OrganelleType::Ribosome, (0, 1)), // Default East
+                            5 => (OrganelleType::Void, (0, 0)),
                             6 => (OrganelleType::Alchemist, (0, 0)),
                             _ => (OrganelleType::Worker, (0, 0)),
                         };
+
+                        let strand = &vm.dna.helix.strands[s_idx];
+                        let mut hasher = DefaultHasher::new();
+                        strand.hash(&mut hasher);
+                        let genome_id = hasher.finish();
+                        let traits = nova_bestiary::analyze_traits(strand);
+                        let name = nova_bestiary::generate_name(genome_id, &traits);
 
                         let organelle = Organelle {
                             stack: Vec::new(),
@@ -1580,6 +2150,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             kind: kind.clone(),
                             direction,
                             ttl: None,
+                            name,
+                            traits,
+                            genome_id,
                         };
                         vm.organelles.push(organelle);
                         vm.energy = vm.energy.saturating_sub(20);
@@ -1597,6 +2170,70 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for spawn".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Entropy => {
+            let (cy, cx) = vm.context_loc;
+            let level = vm.entropy_grid[cy][cx];
+            vm.stack.push(Value::Int(level));
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Stabilize => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 {
+                        let cost = amount; // 1:1 energy cost
+                        if vm.energy >= cost {
+                            vm.energy -= cost;
+                            let (cy, cx) = vm.context_loc;
+                            vm.entropy_grid[cy][cx] =
+                                vm.entropy_grid[cy][cx].saturating_sub(amount);
+                            vm.output.push(format!(
+                                "STABILIZE: Reduced entropy by {} at {},{}",
+                                amount, cx, cy
+                            ));
+                        } else {
+                            vm.output.push("STABILIZE: Insufficient energy".to_string());
+                        }
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for stabilize".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for stabilize".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Disintegrate => {
+            // stack: y, x (top)
+            if vm.stack.len() >= 2 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        vm.entropy_grid[ny][nx] = 100; // Max entropy
+                        vm.grid[ny][nx] = Value::Int(0); // Destroy value
+                        vm.energy = vm.energy.saturating_sub(10);
+                        vm.output
+                            .push(format!("DISINTEGRATE: Cell at {},{}", nx, ny));
+                    } else {
+                        vm.output
+                            .push("Error: Coordinates out of bounds for disintegrate".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for disintegrate".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for disintegrate".to_string());
             }
             None
         }
@@ -1643,6 +2280,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 mycelium: vm.mycelium.clone(),
                 immune_system: vm.immune_system.clone(),
                 dictionary: vm.dictionary.clone(),
+                gravity_grid: vm.gravity_grid.clone(),
+                wind_grid: vm.wind_grid.clone(),
+                moisture_grid: vm.moisture_grid.clone(),
+                entropy_grid: vm.entropy_grid.clone(),
+                relativity_mode: vm.relativity_mode,
                 #[cfg(feature = "cortex")]
                 synapse_map: vm.synapse_map.clone(),
                 #[cfg(feature = "cortex")]
@@ -1699,6 +2341,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.mycelium = spore.mycelium.clone();
                         vm.immune_system = spore.immune_system.clone();
                         vm.dictionary = spore.dictionary.clone();
+                        vm.gravity_grid = spore.gravity_grid.clone();
+                        vm.wind_grid = spore.wind_grid.clone();
+                        vm.moisture_grid = spore.moisture_grid.clone();
+                        vm.entropy_grid = spore.entropy_grid.clone();
+                        vm.relativity_mode = spore.relativity_mode;
                         #[cfg(feature = "cortex")]
                         {
                             vm.synapse_map = spore.synapse_map.clone();
@@ -1855,10 +2502,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.activation_levels.push(0);
                                 vm.synapse_map.push(Vec::new());
                             }
+
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.cladistics.register_strand(
+                                new_idx,
+                                Some(vm.ip.0),
+                                vm.tick_counter,
+                                "Incubate".to_string(),
+                            );
+
                             vm.energy = vm.energy.saturating_sub(20); // Cost
                             vm.output.push(format!(
                                 "INCUBATE: Created new strand {} from grid",
-                                vm.dna.helix.strands.len() - 1
+                                new_idx
                             ));
                         }
                     } else {
@@ -2044,6 +2700,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Inherit epigenetics
                             // We need to find all keys (s_idx, g_idx) and insert (new_idx, g_idx)
                             let new_s_idx = vm.dna.helix.strands.len() - 1;
+
+                            vm.cladistics.register_strand(
+                                new_s_idx,
+                                Some(s_idx),
+                                vm.tick_counter,
+                                "Mitosis".to_string(),
+                            );
+
                             let genes_to_methylate: Vec<usize> = vm
                                 .epigenome
                                 .iter()
@@ -2089,6 +2753,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
+
+                            vm.cladistics.kill_strand(s_idx, vm.tick_counter);
 
                             vm.energy = vm.energy.saturating_sub(10);
                             vm.output
@@ -2472,6 +3138,31 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Exec => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    let strand_idx = idx as usize;
+                    if strand_idx < vm.dna.helix.strands.len() {
+                        if vm.call_stack.len() >= crate::vm::MAX_CALL_STACK_DEPTH {
+                            vm.output.push("Error: Call stack overflow".to_string());
+                            return None;
+                        }
+                        vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
+                        return Some((strand_idx, 0));
+                    } else {
+                        vm.output
+                            .push("Error: Invalid strand index for exec".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for exec".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for exec".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
         OpCode::Ret => {
             if let Some(ret_addr) = vm.call_stack.pop() {
                 return Some(ret_addr);
@@ -2815,6 +3506,18 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         // Force a mutation
                         dream_vm.mutate();
+                        let mutation_desc = dream_vm
+                            .output
+                            .last()
+                            .cloned()
+                            .unwrap_or_else(|| "Unknown Mutation".to_string());
+
+                        // Capture mutated strand
+                        let mutated_strand = if idx < dream_vm.dna.helix.strands.len() {
+                            Some(dream_vm.dna.helix.strands[idx].clone())
+                        } else {
+                            None
+                        };
 
                         // Run simulation
                         dream_vm.ip = (idx, 0);
@@ -2831,6 +3534,24 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         // Evaluate
                         let success = dream_vm.energy > vm.energy;
 
+                        // Pay Cost (Base 50 + ticks/2)
+                        let cost = 50 + (safe_ticks / 2);
+
+                        let trace = crate::vm::dream::DreamTrace::new(
+                            0,
+                            idx,
+                            safe_ticks as usize,
+                            cost,
+                            dream_vm.energy,
+                            if dream_vm.halted { 0 } else { 1 },
+                            mutation_desc,
+                            mutated_strand,
+                            success,
+                            dream_vm.output.clone(),
+                            None,
+                        );
+                        vm.dream_traces.push(trace);
+
                         if success {
                             // Adopt DNA
                             vm.dna = dream_vm.dna;
@@ -2841,8 +3562,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             vm.output.push("DREAM: Mutation discarded".to_string());
                         }
 
-                        // Pay Cost (Base 50 + ticks/2)
-                        let cost = 50 + (safe_ticks / 2);
                         vm.energy = vm.energy.saturating_sub(cost);
                     } else {
                         vm.output.push("Error: Invalid args for dream".to_string());
@@ -2906,6 +3625,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Ribosome) => 4,
                 Some(OrganelleType::Void) => 5,
                 Some(OrganelleType::Alchemist) => 6,
+                Some(OrganelleType::Seed) => 7,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -2922,6 +3642,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             4 => Some(OrganelleType::Ribosome),
                             5 => Some(OrganelleType::Void),
                             6 => Some(OrganelleType::Alchemist),
+                            7 => Some(OrganelleType::Seed),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 
@@ -3358,6 +4079,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     kind: OrganelleType::Worker, // Default
                     direction: (0, 0),
                     ttl: None,
+                    name: "Symbiote Spawn".to_string(),
+                    traits: vec!["Ejected".to_string()],
+                    genome_id: 0,
                 };
                 vm.organelles.push(organelle);
                 vm.energy = vm.energy.saturating_sub(10);
@@ -3384,8 +4108,16 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                         vm.activation_levels.push(0);
                                         vm.synapse_map.push(Vec::new());
                                     }
-                                    vm.stack
-                                        .push(Value::Int((vm.dna.helix.strands.len() - 1) as i64));
+                                    let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                    vm.cladistics.register_strand(
+                                        new_idx,
+                                        Some(vm.ip.0),
+                                        vm.tick_counter,
+                                        "Compile".to_string(),
+                                    );
+
+                                    vm.stack.push(Value::Int(new_idx as i64));
                                     vm.energy = vm.energy.saturating_sub(50);
                                     vm.output.push("COMPILE: Success".to_string());
                                 }
@@ -3544,6 +4276,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 kind: OrganelleType::Void,
                 direction: (0, 0),
                 ttl: None,
+                name: "Voidwalker".to_string(),
+                traits: vec!["Nihilistic".to_string()],
+                genome_id: 0,
             };
             vm.organelles.push(organelle);
             vm.energy = vm.energy.saturating_sub(50);
@@ -3609,6 +4344,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
 
+                vm.cladistics.kill_strand(s_idx, vm.tick_counter);
                 vm.output
                     .push(format!("SUPERNOVA: Strand {} exploded", s_idx));
                 vm.halted = true; // Suicide
@@ -3639,6 +4375,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             // Clear other specific mappings?
             vm.epigenome.clear();
             // We should ideally remap epigenome, but Singularity is destructive/transformative.
+            vm.market.clear();
 
             // Reset IP to start of new strand
             vm.ip = (0, 0);
@@ -3963,13 +4700,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             let mut used_custom_rule = false;
 
             // Check if top of stack is a rule string
-            if let Some(val) = vm.stack.last() {
-                if let Value::Str(s) = val {
-                    if let Some((b, s)) = parse_life_rule(s) {
-                        birth_rules = b;
-                        survival_rules = s;
-                        used_custom_rule = true;
-                    }
+            if let Some(Value::Str(s)) = vm.stack.last() {
+                if let Some((b, s)) = parse_life_rule(s) {
+                    birth_rules = b;
+                    survival_rules = s;
+                    used_custom_rule = true;
                 }
             }
 
@@ -4284,6 +5019,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
 
+                            vm.cladistics.kill_strand(s_idx, vm.tick_counter);
+
                             vm.energy = vm.energy.saturating_sub(10);
                             vm.output
                                 .push(format!("BURY: Buried strand {} in graveyard", s_idx));
@@ -4312,6 +5049,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 let new_idx = vm.dna.helix.strands.len() - 1;
+
+                vm.cladistics.register_strand(
+                    new_idx,
+                    Some(vm.ip.0),
+                    vm.tick_counter,
+                    "Exhume".to_string(),
+                );
+
                 vm.stack.push(Value::Int(new_idx as i64));
                 vm.energy = vm.energy.saturating_sub(25);
                 vm.output
@@ -4398,11 +5143,20 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 vm.synapse_map.push(Vec::new());
                             }
 
+                            vm.cladistics.register_strand(
+                                new_idx,
+                                Some(s_idx),
+                                vm.tick_counter,
+                                "Reincarnate".to_string(),
+                            );
+
                             // 4. Apoptosis of old strand
                             // Clear original
                             vm.dna.helix.strands[s_idx].genes.clear();
                             // Remove associated epigenetics
                             vm.epigenome.retain(|(s, _)| *s != s_idx);
+
+                            vm.cladistics.kill_strand(s_idx, vm.tick_counter);
 
                             // 5. Push new index
                             vm.stack.push(Value::Int(new_idx as i64));

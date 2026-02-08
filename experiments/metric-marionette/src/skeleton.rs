@@ -1,4 +1,7 @@
-use locus::Vec2;
+use crate::monitor::Monitor;
+use rand::Rng;
+use std::f64::consts::PI;
+use tui_shared::math::Vec2;
 
 #[derive(Clone, Debug)]
 pub struct Joint {
@@ -11,18 +14,125 @@ pub struct Joint {
 #[derive(Clone, Debug)]
 pub struct Skeleton {
     pub root: Joint,
+    pub time: f64,
 }
 
 impl Skeleton {
-    pub fn new() -> Self {
-        Skeleton {
-            root: Joint {
-                name: "root".to_string(),
-                length: 0.0,
-                angle: 0.0,
-                children: vec![],
-            },
-        }
+    pub fn new_humanoid() -> Self {
+        // Build a humanoid skeleton
+        // Lengths are relative units
+
+        let head = Joint {
+            name: "head".into(),
+            length: 4.0,
+            angle: 0.0,
+            children: vec![],
+        }; // Relative to neck
+        let neck = Joint {
+            name: "neck".into(),
+            length: 2.0,
+            angle: 0.0,
+            children: vec![head],
+        }; // Relative to spine
+
+        // Arms (Starting from shoulder)
+        // Left Arm (Points Left: PI). Parent Spine is Up (PI/2). Relative: PI/2.
+        let l_hand = Joint {
+            name: "l_hand".into(),
+            length: 3.0,
+            angle: 0.0,
+            children: vec![],
+        };
+        let l_forearm = Joint {
+            name: "l_forearm".into(),
+            length: 6.0,
+            angle: 0.0,
+            children: vec![l_hand],
+        };
+        let l_arm = Joint {
+            name: "l_arm".into(),
+            length: 6.0,
+            angle: PI / 2.0,
+            children: vec![l_forearm],
+        };
+
+        // Right Arm (Points Right: 0). Parent Spine is Up (PI/2). Relative: -PI/2.
+        let r_hand = Joint {
+            name: "r_hand".into(),
+            length: 3.0,
+            angle: 0.0,
+            children: vec![],
+        };
+        let r_forearm = Joint {
+            name: "r_forearm".into(),
+            length: 6.0,
+            angle: 0.0,
+            children: vec![r_hand],
+        };
+        let r_arm = Joint {
+            name: "r_arm".into(),
+            length: 6.0,
+            angle: -PI / 2.0,
+            children: vec![r_forearm],
+        };
+
+        let spine = Joint {
+            name: "spine".into(),
+            length: 8.0,
+            angle: PI / 2.0, // Up relative to root (0)
+            children: vec![neck, l_arm, r_arm],
+        };
+
+        // Legs
+        // Left Leg (Down-Left). Parent Root is 0. Down is -PI/2. Slight spread.
+        let l_foot = Joint {
+            name: "l_foot".into(),
+            length: 2.0,
+            angle: PI / 2.0,
+            children: vec![],
+        };
+        let l_shin = Joint {
+            name: "l_shin".into(),
+            length: 8.0,
+            angle: 0.0,
+            children: vec![l_foot],
+        };
+        let l_thigh = Joint {
+            name: "l_thigh".into(),
+            length: 8.0,
+            angle: -PI / 2.0 - 0.3,
+            children: vec![l_shin],
+        };
+
+        // Right Leg (Down-Right)
+        let r_foot = Joint {
+            name: "r_foot".into(),
+            length: 2.0,
+            angle: PI / 2.0,
+            children: vec![],
+        };
+        let r_shin = Joint {
+            name: "r_shin".into(),
+            length: 8.0,
+            angle: 0.0,
+            children: vec![r_foot],
+        };
+        let r_thigh = Joint {
+            name: "r_thigh".into(),
+            length: 8.0,
+            angle: -PI / 2.0 + 0.3,
+            children: vec![r_shin],
+        };
+
+        // Root (Pelvis)
+        let root = Joint {
+            name: "root".into(),
+            length: 0.0,
+            angle: 0.0,
+            children: vec![spine, l_thigh, r_thigh],
+        };
+
+        Skeleton { root, time: 0.0 }
     }
 
     /// Returns a list of (start, end) points for drawing the bones.
@@ -52,6 +162,55 @@ impl Skeleton {
 
         for child in &joint.children {
             self.solve_recursive(child, end_pos, global_angle, bones);
+        }
+    }
+
+    pub fn animate(&mut self, monitor: &Monitor, dt: f64) {
+        self.time += dt;
+        let time = self.time; // Copy for closure/recursive call
+
+        // Use a recursive helper
+        Self::animate_recursive(&mut self.root, monitor, time);
+    }
+
+    fn animate_recursive(joint: &mut Joint, monitor: &Monitor, time: f64) {
+        let mut rng = rand::thread_rng();
+
+        match joint.name.as_str() {
+            "spine" => {
+                // Breathing: Fast if CPU high
+                let breath_speed = 2.0 + monitor.cpu_usage * 10.0;
+                let breath = (time * breath_speed).sin() * 0.05;
+
+                // Slouch: Heavy RAM
+                let slouch = monitor.ram_usage * 0.5;
+
+                joint.angle = (PI / 2.0) + breath - slouch;
+            }
+            "l_arm" => {
+                // Jitter
+                let jitter = (rng.r#gen::<f64>() - 0.5) * monitor.cpu_usage * 0.3;
+                // Droop (RAM)
+                let droop = monitor.ram_usage * 1.5;
+
+                joint.angle = (PI / 2.0) + droop + jitter;
+            }
+            "r_arm" => {
+                let jitter = (rng.r#gen::<f64>() - 0.5) * monitor.cpu_usage * 0.3;
+                let droop = monitor.ram_usage * 1.5;
+
+                joint.angle = (-PI / 2.0) - droop + jitter;
+            }
+            "head" => {
+                // Look around randomly if network? Or just random noise.
+                let noise = (rng.r#gen::<f64>() - 0.5) * 0.2;
+                joint.angle = noise;
+            }
+            _ => {}
+        }
+
+        for child in &mut joint.children {
+            Self::animate_recursive(child, monitor, time);
         }
     }
 }
@@ -87,7 +246,7 @@ mod tests {
             children: vec![arm],
         };
 
-        let skeleton = Skeleton { root };
+        let skeleton = Skeleton { root, time: 0.0 };
         let bones = skeleton.solve_fk();
 
         assert!(!bones.is_empty(), "Bones should not be empty");

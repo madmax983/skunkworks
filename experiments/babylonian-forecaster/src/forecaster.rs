@@ -20,7 +20,7 @@ impl TimeSeries {
         // We need to sum `window_size` elements and divide by `window_size`.
 
         for i in 0..=self.data.len() - window_size {
-            let window = &self.data[i..i+window_size];
+            let window = &self.data[i..i + window_size];
             let mut sum = Sexagesimal::zero();
             for val in window {
                 sum = sum + val.clone();
@@ -47,10 +47,10 @@ mod tests {
         // [30, 40, 50] avg 40.
 
         let data = vec![
-            Sexagesimal::from_str("𒌋").unwrap(), // 10
-            Sexagesimal::from_str("𒌋𒌋").unwrap(), // 20
-            Sexagesimal::from_str("𒌋𒌋𒌋").unwrap(), // 30
-            Sexagesimal::from_str("𒌋𒌋𒌋𒌋").unwrap(), // 40
+            Sexagesimal::from_str("𒌋").unwrap(),     // 10
+            Sexagesimal::from_str("𒌋𒌋").unwrap(),    // 20
+            Sexagesimal::from_str("𒌋𒌋𒌋").unwrap(),   // 30
+            Sexagesimal::from_str("𒌋𒌋𒌋𒌋").unwrap(),  // 40
             Sexagesimal::from_str("𒌋𒌋𒌋𒌋𒌋").unwrap(), // 50
         ];
 

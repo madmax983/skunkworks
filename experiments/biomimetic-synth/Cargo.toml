@@ -1,0 +1,14 @@
+[package]
+name = "biomimetic-synth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+crossbeam-channel = "0.5"
+rodio = { version = "0.17", optional = true }
+
+[features]
+default = []
+audio = ["dep:rodio"]

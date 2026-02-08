@@ -1,7 +1,7 @@
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
-use crate::vm::nova::perform_alchemy;
+use crate::vm::alchemy::perform_alchemy;
 use crate::vm::{ChimeraVM, Value};
 
 fn make_dna(strands: Vec<Strand>) -> Dna {

@@ -1,3 +1,47 @@
+//! # The Genetic Alphabet 🧬
+//!
+//! This module defines the `OpCode` enum, which represents the set of all possible enzymes (instructions)
+//! in the Chimera language.
+//!
+//! ## Categories
+//!
+//! The genetic alphabet is divided into several domains:
+//!
+//! ### 1. Primary Metabolism (Core)
+//! Basic stack manipulation, arithmetic, and control flow.
+//! - `Push`, `Pop`, `Add`, `Sub`
+//! - `Jump`, `Brz`
+//! - `Photosynthesize`, `Consume`
+//!
+//! ### 2. Spatial Interaction (Grid)
+//! Interacting with the 2D Petri Dish environment.
+//! - `GRead`, `GWrite` (Cell access)
+//! - `Radiate`, `Siphon` (Area of Effect)
+//! - `Migrate`, `Osmosis` (Movement)
+//!
+//! ### 3. Genetics & Evolution (Nova)
+//! Self-modification and reproduction.
+//! - `Mitosis` (Cloning), `Apoptosis` (Death)
+//! - `Transcribe`, `Methylate` (Epigenetics)
+//! - `Splice`, `Recombine`, `CrisprScan` (Gene editing)
+//!
+//! ### 4. Physics & Reality (Nova)
+//! Manipulating the simulation constants.
+//! - `Gravity`, `Lumine` (Fields)
+//! - `Relativity`, `TimeWarp` (Time dilation)
+//! - `PhaseShift`, `Isomerize` (State changes)
+//!
+//! ### 5. Metaphysics (Nova)
+//! Interactions with the "Spirit" (User) and "Egregore" (Collective).
+//! - `Spirit` (Input)
+//! - `Pray`, `Sacrifice` (Egregore)
+//! - `Simulate`, `Dream`, `Prophecy` (Future prediction)
+//!
+//! ### 6. Specialized Systems
+//! - **Cortex**: Neural networks (`Link`, `Spark`).
+//! - **Silicon**: Logic gates (`Wire`, `NAND`).
+//! - **Market**: Economic transactions (`Buy`, `Sell`).
+
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum_macros::{AsRefStr, EnumString};
@@ -206,6 +250,41 @@ pub enum OpCode {
     /// **Args:** `[Nucleotide::String(type), Nucleotide::Number(dir)]`
     #[cfg(feature = "silicon")]
     LogicGate,
+    /// **[Silicon]** Creates an Input Pin (Reads from Stack -> Grid).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    PinIn,
+    /// **[Silicon]** Creates an Output Pin (Reads from Grid -> Stack).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    PinOut,
+    /// **[Silicon]** Creates an Emitter cell that pulses periodically.
+    ///
+    /// **Stack:** `[ ..., freq, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Emitter,
+    /// **[Silicon]** Creates a Receiver cell that triggers a strand when powered.
+    ///
+    /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Receiver,
+    /// **[Silicon]** Creates a stateful D-Latch on the grid.
+    ///
+    /// **Stack:** `[ ..., state, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Latch,
+    /// **[Silicon]** Reads 4-bit signal from neighbors and pushes value to stack (Digital-to-Analog).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., val ]`
+    #[cfg(feature = "silicon")]
+    DAC,
+    /// **[Silicon]** Pops value and writes 4-bit signal to neighbors (Analog-to-Digital).
+    ///
+    /// **Stack:** `[ ..., val ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    ADC,
 
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
@@ -218,6 +297,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., instruction_string, start_y, start_x ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Grow,
+    /// **[Nova]** Spawns a Seed organelle that grows procedurally over time (The Garden).
+    ///
+    /// **Stack:** `[ ..., rules, axiom ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Plant,
 
     /// **[Nova]** Creates a "time-travel" snapshot (Spore) of the VM state.
     ///
@@ -353,6 +437,11 @@ pub enum OpCode {
     /// **Effect:** Pushes return address to `call_stack` and jumps.
     #[cfg(feature = "nova")]
     Call,
+    /// **[Nova]** Calls a strand index popped from the stack.
+    ///
+    /// **Stack:** `[ ..., strand_idx ]`
+    #[cfg(feature = "nova")]
+    Exec,
     /// **[Nova]** Returns from a subroutine.
     ///
     /// **Effect:** Pops address from `call_stack` and jumps.
@@ -651,6 +740,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scramble,
 
+    /// **[Nova]** Pushes local entropy level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., entropy_level ]`
+    #[cfg(feature = "nova")]
+    Entropy,
+    /// **[Nova]** Reduces local entropy.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    /// **Cost:** Energy proportional to amount.
+    #[cfg(feature = "nova")]
+    Stabilize,
+    /// **[Nova]** Instantly converts a grid cell to high entropy.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Disintegrate,
+
     /// **[Nova]** Predicts if the current execution path leads to death within `ticks`.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ..., 1(Death)|0(Life) ]`
@@ -668,6 +774,30 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Meme,
+
+    /// **[Nova]** Creates a Meme from the current strand's genes.
+    ///
+    /// **Stack:** `[ ..., len, virulence, fidelity ] -> [ ..., meme_id ]`
+    #[cfg(feature = "nova")]
+    Conceive,
+
+    /// **[Nova]** Spreads a specific Meme to a target strand.
+    ///
+    /// **Stack:** `[ ..., meme_id, target_strand ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Propagate,
+
+    /// **[Nova]** Removes a Meme from the pool.
+    ///
+    /// **Stack:** `[ ..., meme_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Forget,
+
+    /// **[Nova]** Modifies the dialect of the current strand (OpCode Remapping).
+    ///
+    /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shibboleth,
 
     /// **[Nova]** Randomly mutates the genome with a given probability (Linguistic Drift).
     ///
@@ -716,6 +846,142 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., factor ]`
     #[cfg(feature = "nova")]
     Chronos,
+
+    // Egregore Features (Collective Consciousness)
+    /// **[Nova]** Connects to the collective Egregore mind.
+    ///
+    /// **Stack:** `[ ..., channel_name ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreLink,
+    /// **[Nova]** Sacrifices energy (faith) to the Egregore.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreTithe,
+    /// **[Nova]** Sends a message to a shared Egregore channel.
+    ///
+    /// **Stack:** `[ ..., channel_name, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreChannel,
+    /// **[Nova]** Casts a vote on a global parameter.
+    ///
+    /// **Stack:** `[ ..., parameter_name, vote_value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreDictate,
+    /// **[Nova]** Queries a value from the Egregore (channel or parameter).
+    ///
+    /// **Stack:** `[ ..., key ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    EgregoreQuery,
+    /// **[Nova]** Attempts to summon a global effect using collective faith.
+    ///
+    /// **Stack:** `[ ..., ritual_name ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EgregoreSummon,
+    /// **[Nova]** Sacrifices the current strand to feed the Chaos of the Egregore.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Kills strand, shifts Alignment towards Chaos (-), gains Faith.
+    #[cfg(feature = "nova")]
+    Sacrifice,
+    /// **[Nova]** Prays to the Egregore for Order.
+    ///
+    /// **Stack:** `[ ..., energy_amount ] -> [ ... ]`
+    /// **Effect:** Consumes Energy, shifts Alignment towards Order (+), gains Faith.
+    #[cfg(feature = "nova")]
+    Pray,
+
+    // Astrology Features (Nova)
+    /// **[Nova]** Gazes at the sky to measure star intensity and color.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., intensity, color ]`
+    #[cfg(feature = "nova")]
+    Gaze,
+    /// **[Nova]** Summons a meteor strike if a star is overhead.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Cost:** 50 Energy.
+    #[cfg(feature = "nova")]
+    Starfall,
+    /// **[Nova]** Checks alignment with the nearest star.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., angle_to_nearest ]`
+    #[cfg(feature = "nova")]
+    Align,
+
+    // Market Features
+    /// **[Nova]** Places a Sell Order (Ask) on the Market.
+    ///
+    /// **Stack:** `[ ..., price, item ] -> [ ..., order_id ]`
+    /// **Effect:** Adds item to market. If sold, funds are credited.
+    #[cfg(feature = "nova")]
+    Offer,
+    /// **[Nova]** Places a Buy Order (Bid) on the Market.
+    ///
+    /// **Stack:** `[ ..., max_price, query ] -> [ ..., item, cost ]`
+    /// **Effect:** Purchases item if available. Returns item and cost. If failed, returns 0.
+    #[cfg(feature = "nova")]
+    Buy,
+    /// **[Nova]** Converts global Energy into local Credits.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Invest,
+    /// **[Nova]** Converts local Credits into global Energy.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Divest,
+    /// **[Nova]** Pushes current Credit balance to stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., balance ]`
+    #[cfg(feature = "nova")]
+    Balance,
+    /// **[Nova]** Pushes last trade price to stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., price ]`
+    #[cfg(feature = "nova")]
+    Ticker,
+
+    // Relativity Features
+    /// **[Nova]** Toggles General Relativity simulation (Time Dilation).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Relativity,
+    /// **[Nova]** Emits a gravity wave, increasing local mass.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Graviton,
+    /// **[Nova]** Checks the local gravity field strength.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., gravity ]`
+    #[cfg(feature = "nova")]
+    EventHorizon,
+
+    // Atmosphere Features
+    /// **[Nova]** Sets the local wind vector.
+    ///
+    /// **Stack:** `[ ..., angle, strength ] -> [ ... ]`
+    /// **Angle:** 0=N, 1=NE, 2=E, 3=SE, 4=S, 5=SW, 6=W, 7=NW.
+    #[cfg(feature = "nova")]
+    Aeolus,
+    /// **[Nova]** Creates moisture (clouds/rain) at the current location.
+    ///
+    /// **Stack:** `[ ..., intensity, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Storm,
+    /// **[Nova]** Reads the local wind vector.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dy, dx ]`
+    #[cfg(feature = "nova")]
+    SenseWind,
+    /// **[Nova]** Reads the local moisture level.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., moisture ]`
+    #[cfg(feature = "nova")]
+    SenseMoisture,
 
     /// **[Nova]** Changes the biome of the local area.
     ///
@@ -934,6 +1200,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Perform,
 
+    /// **[Nova]** Converts the musical score into a new DNA strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Maps notes to OpCodes and creates a new strand.
+    #[cfg(feature = "nova")]
+    Compose,
+
     // Resonance Features (Audio Physics)
     /// **[Resonance]** Plucks the underlying physics grid at the current location.
     ///
@@ -952,12 +1225,30 @@ pub enum OpCode {
     #[cfg(feature = "resonance")]
     Hear,
 
+    // Cymatics Features (Nova + Resonance)
+    /// **[Cymatics]** Moves matter on the grid towards nodal points (low amplitude).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(all(feature = "nova", feature = "resonance"))]
+    Sift,
+    /// **[Cymatics]** Modifies walls (membranes) based on sound amplitude.
+    ///
+    /// **Stack:** `[ ..., threshold, mode ] -> [ ... ]`
+    /// **Mode:** 0=Solidify (High Amp -> Wall), 1=Liquefy (High Amp -> No Wall).
+    #[cfg(all(feature = "nova", feature = "resonance"))]
+    Reshape,
+
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
     ///
     /// **Stack:** `[ ..., fact ] -> [ ... ]`
     #[cfg(feature = "oracle")]
     Assert,
+    /// **[Oracle]** Adds a rule to the Knowledge Base.
+    ///
+    /// **Stack:** `[ ..., rule_junction ] -> [ ... ]`
+    #[cfg(feature = "oracle")]
+    Rule,
     /// **[Oracle]** Removes a fact or rule from the Knowledge Base.
     ///
     /// **Stack:** `[ ..., fact ] -> [ ... ]`
@@ -1025,6 +1316,67 @@ pub enum OpCode {
     /// **Stack:** `[ ..., command_string ] -> [ ..., output_string ]`
     #[cfg(feature = "phylogeny")]
     Shell,
+
+    // Geology Features (Nova)
+    /// **[Nova]** Randomly shifts rows or columns of the grid (Plate Tectonics).
+    ///
+    /// **Stack:** `[ ..., intensity ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Quake,
+    /// **[Nova]** Reduces values in a circular area (Weathering).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Erode,
+    /// **[Nova]** Increases values in a circular area (Deposition).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Sediment,
+    /// **[Nova]** Shifts a rectangular block of the grid.
+    ///
+    /// **Stack:** `[ ..., dy, dx, h, w ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tectonics,
+    /// **[Nova]** Erupts high values at the current location.
+    ///
+    /// **Stack:** `[ ..., power ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Volcano,
+
+    // Crystallography Features (Nova)
+    /// **[Nova]** Turns the current cell into a crystal seed.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Nucleate,
+    /// **[Nova]** Grows the crystal by absorbing value from neighbors.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Accrete,
+    /// **[Nova]** Explodes the crystal, scattering value to neighbors.
+    ///
+    /// **Stack:** `[ ..., force ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shatter,
+    /// **[Nova]** Sorts the values in a local window (Annealing).
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Anneal,
+
+    // Ballistics Features (Nova)
+    /// **[Nova]** Fires a projectile with velocity and power.
+    ///
+    /// **Stack:** `[ ..., power, dy, dx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Fire,
+    /// **[Nova]** Fires multiple projectiles in random directions.
+    ///
+    /// **Stack:** `[ ..., power, count ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Salvo,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

@@ -35,3 +35,7 @@
 **2026-03-10 - Chimera-Lang Memory & Recursion Hardening**
 **Threat:** DoS via memory exhaustion in `Incubate` (unbounded strand creation), `Methylate` (unbounded epigenome), and Stack Overflow in recursive nucleotide parsing/formatting.
 **Defense:** Capped `Incubate` length and `Methylate` epigenome size to 1024. Implemented recursion depth limits in `value_to_nucleotide` and `format_nucleotide`.
+
+**2026-03-12 - Chimera-Lang Phylogeny Sandboxing**
+**Threat:** Path Traversal and Arbitrary Command Execution in `phylogeny` feature. Opcodes `Crawl`, `Sequencing`, `Synthesize`, `Infect` allowed access to files outside the VM environment (e.g. `../../etc/passwd`). `Shell` opcode allowed arbitrary command execution.
+**Defense:** Implemented `sandbox_root` in `ChimeraVM` and strict `sanitize_path` helper to enforce confinement using canonicalization and prefix checking. Disabled `Shell` opcode completely ("SHELL DISABLED").

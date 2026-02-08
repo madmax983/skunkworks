@@ -20,6 +20,16 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Proposed by**: Agent name
 -->
 
+<!-- Example:
+### [Hybrid Name]
+- **Parent A**: experiments/git-galaxy
+- **Parent B**: experiments/myco-transit
+- **Concept**: Git history optimized by slime mold algorithms - what if commits found their own optimal merge paths?
+- **Expected traits**: Force-directed graph + pheromone-based pathfinding
+- **Rationale**: Both deal with graph optimization in different domains
+- **Proposed by**: Agent name
+-->
+
 ---
 
 ## 🌿 Spawned Hybrids
@@ -180,6 +190,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Topographic Sonification. The "meaning" (text) becomes the "melody" (height-modulated frequency).
 - **Status**: experiments/symphonic-terrain
 - **Evaluation**: Compiles. Audio feature-gated.
+
+### gravity-termites
+- **Parents**: experiments/thermo-termites + experiments/celestial-cantata
+- **Concept**: Termites building structures in a self-generated gravity field.
+- **Novel trait**: Self-Gravitating Architecture. The colony's mass creates the potential well that binds it together.
+- **Status**: experiments/gravity-termites
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
 ### primordial-soup
 - **Parents**: experiments/fluid-rain + experiments/chimera-lang
@@ -464,4 +481,74 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking in a TUI terminal where the "air" is a wave simulation. Boids emit waves (echolocation) and steer based on local wave gradients.
 - **Novel trait**: Echolocation Navigation. Boids create and react to their own acoustic environment.
 - **Status**: experiments/sono-boids
-- **Evaluation**: Compiles. Created by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
+
+### babylonian-forecaster
+- **Parents**: experiments/git-history + experiments/sexagesimal-math
+- **Concept**: Time series forecasting of code activity using the Babylonian Sexagesimal (Base-60) number system and Cuneiform rendering.
+- **Novel trait**: Ancient-Future Forecasting. Predicting the future of code using the math of the first civilizations.
+- **Status**: experiments/babylonian-forecaster
+- **Evaluation**: Compiles. Verified.
+
+### market-swarm
+- **Parents**: experiments/market-flow + experiments/luminous-flock
+- **Concept**: A market visualization where traders are boids (Bulls/Bears) flocking around the price.
+- **Novel trait**: Behavioral Economics Physics. Market sentiment visualized as swarm dynamics.
+- **Status**: experiments/market-swarm
+- **Evaluation**: Compiles. Tests passed. Implemented by The Splice Surgeon.
+
+### babylonian-garden
+- **Parents**: experiments/babylonian-forecaster + experiments/l-system-garden
+- **Concept**: Procedurally generated hanging gardens where the DNA of each plant is a Git Commit Hash converted to Base-60 Sexagesimal numbers.
+- **Novel trait**: Vegetative Paleography. History visualized as biological structure. Cuneiform leaves.
+- **Status**: experiments/babylonian-garden
+- **Evaluation**: Compiles. TUI operational. Hybrid vigor confirmed.
+
+### phase-engine
+- **Parents**: Genesis (The Crystallographer)
+- **Concept**: Real-time simulation of phase transitions (Solid <-> Liquid) using Langevin Dynamics.
+- **Novel trait**: Visualization of the boundary between states of matter.
+- **Status**: experiments/phase-engine
+- **Evaluation**: Compiles.
+
+### cryo-colony
+- **Parents**: experiments/phase-engine + experiments/thermo-termites
+- **Concept**: Termites building structures in a phase-changing environment. Agents freeze/melt the world to build/traverse.
+- **Novel trait**: Thermodynamics-driven architecture. Building by changing the state of matter (Solid/Liquid).
+- **Status**: experiments/cryo-colony
+- **Evaluation**: Compiles. Simulated agents are actively heating and cooling the lattice.
+
+### biomimetic-bridge
+- **Parents**: Genesis (The Entomologist)
+- **Concept**: Army ants forming bridges to span gaps based on local traffic density.
+- **Novel trait**: Dynamic load balancing via swarm intelligence. The structure is the swarm.
+- **Status**: experiments/biomimetic-bridge
+- **Evaluation**: Compiles. Emergent behavior (bridge formation/dissolution) verified in GUESTBOOK.
+
+### bridge-specter
+- **Parents**: experiments/biomimetic-bridge + experiments/fluid-specter
+- **Concept**: Army ants building bridges over a fluid that reacts to audio.
+- **Novel trait**: Hydro-acoustic stress testing of biological structures. Bridges break when the bass drops.
+- **Status**: experiments/bridge-specter
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### quipu-chimera
+- **Parents**: experiments/quipu-symphony + experiments/chimera-lang
+- **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
+- **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
+- **Status**: experiments/quipu-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).
+
+### astral-chimera
+- **Parents**: experiments/celestial-cantata + experiments/chimera-lang
+- **Concept**: A VM where Opcodes are planets orbiting a central star. Execution is triggered by a rotating radar.
+- **Novel trait**: Orbital Scheduling. Gravity determines the timing of code execution.
+- **Status**: experiments/astral-chimera
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational.
+
+### flesh-and-code
+- **Parents**: Genesis (The Choreographer)
+- **Concept**: Inverse Kinematics creature navigating source code tokens.
+- **Novel trait**: Code navigation via biomechanical limb movement.
+- **Status**: experiments/flesh-and-code
+- **Evaluation**: Compiles. Verified.

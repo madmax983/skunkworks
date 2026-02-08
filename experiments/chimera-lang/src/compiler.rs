@@ -103,6 +103,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     }
 
     let mut strands_ast = Vec::new();
+    let mut anonymous_strands = Vec::new();
 
     // Pass 2: Generate Genes
     for pair in program.into_inner() {
@@ -112,12 +113,16 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             let mut genes = Vec::new();
 
             for instr in inner {
-                let generated = parse_instructions(instr, &strand_map, &macro_map, 0)?;
+                let generated =
+                    parse_instructions(instr, &strand_map, &macro_map, &mut anonymous_strands, 0)?;
                 genes.extend(generated);
             }
             strands_ast.push(Strand { genes });
         }
     }
+
+    // Append anonymous strands
+    strands_ast.extend(anonymous_strands);
 
     Ok(Dna {
         helix: Helix {
@@ -130,6 +135,7 @@ fn parse_instructions(
     pair: pest::iterators::Pair<Rule>,
     strand_map: &HashMap<String, usize>,
     macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
+    anonymous_strands: &mut Vec<Strand>,
     depth: usize,
 ) -> Result<Vec<Gene>> {
     if depth > 50 {
@@ -139,6 +145,23 @@ fn parse_instructions(
     // pair is `instruction`
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
+        Rule::block => {
+            let mut genes = Vec::new();
+            for instr in inner.into_inner() {
+                let sub =
+                    parse_instructions(instr, strand_map, macro_map, anonymous_strands, depth + 1)?;
+                genes.extend(sub);
+            }
+            // Create new strand
+            let index = strand_map.len() + anonymous_strands.len();
+            anonymous_strands.push(Strand { genes });
+
+            // Return push(index)
+            Ok(vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(index as i64)],
+            }])
+        }
         Rule::literal => {
             let val = parse_literal(inner, strand_map)?;
             Ok(vec![Gene {
@@ -152,7 +175,13 @@ fn parse_instructions(
             if let Some(body) = macro_map.get(name) {
                 let mut macro_genes = Vec::new();
                 for instr in body.clone() {
-                    let sub = parse_instructions(instr, strand_map, macro_map, depth + 1)?;
+                    let sub = parse_instructions(
+                        instr,
+                        strand_map,
+                        macro_map,
+                        anonymous_strands,
+                        depth + 1,
+                    )?;
                     macro_genes.extend(sub);
                 }
                 return Ok(macro_genes);
@@ -241,7 +270,24 @@ fn parse_argument(
                 Ok(Nucleotide::Identifier(id.to_string()))
             }
         }
-        _ => unreachable!("Unexpected argument rule"),
+        Rule::junction => {
+            let mut parts = inner.into_inner();
+            let type_str = parts.next().unwrap().as_str();
+            let args_pair = parts.next().unwrap();
+
+            let t = match type_str {
+                "any" => crate::ast::JunctionType::Any,
+                "all" => crate::ast::JunctionType::All,
+                _ => return Err(anyhow!("Invalid junction type")),
+            };
+
+            let mut vals = Vec::new();
+            for arg in args_pair.into_inner() {
+                vals.push(parse_argument(arg, strand_map)?);
+            }
+            Ok(Nucleotide::Junction(t, vals))
+        }
+        _ => unreachable!("Unexpected argument rule: {:?}", inner.as_rule()),
     }
 }
 
@@ -319,5 +365,25 @@ mod tests {
         let genes = &dna.helix.strands[0].genes;
         assert_eq!(genes[0].op, OpCode::Jump);
         assert_eq!(genes[1].op, OpCode::Brz);
+    }
+
+    #[test]
+    fn test_blocks() {
+        let src = r#"
+        strand main {
+            { 1 2 add } call
+        }
+        "#;
+        let dna = compile(src, None).unwrap();
+        assert_eq!(dna.helix.strands.len(), 2); // main + block
+
+        let main_genes = &dna.helix.strands[0].genes;
+        assert_eq!(main_genes[0].op, OpCode::Push); // Push block index
+        assert_eq!(main_genes[0].args[0], Nucleotide::Number(1));
+        assert_eq!(main_genes[1].op, OpCode::Call);
+
+        let block_genes = &dna.helix.strands[1].genes;
+        assert_eq!(block_genes.len(), 3);
+        assert_eq!(block_genes[2].op, OpCode::Add);
     }
 }

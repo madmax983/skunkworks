@@ -1,0 +1,18 @@
+[package]
+name = "quipu-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+cpal = { version = "0.15", optional = true }
+crossbeam-channel = "0.5"
+tui-shared = { path = "../../crates/tui-shared" }
+
+[features]
+default = []
+audio = ["dep:cpal"]

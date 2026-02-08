@@ -54,9 +54,17 @@ mod tests {
         vm.step(); // push query
         vm.step(); // query
 
-        // Stack should contain 1 (Success)
-        assert_eq!(vm.stack.len(), 1);
-        assert_eq!(vm.stack[0], Value::Int(1));
+        // Stack should contain [1, Bindings]
+        // bindings should be empty list if exact match
+        assert!(vm.stack.len() >= 1);
+        // Result (Success) is second from top or pushed before bindings?
+        // Code: vm.stack.push(1); ... vm.stack.push(Bindings);
+        // So Top is Bindings, Below is 1.
+
+        let bindings = vm.stack.pop().unwrap();
+        let result = vm.stack.pop().unwrap();
+
+        assert_eq!(result, Value::Int(1));
     }
 
     #[test]
@@ -142,11 +150,24 @@ mod tests {
             vm.step();
         }
 
-        // Stack should contain 1 (Success)
-        assert_eq!(vm.stack[0], Value::Int(1));
-        // Output should contain binding
-        let output = vm.output.join("\n");
-        // Value::Str is printed with quotes
-        assert!(output.contains("?X=\"socrates\""));
+        let bindings = vm.stack.pop().unwrap();
+        let result = vm.stack.pop().unwrap();
+
+        assert_eq!(result, Value::Int(1));
+
+        // Check bindings
+        if let Value::Junction(_, list) = bindings {
+            assert!(!list.is_empty());
+            // Binding: Junction(All, ["?X", "socrates"])
+            let binding = &list[0];
+            if let Value::Junction(_, pair) = binding {
+                assert_eq!(pair[0], Value::Str("?X".to_string()));
+                assert_eq!(pair[1], Value::Str("socrates".to_string()));
+            } else {
+                panic!("Invalid binding format");
+            }
+        } else {
+            panic!("Expected bindings list");
+        }
     }
 }

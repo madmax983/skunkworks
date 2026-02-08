@@ -125,6 +125,9 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                         kind: OrganelleType::Void,
                         direction: (0, 0),
                         ttl: None,
+                        name: "Summoned Void".to_string(),
+                        traits: vec!["Summoned".to_string()],
+                        genome_id: 0,
                     };
                     vm.organelles.push(organelle);
                     vm.output.push("INVOKE: Void Summoned".to_string());
@@ -259,6 +262,7 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
     let (cy, cx) = vm.context_loc;
 
     // Extract active sigils to avoid borrow conflicts
+    #[allow(clippy::type_complexity)]
     let sigils: Vec<(String, Vec<(i64, i64, Value)>, usize)> = vm
         .sigil_registry
         .iter()
@@ -284,6 +288,9 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
                     kind: OrganelleType::Worker,
                     direction: (0, 0),
                     ttl: None,
+                    name: "Sigil Servant".to_string(),
+                    traits: vec!["Construct".to_string()],
+                    genome_id: 0,
                 };
                 vm.organelles.push(organelle);
             }
