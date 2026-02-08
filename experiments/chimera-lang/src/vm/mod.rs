@@ -1265,21 +1265,26 @@ impl ChimeraVM {
                             };
                             if (self.membranes[cy][cx] & mask) == 0 {
                                 // Spawn ephemeral Ribosome
-                                let new_org = Organelle {
-                                    stack: Vec::new(),
-                                    ip: (0, 0),
-                                    context_loc: (ny, nx),
-                                    call_stack: Vec::new(),
-                                    recursion_depth: 0,
-                                    halted: false,
-                                    kind: nova::OrganelleType::Ribosome,
-                                    direction: (dy as i8, dx as i8),
-                                    ttl: Some(1),
-                                    name: "Spark".to_string(),
-                                    traits: vec!["Ephemeral".to_string()],
-                                    genome_id: 0,
-                                };
-                                self.organelles.push(new_org);
+                                if self.organelles.len() < MAX_ORGANELLES {
+                                    let new_org = Organelle {
+                                        stack: Vec::new(),
+                                        ip: (0, 0),
+                                        context_loc: (ny, nx),
+                                        call_stack: Vec::new(),
+                                        recursion_depth: 0,
+                                        halted: false,
+                                        kind: nova::OrganelleType::Ribosome,
+                                        direction: (dy as i8, dx as i8),
+                                        ttl: Some(1),
+                                        name: "Spark".to_string(),
+                                        traits: vec!["Ephemeral".to_string()],
+                                        genome_id: 0,
+                                    };
+                                    self.organelles.push(new_org);
+                                } else {
+                                    self.output
+                                        .push("Error: Organelle limit exceeded in Bang".to_string());
+                                }
                             }
                         }
                     }
