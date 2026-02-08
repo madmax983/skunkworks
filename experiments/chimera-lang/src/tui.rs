@@ -140,6 +140,9 @@ pub(crate) struct AppState {
     pub(crate) query_mode: bool,
     #[cfg(feature = "oracle")]
     pub(crate) query_results: Vec<String>,
+    pub(crate) palette_open: bool,
+    pub(crate) palette_idx: usize,
+    pub(crate) palette_char: Option<char>,
 }
 
 impl AppState {
@@ -196,6 +199,9 @@ impl AppState {
             query_mode: false,
             #[cfg(feature = "oracle")]
             query_results: Vec::new(),
+            palette_open: false,
+            palette_idx: 0,
+            palette_char: None,
         }
     }
 }
@@ -463,6 +469,25 @@ where
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
+                if app_state.palette_open {
+                    match key.code {
+                        KeyCode::Esc | KeyCode::Char('p') => app_state.palette_open = false,
+                        KeyCode::Up => if app_state.palette_idx >= 4 { app_state.palette_idx -= 4; },
+                        KeyCode::Down => if app_state.palette_idx + 4 < 16 { app_state.palette_idx += 4; },
+                        KeyCode::Left => if app_state.palette_idx > 0 { app_state.palette_idx -= 1; },
+                        KeyCode::Right => if app_state.palette_idx + 1 < 16 { app_state.palette_idx += 1; },
+                        KeyCode::Enter => {
+                            let chars = ['*', 'o', 'x', '^', 'v', '<', '>', '+', '-', '/', '%', '!', '=', ':', ';', '?'];
+                            if app_state.palette_idx < chars.len() {
+                                app_state.palette_char = Some(chars[app_state.palette_idx]);
+                            }
+                            app_state.palette_open = false;
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
                 #[cfg(feature = "oracle")]
                 if app_state.query_mode {
                     match key.code {
@@ -994,8 +1019,16 @@ where
                     KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
                     #[cfg(feature = "elektra")]
                     KeyCode::Char('E') => app_state.view_mode = ViewMode::Elektra,
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
+                    KeyCode::Char('p') => {
+                        if let ViewMode::Grid = app_state.view_mode {
+                            app_state.palette_open = !app_state.palette_open;
+                        } else {
+                            #[cfg(feature = "nova")]
+                            {
+                                app_state.view_mode = ViewMode::PianoRoll;
+                            }
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
                     KeyCode::Char('i') => {
@@ -1095,83 +1128,92 @@ where
                     }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
-                        #[cfg(feature = "nova")]
-                        if let ViewMode::Arena = app_state.view_mode {
-                            if let Some(arena) = &mut vm.arena {
-                                arena.tick();
+                        if let ViewMode::Grid = app_state.view_mode {
+                            if let Some(c) = app_state.palette_char {
+                                let (x, y) = app_state.grid_cursor;
+                                vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
+                            } else {
+                                vm.step();
                             }
-                        } else if let ViewMode::Fishing = app_state.view_mode {
-                            if app_state.fishing_cast {
-                                // Reel
-                                if app_state.fishing_hooked {
-                                    app_state.fishing_bobber_y -= 5.0;
-                                    app_state.fishing_tension += 0.1; // Reeling increases tension
+                        } else {
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Arena = app_state.view_mode {
+                                if let Some(arena) = &mut vm.arena {
+                                    arena.tick();
+                                }
+                            } else if let ViewMode::Fishing = app_state.view_mode {
+                                if app_state.fishing_cast {
+                                    // Reel
+                                    if app_state.fishing_hooked {
+                                        app_state.fishing_bobber_y -= 5.0;
+                                        app_state.fishing_tension += 0.1; // Reeling increases tension
 
-                                    if app_state.fishing_bobber_y < 10.0 {
-                                        // Caught!
-                                        app_state.status_msg = "CAUGHT A FISH!".to_string();
+                                        if app_state.fishing_bobber_y < 10.0 {
+                                            // Caught!
+                                            app_state.status_msg = "CAUGHT A FISH!".to_string();
+                                            app_state.fishing_cast = false;
+                                            app_state.fishing_hooked = false;
+                                            app_state.fishing_tension = 0.0;
+                                            // Maybe give energy?
+                                            vm.energy += 10;
+                                        }
+                                    } else {
+                                        // Just pull empty line
                                         app_state.fishing_cast = false;
-                                        app_state.fishing_hooked = false;
-                                        app_state.fishing_tension = 0.0;
-                                        // Maybe give energy?
-                                        vm.energy += 10;
+                                        app_state.status_msg = "Reeled in empty.".to_string();
                                     }
                                 } else {
-                                    // Just pull empty line
-                                    app_state.fishing_cast = false;
-                                    app_state.status_msg = "Reeled in empty.".to_string();
+                                    // Cast
+                                    app_state.fishing_cast = true;
+                                    app_state.fishing_bobber_y = 50.0;
+                                    app_state.fishing_tension = 0.0;
+                                    app_state.status_msg = "Casted line...".to_string();
                                 }
+                            } else if let ViewMode::Kaleidoscope = app_state.view_mode {
+                                // Paint
+                                let (x, y) = app_state.grid_cursor;
+                                let r = match app_state.kaleidoscope_hue_idx {
+                                    0 => 255,
+                                    1 => 255,
+                                    2 => 0,
+                                    3 => 0,
+                                    4 => 0,
+                                    5 => 255,
+                                    _ => 255,
+                                };
+                                let g = match app_state.kaleidoscope_hue_idx {
+                                    0 => 0,
+                                    1 => 255,
+                                    2 => 255,
+                                    3 => 255,
+                                    4 => 0,
+                                    5 => 0,
+                                    _ => 255,
+                                };
+                                let b = match app_state.kaleidoscope_hue_idx {
+                                    0 => 0,
+                                    1 => 0,
+                                    2 => 0,
+                                    3 => 255,
+                                    4 => 255,
+                                    5 => 255,
+                                    _ => 255,
+                                };
+
+                                // Adjust for lightness (Light=0, Normal=1, Dark=2)
+                                let (r, g, b) = match app_state.kaleidoscope_light_idx {
+                                    0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
+                                    2 => (r / 2, g / 2, b / 2), // Dark
+                                    _ => (r, g, b),             // Normal
+                                };
+
+                                vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
                             } else {
-                                // Cast
-                                app_state.fishing_cast = true;
-                                app_state.fishing_bobber_y = 50.0;
-                                app_state.fishing_tension = 0.0;
-                                app_state.status_msg = "Casted line...".to_string();
+                                vm.step();
                             }
-                        } else if let ViewMode::Kaleidoscope = app_state.view_mode {
-                            // Paint
-                            let (x, y) = app_state.grid_cursor;
-                            let r = match app_state.kaleidoscope_hue_idx {
-                                0 => 255,
-                                1 => 255,
-                                2 => 0,
-                                3 => 0,
-                                4 => 0,
-                                5 => 255,
-                                _ => 255,
-                            };
-                            let g = match app_state.kaleidoscope_hue_idx {
-                                0 => 0,
-                                1 => 255,
-                                2 => 255,
-                                3 => 255,
-                                4 => 0,
-                                5 => 0,
-                                _ => 255,
-                            };
-                            let b = match app_state.kaleidoscope_hue_idx {
-                                0 => 0,
-                                1 => 0,
-                                2 => 0,
-                                3 => 255,
-                                4 => 255,
-                                5 => 255,
-                                _ => 255,
-                            };
-
-                            // Adjust for lightness (Light=0, Normal=1, Dark=2)
-                            let (r, g, b) = match app_state.kaleidoscope_light_idx {
-                                0 => (r + (255 - r) / 2, g + (255 - g) / 2, b + (255 - b) / 2), // Light
-                                2 => (r / 2, g / 2, b / 2), // Dark
-                                _ => (r, g, b),             // Normal
-                            };
-
-                            vm.chroma_grid[y][x].fg = Some((r as u8, g as u8, b as u8));
-                        } else {
+                            #[cfg(not(feature = "nova"))]
                             vm.step();
                         }
-                        #[cfg(not(feature = "nova"))]
-                        vm.step();
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('s') => {
@@ -3171,7 +3213,52 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         );
         f.render_widget(popup, popup_area);
     }
+
+    if app_state.palette_open {
+        render_palette(f, app_state);
+    }
 }
+
+fn render_palette(f: &mut Frame, app_state: &AppState) {
+    let area = f.area();
+    let width = 30;
+    let height = 10;
+    let x = (area.width - width) / 2;
+    let y = (area.height - height) / 2;
+    let rect = ratatui::layout::Rect { x, y, width, height };
+
+    f.render_widget(ratatui::widgets::Clear, rect);
+
+    let chars = ['*', 'o', 'x', '^', 'v', '<', '>', '+', '-', '/', '%', '!', '=', ':', ';', '?'];
+    let mut lines = Vec::new();
+
+    for row in 0..4 {
+        let mut spans = Vec::new();
+        for col in 0..4 {
+            let idx = row * 4 + col;
+            if idx < chars.len() {
+                let ch = chars[idx];
+                let style = if idx == app_state.palette_idx {
+                    Style::default().fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD)
+                } else {
+                    Style::default().fg(Color::Cyan)
+                };
+                spans.push(Span::styled(format!(" {} ", ch), style));
+                spans.push(Span::raw(" "));
+            }
+        }
+        lines.push(Line::from(spans));
+        lines.push(Line::from(""));
+    }
+
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title("Operator Palette (Enter)");
+
+    let p = Paragraph::new(lines).block(block).alignment(ratatui::layout::Alignment::Center);
+    f.render_widget(p, rect);
+}
+
 #[cfg(feature = "biophysics")]
 fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
     let chunks = Layout::default()

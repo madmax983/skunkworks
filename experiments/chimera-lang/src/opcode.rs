@@ -286,6 +286,18 @@ pub enum OpCode {
     #[cfg(feature = "silicon")]
     ADC,
 
+    // Havoc Features (Chaos Engineering)
+    /// **[Havoc]** Sets the fault injection rate.
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    /// **Rate:** 0.0 to 1.0 (Probability per tick).
+    HavocRate,
+    /// **[Havoc]** Sets the scope of fault injection.
+    ///
+    /// **Stack:** `[ ..., mask ] -> [ ... ]`
+    /// **Mask:** 1=Memory, 2=Stack, 4=Execution.
+    HavocScope,
+
     // Elektra Features (Circuitry)
     /// **[Elektra]** Creates a Voltage Source (Battery) on the grid.
     ///
