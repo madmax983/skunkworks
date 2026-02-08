@@ -586,3 +586,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Biological growth patterns constrained by hyperbolic geometry.
 - **Status**: experiments/hyperbolic-lichen
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### cipher-clock
+- **Parents**: experiments/enigma-machine + experiments/clockwork-chimera
+- **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
+- **Novel trait**: Cryptography as physical mechanics.
+- **Status**: experiments/cipher-clock
+- **Evaluation**: FAILS (Dependency Hell: Bevy/Glam conflict).
+
+### synaptic-trace
+- **Parents**: experiments/trace-fold + experiments/biomimetic-synth
+- **Concept**: Stack trace visualized as a spiking neural network. Functions are neurons, calls are synapses.
+- **Novel trait**: Execution as Cognition. The program's run structure forms a transient brain.
+- **Status**: experiments/synaptic-trace
+- **Evaluation**: WIP.
