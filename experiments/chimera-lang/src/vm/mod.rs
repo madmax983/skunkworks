@@ -394,7 +394,7 @@ pub struct ChimeraVM {
     pub entropy_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub signal_grid: Vec<Vec<u8>>,
-    pub execution_trail: Vec<Vec<u8>>,
+    pub execution_trail: Vec<u8>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -464,7 +464,7 @@ impl ChimeraVM {
         let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
-        let execution_trail = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        let execution_trail = vec![0; GRID_SIZE * GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -950,7 +950,7 @@ impl ChimeraVM {
                 self.output.push(format!("REALITY DECAY at {},{}", cx, cy));
                 // Simulate Glitch(1)
                 self.stack.push(Value::Int(1)); // Severity 1
-                if let Some(_) = nova::exec_nova_op(self, OpCode::Glitch, &[]) {
+                if nova::exec_nova_op(self, OpCode::Glitch, &[]).is_some() {
                     // Jump occurred (unlikely for Glitch but possible if we extended it)
                 }
             }
@@ -1499,11 +1499,9 @@ impl ChimeraVM {
         self.energy -= 1;
 
         // Decay execution trail
-        for row in self.execution_trail.iter_mut() {
-            for val in row.iter_mut() {
-                if *val > 0 {
-                    *val = val.saturating_sub(5);
-                }
+        for val in self.execution_trail.iter_mut() {
+            if *val > 0 {
+                *val = val.saturating_sub(5);
             }
         }
 
@@ -1694,7 +1692,7 @@ impl ChimeraVM {
         // Mark trail
         let (cy, cx) = self.context_loc;
         if cy < GRID_SIZE && cx < GRID_SIZE {
-            self.execution_trail[cy][cx] = 255;
+            self.execution_trail[cy * GRID_SIZE + cx] = 255;
         }
 
         if self.recursion_depth > MAX_RECURSION_DEPTH {
