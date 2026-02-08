@@ -1967,9 +1967,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Emit | OpCode::Smell | OpCode::Track => {
             super::nova_scent::exec_scent_op(vm, op, args)
         }
-        OpCode::Conceive | OpCode::Propagate | OpCode::Forget | OpCode::Shibboleth => {
-            super::memetics::exec_memetics_op(vm, op, args)
-        }
+        OpCode::Conceive
+        | OpCode::Propagate
+        | OpCode::Forget
+        | OpCode::Shibboleth
+        | OpCode::Infect
+        | OpCode::Outbreak
+        | OpCode::Sanitize => super::memetics::exec_memetics_op(vm, op, args),
         OpCode::Meme => {
             if let Some(gene) = &vm.last_gene {
                 let gene_clone = gene.clone();

@@ -831,6 +831,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Shibboleth,
 
+    /// **[Nova]** Spawns a linguistic virus at the current location.
+    ///
+    /// **Stack:** `[ ..., mutation_rate, pattern_str, name_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Infect,
+
+    /// **[Nova]** Triggers a viral outbreak step (spread & mutate).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Outbreak,
+
+    /// **[Nova]** Clears viral infection in a radius.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Sanitize,
+
     /// **[Nova]** Randomly mutates the genome with a given probability (Linguistic Drift).
     ///
     /// **Stack:** `[ ..., probability ] -> [ ... ]`

@@ -15,6 +15,20 @@ pub struct Meme {
     pub description: String,
 }
 
+#[derive(Debug, Clone, PartialEq)]
+pub struct Virus {
+    pub name: String,
+    pub color: (u8, u8, u8), // RGB
+    pub pattern: String,     // Target text pattern (contains match)
+    pub mutation_rate: u8,   // 0-100
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct ViralState {
+    pub infection_level: u8, // 0-255
+    pub virus_id: usize,     // Index in virus_library
+}
+
 #[derive(Debug, Clone, Default)]
 pub struct MemePool {
     pub memes: Vec<Meme>,
@@ -177,6 +191,168 @@ pub fn exec_memetics_op(
             } else {
                 vm.output
                     .push("Error: Stack underflow for shibboleth".to_string());
+            }
+            None
+        }
+        OpCode::Infect => {
+            // Stack: [ ..., mutation_rate, pattern_str, name_str ]
+            if vm.stack.len() >= 3 {
+                let name_val = vm.stack.pop().unwrap();
+                let pattern_val = vm.stack.pop().unwrap();
+                let rate_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(name), Value::Str(pattern), Value::Int(rate)) =
+                    (name_val, pattern_val, rate_val)
+                {
+                    let mutation_rate = rate.clamp(0, 100) as u8;
+                    let mut rng = rand::thread_rng();
+                    let color = (
+                        rng.gen_range(50..255),
+                        rng.gen_range(50..255),
+                        rng.gen_range(50..255),
+                    );
+
+                    let virus = Virus {
+                        name: name.clone(),
+                        color,
+                        pattern: pattern.clone(),
+                        mutation_rate,
+                    };
+
+                    let virus_id = vm.virus_library.len();
+                    vm.virus_library.push(virus);
+
+                    let (cy, cx) = vm.context_loc;
+                    vm.viral_grid[cy][cx] = Some(ViralState {
+                        infection_level: 100,
+                        virus_id,
+                    });
+
+                    vm.output.push(format!(
+                        "INFECT: Released '{}' (ID {}) at {},{}",
+                        name, virus_id, cx, cy
+                    ));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for infect".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for infect".to_string());
+            }
+            None
+        }
+        OpCode::Outbreak => {
+            let size = crate::vm::GRID_SIZE;
+            let mut next_viral_grid = vm.viral_grid.clone();
+            let mut spread_count = 0;
+            let mut mutation_count = 0;
+
+            for y in 0..size {
+                for x in 0..size {
+                    if let Some(state) = vm.viral_grid[y][x] {
+                        if state.virus_id >= vm.virus_library.len() {
+                            continue;
+                        }
+                        let virus = &vm.virus_library[state.virus_id];
+
+                        // 1. Spread to neighbors
+                        // Only spread if infection level is high enough (>20)
+                        if state.infection_level > 20 {
+                            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                            for (dy, dx) in neighbors {
+                                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                    // Check if neighbor matches pattern
+                                    let content = match &vm.grid[ny][nx] {
+                                        Value::Str(s) => s.clone(),
+                                        Value::Int(n) => n.to_string(),
+                                        _ => String::new(),
+                                    };
+
+                                    if content.contains(&virus.pattern) {
+                                        // Spread!
+                                        if next_viral_grid[ny][nx].is_none() {
+                                            next_viral_grid[ny][nx] = Some(ViralState {
+                                                infection_level: 50, // Initial load
+                                                virus_id: state.virus_id,
+                                            });
+                                            spread_count += 1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // 2. Mutate host cell
+                        // Only if infection level is high (>80)
+                        if state.infection_level > 80 {
+                            let mut rng = rand::thread_rng();
+                            if rng.gen_range(0..100) < virus.mutation_rate {
+                                // Scramble the string
+                                if let Value::Str(s) = &mut vm.grid[y][x] {
+                                    if !s.is_empty() {
+                                        // Simple mutation: bitflip a char
+                                        let idx = rng.gen_range(0..s.len());
+                                        // Rust strings are utf8, modifying in place is hard.
+                                        // Just replace with random char or "GLITCH"
+                                        *s = format!("GLITCH_{}", rng.gen_range(0..999));
+                                        mutation_count += 1;
+                                    }
+                                }
+                            }
+                        }
+
+                        // 3. Decay/Growth
+                        // If cell matches pattern, infection grows. Else decays.
+                        let content = match &vm.grid[y][x] {
+                            Value::Str(s) => s.clone(),
+                            Value::Int(n) => n.to_string(),
+                            _ => String::new(),
+                        };
+
+                        if let Some(new_state) = &mut next_viral_grid[y][x] {
+                            if content.contains(&virus.pattern) {
+                                new_state.infection_level = new_state.infection_level.saturating_add(10);
+                            } else {
+                                new_state.infection_level = new_state.infection_level.saturating_sub(5);
+                            }
+
+                            if new_state.infection_level == 0 {
+                                next_viral_grid[y][x] = None;
+                            }
+                        }
+                    }
+                }
+            }
+
+            vm.viral_grid = next_viral_grid;
+            if spread_count > 0 || mutation_count > 0 {
+                vm.output.push(format!(
+                    "OUTBREAK: Spread to {} cells, mutated {} items",
+                    spread_count, mutation_count
+                ));
+            }
+            None
+        }
+        OpCode::Sanitize => {
+            // Stack: [ ..., radius ]
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(r) = val {
+                    let (cy, cx) = vm.context_loc;
+                    let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+                    let count = coords.len();
+                    for (tx, ty) in coords {
+                        vm.viral_grid[ty][tx] = None;
+                    }
+                    vm.energy = vm.energy.saturating_sub(count as i64);
+                    vm.output.push(format!("SANITIZE: Cleared {} cells", count));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for sanitize".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for sanitize".to_string());
             }
             None
         }
