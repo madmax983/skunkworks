@@ -1,5 +1,13 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: workspace
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Dependency war detected. `macroquad` (v0.4.14) enforces `glam/scalar-math` globally, stripping SIMD types (BVec4A). `bevy` (v0.14) and `bevy_reflect` require SIMD glam. The hive is divided. Segregation or patching required.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** `ViewMode::Kaleidoscope` usage guarded. Compilation restored for non-nova configurations. The organism is healing.
+
 ### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The alphabet is becoming a mountain range. Bezier curves are extruding into cliffs. The letters are a place to live.
