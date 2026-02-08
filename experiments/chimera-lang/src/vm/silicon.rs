@@ -1,9 +1,86 @@
 #![cfg(feature = "silicon")]
+//! # The Silicon System 🔌
+//!
+//! The `Silicon` module adds **Circuitry** and **Digital Logic** to the grid.
+//!
+//! It implements a modified **Wireworld** cellular automaton, allowing the construction of complex logic gates,
+//! memory, and signal processing on the Petri Dish.
+//!
+//! ## Wireworld Rules
+//!
+//! 1.  **Empty (0)** -> Remains Empty.
+//! 2.  **Electron Head (2)** -> Becomes **Electron Tail (3)**.
+//! 3.  **Electron Tail (3)** -> Becomes **Conductor (1)**.
+//! 4.  **Conductor (1)** -> Becomes **Electron Head (2)** if exactly **1 or 2** neighbors are Electron Heads.
+//!
+//! ## Components
+//!
+//! - **Emitter**: A clock source. `EMIT:{freq}:{phase}`. pulses every `freq` ticks.
+//! - **Receiver**: An interrupt trigger. `RECV:{strand_idx}`. jumps to `strand_idx` when powered.
+//! - **Latch**: A 1-bit memory cell. `LATCH:{state}`.
+//!     - **Clock Input**: South neighbor.
+//!     - **Data Input**: North neighbor.
+//!     - Updates state when Clock is powered.
+//! - **Logic Gates**: `G:{type}:{dir}`.
+//!     - AND, OR, XOR, NAND, NOT.
+//!     - Inputs are adjacent cells (excluding output direction).
+//!     - Output is written to the cell in `dir`.
+//!
+//! ## Example: A Blinker
+//!
+//! To make a wire blink, you need a loop of length 3+ or an Emitter.
+//!
+//! ```ignore
+//! // Create a wire loop
+//! wire(5, 5)
+//! wire(5, 6)
+//! wire(5, 7)
+//! wire(6, 7)
+//! wire(6, 5)
+//! pulse(5, 5) // Inject electron
+//! ```
+
 use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
 /// Executes Silicon OpCodes (Wireworld and Circuits).
+///
+/// Handles the construction and manual manipulation of circuit components.
+///
+/// # Supported Enzymes
+///
+/// - `Conduct`: Manually trigger a simulation step (if auto-mode is off).
+/// - `Wire`: Place a conductor (1).
+/// - `Pulse`: Place an electron head (2).
+/// - `Silicon`: Toggle automatic circuit simulation.
+/// - `Construct`: Build logic gates.
+/// - `PinIn`/`PinOut`: Create I/O pins for stack interactions.
+///
+/// # Examples
+///
+/// ```rust
+/// use chimera_lang::prelude::*;
+///
+/// // Create a simple wire segment at (0,0)
+/// // [ Push(0), Push(0), Wire ] -> Grid[0][0] = 1
+///
+/// let genes = vec![
+///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+///     Gene { op: OpCode::Wire, args: vec![] },
+/// ];
+///
+/// let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+/// let mut vm = ChimeraVM::new(dna);
+///
+/// // Execute 3 instructions
+/// for _ in 0..3 {
+///     vm.step();
+/// }
+///
+/// assert_eq!(vm.grid[0][0], Value::Int(1));
+/// ```
 pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Conduct => {
