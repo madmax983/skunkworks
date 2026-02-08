@@ -511,6 +511,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., success ]`
     #[cfg(feature = "nova")]
     Dream,
+    /// **[Nova]** Runs multi-generational evolution to optimize a strand.
+    ///
+    /// **Stack:** `[ ..., generations, fitness_idx, subject_idx ] -> [ ..., score ]`
+    #[cfg(feature = "nova")]
+    Genesis,
     /// **[Nova]** Calculates direction towards highest chemical concentration.
     ///
     /// **Stack:** `[ ..., channel ] -> [ ..., dy, dx ]`

@@ -1263,6 +1263,48 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// This function acts as the central dispatcher for all advanced features:
 /// Biology, Physics, Metaphysics, Market, and more.
 ///
+#[cfg(feature = "nova")]
+fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: generations, fitness_idx, subject_idx (bottom)
+    if vm.stack.len() >= 3 {
+        let gen_val = vm.stack.pop().unwrap();
+        let fit_val = vm.stack.pop().unwrap();
+        let sub_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(s_idx), Value::Int(f_idx), Value::Int(gen)) = (sub_val, fit_val, gen_val) {
+            let idx = s_idx as usize;
+            let fit_idx = f_idx as usize;
+            let generations = gen as usize;
+
+            if idx < vm.dna.helix.strands.len() && fit_idx < vm.dna.helix.strands.len() && generations > 0 {
+                let (success, score, traces, best_strand) = crate::vm::genesis::evolve(vm, idx, fit_idx, generations);
+
+                vm.genesis_traces = traces;
+
+                if success {
+                    if let Some(strand) = best_strand {
+                        vm.dna.helix.strands[idx] = strand;
+                        vm.output.push(format!("GENESIS: Evolution successful. Score: {}", score));
+                    }
+                } else {
+                    vm.output.push("GENESIS: Evolution failed to improve.".to_string());
+                }
+
+                vm.stack.push(Value::Int(score));
+                // High energy cost
+                vm.energy = vm.energy.saturating_sub((generations * 50) as i64);
+            } else {
+                vm.output.push("Error: Invalid args for genesis".to_string());
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for genesis".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for genesis".to_string());
+    }
+    None
+}
+
 /// # Returns
 ///
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
@@ -3675,6 +3717,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Genesis => exec_genesis(vm),
         #[cfg(feature = "nova")]
         OpCode::Chemotaxis => {
             if let Some(val) = vm.stack.pop() {

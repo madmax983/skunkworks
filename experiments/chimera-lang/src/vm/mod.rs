@@ -54,6 +54,7 @@ pub mod blackbox;
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
+pub mod genesis;
 #[cfg(feature = "git")]
 pub mod git;
 #[cfg(feature = "nova")]
@@ -107,6 +108,9 @@ pub mod nova_relativity;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_retina_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod genesis_test;
 #[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
@@ -385,6 +389,7 @@ pub struct ChimeraVM {
     pub execution_trail: Vec<Vec<u8>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
+    pub genesis_traces: Vec<genesis::GenesisTrace>,
     pub sandbox_root: std::path::PathBuf,
     pub tick_counter: u64,
     #[cfg(feature = "nova")]
@@ -581,6 +586,7 @@ impl ChimeraVM {
             execution_trail,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
+            genesis_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
             tick_counter: 0,
             #[cfg(feature = "nova")]
@@ -2033,7 +2039,8 @@ impl ChimeraVM {
             | OpCode::Align
             | OpCode::Harmonize
             | OpCode::Choir
-            | OpCode::Pray => nova::exec_nova_op(self, op, args),
+            | OpCode::Pray
+            | OpCode::Genesis => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
@@ -2816,23 +2823,31 @@ impl ChimeraVM {
     }
 
     pub fn mutate(&mut self) {
+        let helix_len = self.dna.helix.strands.len();
+        if helix_len == 0 {
+            return;
+        }
+        let mut rng = rand::thread_rng();
+        let strand_idx = rng.gen_range(0..helix_len);
+        self.mutate_strand(strand_idx);
+    }
+
+    pub fn mutate_strand(&mut self, strand_idx: usize) {
         #[cfg(feature = "nova")]
         if self.phase == nova::Phase::Crystalline {
             return;
         }
 
-        let mut rng = rand::thread_rng();
-        let helix_len = self.dna.helix.strands.len();
-        if helix_len == 0 {
+        if strand_idx >= self.dna.helix.strands.len() {
             return;
         }
 
-        let strand_idx = rng.gen_range(0..helix_len);
         let gene_count = self.dna.helix.strands[strand_idx].genes.len();
         if gene_count == 0 {
             return;
         }
 
+        let mut rng = rand::thread_rng();
         let gene_idx = rng.gen_range(0..gene_count);
 
         // 50% chance to change name, 50% to change arg

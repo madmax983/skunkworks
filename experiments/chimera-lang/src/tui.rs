@@ -61,6 +61,8 @@ pub(crate) enum ViewMode {
     Void,
     #[cfg(feature = "nova")]
     Signals,
+    #[cfg(feature = "nova")]
+    Genesis,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -108,6 +110,8 @@ pub(crate) struct AppState {
     pub(crate) kaleidoscope_hue_idx: usize,
     #[cfg(feature = "nova")]
     pub(crate) kaleidoscope_light_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) genesis_generations: usize,
 }
 
 impl AppState {
@@ -148,6 +152,8 @@ impl AppState {
             kaleidoscope_hue_idx: 0,
             #[cfg(feature = "nova")]
             kaleidoscope_light_idx: 1, // Normal
+            #[cfg(feature = "nova")]
+            genesis_generations: 50,
         }
     }
 }
@@ -318,6 +324,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Signals = app_state.view_mode {
                 render_signals(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Genesis = app_state.view_mode {
+                render_genesis(f, vm, app_state);
                 return;
             }
 
@@ -554,6 +566,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Genesis => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -666,6 +683,10 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Void => ViewMode::Signals,
                             #[cfg(feature = "nova")]
+                            ViewMode::Signals => ViewMode::Genesis,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Genesis => ViewMode::Heatmap,
+                            #[cfg(not(feature = "nova"))]
                             ViewMode::Signals => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
@@ -701,7 +722,35 @@ where
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
-                    KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
+                    KeyCode::Char('s') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                             // Step Piet (handled in the other 's' block below, but we need to merge logic)
+                             // Since match arms are checked in order, if we keep this one first, it shadows the other.
+                             // We should move the logic here or combine them.
+                        }
+                        // Default 's' behavior: Switch to Schematic
+                        // But wait, if we are in Kaleidoscope, we want Piet step, not Schematic switch.
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                            // Fallthrough to the Piet handler? No, match arms are exclusive.
+                            // We must implement the check here.
+                            if vm.piet_state.is_none() {
+                                vm.piet_state = Some(crate::vm::piet::init_piet(vm));
+                            }
+                            if let Some(mut state) = vm.piet_state.take() {
+                                crate::vm::piet::step_piet_once(vm, &mut state);
+                                vm.piet_state = Some(state);
+                            }
+                        } else {
+                            app_state.view_mode = ViewMode::Schematic;
+                        }
+
+                        #[cfg(not(feature = "nova"))]
+                        {
+                            app_state.view_mode = ViewMode::Schematic;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('p') => app_state.view_mode = ViewMode::PianoRoll,
                     #[cfg(feature = "nova")]
@@ -783,6 +832,30 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('G') => {
+                        if let ViewMode::Genesis = app_state.view_mode {
+                            // Run Genesis
+                            // Stack: [ generations, fitness_idx, subject_idx ]
+                            // We use parent_a as subject, parent_b as fitness
+                            let sub_idx = app_state.lab_parent_a;
+                            let fit_idx = app_state.lab_parent_b;
+                            let gens = app_state.genesis_generations;
+
+                            let op = crate::opcode::OpCode::Genesis;
+
+                            // Push args to stack manually as execute_gene_inner pops them for Genesis?
+                            // Wait, exec_genesis pops from stack.
+                            // execute_gene doesn't push args to stack automatically.
+                            // I should push them.
+                            vm.stack.push(crate::vm::Value::Int(sub_idx as i64));
+                            vm.stack.push(crate::vm::Value::Int(fit_idx as i64));
+                            vm.stack.push(crate::vm::Value::Int(gens as i64));
+
+                            vm.execute_gene_inner(op, &[]);
+                            app_state.status_msg = format!("Genesis Run: {} gens", gens);
+                        }
+                    }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
                         #[cfg(feature = "nova")]
@@ -831,7 +904,7 @@ where
                         #[cfg(not(feature = "nova"))]
                         vm.step();
                     }
-                    #[cfg(feature = "nova")]
+                    #[cfg(all(feature = "nova", not(feature = "silicon")))]
                     KeyCode::Char('s') => {
                         if let ViewMode::Kaleidoscope = app_state.view_mode {
                             // Step Piet
@@ -917,6 +990,12 @@ where
                         ViewMode::Signals => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Genesis => {
+                            if app_state.genesis_generations > 10 {
+                                app_state.genesis_generations -= 10;
                             }
                         }
                         ViewMode::Grid => {
@@ -1159,8 +1238,14 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Genesis => {
+                            app_state.genesis_generations += 10;
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
+                        #[cfg(feature = "nova")]
+                        ViewMode::Genesis => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 < 15 {
@@ -1295,6 +1380,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Genesis => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1500,6 +1587,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Signals => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Genesis => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1891,6 +1982,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Void => "VOID (ENTROPY)",
         #[cfg(feature = "nova")]
         ViewMode::Signals => "SIGNALS & TRAILS",
+        #[cfg(feature = "nova")]
+        ViewMode::Genesis => "GENESIS ENGINE",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -3949,4 +4042,96 @@ fn render_schematic(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Schematic Info"),
     );
     f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_genesis(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Length(5), // Controls & Stats
+                Constraint::Percentage(50), // Genomes
+                Constraint::Percentage(50), // Graph
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
+
+    // Top: Controls
+    let controls = vec![
+        Line::from("GENESIS ENGINE - Evolution Chamber"),
+        Line::from(format!("Generations per Run: {} (Arrow keys to adjust)", app_state.genesis_generations)),
+        Line::from(format!("Subject: Strand {} | Fitness: Strand {}", app_state.lab_parent_a, app_state.lab_parent_b)),
+        Line::from("Press 'G' to start Evolution Run."),
+    ];
+    let control_widget = Paragraph::new(controls).block(
+        Block::default().borders(Borders::ALL).title("Controls")
+    );
+    f.render_widget(control_widget, chunks[0]);
+
+    // Genomes
+    let genome_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Subject
+    let s_idx = app_state.lab_parent_a;
+    let mut s_lines = Vec::new();
+    if s_idx < vm.dna.helix.strands.len() {
+        for gene in &vm.dna.helix.strands[s_idx].genes {
+            s_lines.push(ListItem::new(format!("{}", gene.op)));
+        }
+    } else {
+        s_lines.push(ListItem::new("Invalid Strand"));
+    }
+    let s_list = List::new(s_lines).block(
+        Block::default().borders(Borders::ALL).title(format!("Subject (Strand {})", s_idx))
+    );
+    f.render_widget(s_list, genome_chunks[0]);
+
+    // Fitness
+    let f_idx = app_state.lab_parent_b;
+    let mut f_lines = Vec::new();
+    if f_idx < vm.dna.helix.strands.len() {
+        for gene in &vm.dna.helix.strands[f_idx].genes {
+            f_lines.push(ListItem::new(format!("{}", gene.op)));
+        }
+    } else {
+        f_lines.push(ListItem::new("Invalid Strand"));
+    }
+    let f_list = List::new(f_lines).block(
+        Block::default().borders(Borders::ALL).title(format!("Fitness Function (Strand {})", f_idx))
+    );
+    f.render_widget(f_list, genome_chunks[1]);
+
+    // Graph
+    // Use sparkline for fitness history
+    let data: Vec<u64> = vm.genesis_traces.iter().map(|t| t.score.max(0) as u64).collect();
+
+    let graph_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(chunks[2]);
+
+    let sparkline = ratatui::widgets::Sparkline::default()
+        .block(Block::default().borders(Borders::ALL).title(format!("Fitness History ({} gens)", data.len())))
+        .data(&data)
+        .style(Style::default().fg(Color::Green));
+    f.render_widget(sparkline, graph_chunks[0]);
+
+    let mut log_items = Vec::new();
+    for trace in vm.genesis_traces.iter().rev().take(10) {
+        let style = if trace.accepted {
+            Style::default().fg(Color::Green)
+        } else {
+            Style::default().fg(Color::DarkGray)
+        };
+        log_items.push(ListItem::new(format!("Gen {}: {} (Score: {})", trace.generation, trace.mutation_desc, trace.score)).style(style));
+    }
+    let log_list = List::new(log_items).block(
+        Block::default().borders(Borders::ALL).title("Evolution Log")
+    );
+    f.render_widget(log_list, graph_chunks[1]);
 }
