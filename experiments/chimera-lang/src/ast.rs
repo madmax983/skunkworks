@@ -28,6 +28,7 @@ pub struct Gene {
 pub enum JunctionType {
     Any,
     All,
+    Dish,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -124,6 +125,7 @@ impl Nucleotide {
                 let j_type = match type_pair.as_str() {
                     "any" => JunctionType::Any,
                     "all" => JunctionType::All,
+                    "dish" => JunctionType::Dish,
                     _ => return Err(format!("Unknown junction type: {}", type_pair.as_str())),
                 };
                 let args_pair = inner.next().ok_or("Expected junction args")?;
