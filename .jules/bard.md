@@ -16,3 +16,7 @@
 ## 2024-05-23 - Hyperbolic to Euclidean Conversion
 **Confusion:** It's easy to mistake hyperbolic radius $R$ for Euclidean radius $r$ when visualizing.
 **Clarification:** In the Poincaré disk model, the conversion is $r = \tanh(R/2)$, not $\tanh(R)$. Using the wrong formula distorts the tiling near the boundary.
+
+## 2026-02-08 - Izhikevich Random Generation
+**Confusion:** The `Izhikevich::random` method seemed to return arbitrary parameters, leading to unpredictable simulation outcomes.
+**Clarification:** It uses hardcoded probabilities (60% Regular Spiking, 20% Fast Spiking, 20% Chattering) to mimic cortical distribution. Documenting these probabilities is critical for reproducibility.
