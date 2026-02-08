@@ -69,6 +69,7 @@ pub mod dream;
 pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
+pub mod havoc;
 #[cfg(feature = "nova")]
 pub mod ipc;
 #[cfg(feature = "nova")]
@@ -473,6 +474,7 @@ pub struct ChimeraVM {
     pub virus_library: Vec<memetics::Virus>,
     #[cfg(feature = "nova")]
     pub arena: Option<nova_arena::ArenaState>,
+    pub havoc: havoc::HavocEngine,
 }
 
 impl ChimeraVM {
@@ -707,6 +709,7 @@ impl ChimeraVM {
             virus_library,
             #[cfg(feature = "nova")]
             arena: Some(nova_arena::ArenaState::new()),
+            havoc: havoc::HavocEngine::new(),
         }
     }
 
@@ -1580,6 +1583,12 @@ impl ChimeraVM {
             elektra::update_circuit(self);
         }
 
+        if !time_frozen {
+            let mut havoc = std::mem::take(&mut self.havoc);
+            havoc.tick(self);
+            self.havoc = havoc;
+        }
+
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
@@ -1885,6 +1894,26 @@ impl ChimeraVM {
             OpCode::Virus => self.exec_grid_op(op),
             OpCode::JumpS | OpCode::BrzS => self.exec_flow_op(op, args),
             OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => self.exec_stack_op(op, args),
+
+            OpCode::HavocRate => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.havoc.rate = (n as f64) / 100.0,
+                        _ => self.output.push("Error: HavocRate requires Int (0-100)".to_string()),
+                    }
+                }
+                None
+            }
+            OpCode::HavocScope => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.havoc.scope = n as u8,
+                        _ => self.output.push("Error: HavocScope requires Int".to_string()),
+                    }
+                }
+                None
+            }
+
             #[cfg(feature = "cortex")]
             OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
                 cortex::exec_cortex_op(self, op, args);
