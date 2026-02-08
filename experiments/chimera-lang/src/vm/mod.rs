@@ -396,6 +396,8 @@ pub struct ChimeraVM {
     pub piet_state: Option<piet::PietState>,
     #[cfg(feature = "nova")]
     pub sky: nova_astrology::Sky,
+    #[cfg(feature = "nova")]
+    pub chord_registry: HashMap<Vec<String>, usize>,
 }
 
 impl ChimeraVM {
@@ -584,6 +586,8 @@ impl ChimeraVM {
             piet_state: None,
             #[cfg(feature = "nova")]
             sky: nova_astrology::Sky::new(),
+            #[cfg(feature = "nova")]
+            chord_registry: HashMap::new(),
         }
     }
 
@@ -1084,7 +1088,10 @@ impl ChimeraVM {
                                 self.chorus_buffer.pop_front();
                             }
                             self.output.push(format!("VOID SONG: {}", n));
-                            nova::check_chorus_chords(self);
+                            if let Some(_target) = nova::check_chorus_chords(self) {
+                                // Void ignores calls, but maybe we can trigger global effect?
+                                // For now, ignore jump for Void.
+                            }
                         }
                     }
                 }
@@ -1112,6 +1119,39 @@ impl ChimeraVM {
                     organelle.halted = true;
                 }
             }
+            nova::OrganelleType::Choir => {
+                let song_len = organelle.traits.len();
+                if song_len > 0 {
+                    let idx = organelle.recursion_depth % song_len;
+                    let note = &organelle.traits[idx];
+
+                    self.chorus_buffer.push_back(note.clone());
+                    if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
+                        self.chorus_buffer.pop_front();
+                    }
+                    self.output.push(format!("CHOIR: {}", note));
+
+                    if let Some(target) = nova::check_chorus_chords(self) {
+                        // Choir triggers HOST to jump
+                        // self.ip is the HOST IP context (because we swapped)
+                        // wait, tick_organelle SWAPPED self.ip with organelle.ip.
+                        // So self.ip is ORGANELLE IP.
+                        // organelle.ip is HOST IP.
+
+                        // We want to update HOST IP.
+                        // So we update organelle.ip.
+
+                        if organelle.call_stack.len() < MAX_CALL_STACK_DEPTH {
+                             organelle.call_stack.push(organelle.ip); // Save old Host IP
+                             organelle.ip = (target, 0); // Jump Host to target
+                             self.output.push(format!("CHOIR: Triggered host jump to {}", target));
+                        }
+                    }
+
+                    organelle.recursion_depth = (organelle.recursion_depth + 1) % song_len;
+                    self.energy = self.energy.saturating_sub(1);
+                }
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1121,6 +1161,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Void
                 | nova::OrganelleType::Alchemist
                 | nova::OrganelleType::Seed
+                | nova::OrganelleType::Choir
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1964,6 +2005,8 @@ impl ChimeraVM {
             | OpCode::Gaze
             | OpCode::Starfall
             | OpCode::Align
+            | OpCode::Harmonize
+            | OpCode::Choir
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

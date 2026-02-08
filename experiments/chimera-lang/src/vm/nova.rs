@@ -121,6 +121,8 @@ pub enum OrganelleType {
     Alchemist,
     /// Grows procedurally based on L-System rules.
     Seed,
+    /// Sings a song repeatedly.
+    Choir,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -422,15 +424,32 @@ pub fn diffuse_entropy(vm: &mut ChimeraVM) {
 }
 
 #[cfg(feature = "nova")]
-pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
+pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
     let len = buffer.len();
     if len < 2 {
-        return false;
+        return None;
     }
 
     // Magic Chords (Spells)
     // Checks from end of buffer (most recent)
+
+    // Check Registry (Dynamic Chords)
+    for (chord, strand_idx) in &vm.chord_registry {
+        let clen = chord.len();
+        if len >= clen {
+            let buffer_slice = &buffer[len - clen..];
+            let chord_slice: Vec<&str> = chord.iter().map(|s| s.as_str()).collect();
+            // vm.output.push(format!("DEBUG: Checking {:?} vs {:?}", buffer_slice, chord_slice));
+            if buffer_slice == chord_slice.as_slice() {
+                if *strand_idx < vm.dna.helix.strands.len() {
+                    vm.chorus_buffer.clear();
+                    vm.output.push(format!("CHORUS: Triggered spell -> Strand {}", strand_idx));
+                    return Some(*strand_idx);
+                }
+            }
+        }
+    }
 
     // "Vitality": Mi Re Do -> Energy + 50
     if len >= 3 && buffer[len - 3..] == ["Mi", "Re", "Do"] {
@@ -438,7 +457,7 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
         vm.chorus_buffer.clear();
         vm.output
             .push("CHORUS: Vitality Chord! Energy restored.".to_string());
-        return true;
+        return None;
     }
 
     // "Genesis": Do Mi Sol -> Spawn Worker
@@ -467,7 +486,7 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
             vm.chorus_buffer.clear();
             vm.output
                 .push("CHORUS: Genesis Chord! Life created.".to_string());
-            return true;
+            return None;
         }
     }
 
@@ -482,7 +501,7 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
         vm.chorus_buffer.clear();
         vm.output
             .push("CHORUS: Apocalypse Chord! A life was taken.".to_string());
-        return true;
+        return None;
     }
 
     // "Transmute": Lead Gold -> Transmute Grid
@@ -503,10 +522,10 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> bool {
             "CHORUS: Transmute Chord! {} Lead became Gold.",
             count
         ));
-        return true;
+        return None;
     }
 
-    false
+    None
 }
 
 #[cfg(feature = "nova")]
@@ -1267,6 +1286,82 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             } else {
                 vm.output
                     .push("Error: Stack underflow for egregore_link".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Harmonize => {
+            if vm.stack.len() >= 2 {
+                let s_val = vm.stack.pop().unwrap();
+                let chord_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(s_idx), Value::Junction(_, notes)) = (s_val, chord_val) {
+                    let idx = s_idx as usize;
+                    if idx < vm.dna.helix.strands.len() {
+                        let mut chord_str = Vec::new();
+                        let mut valid = true;
+                        for note in notes {
+                            if let Value::Str(s) = note {
+                                chord_str.push(s);
+                            } else {
+                                valid = false;
+                                break;
+                            }
+                        }
+
+                        if valid && !chord_str.is_empty() {
+                            vm.chord_registry.insert(chord_str.clone(), idx);
+                            vm.output.push(format!(
+                                "HARMONIZE: Registered chord {:?} -> Strand {}",
+                                chord_str, idx
+                            ));
+                        } else {
+                            vm.output
+                                .push("HARMONIZE: Invalid chord (must be strings)".to_string());
+                        }
+                    } else {
+                        vm.output
+                            .push("HARMONIZE: Invalid strand index".to_string());
+                    }
+                } else {
+                    vm.output.push("HARMONIZE: Type mismatch".to_string());
+                }
+            } else {
+                vm.output.push("HARMONIZE: Stack underflow".to_string());
+            }
+            None
+        }
+        #[cfg(feature = "nova")]
+        OpCode::Choir => {
+            if let Some(Value::Junction(_, notes)) = vm.stack.pop() {
+                if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+                    let mut song = Vec::new();
+                    for note in notes {
+                        if let Value::Str(s) = note {
+                            song.push(s);
+                        }
+                    }
+
+                    if !song.is_empty() {
+                        let organelle = Organelle {
+                            stack: Vec::new(),
+                            ip: (0, 0),
+                            context_loc: vm.context_loc,
+                            call_stack: Vec::new(),
+                            recursion_depth: 0, // Used as note index
+                            halted: false,
+                            kind: OrganelleType::Choir,
+                            direction: (0, 0),
+                            ttl: None,
+                            name: "Seraphim".to_string(),
+                            traits: song, // Store song here
+                            genome_id: 0,
+                        };
+                        vm.organelles.push(organelle);
+                        vm.energy = vm.energy.saturating_sub(50);
+                        vm.output.push("CHOIR: Spun into existence".to_string());
+                    }
+                }
             }
             None
         }
@@ -2084,7 +2179,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.energy = vm.energy.saturating_sub(2);
                     vm.output.push(format!("SING: {}", note));
 
-                    check_chorus_chords(vm);
+                    if let Some(target) = check_chorus_chords(vm) {
+                        if vm.call_stack.len() < crate::vm::MAX_CALL_STACK_DEPTH {
+                            vm.call_stack.push(vm.ip);
+                            vm.ip = (target, 0);
+                        }
+                    }
                 } else {
                     vm.output.push("Error: Type mismatch for sing".to_string());
                 }
@@ -3626,6 +3726,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Void) => 5,
                 Some(OrganelleType::Alchemist) => 6,
                 Some(OrganelleType::Seed) => 7,
+                Some(OrganelleType::Choir) => 8,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -3643,6 +3744,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             5 => Some(OrganelleType::Void),
                             6 => Some(OrganelleType::Alchemist),
                             7 => Some(OrganelleType::Seed),
+                            8 => Some(OrganelleType::Choir),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 

@@ -246,6 +246,8 @@ mod sentry_brainfuck_test;
 mod sentry_nova_test;
 #[cfg(all(test, feature = "silicon"))]
 mod silicon_test;
+#[cfg(all(test, feature = "nova"))]
+mod song_test;
 #[cfg(test)]
 mod warden_dos_test;
 #[cfg(test)]

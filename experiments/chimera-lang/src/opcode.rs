@@ -610,6 +610,16 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., chorus_junction ]`
     #[cfg(feature = "nova")]
     Listen,
+    /// **[Nova]** Registers a chord to trigger a strand.
+    ///
+    /// **Stack:** `[ ..., chord_junction, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Harmonize,
+    /// **[Nova]** Spawns a Choir organelle that sings a song.
+    ///
+    /// **Stack:** `[ ..., song_junction ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Choir,
 
     /// **[Nova]** Pauses execution and requests input from the Spirit (User).
     ///
