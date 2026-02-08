@@ -205,6 +205,34 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/primordial-soup
 - **Evaluation**: Compiles.
 
+### git-harmonograph
+- **Parents**: experiments/git-history + experiments/harmonograph
+- **Concept**: Visualizes git history as parametric Harmonograph drawings.
+- **Novel trait**: Commit hashes determine drawing parameters (frequency, phase, damping).
+- **Status**: experiments/git-harmonograph
+- **Evaluation**: Compiles. Verified. Note: `git2` dependency present but unused in implementation.
+
+### mobius-git
+- **Parents**: experiments/mobius-strip + experiments/git-history
+- **Concept**: Visualizes version control history on a Möbius strip.
+- **Novel trait**: Mapping commit depth to longitudinal coordinate and branch offsets to latitudinal coordinate.
+- **Status**: experiments/mobius-git
+- **Evaluation**: Compiles. Verified. "Non-orientable commit graph."
+
+### git-ghost
+- **Parents**: experiments/git-history + experiments/digital-decay
+- **Concept**: Visualizes deleted git files as "ghosts" with simulated bit-rot decay.
+- **Novel trait**: CRT scanline shader + "Haunted" terminal UI.
+- **Status**: experiments/git-ghost
+- **Evaluation**: Compiles. Verified.
+
+### code-canyon
+- **Parents**: experiments/code-analysis + experiments/hydraulic-erosion
+- **Concept**: Simulates codebase evolution by mapping file sizes to terrain height and treating commits as rainfall.
+- **Novel trait**: Codebase topography shaped by "weather" (development activity).
+- **Status**: experiments/code-canyon
+- **Evaluation**: Compiles. Verified.
+
 <!-- Example:
 ### semantic-spy
 - **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)

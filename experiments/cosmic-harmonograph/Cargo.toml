@@ -1,0 +1,12 @@
+[package]
+name = "cosmic-harmonograph"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
+git2 = "0.18"
+glam = "0.24"
