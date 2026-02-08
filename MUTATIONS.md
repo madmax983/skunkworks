@@ -538,6 +538,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Gyroscopic Orientation. The world rotates as you traverse the hyperbolic manifold to maintain user-centric "Up".
 - **Status**: experiments/hyperbolic-hell
 - **Evaluation**: Compiles. Infinite descent verified.
+
 ### quipu-chimera
 - **Parents**: experiments/quipu-symphony + experiments/chimera-lang
 - **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
@@ -558,3 +559,31 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Code navigation via biomechanical limb movement.
 - **Status**: experiments/flesh-and-code
 - **Evaluation**: Compiles. Verified.
+
+### git-ghost
+- **Parents**: Genesis (The Necromancer)
+- **Concept**: TUI that visualizes deleted git files as "ghosts" with simulated bit-rot decay.
+- **Novel trait**: Necromantic Version Control. Viewing the dead code that was removed.
+- **Status**: experiments/git-ghost
+- **Evaluation**: Compiles. Verified.
+
+### mobius-git
+- **Parents**: Genesis (The Cartographer)
+- **Concept**: Git history visualization on a Möbius strip.
+- **Novel trait**: Non-orientable Time. Navigation flips orientation when traversing the strip.
+- **Status**: experiments/mobius-git
+- **Evaluation**: Compiles. Verified.
+
+### quipu-serializer
+- **Parents**: Genesis (The Archaeologist)
+- **Concept**: Serializer that converts JSON into Incan Quipu knots.
+- **Novel trait**: Physical Data Serialization. Data becomes a 3D knot structure.
+- **Status**: experiments/quipu-serializer
+- **Evaluation**: Compiles. Verified.
+
+### ghost-knots
+- **Parents**: experiments/git-ghost + experiments/quipu-serializer
+- **Concept**: Visualizes deleted files as Incan Quipu knots. The knots encode the metadata (path, deletion date) of the lost code, and they decay visually over time.
+- **Novel trait**: The "Hall of Memories" where lost code hangs as physical artifacts.
+- **Status**: experiments/ghost-knots
+- **Evaluation**: Compiles. Verified. Implemented by The Splice Surgeon.

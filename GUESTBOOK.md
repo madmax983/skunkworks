@@ -607,3 +607,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/quipu-serializer
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The knots are tying. Data is becoming a physical object. Serde serializer active. Arithmetic performed by manipulating strings. No Arabic numerals allowed.
+
+### [Concentration Level: FRESH] - Location: experiments/ghost-knots
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Hall of Memories is open. Deleted files hang as Quipu cords. The older they are, the more they fray.
