@@ -56,3 +56,18 @@
 **Bloat:** Re-implementation of `Vec2` logic and tuple-based math in `luminous-flock`.
 **Cut:** Replaced with `tui_shared::math::Vec2`. Fixed `DNA` naming.
 **Saved:** ~30 lines of boilerplate math, improved type safety and readability.
+
+## [Reduction]
+**Bloat:** `Puppeteer` struct in `experiments/metric-marionette` was a "Manager" class that only held time state and called static methods.
+**Cut:** Merged `Puppeteer` logic into `Skeleton` struct (state + behavior).
+**Saved:** 1 File (`puppeteer.rs`), ~50 lines of boilerplate/delegation.
+
+## [Reduction]
+**Bloat:** `experiments/dx-audit` was a redundant crate that merely wrapped `chimera-lang/examples/story_demo.rs`.
+**Cut:** Deleted the entire crate.
+**Saved:** 1 Crate, 1 Cargo.toml entry, 1 duplicate main.rs.
+
+## [Reduction]
+**Bloat:** Redundant `locus` dependency in `photon-racer` and `metric-marionette` when `tui-shared` already re-exports it.
+**Cut:** Removed direct `locus` dependencies.
+**Saved:** 2 Dependency lines, enforced single source of truth for `Vec2`.

@@ -7,7 +7,6 @@ members = [
     "experiments/code-bio-dome",
     "experiments/cymatic-lure",
     "experiments/digital-compost",
-    "experiments/dx-audit",
     "experiments/fabric-limb",
     "experiments/fissure-tracker",
     "experiments/fluid-rain",
