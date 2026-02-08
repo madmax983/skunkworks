@@ -93,6 +93,8 @@ pub mod prelude {
     pub use crate::vm::{ChimeraVM, Value};
 }
 
+#[cfg(all(test, feature = "nova"))]
+mod babel_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod biophysics_test;
 #[cfg(all(test, feature = "nova"))]

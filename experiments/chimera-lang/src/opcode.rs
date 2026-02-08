@@ -1613,6 +1613,44 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Pangram,
 
+    // Babel Features (Metalinguistics - Nova)
+    /// **[Babel]** Constructs a parser object on the stack.
+    ///
+    /// **Stack:** `[ ..., type_str, ...args ] -> [ ..., parser_junction ]`
+    /// Types: "Match", "Seq", "Alt", "Many", "Opt".
+    #[cfg(feature = "nova")]
+    Grammar,
+    /// **[Babel]** Parses a string using a parser object.
+    ///
+    /// **Stack:** `[ ..., parser_junction, input_string ] -> [ ..., result_ast ]`
+    #[cfg(feature = "nova")]
+    Parse,
+    /// **[Babel]** Creates a literal string matcher.
+    ///
+    /// **Stack:** `[ ..., pattern_string ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserMatch,
+    /// **[Babel]** Creates a sequence parser (P1 then P2).
+    ///
+    /// **Stack:** `[ ..., p1, p2 ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserSeq,
+    /// **[Babel]** Creates an alternative parser (P1 or P2).
+    ///
+    /// **Stack:** `[ ..., p1, p2 ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserAlt,
+    /// **[Babel]** Creates a repetition parser (0 or more).
+    ///
+    /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserMany,
+    /// **[Babel]** Creates an optional parser.
+    ///
+    /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserOpt,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///

@@ -56,6 +56,8 @@ pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 pub mod akashic;
 #[cfg(feature = "nova")]
 pub mod alchemy;
+#[cfg(feature = "nova")]
+pub mod babel;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
@@ -1943,6 +1945,18 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Define | OpCode::Undefine | OpCode::Dictionary => {
                 meta::exec_meta_op(self, op, args)
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Grammar
+            | OpCode::Parse
+            | OpCode::ParserMatch
+            | OpCode::ParserSeq
+            | OpCode::ParserAlt
+            | OpCode::ParserMany
+            | OpCode::ParserOpt => {
+                babel::exec_babel_op(self, op, args);
+                None
             }
 
             #[cfg(feature = "nova")]
