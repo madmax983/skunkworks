@@ -2,8 +2,8 @@ use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use std::fs;
 
-mod parser;
 mod ik;
+mod parser;
 
 fn main() {
     App::new()
@@ -86,11 +86,14 @@ fn setup(
 
         commands.spawn((
             Text2dBundle {
-                text: Text::from_section(token.text.clone(), TextStyle {
-                    font: font.clone(),
-                    font_size: 16.0,
-                    color,
-                }),
+                text: Text::from_section(
+                    token.text.clone(),
+                    TextStyle {
+                        font: font.clone(),
+                        font_size: 16.0,
+                        color,
+                    },
+                ),
                 transform: Transform::from_xyz(x, y, 0.0),
                 ..default()
             },
@@ -106,20 +109,31 @@ fn setup(
 
 fn spawn_creature(commands: &mut Commands, start_pos: Vec2) {
     // 1. Target
-    let target = commands.spawn((
-        TransformBundle::from_transform(Transform::from_xyz(start_pos.x, start_pos.y, 10.0)),
-        VisibilityBundle::default(), // Invisible target
-    )).id();
+    let target = commands
+        .spawn((
+            TransformBundle::from_transform(Transform::from_xyz(start_pos.x, start_pos.y, 10.0)),
+            VisibilityBundle::default(), // Invisible target
+        ))
+        .id();
 
     // 2. Root (Body)
-    let root = commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shapes::Circle { radius: 8.0, center: Vec2::ZERO }),
-            spatial: SpatialBundle::from_transform(Transform::from_xyz(start_pos.x, start_pos.y, 5.0)),
-            ..default()
-        },
-        Fill::color(Color::srgb(0.8, 0.2, 0.8)),
-    )).id();
+    let root = commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shapes::Circle {
+                    radius: 8.0,
+                    center: Vec2::ZERO,
+                }),
+                spatial: SpatialBundle::from_transform(Transform::from_xyz(
+                    start_pos.x,
+                    start_pos.y,
+                    5.0,
+                )),
+                ..default()
+            },
+            Fill::color(Color::srgb(0.8, 0.2, 0.8)),
+        ))
+        .id();
 
     // 3. Joints (Arm)
     let num_segments = 12;
@@ -131,9 +145,11 @@ fn spawn_creature(commands: &mut Commands, start_pos: Vec2) {
         // First segment attached to root
         let x_offset = if i == 0 { 0.0 } else { segment_length };
 
-        let joint = commands.spawn((
-            SpatialBundle::from_transform(Transform::from_xyz(x_offset, 0.0, 0.0)),
-        )).id();
+        let joint = commands
+            .spawn((SpatialBundle::from_transform(Transform::from_xyz(
+                x_offset, 0.0, 0.0,
+            )),))
+            .id();
 
         commands.entity(parent).add_child(joint);
         joints.push(joint);

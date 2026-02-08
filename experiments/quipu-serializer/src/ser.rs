@@ -1,7 +1,7 @@
-use serde::{ser, Serialize};
 use crate::quipu::{Cord, Quipu};
-use thiserror::Error;
+use serde::{ser, Serialize};
 use std::fmt::Display;
+use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -62,7 +62,9 @@ impl<'a> ser::Serializer for &'a mut Serializer {
 
     fn serialize_i64(self, v: i64) -> Result<Quipu, Error> {
         if v < 0 {
-            return Err(Error::Unsupported("Quipu cannot represent negative numbers".into()));
+            return Err(Error::Unsupported(
+                "Quipu cannot represent negative numbers".into(),
+            ));
         }
         self.serialize_u64(v as u64)
     }
@@ -80,7 +82,9 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     }
 
     fn serialize_u64(self, v: u64) -> Result<Quipu, Error> {
-        Ok(Quipu { cords: vec![Cord::from(v)] })
+        Ok(Quipu {
+            cords: vec![Cord::from(v)],
+        })
     }
 
     fn serialize_f32(self, _v: f32) -> Result<Quipu, Error> {
@@ -112,7 +116,9 @@ impl<'a> ser::Serializer for &'a mut Serializer {
     }
 
     fn serialize_none(self) -> Result<Quipu, Error> {
-        Ok(Quipu { cords: vec![Cord::default()] }) // Empty cord for None
+        Ok(Quipu {
+            cords: vec![Cord::default()],
+        }) // Empty cord for None
     }
 
     fn serialize_some<T>(self, value: &T) -> Result<Quipu, Error>
@@ -139,11 +145,7 @@ impl<'a> ser::Serializer for &'a mut Serializer {
         self.serialize_unit()
     }
 
-    fn serialize_newtype_struct<T>(
-        self,
-        _name: &'static str,
-        value: &T,
-    ) -> Result<Quipu, Error>
+    fn serialize_newtype_struct<T>(self, _name: &'static str, value: &T) -> Result<Quipu, Error>
     where
         T: ?Sized + Serialize,
     {

@@ -15,18 +15,16 @@ mod tests {
 
     #[test]
     fn test_locate() {
-        let genes = vec![
-            Gene {
-                op: OpCode::Locate,
-                args: vec![],
-            },
-        ];
+        let genes = vec![Gene {
+            op: OpCode::Locate,
+            args: vec![],
+        }];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.context_loc = (5, 10);
         vm.step();
 
         assert_eq!(vm.stack.pop(), Some(Value::Int(10))); // x
-        assert_eq!(vm.stack.pop(), Some(Value::Int(5)));  // y
+        assert_eq!(vm.stack.pop(), Some(Value::Int(5))); // y
     }
 
     #[test]
@@ -89,7 +87,7 @@ mod tests {
 
         // Seed grid
         vm.grid[8][8] = Value::Int(99); // Center
-        vm.grid[8][9] = Value::Int(1);  // Right 1
+        vm.grid[8][9] = Value::Int(1); // Right 1
         vm.grid[8][11] = Value::Int(2); // Right 3 (out of range 2)
 
         vm.step(); // push

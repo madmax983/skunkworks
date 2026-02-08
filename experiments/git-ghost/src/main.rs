@@ -1,5 +1,5 @@
-mod ghost;
 mod decay;
+mod ghost;
 mod ui;
 
 use anyhow::Result;

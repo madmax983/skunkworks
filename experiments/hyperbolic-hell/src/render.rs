@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use poincare_disk::{Geodesic, Mobius, Point, TilingConsts, neighbor_transform_a};
+use poincare_disk::{neighbor_transform_a, Geodesic, Mobius, Point, TilingConsts};
 use std::f64::consts::PI;
 
 pub fn to_screen(p: Point, scale: f32) -> Vec2 {
@@ -25,8 +25,12 @@ pub fn draw_hyperbolic_line(p1: Point, p2: Point, color: Color, thickness: f32, 
             let start = angle1;
             let end = angle2;
             let mut diff = end - start;
-            while diff <= -PI { diff += 2.0 * PI; }
-            while diff > PI { diff -= 2.0 * PI; }
+            while diff <= -PI {
+                diff += 2.0 * PI;
+            }
+            while diff > PI {
+                diff -= 2.0 * PI;
+            }
 
             let segments = 20;
             for i in 0..segments {
@@ -46,19 +50,23 @@ pub fn draw_hyperbolic_line(p1: Point, p2: Point, color: Color, thickness: f32, 
                 );
 
                 draw_line(
-                    to_screen(pt1, scale).x, to_screen(pt1, scale).y,
-                    to_screen(pt2, scale).x, to_screen(pt2, scale).y,
+                    to_screen(pt1, scale).x,
+                    to_screen(pt1, scale).y,
+                    to_screen(pt2, scale).x,
+                    to_screen(pt2, scale).y,
                     thickness,
-                    color
+                    color,
                 );
             }
-        },
+        }
         None => {
             draw_line(
-                to_screen(p1, scale).x, to_screen(p1, scale).y,
-                to_screen(p2, scale).x, to_screen(p2, scale).y,
+                to_screen(p1, scale).x,
+                to_screen(p1, scale).y,
+                to_screen(p2, scale).x,
+                to_screen(p2, scale).y,
                 thickness,
-                color
+                color,
             );
         }
     }
@@ -87,8 +95,12 @@ pub fn draw_tile(
     let v0 = transform.apply(Point::new(tiling.vertex_offset, 0.0));
     let size_approx = (v0 - center).norm();
 
-    if size_approx * (scale as f64) < 3.0 { return; }
-    if depth > 8 { return; }
+    if size_approx * (scale as f64) < 3.0 {
+        return;
+    }
+    if depth > 8 {
+        return;
+    }
 
     let r = ((path_hash & 0xFF) as f32) / 255.0;
     let g = (((path_hash >> 8) & 0xFF) as f32) / 255.0;
@@ -104,7 +116,11 @@ pub fn draw_tile(
     // Draw edges
     for i in 0..4 {
         let is_blocked = is_wall(path_hash, i);
-        let color = if is_blocked { RED } else { Color::new(r, g, b, 0.5) };
+        let color = if is_blocked {
+            RED
+        } else {
+            Color::new(r, g, b, 0.5)
+        };
         let thickness = if is_blocked { 4.0 } else { 1.0 };
 
         draw_hyperbolic_line(vertices[i], vertices[(i + 1) % 4], color, thickness, scale);
@@ -113,11 +129,15 @@ pub fn draw_tile(
     // Recurse
     for i in 0..4 {
         if let Some(back) = incoming_edge {
-            if i == back { continue; }
+            if i == back {
+                continue;
+            }
         }
 
         let mut new_hash = path_hash;
-        new_hash = new_hash.wrapping_mul(6364136223846793005).wrapping_add((i as u64) + 1);
+        new_hash = new_hash
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add((i as u64) + 1);
 
         let offset = neighbor_transform_a(i, tiling);
         let step = Mobius::translation(offset);

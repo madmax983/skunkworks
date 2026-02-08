@@ -71,8 +71,6 @@ pub mod nova_astrology;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
 #[cfg(feature = "nova")]
-pub mod nova_cartography;
-#[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -82,14 +80,13 @@ pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
 #[cfg(feature = "nova")]
+pub mod nova_cartography;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_orca_test;
 #[cfg(feature = "nova")]
 pub mod nova_crystal;
 #[cfg(all(feature = "nova", feature = "resonance"))]
@@ -99,9 +96,17 @@ pub mod nova_egregore;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod nova_linguistics;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_linguistics_test;
+#[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_orca_test;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
@@ -1181,9 +1186,10 @@ impl ChimeraVM {
                         // So we update organelle.ip.
 
                         if organelle.call_stack.len() < MAX_CALL_STACK_DEPTH {
-                             organelle.call_stack.push(organelle.ip); // Save old Host IP
-                             organelle.ip = (target, 0); // Jump Host to target
-                             self.output.push(format!("CHOIR: Triggered host jump to {}", target));
+                            organelle.call_stack.push(organelle.ip); // Save old Host IP
+                            organelle.ip = (target, 0); // Jump Host to target
+                            self.output
+                                .push(format!("CHOIR: Triggered host jump to {}", target));
                         }
                     }
 
@@ -1925,6 +1931,13 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::Levenshtein
+            | OpCode::Soundex
+            | OpCode::Anagram
+            | OpCode::Cipher
+            | OpCode::Pangram => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
@@ -2226,7 +2239,8 @@ impl ChimeraVM {
                     hint = " (Hint: Silicon feature. Enable 'silicon' feature?)";
                 }
 
-                self.output.push(format!("Unknown enzyme: {}{}", name, hint));
+                self.output
+                    .push(format!("Unknown enzyme: {}{}", name, hint));
                 None
             }
         }

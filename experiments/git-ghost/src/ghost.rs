@@ -48,7 +48,11 @@ pub fn scan_graveyard(repo_path: &str, limit: usize) -> Result<Vec<Ghost>> {
         for delta in diff.deltas() {
             if delta.status() == Delta::Deleted {
                 let old_file = delta.old_file();
-                let path = old_file.path().and_then(|p| p.to_str()).unwrap_or("unknown").to_string();
+                let path = old_file
+                    .path()
+                    .and_then(|p| p.to_str())
+                    .unwrap_or("unknown")
+                    .to_string();
                 let blob_id = old_file.id();
                 let size = old_file.size() as usize;
 
@@ -57,11 +61,11 @@ pub fn scan_graveyard(repo_path: &str, limit: usize) -> Result<Vec<Ghost>> {
                 // Since we iterate from HEAD backwards, the first time we see a deletion for path X,
                 // it is the most recent one.
                 if ghosts.iter().any(|g: &Ghost| g.path == path) {
-                   continue;
+                    continue;
                 }
 
-                let time = DateTime::<Utc>::from_timestamp(commit.time().seconds(), 0)
-                    .unwrap_or_default();
+                let time =
+                    DateTime::<Utc>::from_timestamp(commit.time().seconds(), 0).unwrap_or_default();
 
                 ghosts.push(Ghost {
                     path,
@@ -94,8 +98,8 @@ mod tests {
     use super::*;
     use std::fs::File;
     use std::io::Write;
-    use tempfile::Builder;
     use std::path::Path;
+    use tempfile::Builder;
 
     #[test]
     fn test_ghost_scan() -> Result<()> {
@@ -115,7 +119,8 @@ mod tests {
         let oid = index.write_tree()?;
         let tree = repo.find_tree(oid)?;
         let sig = repo.signature()?;
-        let parent_commit_oid = repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])?;
+        let parent_commit_oid =
+            repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])?;
         let parent_commit = repo.find_commit(parent_commit_oid)?;
 
         // Commit 2: Delete file
@@ -124,7 +129,14 @@ mod tests {
         index.write()?;
         let oid = index.write_tree()?;
         let tree = repo.find_tree(oid)?;
-        repo.commit(Some("HEAD"), &sig, &sig, "Delete file", &tree, &[&parent_commit])?;
+        repo.commit(
+            Some("HEAD"),
+            &sig,
+            &sig,
+            "Delete file",
+            &tree,
+            &[&parent_commit],
+        )?;
 
         // Scan
         let ghosts = scan_graveyard(td.path().to_str().unwrap(), 10)?;

@@ -191,7 +191,9 @@ mod tests {
 
         let expected = 100.0 * 0.95 * 0.95;
         let tolerance = 0.0001;
-        assert!((n.current_decay - expected).abs() < tolerance,
-            "Decay should match 0.95^2 per update call");
+        assert!(
+            (n.current_decay - expected).abs() < tolerance,
+            "Decay should match 0.95^2 per update call"
+        );
     }
 }

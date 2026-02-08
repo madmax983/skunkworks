@@ -1450,6 +1450,33 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tax,
 
+    // Linguistics Features (Nova)
+    /// **[Nova]** Calculates Levenshtein edit distance between two strings.
+    ///
+    /// **Stack:** `[ ..., s1, s2 ] -> [ ..., distance ]`
+    #[cfg(feature = "nova")]
+    Levenshtein,
+    /// **[Nova]** Calculates Soundex phonetic hash.
+    ///
+    /// **Stack:** `[ ..., string ] -> [ ..., code ]`
+    #[cfg(feature = "nova")]
+    Soundex,
+    /// **[Nova]** Checks if two strings are anagrams.
+    ///
+    /// **Stack:** `[ ..., s1, s2 ] -> [ ..., is_anagram ]`
+    #[cfg(feature = "nova")]
+    Anagram,
+    /// **[Nova]** Applies Caesar cipher shift.
+    ///
+    /// **Stack:** `[ ..., shift, string ] -> [ ..., shifted_string ]`
+    #[cfg(feature = "nova")]
+    Cipher,
+    /// **[Nova]** Checks if string is a pangram.
+    ///
+    /// **Stack:** `[ ..., string ] -> [ ..., is_pangram ]`
+    #[cfg(feature = "nova")]
+    Pangram,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///

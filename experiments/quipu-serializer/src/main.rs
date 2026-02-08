@@ -4,6 +4,8 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use quipu_serializer::quipu::{Cord, Quipu};
+use quipu_serializer::ser::to_quipu;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
@@ -11,10 +13,8 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph, Wrap},
     Frame, Terminal,
 };
-use std::io;
-use quipu_serializer::quipu::{Cord, Quipu};
-use quipu_serializer::ser::to_quipu;
 use serde_json::Value;
+use std::io;
 
 enum Mode {
     Calculator,
@@ -75,67 +75,60 @@ fn main() -> Result<()> {
 
         if let Event::Key(key) = event::read()? {
             match app.mode {
-                Mode::Calculator => {
-                    match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => break,
-                        KeyCode::Tab => {
-                            app.mode = Mode::Serializer;
-                        }
-                        KeyCode::Char(c) if c.is_digit(10) => {
-                            if app.calc_focus == 0 {
-                                app.calc_input_a.push(c);
-                            } else {
-                                app.calc_input_b.push(c);
-                            }
-                        }
-                        KeyCode::Backspace => {
-                            if app.calc_focus == 0 {
-                                app.calc_input_a.pop();
-                            } else {
-                                app.calc_input_b.pop();
-                            }
-                        }
-                        KeyCode::Enter | KeyCode::Down | KeyCode::Up => {
-                            app.calc_focus = 1 - app.calc_focus;
-                        }
-                        _ => {}
+                Mode::Calculator => match key.code {
+                    KeyCode::Char('q') | KeyCode::Esc => break,
+                    KeyCode::Tab => {
+                        app.mode = Mode::Serializer;
                     }
-                }
-                Mode::Serializer => {
-                    match key.code {
-                        KeyCode::Esc => break,
-                        KeyCode::Tab => {
-                            app.mode = Mode::Calculator;
+                    KeyCode::Char(c) if c.is_digit(10) => {
+                        if app.calc_focus == 0 {
+                            app.calc_input_a.push(c);
+                        } else {
+                            app.calc_input_b.push(c);
                         }
-                        KeyCode::Char(c) => {
-                            app.ser_input.push(c);
-                            app.update_serializer();
-                        }
-                        KeyCode::Backspace => {
-                            app.ser_input.pop();
-                            app.update_serializer();
-                        }
-                        KeyCode::Up => {
-                            if app.ser_scroll > 0 {
-                                app.ser_scroll -= 1;
-                            }
-                        }
-                        KeyCode::Down => {
-                            app.ser_scroll += 1;
-                        }
-                        _ => {}
                     }
-                }
+                    KeyCode::Backspace => {
+                        if app.calc_focus == 0 {
+                            app.calc_input_a.pop();
+                        } else {
+                            app.calc_input_b.pop();
+                        }
+                    }
+                    KeyCode::Enter | KeyCode::Down | KeyCode::Up => {
+                        app.calc_focus = 1 - app.calc_focus;
+                    }
+                    _ => {}
+                },
+                Mode::Serializer => match key.code {
+                    KeyCode::Esc => break,
+                    KeyCode::Tab => {
+                        app.mode = Mode::Calculator;
+                    }
+                    KeyCode::Char(c) => {
+                        app.ser_input.push(c);
+                        app.update_serializer();
+                    }
+                    KeyCode::Backspace => {
+                        app.ser_input.pop();
+                        app.update_serializer();
+                    }
+                    KeyCode::Up => {
+                        if app.ser_scroll > 0 {
+                            app.ser_scroll -= 1;
+                        }
+                    }
+                    KeyCode::Down => {
+                        app.ser_scroll += 1;
+                    }
+                    _ => {}
+                },
             }
         }
     }
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     Ok(())
@@ -157,7 +150,11 @@ fn ui(f: &mut Frame, app: &mut App) {
     };
 
     let header = Paragraph::new(title_text)
-        .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+        .style(
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        )
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(header, chunks[0]);
 
@@ -186,39 +183,61 @@ fn render_calculator(f: &mut Frame, area: Rect, app: &App) {
     let val_a = app.calc_input_a.parse::<u64>().unwrap_or(0);
     let cord_a = Cord::from(val_a);
     let style_a = if app.calc_focus == 0 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default()
     };
 
-    let block_a = Block::default().borders(Borders::ALL).title(format!(" Input A: {} ", app.calc_input_a));
-    f.render_widget(Paragraph::new(format!("{}", cord_a)).block(block_a).style(style_a), chunks[0]);
+    let block_a = Block::default()
+        .borders(Borders::ALL)
+        .title(format!(" Input A: {} ", app.calc_input_a));
+    f.render_widget(
+        Paragraph::new(format!("{}", cord_a))
+            .block(block_a)
+            .style(style_a),
+        chunks[0],
+    );
 
     // Input B
     let val_b = app.calc_input_b.parse::<u64>().unwrap_or(0);
     let cord_b = Cord::from(val_b);
     let style_b = if app.calc_focus == 1 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default()
     };
 
-    let block_b = Block::default().borders(Borders::ALL).title(format!(" Input B: {} ", app.calc_input_b));
-    f.render_widget(Paragraph::new(format!("{}", cord_b)).block(block_b).style(style_b), chunks[1]);
+    let block_b = Block::default()
+        .borders(Borders::ALL)
+        .title(format!(" Input B: {} ", app.calc_input_b));
+    f.render_widget(
+        Paragraph::new(format!("{}", cord_b))
+            .block(block_b)
+            .style(style_b),
+        chunks[1],
+    );
 
     // Result
     let cord_sum = cord_a.clone() + cord_b.clone();
-    let block_sum = Block::default().borders(Borders::ALL).title(format!(" Sum: {} ", cord_sum.value()));
-    f.render_widget(Paragraph::new(format!("{}", cord_sum)).block(block_sum).style(Style::default().fg(Color::Green)), chunks[2]);
+    let block_sum = Block::default()
+        .borders(Borders::ALL)
+        .title(format!(" Sum: {} ", cord_sum.value()));
+    f.render_widget(
+        Paragraph::new(format!("{}", cord_sum))
+            .block(block_sum)
+            .style(Style::default().fg(Color::Green)),
+        chunks[2],
+    );
 }
 
 fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(50),
-            Constraint::Percentage(50),
-        ])
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
         .split(area);
 
     // JSON Input
@@ -231,7 +250,9 @@ fn render_serializer(f: &mut Frame, area: Rect, app: &App) {
     );
 
     // Quipu Output
-    let output_block = Block::default().borders(Borders::ALL).title(" Quipu Output ");
+    let output_block = Block::default()
+        .borders(Borders::ALL)
+        .title(" Quipu Output ");
     let text = if let Some(q) = &app.ser_output {
         format!("{}", q)
     } else {

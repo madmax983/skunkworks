@@ -14,10 +14,7 @@ use rand::Rng;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
-    widgets::{
-        canvas::Canvas,
-        Block, Borders, Paragraph,
-    },
+    widgets::{canvas::Canvas, Block, Borders, Paragraph},
     Terminal,
 };
 use std::{
@@ -112,37 +109,43 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
                         KeyCode::Up => camera.elevation += 0.1,
                         KeyCode::Down => camera.elevation -= 0.1,
                         KeyCode::Char('+') | KeyCode::Char('=') => string.tension += 5.0,
-                        KeyCode::Char('-') | KeyCode::Char('_') => string.tension = (string.tension - 5.0).max(1.0),
+                        KeyCode::Char('-') | KeyCode::Char('_') => {
+                            string.tension = (string.tension - 5.0).max(1.0)
+                        }
                         KeyCode::Char(' ') => {
                             // Pluck random node
                             let mut rng = rand::thread_rng();
                             let idx = rng.gen_range(1..string.nodes.len() - 1);
-                            let force = Vec3::new(0.0, rng.gen_range(-10.0..10.0), rng.gen_range(-10.0..10.0));
+                            let force = Vec3::new(
+                                0.0,
+                                rng.gen_range(-10.0..10.0),
+                                rng.gen_range(-10.0..10.0),
+                            );
                             string.pluck(idx, force);
                         }
                         KeyCode::Char('r') => {
-                             // Reset
-                             let start = Vec3::new(-20.0, 0.0, 0.0);
-                             let end = Vec3::new(20.0, 0.0, 0.0);
-                             let tension = string.tension;
-                             let damping = string.damping;
-                             string = CosmicString::new(start, end, 40, tension, damping);
+                            // Reset
+                            let start = Vec3::new(-20.0, 0.0, 0.0);
+                            let end = Vec3::new(20.0, 0.0, 0.0);
+                            let tension = string.tension;
+                            let damping = string.damping;
+                            string = CosmicString::new(start, end, 40, tension, damping);
                         }
                         KeyCode::Char('1') => {
                             // Fundamental mode pluck
-                             for i in 1..string.nodes.len()-1 {
-                                 let x = i as f32 / string.nodes.len() as f32;
-                                 let disp = (x * std::f32::consts::PI).sin() * 5.0;
-                                 string.pluck(i, Vec3::new(0.0, disp, 0.0));
-                             }
+                            for i in 1..string.nodes.len() - 1 {
+                                let x = i as f32 / string.nodes.len() as f32;
+                                let disp = (x * std::f32::consts::PI).sin() * 5.0;
+                                string.pluck(i, Vec3::new(0.0, disp, 0.0));
+                            }
                         }
                         KeyCode::Char('2') => {
                             // 2nd Harmonic
-                             for i in 1..string.nodes.len()-1 {
-                                 let x = i as f32 / string.nodes.len() as f32;
-                                 let disp = (x * 2.0 * std::f32::consts::PI).sin() * 5.0;
-                                 string.pluck(i, Vec3::new(0.0, disp, 0.0));
-                             }
+                            for i in 1..string.nodes.len() - 1 {
+                                let x = i as f32 / string.nodes.len() as f32;
+                                let disp = (x * 2.0 * std::f32::consts::PI).sin() * 5.0;
+                                string.pluck(i, Vec3::new(0.0, disp, 0.0));
+                            }
                         }
                         _ => {}
                     }

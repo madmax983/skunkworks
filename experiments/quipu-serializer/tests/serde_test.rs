@@ -1,5 +1,5 @@
-use serde::Serialize;
 use quipu_serializer::ser::to_quipu;
+use serde::Serialize;
 
 #[derive(Serialize)]
 struct Trade {
@@ -9,7 +9,10 @@ struct Trade {
 
 #[test]
 fn test_struct_serialization() {
-    let t = Trade { amount: 12, price: 5 };
+    let t = Trade {
+        amount: 12,
+        price: 5,
+    };
     let q = to_quipu(&t).unwrap();
 
     assert_eq!(q.cords.len(), 2);
@@ -28,8 +31,14 @@ fn test_nested_serialization() {
 
     let p = Portfolio {
         trades: vec![
-            Trade { amount: 10, price: 2 },
-            Trade { amount: 20, price: 3 },
+            Trade {
+                amount: 10,
+                price: 2,
+            },
+            Trade {
+                amount: 20,
+                price: 3,
+            },
         ],
     };
 

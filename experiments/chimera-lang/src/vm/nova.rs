@@ -444,7 +444,8 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
             if buffer_slice == chord_slice.as_slice() {
                 if *strand_idx < vm.dna.helix.strands.len() {
                     vm.chorus_buffer.clear();
-                    vm.output.push(format!("CHORUS: Triggered spell -> Strand {}", strand_idx));
+                    vm.output
+                        .push(format!("CHORUS: Triggered spell -> Strand {}", strand_idx));
                     return Some(*strand_idx);
                 }
             }
@@ -1271,6 +1272,16 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 #[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
+        #[cfg(feature = "nova")]
+        OpCode::Levenshtein => super::nova_linguistics::exec_levenshtein(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Soundex => super::nova_linguistics::exec_soundex(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Anagram => super::nova_linguistics::exec_anagram(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Cipher => super::nova_linguistics::exec_cipher(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Pangram => super::nova_linguistics::exec_pangram(vm),
         #[cfg(feature = "nova")]
         OpCode::Resonate => super::nova_resonance_war::exec_resonate(vm),
         #[cfg(feature = "nova")]

@@ -108,7 +108,11 @@ pub fn tokenize(code: &str) -> Vec<Token> {
                     break;
                 }
             }
-            let kind = if is_keyword(&text) { TokenType::Keyword } else { TokenType::Ident };
+            let kind = if is_keyword(&text) {
+                TokenType::Keyword
+            } else {
+                TokenType::Ident
+            };
             tokens.push(Token {
                 text,
                 kind,
@@ -142,7 +146,8 @@ fn is_ident_char(c: char) -> bool {
 
 fn is_keyword(s: &str) -> bool {
     match s {
-        "fn" | "let" | "mut" | "if" | "else" | "match" | "while" | "for" | "loop" | "return" | "struct" | "enum" | "impl" | "use" | "mod" | "pub" | "crate" => true,
+        "fn" | "let" | "mut" | "if" | "else" | "match" | "while" | "for" | "loop" | "return"
+        | "struct" | "enum" | "impl" | "use" | "mod" | "pub" | "crate" => true,
         _ => false,
     }
 }

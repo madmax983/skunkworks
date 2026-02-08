@@ -66,11 +66,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             let val = &vm.grid[y][x];
             let c = match val {
                 Value::Str(s) if s.len() == 1 => s.chars().next().unwrap(),
-                Value::Str(s) => {
-                     match s.as_str() {
-                        "*" | ">" | "<" | "^" | "v" | "+" => s.chars().next().unwrap(),
-                        _ => '\0'
-                    }
+                Value::Str(s) => match s.as_str() {
+                    "*" | ">" | "<" | "^" | "v" | "+" => s.chars().next().unwrap(),
+                    _ => '\0',
                 },
                 _ => '\0',
             };
@@ -87,9 +85,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '*' => {
                     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                     for (dy, dx) in neighbors {
-                        if let Some((ny, nx)) =
-                            vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                        {
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                             next_signals[ny][nx] = next_signals[ny][nx].saturating_add(1);
                         }
                     }
@@ -101,9 +97,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '+' => {
                     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                     for (dy, dx) in neighbors {
-                        if let Some((ny, nx)) =
-                            vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                        {
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                             next_signals[ny][nx] = next_signals[ny][nx].saturating_add(signal);
                         }
                     }
@@ -115,13 +109,23 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'A' | 'a' => binary_op(vm, y, x, &mut grid_writes, |a, b| a.wrapping_add(b)),
                 'B' | 'b' => binary_op(vm, y, x, &mut grid_writes, |a, b| a.wrapping_sub(b)),
                 'M' | 'm' => binary_op(vm, y, x, &mut grid_writes, |a, b| a.wrapping_mul(b)),
-                'D' | 'd' => binary_op(vm, y, x, &mut grid_writes, |a, b| if b != 0 { a.wrapping_div(b) } else { 0 }),
+                'D' | 'd' => binary_op(vm, y, x, &mut grid_writes, |a, b| {
+                    if b != 0 {
+                        a.wrapping_div(b)
+                    } else {
+                        0
+                    }
+                }),
                 'I' | 'i' => {
                     if let Some(n) = peek(vm, y, x, -1, 0) {
                         let max = peek(vm, y, x, 0, 1).unwrap_or(35);
                         let res = if n >= max { 0 } else { n + 1 };
-                         if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                            grid_writes.push(GridWrite { y: sy, x: sx, val: Value::Str(val_to_char(res).to_string()) });
+                        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                            grid_writes.push(GridWrite {
+                                y: sy,
+                                x: sx,
+                                val: Value::Str(val_to_char(res).to_string()),
+                            });
                         }
                     }
                 }
@@ -133,7 +137,11 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     let range_max = min.max(max);
                     let res = rng.gen_range(range_min..=range_max);
                     if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                        grid_writes.push(GridWrite { y: sy, x: sx, val: Value::Str(val_to_char(res).to_string()) });
+                        grid_writes.push(GridWrite {
+                            y: sy,
+                            x: sx,
+                            val: Value::Str(val_to_char(res).to_string()),
+                        });
                     }
                 }
                 'C' | 'c' => {
@@ -141,33 +149,53 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     let mod_val = peek(vm, y, x, -1, 0).unwrap_or(8).max(1);
                     let res = (vm.tick_counter as i64 / rate) % mod_val;
                     if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                        grid_writes.push(GridWrite { y: sy, x: sx, val: Value::Str(val_to_char(res).to_string()) });
+                        grid_writes.push(GridWrite {
+                            y: sy,
+                            x: sx,
+                            val: Value::Str(val_to_char(res).to_string()),
+                        });
                     }
                 }
                 'X' | 'x' => {
                     // Write: North (val) -> (West (x), East (y))
-                    if let (Some(val), Some(x_off), Some(y_off)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
-                        if let Some((ty, tx)) = vm.normalize_coords(y as i64 + y_off, x as i64 + x_off) {
-                             grid_writes.push(GridWrite { y: ty, x: tx, val: Value::Str(val_to_char(val).to_string()) });
+                    if let (Some(val), Some(x_off), Some(y_off)) = (
+                        peek(vm, y, x, -1, 0),
+                        peek(vm, y, x, 0, -1),
+                        peek(vm, y, x, 0, 1),
+                    ) {
+                        if let Some((ty, tx)) =
+                            vm.normalize_coords(y as i64 + y_off, x as i64 + x_off)
+                        {
+                            grid_writes.push(GridWrite {
+                                y: ty,
+                                x: tx,
+                                val: Value::Str(val_to_char(val).to_string()),
+                            });
                         }
                     }
                 }
                 'O' | 'o' => {
                     // Offset: Read (West (x), East (y)) -> South
-                    if let (Some(x_off), Some(y_off)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
+                    if let (Some(x_off), Some(y_off)) =
+                        (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1))
+                    {
                         if let Some(val) = peek(vm, y, x, y_off, x_off) {
-                             if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                                grid_writes.push(GridWrite { y: sy, x: sx, val: Value::Str(val_to_char(val).to_string()) });
+                            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                                grid_writes.push(GridWrite {
+                                    y: sy,
+                                    x: sx,
+                                    val: Value::Str(val_to_char(val).to_string()),
+                                });
                             }
                         }
                     }
                 }
                 _ => {
                     if let Value::Str(s) = val {
-                         if let Ok(op) = s.parse::<OpCode>() {
-                             if signal > 0 {
+                        if let Ok(op) = s.parse::<OpCode>() {
+                            if signal > 0 {
                                 executions.push((op, signal));
-                             }
+                            }
                         }
                     }
                 }
@@ -206,17 +234,31 @@ fn propagate_directional(
 
 #[cfg(feature = "nova")]
 fn binary_op<F>(vm: &ChimeraVM, y: usize, x: usize, grid_writes: &mut Vec<GridWrite>, op: F)
-where F: Fn(i64, i64) -> i64 {
+where
+    F: Fn(i64, i64) -> i64,
+{
     if let (Some(n), Some(e)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
         let res = op(n, e);
         if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-            grid_writes.push(GridWrite { y: sy, x: sx, val: Value::Str(val_to_char(res).to_string()) });
+            grid_writes.push(GridWrite {
+                y: sy,
+                x: sx,
+                val: Value::Str(val_to_char(res).to_string()),
+            });
         }
     }
 }
 
 #[cfg(feature = "nova")]
-fn try_move(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64, grid_writes: &mut Vec<GridWrite>, c: &str) {
+fn try_move(
+    vm: &ChimeraVM,
+    y: usize,
+    x: usize,
+    dy: i64,
+    dx: i64,
+    grid_writes: &mut Vec<GridWrite>,
+    c: &str,
+) {
     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
         let target_val = &vm.grid[ny][nx];
         // Only move if target is empty (Int(0) or Str("."))
@@ -227,8 +269,16 @@ fn try_move(vm: &ChimeraVM, y: usize, x: usize, dy: i64, dx: i64, grid_writes: &
         };
 
         if is_empty {
-            grid_writes.push(GridWrite { y, x, val: Value::Int(0) });
-            grid_writes.push(GridWrite { y: ny, x: nx, val: Value::Str(c.to_string()) });
+            grid_writes.push(GridWrite {
+                y,
+                x,
+                val: Value::Int(0),
+            });
+            grid_writes.push(GridWrite {
+                y: ny,
+                x: nx,
+                val: Value::Str(c.to_string()),
+            });
         }
     }
 }

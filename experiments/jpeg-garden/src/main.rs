@@ -1,6 +1,6 @@
 use image::{Rgba, RgbaImage};
-use macroquad::prelude::*;
 use macroquad::audio::{load_sound_from_bytes, play_sound, PlaySoundParams};
+use macroquad::prelude::*;
 
 mod dct;
 mod garden;
@@ -34,7 +34,13 @@ fn generate_test_image(w: u32, h: u32) -> RgbaImage {
 }
 
 // Simple WAV header generator
-fn generate_wav(duration_secs: f32, sample_rate: u32, freq: f32, amplitude: f32, noise_mix: f32) -> Vec<u8> {
+fn generate_wav(
+    duration_secs: f32,
+    sample_rate: u32,
+    freq: f32,
+    amplitude: f32,
+    noise_mix: f32,
+) -> Vec<u8> {
     let num_samples = (duration_secs * sample_rate as f32) as usize;
     let mut data = Vec::with_capacity(44 + num_samples * 2);
 
@@ -138,8 +144,8 @@ async fn main() {
                 // Let's just invert colors for heatmap mode for now to show "something different".
                 for i in (0..bytes.len()).step_by(4) {
                     bytes[i] = 255 - bytes[i];
-                    bytes[i+1] = 255 - bytes[i+1];
-                    bytes[i+2] = 255 - bytes[i+2];
+                    bytes[i + 1] = 255 - bytes[i + 1];
+                    bytes[i + 2] = 255 - bytes[i + 2];
                 }
             }
 
@@ -155,22 +161,28 @@ async fn main() {
 
         // Audio
         if !paused && get_time() > next_sound_time {
-             // Normalized error
-             let error_factor = (metrics.total_error / 5000000.0).clamp(0.0, 1.0);
-             // Freq goes down as rot increases (dying)
-             let freq = 400.0 - error_factor * 300.0;
-             // Noise goes up
-             let noise = error_factor * 0.9;
+            // Normalized error
+            let error_factor = (metrics.total_error / 5000000.0).clamp(0.0, 1.0);
+            // Freq goes down as rot increases (dying)
+            let freq = 400.0 - error_factor * 300.0;
+            // Noise goes up
+            let noise = error_factor * 0.9;
 
-             // Only play if there is some error or just keep the hum?
-             // Let's play a hum.
+            // Only play if there is some error or just keep the hum?
+            // Let's play a hum.
 
-             let wav_data = generate_wav(0.1, 44100, freq, 0.1, noise);
+            let wav_data = generate_wav(0.1, 44100, freq, 0.1, noise);
 
-             if let Ok(snd) = load_sound_from_bytes(&wav_data).await {
-                 play_sound(&snd, PlaySoundParams { looped: false, volume: 0.5 });
-             }
-             next_sound_time = get_time() + 0.12; // slightly overlapping
+            if let Ok(snd) = load_sound_from_bytes(&wav_data).await {
+                play_sound(
+                    &snd,
+                    PlaySoundParams {
+                        looped: false,
+                        volume: 0.5,
+                    },
+                );
+            }
+            next_sound_time = get_time() + 0.12; // slightly overlapping
         }
 
         // Draw fitting screen
@@ -187,7 +199,10 @@ async fn main() {
 
         draw_text("JPEG Garden", 10.0, 30.0, 30.0, WHITE);
         draw_text(
-            &format!("Error: {:.0} (Max: {:.0})", metrics.total_error, metrics.max_block_error),
+            &format!(
+                "Error: {:.0} (Max: {:.0})",
+                metrics.total_error, metrics.max_block_error
+            ),
             10.0,
             60.0,
             20.0,
