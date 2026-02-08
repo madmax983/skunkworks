@@ -136,6 +136,7 @@ members = [
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
     "experiments/lichen-mesh",
     "experiments/cipher-clock",
+    "experiments/hyperbolic-lichen",
 ]
 resolver = "2"
 
