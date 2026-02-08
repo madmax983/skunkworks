@@ -34,9 +34,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with recursive-conservatory. Biomass returned to the void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/resonance-chamber
+### [Concentration Level: CONDEMNED] - Location: experiments/thread-frequency
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with ripple-tank. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Redundant with `schrodingers-beat`. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/resonance-chamber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `ripple-tank`. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
