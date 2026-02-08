@@ -1681,6 +1681,34 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Lens,
 
+    // Hydrology Features (Nova)
+    /// **[Nova]** Adds moisture (rain) to the local area.
+    ///
+    /// **Stack:** `[ ..., intensity, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Rain,
+    /// **[Nova]** Simulates one step of hydraulic flow/erosion.
+    ///
+    /// **Stack:** `[ ..., iterations ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Flow,
+    /// **[Nova]** Carves a river path from the current location.
+    ///
+    /// **Stack:** `[ ..., length, width ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    River,
+    /// **[Nova]** Detects the direction of water flow.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dy, dx ]`
+    #[cfg(feature = "nova")]
+    SenseFlow,
+    /// **[Nova]** Pumps ground water to surface or drains surface to ground.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ..., extracted ]`
+    /// **Effect:** Positive amount extracts, negative drains.
+    #[cfg(feature = "nova")]
+    Aquifer,
+
     // Bureaucracy Features (Nova)
     /// **[Nova]** Increases local bureaucracy (Red Tape), making actions cost more energy.
     ///

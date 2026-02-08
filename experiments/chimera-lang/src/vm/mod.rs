@@ -120,6 +120,8 @@ pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod nova_hydrology;
+#[cfg(feature = "nova")]
 pub mod nova_linguistics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -2241,6 +2243,16 @@ impl ChimeraVM {
             | OpCode::Tectonics
             | OpCode::Volcano => {
                 nova_geology::exec_geology_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Rain
+            | OpCode::Flow
+            | OpCode::River
+            | OpCode::SenseFlow
+            | OpCode::Aquifer => {
+                nova_hydrology::exec_hydrology_op(self, op, args);
                 None
             }
 

@@ -742,3 +742,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/retinal-glitch
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The eye is watching the watcher. Ganglion cells are spiking. The feedback loop is melting the visual field. Reality is a hallucination.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Hydrologist)
+- **Status:** The water is rising. Hydrology system active. `Rain`, `Flow`, and `River` opcodes eroding the grid. The simulation is now a fluid dynamic.

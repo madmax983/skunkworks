@@ -172,6 +172,8 @@ mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_hydrology_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_ipc_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_isomer_test;
