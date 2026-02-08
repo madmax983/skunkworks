@@ -80,7 +80,6 @@ members = [
     "experiments/syntax-garden", 
     "experiments/entropic-rain", 
     "experiments/beat-cortex", 
-    "experiments/text-terra", 
     "experiments/harmony-of-spheres", 
     "experiments/bio-chain",
     "experiments/walker-filesystem", 

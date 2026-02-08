@@ -660,9 +660,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infinite. Lichen colonies are growing on the Poincaré disk. Symbiosis has adapted to non-Euclidean space.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/text-terra
+### [Concentration Level: TOXIC] - Location: graveyard/text-terra
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with executed `text-erosion`. Static implementation ("GENESIS" heightmap). Grace period: 24h.
+- **Status:** Specimen executed. Redundant with `text-erosion`. Static implementation. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/venation-vines
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `rhizome-radar`. Documentation void. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/morph-physics
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
