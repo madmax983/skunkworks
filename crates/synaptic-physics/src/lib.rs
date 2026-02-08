@@ -143,4 +143,55 @@ mod tests {
         n.update(0.1, 0.0);
         assert!(n.current_decay < 10.0);
     }
+
+    #[test]
+    fn test_spike_reset() {
+        let mut n = Izhikevich::new();
+        // Force a value just below threshold
+        n.v = 29.9;
+        // Small step should push it over 30, triggering reset to `c` (-65.0)
+        // Note: update runs 2 substeps.
+        n.update(0.01, 10.0);
+
+        // Should be near resting potential (reset value), not sky high
+        assert!(n.v < 0.0);
+        assert!(n.v >= -70.0);
+    }
+
+    #[test]
+    fn test_random_generation() {
+        let mut rng = rand::thread_rng();
+        // Just verify it doesn't panic and returns valid floats
+        for _ in 0..100 {
+            let n = Izhikevich::random(&mut rng);
+            assert!(n.v.is_finite());
+            assert!(n.u.is_finite());
+        }
+    }
+
+    #[test]
+    fn test_nan_resilience() {
+        let mut n = Izhikevich::new();
+        // Inject NaN current
+        n.update(0.1, f32::NAN);
+        // v should become NaN, but function should not panic
+        assert!(n.v.is_nan());
+
+        // Check if subsequent updates panic
+        n.update(0.1, 0.0);
+        assert!(n.v.is_nan());
+    }
+
+    #[test]
+    fn test_current_decay_behavior() {
+        let mut n = Izhikevich::new();
+        n.inject(100.0);
+        // decay is 0.95 per substep (2 substeps per update) => 0.9025 per update
+        n.update(1.0, 0.0);
+
+        let expected = 100.0 * 0.95 * 0.95;
+        let tolerance = 0.0001;
+        assert!((n.current_decay - expected).abs() < tolerance,
+            "Decay should match 0.95^2 per update call");
+    }
 }
