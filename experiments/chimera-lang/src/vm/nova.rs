@@ -15,26 +15,18 @@
 use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, ChromaCell, Value, MAX_STRANDS};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
-#[cfg(feature = "nova")]
 use crate::{ChimeraParser, Rule};
-#[cfg(feature = "nova")]
 use pest::Parser;
-#[cfg(feature = "nova")]
 use rand::seq::SliceRandom;
-#[cfg(feature = "nova")]
 use rand::Rng;
-#[cfg(feature = "nova")]
 use std::collections::hash_map::DefaultHasher;
-#[cfg(feature = "nova")]
 use std::collections::{HashMap, HashSet, VecDeque};
-#[cfg(feature = "nova")]
 use std::hash::{Hash, Hasher};
 
 const MAX_EPIGENOME_SIZE: usize = 1024;
 const MAX_INCUBATE_LENGTH: usize = 1024;
 
 /// The physical state of the organism, affecting movement and mutation.
-#[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Phase {
     /// Standard state. Blocks movement through walls. Normal energy costs.
@@ -52,7 +44,6 @@ pub enum Phase {
 ///
 /// Used by the `Sporulate` and `Germinate` opcodes to save and restore the entire simulation state.
 /// This includes the grid, stack, energy, DNA, and all Nova subsystems (epigenetics, portals, etc.).
-#[cfg(feature = "nova")]
 #[derive(Clone)]
 pub struct Spore {
     pub phase: Phase,
@@ -101,7 +92,6 @@ pub struct Spore {
 }
 
 /// Defines the specialized behavior of an Organelle.
-#[cfg(feature = "nova")]
 #[derive(Debug, Clone, PartialEq)]
 pub enum OrganelleType {
     /// Standard execution unit. No special abilities.
@@ -129,7 +119,6 @@ pub enum OrganelleType {
 ///
 /// Organelles run in parallel to the main organism (sequentially in the loop, but logically parallel).
 /// They have their own stack, IP, and location, but share the organism's Energy and DNA.
-#[cfg(feature = "nova")]
 #[derive(Debug, Clone)]
 pub struct Organelle {
     /// The organelle's private stack.
@@ -154,7 +143,6 @@ pub struct Organelle {
     pub genome_id: u64,
 }
 
-#[cfg(feature = "nova")]
 fn get_open_neighbors(
     vm: &ChimeraVM,
     y: usize,
@@ -177,6 +165,62 @@ fn get_open_neighbors(
         })
 }
 
+/// Generic diffusion logic for scalar grids (i64).
+///
+/// Applies inertia, wind flow, and decay.
+fn diffuse_scalar_grid<F>(
+    source: &mut [Vec<i64>],
+    biomes: &[Vec<Biome>],
+    wind: &[Vec<(i8, i8)>],
+    membranes: &[Vec<u8>],
+    topology: &crate::vm::Topology,
+    decay_fn: F,
+) where
+    F: Fn(usize, usize, &Biome) -> i128,
+{
+    let size = crate::vm::GRID_SIZE;
+    let mut buffer = vec![vec![0i64; size]; size];
+
+    for y in 0..size {
+        for x in 0..size {
+            let inertia = biomes[y][x].diffusion_inertia();
+            let weight_center = 10;
+            let mut sum = (source[y][x] as i128) * (inertia as i128) * weight_center;
+            let mut total_weight = (inertia as i128) * weight_center;
+
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                if let Some(mask) = get_direction_mask(dy, dx) {
+                    if (membranes[y][x] & mask) != 0 {
+                        continue;
+                    }
+                }
+
+                if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, size) {
+                    let (w_dy, w_dx) = wind[ny][nx];
+                    // Wind flow from neighbor (ny, nx) to here (y, x).
+                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
+                    let weight = (10 + flow).max(0);
+
+                    sum += (source[ny][nx] as i128) * weight;
+                    total_weight += weight;
+                }
+            }
+
+            let decay = decay_fn(y, x, &biomes[y][x]);
+            if total_weight > 0 {
+                buffer[y][x] = ((sum / total_weight) * decay / 100) as i64;
+            }
+        }
+    }
+
+    for y in 0..size {
+        for x in 0..size {
+            source[y][x] = buffer[y][x];
+        }
+    }
+}
+
 /// Simulates the diffusion of chemical signals (hormones) across the grid.
 ///
 /// Uses a simple cellular automaton model: each cell becomes the average of itself
@@ -188,7 +232,6 @@ fn get_open_neighbors(
 /// // Inside VM step loop
 /// nova::diffuse_hormones(&mut vm);
 /// ```
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 /// Simulates the diffusion of chemical signals (hormones) across the grid.
 ///
@@ -249,52 +292,22 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
 /// Simulates the diffusion of metabolic waste products.
 ///
 /// Waste accumulates and spreads. High concentrations trigger damage/mutation.
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_waste(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
-            let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let weight_center = 10;
-            let mut sum = (vm.waste_grid[y][x] as i128) * (inertia as i128) * weight_center;
-            let mut total_weight = (inertia as i128) * weight_center;
-
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[y][x] & mask) != 0 {
-                        continue;
-                    }
-                }
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
-                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
-                    let weight = (10 + flow).max(0);
-
-                    sum += (vm.waste_grid[ny][nx] as i128) * weight;
-                    total_weight += weight;
-                }
-            }
-
-            let decay = vm.biome_grid[y][x].decay_rate() as i128;
-            if total_weight > 0 {
-                buffer[y][x] = ((sum / total_weight) * decay / 100) as i64;
-            }
-        }
-    }
-    for y in 0..16 {
-        for x in 0..16 {
-            vm.waste_grid[y][x] = buffer[y][x];
-        }
-    }
+    diffuse_scalar_grid(
+        &mut vm.waste_grid,
+        &vm.biome_grid,
+        &vm.wind_grid,
+        &vm.membranes,
+        &vm.topology,
+        |_, _, b| b.decay_rate() as i128,
+    );
 }
 
 /// Simulates the diffusion and decay of light.
 ///
 /// Light spreads but decays rapidly (50% per tick), simulating absorption and scattering.
 /// Chloroplasts harvest energy from this grid.
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_light(vm: &mut ChimeraVM) {
     let mut buffer = [[0i64; 16]; 16];
@@ -334,96 +347,34 @@ pub fn diffuse_light(vm: &mut ChimeraVM) {
 ///
 /// Mutagen spreads and decays slowly (90% retained per tick).
 /// High levels cause random DNA mutations.
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_mutagen(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
-            let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let weight_center = 10;
-            let mut sum = (vm.mutagen_grid[y][x] as i128) * (inertia as i128) * weight_center;
-            let mut total_weight = (inertia as i128) * weight_center;
-
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[y][x] & mask) != 0 {
-                        continue;
-                    }
-                }
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
-                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
-                    let weight = (10 + flow).max(0);
-
-                    sum += (vm.mutagen_grid[ny][nx] as i128) * weight;
-                    total_weight += weight;
-                }
-            }
-
-            // Blur and slow decay (based on biome)
-            // Mutagen naturally decays faster than waste (90% base retention)
-            let decay = vm.biome_grid[y][x].decay_rate() as i128;
-            if total_weight > 0 {
-                buffer[y][x] = ((sum / total_weight) * decay / 100 * 9 / 10) as i64;
-            }
-        }
-    }
-    for y in 0..16 {
-        for x in 0..16 {
-            vm.mutagen_grid[y][x] = buffer[y][x];
-        }
-    }
+    diffuse_scalar_grid(
+        &mut vm.mutagen_grid,
+        &vm.biome_grid,
+        &vm.wind_grid,
+        &vm.membranes,
+        &vm.topology,
+        |_, _, b| b.decay_rate() as i128 * 9 / 10,
+    );
 }
 
 /// Simulates the diffusion of entropy.
 ///
 /// Entropy spreads and decays slowly.
 /// High levels cause Reality Decay (glitches).
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn diffuse_entropy(vm: &mut ChimeraVM) {
-    let mut buffer = [[0i64; 16]; 16];
-    for y in 0..16 {
-        for x in 0..16 {
-            let inertia = vm.biome_grid[y][x].diffusion_inertia();
-            let weight_center = 10;
-            let mut sum = (vm.entropy_grid[y][x] as i128) * (inertia as i128) * weight_center;
-            let mut total_weight = (inertia as i128) * weight_center;
-
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[y][x] & mask) != 0 {
-                        continue;
-                    }
-                }
-                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-                    // Entropy follows wind too? Sure.
-                    let (w_dy, w_dx) = vm.wind_grid[ny][nx];
-                    let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);
-                    let weight = (10 + flow).max(0);
-
-                    sum += (vm.entropy_grid[ny][nx] as i128) * weight;
-                    total_weight += weight;
-                }
-            }
-
-            // Decay: 95% retention (persistent)
-            if total_weight > 0 {
-                buffer[y][x] = ((sum / total_weight) * 95 / 100) as i64;
-            }
-        }
-    }
-    for y in 0..16 {
-        for x in 0..16 {
-            vm.entropy_grid[y][x] = buffer[y][x];
-        }
-    }
+    diffuse_scalar_grid(
+        &mut vm.entropy_grid,
+        &vm.biome_grid,
+        &vm.wind_grid,
+        &vm.membranes,
+        &vm.topology,
+        |_, _, _| 95,
+    );
 }
 
-#[cfg(feature = "nova")]
 pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     let buffer: Vec<&str> = vm.chorus_buffer.iter().map(|s| s.as_str()).collect();
     let len = buffer.len();
@@ -529,7 +480,6 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
     None
 }
 
-#[cfg(feature = "nova")]
 fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
     if depth > crate::vm::MAX_RECURSION_DEPTH {
         return None;
@@ -556,7 +506,6 @@ fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
 ///
 /// **OpCode:** `Prophecy`
 /// **Stack:** `[ ..., ticks ] -> [ ..., result (1=Death, 0=Life) ]`
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks (top)
@@ -617,7 +566,6 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Metamorphosis`
 /// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0).
-#[cfg(feature = "nova")]
 fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
@@ -742,7 +690,6 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Simulate`
 /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., top_val, final_energy, status ]`
-#[cfg(feature = "nova")]
 fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: ticks, strand_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -818,7 +765,6 @@ fn exec_simulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Brainfuck`
 /// **Stack:** `[ ..., bf_code, input ] -> [ ..., output ]`
-#[cfg(feature = "nova")]
 fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: bf_code_string, input_string (top)
     if vm.stack.len() >= 2 {
@@ -907,7 +853,6 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
-#[cfg(feature = "nova")]
 fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: spore_id, strand_idx (top)
     if vm.stack.len() >= 2 {
@@ -975,7 +920,6 @@ fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 /// **OpCode:** `Splice`
 /// **Stack:** `[ ..., method, strand_b, strand_a ] -> [ ..., new_strand_idx ]`
 /// **Methods:** 0=Interleave, 1=Crossover, 2=Merge.
-#[cfg(feature = "nova")]
 fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: method, strand_b, strand_a (bottom)
     if vm.stack.len() >= 3 {
@@ -1100,7 +1044,6 @@ fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Recombine`
 /// **Stack:** `[ ..., split_point, strand_b, strand_a ] -> [ ... ]`
-#[cfg(feature = "nova")]
 fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: split_point, strand_b, strand_a (bottom)
     if vm.stack.len() >= 3 {
@@ -1187,7 +1130,6 @@ fn exec_recombine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `CrisprScan`
 /// **Stack:** `[ ..., guide_idx, target_idx ] -> [ ..., match_index ]`
-#[cfg(feature = "nova")]
 fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: guide_idx, target_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -1255,7 +1197,6 @@ fn exec_crispr_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Cas9Cut`
 /// **Stack:** `[ ..., cut_index, strand_idx ] -> [ ..., new_strand_idx ]`
-#[cfg(feature = "nova")]
 fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: cut_index, strand_idx (bottom)
     if vm.stack.len() >= 2 {
@@ -1344,29 +1285,18 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// Returns `Some((strand_idx, gene_idx))` if the operation triggered a jump or call that
 /// modifies the Instruction Pointer (IP). Returns `None` if execution should proceed sequentially.
-#[cfg(feature = "nova")]
 #[allow(clippy::needless_range_loop)]
 pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
-        #[cfg(feature = "nova")]
         OpCode::Levenshtein => super::nova_linguistics::exec_levenshtein(vm),
-        #[cfg(feature = "nova")]
         OpCode::Soundex => super::nova_linguistics::exec_soundex(vm),
-        #[cfg(feature = "nova")]
         OpCode::Anagram => super::nova_linguistics::exec_anagram(vm),
-        #[cfg(feature = "nova")]
         OpCode::Cipher => super::nova_linguistics::exec_cipher(vm),
-        #[cfg(feature = "nova")]
         OpCode::Pangram => super::nova_linguistics::exec_pangram(vm),
-        #[cfg(feature = "nova")]
         OpCode::Resonate => super::nova_resonance_war::exec_resonate(vm),
-        #[cfg(feature = "nova")]
         OpCode::SonicClaim => super::nova_resonance_war::exec_sonic_claim(vm),
-        #[cfg(feature = "nova")]
         OpCode::Dampen => super::nova_resonance_war::exec_dampen(vm),
-        #[cfg(feature = "nova")]
         OpCode::Prophecy => exec_prophecy(vm),
-        #[cfg(feature = "nova")]
         OpCode::EgregoreLink => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(name) = val {
@@ -1382,21 +1312,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::ChronosSplice => exec_chronos_splice(vm),
-        #[cfg(feature = "nova")]
         OpCode::Claim => super::nova_sovereignty::exec_claim(vm),
-        #[cfg(feature = "nova")]
         OpCode::Cede => super::nova_sovereignty::exec_cede(vm),
-        #[cfg(feature = "nova")]
         OpCode::Sovereignty => super::nova_sovereignty::exec_sovereignty(vm),
-        #[cfg(feature = "nova")]
         OpCode::Tax => super::nova_sovereignty::exec_tax(vm),
-        #[cfg(feature = "nova")]
         OpCode::Pocket => super::nova_pocket::exec_pocket(vm),
-        #[cfg(feature = "nova")]
         OpCode::Unpocket => super::nova_pocket::exec_unpocket(vm),
-        #[cfg(feature = "nova")]
         OpCode::Harmonize => {
             if vm.stack.len() >= 2 {
                 let s_val = vm.stack.pop().unwrap();
@@ -1438,7 +1360,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Choir => {
             if let Some(Value::Junction(_, notes)) = vm.stack.pop() {
                 if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
@@ -1472,17 +1393,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Fire => super::nova_ballistics::exec_fire(vm),
-        #[cfg(feature = "nova")]
         OpCode::Salvo => super::nova_ballistics::exec_salvo(vm),
-        #[cfg(feature = "nova")]
         OpCode::Reflector => super::nova_optics::exec_reflector(vm),
-        #[cfg(feature = "nova")]
         OpCode::Prism => super::nova_optics::exec_prism(vm),
-        #[cfg(feature = "nova")]
         OpCode::Lens => super::nova_optics::exec_lens(vm),
-        #[cfg(feature = "nova")]
         OpCode::Sacrifice => {
             let s_idx = vm.ip.0;
             if s_idx < vm.dna.helix.strands.len() {
@@ -1499,13 +1414,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Gaze => super::nova_astrology::exec_gaze(vm),
-        #[cfg(feature = "nova")]
         OpCode::Starfall => super::nova_astrology::exec_starfall(vm),
-        #[cfg(feature = "nova")]
         OpCode::Align => super::nova_astrology::exec_align(vm),
-        #[cfg(feature = "nova")]
         OpCode::Pray => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(amount) = val {
@@ -1525,7 +1436,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::EgregoreTithe => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {
@@ -1548,7 +1458,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::EgregoreChannel => {
             // stack: channel_name, value (top)
             if vm.stack.len() >= 2 {
@@ -1568,7 +1477,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::EgregoreDictate => {
             // stack: parameter_name, vote_value (top)
             if vm.stack.len() >= 2 {
@@ -1587,7 +1495,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::EgregoreQuery => {
             // stack: key (top)
             if let Some(val) = vm.stack.pop() {
@@ -1610,7 +1517,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::EgregoreSummon => {
             // stack: ritual_name
             if let Some(val) = vm.stack.pop() {
@@ -1659,7 +1565,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Offer => {
             // stack: price, item
             if vm.stack.len() >= 2 {
@@ -1688,7 +1593,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Buy => {
             // stack: max_price, query
             if vm.stack.len() >= 2 {
@@ -1715,7 +1619,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Invest => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {
@@ -1738,7 +1641,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Divest => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {
@@ -1762,13 +1664,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Balance => {
             let bal = vm.market.get_balance(vm.ip.0);
             vm.stack.push(Value::Int(bal));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Ticker => {
             if let Some((_, price)) = vm.market.history.back() {
                 vm.stack.push(Value::Int(*price));
@@ -1777,7 +1677,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::TimeWarp => {
             // stack: radius, factor (top)
             if vm.stack.len() >= 2 {
@@ -1815,7 +1714,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::RetinaDraw => {
             // Stack: [ ..., packed_color, char_code, y, x ]
             if vm.stack.len() >= 4 {
@@ -1844,7 +1742,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::RetinaClear => {
             // Stack: [ ..., packed_color ]
             if let Some(val) = vm.stack.pop() {
@@ -1864,13 +1761,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::RetinaSize => {
             vm.stack.push(Value::Int(vm.retina.width as i64));
             vm.stack.push(Value::Int(vm.retina.height as i64));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::QuantumJump => {
             let s_idx = vm.ip.0;
             if let Some(&partner_idx) = vm.entangled_pairs.get(&s_idx) {
@@ -1895,16 +1790,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Chronos => {
             let (cy, cx) = vm.context_loc;
             let factor = vm.time_grid[cy][cx];
             vm.stack.push(Value::Int(factor as i64));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Retroscope => super::nova_relativity::exec_retroscope(vm),
-        #[cfg(feature = "nova")]
         OpCode::Relativity => {
             vm.relativity_mode = !vm.relativity_mode;
             let status = if vm.relativity_mode { "ON" } else { "OFF" };
@@ -1912,7 +1804,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 .push(format!("RELATIVITY: Physics engine {}", status));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Graviton => {
             let (cy, cx) = vm.context_loc;
             vm.gravity_grid[cy][cx] = vm.gravity_grid[cy][cx].saturating_add(50);
@@ -1921,14 +1812,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 .push(format!("GRAVITON: Emitted at {},{}", cx, cy));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::EventHorizon => {
             let (cy, cx) = vm.context_loc;
             let g = vm.gravity_grid[cy][cx];
             vm.stack.push(Value::Int(g));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Aeolus => {
             // Stack: [ ..., angle, strength ]
             if vm.stack.len() >= 2 {
@@ -1966,7 +1855,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Storm => {
             // Stack: [ ..., intensity, radius ]
             if vm.stack.len() >= 2 {
@@ -1993,7 +1881,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SenseWind => {
             let (cy, cx) = vm.context_loc;
             let (dy, dx) = vm.wind_grid[cy][cx];
@@ -2001,13 +1888,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.push(Value::Int(dx as i64));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SenseMoisture => {
             let (cy, cx) = vm.context_loc;
             vm.stack.push(Value::Int(vm.moisture_grid[cy][cx]));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Terraform => {
             // stack: biome_id, radius (top)
             if vm.stack.len() >= 2 {
@@ -2050,7 +1935,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SenseBiome => {
             let (cy, cx) = vm.context_loc;
             let biome = vm.biome_grid[cy][cx];
@@ -2064,24 +1948,20 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.push(Value::Int(id));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Alchemy => {
             let (cy, cx) = vm.context_loc;
             crate::vm::alchemy::perform_alchemy(vm, cy, cx);
             vm.energy = vm.energy.saturating_sub(5);
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Cook
         | OpCode::Spice
         | OpCode::Savor
         | OpCode::Cultivate
         | OpCode::Banquet => super::nova_gastronomy::exec_gastronomy_op(vm, op, args),
-        #[cfg(feature = "nova")]
         OpCode::Conceive | OpCode::Propagate | OpCode::Forget | OpCode::Shibboleth => {
             super::memetics::exec_memetics_op(vm, op, args)
         }
-        #[cfg(feature = "nova")]
         OpCode::Meme => {
             if let Some(gene) = &vm.last_gene {
                 let gene_clone = gene.clone();
@@ -2108,7 +1988,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Drift => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(prob) = val {
@@ -2158,7 +2037,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Poly => {
             // stack: [ val ] (peek)
             if let Some(val) = vm.stack.last() {
@@ -2197,9 +2075,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Metamorphosis => exec_metamorphosis(vm),
-        #[cfg(feature = "nova")]
         OpCode::Piet => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(steps) = val {
@@ -2238,7 +2114,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Chronostasis => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(ticks) = val {
@@ -2262,9 +2137,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Simulate => exec_simulate(vm),
-        #[cfg(feature = "nova")]
         OpCode::SensePigment => {
             let (cy, cx) = vm.context_loc;
             if let Some((r, g, b)) = vm.chroma_grid[cy][cx].fg {
@@ -2278,7 +2151,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SenseGlyph => {
             let (cy, cx) = vm.context_loc;
             if let Some(c) = vm.chroma_grid[cy][cx].char {
@@ -2288,7 +2160,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Sing => {
             // stack: note (top)
             if let Some(val) = vm.stack.pop() {
@@ -2315,7 +2186,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Listen => {
             let notes: Vec<Value> = vm
                 .chorus_buffer
@@ -2326,9 +2196,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 .push(Value::Junction(crate::ast::JunctionType::All, notes));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Brainfuck => exec_brainfuck(vm),
-        #[cfg(feature = "nova")]
         OpCode::Spawn => {
             // stack: type, strand_idx (bottom)
             if vm.stack.len() >= 2 {
@@ -2394,14 +2262,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Entropy => {
             let (cy, cx) = vm.context_loc;
             let level = vm.entropy_grid[cy][cx];
             vm.stack.push(Value::Int(level));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Stabilize => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {
@@ -2431,7 +2297,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Disintegrate => {
             // stack: y, x (top)
             if vm.stack.len() >= 2 {
@@ -2458,7 +2323,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Sporulate => {
             if vm.spores.len() >= crate::vm::MAX_SPORES {
                 vm.output.push("Error: Spore limit exceeded".to_string());
@@ -2519,7 +2383,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.output.push(format!("SPORULATE: Created Spore {}", id));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Germinate => {
             // stack: spore_id
             if let Some(val) = vm.stack.pop() {
@@ -2588,7 +2451,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Incubate => {
             // stack: len, y, x (top)
             if vm.stack.len() >= 3 {
@@ -2756,7 +2618,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Methylate => {
             if vm.stack.len() >= 2 {
                 let gene_val = vm.stack.pop().unwrap();
@@ -2779,7 +2640,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Demethylate => {
             if vm.stack.len() >= 2 {
                 let gene_val = vm.stack.pop().unwrap();
@@ -2797,7 +2657,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Telomerase => {
             if let Some(val) = vm.stack.pop() {
                 match val {
@@ -2824,7 +2683,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::TLen => {
             let idx = vm.ip.0;
             if idx < vm.telomeres.len() {
@@ -2834,20 +2692,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Splice => exec_splice(vm),
-        #[cfg(feature = "nova")]
         OpCode::Recombine => exec_recombine(vm),
-        #[cfg(feature = "nova")]
         OpCode::SIndex => {
             vm.stack.push(Value::Int(vm.ip.0 as i64));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::CrisprScan => exec_crispr_scan(vm),
-        #[cfg(feature = "nova")]
         OpCode::Cas9Cut => exec_cas9_cut(vm),
-        #[cfg(feature = "nova")]
         OpCode::Ligase => {
             // stack: donor_idx, recipient_idx (bottom)
             if vm.stack.len() >= 2 {
@@ -2903,7 +2755,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Mitosis => {
             // stack: strand_idx (target to clone)
             if let Some(val) = vm.stack.pop() {
@@ -2966,7 +2817,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Apoptosis => {
             // stack: strand_idx
             if let Some(val) = vm.stack.pop() {
@@ -3004,7 +2854,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Integrase => {
             // stack: arg, name, gene_idx, strand_idx (bottom)
             if vm.stack.len() >= 4 {
@@ -3088,7 +2937,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Excision => {
             // stack: gene_idx, strand_idx (bottom)
             if vm.stack.len() >= 2 {
@@ -3161,7 +3009,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Secrete => {
             // stack: channel, amount (top)
             if vm.stack.len() >= 2 {
@@ -3188,7 +3035,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Detect => {
             // stack: channel
             if let Some(val) = vm.stack.pop() {
@@ -3207,7 +3053,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Absorb => {
             // stack: channel, amount (top)
             if vm.stack.len() >= 2 {
@@ -3240,7 +3085,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Migrate => {
             // stack: dy, dx (top)
             if vm.stack.len() >= 2 {
@@ -3313,7 +3157,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Detox => {
             // stack: radius (top)
             if let Some(val) = vm.stack.pop() {
@@ -3335,14 +3178,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::WRead => {
             let (cy, cx) = vm.context_loc;
             let waste = vm.waste_grid[cy][cx];
             vm.stack.push(Value::Int(waste));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Call => {
             if let Some(Nucleotide::Number(idx)) = args.first() {
                 let strand_idx = *idx as usize;
@@ -3366,7 +3207,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Exec => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(idx) = val {
@@ -3391,7 +3231,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Ret => {
             if let Some(ret_addr) = vm.call_stack.pop() {
                 return Some(ret_addr);
@@ -3401,7 +3240,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Bind => {
             // stack: strand_idx (top), char_code
             if vm.stack.len() >= 2 {
@@ -3427,7 +3265,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Unbind => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(c) = val {
@@ -3444,7 +3281,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Entangle => {
             if vm.stack.len() >= 2 {
                 let s_val2 = vm.stack.pop().unwrap();
@@ -3485,7 +3321,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Decohere => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(s) = val {
@@ -3508,7 +3343,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Conjugate => {
             // stack: direction (0=R, 1=D, 2=L, 3=U), y, x, strand_idx (bottom)
             if vm.stack.len() >= 4 {
@@ -3590,7 +3424,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Gravitate => {
             // stack: radius
             if let Some(val) = vm.stack.pop() {
@@ -3680,7 +3513,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Lumine => {
             // stack: intensity, radius (bottom)
             if vm.stack.len() >= 2 {
@@ -3710,14 +3542,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SenseLight => {
             let (cy, cx) = vm.context_loc;
             let intensity = vm.light_grid[cy][cx];
             vm.stack.push(Value::Int(intensity));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Dream => {
             // stack: ticks, strand_idx (bottom)
             if vm.stack.len() >= 2 {
@@ -3804,7 +3634,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Chemotaxis => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(c) = val {
@@ -3843,7 +3672,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Identity => {
             let id = match &vm.active_organelle_kind {
                 None => -1, // Nucleus
@@ -3860,7 +3688,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.push(Value::Int(id));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Differentiate => {
             if let Some(val) = vm.stack.pop() {
                 if vm.active_organelle_kind.is_some() {
@@ -3897,7 +3724,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Shape => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(t) = val {
@@ -3930,7 +3756,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Rift => {
             // stack: y2, x2, y1, x1 (bottom)
             if vm.stack.len() >= 4 {
@@ -3967,7 +3792,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Seal => {
             // stack: y, x (top)
             if vm.stack.len() >= 2 {
@@ -3996,7 +3820,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Sonar => {
             // stack: dy, dx (top)
             if vm.stack.len() >= 2 {
@@ -4038,7 +3861,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Broadcast => {
             // stack: channel, value (top)
             if vm.stack.len() >= 2 {
@@ -4065,7 +3887,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Tune => {
             // stack: channel
             if let Some(val) = vm.stack.pop() {
@@ -4089,7 +3910,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Isomerize => {
             vm.chirality = match vm.chirality {
                 crate::vm::Chirality::Left => crate::vm::Chirality::Right,
@@ -4099,7 +3919,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 .push(format!("ISOMERIZE: Switched to {:?}", vm.chirality));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::PhaseShift => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(id) = val {
@@ -4123,7 +3942,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Membrane => {
             // stack: mask (1=N, 2=S, 4=E, 8=W)
             if let Some(val) = vm.stack.pop() {
@@ -4173,7 +3991,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Osmosis => {
             // stack: dy, dx (top)
             if vm.stack.len() >= 2 {
@@ -4212,7 +4029,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Symbiosis => {
             // stack: dy, dx (top)
             if vm.stack.len() >= 2 {
@@ -4259,7 +4075,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Reflex => {
             // stack: event_id, strand_idx (bottom)
             if vm.stack.len() >= 2 {
@@ -4286,7 +4101,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Lysis => {
             // Eject the last symbiote
             if let Some(sip) = vm.symbiotes.pop() {
@@ -4323,7 +4137,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Compile => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(s) = val {
@@ -4375,7 +4188,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Irradiate => {
             // stack: amount, radius (top)
             if vm.stack.len() >= 2 {
@@ -4408,14 +4220,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SenseMutagen => {
             let (cy, cx) = vm.context_loc;
             let level = vm.mutagen_grid[cy][cx];
             vm.stack.push(Value::Int(level));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Devour => {
             let (cy, cx) = vm.context_loc;
             let level = vm.mutagen_grid[cy][cx];
@@ -4433,7 +4243,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Decompile => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(idx) = val {
@@ -4493,7 +4302,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Void => {
             if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
                 vm.output
@@ -4521,7 +4329,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.output.push(format!("VOID: Spawned at {},{}", cx, cy));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Supernova => {
             let s_idx = vm.ip.0;
             if s_idx < vm.dna.helix.strands.len() {
@@ -4588,7 +4395,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Singularity => {
             let mut merged_genes = Vec::new();
             // Take all strands
@@ -4621,7 +4427,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 .push("SINGULARITY: All strands merged".to_string());
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Eval => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(s) = val {
@@ -4652,7 +4457,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Map => {
             // stack: junction, function (top)
             if vm.stack.len() >= 2 {
@@ -4712,7 +4516,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Fold => {
             // stack: junction, init, function (top)
             if vm.stack.len() >= 3 {
@@ -4760,7 +4563,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Filter => {
             // stack: junction, predicate (top)
             if vm.stack.len() >= 2 {
@@ -4819,7 +4621,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Zip => {
             // stack: junction_a, junction_b (top)
             if vm.stack.len() >= 2 {
@@ -4859,7 +4660,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Pigment => {
             // stack: r, g, b, y, x (top)
             if vm.stack.len() >= 5 {
@@ -4898,7 +4698,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Glyph => {
             // stack: char_code, y, x (top)
             if vm.stack.len() >= 3 {
@@ -4930,7 +4729,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Evolve => {
             let mut birth_rules = vec![3];
             let mut survival_rules = vec![2, 3];
@@ -4996,7 +4794,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.energy = vm.energy.saturating_sub(20);
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Glitch => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(severity) = val {
@@ -5042,7 +4839,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Scramble => {
             let mut rng = rand::thread_rng();
             vm.stack.shuffle(&mut rng);
@@ -5050,7 +4846,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.output.push("SCRAMBLE: Stack shuffled".to_string());
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Hyphae => {
             let (cy, cx) = vm.context_loc;
             if let std::collections::hash_map::Entry::Vacant(e) = vm.mycelium.entry((cy, cx)) {
@@ -5063,7 +4858,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Connect => {
             // stack: y, x (top)
             if vm.stack.len() >= 2 {
@@ -5101,7 +4895,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Transport => {
             // stack: val, y, x (top)
             if vm.stack.len() >= 3 {
@@ -5158,7 +4951,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::SporeCloud => {
             // stack: radius, density (top)
             if vm.stack.len() >= 2 {
@@ -5193,17 +4985,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Signal => {
             super::ipc::signal(vm);
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Receive => {
             super::ipc::receive(vm);
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Spirit => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(msg) = val {
@@ -5219,7 +5008,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.spirit_request = true;
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Match => {
             // stack: pattern, target (top)
             if vm.stack.len() >= 2 {
@@ -5239,7 +5027,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Bury => {
             // stack: strand_idx
             if let Some(val) = vm.stack.pop() {
@@ -5274,7 +5061,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Exhume => {
             if let Some(strand) = vm.graveyard.pop() {
                 vm.dna.helix.strands.push(strand);
@@ -5304,7 +5090,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Seance => {
             if let Some(strand) = vm.graveyard.last() {
                 let ghost_strand = strand.clone();
@@ -5316,7 +5101,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Mourn => {
             let count = vm.graveyard.len() as i64;
             let energy_gain = count * 2;
@@ -5328,7 +5112,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             ));
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Reincarnate => {
             // stack: strand_idx
             if let Some(val) = vm.stack.pop() {
@@ -5423,7 +5206,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Superpose => {
             if vm.stack.len() >= 2 {
                 let b = vm.stack.pop().unwrap();
@@ -5438,7 +5220,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Collapse => {
             if let Some(val) = vm.stack.pop() {
                 match val {
@@ -5469,7 +5250,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        #[cfg(feature = "nova")]
         OpCode::Observe => {
             if let Some(val) = vm.stack.pop() {
                 match val {
@@ -5505,7 +5285,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
     }
 }
 
-#[cfg(feature = "nova")]
 fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
     let parts: Vec<&str> = rule.split('/').collect();
     if parts.len() != 2 {
@@ -5531,7 +5310,6 @@ fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
     Some((birth, survival))
 }
 
-#[cfg(feature = "nova")]
 fn glob_match(pattern: &str, target: &str) -> bool {
     if let Some((p_head, p_tail)) = pattern.split_once('*') {
         if !target.starts_with(p_head) {
@@ -5559,7 +5337,6 @@ fn glob_match(pattern: &str, target: &str) -> bool {
     }
 }
 
-#[cfg(feature = "nova")]
 fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
     if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
         vm.output
@@ -5580,7 +5357,6 @@ fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
     vm.recursion_depth -= 1;
 }
 
-#[cfg(feature = "nova")]
 fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
     if strand_idx < vm.dna.helix.strands.len() {
         let strand = vm.dna.helix.strands[strand_idx].clone();
@@ -5598,7 +5374,6 @@ fn execute_strand_sync(vm: &mut ChimeraVM, strand_idx: usize) {
 /// - (1, 0) South -> 2
 /// - (0, 1) East -> 4
 /// - (0, -1) West -> 8
-#[cfg(feature = "nova")]
 pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
     match (dy, dx) {
         (-1, 0) => Some(1), // N
@@ -5609,7 +5384,6 @@ pub fn get_direction_mask(dy: i64, dx: i64) -> Option<u8> {
     }
 }
 
-#[cfg(feature = "nova")]
 impl ChimeraVM {
     pub fn resurrect_from_graveyard(&mut self, index: usize) -> Result<usize, String> {
         if index < self.graveyard.len() {
