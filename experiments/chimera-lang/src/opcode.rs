@@ -1376,6 +1376,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Anneal,
 
+    // Cartography Features (Nova)
+    /// **[Nova]** Scans a circular area and returns a Junction of values.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ..., junction_of_values ]`
+    #[cfg(feature = "nova")]
+    Scan,
+    /// **[Nova]** Pushes the current coordinates to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., y, x ]`
+    #[cfg(feature = "nova")]
+    Locate,
+    /// **[Nova]** Writes a value to the persistent Cartography Map.
+    ///
+    /// **Stack:** `[ ..., value, y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chart,
+    /// **[Nova]** Reads a value from the persistent Cartography Map.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    Atlas,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///
