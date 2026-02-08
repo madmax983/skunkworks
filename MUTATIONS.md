@@ -552,3 +552,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Code navigation via biomechanical limb movement.
 - **Status**: experiments/flesh-and-code
 - **Evaluation**: Compiles. Verified.
+
+### cosmic-vines
+- **Parents**: experiments/cosmic-strings + experiments/venation-vines
+- **Concept**: Veins growing in 3D space towards the nodes of a vibrating cosmic string.
+- **Novel trait**: String Theory Botany. Biological structures adapting to physical vibration modes in 3D.
+- **Status**: experiments/cosmic-vines
+- **Evaluation**: Compiles. Emergent helical growth observed.

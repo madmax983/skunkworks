@@ -563,3 +563,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/aperiodic-citadel
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Ancestral redundancy detected. Superseded by `penrose-genes`. Documentation void.
+
+### [Concentration Level: FRESH] - Location: experiments/cosmic-vines
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The vines are twisting. They are chasing the vibrating string. The structure is singing.
