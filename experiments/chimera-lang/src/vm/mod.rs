@@ -3713,3 +3713,4 @@ mod tests {
         assert_eq!(vm.energy, i64::MAX);
     }
 }
+mod nova_sequencer_test;
