@@ -1,12 +1,19 @@
-use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-use chimera_lang::opcode::OpCode;
-use chimera_lang::vm::{ChimeraVM, Value};
+#[cfg(feature = "nova")]
+use chimera_lang::prelude::*;
 
+#[cfg(feature = "nova")]
 fn main() {
     println!("🗣️ Echo's Story Demo");
     run_demo();
 }
 
+#[cfg(not(feature = "nova"))]
+fn main() {
+    println!("⚠️  This example requires the 'nova' feature.");
+    println!("👉  Run with: cargo run --example story_demo --features nova");
+}
+
+#[cfg(feature = "nova")]
 fn run_demo() {
     // 1. Initialize empty VM
     let dna = Dna {

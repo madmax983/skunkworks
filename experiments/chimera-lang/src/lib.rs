@@ -34,9 +34,7 @@
 //! A minimal organism must generate energy to stay alive.
 //!
 //! ```rust
-//! use chimera_lang::vm::ChimeraVM;
-//! use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-//! use chimera_lang::opcode::OpCode;
+//! use chimera_lang::prelude::*;
 //!
 //! // DNA: [ photosynthesize(), jump(0) ]
 //! // This organism sits in the sun and loops forever.
@@ -85,6 +83,15 @@ pub mod compiler;
 pub mod opcode;
 pub mod tui;
 pub mod vm;
+
+/// Common imports for Chimera Language.
+///
+/// Use `use chimera_lang::prelude::*;` to import common types.
+pub mod prelude {
+    pub use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
+    pub use crate::opcode::OpCode;
+    pub use crate::vm::{ChimeraVM, Value};
+}
 
 #[cfg(all(test, feature = "biophysics"))]
 mod biophysics_test;
