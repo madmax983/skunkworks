@@ -891,6 +891,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Pray,
 
+    /// **[Nova]** Summons an organism from the Bestiary (filesystem).
+    ///
+    /// **Stack:** `[ ..., filename_str ] -> [ ... ]`
+    /// **Effect:** Loads .chs file, compiles it, and spawns as Organelle.
+    #[cfg(feature = "nova")]
+    Summon,
+
     // Astrology Features (Nova)
     /// **[Nova]** Gazes at the sky to measure star intensity and color.
     ///

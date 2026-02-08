@@ -17,3 +17,8 @@
 **Concept:** A TUI puzzle game (`experiments/photon-racer`) combining cellular grid mechanics with discrete ray-tracing optics. Users place mirrors and obstacles to guide a photon to a target.
 **Fate:** Merged
 **Lesson:** Discrete ray-tracing in a TUI is surprisingly intuitive and visually satisfying. Using `locus::Vec2` for vector math simplified the reflection logic significantly.
+
+## [The Summoning Circle]
+**Concept:** Added `OpCode::Summon(filename)` to dynamically load and spawn organisms from a `bestiary/` directory. Allows modular composition of Chimera ecosystems.
+**Fate:** Merged
+**Lesson:** Relocating jump targets when appending DNA is tricky. A simple offset strategy works for immediate arguments, but stack-based jumps require runtime resolution or absolute addressing.

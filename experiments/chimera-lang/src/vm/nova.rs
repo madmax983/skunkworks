@@ -1318,6 +1318,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Summon => nova_bestiary::exec_summon(vm),
+        #[cfg(feature = "nova")]
         OpCode::EgregoreTithe => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {

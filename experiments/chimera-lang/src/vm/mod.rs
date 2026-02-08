@@ -108,6 +108,8 @@ pub mod nova_security;
 pub mod nova_sigil;
 #[cfg(feature = "nova")]
 pub mod nova_signals;
+#[cfg(all(test, feature = "nova"))]
+mod nova_summon_test;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -1961,6 +1963,7 @@ impl ChimeraVM {
             | OpCode::Gaze
             | OpCode::Starfall
             | OpCode::Align
+            | OpCode::Summon
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
