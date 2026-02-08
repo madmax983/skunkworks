@@ -2,33 +2,101 @@
 //!
 //! Shared physics logic for neural simulation experiments.
 //!
-//! This crate provides the `Izhikevich` neuron model, which is used in `synaptic-choir` and `synaptic-pachinko`.
+//! This crate provides the [`Izhikevich`] neuron model, a computationally efficient model that reproduces
+//! spiking and bursting behavior of cortical neurons. It combines the biological plausibility of
+//! Hodgkin-Huxley-type dynamics with the computational efficiency of integrate-and-fire models.
+//!
+//! ## Usage
+//!
+//! ```rust
+//! use synaptic_physics::Izhikevich;
+//!
+//! // Create a default "Regular Spiking" neuron
+//! let mut neuron = Izhikevich::new();
+//!
+//! // Simulate for 100ms
+//! let dt = 0.1; // time step
+//! for _ in 0..1000 {
+//!     // Update with 10.0 units of input current
+//!     let voltage = neuron.update(dt, 10.0);
+//!
+//!     if voltage >= 30.0 {
+//!         println!("Spike!");
+//!     }
+//! }
+//! ```
+//!
+//! ## References
+//! * Izhikevich, E. M. (2003). [Simple model of spiking neurons](https://www.izhikevich.org/publications/spikes.htm).
+//!   IEEE Transactions on Neural Networks, 14(6), 1569-1572.
 
 use rand::Rng;
 
 /// The Izhikevich neuron model.
 ///
-/// See: <https://www.izhikevich.org/publications/spikes.htm>
+/// This struct holds the state variables (`v`, `u`) and parameters (`a`, `b`, `c`, `d`) defining the neuron's behavior.
+/// The model uses a system of two ordinary differential equations to simulate membrane potential dynamics.
+///
+/// # Examples
+///
+/// Creating a custom neuron:
+///
+/// ```rust
+/// use synaptic_physics::Izhikevich;
+///
+/// let mut neuron = Izhikevich {
+///     v: -65.0,
+///     u: -13.0,
+///     a: 0.02,
+///     b: 0.2,
+///     c: -55.0, // Higher reset potential
+///     d: 4.0,   // Lower reset recovery
+///     current_decay: 0.0,
+/// };
+/// ```
 #[derive(Clone, Copy, Debug)]
 pub struct Izhikevich {
-    /// Membrane potential
+    /// Membrane potential ($v$). Represents the voltage across the neuron membrane in millivolts (mV).
+    /// Typically rests around -65.0.
     pub v: f32,
-    /// Recovery variable
+
+    /// Membrane recovery variable ($u$). Accounts for the activation of K+ ionic currents
+    /// and inactivation of Na+ ionic currents. It provides negative feedback to $v$.
     pub u: f32,
-    /// Time scale of recovery variable
+
+    /// Time scale of the recovery variable $u$.
+    /// Smaller values result in slower recovery.
     pub a: f32,
-    /// Sensitivity of recovery variable
+
+    /// Sensitivity of the recovery variable $u$ to the subthreshold fluctuations of the membrane potential $v$.
+    /// Greater values couple $v$ and $u$ more strongly.
     pub b: f32,
-    /// After-spike reset value of v
+
+    /// After-spike reset value of the membrane potential $v$.
+    /// When $v \ge 30$, $v$ is reset to $c$.
     pub c: f32,
-    /// After-spike reset of u
+
+    /// After-spike reset of the recovery variable $u$.
+    /// When $v \ge 30$, $u$ is reset to $u + d$.
     pub d: f32,
-    /// Decaying injected current (used for impulse injections)
+
+    /// Decaying injected current (used for impulse injections).
+    /// This value is added to the input current during updates and decays exponentially (x0.95 per substep).
     pub current_decay: f32,
 }
 
 impl Izhikevich {
-    /// Creates a new neuron with default "Regular Spiking" parameters.
+    /// Creates a new neuron with default "Regular Spiking" (RS) parameters.
+    ///
+    /// Parameters: $a=0.02, b=0.2, c=-65.0, d=8.0$.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use synaptic_physics::Izhikevich;
+    /// let neuron = Izhikevich::new();
+    /// assert_eq!(neuron.a, 0.02);
+    /// ```
     pub fn new() -> Self {
         Self {
             v: -65.0,
@@ -41,7 +109,20 @@ impl Izhikevich {
         }
     }
 
-    /// Creates a new neuron with random parameters (Regular, Fast Spiking, or Chattering).
+    /// Creates a new neuron with random parameters.
+    ///
+    /// Selects between three common firing patterns based on probabilities:
+    /// - **Regular Spiking (60%):** Standard cortical neuron behavior.
+    /// - **Fast Spiking (20%):** Interneuron behavior.
+    /// - **Chattering (20%):** Bursting behavior.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use synaptic_physics::Izhikevich;
+    /// let mut rng = rand::thread_rng();
+    /// let neuron = Izhikevich::random(&mut rng);
+    /// ```
     pub fn random(rng: &mut impl Rng) -> Self {
         let r = rng.gen::<f32>();
         if r < 0.6 {
@@ -81,17 +162,48 @@ impl Izhikevich {
     }
 
     /// Injects a current impulse that will decay over time.
+    ///
+    /// This is useful for simulating a sudden synaptic event (spike arrival) rather than a continuous current.
+    /// The injected current is added to `current_decay`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use synaptic_physics::Izhikevich;
+    /// let mut neuron = Izhikevich::new();
+    /// neuron.inject(50.0); // Simulates a strong kick
+    /// ```
     pub fn inject(&mut self, current: f32) {
         self.current_decay += current;
     }
 
     /// Updates the neuron state for a time step `dt`.
     ///
-    /// `extra_current` is a continuous current added to the simulation for this step.
-    /// It is added to `current_decay`.
+    /// Performs numerical integration (Euler method) to advance the simulation.
     ///
-    /// Returns the current membrane potential `v`.
+    /// # Parameters
+    ///
+    /// * `dt`: The time step size (e.g., 0.1 or 1.0). Small steps improve accuracy.
+    /// * `extra_current`: Continuous input current ($I$) applied during this step (e.g., from sensory input).
+    ///
+    /// # Returns
+    ///
+    /// Returns the current membrane potential `v` after the update.
+    ///
+    /// # Panics
+    ///
+    /// This function does not panic, but passing `NaN` or `Inf` for `dt` or `extra_current` will propagate those values to the neuron state.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use synaptic_physics::Izhikevich;
+    /// let mut neuron = Izhikevich::new();
+    /// // Advance by 1.0 unit of time with 5.0 units of input current
+    /// let v = neuron.update(1.0, 5.0);
+    /// ```
     pub fn update(&mut self, dt: f32, extra_current: f32) -> f32 {
+        // Internal substeps for numerical stability
         let substeps = 2;
         let dt_sub = dt / substeps as f32;
 
