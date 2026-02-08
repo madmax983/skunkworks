@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 use macroquad::miniquad::{PrimitiveType, BlendState, BlendFactor, BlendValue, Equation, Comparison};
-use system_attractor::simulation::Simulation;
+use system_attractor::simulation::{Particle, Simulation};
 use system_attractor::lyapunov::LyapunovMonitor;
 use system_attractor::audio::Synth;
 
@@ -34,6 +34,15 @@ void main() {
     gl_FragColor = color;
 }
 "#;
+
+fn to_vertex(p: &Particle) -> Vertex {
+    Vertex {
+        position: p.pos,
+        uv: Vec2::ZERO,
+        color: p.color.into(),
+        normal: vec4(0.0, 0.0, 1.0, 0.0),
+    }
+}
 
 #[macroquad::main("System Attractor")]
 async fn main() {
@@ -75,7 +84,7 @@ async fn main() {
     ).unwrap();
 
     // Meshes for batch rendering
-    let num_batches = (PARTICLE_COUNT + BATCH_SIZE - 1) / BATCH_SIZE;
+    let num_batches = PARTICLE_COUNT.div_ceil(BATCH_SIZE);
     let mut meshes: Vec<Mesh> = (0..num_batches).map(|_| {
         Mesh {
             vertices: Vec::with_capacity(BATCH_SIZE),
@@ -139,12 +148,7 @@ async fn main() {
             mesh.indices.clear();
 
             for (idx, p) in slice.iter().enumerate() {
-                mesh.vertices.push(Vertex {
-                    position: p.pos,
-                    uv: Vec2::ZERO,
-                    color: p.color.into(),
-                    normal: vec4(0.0, 0.0, 1.0, 0.0),
-                });
+                mesh.vertices.push(to_vertex(p));
                 mesh.indices.push(idx as u16);
             }
 
