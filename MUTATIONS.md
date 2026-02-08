@@ -586,3 +586,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Biological growth patterns constrained by hyperbolic geometry.
 - **Status**: experiments/hyperbolic-lichen
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### syntax-resonance
+- **Parents**: experiments/syntax-spider + experiments/resonance-audio
+- **Concept**: Mapping AST nodes to physical walls in a 2D wave simulation. Functions are resonant chambers.
+- **Novel trait**: Acoustic Static Analysis. Debugging by ear - complex functions sound chaotic, simple ones harmonic.
+- **Status**: experiments/syntax-resonance
+- **Evaluation**: Compiles. TUI operational. Audio optional via feature flag.

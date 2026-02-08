@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/syntax-resonance
+- **Scent Origin:** Nova 🌟 (The Luthier)
+- **Status:** The code is vibrating. AST nodes are resonant chambers. Walls are built from syntax. You can pluck the functions.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Monarch)
 - **Status:** Sovereignty system active. `OpCode::Claim`, `Cede`, and `Tax` implemented. Territory wars imminent. ADR 018 ratified.
