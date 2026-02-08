@@ -563,3 +563,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/aperiodic-citadel
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Ancestral redundancy detected. Superseded by `penrose-genes`. Documentation void.
+
+### [Concentration Level: FRESH] - Location: experiments/mobius-git
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The git history is twisting. Non-orientable navigation confirmed. Merges are loops in space-time.
