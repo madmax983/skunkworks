@@ -233,9 +233,9 @@
 - **Scent Origin:** Nova 🌟 (The Biophysicist)
 - **Status:** The brain is alive. Hodgkin-Huxley neurons are spiking in the VM. The mashup is complete.
 
-### [Concentration Level: FRESH] - Location: experiments/system-bonsai
-- **Scent Origin:** Genesis (The Gardener) ⚛️🌳
-- **Status:** Process trees are growing. Sysinfo is root-deep.
+### [Concentration Level: CONDEMNED] - Location: experiments/system-bonsai
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `recursive-conservatory`.
 
 ### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
@@ -317,9 +317,9 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The servers are rotating. Requests are trapped in L4/L5 points. Orbital load balancing is active.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/metric-marionette
+### [Concentration Level: TOXIC] - Location: graveyard/metric-marionette
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic implementation. Redundant with `system-attractor`.
+- **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`.
 
 ### [Concentration Level: FRESH] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨

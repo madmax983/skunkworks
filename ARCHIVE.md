@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **metric-marionette**: Documentation void. Generic implementation. Redundant with `system-attractor`. Grace period: 24h.
+- **system-bonsai**: Documentation void. Generic implementation (sysinfo tree). Redundant with `recursive-conservatory`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **metric-marionette**: Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`. Moved to graveyard.
 - **syntax-fold**: Specimen executed. Documentation void. Hardcoded "toy" implementation. Redundant with `trace-fold`. Moved to graveyard.
 - **gastown**: Specimen executed. Documentation void. Skeletal implementation (mostly mock-ups). Generic CLI scaffolding. Lacks persona alignment. Moved to graveyard.
 - **git-etymology**: Specimen executed. Documentation void. Redundant with `git-rogue`/`git-cantata`. Biomass returned to the void.
