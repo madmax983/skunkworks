@@ -751,7 +751,7 @@ where
                             match app_state.alchemy_selection {
                                 0 => {
                                     // Shelf
-                                    let elements = vec![
+                                    let elements = [
                                         "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead",
                                         "Energy",
                                     ];
@@ -1563,11 +1563,11 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Signal Grid
     let mut grid_lines = Vec::new();
-    for y in 0..16 {
+    for y in 0..crate::vm::GRID_SIZE {
         let mut line_spans = Vec::new();
-        for x in 0..16 {
+        for x in 0..crate::vm::GRID_SIZE {
             let signal = vm.signal_grid[y][x];
-            let trail = vm.execution_trail[y][x];
+            let trail = vm.execution_trail[y * crate::vm::GRID_SIZE + x];
             let mut style = Style::default();
 
             // Background for Execution Trail
@@ -2663,7 +2663,7 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .split(f.area());
 
     // Shelf
-    let elements = vec![
+    let elements = [
         "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
     ];
     let mut shelf_items = Vec::new();
