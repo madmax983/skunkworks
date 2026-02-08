@@ -134,6 +134,12 @@ pub(crate) struct AppState {
     pub(crate) fishing_cast: bool,
     #[cfg(feature = "nova")]
     pub(crate) fishing_fish_y: f64,
+    #[cfg(feature = "oracle")]
+    pub(crate) query_input: String,
+    #[cfg(feature = "oracle")]
+    pub(crate) query_mode: bool,
+    #[cfg(feature = "oracle")]
+    pub(crate) query_results: Vec<String>,
 }
 
 impl AppState {
@@ -184,6 +190,12 @@ impl AppState {
             fishing_cast: false,
             #[cfg(feature = "nova")]
             fishing_fish_y: 80.0,
+            #[cfg(feature = "oracle")]
+            query_input: String::new(),
+            #[cfg(feature = "oracle")]
+            query_mode: false,
+            #[cfg(feature = "oracle")]
+            query_results: Vec::new(),
         }
     }
 }
@@ -451,6 +463,91 @@ where
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
+                #[cfg(feature = "oracle")]
+                if app_state.query_mode {
+                    match key.code {
+                        KeyCode::Enter => {
+                            let query_str = &app_state.query_input;
+                            match ChimeraParser::parse(Rule::gene, query_str) {
+                                Ok(mut pairs) => {
+                                    let pair = pairs.next().unwrap();
+                                    match Gene::try_from_pair(pair) {
+                                        Ok(gene) => {
+                                            let op_name = gene.op.to_string();
+                                            let mut terms = vec![crate::vm::Value::Str(op_name)];
+
+                                            fn nuc_to_val(n: &crate::ast::Nucleotide) -> crate::vm::Value {
+                                                match n {
+                                                    crate::ast::Nucleotide::Number(i) => crate::vm::Value::Int(*i),
+                                                    crate::ast::Nucleotide::String(s) => crate::vm::Value::Str(s.clone()),
+                                                    crate::ast::Nucleotide::Identifier(s) => crate::vm::Value::Str(s.clone()),
+                                                    crate::ast::Nucleotide::Junction(t, args) => {
+                                                        crate::vm::Value::Junction(*t, args.iter().map(nuc_to_val).collect())
+                                                    },
+                                                    _ => crate::vm::Value::Str("?".to_string()),
+                                                }
+                                            }
+
+                                            for arg in gene.args {
+                                                terms.push(nuc_to_val(&arg));
+                                            }
+
+                                            let goal = crate::vm::Value::Junction(crate::ast::JunctionType::Any, terms);
+                                            let mut solutions = Vec::new();
+                                            crate::vm::oracle::solve(
+                                                &[goal],
+                                                std::collections::HashMap::new(),
+                                                &vm.knowledge_base,
+                                                vm,
+                                                &mut solutions,
+                                                0
+                                            );
+
+                                            app_state.query_results.clear();
+                                            if solutions.is_empty() {
+                                                app_state.query_results.push("No.".to_string());
+                                            } else {
+                                                app_state.query_results.push(format!("Yes ({} solutions):", solutions.len()));
+                                                for (i, sol) in solutions.iter().enumerate() {
+                                                    let mut s = format!("{}: ", i+1);
+                                                    for (k, v) in sol {
+                                                        s.push_str(&format!("{}={} ", k, v));
+                                                    }
+                                                    if sol.is_empty() {
+                                                        s.push_str("true");
+                                                    }
+                                                    app_state.query_results.push(s);
+                                                }
+                                            }
+                                        },
+                                        Err(e) => {
+                                            app_state.query_results.clear();
+                                            app_state.query_results.push(format!("Parse Error: {}", e));
+                                        }
+                                    }
+                                },
+                                Err(e) => {
+                                    app_state.query_results.clear();
+                                    app_state.query_results.push(format!("Syntax Error: {}", e));
+                                }
+                            }
+                        }
+                        KeyCode::Esc => {
+                            app_state.query_mode = false;
+                            app_state.query_input.clear();
+                            app_state.query_results.clear();
+                        }
+                        KeyCode::Char(c) => {
+                            app_state.query_input.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.query_input.pop();
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
                 // Handle Spirit Request
                 #[cfg(feature = "nova")]
                 if vm.spirit_request {
@@ -988,6 +1085,14 @@ where
                     KeyCode::Char('f') => app_state.view_mode = ViewMode::Fishing,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
+                    #[cfg(all(feature = "oracle", feature = "nova"))]
+                    KeyCode::Char('/') => {
+                        if let ViewMode::Grimoire = app_state.view_mode {
+                            app_state.query_mode = true;
+                            app_state.query_input.clear();
+                            app_state.query_results.clear();
+                        }
+                    }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
                         #[cfg(feature = "nova")]
@@ -3390,16 +3495,37 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Oracle (KB)
     #[cfg(feature = "oracle")]
     {
-        let kb_items: Vec<ListItem> = vm
+        let mut kb_items: Vec<ListItem> = vm
             .knowledge_base
             .iter()
             .take(20)
             .map(|fact| ListItem::new(format!("{}", fact)))
             .collect();
+
+        if !app_state.query_results.is_empty() {
+            kb_items.push(ListItem::new("--- Query Results ---").style(Style::default().fg(Color::Yellow)));
+            for res in &app_state.query_results {
+                kb_items.push(ListItem::new(res.clone()).style(Style::default().fg(Color::Cyan)));
+            }
+        }
+
+        let title = if app_state.query_mode {
+            format!("Oracle (Query Mode: {})", app_state.query_input)
+        } else {
+            "Oracle (Knowledge Base) - Press '/' to Query".to_string()
+        };
+
+        let border_style = if app_state.query_mode {
+             Style::default().fg(Color::Yellow)
+        } else {
+             Style::default().fg(Color::White)
+        };
+
         let oracle_list = List::new(kb_items).block(
             Block::default()
                 .borders(Borders::ALL)
-                .title("Oracle (Knowledge Base)"),
+                .title(title)
+                .border_style(border_style),
         );
         f.render_widget(oracle_list, chunks[1]);
     }

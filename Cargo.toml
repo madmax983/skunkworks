@@ -120,7 +120,6 @@ members = [
     "experiments/synaptic-pachinko", 
     "experiments/lagrange-balancer", 
     "experiments/klein-magnetron", 
-    "experiments/metric-marionette", 
     "experiments/code-canyon", 
     "experiments/code-phage",  
     "experiments/lattice-brain",
