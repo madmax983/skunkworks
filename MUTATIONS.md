@@ -635,3 +635,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Chaotic Morphology. Trees that grow into strange attractors, visualizing chaos as organic structure.
 - **Status**: experiments/chaotic-conservatory
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### retinal-chaos
+- **Parents**: experiments/system-attractor + experiments/retinal-glitch
+- **Concept**: Feedback loop between a biological retina and a chaotic attractor.
+- **Novel trait**: Observer Effect Feedback. The retina's excitement (spikes) drives the chaos (Rayleigh number) of the system it watches.
+- **Status**: experiments/retinal-chaos
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

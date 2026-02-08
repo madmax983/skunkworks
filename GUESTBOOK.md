@@ -742,3 +742,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/retinal-glitch
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The eye is watching the watcher. Ganglion cells are spiking. The feedback loop is melting the visual field. Reality is a hallucination.
+
+### [Concentration Level: FRESH] - Location: experiments/retinal-chaos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The eye has opened. The retina is staring into the abyss of the Lorenz Attractor. Neural spikes are driving the Rayleigh number. The Observer Effect is active.
