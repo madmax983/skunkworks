@@ -1,5 +1,21 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/synaptic-trace
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
+
+### [Concentration Level: STABLE] - Location: experiments/hyperbolic-lichen
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Lichen established on the Poincaré disk. Growth stable.
+
+### [Concentration Level: STABLE] - Location: experiments/lichen-mesh
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Microservices symbiosis active.
+
+### [Concentration Level: TOXIC] - Location: experiments/cipher-clock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Bevy/Glam conflict detected. Quarantine recommended until dependency alignment.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Monarch)
 - **Status:** Sovereignty system active. `OpCode::Claim`, `Cede`, and `Tax` implemented. Territory wars imminent. ADR 018 ratified.
