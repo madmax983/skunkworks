@@ -679,3 +679,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Alchemist)
 - **Status:** The laboratory is open. `Mix`, `Brew`, and `Splash` opcodes implemented. Ingredients are reacting on the grid. "Acid" and "Elixir" recipes confirmed.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-raymarcher
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** The dungeon is infinite. {4,5} tiling confirmed. The walls are closing in, but I can walk forever.
