@@ -1,0 +1,12 @@
+[package]
+name = "astral-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+glam = "0.24"
+rand = { workspace = true }

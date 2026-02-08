@@ -7,6 +7,9 @@
 //! The resulting score can be exported as [ABC Notation](https://abcnotation.com/), allowing
 //! the organism's "song" to be played by external tools.
 //!
+//! With the **Composer** feature (`OpCode::Compose`), the organism can also turn its song back into DNA,
+//! creating a feedback loop between music and genetics.
+//!
 //! ## Example
 //!
 //! ```
@@ -28,7 +31,7 @@
 //! ```
 
 use super::{ChimeraVM, Value};
-use crate::ast::Nucleotide;
+use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 #[cfg(feature = "resonance")]
 use resonance_audio::audio::AudioCommand;
@@ -73,6 +76,7 @@ impl Note {
 /// - `Rest`: Adds a silence.
 /// - `Tempo`: Logs tempo change (metadata).
 /// - `Perform`: Compiles the score to ABC notation string on the stack.
+/// - `Compose`: Compiles the score into a DNA strand.
 pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Note => {
@@ -145,10 +149,6 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(bpm) = val {
                     vm.output.push(format!("TEMPO: Set to {} BPM", bpm));
-                    // For now, we don't store tempo in the Note struct, but we could add a Tempo event.
-                    // Since `score` is Vec<Note>, we can't easily add Tempo change unless Note has a variant.
-                    // For MVP, just logging it is fine, or we can treat it as a metadata instruction.
-                    // Let's just log it. The ABC exporter can just set a default or we can extend Note later.
                 } else {
                     vm.output.push("Error: Type mismatch for tempo".to_string());
                 }
@@ -164,57 +164,88 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             vm.output
                 .push("PERFORM: Exported score to stack".to_string());
         }
+        OpCode::Compose => {
+            if vm.score.is_empty() {
+                vm.stack.push(Value::Int(-1));
+                vm.output.push("COMPOSE: Score empty".to_string());
+                return;
+            }
+
+            let mut genes = Vec::new();
+            for note in &vm.score {
+                if let Some(gene) = note_to_gene(note) {
+                    genes.push(gene);
+                }
+            }
+
+            if !genes.is_empty() {
+                vm.dna.helix.strands.push(Strand { genes });
+                vm.telomeres.push(50);
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
+                let new_idx = vm.dna.helix.strands.len() - 1;
+                vm.stack.push(Value::Int(new_idx as i64));
+                vm.output
+                    .push(format!("COMPOSE: Created strand {} from song", new_idx));
+
+                // Clear score after composition (consuming the inspiration)
+                vm.score.clear();
+
+                vm.energy = vm.energy.saturating_sub(20);
+            } else {
+                vm.stack.push(Value::Int(-1));
+                vm.output
+                    .push("COMPOSE: No valid genes produced".to_string());
+            }
+        }
         _ => {}
     }
 }
 
+/// Maps a musical Note to a genetic Instruction.
+///
+/// The mapping is based on the pitch class (Note name) relative to C.
+/// Arguments (Nucleotides) are derived from Velocity and Duration.
+fn note_to_gene(note: &Note) -> Option<Gene> {
+    if note.pitch == 0 {
+        return None; // Rest -> No Op (or maybe Nop?)
+    }
+
+    // Chromatic Scale (C = 0)
+    let class = note.pitch % 12;
+    // Duration used as numeric argument
+    let arg_val = note.duration as i64;
+    // Velocity used as secondary argument (if needed) or alternative
+    let _vel_val = note.velocity as i64;
+
+    let (op, args) = match class {
+        0 => (OpCode::Push, vec![Nucleotide::Number(arg_val)]), // C
+        1 => (OpCode::Dup, vec![]),                             // C#
+        2 => (OpCode::Add, vec![]),                             // D
+        3 => (OpCode::Sub, vec![]),                             // D#
+        4 => (OpCode::Mul, vec![]),                             // E
+        5 => (OpCode::Div, vec![]),                             // F
+        6 => (OpCode::GRead, vec![]),                           // F#
+        7 => (OpCode::GWrite, vec![]),                          // G
+        8 => (OpCode::Print, vec![]),                           // G#
+        9 => (OpCode::Jump, vec![Nucleotide::Number(arg_val)]), // A
+        10 => (OpCode::Brz, vec![Nucleotide::Number(arg_val)]), // A#
+        11 => (OpCode::Call, vec![Nucleotide::Number(arg_val)]), // B
+        _ => return None,
+    };
+
+    Some(Gene { op, args })
+}
+
 /// Converts the recorded score into an ABC Notation string.
-///
-/// # Format Details
-///
-/// - Header: Fixed `X:1`, `T:Chimera Composition`, `M:4/4`, `L:1/16`, `K:C`.
-/// - Pitch: Mapped from MIDI to ABC (e.g., 60 -> c).
-/// - Duration: Mapped to ABC duration multipliers (relative to L:1/16).
-///
-/// # Examples
-///
-/// ```
-/// use chimera_lang::vm::bard::{Note, score_to_abc};
-///
-/// let score = vec![
-///     Note::new(60, 4, 100), // Middle C, quarter note (4 * 1/16)
-///     Note::new(64, 4, 100), // E, quarter note
-/// ];
-/// let abc = score_to_abc(&score);
-///
-/// assert!(abc.starts_with("X:1\nT:Chimera Composition"));
-/// // Middle C (60) is "c" in ABC. E4 (64) is "e".
-/// // Duration 4 becomes "4".
-/// assert!(abc.contains("c4 e4"));
-/// ```
 pub fn score_to_abc(score: &[Note]) -> String {
     let mut s = String::from("X:1\nT:Chimera Composition\nM:4/4\nL:1/16\nK:C\n");
     let mut measure_dur = 0;
 
     for note in score {
-        // Pitch mapping
-        // 60 = C4 (Middle C) -> "C" in ABC
-        // ABC: C, D, E, F, G, A, B, c, d, e, f...
-        // Capital C is C3? No.
-        // Standard: C = Middle C?
-        // Let's use standard pitch notation:
-        // C, is C2. C is C3. c is C4 (Middle C). c' is C5.
-        // Wait, different standards.
-        // Let's use:
-        // 60 (Middle C) = "C"
-        // 72 = "c"
-        // 48 = "C,"
-
-        // Actually, ABC standard:
-        // C = middle C (60)
-        // c = C5 (72)
-        // C, = C3 (48)
-
         let pitch_str = if note.pitch == 0 {
             "z".to_string()
         } else {
@@ -245,39 +276,19 @@ fn midi_to_abc(pitch: u8) -> String {
         "C", "^C", "D", "^D", "E", "F", "^F", "G", "^G", "A", "^A", "B",
     ];
 
-    // Standard ABC:
-    // C = C3 (48)
-    // c = C4 (60, Middle C)
-    // c' = C5 (72)
-    // C, = C2 (36)
-
     let name_idx = (pitch % 12) as usize;
     let base_name = names[name_idx].to_string();
 
-    // 60 / 12 = 5.
-    // We want 60 -> "c" (lowercase, no prime).
-    // So target "rel_octave" logic:
-    // C3 (48) -> "C" (uppercase).
-    // C4 (60) -> "c" (lowercase).
-
     let octave = (pitch / 12) as i32;
-    // 36 -> 3. Target: "C," (Upper + comma)
-    // 48 -> 4. Target: "C" (Upper)
-    // 60 -> 5. Target: "c" (Lower)
-    // 72 -> 6. Target: "c'" (Lower + prime)
 
     let mut res = base_name;
 
     if octave >= 5 {
         res = res.to_lowercase();
-        // 60 -> 5. primes = 5 - 5 = 0.
-        // 72 -> 6. primes = 6 - 5 = 1.
         for _ in 0..(octave - 5) {
             res.push('\'');
         }
     } else {
-        // 48 -> 4. commas = 4 - 4 = 0.
-        // 36 -> 3. commas = 4 - 3 = 1.
         for _ in 0..(4 - octave) {
             res.push(',');
         }
@@ -301,14 +312,9 @@ mod tests {
             (59, "B", "B3"),
         ];
 
-        // We test via score_to_abc since midi_to_abc is private
         for (pitch, expected_note, desc) in cases {
             let score = vec![Note::new(pitch, 1, 100)];
             let abc = score_to_abc(&score);
-            // ABC output will be header... then the note.
-            // Note duration 1 is empty string suffix.
-            // So we expect just the note name.
-            // But score_to_abc adds spaces.
             assert!(
                 abc.contains(expected_note),
                 "Failed on {}: expected '{}' in output, got '{}'",
@@ -327,8 +333,6 @@ mod tests {
             Note::new(67, 8, 100), // G4, half
         ];
         let abc = score_to_abc(&score);
-        // Expected body: c4 z4 g8
-        // Note: G4 (67) is "g" in ABC because C4 (60) is "c".
         assert!(abc.contains("c4 z4 g8"));
     }
 }

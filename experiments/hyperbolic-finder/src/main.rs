@@ -105,13 +105,7 @@ async fn main() -> anyhow::Result<()> {
             disk_radius,
             Color::new(0.05, 0.05, 0.05, 1.0),
         );
-        draw_circle_lines(
-            screen_center.x,
-            screen_center.y,
-            disk_radius,
-            2.0,
-            DARKGRAY,
-        );
+        draw_circle_lines(screen_center.x, screen_center.y, disk_radius, 2.0, DARKGRAY);
 
         // Nodes & Links
         draw_node_recursive(
@@ -125,13 +119,7 @@ async fn main() -> anyhow::Result<()> {
 
         // UI Overlay
         draw_text("Hyperbolic Finder", 20.0, 30.0, 30.0, WHITE);
-        draw_text(
-            &format!("View: {:.2}", view_center),
-            20.0,
-            50.0,
-            20.0,
-            GRAY,
-        );
+        draw_text(&format!("View: {:.2}", view_center), 20.0, 50.0, 20.0, GRAY);
 
         // Buttons
         if draw_button("Reset View", 20.0, h - 50.0, 120.0, 30.0) {

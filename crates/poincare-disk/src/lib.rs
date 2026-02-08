@@ -205,6 +205,53 @@ impl Mobius {
         }
     }
 
+    /// Creates a rotation by theta around the origin.
+    ///
+    /// Form: $f(z) = e^{i\theta} z$
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// use std::f64::consts::PI;
+    /// let m = Mobius::rotation(PI / 2.0);
+    /// let z = Point::new(1.0, 0.0); // Technically on boundary, but valid for rotation
+    /// let rotated = m.apply(z);
+    /// assert!((rotated.im - 1.0).abs() < 1e-9);
+    /// ```
+    pub fn rotation(theta: f64) -> Self {
+        let rot = Complex::from_polar(1.0, theta);
+        Self {
+            a: rot,
+            b: Complex::new(0.0, 0.0),
+            c: Complex::new(0.0, 0.0),
+            d: Complex::new(1.0, 0.0),
+        }
+    }
+
+    /// Returns the inverse of the transformation.
+    ///
+    /// If $f(z) = \frac{az+b}{cz+d}$, then $f^{-1}(z) = \frac{dz-b}{-cz+a}$.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Mobius, Point};
+    /// let t = Mobius::translation(Point::new(0.5, 0.0));
+    /// let inv = t.inverse();
+    /// let p = Point::new(0.1, 0.1);
+    /// let identity_check = inv.apply(t.apply(p));
+    /// assert!((identity_check - p).norm() < 1e-9);
+    /// ```
+    pub fn inverse(&self) -> Self {
+        Self {
+            a: self.d,
+            b: -self.b,
+            c: -self.c,
+            d: self.a,
+        }
+    }
+
     /// Composes two Möbius transformations.
     ///
     /// Returns a new transformation representing $f(g(z))$, where $f$ is `self` and $g$ is `other`.
@@ -246,6 +293,69 @@ impl Mobius {
         // In the Disk model, the denominator (cz + d) is never zero for |z| < 1
         // (unless the transformation maps the disk to infinity, which these shouldn't).
         num / den
+    }
+}
+
+/// Represents a geodesic segment between two points in the Poincaré disk.
+#[derive(Debug, Clone, Copy)]
+pub struct Geodesic {
+    pub p1: Point,
+    pub p2: Point,
+}
+
+impl Geodesic {
+    /// Creates a new geodesic segment connecting `p1` and `p2`.
+    pub fn new(p1: Point, p2: Point) -> Self {
+        Self { p1, p2 }
+    }
+
+    /// Returns the Euclidean center and radius of the circular arc representing the geodesic.
+    ///
+    /// Returns `None` if the geodesic is a straight line passing through the origin.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use poincare_disk::{Geodesic, Point};
+    /// let p1 = Point::new(0.5, 0.0);
+    /// let p2 = Point::new(0.0, 0.5);
+    /// let geo = Geodesic::new(p1, p2);
+    /// if let Some((center, radius)) = geo.euclidean_circle() {
+    ///     println!("Arc center: {:?}, radius: {}", center, radius);
+    /// }
+    /// ```
+    pub fn euclidean_circle(&self) -> Option<(Point, f64)> {
+        // Implementation adapted from `experiments/poincare-crawl/src/math.rs`
+        let x1 = self.p1.re;
+        let y1 = self.p1.im;
+        let x2 = self.p2.re;
+        let y2 = self.p2.im;
+
+        // Condition for circle passing through p and orthogonal to unit circle:
+        // |p|^2 - 2 Re(p conj(c)) + 1 = 0
+        // which simplifies to: 2*x*x_i + 2*y*y_i = 1 + |p_i|^2
+
+        let d1 = 1.0 + x1 * x1 + y1 * y1;
+        let d2 = 1.0 + x2 * x2 + y2 * y2;
+
+        // Linear system:
+        // 2*x1*x + 2*y1*y = d1
+        // 2*x2*x + 2*y2*y = d2
+
+        let det = 4.0 * (x1 * y2 - x2 * y1);
+
+        if det.abs() < 1e-9 {
+            // Collinear with origin (or points are coincident/too close)
+            return None;
+        }
+
+        let x = (d1 * 2.0 * y2 - d2 * 2.0 * y1) / det;
+        let y = (2.0 * x1 * d2 - 2.0 * x2 * d1) / det;
+
+        let center = Point::new(x, y);
+        let radius = (center - self.p1).norm();
+
+        Some((center, radius))
     }
 }
 

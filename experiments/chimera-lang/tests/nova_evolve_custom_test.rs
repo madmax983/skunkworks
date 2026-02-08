@@ -21,23 +21,59 @@ fn test_evolve_default() {
 
     let genes = vec![
         // Write 1 to (5,5), (5,6), (5,7)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] }, // x
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(7)] }, // x
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // x
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        }, // x
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(7)],
+        }, // x
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Evolve
-        Gene { op: OpCode::Evolve, args: vec![] },
+        Gene {
+            op: OpCode::Evolve,
+            args: vec![],
+        },
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));
@@ -85,43 +121,114 @@ fn test_evolve_custom_highlife() {
 
     let genes = vec![
         // Row 4: 1 1 1 (cols 4,5,6)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Row 5: 1 . 1 (cols 4,6)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-        Gene { op: OpCode::GWrite, args: vec![] },
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Row 6: 1 . . (col 4)
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(6)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] },
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(6)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        },
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Push HighLife Rule "B36/S23"
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("B36/S23".to_string())] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("B36/S23".to_string())],
+        },
         // Evolve
-        Gene { op: OpCode::Evolve, args: vec![] },
+        Gene {
+            op: OpCode::Evolve,
+            args: vec![],
+        },
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));

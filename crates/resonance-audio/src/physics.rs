@@ -1,15 +1,47 @@
 /// Shared Physics Grid Logic for Resonance Experiments
+///
+/// This module implements the Finite Difference Time Domain (FDTD) solver for the 2D wave equation.
+/// The solver uses a discrete grid to simulate wave propagation, reflection, and interference.
+///
+/// # Examples
+///
+/// ```
+/// use resonance_audio::physics::PhysicsGrid;
+///
+/// // Create a grid
+/// let mut grid = PhysicsGrid::new(50, 50);
+///
+/// // Pluck the center
+/// grid.pluck(25, 25, 1.0);
+///
+/// // Run simulation step
+/// grid.step();
+///
+/// // Check propagation
+/// assert!(grid.get(25, 25) < 1.0); // Energy spreads out
+/// ```
 pub struct PhysicsGrid {
+    /// The width of the simulation grid in cells.
     pub width: usize,
+    /// The height of the simulation grid in cells.
     pub height: usize,
-    pub u: Vec<f32>,      // Current state
-    pub u_prev: Vec<f32>, // Previous state
-    pub u_next: Vec<f32>, // Next state (scratch buffer)
-    pub walls: Vec<bool>, // Wall mask
+    /// The current state of the wave field (pressure/displacement at each cell).
+    pub u: Vec<f32>,
+    /// The previous state of the wave field (t - 1), used for time integration.
+    pub u_prev: Vec<f32>,
+    /// Scratch buffer for calculating the next state (t + 1).
+    pub u_next: Vec<f32>,
+    /// Boolean mask where `true` indicates a wall (reflective boundary) and `false` is open space.
+    pub walls: Vec<bool>,
+    /// Damping factor applied at each step to simulate energy loss (0.0 = instant stop, 1.0 = no loss).
     pub damping: f32,
 }
 
 impl PhysicsGrid {
+    /// Creates a new physics grid with the specified dimensions.
+    ///
+    /// The grid is initialized with zero energy (silence) and no walls.
+    /// The default damping is set to 0.999 for high resonance.
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             width,
@@ -22,6 +54,16 @@ impl PhysicsGrid {
         }
     }
 
+    /// Advances the simulation by one time step.
+    ///
+    /// This method implements the discrete 2D wave equation:
+    /// `u_next[x,y] = 2*u[x,y] - u_prev[x,y] + c^2 * Laplacian(u)`
+    ///
+    /// It handles:
+    /// - Wave propagation using a 5-point stencil Laplacian.
+    /// - Wall reflections (walls force value to 0, causing reflection).
+    /// - Damping.
+    /// - Buffer swapping (prev -> curr, curr -> next).
     pub fn step(&mut self) {
         let w = self.width;
         let h = self.height;
@@ -63,6 +105,10 @@ impl PhysicsGrid {
         std::mem::swap(&mut self.u, &mut self.u_next);
     }
 
+    /// Injects energy into the grid at a specific point (like a pluck).
+    ///
+    /// The energy is added to the current state, creating a disturbance that will propagate.
+    /// Does nothing if the coordinates are out of bounds or inside a wall.
     pub fn pluck(&mut self, x: usize, y: usize, strength: f32) {
         if x > 0 && x < self.width - 1 && y > 0 && y < self.height - 1 {
             let idx = y * self.width + x;
@@ -72,6 +118,9 @@ impl PhysicsGrid {
         }
     }
 
+    /// Adds a wall at the specified coordinates.
+    ///
+    /// Also clears any existing energy at that point to prevent instabilities.
     pub fn add_wall(&mut self, x: usize, y: usize) {
         if x < self.width && y < self.height {
             let idx = y * self.width + x;
@@ -82,6 +131,29 @@ impl PhysicsGrid {
         }
     }
 
+    /// Removes a wall from the specified coordinates.
+    pub fn remove_wall(&mut self, x: usize, y: usize) {
+        if x < self.width && y < self.height {
+            let idx = y * self.width + x;
+            self.walls[idx] = false;
+        }
+    }
+
+    /// Resets all wave states to zero, silencing the simulation.
+    pub fn clear_waves(&mut self) {
+        self.u.fill(0.0);
+        self.u_prev.fill(0.0);
+        self.u_next.fill(0.0);
+    }
+
+    /// Removes all walls from the grid.
+    pub fn clear_walls(&mut self) {
+        self.walls.fill(false);
+    }
+
+    /// Gets the current wave value (pressure) at the specified coordinates.
+    ///
+    /// Returns 0.0 if coordinates are out of bounds.
     pub fn get(&self, x: usize, y: usize) -> f32 {
         if x < self.width && y < self.height {
             self.u[y * self.width + x]

@@ -30,7 +30,8 @@ pub struct AudioEngine {
     _stream: Option<cpal::Stream>,
     pub cmd_tx: Sender<AudioCommand>,
     #[cfg(feature = "audio")]
-    pub snapshot_rx: Consumer<Snapshot, Arc<SharedRb<Snapshot, Vec<std::mem::MaybeUninit<Snapshot>>>>>,
+    pub snapshot_rx:
+        Consumer<Snapshot, Arc<SharedRb<Snapshot, Vec<std::mem::MaybeUninit<Snapshot>>>>>,
     #[cfg(not(feature = "audio"))]
     pub snapshot_rx: Receiver<Snapshot>, // Dummy receiver for non-audio mode
 }
@@ -72,7 +73,10 @@ impl AudioEngine {
                     // Process commands
                     while let Ok(cmd) = cmd_rx.try_recv() {
                         match cmd {
-                            AudioCommand::UpdateNetwork { neurons: n, connections: c } => {
+                            AudioCommand::UpdateNetwork {
+                                neurons: n,
+                                connections: c,
+                            } => {
                                 neurons = n;
                                 connections = c;
                             }
@@ -85,7 +89,9 @@ impl AudioEngine {
                     }
 
                     if neurons.is_empty() {
-                        for sample in data.iter_mut() { *sample = 0.0; }
+                        for sample in data.iter_mut() {
+                            *sample = 0.0;
+                        }
                         return;
                     }
 
@@ -100,7 +106,7 @@ impl AudioEngine {
 
                         // Simple Mean Field
                         if !neurons.is_empty() {
-                             mean_field /= neurons.len() as f32;
+                            mean_field /= neurons.len() as f32;
                         }
 
                         let sample = ((mean_field + 65.0) / 100.0).clamp(-0.8, 0.8);
@@ -111,10 +117,14 @@ impl AudioEngine {
 
                         // Snapshot
                         snapshot_timer += 1;
-                        if snapshot_timer > 735 { // ~60Hz at 44100
+                        if snapshot_timer > 735 {
+                            // ~60Hz at 44100
                             snapshot_timer = 0;
                             let voltages: Vec<f32> = neurons.iter().map(|n| n.v).collect();
-                            let _ = snapshot_tx.push(Snapshot { voltages, mean_field });
+                            let _ = snapshot_tx.push(Snapshot {
+                                voltages,
+                                mean_field,
+                            });
                         }
                     }
                 },
@@ -124,8 +134,8 @@ impl AudioEngine {
 
             match stream_res {
                 Ok(stream) => {
-                     stream.play().ok();
-                     Ok(Self {
+                    stream.play().ok();
+                    Ok(Self {
                         _stream: Some(stream),
                         cmd_tx,
                         snapshot_rx,
@@ -143,21 +153,21 @@ impl AudioEngine {
 
     #[cfg(feature = "audio")]
     fn dummy(cmd_tx: Sender<AudioCommand>) -> Self {
-         let rb = HeapRb::<Snapshot>::new(1);
-         let (_, snapshot_rx) = rb.split();
-         Self {
-             _stream: None,
-             cmd_tx,
-             snapshot_rx,
-         }
+        let rb = HeapRb::<Snapshot>::new(1);
+        let (_, snapshot_rx) = rb.split();
+        Self {
+            _stream: None,
+            cmd_tx,
+            snapshot_rx,
+        }
     }
 
     #[cfg(not(feature = "audio"))]
     fn dummy(cmd_tx: Sender<AudioCommand>) -> Self {
-         let (_, snapshot_rx) = unbounded();
-         Self {
-             cmd_tx,
-             snapshot_rx,
-         }
+        let (_, snapshot_rx) = unbounded();
+        Self {
+            cmd_tx,
+            snapshot_rx,
+        }
     }
 }

@@ -1,0 +1,15 @@
+[package]
+name = "sono-scapes"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+resonance-audio = { path = "../../crates/resonance-audio" }
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+anyhow = "1.0"
+cpal = { version = "0.15", optional = true }
+
+[features]
+default = []
+audio = ["cpal"]

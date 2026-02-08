@@ -3,8 +3,8 @@
 mod tests {
     use chimera_lang::ast::{Dna, Helix, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::vm::nova_biome::Biome;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -83,7 +83,10 @@ mod tests {
         // Plains (Inertia 4): (100*4 + 0)/8 = 50
         // Swamp (Inertia 12): (100*12 + 0)/16 = 75
 
-        assert!(swamp_val > plains_val, "Swamp should retain more hormone due to stagnation");
+        assert!(
+            swamp_val > plains_val,
+            "Swamp should retain more hormone due to stagnation"
+        );
         assert_eq!(plains_val, 50);
         assert_eq!(swamp_val, 75);
     }

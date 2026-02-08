@@ -183,7 +183,7 @@ async fn main() -> anyhow::Result<()> {
         initial_bytes[i * 4] = 255;
         // B = 0.0 (No reagent), except small noise
         if rand::gen_range(0, 100) > 99 {
-             initial_bytes[i * 4 + 1] = 255;
+            initial_bytes[i * 4 + 1] = 255;
         }
         initial_bytes[i * 4 + 3] = 255;
     }
@@ -192,7 +192,6 @@ async fn main() -> anyhow::Result<()> {
         height: h as u16,
         bytes: initial_bytes,
     });
-
 
     // Materials
     let reaction_material = load_material(
@@ -250,13 +249,21 @@ async fn main() -> anyhow::Result<()> {
         let sh = screen_height();
 
         reaction_material.set_uniform("Mouse", (mx / sw, 1.0 - (my / sh)));
-        reaction_material.set_uniform("MouseDown", if is_mouse_button_down(MouseButton::Left) { 1.0f32 } else { 0.0f32 });
+        reaction_material.set_uniform(
+            "MouseDown",
+            if is_mouse_button_down(MouseButton::Left) {
+                1.0f32
+            } else {
+                0.0f32
+            },
+        );
         reaction_material.set_texture("Params", texture_params.clone());
 
         // Draw the full screen quad (which is the previous state texture)
         draw_texture_ex(
             &current_rt.texture,
-            -1.0, -1.0, // Position (NDC)
+            -1.0,
+            -1.0, // Position (NDC)
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(2.0, 2.0)), // Full NDC coverage
@@ -276,7 +283,8 @@ async fn main() -> anyhow::Result<()> {
         // We use the same pass-through vertex shader, so we must provide NDC coordinates.
         draw_texture_ex(
             &next_rt.texture,
-            -1.0, -1.0,
+            -1.0,
+            -1.0,
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(2.0, 2.0)),
@@ -292,15 +300,11 @@ async fn main() -> anyhow::Result<()> {
         next_rt = temp;
 
         // UI Overlay
+        draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 30.0, WHITE);
         draw_text(
-            &format!("FPS: {}", get_fps()),
-            10.0, 20.0,
-            30.0,
-            WHITE,
-        );
-         draw_text(
             &format!("Files: {}", genes.len()),
-            10.0, 50.0,
+            10.0,
+            50.0,
             20.0,
             LIGHTGRAY,
         );

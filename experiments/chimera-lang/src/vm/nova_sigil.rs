@@ -125,6 +125,9 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                         kind: OrganelleType::Void,
                         direction: (0, 0),
                         ttl: None,
+                        name: "Summoned Void".to_string(),
+                        traits: vec!["Summoned".to_string()],
+                        genome_id: 0,
                     };
                     vm.organelles.push(organelle);
                     vm.output.push("INVOKE: Void Summoned".to_string());
@@ -233,10 +236,15 @@ pub fn exec_auto_cast(
         if let (Value::Str(name), Value::Int(state)) = (name_val, state_val) {
             if let Some(sigil) = vm.sigil_registry.get_mut(&name) {
                 sigil.auto_cast = state != 0;
-                let status = if sigil.auto_cast { "ENABLED" } else { "DISABLED" };
+                let status = if sigil.auto_cast {
+                    "ENABLED"
+                } else {
+                    "DISABLED"
+                };
                 vm.output.push(format!("AUTO_CAST: {} -> {}", name, status));
             } else {
-                vm.output.push(format!("AUTO_CAST: Unknown sigil '{}'", name));
+                vm.output
+                    .push(format!("AUTO_CAST: Unknown sigil '{}'", name));
             }
         } else {
             vm.output
@@ -254,7 +262,10 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
     let (cy, cx) = vm.context_loc;
 
     // Extract active sigils to avoid borrow conflicts
-    let sigils: Vec<(String, Vec<(i64, i64, Value)>, usize)> = vm.sigil_registry.iter()
+    #[allow(clippy::type_complexity)]
+    let sigils: Vec<(String, Vec<(i64, i64, Value)>, usize)> = vm
+        .sigil_registry
+        .iter()
         .filter(|(_, s)| s.auto_cast)
         .map(|(k, s)| (k.clone(), s.pattern.clone(), s.strand_idx))
         .collect();
@@ -267,7 +278,7 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
 
             // Spawn Worker to execute
             if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
-                 let organelle = Organelle {
+                let organelle = Organelle {
                     stack: Vec::new(),
                     ip: (strand_idx, 0),
                     context_loc: (cy, cx),
@@ -277,6 +288,9 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
                     kind: OrganelleType::Worker,
                     direction: (0, 0),
                     ttl: None,
+                    name: "Sigil Servant".to_string(),
+                    traits: vec!["Construct".to_string()],
+                    genome_id: 0,
                 };
                 vm.organelles.push(organelle);
             }

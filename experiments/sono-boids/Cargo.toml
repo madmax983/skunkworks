@@ -1,0 +1,13 @@
+[package]
+name = "sono-boids"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+tui-shared = { workspace = true }
+resonance-audio = { path = "../../crates/resonance-audio" }
+crossbeam-channel = "0.5"

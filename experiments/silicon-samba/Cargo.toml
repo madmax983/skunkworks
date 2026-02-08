@@ -1,0 +1,20 @@
+[package]
+name = "silicon-samba"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sysinfo = "0.30"
+ratatui = "0.26"
+crossterm = "0.27"
+crossbeam = "0.8"
+anyhow = "1.0"
+rand = "0.8"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]

@@ -12,8 +12,14 @@ impl LuaRuntime {
         {
             let globals = lua.globals();
 
-            globals.set("screen_width", lua.create_function(|_, ()| Ok(screen_width()))?)?;
-            globals.set("screen_height", lua.create_function(|_, ()| Ok(screen_height()))?)?;
+            globals.set(
+                "screen_width",
+                lua.create_function(|_, ()| Ok(screen_width()))?,
+            )?;
+            globals.set(
+                "screen_height",
+                lua.create_function(|_, ()| Ok(screen_height()))?,
+            )?;
             globals.set("time", lua.create_function(|_, ()| Ok(get_time()))?)?;
 
             globals.set(
@@ -27,11 +33,13 @@ impl LuaRuntime {
 
             globals.set(
                 "draw_text",
-                lua.create_function(|_, (text, x, y, size, color_hex): (String, f32, f32, f32, u32)| {
-                    let color = hex_to_color(color_hex);
-                    draw_text(&text, x, y, size, color);
-                    Ok(())
-                })?,
+                lua.create_function(
+                    |_, (text, x, y, size, color_hex): (String, f32, f32, f32, u32)| {
+                        let color = hex_to_color(color_hex);
+                        draw_text(&text, x, y, size, color);
+                        Ok(())
+                    },
+                )?,
             )?;
 
             globals.set(

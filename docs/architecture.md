@@ -393,7 +393,28 @@ sequenceDiagram
     end
 ```
 
-## Core Architecture Changes (ADR 012)
+### Phylogeny Feature: Host Interaction (ADR 017)
+
+The `phylogeny` feature enables the VM to escape its sandbox and interact with the host filesystem and shell.
+
+```mermaid
+sequenceDiagram
+    participant VM as ChimeraVM
+    participant Phy as Phylogeny Module
+    participant OS as Host OS
+
+    VM->>Phy: exec_phylogeny_op(Crawl, path)
+    Phy->>OS: fs::read_dir(path)
+    OS-->>Phy: Result<Entries>
+    Phy-->>VM: push(Junction(files))
+
+    VM->>Phy: exec_phylogeny_op(Shell, "cargo build")
+    Phy->>OS: Command::new("cargo").arg("build")
+    OS-->>Phy: Output(stdout, stderr)
+    Phy-->>VM: push(String(stdout))
+```
+
+## Core Architecture Changes (ADR 021)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -404,7 +425,7 @@ classDiagram
   class Core
   class Storage
   Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow
+  %% Removed the circular dependency arrow (ADR 021)
 ```
 
 ### Storage Flow
@@ -414,6 +435,7 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
+    Note over C,S: Decoupled via Trait (ADR 021)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
 ```

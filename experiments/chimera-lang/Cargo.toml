@@ -10,6 +10,7 @@ biophysics = []
 oracle = []
 silicon = []
 git = []
+phylogeny = []
 resonance = ["dep:resonance-audio", "dep:crossbeam-channel"]
 
 [dependencies]
@@ -27,3 +28,7 @@ serde_json = "1.0"
 strum = "0.26"
 strum_macros = "0.26"
 poincare-disk = { path = "../../crates/poincare-disk" }
+
+[[example]]
+name = "story_demo"
+required-features = ["nova"]

@@ -18,9 +18,7 @@ impl World {
             boids.push(Boid::new(width / 2.0, height / 2.0));
         }
 
-        Self {
-            boids,
-        }
+        Self { boids }
     }
 
     pub fn update(&mut self) {
@@ -49,7 +47,9 @@ impl World {
             let separation_radius_sq = (dna.view_radius / 2.0).powi(2);
 
             for j in 0..count {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let p2_orig = self.boids[j].position;
                 let v2_orig = self.boids[j].velocity;
@@ -75,10 +75,15 @@ impl World {
 
                     // Case: p2 is "physically" to the right of p1 across the boundary
                     // Ghost pos: p2 - 2PI (in U), but V is flipped.
-                    (Vec2::new(p2_orig.x - TAU, TAU - p2_orig.y), Vec2::new(v2_orig.x, -v2_orig.y)),
-
+                    (
+                        Vec2::new(p2_orig.x - TAU, TAU - p2_orig.y),
+                        Vec2::new(v2_orig.x, -v2_orig.y),
+                    ),
                     // Case: p2 is to the left
-                    (Vec2::new(p2_orig.x + TAU, TAU - p2_orig.y), Vec2::new(v2_orig.x, -v2_orig.y)),
+                    (
+                        Vec2::new(p2_orig.x + TAU, TAU - p2_orig.y),
+                        Vec2::new(v2_orig.x, -v2_orig.y),
+                    ),
                 ];
 
                 for (cand_p, cand_v) in candidates {
@@ -91,13 +96,13 @@ impl World {
                 }
 
                 if min_dist_sq < view_radius_sq {
-                     // Separation
+                    // Separation
                     if min_dist_sq < separation_radius_sq {
                         let diff = p1 - best_p2;
                         // Avoid div by zero
                         if min_dist_sq > 0.00001 {
-                             separation += diff / min_dist_sq;
-                             sep_count += 1;
+                            separation += diff / min_dist_sq;
+                            sep_count += 1;
                         }
                     }
 
@@ -202,7 +207,9 @@ impl World {
             sum_cos += theta.cos();
         }
 
-        if n == 0.0 { return 0.0; }
+        if n == 0.0 {
+            return 0.0;
+        }
         ((sum_sin / n).powi(2) + (sum_cos / n).powi(2)).sqrt()
     }
 }

@@ -81,11 +81,7 @@ async fn main() {
             cam_angle_y.sin() * cam_dist,
         );
 
-        let target = vec3(
-            terrain.width as f32 / 2.0,
-            0.0,
-            terrain.height as f32 / 2.0,
-        );
+        let target = vec3(terrain.width as f32 / 2.0, 0.0, terrain.height as f32 / 2.0);
 
         set_camera(&Camera3D {
             position: cam_pos + target,
@@ -102,14 +98,26 @@ async fn main() {
 
         // UI
         draw_text(
-            &format!("Code Canyon: {} files mapped to {}x{} grid", files.len(), terrain.width, terrain.height),
+            &format!(
+                "Code Canyon: {} files mapped to {}x{} grid",
+                files.len(),
+                terrain.width,
+                terrain.height
+            ),
             10.0,
             20.0,
             30.0,
             BLACK,
         );
         draw_text(
-            &format!("Status: {}", if raining { "RAINING (Eroding)" } else { "PAUSED" }),
+            &format!(
+                "Status: {}",
+                if raining {
+                    "RAINING (Eroding)"
+                } else {
+                    "PAUSED"
+                }
+            ),
             10.0,
             50.0,
             30.0,

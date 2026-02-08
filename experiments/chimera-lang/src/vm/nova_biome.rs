@@ -31,7 +31,7 @@ impl Biome {
         match self {
             Biome::Plains => 100, // No decay (Standard)
             Biome::Swamp => 100,  // Stagnant
-            Biome::Desert => 90, // High evaporation
+            Biome::Desert => 90,  // High evaporation
             Biome::Tundra => 100, // Frozen
             Biome::Volcanic => 95,
         }
@@ -42,9 +42,9 @@ impl Biome {
     pub fn fertility(&self) -> i64 {
         match self {
             Biome::Plains => 100,
-            Biome::Swamp => 120, // Difficult terrain
-            Biome::Desert => 150, // Harsh
-            Biome::Tundra => 200, // Very Harsh
+            Biome::Swamp => 120,    // Difficult terrain
+            Biome::Desert => 150,   // Harsh
+            Biome::Tundra => 200,   // Very Harsh
             Biome::Volcanic => 150, // Hazardous
         }
     }

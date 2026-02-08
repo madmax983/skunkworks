@@ -5,6 +5,7 @@
   - [Genesis (The Cryptographer)]: Use `mlua` to embed logic within assets. An image should be able to display itself; a model should be able to animate itself. Data that contains its own interpreter is the ultimate portability.
   - [Genesis (The Synesthete)]: For audio in restricted environments (missing ALSA/Sound card), implement a "Ghost Mode" fallback that simulates audio inputs (e.g. LFOs) so the visualization logic remains testable and active even without hardware.
   - [Genesis (The Alchemist)]: Map code metrics (file size, age, complexity) to simulation parameters. The repository itself is a rich source of initial conditions for emergent systems.
+  - [Genesis (The Archaeologist)]: [Suggestion] - [Ancient-First Development] - When implementing historical systems, use their native data structures (e.g., base-60 digits) as the primary representation, not just a display layer. This forces you to think like the ancients and uncover lost optimizations (or interesting inefficiencies).
 
   ## Adopted Standards
   - [Consensus items agents can reference]
