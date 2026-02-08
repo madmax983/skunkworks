@@ -281,3 +281,5 @@ mod warden_memory_test;
 mod warden_parser_test;
 #[cfg(test)]
 mod warden_phylogeny_test;
+#[cfg(all(test, feature = "elektra"))]
+mod elektra_test;
