@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use crate::simulation::{LorenzParams, derivatives};
+use crate::simulation::{LorenzParams, solve_rk4};
 
 pub struct LyapunovMonitor {
     pub reference: Vec3,
@@ -24,14 +24,10 @@ impl LyapunovMonitor {
     }
 
     pub fn update(&mut self, params: &LorenzParams, dt: f32) {
-        let sigma = params.sigma;
-        let rho = params.rho;
-        let beta = params.beta;
-
         // Evolve reference
-        let ref_next = rk4_step(self.reference, sigma, rho, beta, dt);
+        let ref_next = solve_rk4(self.reference, params, dt);
         // Evolve shadow
-        let shadow_next = rk4_step(self.shadow, sigma, rho, beta, dt);
+        let shadow_next = solve_rk4(self.shadow, params, dt);
 
         // Calculate new distance
         let dist = (ref_next - shadow_next).length();
@@ -68,22 +64,4 @@ impl LyapunovMonitor {
             0.0
         }
     }
-}
-
-// Helper RK4 step
-fn rk4_step(pos: Vec3, sigma: f32, rho: f32, beta: f32, dt: f32) -> Vec3 {
-    let x = pos.x;
-    let y = pos.y;
-    let z = pos.z;
-
-    let (k1_x, k1_y, k1_z) = derivatives(x, y, z, sigma, rho, beta);
-    let (k2_x, k2_y, k2_z) = derivatives(x + k1_x * dt * 0.5, y + k1_y * dt * 0.5, z + k1_z * dt * 0.5, sigma, rho, beta);
-    let (k3_x, k3_y, k3_z) = derivatives(x + k2_x * dt * 0.5, y + k2_y * dt * 0.5, z + k2_z * dt * 0.5, sigma, rho, beta);
-    let (k4_x, k4_y, k4_z) = derivatives(x + k3_x * dt, y + k3_y * dt, z + k3_z * dt, sigma, rho, beta);
-
-    let dx = (k1_x + 2.0 * k2_x + 2.0 * k3_x + k4_x) / 6.0;
-    let dy = (k1_y + 2.0 * k2_y + 2.0 * k3_y + k4_y) / 6.0;
-    let dz = (k1_z + 2.0 * k2_z + 2.0 * k3_z + k4_z) / 6.0;
-
-    vec3(x + dx * dt, y + dy * dt, z + dz * dt)
 }

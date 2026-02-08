@@ -2,6 +2,13 @@ use macroquad::prelude::*;
 use rayon::prelude::*;
 use sysinfo::{CpuRefreshKind, MemoryRefreshKind, RefreshKind, System};
 
+// Constants for System Monitor scaling
+const SIGMA_BASE: f32 = 10.0;
+const SIGMA_SCALE: f32 = 40.0;
+const RHO_BASE: f32 = 28.0;
+const RHO_SCALE: f32 = 72.0;
+const BETA_VAL: f32 = 8.0 / 3.0;
+
 #[derive(Clone, Copy)]
 pub struct Particle {
     pub pos: Vec3,
@@ -17,7 +24,16 @@ impl Particle {
             color: WHITE,
         }
     }
+
+    pub fn random() -> Self {
+        Self::new(
+            rand::gen_range(-10.0, 10.0),
+            rand::gen_range(-10.0, 10.0),
+            rand::gen_range(10.0, 40.0),
+        )
+    }
 }
+
 
 pub struct LorenzParams {
     pub sigma: f32,
@@ -28,9 +44,9 @@ pub struct LorenzParams {
 impl Default for LorenzParams {
     fn default() -> Self {
         Self {
-            sigma: 10.0,
-            rho: 28.0,
-            beta: 8.0 / 3.0,
+            sigma: SIGMA_BASE,
+            rho: RHO_BASE,
+            beta: BETA_VAL,
         }
     }
 }
@@ -38,6 +54,12 @@ impl Default for LorenzParams {
 pub struct SystemMonitor {
     sys: System,
     pub params: LorenzParams,
+}
+
+impl Default for SystemMonitor {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl SystemMonitor {
@@ -71,16 +93,16 @@ impl SystemMonitor {
         // CPU -> Sigma (Turbulence)
         // 0% -> 10.0
         // 100% -> 50.0
-        self.params.sigma = 10.0 + (cpu_usage / 100.0) * 40.0;
+        self.params.sigma = SIGMA_BASE + (cpu_usage / 100.0) * SIGMA_SCALE;
 
         // Rho (Rayleigh): 28.0 base.
         // RAM -> Rho (Driving Force)
         // 0% -> 28.0
         // 100% -> 100.0
-        self.params.rho = 28.0 + (mem_usage * 72.0);
+        self.params.rho = RHO_BASE + (mem_usage * RHO_SCALE);
 
         // Beta: 8/3 ~ 2.66
-        self.params.beta = 8.0 / 3.0;
+        self.params.beta = BETA_VAL;
     }
 }
 
@@ -93,10 +115,7 @@ impl Simulation {
     pub fn new(count: usize) -> Self {
         let mut particles = Vec::with_capacity(count);
         for _ in 0..count {
-            let x = rand::gen_range(-10.0, 10.0);
-            let y = rand::gen_range(-10.0, 10.0);
-            let z = rand::gen_range(10.0, 40.0);
-            particles.push(Particle::new(x, y, z));
+            particles.push(Particle::random());
         }
 
         Self {
@@ -112,64 +131,22 @@ impl Simulation {
 
     pub fn reset(&mut self) {
         self.particles.par_iter_mut().for_each(|p| {
-             p.pos = vec3(
-                rand::gen_range(-10.0, 10.0),
-                rand::gen_range(-10.0, 10.0),
-                rand::gen_range(10.0, 40.0),
-            );
-            p.vel = vec3(0., 0., 0.);
-            p.color = WHITE;
+            *p = Particle::random();
         });
     }
 }
 
 pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f32) {
-    let sigma = params.sigma;
-    let rho = params.rho;
-    let beta = params.beta;
-
     particles.par_iter_mut().for_each(|p| {
-        let x = p.pos.x;
-        let y = p.pos.y;
-        let z = p.pos.z;
-
         // RK4 Integration
-        let (k1_x, k1_y, k1_z) = derivatives(x, y, z, sigma, rho, beta);
-        let (k2_x, k2_y, k2_z) = derivatives(
-            x + k1_x * dt * 0.5,
-            y + k1_y * dt * 0.5,
-            z + k1_z * dt * 0.5,
-            sigma,
-            rho,
-            beta,
-        );
-        let (k3_x, k3_y, k3_z) = derivatives(
-            x + k2_x * dt * 0.5,
-            y + k2_y * dt * 0.5,
-            z + k2_z * dt * 0.5,
-            sigma,
-            rho,
-            beta,
-        );
-        let (k4_x, k4_y, k4_z) = derivatives(
-            x + k3_x * dt,
-            y + k3_y * dt,
-            z + k3_z * dt,
-            sigma,
-            rho,
-            beta,
-        );
+        let next_pos = solve_rk4(p.pos, params, dt);
+        let diff = next_pos - p.pos;
 
-        let dx = (k1_x + 2.0 * k2_x + 2.0 * k3_x + k4_x) / 6.0;
-        let dy = (k1_y + 2.0 * k2_y + 2.0 * k3_y + k4_y) / 6.0;
-        let dz = (k1_z + 2.0 * k2_z + 2.0 * k3_z + k4_z) / 6.0;
-
-        p.pos.x += dx * dt;
-        p.pos.y += dy * dt;
-        p.pos.z += dz * dt;
+        p.pos = next_pos;
 
         // Update velocity for coloring (approximate)
-        p.vel = vec3(dx, dy, dz);
+        // We use (dx, dy, dz) / dt essentially, but here we just store displacement as velocity proxy
+        p.vel = diff / dt;
 
         // Color mapping
         // Velocity magnitude helps visualize speed
@@ -184,9 +161,23 @@ pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f
     });
 }
 
-pub fn derivatives(x: f32, y: f32, z: f32, sigma: f32, rho: f32, beta: f32) -> (f32, f32, f32) {
-    let dx = sigma * (y - x);
-    let dy = x * (rho - z) - y;
-    let dz = x * y - beta * z;
-    (dx, dy, dz)
+pub fn derivatives(pos: Vec3, params: &LorenzParams) -> Vec3 {
+    let x = pos.x;
+    let y = pos.y;
+    let z = pos.z;
+
+    let dx = params.sigma * (y - x);
+    let dy = x * (params.rho - z) - y;
+    let dz = x * y - params.beta * z;
+
+    vec3(dx, dy, dz)
+}
+
+pub fn solve_rk4(pos: Vec3, params: &LorenzParams, dt: f32) -> Vec3 {
+    let k1 = derivatives(pos, params);
+    let k2 = derivatives(pos + k1 * dt * 0.5, params);
+    let k3 = derivatives(pos + k2 * dt * 0.5, params);
+    let k4 = derivatives(pos + k3 * dt, params);
+
+    pos + (k1 + k2 * 2.0 + k3 * 2.0 + k4) * (dt / 6.0)
 }
