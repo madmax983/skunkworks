@@ -12,7 +12,7 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, ChromaCell, Value};
+use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, ChromaCell, Value, MAX_STRANDS};
 use crate::ast::{Dna, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -701,6 +701,10 @@ fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
 
     if !new_strands.is_empty() {
+        if new_strands.len() > MAX_STRANDS {
+            vm.output.push("METAMORPHOSIS: Failed (Too many strands)".to_string());
+            return Some((0, 0));
+        }
         vm.dna.helix.strands = new_strands;
 
         // Reset State
@@ -917,6 +921,10 @@ fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if id < vm.spores.len() {
                 let spore = &vm.spores[id];
                 if idx < spore.dna.helix.strands.len() {
+                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                        vm.output.push("Error: Strand limit exceeded for chronos_splice".to_string());
+                        return None;
+                    }
                     // Clone strand from spore
                     let strand = spore.dna.helix.strands[idx].clone();
 
@@ -1043,6 +1051,11 @@ fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 if !new_genes.is_empty() {
+                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                        vm.output.push("Error: Strand limit exceeded for splice".to_string());
+                        vm.stack.push(Value::Int(-1));
+                        return None;
+                    }
                     vm.dna
                         .helix
                         .strands
@@ -1257,6 +1270,10 @@ fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if s_idx < helix_len {
                 let strand_len = vm.dna.helix.strands[s_idx].genes.len();
                 if cut >= 0 && cut_idx <= strand_len {
+                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                        vm.output.push("Error: Strand limit exceeded for cas9_cut".to_string());
+                        return None;
+                    }
                     // Perform split
                     // We need to mutate the strand.
                     let strand = &mut vm.dna.helix.strands[s_idx];
@@ -2579,6 +2596,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 if let (Value::Int(x), Value::Int(y), Value::Int(len)) = (x_val, y_val, len_val) {
                     if len > 0 {
+                        if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                            vm.output.push("Error: Strand limit exceeded for incubate".to_string());
+                            return None;
+                        }
                         let mut genes = Vec::new();
                         let mut valid = true;
                         let max_len = (len as usize).min(MAX_INCUBATE_LENGTH);
@@ -2888,6 +2909,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     Value::Int(idx) => {
                         let s_idx = idx as usize;
                         if s_idx < vm.dna.helix.strands.len() {
+                            if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                                vm.output.push("Error: Strand limit exceeded for mitosis".to_string());
+                                return None;
+                            }
                             // Clone the strand
                             let new_strand = vm.dna.helix.strands[s_idx].clone();
                             vm.dna.helix.strands.push(new_strand);
@@ -4305,25 +4330,29 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let pair = pairs.next().unwrap();
                             match crate::ast::Strand::try_from_pair(pair) {
                                 Ok(strand) => {
-                                    vm.dna.helix.strands.push(strand);
-                                    vm.telomeres.push(50);
-                                    #[cfg(feature = "cortex")]
-                                    {
-                                        vm.activation_levels.push(0);
-                                        vm.synapse_map.push(Vec::new());
+                                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                                        vm.output.push("COMPILE ERROR: Strand limit exceeded".to_string());
+                                    } else {
+                                        vm.dna.helix.strands.push(strand);
+                                        vm.telomeres.push(50);
+                                        #[cfg(feature = "cortex")]
+                                        {
+                                            vm.activation_levels.push(0);
+                                            vm.synapse_map.push(Vec::new());
+                                        }
+                                        let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                        vm.cladistics.register_strand(
+                                            new_idx,
+                                            Some(vm.ip.0),
+                                            vm.tick_counter,
+                                            "Compile".to_string(),
+                                        );
+
+                                        vm.stack.push(Value::Int(new_idx as i64));
+                                        vm.energy = vm.energy.saturating_sub(50);
+                                        vm.output.push("COMPILE: Success".to_string());
                                     }
-                                    let new_idx = vm.dna.helix.strands.len() - 1;
-
-                                    vm.cladistics.register_strand(
-                                        new_idx,
-                                        Some(vm.ip.0),
-                                        vm.tick_counter,
-                                        "Compile".to_string(),
-                                    );
-
-                                    vm.stack.push(Value::Int(new_idx as i64));
-                                    vm.energy = vm.energy.saturating_sub(50);
-                                    vm.output.push("COMPILE: Success".to_string());
                                 }
                                 Err(e) => {
                                     vm.output.push(format!("COMPILE ERROR: {}", e));
@@ -5340,6 +5369,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             }
 
                             // 3. Push new strand
+                            if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                                vm.output.push("Error: Strand limit exceeded for reincarnate".to_string());
+                                return None;
+                            }
                             vm.dna.helix.strands.push(new_strand);
                             let new_idx = vm.dna.helix.strands.len() - 1;
                             vm.telomeres.push(50);

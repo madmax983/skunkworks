@@ -39,3 +39,10 @@
 **2026-03-12 - Chimera-Lang Phylogeny Sandboxing**
 **Threat:** Path Traversal and Arbitrary Command Execution in `phylogeny` feature. Opcodes `Crawl`, `Sequencing`, `Synthesize`, `Infect` allowed access to files outside the VM environment (e.g. `../../etc/passwd`). `Shell` opcode allowed arbitrary command execution.
 **Defense:** Implemented `sandbox_root` in `ChimeraVM` and strict `sanitize_path` helper to enforce confinement using canonicalization and prefix checking. Disabled `Shell` opcode completely ("SHELL DISABLED").
+
+**2026-03-15 - Chimera-Lang Nova DoS Hardening**
+**Threat:** Denial of Service (DoS) via unbounded resource allocation in `Pocket` (massive loop/allocation), `Mitosis`/`Splice` (infinite strand creation), and `Akashic` (loading massive files).
+**Defense:**
+- Capped `Pocket` radius to `MAX_POCKET_RADIUS` (32).
+- Enforced `MAX_STRANDS` (1024) limit on all strand-creating Opcodes.
+- Enforced `MAX_AKASHIC_SIZE` (10MB) limit on file loading.

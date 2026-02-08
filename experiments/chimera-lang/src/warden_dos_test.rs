@@ -3,8 +3,10 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::ChimeraVM;
-    use crate::vm::{MAX_CALL_STACK_DEPTH, MAX_ORGANELLES, MAX_SPORES};
+    use crate::vm::{
+        ChimeraVM, Value, MAX_CALL_STACK_DEPTH, MAX_ORGANELLES, MAX_POCKET_RADIUS, MAX_SPORES,
+        MAX_STRANDS,
+    };
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
         let dna = Dna {
@@ -164,5 +166,44 @@ mod tests {
             MAX_CALL_STACK_DEPTH,
             "Should reach max call stack"
         );
+    }
+
+    #[test]
+    fn test_pocket_radius_cap() {
+        let mut vm = make_vm(vec![]);
+        vm.stack.push(Value::Int(100)); // > MAX_POCKET_RADIUS (32)
+        crate::vm::nova_pocket::exec_pocket(&mut vm);
+
+        let val = vm.stack.pop().unwrap();
+        if let Value::Junction(_, items) = val {
+            // Header is POCKET, radius
+            if let Value::Int(r) = items[1] {
+                assert_eq!(r, MAX_POCKET_RADIUS);
+            } else {
+                panic!("Invalid pocket header");
+            }
+        } else {
+            panic!("Expected pocket junction");
+        }
+    }
+
+    #[test]
+    fn test_strand_limit() {
+        let mut vm = make_vm(vec![]);
+
+        // Fill strands to limit
+        // Current length is 1. We need to add MAX_STRANDS - 1.
+        for _ in 1..MAX_STRANDS {
+            vm.dna.helix.strands.push(Strand { genes: vec![] });
+        }
+        assert_eq!(vm.dna.helix.strands.len(), MAX_STRANDS);
+
+        // Try Mitosis
+        vm.stack.push(Value::Int(0));
+        crate::vm::nova::exec_nova_op(&mut vm, OpCode::Mitosis, &[]);
+
+        // Should fail
+        assert_eq!(vm.dna.helix.strands.len(), MAX_STRANDS);
+        assert!(vm.output.last().unwrap().contains("Strand limit exceeded"));
     }
 }

@@ -42,6 +42,12 @@ pub const MAX_CHORUS_SIZE: usize = 8;
 pub const MAX_JUNCTION_SIZE: usize = 1024;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
+#[cfg(feature = "nova")]
+pub const MAX_STRANDS: usize = 1024;
+#[cfg(feature = "nova")]
+pub const MAX_POCKET_RADIUS: i64 = 32;
+#[cfg(feature = "nova")]
+pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 
 #[cfg(feature = "nova")]
 pub mod akashic;
