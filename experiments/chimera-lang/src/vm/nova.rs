@@ -903,6 +903,65 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+#[cfg(feature = "nova")]
+fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: spore_id, strand_idx (top)
+    if vm.stack.len() >= 2 {
+        let s_val = vm.stack.pop().unwrap(); // strand_idx
+        let id_val = vm.stack.pop().unwrap(); // spore_id
+
+        if let (Value::Int(spore_id), Value::Int(s_idx)) = (id_val, s_val) {
+            let id = spore_id as usize;
+            let idx = s_idx as usize;
+
+            if id < vm.spores.len() {
+                let spore = &vm.spores[id];
+                if idx < spore.dna.helix.strands.len() {
+                    // Clone strand from spore
+                    let strand = spore.dna.helix.strands[idx].clone();
+
+                    // Add to current genome
+                    vm.dna.helix.strands.push(strand);
+                    vm.telomeres.push(50);
+                    #[cfg(feature = "cortex")]
+                    {
+                        vm.activation_levels.push(0);
+                        vm.synapse_map.push(Vec::new());
+                    }
+
+                    let new_idx = vm.dna.helix.strands.len() - 1;
+
+                    vm.cladistics.register_strand(
+                        new_idx,
+                        Some(idx),
+                        vm.tick_counter,
+                        format!("ChronosSplice({}, {})", id, idx),
+                    );
+
+                    vm.stack.push(Value::Int(new_idx as i64));
+                    vm.energy = vm.energy.saturating_sub(75); // Expensive time travel
+                    vm.output.push(format!(
+                        "CHRONOS_SPLICE: Retrieved strand {} from Spore {}",
+                        idx, id
+                    ));
+                } else {
+                    vm.output
+                        .push("Error: Strand index out of bounds in spore".to_string());
+                }
+            } else {
+                vm.output.push("Error: Spore ID out of bounds".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for chronos_splice".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for chronos_splice".to_string());
+    }
+    None
+}
+
 /// Combines two strands using a genetic splicing method.
 ///
 /// **OpCode:** `Splice`
@@ -1306,6 +1365,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::ChronosSplice => exec_chronos_splice(vm),
         #[cfg(feature = "nova")]
         OpCode::Claim => super::nova_sovereignty::exec_claim(vm),
         #[cfg(feature = "nova")]

@@ -113,6 +113,9 @@ pub mod nova_pocket;
 #[cfg(test)]
 mod nova_pocket_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chronos_splice_test;
+#[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
 pub mod nova_resonance_war;
@@ -1941,6 +1944,7 @@ impl ChimeraVM {
             OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
+            | OpCode::ChronosSplice
             | OpCode::Fire
             | OpCode::Salvo
             | OpCode::Claim
