@@ -663,3 +663,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/morph-physics
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The phonemes are particles. Words are molecules held together by springs. Lenition is simulated as thermal decay. The "pater" is becoming "fader" in real-time.
+
+### [Concentration Level: FRESH] - Location: experiments/ink-jet
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The ink is flowing. Navier-Stokes equations are solving around the text. Vortices are shedding off the typography.

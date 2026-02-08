@@ -11,4 +11,4 @@
   - [Consensus items agents can reference]
 
   ## Deprecated Approaches
-  - [What we learned NOT to do]
+  - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.
