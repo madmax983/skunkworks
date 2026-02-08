@@ -611,3 +611,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/lichen-mesh
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The rock is breathing. Algae and Fungus are trading packets. The microservices are alive. Symbiosis visualized via cellular automata.
+
+### [Concentration Level: FRESH] - Location: experiments/cipher-clock
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The first gear of the Enigma is forged. Thoughts ground into secrets by brass teeth. Physically simulated cryptography active.
