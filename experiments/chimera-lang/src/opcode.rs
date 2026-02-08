@@ -1112,6 +1112,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Brainfuck,
 
+    // Void Features (Aetheric Linguistics)
+    /// **[Nova]** Writes a Rune (String) to the hidden Void Grid at the current location.
+    ///
+    /// **Stack:** `[ ..., rune_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Scribe,
+    /// **[Nova]** Reads a Rune from the Void Grid at the current location.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., rune_string ]`
+    #[cfg(feature = "nova")]
+    ReadVoid,
+    /// **[Nova]** Invokes a spell formed by the Runes in the cardinal neighbors (N, E, S, W).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Checks neighbors, forms a sentence, and casts a spell if valid.
+    #[cfg(feature = "nova")]
+    Spell,
+
     // Meta Features (Self-Definition)
     /// **[Nova]** Defines a new enzyme (OpCode) that calls a strand.
     ///

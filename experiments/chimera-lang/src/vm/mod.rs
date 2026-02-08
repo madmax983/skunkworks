@@ -145,6 +145,8 @@ pub mod nova_sigil;
 #[cfg(feature = "nova")]
 pub mod nova_signals;
 #[cfg(feature = "nova")]
+pub mod nova_void_grid;
+#[cfg(feature = "nova")]
 pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -438,6 +440,8 @@ pub struct ChimeraVM {
     pub resonance_grid: Vec<Vec<(f32, f32)>>,
     #[cfg(feature = "nova")]
     pub buffs: HashMap<String, usize>,
+    #[cfg(feature = "nova")]
+    pub void_grid: Vec<Vec<Option<String>>>,
 }
 
 impl ChimeraVM {
@@ -483,6 +487,8 @@ impl ChimeraVM {
         let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let buffs = HashMap::new();
+        #[cfg(feature = "nova")]
+        let void_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         let execution_trail = vec![0; GRID_SIZE * GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -650,6 +656,8 @@ impl ChimeraVM {
             resonance_grid,
             #[cfg(feature = "nova")]
             buffs,
+            #[cfg(feature = "nova")]
+            void_grid,
         }
     }
 
@@ -1900,6 +1908,9 @@ impl ChimeraVM {
             | OpCode::Savor
             | OpCode::Cultivate
             | OpCode::Banquet => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Scribe | OpCode::ReadVoid | OpCode::Spell => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Resonate

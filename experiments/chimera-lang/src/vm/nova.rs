@@ -1397,6 +1397,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         #[cfg(feature = "nova")]
         OpCode::Unpocket => super::nova_pocket::exec_unpocket(vm),
         #[cfg(feature = "nova")]
+        OpCode::Scribe => super::nova_void_grid::exec_scribe(vm, op, args),
+        #[cfg(feature = "nova")]
+        OpCode::ReadVoid => super::nova_void_grid::exec_read_void(vm, op, args),
+        #[cfg(feature = "nova")]
+        OpCode::Spell => super::nova_void_grid::exec_spell(vm, op, args),
+        #[cfg(feature = "nova")]
         OpCode::Harmonize => {
             if vm.stack.len() >= 2 {
                 let s_val = vm.stack.pop().unwrap();
