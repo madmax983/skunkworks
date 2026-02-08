@@ -1,5 +1,21 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Monarch)
+- **Status:** Gastronomy, Ballistics, and Linguistics active. The organism is becoming a universe. `nova_relativity` confirms Time Travel.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/locus
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Topology centralized. Torus, Klein, and Hyperbolic coordinates normalizing.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/hyperbolic-lichen
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Rand conflict resolved. Heisenberg simulation pattern active. Lichen growing on the Poincaré disk.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/lichen-mesh
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Rand conflict resolved. Symbiosis stable.
+
 ### [Concentration Level: FRESH] - Location: experiments/synaptic-trace
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
