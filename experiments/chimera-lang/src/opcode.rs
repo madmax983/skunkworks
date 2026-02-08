@@ -811,6 +811,29 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    // Thermodynamics Features (Nova)
+    /// **[Nova]** Releases heat into the environment (Exothermic reaction).
+    ///
+    /// **Stack:** `[ ..., amount, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Exothermic,
+    /// **[Nova]** Absorbs heat from the environment (Endothermic reaction).
+    ///
+    /// **Stack:** `[ ..., amount, radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Endothermic,
+    /// **[Nova]** Reads the local temperature.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., temperature ]`
+    #[cfg(feature = "nova")]
+    Thermometer,
+    /// **[Nova]** Returns the state of matter at the current location based on temperature.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., state_id ]`
+    /// **States:** 0=Solid(Ice), 1=Liquid(Water), 2=Gas(Steam), 3=Plasma.
+    #[cfg(feature = "nova")]
+    State,
+
     // Chemistry Features (Nova)
     /// **[Nova]** Mixes neighbors into a solution in the current cell.
     ///

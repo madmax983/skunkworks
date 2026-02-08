@@ -100,62 +100,66 @@ pub fn exec_unearth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                         // Parse
                         match ChimeraParser::parse(Rule::strand, dna_content) {
-                                Ok(mut pairs) => {
-                                    let pair = pairs.next().unwrap();
-                                    match Strand::try_from_pair(pair) {
-                                        Ok(strand) => {
-                                            vm.dna.helix.strands.push(strand);
-                                            vm.telomeres.push(50);
-                                            #[cfg(feature = "cortex")]
-                                            {
-                                                vm.activation_levels.push(0);
-                                                vm.synapse_map.push(Vec::new());
-                                            }
-                                            let new_idx = vm.dna.helix.strands.len() - 1;
-
-                                            // Register ancestry
-                                            vm.cladistics.register_strand(
-                                                new_idx,
-                                                Some(vm.ip.0),
-                                                vm.tick_counter,
-                                                "Unearth".to_string()
-                                            );
-
-                                            vm.stack.push(Value::Int(new_idx as i64));
-                                            vm.energy = vm.energy.saturating_sub(15);
-                                            vm.output.push(format!("UNEARTH: Recovered strand from fossil at {},{}", nx, ny));
-                                        },
-                                        Err(e) => {
-                                            vm.output.push(format!("UNEARTH ERROR: Invalid DNA: {}", e));
-                                            vm.stack.push(Value::Int(-1));
+                            Ok(mut pairs) => {
+                                let pair = pairs.next().unwrap();
+                                match Strand::try_from_pair(pair) {
+                                    Ok(strand) => {
+                                        vm.dna.helix.strands.push(strand);
+                                        vm.telomeres.push(50);
+                                        #[cfg(feature = "cortex")]
+                                        {
+                                            vm.activation_levels.push(0);
+                                            vm.synapse_map.push(Vec::new());
                                         }
+                                        let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                        // Register ancestry
+                                        vm.cladistics.register_strand(
+                                            new_idx,
+                                            Some(vm.ip.0),
+                                            vm.tick_counter,
+                                            "Unearth".to_string(),
+                                        );
+
+                                        vm.stack.push(Value::Int(new_idx as i64));
+                                        vm.energy = vm.energy.saturating_sub(15);
+                                        vm.output.push(format!(
+                                            "UNEARTH: Recovered strand from fossil at {},{}",
+                                            nx, ny
+                                        ));
                                     }
-                                },
-                                Err(e) => {
-                                    vm.output.push(format!("UNEARTH ERROR: Parse failed: {}", e));
-                                    vm.stack.push(Value::Int(-1));
+                                    Err(e) => {
+                                        vm.output
+                                            .push(format!("UNEARTH ERROR: Invalid DNA: {}", e));
+                                        vm.stack.push(Value::Int(-1));
+                                    }
                                 }
                             }
-                        } else {
-                            vm.output.push("UNEARTH: Malformed fossil data".to_string());
-                            vm.stack.push(Value::Int(-1));
+                            Err(e) => {
+                                vm.output
+                                    .push(format!("UNEARTH ERROR: Parse failed: {}", e));
+                                vm.stack.push(Value::Int(-1));
+                            }
                         }
                     } else {
-                        vm.output.push("UNEARTH: Not a valid fossil".to_string());
+                        vm.output.push("UNEARTH: Malformed fossil data".to_string());
                         vm.stack.push(Value::Int(-1));
                     }
                 } else {
-                    vm.output.push("UNEARTH: No fossil found at location".to_string());
+                    vm.output
+                        .push("UNEARTH: No fossil found at location".to_string());
                     vm.stack.push(Value::Int(-1));
                 }
             } else {
-                vm.output.push("Error: Coordinates out of bounds for unearth".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for unearth".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for unearth".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for unearth".to_string());
+        vm.output
+            .push("Error: Stack underflow for unearth".to_string());
     }
     None
 }
@@ -188,13 +192,16 @@ pub fn exec_carbon_date(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.stack.push(Value::Int(-1));
                 }
             } else {
-                vm.output.push("Error: Coordinates out of bounds for carbon_date".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for carbon_date".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for carbon_date".to_string());
+            vm.output
+                .push("Error: Type mismatch for carbon_date".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for carbon_date".to_string());
+        vm.output
+            .push("Error: Stack underflow for carbon_date".to_string());
     }
     None
 }

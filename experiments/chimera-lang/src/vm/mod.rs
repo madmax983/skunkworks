@@ -158,6 +158,8 @@ pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_sovereignty_test;
+#[cfg(feature = "nova")]
+pub mod nova_thermo;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -423,6 +425,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub moisture_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
+    pub temperature_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub entropy_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub signal_grid: Vec<Vec<u8>>,
@@ -494,6 +498,8 @@ impl ChimeraVM {
         let wind_grid = vec![vec![(0, 0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let moisture_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let temperature_grid = vec![vec![20; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
@@ -650,6 +656,8 @@ impl ChimeraVM {
             wind_grid,
             #[cfg(feature = "nova")]
             moisture_grid,
+            #[cfg(feature = "nova")]
+            temperature_grid,
             #[cfg(feature = "nova")]
             entropy_grid,
             #[cfg(feature = "nova")]
@@ -885,6 +893,8 @@ impl ChimeraVM {
         nova::diffuse_light(self);
         nova::diffuse_mutagen(self);
         nova::diffuse_entropy(self);
+        nova_thermo::diffuse_heat(self);
+        nova_thermo::process_phase_changes(self);
         nova_scent::process_scents(self);
 
         for row in self.hormone_grid.iter_mut() {
@@ -2107,6 +2117,11 @@ impl ChimeraVM {
             | OpCode::Unearth
             | OpCode::CarbonDate
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Exothermic | OpCode::Endothermic | OpCode::Thermometer | OpCode::State => {
+                nova_thermo::exec_thermo_op(self, op, args)
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
