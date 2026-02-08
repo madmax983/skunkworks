@@ -33,6 +33,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
+#[cfg(any(feature = "nova", feature = "silicon"))]
+pub use locus::Topology;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -178,18 +180,6 @@ pub enum Chirality {
     #[default]
     Left, // Levo (Normal)
     Right, // Dextro (Inverted)
-}
-
-#[cfg(any(feature = "nova", feature = "silicon"))]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Topology {
-    Plane,      // 0: Bounded. Edges are walls.
-    Torus,      // 1: Wraps X and Y.
-    CylinderH,  // 2: Wraps X, Bounded Y.
-    CylinderV,  // 3: Bounded X, Wraps Y.
-    Klein,      // 4: Wraps X, Wraps Y with twist (x' = 15-x).
-    Mobius,     // 5: Wraps X with twist, Bounded Y.
-    Hyperbolic, // 6: Poincaré Disk model mapping.
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -798,96 +788,7 @@ impl ChimeraVM {
     /// Helper to normalize coordinates based on topology
     #[cfg(any(feature = "nova", feature = "silicon"))]
     pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
-        let size = GRID_SIZE as i64;
-        match self.topology {
-            Topology::Plane => {
-                if self.is_valid_coord(y, x) {
-                    Some((y as usize, x as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::Torus => Some((y.rem_euclid(size) as usize, x.rem_euclid(size) as usize)),
-            Topology::CylinderH => {
-                // Wraps X, Bounded Y
-                if (0..size).contains(&y) {
-                    Some((y as usize, x.rem_euclid(size) as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::CylinderV => {
-                // Bounded X, Wraps Y
-                if (0..size).contains(&x) {
-                    Some((y.rem_euclid(size) as usize, x as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::Klein => {
-                // Wraps X normal, Y wraps with X-twist
-                // Standard Klein bottle: (x, y+H) = (W-x, y)
-                // Let's implement: X wraps normally. Y wraps with twist.
-                let mut nx = x;
-                let mut ny = y;
-
-                // First handle Y wrapping (the twisty one)
-                // If we go off top or bottom, we flip X and wrap Y
-                if !(0..size).contains(&ny) {
-                    // How many times did we wrap?
-                    // Simple case: single step
-                    // General case: rem_euclid logic with flip parity
-                    // Let's assume simple wrapping for simulation steps usually +/- 1
-
-                    // Logic:
-                    // y' = y mod 16
-                    // if (floor(y/16)) is odd, x' = 15 - x.
-
-                    let wrap_count = ny.div_euclid(size);
-                    if wrap_count % 2 != 0 {
-                        nx = (size - 1) - nx; // Twist X
-                    }
-                    ny = ny.rem_euclid(size);
-                }
-
-                // Now handle X wrapping (Torus-like)
-                nx = nx.rem_euclid(size);
-
-                Some((ny as usize, nx as usize))
-            }
-            Topology::Mobius => {
-                // Mobius Strip: Wraps X with twist, Bounded Y
-                // strip [0,L]x[0,W]. (x+L, y) = (x, W-y)
-                // Here X wraps with twist.
-                let mut nx = x;
-                let mut ny = y;
-
-                if !(0..size).contains(&nx) {
-                    let wrap_count = nx.div_euclid(size);
-                    if wrap_count % 2 != 0 {
-                        ny = (size - 1) - ny; // Twist Y
-                    }
-                    nx = nx.rem_euclid(size);
-                }
-
-                if (0..size).contains(&ny) {
-                    Some((ny as usize, nx as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::Hyperbolic => {
-                // Hyperbolic topology doesn't support simple integer coordinate normalization
-                // because space is curved. It relies on the caller (OpCode::Migrate)
-                // to use grid_to_disk / disk_to_grid.
-                // However, if we just want to clamp/check bounds for static access:
-                if self.is_valid_coord(y, x) {
-                    Some((y as usize, x as usize))
-                } else {
-                    None
-                }
-            }
-        }
+        self.topology.normalize(y, x, GRID_SIZE)
     }
 
     /// Handles a character input event.

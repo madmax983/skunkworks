@@ -476,3 +476,98 @@ mod tests {
         assert!((r270.y - -1.0).abs() < 1e-6);
     }
 }
+
+/// Represents the topology of a grid or space.
+///
+/// Determines how coordinates wrap or bound at the edges.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum Topology {
+    Plane,      // 0: Bounded. Edges are walls.
+    Torus,      // 1: Wraps X and Y.
+    CylinderH,  // 2: Wraps X, Bounded Y.
+    CylinderV,  // 3: Bounded X, Wraps Y.
+    Klein,      // 4: Wraps X, Wraps Y with twist (x' = W-1-x).
+    Mobius,     // 5: Wraps X with twist, Bounded Y.
+    Hyperbolic, // 6: Poincaré Disk model mapping (handled externally or treated as bounded).
+}
+
+impl Topology {
+    /// Normalizes coordinates based on the topology and grid size.
+    ///
+    /// Returns `Some((y, x))` if the coordinates are valid or wrapped.
+    /// Returns `None` if the coordinates are out of bounds (for bounded topologies).
+    ///
+    /// # Arguments
+    ///
+    /// * `y` - The Y coordinate (row).
+    /// * `x` - The X coordinate (column).
+    /// * `size` - The size of the grid (assumed square: size x size).
+    pub fn normalize(&self, y: i64, x: i64, size: usize) -> Option<(usize, usize)> {
+        let s = size as i64;
+        match self {
+            Topology::Plane | Topology::Hyperbolic => {
+                if (0..s).contains(&y) && (0..s).contains(&x) {
+                    Some((y as usize, x as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Torus => Some((
+                y.rem_euclid(s) as usize,
+                x.rem_euclid(s) as usize
+            )),
+            Topology::CylinderH => {
+                // Wraps X, Bounded Y
+                if (0..s).contains(&y) {
+                    Some((y as usize, x.rem_euclid(s) as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::CylinderV => {
+                // Bounded X, Wraps Y
+                if (0..s).contains(&x) {
+                    Some((y.rem_euclid(s) as usize, x as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Klein => {
+                // Wraps X normal, Y wraps with X-twist
+                let mut nx = x;
+                let mut ny = y;
+
+                if !(0..s).contains(&ny) {
+                    let wrap_count = ny.div_euclid(s);
+                    if wrap_count % 2 != 0 {
+                        nx = (s - 1) - nx; // Twist X
+                    }
+                    ny = ny.rem_euclid(s);
+                }
+                nx = nx.rem_euclid(s);
+
+                Some((ny as usize, nx as usize))
+            }
+            Topology::Mobius => {
+                // Wraps X with twist, Bounded Y
+                let mut nx = x;
+                let mut ny = y;
+
+                if !(0..s).contains(&nx) {
+                    let wrap_count = nx.div_euclid(s);
+                    if wrap_count % 2 != 0 {
+                        ny = (s - 1) - ny; // Twist Y
+                    }
+                    nx = nx.rem_euclid(s);
+                }
+
+                if (0..s).contains(&ny) {
+                    Some((ny as usize, nx as usize))
+                } else {
+                    None
+                }
+            }
+        }
+    }
+}
