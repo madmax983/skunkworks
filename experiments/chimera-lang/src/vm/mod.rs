@@ -168,6 +168,8 @@ pub mod resonance;
 pub mod retina;
 #[cfg(feature = "silicon")]
 pub mod silicon;
+#[cfg(feature = "elektra")]
+pub mod elektra;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
@@ -382,6 +384,12 @@ pub struct ChimeraVM {
     pub blackbox: blackbox::Blackbox,
     #[cfg(feature = "silicon")]
     pub silicon_mode: bool,
+    #[cfg(feature = "elektra")]
+    pub voltage_grid: Vec<Vec<f32>>,
+    #[cfg(feature = "elektra")]
+    pub current_grid: Vec<Vec<f32>>,
+    #[cfg(feature = "elektra")]
+    pub resistance_grid: Vec<Vec<f32>>,
     #[cfg(feature = "nova")]
     pub last_gene: Option<crate::ast::Gene>,
     #[cfg(feature = "nova")]
@@ -604,6 +612,12 @@ impl ChimeraVM {
             blackbox: blackbox::Blackbox::new(),
             #[cfg(feature = "silicon")]
             silicon_mode: false,
+            #[cfg(feature = "elektra")]
+            voltage_grid: vec![vec![0.0; GRID_SIZE]; GRID_SIZE],
+            #[cfg(feature = "elektra")]
+            current_grid: vec![vec![0.0; GRID_SIZE]; GRID_SIZE],
+            #[cfg(feature = "elektra")]
+            resistance_grid: vec![vec![1.0; GRID_SIZE]; GRID_SIZE], // Default resistance 1.0 (Air/Void might be high?)
             #[cfg(feature = "nova")]
             last_gene: None,
             #[cfg(feature = "nova")]
@@ -1541,6 +1555,11 @@ impl ChimeraVM {
             silicon::step_circuit(self);
         }
 
+        #[cfg(feature = "elektra")]
+        if !time_frozen {
+            elektra::update_circuit(self);
+        }
+
         if !time_frozen && self.chaos_mode {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
@@ -2148,6 +2167,12 @@ impl ChimeraVM {
                 None
             }
 
+            #[cfg(feature = "elektra")]
+            OpCode::Battery | OpCode::Ground | OpCode::SenseVolt | OpCode::Shock | OpCode::Lightning => {
+                elektra::exec_elektra_op(self, op, args);
+                None
+            }
+
             #[cfg(feature = "git")]
             OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
                 git::exec_git_op(self, op, args);
@@ -2242,6 +2267,11 @@ impl ChimeraVM {
                     "conduct" | "wire" | "pulse" | "silicon" | "construct" | "logic_gate"
                 ) {
                     hint = " (Hint: Silicon feature. Enable 'silicon' feature?)";
+                }
+
+                // Elektra Features
+                if matches!(n, "battery" | "ground" | "sense_volt" | "shock" | "lightning") {
+                    hint = " (Hint: Elektra feature. Enable 'elektra' feature?)";
                 }
 
                 self.output

@@ -286,6 +286,33 @@ pub enum OpCode {
     #[cfg(feature = "silicon")]
     ADC,
 
+    // Elektra Features (Circuitry)
+    /// **[Elektra]** Creates a Voltage Source (Battery) on the grid.
+    ///
+    /// **Stack:** `[ ..., voltage, y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Battery,
+    /// **[Elektra]** Creates a Ground (0V Sink) on the grid.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Ground,
+    /// **[Elektra]** Reads the Voltage at a grid location.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., voltage ]`
+    #[cfg(feature = "elektra")]
+    SenseVolt,
+    /// **[Elektra]** Discharges built-up charge, damaging neighbors.
+    ///
+    /// **Stack:** `[ ..., power, radius ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Shock,
+    /// **[Elektra]** Creates a lightning strike effect.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Lightning,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///
