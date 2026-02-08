@@ -7,3 +7,4 @@ edition = "2021"
 macroquad = "0.4.14"
 rand.workspace = true
 walkdir = "2.5.0"
+git2 = "0.18"

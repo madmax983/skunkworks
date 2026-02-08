@@ -1,3 +1,5 @@
+use macroquad::prelude::Color;
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
@@ -11,6 +13,7 @@ pub struct Scanner;
 
 impl Scanner {
     pub fn scan<P: AsRef<Path>>(root: P) -> Vec<FileMetadata> {
+        let root = root.as_ref();
         let mut files = Vec::new();
         for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
             if entry.file_type().is_file() {
@@ -20,10 +23,14 @@ impl Scanner {
                 }
 
                 let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
-                files.push(FileMetadata {
-                    path: entry.path().to_path_buf(),
-                    size,
-                });
+                // Strip prefix to match git paths (which are relative to repo root)
+                let path = entry
+                    .path()
+                    .strip_prefix(root)
+                    .unwrap_or(entry.path())
+                    .to_path_buf();
+
+                files.push(FileMetadata { path, size });
             }
         }
         // Sort alphabetically to group directories
@@ -36,7 +43,9 @@ pub struct Terrain {
     pub width: usize,
     pub height: usize,
     pub heightmap: Vec<f32>,
+    pub colors: Vec<Color>,
     pub max_height: f32,
+    pub file_indices: HashMap<PathBuf, usize>,
 }
 
 impl Terrain {
@@ -52,6 +61,8 @@ impl Terrain {
         let height = power_of_two;
 
         let mut heightmap = vec![0.0; width * height];
+        let colors = vec![Color::new(1.0, 1.0, 1.0, 1.0); width * height];
+        let mut file_indices = HashMap::new();
         let mut max_height = 0.0;
 
         for (i, file) in files.iter().enumerate() {
@@ -62,6 +73,7 @@ impl Terrain {
             // Log scale for size to avoid massive spikes
             let h = (file.size as f32).ln().max(0.0) * 2.0;
             heightmap[y * width + x] = h;
+            file_indices.insert(file.path.clone(), i);
             if h > max_height {
                 max_height = h;
             }
@@ -71,8 +83,14 @@ impl Terrain {
             width,
             height,
             heightmap,
+            colors,
             max_height,
+            file_indices,
         }
+    }
+
+    pub fn get_coords(&self, path: &Path) -> Option<(usize, usize)> {
+        self.file_indices.get(path).map(|&i| d2xy(self.width, i))
     }
 }
 
