@@ -572,9 +572,13 @@
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The parser is crawling. Inverse Kinematics are reaching for syntax tokens. Code is becoming a jungle gym.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/gastown
+### [Concentration Level: TOXIC] - Location: graveyard/gastown
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Skeletal implementation. Lacks emergent behavior. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Skeletal implementation. Moved to graveyard.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/syntax-fold
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Hardcoded implementation. Grace period: 24h.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/git-etymology
 - **Scent Origin:** The Reaper ☠️
