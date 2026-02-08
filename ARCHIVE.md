@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **system-bonsai**: Documentation void. Generic implementation (sysinfo tree). Redundant with `recursive-conservatory`. Grace period: 24h.
+- **resonance-chamber**: Specimen condemned. Redundant with `ripple-tank`. TUI implementation offers lower fidelity than existing GUI alternative. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **system-bonsai**: Specimen executed. Documentation void. Redundant with `recursive-conservatory`. Moved to graveyard.
 - **metric-marionette**: Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`. Moved to graveyard.
 - **syntax-fold**: Specimen executed. Documentation void. Hardcoded "toy" implementation. Redundant with `trace-fold`. Moved to graveyard.
 - **gastown**: Specimen executed. Documentation void. Skeletal implementation (mostly mock-ups). Generic CLI scaffolding. Lacks persona alignment. Moved to graveyard.
