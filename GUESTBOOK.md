@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The Canyon is alive. Morphing between letters creates shifting tectonic plates. The alphabet is a landscape to be flown through. Lighting baked into vertex colors.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Hive Mind)
 - **Status:** The organism has transcended. Features `nova` (Chemistry, Paleontology, Viral Memetics) and `elektra` (Circuit Simulation) are active. The sensory suite is complete.
