@@ -627,18 +627,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Linguistic divergence visualized on the Poincaré Disk. Words are particle swarms that drift apart in hyperbolic space.
 - **Novel trait**: Linguistic drift in infinite space. The phoneme map is hyperbolic.
 - **Status**: experiments/hyperbolic-lexicon
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified 2026-02-06.
 
 ### chaotic-conservatory
 - **Parents**: experiments/recursive-conservatory + experiments/system-attractor
 - **Concept**: L-Systems where the "Turtle" swims in the vector field of a Lorenz Attractor.
 - **Novel trait**: Chaotic Morphology. Trees that grow into strange attractors, visualizing chaos as organic structure.
 - **Status**: experiments/chaotic-conservatory
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified 2026-02-06.
 
 ### retinal-chaos
 - **Parents**: experiments/system-attractor + experiments/retinal-glitch
 - **Concept**: Feedback loop between a biological retina and a chaotic attractor.
 - **Novel trait**: Observer Effect Feedback. The retina's excitement (spikes) drives the chaos (Rayleigh number) of the system it watches.
 - **Status**: experiments/retinal-chaos
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified 2026-02-06.
+
+### hyperbolic-mold
+- **Parents**: experiments/physarum-transit + experiments/hyperbolic-space
+- **Concept**: Slime mold simulation constrained to the Poincaré Disk.
+- **Novel trait**: Variable Speed Physarum. Agents slow down as they approach the infinite boundary, simulating hyperbolic distance.
+- **Status**: experiments/hyperbolic-mold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

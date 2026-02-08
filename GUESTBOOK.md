@@ -762,3 +762,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/cipher-clock
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Contributes to workspace dependency conflicts (`bevy` vs `macroquad`). Grace period: 24h.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-mold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The mold is expanding. Agents are slowing down as they approach infinity. The Poincaré disk is being colonized by slime.
