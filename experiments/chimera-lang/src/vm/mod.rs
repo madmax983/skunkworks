@@ -71,6 +71,8 @@ pub mod nova_astrology;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
 #[cfg(feature = "nova")]
+pub mod nova_cartography;
+#[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -399,6 +401,8 @@ pub struct ChimeraVM {
     pub sky: nova_astrology::Sky,
     #[cfg(feature = "nova")]
     pub chord_registry: HashMap<Vec<String>, usize>,
+    #[cfg(feature = "nova")]
+    pub cartography_grid: Vec<Vec<Value>>,
 }
 
 impl ChimeraVM {
@@ -436,6 +440,8 @@ impl ChimeraVM {
         let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let signal_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let cartography_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
         let execution_trail = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -591,6 +597,8 @@ impl ChimeraVM {
             sky: nova_astrology::Sky::new(),
             #[cfg(feature = "nova")]
             chord_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            cartography_grid,
         }
     }
 
@@ -2099,6 +2107,12 @@ impl ChimeraVM {
             | OpCode::Infect
             | OpCode::Shell => {
                 phylogeny::exec_phylogeny_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Scan | OpCode::Locate | OpCode::Chart | OpCode::Atlas => {
+                nova_cartography::exec_cartography_op(self, op, args);
                 None
             }
 
