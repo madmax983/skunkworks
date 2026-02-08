@@ -50,6 +50,8 @@ pub mod alchemy;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+#[cfg(feature = "nova")]
+pub mod cladistics;
 pub mod cortex;
 pub mod dream;
 #[cfg(feature = "git")]
@@ -57,25 +59,47 @@ pub mod git;
 #[cfg(feature = "nova")]
 pub mod ipc;
 #[cfg(feature = "nova")]
+pub mod memetics;
+#[cfg(feature = "nova")]
 pub mod meta;
 pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_astrology;
+#[cfg(feature = "nova")]
+pub mod nova_ballistics;
+#[cfg(feature = "nova")]
+pub mod nova_cartography;
+#[cfg(feature = "nova")]
+pub mod nova_bestiary;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_bestiary_test;
+#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
-#[cfg(all(feature = "nova", feature = "resonance"))]
-pub mod nova_cymatics;
-#[cfg(feature = "nova")]
-pub mod nova_market;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_orca_test;
+#[cfg(feature = "nova")]
+pub mod nova_crystal;
+#[cfg(all(feature = "nova", feature = "resonance"))]
+pub mod nova_cymatics;
+#[cfg(feature = "nova")]
+pub mod nova_egregore;
+#[cfg(feature = "nova")]
+pub mod nova_geology;
+#[cfg(feature = "nova")]
+pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
@@ -87,9 +111,14 @@ mod nova_retina_test;
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
-pub mod oracle;
 #[cfg(feature = "nova")]
-pub mod cladistics;
+pub mod nova_signals;
+#[cfg(feature = "nova")]
+pub mod nova_sovereignty;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_sovereignty_test;
+pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
 #[cfg(feature = "nova")]
@@ -210,18 +239,28 @@ impl std::fmt::Display for Value {
 #[derive(Clone)]
 pub struct ChimeraVM {
     /// The read-only DNA program.
+    ///
+    /// Contains a `Helix` of `Strands`, each containing `Genes` (OpCodes).
     pub dna: Dna,
     /// The LIFO stack for data manipulation.
+    ///
+    /// Stores `Value::Int`, `Value::Str`, or `Value::Junction` types.
     pub stack: Vec<Value>,
     /// Instruction Pointer: `(strand_index, gene_index)`.
     pub ip: (usize, usize),
     /// Standard Output buffer (silent, accumulates strings).
     pub output: Vec<String>,
     /// Execution flag. If true, `step()` does nothing.
+    ///
+    /// Set when energy runs out or explicit halt occurs.
     pub halted: bool,
     /// Biological fuel. Starts at 50. Decreases by 1 per step.
+    ///
+    /// If energy drops to 0 or below, the organism dies (halts).
     pub energy: i64,
     /// 16x16 2D memory grid.
+    ///
+    /// Cells can store any `Value`, including OpCodes (Strings) or Integers.
     pub grid: Vec<Vec<Value>>,
     /// If true, random mutations occur frequently.
     pub chaos_mode: bool,
@@ -247,6 +286,8 @@ pub struct ChimeraVM {
     pub light_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub time_grid: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
+    pub projectiles: Vec<nova_ballistics::Projectile>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     pub call_stack: Vec<(usize, usize)>,
@@ -337,9 +378,16 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub market: nova_market::MarketState,
     #[cfg(feature = "nova")]
+    pub egregore: nova_egregore::Egregore,
+    #[cfg(feature = "nova")]
     pub wind_grid: Vec<Vec<(i8, i8)>>,
     #[cfg(feature = "nova")]
     pub moisture_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
+    pub entropy_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
+    pub signal_grid: Vec<Vec<u8>>,
+    pub execution_trail: Vec<Vec<u8>>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
@@ -348,6 +396,22 @@ pub struct ChimeraVM {
     pub cladistics: cladistics::Cladistics,
     #[cfg(feature = "nova")]
     pub crucible: alchemy::Crucible,
+    #[cfg(feature = "nova")]
+    pub meme_pool: memetics::MemePool,
+    #[cfg(feature = "nova")]
+    pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
+    #[cfg(feature = "nova")]
+    pub piet_state: Option<piet::PietState>,
+    #[cfg(feature = "nova")]
+    pub sky: nova_astrology::Sky,
+    #[cfg(feature = "nova")]
+    pub chord_registry: HashMap<Vec<String>, usize>,
+    #[cfg(feature = "nova")]
+    pub cartography_grid: Vec<Vec<Value>>,
+    #[cfg(feature = "nova")]
+    pub sovereignty_grid: Vec<Vec<Option<usize>>>,
+    #[cfg(feature = "nova")]
+    pub tax_rates: HashMap<usize, i64>,
 }
 
 impl ChimeraVM {
@@ -381,6 +445,15 @@ impl ChimeraVM {
         let wind_grid = vec![vec![(0, 0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let moisture_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let entropy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let signal_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let cartography_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+        let execution_trail = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
@@ -415,6 +488,8 @@ impl ChimeraVM {
             light_grid,
             #[cfg(feature = "nova")]
             time_grid,
+            #[cfg(feature = "nova")]
+            projectiles: Vec::new(),
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             call_stack: Vec::new(),
@@ -505,9 +580,16 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             market: nova_market::MarketState::new(),
             #[cfg(feature = "nova")]
+            egregore: nova_egregore::Egregore::new(),
+            #[cfg(feature = "nova")]
             wind_grid,
             #[cfg(feature = "nova")]
             moisture_grid,
+            #[cfg(feature = "nova")]
+            entropy_grid,
+            #[cfg(feature = "nova")]
+            signal_grid,
+            execution_trail,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
@@ -516,6 +598,22 @@ impl ChimeraVM {
             cladistics: cladistics::Cladistics::new(),
             #[cfg(feature = "nova")]
             crucible: alchemy::Crucible::new(),
+            #[cfg(feature = "nova")]
+            meme_pool: memetics::MemePool::new(),
+            #[cfg(feature = "nova")]
+            dialects: HashMap::new(),
+            #[cfg(feature = "nova")]
+            piet_state: None,
+            #[cfg(feature = "nova")]
+            sky: nova_astrology::Sky::new(),
+            #[cfg(feature = "nova")]
+            chord_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            cartography_grid,
+            #[cfg(feature = "nova")]
+            sovereignty_grid,
+            #[cfg(feature = "nova")]
+            tax_rates: HashMap::new(),
         }
     }
 
@@ -599,14 +697,17 @@ impl ChimeraVM {
     pub fn interrupt(&mut self, strand_idx: usize) {
         if strand_idx < self.dna.helix.strands.len() {
             if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
-                self.output.push("Error: Interrupt ignored, call stack full".to_string());
+                self.output
+                    .push("Error: Interrupt ignored, call stack full".to_string());
                 return;
             }
             self.call_stack.push(self.ip);
             self.ip = (strand_idx, 0);
-            self.output.push(format!("INTERRUPT: Triggered strand {}", strand_idx));
+            self.output
+                .push(format!("INTERRUPT: Triggered strand {}", strand_idx));
         } else {
-            self.output.push(format!("INTERRUPT ERROR: Invalid strand {}", strand_idx));
+            self.output
+                .push(format!("INTERRUPT ERROR: Invalid strand {}", strand_idx));
         }
     }
 
@@ -797,6 +898,7 @@ impl ChimeraVM {
         nova::diffuse_waste(self);
         nova::diffuse_light(self);
         nova::diffuse_mutagen(self);
+        nova::diffuse_entropy(self);
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -824,6 +926,20 @@ impl ChimeraVM {
                 self.output
                     .push(format!("MUTATION: RADIATION at {},{}", cx, cy));
                 self.mutate();
+            }
+        }
+
+        // Reality Decay (Entropy)
+        if self.entropy_grid[cy][cx] > 50 {
+            let mut rng = rand::thread_rng();
+            // 20% chance of Glitch per tick if high entropy
+            if rng.gen_bool(0.20) {
+                self.output.push(format!("REALITY DECAY at {},{}", cx, cy));
+                // Simulate Glitch(1)
+                self.stack.push(Value::Int(1)); // Severity 1
+                if let Some(_) = nova::exec_nova_op(self, OpCode::Glitch, &[]) {
+                    // Jump occurred (unlikely for Glitch but possible if we extended it)
+                }
             }
         }
     }
@@ -970,6 +1086,10 @@ impl ChimeraVM {
             }
             nova::OrganelleType::Void => {
                 let (cy, cx) = self.context_loc;
+
+                // Entropy Trail
+                self.entropy_grid[cy][cx] = self.entropy_grid[cy][cx].saturating_add(10).min(100);
+
                 // Void consumes grid cell if not 0
                 let val = self.grid[cy][cx].clone();
                 if !matches!(val, Value::Int(0)) {
@@ -994,7 +1114,10 @@ impl ChimeraVM {
                                 self.chorus_buffer.pop_front();
                             }
                             self.output.push(format!("VOID SONG: {}", n));
-                            nova::check_chorus_chords(self);
+                            if let Some(_target) = nova::check_chorus_chords(self) {
+                                // Void ignores calls, but maybe we can trigger global effect?
+                                // For now, ignore jump for Void.
+                            }
                         }
                     }
                 }
@@ -1022,6 +1145,39 @@ impl ChimeraVM {
                     organelle.halted = true;
                 }
             }
+            nova::OrganelleType::Choir => {
+                let song_len = organelle.traits.len();
+                if song_len > 0 {
+                    let idx = organelle.recursion_depth % song_len;
+                    let note = &organelle.traits[idx];
+
+                    self.chorus_buffer.push_back(note.clone());
+                    if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
+                        self.chorus_buffer.pop_front();
+                    }
+                    self.output.push(format!("CHOIR: {}", note));
+
+                    if let Some(target) = nova::check_chorus_chords(self) {
+                        // Choir triggers HOST to jump
+                        // self.ip is the HOST IP context (because we swapped)
+                        // wait, tick_organelle SWAPPED self.ip with organelle.ip.
+                        // So self.ip is ORGANELLE IP.
+                        // organelle.ip is HOST IP.
+
+                        // We want to update HOST IP.
+                        // So we update organelle.ip.
+
+                        if organelle.call_stack.len() < MAX_CALL_STACK_DEPTH {
+                             organelle.call_stack.push(organelle.ip); // Save old Host IP
+                             organelle.ip = (target, 0); // Jump Host to target
+                             self.output.push(format!("CHOIR: Triggered host jump to {}", target));
+                        }
+                    }
+
+                    organelle.recursion_depth = (organelle.recursion_depth + 1) % song_len;
+                    self.energy = self.energy.saturating_sub(1);
+                }
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1031,6 +1187,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Void
                 | nova::OrganelleType::Alchemist
                 | nova::OrganelleType::Seed
+                | nova::OrganelleType::Choir
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1112,6 +1269,9 @@ impl ChimeraVM {
                                     kind: nova::OrganelleType::Ribosome,
                                     direction: (dy as i8, dx as i8),
                                     ttl: Some(1),
+                                    name: "Spark".to_string(),
+                                    traits: vec!["Ephemeral".to_string()],
+                                    genome_id: 0,
                                 };
                                 self.organelles.push(new_org);
                             }
@@ -1272,6 +1432,17 @@ impl ChimeraVM {
     }
 
     /// Advances the simulation by one tick.
+    ///
+    /// The execution order is:
+    /// 1.  **Spirit Input**: Process external user input if requested (`OpCode::Spirit`).
+    /// 2.  **Egregore**: Global collective consciousness updates (if Nova enabled).
+    /// 3.  **Environment**: Diffusion of light, waste, hormones, and entropy.
+    /// 4.  **Physics**: Signal propagation, relativity, and ballistics.
+    /// 5.  **Circuitry**: Wireworld simulation (if Silicon enabled).
+    /// 6.  **Mutation**: Random bitflips if Chaos Mode is active.
+    /// 7.  **Metabolism**: Energy decay (-1 per tick) and starvation check.
+    /// 8.  **Gene Execution**: Execute the instruction at the current IP.
+    /// 9.  **Organelles**: Update all sub-processes (organelles/symbiotes).
     pub fn step(&mut self) {
         if self.halted {
             return;
@@ -1314,6 +1485,15 @@ impl ChimeraVM {
 
         self.energy -= 1;
 
+        // Decay execution trail
+        for row in self.execution_trail.iter_mut() {
+            for val in row.iter_mut() {
+                if *val > 0 {
+                    *val = val.saturating_sub(5);
+                }
+            }
+        }
+
         #[cfg(feature = "nova")]
         self.handle_input_interrupts();
 
@@ -1324,11 +1504,42 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         if !time_frozen {
+            self.sky.tick();
+            let manifestation = self.egregore.tick();
+            match manifestation {
+                nova_egregore::Manifestation::Smite => {
+                    self.output.push("EGREGORE: SMITE!".to_string());
+                    if !self.dna.helix.strands.is_empty() {
+                        let mut rng = rand::thread_rng();
+                        let idx = rng.gen_range(0..self.dna.helix.strands.len());
+                        self.dna.helix.strands[idx].genes.clear();
+                        self.output
+                            .push(format!("EGREGORE: Struck down strand {}", idx));
+                    }
+                }
+                nova_egregore::Manifestation::Bless => {
+                    self.output.push("EGREGORE: BLESSING!".to_string());
+                    self.energy = self.energy.saturating_add(100);
+                }
+                nova_egregore::Manifestation::Whisper(msg) => {
+                    self.output.push(format!("EGREGORE: Whisper '{}'", msg));
+                    self.stack.push(Value::Str(msg));
+                }
+                nova_egregore::Manifestation::Corrupt => {
+                    self.output.push("EGREGORE: CORRUPTION!".to_string());
+                    self.mutate();
+                }
+                nova_egregore::Manifestation::None => {}
+            }
+
             self.process_environment();
+            nova_signals::process_signals(self);
             nova_sigil::process_passive_sigils(self);
             if self.relativity_mode {
                 nova_relativity::update_relativity(self);
             }
+            nova_ballistics::update_projectiles(self);
+            nova_sovereignty::process_territory(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -1465,6 +1676,12 @@ impl ChimeraVM {
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
         *self.gene_execution_counts.entry(self.ip).or_insert(0) += 1;
 
+        // Mark trail
+        let (cy, cx) = self.context_loc;
+        if cy < GRID_SIZE && cx < GRID_SIZE {
+            self.execution_trail[cy][cx] = 255;
+        }
+
         if self.recursion_depth > MAX_RECURSION_DEPTH {
             self.output
                 .push("Error: Recursion limit exceeded".to_string());
@@ -1473,7 +1690,17 @@ impl ChimeraVM {
         self.recursion_depth += 1;
 
         #[cfg(feature = "nova")]
-        let effective_op = self.remap_table.get(&op).unwrap_or(&op).clone();
+        let effective_op = {
+            if let Some(dialect) = self.dialects.get(&self.ip.0) {
+                if let Some(mapped) = dialect.get(&op) {
+                    mapped.clone()
+                } else {
+                    self.remap_table.get(&op).unwrap_or(&op).clone()
+                }
+            } else {
+                self.remap_table.get(&op).unwrap_or(&op).clone()
+            }
+        };
         #[cfg(not(feature = "nova"))]
         let effective_op = op;
 
@@ -1685,7 +1912,13 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Offer
+            OpCode::Fire
+            | OpCode::Salvo
+            | OpCode::Claim
+            | OpCode::Cede
+            | OpCode::Sovereignty
+            | OpCode::Tax
+            | OpCode::Offer
             | OpCode::Buy
             | OpCode::Invest
             | OpCode::Divest
@@ -1704,6 +1937,10 @@ impl ChimeraVM {
             | OpCode::Spirit
             | OpCode::Alchemy
             | OpCode::Meme
+            | OpCode::Conceive
+            | OpCode::Propagate
+            | OpCode::Forget
+            | OpCode::Shibboleth
             | OpCode::Drift
             | OpCode::Poly
             | OpCode::Chronostasis
@@ -1800,7 +2037,23 @@ impl ChimeraVM {
             | OpCode::SenseBiome
             | OpCode::RetinaDraw
             | OpCode::RetinaClear
-            | OpCode::RetinaSize => nova::exec_nova_op(self, op, args),
+            | OpCode::RetinaSize
+            | OpCode::EgregoreLink
+            | OpCode::EgregoreTithe
+            | OpCode::EgregoreChannel
+            | OpCode::EgregoreDictate
+            | OpCode::EgregoreQuery
+            | OpCode::EgregoreSummon
+            | OpCode::Sacrifice
+            | OpCode::Entropy
+            | OpCode::Stabilize
+            | OpCode::Disintegrate
+            | OpCode::Gaze
+            | OpCode::Starfall
+            | OpCode::Align
+            | OpCode::Harmonize
+            | OpCode::Choir
+            | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
@@ -1853,7 +2106,10 @@ impl ChimeraVM {
             | OpCode::PinIn
             | OpCode::PinOut
             | OpCode::Emitter
-            | OpCode::Receiver => {
+            | OpCode::Receiver
+            | OpCode::Latch
+            | OpCode::DAC
+            | OpCode::ADC => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }
@@ -1874,6 +2130,28 @@ impl ChimeraVM {
                 None
             }
 
+            #[cfg(feature = "nova")]
+            OpCode::Scan | OpCode::Locate | OpCode::Chart | OpCode::Atlas => {
+                nova_cartography::exec_cartography_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Quake
+            | OpCode::Erode
+            | OpCode::Sediment
+            | OpCode::Tectonics
+            | OpCode::Volcano => {
+                nova_geology::exec_geology_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
+                nova_crystal::exec_crystal_op(self, op, args);
+                None
+            }
+
             OpCode::Unknown(name) => {
                 #[cfg(feature = "nova")]
                 if let Some(&strand_idx) = self.dictionary.get(&name) {
@@ -1885,7 +2163,51 @@ impl ChimeraVM {
                     return Some((strand_idx, 0));
                 }
 
-                self.output.push(format!("Unknown enzyme: {}", name));
+                let mut hint = "";
+                let n = name.as_str();
+
+                // Nova Features
+                if matches!(
+                    n,
+                    "mitosis"
+                        | "apoptosis"
+                        | "spawn"
+                        | "incubate"
+                        | "telomerase"
+                        | "methylate"
+                        | "demethylate"
+                        | "recombine"
+                        | "splice"
+                        | "crispr_scan"
+                        | "cas9_cut"
+                        | "ligase"
+                        | "entangle"
+                        | "decohere"
+                        | "simulate"
+                        | "dream"
+                ) {
+                    hint = " (Hint: Nova feature. Enable 'nova' feature?)";
+                }
+
+                // Cortex Features
+                if matches!(n, "link" | "sever" | "spark" | "sense" | "gate") {
+                    hint = " (Hint: Cortex feature. Enable 'cortex' feature?)";
+                }
+
+                // Biophysics Features
+                if matches!(n, "neuro_genesis" | "stimulate" | "dendrite" | "axon") {
+                    hint = " (Hint: Biophysics feature. Enable 'biophysics' feature?)";
+                }
+
+                // Silicon Features
+                if matches!(
+                    n,
+                    "conduct" | "wire" | "pulse" | "silicon" | "construct" | "logic_gate"
+                ) {
+                    hint = " (Hint: Silicon feature. Enable 'silicon' feature?)";
+                }
+
+                self.output.push(format!("Unknown enzyme: {}{}", name, hint));
                 None
             }
         }

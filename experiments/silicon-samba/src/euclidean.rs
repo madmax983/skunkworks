@@ -75,7 +75,11 @@ mod tests {
     #[test]
     fn test_euclidean_5_13() {
         let gen = EuclideanGenerator::new(13, 5);
-        let pattern: String = gen.pattern.iter().map(|&b| if b { 'X' } else { '.' }).collect();
+        let pattern: String = gen
+            .pattern
+            .iter()
+            .map(|&b| if b { 'X' } else { '.' })
+            .collect();
         println!("Pattern (5, 13): {}", pattern);
         assert_eq!(gen.pattern.iter().filter(|&&b| b).count(), 5);
         assert_eq!(gen.pattern.len(), 13);
@@ -85,7 +89,11 @@ mod tests {
     #[test]
     fn test_euclidean_4_16() {
         let gen = EuclideanGenerator::new(16, 4);
-        let pattern: String = gen.pattern.iter().map(|&b| if b { 'X' } else { '.' }).collect();
+        let pattern: String = gen
+            .pattern
+            .iter()
+            .map(|&b| if b { 'X' } else { '.' })
+            .collect();
         println!("Pattern (4, 16): {}", pattern);
         assert_eq!(gen.pattern.iter().filter(|&&b| b).count(), 4);
         assert!(gen.pattern[0]);

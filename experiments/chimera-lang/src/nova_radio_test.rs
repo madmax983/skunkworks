@@ -131,6 +131,9 @@ mod tests {
 
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 10000;
+        // Prevent Egregore interference (Whispers corrupt stack)
+        vm.egregore.manifestation_timer = 10000;
+
         while !vm.halted {
             vm.step();
             // Prevent toxicity mutations by clearing waste at context location
@@ -140,17 +143,12 @@ mod tests {
 
         // Check internal ether state
         if let Some(queue) = vm.ether.get(&99) {
-            if queue.len() != 100 {
-                println!("VM Output: {:?}", vm.output);
-                println!("Queue len: {}", queue.len());
-            }
             assert_eq!(queue.len(), 100);
             // The last one (100) should have been rejected.
             // Queue contains 0..99.
             assert_eq!(queue.front(), Some(&Value::Int(0)));
             assert_eq!(queue.back(), Some(&Value::Int(99)));
         } else {
-            println!("VM Output: {:?}", vm.output);
             panic!("Queue 99 not found");
         }
 

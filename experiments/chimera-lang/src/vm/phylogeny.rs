@@ -78,23 +78,28 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                                         }
                                     }
                                 }
-                                vm.stack.push(Value::Junction(crate::ast::JunctionType::All, files));
+                                vm.stack
+                                    .push(Value::Junction(crate::ast::JunctionType::All, files));
                                 vm.output.push(format!("CRAWL: Scanned {}", path_str));
                             }
                             Err(e) => {
                                 vm.output.push(format!("CRAWL ERROR: {}", e));
-                                vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, vec![]));
+                                vm.stack
+                                    .push(Value::Junction(crate::ast::JunctionType::Any, vec![]));
                             }
                         }
                     } else {
-                        vm.output.push("CRAWL ERROR: Path Access Denied".to_string());
-                        vm.stack.push(Value::Junction(crate::ast::JunctionType::Any, vec![]));
+                        vm.output
+                            .push("CRAWL ERROR: Path Access Denied".to_string());
+                        vm.stack
+                            .push(Value::Junction(crate::ast::JunctionType::Any, vec![]));
                     }
                 } else {
                     vm.output.push("Error: Type mismatch for crawl".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for crawl".to_string());
+                vm.output
+                    .push("Error: Stack underflow for crawl".to_string());
             }
         }
         OpCode::Sequencing => {
@@ -112,14 +117,17 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             }
                         }
                     } else {
-                        vm.output.push("SEQUENCING ERROR: Path Access Denied".to_string());
+                        vm.output
+                            .push("SEQUENCING ERROR: Path Access Denied".to_string());
                         vm.stack.push(Value::Str("".to_string()));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for sequencing".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for sequencing".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for sequencing".to_string());
+                vm.output
+                    .push("Error: Stack underflow for sequencing".to_string());
             }
         }
         OpCode::Synthesize => {
@@ -133,13 +141,16 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             Err(e) => vm.output.push(format!("SYNTHESIZE ERROR: {}", e)),
                         }
                     } else {
-                        vm.output.push("SYNTHESIZE ERROR: Path Access Denied".to_string());
+                        vm.output
+                            .push("SYNTHESIZE ERROR: Path Access Denied".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for synthesize".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for synthesize".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for synthesize".to_string());
+                vm.output
+                    .push("Error: Stack underflow for synthesize".to_string());
             }
         }
         OpCode::Infect => {
@@ -148,38 +159,44 @@ pub fn exec_phylogeny_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 let path_val = vm.stack.pop().unwrap();
                 if let (Value::Str(path_str), Value::Str(content)) = (path_val, content_val) {
                     if let Some(path) = sanitize_path(&vm.sandbox_root, &path_str) {
-                        let mut file = match fs::OpenOptions::new().append(true).create(true).open(&path) {
-                            Ok(f) => f,
-                            Err(e) => {
-                                vm.output.push(format!("INFECT ERROR: {}", e));
-                                return;
-                            }
-                        };
+                        let mut file =
+                            match fs::OpenOptions::new().append(true).create(true).open(&path) {
+                                Ok(f) => f,
+                                Err(e) => {
+                                    vm.output.push(format!("INFECT ERROR: {}", e));
+                                    return;
+                                }
+                            };
                         if let Err(e) = write!(file, "{}", content) {
                             vm.output.push(format!("INFECT ERROR: {}", e));
                         } else {
                             vm.output.push(format!("INFECT: Appended to {}", path_str));
                         }
                     } else {
-                        vm.output.push("INFECT ERROR: Path Access Denied".to_string());
+                        vm.output
+                            .push("INFECT ERROR: Path Access Denied".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for infect".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for infect".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for infect".to_string());
+                vm.output
+                    .push("Error: Stack underflow for infect".to_string());
             }
         }
         OpCode::Shell => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(_cmd_str) = val {
-                    vm.output.push("SHELL: Command execution disabled for security".to_string());
+                    vm.output
+                        .push("SHELL: Command execution disabled for security".to_string());
                     vm.stack.push(Value::Str("SHELL DISABLED".to_string()));
                 } else {
                     vm.output.push("Error: Type mismatch for shell".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for shell".to_string());
+                vm.output
+                    .push("Error: Stack underflow for shell".to_string());
             }
         }
         _ => {}

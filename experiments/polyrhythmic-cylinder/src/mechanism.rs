@@ -29,7 +29,7 @@ pub struct Governor {
 pub struct Cylinder {
     pub radius: f32,
     pub angular_velocity: f32, // Radians per second
-    pub angle: f32, // Current rotation of cylinder
+    pub angle: f32,            // Current rotation of cylinder
     pub pins: Vec<Pin>,
     pub mainspring: Mainspring,
     pub governor: Governor,
@@ -78,7 +78,9 @@ impl Cylinder {
     pub fn tick(&mut self, dt: f32, comb: &mut Comb) -> Vec<PluckEvent> {
         // Physics update
         let torque = self.mainspring.tension * self.mainspring.torque_constant;
-        let drag = self.governor.drag_coefficient * self.angular_velocity.powi(2) * self.angular_velocity.signum();
+        let drag = self.governor.drag_coefficient
+            * self.angular_velocity.powi(2)
+            * self.angular_velocity.signum();
 
         let net_torque = torque - drag;
         let alpha = net_torque / self.moment_of_inertia;
@@ -86,15 +88,18 @@ impl Cylinder {
         self.angular_velocity += alpha * dt;
         // Friction/stopping
         if self.angular_velocity < 0.0 && torque > 0.0 {
-             // Prevent reverse unless we want it?
-             // Music boxes have ratchets.
-             self.angular_velocity = 0.0;
+            // Prevent reverse unless we want it?
+            // Music boxes have ratchets.
+            self.angular_velocity = 0.0;
         }
 
         // Unwind spring
         if self.angular_velocity > 0.0 {
-            self.mainspring.tension -= self.angular_velocity.abs() * dt * self.mainspring.unwind_rate;
-            if self.mainspring.tension < 0.0 { self.mainspring.tension = 0.0; }
+            self.mainspring.tension -=
+                self.angular_velocity.abs() * dt * self.mainspring.unwind_rate;
+            if self.mainspring.tension < 0.0 {
+                self.mainspring.tension = 0.0;
+            }
         }
 
         let mut events = Vec::new();
@@ -134,22 +139,26 @@ impl Cylinder {
 
             // Assumption: angular_velocity is positive.
             if pos_curr > pos_prev {
-                 let turn_prev = (pos_prev / two_pi).floor() as i32;
-                 let turn_curr = (pos_curr / two_pi).floor() as i32;
+                let turn_prev = (pos_prev / two_pi).floor() as i32;
+                let turn_curr = (pos_curr / two_pi).floor() as i32;
 
-                 if turn_curr > turn_prev {
-                     // Hit!
-                     // Find the corresponding tooth
-                     if let Some(tooth) = comb.teeth.iter_mut().find(|t| t.track_index == pin.track_index) {
-                         events.push(PluckEvent {
-                             frequency: tooth.frequency,
-                             volume: 1.0,
-                             track_index: pin.track_index,
-                         });
-                         // Visual feedback
-                         tooth.vibration_amplitude = 1.0;
-                     }
-                 }
+                if turn_curr > turn_prev {
+                    // Hit!
+                    // Find the corresponding tooth
+                    if let Some(tooth) = comb
+                        .teeth
+                        .iter_mut()
+                        .find(|t| t.track_index == pin.track_index)
+                    {
+                        events.push(PluckEvent {
+                            frequency: tooth.frequency,
+                            volume: 1.0,
+                            track_index: pin.track_index,
+                        });
+                        // Visual feedback
+                        tooth.vibration_amplitude = 1.0;
+                    }
+                }
             }
         }
 

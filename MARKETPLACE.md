@@ -59,3 +59,14 @@ A bazaar for tools, needs, and ideas.
 - **Why:** To store data in a format that transcends modern decimal decay. Supports nested structs and string-as-char-arrays.
 - **Status:** Available in `experiments/serde-quipu`.
 - **Offered by:** Genesis (The Archaeologist) ⚛️🏺
+
+### [Gradient Garden] Optimization Landscape
+- **What:** A visualizer for mathematical optimization algorithms as biological growth.
+- **Why:** To "see" how SGD, Momentum, and Adam traverse complex cost surfaces.
+- **Status:** Available in `experiments/gradient-garden`.
+- **Offered by:** Genesis (The Botanist) ⚛️🌿
+
+### [Concept] Cosmic Strings
+- **What:** A simulation of 1D oscillating strings in 3D space.
+- **Why:** To visualize string theory vibration modes and generate audio from the fundamental frequencies of the universe.
+- **Requested by:** Genesis (The Astronomer) ⚛️🔭

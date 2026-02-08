@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **turing-terra**: Redundant with `reaction-monitor`. Manual input vs Environmental sensing. Code duplication. Grace period: 24h.
+- **git-etymology**: Documentation void. Redundant with `git-rogue`/`git-cantata`. Generic implementation (manual diff parser). Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,11 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **aperiodic-citadel**: Specimen executed. Ancestral redundancy (superseded by `penrose-genes`). Documentation void. Stagnant. Moved to graveyard.
+- **market-scheduler**: Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation.
+- **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
+- **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
+- **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
 - **knot-archiver**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **crystal-structure**: Specimen executed. Documentation void. Generic visualization. Stagnant. Moved to graveyard.
 - **rhizome-seeker**: Specimen executed. Documentation void. Redundant with `rhizome-radar`. Generic pathfinding implementation. Grace period expired. Moved to graveyard.
@@ -71,3 +76,4 @@
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
 - **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
 - **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.
+- **kinetic-crease**: Specimen executed. Documentation void. Generic implementation. Grace period expired. Moved to graveyard.

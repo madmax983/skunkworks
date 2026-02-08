@@ -35,7 +35,7 @@ async fn main() -> anyhow::Result<()> {
             // Map x (0..128) to freq bins (0..512)
             // Low freqs are more interesting usually, so linear mapping is fine
             let bin_idx = (i * spectrum.len()) / FLUID_SIZE;
-            let val = spectrum[bin_idx.min(spectrum.len()-1)];
+            let val = spectrum[bin_idx.min(spectrum.len() - 1)];
 
             // Logarithmic scaling for audio? Or simple threshold?
             // "Ghost mode" produces vals around 0.0-3.0.
@@ -55,7 +55,12 @@ async fn main() -> anyhow::Result<()> {
             let x = macroquad::rand::gen_range(0, FLUID_SIZE);
             let y = macroquad::rand::gen_range(0, FLUID_SIZE / 2);
             fluid.add_density(x, y, 5.0);
-            fluid.add_velocity(x, y, macroquad::rand::gen_range(-1.0, 1.0), macroquad::rand::gen_range(-1.0, 1.0));
+            fluid.add_velocity(
+                x,
+                y,
+                macroquad::rand::gen_range(-1.0, 1.0),
+                macroquad::rand::gen_range(-1.0, 1.0),
+            );
         }
 
         // Mouse Interaction
@@ -72,7 +77,12 @@ async fn main() -> anyhow::Result<()> {
 
                 // Add velocity based on mouse delta?
                 // For now just random burst
-                fluid.add_velocity(fx, fy, macroquad::rand::gen_range(-2.0, 2.0), macroquad::rand::gen_range(-2.0, 2.0));
+                fluid.add_velocity(
+                    fx,
+                    fy,
+                    macroquad::rand::gen_range(-2.0, 2.0),
+                    macroquad::rand::gen_range(-2.0, 2.0),
+                );
             }
         }
 
@@ -102,14 +112,26 @@ async fn main() -> anyhow::Result<()> {
         texture.update(&image);
 
         // Draw texture
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
 
         // Draw HUD
         draw_text("Fluid Specter", 10.0, 20.0, 30.0, WHITE);
-        draw_text(format!("FPS: {}", get_fps()).as_str(), 10.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(
+            format!("FPS: {}", get_fps()).as_str(),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

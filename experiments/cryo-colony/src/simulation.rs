@@ -1,4 +1,4 @@
-use cgmath::{Point3, Vector3, Zero, InnerSpace, MetricSpace};
+use cgmath::{InnerSpace, MetricSpace, Point3, Vector3, Zero};
 use rand::prelude::*;
 use rayon::prelude::*;
 
@@ -67,17 +67,27 @@ impl Simulation {
         let num_agents = 500;
 
         for _ in 0..num_agents {
-             let x = rng.gen_range(-offset..offset);
-             let y = rng.gen_range(-offset..offset);
-             let z = rng.gen_range(-offset..offset);
+            let x = rng.gen_range(-offset..offset);
+            let y = rng.gen_range(-offset..offset);
+            let z = rng.gen_range(-offset..offset);
 
-             let kind = if rng.gen_bool(0.5) { AgentType::Cooler } else { AgentType::Heater };
+            let kind = if rng.gen_bool(0.5) {
+                AgentType::Cooler
+            } else {
+                AgentType::Heater
+            };
 
-             agents.push(Agent {
-                 pos: Point3::new(x, y, z),
-                 vel: Vector3::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize() * 5.0,
-                 kind,
-             });
+            agents.push(Agent {
+                pos: Point3::new(x, y, z),
+                vel: Vector3::new(
+                    rng.gen_range(-1.0..1.0),
+                    rng.gen_range(-1.0..1.0),
+                    rng.gen_range(-1.0..1.0),
+                )
+                .normalize()
+                    * 5.0,
+                kind,
+            });
         }
 
         Self {
@@ -90,24 +100,36 @@ impl Simulation {
 
     pub fn update(&mut self, dt: f32, global_temp_mod: f32) {
         let spring_k = 10.0; // Spring constant for solids
-        let liquid_k = 0.5;  // Weak spring for liquids (viscosity/tension)
+        let liquid_k = 0.5; // Weak spring for liquids (viscosity/tension)
         let damping = 0.90;
 
         // Update Agents first
         for agent in &mut self.agents {
-             // Random walk / change direction occasionally
-             let mut rng = rand::thread_rng();
-             if rng.gen_bool(0.05) {
-                 agent.vel = Vector3::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize() * 5.0;
-             }
+            // Random walk / change direction occasionally
+            let mut rng = rand::thread_rng();
+            if rng.gen_bool(0.05) {
+                agent.vel = Vector3::new(
+                    rng.gen_range(-1.0..1.0),
+                    rng.gen_range(-1.0..1.0),
+                    rng.gen_range(-1.0..1.0),
+                )
+                .normalize()
+                    * 5.0;
+            }
 
-             // Bounce off bounds (rough approximation)
-             let limit = (self.grid_size as f32 * self.spacing) / 2.0;
-             if agent.pos.x.abs() > limit { agent.vel.x *= -1.0; }
-             if agent.pos.y.abs() > limit { agent.vel.y *= -1.0; }
-             if agent.pos.z.abs() > limit { agent.vel.z *= -1.0; }
+            // Bounce off bounds (rough approximation)
+            let limit = (self.grid_size as f32 * self.spacing) / 2.0;
+            if agent.pos.x.abs() > limit {
+                agent.vel.x *= -1.0;
+            }
+            if agent.pos.y.abs() > limit {
+                agent.vel.y *= -1.0;
+            }
+            if agent.pos.z.abs() > limit {
+                agent.vel.z *= -1.0;
+            }
 
-             agent.pos += agent.vel * dt;
+            agent.pos += agent.vel * dt;
         }
 
         // Parallel update for particles
@@ -120,12 +142,12 @@ impl Simulation {
             // Check for nearby agents
             // Optimization: This is O(N*M), naive but might pass for M=500.
             for agent in &agents_copy {
-                 if p.pos.distance2(agent.pos) < (spacing * spacing * 4.0) {
-                      match agent.kind {
-                          AgentType::Heater => p.temperature += 5.0 * dt,
-                          AgentType::Cooler => p.temperature -= 5.0 * dt,
-                      }
-                 }
+                if p.pos.distance2(agent.pos) < (spacing * spacing * 4.0) {
+                    match agent.kind {
+                        AgentType::Heater => p.temperature += 5.0 * dt,
+                        AgentType::Cooler => p.temperature -= 5.0 * dt,
+                    }
+                }
             }
 
             // Natural cooling/warming towards global ambient
@@ -155,7 +177,7 @@ impl Simulation {
             let random_force = Vector3::new(
                 rng.gen_range(-1.0..1.0),
                 rng.gen_range(-1.0..1.0),
-                rng.gen_range(-1.0..1.0)
+                rng.gen_range(-1.0..1.0),
             ) * noise_mag;
 
             let force = spring_force + random_force;
@@ -181,6 +203,9 @@ mod tests {
         sim.update(0.1, 1000.0);
 
         // Assert position changed due to thermal noise
-        assert_ne!(sim.particles[0].pos, initial_pos, "Particle should move due to temperature");
+        assert_ne!(
+            sim.particles[0].pos, initial_pos,
+            "Particle should move due to temperature"
+        );
     }
 }

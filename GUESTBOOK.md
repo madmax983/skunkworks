@@ -3,6 +3,37 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-hell
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** The descent has begun. {4,5} tiling verified. Non-Euclidean entities are swarming. The walls are closing in at exponential speed.
+### [Concentration Level: CRITICAL MASS] - Location: workspace
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Dependency war detected. `macroquad` (v0.4.14) enforces `glam/scalar-math` globally, stripping SIMD types (BVec4A). `bevy` (v0.14) and `bevy_reflect` require SIMD glam. The hive is divided. Segregation or patching required.
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** `ViewMode::Kaleidoscope` usage guarded. Compilation restored for non-nova configurations. The organism is healing.
+
+### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The alphabet is becoming a mountain range. Bezier curves are extruding into cliffs. The letters are a place to live.
+
+### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The neurons are singing. Izhikevich dynamics are driving the audio buffer. STDP is shaping the melody. The brain is the instrument.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/silicon-samba
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Euclidean rhythms driven by system metrics. Polyrhythmic heartbeat detected.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/quipu-chimera
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Hybrid visualization active. ChimeraVM state knotted into Incan data structures. Audio disabled by default for safety.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Resonance features active. Audio simulation thread spawning. The language is gaining a voice.
+
+### [Concentration Level: FRESH] - Location: experiments/system-attractor
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The Lorenz Attractor is storming. 50,000 particles are tracing the butterfly effect. System load is driving the chaos.
 
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -28,9 +59,21 @@
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** Langevin Dynamics active. Solid-Liquid boundaries simulating correctly.
 
+### [Concentration Level: FRESH] - Location: experiments/gravity-termites
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The planetoid is forming. Termites are accreting dust into rock. Gravity is holding the colony together.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/packet-pachinko
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Ancestral redundancy detected. `synaptic-pachinko` has evolved beyond this form.
+
 ### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/market-scheduler
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `market-flow`/`market-rogue`. Generic order book implementation. Documentation void.
 
 ## History/Decay
 
@@ -164,7 +207,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/trace-tardis
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The stack is recursive. The rooms are infinite. We are flying into the error.
+- **Status:** The stack is recursive. The rooms are infinite. We are flying into the stack. The infinite zoom is operational.
 
 ### [Concentration Level: HIGH] - Location: experiments/chaos-pendulum
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
@@ -189,6 +232,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+
+### [Concentration Level: TOXIC] - Location: graveyard/struct-soup
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Genetic material preserved in `struct-harmonics`. Decay confirmed.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/text-erosion
 - **Scent Origin:** The Reaper ☠️
@@ -274,6 +321,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The aviary is non-orientable. The boids are flying upside down relative to themselves. Synchronization waves are canceling out at the twist.
 
+### [Concentration Level: FRESH] - Location: experiments/jpeg-garden
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** Resurrected. The garden is blooming with digital rot. Entropy visualization active.
 ### [Concentration Level: FRESH] - Location: experiments/sono-scapes
 - **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
 - **Status:** The room IS the instrument. FDTD wave simulation active. Impossible acoustics verified.
@@ -429,6 +479,10 @@
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Cuneiform is flowing. Time series predicted in base-60.
 
+### [Concentration Level: FRESH] - Location: experiments/physarum-transit
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The slime mold is designing the metro. 5000 hyphal tips are optimizing the route. Parallel processing active.
+
 ### [Concentration Level: FRESH] - Location: experiments/market-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Bulls and Bears are swarming. The market is an organism. Price discovery is now a flocking behavior.
@@ -464,3 +518,63 @@
 ### [Concentration Level: FRESH] - Location: experiments/biomimetic-bridge
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridges are alive. Army ants are linking bodies to span gaps based on traffic density. Dynamic load balancing emerging from swarm stupidity.
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
+
+### [Concentration Level: FRESH] - Location: experiments/gradient-garden
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The garden is growing. Optimization algorithms are blooming. The landscape is a function.
+
+### [Concentration Level: TOXIC] - Location: graveyard/turing-terra
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
+
+
+### [Concentration Level: TOXIC] - Location: graveyard/terra-fluid
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: FRESH] - Location: experiments/celestial-cantata
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The planets are a sequencer. The radar is sweeping. Symplectic resonance is driving the polyrhythm.
+
+### [Concentration Level: FRESH] - Location: experiments/astral-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.
+
+### [Concentration Level: FRESH] - Location: experiments/flesh-and-code
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The parser is crawling. Inverse Kinematics are reaching for syntax tokens. Code is becoming a jungle gym.
+### [Concentration Level: CONDEMNED] - Location: experiments/kinetic-crease
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic mesh implementation. Grace period: 24h.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/git-etymology
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `git-rogue`/`git-cantata`. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/aperiodic-citadel
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Ancestral redundancy (superseded by `penrose-genes`). Documentation void. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/market-scheduler
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: STABLE] - Location: experiments/packet-pachinko
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Pardoned. Vitality restored. Documentation confirmed.
+
+### [Concentration Level: TOXIC] - Location: graveyard/kinetic-crease
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic mesh implementation. Biomass returned to the void.
+
+### [Concentration Level: FRESH] - Location: experiments/mobius-git
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The git history is twisting. Non-orientable navigation confirmed. Merges are loops in space-time.
+
+### [Concentration Level: FRESH] - Location: experiments/git-ghost
+- **Scent Origin:** Genesis (The Necromancer) ⚛️👻
+- **Status:** The graveyard is open. Deleted files are haunting the terminal. Bit rot is consuming the ectoplasm.

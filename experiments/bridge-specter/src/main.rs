@@ -1,13 +1,13 @@
-use macroquad::prelude::*;
 use log::info;
+use macroquad::prelude::*;
 
-mod fluid;
-mod audio;
 mod ants;
+mod audio;
+mod fluid;
 
-use fluid::FluidSolver;
+use ants::{AntColony, State, Terrain};
 use audio::AudioSystem;
-use ants::{AntColony, Terrain, State};
+use fluid::FluidSolver;
 
 const FLUID_SIZE: usize = 128; // Simulation grid size
 const SCALE: f32 = 4.0; // Visual scale
@@ -58,17 +58,17 @@ async fn main() {
         let my = (my / SCALE) as usize;
 
         if is_mouse_button_down(MouseButton::Left) {
-             if mx < FLUID_SIZE && my < FLUID_SIZE {
-                 fluid.add_density(mx, my, 5.0);
-                 fluid.add_velocity(mx, my, 1.0, 1.0);
-             }
+            if mx < FLUID_SIZE && my < FLUID_SIZE {
+                fluid.add_density(mx, my, 5.0);
+                fluid.add_velocity(mx, my, 1.0, 1.0);
+            }
         }
 
         // Right click to spawn ants
         if is_mouse_button_down(MouseButton::Right) {
-             if mx < FLUID_SIZE && my < FLUID_SIZE {
-                 colony.add_ant(mx as i32, my as i32);
-             }
+            if mx < FLUID_SIZE && my < FLUID_SIZE {
+                colony.add_ant(mx as i32, my as i32);
+            }
         }
 
         fluid.step();
@@ -94,10 +94,16 @@ async fn main() {
             }
         }
         texture.update(&image);
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(FLUID_SIZE as f32 * SCALE, FLUID_SIZE as f32 * SCALE)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(FLUID_SIZE as f32 * SCALE, FLUID_SIZE as f32 * SCALE)),
+                ..Default::default()
+            },
+        );
 
         // Render Ants
         for ant in &colony.ants {
@@ -113,7 +119,7 @@ async fn main() {
                 ant.y as f32 * SCALE,
                 SCALE,
                 SCALE,
-                color
+                color,
             );
         }
 
@@ -126,7 +132,7 @@ async fn main() {
                         y as f32 * SCALE,
                         SCALE,
                         SCALE,
-                        Color::new(0.8, 0.4, 0.0, 0.5) // Brownish overlay for bridge
+                        Color::new(0.8, 0.4, 0.0, 0.5), // Brownish overlay for bridge
                     );
                 }
             }
@@ -134,15 +140,33 @@ async fn main() {
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, WHITE);
-        draw_text(&format!("Ants: {}", colony.ants.len()), 10.0, 40.0, 20.0, WHITE);
-        draw_text(&format!("Bass: {:.2}", bass_energy), 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Ants: {}", colony.ants.len()),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Bass: {:.2}", bass_energy),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
 
         // Visualizer bar
         let spectrum_h = 100.0;
         let bar_w = screen_width() / spectrum.len() as f32;
         for (i, val) in spectrum.iter().enumerate() {
             let h = (val * 5.0).min(spectrum_h);
-            draw_rectangle(i as f32 * bar_w, screen_height() - h, bar_w, h, Color::new(1.0, 1.0, 1.0, 0.5));
+            draw_rectangle(
+                i as f32 * bar_w,
+                screen_height() - h,
+                bar_w,
+                h,
+                Color::new(1.0, 1.0, 1.0, 0.5),
+            );
         }
 
         next_frame().await;

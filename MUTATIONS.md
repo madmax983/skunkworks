@@ -191,6 +191,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/symphonic-terrain
 - **Evaluation**: Compiles. Audio feature-gated.
 
+### gravity-termites
+- **Parents**: experiments/thermo-termites + experiments/celestial-cantata
+- **Concept**: Termites building structures in a self-generated gravity field.
+- **Novel trait**: Self-Gravitating Architecture. The colony's mass creates the potential well that binds it together.
+- **Status**: experiments/gravity-termites
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
 ### primordial-soup
 - **Parents**: experiments/fluid-rain + experiments/chimera-lang
 - **Concept**: TUI fluid simulation where particles are biological entities (Algae, Grazer, Predator) with metabolic rules.
@@ -531,3 +538,23 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Gyroscopic Orientation. The world rotates as you traverse the hyperbolic manifold to maintain user-centric "Up".
 - **Status**: experiments/hyperbolic-hell
 - **Evaluation**: Compiles. Infinite descent verified.
+### quipu-chimera
+- **Parents**: experiments/quipu-symphony + experiments/chimera-lang
+- **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
+- **Novel trait**: Code as Knots. Gravity Execution. Sonic Debugging.
+- **Status**: experiments/quipu-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio ready (optional).
+
+### astral-chimera
+- **Parents**: experiments/celestial-cantata + experiments/chimera-lang
+- **Concept**: A VM where Opcodes are planets orbiting a central star. Execution is triggered by a rotating radar.
+- **Novel trait**: Orbital Scheduling. Gravity determines the timing of code execution.
+- **Status**: experiments/astral-chimera
+- **Evaluation**: Compiles. Verified by Splice Surgeon. TUI operational.
+
+### flesh-and-code
+- **Parents**: Genesis (The Choreographer)
+- **Concept**: Inverse Kinematics creature navigating source code tokens.
+- **Novel trait**: Code navigation via biomechanical limb movement.
+- **Status**: experiments/flesh-and-code
+- **Evaluation**: Compiles. Verified.

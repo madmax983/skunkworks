@@ -118,9 +118,13 @@ impl AntColony {
         // 2. Build Ant Grid for O(1) neighbor checks
         let mut ant_grid = vec![0; self.width * self.height];
         for ant in &self.ants {
-             if ant.x >= 0 && ant.y >= 0 && (ant.x as usize) < self.width && (ant.y as usize) < self.height {
-                 ant_grid[(ant.y as usize) * self.width + (ant.x as usize)] += 1;
-             }
+            if ant.x >= 0
+                && ant.y >= 0
+                && (ant.x as usize) < self.width
+                && (ant.y as usize) < self.height
+            {
+                ant_grid[(ant.y as usize) * self.width + (ant.x as usize)] += 1;
+            }
         }
 
         let width = self.width;
@@ -147,11 +151,15 @@ impl AntColony {
                     let nx = x + dx;
                     let ny = y + dy;
                     if nx >= 0 && ny >= 0 && (nx as usize) < width && (ny as usize) < height {
-                         count += grid[(ny as usize) * width + (nx as usize)];
+                        count += grid[(ny as usize) * width + (nx as usize)];
                     }
                 }
             }
-            if count > 0 { count - 1 } else { 0 }
+            if count > 0 {
+                count - 1
+            } else {
+                0
+            }
         };
 
         for (i, ant) in self.ants.iter().enumerate() {
@@ -186,35 +194,35 @@ impl AntColony {
                             terrain_change: Some((x, y, Terrain::Gap)),
                         });
                     } else {
-                         // Stay as bridge
+                        // Stay as bridge
                     }
                 }
                 State::Panicking => {
                     // Random walk to find solid ground
-                     let dx = rng.gen_range(-1..=1);
-                     let dy = rng.gen_range(-1..=1);
-                     let nx = x + dx;
-                     let ny = y + dy;
+                    let dx = rng.gen_range(-1..=1);
+                    let dy = rng.gen_range(-1..=1);
+                    let nx = x + dx;
+                    let ny = y + dy;
 
-                     let t = self.get_terrain(nx, ny);
-                     if t == Terrain::Solid {
-                         updates.push(Update {
+                    let t = self.get_terrain(nx, ny);
+                    if t == Terrain::Solid {
+                        updates.push(Update {
                             index: i,
                             nx,
                             ny,
                             nstate: State::Foraging,
                             terrain_change: None,
                         });
-                     } else {
-                         // Still panicking (swimming?)
-                         updates.push(Update {
+                    } else {
+                        // Still panicking (swimming?)
+                        updates.push(Update {
                             index: i,
                             nx,
                             ny,
                             nstate: State::Panicking,
                             terrain_change: None,
                         });
-                     }
+                    }
                 }
                 State::Foraging | State::Returning => {
                     // Decide where to move
@@ -223,7 +231,9 @@ impl AntColony {
                     // Look at neighbors
                     for dx in -1..=1 {
                         for dy in -1..=1 {
-                            if dx == 0 && dy == 0 { continue; }
+                            if dx == 0 && dy == 0 {
+                                continue;
+                            }
                             let nx = x + dx;
                             let ny = y + dy;
 
@@ -232,8 +242,14 @@ impl AntColony {
                             if t != Terrain::Gap {
                                 // Prefer Pheromones?
                                 let mut weight = 1.0;
-                                if nx >= 0 && ny >= 0 && (nx as usize) < width && (ny as usize) < height {
-                                    weight += self.pheromones[(ny as usize) * width + (nx as usize)] * 10.0;
+                                if nx >= 0
+                                    && ny >= 0
+                                    && (nx as usize) < width
+                                    && (ny as usize) < height
+                                {
+                                    weight += self.pheromones
+                                        [(ny as usize) * width + (nx as usize)]
+                                        * 10.0;
                                 }
                                 possible_moves.push((nx, ny, false, weight));
                             } else {
@@ -249,7 +265,7 @@ impl AntColony {
 
                     if !possible_moves.is_empty() {
                         // Weighted random choice
-                        let total_weight: f32 = possible_moves.iter().map(|(_,_,_,w)| w).sum();
+                        let total_weight: f32 = possible_moves.iter().map(|(_, _, _, w)| w).sum();
                         let mut r = rng.gen::<f32>() * total_weight;
                         let mut selected = possible_moves[0];
 
@@ -264,7 +280,7 @@ impl AntColony {
                         let (nx, ny, bridging, _) = selected;
 
                         if bridging {
-                             updates.push(Update {
+                            updates.push(Update {
                                 index: i,
                                 nx,
                                 ny,
@@ -272,7 +288,7 @@ impl AntColony {
                                 terrain_change: Some((nx, ny, Terrain::Bridge)),
                             });
                         } else {
-                             updates.push(Update {
+                            updates.push(Update {
                                 index: i,
                                 nx,
                                 ny,
@@ -292,11 +308,15 @@ impl AntColony {
             self.ants[update.index].state = update.nstate;
 
             if let Some((tx, ty, t)) = update.terrain_change {
-                 self.set_terrain_safe(tx, ty, t);
+                self.set_terrain_safe(tx, ty, t);
             }
 
             // Apply pheromone at new position
-            if update.nx >= 0 && update.ny >= 0 && (update.nx as usize) < width && (update.ny as usize) < height {
+            if update.nx >= 0
+                && update.ny >= 0
+                && (update.nx as usize) < width
+                && (update.ny as usize) < height
+            {
                 let idx = (update.ny as usize) * width + (update.nx as usize);
                 self.pheromones[idx] = (self.pheromones[idx] + 0.1).min(1.0);
             }

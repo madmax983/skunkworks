@@ -34,8 +34,12 @@ pub fn erode(terrain: &mut Terrain, iterations: usize, params: &ErosionParams) {
     for _ in 0..iterations {
         let x = rng.gen_range(0..terrain.width - 1) as f32;
         let y = rng.gen_range(0..terrain.height - 1) as f32;
-        trace_droplet(terrain, x, y, params);
+        erode_at(terrain, x, y, params);
     }
+}
+
+pub fn erode_at(terrain: &mut Terrain, x: f32, y: f32, params: &ErosionParams) {
+    trace_droplet(terrain, x, y, params);
 }
 
 fn trace_droplet(terrain: &mut Terrain, mut x: f32, mut y: f32, params: &ErosionParams) {

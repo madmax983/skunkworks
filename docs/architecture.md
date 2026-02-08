@@ -414,7 +414,7 @@ sequenceDiagram
     Phy-->>VM: push(String(stdout))
 ```
 
-## Core Architecture Changes (ADR 012)
+## Core Architecture Changes (ADR 006)
 
 Refactoring to decouple storage from core logic to resolve circular dependencies.
 
@@ -425,7 +425,7 @@ classDiagram
   class Core
   class Storage
   Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow
+  %% Removed the circular dependency arrow (ADR 006)
 ```
 
 ### Storage Flow
@@ -435,6 +435,34 @@ sequenceDiagram
     participant C as Core
     participant S as Storage
 
+    Note over C,S: Decoupled via Trait (ADR 006)
     C->>S: save_state(data)
     S-->>C: Result<Ok>
+```
+
+### Chimera Feature: Sovereignty (ADR 018)
+
+The Sovereignty system enables organisms to claim territory and tax visitors.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant SovGrid as Sovereignty Grid
+    participant Market
+
+    VM->>VM: step() calls process_territory()
+    VM->>SovGrid: check owner at (x, y)
+
+    alt If cell has Owner != Visitor
+        VM->>VM: get tax_rate for Owner
+
+        opt If tax_rate > 0
+            VM->>VM: deduct tax from Visitor energy
+            VM->>Market: credit(Owner, tax_amount)
+
+            opt If Visitor energy <= 0
+                VM->>VM: Kill Visitor (Starvation)
+            end
+        end
+    end
 ```

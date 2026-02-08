@@ -9,5 +9,4 @@ crossterm = "0.28"
 sysinfo = "0.30"
 anyhow = "1.0"
 tui-shared = { path = "../../crates/tui-shared" }
-locus = { path = "../../crates/locus" }
 rand = "0.8"

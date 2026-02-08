@@ -17,7 +17,8 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                 // vm.audio_snapshot is Vec<f32>, length GRID_SIZE*GRID_SIZE (256).
 
                 if vm.audio_snapshot.len() != width * width {
-                    vm.output.push("SIFT ERROR: Audio snapshot invalid size".to_string());
+                    vm.output
+                        .push("SIFT ERROR: Audio snapshot invalid size".to_string());
                     return;
                 }
 
@@ -39,8 +40,12 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                     // Check neighbors
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            if dy == 0 && dx == 0 { continue; }
-                            if let Some((ny, nx)) = vm.normalize_coords(ty as i64 + dy, tx as i64 + dx) {
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(ty as i64 + dy, tx as i64 + dx)
+                            {
                                 // Must be empty
                                 if matches!(vm.grid[ny][nx], Value::Int(0)) {
                                     let n_idx = ny * width + nx;
@@ -63,8 +68,8 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                 }
 
                 vm.energy = vm.energy.saturating_sub(moved_count / 2 + 5);
-                vm.output.push(format!("SIFT: Moved {} particles to nodes", moved_count));
-
+                vm.output
+                    .push(format!("SIFT: Moved {} particles to nodes", moved_count));
             } else {
                 vm.output.push("Error: Invalid radius for sift".to_string());
             }
@@ -72,7 +77,8 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
             vm.output.push("Error: Type mismatch for sift".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for sift".to_string());
+        vm.output
+            .push("Error: Stack underflow for sift".to_string());
     }
 }
 
@@ -87,7 +93,8 @@ pub fn exec_reshape(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
             let width = 16;
 
             if vm.audio_snapshot.len() != width * width {
-                vm.output.push("RESHAPE ERROR: Audio snapshot invalid".to_string());
+                vm.output
+                    .push("RESHAPE ERROR: Audio snapshot invalid".to_string());
                 return;
             }
 
@@ -106,14 +113,14 @@ pub fn exec_reshape(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                                     vm.membranes[y][x] = 15;
                                     count += 1;
                                 }
-                            },
+                            }
                             1 => {
                                 // Liquefy: Remove walls
                                 if vm.membranes[y][x] != 0 {
                                     vm.membranes[y][x] = 0;
                                     count += 1;
                                 }
-                            },
+                            }
                             _ => {}
                         }
                     }
@@ -122,12 +129,16 @@ pub fn exec_reshape(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
 
             vm.energy = vm.energy.saturating_sub(count + 10);
             let mode_str = if mode == 0 { "Solidified" } else { "Liquefied" };
-            vm.output.push(format!("RESHAPE: {} {} cells (Thresh {:.2})", mode_str, count, threshold));
-
+            vm.output.push(format!(
+                "RESHAPE: {} {} cells (Thresh {:.2})",
+                mode_str, count, threshold
+            ));
         } else {
-            vm.output.push("Error: Type mismatch for reshape".to_string());
+            vm.output
+                .push("Error: Type mismatch for reshape".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for reshape".to_string());
+        vm.output
+            .push("Error: Stack underflow for reshape".to_string());
     }
 }

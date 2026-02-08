@@ -1,0 +1,10 @@
+[package]
+name = "physarum-transit"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.4"
+rand = "0.8.5"
+rayon = "1.10.0"
+anyhow = "1.0.95"

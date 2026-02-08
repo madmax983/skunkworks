@@ -1,4 +1,4 @@
-use biomimetic_bridge::model::{World, Terrain, State};
+use biomimetic_bridge::model::{State, Terrain, World};
 use macroquad::prelude::*;
 
 const GRID_WIDTH: usize = 100;
@@ -120,7 +120,13 @@ async fn main() {
             );
         }
 
-        draw_text("Left Click: Dig Gap | Right Click: Fill | Space: Spawn Ants | R: Reset", 10.0, 20.0, 20.0, WHITE);
+        draw_text(
+            "Left Click: Dig Gap | Right Click: Fill | Space: Spawn Ants | R: Reset",
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

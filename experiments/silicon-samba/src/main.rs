@@ -79,7 +79,7 @@ fn main() -> Result<()> {
             generators[2].set_params(16, hh_pulses.max(4));
 
             // Perc: Core 2 (or Global if single core)
-             if let Some(&c2) = cores.get(2).or(cores.get(0)) {
+            if let Some(&c2) = cores.get(2).or(cores.get(0)) {
                 let pulses = (c2 * 12.0).round() as usize;
                 generators[3].set_params(16, pulses.max(2));
             }
