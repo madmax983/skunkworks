@@ -95,6 +95,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_enigma;
+#[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
 pub mod nova_market;
@@ -1964,7 +1966,11 @@ impl ChimeraVM {
             | OpCode::Gaze
             | OpCode::Starfall
             | OpCode::Align
-            | OpCode::Pray => nova::exec_nova_op(self, op, args),
+            | OpCode::Pray
+            | OpCode::Encrypt
+            | OpCode::Decrypt
+            | OpCode::Sign
+            | OpCode::VerifySig => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {

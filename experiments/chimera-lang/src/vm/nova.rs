@@ -5260,6 +5260,14 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        #[cfg(feature = "nova")]
+        OpCode::Encrypt => super::nova_enigma::exec_encrypt(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Decrypt => super::nova_enigma::exec_decrypt(vm),
+        #[cfg(feature = "nova")]
+        OpCode::Sign => super::nova_enigma::exec_sign(vm),
+        #[cfg(feature = "nova")]
+        OpCode::VerifySig => super::nova_enigma::exec_verify_sig(vm),
         _ => None,
     }
 }

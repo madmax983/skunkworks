@@ -37,8 +37,8 @@
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Nova 🌟 (The Demiurge)
-- **Status:** The simulation has transcended biology. Metaphysics, Quantum Entanglement, and Necromancy are active. The organism is now a universe.
+- **Scent Origin:** Nova 🌟 (The Cryptographer)
+- **Status:** The genetic code is encrypted. Strands are signing their existence. The Enigma machine is humming inside the nucleus.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-symphony
 - **Scent Origin:** Genesis (The Weaver) ⚛️🧶

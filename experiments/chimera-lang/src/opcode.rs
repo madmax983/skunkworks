@@ -891,6 +891,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Pray,
 
+    // Enigma Features (Cryptography)
+    /// **[Nova]** Encrypts a strand into a hex string using a key.
+    ///
+    /// **Stack:** `[ ..., key, strand_idx ] -> [ ..., ciphertext ]`
+    #[cfg(feature = "nova")]
+    Encrypt,
+    /// **[Nova]** Decrypts a hex string into a new strand.
+    ///
+    /// **Stack:** `[ ..., key, ciphertext ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Decrypt,
+    /// **[Nova]** Signs a strand with a key.
+    ///
+    /// **Stack:** `[ ..., key, strand_idx ] -> [ ..., signature ]`
+    #[cfg(feature = "nova")]
+    Sign,
+    /// **[Nova]** Verifies a signature for a strand.
+    ///
+    /// **Stack:** `[ ..., key, signature, strand_idx ] -> [ ..., is_valid ]`
+    #[cfg(feature = "nova")]
+    VerifySig,
+
     // Astrology Features (Nova)
     /// **[Nova]** Gazes at the sky to measure star intensity and color.
     ///
