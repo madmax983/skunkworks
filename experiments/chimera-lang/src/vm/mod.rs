@@ -94,6 +94,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_gastronomy;
+#[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
 pub mod nova_linguistics;
@@ -201,6 +203,7 @@ impl std::fmt::Display for Value {
                 let t_str = match t {
                     JunctionType::Any => "any",
                     JunctionType::All => "all",
+                    JunctionType::Dish => "dish",
                 };
                 write!(f, "{}(", t_str)?;
                 for (i, v) in vals.iter().enumerate() {
@@ -434,6 +437,8 @@ pub struct ChimeraVM {
     pub tax_rates: HashMap<usize, i64>,
     #[cfg(feature = "nova")]
     pub resonance_grid: Vec<Vec<(f32, f32)>>,
+    #[cfg(feature = "nova")]
+    pub buffs: HashMap<String, usize>,
 }
 
 impl ChimeraVM {
@@ -477,6 +482,8 @@ impl ChimeraVM {
         let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let buffs = HashMap::new();
         let execution_trail = vec![0; GRID_SIZE * GRID_SIZE];
         #[cfg(feature = "cortex")]
         let synapse_map = vec![vec![]; strand_count];
@@ -640,6 +647,8 @@ impl ChimeraVM {
             tax_rates: HashMap::new(),
             #[cfg(feature = "nova")]
             resonance_grid,
+            #[cfg(feature = "nova")]
+            buffs,
         }
     }
 
@@ -1598,9 +1607,29 @@ impl ChimeraVM {
         }
 
         #[cfg(feature = "nova")]
+        {
+            // Process Buffs
+            let mut expired = Vec::new();
+            for (buff, duration) in self.buffs.iter_mut() {
+                if *duration > 0 {
+                    *duration -= 1;
+                }
+                if *duration == 0 {
+                    expired.push(buff.clone());
+                }
+            }
+            for buff in expired {
+                self.buffs.remove(&buff);
+                self.output.push(format!("BUFF EXPIRED: {}", buff));
+            }
+        }
+
+        #[cfg(feature = "nova")]
         let iterations = if self.phase == nova::Phase::Flux {
             self.energy -= 1;
             2
+        } else if self.buffs.contains_key("Sour") {
+            2 // Haste Buff
         } else {
             1
         };
@@ -1944,6 +1973,13 @@ impl ChimeraVM {
             | OpCode::Anagram
             | OpCode::Cipher
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Cook
+            | OpCode::Spice
+            | OpCode::Savor
+            | OpCode::Cultivate
+            | OpCode::Banquet => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Resonate
@@ -2530,7 +2566,9 @@ impl ChimeraVM {
                                 Value::Int(i) => *i == 0,
                                 Value::Junction(t, vals) => match t {
                                     JunctionType::Any => vals.iter().any(check_zero),
-                                    JunctionType::All => vals.iter().all(check_zero),
+                                    JunctionType::All | JunctionType::Dish => {
+                                        vals.iter().all(check_zero)
+                                    }
                                 },
                                 Value::Superposition(states) => {
                                     states.iter().any(|(v, _)| check_zero(v))

@@ -153,6 +153,8 @@ mod nova_dream_trace_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_gastronomy_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;

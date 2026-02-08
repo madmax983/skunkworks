@@ -375,6 +375,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "nova")]
     fn test_blocks() {
         let src = r#"
         strand main {

@@ -1412,6 +1412,7 @@ where
                                                     let t_str = match t {
                                                         crate::ast::JunctionType::Any => "any",
                                                         crate::ast::JunctionType::All => "all",
+                                                        crate::ast::JunctionType::Dish => "dish",
                                                     };
                                                     s.push_str(t_str);
                                                     s.push('(');

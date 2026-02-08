@@ -2053,6 +2053,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Cook
+        | OpCode::Spice
+        | OpCode::Savor
+        | OpCode::Cultivate
+        | OpCode::Banquet => super::nova_gastronomy::exec_gastronomy_op(vm, op, args),
+        #[cfg(feature = "nova")]
         OpCode::Conceive | OpCode::Propagate | OpCode::Forget | OpCode::Shibboleth => {
             super::memetics::exec_memetics_op(vm, op, args)
         }
@@ -4416,6 +4422,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                     let t_str = match t {
                                         crate::ast::JunctionType::Any => "any",
                                         crate::ast::JunctionType::All => "all",
+                                        crate::ast::JunctionType::Dish => "dish",
                                     };
                                     let args_str: Vec<String> = args
                                         .iter()
@@ -4512,6 +4519,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                                 let t_str = match t {
                                     crate::ast::JunctionType::Any => "any",
                                     crate::ast::JunctionType::All => "all",
+                                    crate::ast::JunctionType::Dish => "dish",
                                 };
                                 let args_str: Vec<String> = args
                                     .iter()
