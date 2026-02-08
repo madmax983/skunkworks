@@ -61,7 +61,7 @@ mod tests {
         // Code: vm.stack.push(1); ... vm.stack.push(Bindings);
         // So Top is Bindings, Below is 1.
 
-        let bindings = vm.stack.pop().unwrap();
+        let _bindings = vm.stack.pop().unwrap();
         let result = vm.stack.pop().unwrap();
 
         assert_eq!(result, Value::Int(1));
@@ -168,6 +168,67 @@ mod tests {
             }
         } else {
             panic!("Expected bindings list");
+        }
+    }
+
+    #[test]
+    fn test_dynamic_grid_query() {
+        // [ push(100) push(5) push(5) g_write() push("cell") push("?X") push(5) push(100) query() ]
+        // cell(?X, 5, 100) -> Should find ?X=5.
+        // Stack order for Query Junction: ["cell", "?X", 5, 100]
+
+        let genes = vec![
+            // Write 100 to (5,5)
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+            Gene { op: OpCode::GWrite, args: vec![] },
+
+            // Query cell(?X, 5, 100)
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Nucleotide::String("cell".to_string()),
+                        Nucleotide::String("?X".to_string()),
+                        Nucleotide::Number(5),
+                        Nucleotide::Number(100),
+                    ]
+                )]
+            },
+            Gene { op: OpCode::Query, args: vec![] },
+        ];
+
+        let len = genes.len();
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Run steps
+        for _ in 0..20 { // Enough steps
+            vm.step();
+            if vm.ip.0 > 0 || vm.ip.1 >= len {
+                break;
+            }
+        }
+
+        // Stack top: Bindings list
+        let bindings = vm.stack.pop().unwrap();
+        let result = vm.stack.pop().unwrap();
+
+        assert_eq!(result, Value::Int(1)); // Success
+
+        // Check binding ?X = 5
+        if let Value::Junction(_, list) = bindings {
+            let found = list.iter().any(|b| {
+                if let Value::Junction(_, pair) = b {
+                    pair[0] == Value::Str("?X".to_string()) && pair[1] == Value::Int(5)
+                } else {
+                    false
+                }
+            });
+            assert!(found, "Binding ?X=5 not found");
+        } else {
+            panic!("Invalid bindings format");
         }
     }
 }

@@ -82,6 +82,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     &goals,
                     HashMap::new(),
                     &vm.knowledge_base,
+                    vm,
                     &mut solutions,
                     0,
                 );
@@ -145,6 +146,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     &[omen.condition.clone()],
                     HashMap::new(),
                     &vm.knowledge_base,
+                    vm,
                     &mut solutions,
                     0,
                 );
@@ -247,7 +249,14 @@ fn bind(var: &str, val: &Value, subst: &Subst) -> Option<Subst> {
     Some(new_subst)
 }
 
-fn solve(goals: &[Value], subst: Subst, kb: &[Value], solutions: &mut Vec<Subst>, depth: usize) {
+fn solve(
+    goals: &[Value],
+    subst: Subst,
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) {
     if depth > 50 {
         return;
     } // Prevent infinite recursion
@@ -262,6 +271,19 @@ fn solve(goals: &[Value], subst: Subst, kb: &[Value], solutions: &mut Vec<Subst>
 
     let resolved_goal = resolve(goal, &subst);
 
+    // Dynamic Predicates Check
+    if check_dynamic_predicates(
+        &resolved_goal,
+        remaining_goals,
+        &subst,
+        kb,
+        vm,
+        solutions,
+        depth,
+    ) {
+        return;
+    }
+
     for fact in kb {
         let (head, body) = parse_kb_entry(fact);
 
@@ -274,9 +296,101 @@ fn solve(goals: &[Value], subst: Subst, kb: &[Value], solutions: &mut Vec<Subst>
         if let Some(new_subst) = unify(&resolved_goal, &fresh_head, &subst) {
             let mut new_goals = fresh_body.clone();
             new_goals.extend_from_slice(remaining_goals);
-            solve(&new_goals, new_subst, kb, solutions, depth + 1);
+            solve(&new_goals, new_subst, kb, vm, solutions, depth + 1);
         }
     }
+}
+
+fn check_dynamic_predicates(
+    goal: &Value,
+    remaining_goals: &[Value],
+    subst: &Subst,
+    kb: &[Value],
+    vm: &ChimeraVM,
+    solutions: &mut Vec<Subst>,
+    depth: usize,
+) -> bool {
+    if let Value::Junction(JunctionType::Any, args) = goal {
+        // We use Junction(Any, [Name, Args...]) as predicate format generally?
+        // But tests use Junction(Any, [Pred, Arg1...]).
+        if args.is_empty() {
+            return false;
+        }
+        if let Value::Str(pred_name) = &args[0] {
+            match pred_name.as_str() {
+                "cell" => {
+                    // cell(X, Y, Val)
+                    if args.len() == 4 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_val = &args[3];
+
+                        // Iterate over grid (0..16, 0..16)
+                        for y in 0..crate::vm::GRID_SIZE {
+                            for x in 0..crate::vm::GRID_SIZE {
+                                let fact_x = Value::Int(x as i64);
+                                let fact_y = Value::Int(y as i64);
+                                let fact_val = vm.grid[y][x].clone();
+
+                                // Try to unify X
+                                if let Some(subst_x) = unify(arg_x, &fact_x, subst) {
+                                    // Try to unify Y
+                                    if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
+                                        // Try to unify Val
+                                        if let Some(final_subst) = unify(arg_val, &fact_val, &subst_y) {
+                                            solve(remaining_goals, final_subst, kb, vm, solutions, depth + 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true; // Handled
+                    }
+                }
+                "energy" => {
+                    // energy(E)
+                    if args.len() == 2 {
+                        let arg_e = &args[1];
+                        let fact_e = Value::Int(vm.energy);
+                        if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "organelle" => {
+                    // organelle(Idx, Type, X, Y)
+                    // organelle(Name, Type, X, Y) maybe better if Name is unique? But idx is safer.
+                    if args.len() == 5 {
+                        #[cfg(feature = "nova")]
+                        for (i, org) in vm.organelles.iter().enumerate() {
+                            let fact_idx = Value::Int(i as i64);
+                            let fact_type = Value::Str(format!("{:?}", org.kind));
+                            let fact_x = Value::Int(org.context_loc.1 as i64);
+                            let fact_y = Value::Int(org.context_loc.0 as i64);
+
+                            let mut current_subst = subst.clone();
+                            if let Some(s1) = unify(&args[1], &fact_idx, &current_subst) {
+                                current_subst = s1;
+                                if let Some(s2) = unify(&args[2], &fact_type, &current_subst) {
+                                    current_subst = s2;
+                                    if let Some(s3) = unify(&args[3], &fact_x, &current_subst) {
+                                        current_subst = s3;
+                                        if let Some(s4) = unify(&args[4], &fact_y, &current_subst) {
+                                            solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    false
 }
 
 fn parse_kb_entry(entry: &Value) -> (Value, Vec<Value>) {
