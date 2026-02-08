@@ -1973,6 +1973,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Emit | OpCode::Smell | OpCode::Track => {
             super::nova_scent::exec_scent_op(vm, op, args)
         }
+        OpCode::Reflect => super::nova_symmetry::exec_reflect(vm, op, args),
+        OpCode::Rotate => super::nova_symmetry::exec_rotate(vm, op, args),
+        OpCode::Symmetrize => super::nova_symmetry::exec_symmetrize(vm, op, args),
         OpCode::Conceive
         | OpCode::Propagate
         | OpCode::Forget

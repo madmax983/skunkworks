@@ -168,6 +168,8 @@ pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_sovereignty_test;
+#[cfg(feature = "nova")]
+pub mod nova_symmetry;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -2138,6 +2140,9 @@ impl ChimeraVM {
             | OpCode::Fossilize
             | OpCode::Unearth
             | OpCode::CarbonDate
+            | OpCode::Reflect
+            | OpCode::Rotate
+            | OpCode::Symmetrize
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

@@ -1681,6 +1681,25 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Lens,
 
+    // Symmetry Features (Nova)
+    /// **[Nova]** Reflects the grid across an axis.
+    ///
+    /// **Stack:** `[ ..., axis ] -> [ ... ]`
+    /// **Axis:** 0=Vert, 1=Horiz, 2=Diag(\), 3=Diag(/).
+    #[cfg(feature = "nova")]
+    Reflect,
+    /// **[Nova]** Rotates the grid 90 degrees clockwise.
+    ///
+    /// **Stack:** `[ ..., turns ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Rotate,
+    /// **[Nova]** Enforces symmetry on the grid.
+    ///
+    /// **Stack:** `[ ..., mode ] -> [ ... ]`
+    /// **Mode:** 0=MirrorX, 1=MirrorY, 2=Quad, 3=Octal.
+    #[cfg(feature = "nova")]
+    Symmetrize,
+
     // Bureaucracy Features (Nova)
     /// **[Nova]** Increases local bureaucracy (Red Tape), making actions cost more energy.
     ///
