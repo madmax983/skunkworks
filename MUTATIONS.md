@@ -386,7 +386,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Evaluation**: Compiles. Audio generation active.
 
 ### chimera-automaton
-- **Parents**: experiments/cam-automaton + experiments/chimera-lang
+- **Parents**: experiments/chimera-automaton + experiments/chimera-lang
 - **Concept**: Biomechanical vehicle where a Genetic Program (ChimeraVM) drives a Physics Body (Rapier2D).
 - **Novel trait**: Embodied Artificial Life. Code becomes motion.
 - **Status**: experiments/chimera-automaton
@@ -558,3 +558,31 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Code navigation via biomechanical limb movement.
 - **Status**: experiments/flesh-and-code
 - **Evaluation**: Compiles. Verified.
+
+### cipher-clock
+- **Parents**: experiments/enigma-machine + experiments/clockwork-chimera
+- **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
+- **Novel trait**: Cryptography as physical mechanics.
+- **Status**: experiments/cipher-clock
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### lichen-mesh
+- **Parents**: experiments/cellular-automata + experiments/microservices-demo
+- **Concept**: Symbiotic network (Lichen) visualizing microservice architecture.
+- **Novel trait**: Biological visualization of frontend/backend traffic.
+- **Status**: experiments/lichen-mesh
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### git-ghost
+- **Parents**: experiments/git-history + experiments/spectral-loading
+- **Concept**: Visualizing deleted files from git history.
+- **Novel trait**: Necrotic visualization of code deletion.
+- **Status**: experiments/git-ghost
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### hyperbolic-lichen
+- **Parents**: experiments/hyperbolic-hell + experiments/lichen-mesh
+- **Concept**: Infinite procedural lichen garden on the Poincaré Disk.
+- **Novel trait**: Biological growth patterns constrained by hyperbolic geometry.
+- **Status**: experiments/hyperbolic-lichen
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

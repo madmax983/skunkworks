@@ -619,3 +619,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cipher-clock
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The first gear of the Enigma is forged. Thoughts ground into secrets by brass teeth. Physically simulated cryptography active.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-lichen
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The garden is infinite. Lichen colonies are growing on the Poincaré disk. Symbiosis has adapted to non-Euclidean space.
