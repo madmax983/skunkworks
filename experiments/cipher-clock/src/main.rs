@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 use bevy_prototype_lyon::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 mod mechanism;
 use mechanism::*;
@@ -42,19 +42,22 @@ fn setup(mut commands: Commands) {
     spawn_pawl(&mut commands, pivot_pos, pawl_len);
 
     // Instructions
-    commands.spawn(TextBundle::from_section(
-        "Press SPACE to Spin Rotor (CCW)\nObserve the Pawl clicking.",
-        TextStyle {
-            font_size: 20.0,
-            color: Color::WHITE,
+    commands.spawn(
+        TextBundle::from_section(
+            "Press SPACE to Spin Rotor (CCW)\nObserve the Pawl clicking.",
+            TextStyle {
+                font_size: 20.0,
+                color: Color::WHITE,
+                ..default()
+            },
+        )
+        .with_style(Style {
+            position_type: PositionType::Absolute,
+            top: Val::Px(10.0),
+            left: Val::Px(10.0),
             ..default()
-        },
-    ).with_style(Style {
-        position_type: PositionType::Absolute,
-        top: Val::Px(10.0),
-        left: Val::Px(10.0),
-        ..default()
-    }));
+        }),
+    );
 }
 
 fn input_control(
@@ -63,8 +66,8 @@ fn input_control(
 ) {
     if keyboard.just_pressed(KeyCode::Space) {
         for mut vel in query.iter_mut() {
-             // Spin CCW
-             vel.angvel += 5.0;
+            // Spin CCW
+            vel.angvel += 5.0;
         }
     }
 }

@@ -1,6 +1,6 @@
 #[cfg(all(test, feature = "nova"))]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 
@@ -17,11 +17,26 @@ mod tests {
         // [ push(10) push(20) push(2) cook() savor() ]
         // Should gain 30 energy.
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Cook, args: vec![] },
-            Gene { op: OpCode::Savor, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Cook,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Savor,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 50; // Reset
@@ -52,12 +67,30 @@ mod tests {
     fn test_spicing() {
         // [ push(10) push(1) cook() push("Spicy") spice() savor() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Cook, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Spicy".to_string())] },
-            Gene { op: OpCode::Spice, args: vec![] },
-            Gene { op: OpCode::Savor, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Cook,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Spicy".to_string())],
+            },
+            Gene {
+                op: OpCode::Spice,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Savor,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -73,12 +106,30 @@ mod tests {
         // [ push(10) push(1) cook() push("Sweet") spice() savor() ]
         // Sweet doubles energy. 10 * 2 = 20.
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Cook, args: vec![] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("Sweet".to_string())] },
-            Gene { op: OpCode::Spice, args: vec![] },
-            Gene { op: OpCode::Savor, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Cook,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("Sweet".to_string())],
+            },
+            Gene {
+                op: OpCode::Spice,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Savor,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 100;
@@ -95,11 +146,26 @@ mod tests {
     fn test_cultivate() {
         // [ push(10) push(8) push(8) g_write() cultivate() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-            Gene { op: OpCode::Cultivate, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Cultivate,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         // We need to set context_loc explicitly if we rely on GWrite setting it?
@@ -133,9 +199,18 @@ mod tests {
         // Stack: [radius, amount] -> [2, 50]
         // Should distribute 50 energy to neighbors in radius 2
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-            Gene { op: OpCode::Banquet, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(50)],
+            },
+            Gene {
+                op: OpCode::Banquet,
+                args: vec![],
+            },
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.energy = 100;

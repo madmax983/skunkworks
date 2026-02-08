@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use crate::opcode::OpCode;
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
-    use crate::opcode::OpCode;
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -49,7 +49,7 @@ mod tests {
 
         match &vm.grid[2][1] {
             Value::Str(s) => assert_eq!(s, "add"),
-            Value::Int(_) => {}, // Accept int if implementation uses int
+            Value::Int(_) => {} // Accept int if implementation uses int
             _ => panic!("Expected result 'add', got {:?}", vm.grid[2][1]),
         }
     }
@@ -155,7 +155,8 @@ mod tests {
         vm.telomeres.push(50);
 
         // Addcladistics
-        vm.cladistics.register_strand(0, None, 0, "Init".to_string());
+        vm.cladistics
+            .register_strand(0, None, 0, "Init".to_string());
 
         // Layout:
         // . * .

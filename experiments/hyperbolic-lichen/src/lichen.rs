@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
+use std::collections::HashMap;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum CellType {
@@ -47,15 +47,15 @@ impl LichenState {
                 CellType::Algae => {
                     let brightness = (cell.energy / 50.0).clamp(0.2, 1.0);
                     Color::new(0.0, brightness, 0.2 + brightness * 0.1, 0.8)
-                },
+                }
                 CellType::Fungus => {
                     let brightness = (cell.water / 50.0).clamp(0.2, 0.8);
                     Color::new(brightness, brightness, brightness, 0.8)
-                },
+                }
                 CellType::Empty => Color::new(0.0, 0.0, 0.0, 0.0),
             }
         } else {
-             Color::new(0.0, 0.0, 0.0, 0.0)
+            Color::new(0.0, 0.0, 0.0, 0.0)
         }
     }
 
@@ -103,16 +103,16 @@ impl LichenState {
                     }
 
                     if let Some(nbs) = self.neighbors.get(&hash) {
-                         for &nb in nbs {
-                             if let Some(nb_cell) = self.cells.get(&nb) {
-                                 if nb_cell.cell_type == CellType::Fungus {
-                                     e_change -= 0.5;
-                                     *energy_delta.entry(nb).or_insert(0.0) += 0.5;
-                                 }
-                             }
-                         }
+                        for &nb in nbs {
+                            if let Some(nb_cell) = self.cells.get(&nb) {
+                                if nb_cell.cell_type == CellType::Fungus {
+                                    e_change -= 0.5;
+                                    *energy_delta.entry(nb).or_insert(0.0) += 0.5;
+                                }
+                            }
+                        }
                     }
-                },
+                }
                 CellType::Fungus => {
                     if cell.energy > 1.0 {
                         w_change += 1.0;
@@ -120,16 +120,16 @@ impl LichenState {
                     }
 
                     if let Some(nbs) = self.neighbors.get(&hash) {
-                         for &nb in nbs {
-                             if let Some(nb_cell) = self.cells.get(&nb) {
-                                 if nb_cell.cell_type == CellType::Algae {
-                                     w_change -= 0.5;
-                                     *water_delta.entry(nb).or_insert(0.0) += 0.5;
-                                 }
-                             }
-                         }
+                        for &nb in nbs {
+                            if let Some(nb_cell) = self.cells.get(&nb) {
+                                if nb_cell.cell_type == CellType::Algae {
+                                    w_change -= 0.5;
+                                    *water_delta.entry(nb).or_insert(0.0) += 0.5;
+                                }
+                            }
+                        }
                     }
-                },
+                }
                 _ => {}
             }
             *energy_delta.entry(hash).or_insert(0.0) += e_change;
@@ -149,7 +149,7 @@ impl LichenState {
         // 3. Colonization (Growth)
         let mut new_sprouts: Vec<(u64, CellType)> = Vec::new();
         for (&hash, cell) in &self.cells {
-             if cell.energy > 20.0 && cell.water > 20.0 {
+            if cell.energy > 20.0 && cell.water > 20.0 {
                 if let Some(nbs) = self.neighbors.get(&hash) {
                     for &nb in nbs {
                         if let Some(nb_cell) = self.cells.get(&nb) {
@@ -161,7 +161,7 @@ impl LichenState {
                         }
                     }
                 }
-             }
+            }
         }
 
         for (hash, c_type) in new_sprouts {

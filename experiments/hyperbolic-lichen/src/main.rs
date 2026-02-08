@@ -1,12 +1,12 @@
-mod render;
 mod lichen;
+mod render;
 
+use lichen::LichenState;
 use macroquad::prelude::*;
 use poincare_disk::{
-    mobius_add, neighbor_transform_a, hyperbolic_dist, Mobius, Point, TilingConsts,
+    hyperbolic_dist, mobius_add, neighbor_transform_a, Mobius, Point, TilingConsts,
 };
-use render::{draw_tile_recursive};
-use lichen::{LichenState};
+use render::draw_tile_recursive;
 
 struct GameState {
     player_pos: Point,
@@ -49,10 +49,18 @@ impl GameState {
 
         // Input & Movement
         let mut move_vec = Vec2::new(0.0, 0.0);
-        if is_key_down(KeyCode::W) { move_vec.y += 1.0; }
-        if is_key_down(KeyCode::S) { move_vec.y -= 1.0; }
-        if is_key_down(KeyCode::A) { move_vec.x -= 1.0; }
-        if is_key_down(KeyCode::D) { move_vec.x += 1.0; }
+        if is_key_down(KeyCode::W) {
+            move_vec.y += 1.0;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec.y -= 1.0;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec.x -= 1.0;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec.x += 1.0;
+        }
 
         if move_vec.length() > 0.0 {
             move_vec = move_vec.normalize();
@@ -83,7 +91,7 @@ impl GameState {
             }
 
             if let Some((idx, neighbor_center)) = best_neighbor {
-                 // Transition!
+                // Transition!
                 let inv_neighbor = Mobius::inverse_translation(neighbor_center);
                 let new_pos = inv_neighbor.apply(candidate_pos);
 
@@ -153,7 +161,7 @@ async fn main() {
             None,
             &state.tiling,
             incoming,
-            &mut state.lichen
+            &mut state.lichen,
         );
 
         // Draw Player

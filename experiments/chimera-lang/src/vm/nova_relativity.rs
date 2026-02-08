@@ -15,7 +15,11 @@ pub fn exec_retroscope(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     let ticks = t as usize;
                     if ticks < vm.grid_history.len() {
                         // Index from back: len - 1 is most recent (start of current tick)
-                        let idx = vm.grid_history.len().saturating_sub(1).saturating_sub(ticks);
+                        let idx = vm
+                            .grid_history
+                            .len()
+                            .saturating_sub(1)
+                            .saturating_sub(ticks);
                         let val = vm.grid_history[idx][ny][nx].clone();
                         vm.stack.push(val);
                     } else {

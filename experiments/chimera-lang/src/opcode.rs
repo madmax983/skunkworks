@@ -1032,6 +1032,23 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     SenseMoisture,
 
+    // Olfactory Features (Nova)
+    /// **[Nova]** Emits a scent trail (Pheromone).
+    ///
+    /// **Stack:** `[ ..., intensity, signature_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Emit,
+    /// **[Nova]** Smells the strongest local scent.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dy, dx, intensity, signature ]`
+    #[cfg(feature = "nova")]
+    Smell,
+    /// **[Nova]** Tracks a specific scent.
+    ///
+    /// **Stack:** `[ ..., signature ] -> [ ..., dy, dx ]`
+    #[cfg(feature = "nova")]
+    Track,
+
     /// **[Nova]** Changes the biome of the local area.
     ///
     /// **Stack:** `[ ..., biome_id, radius ] -> [ ... ]`

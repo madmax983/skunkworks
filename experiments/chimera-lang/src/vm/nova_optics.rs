@@ -50,8 +50,10 @@ pub fn exec_prism(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let orientation = ori.rem_euclid(4);
                 vm.grid[ny][nx] = Value::Str(format!("PRISM:{}", orientation));
                 vm.energy = vm.energy.saturating_sub(15);
-                vm.output
-                    .push(format!("PRISM: Placed type {} at {},{}", orientation, nx, ny));
+                vm.output.push(format!(
+                    "PRISM: Placed type {} at {},{}",
+                    orientation, nx, ny
+                ));
             } else {
                 vm.output
                     .push("Error: Coordinates out of bounds for prism".to_string());
@@ -79,10 +81,8 @@ pub fn exec_lens(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let power = pow.clamp(1, 10);
                 vm.grid[ny][nx] = Value::Str(format!("LENS:{}", power));
                 vm.energy = vm.energy.saturating_sub(20);
-                vm.output.push(format!(
-                    "LENS: Placed power {} at {},{}",
-                    power, nx, ny
-                ));
+                vm.output
+                    .push(format!("LENS: Placed power {} at {},{}", power, nx, ny));
             } else {
                 vm.output
                     .push("Error: Coordinates out of bounds for lens".to_string());

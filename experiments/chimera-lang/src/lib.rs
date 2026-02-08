@@ -205,6 +205,8 @@ mod nova_resonance_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_resonance_war_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_scent_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_security_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_sigil_dynamic_test;

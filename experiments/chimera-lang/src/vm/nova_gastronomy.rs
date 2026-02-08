@@ -43,7 +43,8 @@ fn exec_cook(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.stack
                         .push(Value::Junction(JunctionType::Dish, ingredients));
                     vm.energy = vm.energy.saturating_sub(5);
-                    vm.output.push(format!("COOK: Created Dish with {} ingredients", c));
+                    vm.output
+                        .push(format!("COOK: Created Dish with {} ingredients", c));
                 } else {
                     vm.output
                         .push("Error: Stack underflow for cook ingredients".to_string());
@@ -55,7 +56,8 @@ fn exec_cook(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for cook".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for cook".to_string());
+        vm.output
+            .push("Error: Stack underflow for cook".to_string());
     }
     None
 }
@@ -135,8 +137,10 @@ fn exec_savor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 vm.energy = vm.energy.saturating_add(energy_gain);
-                vm.output
-                    .push(format!("SAVOR: Consumed Dish, gained {} energy", energy_gain));
+                vm.output.push(format!(
+                    "SAVOR: Consumed Dish, gained {} energy",
+                    energy_gain
+                ));
             }
             _ => {
                 // Regular consume behavior for non-dishes
@@ -205,17 +209,20 @@ fn exec_banquet(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 vm.grid[ty][tx] = Value::Int(per_cell);
                             }
                         }
-                        vm.output.push(format!("BANQUET: Distributed {} energy", amount));
+                        vm.output
+                            .push(format!("BANQUET: Distributed {} energy", amount));
                     }
                 } else {
                     vm.output.push("BANQUET: Insufficient energy".to_string());
                 }
             }
         } else {
-            vm.output.push("Error: Type mismatch for banquet".to_string());
+            vm.output
+                .push("Error: Type mismatch for banquet".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for banquet".to_string());
+        vm.output
+            .push("Error: Stack underflow for banquet".to_string());
     }
     None
 }

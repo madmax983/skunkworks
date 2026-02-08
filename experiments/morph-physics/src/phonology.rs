@@ -24,12 +24,23 @@ mod tests {
 
     #[test]
     fn test_distance() {
-        let f1 = Features { voice: 0.0, place: 0.0, manner: 0.0 };
-        let f2 = Features { voice: 1.0, place: 0.0, manner: 0.0 };
+        let f1 = Features {
+            voice: 0.0,
+            place: 0.0,
+            manner: 0.0,
+        };
+        let f2 = Features {
+            voice: 1.0,
+            place: 0.0,
+            manner: 0.0,
+        };
         // Euclidean distance should be 1.0
         assert_eq!(distance(&f1, &f2), 1.0);
 
-        let p = Phoneme { features: f1, symbol: 'p' }; // Usage to avoid warning
+        let p = Phoneme {
+            features: f1,
+            symbol: 'p',
+        }; // Usage to avoid warning
         assert_eq!(p.symbol, 'p');
     }
 }

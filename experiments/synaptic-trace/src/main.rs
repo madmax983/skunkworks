@@ -66,7 +66,7 @@ stack backtrace:
         }
 
         if auto_fold {
-             fold_progress = (fold_progress + 0.005).min(1.0);
+            fold_progress = (fold_progress + 0.005).min(1.0);
         }
 
         // Camera
@@ -104,7 +104,9 @@ stack backtrace:
         for _ in 0..5 {
             network.step(1.0, &inputs);
             // Reset input after one tick
-            if inputs[0] > 0.0 { inputs[0] = 0.0; }
+            if inputs[0] > 0.0 {
+                inputs[0] = 0.0;
+            }
         }
 
         // Draw Trace
@@ -131,7 +133,7 @@ stack backtrace:
                 base_color.r + (flash_color.r - base_color.r) * v_norm,
                 base_color.g + (flash_color.g - base_color.g) * v_norm,
                 base_color.b + (flash_color.b - base_color.b) * v_norm,
-                1.0
+                1.0,
             );
 
             // Draw Wireframe Box
@@ -194,7 +196,10 @@ stack backtrace:
             LIGHTGRAY,
         );
         draw_text(
-            &format!("Neurons Active: {}", network.neurons.iter().filter(|n| n.v > -50.0).count()),
+            &format!(
+                "Neurons Active: {}",
+                network.neurons.iter().filter(|n| n.v > -50.0).count()
+            ),
             10.0,
             60.0,
             20.0,

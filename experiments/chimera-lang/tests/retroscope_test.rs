@@ -16,23 +16,45 @@ fn test_retroscope() {
 
     let genes = vec![
         // Tick 1: Push 10
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
         // Tick 2: Push 0
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
         // Tick 3: Push 0
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
         // Tick 4: GWrite (10 to 0,0)
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Tick 5: Push 20
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        },
         // Tick 6: Push 0
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
         // Tick 7: Push 0
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
         // Tick 8: GWrite (20 to 0,0)
-        Gene { op: OpCode::GWrite, args: vec![] },
-
+        Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        },
         // Tick 9: Retroscope(4, 0, 0)
         // Current Grid is 20.
         // We want to see 10.
@@ -45,11 +67,22 @@ fn test_retroscope() {
         // History len = 9 (0 to 8).
         // Ticks = 4. Index = 9 - 1 - 4 = 4.
         // State4 is AFTER Tick 4 executed. So it has 10.
-
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(4)] }, // ticks
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // y
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // x
-        Gene { op: OpCode::Retroscope, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(4)],
+        }, // ticks
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // y
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        }, // x
+        Gene {
+            op: OpCode::Retroscope,
+            args: vec![],
+        },
     ];
 
     let dna = Dna {
