@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 use rayon::prelude::*;
 
 mod model;
-use model::{World, Agent, City};
+use model::{Agent, City, World};
 
 #[macroquad::main("Physarum Transit")]
 async fn main() {
@@ -69,7 +69,13 @@ async fn main() {
         draw_texture(&texture, 0.0, 0.0, WHITE);
 
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 20.0, 30.0, GREEN);
-        draw_text(&format!("Agents: {}", world.agents.len()), 20.0, 50.0, 30.0, GREEN);
+        draw_text(
+            &format!("Agents: {}", world.agents.len()),
+            20.0,
+            50.0,
+            30.0,
+            GREEN,
+        );
 
         next_frame().await
     }

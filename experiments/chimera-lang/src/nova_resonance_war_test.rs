@@ -1,12 +1,16 @@
 #![cfg(test)]
 #![cfg(feature = "nova")]
 
-use super::vm::ChimeraVM;
 use super::ast::{Dna, Helix, Strand};
+use super::vm::ChimeraVM;
 use super::vm::Value;
 
 fn make_vm() -> ChimeraVM {
-    let dna = Dna { helix: Helix { strands: vec![Strand { genes: vec![] }] } };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![Strand { genes: vec![] }],
+        },
+    };
     ChimeraVM::new(dna)
 }
 

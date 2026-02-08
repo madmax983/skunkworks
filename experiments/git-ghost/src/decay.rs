@@ -1,6 +1,9 @@
 use rand::Rng;
 
-const GLITCH_CHARS: &[char] = &['░', '▒', '▓', '█', '▄', '▀', '■', '/', '\\', '?', '#', '$', '%', '&', '@', '!', '^', '*', '(', ')', '-', '+', '=', '{', '}', '[', ']', '<', '>', ',', '.', ':', ';', '"', '\''];
+const GLITCH_CHARS: &[char] = &[
+    '░', '▒', '▓', '█', '▄', '▀', '■', '/', '\\', '?', '#', '$', '%', '&', '@', '!', '^', '*', '(',
+    ')', '-', '+', '=', '{', '}', '[', ']', '<', '>', ',', '.', ':', ';', '"', '\'',
+];
 
 pub fn apply_decay(text: &str, age_seconds: i64) -> String {
     let mut rng = rand::thread_rng();
@@ -23,7 +26,7 @@ pub fn apply_decay(text: &str, age_seconds: i64) -> String {
     for line in text.lines() {
         // Chance to drop the line entirely (rot) - only for very old files
         if effective_entropy > 0.8 && rng.gen_bool(effective_entropy * 0.1) {
-             continue;
+            continue;
         }
 
         // Chance to shift the line (melt)
@@ -43,13 +46,13 @@ pub fn apply_decay(text: &str, age_seconds: i64) -> String {
                     let glitch = GLITCH_CHARS[rng.gen_range(0..GLITCH_CHARS.len())];
                     decayed.push(glitch);
                 } else if rng.gen_bool(0.3) {
-                     // Replace with space (fade)
+                    // Replace with space (fade)
                     decayed.push(' ');
                 } else {
                     // Replace with random hex
                     if rng.gen_bool(0.5) {
-                         let hex = format!("{:x}", rng.gen_range(0..16));
-                         decayed.push_str(&hex);
+                        let hex = format!("{:x}", rng.gen_range(0..16));
+                        decayed.push_str(&hex);
                     } else {
                         decayed.push('?');
                     }

@@ -1,4 +1,4 @@
-use git2::{Repository, Oid, DiffOptions};
+use git2::{DiffOptions, Oid, Repository};
 use std::path::{Path, PathBuf};
 
 pub struct History {
@@ -56,11 +56,14 @@ impl History {
         match commit.parent(0) {
             Ok(parent) => {
                 let parent_tree = parent.tree().ok()?;
-                let diff = self.repo.diff_tree_to_tree(
-                    Some(&parent_tree),
-                    Some(&tree),
-                    Some(&mut DiffOptions::new()),
-                ).ok()?;
+                let diff = self
+                    .repo
+                    .diff_tree_to_tree(
+                        Some(&parent_tree),
+                        Some(&tree),
+                        Some(&mut DiffOptions::new()),
+                    )
+                    .ok()?;
 
                 diff.foreach(
                     &mut |delta, _| {
@@ -75,26 +78,29 @@ impl History {
                     None,
                     None,
                     None,
-                ).ok()?;
+                )
+                .ok()?;
             }
             Err(_) => {
                 // Initial commit: diff against empty tree or just list all files
                 // Listing all files in tree is easier via diff against None
-                 let diff = self.repo.diff_tree_to_tree(
-                    None,
-                    Some(&tree),
-                    Some(&mut DiffOptions::new()),
-                ).ok()?;
+                let diff = self
+                    .repo
+                    .diff_tree_to_tree(None, Some(&tree), Some(&mut DiffOptions::new()))
+                    .ok()?;
 
-                 diff.foreach(
+                diff.foreach(
                     &mut |delta, _| {
-                         if let Some(path) = delta.new_file().path() {
+                        if let Some(path) = delta.new_file().path() {
                             diff_paths.push(path.to_path_buf());
                         }
                         true
                     },
-                    None, None, None
-                ).ok()?;
+                    None,
+                    None,
+                    None,
+                )
+                .ok()?;
             }
         }
 

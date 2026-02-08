@@ -120,7 +120,8 @@ impl Add for Cord {
         let mut result_clusters = Vec::new();
         let mut carry = 0;
 
-        for i in 0..=max_len { // Go one past max to handle final carry
+        for i in 0..=max_len {
+            // Go one past max to handle final carry
             if i == max_len && carry == 0 {
                 break;
             }
@@ -163,7 +164,9 @@ impl Add for Cord {
             result_clusters.push(knots);
         }
 
-        Cord { clusters: result_clusters }
+        Cord {
+            clusters: result_clusters,
+        }
     }
 }
 

@@ -35,7 +35,8 @@ fn exec_scan(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         // Cost based on area
         vm.energy = vm.energy.saturating_sub(r * r);
         vm.stack.push(Value::Junction(JunctionType::All, values));
-        vm.output.push(format!("SCAN: Radius {} at {},{}", r, cx, cy));
+        vm.output
+            .push(format!("SCAN: Radius {} at {},{}", r, cx, cy));
     } else {
         vm.output.push("Error: Type mismatch for scan".to_string());
     }
@@ -63,13 +64,15 @@ fn exec_chart(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.energy = vm.energy.saturating_sub(2);
                 vm.output.push(format!("CHART: Marked {},{}", x, y));
             } else {
-                vm.output.push("Error: Coordinates out of bounds for chart".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for chart".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for chart".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for chart".to_string());
+        vm.output
+            .push("Error: Stack underflow for chart".to_string());
     }
     None
 }
@@ -86,13 +89,15 @@ fn exec_atlas(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let val = vm.cartography_grid[y as usize][x as usize].clone();
                 vm.stack.push(val);
             } else {
-                vm.output.push("Error: Coordinates out of bounds for atlas".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for atlas".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for atlas".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for atlas".to_string());
+        vm.output
+            .push("Error: Stack underflow for atlas".to_string());
     }
     None
 }

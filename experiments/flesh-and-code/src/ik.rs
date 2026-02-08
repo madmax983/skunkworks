@@ -48,8 +48,12 @@ pub fn solve_ik(
                 let mut angle_diff = target_angle - current_angle;
 
                 // Normalize angle to -PI..PI
-                while angle_diff > std::f32::consts::PI { angle_diff -= 2.0 * std::f32::consts::PI; }
-                while angle_diff < -std::f32::consts::PI { angle_diff += 2.0 * std::f32::consts::PI; }
+                while angle_diff > std::f32::consts::PI {
+                    angle_diff -= 2.0 * std::f32::consts::PI;
+                }
+                while angle_diff < -std::f32::consts::PI {
+                    angle_diff += 2.0 * std::f32::consts::PI;
+                }
 
                 // Dampening for organic feel
                 let speed = 0.1;
@@ -73,20 +77,29 @@ mod tests {
         app.add_systems(Update, solve_ik);
 
         // Setup entities
-        let target = app.world_mut().spawn((
-            Transform::from_xyz(10.0, 0.0, 0.0),
-            GlobalTransform::from_xyz(10.0, 0.0, 0.0),
-        )).id();
+        let target = app
+            .world_mut()
+            .spawn((
+                Transform::from_xyz(10.0, 0.0, 0.0),
+                GlobalTransform::from_xyz(10.0, 0.0, 0.0),
+            ))
+            .id();
 
-        let joint = app.world_mut().spawn((
-            Transform::from_xyz(0.0, 0.0, 0.0),
-            GlobalTransform::from_xyz(0.0, 0.0, 0.0),
-        )).id();
+        let joint = app
+            .world_mut()
+            .spawn((
+                Transform::from_xyz(0.0, 0.0, 0.0),
+                GlobalTransform::from_xyz(0.0, 0.0, 0.0),
+            ))
+            .id();
 
-        let effector = app.world_mut().spawn((
-            Transform::from_xyz(5.0, 0.0, 0.0), // Starts at x=5
-            GlobalTransform::from_xyz(5.0, 0.0, 0.0),
-        )).id();
+        let effector = app
+            .world_mut()
+            .spawn((
+                Transform::from_xyz(5.0, 0.0, 0.0), // Starts at x=5
+                GlobalTransform::from_xyz(5.0, 0.0, 0.0),
+            ))
+            .id();
 
         app.world_mut().spawn(IkChain {
             target,

@@ -103,7 +103,7 @@ impl GitGraph {
 
             // Other parents (merge bases) get new lanes
             for &pid in parent_ids.iter().skip(1) {
-                 if let Some(&p_idx) = node_map.get(&pid) {
+                if let Some(&p_idx) = node_map.get(&pid) {
                     if !node_lanes.contains_key(&p_idx) {
                         // Assign a new lane
                         // To keep it balanced around 0, we can alternate signs
@@ -126,7 +126,7 @@ impl GitGraph {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use git2::{Signature, RepositoryInitOptions};
+    use git2::{RepositoryInitOptions, Signature};
     use tempfile::TempDir;
 
     fn create_dummy_repo() -> (TempDir, Repository) {
@@ -141,7 +141,8 @@ mod tests {
         {
             let tree_id = repo.index().unwrap().write_tree().unwrap();
             let tree = repo.find_tree(tree_id).unwrap();
-            repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[]).unwrap();
+            repo.commit(Some("HEAD"), &sig, &sig, "Initial commit", &tree, &[])
+                .unwrap();
         }
 
         (temp_dir, repo)
@@ -151,7 +152,8 @@ mod tests {
         let sig = Signature::now("Test User", "test@example.com").unwrap();
         let tree_id = repo.index().unwrap().write_tree().unwrap();
         let tree = repo.find_tree(tree_id).unwrap();
-        repo.commit(Some("HEAD"), &sig, &sig, msg, &tree, parents).unwrap()
+        repo.commit(Some("HEAD"), &sig, &sig, msg, &tree, parents)
+            .unwrap()
     }
 
     #[test]
@@ -172,12 +174,23 @@ mod tests {
         let tree_id = repo.index().unwrap().write_tree().unwrap();
         let tree = repo.find_tree(tree_id).unwrap();
 
-        let f1_oid = repo.commit(Some("refs/heads/feature"), &sig, &sig, "F1", &tree, &[&c0]).unwrap();
+        let f1_oid = repo
+            .commit(Some("refs/heads/feature"), &sig, &sig, "F1", &tree, &[&c0])
+            .unwrap();
         let f1 = repo.find_commit(f1_oid).unwrap();
 
         // Merge M1 -> C1, F1
         repo.set_head("refs/heads/main").unwrap();
-        let m1_oid = repo.commit(Some("refs/heads/main"), &sig, &sig, "M1", &tree, &[&c1, &f1]).unwrap();
+        let m1_oid = repo
+            .commit(
+                Some("refs/heads/main"),
+                &sig,
+                &sig,
+                "M1",
+                &tree,
+                &[&c1, &f1],
+            )
+            .unwrap();
 
         // Now run graph builder
         let git_graph = GitGraph::new(temp_dir.path(), 100).unwrap();

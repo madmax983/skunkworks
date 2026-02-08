@@ -1670,23 +1670,32 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Legend
     let legend_text = vec![
         Line::from("SIGNALS"),
-        Line::from(Span::styled("· Low Intensity", Style::default().fg(Color::Cyan))),
-        Line::from(Span::styled("+ Med Intensity", Style::default().fg(Color::Yellow))),
-        Line::from(Span::styled("* High Intensity", Style::default().fg(Color::Red))),
+        Line::from(Span::styled(
+            "· Low Intensity",
+            Style::default().fg(Color::Cyan),
+        )),
+        Line::from(Span::styled(
+            "+ Med Intensity",
+            Style::default().fg(Color::Yellow),
+        )),
+        Line::from(Span::styled(
+            "* High Intensity",
+            Style::default().fg(Color::Red),
+        )),
         Line::from(" "),
         Line::from("EXECUTION TRAIL"),
-        Line::from(Span::styled("Background (Blue Fade)", Style::default().bg(Color::Blue))),
+        Line::from(Span::styled(
+            "Background (Blue Fade)",
+            Style::default().bg(Color::Blue),
+        )),
         Line::from(" "),
         Line::from("Mechanics:"),
         Line::from("  - Signals propagate via 'nova_signals.rs'"),
         Line::from("  - Trail marks recent gene execution sites"),
     ];
 
-    let legend_widget = Paragraph::new(legend_text).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Legend"),
-    );
+    let legend_widget =
+        Paragraph::new(legend_text).block(Block::default().borders(Borders::ALL).title("Legend"));
     f.render_widget(legend_widget, chunks[1]);
 }
 

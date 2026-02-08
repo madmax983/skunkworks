@@ -1,6 +1,6 @@
+use ::rand::Rng;
 use macroquad::prelude::*;
-use rayon::prelude::*;
-use ::rand::Rng; // Import Rng trait for gen_range from crate rand
+use rayon::prelude::*; // Import Rng trait for gen_range from crate rand
 
 const SENSOR_ANGLE: f32 = std::f32::consts::PI / 4.0; // 45 degrees
 const SENSOR_DIST: f32 = 9.0;
@@ -15,10 +15,20 @@ pub struct Agent {
 
 impl Agent {
     pub fn new(position: Vec2, angle: f32) -> Self {
-        Self { position, angle, speed: 2.0 }
+        Self {
+            position,
+            angle,
+            speed: 2.0,
+        }
     }
 
-    pub fn sense(&self, sensor_angle_offset: f32, width: usize, height: usize, grid: &[f32]) -> f32 {
+    pub fn sense(
+        &self,
+        sensor_angle_offset: f32,
+        width: usize,
+        height: usize,
+        grid: &[f32],
+    ) -> f32 {
         let sensor_angle = self.angle + sensor_angle_offset;
         let sensor_dir = vec2(sensor_angle.cos(), sensor_angle.sin());
         let sensor_pos = self.position + sensor_dir * SENSOR_DIST;
@@ -58,10 +68,18 @@ impl Agent {
 
         let w = width as f32;
         let h = height as f32;
-        if self.position.x < 0.0 { self.position.x += w; }
-        if self.position.x >= w { self.position.x -= w; }
-        if self.position.y < 0.0 { self.position.y += h; }
-        if self.position.y >= h { self.position.y -= h; }
+        if self.position.x < 0.0 {
+            self.position.x += w;
+        }
+        if self.position.x >= w {
+            self.position.x -= w;
+        }
+        if self.position.y < 0.0 {
+            self.position.y += h;
+        }
+        if self.position.y >= h {
+            self.position.y -= h;
+        }
     }
 }
 
@@ -73,7 +91,10 @@ pub struct City {
 
 impl City {
     pub fn new(position: Vec2) -> Self {
-        Self { position, radius: 3.0 }
+        Self {
+            position,
+            radius: 3.0,
+        }
     }
 }
 
@@ -128,7 +149,7 @@ impl World {
 
             for dy in -r..=r {
                 for dx in -r..=r {
-                    if dx*dx + dy*dy <= r*r {
+                    if dx * dx + dy * dy <= r * r {
                         let nx = (cx + dx).rem_euclid(width as isize) as usize;
                         let ny = (cy + dy).rem_euclid(height as isize) as usize;
                         self.grid[ny * width + nx] = 1.0;
@@ -143,20 +164,23 @@ impl World {
         let h = self.height;
         let grid = &self.grid;
 
-        next_grid.par_chunks_mut(w).enumerate().for_each(|(y, row)| {
-            for x in 0..w {
-                let mut sum = 0.0;
-                for dy in -1..=1 {
-                    for dx in -1..=1 {
-                        let nx = (x as isize + dx).rem_euclid(w as isize) as usize;
-                        let ny = (y as isize + dy).rem_euclid(h as isize) as usize;
-                        sum += grid[ny * w + nx];
+        next_grid
+            .par_chunks_mut(w)
+            .enumerate()
+            .for_each(|(y, row)| {
+                for x in 0..w {
+                    let mut sum = 0.0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            let nx = (x as isize + dx).rem_euclid(w as isize) as usize;
+                            let ny = (y as isize + dy).rem_euclid(h as isize) as usize;
+                            sum += grid[ny * w + nx];
+                        }
                     }
+                    let avg = sum / 9.0;
+                    row[x] = avg * 0.95;
                 }
-                let avg = sum / 9.0;
-                row[x] = avg * 0.95;
-            }
-        });
+            });
 
         self.grid = next_grid;
     }

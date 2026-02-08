@@ -1,7 +1,9 @@
 mod render;
 
 use macroquad::prelude::*;
-use poincare_disk::{Mobius, Point, TilingConsts, neighbor_transform_a, hyperbolic_dist, mobius_add, mobius_sub};
+use poincare_disk::{
+    hyperbolic_dist, mobius_add, mobius_sub, neighbor_transform_a, Mobius, Point, TilingConsts,
+};
 use render::{draw_tile, is_wall, to_screen};
 use std::f64::consts::PI;
 
@@ -40,7 +42,9 @@ impl GameState {
     fn get_path_hash(&self) -> u64 {
         let mut h: u64 = 123456789;
         for &step in &self.player_path {
-            h = h.wrapping_mul(6364136223846793005).wrapping_add(step as u64);
+            h = h
+                .wrapping_mul(6364136223846793005)
+                .wrapping_add(step as u64);
         }
         h
     }
@@ -62,21 +66,30 @@ impl GameState {
                 let speed = 0.2 * dt as f64;
                 let step = Point::new(
                     dir_at_entity.re * speed / dist,
-                    dir_at_entity.im * speed / dist
+                    dir_at_entity.im * speed / dist,
                 );
                 entity.pos = mobius_add(entity.pos, step);
             }
         }
 
         // Remove far entities
-        self.entities.retain(|e| hyperbolic_dist(e.pos, Point::new(0.0, 0.0)) < 4.0);
+        self.entities
+            .retain(|e| hyperbolic_dist(e.pos, Point::new(0.0, 0.0)) < 4.0);
 
         // Input
         let mut move_vec = Vec2::new(0.0, 0.0);
-        if is_key_down(KeyCode::W) { move_vec.y += 1.0; }
-        if is_key_down(KeyCode::S) { move_vec.y -= 1.0; }
-        if is_key_down(KeyCode::A) { move_vec.x -= 1.0; }
-        if is_key_down(KeyCode::D) { move_vec.x += 1.0; }
+        if is_key_down(KeyCode::W) {
+            move_vec.y += 1.0;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec.y -= 1.0;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec.x -= 1.0;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec.x += 1.0;
+        }
 
         if move_vec.length() > 0.0 {
             move_vec = move_vec.normalize();
@@ -85,10 +98,13 @@ impl GameState {
             let angle = self.view_angle as f32;
             let rot_vec = Vec2::new(
                 move_vec.x * angle.cos() - move_vec.y * angle.sin(),
-                move_vec.x * angle.sin() + move_vec.y * angle.cos()
+                move_vec.x * angle.sin() + move_vec.y * angle.cos(),
             );
 
-            let delta = Point::new(rot_vec.x as f64 * speed as f64, rot_vec.y as f64 * speed as f64);
+            let delta = Point::new(
+                rot_vec.x as f64 * speed as f64,
+                rot_vec.y as f64 * speed as f64,
+            );
             let candidate_pos = mobius_add(self.player_pos, delta);
 
             // Wall Collision Check
@@ -119,8 +135,12 @@ impl GameState {
         }
 
         // Manual Rotation
-        if is_key_down(KeyCode::Q) { self.view_angle += 2.0 * dt as f64; }
-        if is_key_down(KeyCode::E) { self.view_angle -= 2.0 * dt as f64; }
+        if is_key_down(KeyCode::Q) {
+            self.view_angle += 2.0 * dt as f64;
+        }
+        if is_key_down(KeyCode::E) {
+            self.view_angle -= 2.0 * dt as f64;
+        }
 
         // Transition Logic
         let origin_dist = hyperbolic_dist(self.player_pos, Point::new(0.0, 0.0));
@@ -141,7 +161,8 @@ impl GameState {
             let new_pos = inv_neighbor.apply(self.player_pos);
 
             // Rotation Correction
-            let m_old = Mobius::rotation(-self.view_angle).then(&Mobius::inverse_translation(self.player_pos));
+            let m_old = Mobius::rotation(-self.view_angle)
+                .then(&Mobius::inverse_translation(self.player_pos));
             let trans_neighbor = Mobius::translation(neighbor_center);
             let trans_p_new = Mobius::translation(new_pos);
 
@@ -170,13 +191,17 @@ impl GameState {
 
             // Spawn Entities
             let new_hash = self.get_path_hash();
-            if new_hash % 5 == 0 { // 20% chance
-                 let r = macroquad::rand::gen_range(0.1, 0.5);
-                 let theta = macroquad::rand::gen_range(0.0, 2.0 * PI);
-                 let p = Point::from_polar(r, theta);
-                 self.entities.push(Entity { pos: p, seed: new_hash });
-                 self.message = "Entity Spawned!".to_string();
-                 self.message_timer = 2.0;
+            if new_hash % 5 == 0 {
+                // 20% chance
+                let r = macroquad::rand::gen_range(0.1, 0.5);
+                let theta = macroquad::rand::gen_range(0.0, 2.0 * PI);
+                let p = Point::from_polar(r, theta);
+                self.entities.push(Entity {
+                    pos: p,
+                    seed: new_hash,
+                });
+                self.message = "Entity Spawned!".to_string();
+                self.message_timer = 2.0;
             }
         }
     }
@@ -213,12 +238,24 @@ async fn main() {
         }
 
         // Draw Player
-        draw_circle(screen_width()/2.0, screen_height()/2.0, 5.0, YELLOW);
+        draw_circle(screen_width() / 2.0, screen_height() / 2.0, 5.0, YELLOW);
 
         // UI
         draw_text(&state.message, 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Depth: {}", state.player_path.len()), 20.0, 60.0, 20.0, GRAY);
-        draw_text(&format!("Entities: {}", state.entities.len()), 20.0, 90.0, 20.0, GRAY);
+        draw_text(
+            &format!("Depth: {}", state.player_path.len()),
+            20.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
+        draw_text(
+            &format!("Entities: {}", state.entities.len()),
+            20.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }

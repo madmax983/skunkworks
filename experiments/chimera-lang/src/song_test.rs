@@ -1,6 +1,6 @@
 #[cfg(all(test, feature = "nova"))]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 
@@ -14,7 +14,7 @@ mod tests {
 
         let chord = vec![
             Nucleotide::String("Fiat".to_string()),
-            Nucleotide::String("Lux".to_string())
+            Nucleotide::String("Lux".to_string()),
         ];
 
         let main_strand = Strand {
@@ -40,17 +40,15 @@ mod tests {
                 Gene {
                     op: OpCode::Choir,
                     args: vec![],
-                }
-            ]
+                },
+            ],
         };
 
         let effect_strand = Strand {
-            genes: vec![
-                Gene {
-                    op: OpCode::Push,
-                    args: vec![Nucleotide::Number(100)],
-                }
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }],
         };
 
         let dna = Dna {
@@ -82,7 +80,7 @@ mod tests {
         assert_eq!(vm.chorus_buffer.back(), Some(&"Fiat".to_string()));
 
         vm.step(); // Tick 2 (Choir: "Lux")
-        // Buffer should be cleared if triggered
+                   // Buffer should be cleared if triggered
         assert_eq!(vm.chorus_buffer.len(), 0);
 
         // Check if triggered (IP moved to 1)
@@ -91,9 +89,9 @@ mod tests {
 
     #[test]
     fn test_song_integration() {
-       let chord = vec![
+        let chord = vec![
             Nucleotide::String("Fiat".to_string()),
-            Nucleotide::String("Lux".to_string())
+            Nucleotide::String("Lux".to_string()),
         ];
 
         let main_strand = Strand {
@@ -127,8 +125,8 @@ mod tests {
                 Gene {
                     op: OpCode::Jump,
                     args: vec![Nucleotide::Number(0)],
-                }
-            ]
+                },
+            ],
         };
 
         let effect_strand = Strand {
@@ -140,8 +138,8 @@ mod tests {
                 Gene {
                     op: OpCode::Ret,
                     args: vec![],
-                }
-            ]
+                },
+            ],
         };
 
         let dna = Dna {

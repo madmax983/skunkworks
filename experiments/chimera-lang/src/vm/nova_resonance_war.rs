@@ -33,12 +33,17 @@ pub fn exec_resonate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             // Energy Cost
             vm.energy = vm.energy.saturating_sub(5 + (amp_int / 10));
-            vm.output.push(format!("RESONATE: {}Hz @ {:.1} at {},{}", freq, amp, cx, cy));
+            vm.output.push(format!(
+                "RESONATE: {}Hz @ {:.1} at {},{}",
+                freq, amp, cx, cy
+            ));
         } else {
-            vm.output.push("Error: Type mismatch for resonate".to_string());
+            vm.output
+                .push("Error: Type mismatch for resonate".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for resonate".to_string());
+        vm.output
+            .push("Error: Stack underflow for resonate".to_string());
     }
     None
 }
@@ -61,21 +66,30 @@ pub fn exec_sonic_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if vm.sovereignty_grid[cy][cx] != Some(owner) {
                     vm.sovereignty_grid[cy][cx] = Some(owner);
                     vm.energy = vm.energy.saturating_sub(10);
-                    vm.output.push(format!("SONIC_CLAIM: Strand {} claimed {},{}", owner, cx, cy));
+                    vm.output.push(format!(
+                        "SONIC_CLAIM: Strand {} claimed {},{}",
+                        owner, cx, cy
+                    ));
                 }
             } else {
                 // Feedback on why it failed can be useful for debugging strands
                 if local_amp <= 10.0 {
-                     vm.output.push(format!("SONIC_CLAIM: Signal too weak ({:.1})", local_amp));
+                    vm.output
+                        .push(format!("SONIC_CLAIM: Signal too weak ({:.1})", local_amp));
                 } else {
-                     vm.output.push(format!("SONIC_CLAIM: Frequency mismatch ({} vs {})", local_freq, target_freq));
+                    vm.output.push(format!(
+                        "SONIC_CLAIM: Frequency mismatch ({} vs {})",
+                        local_freq, target_freq
+                    ));
                 }
             }
         } else {
-            vm.output.push("Error: Type mismatch for sonic_claim".to_string());
+            vm.output
+                .push("Error: Type mismatch for sonic_claim".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for sonic_claim".to_string());
+        vm.output
+            .push("Error: Stack underflow for sonic_claim".to_string());
     }
     None
 }
@@ -103,13 +117,18 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 vm.energy = vm.energy.saturating_sub(radius * 2);
-                vm.output.push(format!("DAMPEN: Reduced amplitude by {} in {} cells", amount, count));
+                vm.output.push(format!(
+                    "DAMPEN: Reduced amplitude by {} in {} cells",
+                    amount, count
+                ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for dampen".to_string());
+            vm.output
+                .push("Error: Type mismatch for dampen".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for dampen".to_string());
+        vm.output
+            .push("Error: Stack underflow for dampen".to_string());
     }
     None
 }
@@ -156,7 +175,11 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
             let retention = 0.6;
             let diffusion = 0.4;
 
-            let avg_neighbor_amp = if count > 0 { neighbors_amp_sum / count as f32 } else { 0.0 };
+            let avg_neighbor_amp = if count > 0 {
+                neighbors_amp_sum / count as f32
+            } else {
+                0.0
+            };
 
             let mut new_amp = self_amp * retention + avg_neighbor_amp * diffusion;
 

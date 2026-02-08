@@ -3,7 +3,7 @@ mod mobius;
 
 use git_graph::GitGraph;
 use macroquad::prelude::*;
-use mobius::{map_to_mobius, get_normal, get_tangent};
+use mobius::{get_normal, get_tangent, map_to_mobius};
 
 #[macroquad::main("Mobius Git")]
 async fn main() -> anyhow::Result<()> {
@@ -17,7 +17,10 @@ async fn main() -> anyhow::Result<()> {
         }
     };
 
-    println!("Loaded {} commits into the graph.", git_graph.graph.node_count());
+    println!(
+        "Loaded {} commits into the graph.",
+        git_graph.graph.node_count()
+    );
 
     // Camera State
     let mut cam_u: f32 = 0.0;
@@ -48,7 +51,8 @@ async fn main() -> anyhow::Result<()> {
         if is_key_down(KeyCode::Down) {
             cam_v -= 5.0 * dt;
         }
-        if is_key_down(KeyCode::Equal) { // +
+        if is_key_down(KeyCode::Equal) {
+            // +
             cam_dist -= 10.0 * dt;
         }
         if is_key_down(KeyCode::Minus) {
@@ -126,61 +130,89 @@ async fn main() -> anyhow::Result<()> {
 
         // 2. Draw Git Graph Nodes & Edges
         for idx in git_graph.graph.node_indices() {
-             let node = &git_graph.graph[idx];
+            let node = &git_graph.graph[idx];
 
-             // Culling
-             if node.u < u_min || node.u > u_max {
-                 continue;
-             }
+            // Culling
+            if node.u < u_min || node.u > u_max {
+                continue;
+            }
 
-             // Scale coordinates
-             let node_u_scaled = node.u * u_scale;
-             let node_v_scaled = node.v * 1.5; // Match mesh lane width
+            // Scale coordinates
+            let node_u_scaled = node.u * u_scale;
+            let node_v_scaled = node.v * 1.5; // Match mesh lane width
 
-             let pos = map_to_mobius(node_u_scaled, node_v_scaled);
+            let pos = map_to_mobius(node_u_scaled, node_v_scaled);
 
-             // Draw Node
-             // Color based on branch? (v)
-             let color = if node.v.abs() < 0.1 { BLUE } else { GREEN };
-             draw_sphere(pos, 0.3, None, color);
+            // Draw Node
+            // Color based on branch? (v)
+            let color = if node.v.abs() < 0.1 { BLUE } else { GREEN };
+            draw_sphere(pos, 0.3, None, color);
 
-             // Draw Edges (to parents)
-             for &parent_oid in &node.parent_ids {
-                 if let Some(&p_idx) = git_graph.node_map.get(&parent_oid) {
-                     let parent_node = &git_graph.graph[p_idx];
+            // Draw Edges (to parents)
+            for &parent_oid in &node.parent_ids {
+                if let Some(&p_idx) = git_graph.node_map.get(&parent_oid) {
+                    let parent_node = &git_graph.graph[p_idx];
 
-                     let parent_u_scaled = parent_node.u * u_scale;
-                     let parent_v_scaled = parent_node.v * 1.5;
+                    let parent_u_scaled = parent_node.u * u_scale;
+                    let parent_v_scaled = parent_node.v * 1.5;
 
-                     // Subdivide edge for curvature
-                     let u_diff = (node_u_scaled - parent_u_scaled).abs();
-                     let segments = (u_diff * 10.0).ceil() as i32;
-                     let segments = segments.max(2).min(20);
+                    // Subdivide edge for curvature
+                    let u_diff = (node_u_scaled - parent_u_scaled).abs();
+                    let segments = (u_diff * 10.0).ceil() as i32;
+                    let segments = segments.max(2).min(20);
 
-                     let mut last_p = pos;
-                     for i in 1..=segments {
-                         let t = i as f32 / segments as f32;
-                         // Linear interpolation of (u, v) in topological space
-                         // This creates a geodesic-like curve on the strip
-                         let curr_u = node_u_scaled * (1.0 - t) + parent_u_scaled * t;
-                         let curr_v = node_v_scaled * (1.0 - t) + parent_v_scaled * t;
+                    let mut last_p = pos;
+                    for i in 1..=segments {
+                        let t = i as f32 / segments as f32;
+                        // Linear interpolation of (u, v) in topological space
+                        // This creates a geodesic-like curve on the strip
+                        let curr_u = node_u_scaled * (1.0 - t) + parent_u_scaled * t;
+                        let curr_v = node_v_scaled * (1.0 - t) + parent_v_scaled * t;
 
-                         let curr_p = map_to_mobius(curr_u, curr_v);
-                         draw_line_3d(last_p, curr_p, RED);
-                         last_p = curr_p;
-                     }
-                 }
-             }
+                        let curr_p = map_to_mobius(curr_u, curr_v);
+                        draw_line_3d(last_p, curr_p, RED);
+                        last_p = curr_p;
+                    }
+                }
+            }
         }
 
         set_default_camera();
 
         // UI Overlay
         draw_text("Mobius Git Explorer", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Commits: {}", git_graph.graph.node_count()), 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("U: {:.2} (Twist: {:.2} pi)", cam_u, (cam_u * u_scale) / std::f32::consts::PI), 20.0, 80.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("V: {:.2} | Dist: {:.2}", cam_v, cam_dist), 20.0, 100.0, 20.0, LIGHTGRAY);
-        draw_text("Arrows: Move | +/-: Zoom", 20.0, screen_height() - 30.0, 20.0, WHITE);
+        draw_text(
+            &format!("Commits: {}", git_graph.graph.node_count()),
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!(
+                "U: {:.2} (Twist: {:.2} pi)",
+                cam_u,
+                (cam_u * u_scale) / std::f32::consts::PI
+            ),
+            20.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("V: {:.2} | Dist: {:.2}", cam_v, cam_dist),
+            20.0,
+            100.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Arrows: Move | +/-: Zoom",
+            20.0,
+            screen_height() - 30.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

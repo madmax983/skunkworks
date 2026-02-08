@@ -186,7 +186,13 @@ async fn main() {
             10.0,
             50.0,
             30.0,
-            if replay_mode { RED } else if raining { BLUE } else { BLACK },
+            if replay_mode {
+                RED
+            } else if raining {
+                BLUE
+            } else {
+                BLACK
+            },
         );
 
         draw_text(

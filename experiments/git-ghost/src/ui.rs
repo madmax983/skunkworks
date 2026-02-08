@@ -1,8 +1,9 @@
-use crate::ghost::{Ghost, scan_graveyard, fetch_ectoplasm};
 use crate::decay::apply_decay;
+use crate::ghost::{fetch_ectoplasm, scan_graveyard, Ghost};
 use anyhow::Result;
 use chrono::Utc;
 use crossterm::event::{self, Event, KeyCode};
+use git2::Repository;
 use ratatui::{
     backend::Backend,
     layout::{Constraint, Direction, Layout, Margin},
@@ -12,7 +13,6 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::time::Duration;
-use git2::Repository;
 
 pub struct App {
     pub ghosts: Vec<Ghost>,
@@ -45,7 +45,9 @@ impl App {
     }
 
     pub fn next(&mut self) {
-        if self.ghosts.is_empty() { return; }
+        if self.ghosts.is_empty() {
+            return;
+        }
         let i = match self.list_state.selected() {
             Some(i) => {
                 if i >= self.ghosts.len() - 1 {
@@ -61,7 +63,9 @@ impl App {
     }
 
     pub fn previous(&mut self) {
-        if self.ghosts.is_empty() { return; }
+        if self.ghosts.is_empty() {
+            return;
+        }
         let i = match self.list_state.selected() {
             Some(i) => {
                 if i == 0 {
@@ -81,7 +85,11 @@ impl App {
             if let Some(ghost) = self.ghosts.get(i) {
                 let repo = Repository::discover(&self.repo_path)?;
                 let content = fetch_ectoplasm(&repo, ghost)?;
-                let filename = std::path::Path::new(&ghost.path).file_name().unwrap_or_default().to_str().unwrap_or("unknown");
+                let filename = std::path::Path::new(&ghost.path)
+                    .file_name()
+                    .unwrap_or_default()
+                    .to_str()
+                    .unwrap_or("unknown");
                 let out_path = format!("resurrected_{}", filename);
                 std::fs::write(&out_path, content)?;
                 self.message = format!("Resurrected {} to {}", ghost.path, out_path);
@@ -113,9 +121,9 @@ where
                     KeyCode::Down => app.next(),
                     KeyCode::Up => app.previous(),
                     KeyCode::Char('t') | KeyCode::Enter => {
-                         if let Err(e) = app.resurrect() {
-                             app.message = format!("Resurrection failed: {}", e);
-                         }
+                        if let Err(e) = app.resurrect() {
+                            app.message = format!("Resurrection failed: {}", e);
+                        }
                     }
                     _ => {}
                 }
@@ -131,40 +139,58 @@ fn ui(f: &mut Frame, app: &mut App) {
         .split(f.area());
 
     // List of ghosts
-    let items: Vec<ListItem> = app.ghosts.iter().map(|g| {
-        let age_secs = (Utc::now() - g.deleted_at).num_seconds();
-        let color = if age_secs < 86400 {
-            Color::White
-        } else if age_secs < 2592000 { // 30 days
-            Color::Gray
-        } else {
-            Color::DarkGray
-        };
+    let items: Vec<ListItem> = app
+        .ghosts
+        .iter()
+        .map(|g| {
+            let age_secs = (Utc::now() - g.deleted_at).num_seconds();
+            let color = if age_secs < 86400 {
+                Color::White
+            } else if age_secs < 2592000 {
+                // 30 days
+                Color::Gray
+            } else {
+                Color::DarkGray
+            };
 
-        ListItem::new(format!("{} ({})", g.path, g.deleted_at.format("%Y-%m-%d")))
-            .style(Style::default().fg(color))
-    }).collect();
+            ListItem::new(format!("{} ({})", g.path, g.deleted_at.format("%Y-%m-%d")))
+                .style(Style::default().fg(color))
+        })
+        .collect();
 
     let list = List::new(items)
         .block(Block::default().borders(Borders::ALL).title("Graveyard"))
-        .highlight_style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+        .highlight_style(
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        )
         .highlight_symbol(">> ");
 
     f.render_stateful_widget(list, chunks[0], &mut app.list_state);
 
     // Content Pane
-    let block = Block::default().borders(Borders::ALL).title("Manifestation");
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title("Manifestation");
     f.render_widget(block, chunks[1]);
 
-    let inner_area = chunks[1].inner(Margin { vertical: 1, horizontal: 1 });
+    let inner_area = chunks[1].inner(Margin {
+        vertical: 1,
+        horizontal: 1,
+    });
 
     if let Some((_, content)) = &app.content_cache {
         // Render lines with CRT scanline effect
         let mut text_lines = Vec::new();
         for (idx, line_str) in content.lines().enumerate() {
-             let bg = if idx % 2 == 0 { Color::Black } else { Color::Rgb(20, 20, 20) };
-             let span = Span::styled(line_str, Style::default().fg(Color::Green).bg(bg));
-             text_lines.push(Line::from(span));
+            let bg = if idx % 2 == 0 {
+                Color::Black
+            } else {
+                Color::Rgb(20, 20, 20)
+            };
+            let span = Span::styled(line_str, Style::default().fg(Color::Green).bg(bg));
+            text_lines.push(Line::from(span));
         }
 
         let p = Paragraph::new(text_lines)
@@ -183,12 +209,17 @@ fn ui(f: &mut Frame, app: &mut App) {
             width: area.width,
             height: 1,
         };
-        f.render_widget(Paragraph::new(Span::styled(&app.message, Style::default().fg(Color::Red))), msg_area);
+        f.render_widget(
+            Paragraph::new(Span::styled(&app.message, Style::default().fg(Color::Red))),
+            msg_area,
+        );
     }
 }
 
 fn generate_content(app: &App, index: usize) -> String {
-    if index >= app.ghosts.len() { return String::new(); }
+    if index >= app.ghosts.len() {
+        return String::new();
+    }
     let ghost = &app.ghosts[index];
 
     // Open repo temporarily (not efficient but safe)
@@ -201,7 +232,7 @@ fn generate_content(app: &App, index: usize) -> String {
         Ok(raw) => {
             let age = (Utc::now() - ghost.deleted_at).num_seconds();
             apply_decay(&raw, age)
-        },
+        }
         Err(e) => format!("Error summoning ghost: {}", e),
     }
 }

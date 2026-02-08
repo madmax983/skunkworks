@@ -1,7 +1,7 @@
 mod simulation;
 
 use macroquad::prelude::*;
-use simulation::{World, WIDTH, HEIGHT, Material};
+use simulation::{Material, World, HEIGHT, WIDTH};
 
 #[macroquad::main("Gravity Termites")]
 async fn main() {
@@ -25,10 +25,18 @@ async fn main() {
         }
 
         let move_speed = 5.0 / zoom;
-        if is_key_down(KeyCode::Left) { offset.x += move_speed; }
-        if is_key_down(KeyCode::Right) { offset.x -= move_speed; }
-        if is_key_down(KeyCode::Up) { offset.y += move_speed; }
-        if is_key_down(KeyCode::Down) { offset.y -= move_speed; }
+        if is_key_down(KeyCode::Left) {
+            offset.x += move_speed;
+        }
+        if is_key_down(KeyCode::Right) {
+            offset.x -= move_speed;
+        }
+        if is_key_down(KeyCode::Up) {
+            offset.y += move_speed;
+        }
+        if is_key_down(KeyCode::Down) {
+            offset.y -= move_speed;
+        }
 
         // Update
         world.update();
@@ -84,7 +92,7 @@ async fn main() {
             DrawTextureParams {
                 dest_size: Some(Vec2::new(grid_w, grid_h)),
                 ..Default::default()
-            }
+            },
         );
 
         // Draw Agents
@@ -94,7 +102,8 @@ async fn main() {
             let ay = agent.pos.y * zoom + dest_y;
 
             // Cull off-screen
-            if ax > -10.0 && ax < screen_width() + 10.0 && ay > -10.0 && ay < screen_height() + 10.0 {
+            if ax > -10.0 && ax < screen_width() + 10.0 && ay > -10.0 && ay < screen_height() + 10.0
+            {
                 let color = if agent.carrying { GREEN } else { YELLOW };
                 // Draw as small rect
                 draw_rectangle(ax, ay, zoom.max(1.0), zoom.max(1.0), color);
@@ -103,9 +112,27 @@ async fn main() {
 
         // UI
         draw_text("Gravity Termites", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Step: {}", world.step), 10.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text("Agents build planetoids in gravity wells.", 10.0, 80.0, 20.0, LIGHTGRAY);
-        draw_text("Controls: Arrows (Pan), +/- (Zoom)", 10.0, 100.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Step: {}", world.step),
+            10.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Agents build planetoids in gravity wells.",
+            10.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Controls: Arrows (Pan), +/- (Zoom)",
+            10.0,
+            100.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }
