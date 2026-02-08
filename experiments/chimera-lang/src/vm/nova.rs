@@ -168,6 +168,9 @@ fn get_open_neighbors(
 /// Generic diffusion logic for scalar grids (i64).
 ///
 /// Applies inertia, wind flow, and decay.
+///
+/// **Optimization:** Uses a stack-allocated buffer `[[i64; GRID_SIZE]; GRID_SIZE]` to avoid
+/// repeated heap allocations (`Vec<Vec<i64>>`) every tick.
 fn diffuse_scalar_grid<F>(
     source: &mut [Vec<i64>],
     biomes: &[Vec<Biome>],
@@ -179,7 +182,7 @@ fn diffuse_scalar_grid<F>(
     F: Fn(usize, usize, &Biome) -> i128,
 {
     let size = crate::vm::GRID_SIZE;
-    let mut buffer = vec![vec![0i64; size]; size];
+    let mut buffer = [[0i64; crate::vm::GRID_SIZE]; crate::vm::GRID_SIZE];
 
     for y in 0..size {
         for x in 0..size {

@@ -29,11 +29,6 @@ mod tests {
 
         // Step 1
         vm.step();
-        // waste added +10. Diffused.
-        // Center: 10*4 = 40. Neighbors 0. Count 8 (center + 4 neighbors).
-        // New center: 40/8 = 5.
-        // Neighbors: 0*4 + 10 (from center) = 10. Count 8? No, neighbors have 3 or 4 neighbors.
-        // Let's just check it's > 0.
         assert!(vm.waste_grid[8][8] > 0);
     }
 
@@ -121,5 +116,27 @@ mod tests {
         assert!(vm.waste_grid[5][5] > 0, "Waste decayed to zero too fast");
         // Check neighbor
         assert!(vm.waste_grid[5][6] > 0, "Neighbor did not receive waste");
+    }
+
+    #[test]
+    fn test_diffusion_scalar_stack_optimization() {
+        let genes = vec![];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+
+        // Seed waste (uses diffuse_scalar_grid)
+        vm.waste_grid[5][5] = 10000;
+        vm.waste_grid[6][6] = 5000;
+
+        // Run diffusion 100 times
+        for _ in 0..100 {
+            crate::vm::nova::diffuse_waste(&mut vm);
+        }
+
+        // Assert values spread but didn't explode or vanish
+        assert!(vm.waste_grid[5][5] < 5000, "Should have diffused away from center");
+
+        let total_waste: i64 = vm.waste_grid.iter().flatten().sum();
+        // Allow some loss due to integer division floor
+        assert!(total_waste > 1000, "Mass conservation failure (too much loss)");
     }
 }
