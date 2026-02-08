@@ -63,6 +63,8 @@ pub mod blackbox;
 pub mod cladistics;
 pub mod cortex;
 pub mod dream;
+#[cfg(feature = "elektra")]
+pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
 #[cfg(feature = "nova")]
@@ -88,6 +90,8 @@ mod nova_bestiary_test;
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
+#[cfg(feature = "nova")]
+pub mod nova_bureaucracy;
 #[cfg(feature = "nova")]
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
@@ -126,13 +130,13 @@ pub mod nova_optics;
 #[cfg(test)]
 mod nova_optics_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_orca_test;
+#[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_paleontology_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_orca_test;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
@@ -168,8 +172,6 @@ pub mod resonance;
 pub mod retina;
 #[cfg(feature = "silicon")]
 pub mod silicon;
-#[cfg(feature = "elektra")]
-pub mod elektra;
 
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
@@ -452,6 +454,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub sovereignty_grid: Vec<Vec<Option<usize>>>,
     #[cfg(feature = "nova")]
+    pub bureaucracy_grid: Vec<Vec<i64>>,
+    #[cfg(feature = "nova")]
     pub tax_rates: HashMap<usize, i64>,
     #[cfg(feature = "nova")]
     pub resonance_grid: Vec<Vec<(f32, f32)>>,
@@ -502,6 +506,8 @@ impl ChimeraVM {
         let cartography_grid = vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let sovereignty_grid = vec![vec![None; GRID_SIZE]; GRID_SIZE];
+        #[cfg(feature = "nova")]
+        let bureaucracy_grid = vec![vec![0; GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
         let resonance_grid = vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
         #[cfg(feature = "nova")]
@@ -679,6 +685,8 @@ impl ChimeraVM {
             cartography_grid,
             #[cfg(feature = "nova")]
             sovereignty_grid,
+            #[cfg(feature = "nova")]
+            bureaucracy_grid,
             #[cfg(feature = "nova")]
             tax_rates: HashMap::new(),
             #[cfg(feature = "nova")]
@@ -1534,6 +1542,7 @@ impl ChimeraVM {
             }
             nova_ballistics::update_projectiles(self);
             nova_sovereignty::process_territory(self);
+            nova_bureaucracy::process_red_tape(self);
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
         }
@@ -2168,7 +2177,11 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "elektra")]
-            OpCode::Battery | OpCode::Ground | OpCode::SenseVolt | OpCode::Shock | OpCode::Lightning => {
+            OpCode::Battery
+            | OpCode::Ground
+            | OpCode::SenseVolt
+            | OpCode::Shock
+            | OpCode::Lightning => {
                 elektra::exec_elektra_op(self, op, args);
                 None
             }
@@ -2211,6 +2224,12 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Nucleate | OpCode::Accrete | OpCode::Shatter | OpCode::Anneal => {
                 nova_crystal::exec_crystal_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Form | OpCode::Sign | OpCode::Permit | OpCode::RedTape => {
+                nova_bureaucracy::exec_bureaucracy_op(self, op, args);
                 None
             }
 
@@ -2270,7 +2289,10 @@ impl ChimeraVM {
                 }
 
                 // Elektra Features
-                if matches!(n, "battery" | "ground" | "sense_volt" | "shock" | "lightning") {
+                if matches!(
+                    n,
+                    "battery" | "ground" | "sense_volt" | "shock" | "lightning"
+                ) {
                     hint = " (Hint: Elektra feature. Enable 'elektra' feature?)";
                 }
 

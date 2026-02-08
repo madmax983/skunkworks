@@ -4210,16 +4210,26 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Fixed nodes
             let ch = if r == -1.0 {
-                style = style.fg(Color::White).bg(Color::Red).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::White)
+                    .bg(Color::Red)
+                    .add_modifier(Modifier::BOLD);
                 "+".to_string() // Battery
             } else if r == -2.0 {
-                style = style.fg(Color::White).bg(Color::Blue).add_modifier(Modifier::BOLD);
+                style = style
+                    .fg(Color::White)
+                    .bg(Color::Blue)
+                    .add_modifier(Modifier::BOLD);
                 "-".to_string() // Ground
             } else {
                 // Current flow?
                 let i = vm.current_grid[y][x];
                 if i > 0.1 {
-                    style = style.bg(Color::Rgb(0, (i * 10.0).clamp(0.0, 100.0) as u8, (i * 20.0).clamp(0.0, 255.0) as u8));
+                    style = style.bg(Color::Rgb(
+                        0,
+                        (i * 10.0).clamp(0.0, 100.0) as u8,
+                        (i * 20.0).clamp(0.0, 255.0) as u8,
+                    ));
                 }
 
                 if v.abs() < 0.1 {

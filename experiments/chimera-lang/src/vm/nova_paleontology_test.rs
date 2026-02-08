@@ -63,7 +63,11 @@ fn test_fossilize_and_unearth() {
     // Check results
     // Stack should have new_strand_idx
     assert_eq!(vm.stack.len(), 1);
-    let new_idx = if let Value::Int(i) = vm.stack[0] { i } else { -1 };
+    let new_idx = if let Value::Int(i) = vm.stack[0] {
+        i
+    } else {
+        -1
+    };
     assert!(new_idx > 0);
 
     // Verify the new strand matches the old one
