@@ -42,6 +42,7 @@ pub const MAX_SPORES: usize = 64;
 pub const MAX_ORGANELLES: usize = 256;
 pub const MAX_CHORUS_SIZE: usize = 8;
 pub const MAX_JUNCTION_SIZE: usize = 1024;
+pub const MAX_HISTORY_DEPTH: usize = 64;
 pub const GRID_SIZE: usize = 16;
 pub const INITIAL_ENERGY: i64 = 50;
 #[cfg(feature = "nova")]
@@ -406,6 +407,8 @@ pub struct ChimeraVM {
     pub entropy_grid: Vec<Vec<i64>>,
     #[cfg(feature = "nova")]
     pub signal_grid: Vec<Vec<u8>>,
+    #[cfg(feature = "nova")]
+    pub grid_history: VecDeque<Vec<Vec<Value>>>,
     pub execution_trail: Vec<u8>,
     pub gene_execution_counts: HashMap<(usize, usize), u64>,
     pub dream_traces: Vec<dream::DreamTrace>,
@@ -616,6 +619,8 @@ impl ChimeraVM {
             entropy_grid,
             #[cfg(feature = "nova")]
             signal_grid,
+            #[cfg(feature = "nova")]
+            grid_history: VecDeque::new(),
             execution_trail,
             gene_execution_counts: HashMap::new(),
             dream_traces: Vec::new(),
@@ -1394,6 +1399,14 @@ impl ChimeraVM {
         self.tick_counter += 1;
 
         #[cfg(feature = "nova")]
+        {
+            if self.grid_history.len() >= MAX_HISTORY_DEPTH {
+                self.grid_history.pop_front();
+            }
+            self.grid_history.push_back(self.grid.clone());
+        }
+
+        #[cfg(feature = "nova")]
         if self.spirit_request {
             if let Some(val) = self.spirit_value.take() {
                 self.stack.push(val);
@@ -2015,6 +2028,7 @@ impl ChimeraVM {
             | OpCode::Mourn
             | OpCode::TimeWarp
             | OpCode::Chronos
+            | OpCode::Retroscope
             | OpCode::Reincarnate
             | OpCode::Piet
             | OpCode::Terraform

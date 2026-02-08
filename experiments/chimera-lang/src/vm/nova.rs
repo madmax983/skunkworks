@@ -1903,6 +1903,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         #[cfg(feature = "nova")]
+        OpCode::Retroscope => super::nova_relativity::exec_retroscope(vm),
+        #[cfg(feature = "nova")]
         OpCode::Relativity => {
             vm.relativity_mode = !vm.relativity_mode;
             let status = if vm.relativity_mode { "ON" } else { "OFF" };
