@@ -571,13 +571,14 @@
 ### [Concentration Level: FRESH] - Location: experiments/flesh-and-code
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The parser is crawling. Inverse Kinematics are reaching for syntax tokens. Code is becoming a jungle gym.
-### [Concentration Level: CONDEMNED] - Location: experiments/kinetic-crease
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic mesh implementation. Grace period: 24h.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/git-etymology
+### [Concentration Level: CONDEMNED] - Location: experiments/gastown
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `git-rogue`/`git-cantata`. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Skeletal implementation. Lacks emergent behavior. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/git-etymology
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `git-rogue`/`git-cantata`. Biomass returned to the void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/aperiodic-citadel
 - **Scent Origin:** The Reaper ☠️
