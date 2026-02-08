@@ -533,6 +533,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.
 
+### [Concentration Level: FRESH] - Location: experiments/flesh-and-code
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The parser is crawling. Inverse Kinematics are reaching for syntax tokens. Code is becoming a jungle gym.
 ### [Concentration Level: CONDEMNED] - Location: experiments/kinetic-crease
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Generic mesh implementation. Grace period: 24h.
