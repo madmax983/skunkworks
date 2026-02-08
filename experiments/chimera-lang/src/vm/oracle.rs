@@ -14,7 +14,11 @@ pub struct Omen {
 
 type Subst = HashMap<String, Value>;
 
-pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
+pub fn exec_oracle_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::Assert => {
             if let Some(fact) = vm.stack.pop() {
@@ -29,6 +33,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output
                     .push("Error: Stack underflow for assert".to_string());
             }
+            None
         }
         OpCode::Rule => {
             // Stack: [ ..., body_junction, head ]
@@ -55,6 +60,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output
                     .push("Error: Stack underflow for rule".to_string());
             }
+            None
         }
         OpCode::Retract => {
             if let Some(fact) = vm.stack.pop() {
@@ -68,6 +74,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output
                     .push("Error: Stack underflow for retract".to_string());
             }
+            None
         }
         OpCode::Query => {
             if let Some(query) = vm.stack.pop() {
@@ -121,6 +128,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output
                     .push("Error: Stack underflow for query".to_string());
             }
+            None
         }
         OpCode::Augury => {
             if vm.stack.len() >= 2 {
@@ -136,6 +144,7 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 vm.output
                     .push("Error: Stack underflow for augury".to_string());
             }
+            None
         }
         OpCode::Divinate => {
             let mut triggered_count = 0;
@@ -173,8 +182,65 @@ pub fn exec_oracle_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 }
             }
             vm.stack.push(Value::Int(triggered_count));
+            None
         }
-        _ => {}
+        OpCode::Seek => {
+            if let Some(query) = vm.stack.pop() {
+                let goal = match query {
+                    Value::Str(op_name) => {
+                        // Goal: has_feature(?Target, op_name)
+                        Value::Junction(
+                            JunctionType::Any,
+                            vec![
+                                Value::Str("has_feature".to_string()),
+                                Value::Str("?Target".to_string()),
+                                Value::Str(op_name),
+                            ],
+                        )
+                    }
+                    val @ Value::Junction(_, _) => val,
+                    _ => {
+                        vm.output
+                            .push("Error: Invalid query for seek".to_string());
+                        return None;
+                    }
+                };
+
+                let mut solutions = Vec::new();
+                solve(
+                    &[goal],
+                    HashMap::new(),
+                    &vm.knowledge_base,
+                    vm,
+                    &mut solutions,
+                    0,
+                );
+
+                if let Some(sol) = solutions.first() {
+                    if let Some(Value::Int(idx)) = sol.get("?Target") {
+                        if *idx >= 0 {
+                            // Don't set vm.ip directly here if we return it
+                            // Actually, if we return Some(target), caller sets it.
+                            // But vm.ip is also used in `step`.
+                            // If we return target, caller sets vm.ip.
+                            vm.output.push(format!("SEEK: Jumped to strand {}", idx));
+                            return Some((*idx as usize, 0));
+                        }
+                    } else {
+                        vm.output
+                            .push("SEEK: ?Target not bound to Int".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("SEEK: No matching strand found".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for seek".to_string());
+            }
+            None
+        }
+        _ => None,
     }
 }
 
@@ -575,6 +641,38 @@ fn check_dynamic_predicates(
                             if let Some(s1) = unify(arg_name, &fact_name, &current_subst) {
                                 if let Some(s2) = unify(arg_val, &fact_val, &s1) {
                                     solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "has_feature" => {
+                    // has_feature(StrandIdx, OpCodeName)
+                    if args.len() == 3 {
+                        let arg_strand = &args[1];
+                        let arg_op = &args[2];
+
+                        for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                            let fact_strand = Value::Int(s_idx as i64);
+
+                            // Check if strand has opcode
+                            for gene in &strand.genes {
+                                let op_name = gene.op.to_string();
+                                let fact_op = Value::Str(op_name);
+
+                                let mut current_subst = subst.clone();
+                                if let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) {
+                                    if let Some(s2) = unify(arg_op, &fact_op, &s1) {
+                                        solve(
+                                            remaining_goals,
+                                            s2,
+                                            kb,
+                                            vm,
+                                            solutions,
+                                            depth + 1,
+                                        );
+                                    }
                                 }
                             }
                         }
