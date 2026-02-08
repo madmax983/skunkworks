@@ -466,3 +466,30 @@ sequenceDiagram
         end
     end
 ```
+
+### Nova Feature: Chemistry System (ADR 019)
+
+The Chemistry system allows for the creation and manipulation of chemical solutions using recipes.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Grid
+    participant Chemistry as Chemistry Module
+
+    Note over VM: OpCode::Mix(radius)
+    VM->>Grid: Collect ingredients in radius
+    Grid-->>Chemistry: Ingredients
+    Chemistry->>Grid: Set Cell = Dish(Ingredients)
+
+    Note over VM: OpCode::Brew(heat)
+    VM->>Grid: Get Dish at (x,y)
+    Grid-->>Chemistry: Ingredients
+    Chemistry->>Chemistry: Match Recipe(Ingredients, Heat)
+    Chemistry->>Grid: Set Cell = Dish(Solution)
+
+    Note over VM: OpCode::Splash(x, y, radius)
+    VM->>Grid: Get Solution at (x,y)
+    Chemistry->>Grid: Apply Effect(Solution, TargetArea)
+    Note right of Grid: Acid: Destroy<br/>Elixir: Heal<br/>Mutagen: Mutate
+```
