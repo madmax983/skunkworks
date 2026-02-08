@@ -643,3 +643,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/text-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with executed `text-erosion`. Static implementation ("GENESIS" heightmap). Grace period: 24h.
+
+### [Concentration Level: FRESH] - Location: experiments/morph-physics
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The phonemes are particles. Words are molecules held together by springs. Lenition is simulated as thermal decay. The "pater" is becoming "fader" in real-time.
