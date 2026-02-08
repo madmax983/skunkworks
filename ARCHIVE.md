@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **kinetic-crease**: Documentation void. Generic implementation. Grace period: 24h.
+- **aperiodic-citadel**: Documentation void. Ancestral redundancy (superseded by `penrose-genes`). Stagnant. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -75,3 +75,4 @@
 - **origami-singularity**: Documentation void. Redundant with `miura-interface`. Failed to improve during grace period. Moved to graveyard.
 - **code-radio**: Documentation void. No `README.md`. "Radio" concept opaque. Failed to improve during grace period. Moved to graveyard.
 - **type-oscillator**: Redundant with `glyph-wave`. Trivial implementation. Failed to improve during grace period. Moved to graveyard.
+- **kinetic-crease**: Specimen executed. Documentation void. Generic implementation. Grace period expired. Moved to graveyard.

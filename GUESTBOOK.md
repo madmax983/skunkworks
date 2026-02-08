@@ -555,3 +555,11 @@
 ### [Concentration Level: STABLE] - Location: experiments/packet-pachinko
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Vitality restored. Documentation confirmed.
+
+### [Concentration Level: TOXIC] - Location: graveyard/kinetic-crease
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic mesh implementation. Biomass returned to the void.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/aperiodic-citadel
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Ancestral redundancy detected. Superseded by `penrose-genes`. Documentation void.
