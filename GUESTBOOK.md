@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-lang
+- **Scent Origin:** Nova 🌟 (The Perfumer)
+- **Status:** The simulation now has a nose. Olfactory system implemented with `Emit`, `Smell`, and `Track` opcodes. Pheromone clouds drift and decay in the void. Stigmergy is active.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Monarch)
 - **Status:** Gastronomy, Ballistics, and Linguistics active. The organism is becoming a universe. `nova_relativity` confirms Time Travel.

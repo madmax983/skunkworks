@@ -1,7 +1,7 @@
+use crate::lichen::LichenState;
 use macroquad::prelude::*;
 use poincare_disk::{neighbor_transform_a, Geodesic, Mobius, Point, TilingConsts};
 use std::f64::consts::PI;
-use crate::lichen::LichenState;
 
 pub fn to_screen(p: Point, scale: f32) -> Vec2 {
     let screen_center = vec2(screen_width() / 2.0, screen_height() / 2.0);
@@ -74,13 +74,15 @@ pub fn draw_hyperbolic_line(p1: Point, p2: Point, color: Color, thickness: f32, 
 }
 
 pub fn draw_filled_polygon(vertices: &[Point], color: Color, scale: f32) {
-     if vertices.len() < 3 { return; }
-     let p0 = to_screen(vertices[0], scale);
-     for i in 1..vertices.len()-1 {
-         let p1 = to_screen(vertices[i], scale);
-         let p2 = to_screen(vertices[i+1], scale);
-         draw_triangle(p0, p1, p2, color);
-     }
+    if vertices.len() < 3 {
+        return;
+    }
+    let p0 = to_screen(vertices[0], scale);
+    for i in 1..vertices.len() - 1 {
+        let p1 = to_screen(vertices[i], scale);
+        let p2 = to_screen(vertices[i + 1], scale);
+        draw_triangle(p0, p1, p2, color);
+    }
 }
 
 pub fn draw_tile_recursive(
@@ -112,7 +114,9 @@ pub fn draw_tile_recursive(
     }
     for i in 0..4 {
         if let Some(back) = incoming_edge {
-            if i == back { continue; }
+            if i == back {
+                continue;
+            }
         }
         // Calculate child hash
         let mut child_hash = path_hash;
@@ -139,7 +143,13 @@ pub fn draw_tile_recursive(
 
     // Draw edges
     for i in 0..4 {
-        draw_hyperbolic_line(vertices[i], vertices[(i + 1) % 4], Color::new(0.2, 0.2, 0.2, 0.5), 1.0, scale);
+        draw_hyperbolic_line(
+            vertices[i],
+            vertices[(i + 1) % 4],
+            Color::new(0.2, 0.2, 0.2, 0.5),
+            1.0,
+            scale,
+        );
     }
 
     // Recurse
@@ -160,6 +170,14 @@ pub fn draw_tile_recursive(
         let next_transform = transform.then(&step);
         let next_incoming = Some((i + 2) % 4);
 
-        draw_tile_recursive(next_transform, depth + 1, new_hash, Some(path_hash), tiling, next_incoming, lichen_state);
+        draw_tile_recursive(
+            next_transform,
+            depth + 1,
+            new_hash,
+            Some(path_hash),
+            tiling,
+            next_incoming,
+            lichen_state,
+        );
     }
 }

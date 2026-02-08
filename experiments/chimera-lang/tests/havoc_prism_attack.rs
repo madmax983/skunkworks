@@ -1,25 +1,36 @@
 #[cfg(feature = "nova")]
 #[test]
 fn test_prism_cascade() {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     // Strand 0: [ Push(8) Push(5) Salvo ]
     let genes_0 = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Salvo, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Salvo,
+            args: vec![],
+        },
     ];
     // Strand 1: [ Jump(1) ] (Infinite Loop to keep VM alive)
-    let genes_1 = vec![
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
-    ];
+    let genes_1 = vec![Gene {
+        op: OpCode::Jump,
+        args: vec![Nucleotide::Number(1)],
+    }];
 
-    let dna = Dna { helix: Helix { strands: vec![
-        Strand { genes: genes_0 },
-        Strand { genes: genes_1 }
-    ] } };
+    let dna = Dna {
+        helix: Helix {
+            strands: vec![Strand { genes: genes_0 }, Strand { genes: genes_1 }],
+        },
+    };
     let mut vm = ChimeraVM::new(dna);
     vm.energy = 1_000_000;
 
@@ -38,7 +49,10 @@ fn test_prism_cascade() {
         }
 
         if count > 100_000 {
-            panic!("SUCCESS: Unbounded projectile growth detected! Count: {}", count);
+            panic!(
+                "SUCCESS: Unbounded projectile growth detected! Count: {}",
+                count
+            );
         }
     }
 }

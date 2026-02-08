@@ -25,6 +25,8 @@
 
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+#[cfg(any(feature = "nova", feature = "silicon"))]
+pub use locus::Topology;
 #[cfg(feature = "nova")]
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
@@ -33,8 +35,6 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
-#[cfg(any(feature = "nova", feature = "silicon"))]
-pub use locus::Topology;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -95,6 +95,9 @@ pub mod nova_cartography;
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod nova_chronos_splice_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod nova_chronos_test;
 #[cfg(feature = "nova")]
 pub mod nova_crystal;
@@ -129,15 +132,14 @@ pub mod nova_pocket;
 #[cfg(test)]
 mod nova_pocket_test;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_chronos_splice_test;
-#[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
 pub mod nova_resonance_war;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_retina_test;
+#[cfg(feature = "nova")]
+pub mod nova_scent;
 #[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
@@ -308,6 +310,8 @@ pub struct ChimeraVM {
     pub time_grid: Vec<Vec<u8>>,
     #[cfg(feature = "nova")]
     pub projectiles: Vec<nova_ballistics::Projectile>,
+    #[cfg(feature = "nova")]
+    pub pheromones: Vec<nova_scent::Scent>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
     pub call_stack: Vec<(usize, usize)>,
@@ -520,6 +524,8 @@ impl ChimeraVM {
             time_grid,
             #[cfg(feature = "nova")]
             projectiles: Vec::new(),
+            #[cfg(feature = "nova")]
+            pheromones: Vec::new(),
             #[cfg(feature = "nova")]
             spores: Vec::new(),
             call_stack: Vec::new(),
@@ -846,6 +852,7 @@ impl ChimeraVM {
         nova::diffuse_light(self);
         nova::diffuse_mutagen(self);
         nova::diffuse_entropy(self);
+        nova_scent::process_scents(self);
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -1895,17 +1902,18 @@ impl ChimeraVM {
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Cook
-            | OpCode::Spice
-            | OpCode::Savor
-            | OpCode::Cultivate
-            | OpCode::Banquet => nova::exec_nova_op(self, op, args),
+            OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
+                nova::exec_nova_op(self, op, args)
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
             | OpCode::ChronosSplice
+            | OpCode::Emit
+            | OpCode::Smell
+            | OpCode::Track
             | OpCode::Fire
             | OpCode::Salvo
             | OpCode::Reflector

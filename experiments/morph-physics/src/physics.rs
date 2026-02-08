@@ -1,4 +1,4 @@
-use crate::phonology::{Phoneme};
+use crate::phonology::Phoneme;
 use macroquad::prelude::Vec2;
 
 pub struct Particle {
@@ -51,7 +51,9 @@ impl World {
         // Apply Spring Forces
         for &(i, j, len) in &self.springs {
             // Check bounds just in case
-            if i >= self.particles.len() || j >= self.particles.len() { continue; }
+            if i >= self.particles.len() || j >= self.particles.len() {
+                continue;
+            }
 
             let p1_pos = self.particles[i].pos;
             let p2_pos = self.particles[j].pos;
@@ -72,7 +74,8 @@ impl World {
             for j in (i + 1)..count {
                 let delta = self.particles[j].pos - self.particles[i].pos;
                 let dist_sq = delta.length_squared();
-                if dist_sq < 2500.0 && dist_sq > 0.001 { // Radius 50 interaction
+                if dist_sq < 2500.0 && dist_sq > 0.001 {
+                    // Radius 50 interaction
                     let dist = dist_sq.sqrt();
                     let dir = delta / dist;
                     let force = -dir * (self.repulsion_strength / dist);
