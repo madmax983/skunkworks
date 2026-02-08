@@ -559,13 +559,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/flesh-and-code
 - **Evaluation**: Compiles. Verified.
 
-### cipher-clock
-- **Parents**: experiments/enigma-machine + experiments/clockwork-chimera
-- **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
-- **Novel trait**: Cryptography as physical mechanics.
-- **Status**: experiments/cipher-clock
-- **Evaluation**: Compiles. Verified by Splice Surgeon.
-
 ### lichen-mesh
 - **Parents**: experiments/cellular-automata + experiments/microservices-demo
 - **Concept**: Symbiotic network (Lichen) visualizing microservice architecture.
@@ -587,16 +580,23 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/hyperbolic-lichen
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
-### cipher-clock
-- **Parents**: experiments/enigma-machine + experiments/clockwork-chimera
-- **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
-- **Novel trait**: Cryptography as physical mechanics.
-- **Status**: experiments/cipher-clock
-- **Evaluation**: FAILS (Dependency Hell: Bevy/Glam conflict).
-
 ### synaptic-trace
 - **Parents**: experiments/trace-fold + experiments/biomimetic-synth
 - **Concept**: Stack trace visualized as a spiking neural network. Functions are neurons, calls are synapses.
 - **Novel trait**: Execution as Cognition. The program's run structure forms a transient brain.
 - **Status**: experiments/synaptic-trace
-- **Evaluation**: WIP.
+- **Evaluation**: Compiles.
+
+### cipher-clock
+- **Parents**: experiments/enigma-machine + experiments/clockwork-chimera
+- **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
+- **Novel trait**: Cryptography as physical mechanics.
+- **Status**: experiments/cipher-clock
+- **Evaluation**: Compiles (Fixed).
+
+### hydro-boids
+- **Parents**: experiments/luminous-flock + experiments/primordial-soup
+- **Concept**: Boids swimming in a Smoothed-Particle Hydrodynamics (SPH) fluid simulation.
+- **Novel trait**: Hydrodynamic Flocking. Boids create turbulence and are pushed by fluid currents.
+- **Status**: experiments/hydro-boids
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
