@@ -1,6 +1,6 @@
 #[cfg(all(test, feature = "nova"))]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, JunctionType};
+    use crate::ast::{Dna, Helix, JunctionType, Strand};
     use crate::opcode::OpCode;
     use crate::vm::{ChimeraVM, Value};
 

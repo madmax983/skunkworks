@@ -179,11 +179,22 @@ mod tests {
 
         let genes = vec![
             // Write 100 to (5,5)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // Query cell(?X, 5, 100)
             Gene {
                 op: OpCode::Push,
@@ -194,17 +205,21 @@ mod tests {
                         Nucleotide::String("?X".to_string()),
                         Nucleotide::Number(5),
                         Nucleotide::Number(100),
-                    ]
-                )]
+                    ],
+                )],
             },
-            Gene { op: OpCode::Query, args: vec![] },
+            Gene {
+                op: OpCode::Query,
+                args: vec![],
+            },
         ];
 
         let len = genes.len();
         let mut vm = ChimeraVM::new(make_dna(genes));
 
         // Run steps
-        for _ in 0..20 { // Enough steps
+        for _ in 0..20 {
+            // Enough steps
             vm.step();
             if vm.ip.0 > 0 || vm.ip.1 >= len {
                 break;

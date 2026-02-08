@@ -337,8 +337,17 @@ fn check_dynamic_predicates(
                                     // Try to unify Y
                                     if let Some(subst_y) = unify(arg_y, &fact_y, &subst_x) {
                                         // Try to unify Val
-                                        if let Some(final_subst) = unify(arg_val, &fact_val, &subst_y) {
-                                            solve(remaining_goals, final_subst, kb, vm, solutions, depth + 1);
+                                        if let Some(final_subst) =
+                                            unify(arg_val, &fact_val, &subst_y)
+                                        {
+                                            solve(
+                                                remaining_goals,
+                                                final_subst,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
                                         }
                                     }
                                 }
@@ -377,7 +386,14 @@ fn check_dynamic_predicates(
                                     if let Some(s3) = unify(&args[3], &fact_x, &current_subst) {
                                         current_subst = s3;
                                         if let Some(s4) = unify(&args[4], &fact_y, &current_subst) {
-                                            solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+                                            solve(
+                                                remaining_goals,
+                                                s4,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
                                         }
                                     }
                                 }

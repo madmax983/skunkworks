@@ -1,5 +1,6 @@
 use rand::prelude::*;
 use rand::rngs::StdRng;
+use comfy_table::{Table, presets::UTF8_FULL, ContentArrangement, Cell, Color};
 
 #[derive(Debug, Clone)]
 pub struct Fossil {
@@ -106,6 +107,62 @@ pub fn fossilize(text: &str, age_factor: f64, seed: u64) -> Fossil {
         original_text: text.to_string(),
         displayed_text,
         mask,
+    }
+}
+
+impl std::fmt::Display for Fossil {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_header(vec!["Property", "Value"]);
+
+        let display_orig = if self.original_text.len() > 60 {
+            format!("{}...", &self.original_text[..60].replace('\n', " "))
+        } else {
+            self.original_text.replace('\n', " ")
+        };
+
+        let display_curr = if self.displayed_text.len() > 60 {
+            format!("{}...", &self.displayed_text[..60].replace('\n', " "))
+        } else {
+            self.displayed_text.replace('\n', " ")
+        };
+
+        table.add_row(vec!["Original", &display_orig]);
+        table.add_row(vec!["Current", &display_curr]);
+
+        let intact_count = self.mask.iter().filter(|&&m| m).count();
+        let integrity = if self.mask.is_empty() {
+            100.0
+        } else {
+            (intact_count as f64 / self.mask.len() as f64) * 100.0
+        };
+
+        let integrity_color = if integrity > 90.0 {
+            Color::Green
+        } else if integrity > 50.0 {
+            Color::Yellow
+        } else {
+            Color::Red
+        };
+
+        table.add_row(vec![
+            Cell::new("Integrity"),
+            Cell::new(format!("{:.2}%", integrity)).fg(integrity_color),
+        ]);
+
+        let is_pristine = integrity >= 100.0;
+        let bool_cell = Cell::new(is_pristine.to_string())
+            .fg(if is_pristine { Color::Green } else { Color::Red });
+
+        table.add_row(vec![
+            Cell::new("Pristine?"),
+            bool_cell,
+        ]);
+
+        write!(f, "{}", table)
     }
 }
 

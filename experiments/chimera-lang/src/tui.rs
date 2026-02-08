@@ -74,6 +74,8 @@ pub(crate) enum ViewMode {
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
+    #[cfg(feature = "nova")]
+    Fishing,
 }
 
 enum InputMode {
@@ -118,6 +120,16 @@ pub(crate) struct AppState {
     pub(crate) kaleidoscope_hue_idx: usize,
     #[cfg(feature = "nova")]
     pub(crate) kaleidoscope_light_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) fishing_bobber_y: f64,
+    #[cfg(feature = "nova")]
+    pub(crate) fishing_tension: f64,
+    #[cfg(feature = "nova")]
+    pub(crate) fishing_hooked: bool,
+    #[cfg(feature = "nova")]
+    pub(crate) fishing_cast: bool,
+    #[cfg(feature = "nova")]
+    pub(crate) fishing_fish_y: f64,
 }
 
 impl AppState {
@@ -158,6 +170,16 @@ impl AppState {
             kaleidoscope_hue_idx: 0,
             #[cfg(feature = "nova")]
             kaleidoscope_light_idx: 1, // Normal
+            #[cfg(feature = "nova")]
+            fishing_bobber_y: 50.0,
+            #[cfg(feature = "nova")]
+            fishing_tension: 0.0,
+            #[cfg(feature = "nova")]
+            fishing_hooked: false,
+            #[cfg(feature = "nova")]
+            fishing_cast: false,
+            #[cfg(feature = "nova")]
+            fishing_fish_y: 80.0,
         }
     }
 }
@@ -204,6 +226,36 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        #[cfg(feature = "nova")]
+        if let ViewMode::Fishing = app_state.view_mode {
+            if app_state.fishing_cast {
+                // Bobber float animation
+                app_state.fishing_bobber_y += (rand::random::<f64>() - 0.5) * 0.5;
+
+                // Random Hook
+                if !app_state.fishing_hooked && rand::random::<f64>() < 0.01 {
+                    app_state.fishing_hooked = true;
+                    app_state.status_msg = "FISH HOOKED! REEL IT IN!".to_string();
+                }
+
+                if app_state.fishing_hooked {
+                    // Fish fights back
+                    app_state.fishing_tension += 0.005;
+                    app_state.fishing_fish_y =
+                        app_state.fishing_bobber_y + (rand::random::<f64>() - 0.5) * 2.0;
+                } else {
+                    app_state.fishing_tension = (app_state.fishing_tension - 0.01).max(0.0);
+                }
+
+                if app_state.fishing_tension >= 1.0 {
+                    app_state.status_msg = "SNAP! Line broke.".to_string();
+                    app_state.fishing_cast = false;
+                    app_state.fishing_hooked = false;
+                    app_state.fishing_tension = 0.0;
+                }
+            }
+        }
+
         #[cfg(feature = "biophysics")]
         if let Some(coord) = app_state.selected_neuron_coords {
             if let Some(neuron) = vm.neurons.get(&coord) {
@@ -358,6 +410,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Scent = app_state.view_mode {
                 render_scent(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Fishing = app_state.view_mode {
+                render_fishing(f, vm, app_state);
                 return;
             }
 
@@ -619,6 +677,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Fishing => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -741,7 +804,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Ballistics => ViewMode::Scent,
                             #[cfg(feature = "nova")]
-                            ViewMode::Scent => ViewMode::Heatmap,
+                            ViewMode::Scent => ViewMode::Fishing,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Fishing => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -864,10 +929,40 @@ where
                     KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('f') => app_state.view_mode = ViewMode::Fishing,
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
                         #[cfg(feature = "nova")]
-                        if let ViewMode::Kaleidoscope = app_state.view_mode {
+                        if let ViewMode::Fishing = app_state.view_mode {
+                            if app_state.fishing_cast {
+                                // Reel
+                                if app_state.fishing_hooked {
+                                    app_state.fishing_bobber_y -= 5.0;
+                                    app_state.fishing_tension += 0.1; // Reeling increases tension
+
+                                    if app_state.fishing_bobber_y < 10.0 {
+                                        // Caught!
+                                        app_state.status_msg = "CAUGHT A FISH!".to_string();
+                                        app_state.fishing_cast = false;
+                                        app_state.fishing_hooked = false;
+                                        app_state.fishing_tension = 0.0;
+                                        // Maybe give energy?
+                                        vm.energy += 10;
+                                    }
+                                } else {
+                                    // Just pull empty line
+                                    app_state.fishing_cast = false;
+                                    app_state.status_msg = "Reeled in empty.".to_string();
+                                }
+                            } else {
+                                // Cast
+                                app_state.fishing_cast = true;
+                                app_state.fishing_bobber_y = 50.0;
+                                app_state.fishing_tension = 0.0;
+                                app_state.status_msg = "Casted line...".to_string();
+                            }
+                        } else if let ViewMode::Kaleidoscope = app_state.view_mode {
                             // Paint
                             let (x, y) = app_state.grid_cursor;
                             let r = match app_state.kaleidoscope_hue_idx {
@@ -1018,6 +1113,8 @@ where
                         ViewMode::Ballistics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Scent => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Fishing => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1276,6 +1373,8 @@ where
                         ViewMode::Ballistics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Scent => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Fishing => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1362,6 +1461,8 @@ where
                         ViewMode::Ballistics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Scent => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Fishing => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1448,6 +1549,8 @@ where
                         ViewMode::Ballistics => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Scent => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Fishing => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1676,6 +1779,10 @@ where
                             ViewMode::Scent => {
                                 app_state.input_mode = InputMode::Normal;
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Fishing => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
                         }
                     }
                     _ => {}
@@ -1785,6 +1892,102 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let legend_widget =
         Paragraph::new(legend_text).block(Block::default().borders(Borders::ALL).title("Legend"));
     f.render_widget(legend_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_fishing(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Fishing Minigame"),
+        )
+        .x_bounds([0.0, 100.0])
+        .y_bounds([0.0, 100.0])
+        .paint(|ctx| {
+            // Water
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 50.0,
+                color: Color::Blue,
+            });
+
+            // Sky
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 50.0,
+                width: 100.0,
+                height: 50.0,
+                color: Color::Cyan,
+            });
+
+            if app_state.fishing_cast {
+                // Fishing Line
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: 50.0,
+                    y1: 100.0, // Top center (approx rod tip)
+                    x2: 50.0,
+                    y2: app_state.fishing_bobber_y,
+                    color: Color::White,
+                });
+
+                // Bobber (Small Rectangle)
+                ctx.draw(&Rectangle {
+                    x: 49.0,
+                    y: app_state.fishing_bobber_y,
+                    width: 2.0,
+                    height: 2.0,
+                    color: Color::Red,
+                });
+
+                // Fish (if visible/close)
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: 48.0,
+                    y1: app_state.fishing_fish_y,
+                    x2: 52.0,
+                    y2: app_state.fishing_fish_y,
+                    color: Color::Green,
+                });
+                // Fish tail
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: 48.0,
+                    y1: app_state.fishing_fish_y,
+                    x2: 46.0,
+                    y2: app_state.fishing_fish_y + 1.0,
+                    color: Color::Green,
+                });
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: 48.0,
+                    y1: app_state.fishing_fish_y,
+                    x2: 46.0,
+                    y2: app_state.fishing_fish_y - 1.0,
+                    color: Color::Green,
+                });
+            } else {
+                ctx.print(40.0, 60.0, "Press SPACE to Cast");
+            }
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    // Tension Bar
+    let gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title("Tension"))
+        .gauge_style(Style::default().fg(if app_state.fishing_tension > 0.8 {
+            Color::Red
+        } else {
+            Color::Green
+        }))
+        .ratio(app_state.fishing_tension)
+        .label(format!("{:.0}%", app_state.fishing_tension * 100.0));
+    f.render_widget(gauge, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
@@ -2265,6 +2468,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Ballistics => "BALLISTICS (TRAJECTORY)",
         #[cfg(feature = "nova")]
         ViewMode::Scent => "SCENT (OLFACTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Fishing => "FISHING (MINIGAME)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -2560,11 +2765,21 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                 // Projectiles (Top Layer)
                 for p in &vm.projectiles {
                     if (p.x as usize) == x && (p.y as usize) == y {
-                        style = style.fg(Color::Red).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+                        style = style
+                            .fg(Color::Red)
+                            .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
                         if p.vx.abs() > p.vy.abs() {
-                            if p.vx > 0.0 { char_rep = "→".to_string(); } else { char_rep = "←".to_string(); }
+                            if p.vx > 0.0 {
+                                char_rep = "→".to_string();
+                            } else {
+                                char_rep = "←".to_string();
+                            }
                         } else {
-                            if p.vy > 0.0 { char_rep = "↓".to_string(); } else { char_rep = "↑".to_string(); }
+                            if p.vy > 0.0 {
+                                char_rep = "↓".to_string();
+                            } else {
+                                char_rep = "↑".to_string();
+                            }
                         }
                     }
                 }
@@ -3884,7 +4099,14 @@ fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(34)].as_ref())
+        .constraints(
+            [
+                Constraint::Percentage(33),
+                Constraint::Percentage(33),
+                Constraint::Percentage(34),
+            ]
+            .as_ref(),
+        )
         .split(f.area());
 
     // Asks
@@ -3899,7 +4121,11 @@ fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             )));
         }
     }
-    let asks_list = List::new(ask_items).block(Block::default().borders(Borders::ALL).title("Order Book (Asks)"));
+    let asks_list = List::new(ask_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Order Book (Asks)"),
+    );
     f.render_widget(asks_list, chunks[0]);
 
     // History
@@ -3911,7 +4137,8 @@ fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             hist_items.push(ListItem::new(format!("{} sold for {}", item, price)));
         }
     }
-    let hist_list = List::new(hist_items).block(Block::default().borders(Borders::ALL).title("Ticker"));
+    let hist_list =
+        List::new(hist_items).block(Block::default().borders(Borders::ALL).title("Ticker"));
     f.render_widget(hist_list, chunks[1]);
 
     // Wallets
@@ -3924,7 +4151,11 @@ fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     if wallet_items.is_empty() {
         wallet_items.push(ListItem::new("No funds."));
     }
-    let wallet_list = List::new(wallet_items).block(Block::default().borders(Borders::ALL).title("Wealth Leaderboard"));
+    let wallet_list = List::new(wallet_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Wealth Leaderboard"),
+    );
     f.render_widget(wallet_list, chunks[2]);
 }
 
@@ -3947,7 +4178,11 @@ fn render_ballistics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             )));
         }
     }
-    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Active Trajectories"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Active Trajectories"),
+    );
     f.render_widget(list, chunks[0]);
 
     // Info
@@ -3970,7 +4205,11 @@ fn render_scent(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     } else {
         // Show top 20 strongest
         let mut sorted_scents: Vec<_> = vm.pheromones.iter().collect();
-        sorted_scents.sort_by(|a, b| b.intensity.partial_cmp(&a.intensity).unwrap_or(std::cmp::Ordering::Equal));
+        sorted_scents.sort_by(|a, b| {
+            b.intensity
+                .partial_cmp(&a.intensity)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
 
         for p in sorted_scents.iter().take(20) {
             items.push(ListItem::new(format!(
@@ -3979,10 +4218,17 @@ fn render_scent(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             )));
         }
         if vm.pheromones.len() > 20 {
-            items.push(ListItem::new(format!("... and {} more", vm.pheromones.len() - 20)));
+            items.push(ListItem::new(format!(
+                "... and {} more",
+                vm.pheromones.len() - 20
+            )));
         }
     }
-    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Olfactory Sensors"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Olfactory Sensors"),
+    );
     f.render_widget(list, chunks[0]);
 
     // Info
