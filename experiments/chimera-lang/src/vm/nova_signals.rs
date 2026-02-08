@@ -61,11 +61,26 @@ struct DnaWrite {
 }
 
 #[cfg(feature = "nova")]
+struct ResonanceWrite {
+    y: usize,
+    x: usize,
+    freq: f32,
+    amp: f32,
+}
+
+#[cfg(feature = "nova")]
+struct MutationRequest {
+    strand_idx: usize,
+}
+
+#[cfg(feature = "nova")]
 pub fn process_signals(vm: &mut ChimeraVM) {
     let size = GRID_SIZE;
     let mut next_signals = vec![vec![0u8; size]; size];
     let mut grid_writes: Vec<GridWrite> = Vec::new();
     let mut dna_writes: Vec<DnaWrite> = Vec::new();
+    let mut resonance_writes: Vec<ResonanceWrite> = Vec::new();
+    let mut mutation_requests: Vec<MutationRequest> = Vec::new();
     // Executions now store (OpCode, Args)
     let mut executions: Vec<(OpCode, Vec<Nucleotide>)> = Vec::new();
 
@@ -113,13 +128,12 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         }
                     }
                 }
-                'N' => try_move(vm, y, x, -1, 0, &mut grid_writes, "N"),
-                'S' => try_move(vm, y, x, 1, 0, &mut grid_writes, "S"),
-                'E' => try_move(vm, y, x, 0, 1, &mut grid_writes, "E"),
-                'W' => try_move(vm, y, x, 0, -1, &mut grid_writes, "W"),
+                'N' => read_write_directional(vm, y, x, -1, 0, 1, 0, &mut grid_writes),
+                'S' => read_write_directional(vm, y, x, 1, 0, -1, 0, &mut grid_writes),
+                'E' => read_write_directional(vm, y, x, 0, 1, 0, -1, &mut grid_writes),
+                'W' => read_write_directional(vm, y, x, 0, -1, 0, 1, &mut grid_writes),
                 'A' | 'a' => binary_op(vm, y, x, &mut grid_writes, |a, b| a.wrapping_add(b)),
                 'B' | 'b' => binary_op(vm, y, x, &mut grid_writes, |a, b| a.wrapping_sub(b)),
-                'M' | 'm' => binary_op(vm, y, x, &mut grid_writes, |a, b| a.wrapping_mul(b)),
                 'D' | 'd' => binary_op(vm, y, x, &mut grid_writes, |a, b| {
                     if b != 0 {
                         a.wrapping_div(b)
@@ -127,6 +141,66 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         0
                     }
                 }),
+                'M' | 'm' => {
+                    // Mutate: West (Strand)
+                    if let Some(s_idx) = peek(vm, y, x, 0, -1) {
+                        if signal > 0 {
+                            mutation_requests.push(MutationRequest {
+                                strand_idx: s_idx as usize,
+                            });
+                        }
+                    }
+                }
+                'T' | 't' => {
+                    // Teleport: West(X), East(Y), North(Val) -> Write Val to (Y,X)
+                    if let (Some(x_val), Some(y_val), Some(val)) = (
+                        peek(vm, y, x, 0, -1),
+                        peek(vm, y, x, 0, 1),
+                        peek(vm, y, x, -1, 0),
+                    ) {
+                        if let Some((ty, tx)) = vm.normalize_coords(y_val, x_val) {
+                            grid_writes.push(GridWrite {
+                                y: ty,
+                                x: tx,
+                                val: Value::Str(val_to_char(val).to_string()),
+                            });
+                        }
+                    }
+                }
+                'L' | 'l' => {
+                    // Laser: West(Len), North(Dir)
+                    // Dir: 0=N, 1=E, 2=S, 3=W (clock-wise)
+                    if let (Some(len), Some(dir)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, -1, 0)) {
+                        let (dy, dx) = match dir % 4 {
+                            0 => (-1, 0),
+                            1 => (0, 1),
+                            2 => (1, 0),
+                            3 => (0, -1),
+                            _ => (0, 0),
+                        };
+                        // Beam length up to 16
+                        for i in 1..=len.min(16) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(y as i64 + dy * i, x as i64 + dx * i)
+                            {
+                                next_signals[ny][nx] = next_signals[ny][nx].saturating_add(1);
+                            }
+                        }
+                    }
+                }
+                'Z' | 'z' => {
+                    // Resonate: West(Freq), East(Amp)
+                    if let (Some(freq), Some(amp)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
+                        if signal > 0 {
+                            resonance_writes.push(ResonanceWrite {
+                                y,
+                                x,
+                                freq: freq as f32 * 10.0,
+                                amp: amp as f32 * 2.0,
+                            });
+                        }
+                    }
+                }
                 'I' | 'i' => {
                     if let Some(n) = peek(vm, y, x, -1, 0) {
                         let max = peek(vm, y, x, 0, 1).unwrap_or(35);
@@ -290,6 +364,30 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 3. Update Signal State
     vm.signal_grid = next_signals;
 
+    // 3.5 Apply Resonance & Mutations
+    for w in resonance_writes {
+        vm.resonance_grid[w.y][w.x] = (w.freq, w.amp);
+    }
+
+    for req in mutation_requests {
+        if req.strand_idx < vm.dna.helix.strands.len() {
+            let strand_len = vm.dna.helix.strands[req.strand_idx].genes.len();
+            if strand_len > 0 {
+                let mut rng = rand::thread_rng();
+                let g_idx = rng.gen_range(0..strand_len);
+                // Mutate Arg
+                if !vm.dna.helix.strands[req.strand_idx].genes[g_idx]
+                    .args
+                    .is_empty()
+                {
+                    let val = rng.gen_range(0..100);
+                    vm.dna.helix.strands[req.strand_idx].genes[g_idx].args[0] =
+                        Nucleotide::Number(val);
+                }
+            }
+        }
+    }
+
     // 4. Execution Phase
     for (op, args) in executions {
         vm.execute_gene_inner(op.clone(), &args);
@@ -329,34 +427,22 @@ where
 }
 
 #[cfg(feature = "nova")]
-fn try_move(
+fn read_write_directional(
     vm: &ChimeraVM,
     y: usize,
     x: usize,
-    dy: i64,
-    dx: i64,
+    read_dy: i64,
+    read_dx: i64,
+    write_dy: i64,
+    write_dx: i64,
     grid_writes: &mut Vec<GridWrite>,
-    c: &str,
 ) {
-    if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
-        let target_val = &vm.grid[ny][nx];
-        // Only move if target is empty (Int(0) or Str("."))
-        let is_empty = match target_val {
-            Value::Int(0) => true,
-            Value::Str(s) => s == ".",
-            _ => false,
-        };
-
-        if is_empty {
+    if let Some(val) = peek(vm, y, x, read_dy, read_dx) {
+        if let Some((wy, wx)) = vm.normalize_coords(y as i64 + write_dy, x as i64 + write_dx) {
             grid_writes.push(GridWrite {
-                y,
-                x,
-                val: Value::Int(0),
-            });
-            grid_writes.push(GridWrite {
-                y: ny,
-                x: nx,
-                val: Value::Str(c.to_string()),
+                y: wy,
+                x: wx,
+                val: Value::Str(val_to_char(val).to_string()),
             });
         }
     }

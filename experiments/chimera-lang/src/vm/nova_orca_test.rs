@@ -94,4 +94,84 @@ mod tests {
             _ => panic!("Expected result 1, got {:?}", vm.grid[2][1]),
         }
     }
+
+    #[test]
+    fn test_orca_io() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 5 .
+        // * N .
+        // . . .
+        // N should read North (5) and write South (5)
+
+        vm.grid[0][1] = Value::Str("5".to_string());
+        vm.grid[1][0] = Value::Str("*".to_string());
+        vm.grid[1][1] = Value::Str("N".to_string());
+        vm.signal_grid[1][0] = 1;
+
+        process_signals(&mut vm);
+
+        // N should stay put
+        match &vm.grid[1][1] {
+            Value::Str(s) => assert_eq!(s, "N"),
+            _ => panic!("N moved or disappeared"),
+        }
+
+        // South (2,1) should be 5
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "5"),
+            _ => panic!("Expected result 5 at South, got {:?}", vm.grid[2][1]),
+        }
+    }
+
+    #[test]
+    fn test_orca_teleport() {
+        let mut vm = make_vm();
+        // Layout:
+        // . V .  (Value to write: V='7')
+        // X T Y  (X=3, Y=3) -> Write '7' to (3,3)
+        // . . .
+
+        vm.grid[0][1] = Value::Str("7".to_string());
+        vm.grid[1][0] = Value::Str("3".to_string()); // West (X)
+        vm.grid[1][1] = Value::Str("T".to_string());
+        vm.grid[1][2] = Value::Str("3".to_string()); // East (Y)
+
+        // Signal T directly
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        match &vm.grid[3][3] {
+            Value::Str(s) => assert_eq!(s, "7"),
+            _ => panic!("Expected result 7 at (3,3), got {:?}", vm.grid[3][3]),
+        }
+    }
+
+    #[test]
+    fn test_orca_laser() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 1 .  (Direction: 1 = East)
+        // 4 L .  (Length: 4)
+        // . . .
+        // Should fire beam East for 4 cells.
+
+        vm.grid[0][1] = Value::Str("1".to_string());
+        vm.grid[1][0] = Value::Str("4".to_string());
+        vm.grid[1][1] = Value::Str("L".to_string());
+
+        // Signal L
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        // Check signal trace to the East
+        // (1,2), (1,3), (1,4), (1,5) should have signal
+        assert!(vm.signal_grid[1][2] > 0, "Beam missing at dist 1");
+        assert!(vm.signal_grid[1][3] > 0, "Beam missing at dist 2");
+        assert!(vm.signal_grid[1][4] > 0, "Beam missing at dist 3");
+        assert!(vm.signal_grid[1][5] > 0, "Beam missing at dist 4");
+        assert_eq!(vm.signal_grid[1][6], 0, "Beam went too far");
+    }
 }
