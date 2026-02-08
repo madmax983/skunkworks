@@ -1461,6 +1461,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Volcano,
 
+    // Paleontology Features (Nova)
+    /// **[Nova]** Fossilizes a strand into a compressed string on the grid.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    /// **Effect:** Writes `Fossil:{tick}:{hash}:{dna}` to the grid.
+    #[cfg(feature = "nova")]
+    Fossilize,
+    /// **[Nova]** Unearths a fossil from the grid, restoring the DNA strand.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Unearth,
+    /// **[Nova]** Carbon dates a fossil to determine its age.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., age ]`
+    #[cfg(feature = "nova")]
+    CarbonDate,
+
     // Crystallography Features (Nova)
     /// **[Nova]** Turns the current cell into a crystal seed.
     ///
