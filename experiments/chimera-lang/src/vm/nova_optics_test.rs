@@ -97,7 +97,11 @@ mod tests {
         let p_after = &vm.projectiles[0];
 
         // Should be moving West now (vx < 0)
-        assert!(p_after.vx < -0.9, "Projectile did not reflect: vx={}", p_after.vx);
+        assert!(
+            p_after.vx < -0.9,
+            "Projectile did not reflect: vx={}",
+            p_after.vx
+        );
     }
 
     #[test]
@@ -163,9 +167,9 @@ mod tests {
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000;
         vm.context_loc = (0, 0); // Start at 0,0, but migrate to 0,5 (x=0, y=5)
-        // Wait, migrate takes dy, dx. From 0,0 to 0,5 (x=0, y=5)?
-        // No, I want Prism at 5,5 (x=5, y=5). Fire from 0,5 (x=0, y=5).
-        // Migrate dx=0, dy=5.
+                                 // Wait, migrate takes dy, dx. From 0,0 to 0,5 (x=0, y=5)?
+                                 // No, I want Prism at 5,5 (x=5, y=5). Fire from 0,5 (x=0, y=5).
+                                 // Migrate dx=0, dy=5.
 
         // Run setup (Migration + Placement + Fire)
         // Migrate: 1 step. Push(5), Push(0), Migrate.

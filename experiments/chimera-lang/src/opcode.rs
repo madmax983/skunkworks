@@ -1141,6 +1141,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     AkashicRead,
 
+    // Chronos Vault Features (Nova)
+    /// **[Nova]** Encapsulates a value in a time-locked capsule.
+    ///
+    /// **Stack:** `[ ..., key, value, duration_seconds ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Encapsulate,
+    /// **[Nova]** Decapsulates a value if the time lock has expired.
+    ///
+    /// **Stack:** `[ ..., key ] -> [ ..., value_or_wait_time ]`
+    #[cfg(feature = "nova")]
+    Decapsulate,
+
     /// **[Nova]** Dumps the flight recorder (blackbox) to the stack.
     ///
     /// **Stack:** `[ ... ] -> [ ..., dump_string ]`

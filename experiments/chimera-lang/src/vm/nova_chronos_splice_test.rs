@@ -17,10 +17,22 @@ mod tests {
     fn test_chronos_splice() {
         // Strand 0: [ Push(100) Sporulate() Push(0) Apoptosis() ]
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Sporulate, args: vec![] }, // Creates Spore 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Apoptosis, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Sporulate,
+                args: vec![],
+            }, // Creates Spore 0
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Apoptosis,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -40,9 +52,18 @@ mod tests {
         vm.halted = false;
         vm.ip = (0, 0);
         vm.inject_genes(vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Spore ID
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Strand ID in Spore
-            Gene { op: OpCode::ChronosSplice, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Spore ID
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Strand ID in Spore
+            Gene {
+                op: OpCode::ChronosSplice,
+                args: vec![],
+            },
         ]);
 
         // Run miracle

@@ -25,6 +25,8 @@
 
 use crate::ast::{Dna, JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+#[cfg(any(feature = "nova", feature = "silicon"))]
+pub use locus::Topology;
 #[cfg(feature = "nova")]
 use poincare_disk::hyperbolic_dist;
 use poincare_disk::Point;
@@ -33,8 +35,6 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
-#[cfg(any(feature = "nova", feature = "silicon"))]
-pub use locus::Topology;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -89,10 +89,18 @@ pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
 #[cfg(feature = "nova")]
+pub mod nova_capsule;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_capsule_test;
+#[cfg(feature = "nova")]
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chronos_splice_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_test;
@@ -128,9 +136,6 @@ pub mod nova_pocket;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_pocket_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_chronos_splice_test;
 #[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
@@ -1836,6 +1841,12 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::Encapsulate | OpCode::Decapsulate => {
+                nova_capsule::exec_capsule_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
             OpCode::Blackbox => {
                 let dump = self.blackbox.dump();
                 self.stack.push(Value::Str(dump));
@@ -1895,11 +1906,9 @@ impl ChimeraVM {
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Cook
-            | OpCode::Spice
-            | OpCode::Savor
-            | OpCode::Cultivate
-            | OpCode::Banquet => nova::exec_nova_op(self, op, args),
+            OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
+                nova::exec_nova_op(self, op, args)
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Resonate

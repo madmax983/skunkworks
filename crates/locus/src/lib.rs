@@ -513,10 +513,7 @@ impl Topology {
                     None
                 }
             }
-            Topology::Torus => Some((
-                y.rem_euclid(s) as usize,
-                x.rem_euclid(s) as usize
-            )),
+            Topology::Torus => Some((y.rem_euclid(s) as usize, x.rem_euclid(s) as usize)),
             Topology::CylinderH => {
                 // Wraps X, Bounded Y
                 if (0..s).contains(&y) {

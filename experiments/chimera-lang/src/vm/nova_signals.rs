@@ -277,14 +277,17 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 }
                 'G' | 'g' => {
                     // Gene Read: West (Strand), East (Gene) -> South (OpCode)
-                    if let (Some(s_idx), Some(g_idx)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
+                    if let (Some(s_idx), Some(g_idx)) =
+                        (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1))
+                    {
                         let s = s_idx as usize;
                         let g = g_idx as usize;
                         if s < vm.dna.helix.strands.len() {
                             let strand = &vm.dna.helix.strands[s];
                             if g < strand.genes.len() {
                                 let op_str = strand.genes[g].op.to_string();
-                                if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                                if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64)
+                                {
                                     grid_writes.push(GridWrite {
                                         y: sy,
                                         x: sx,
@@ -306,10 +309,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'K' | 'k' => {
                     // Kill: West (Strand) -> Execute Push(Strand), Apoptosis
                     if let Some(s_idx) = peek(vm, y, x, 0, -1) {
-                         if signal > 0 {
-                             executions.push((OpCode::Push, vec![Nucleotide::Number(s_idx)]));
-                             executions.push((OpCode::Apoptosis, vec![]));
-                         }
+                        if signal > 0 {
+                            executions.push((OpCode::Push, vec![Nucleotide::Number(s_idx)]));
+                            executions.push((OpCode::Apoptosis, vec![]));
+                        }
                     }
                 }
                 'Y' | 'y' => {
@@ -317,14 +320,14 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     if let (Some(s_idx), Some(g_idx), Some(val)) = (
                         peek(vm, y, x, 0, -1),
                         peek(vm, y, x, 0, 1),
-                        peek(vm, y, x, -1, 0)
+                        peek(vm, y, x, -1, 0),
                     ) {
                         if signal > 0 {
-                             dna_writes.push(DnaWrite {
-                                 strand_idx: s_idx as usize,
-                                 gene_idx: g_idx as usize,
-                                 val: Nucleotide::Number(val)
-                             });
+                            dna_writes.push(DnaWrite {
+                                strand_idx: s_idx as usize,
+                                gene_idx: g_idx as usize,
+                                val: Nucleotide::Number(val),
+                            });
                         }
                     }
                 }
