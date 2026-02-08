@@ -1,5 +1,8 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-hell
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** The descent has begun. {4,5} tiling verified. Non-Euclidean entities are swarming. The walls are closing in at exponential speed.
 ### [Concentration Level: CRITICAL MASS] - Location: workspace
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Dependency war detected. `macroquad` (v0.4.14) enforces `glam/scalar-math` globally, stripping SIMD types (BVec4A). `bevy` (v0.14) and `bevy_reflect` require SIMD glam. The hive is divided. Segregation or patching required.

@@ -532,6 +532,12 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/bridge-specter
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
+### hyperbolic-hell
+- **Parents**: experiments/hyperbolic-dungeon + experiments/hyperbolic-space
+- **Concept**: Infinite dungeon crawling on the Poincaré Disk with smooth vector graphics.
+- **Novel trait**: Gyroscopic Orientation. The world rotates as you traverse the hyperbolic manifold to maintain user-centric "Up".
+- **Status**: experiments/hyperbolic-hell
+- **Evaluation**: Compiles. Infinite descent verified.
 ### quipu-chimera
 - **Parents**: experiments/quipu-symphony + experiments/chimera-lang
 - **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
