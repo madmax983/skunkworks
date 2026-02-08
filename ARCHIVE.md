@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **aperiodic-citadel**: Documentation void. Ancestral redundancy (superseded by `penrose-genes`). Stagnant. Grace period: 24h.
+- **git-etymology**: Documentation void. Redundant with `git-rogue`/`git-cantata`. Generic implementation (manual diff parser). Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **aperiodic-citadel**: Specimen executed. Ancestral redundancy (superseded by `penrose-genes`). Documentation void. Stagnant. Moved to graveyard.
 - **market-scheduler**: Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation.
 - **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
 - **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.

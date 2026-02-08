@@ -548,6 +548,14 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Generic mesh implementation. Grace period: 24h.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/git-etymology
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `git-rogue`/`git-cantata`. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/aperiodic-citadel
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Ancestral redundancy (superseded by `penrose-genes`). Documentation void. Biomass returned to the void.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/market-scheduler
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Biomass returned to the void.
@@ -559,10 +567,6 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/kinetic-crease
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic mesh implementation. Biomass returned to the void.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/aperiodic-citadel
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Ancestral redundancy detected. Superseded by `penrose-genes`. Documentation void.
 
 ### [Concentration Level: FRESH] - Location: experiments/mobius-git
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
