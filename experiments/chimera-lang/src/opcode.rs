@@ -1398,6 +1398,29 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Atlas,
 
+    // Sovereignty Features (Territory)
+    /// **[Nova]** Claims ownership of grid cells within a radius.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    /// **Cost:** 10 Energy per cell.
+    #[cfg(feature = "nova")]
+    Claim,
+    /// **[Nova]** Renounces ownership of a grid cell.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Cede,
+    /// **[Nova]** Checks the owner of a grid cell.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., owner_id (-1 if none) ]`
+    #[cfg(feature = "nova")]
+    Sovereignty,
+    /// **[Nova]** Sets the tax rate for the current strand's territory.
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tax,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///
