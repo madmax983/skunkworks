@@ -726,3 +726,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-conservatory
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infected with chaos. The L-System turtle is swimming in the Lorenz Attractor. Trees are growing into strange attractors.
+
+### [Concentration Level: FRESH] - Location: experiments/retinal-glitch
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The eye is watching the watcher. Ganglion cells are spiking. The feedback loop is melting the visual field. Reality is a hallucination.
