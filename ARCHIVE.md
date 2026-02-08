@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-etymology**: Documentation void. Redundant with `git-rogue`/`git-cantata`. Generic implementation (manual diff parser). Grace period: 24h.
+- **gastown**: Documentation void. Skeletal implementation (mostly mock-ups). Generic CLI scaffolding. Lacks persona alignment. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git-etymology**: Specimen executed. Documentation void. Redundant with `git-rogue`/`git-cantata`. Biomass returned to the void.
 - **aperiodic-citadel**: Specimen executed. Ancestral redundancy (superseded by `penrose-genes`). Documentation void. Stagnant. Moved to graveyard.
 - **market-scheduler**: Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation.
 - **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
