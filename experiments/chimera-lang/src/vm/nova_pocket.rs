@@ -1,5 +1,5 @@
 #[cfg(feature = "nova")]
-use super::{ChimeraVM, Value};
+use super::{ChimeraVM, Value, MAX_POCKET_RADIUS};
 #[cfg(feature = "nova")]
 use crate::ast::JunctionType;
 
@@ -12,7 +12,7 @@ pub fn exec_pocket(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(r) = val {
             if r >= 0 {
-                let radius = r as i64;
+                let radius = r.min(MAX_POCKET_RADIUS);
                 let (cy, cx) = vm.context_loc;
                 let mut data = Vec::new();
 
@@ -74,8 +74,9 @@ pub fn exec_unpocket(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if items.len() >= 2 {
                 if let (Value::Str(marker), Value::Int(r)) = (&items[0], &items[1]) {
                     if marker == "POCKET" {
-                        let radius = *r;
-                        let expected_size = (2 * radius + 1).pow(2) as usize;
+                        let radius = (*r).min(MAX_POCKET_RADIUS);
+                        let side = (2 * radius + 1) as usize;
+                        let expected_size = side.saturating_mul(side);
 
                         if items.len() == 2 + expected_size {
                             let (cy, cx) = vm.context_loc;

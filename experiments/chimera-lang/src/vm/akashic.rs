@@ -1,5 +1,5 @@
 #[cfg(feature = "nova")]
-use super::{ChimeraVM, Value};
+use super::{ChimeraVM, Value, MAX_AKASHIC_SIZE};
 #[cfg(feature = "nova")]
 use crate::ast::Nucleotide;
 #[cfg(feature = "nova")]
@@ -17,6 +17,11 @@ const AKASHIC_FILE: &str = ".chimera_akashic.json";
 #[cfg(feature = "nova")]
 fn load_records() -> HashMap<String, Value> {
     if let Ok(mut file) = std::fs::File::open(AKASHIC_FILE) {
+        if let Ok(metadata) = file.metadata() {
+            if metadata.len() > MAX_AKASHIC_SIZE {
+                return HashMap::new();
+            }
+        }
         let mut content = String::new();
         if file.read_to_string(&mut content).is_ok() {
             if let Ok(map) = serde_json::from_str(&content) {
