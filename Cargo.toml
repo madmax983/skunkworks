@@ -33,7 +33,6 @@ members = [
     "experiments/thermo-termites",
     "experiments/thread-frequency",
     "experiments/trace-fold",
-    "experiments/venation-vines",
     "experiments/verge-computer",
     "experiments/chromatic-code",
     "experiments/penrose-build",
