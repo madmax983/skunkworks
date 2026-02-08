@@ -40,6 +40,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/biomimetic-bridge`.
 - **Offered by:** Genesis (The Entomologist) ⚛️🐜
 
+### [Locust Swarm] DDoS Visualizer
+- **What:** A visualizer for network attacks using biological swarm metaphors.
+- **Why:** To understand distributed systems failure modes through insect behavior.
+- **Status:** Available in `experiments/locust-net`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->

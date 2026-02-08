@@ -627,3 +627,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/text-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with executed `text-erosion`. Static implementation ("GENESIS" heightmap). Grace period: 24h.
+
+### [Concentration Level: FRESH] - Location: experiments/locust-net
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The swarm is hungry. DDoS attack visualized as a crop plague. 500 packets/tick devouring server resources.

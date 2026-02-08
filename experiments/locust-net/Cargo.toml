@@ -1,0 +1,17 @@
+[package]
+name = "locust-net"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "locust_net"
+path = "src/lib.rs"
+
+[[bin]]
+name = "locust-net"
+path = "src/main.rs"
+
+[dependencies]
+macroquad = "0.4"
+rayon = "1.10"
+rand = "0.8"
