@@ -521,3 +521,15 @@
 ### [Concentration Level: FRESH] - Location: experiments/astral-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.
+
+### [Concentration Level: TOXIC] - Location: graveyard/packet-pachinko
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Ancestral redundancy with `synaptic-pachinko`. Stagnant implementation.
+
+### [Concentration Level: TOXIC] - Location: graveyard/market-scheduler
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `market-flow`.
+
+### [Concentration Level: TOXIC] - Location: experiments/aperiodic-citadel
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Vestigial ancestor of `penrose-genes`. Documentation void.

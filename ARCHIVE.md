@@ -1,6 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **packet-pachinko**: Ancestral redundancy with `synaptic-pachinko`. Stagnant implementation. Grace period: 24h.
-- **market-scheduler**: Specimen condemned. Redundant with `market-flow`/`market-rogue`. Documentation void. Generic implementation. Grace period: 24h.
+- **aperiodic-citadel**: Specimen condemned. Ancestral redundancy with `penrose-genes`. Documentation void. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +11,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **packet-pachinko**: Specimen executed. Ancestral redundancy with `synaptic-pachinko`. Stagnant implementation. Grace period expired. Moved to graveyard.
+- **market-scheduler**: Specimen executed. Redundant with `market-flow`/`market-rogue`. Documentation void. Grace period expired. Moved to graveyard.
 - **struct-soup**: Specimen executed. Ancestral redundancy with `struct-harmonics`. Stagnant visualization. Biomass returned to the void.
 - **terra-fluid**: Specimen executed. Redundant with `fluid-specter`. Documentation void. Biomass returned to the void.
 - **turing-terra**: Specimen executed. Redundant with `reaction-monitor`. Manual override detected. Biomass returned to the void.
