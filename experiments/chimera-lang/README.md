@@ -233,8 +233,7 @@ chimera-lang = { path = "../chimera-lang", features = ["nova"] }
 
 Example `main.rs`:
 ```rust
-use chimera_lang::ast::{Dna, Helix};
-use chimera_lang::vm::ChimeraVM;
+use chimera_lang::prelude::*;
 
 fn main() {
     let dna = Dna { helix: Helix { strands: vec![] } };

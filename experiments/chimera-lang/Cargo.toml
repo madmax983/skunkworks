@@ -32,4 +32,3 @@ poincare-disk = { path = "../../crates/poincare-disk" }
 
 [[example]]
 name = "story_demo"
-required-features = ["nova"]
