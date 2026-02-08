@@ -65,6 +65,12 @@ pub(crate) enum ViewMode {
     Sovereignty,
     #[cfg(feature = "nova")]
     Spectrogram,
+    #[cfg(feature = "nova")]
+    Market,
+    #[cfg(feature = "nova")]
+    Ballistics,
+    #[cfg(feature = "nova")]
+    Scent,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -337,6 +343,24 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Market = app_state.view_mode {
+                render_market(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Ballistics = app_state.view_mode {
+                render_ballistics(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Scent = app_state.view_mode {
+                render_scent(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -580,6 +604,21 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Market => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Ballistics => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Scent => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -696,7 +735,13 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Sovereignty => ViewMode::Spectrogram,
                             #[cfg(feature = "nova")]
-                            ViewMode::Spectrogram => ViewMode::Heatmap,
+                            ViewMode::Spectrogram => ViewMode::Market,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Market => ViewMode::Ballistics,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Ballistics => ViewMode::Scent,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Scent => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -813,6 +858,12 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('k') => app_state.view_mode = ViewMode::Kaleidoscope,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('$') => app_state.view_mode = ViewMode::Market,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
                         #[cfg(feature = "nova")]
@@ -961,6 +1012,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Market => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ballistics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Scent => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1213,6 +1270,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Market => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ballistics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Scent => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1293,6 +1356,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Market => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ballistics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Scent => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1373,6 +1442,12 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Market => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Ballistics => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Scent => {}
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1587,6 +1662,18 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Spectrogram => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Market => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Ballistics => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Scent => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -2172,6 +2259,12 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Sovereignty => "SOVEREIGNTY (TERRITORY)",
         #[cfg(feature = "nova")]
         ViewMode::Spectrogram => "SPECTROGRAM (RESONANCE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Market => "MARKET (EXCHANGE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Ballistics => "BALLISTICS (TRAJECTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Scent => "SCENT (OLFACTORY)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -2446,6 +2539,18 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
 
                 if (vm.membranes[y][x] & 2) != 0 {
                     style = style.add_modifier(Modifier::UNDERLINED);
+                }
+
+                // Projectiles (Top Layer)
+                for p in &vm.projectiles {
+                    if (p.x as usize) == x && (p.y as usize) == y {
+                        style = style.fg(Color::Red).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+                        if p.vx.abs() > p.vy.abs() {
+                            if p.vx > 0.0 { char_rep = "→".to_string(); } else { char_rep = "←".to_string(); }
+                        } else {
+                            if p.vy > 0.0 { char_rep = "↓".to_string(); } else { char_rep = "↑".to_string(); }
+                        }
+                    }
                 }
             }
 
@@ -3756,6 +3861,117 @@ fn render_egregore(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     let info =
         Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("The Covenant"));
+    f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_market(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(34)].as_ref())
+        .split(f.area());
+
+    // Asks
+    let mut ask_items = Vec::new();
+    if vm.market.asks.is_empty() {
+        ask_items.push(ListItem::new("No active asks."));
+    } else {
+        for order in &vm.market.asks {
+            ask_items.push(ListItem::new(format!(
+                "#{}: {} @ {} (Seller: {})",
+                order.id, order.item, order.price, order.trader_id
+            )));
+        }
+    }
+    let asks_list = List::new(ask_items).block(Block::default().borders(Borders::ALL).title("Order Book (Asks)"));
+    f.render_widget(asks_list, chunks[0]);
+
+    // History
+    let mut hist_items = Vec::new();
+    if vm.market.history.is_empty() {
+        hist_items.push(ListItem::new("No recent transactions."));
+    } else {
+        for (item, price) in &vm.market.history {
+            hist_items.push(ListItem::new(format!("{} sold for {}", item, price)));
+        }
+    }
+    let hist_list = List::new(hist_items).block(Block::default().borders(Borders::ALL).title("Ticker"));
+    f.render_widget(hist_list, chunks[1]);
+
+    // Wallets
+    let mut wallet_items = Vec::new();
+    for (id, balance) in vm.market.wallets.iter().enumerate() {
+        if *balance > 0 {
+            wallet_items.push(ListItem::new(format!("Strand {}: {}", id, balance)));
+        }
+    }
+    if wallet_items.is_empty() {
+        wallet_items.push(ListItem::new("No funds."));
+    }
+    let wallet_list = List::new(wallet_items).block(Block::default().borders(Borders::ALL).title("Wealth Leaderboard"));
+    f.render_widget(wallet_list, chunks[2]);
+}
+
+#[cfg(feature = "nova")]
+fn render_ballistics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Projectile List
+    let mut items = Vec::new();
+    if vm.projectiles.is_empty() {
+        items.push(ListItem::new("No active projectiles."));
+    } else {
+        for (i, p) in vm.projectiles.iter().enumerate() {
+            items.push(ListItem::new(format!(
+                "#{}: Pos({:.1}, {:.1}) Vel({:.1}, {:.1}) Pow:{} TTL:{}",
+                i, p.x, p.y, p.vx, p.vy, p.power, p.ttl
+            )));
+        }
+    }
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Active Trajectories"));
+    f.render_widget(list, chunks[0]);
+
+    // Info
+    let info = Paragraph::new("Visualizing ballistic objects.\n\nOpcodes:\n- fire(pow, dy, dx)\n- salvo(pow, count)\n- reflector(mode)\n- prism\n- lens(pow)")
+        .block(Block::default().borders(Borders::ALL).title("Ballistics Control"));
+    f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_scent(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Scent List
+    let mut items = Vec::new();
+    if vm.pheromones.is_empty() {
+        items.push(ListItem::new("No active scents."));
+    } else {
+        // Show top 20 strongest
+        let mut sorted_scents: Vec<_> = vm.pheromones.iter().collect();
+        sorted_scents.sort_by(|a, b| b.intensity.partial_cmp(&a.intensity).unwrap_or(std::cmp::Ordering::Equal));
+
+        for p in sorted_scents.iter().take(20) {
+            items.push(ListItem::new(format!(
+                "'{}': Pos({:.1}, {:.1}) Int:{:.2} Age:{}",
+                p.signature, p.x, p.y, p.intensity, p.age
+            )));
+        }
+        if vm.pheromones.len() > 20 {
+            items.push(ListItem::new(format!("... and {} more", vm.pheromones.len() - 20)));
+        }
+    }
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Olfactory Sensors"));
+    f.render_widget(list, chunks[0]);
+
+    // Info
+    let info = Paragraph::new("Visualizing airborne chemicals.\n\nOpcodes:\n- emit(int, sig)\n- smell() -> [dy, dx, int, sig]\n- track(sig) -> [dy, dx]\n\nMechanics:\n- Diffusion via Brownian motion\n- Wind influence\n- Decay over time")
+        .block(Block::default().borders(Borders::ALL).title("Pheromone Analysis"));
     f.render_widget(info, chunks[1]);
 }
 
