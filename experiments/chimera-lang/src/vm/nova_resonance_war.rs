@@ -113,3 +113,67 @@ pub fn exec_dampen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
+
+/// Simulates continuous wave propagation (diffusion) and decay.
+/// Should be called once per VM tick if Resonance is enabled.
+pub fn process_resonance(vm: &mut ChimeraVM) {
+    let size = super::GRID_SIZE;
+    let mut new_grid = vm.resonance_grid.clone();
+
+    for y in 0..size {
+        for x in 0..size {
+            let (self_freq, self_amp) = vm.resonance_grid[y][x];
+
+            if self_amp < 0.1 {
+                new_grid[y][x] = (0.0, 0.0);
+                continue;
+            }
+
+            // Neighbors (Von Neumann for efficiency or Moore?)
+            // Let's use simple Von Neumann (4-neighbors)
+            let mut neighbors_amp_sum = 0.0;
+            let mut neighbors_weighted_freq = 0.0;
+            let mut count = 0;
+
+            for (dy, dx) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                let ny = y as i64 + dy;
+                let nx = x as i64 + dx;
+
+                // Use normalize_coords for topology support
+                if let Some((ny, nx)) = vm.normalize_coords(ny, nx) {
+                    let (n_freq, n_amp) = vm.resonance_grid[ny][nx];
+                    if n_amp > 0.1 {
+                        neighbors_amp_sum += n_amp;
+                        neighbors_weighted_freq += n_freq * n_amp;
+                        count += 1;
+                    }
+                }
+            }
+
+            // Diffusion:
+            // New Amp = Self * Retention + Neighbors * Intake
+            // Simple averaging
+            let retention = 0.6;
+            let diffusion = 0.4;
+
+            let avg_neighbor_amp = if count > 0 { neighbors_amp_sum / count as f32 } else { 0.0 };
+
+            let mut new_amp = self_amp * retention + avg_neighbor_amp * diffusion;
+
+            // Frequency mixing: Weighted average based on amplitude
+            let mut new_freq = self_freq;
+            if count > 0 && (self_amp + neighbors_amp_sum) > 0.0 {
+                let total_weighted_freq = (self_freq * self_amp) + neighbors_weighted_freq;
+                let total_amp = self_amp + neighbors_amp_sum;
+                new_freq = total_weighted_freq / total_amp;
+            }
+
+            // Global Decay
+            new_amp *= 0.95;
+
+            new_grid[y][x] = (new_freq, new_amp);
+        }
+    }
+
+    vm.resonance_grid = new_grid;
+}

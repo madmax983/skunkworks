@@ -1553,6 +1553,8 @@ impl ChimeraVM {
             }
             nova_ballistics::update_projectiles(self);
             nova_sovereignty::process_territory(self);
+            #[cfg(feature = "resonance")]
+            nova_resonance_war::process_resonance(self);
         }
 
         #[cfg(feature = "biophysics")]

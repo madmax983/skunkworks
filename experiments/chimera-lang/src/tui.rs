@@ -63,6 +63,8 @@ pub(crate) enum ViewMode {
     Signals,
     #[cfg(feature = "nova")]
     Sovereignty,
+    #[cfg(feature = "nova")]
+    Spectrogram,
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
@@ -329,6 +331,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Spectrogram = app_state.view_mode {
+                render_spectrogram(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -567,6 +575,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Spectrogram => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Esc => {
@@ -681,7 +694,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Signals => ViewMode::Sovereignty,
                             #[cfg(feature = "nova")]
-                            ViewMode::Sovereignty => ViewMode::Heatmap,
+                            ViewMode::Sovereignty => ViewMode::Spectrogram,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Spectrogram => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -940,6 +955,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Spectrogram => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1186,6 +1207,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Spectrogram => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1260,6 +1287,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Spectrogram => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1330,6 +1363,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Sovereignty => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Spectrogram => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -1543,6 +1582,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Sovereignty => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Spectrogram => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                         }
@@ -1835,6 +1878,101 @@ fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(table, main_split[1]);
 }
 
+#[cfg(feature = "nova")]
+fn render_spectrogram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Frequency/Amp Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let (freq, amp) = vm.resonance_grid[y][x];
+            let mut style = Style::default();
+
+            // Character based on amplitude
+            let ch = if amp < 0.1 {
+                " "
+            } else if amp < 5.0 {
+                "·"
+            } else if amp < 20.0 {
+                "~"
+            } else if amp < 50.0 {
+                "≈"
+            } else if amp < 100.0 {
+                "%"
+            } else {
+                "#"
+            };
+
+            // Color based on Frequency (Hue mapping)
+            // Visible spectrum approx 400-700THz, audio 20-20kHz.
+            // Let's map arbitrary frequency range to colors.
+            // Low = Red, Mid = Green, High = Blue
+            let color = if amp < 0.1 {
+                Color::DarkGray
+            } else if freq < 100.0 {
+                Color::Red
+            } else if freq < 300.0 {
+                Color::Yellow
+            } else if freq < 600.0 {
+                Color::Green
+            } else if freq < 1000.0 {
+                Color::Cyan
+            } else if freq < 5000.0 {
+                Color::Blue
+            } else {
+                Color::Magenta
+            };
+
+            style = style.fg(color);
+
+            // Cursor
+            if app_state.grid_cursor == (x, y) {
+                style = style.bg(Color::White).fg(Color::Black);
+            }
+
+            line_spans.push(Span::styled(ch.to_string(), style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Resonance Spectrogram"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let (freq, amp) = vm.resonance_grid[cy][cx];
+
+    let info_text = vec![
+        Line::from("SONIC FIELD"),
+        Line::from(" "),
+        Line::from(format!("Frequency: {:.2} Hz", freq)),
+        Line::from(format!("Amplitude: {:.2}", amp)),
+        Line::from(" "),
+        Line::from("Mechanics:"),
+        Line::from("  - resonate(freq, amp): Emit continuous wave"),
+        Line::from("  - sonic_claim(freq): Claim territory if resonant"),
+        Line::from("  - dampen(amount, radius): Reduce amplitude"),
+        Line::from("  - Waves diffuse and mix frequencies"),
+    ];
+
+    let info_widget = Paragraph::new(info_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Wave Analysis"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
 fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -2022,6 +2160,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Signals => "SIGNALS & TRAILS",
         #[cfg(feature = "nova")]
         ViewMode::Sovereignty => "SOVEREIGNTY (TERRITORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Spectrogram => "SPECTROGRAM (RESONANCE)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
