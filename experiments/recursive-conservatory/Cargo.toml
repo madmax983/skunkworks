@@ -1,0 +1,8 @@
+[package]
+name = "recursive-conservatory"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+glam = "0.25"
