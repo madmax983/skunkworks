@@ -1,18 +1,12 @@
 #!/bin/bash
-
 experiments=(
-    "git-landscape"
-    "miller-fs"
-    "chimera-automaton"
-    "git-cantata"
-    "cam-automaton"
-    "chimera-fossil"
-    "laban-rover"
-    "quantum-boids"
-    "compost-chimera"
+    "hyperbolic-lexicon"
+    "ink-jet"
+    "morph-physics"
+    "hyperbolic-raymarcher"
 )
 
-echo "Checking compilation of recent hybrids..."
+echo "Checking compilation..."
 for exp in "${experiments[@]}"; do
     echo "---------------------------------------------------"
     echo "Checking $exp"
