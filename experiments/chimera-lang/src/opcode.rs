@@ -1550,6 +1550,14 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Atlas,
 
+    /// **[Nova]** Configures the Logistics Layer (Factory Automation).
+    ///
+    /// **Stack:** `[ ..., type, direction, y, x ] -> [ ... ]`
+    /// **Type:** 0=Clear, 1=Belt, 2=Sorter.
+    /// **Direction:** 0=N, 1=E, 2=S, 3=W.
+    #[cfg(feature = "nova")]
+    Logistics,
+
     /// **[Nova]** Compresses a grid area into a value on the stack.
     ///
     /// **Stack:** `[ ..., radius ] -> [ ..., pocket_val ]`

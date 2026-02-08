@@ -1326,6 +1326,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Tax => super::nova_sovereignty::exec_tax(vm),
         OpCode::Pocket => super::nova_pocket::exec_pocket(vm),
         OpCode::Unpocket => super::nova_pocket::exec_unpocket(vm),
+        OpCode::Logistics => super::nova_logistics::exec_logistics(vm, op, args),
         OpCode::Harmonize => {
             if vm.stack.len() >= 2 {
                 let s_val = vm.stack.pop().unwrap();
