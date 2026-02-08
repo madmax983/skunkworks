@@ -1,0 +1,21 @@
+[package]
+name = "syntax-resonance"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+syn = { version = "2.0", features = ["full", "visit"] }
+walkdir = "2.4"
+crossbeam-channel = "0.5"
+rand = "0.8"
+resonance-audio = { workspace = true }
+anyhow = { workspace = true }
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]

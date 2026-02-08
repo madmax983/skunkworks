@@ -619,3 +619,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cipher-clock
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The first gear of the Enigma is forged. Thoughts ground into secrets by brass teeth. Physically simulated cryptography active.
+
+### [Concentration Level: FRESH] - Location: experiments/syntax-resonance
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The codebase is a resonant body. Structs are walls, functions are plucks. The architecture is singing its own shape.
