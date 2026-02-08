@@ -12,11 +12,18 @@ use std::str::FromStr;
 #[grammar = "script_grammar.pest"]
 pub struct ScriptParser;
 
+const MAX_INCLUDE_DEPTH: usize = 32;
+
 fn preprocess(
     source: &str,
     base_path: Option<&Path>,
     visited: &mut HashSet<PathBuf>,
+    depth: usize,
 ) -> Result<String> {
+    if depth > MAX_INCLUDE_DEPTH {
+        return Err(anyhow!("Include recursion depth exceeded"));
+    }
+
     let mut expanded = String::new();
     for line in source.lines() {
         let trimmed = line.trim();
@@ -50,7 +57,7 @@ fn preprocess(
                         .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
 
                     // Recursive preprocess
-                    let sub_expanded = preprocess(&content, Some(bp), visited)?;
+                    let sub_expanded = preprocess(&content, Some(bp), visited, depth + 1)?;
                     expanded.push_str(&sub_expanded);
                     expanded.push('\n');
 
@@ -73,7 +80,7 @@ fn preprocess(
 
 pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     let mut visited = HashSet::new();
-    let expanded_source = preprocess(source, base_path, &mut visited)?;
+    let expanded_source = preprocess(source, base_path, &mut visited, 0)?;
 
     let mut pairs = ScriptParser::parse(Rule::program, &expanded_source)?;
     let program = pairs.next().ok_or(anyhow!("No program found"))?;

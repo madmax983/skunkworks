@@ -315,6 +315,11 @@ pub enum OpCode {
     /// **Effect:** Reverts *everything* (Grid, DNA, Stack) to the spore's state.
     #[cfg(feature = "nova")]
     Germinate,
+    /// **[Nova]** Splices a strand from a saved Spore (timeline) into the current genome.
+    ///
+    /// **Stack:** `[ ..., spore_id, strand_idx ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    ChronosSplice,
     /// **[Nova]** Creates a new DNA strand from a sequence of values on the grid.
     ///
     /// **Stack:** `[ ..., len, y, x ] -> [ ... ]`

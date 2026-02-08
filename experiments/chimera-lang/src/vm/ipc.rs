@@ -69,29 +69,45 @@ pub fn receive(vm: &mut ChimeraVM) {
                     let mut found = false;
                     for entry in files {
                         let path = entry.path();
-                        // Attempt to lock by renaming
-                        let lock_path = path.with_extension("json.lock");
-                        if fs::rename(&path, &lock_path).is_ok() {
-                            if let Ok(content) = fs::read_to_string(&lock_path) {
-                                if let Ok(value) = serde_json::from_str::<Value>(&content) {
-                                    vm.stack.push(value);
-                                    // Consume message
-                                    let _ = fs::remove_file(lock_path);
-                                    vm.output
-                                        .push(format!("RECEIVE: Read from channel {}", channel));
-                                    vm.energy = vm.energy.saturating_sub(5);
-                                    found = true;
-                                    break;
+
+                        // Only process .json files. Ignore .lock files to prevent race conditions.
+                        if path.extension().map_or(false, |ext| ext == "json") {
+                            // Attempt to lock by renaming
+                            // Note: with_extension on "msg.json" -> "msg.json.lock" (replaces json with json.lock? No)
+                            // Path::new("msg.json").with_extension("json.lock") -> "msg.json.lock" (Replaces "json")
+                            // Wait, "msg.json" extension is "json". with_extension replaces it.
+                            // So "msg.json" -> "msg.json.lock".
+                            // If we used just "lock", it would be "msg.lock".
+                            // Let's ensure we append properly or use a convention.
+                            // The original code used `with_extension("json.lock")`.
+                            // If file is `timestamp.json`. `with_extension("json.lock")` -> `timestamp.json.lock`.
+                            // This seems correct for preserving the name.
+
+                            let lock_path = path.with_extension("json.lock");
+                            if fs::rename(&path, &lock_path).is_ok() {
+                                if let Ok(content) = fs::read_to_string(&lock_path) {
+                                    if let Ok(value) = serde_json::from_str::<Value>(&content) {
+                                        vm.stack.push(value);
+                                        // Consume message
+                                        let _ = fs::remove_file(lock_path);
+                                        vm.output.push(format!(
+                                            "RECEIVE: Read from channel {}",
+                                            channel
+                                        ));
+                                        vm.energy = vm.energy.saturating_sub(5);
+                                        found = true;
+                                        break;
+                                    } else {
+                                        // Corrupt but locked, delete it
+                                        let _ = fs::remove_file(lock_path);
+                                    }
                                 } else {
-                                    // Corrupt but locked, delete it
+                                    // Locked but unreadable?
                                     let _ = fs::remove_file(lock_path);
                                 }
-                            } else {
-                                // Locked but unreadable?
-                                let _ = fs::remove_file(lock_path);
                             }
+                            // If rename failed, someone else took it, continue loop
                         }
-                        // If rename failed, someone else took it, continue loop
                     }
 
                     if !found {
