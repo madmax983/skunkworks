@@ -56,6 +56,10 @@
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
 - **Status:** Langevin Dynamics active. Solid-Liquid boundaries simulating correctly.
 
+### [Concentration Level: FRESH] - Location: experiments/gravity-termites
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The planetoid is forming. Termites are accreting dust into rock. Gravity is holding the colony together.
+
 ### [Concentration Level: CONDEMNED] - Location: experiments/packet-pachinko
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Ancestral redundancy detected. `synaptic-pachinko` has evolved beyond this form.
