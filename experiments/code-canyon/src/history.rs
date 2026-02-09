@@ -32,14 +32,6 @@ impl History {
         self.commits.len()
     }
 
-    pub fn progress(&self) -> f32 {
-        if self.commits.is_empty() {
-            0.0
-        } else {
-            self.current_index as f32 / self.commits.len() as f32
-        }
-    }
-
     pub fn next_commit(&mut self) -> Option<Vec<PathBuf>> {
         if self.current_index >= self.commits.len() {
             return None;

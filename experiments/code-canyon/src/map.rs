@@ -7,6 +7,7 @@ use walkdir::WalkDir;
 pub struct FileMetadata {
     pub path: PathBuf,
     pub size: u64,
+    pub extension: String,
 }
 
 pub struct Scanner;
@@ -30,7 +31,17 @@ impl Scanner {
                     .unwrap_or(entry.path())
                     .to_path_buf();
 
-                files.push(FileMetadata { path, size });
+                let extension = path
+                    .extension()
+                    .and_then(|e| e.to_str())
+                    .unwrap_or("")
+                    .to_string();
+
+                files.push(FileMetadata {
+                    path,
+                    size,
+                    extension,
+                });
             }
         }
         // Sort alphabetically to group directories
@@ -44,7 +55,6 @@ pub struct Terrain {
     pub height: usize,
     pub heightmap: Vec<f32>,
     pub colors: Vec<Color>,
-    pub max_height: f32,
     pub file_indices: HashMap<PathBuf, usize>,
 }
 
@@ -61,10 +71,8 @@ impl Terrain {
         let height = power_of_two;
 
         let mut heightmap = vec![0.0; width * height];
-        let colors = vec![Color::new(1.0, 1.0, 1.0, 1.0); width * height];
+        let mut colors = vec![Color::new(0.1, 0.1, 0.1, 1.0); width * height]; // Dark bedrock
         let mut file_indices = HashMap::new();
-        let mut max_height = 0.0;
-
         for (i, file) in files.iter().enumerate() {
             if i >= width * height {
                 break;
@@ -73,10 +81,11 @@ impl Terrain {
             // Log scale for size to avoid massive spikes
             let h = (file.size as f32).ln().max(0.0) * 2.0;
             heightmap[y * width + x] = h;
+
+            // Set color based on extension
+            colors[y * width + x] = get_color_for_extension(&file.extension);
+
             file_indices.insert(file.path.clone(), i);
-            if h > max_height {
-                max_height = h;
-            }
         }
 
         Self {
@@ -84,13 +93,30 @@ impl Terrain {
             height,
             heightmap,
             colors,
-            max_height,
             file_indices,
         }
     }
 
     pub fn get_coords(&self, path: &Path) -> Option<(usize, usize)> {
         self.file_indices.get(path).map(|&i| d2xy(self.width, i))
+    }
+}
+
+fn get_color_for_extension(ext: &str) -> Color {
+    match ext {
+        "rs" => Color::new(0.8, 0.4, 0.0, 1.0),       // Rust Orange
+        "py" => Color::new(0.2, 0.6, 0.8, 1.0),       // Python Blue
+        "js" | "ts" => Color::new(0.9, 0.9, 0.2, 1.0), // JS Yellow
+        "md" => Color::new(0.6, 0.6, 0.6, 1.0),       // Markdown Gray
+        "toml" => Color::new(0.4, 0.2, 0.1, 1.0),     // TOML Brown
+        "json" => Color::new(0.8, 0.8, 0.2, 1.0),     // JSON Yellow-ish
+        "html" => Color::new(0.9, 0.4, 0.2, 1.0),     // HTML Orange
+        "css" => Color::new(0.2, 0.4, 0.8, 1.0),      // CSS Blue
+        "c" | "h" => Color::new(0.4, 0.4, 0.4, 1.0),  // C Gray
+        "cpp" | "hpp" => Color::new(0.0, 0.3, 0.7, 1.0), // C++ Dark Blue
+        "sh" => Color::new(0.0, 0.8, 0.0, 1.0),       // Shell Green
+        "png" | "jpg" | "jpeg" => Color::new(0.8, 0.2, 0.8, 1.0), // Images Purple
+        _ => Color::new(0.8, 0.8, 0.8, 1.0),          // Default White/Gray
     }
 }
 
@@ -119,8 +145,23 @@ fn rot(n: usize, x: &mut usize, y: &mut usize, rx: usize, ry: usize) {
             *y = n - 1 - *y;
         }
         // Swap x and y
-        let t = *x;
-        *x = *y;
-        *y = t;
+        std::mem::swap(x, y);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_extension_colors() {
+        let rs = get_color_for_extension("rs");
+        assert!(rs.r > 0.7); // Orange-ish
+
+        let py = get_color_for_extension("py");
+        assert!(py.b > 0.7); // Blue-ish
+
+        let unknown = get_color_for_extension("unknown_xyz");
+        assert!(unknown.r > 0.7 && unknown.g > 0.7 && unknown.b > 0.7); // Light Gray/White
     }
 }
