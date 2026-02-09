@@ -11,6 +11,62 @@ pub fn exec_babel_op(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
+        OpCode::Learn => {
+            // Stack: [ ..., name_str, parser_junction ]
+            if vm.stack.len() >= 2 {
+                let parser_val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+
+                if let Value::Str(name) = name_val {
+                    // Validate parser structure lightly?
+                    // For now, assume any Value can be stored, validation happens on Antibody usage.
+                    vm.antibodies.insert(name.clone(), parser_val);
+                    vm.output.push(format!("LEARN: Stored antibody '{}'", name));
+                } else {
+                    vm.output.push("Error: Antibody name must be a string".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for learn".to_string());
+            }
+        }
+        OpCode::Antibody => {
+            // Stack: [ ..., name_str, input_str ]
+            if vm.stack.len() >= 2 {
+                let input_val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(name), Value::Str(input)) = (name_val, input_val) {
+                    if let Some(parser) = vm.antibodies.get(&name) {
+                        let mut trace = Vec::new();
+                        match run_parser(parser, &input, 0, &mut trace) {
+                            Ok((ast, consumed)) => {
+                                // Full match required? Usually yes for antibodies.
+                                if consumed == input.len() {
+                                    vm.stack.push(ast);
+                                    vm.output.push(format!("ANTIBODY '{}': Success", name));
+                                    // Optional: Push trace for visualization?
+                                    // vm.stack.push(Value::Str(trace.join("\n")));
+                                } else {
+                                    vm.stack.push(Value::Int(0)); // Fail
+                                    vm.output.push(format!("ANTIBODY '{}': Partial match ({}/{})", name, consumed, input.len()));
+                                }
+                            }
+                            Err(_) => {
+                                vm.stack.push(Value::Int(0)); // Fail
+                                vm.output.push(format!("ANTIBODY '{}': Failed", name));
+                            }
+                        }
+                    } else {
+                        vm.output.push(format!("ANTIBODY: Unknown antibody '{}'", name));
+                        vm.stack.push(Value::Int(0));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for antibody".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for antibody".to_string());
+            }
+        }
         OpCode::Grammar => {
             // Stack: [ ..., type_str, ...args ]
             if let Some(type_val) = vm.stack.pop() {
@@ -72,7 +128,8 @@ pub fn exec_babel_op(
                 let parser_val = vm.stack.pop().unwrap();
 
                 if let Value::Str(input_str) = input_val {
-                    match run_parser(&parser_val, &input_str) {
+                    let mut trace = Vec::new();
+                    match run_parser(&parser_val, &input_str, 0, &mut trace) {
                         Ok((ast, consumed)) => {
                             if consumed == input_str.len() {
                                 vm.stack.push(ast);
@@ -80,7 +137,7 @@ pub fn exec_babel_op(
                             } else {
                                 vm.output
                                     .push(format!("PARSE: Partial match ({} chars)", consumed));
-                                vm.stack.push(Value::Int(0)); // Failure indicator? Or partial AST? For now, failure.
+                                vm.stack.push(Value::Int(0)); // Failure indicator
                             }
                         }
                         Err(_) => {
@@ -163,12 +220,21 @@ pub fn exec_babel_op(
 
 /// Runs a parser on an input string.
 /// Returns Ok((AST, consumed_count)) or Err.
-pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
+/// Trace records steps.
+pub fn run_parser(parser: &Value, input: &str, depth: usize, trace: &mut Vec<String>) -> Result<(Value, usize), ()> {
+    if depth > 100 {
+        trace.push("Recursion limit exceeded".to_string());
+        return Err(());
+    }
+
     if let Value::Junction(JunctionType::Any, args) = parser {
         if args.is_empty() {
             return Err(());
         }
         if let Value::Str(type_str) = &args[0] {
+            let indent = "  ".repeat(depth);
+            trace.push(format!("{}Testing {} on '{}'", indent, type_str, input));
+
             match type_str.as_str() {
                 "Match" => {
                     if args.len() < 2 {
@@ -176,9 +242,11 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     }
                     if let Value::Str(pattern) = &args[1] {
                         if input.starts_with(pattern) {
+                            trace.push(format!("{}  -> Match success: '{}'", indent, pattern));
                             return Ok((Value::Str(pattern.clone()), pattern.len()));
                         }
                     }
+                    trace.push(format!("{}  -> Match failed", indent));
                     return Err(());
                 }
                 "Seq" => {
@@ -188,8 +256,8 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     let p1 = &args[1];
                     let p2 = &args[2];
 
-                    let (res1, consumed1) = run_parser(p1, input)?;
-                    let (res2, consumed2) = run_parser(p2, &input[consumed1..])?;
+                    let (res1, consumed1) = run_parser(p1, input, depth + 1, trace)?;
+                    let (res2, consumed2) = run_parser(p2, &input[consumed1..], depth + 1, trace)?;
 
                     Ok((
                         Value::Junction(JunctionType::All, vec![res1, res2]),
@@ -203,12 +271,14 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     let p1 = &args[1];
                     let p2 = &args[2];
 
-                    if let Ok(res) = run_parser(p1, input) {
+                    if let Ok(res) = run_parser(p1, input, depth + 1, trace) {
                         return Ok(res);
                     }
-                    if let Ok(res) = run_parser(p2, input) {
+                    trace.push(format!("{}  -> Alt 1 failed, trying 2", indent));
+                    if let Ok(res) = run_parser(p2, input, depth + 1, trace) {
                         return Ok(res);
                     }
+                    trace.push(format!("{}  -> Alt 2 failed", indent));
                     Err(())
                 }
                 "Many" => {
@@ -219,7 +289,7 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     let mut results = Vec::new();
                     let mut total_consumed = 0;
 
-                    while let Ok((res, consumed)) = run_parser(p, &input[total_consumed..]) {
+                    while let Ok((res, consumed)) = run_parser(p, &input[total_consumed..], depth + 1, trace) {
                         if consumed == 0 {
                             break;
                         } // Prevent infinite loops on empty matches
@@ -235,9 +305,10 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     }
                     let p = &args[1];
 
-                    if let Ok(res) = run_parser(p, input) {
+                    if let Ok(res) = run_parser(p, input, depth + 1, trace) {
                         Ok(res)
                     } else {
+                        trace.push(format!("{}  -> Opt failed, returning empty", indent));
                         Ok((Value::Junction(JunctionType::All, Vec::new()), 0))
                     }
                 }

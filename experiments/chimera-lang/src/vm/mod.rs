@@ -490,6 +490,8 @@ pub struct ChimeraVM {
     pub garden: nova_garden::GardenState,
     #[cfg(feature = "nova")]
     pub fate: nova_arcana::FateState,
+    #[cfg(feature = "nova")]
+    pub antibodies: HashMap<String, Value>,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -733,6 +735,8 @@ impl ChimeraVM {
             garden: nova_garden::GardenState::new(),
             #[cfg(feature = "nova")]
             fate: nova_arcana::FateState::default(),
+            #[cfg(feature = "nova")]
+            antibodies: HashMap::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -2013,7 +2017,9 @@ impl ChimeraVM {
             | OpCode::ParserSeq
             | OpCode::ParserAlt
             | OpCode::ParserMany
-            | OpCode::ParserOpt => {
+            | OpCode::ParserOpt
+            | OpCode::Learn
+            | OpCode::Antibody => {
                 babel::exec_babel_op(self, op, args);
                 None
             }

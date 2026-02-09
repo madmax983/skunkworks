@@ -95,6 +95,8 @@ pub mod prelude {
 
 #[cfg(all(test, feature = "nova"))]
 mod babel_test;
+#[cfg(all(test, feature = "nova"))]
+mod babel_tower_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod biophysics_test;
 #[cfg(all(test, feature = "nova"))]

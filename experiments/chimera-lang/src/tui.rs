@@ -84,6 +84,8 @@ pub(crate) enum ViewMode {
     Garden,
     #[cfg(feature = "nova")]
     Orca,
+    #[cfg(feature = "nova")]
+    Tower,
 }
 
 enum InputMode {
@@ -463,6 +465,12 @@ where
                 return;
             }
 
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Tower = app_state.view_mode {
+                                render_tower(f, vm, app_state);
+                                return;
+                            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -748,6 +756,12 @@ where
                                     let (x, y) = app_state.grid_cursor;
                                     vm.grid[y][x] = val;
                                     app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Tower => {
+                                    // Editing disabled for now, or maybe edit grid?
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1041,7 +1055,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Garden => ViewMode::Orca,
                             #[cfg(feature = "nova")]
-                            ViewMode::Orca => ViewMode::Heatmap,
+                            ViewMode::Orca => ViewMode::Tower,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Tower => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1207,6 +1223,8 @@ where
                     KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('L') => app_state.view_mode = ViewMode::Tower,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1452,6 +1470,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Orca => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Tower => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -1736,6 +1760,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Tower => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1850,6 +1880,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Tower => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1958,6 +1994,12 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Tower => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -2043,6 +2085,11 @@ where
                                     crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
                                     _ => app_state.input_buffer = String::new(),
                                 }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Tower => {
+                                // Editing disabled for now, or maybe edit grid?
+                                app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Orca => {
@@ -2926,6 +2973,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
         #[cfg(feature = "nova")]
         ViewMode::Orca => "ORCA (SIGNAL GRID)",
+        #[cfg(feature = "nova")]
+        ViewMode::Tower => "THE TOWER OF BABEL (IMMUNE SYSTEM)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -4752,6 +4801,89 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Circuit Analyzer"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_tower(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(40), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Left: Antibodies
+    let mut antibodies_items = Vec::new();
+    if vm.antibodies.is_empty() {
+        antibodies_items.push(ListItem::new("No known antibodies. Use learn(name, parser)."));
+    } else {
+        for (name, _) in &vm.antibodies {
+            antibodies_items.push(ListItem::new(name.clone()).style(Style::default().fg(Color::Cyan)));
+        }
+    }
+    let ab_list = List::new(antibodies_items).block(
+        Block::default().borders(Borders::ALL).title("Antibody Library")
+    );
+    f.render_widget(ab_list, chunks[0]);
+
+    // Center: Battlefield (Grid)
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut ch = "·".to_string();
+            let mut style = Style::default().fg(Color::DarkGray);
+
+            if let Some(v_state) = &vm.viral_grid[y][x] {
+                if v_state.virus_id < vm.virus_library.len() {
+                    let virus = &vm.virus_library[v_state.virus_id];
+                    let (r, g, b) = virus.color;
+                    style = style.fg(Color::Rgb(r, g, b));
+                    ch = "V".to_string();
+                    if v_state.infection_level > 50 {
+                        style = style.add_modifier(Modifier::BOLD);
+                    }
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.bg(Color::White).fg(Color::Black);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title("Viral Battlefield")
+    );
+    f.render_widget(grid_widget, chunks[1]);
+
+    // Right: Virus Info
+    let (cx, cy) = app_state.grid_cursor;
+    let mut info_text = Vec::new();
+    if let Some(v_state) = &vm.viral_grid[cy][cx] {
+        if v_state.virus_id < vm.virus_library.len() {
+            let virus = &vm.virus_library[v_state.virus_id];
+            info_text.push(Line::from(Span::styled(format!("Virus: {}", virus.name), Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))));
+            info_text.push(Line::from(format!("Pattern: {}", virus.pattern)));
+            info_text.push(Line::from(format!("Mutation Rate: {}%", virus.mutation_rate)));
+            info_text.push(Line::from(format!("Infection Level: {}", v_state.infection_level)));
+        }
+    } else {
+        info_text.push(Line::from("No virus detected at cursor."));
+    }
+
+    info_text.push(Line::from(""));
+    info_text.push(Line::from("Mechanics:"));
+    info_text.push(Line::from("  - inspect cursor to see Pattern"));
+    info_text.push(Line::from("  - build parser matching Pattern"));
+    info_text.push(Line::from("  - learn(name, parser)"));
+    info_text.push(Line::from("  - sanitize(parser, radius) to cure"));
+
+    let info_widget = Paragraph::new(info_text).block(
+        Block::default().borders(Borders::ALL).title("Threat Analysis")
+    );
+    f.render_widget(info_widget, chunks[2]);
 }
 
 #[cfg(feature = "nova")]

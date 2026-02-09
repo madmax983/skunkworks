@@ -1677,6 +1677,16 @@ pub enum OpCode {
     Pangram,
 
     // Babel Features (Metalinguistics - Nova)
+    /// **[Babel]** Stores a parser in the Antibody Library.
+    ///
+    /// **Stack:** `[ ..., name_str, parser_junction ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Learn,
+    /// **[Babel]** Executes a stored antibody against input.
+    ///
+    /// **Stack:** `[ ..., name_str, input_str ] -> [ ..., result_ast ]`
+    #[cfg(feature = "nova")]
+    Antibody,
     /// **[Babel]** Constructs a parser object on the stack.
     ///
     /// **Stack:** `[ ..., type_str, ...args ] -> [ ..., parser_junction ]`

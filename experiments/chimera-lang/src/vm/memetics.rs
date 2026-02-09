@@ -339,17 +339,63 @@ pub fn exec_memetics_op(
             None
         }
         OpCode::Sanitize => {
-            // Stack: [ ..., radius ]
+            // Stack: [ ..., (optional: parser), radius ]
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(r) = val {
                     let (cy, cx) = vm.context_loc;
                     let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                    let count = coords.len();
-                    for (tx, ty) in coords {
-                        vm.viral_grid[ty][tx] = None;
+
+                    // Check if there is a parser on the stack
+                    let parser = if let Some(p) = vm.stack.last() {
+                        if let Value::Junction(crate::ast::JunctionType::Any, args) = p {
+                            if !args.is_empty() {
+                                Some(p.clone())
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    };
+
+                    if let Some(parser_val) = parser {
+                        // Targeted Sanitize (Immune Response)
+                        vm.stack.pop(); // Remove parser
+                        let mut cured = 0;
+                        let mut energy_gain = 0;
+
+                        for (tx, ty) in coords {
+                            if let Some(v_state) = &vm.viral_grid[ty][tx] {
+                                if v_state.virus_id < vm.virus_library.len() {
+                                    let virus = &vm.virus_library[v_state.virus_id];
+                                    // Virus content is the pattern itself for now
+                                    let content = &virus.pattern;
+
+                                    let mut trace = Vec::new();
+                                    if let Ok((_, consumed)) = super::babel::run_parser(&parser_val, content, 0, &mut trace) {
+                                        if consumed == content.len() {
+                                            vm.viral_grid[ty][tx] = None;
+                                            cured += 1;
+                                            energy_gain += 10;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        vm.energy = vm.energy.saturating_add(energy_gain);
+                        vm.output.push(format!("SANITIZE: Cured {} infections with antibody", cured));
+                    } else {
+                        // Nuclear option (Old Sanitize)
+                        let count = coords.len();
+                        for (tx, ty) in coords {
+                            vm.viral_grid[ty][tx] = None;
+                        }
+                        vm.energy = vm.energy.saturating_sub(count as i64);
+                        vm.output.push(format!("SANITIZE: Nuke cleared {} cells", count));
                     }
-                    vm.energy = vm.energy.saturating_sub(count as i64);
-                    vm.output.push(format!("SANITIZE: Cleared {} cells", count));
                 } else {
                     vm.output
                         .push("Error: Type mismatch for sanitize".to_string());
