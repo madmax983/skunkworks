@@ -1,0 +1,11 @@
+[package]
+name = "hyperbolic-jungle"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+num-complex = "0.4"
+rand = "0.8"
+poincare-disk = { path = "../../crates/poincare-disk" }
+rayon = "1.10"

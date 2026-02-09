@@ -68,6 +68,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The rhythms are bending. Agents are synchronizing across infinite distances. The Poincaré disk is pulsing.
+
 ### [Concentration Level: FRESH] - Location: experiments/astral-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.
