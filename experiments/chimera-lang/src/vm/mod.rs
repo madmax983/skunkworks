@@ -102,6 +102,11 @@ mod nova_bestiary_test;
 #[cfg(feature = "nova")]
 pub mod nova_fluid;
 #[cfg(feature = "nova")]
+pub mod nova_flux;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_flux_test;
+#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
@@ -1263,6 +1268,11 @@ impl ChimeraVM {
                     organelle.halted = true;
                 }
             }
+            nova::OrganelleType::Wisp => {
+                if !nova_flux::tick_wisp(self, organelle) {
+                    organelle.halted = true;
+                }
+            }
             nova::OrganelleType::Choir => {
                 let song_len = organelle.traits.len();
                 if song_len > 0 {
@@ -1671,6 +1681,7 @@ impl ChimeraVM {
 
             nova_logistics::process_logistics(self);
             self.process_environment();
+            nova_flux::process_flux(self);
             nova_metamorphism::process_metamorphism(self);
             nova_signals::process_signals(self);
             nova_sigil::process_passive_sigils(self);

@@ -3500,6 +3500,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
                         crate::vm::nova::OrganelleType::Seed => Color::Green,
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
+                        crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -3511,6 +3512,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Alchemist => "A",
                         crate::vm::nova::OrganelleType::Seed => "S",
                         crate::vm::nova::OrganelleType::Choir => "♫",
+                        crate::vm::nova::OrganelleType::Wisp => "*",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
@@ -5547,9 +5549,12 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Overlay Void Organelles
             let mut is_void = false;
+            let mut is_wisp = false;
             if let Some(org) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
                 if org.kind == crate::vm::nova::OrganelleType::Void {
                     is_void = true;
+                } else if org.kind == crate::vm::nova::OrganelleType::Wisp {
+                    is_wisp = true;
                 }
             }
 
@@ -5559,6 +5564,11 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     .fg(Color::Black)
                     .add_modifier(Modifier::BOLD);
                 line_spans.push(Span::styled("Ø", style));
+            } else if is_wisp {
+                style = style
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+                line_spans.push(Span::styled("*", style));
             } else {
                 // If cursor
                 if app_state.grid_cursor == (x, y) {
