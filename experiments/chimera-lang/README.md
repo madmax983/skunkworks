@@ -201,7 +201,7 @@ You can run legacy DNA files (`.dna`) or new ChimeraScript files (`.chs`).
 
 ```bash
 # Basic usage with standard DNA files
-cargo run --release -- --input sample.dna
+cargo run --release --features nova -- --input sample.dna
 
 # Running complex examples like Genesis (requires Nova features)
 cargo run --release --features nova -- --input examples/genesis.chs
