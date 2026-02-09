@@ -1,4 +1,4 @@
-//! # Event
+//! # Ghost Event System
 //!
 //! A system for recording, serializing, and replaying terminal input events.
 //!
@@ -442,24 +442,6 @@ pub struct RecordedEvent {
 /// Records a sequence of input events with timestamps.
 ///
 /// Use this to capture a user's session.
-///
-/// # Examples
-///
-/// ```
-/// use tui_shared::event::GhostRecorder;
-/// use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
-///
-/// let mut recorder = GhostRecorder::new();
-/// recorder.start();
-///
-/// // ... user presses 'a' ...
-/// let event = Event::Key(KeyEvent::new(KeyCode::Char('a'), KeyModifiers::NONE));
-/// recorder.record(event);
-///
-/// // ... later ...
-/// let json = recorder.to_json().unwrap();
-/// assert!(json.contains("Char"));
-/// ```
 #[derive(Default)]
 pub struct GhostRecorder {
     start_time: Option<Instant>,
@@ -504,32 +486,6 @@ impl GhostRecorder {
 /// Replays a sequence of recorded events with correct timing.
 ///
 /// Use this to feed recorded inputs back into an application.
-///
-/// # Examples
-///
-/// ```
-/// use tui_shared::event::{GhostRecorder, GhostReplayer};
-/// use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
-///
-/// // Assume we have a JSON string from a previous recording
-/// let mut recorder = GhostRecorder::new();
-/// recorder.start();
-/// recorder.record(Event::Key(KeyEvent::new(KeyCode::Char('a'), KeyModifiers::NONE)));
-/// let json = recorder.to_json().unwrap();
-///
-/// // Create a replayer
-/// let mut replayer = GhostReplayer::from_json(&json).unwrap();
-/// replayer.start();
-///
-/// // In your game loop:
-/// if let Some(event) = replayer.poll() {
-///     // Handle the replayed event
-///     match event {
-///         Event::Key(k) => println!("Replayed key: {:?}", k),
-///         _ => {}
-///     }
-/// }
-/// ```
 pub struct GhostReplayer {
     start_time: Option<Instant>,
     events: Vec<RecordedEvent>,

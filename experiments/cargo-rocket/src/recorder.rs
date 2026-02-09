@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use tui_shared::event::RecordedEvent;
+use crate::ghost::RecordedEvent;
 
 #[derive(Serialize, Deserialize)]
 pub struct FlightData {
@@ -27,7 +27,7 @@ impl FlightData {
 mod tests {
     use super::*;
     use std::time::Duration;
-    use tui_shared::event::{GhostEvent, GhostKeyCode, GhostKeyEvent, GhostKeyEventKind};
+    use crate::ghost::{GhostEvent, GhostKeyCode, GhostKeyEvent, GhostKeyEventKind};
 
     #[test]
     fn test_flight_data_serialization() {

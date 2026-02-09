@@ -57,9 +57,6 @@ use crossterm::{
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io::{self, Stdout};
 
-#[cfg(feature = "ghost")]
-pub mod event;
-
 /// A RAII wrapper for the Ratatui Terminal.
 ///
 /// This struct handles the initialization and cleanup of the terminal environment.
