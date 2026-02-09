@@ -627,7 +627,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Linguistic divergence visualized on the Poincaré Disk. Words are particle swarms that drift apart in hyperbolic space.
 - **Novel trait**: Linguistic drift in infinite space. The phoneme map is hyperbolic.
 - **Status**: experiments/hyperbolic-lexicon
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 ### chaotic-conservatory
 - **Parents**: experiments/recursive-conservatory + experiments/system-attractor
@@ -641,4 +641,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Feedback loop between a biological retina and a chaotic attractor.
 - **Novel trait**: Observer Effect Feedback. The retina's excitement (spikes) drives the chaos (Rayleigh number) of the system it watches.
 - **Status**: experiments/retinal-chaos
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### quantum-lexicon
+- **Parents**: experiments/retinal-chaos + experiments/hyperbolic-lexicon
+- **Concept**: A hyperbolic world of words where the act of looking at them changes or stabilizes them (Quantum Zeno Effect applied to Linguistics).
+- **Novel trait**: Observation-Dependent Reality. The retina watches the screen, and where it sees activity (spikes), the words freeze. Unobserved words drift and mutate phonemes.
+- **Status**: experiments/quantum-lexicon
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.

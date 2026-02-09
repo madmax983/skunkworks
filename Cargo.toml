@@ -133,6 +133,7 @@ members = [
     "experiments/lichen-mesh",
     "experiments/hyperbolic-lichen",
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
+    "experiments/quantum-lexicon",
     "experiments/chaotic-conservatory", "experiments/retinal-glitch", "experiments/retinal-chaos", "experiments/syntax-serum", "experiments/ik-codewalker", "experiments/event-horizon",
 ]
 resolver = "2"
