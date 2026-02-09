@@ -657,3 +657,9 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Hyperbolic Transport. Agents follow geodesics (circles on screen), but diffusion is Euclidean.
 - **Status**: experiments/hyperbolic-mold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### quipu-net
+- **Parents**: experiments/quipu-cradle + experiments/hive-mind-dependencies
+- **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings.
+- **Novel trait**: Physical Serialization. Bandwidth is limited by the speed of tying knots.
+- **Proposed by**: Genesis (The Archaeologist)

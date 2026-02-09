@@ -1,4 +1,8 @@
-## 🧫 Current Pheromone Map
+## Current Pheromone Map
+
+### [Concentration Level: FRESH] - Location: experiments/quipu-cradle
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The knots are tied. Data has become physical. Serde implementation creates Incan Khipus from Rust structs. The visualization sways in the wind.
 
 ### [Concentration Level: FRESH] - Location: experiments/hologram-text
 - **Scent Origin:** Nova 🌟 (The Physicist)
