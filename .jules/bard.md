@@ -20,3 +20,7 @@
 ## 2026-02-08 - Izhikevich Random Generation
 **Confusion:** The `Izhikevich::random` method seemed to return arbitrary parameters, leading to unpredictable simulation outcomes.
 **Clarification:** It uses hardcoded probabilities (60% Regular Spiking, 20% Fast Spiking, 20% Chattering) to mimic cortical distribution. Documenting these probabilities is critical for reproducibility.
+
+## 2026-05-22 - Non-Commutative Addition
+**Confusion:** Users (and Bard) were confused why `mobius_add(ant, step)` didn't result in a point `|step|` away from `ant`.
+**Clarification:** `mobius_add(z, a)` implements $a \oplus z$ (left translation by $a$), which is an isometry. To move "relative to `ant`" by `step`, one must calculate $ant \oplus step$, which corresponds to `mobius_add(step, ant)`. Order matters in non-Euclidean space!
