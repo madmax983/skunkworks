@@ -664,6 +664,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI visualization of git history as an Incan Quipu. Cords are time, knots are commits.
 - **Novel trait**: Physical History. The commit log sways in the wind.
 - **Status**: experiments/git-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Confirmed functionality.
+
+### rhythmic-jungle
+- **Parents**: experiments/protocol-jungle + experiments/silicon-samba
+- **Concept**: Agents in a 2D space negotiate rhythmic patterns (Euclidean rhythms) to find consensus.
+- **Novel trait**: Rhythmic Consensus. The jungle settles into a shared groove.
+- **Status**: experiments/rhythmic-jungle
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
 
 ### quipu-net

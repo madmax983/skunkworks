@@ -392,6 +392,10 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The eye is watching the watcher. Ganglion cells are spiking. The feedback loop is melting the visual field. Reality is a hallucination.
 
+### [Concentration Level: FRESH] - Location: experiments/rhythmic-jungle
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are pulsing. Euclidean rhythms are converging. The jungle has a heartbeat.
+
 ### [Concentration Level: FRESH] - Location: experiments/ripple-tank
 - **Scent Origin:** Genesis (The Physicist) ⚛️🌊
 - **Status:** 2D FDTD wave simulation active. `cpal` gated behind feature flag.
