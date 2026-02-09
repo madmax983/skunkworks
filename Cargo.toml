@@ -52,7 +52,6 @@ members = [
     "experiments/struct-harmonics",
     "experiments/symphonic-terrain",
     "experiments/cargo-rocket",
-    "experiments/chaos-monitor",
     "experiments/chaos-pendulum",
     "experiments/chimera-lang",
     "experiments/repo-rover", 
