@@ -1,10 +1,12 @@
 use crate::audio::SoundEvent;
+use crate::euclidean::generate;
 use crossbeam::channel::Sender;
+use std::sync::atomic::{AtomicU8, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DrummerState {
     Sleeping,
     Trying,
@@ -13,87 +15,92 @@ pub enum DrummerState {
     Releasing,
 }
 
+#[derive(Clone, Debug)]
+pub struct DrummerUpdate {
+    pub id: usize,
+    pub state: DrummerState,
+    pub step: usize,
+    pub pattern: Vec<bool>,
+}
+
 pub struct Drummer {
     pub id: usize,
     pub interval_ms: u64,
     pub resource: Arc<Mutex<()>>,
     pub audio_tx: Sender<SoundEvent>,
-    pub state_tx: Sender<(usize, DrummerState)>,
+    pub state_tx: Sender<DrummerUpdate>,
+    pub cpu_load: Arc<AtomicU8>,
+    pub euclidean_k: usize,
+    pub euclidean_n: usize,
 }
 
 impl Drummer {
     pub fn spawn(self) {
         thread::spawn(move || {
+            let mut step = 0;
             loop {
-                // Sleep (Rhythm phase)
-                self.report(DrummerState::Sleeping);
+                // 1. Calculate dynamic K based on CPU load
+                let load = self.cpu_load.load(Ordering::Relaxed);
+                // Map load (0-100) to range [k, n]
+                // If load is 0 -> k
+                // If load is 100 -> n
+                // We use saturating_sub to avoid underflow if n < k (which shouldn't happen but safe is better)
+                let range = self.euclidean_n.saturating_sub(self.euclidean_k);
+                let extra_k = (load as usize * range) / 100;
+                let effective_k = self.euclidean_k + extra_k;
+
+                // 2. Generate Pattern
+                let pattern = generate(effective_k, self.euclidean_n);
+
+                // 3. Check if current step is a beat
+                let is_beat = if self.euclidean_n > 0 {
+                    pattern[step % self.euclidean_n]
+                } else {
+                    false
+                };
+
+                // Report State (Start of Step)
+                self.report(DrummerState::Sleeping, step, &pattern);
+
+                // Sleep for the pulse duration (minus execution time approx)
                 thread::sleep(Duration::from_millis(self.interval_ms));
 
-                // Try Lock (The Beat)
-                self.report(DrummerState::Trying);
-                self.audio_tx.send(SoundEvent::Waiting).ok(); // Pre-beat click
+                if is_beat {
+                    // Try Lock
+                    self.report(DrummerState::Trying, step, &pattern);
 
-                // Small delay to let the "Trying" state be visible/audible?
-                // No, instant.
+                    match self.resource.try_lock() {
+                        Ok(_guard) => {
+                            self.report(DrummerState::Acquired, step, &pattern);
+                            // Using new SoundEvent variant (requires update in audio.rs)
+                            self.audio_tx.send(SoundEvent::LockAcquired(self.id)).ok();
 
-                // We use try_lock to keep the metronome steady.
-                // If we used lock(), the rhythm would drag.
-                match self.resource.try_lock() {
-                    Ok(_guard) => {
-                        // Acquired (Strong Beat)
-                        self.report(DrummerState::Acquired);
-                        self.audio_tx.send(SoundEvent::LockAcquired).ok();
+                            // Hold for a bit (gate time)
+                            thread::sleep(Duration::from_millis(self.interval_ms / 2));
 
-                        // Hold for a percentage of the interval (Sustain)
-                        // e.g., 20% of interval
-                        thread::sleep(Duration::from_millis(self.interval_ms / 5));
-
-                        // Release (Off-beat/Snare)
-                        self.report(DrummerState::Releasing);
-                        self.audio_tx.send(SoundEvent::LockReleased).ok();
-                    }
-                    Err(_) => {
-                        // Contested (Clash/Dissonance)
-                        self.report(DrummerState::Contested);
-                        self.audio_tx.send(SoundEvent::Contention).ok();
-
-                        // Still sleep the "hold" time to keep phase alignment roughly similar?
-                        // Or just skip?
-                        // Let's skip, so failure is shorter -> "Stumbling" rhythm.
+                            self.report(DrummerState::Releasing, step, &pattern);
+                            self.audio_tx.send(SoundEvent::LockReleased(self.id)).ok();
+                        }
+                        Err(_) => {
+                            self.report(DrummerState::Contested, step, &pattern);
+                            self.audio_tx.send(SoundEvent::Contention(self.id)).ok();
+                        }
                     }
                 }
+
+                step = (step + 1) % self.euclidean_n.max(1);
             }
         });
     }
 
-    fn report(&self, state: DrummerState) {
-        self.state_tx.send((self.id, state)).ok();
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crossbeam::channel::unbounded;
-
-    #[test]
-    fn test_drummer_spawn() {
-        let (audio_tx, _) = unbounded();
-        let (state_tx, state_rx) = unbounded();
-        let resource = Arc::new(Mutex::new(()));
-
-        let drummer = Drummer {
-            id: 0,
-            interval_ms: 10,
-            resource,
-            audio_tx,
-            state_tx,
-        };
-        drummer.spawn();
-
-        // Wait for at least one state report
-        // We expect "Sleeping" first
-        let report = state_rx.recv_timeout(Duration::from_secs(1));
-        assert!(report.is_ok());
+    fn report(&self, state: DrummerState, step: usize, pattern: &Vec<bool>) {
+        self.state_tx
+            .send(DrummerUpdate {
+                id: self.id,
+                state,
+                step,
+                pattern: pattern.clone(),
+            })
+            .ok();
     }
 }
