@@ -858,6 +858,39 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    // Plasmid Features (Higher Order Genetics)
+    /// **[Nova]** Extracts a strand into a Plasmid value on the stack.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ..., plasmid ]`
+    #[cfg(feature = "nova")]
+    Extract,
+    /// **[Nova]** Injects a Plasmid into the genome as a new strand.
+    ///
+    /// **Stack:** `[ ..., plasmid ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Inject,
+    /// **[Nova]** Creates a Plasmid from a slice of the current strand.
+    ///
+    /// **Stack:** `[ ..., len, start_idx ] -> [ ..., plasmid ]`
+    #[cfg(feature = "nova")]
+    Sample,
+    /// **[Nova]** cuts a slice of the current strand into a Plasmid.
+    ///
+    /// **Stack:** `[ ..., len, start_idx ] -> [ ..., plasmid ]`
+    /// **Effect:** Removes genes from current strand.
+    #[cfg(feature = "nova")]
+    Cut,
+    /// **[Nova]** Pastes a Plasmid into the current strand.
+    ///
+    /// **Stack:** `[ ..., plasmid, insert_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Paste,
+    /// **[Nova]** Executes a Plasmid immediately (Enzymatic Action).
+    ///
+    /// **Stack:** `[ ..., plasmid ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Enzyme,
+
     // Chemistry Features (Nova)
     /// **[Nova]** Mixes neighbors into a solution in the current cell.
     ///

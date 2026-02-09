@@ -94,6 +94,7 @@ fn main() -> Result<()> {
                 chimera_lang::vm::Value::Str(_) => "String",
                 chimera_lang::vm::Value::Junction(_, _) => "Junction",
                 chimera_lang::vm::Value::Superposition(_) => "Superposition",
+                chimera_lang::vm::Value::Plasmid(_) => "Plasmid",
             };
 
             let val_str = format!("{}", val);

@@ -3633,6 +3633,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
 
             #[allow(unused_mut)]
             let (mut char_rep, mut style) = match val {
+                crate::vm::Value::Plasmid(_) => ("⚯".to_string(), Style::default().fg(Color::Green).add_modifier(Modifier::BOLD)),
                 crate::vm::Value::Int(0) => (".".to_string(), Style::default().fg(Color::DarkGray)),
                 crate::vm::Value::Int(n) => {
                     #[cfg(feature = "silicon")]

@@ -1447,6 +1447,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Drift => super::nova_genetics::exec_drift(vm),
         OpCode::Poly => super::nova_genetics::exec_poly(vm, args),
         OpCode::Metamorphosis => super::nova_genetics::exec_metamorphosis(vm),
+        OpCode::Extract => super::nova_genetics::exec_extract(vm),
+        OpCode::Inject => super::nova_genetics::exec_inject(vm),
+        OpCode::Sample => super::nova_genetics::exec_sample(vm),
+        OpCode::Cut => super::nova_genetics::exec_cut(vm),
+        OpCode::Paste => super::nova_genetics::exec_paste(vm),
+        OpCode::Enzyme => super::nova_genetics::exec_enzyme(vm),
         OpCode::Piet => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(steps) = val {

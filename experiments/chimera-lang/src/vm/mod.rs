@@ -267,6 +267,7 @@ pub enum Value {
     Str(String),
     Junction(JunctionType, Vec<Value>),
     Superposition(Vec<(Value, f64)>),
+    Plasmid(Vec<crate::ast::Gene>),
 }
 
 impl std::fmt::Display for Value {
@@ -298,6 +299,9 @@ impl std::fmt::Display for Value {
                     write!(f, "{}:{:.2}", v, p)?;
                 }
                 write!(f, ")")
+            }
+            Value::Plasmid(genes) => {
+                write!(f, "P<{} genes>", genes.len())
             }
         }
     }
@@ -1369,6 +1373,7 @@ impl ChimeraVM {
             Value::Int(n) => self.stack.push(Value::Int(n)),
             Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
             Value::Superposition(s) => self.stack.push(Value::Superposition(s)),
+            Value::Plasmid(p) => self.stack.push(Value::Plasmid(p)),
             Value::Str(s) => match s.as_str() {
                 ">" => organelle.direction = (0, 1),
                 "<" => organelle.direction = (0, -1),
@@ -2263,6 +2268,12 @@ impl ChimeraVM {
             | OpCode::Glitch
             | OpCode::Scramble
             | OpCode::Metamorphosis
+            | OpCode::Extract
+            | OpCode::Inject
+            | OpCode::Sample
+            | OpCode::Cut
+            | OpCode::Paste
+            | OpCode::Enzyme
             | OpCode::Pigment
             | OpCode::Glyph
             | OpCode::SensePigment
@@ -2739,6 +2750,7 @@ impl ChimeraVM {
                     }
                     Some(Value::Superposition(res))
                 }
+                (Value::Plasmid(_), _) | (_, Value::Plasmid(_)) => None,
                 _ => None,
             }
         }
@@ -2918,6 +2930,7 @@ impl ChimeraVM {
                                 Value::Superposition(states) => {
                                     states.iter().any(|(v, _)| check_zero(v))
                                 }
+                                Value::Plasmid(_) => false,
                                 _ => false,
                             }
                         }
@@ -3139,6 +3152,9 @@ impl ChimeraVM {
                                 self.output
                                     .push("Error: Virus cannot execute superposition".to_string());
                             }
+                            Value::Plasmid(_) => {
+                                self.output.push("Error: Virus cannot execute plasmid".to_string());
+                            }
                         }
                     }
                 } else {
@@ -3175,6 +3191,9 @@ impl ChimeraVM {
                                 }
                             }
                             self.energy = self.energy.saturating_add(total as i64);
+                        }
+                        Value::Plasmid(genes) => {
+                            self.energy = self.energy.saturating_add((genes.len() * 5) as i64);
                         }
                     }
                 } else {

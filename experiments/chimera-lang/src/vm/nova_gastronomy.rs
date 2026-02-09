@@ -101,6 +101,9 @@ fn exec_savor(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 // Analyze ingredients
                 for item in ingredients {
                     match item {
+                        Value::Plasmid(genes) => {
+                            energy_gain += (genes.len() * 10) as i64;
+                        }
                         Value::Int(n) => {
                             energy_gain += n;
                         }

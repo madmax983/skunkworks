@@ -30,6 +30,7 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
             Some(Nucleotide::Junction(*t, nuc_vals))
         }
         Value::Superposition(_) => None, // Cannot compile superposition to static AST
+        Value::Plasmid(_) => None,
     }
 }
 
@@ -73,7 +74,7 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     });
                     x += 1;
                 }
-                Value::Superposition(_) => {
+                Value::Superposition(_) | Value::Plasmid(_) => {
                     x += 1; // Skip
                 }
                 Value::Str(s) => {
@@ -646,7 +647,7 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                 });
                                 k += 1;
                             }
-                            Value::Superposition(_) => {
+                            Value::Superposition(_) | Value::Plasmid(_) => {
                                 k += 1; // Skip
                             }
                             Value::Str(s) => {
@@ -1365,6 +1366,208 @@ pub fn exec_decompile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     } else {
         vm.output
             .push("Error: Stack underflow for decompile".to_string());
+    }
+    None
+}
+
+pub fn exec_extract(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(idx) = val {
+            let s_idx = idx as usize;
+            if s_idx < vm.dna.helix.strands.len() {
+                let strand = &vm.dna.helix.strands[s_idx];
+                vm.stack.push(Value::Plasmid(strand.genes.clone()));
+                vm.energy = vm.energy.saturating_sub(10);
+                vm.output.push(format!("EXTRACT: Extracted strand {}", s_idx));
+            } else {
+                vm.output.push("Error: Strand index out of bounds for extract".to_string());
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for extract".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for extract".to_string());
+    }
+    None
+}
+
+pub fn exec_inject(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Plasmid(genes) = val {
+            if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                vm.output.push("Error: Strand limit exceeded for inject".to_string());
+                return None;
+            }
+            vm.dna.helix.strands.push(crate::ast::Strand { genes });
+            vm.telomeres.push(50);
+            #[cfg(feature = "cortex")]
+            {
+                vm.activation_levels.push(0);
+                vm.synapse_map.push(Vec::new());
+            }
+            let new_idx = vm.dna.helix.strands.len() - 1;
+            vm.cladistics.register_strand(new_idx, Some(vm.ip.0), vm.tick_counter, "Inject".to_string());
+            vm.stack.push(Value::Int(new_idx as i64));
+            vm.energy = vm.energy.saturating_sub(25);
+            vm.output.push(format!("INJECT: Injected plasmid as strand {}", new_idx));
+        } else {
+            vm.output.push("Error: Type mismatch for inject (requires Plasmid)".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for inject".to_string());
+    }
+    None
+}
+
+pub fn exec_enzyme(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Plasmid(genes) = val {
+            if vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
+                vm.output.push("Error: Recursion limit exceeded in enzyme".to_string());
+                return None;
+            }
+            vm.recursion_depth += 1;
+
+            for gene in genes {
+                let result = vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                if let Some(target) = result {
+                    vm.ip = target;
+                    // Jump occurred, break execution of plasmid
+                    break;
+                }
+            }
+
+            vm.recursion_depth -= 1;
+            vm.energy = vm.energy.saturating_sub(5);
+            vm.output.push("ENZYME: Catalyzed plasmid".to_string());
+        } else {
+            vm.output.push("Error: Type mismatch for enzyme (requires Plasmid)".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for enzyme".to_string());
+    }
+    None
+}
+
+pub fn exec_sample(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let start_val = vm.stack.pop().unwrap();
+        let len_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(len), Value::Int(start)) = (len_val, start_val) {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                let strand = &vm.dna.helix.strands[s_idx];
+                let genes_len = strand.genes.len();
+                let start_idx = start as usize;
+                let length = len as usize;
+
+                if start_idx < genes_len {
+                    let end_idx = (start_idx + length).min(genes_len);
+                    let slice = strand.genes[start_idx..end_idx].to_vec();
+                    vm.stack.push(Value::Plasmid(slice));
+                    vm.energy = vm.energy.saturating_sub(5);
+                    vm.output.push(format!("SAMPLE: Sampled {} genes from {}", end_idx - start_idx, s_idx));
+                } else {
+                    vm.output.push("SAMPLE: Start index out of bounds".to_string());
+                }
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for sample".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for sample".to_string());
+    }
+    None
+}
+
+pub fn exec_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let start_val = vm.stack.pop().unwrap();
+        let len_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(len), Value::Int(start)) = (len_val, start_val) {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                let genes_len = vm.dna.helix.strands[s_idx].genes.len();
+                let start_idx = start as usize;
+                let length = len as usize;
+
+                if start_idx < genes_len {
+                    let end_idx = (start_idx + length).min(genes_len);
+
+                    // Remove range
+                    let drain: Vec<_> = vm.dna.helix.strands[s_idx].genes.drain(start_idx..end_idx).collect();
+                    let count = drain.len();
+
+                    // Adjust IP if cut was before or at IP
+                    if vm.ip.1 >= start_idx {
+                        if vm.ip.1 < end_idx {
+                            // IP was inside the cut region
+                            if start_idx > 0 {
+                                vm.ip.1 = start_idx - 1;
+                            } else {
+                                // Jump to start of strand
+                                return Some((s_idx, 0));
+                            }
+                        } else {
+                            // IP was after cut region
+                            vm.ip.1 -= count;
+                        }
+                    }
+
+                    vm.stack.push(Value::Plasmid(drain));
+                    vm.energy = vm.energy.saturating_sub(10);
+                    vm.output.push(format!("CUT: Removed {} genes from {}", count, s_idx));
+                } else {
+                    vm.output.push("CUT: Start index out of bounds".to_string());
+                }
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for cut".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for cut".to_string());
+    }
+    None
+}
+
+pub fn exec_paste(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let idx_val = vm.stack.pop().unwrap();
+        let plasmid_val = vm.stack.pop().unwrap();
+
+        if let (Value::Plasmid(genes), Value::Int(idx)) = (plasmid_val, idx_val) {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                let strand_len = vm.dna.helix.strands[s_idx].genes.len();
+                let insert_idx = idx as usize;
+                let count = genes.len();
+
+                if insert_idx <= strand_len {
+                    // Splice in genes
+                    let strand = &mut vm.dna.helix.strands[s_idx];
+                    strand.genes.splice(insert_idx..insert_idx, genes);
+
+                    // Adjust IP if pasted before current IP
+                    // If we paste at IP, we push current gene forward.
+                    // IP points to same index, which is now the first pasted gene.
+                    // We want to continue executing.
+                    if vm.ip.1 >= insert_idx {
+                        vm.ip.1 += count;
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(10);
+                    vm.output.push(format!("PASTE: Inserted {} genes at {}", count, insert_idx));
+                } else {
+                    vm.output.push("PASTE: Index out of bounds".to_string());
+                }
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for paste".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for paste".to_string());
     }
     None
 }
