@@ -520,6 +520,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Decohere,
+    /// **[Nova]** Moves the current gene to a new location in the strand (Transposon).
+    ///
+    /// **Stack:** `[ ..., offset ] -> [ ... ]`
+    /// **Effect:** Moves current instruction `offset` genes away, replacing self with Nop. Jumps to new location.
+    #[cfg(feature = "nova")]
+    Transposon,
     /// **[Nova]** Writes a strand's code onto the grid physically.
     ///
     /// **Stack:** `[ ..., strand_idx, y, x, direction ] -> [ ... ]`
@@ -1476,6 +1482,12 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Query,
 
+    /// **[Oracle]** Finds all solutions to a query.
+    ///
+    /// **Stack:** `[ ..., template, goal ] -> [ ..., result_list ]`
+    #[cfg(feature = "oracle")]
+    FindAll,
+
     /// **[Oracle]** Registers an Omen (Trigger).
     ///
     /// **Stack:** `[ ..., condition, effect ] -> [ ... ]`
@@ -1925,6 +1937,9 @@ pub enum OpCode {
     /// **Stack:** `[ ..., other_cord_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Tangle,
+
+    /// No Operation. Does nothing.
+    Nop,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

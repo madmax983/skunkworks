@@ -354,4 +354,53 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_introspection_stack() {
+        // [ Push(42) FindAll(?X, stack(all(?X))) ]
+        // Should return [ [42] ]? Or just 42 if unwrap?
+        // stack(List) unifies List with whole stack.
+        // Stack at query time: [42, Template, Goal] (if pushed).
+        // FindAll pops Template and Goal. So stack is [42].
+
+        let genes = vec![
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
+            Gene { op: OpCode::Push, args: vec![Nucleotide::String("?S".to_string())] }, // Template
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(
+                JunctionType::Any,
+                vec![
+                    Nucleotide::String("stack".to_string()),
+                    Nucleotide::String("?S".to_string()),
+                ]
+            )] }, // Goal
+            Gene { op: OpCode::FindAll, args: vec![] },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.step(); // Push 42
+        vm.step(); // Push template
+        vm.step(); // Push goal
+        vm.step(); // FindAll
+
+        // Stack should be [42, ResultList]
+        // ResultList = [ StackSnapshot ]
+        // StackSnapshot = [42] (Because 42 is on stack when stack() is called inside FindAll logic?
+        // Wait, FindAll pops args first. So stack is indeed [42].
+
+        let result_list = vm.stack.pop().unwrap();
+        assert_eq!(vm.stack.pop(), Some(Value::Int(42)));
+
+        if let Value::Junction(_, list) = result_list {
+            assert_eq!(list.len(), 1); // 1 solution
+            let stack_val = &list[0];
+            // stack_val should be Junction(All, [42])
+            if let Value::Junction(_, s_list) = stack_val {
+                assert_eq!(s_list[0], Value::Int(42));
+            } else {
+                panic!("Expected stack list");
+            }
+        } else {
+            panic!("Expected result list");
+        }
+    }
 }
