@@ -318,3 +318,6 @@ mod warden_phylogeny_test;
 
 #[cfg(all(test, feature = "nova"))]
 mod havoc_recursive_prophecy;
+
+#[cfg(all(test, feature = "nova", feature = "biophysics"))]
+mod synaptic_lattice_test;
