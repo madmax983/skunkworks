@@ -777,6 +777,12 @@
 
 ### [Concentration Level: TOXIC] - Location: graveyard/cipher-clock
 - **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/heap-auction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
