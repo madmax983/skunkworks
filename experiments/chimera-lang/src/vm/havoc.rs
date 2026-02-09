@@ -31,11 +31,19 @@ impl HavocEngine {
         let mut rng = rand::thread_rng();
         // Determine available scopes
         let mut scopes = Vec::new();
-        if (self.scope & 1) != 0 { scopes.push(1); }
-        if (self.scope & 2) != 0 { scopes.push(2); }
-        if (self.scope & 4) != 0 { scopes.push(4); }
+        if (self.scope & 1) != 0 {
+            scopes.push(1);
+        }
+        if (self.scope & 2) != 0 {
+            scopes.push(2);
+        }
+        if (self.scope & 4) != 0 {
+            scopes.push(4);
+        }
 
-        if scopes.is_empty() { return; }
+        if scopes.is_empty() {
+            return;
+        }
 
         let chosen_scope = scopes[rng.gen_range(0..scopes.len())];
 
@@ -59,10 +67,11 @@ impl HavocEngine {
                         let idx = rng.gen_range(0..chars.len());
                         chars[idx] = (rng.gen_range(33..126) as u8) as char;
                         vm.grid[y][x] = Value::Str(chars.into_iter().collect());
-                        vm.output.push(format!("HAVOC: Corrupted string at {},{}", x, y));
+                        vm.output
+                            .push(format!("HAVOC: Corrupted string at {},{}", x, y));
                     }
                 }
-            },
+            }
             2 => {
                 // Stack Fault
                 if !vm.stack.is_empty() {
@@ -80,7 +89,7 @@ impl HavocEngine {
                         }
                     }
                 }
-            },
+            }
             4 => {
                 // Execution Fault
                 if !vm.dna.helix.strands.is_empty() {
@@ -91,21 +100,21 @@ impl HavocEngine {
                             let s_idx = rng.gen_range(0..vm.dna.helix.strands.len());
                             vm.ip = (s_idx, 0);
                             vm.output.push(format!("HAVOC: Jump to Strand {}", s_idx));
-                        },
+                        }
                         1 => {
                             // Skip Gene
                             vm.ip.1 += 1;
                             vm.output.push("HAVOC: Skipped Gene".to_string());
-                        },
+                        }
                         2 => {
                             // Reset Energy
                             vm.energy /= 2;
                             vm.output.push("HAVOC: Energy Drain".to_string());
-                        },
+                        }
                         _ => {}
                     }
                 }
-            },
+            }
             _ => {}
         }
     }

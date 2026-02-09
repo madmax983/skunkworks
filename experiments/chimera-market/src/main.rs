@@ -19,8 +19,8 @@ mod ast;
 mod vm;
 
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-use market_sim::{Grid, Particle};
 use crate::vm::{ChimeraVM, Value};
+use market_sim::{Grid, Particle};
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]

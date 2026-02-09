@@ -24,43 +24,90 @@ mod tests {
 
         let genes = vec![
             // Write 100 to (8,8)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // Switch to Plane 1
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Dimension, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Dimension,
+                args: vec![],
+            },
             // Read (8,8) - Should be 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::GRead, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            },
             // Switch back to Plane 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Dimension, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Dimension,
+                args: vec![],
+            },
             // Read (8,8) - Should be 100
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::GRead, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
 
         // Execute steps
         // 4 writes
-        vm.step(); vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
         // 2 dimension
-        vm.step(); vm.step();
+        vm.step();
+        vm.step();
         // 3 read
-        vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
         // 2 dimension back
-        vm.step(); vm.step();
+        vm.step();
+        vm.step();
         // 3 read
-        vm.step(); vm.step(); vm.step();
+        vm.step();
+        vm.step();
+        vm.step();
 
         assert_eq!(vm.stack.len(), 2);
         assert_eq!(vm.stack[0], Value::Int(0));
@@ -74,16 +121,42 @@ mod tests {
         // Read it back.
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] }, // val
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // plane
-            Gene { op: OpCode::DWrite, args: vec![] },
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // plane
-            Gene { op: OpCode::DRead, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(50)],
+            }, // val
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // x
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            }, // plane
+            Gene {
+                op: OpCode::DWrite,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // x
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            }, // plane
+            Gene {
+                op: OpCode::DRead,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -106,22 +179,56 @@ mod tests {
 
         let genes = vec![
             // Write 10 to Plane 0 (0,0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // Write 20 to Plane 1 (0,0) using DWrite
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::DWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(20)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::DWrite,
+                args: vec![],
+            },
             // Merge Plane 1 into Plane 0 (Add)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Method 0 (Add)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Plane ID
-            Gene { op: OpCode::DMerge, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // Method 0 (Add)
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // Plane ID
+            Gene {
+                op: OpCode::DMerge,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

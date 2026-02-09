@@ -2,10 +2,12 @@ mod neuron;
 mod retina;
 mod simulation;
 
+use macroquad::miniquad::{
+    BlendFactor, BlendState, BlendValue, Comparison, Equation, PrimitiveType,
+};
 use macroquad::prelude::*;
-use macroquad::miniquad::{PrimitiveType, BlendState, BlendFactor, BlendValue, Equation, Comparison};
-use simulation::{Particle, Simulation};
 use retina::Retina;
+use simulation::{Particle, Simulation};
 
 const PARTICLE_COUNT: usize = 50_000;
 const BATCH_SIZE: usize = 10_000;
@@ -58,9 +60,17 @@ async fn main() {
     render_target.texture.set_filter(FilterMode::Nearest);
 
     // Textures for debug visualization
-    let bipolar_texture = Texture2D::from_image(&Image::gen_image_color(EYE_RES as u16, EYE_RES as u16, BLACK));
+    let bipolar_texture = Texture2D::from_image(&Image::gen_image_color(
+        EYE_RES as u16,
+        EYE_RES as u16,
+        BLACK,
+    ));
     bipolar_texture.set_filter(FilterMode::Nearest);
-    let ganglion_texture = Texture2D::from_image(&Image::gen_image_color(EYE_RES as u16, EYE_RES as u16, BLACK));
+    let ganglion_texture = Texture2D::from_image(&Image::gen_image_color(
+        EYE_RES as u16,
+        EYE_RES as u16,
+        BLACK,
+    ));
     ganglion_texture.set_filter(FilterMode::Nearest);
 
     let mut bipolar_image = Image::gen_image_color(EYE_RES as u16, EYE_RES as u16, BLACK);
@@ -93,17 +103,18 @@ async fn main() {
             pipeline_params,
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     // Meshes for batch rendering
     let num_batches = PARTICLE_COUNT.div_ceil(BATCH_SIZE);
-    let mut meshes: Vec<Mesh> = (0..num_batches).map(|_| {
-        Mesh {
+    let mut meshes: Vec<Mesh> = (0..num_batches)
+        .map(|_| Mesh {
             vertices: Vec::with_capacity(BATCH_SIZE),
             indices: Vec::with_capacity(BATCH_SIZE),
             texture: None,
-        }
-    }).collect();
+        })
+        .collect();
 
     loop {
         let dt = get_frame_time().min(0.05);
@@ -137,8 +148,8 @@ async fn main() {
             clear_background(BLACK);
 
             // Draw simplified particles for the eye (just white dots)
-             gl_use_material(&material);
-             for (i, mesh) in meshes.iter_mut().enumerate() {
+            gl_use_material(&material);
+            for (i, mesh) in meshes.iter_mut().enumerate() {
                 let start = i * BATCH_SIZE;
                 let end = (start + BATCH_SIZE).min(sim.particles.len());
                 let slice = &sim.particles[start..end];
@@ -194,8 +205,16 @@ async fn main() {
                 // Bipolar
                 let b = retina.bipolar[idx];
                 let b_norm = (b * 5.0).tanh();
-                let r = if b_norm > 0.0 { (b_norm * 255.0) as u8 } else { 0 };
-                let bl = if b_norm < 0.0 { (-b_norm * 255.0) as u8 } else { 0 };
+                let r = if b_norm > 0.0 {
+                    (b_norm * 255.0) as u8
+                } else {
+                    0
+                };
+                let bl = if b_norm < 0.0 {
+                    (-b_norm * 255.0) as u8
+                } else {
+                    0
+                };
                 bipolar_image.set_pixel(x as u32, y as u32, Color::from_rgba(r, 0, bl, 255));
 
                 // Ganglion Background (Voltage)
@@ -207,20 +226,34 @@ async fn main() {
         }
         // Draw spikes
         for (sx, sy) in &spikes {
-             ganglion_image.set_pixel(*sx as u32, *sy as u32, WHITE);
+            ganglion_image.set_pixel(*sx as u32, *sy as u32, WHITE);
         }
         bipolar_texture.update(&bipolar_image);
         ganglion_texture.update(&ganglion_image);
 
         // 6. Render Main View
         // Camera controls
-        if is_key_down(KeyCode::Left) { cam_yaw -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_yaw += 0.02; }
-        if is_key_down(KeyCode::Up) { cam_pitch = (cam_pitch + 0.02).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::Down) { cam_pitch = (cam_pitch - 0.02).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::W) { cam_dist -= 0.5; }
-        if is_key_down(KeyCode::S) { cam_dist += 0.5; }
-        if is_key_pressed(KeyCode::R) { sim.reset(); }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch = (cam_pitch + 0.02).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch = (cam_pitch - 0.02).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 0.5;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 0.5;
+        }
+        if is_key_pressed(KeyCode::R) {
+            sim.reset();
+        }
 
         clear_background(BLACK);
 
@@ -254,38 +287,106 @@ async fn main() {
         let pad = 10.0;
 
         // Retina Input
-        draw_texture_ex(&render_target.texture, sw - pip_size - pad, pad, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(pip_size, pip_size)),
-            flip_y: true, // RenderTargets are flipped
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &render_target.texture,
+            sw - pip_size - pad,
+            pad,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(pip_size, pip_size)),
+                flip_y: true, // RenderTargets are flipped
+                ..Default::default()
+            },
+        );
         draw_rectangle_lines(sw - pip_size - pad, pad, pip_size, pip_size, 2.0, GRAY);
         draw_text("Retina Input", sw - pip_size - pad, pad - 5.0, 20.0, WHITE);
 
         // Bipolar
-        draw_texture_ex(&bipolar_texture, sw - pip_size - pad, pad * 2.0 + pip_size, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(pip_size, pip_size)),
-            ..Default::default()
-        });
-        draw_rectangle_lines(sw - pip_size - pad, pad * 2.0 + pip_size, pip_size, pip_size, 2.0, GRAY);
-        draw_text("Bipolar (Edges)", sw - pip_size - pad, pad * 2.0 + pip_size - 5.0, 20.0, WHITE);
+        draw_texture_ex(
+            &bipolar_texture,
+            sw - pip_size - pad,
+            pad * 2.0 + pip_size,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(pip_size, pip_size)),
+                ..Default::default()
+            },
+        );
+        draw_rectangle_lines(
+            sw - pip_size - pad,
+            pad * 2.0 + pip_size,
+            pip_size,
+            pip_size,
+            2.0,
+            GRAY,
+        );
+        draw_text(
+            "Bipolar (Edges)",
+            sw - pip_size - pad,
+            pad * 2.0 + pip_size - 5.0,
+            20.0,
+            WHITE,
+        );
 
         // Ganglion
-        draw_texture_ex(&ganglion_texture, sw - pip_size - pad, pad * 3.0 + pip_size * 2.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(pip_size, pip_size)),
-            ..Default::default()
-        });
-        draw_rectangle_lines(sw - pip_size - pad, pad * 3.0 + pip_size * 2.0, pip_size, pip_size, 2.0, GRAY);
-        draw_text("Ganglion (Spikes)", sw - pip_size - pad, pad * 3.0 + pip_size * 2.0 - 5.0, 20.0, WHITE);
+        draw_texture_ex(
+            &ganglion_texture,
+            sw - pip_size - pad,
+            pad * 3.0 + pip_size * 2.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(pip_size, pip_size)),
+                ..Default::default()
+            },
+        );
+        draw_rectangle_lines(
+            sw - pip_size - pad,
+            pad * 3.0 + pip_size * 2.0,
+            pip_size,
+            pip_size,
+            2.0,
+            GRAY,
+        );
+        draw_text(
+            "Ganglion (Spikes)",
+            sw - pip_size - pad,
+            pad * 3.0 + pip_size * 2.0 - 5.0,
+            20.0,
+            WHITE,
+        );
 
         // Stats
         draw_text("Retinal Chaos", 20.0, 30.0, 40.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 60.0, 20.0, LIGHTGRAY);
         draw_text(&format!("Spikes: {}", spike_count), 20.0, 90.0, 20.0, GREEN);
-        draw_text(&format!("Excitement: {:.2}%", excitement), 20.0, 110.0, 20.0, YELLOW);
-        draw_text(&format!("Rho (Chaos): {:.2}", sim.params.rho), 20.0, 140.0, 20.0, RED);
-        draw_text("The Eye watches the Chaos.", 20.0, sh - 40.0, 20.0, LIGHTGRAY);
-        draw_text("The Chaos reacts to the Eye.", 20.0, sh - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Excitement: {:.2}%", excitement),
+            20.0,
+            110.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("Rho (Chaos): {:.2}", sim.params.rho),
+            20.0,
+            140.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            "The Eye watches the Chaos.",
+            20.0,
+            sh - 40.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "The Chaos reacts to the Eye.",
+            20.0,
+            sh - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

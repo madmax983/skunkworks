@@ -31,7 +31,6 @@ impl Particle {
     }
 }
 
-
 pub struct LorenzParams {
     pub sigma: f32,
     pub rho: f32,

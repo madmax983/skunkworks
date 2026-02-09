@@ -1,11 +1,11 @@
 use macroquad::prelude::*;
 
-pub mod grammar;
 pub mod attractor;
+pub mod grammar;
 pub mod turtle;
 
-use grammar::LSystem;
 use attractor::LorenzParams;
+use grammar::LSystem;
 use turtle::ChaoticTurtle;
 
 #[macroquad::main("Chaotic Conservatory")]
@@ -23,10 +23,7 @@ async fn main() {
     // X -> F[&+X]F[->X][<X]
     // F -> FF
 
-    let rules = vec![
-        ('X', "F[&+X]F[->X][<X]"),
-        ('F', "FF"),
-    ];
+    let rules = vec![('X', "F[&+X]F[->X][<X]"), ('F', "FF")];
     let lsystem = LSystem::new("X", rules);
     let mut iterations = 4;
 
@@ -54,22 +51,42 @@ async fn main() {
             need_regen = true;
         }
         if is_key_pressed(KeyCode::Down) {
-            if iterations > 0 { iterations -= 1; }
+            if iterations > 0 {
+                iterations -= 1;
+            }
             expanded = lsystem.expand(iterations);
             need_regen = true;
         }
 
         // Chaos Control
-        if is_key_down(KeyCode::Right) { params.rho += 0.1; need_regen = true; }
-        if is_key_down(KeyCode::Left) { params.rho -= 0.1; need_regen = true; }
+        if is_key_down(KeyCode::Right) {
+            params.rho += 0.1;
+            need_regen = true;
+        }
+        if is_key_down(KeyCode::Left) {
+            params.rho -= 0.1;
+            need_regen = true;
+        }
 
         // Camera Control
-        if is_key_down(KeyCode::W) { cam_pitch += 0.02; }
-        if is_key_down(KeyCode::S) { cam_pitch -= 0.02; }
-        if is_key_down(KeyCode::A) { cam_yaw -= 0.02; }
-        if is_key_down(KeyCode::D) { cam_yaw += 0.02; }
-        if is_key_down(KeyCode::Q) { cam_dist += 0.5; }
-        if is_key_down(KeyCode::E) { cam_dist -= 0.5; }
+        if is_key_down(KeyCode::W) {
+            cam_pitch += 0.02;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_pitch -= 0.02;
+        }
+        if is_key_down(KeyCode::A) {
+            cam_yaw -= 0.02;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_yaw += 0.02;
+        }
+        if is_key_down(KeyCode::Q) {
+            cam_dist += 0.5;
+        }
+        if is_key_down(KeyCode::E) {
+            cam_dist -= 0.5;
+        }
 
         cam_pitch = cam_pitch.clamp(-1.5, 1.5);
         cam_dist = cam_dist.max(1.0);
@@ -92,7 +109,7 @@ async fn main() {
             for c in expanded.chars() {
                 match c {
                     'F' => turtle.forward(step_len, GREEN),
-                    'X' => {}, // Placeholder
+                    'X' => {} // Placeholder
                     '+' => turtle.turn(angle),
                     '-' => turtle.turn(-angle),
                     '&' => turtle.pitch(angle),
@@ -123,9 +140,27 @@ async fn main() {
 
         // UI
         draw_text("Chaotic Conservatory", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Gen: {} (Up/Down)", iterations), 10.0, 60.0, 20.0, WHITE);
-        draw_text(&format!("Chaos (Rho): {:.1} (Left/Right)", params.rho), 10.0, 80.0, 20.0, YELLOW);
-        draw_text(&format!("Segments: {}", turtle.lines.len()), 10.0, 100.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Gen: {} (Up/Down)", iterations),
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Chaos (Rho): {:.1} (Left/Right)", params.rho),
+            10.0,
+            80.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            &format!("Segments: {}", turtle.lines.len()),
+            10.0,
+            100.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

@@ -129,49 +129,84 @@ impl System {
             match agent.strategy {
                 Strategy::Random => {
                     if rng.gen_bool(0.1) {
-                         let price = rng.gen_range(5.0..15.0);
-                         if agent.balance > price && agent.owned_blocks.len() < agent.memory_need {
-                             new_orders.push(Order { agent_id: agent.id, price, block_id: None, is_buy: true });
-                         }
+                        let price = rng.gen_range(5.0..15.0);
+                        if agent.balance > price && agent.owned_blocks.len() < agent.memory_need {
+                            new_orders.push(Order {
+                                agent_id: agent.id,
+                                price,
+                                block_id: None,
+                                is_buy: true,
+                            });
+                        }
                     }
                     if rng.gen_bool(0.1) && !agent.owned_blocks.is_empty() {
-                         let block_idx = rng.gen_range(0..agent.owned_blocks.len());
-                         let block_id = agent.owned_blocks[block_idx];
-                         let price = rng.gen_range(10.0..20.0);
-                         new_orders.push(Order { agent_id: agent.id, price, block_id: Some(block_id), is_buy: false });
+                        let block_idx = rng.gen_range(0..agent.owned_blocks.len());
+                        let block_id = agent.owned_blocks[block_idx];
+                        let price = rng.gen_range(10.0..20.0);
+                        new_orders.push(Order {
+                            agent_id: agent.id,
+                            price,
+                            block_id: Some(block_id),
+                            is_buy: false,
+                        });
                     }
                 }
                 Strategy::Hoarder => {
-                     // Buys if price is low, rarely sells
-                     if agent.balance > 50.0 && agent.owned_blocks.len() < agent.memory_need * 2 {
-                          let bid_price = 8.0;
-                          new_orders.push(Order { agent_id: agent.id, price: bid_price, block_id: None, is_buy: true });
-                     }
+                    // Buys if price is low, rarely sells
+                    if agent.balance > 50.0 && agent.owned_blocks.len() < agent.memory_need * 2 {
+                        let bid_price = 8.0;
+                        new_orders.push(Order {
+                            agent_id: agent.id,
+                            price: bid_price,
+                            block_id: None,
+                            is_buy: true,
+                        });
+                    }
                 }
                 Strategy::Desperate => {
                     // Must reach memory_need
                     if agent.owned_blocks.len() < agent.memory_need {
-                         let bid_price = agent.balance.min(50.0); // All in if needed
-                         new_orders.push(Order { agent_id: agent.id, price: bid_price, block_id: None, is_buy: true });
+                        let bid_price = agent.balance.min(50.0); // All in if needed
+                        new_orders.push(Order {
+                            agent_id: agent.id,
+                            price: bid_price,
+                            block_id: None,
+                            is_buy: true,
+                        });
                     } else if agent.balance < 50.0 && !agent.owned_blocks.is_empty() {
                         // Sell to survive
-                         let block_idx = rng.gen_range(0..agent.owned_blocks.len());
-                         let block_id = agent.owned_blocks[block_idx];
-                         new_orders.push(Order { agent_id: agent.id, price: 5.0, block_id: Some(block_id), is_buy: false });
+                        let block_idx = rng.gen_range(0..agent.owned_blocks.len());
+                        let block_id = agent.owned_blocks[block_idx];
+                        new_orders.push(Order {
+                            agent_id: agent.id,
+                            price: 5.0,
+                            block_id: Some(block_id),
+                            is_buy: false,
+                        });
                     }
                 }
                 Strategy::Flipper => {
-                     // Buy low, sell high
-                     if agent.balance > 20.0 {
-                         new_orders.push(Order { agent_id: agent.id, price: 9.0, block_id: None, is_buy: true });
-                     }
-                     for &block_id in &agent.owned_blocks {
-                         // Find block current price? We store it in memory.
-                         // For simplicity, just sell randomly for profit
-                         if rng.gen_bool(0.2) {
-                             new_orders.push(Order { agent_id: agent.id, price: 15.0, block_id: Some(block_id), is_buy: false });
-                         }
-                     }
+                    // Buy low, sell high
+                    if agent.balance > 20.0 {
+                        new_orders.push(Order {
+                            agent_id: agent.id,
+                            price: 9.0,
+                            block_id: None,
+                            is_buy: true,
+                        });
+                    }
+                    for &block_id in &agent.owned_blocks {
+                        // Find block current price? We store it in memory.
+                        // For simplicity, just sell randomly for profit
+                        if rng.gen_bool(0.2) {
+                            new_orders.push(Order {
+                                agent_id: agent.id,
+                                price: 15.0,
+                                block_id: Some(block_id),
+                                is_buy: false,
+                            });
+                        }
+                    }
                 }
             }
         }
@@ -180,12 +215,12 @@ impl System {
         for block in &self.memory {
             if block.owner.is_none() {
                 // System asks
-                 self.market.asks.push(Order {
-                     agent_id: AgentId(u64::MAX), // System ID
-                     price: 10.0, // Reserve price
-                     block_id: Some(block.id),
-                     is_buy: false,
-                 });
+                self.market.asks.push(Order {
+                    agent_id: AgentId(u64::MAX), // System ID
+                    price: 10.0,                 // Reserve price
+                    block_id: Some(block.id),
+                    is_buy: false,
+                });
             }
         }
 
@@ -199,8 +234,12 @@ impl System {
         }
 
         // 2. Market Clearing
-        self.market.bids.sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap()); // Descending
-        self.market.asks.sort_by(|a, b| a.price.partial_cmp(&b.price).unwrap()); // Ascending
+        self.market
+            .bids
+            .sort_by(|a, b| b.price.partial_cmp(&a.price).unwrap()); // Descending
+        self.market
+            .asks
+            .sort_by(|a, b| a.price.partial_cmp(&b.price).unwrap()); // Ascending
 
         let mut transactions = Vec::new();
 
@@ -232,7 +271,11 @@ impl System {
                 // Record transaction
                 transactions.push(Transaction {
                     buyer: bid.agent_id,
-                    seller: if ask.agent_id == AgentId(u64::MAX) { None } else { Some(ask.agent_id) },
+                    seller: if ask.agent_id == AgentId(u64::MAX) {
+                        None
+                    } else {
+                        Some(ask.agent_id)
+                    },
                     block_id,
                     price,
                     tick: self.tick,
@@ -250,24 +293,24 @@ impl System {
 
         // Apply transactions
         for tx in transactions.clone() {
-             // 1. Transfer money
-             if let Some(seller_id) = tx.seller {
-                 if let Some(seller) = self.agents.iter_mut().find(|a| a.id == seller_id) {
-                     seller.balance += tx.price;
-                     seller.owned_blocks.retain(|&b| b != tx.block_id);
-                 }
-             }
+            // 1. Transfer money
+            if let Some(seller_id) = tx.seller {
+                if let Some(seller) = self.agents.iter_mut().find(|a| a.id == seller_id) {
+                    seller.balance += tx.price;
+                    seller.owned_blocks.retain(|&b| b != tx.block_id);
+                }
+            }
 
-             if let Some(buyer) = self.agents.iter_mut().find(|a| a.id == tx.buyer) {
-                 buyer.balance -= tx.price;
-                 buyer.owned_blocks.push(tx.block_id);
-             }
+            if let Some(buyer) = self.agents.iter_mut().find(|a| a.id == tx.buyer) {
+                buyer.balance -= tx.price;
+                buyer.owned_blocks.push(tx.block_id);
+            }
 
-             // 2. Update block ownership and price
-             if let Some(block) = self.memory.iter_mut().find(|b| b.id == tx.block_id) {
-                 block.owner = Some(tx.buyer);
-                 block.price = tx.price;
-             }
+            // 2. Update block ownership and price
+            if let Some(block) = self.memory.iter_mut().find(|b| b.id == tx.block_id) {
+                block.owner = Some(tx.buyer);
+                block.price = tx.price;
+            }
         }
 
         // Add to history
@@ -283,7 +326,9 @@ impl System {
         self.market.asks.clear();
 
         // 3. GC (Bankruptcy)
-        let bankrupt_ids: Vec<AgentId> = self.agents.iter()
+        let bankrupt_ids: Vec<AgentId> = self
+            .agents
+            .iter()
             .filter(|a| a.balance < 0.0)
             .map(|a| a.id)
             .collect();

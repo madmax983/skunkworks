@@ -52,10 +52,18 @@ async fn main() {
         let speed = 0.02;
         let mut move_vec = Point::new(0.0, 0.0);
 
-        if is_key_down(KeyCode::W) { move_vec.im += speed; }
-        if is_key_down(KeyCode::S) { move_vec.im -= speed; }
-        if is_key_down(KeyCode::A) { move_vec.re -= speed; }
-        if is_key_down(KeyCode::D) { move_vec.re += speed; }
+        if is_key_down(KeyCode::W) {
+            move_vec.im += speed;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec.im -= speed;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec.re -= speed;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec.re += speed;
+        }
 
         if move_vec.norm() > 0.0 {
             // Apply movement in hyperbolic space
@@ -123,7 +131,13 @@ async fn main() {
         gl_use_default_material();
 
         // UI
-        draw_text(&format!("Path Len: {}", current_path.len()), 10.0, 30.0, 20.0, WHITE);
+        draw_text(
+            &format!("Path Len: {}", current_path.len()),
+            10.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
         draw_text("WASD to Move", 10.0, 50.0, 20.0, WHITE);
 
         next_frame().await

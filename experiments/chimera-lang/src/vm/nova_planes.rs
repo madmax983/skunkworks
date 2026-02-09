@@ -75,7 +75,8 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     vm.output.push("Error: Type mismatch for DRead".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for DRead".to_string());
+                vm.output
+                    .push("Error: Stack underflow for DRead".to_string());
             }
         }
         OpCode::DWrite => {
@@ -95,7 +96,8 @@ pub fn exec_planes_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                         vm.grid[y as usize][x as usize] = val;
                     } else {
                         // Access stored plane or create it
-                        let plane = vm.planes
+                        let plane = vm
+                            .planes
                             .entry(id)
                             .or_insert_with(|| vec![vec![Value::Int(0); GRID_SIZE]; GRID_SIZE]);
                         plane[y as usize][x as usize] = val;

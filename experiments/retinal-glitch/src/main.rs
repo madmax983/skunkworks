@@ -1,9 +1,9 @@
+mod input;
 mod neuron;
 mod retina;
-mod input;
 
-use macroquad::prelude::*;
 use input::VisualField;
+use macroquad::prelude::*;
 use retina::Retina;
 
 #[macroquad::main("Retinal Glitch")]
@@ -17,7 +17,8 @@ async fn main() {
     // Textures for visualization
     let input_texture = Texture2D::from_image(&Image::gen_image_color(w as u16, h as u16, BLACK));
     let bipolar_texture = Texture2D::from_image(&Image::gen_image_color(w as u16, h as u16, BLACK));
-    let ganglion_texture = Texture2D::from_image(&Image::gen_image_color(w as u16, h as u16, BLACK));
+    let ganglion_texture =
+        Texture2D::from_image(&Image::gen_image_color(w as u16, h as u16, BLACK));
 
     input_texture.set_filter(FilterMode::Nearest);
     bipolar_texture.set_filter(FilterMode::Nearest);
@@ -54,9 +55,17 @@ async fn main() {
                 let b = retina.bipolar[idx];
                 // Scale for visibility
                 let b_norm = (b * 5.0).tanh(); // -1..1
-                let r = if b_norm > 0.0 { (b_norm * 255.0) as u8 } else { 0 };
+                let r = if b_norm > 0.0 {
+                    (b_norm * 255.0) as u8
+                } else {
+                    0
+                };
                 let g = 0;
-                let bl = if b_norm < 0.0 { (-b_norm * 255.0) as u8 } else { 0 };
+                let bl = if b_norm < 0.0 {
+                    (-b_norm * 255.0) as u8
+                } else {
+                    0
+                };
                 bipolar_image.set_pixel(x as u32, y as u32, Color::from_rgba(r, g, bl, 255));
 
                 // Ganglion: Voltage (Green)
@@ -64,13 +73,13 @@ async fn main() {
                 // Map -65..30 to 0..1
                 let v_norm = ((v + 70.0) / 100.0).clamp(0.0, 1.0);
                 let g_val = (v_norm * 255.0) as u8;
-                 ganglion_image.set_pixel(x as u32, y as u32, Color::from_rgba(0, g_val, 0, 255));
+                ganglion_image.set_pixel(x as u32, y as u32, Color::from_rgba(0, g_val, 0, 255));
             }
         }
 
         // Draw Spikes as bright dots
         for (sx, sy) in &spikes {
-             ganglion_image.set_pixel(*sx as u32, *sy as u32, WHITE);
+            ganglion_image.set_pixel(*sx as u32, *sy as u32, WHITE);
         }
 
         // 3. Update Textures
@@ -89,29 +98,59 @@ async fn main() {
 
         let y_pos = (sh - view_h) / 2.0;
 
-        draw_texture_ex(&input_texture, 0.0, y_pos, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(view_w, view_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &input_texture,
+            0.0,
+            y_pos,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(view_w, view_h)),
+                ..Default::default()
+            },
+        );
         draw_rectangle_lines(0.0, y_pos, view_w, view_h, 2.0, GRAY);
         draw_text("Input (Retina)", 10.0, y_pos - 10.0, 20.0, WHITE);
 
-        draw_texture_ex(&bipolar_texture, view_w, y_pos, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(view_w, view_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &bipolar_texture,
+            view_w,
+            y_pos,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(view_w, view_h)),
+                ..Default::default()
+            },
+        );
         draw_rectangle_lines(view_w, y_pos, view_w, view_h, 2.0, GRAY);
         draw_text("Bipolar (Edges)", view_w + 10.0, y_pos - 10.0, 20.0, WHITE);
 
-        draw_texture_ex(&ganglion_texture, view_w * 2.0, y_pos, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(view_w, view_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &ganglion_texture,
+            view_w * 2.0,
+            y_pos,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(view_w, view_h)),
+                ..Default::default()
+            },
+        );
         draw_rectangle_lines(view_w * 2.0, y_pos, view_w, view_h, 2.0, GRAY);
-        draw_text("Ganglion (Spikes)", view_w * 2.0 + 10.0, y_pos - 10.0, 20.0, WHITE);
+        draw_text(
+            "Ganglion (Spikes)",
+            view_w * 2.0 + 10.0,
+            y_pos - 10.0,
+            20.0,
+            WHITE,
+        );
 
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 20.0, 20.0, YELLOW);
-        draw_text(&format!("Spikes: {}", spikes.len()), 10.0, 40.0, 20.0, GREEN);
+        draw_text(
+            &format!("Spikes: {}", spikes.len()),
+            10.0,
+            40.0,
+            20.0,
+            GREEN,
+        );
         draw_text("SPACE to Reset Warp", 10.0, 60.0, 20.0, LIGHTGRAY);
 
         next_frame().await

@@ -1,10 +1,10 @@
 #[cfg(feature = "elektra")]
 #[cfg(test)]
 mod tests {
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::prelude::*;
     use crate::vm::elektra;
     use crate::vm::ChimeraVM;
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -23,10 +23,22 @@ mod tests {
         // [ push(10) push(5) push(5) battery() ]
         // Should set V=10 at (5,5) and mark as source
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // Voltage
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // X
-            Gene { op: OpCode::Battery, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }, // Voltage
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // X
+            Gene {
+                op: OpCode::Battery,
+                args: vec![],
+            },
         ];
         let mut vm = make_vm(genes);
 
@@ -44,9 +56,18 @@ mod tests {
         // [ push(5) push(5) ground() ]
         // Should set V=0 at (5,5) and mark as ground
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // X
-            Gene { op: OpCode::Ground, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // X
+            Gene {
+                op: OpCode::Ground,
+                args: vec![],
+            },
         ];
         let mut vm = make_vm(genes);
 
@@ -64,9 +85,18 @@ mod tests {
         // [ push(5) push(5) sense_volt() ]
         // Should push voltage at (5,5)
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },  // X
-            Gene { op: OpCode::SenseVolt, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // X
+            Gene {
+                op: OpCode::SenseVolt,
+                args: vec![],
+            },
         ];
         let mut vm = make_vm(genes);
 
@@ -93,9 +123,18 @@ mod tests {
         // [ push(100) push(2) shock() ]
         // Shock with power 100, radius 2 at context (8,8)
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // Power
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },   // Radius
-            Gene { op: OpCode::Shock, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }, // Power
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            }, // Radius
+            Gene {
+                op: OpCode::Shock,
+                args: vec![],
+            },
         ];
         let mut vm = make_vm(genes);
 
@@ -140,7 +179,10 @@ mod tests {
         // Voltage at wire should be average of neighbors (approx 5V)
         let v_wire = vm.voltage_grid[5][6];
         println!("Wire Voltage: {}", v_wire);
-        assert!(v_wire > 4.0 && v_wire < 6.0, "Voltage should settle around 5V");
+        assert!(
+            v_wire > 4.0 && v_wire < 6.0,
+            "Voltage should settle around 5V"
+        );
     }
 
     #[test]

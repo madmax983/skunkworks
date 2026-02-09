@@ -85,7 +85,11 @@ impl App {
             let is_bid = rng.gen_bool(0.5);
             let cx = rng.gen_range(10..self.grid.width - 10);
             let cy = if is_bid { self.grid.height - 8 } else { 5 };
-            let p = if is_bid { Particle::Bid(0) } else { Particle::Ask(0) };
+            let p = if is_bid {
+                Particle::Bid(0)
+            } else {
+                Particle::Ask(0)
+            };
             for dy in 0..4 {
                 for dx in 0..6 {
                     self.grid.set(cx + dx, cy + dy, p);
