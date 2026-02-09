@@ -2187,6 +2187,7 @@ impl ChimeraVM {
             | OpCode::Singularity
             | OpCode::Simulate
             | OpCode::Dream
+            | OpCode::Lucid
             | OpCode::Chemotaxis
             | OpCode::Identity
             | OpCode::Differentiate

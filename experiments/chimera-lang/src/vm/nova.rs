@@ -1319,6 +1319,31 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        OpCode::Lucid => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 {
+                        let cost = amount;
+                        if vm.energy >= cost {
+                            vm.energy -= cost;
+                            let (cy, cx) = vm.context_loc;
+                            vm.entropy_grid[cy][cx] =
+                                vm.entropy_grid[cy][cx].saturating_sub(amount).max(0);
+                            vm.output.push("LUCIDITY: Clarity restored.".to_string());
+                        } else {
+                            vm.output.push("LUCID: Insufficient energy".to_string());
+                        }
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for lucid".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for lucid".to_string());
+            }
+            None
+        }
         OpCode::ChronosSplice => exec_chronos_splice(vm),
         OpCode::Claim => super::nova_sovereignty::exec_claim(vm),
         OpCode::Cede => super::nova_sovereignty::exec_cede(vm),
@@ -3557,7 +3582,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
 
                         // Evaluate
-                        let success = dream_vm.energy > vm.energy;
+                        let mut success = dream_vm.energy > vm.energy;
+
+                        // Nightmare Check
+                        let (cy, cx) = vm.context_loc;
+                        let entropy = vm.entropy_grid[cy][cx];
+                        let is_nightmare = entropy > 50;
+
+                        if is_nightmare {
+                            success = true; // Nightmares are forced
+                            vm.output.push("NIGHTMARE: The Void invades the dream...".to_string());
+                        }
 
                         // Pay Cost (Base 50 + ticks/2)
                         let cost = 50 + (safe_ticks / 2);
@@ -3572,6 +3607,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             mutation_desc,
                             mutated_strand,
                             success,
+                            is_nightmare,
                             dream_vm.output.clone(),
                             None,
                         );
@@ -3581,7 +3617,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             // Adopt DNA
                             vm.dna = dream_vm.dna;
                             vm.stack.push(Value::Int(1)); // Success
-                            vm.output.push("DREAM: Mutation accepted".to_string());
+                            if is_nightmare {
+                                vm.output.push("DREAM: Nightmare realized!".to_string());
+                            } else {
+                                vm.output.push("DREAM: Mutation accepted".to_string());
+                            }
                         } else {
                             vm.stack.push(Value::Int(0)); // Failure
                             vm.output.push("DREAM: Mutation discarded".to_string());
