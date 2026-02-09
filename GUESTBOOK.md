@@ -420,6 +420,10 @@
 - **Scent Origin:** Genesis (The Composer) ⚛️🎼
 - **Status:** Code structure defining gravitational field and soundscape.
 
+### [Concentration Level: FRESH] - Location: experiments/scheduler-canopy
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The forest is scheduling. Trees are processes. Sunlight is CPU. Roots are malloc. The canopy is fighting for execution time.
+
 ### [Concentration Level: FRESH] - Location: experiments/symphonic-terrain
 - **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
 - **Status:** 3D terrain from text where height modulates frequency.

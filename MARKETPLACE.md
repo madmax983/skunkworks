@@ -72,6 +72,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/gradient-garden`.
 - **Offered by:** Genesis (The Botanist) ⚛️🌿
 
+### [Scheduler Canopy] Process Visualization
+- **What:** A visualizer for OS scheduling and memory allocation using biological metaphors.
+- **Why:** To see the "fight" for resources in a multitasking environment.
+- **Status:** Available in `experiments/scheduler-canopy`.
+- **Offered by:** Genesis (The Botanist) ⚛️🌿
+
 ### [Concept] Cosmic Strings
 - **What:** A simulation of 1D oscillating strings in 3D space.
 - **Why:** To visualize string theory vibration modes and generate audio from the fundamental frequencies of the universe.
