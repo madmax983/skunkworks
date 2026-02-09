@@ -45,6 +45,8 @@ mod tests {
             ttl: None,
             name: "Test Mito".to_string(),
             traits: vec![],
+            id: 1,
+            tissue_id: None,
             genome_id: 0,
         };
         vm.organelles.push(organelle);

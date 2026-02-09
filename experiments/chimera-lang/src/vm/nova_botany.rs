@@ -32,6 +32,7 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             stack.push(Value::Int(0)); // Index
             stack.push(Value::Junction(crate::ast::JunctionType::All, Vec::new())); // Turtle Stack
 
+            vm.organelle_id_counter += 1;
             let organelle = Organelle {
                 stack,
                 ip: (0, 0), // Not used
@@ -44,6 +45,8 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 ttl: Some(1000),   // Finite life
                 name: "Procedural Seed".to_string(),
                 traits: vec!["Fractal".to_string()],
+                id: vm.organelle_id_counter,
+                tissue_id: None,
                 genome_id: 0,
             };
 

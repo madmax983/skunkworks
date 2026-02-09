@@ -115,6 +115,7 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                 consume_pattern(vm, cy, cx, &offsets);
                 // Spawn Void
                 if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+                    vm.organelle_id_counter += 1;
                     let organelle = Organelle {
                         stack: Vec::new(),
                         ip: (0, 0),
@@ -127,6 +128,8 @@ fn perform_invoke(vm: &mut ChimeraVM, name: &str) -> Option<(usize, usize)> {
                         ttl: None,
                         name: "Summoned Void".to_string(),
                         traits: vec!["Summoned".to_string()],
+                        id: vm.organelle_id_counter,
+                        tissue_id: None,
                         genome_id: 0,
                     };
                     vm.organelles.push(organelle);
@@ -278,6 +281,7 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
 
             // Spawn Worker to execute
             if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+                vm.organelle_id_counter += 1;
                 let organelle = Organelle {
                     stack: Vec::new(),
                     ip: (strand_idx, 0),
@@ -290,6 +294,8 @@ pub fn process_passive_sigils(vm: &mut ChimeraVM) {
                     ttl: None,
                     name: "Sigil Servant".to_string(),
                     traits: vec!["Construct".to_string()],
+                    id: vm.organelle_id_counter,
+                    tissue_id: None,
                     genome_id: 0,
                 };
                 vm.organelles.push(organelle);
