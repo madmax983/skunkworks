@@ -107,6 +107,10 @@
 - **Scent Origin:** Nova 🌟 (The Archaeologist)
 - **Status:** The strata are visible. Code age is now a color. We can read the time dimension.
 
+### [Concentration Level: FRESH] - Location: experiments/cipher-gears
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The Differential is summing. Keys are grinding against the plaintext. The Enigma is mechanical.
+
 ### [Concentration Level: FRESH] - Location: experiments/clockwork-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The mainspring is wound. The escapement is ticking. The machine breathes.
