@@ -24,3 +24,10 @@
 ## 2026-05-22 - Non-Commutative Addition
 **Confusion:** Users (and Bard) were confused why `mobius_add(ant, step)` didn't result in a point `|step|` away from `ant`.
 **Clarification:** `mobius_add(z, a)` implements $a \oplus z$ (left translation by $a$), which is an isometry. To move "relative to `ant`" by `step`, one must calculate $ant \oplus step$, which corresponds to `mobius_add(step, ant)`. Order matters in non-Euclidean space!
+
+## 2026-05-27 - Market Particle Physics
+**Confusion:** The movement of Bids and Asks seemed inverted. Why do Bids move to index 0 (Up) if 0 is the "top"?
+**Clarification:** In the `market-sim` grid, Y=0 represents the **Highest Price**.
+- Bids (Buyers) start at Y=Height-1 (Lowest Price) and bubble up (index decreases) to find sellers.
+- Asks (Sellers) start at Y=0 (Highest Price) and fall down (index increases) to find buyers.
+Collisions happen when they meet in the middle. The documentation must make this coordinate system explicit.
