@@ -649,7 +649,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/biomimetic-bridge
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
-- **Status:** The bridges are alive. Army ants are linking bodies to span gaps based on traffic density. Dynamic load balancing emerging from swarm stupidity.
+- **Status:** The bridges are alive. Army ants are linking bodies to span gaps based on local traffic density. Dynamic load balancing emerging from swarm stupidity.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -801,3 +801,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/flesh-and-code
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-mold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The mold is growing on the disk. Geodesic transport active. Diffusion is warping near the edge.
