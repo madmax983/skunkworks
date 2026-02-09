@@ -209,6 +209,8 @@ mod nova_morphogenesis_test;
 mod nova_mutagen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_necromancy_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_nightmare_test;
 #[cfg(all(test, feature = "oracle"))]
 mod nova_omen_test;
 #[cfg(all(test, feature = "nova"))]

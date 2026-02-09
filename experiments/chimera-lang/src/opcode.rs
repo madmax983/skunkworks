@@ -557,6 +557,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., success ]`
     #[cfg(feature = "nova")]
     Dream,
+    /// **[Nova]** Reduces local entropy to prevent Nightmares.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Lucid,
     /// **[Nova]** Calculates direction towards highest chemical concentration.
     ///
     /// **Stack:** `[ ..., channel ] -> [ ..., dy, dx ]`

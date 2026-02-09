@@ -77,6 +77,7 @@ mod tests {
             "Fake Mutation".to_string(),
             Some(mutated_strand.clone()),
             false, // Discarded originally
+            false, // is_nightmare
             vec![],
             None,
         );

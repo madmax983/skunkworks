@@ -4465,6 +4465,12 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 style = style.fg(Color::Magenta); // Discarded dreams
             }
 
+            let mut label_suffix = "";
+            if trace.is_nightmare {
+                style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+                label_suffix = " (NIGHTMARE)";
+            }
+
             if is_selected {
                 style = style.add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
             }
@@ -4472,8 +4478,8 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let icon = if trace.accepted { "✔" } else { "✖" };
             trace_items.push(
                 ListItem::new(format!(
-                    "{} Dream #{} (Strand {}) - {} Ticks",
-                    icon, i, trace.strand_idx, trace.duration
+                    "{} Dream #{} (Strand {}) - {} Ticks{}",
+                    icon, i, trace.strand_idx, trace.duration, label_suffix
                 ))
                 .style(style),
             );
@@ -4493,7 +4499,7 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .constraints([Constraint::Length(8), Constraint::Min(0)].as_ref())
             .split(chunks[1]);
 
-        let info_text = vec![
+        let mut info_text = vec![
             Line::from(format!("Mutation: {}", trace.mutation_desc)),
             Line::from(format!(
                 "Energy: {} -> {} (Cost: {})",
@@ -4506,12 +4512,20 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 if trace.status == 1 { "Alive" } else { "Dead" }
             )),
             Line::from(format!("Accepted: {}", trace.accepted)),
-            Line::from(""),
-            Line::from(Span::styled(
-                "Press ENTER to Realize (Lucid Dreaming)",
-                Style::default().fg(Color::Cyan),
-            )),
         ];
+
+        if trace.is_nightmare {
+            info_text.push(Line::from(Span::styled(
+                "TYPE: NIGHTMARE (FORCED)",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            )));
+        }
+
+        info_text.push(Line::from(""));
+        info_text.push(Line::from(Span::styled(
+            "Press ENTER to Realize (Lucid Dreaming)",
+            Style::default().fg(Color::Cyan),
+        )));
 
         let info = Paragraph::new(info_text).block(
             Block::default()
