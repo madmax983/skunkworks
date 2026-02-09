@@ -2,8 +2,92 @@ use super::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
-pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
+pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
+        OpCode::Electrogenesis => {
+            // [amount]
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    let cost = amount.abs().max(1);
+                    if vm.energy >= cost {
+                        vm.energy -= cost;
+                        let (y, x) = vm.context_loc;
+                        vm.voltage_grid[y][x] += amount as f32;
+                        vm.output.push(format!("ELECTROGENESIS: +{}V at {},{}", amount, x, y));
+                    } else {
+                        vm.output.push("ELECTROGENESIS: Not enough energy".to_string());
+                    }
+                }
+            }
+        }
+        OpCode::Induction => {
+            // [] -> [amount]
+            let (y, x) = vm.context_loc;
+            let v = vm.voltage_grid[y][x];
+            let energy_gain = v.abs() as i64;
+            if energy_gain > 0 {
+                vm.energy = vm.energy.saturating_add(energy_gain);
+                vm.voltage_grid[y][x] = 0.0; // Absorb charge
+                vm.stack.push(Value::Int(energy_gain));
+                vm.output.push(format!("INDUCTION: Absorbed {}V -> {} Energy", v, energy_gain));
+            } else {
+                vm.stack.push(Value::Int(0));
+            }
+        }
+        OpCode::WireGrowth => {
+            // [direction]
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(dir) = val {
+                    if vm.energy >= 5 {
+                        let (cy, cx) = vm.context_loc;
+                        // 0=N, 1=E, 2=S, 3=W
+                        let (dy, dx) = match dir % 4 {
+                            0 => (-1, 0),
+                            1 => (0, 1),
+                            2 => (1, 0),
+                            3 => (0, -1),
+                            _ => (0, 0),
+                        };
+
+                        // Check bounds manually or use helper?
+                        // vm.normalize_coords might wrap if torus, but here let's assume valid grid.
+                        // Actually, better to check bounds.
+                        let ny = cy as i64 + dy;
+                        let nx = cx as i64 + dx;
+
+                        if ny >= 0 && ny < GRID_SIZE as i64 && nx >= 0 && nx < GRID_SIZE as i64 {
+                            let ny = ny as usize;
+                            let nx = nx as usize;
+                            vm.grid[ny][nx] = Value::Int(1); // Wire
+                            vm.energy -= 5;
+                            vm.output.push(format!("WIREGROWTH: Wire at {},{}", nx, ny));
+                        } else {
+                             vm.output.push("WIREGROWTH: Out of bounds".to_string());
+                        }
+                    } else {
+                        vm.output.push("WIREGROWTH: Not enough energy".to_string());
+                    }
+                }
+            }
+        }
+        OpCode::CircuitBreaker => {
+            // [threshold, strand_idx]
+            if vm.stack.len() >= 2 {
+                let s_val = vm.stack.pop().unwrap();
+                let t_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(strand_idx), Value::Int(threshold)) = (s_val, t_val) {
+                    let (y, x) = vm.context_loc;
+                    let v = vm.voltage_grid[y][x];
+                    if v > threshold as f32 {
+                        if strand_idx >= 0 {
+                             vm.output.push(format!("CIRCUITBREAKER: Tripped at {}V > {}", v, threshold));
+                             return Some((strand_idx as usize, 0));
+                        }
+                    }
+                }
+            }
+        }
         OpCode::Battery => {
             // [voltage, y, x]
             if vm.stack.len() >= 3 {
@@ -85,6 +169,7 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         }
         _ => {}
     }
+    None
 }
 
 #[allow(clippy::needless_range_loop)]

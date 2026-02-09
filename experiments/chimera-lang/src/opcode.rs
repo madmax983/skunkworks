@@ -337,6 +337,30 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     Lightning,
 
+    /// **[Elektra]** Converts internal Energy to Voltage at the current location.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Electrogenesis,
+
+    /// **[Elektra]** Absorb Voltage at the current location to gain Energy.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., amount ]`
+    #[cfg(feature = "elektra")]
+    Induction,
+
+    /// **[Elektra]** Grows a wire (Value::Int(1)) in a direction.
+    ///
+    /// **Stack:** `[ ..., direction ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    WireGrowth,
+
+    /// **[Elektra]** Branches if Voltage at current location is > threshold.
+    ///
+    /// **Stack:** `[ ..., threshold, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    CircuitBreaker,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///

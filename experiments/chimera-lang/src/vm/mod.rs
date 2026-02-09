@@ -2475,14 +2475,15 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "elektra")]
-            OpCode::Battery
+            OpCode::Electrogenesis
+            | OpCode::Induction
+            | OpCode::WireGrowth
+            | OpCode::CircuitBreaker
+            | OpCode::Battery
             | OpCode::Ground
             | OpCode::SenseVolt
             | OpCode::Shock
-            | OpCode::Lightning => {
-                elektra::exec_elektra_op(self, op, args);
-                None
-            }
+            | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
             #[cfg(feature = "hive")]
             OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose => {
