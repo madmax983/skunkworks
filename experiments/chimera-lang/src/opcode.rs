@@ -1899,6 +1899,33 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Shuffle,
 
+    // Quipu Features (Topological Memory)
+    /// **[Nova]** Ties a knot with a value on the current Quipu Cord.
+    ///
+    /// **Stack:** `[ ..., value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Knot,
+    /// **[Nova]** Unties the last knot cluster from the current Quipu Cord.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    Unknot,
+    /// **[Nova]** Selects the active Quipu Cord.
+    ///
+    /// **Stack:** `[ ..., cord_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Cord,
+    /// **[Nova]** Reads the value of the current Quipu Cord.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    ReadCord,
+    /// **[Nova]** Entangles (adds) the value of another cord to the current one.
+    ///
+    /// **Stack:** `[ ..., other_cord_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tangle,
+
     /// Unknown or invalid instruction.
     #[strum(default)]
     Unknown(String),

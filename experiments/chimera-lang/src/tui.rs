@@ -88,6 +88,8 @@ pub(crate) enum ViewMode {
     Babel,
     #[cfg(feature = "nova")]
     Strings,
+    #[cfg(feature = "nova")]
+    Quipu,
 }
 
 enum InputMode {
@@ -492,6 +494,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Strings = app_state.view_mode {
                 render_strings(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Quipu = app_state.view_mode {
+                render_quipu(f, vm, app_state);
                 return;
             }
 
@@ -950,6 +958,24 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Quipu => {
+                                    // Edit cord value?
+                                    // Let's allow setting value of active cord
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    if let crate::vm::Value::Int(n) = val {
+                                        if let Some(cord) = vm.quipu.cords.get_mut(vm.quipu.active_cord) {
+                                            // Reset cord to this value?
+                                            // Tie replaces it?
+                                            // Let's reuse tie logic by clearing first?
+                                            // Or just make tie set it. My tie logic replaces.
+                                            cord.tie(n);
+                                            app_state.status_msg = format!("Cord {} set to {}", vm.quipu.active_cord, n);
+                                        }
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab => {
@@ -1120,7 +1146,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Babel => ViewMode::Strings,
                             #[cfg(feature = "nova")]
-                            ViewMode::Strings => ViewMode::Heatmap,
+                            ViewMode::Strings => ViewMode::Quipu,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Quipu => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1565,6 +1593,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Strings => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1855,6 +1885,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Strings => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1973,6 +2005,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {
+                            if vm.quipu.active_cord + 1 < vm.quipu.cords.len() {
+                                vm.quipu.active_cord += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2083,6 +2121,12 @@ where
                         ViewMode::Orca => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {
+                            if vm.quipu.active_cord > 0 {
+                                vm.quipu.active_cord -= 1;
                             }
                         }
                     },
@@ -2367,6 +2411,14 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Strings => {
                                 app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Quipu => {
+                                // Prepare buffer with current value
+                                if vm.quipu.active_cord < vm.quipu.cords.len() {
+                                    let val = vm.quipu.cords[vm.quipu.active_cord].read();
+                                    app_state.input_buffer = val.to_string();
+                                }
                             }
                         }
                     }
@@ -3098,6 +3150,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Babel => "BABEL (REGEX LAB)",
         #[cfg(feature = "nova")]
         ViewMode::Strings => "COSMIC STRINGS (VIBRATION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
     };
 
     let title = match app_state.input_mode {
@@ -5979,4 +6033,83 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     let list = List::new(items).block(Block::default().borders(Borders::ALL).title("String Stats"));
     f.render_widget(list, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Quipu (Knot Memory)"),
+        )
+        .x_bounds([0.0, 100.0])
+        .y_bounds([0.0, 50.0])
+        .paint(|ctx| {
+            // Draw Main Cord (Horizontal)
+            ctx.draw(&ratatui::widgets::canvas::Line {
+                x1: 5.0,
+                y1: 45.0,
+                x2: 95.0,
+                y2: 45.0,
+                color: Color::White,
+            });
+
+            // Draw Pendant Cords
+            let cord_count = vm.quipu.cords.len();
+            let spacing = 90.0 / (cord_count as f64 + 1.0);
+
+            for (i, cord) in vm.quipu.cords.iter().enumerate() {
+                let x = 5.0 + spacing * (i as f64 + 1.0);
+
+                // Draw Cord Line
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: x,
+                    y1: 45.0,
+                    x2: x,
+                    y2: 5.0,
+                    color: if i == vm.quipu.active_cord { Color::Yellow } else { Color::Gray },
+                });
+
+                // Draw Knots
+                // Top-down visually means y decreasing from 45.
+                let mut current_y = 40.0;
+
+                for cluster in &cord.clusters {
+                    for knot in cluster {
+                        let _color = match knot {
+                            crate::vm::nova_quipu::Knot::Simple => Color::Cyan,
+                            crate::vm::nova_quipu::Knot::Long(_) => Color::Green,
+                            crate::vm::nova_quipu::Knot::FigureEight => Color::Red,
+                        };
+
+                        let symbol = match knot {
+                            crate::vm::nova_quipu::Knot::Simple => "o",
+                            crate::vm::nova_quipu::Knot::Long(_v) => "L",
+                            crate::vm::nova_quipu::Knot::FigureEight => "8",
+                        };
+
+                        ctx.print(x - 0.5, current_y, symbol);
+                        current_y -= 2.0;
+                    }
+                    // Gap between clusters
+                    current_y -= 3.0;
+                }
+
+                // Draw Value at bottom
+                let val = cord.read();
+                ctx.print(x - 1.0, 2.0, val.to_string());
+            }
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    let info = Paragraph::new("Quipu Interface.\nActive Cord highlighted Yellow.\nOpcodes: Knot, Unknot, Cord, ReadCord, Tangle")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(info, chunks[1]);
 }
