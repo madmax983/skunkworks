@@ -248,6 +248,8 @@ mod ribosome_dos_tests {
             ttl: None,
             name: "Patient Zero".to_string(),
             traits: vec![],
+            id: 1,
+            tissue_id: None,
             genome_id: 0,
         };
         vm.organelles.push(org);

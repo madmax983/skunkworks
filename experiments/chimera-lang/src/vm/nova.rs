@@ -113,6 +113,8 @@ pub enum OrganelleType {
     Seed,
     /// Sings a song repeatedly.
     Choir,
+    /// Moves randomly and triggers random glitches or entropy.
+    Wisp,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -140,6 +142,8 @@ pub struct Organelle {
     pub ttl: Option<usize>,
     pub name: String,
     pub traits: Vec<String>,
+    pub id: u64,
+    pub tissue_id: Option<usize>,
     pub genome_id: u64,
 }
 
@@ -423,6 +427,7 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
             let rx = rng.gen_range(0..crate::vm::GRID_SIZE);
             let ry = rng.gen_range(0..crate::vm::GRID_SIZE);
 
+            vm.organelle_id_counter += 1;
             let organelle = Organelle {
                 stack: Vec::new(),
                 ip: (0, 0),
@@ -435,6 +440,8 @@ pub fn check_chorus_chords(vm: &mut ChimeraVM) -> Option<usize> {
                 ttl: None,
                 name: "Genesis Wisp".to_string(),
                 traits: vec!["Summoned".to_string()],
+                id: vm.organelle_id_counter,
+                tissue_id: None,
                 genome_id: 0,
             };
             vm.organelles.push(organelle);
@@ -1412,6 +1419,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
 
                     if !song.is_empty() {
+                        vm.organelle_id_counter += 1;
                         let organelle = Organelle {
                             stack: Vec::new(),
                             ip: (0, 0),
@@ -1424,6 +1432,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             ttl: None,
                             name: "Seraphim".to_string(),
                             traits: song, // Store song here
+                            id: vm.organelle_id_counter,
+                            tissue_id: None,
                             genome_id: 0,
                         };
                         vm.organelles.push(organelle);
@@ -2273,6 +2283,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         let traits = nova_bestiary::analyze_traits(strand);
                         let name = nova_bestiary::generate_name(genome_id, &traits);
 
+                        vm.organelle_id_counter += 1;
                         let organelle = Organelle {
                             stack: Vec::new(),
                             ip: (s_idx, 0),
@@ -2285,6 +2296,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             ttl: None,
                             name,
                             traits,
+                            id: vm.organelle_id_counter,
+                            tissue_id: None,
                             genome_id,
                         };
                         vm.organelles.push(organelle);
@@ -3749,6 +3762,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Alchemist) => 6,
                 Some(OrganelleType::Seed) => 7,
                 Some(OrganelleType::Choir) => 8,
+                Some(OrganelleType::Wisp) => 9,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -3766,6 +3780,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             6 => Some(OrganelleType::Alchemist),
                             7 => Some(OrganelleType::Seed),
                             8 => Some(OrganelleType::Choir),
+                            9 => Some(OrganelleType::Wisp),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 
@@ -4183,6 +4198,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let (cy, cx) = vm.context_loc;
 
                 // Create organelle
+                vm.organelle_id_counter += 1;
                 let organelle = Organelle {
                     stack: Vec::new(),
                     ip: sip,
@@ -4195,6 +4211,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     ttl: None,
                     name: "Symbiote Spawn".to_string(),
                     traits: vec!["Ejected".to_string()],
+                    id: vm.organelle_id_counter,
+                    tissue_id: None,
                     genome_id: 0,
                 };
                 vm.organelles.push(organelle);
@@ -4381,6 +4399,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
 
             let (cy, cx) = vm.context_loc;
+            vm.organelle_id_counter += 1;
             let organelle = Organelle {
                 stack: Vec::new(),
                 ip: (0, 0), // Void has no IP
@@ -4393,6 +4412,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 ttl: None,
                 name: "Voidwalker".to_string(),
                 traits: vec!["Nihilistic".to_string()],
+                id: vm.organelle_id_counter,
+                tissue_id: None,
                 genome_id: 0,
             };
             vm.organelles.push(organelle);

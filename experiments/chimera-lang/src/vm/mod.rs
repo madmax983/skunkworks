@@ -85,6 +85,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_metazoa;
+#[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
@@ -99,6 +101,11 @@ pub mod nova_bestiary;
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
 pub mod nova_fluid;
+#[cfg(feature = "nova")]
+pub mod nova_flux;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_flux_test;
 #[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
@@ -545,6 +552,9 @@ pub struct ChimeraVM {
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
     #[cfg(feature = "nova")]
     pub quipu: nova_quipu::QuipuState,
+    #[cfg(feature = "nova")]
+    pub tissues: HashMap<usize, nova_metazoa::Tissue>,
+    pub organelle_id_counter: u64,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -807,6 +817,9 @@ impl ChimeraVM {
             hive_sockets: HashMap::new(),
             #[cfg(feature = "nova")]
             quipu: nova_quipu::QuipuState::new(),
+            #[cfg(feature = "nova")]
+            tissues: HashMap::new(),
+            organelle_id_counter: 0,
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -1255,6 +1268,11 @@ impl ChimeraVM {
                     organelle.halted = true;
                 }
             }
+            nova::OrganelleType::Wisp => {
+                if !nova_flux::tick_wisp(self, organelle) {
+                    organelle.halted = true;
+                }
+            }
             nova::OrganelleType::Choir => {
                 let song_len = organelle.traits.len();
                 if song_len > 0 {
@@ -1371,6 +1389,7 @@ impl ChimeraVM {
                             if (self.membranes[cy][cx] & mask) == 0 {
                                 // Spawn ephemeral Ribosome
                                 if self.organelles.len() < MAX_ORGANELLES {
+                                    self.organelle_id_counter += 1;
                                     let new_org = Organelle {
                                         stack: Vec::new(),
                                         ip: (0, 0),
@@ -1383,6 +1402,8 @@ impl ChimeraVM {
                                         ttl: Some(1),
                                         name: "Spark".to_string(),
                                         traits: vec!["Ephemeral".to_string()],
+                                        id: self.organelle_id_counter,
+                                        tissue_id: None,
                                         genome_id: 0,
                                     };
                                     self.organelles.push(new_org);
@@ -1660,6 +1681,7 @@ impl ChimeraVM {
 
             nova_logistics::process_logistics(self);
             self.process_environment();
+            nova_flux::process_flux(self);
             nova_metamorphism::process_metamorphism(self);
             nova_signals::process_signals(self);
             nova_sigil::process_passive_sigils(self);
@@ -2435,7 +2457,9 @@ impl ChimeraVM {
             | OpCode::Receiver
             | OpCode::Latch
             | OpCode::DAC
-            | OpCode::ADC => {
+            | OpCode::ADC
+            | OpCode::Trace
+            | OpCode::Fabricate => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }
@@ -2518,6 +2542,15 @@ impl ChimeraVM {
             OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
                 nova_strings::exec_string_op(self, op, args)
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Bond => nova_metazoa::exec_bond(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Unbond => nova_metazoa::exec_unbond(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Signify => nova_metazoa::exec_signify(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Tissue => nova_metazoa::exec_tissue(self, op, args),
 
             OpCode::Nop => None,
 

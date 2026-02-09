@@ -1,7 +1,6 @@
 /// Shared Audio Model Logic for Resonance Experiments
 use crate::physics::PhysicsGrid;
 use crossbeam_channel::{Receiver, Sender};
-use std::collections::HashMap;
 use std::f32::consts::PI;
 
 /// Commands to control the audio simulation state.
@@ -81,6 +80,23 @@ pub enum AudioCommand {
     },
 }
 
+/// A continuous oscillator that injects energy into the grid.
+#[derive(Debug, Clone)]
+pub struct Oscillator {
+    /// The X coordinate.
+    pub x: usize,
+    /// The Y coordinate.
+    pub y: usize,
+    /// The precomputed grid index.
+    pub idx: usize,
+    /// The current phase of the oscillator.
+    pub phase: f32,
+    /// The frequency in Hz.
+    pub frequency: f32,
+    /// The amplitude.
+    pub strength: f32,
+}
+
 /// The main audio simulation engine.
 ///
 /// This struct runs on the audio thread and manages the physics grid, processes commands,
@@ -98,8 +114,8 @@ pub struct AudioModel {
     pub snapshot_tx: Sender<Vec<f32>>,
     /// Counter for generated samples, used for snapshot timing.
     pub sample_counter: usize,
-    /// Active continuous oscillators: Map of (x, y) -> (phase, frequency, strength).
-    pub oscillators: HashMap<(usize, usize), (f32, f32, f32)>,
+    /// Active continuous oscillators.
+    pub oscillators: Vec<Oscillator>,
     /// Active transient tones: List of (x, y, freq, strength, remaining_samples, phase).
     pub active_tones: Vec<(usize, usize, f32, f32, usize, f32)>,
 }
@@ -126,7 +142,7 @@ impl AudioModel {
             command_rx,
             snapshot_tx,
             sample_counter: 0,
-            oscillators: HashMap::new(),
+            oscillators: Vec::new(),
             active_tones: Vec::new(),
         }
     }
@@ -134,82 +150,94 @@ impl AudioModel {
     /// Processes audio and fills the output buffer.
     ///
     /// This method performs the following steps for each sample in the buffer:
-    /// 1. Processes any pending `AudioCommand`s.
+    /// 1. Processes any pending `AudioCommand`s (once per block).
     /// 2. Updates the state of all active oscillators and tones, injecting energy into the grid.
     /// 3. Advances the physics simulation by one step (`grid.step()`).
     /// 4. Samples the grid at the listener's position.
     /// 5. Clamps the sample and writes it to the output buffer.
     /// 6. Periodically sends a snapshot of the grid to the visualization thread.
     pub fn process(&mut self, output: &mut [f32]) {
-        for sample in output.iter_mut() {
-            // Check commands
-            while let Ok(cmd) = self.command_rx.try_recv() {
-                match cmd {
-                    AudioCommand::Pluck { x, y, strength } => self.grid.pluck(x, y, strength),
-                    AudioCommand::Oscillate {
-                        x,
-                        y,
-                        frequency,
-                        strength,
-                    } => {
+        // Process all pending commands at the start of the block
+        while let Ok(cmd) = self.command_rx.try_recv() {
+            match cmd {
+                AudioCommand::Pluck { x, y, strength } => self.grid.pluck(x, y, strength),
+                AudioCommand::Oscillate {
+                    x,
+                    y,
+                    frequency,
+                    strength,
+                } => {
+                    // Check if oscillator exists
+                    if let Some(pos) = self.oscillators.iter().position(|o| o.x == x && o.y == y) {
                         if strength.abs() < 0.001 {
-                            self.oscillators.remove(&(x, y));
+                            // Remove
+                            self.oscillators.swap_remove(pos);
                         } else {
-                            // Reset phase if new? Or keep phase to avoid clicking?
-                            // Let's keep phase if exists, else 0.0.
-                            let entry = self
-                                .oscillators
-                                .entry((x, y))
-                                .or_insert((0.0, frequency, strength));
-                            entry.1 = frequency;
-                            entry.2 = strength;
+                            // Update
+                            let osc = &mut self.oscillators[pos];
+                            osc.frequency = frequency;
+                            osc.strength = strength;
+                        }
+                    } else if strength.abs() >= 0.001 {
+                        // Add new if valid bounds
+                        if x < self.grid.width && y < self.grid.height {
+                            let idx = y * self.grid.width + x;
+                            self.oscillators.push(Oscillator {
+                                x,
+                                y,
+                                idx,
+                                phase: 0.0,
+                                frequency,
+                                strength,
+                            });
                         }
                     }
-                    AudioCommand::Tone {
+                }
+                AudioCommand::Tone {
+                    x,
+                    y,
+                    frequency,
+                    strength,
+                    duration_ms,
+                } => {
+                    let duration_samples = (duration_ms as f64 * 44100.0 / 1000.0) as usize;
+                    self.active_tones.push((
                         x,
                         y,
                         frequency,
                         strength,
-                        duration_ms,
-                    } => {
-                        let duration_samples = (duration_ms as f64 * 44100.0 / 1000.0) as usize;
-                        self.active_tones.push((
-                            x,
-                            y,
-                            frequency,
-                            strength,
-                            duration_samples,
-                            0.0, // Initial phase
-                        ));
-                    }
-                    AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
-                    AudioCommand::RemoveWall { x, y } => self.grid.remove_wall(x, y),
-                    AudioCommand::ClearWaves => self.grid.clear_waves(),
-                    AudioCommand::ClearWalls => self.grid.clear_walls(),
-                    AudioCommand::MoveListener { x, y } => {
-                        if x < self.grid.width && y < self.grid.height {
-                            self.listener_x = x;
-                            self.listener_y = y;
-                        }
+                        duration_samples,
+                        0.0, // Initial phase
+                    ));
+                }
+                AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
+                AudioCommand::RemoveWall { x, y } => self.grid.remove_wall(x, y),
+                AudioCommand::ClearWaves => self.grid.clear_waves(),
+                AudioCommand::ClearWalls => self.grid.clear_walls(),
+                AudioCommand::MoveListener { x, y } => {
+                    if x < self.grid.width && y < self.grid.height {
+                        self.listener_x = x;
+                        self.listener_y = y;
                     }
                 }
             }
+        }
 
+        for sample in output.iter_mut() {
             // Apply oscillators
-            for ((x, y), (phase, freq, strength)) in self.oscillators.iter_mut() {
+            for osc in self.oscillators.iter_mut() {
                 // frequency is Hz. Sample rate assumed 44100.
-                *phase += *freq * 2.0 * PI / 44100.0;
-                if *phase > 2.0 * PI {
-                    *phase -= 2.0 * PI;
+                osc.phase += osc.frequency * 2.0 * PI / 44100.0;
+                if osc.phase > 2.0 * PI {
+                    osc.phase -= 2.0 * PI;
                 }
-                let val = phase.sin() * *strength;
+                let val = osc.phase.sin() * osc.strength;
 
-                // Inject into grid
-                if *x < self.grid.width && *y < self.grid.height {
-                    let idx = *y * self.grid.width + *x;
-                    if !self.grid.walls[idx] {
-                        self.grid.u[idx] += val;
-                    }
+                // Inject into grid using precomputed idx
+                // We checked bounds on insertion, so idx is valid.
+                // We must check if the cell is a wall.
+                if !self.grid.walls[osc.idx] {
+                    self.grid.u[osc.idx] += val;
                 }
             }
 
@@ -241,9 +269,7 @@ impl AudioModel {
             // Sample at listener position
             let val = self.grid.get(self.listener_x, self.listener_y);
 
-            // Soft clip / Tanh to prevent explosion?
-            // Or just raw. Raw is "physics".
-            // But let's clamp slightly to save ears.
+            // Soft clip / Tanh to prevent explosion
             let clamped = val.clamp(-1.0, 1.0);
             *sample = clamped;
 
@@ -297,5 +323,75 @@ mod tests {
         model.process(&mut big_buffer);
 
         assert!(snap_rx.try_recv().is_ok());
+    }
+
+    #[test]
+    fn test_oscillator_lifecycle() {
+        let (cmd_tx, cmd_rx) = bounded(10);
+        let (snap_tx, _snap_rx) = bounded(10);
+
+        let mut model = AudioModel::new(10, 10, cmd_rx, snap_tx);
+        let mut buffer = vec![0.0; 10];
+
+        // 1. Add Oscillator
+        cmd_tx
+            .send(AudioCommand::Oscillate {
+                x: 2,
+                y: 2,
+                frequency: 440.0,
+                strength: 0.5,
+            })
+            .unwrap();
+
+        model.process(&mut buffer);
+
+        assert_eq!(model.oscillators.len(), 1);
+        assert_eq!(model.oscillators[0].x, 2);
+        assert_eq!(model.oscillators[0].y, 2);
+        assert!((model.oscillators[0].strength - 0.5).abs() < 0.001);
+
+        // 2. Update Oscillator
+        cmd_tx
+            .send(AudioCommand::Oscillate {
+                x: 2,
+                y: 2,
+                frequency: 880.0,
+                strength: 0.8,
+            })
+            .unwrap();
+
+        model.process(&mut buffer);
+
+        assert_eq!(model.oscillators.len(), 1);
+        assert!((model.oscillators[0].frequency - 880.0).abs() < 0.001);
+        assert!((model.oscillators[0].strength - 0.8).abs() < 0.001);
+
+        // 3. Remove Oscillator
+        cmd_tx
+            .send(AudioCommand::Oscillate {
+                x: 2,
+                y: 2,
+                frequency: 880.0,
+                strength: 0.0,
+            })
+            .unwrap();
+
+        model.process(&mut buffer);
+
+        assert_eq!(model.oscillators.len(), 0);
+
+        // 4. Out of bounds Oscillator
+        cmd_tx
+            .send(AudioCommand::Oscillate {
+                x: 20,
+                y: 20,
+                frequency: 440.0,
+                strength: 1.0,
+            })
+            .unwrap();
+
+        model.process(&mut buffer);
+
+        assert_eq!(model.oscillators.len(), 0);
     }
 }
