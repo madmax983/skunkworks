@@ -283,17 +283,30 @@ mod tests {
             // Write 100, wait, query past
             let genes = vec![
                 // Write 100 at 0,0
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::GWrite, args: vec![] },
-
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(100)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::GWrite,
+                    args: vec![],
+                },
                 // Wait (step to push to history)
                 // Grid history is updated at START of step.
                 // So if we write, then next step starts, history is pushed.
                 // So T=0 should see the write.
-                Gene { op: OpCode::Photosynthesize, args: vec![] },
-
+                Gene {
+                    op: OpCode::Photosynthesize,
+                    args: vec![],
+                },
                 // Query past_cell(0, 0, 0, ?X)
                 Gene {
                     op: OpCode::Push,
@@ -301,14 +314,17 @@ mod tests {
                         JunctionType::Any,
                         vec![
                             Nucleotide::String("past_cell".to_string()),
-                            Nucleotide::Number(0), // Ticks back
-                            Nucleotide::Number(0), // X
-                            Nucleotide::Number(0), // Y
+                            Nucleotide::Number(0),                // Ticks back
+                            Nucleotide::Number(0),                // X
+                            Nucleotide::Number(0),                // Y
                             Nucleotide::String("?X".to_string()), // Val
                         ],
                     )],
                 },
-                Gene { op: OpCode::Query, args: vec![] },
+                Gene {
+                    op: OpCode::Query,
+                    args: vec![],
+                },
             ];
 
             let mut vm = ChimeraVM::new(make_dna(genes));
@@ -316,7 +332,7 @@ mod tests {
             for _ in 0..10 {
                 vm.step();
                 if vm.stack.len() >= 2 && matches!(vm.stack.last(), Some(Value::Junction(_, _))) {
-                     break;
+                    break;
                 }
             }
 

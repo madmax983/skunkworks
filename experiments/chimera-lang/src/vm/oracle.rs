@@ -463,10 +463,20 @@ fn check_dynamic_predicates(
                                         current_subst = s1;
                                         if let Some(s2) = unify(arg_x, &fact_x, &current_subst) {
                                             current_subst = s2;
-                                            if let Some(s3) = unify(arg_y, &fact_y, &current_subst) {
+                                            if let Some(s3) = unify(arg_y, &fact_y, &current_subst)
+                                            {
                                                 current_subst = s3;
-                                                if let Some(s4) = unify(arg_val, &fact_val, &current_subst) {
-                                                    solve(remaining_goals, s4, kb, vm, solutions, depth + 1);
+                                                if let Some(s4) =
+                                                    unify(arg_val, &fact_val, &current_subst)
+                                                {
+                                                    solve(
+                                                        remaining_goals,
+                                                        s4,
+                                                        kb,
+                                                        vm,
+                                                        solutions,
+                                                        depth + 1,
+                                                    );
                                                 }
                                             }
                                         }
@@ -519,13 +529,18 @@ fn check_dynamic_predicates(
 
                                     #[cfg(any(feature = "nova", feature = "silicon"))]
                                     {
-                                        neighbor_opt = vm.normalize_coords(y as i64 + dy, x as i64 + dx);
+                                        neighbor_opt =
+                                            vm.normalize_coords(y as i64 + dy, x as i64 + dx);
                                     }
                                     #[cfg(not(any(feature = "nova", feature = "silicon")))]
                                     {
                                         let ny = y as i64 + dy;
                                         let nx = x as i64 + dx;
-                                        if ny >= 0 && ny < crate::vm::GRID_SIZE as i64 && nx >= 0 && nx < crate::vm::GRID_SIZE as i64 {
+                                        if ny >= 0
+                                            && ny < crate::vm::GRID_SIZE as i64
+                                            && nx >= 0
+                                            && nx < crate::vm::GRID_SIZE as i64
+                                        {
                                             neighbor_opt = Some((ny as usize, nx as usize));
                                         }
                                     }
@@ -540,14 +555,28 @@ fn check_dynamic_predicates(
                                         let mut current_subst = subst.clone();
                                         if let Some(s1) = unify(arg_x, &fact_x, &current_subst) {
                                             current_subst = s1;
-                                            if let Some(s2) = unify(arg_y, &fact_y, &current_subst) {
+                                            if let Some(s2) = unify(arg_y, &fact_y, &current_subst)
+                                            {
                                                 current_subst = s2;
-                                                if let Some(s3) = unify(arg_dir, &fact_dir, &current_subst) {
+                                                if let Some(s3) =
+                                                    unify(arg_dir, &fact_dir, &current_subst)
+                                                {
                                                     current_subst = s3;
-                                                    if let Some(s4) = unify(arg_nx, &fact_nx, &current_subst) {
+                                                    if let Some(s4) =
+                                                        unify(arg_nx, &fact_nx, &current_subst)
+                                                    {
                                                         current_subst = s4;
-                                                        if let Some(s5) = unify(arg_ny, &fact_ny, &current_subst) {
-                                                            solve(remaining_goals, s5, kb, vm, solutions, depth + 1);
+                                                        if let Some(s5) =
+                                                            unify(arg_ny, &fact_ny, &current_subst)
+                                                        {
+                                                            solve(
+                                                                remaining_goals,
+                                                                s5,
+                                                                kb,
+                                                                vm,
+                                                                solutions,
+                                                                depth + 1,
+                                                            );
                                                         }
                                                     }
                                                 }

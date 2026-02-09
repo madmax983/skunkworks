@@ -1,5 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **heap-auction**: Specimen condemned. Documentation void. Redundant with `market-flow`/`ram-bazaar`. Generic implementation. Grace period: 24h.
+- **heap-auction**: Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **biophysical-synth**: Specimen condemned. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +14,7 @@
 
 ## Executed
 - **cipher-clock**: Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
+- **cipher-clock**: Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
 - **resonance-chamber**: Specimen executed. Redundant with `ripple-tank`. TUI implementation offers lower fidelity. Moved to graveyard.
 - **system-bonsai**: Specimen executed. Documentation void. Redundant with `recursive-conservatory`. Moved to graveyard.
 - **metric-marionette**: Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`. Moved to graveyard.

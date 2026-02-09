@@ -5,7 +5,11 @@ use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 
 /// Executes Babel-related OpCodes.
-pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_babel_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::Grammar => {
             // Stack: [ ..., type_str, ...args ]
@@ -18,7 +22,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                                 args.push(pattern);
                                 vm.stack.push(Value::Junction(JunctionType::Any, args));
                             } else {
-                                vm.output.push("Error: Stack underflow for Grammar(Match)".to_string());
+                                vm.output
+                                    .push("Error: Stack underflow for Grammar(Match)".to_string());
                             }
                         }
                         "Seq" | "Alt" => {
@@ -29,7 +34,10 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                                 args.push(p2);
                                 vm.stack.push(Value::Junction(JunctionType::Any, args));
                             } else {
-                                vm.output.push(format!("Error: Stack underflow for Grammar({})", type_str));
+                                vm.output.push(format!(
+                                    "Error: Stack underflow for Grammar({})",
+                                    type_str
+                                ));
                             }
                         }
                         "Many" | "Opt" => {
@@ -37,18 +45,24 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                                 args.push(p);
                                 vm.stack.push(Value::Junction(JunctionType::Any, args));
                             } else {
-                                vm.output.push(format!("Error: Stack underflow for Grammar({})", type_str));
+                                vm.output.push(format!(
+                                    "Error: Stack underflow for Grammar({})",
+                                    type_str
+                                ));
                             }
                         }
                         _ => {
-                            vm.output.push(format!("Error: Unknown Grammar type '{}'", type_str));
+                            vm.output
+                                .push(format!("Error: Unknown Grammar type '{}'", type_str));
                         }
                     }
                 } else {
-                    vm.output.push("Error: Grammar type must be a string".to_string());
+                    vm.output
+                        .push("Error: Grammar type must be a string".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for Grammar".to_string());
+                vm.output
+                    .push("Error: Stack underflow for Grammar".to_string());
             }
         }
         OpCode::Parse => {
@@ -64,7 +78,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                                 vm.stack.push(ast);
                                 vm.output.push("PARSE: Success".to_string());
                             } else {
-                                vm.output.push(format!("PARSE: Partial match ({} chars)", consumed));
+                                vm.output
+                                    .push(format!("PARSE: Partial match ({} chars)", consumed));
                                 vm.stack.push(Value::Int(0)); // Failure indicator? Or partial AST? For now, failure.
                             }
                         }
@@ -74,10 +89,12 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                         }
                     }
                 } else {
-                    vm.output.push("Error: Parse input must be a string".to_string());
+                    vm.output
+                        .push("Error: Parse input must be a string".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for Parse".to_string());
+                vm.output
+                    .push("Error: Stack underflow for Parse".to_string());
             }
         }
         OpCode::ParserMatch => {
@@ -87,7 +104,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                     vec![Value::Str("Match".to_string()), pattern],
                 ));
             } else {
-                vm.output.push("Error: Stack underflow for ParserMatch".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ParserMatch".to_string());
             }
         }
         OpCode::ParserSeq => {
@@ -99,7 +117,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                     vec![Value::Str("Seq".to_string()), p1, p2],
                 ));
             } else {
-                vm.output.push("Error: Stack underflow for ParserSeq".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ParserSeq".to_string());
             }
         }
         OpCode::ParserAlt => {
@@ -111,7 +130,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                     vec![Value::Str("Alt".to_string()), p1, p2],
                 ));
             } else {
-                vm.output.push("Error: Stack underflow for ParserAlt".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ParserAlt".to_string());
             }
         }
         OpCode::ParserMany => {
@@ -121,7 +141,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                     vec![Value::Str("Many".to_string()), p],
                 ));
             } else {
-                vm.output.push("Error: Stack underflow for ParserMany".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ParserMany".to_string());
             }
         }
         OpCode::ParserOpt => {
@@ -131,7 +152,8 @@ pub fn exec_babel_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Op
                     vec![Value::Str("Opt".to_string()), p],
                 ));
             } else {
-                vm.output.push("Error: Stack underflow for ParserOpt".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ParserOpt".to_string());
             }
         }
         _ => {}
@@ -149,7 +171,9 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
         if let Value::Str(type_str) = &args[0] {
             match type_str.as_str() {
                 "Match" => {
-                    if args.len() < 2 { return Err(()); }
+                    if args.len() < 2 {
+                        return Err(());
+                    }
                     if let Value::Str(pattern) = &args[1] {
                         if input.starts_with(pattern) {
                             return Ok((Value::Str(pattern.clone()), pattern.len()));
@@ -158,7 +182,9 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     return Err(());
                 }
                 "Seq" => {
-                    if args.len() < 3 { return Err(()); }
+                    if args.len() < 3 {
+                        return Err(());
+                    }
                     let p1 = &args[1];
                     let p2 = &args[2];
 
@@ -167,11 +193,13 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
 
                     Ok((
                         Value::Junction(JunctionType::All, vec![res1, res2]),
-                        consumed1 + consumed2
+                        consumed1 + consumed2,
                     ))
                 }
                 "Alt" => {
-                    if args.len() < 3 { return Err(()); }
+                    if args.len() < 3 {
+                        return Err(());
+                    }
                     let p1 = &args[1];
                     let p2 = &args[2];
 
@@ -184,24 +212,27 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     Err(())
                 }
                 "Many" => {
-                    if args.len() < 2 { return Err(()); }
+                    if args.len() < 2 {
+                        return Err(());
+                    }
                     let p = &args[1];
                     let mut results = Vec::new();
                     let mut total_consumed = 0;
 
                     while let Ok((res, consumed)) = run_parser(p, &input[total_consumed..]) {
-                        if consumed == 0 { break; } // Prevent infinite loops on empty matches
+                        if consumed == 0 {
+                            break;
+                        } // Prevent infinite loops on empty matches
                         results.push(res);
                         total_consumed += consumed;
                     }
 
-                    Ok((
-                        Value::Junction(JunctionType::All, results),
-                        total_consumed
-                    ))
+                    Ok((Value::Junction(JunctionType::All, results), total_consumed))
                 }
                 "Opt" => {
-                    if args.len() < 2 { return Err(()); }
+                    if args.len() < 2 {
+                        return Err(());
+                    }
                     let p = &args[1];
 
                     if let Ok(res) = run_parser(p, input) {
@@ -210,7 +241,7 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                         Ok((Value::Junction(JunctionType::All, Vec::new()), 0))
                     }
                 }
-                _ => Err(())
+                _ => Err(()),
             }
         } else {
             Err(())

@@ -1,6 +1,7 @@
 mod synth;
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use market_sim::{Grid, Particle};
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -11,7 +12,6 @@ use ratatui::{
         canvas::{Canvas, Points},
     },
 };
-use market_sim::{Grid, Particle};
 use std::time::Duration;
 use synth::SynthState;
 use tui_shared::Tui;
@@ -81,7 +81,11 @@ impl App {
             let cx = rng.gen_range(10..self.grid.width - 10);
             // Bid whale at bottom, Ask whale at top
             let cy = if is_bid { self.grid.height - 8 } else { 5 };
-            let p = if is_bid { Particle::Bid(0) } else { Particle::Ask(0) };
+            let p = if is_bid {
+                Particle::Bid(0)
+            } else {
+                Particle::Ask(0)
+            };
             for dy in 0..4 {
                 for dx in 0..6 {
                     self.grid.set(cx + dx, cy + dy, p);

@@ -62,11 +62,11 @@ pub fn generate_glyph_heightmap(
     positioned_glyph.position = ab_glyph::point(shift_x, shift_y);
 
     if let Some(outlined) = font.outline_glyph(positioned_glyph) {
-         outlined.draw(|x, y, v| {
-             if x < width as u32 && y < height as u32 {
-                 map.data[(y as usize) * width + (x as usize)] = v;
-             }
-         });
+        outlined.draw(|x, y, v| {
+            if x < width as u32 && y < height as u32 {
+                map.data[(y as usize) * width + (x as usize)] = v;
+            }
+        });
     }
 
     map
@@ -81,11 +81,7 @@ pub fn create_grid_mesh(subdivisions: usize, size: f32) -> Mesh {
 
     for z in 0..subdivisions {
         for x in 0..subdivisions {
-            let pos = vec3(
-                (x as f32) * step - offset,
-                0.0,
-                (z as f32) * step - offset,
-            );
+            let pos = vec3((x as f32) * step - offset, 0.0, (z as f32) * step - offset);
 
             let u = x as f32 / (subdivisions as f32 - 1.0);
             let v = z as f32 / (subdivisions as f32 - 1.0);
@@ -129,7 +125,7 @@ pub fn update_mesh_heights(
     noise_seed: u32,
     noise_scale: f64,
     noise_amp: f32,
-    glyph_amp: f32
+    glyph_amp: f32,
 ) {
     let perlin = Perlin::new(noise_seed);
     let w = heightmap.width as f32;
@@ -144,7 +140,10 @@ pub fn update_mesh_heights(
 
         let glyph_h = heightmap.get(x, y);
 
-        let noise_val = perlin.get([vertex.position.x as f64 * noise_scale, vertex.position.z as f64 * noise_scale]);
+        let noise_val = perlin.get([
+            vertex.position.x as f64 * noise_scale,
+            vertex.position.z as f64 * noise_scale,
+        ]);
 
         vertex.position.y = (noise_val as f32 * noise_amp) + (glyph_h * glyph_amp);
     }
@@ -154,8 +153,8 @@ pub fn update_mesh_heights(
 
     for i in (0..mesh.indices.len()).step_by(3) {
         let i0 = mesh.indices[i] as usize;
-        let i1 = mesh.indices[i+1] as usize;
-        let i2 = mesh.indices[i+2] as usize;
+        let i1 = mesh.indices[i + 1] as usize;
+        let i2 = mesh.indices[i + 2] as usize;
 
         let v0 = mesh.vertices[i0].position;
         let v1 = mesh.vertices[i1].position;
@@ -180,15 +179,15 @@ pub fn update_mesh_heights(
 
         let h = v.position.y;
         let base_color = if h < 0.5 {
-             Color::new(0.0, 0.2, 0.8, 0.9)
+            Color::new(0.0, 0.2, 0.8, 0.9)
         } else if h < 2.0 {
-             Color::new(0.8, 0.7, 0.5, 1.0)
+            Color::new(0.8, 0.7, 0.5, 1.0)
         } else if h < 6.0 {
-             Color::new(0.1, 0.6, 0.1, 1.0)
+            Color::new(0.1, 0.6, 0.1, 1.0)
         } else if h < 10.0 {
-             Color::new(0.5, 0.5, 0.5, 1.0)
+            Color::new(0.5, 0.5, 0.5, 1.0)
         } else {
-             Color::new(0.9, 0.9, 1.0, 1.0)
+            Color::new(0.9, 0.9, 1.0, 1.0)
         };
 
         let r = (base_color.r * diffuse).min(1.0);

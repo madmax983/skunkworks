@@ -61,7 +61,9 @@ async fn main() {
         for line in SOURCE_CODE.lines() {
             draw_text(line, 10.0, y, font_size, GREEN);
             y += font_size;
-            if y > h { break; }
+            if y > h {
+                break;
+            }
         }
 
         set_default_camera();
@@ -85,7 +87,8 @@ async fn main() {
             ],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     let mut current_target = target_a;
     let mut next_target = target_b;
@@ -109,10 +112,18 @@ async fn main() {
         }
 
         // Adjust Feed/Kill
-        if is_key_down(KeyCode::Up) { feed += 0.0001; }
-        if is_key_down(KeyCode::Down) { feed -= 0.0001; }
-        if is_key_down(KeyCode::Right) { kill += 0.0001; }
-        if is_key_down(KeyCode::Left) { kill -= 0.0001; }
+        if is_key_down(KeyCode::Up) {
+            feed += 0.0001;
+        }
+        if is_key_down(KeyCode::Down) {
+            feed -= 0.0001;
+        }
+        if is_key_down(KeyCode::Right) {
+            kill += 0.0001;
+        }
+        if is_key_down(KeyCode::Left) {
+            kill -= 0.0001;
+        }
 
         // Simulation Step
         {
@@ -159,7 +170,7 @@ async fn main() {
                 dest_size: Some(vec2(screen_width(), screen_height())),
                 flip_y: true,
                 ..Default::default()
-            }
+            },
         );
 
         // UI

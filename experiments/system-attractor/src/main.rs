@@ -1,8 +1,10 @@
+use macroquad::miniquad::{
+    BlendFactor, BlendState, BlendValue, Comparison, Equation, PrimitiveType,
+};
 use macroquad::prelude::*;
-use macroquad::miniquad::{PrimitiveType, BlendState, BlendFactor, BlendValue, Equation, Comparison};
-use system_attractor::simulation::{Particle, Simulation};
-use system_attractor::lyapunov::LyapunovMonitor;
 use system_attractor::audio::Synth;
+use system_attractor::lyapunov::LyapunovMonitor;
+use system_attractor::simulation::{Particle, Simulation};
 
 const PARTICLE_COUNT: usize = 500_000;
 const BATCH_SIZE: usize = 60_000;
@@ -81,17 +83,18 @@ async fn main() {
             pipeline_params,
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     // Meshes for batch rendering
     let num_batches = PARTICLE_COUNT.div_ceil(BATCH_SIZE);
-    let mut meshes: Vec<Mesh> = (0..num_batches).map(|_| {
-        Mesh {
+    let mut meshes: Vec<Mesh> = (0..num_batches)
+        .map(|_| Mesh {
             vertices: Vec::with_capacity(BATCH_SIZE),
             indices: Vec::with_capacity(BATCH_SIZE),
             texture: None,
-        }
-    }).collect();
+        })
+        .collect();
 
     loop {
         let dt = get_frame_time().min(0.05);
@@ -101,21 +104,33 @@ async fn main() {
 
         if let Some(synth) = &mut synth {
             if let Some(p) = sim.particles.first() {
-                 let z = p.pos.z;
-                 let speed = p.vel.length();
-                 let freq = 100.0 + (z * 20.0).clamp(0.0, 2000.0);
-                 let amp = (speed / 100.0).clamp(0.0, 0.5);
-                 synth.update(freq, amp);
+                let z = p.pos.z;
+                let speed = p.vel.length();
+                let freq = 100.0 + (z * 20.0).clamp(0.0, 2000.0);
+                let amp = (speed / 100.0).clamp(0.0, 0.5);
+                synth.update(freq, amp);
             }
         }
 
         // Camera Input
-        if is_key_down(KeyCode::Left) { cam_yaw -= 0.02; }
-        if is_key_down(KeyCode::Right) { cam_yaw += 0.02; }
-        if is_key_down(KeyCode::Up) { cam_pitch = (cam_pitch + 0.02).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::Down) { cam_pitch = (cam_pitch - 0.02).clamp(-1.5, 1.5); }
-        if is_key_down(KeyCode::W) { cam_dist -= 0.5; }
-        if is_key_down(KeyCode::S) { cam_dist += 0.5; }
+        if is_key_down(KeyCode::Left) {
+            cam_yaw -= 0.02;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_yaw += 0.02;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pitch = (cam_pitch + 0.02).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pitch = (cam_pitch - 0.02).clamp(-1.5, 1.5);
+        }
+        if is_key_down(KeyCode::W) {
+            cam_dist -= 0.5;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_dist += 0.5;
+        }
         if is_key_pressed(KeyCode::R) {
             sim.reset();
             lyapunov = LyapunovMonitor::new(vec3(1.0, 1.0, 1.0), 1e-4);
@@ -167,19 +182,37 @@ async fn main() {
 
         draw_text("System Attractor", 10.0, 30.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Particles: {}", PARTICLE_COUNT), 10.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Particles: {}", PARTICLE_COUNT),
+            10.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         let p = &sim.monitor.params;
-        draw_text(&format!("Sigma (CPU): {:.2}", p.sigma), 10.0, 100.0, 20.0, RED);
+        draw_text(
+            &format!("Sigma (CPU): {:.2}", p.sigma),
+            10.0,
+            100.0,
+            20.0,
+            RED,
+        );
         draw_text(&format!("Rho (RAM): {:.2}", p.rho), 10.0, 120.0, 20.0, BLUE);
         draw_text(&format!("Beta: {:.2}", p.beta), 10.0, 140.0, 20.0, GREEN);
 
-        draw_text(&format!("Lyapunov Exp: {:.4}", lyapunov.get_exponent()), 10.0, 170.0, 20.0, YELLOW);
+        draw_text(
+            &format!("Lyapunov Exp: {:.4}", lyapunov.get_exponent()),
+            10.0,
+            170.0,
+            20.0,
+            YELLOW,
+        );
 
         if synth.is_some() {
-             draw_text("Audio: Active", 10.0, 190.0, 20.0, GOLD);
+            draw_text("Audio: Active", 10.0, 190.0, 20.0, GOLD);
         } else {
-             draw_text("Audio: Disabled", 10.0, 190.0, 20.0, DARKGRAY);
+            draw_text("Audio: Disabled", 10.0, 190.0, 20.0, DARKGRAY);
         }
 
         next_frame().await

@@ -1,5 +1,5 @@
+use crate::simulation::{solve_rk4, LorenzParams};
 use macroquad::prelude::*;
-use crate::simulation::{LorenzParams, solve_rk4};
 
 pub struct LyapunovMonitor {
     pub reference: Vec3,
@@ -48,9 +48,9 @@ impl LyapunovMonitor {
         // Move shadow to be exactly initial_dist away from ref_next along the direction (shadow_next - ref_next)
         let diff = shadow_next - ref_next;
         let direction = if diff.length_squared() > 0.0 {
-             diff.normalize()
+            diff.normalize()
         } else {
-             vec3(1.0, 0.0, 0.0) // Fallback
+            vec3(1.0, 0.0, 0.0) // Fallback
         };
 
         self.shadow = ref_next + direction * self.initial_dist;

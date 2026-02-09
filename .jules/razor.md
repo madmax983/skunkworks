@@ -71,3 +71,8 @@
 **Bloat:** Redundant `locus` dependency in `photon-racer` and `metric-marionette` when `tui-shared` already re-exports it.
 **Cut:** Removed direct `locus` dependencies.
 **Saved:** 2 Dependency lines, enforced single source of truth for `Vec2`.
+
+## [Reduction]
+**Bloat:** Manual `integrate` function in `system-bio-dome/lorenz.rs` and verbose neighbor calculation in `reaction.rs`.
+**Cut:** Moved `integrate` to `LorenzState::update` and simplified neighbor loops.
+**Saved:** Reduced cognitive load, ~20 lines of code, and improved encapsulation.

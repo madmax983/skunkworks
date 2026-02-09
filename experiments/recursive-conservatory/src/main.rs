@@ -194,7 +194,7 @@ async fn main() {
             let (action, depth) = &data.actions[current_step - 1];
             let root_x = (current_step - 1) as f32 * 0.1;
             if let Action::Move(_, end) = action {
-                 draw_line(end.x, end.y, root_x, *depth as f32, 0.05, YELLOW);
+                draw_line(end.x, end.y, root_x, *depth as f32, 0.05, YELLOW);
             }
         }
 

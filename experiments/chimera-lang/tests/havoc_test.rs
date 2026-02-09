@@ -13,12 +13,27 @@ fn make_dna(genes: Vec<Gene>) -> Dna {
 #[test]
 fn test_havoc_rate() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // Rate 1.0
-        Gene { op: OpCode::HavocRate, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(7)] }, // Scope: Memory + Stack + Exec (1+2+4=7)
-        Gene { op: OpCode::HavocScope, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        }, // Rate 1.0
+        Gene {
+            op: OpCode::HavocRate,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(7)],
+        }, // Scope: Memory + Stack + Exec (1+2+4=7)
+        Gene {
+            op: OpCode::HavocScope,
+            args: vec![],
+        },
         // Loop to let havoc run
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        },
     ];
     let mut vm = ChimeraVM::new(make_dna(genes));
 
@@ -43,6 +58,13 @@ fn test_havoc_rate() {
         vm.step();
     }
 
-    let havoc_triggered = vm.output.iter().skip(start_output_len).any(|s| s.contains("HAVOC"));
-    assert!(havoc_triggered, "Havoc engine should have triggered a fault (Rate 1.0)");
+    let havoc_triggered = vm
+        .output
+        .iter()
+        .skip(start_output_len)
+        .any(|s| s.contains("HAVOC"));
+    assert!(
+        havoc_triggered,
+        "Havoc engine should have triggered a fault (Rate 1.0)"
+    );
 }

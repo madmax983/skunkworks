@@ -17,10 +17,22 @@ fn test_metamorphism_compression() {
     // Sequence: [ Push(10), Push(20), Add, Jump(0) ]
     // This should compress to [ Push(30), Jump(0) ] under pressure.
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(0)],
+        },
     ];
 
     let mut vm = ChimeraVM::new(make_dna(genes));
@@ -36,13 +48,27 @@ fn test_metamorphism_compression() {
     // Let's make strand 1 the target.
 
     let target_genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-        Gene { op: OpCode::Add, args: vec![] },
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        },
     ];
 
-    vm.dna.helix.strands.push(Strand { genes: target_genes });
+    vm.dna.helix.strands.push(Strand {
+        genes: target_genes,
+    });
 
     // vm.ip is (0,0). Target is strand 1.
 
@@ -77,17 +103,26 @@ fn test_metamorphism_expansion() {
     // Sequence: [ Push(30), Jump(1) ]
     // Should expand to [ Push(15), Push(15), Add, Jump(1) ] under heat.
 
-    let genes = vec![
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
-    ];
+    let genes = vec![Gene {
+        op: OpCode::Jump,
+        args: vec![Nucleotide::Number(0)],
+    }];
     let mut vm = ChimeraVM::new(make_dna(genes));
 
     // Add target strand
     let target_genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(30)] },
-        Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(1)] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(30)],
+        },
+        Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(1)],
+        },
     ];
-    vm.dna.helix.strands.push(Strand { genes: target_genes });
+    vm.dna.helix.strands.push(Strand {
+        genes: target_genes,
+    });
 
     // High Energy (Heat > 100)
     vm.energy = 200;
@@ -104,12 +139,13 @@ fn test_metamorphism_expansion() {
             // Expanded!
             // Should be Push(15), Push(15), Add, Jump(1) => len 4
             if s1.genes.len() == 4 {
-                if s1.genes[0].op == OpCode::Push &&
-                   s1.genes[1].op == OpCode::Push &&
-                   s1.genes[2].op == OpCode::Add {
-                       changed = true;
-                       break;
-                   }
+                if s1.genes[0].op == OpCode::Push
+                    && s1.genes[1].op == OpCode::Push
+                    && s1.genes[2].op == OpCode::Add
+                {
+                    changed = true;
+                    break;
+                }
             }
         }
     }

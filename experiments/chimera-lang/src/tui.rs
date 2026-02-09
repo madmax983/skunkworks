@@ -82,6 +82,8 @@ pub(crate) enum ViewMode {
     Arena,
     #[cfg(feature = "nova")]
     Garden,
+    #[cfg(feature = "nova")]
+    Orca,
 }
 
 enum InputMode {
@@ -455,6 +457,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Orca = app_state.view_mode {
+                render_orca(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -480,12 +488,31 @@ where
                 if app_state.palette_open {
                     match key.code {
                         KeyCode::Esc | KeyCode::Char('p') => app_state.palette_open = false,
-                        KeyCode::Up => if app_state.palette_idx >= 4 { app_state.palette_idx -= 4; },
-                        KeyCode::Down => if app_state.palette_idx + 4 < 16 { app_state.palette_idx += 4; },
-                        KeyCode::Left => if app_state.palette_idx > 0 { app_state.palette_idx -= 1; },
-                        KeyCode::Right => if app_state.palette_idx + 1 < 16 { app_state.palette_idx += 1; },
+                        KeyCode::Up => {
+                            if app_state.palette_idx >= 4 {
+                                app_state.palette_idx -= 4;
+                            }
+                        }
+                        KeyCode::Down => {
+                            if app_state.palette_idx + 4 < 16 {
+                                app_state.palette_idx += 4;
+                            }
+                        }
+                        KeyCode::Left => {
+                            if app_state.palette_idx > 0 {
+                                app_state.palette_idx -= 1;
+                            }
+                        }
+                        KeyCode::Right => {
+                            if app_state.palette_idx + 1 < 16 {
+                                app_state.palette_idx += 1;
+                            }
+                        }
                         KeyCode::Enter => {
-                            let chars = ['*', 'o', 'x', '^', 'v', '<', '>', '+', '-', '/', '%', '!', '=', ':', ';', '?'];
+                            let chars = [
+                                '*', 'o', 'x', '^', 'v', '<', '>', '+', '-', '/', '%', '!', '=',
+                                ':', ';', '?',
+                            ];
                             if app_state.palette_idx < chars.len() {
                                 app_state.palette_char = Some(chars[app_state.palette_idx]);
                             }
@@ -509,14 +536,26 @@ where
                                             let op_name = gene.op.to_string();
                                             let mut terms = vec![crate::vm::Value::Str(op_name)];
 
-                                            fn nuc_to_val(n: &crate::ast::Nucleotide) -> crate::vm::Value {
+                                            fn nuc_to_val(
+                                                n: &crate::ast::Nucleotide,
+                                            ) -> crate::vm::Value
+                                            {
                                                 match n {
-                                                    crate::ast::Nucleotide::Number(i) => crate::vm::Value::Int(*i),
-                                                    crate::ast::Nucleotide::String(s) => crate::vm::Value::Str(s.clone()),
-                                                    crate::ast::Nucleotide::Identifier(s) => crate::vm::Value::Str(s.clone()),
+                                                    crate::ast::Nucleotide::Number(i) => {
+                                                        crate::vm::Value::Int(*i)
+                                                    }
+                                                    crate::ast::Nucleotide::String(s) => {
+                                                        crate::vm::Value::Str(s.clone())
+                                                    }
+                                                    crate::ast::Nucleotide::Identifier(s) => {
+                                                        crate::vm::Value::Str(s.clone())
+                                                    }
                                                     crate::ast::Nucleotide::Junction(t, args) => {
-                                                        crate::vm::Value::Junction(*t, args.iter().map(nuc_to_val).collect())
-                                                    },
+                                                        crate::vm::Value::Junction(
+                                                            *t,
+                                                            args.iter().map(nuc_to_val).collect(),
+                                                        )
+                                                    }
                                                     _ => crate::vm::Value::Str("?".to_string()),
                                                 }
                                             }
@@ -525,7 +564,10 @@ where
                                                 terms.push(nuc_to_val(&arg));
                                             }
 
-                                            let goal = crate::vm::Value::Junction(crate::ast::JunctionType::Any, terms);
+                                            let goal = crate::vm::Value::Junction(
+                                                crate::ast::JunctionType::Any,
+                                                terms,
+                                            );
                                             let mut solutions = Vec::new();
                                             crate::vm::oracle::solve(
                                                 &[goal],
@@ -533,16 +575,19 @@ where
                                                 &vm.knowledge_base,
                                                 vm,
                                                 &mut solutions,
-                                                0
+                                                0,
                                             );
 
                                             app_state.query_results.clear();
                                             if solutions.is_empty() {
                                                 app_state.query_results.push("No.".to_string());
                                             } else {
-                                                app_state.query_results.push(format!("Yes ({} solutions):", solutions.len()));
+                                                app_state.query_results.push(format!(
+                                                    "Yes ({} solutions):",
+                                                    solutions.len()
+                                                ));
                                                 for (i, sol) in solutions.iter().enumerate() {
-                                                    let mut s = format!("{}: ", i+1);
+                                                    let mut s = format!("{}: ", i + 1);
                                                     for (k, v) in sol {
                                                         s.push_str(&format!("{}={} ", k, v));
                                                     }
@@ -552,13 +597,15 @@ where
                                                     app_state.query_results.push(s);
                                                 }
                                             }
-                                        },
+                                        }
                                         Err(e) => {
                                             app_state.query_results.clear();
-                                            app_state.query_results.push(format!("Parse Error: {}", e));
+                                            app_state
+                                                .query_results
+                                                .push(format!("Parse Error: {}", e));
                                         }
                                     }
-                                },
+                                }
                                 Err(e) => {
                                     app_state.query_results.clear();
                                     app_state.query_results.push(format!("Syntax Error: {}", e));
@@ -686,6 +733,16 @@ where
                                     }
                                 }
                                 ViewMode::Grid => {
+                                    // Grid Editing Logic
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Orca => {
                                     // Grid Editing Logic
                                     let val = parse_grid_value(&app_state.input_buffer);
                                     let (x, y) = app_state.grid_cursor;
@@ -864,6 +921,16 @@ where
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
+                    if app_state.view_mode == ViewMode::Orca {
+                        if c == ' ' {
+                            // Let Space fall through
+                        } else if c.is_ascii_graphic() {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
+                            continue;
+                        }
+                    }
+
                     if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
                         continue;
                     }
@@ -972,7 +1039,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Arena => ViewMode::Garden,
                             #[cfg(feature = "nova")]
-                            ViewMode::Garden => ViewMode::Heatmap,
+                            ViewMode::Garden => ViewMode::Orca,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Orca => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1136,6 +1205,8 @@ where
                     KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1268,8 +1339,12 @@ where
                                     let mut rng = rand::thread_rng();
                                     use rand::Rng;
                                     if !vm.dna.helix.strands.is_empty() {
-                                        let s1 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
-                                        let s2 = vm.dna.helix.strands[rng.gen_range(0..vm.dna.helix.strands.len())].clone();
+                                        let s1 = vm.dna.helix.strands
+                                            [rng.gen_range(0..vm.dna.helix.strands.len())]
+                                        .clone();
+                                        let s2 = vm.dna.helix.strands
+                                            [rng.gen_range(0..vm.dna.helix.strands.len())]
+                                        .clone();
                                         arena.add_gladiator(s1, rng.gen());
                                         arena.add_gladiator(s2, rng.gen());
                                     }
@@ -1371,6 +1446,12 @@ where
                         ViewMode::Arena => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Garden => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -1649,6 +1730,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1757,6 +1844,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1859,6 +1952,12 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1935,6 +2034,19 @@ where
                                 }
                             }
                             ViewMode::Grid => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Orca => {
+                                // Enable editing grid from Orca view
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
@@ -2812,6 +2924,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Arena => "ARENA (COLOSSEUM)",
         #[cfg(feature = "nova")]
         ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
+        #[cfg(feature = "nova")]
+        ViewMode::Orca => "ORCA (SIGNAL GRID)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -3282,11 +3396,18 @@ fn render_palette(f: &mut Frame, app_state: &AppState) {
     let height = 10;
     let x = (area.width - width) / 2;
     let y = (area.height - height) / 2;
-    let rect = ratatui::layout::Rect { x, y, width, height };
+    let rect = ratatui::layout::Rect {
+        x,
+        y,
+        width,
+        height,
+    };
 
     f.render_widget(ratatui::widgets::Clear, rect);
 
-    let chars = ['*', 'o', 'x', '^', 'v', '<', '>', '+', '-', '/', '%', '!', '=', ':', ';', '?'];
+    let chars = [
+        '*', 'o', 'x', '^', 'v', '<', '>', '+', '-', '/', '%', '!', '=', ':', ';', '?',
+    ];
     let mut lines = Vec::new();
 
     for row in 0..4 {
@@ -3296,7 +3417,10 @@ fn render_palette(f: &mut Frame, app_state: &AppState) {
             if idx < chars.len() {
                 let ch = chars[idx];
                 let style = if idx == app_state.palette_idx {
-                    Style::default().fg(Color::Black).bg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    Style::default()
+                        .fg(Color::Black)
+                        .bg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD)
                 } else {
                     Style::default().fg(Color::Cyan)
                 };
@@ -3312,7 +3436,9 @@ fn render_palette(f: &mut Frame, app_state: &AppState) {
         .borders(Borders::ALL)
         .title("Operator Palette (Enter)");
 
-    let p = Paragraph::new(lines).block(block).alignment(ratatui::layout::Alignment::Center);
+    let p = Paragraph::new(lines)
+        .block(block)
+        .alignment(ratatui::layout::Alignment::Center);
     f.render_widget(p, rect);
 }
 
@@ -3641,7 +3767,9 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .collect();
 
         if !app_state.query_results.is_empty() {
-            kb_items.push(ListItem::new("--- Query Results ---").style(Style::default().fg(Color::Yellow)));
+            kb_items.push(
+                ListItem::new("--- Query Results ---").style(Style::default().fg(Color::Yellow)),
+            );
             for res in &app_state.query_results {
                 kb_items.push(ListItem::new(res.clone()).style(Style::default().fg(Color::Cyan)));
             }
@@ -3654,9 +3782,9 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         };
 
         let border_style = if app_state.query_mode {
-             Style::default().fg(Color::Yellow)
+            Style::default().fg(Color::Yellow)
         } else {
-             Style::default().fg(Color::White)
+            Style::default().fg(Color::White)
         };
 
         let oracle_list = List::new(kb_items).block(
@@ -5260,22 +5388,45 @@ fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         .split(chunks[0]);
 
     for (i, gladiator) in arena.combatants.iter().enumerate() {
-        if i >= 2 { break; } // Only show first 2 for now
+        if i >= 2 {
+            break;
+        } // Only show first 2 for now
 
-        let hp_percent = (gladiator.stats.hp as f64 / gladiator.stats.max_hp as f64).clamp(0.0, 1.0);
+        let hp_percent =
+            (gladiator.stats.hp as f64 / gladiator.stats.max_hp as f64).clamp(0.0, 1.0);
 
         let stats_text = vec![
             Line::from(vec![
-                Span::styled(format!("{} ", gladiator.name), Style::default().add_modifier(Modifier::BOLD).fg(Color::Yellow)),
-                Span::raw(format!("(HP: {}/{})", gladiator.stats.hp, gladiator.stats.max_hp)),
+                Span::styled(
+                    format!("{} ", gladiator.name),
+                    Style::default()
+                        .add_modifier(Modifier::BOLD)
+                        .fg(Color::Yellow),
+                ),
+                Span::raw(format!(
+                    "(HP: {}/{})",
+                    gladiator.stats.hp, gladiator.stats.max_hp
+                )),
             ]),
-            Line::from(format!("ATK: {} | DEF: {} | SPD: {}", gladiator.stats.attack, gladiator.stats.defense, gladiator.stats.speed)),
+            Line::from(format!(
+                "ATK: {} | DEF: {} | SPD: {}",
+                gladiator.stats.attack, gladiator.stats.defense, gladiator.stats.speed
+            )),
             Line::from(format!("Traits: {:?}", gladiator.traits)),
             Line::from(""),
-            Line::from(format!("Action: {}", if arena.turn > 0 { "Fighting" } else { "Waiting" })),
+            Line::from(format!(
+                "Action: {}",
+                if arena.turn > 0 {
+                    "Fighting"
+                } else {
+                    "Waiting"
+                }
+            )),
         ];
 
-        let block = Block::default().borders(Borders::ALL).title(format!("Fighter {}", i + 1));
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Fighter {}", i + 1));
         let paragraph = Paragraph::new(stats_text).block(block);
 
         f.render_widget(paragraph, combat_chunks[i]);
@@ -5292,20 +5443,34 @@ fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         };
 
         let gauge = Gauge::default()
-            .gauge_style(Style::default().fg(if hp_percent > 0.5 { Color::Green } else { Color::Red }))
+            .gauge_style(Style::default().fg(if hp_percent > 0.5 {
+                Color::Green
+            } else {
+                Color::Red
+            }))
             .ratio(hp_percent);
 
         f.render_widget(gauge, gauge_area);
     }
 
     if arena.combatants.is_empty() {
-        let center = Paragraph::new("Press 'S' to Start (Auto-Draft)").alignment(ratatui::layout::Alignment::Center);
+        let center = Paragraph::new("Press 'S' to Start (Auto-Draft)")
+            .alignment(ratatui::layout::Alignment::Center);
         f.render_widget(center, chunks[0]);
     }
 
     // Bottom: Logs
-    let log_items: Vec<ListItem> = arena.logs.iter().rev().map(|s| ListItem::new(s.clone())).collect();
-    let logs_list = List::new(log_items).block(Block::default().borders(Borders::ALL).title("Battle Log (Space: Tick, R: Reset)"));
+    let log_items: Vec<ListItem> = arena
+        .logs
+        .iter()
+        .rev()
+        .map(|s| ListItem::new(s.clone()))
+        .collect();
+    let logs_list = List::new(log_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Battle Log (Space: Tick, R: Reset)"),
+    );
     f.render_widget(logs_list, chunks[1]);
 }
 
@@ -5358,11 +5523,8 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         grid_lines.push(Line::from(line_spans));
     }
 
-    let grid_widget = Paragraph::new(grid_lines).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("The Garden"),
-    );
+    let grid_widget = Paragraph::new(grid_lines)
+        .block(Block::default().borders(Borders::ALL).title("The Garden"));
     f.render_widget(grid_widget, chunks[0]);
 
     // Right: Rules List
@@ -5376,16 +5538,19 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             if let Some(rule) = vm.garden.rules.get(k) {
                 let r_str = format!("B{:?}/S{:?}", rule.birth, rule.survival);
                 let colors = [
-                        Color::Red,
-                        Color::Green,
-                        Color::Blue,
-                        Color::Yellow,
-                        Color::Magenta,
-                        Color::Cyan,
-                        Color::White,
-                    ];
+                    Color::Red,
+                    Color::Green,
+                    Color::Blue,
+                    Color::Yellow,
+                    Color::Magenta,
+                    Color::Cyan,
+                    Color::White,
+                ];
                 let color = colors[(*k as usize) % colors.len()];
-                rules_items.push(ListItem::new(format!("Species {}: {}", k, r_str)).style(Style::default().fg(color)));
+                rules_items.push(
+                    ListItem::new(format!("Species {}: {}", k, r_str))
+                        .style(Style::default().fg(color)),
+                );
             }
         }
     }
@@ -5411,10 +5576,95 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from(" "),
         Line::from("Default: Species 1 (Life B3/S23)"),
     ];
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Guide"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Guide"));
     f.render_widget(info_widget, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let signal = vm.signal_grid[y][x];
+            let mut style = Style::default();
+
+            let (ch, base_color) = match val {
+                crate::vm::Value::Str(s) => {
+                    let c = s.chars().next().unwrap_or('.');
+                    let color = match c {
+                        '*' => Color::Red,
+                        '0'..='9' => Color::Cyan,
+                        'a'..='z' => Color::Green,
+                        'A'..='Z' => Color::Yellow,
+                        _ => Color::DarkGray,
+                    };
+                    (c.to_string(), color)
+                },
+                crate::vm::Value::Int(n) => {
+                    let v = (*n).rem_euclid(36);
+                    let c = if v < 10 {
+                        ((v as u8) + b'0') as char
+                    } else {
+                        ((v as u8 - 10) + b'a') as char
+                    };
+                    let color = if *n == 0 { Color::DarkGray } else { Color::Cyan };
+                    (c.to_string(), color)
+                },
+                _ => ("?".to_string(), Color::White),
+            };
+
+            style = style.fg(base_color);
+
+            if signal > 0 {
+                style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_block = Block::default()
+        .borders(Borders::ALL)
+        .title("ORCA GRID (Signal Processing)");
+
+    let grid_widget = Paragraph::new(grid_lines).block(grid_block);
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let info = vec![
+        Line::from("ORCA MODE"),
+        Line::from(" "),
+        Line::from("Operators:"),
+        Line::from("  * Bang (Signal Source)"),
+        Line::from("  N/S/E/W (Directional I/O)"),
+        Line::from("  A/B/D (Math: + - /)"),
+        Line::from("  M (Mutate), C (Clock)"),
+        Line::from("  Q (Query Neighbor)"),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Type to place operators."),
+        Line::from("  Space to Step."),
+        Line::from("  Arrow Keys to Move."),
+        Line::from("  Shift+O to Switch Mode."),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default().borders(Borders::ALL).title("Manual")
+    );
+    f.render_widget(info_widget, chunks[1]);
 }
