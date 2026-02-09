@@ -224,6 +224,10 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** The ants are navigating the Poincaré disk. Pheromones are decaying in non-Euclidean space.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The bridges are forming. Ants are crossing the Moat of Infinity. The void is being spanned by living structures.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-browser
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** File system mapped to Poincaré disk. Navigation via non-Euclidean translation.
