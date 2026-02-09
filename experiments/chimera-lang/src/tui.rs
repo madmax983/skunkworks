@@ -545,6 +545,10 @@ where
             }
 
             render_genome_and_grid(f, vm, app_state);
+
+            if vm.glitch_level > 0.01 {
+                apply_glitch_fx(f.buffer_mut(), vm.glitch_level);
+            }
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {
@@ -2582,6 +2586,39 @@ where
                                 }
                             }
                         }
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+}
+
+fn apply_glitch_fx(buffer: &mut ratatui::buffer::Buffer, intensity: f32) {
+    let area = *buffer.area();
+    let mut rng = rand::thread_rng();
+    use rand::Rng;
+
+    for y in area.y..area.height {
+        for x in area.x..area.width {
+            if rng.gen::<f32>() < intensity {
+                let cell = &mut buffer[(x, y)];
+                match rng.gen_range(0..4) {
+                    0 => {
+                        let chars = ['@', '#', '$', '%', '&', '!', '?', 'X', '.', ':', ';', '~'];
+                        cell.set_char(chars[rng.gen_range(0..chars.len())]);
+                    }
+                    1 => {
+                        let fg = cell.fg;
+                        cell.fg = cell.bg;
+                        cell.bg = fg;
+                    }
+                    2 => {
+                        cell.fg = Color::DarkGray;
+                    }
+                    3 => {
+                        cell.set_char('?');
+                        cell.set_style(Style::default().fg(Color::Red).bg(Color::Black));
                     }
                     _ => {}
                 }

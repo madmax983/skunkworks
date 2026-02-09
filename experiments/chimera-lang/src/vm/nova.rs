@@ -1653,6 +1653,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             let (cy, cx) = vm.context_loc;
                             vm.entropy_grid[cy][cx] =
                                 vm.entropy_grid[cy][cx].saturating_sub(amount);
+                            vm.glitch_level = (vm.glitch_level - (amount as f32 / 10.0)).max(0.0);
                             vm.output.push(format!(
                                 "STABILIZE: Reduced entropy by {} at {},{}",
                                 amount, cx, cy
@@ -1680,6 +1681,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                         vm.entropy_grid[ny][nx] = 100; // Max entropy
                         vm.grid[ny][nx] = Value::Int(0); // Destroy value
+                        vm.glitch_level = (vm.glitch_level + 0.5).clamp(0.0, 1.0);
                         vm.energy = vm.energy.saturating_sub(10);
                         vm.output
                             .push(format!("DISINTEGRATE: Cell at {},{}", nx, ny));
@@ -3534,6 +3536,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         }
                     }
 
+                    vm.glitch_level = (vm.glitch_level + (sev as f32 / 10.0)).clamp(0.0, 1.0);
                     vm.energy = vm.energy.saturating_sub(severity);
                     vm.output.push(format!("GLITCH: Severity {}", severity));
                 } else {

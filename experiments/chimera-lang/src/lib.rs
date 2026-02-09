@@ -321,3 +321,6 @@ mod havoc_recursive_prophecy;
 
 #[cfg(all(test, feature = "nova", feature = "biophysics"))]
 mod synaptic_lattice_test;
+
+#[cfg(test)]
+mod glitch_test;

@@ -558,6 +558,7 @@ pub struct ChimeraVM {
     pub tissues: HashMap<usize, nova_metazoa::Tissue>,
     pub organelle_id_counter: u64,
     pub havoc: havoc::HavocEngine,
+    pub glitch_level: f32,
 }
 
 impl ChimeraVM {
@@ -823,6 +824,7 @@ impl ChimeraVM {
             tissues: HashMap::new(),
             organelle_id_counter: 0,
             havoc: havoc::HavocEngine::new(),
+            glitch_level: 0.0,
         }
     }
 
@@ -1725,6 +1727,12 @@ impl ChimeraVM {
             let mut havoc = std::mem::take(&mut self.havoc);
             havoc.tick(self);
             self.havoc = havoc;
+        }
+
+        // Decay glitch effect
+        self.glitch_level *= 0.95;
+        if self.glitch_level < 0.01 {
+            self.glitch_level = 0.0;
         }
 
         if !time_frozen && self.chaos_mode {
