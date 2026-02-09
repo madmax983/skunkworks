@@ -113,6 +113,8 @@ pub enum OrganelleType {
     Seed,
     /// Sings a song repeatedly.
     Choir,
+    /// Moves randomly and triggers random glitches or entropy.
+    Wisp,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -3760,6 +3762,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Alchemist) => 6,
                 Some(OrganelleType::Seed) => 7,
                 Some(OrganelleType::Choir) => 8,
+                Some(OrganelleType::Wisp) => 9,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -3777,6 +3780,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             6 => Some(OrganelleType::Alchemist),
                             7 => Some(OrganelleType::Seed),
                             8 => Some(OrganelleType::Choir),
+                            9 => Some(OrganelleType::Wisp),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 
