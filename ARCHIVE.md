@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **primordial-soup**: Specimen condemned. Documentation void. Generic implementation (SPH/ALife). Redundant with `fluid-specter`. Grace period: 24h.
+- **log-landscape**: Specimen condemned. Documentation void. Generic implementation (heightmap). Redundant with `git-landscape`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
