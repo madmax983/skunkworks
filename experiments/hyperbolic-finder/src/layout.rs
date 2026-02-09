@@ -19,7 +19,9 @@ fn layout_recursive(
     angle_end: f64,
     depth: usize,
 ) -> LayoutNode {
-    let step_h = 1.5;
+    // Reduced step size to make deeper nodes visible in the disk before hitting the boundary.
+    // 1.5 was too aggressive, pushing everything to the edge immediately.
+    let step_h = 0.8;
     let r_h = depth as f64 * step_h;
     let r_e = (r_h / 2.0).tanh(); // r_euclidean = tanh(r_hyperbolic / 2)
 

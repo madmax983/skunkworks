@@ -1,5 +1,6 @@
 mod fs;
 mod layout;
+mod tiling;
 
 use fs::{scan_dir, FileType};
 use layout::{layout_tree, LayoutNode};
@@ -23,9 +24,6 @@ async fn main() -> anyhow::Result<()> {
     let mut is_dragging = false;
     let mut drag_start_mouse = Point::new(0.0, 0.0);
     let mut drag_locked_world_point = Point::new(0.0, 0.0);
-
-    // Hover State
-    // let mut hovered_node: Option<(String, String, f32)> = None; // Moved inside loop
 
     loop {
         let mut hovered_node: Option<(String, String, f32)> = None; // Name, Info, Screen Y
@@ -52,9 +50,9 @@ async fn main() -> anyhow::Result<()> {
             is_dragging = true;
             drag_start_mouse = mouse_z;
             // The world point currently under the mouse is P = mobius_add(mouse_z, view_center)
-            // Wait, standard convention: view transform maps World -> Screen (Disk).
+            // Note: view transform maps World -> Screen (Disk).
             // T(p) = mobius_sub(p, view_center).
-            // So p = mobius_add(disk_point, view_center). Correct.
+            // So p = mobius_add(disk_point, view_center).
             drag_locked_world_point = mobius_add(mouse_z, view_center);
         }
 
@@ -98,13 +96,18 @@ async fn main() -> anyhow::Result<()> {
 
         // --- Drawing ---
 
-        // Disk Boundary
+        // Disk Boundary (Background)
         draw_circle(
             screen_center.x,
             screen_center.y,
             disk_radius,
             Color::new(0.05, 0.05, 0.05, 1.0),
         );
+
+        // Draw Tiling (Hyperbolic Grid)
+        tiling::draw_tiling(view_center, screen_center, disk_radius);
+
+        // Disk Boundary (Lines)
         draw_circle_lines(screen_center.x, screen_center.y, disk_radius, 2.0, DARKGRAY);
 
         // Nodes & Links
@@ -129,7 +132,9 @@ async fn main() -> anyhow::Result<()> {
         // Hover Info
         if let Some((name, info, sy)) = hovered_node {
             let text = format!("{} ({})", name, info);
-            let tw = measure_text(&text, None, 20, 1.0).width;
+            let dims = measure_text(&text, None, 20, 1.0);
+            let tw = dims.width;
+
             draw_rectangle(
                 mx + 10.0,
                 sy - 25.0,
@@ -234,7 +239,8 @@ fn draw_node_recursive(
     // Draw Links first
     for child in &node.children {
         let child_z_prime = mobius_sub(child.pos, view_center);
-        if child_z_prime.norm_sqr() > 0.99 && z_prime.norm_sqr() > 0.99 {
+        // Only cull if both are far invisible
+        if child_z_prime.norm_sqr() > 0.999 && z_prime.norm_sqr() > 0.999 {
             continue;
         }
 
