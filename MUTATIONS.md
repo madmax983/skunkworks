@@ -678,11 +678,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings.
 - **Novel trait**: Physical Serialization. Bandwidth is limited by the speed of tying knots.
 - **Status**: experiments/quipu-net
-- **Evaluation**: MISSING. Directory not found. Specimen failed to gestate.
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
 
 ### hyperbolic-bridge
 - **Parents**: experiments/biomimetic-bridge + experiments/hyperbolic-mold
 - **Concept**: Ants traversing the Poincaré Disk encounter a "Moat of Infinity" (Ring Gap) and must form living bridges to cross it.
 - **Novel trait**: Infinite Bridge Construction. Bridges span hyperbolic distances, allowing the colony to cross non-Euclidean voids.
 - **Status**: experiments/hyperbolic-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-jungle
+- **Parents**: experiments/hyperbolic-mold + experiments/rhythmic-jungle
+- **Concept**: Agents in the Poincaré Disk negotiating rhythmic consensus.
+- **Novel trait**: Relativistic Rhythms. Distance is hyperbolic, affecting synchronization dynamics.
+- **Status**: experiments/hyperbolic-jungle
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
