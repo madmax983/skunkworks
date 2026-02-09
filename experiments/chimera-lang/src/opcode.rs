@@ -1561,6 +1561,29 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Volcano,
 
+    // Geomancy Features (Nova)
+    /// **[Nova]** Detects the nearest Ley Node.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dy, dx, distance, power ]`
+    #[cfg(feature = "nova")]
+    LeySense,
+    /// **[Nova]** Absorbs energy from a Ley Node.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., energy_gained ]`
+    /// **Risk:** High power nodes can cause Overload damage.
+    #[cfg(feature = "nova")]
+    LeyTap,
+    /// **[Nova]** Teleports to a connected Ley Node.
+    ///
+    /// **Stack:** `[ ..., target_node_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    LeyWarp,
+    /// **[Nova]** Moves a Ley Node to a new location.
+    ///
+    /// **Stack:** `[ ..., dy, dx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    LeyShift,
+
     // Dimension Features (Nova)
     /// **[Nova]** Switches to a different Grid Dimension (Plane).
     ///

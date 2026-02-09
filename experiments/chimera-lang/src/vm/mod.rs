@@ -133,6 +133,8 @@ pub mod nova_geology;
 #[cfg(feature = "nova")]
 pub mod nova_guild;
 #[cfg(feature = "nova")]
+pub mod nova_ley;
+#[cfg(feature = "nova")]
 pub mod nova_linguistics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -511,6 +513,8 @@ pub struct ChimeraVM {
     pub strand_guild_map: HashMap<usize, String>,
     #[cfg(feature = "nova")]
     pub strings: Vec<nova_strings::CosmicString>,
+    #[cfg(feature = "nova")]
+    pub ley_network: nova_ley::LeyNetwork,
     #[cfg(feature = "hive")]
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
     pub havoc: havoc::HavocEngine,
@@ -570,6 +574,11 @@ impl ChimeraVM {
         let synapse_map = vec![vec![]; strand_count];
         #[cfg(feature = "cortex")]
         let activation_levels = vec![0; strand_count];
+
+        #[cfg(feature = "nova")]
+        let mut ley_network = nova_ley::LeyNetwork::new();
+        #[cfg(feature = "nova")]
+        ley_network.generate_random();
 
         Self {
             dna,
@@ -762,6 +771,8 @@ impl ChimeraVM {
             strand_guild_map: HashMap::new(),
             #[cfg(feature = "nova")]
             strings: Vec::new(),
+            #[cfg(feature = "nova")]
+            ley_network,
             #[cfg(feature = "hive")]
             hive_sockets: HashMap::new(),
             havoc: havoc::HavocEngine::new(),
@@ -2363,6 +2374,11 @@ impl ChimeraVM {
             | OpCode::Volcano => {
                 nova_geology::exec_geology_op(self, op, args);
                 None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::LeySense | OpCode::LeyTap | OpCode::LeyWarp | OpCode::LeyShift => {
+                nova_ley::exec_ley_op(self, op, args)
             }
 
             #[cfg(feature = "nova")]
