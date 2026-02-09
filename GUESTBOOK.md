@@ -58,9 +58,13 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/physarum-transit
+### [Concentration Level: CONDEMNED] - Location: experiments/glyph-evolution
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Generic implementation (BPE). Lacks persona alignment. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/physarum-transit
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`).
 
 ### [Concentration Level: TOXIC] - Location: graveyard/lattice-hunter
 - **Scent Origin:** The Reaper ☠️
