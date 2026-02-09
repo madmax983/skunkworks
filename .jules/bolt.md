@@ -19,3 +19,11 @@
 **[Allocation-Free Diffusion]**
 **Learning:** Collecting iterators into `Vec` inside hot loops (e.g., 256 cells/frame) causes massive allocator pressure.
 **Action:** Inverted loop nesting (iterate neighbors once, update multiple channels) to use stack-based arrays instead of heap allocations.
+
+**[HashMap vs Vec for Small N]**
+**Learning:** For small collections (N < 100) iterated frequently (e.g., audio rate), `Vec` beats `HashMap` due to cache locality and no hashing overhead. Linear scan for lookup is also competitive for small N.
+**Action:** Replace `HashMap` with `Vec` for small, frequently iterated collections like active oscillators or particles.
+
+**[Hoisting Command Processing]**
+**Learning:** Polling atomic channels inside a hot loop (e.g., per sample) introduces significant overhead.
+**Action:** Process commands once per block (e.g., every 64-512 samples) instead of per sample. The latency impact (<12ms) is usually acceptable.
