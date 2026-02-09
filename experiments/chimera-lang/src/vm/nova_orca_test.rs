@@ -203,4 +203,55 @@ mod tests {
             _ => panic!("Expected result 1, got {:?}", vm.grid[2][1]),
         }
     }
+
+    #[test]
+    fn test_orca_midi() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 1 . (Channel 1)
+        // 5 : 4 (Note 5, Vel 4)
+        // . 2 . (Dur 2)
+
+        vm.grid[0][1] = Value::Str("1".to_string());
+        vm.grid[1][0] = Value::Str("5".to_string()); // West: Note
+        vm.grid[1][1] = Value::Str(":".to_string());
+        vm.grid[1][2] = Value::Str("4".to_string()); // East: Vel
+        vm.grid[2][1] = Value::Str("2".to_string()); // South: Dur
+
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        assert_eq!(vm.midi_queue.len(), 1);
+        let msg = &vm.midi_queue[0];
+        assert_eq!(msg.command, 0); // NoteOn
+        assert_eq!(msg.channel, 1);
+        assert_eq!(msg.note, 5);
+        assert_eq!(msg.velocity, 4);
+        assert_eq!(msg.duration, 2);
+    }
+
+    #[test]
+    fn test_orca_cc() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 0 . (Channel 0)
+        // 7 ; 9 (CC 7, Val 9)
+
+        vm.grid[0][1] = Value::Str("0".to_string());
+        vm.grid[1][0] = Value::Str("7".to_string());
+        vm.grid[1][1] = Value::Str(";".to_string());
+        vm.grid[1][2] = Value::Str("9".to_string());
+
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        assert_eq!(vm.midi_queue.len(), 1);
+        let msg = &vm.midi_queue[0];
+        assert_eq!(msg.command, 1); // CC
+        assert_eq!(msg.channel, 0);
+        assert_eq!(msg.note, 7); // Knob
+        assert_eq!(msg.velocity, 9); // Value
+    }
 }

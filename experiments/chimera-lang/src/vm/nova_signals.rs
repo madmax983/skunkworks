@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, GRID_SIZE};
+use super::{ChimeraVM, Value, GRID_SIZE, MidiMessage};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -77,6 +77,7 @@ struct SignalContext {
     resonance_writes: Vec<ResonanceWrite>,
     mutation_requests: Vec<MutationRequest>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
+    midi_writes: Vec<MidiMessage>,
 }
 
 pub fn process_signals(vm: &mut ChimeraVM) {
@@ -89,6 +90,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         resonance_writes: Vec::new(),
         mutation_requests: Vec::new(),
         executions: Vec::new(),
+        midi_writes: Vec::new(),
     };
 
     // 1. Scan Phase
@@ -164,6 +166,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
                 'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
                 'H' | 'h' => exec_harvest(vm, y, x, signal, &mut ctx),
+                ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
+                ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -234,6 +238,46 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     for (op, args) in ctx.executions {
         vm.execute_gene_inner(op.clone(), &args);
     }
+
+    // 5. MIDI Output
+    vm.midi_queue.extend(ctx.midi_writes);
+}
+
+fn exec_midi_note(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // N: Channel, W: Note, E: Velocity, S: Duration
+    let ch = peek(vm, y, x, -1, 0).unwrap_or(0).clamp(0, 15);
+    let note = peek(vm, y, x, 0, -1).unwrap_or(60).clamp(0, 127);
+    let vel = peek(vm, y, x, 0, 1).unwrap_or(100).clamp(0, 127);
+    let dur = peek(vm, y, x, 1, 0).unwrap_or(4).clamp(1, 64);
+
+    ctx.midi_writes.push(MidiMessage {
+        channel: ch as u8,
+        command: 0, // NoteOn
+        note: note as u8,
+        velocity: vel as u8,
+        duration: dur as u8,
+    });
+}
+
+fn exec_midi_cc(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // N: Channel, W: Knob (CC#), E: Value
+    let ch = peek(vm, y, x, -1, 0).unwrap_or(0).clamp(0, 15);
+    let knob = peek(vm, y, x, 0, -1).unwrap_or(0).clamp(0, 127);
+    let val = peek(vm, y, x, 0, 1).unwrap_or(0).clamp(0, 127);
+
+    ctx.midi_writes.push(MidiMessage {
+        channel: ch as u8,
+        command: 1, // CC
+        note: knob as u8,
+        velocity: val as u8,
+        duration: 0,
+    });
 }
 
 fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {

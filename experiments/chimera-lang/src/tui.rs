@@ -159,6 +159,8 @@ pub(crate) struct AppState {
     pub(crate) babel_result: String,
     #[cfg(feature = "nova")]
     pub(crate) babel_focus: usize, // 0=Pattern, 1=Input
+    #[cfg(feature = "nova")]
+    pub(crate) midi_history: Vec<String>,
 }
 
 impl AppState {
@@ -226,6 +228,8 @@ impl AppState {
             babel_result: String::new(),
             #[cfg(feature = "nova")]
             babel_focus: 0,
+            #[cfg(feature = "nova")]
+            midi_history: Vec::new(),
         }
     }
 }
@@ -272,6 +276,18 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        #[cfg(feature = "nova")]
+        if !vm.midi_queue.is_empty() {
+            for msg in vm.midi_queue.drain(..) {
+                let type_str = if msg.command == 0 { "NOTE" } else { "CC" };
+                let log = format!("{} Ch:{} N:{} V:{} D:{}", type_str, msg.channel, msg.note, msg.velocity, msg.duration);
+                app_state.midi_history.push(log);
+            }
+            while app_state.midi_history.len() > 20 {
+                app_state.midi_history.remove(0);
+            }
+        }
+
         #[cfg(feature = "nova")]
         if let ViewMode::Fishing = app_state.view_mode {
             if app_state.fishing_cast {
@@ -5813,28 +5829,45 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(grid_widget, chunks[0]);
 
     // Info Panel
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
     let info = vec![
         Line::from("ORCA MODE"),
         Line::from(" "),
         Line::from("Operators:"),
         Line::from("  * Bang (Signal Source)"),
+        Line::from("  : MIDI Note (N:Ch W:Nt E:Vel S:Len)"),
+        Line::from("  ; MIDI CC   (N:Ch W:Kn E:Val)"),
         Line::from("  N/S/E/W (Directional I/O)"),
         Line::from("  A/B/D (Math: + - /)"),
         Line::from("  M (Mutate), C (Clock)"),
         Line::from("  Q (Query Neighbor)"),
         Line::from("  H (Harvest Gene)"),
-        Line::from(" "),
-        Line::from("Controls:"),
-        Line::from("  Type to place operators."),
-        Line::from("  Space to Step."),
-        Line::from("  Arrow Keys to Move."),
-        Line::from("  Shift+O to Switch Mode."),
     ];
 
     let info_widget = Paragraph::new(info).block(
         Block::default().borders(Borders::ALL).title("Manual")
     );
-    f.render_widget(info_widget, chunks[1]);
+    f.render_widget(info_widget, right_chunks[0]);
+
+    // MIDI Log
+    let mut midi_items = Vec::new();
+    if app_state.midi_history.is_empty() {
+        midi_items.push(ListItem::new("No MIDI events recorded."));
+    } else {
+        for msg in app_state.midi_history.iter().rev() {
+            let color = if msg.starts_with("NOTE") { Color::Cyan } else { Color::Magenta };
+            midi_items.push(ListItem::new(msg.clone()).style(Style::default().fg(color)));
+        }
+    }
+
+    let midi_list = List::new(midi_items).block(
+        Block::default().borders(Borders::ALL).title("MIDI Output Log")
+    );
+    f.render_widget(midi_list, right_chunks[1]);
 }
 
 #[cfg(feature = "nova")]

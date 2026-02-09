@@ -229,6 +229,15 @@ pub enum Chirality {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct MidiMessage {
+    pub channel: u8,
+    pub command: u8, // 0=NoteOn, 1=CC
+    pub note: u8,    // or CC number
+    pub velocity: u8, // or CC value
+    pub duration: u8,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Value {
     Int(i64),
     Str(String),
@@ -518,6 +527,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "hive")]
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
     pub havoc: havoc::HavocEngine,
+    pub midi_queue: Vec<MidiMessage>,
 }
 
 impl ChimeraVM {
@@ -776,6 +786,7 @@ impl ChimeraVM {
             #[cfg(feature = "hive")]
             hive_sockets: HashMap::new(),
             havoc: havoc::HavocEngine::new(),
+            midi_queue: Vec::new(),
         }
     }
 
@@ -1531,6 +1542,7 @@ impl ChimeraVM {
             return;
         }
 
+        self.midi_queue.clear();
         self.tick_counter += 1;
 
         #[cfg(feature = "nova")]
