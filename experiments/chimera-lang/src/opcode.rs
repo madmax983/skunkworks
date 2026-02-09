@@ -1580,6 +1580,29 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     DView,
 
+    // Hive Features (Networking)
+    /// **[Hive]** Binds a UDP port for receiving messages.
+    ///
+    /// **Stack:** `[ ..., port ] -> [ ... ]`
+    #[cfg(feature = "hive")]
+    HiveBind,
+    /// **[Hive]** Sends a message to a target IP and Port.
+    ///
+    /// **Stack:** `[ ..., value, ip_string, port ] -> [ ... ]`
+    #[cfg(feature = "hive")]
+    HiveSend,
+    /// **[Hive]** Receives a message from a bound port (non-blocking).
+    ///
+    /// **Stack:** `[ ..., port ] -> [ ..., value ]`
+    /// **Effect:** Pushes received value or 0 if no message.
+    #[cfg(feature = "hive")]
+    HiveRecv,
+    /// **[Hive]** Closes a bound UDP port.
+    ///
+    /// **Stack:** `[ ..., port ] -> [ ... ]`
+    #[cfg(feature = "hive")]
+    HiveClose,
+
     // Paleontology Features (Nova)
     /// **[Nova]** Fossilizes a strand into a compressed string on the grid.
     ///

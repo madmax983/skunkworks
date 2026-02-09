@@ -72,6 +72,8 @@ pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
 pub mod havoc;
+#[cfg(feature = "hive")]
+pub mod hive;
 #[cfg(feature = "nova")]
 pub mod ipc;
 #[cfg(feature = "nova")]
@@ -504,6 +506,8 @@ pub struct ChimeraVM {
     pub strand_guild_map: HashMap<usize, String>,
     #[cfg(feature = "nova")]
     pub strings: Vec<nova_strings::CosmicString>,
+    #[cfg(feature = "hive")]
+    pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -753,6 +757,8 @@ impl ChimeraVM {
             strand_guild_map: HashMap::new(),
             #[cfg(feature = "nova")]
             strings: Vec::new(),
+            #[cfg(feature = "hive")]
+            hive_sockets: HashMap::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -2311,6 +2317,12 @@ impl ChimeraVM {
                 None
             }
 
+            #[cfg(feature = "hive")]
+            OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose => {
+                hive::exec_hive_op(self, op, args);
+                None
+            }
+
             #[cfg(feature = "git")]
             OpCode::Ancestry | OpCode::Excavate | OpCode::Evolution => {
                 git::exec_git_op(self, op, args);
@@ -2430,6 +2442,11 @@ impl ChimeraVM {
                     "battery" | "ground" | "sense_volt" | "shock" | "lightning"
                 ) {
                     hint = " (Hint: Elektra feature. Enable 'elektra' feature?)";
+                }
+
+                // Hive Features
+                if matches!(n, "hive_bind" | "hive_send" | "hive_recv" | "hive_close") {
+                    hint = " (Hint: Hive feature. Enable 'hive' feature?)";
                 }
 
                 self.output
