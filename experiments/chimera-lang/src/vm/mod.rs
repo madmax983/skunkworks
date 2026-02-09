@@ -81,6 +81,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_arcana;
+#[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
 pub mod nova_astrology;
@@ -123,8 +125,6 @@ pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
-pub mod nova_planes;
-#[cfg(feature = "nova")]
 pub mod nova_linguistics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -150,6 +150,8 @@ pub mod nova_paleontology;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_paleontology_test;
+#[cfg(feature = "nova")]
+pub mod nova_planes;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
@@ -486,6 +488,8 @@ pub struct ChimeraVM {
     pub current_plane: i64,
     #[cfg(feature = "nova")]
     pub garden: nova_garden::GardenState,
+    #[cfg(feature = "nova")]
+    pub fate: nova_arcana::FateState,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -727,6 +731,8 @@ impl ChimeraVM {
             current_plane: 0,
             #[cfg(feature = "nova")]
             garden: nova_garden::GardenState::new(),
+            #[cfg(feature = "nova")]
+            fate: nova_arcana::FateState::default(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -1576,6 +1582,7 @@ impl ChimeraVM {
             nova_ballistics::update_projectiles(self);
             nova_sovereignty::process_territory(self);
             nova_bureaucracy::process_red_tape(self);
+            nova_arcana::process_fate(self);
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
         }
@@ -1918,7 +1925,9 @@ impl ChimeraVM {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(n) => self.havoc.rate = (n as f64) / 100.0,
-                        _ => self.output.push("Error: HavocRate requires Int (0-100)".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: HavocRate requires Int (0-100)".to_string()),
                     }
                 }
                 None
@@ -1927,7 +1936,9 @@ impl ChimeraVM {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(n) => self.havoc.scope = n as u8,
-                        _ => self.output.push("Error: HavocScope requires Int".to_string()),
+                        _ => self
+                            .output
+                            .push("Error: HavocScope requires Int".to_string()),
                     }
                 }
                 None
@@ -2189,6 +2200,9 @@ impl ChimeraVM {
             | OpCode::Logistics
             | OpCode::Sow
             | OpCode::Harvest
+            | OpCode::Draw
+            | OpCode::Fate
+            | OpCode::Shuffle
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

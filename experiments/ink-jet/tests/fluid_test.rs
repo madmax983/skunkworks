@@ -29,5 +29,8 @@ fn test_conservation() {
         assert!(false, "Initial mass is 0, add_density failed");
     }
 
-    assert!((initial_mass - final_mass).abs() < 0.1, "Mass not conserved");
+    assert!(
+        (initial_mass - final_mass).abs() < 0.1,
+        "Mass not conserved"
+    );
 }

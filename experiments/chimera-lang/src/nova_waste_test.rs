@@ -133,10 +133,16 @@ mod tests {
         }
 
         // Assert values spread but didn't explode or vanish
-        assert!(vm.waste_grid[5][5] < 5000, "Should have diffused away from center");
+        assert!(
+            vm.waste_grid[5][5] < 5000,
+            "Should have diffused away from center"
+        );
 
         let total_waste: i64 = vm.waste_grid.iter().flatten().sum();
         // Allow some loss due to integer division floor
-        assert!(total_waste > 1000, "Mass conservation failure (too much loss)");
+        assert!(
+            total_waste > 1000,
+            "Mass conservation failure (too much loss)"
+        );
     }
 }

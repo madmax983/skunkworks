@@ -33,20 +33,22 @@ impl VisualField {
         let blob_x = (self.time.sin() * 0.5 + 0.5) * self.width as f32;
         let blob_y = (self.time.cos() * 0.5 + 0.5) * self.height as f32;
 
-        let temp_buffer = (0..self.height).flat_map(|y| {
-            (0..self.width).map(move |x| {
-                // Background Grating
-                let grating = (x as f32 * 0.1 + phase).sin() * 0.5 + 0.5;
+        let temp_buffer = (0..self.height)
+            .flat_map(|y| {
+                (0..self.width).map(move |x| {
+                    // Background Grating
+                    let grating = (x as f32 * 0.1 + phase).sin() * 0.5 + 0.5;
 
-                // Moving Blob
-                let dx = x as f32 - blob_x;
-                let dy = y as f32 - blob_y;
-                let dist = (dx*dx + dy*dy).sqrt();
-                let blob = (-dist * 0.1).exp();
+                    // Moving Blob
+                    let dx = x as f32 - blob_x;
+                    let dy = y as f32 - blob_y;
+                    let dist = (dx * dx + dy * dy).sqrt();
+                    let blob = (-dist * 0.1).exp();
 
-                (grating * 0.3 + blob * 0.7).clamp(0.0, 1.0)
+                    (grating * 0.3 + blob * 0.7).clamp(0.0, 1.0)
+                })
             })
-        }).collect::<Vec<f32>>();
+            .collect::<Vec<f32>>();
 
         // 2. Apply Warp & Decay
         for y in 0..self.height {
@@ -96,7 +98,7 @@ impl VisualField {
                     if nx >= 0 && nx < self.width as i32 && ny >= 0 && ny < self.height as i32 {
                         let idx = (ny * self.width as i32 + nx) as usize;
                         // Distance falloff
-                        let dist = ((dx*dx + dy*dy) as f32).sqrt();
+                        let dist = ((dx * dx + dy * dy) as f32).sqrt();
                         let falloff = (1.0 - dist / range as f32).max(0.0);
 
                         self.warp_x[idx] += push_x * falloff;

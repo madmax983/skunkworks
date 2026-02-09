@@ -4,6 +4,7 @@ mod mechanics;
 use anyhow::Result;
 use crawler::{crawl, Node};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use market_sim::{Grid, Particle};
 use mechanics::{Position, Trader};
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ratatui::{
@@ -17,7 +18,6 @@ use ratatui::{
     },
     Frame,
 };
-use market_sim::{Grid, Particle};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
