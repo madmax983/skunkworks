@@ -1,6 +1,8 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
+#[cfg(feature = "biophysics")]
+use super::neuron::Neuron;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -69,6 +71,13 @@ struct MutationRequest {
     strand_idx: usize,
 }
 
+#[cfg(feature = "biophysics")]
+struct NeuronStimulus {
+    y: usize,
+    x: usize,
+    amount: f32,
+}
+
 struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
@@ -76,6 +85,8 @@ struct SignalContext {
     dna_appends: Vec<DnaAppend>,
     resonance_writes: Vec<ResonanceWrite>,
     mutation_requests: Vec<MutationRequest>,
+    #[cfg(feature = "biophysics")]
+    neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
     midi_events: Vec<MidiEvent>,
 }
@@ -89,6 +100,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         dna_appends: Vec::new(),
         resonance_writes: Vec::new(),
         mutation_requests: Vec::new(),
+        #[cfg(feature = "biophysics")]
+        neuron_stimuli: Vec::new(),
         executions: Vec::new(),
         midi_events: Vec::new(),
     };
@@ -110,13 +123,59 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
             let is_uppercase = c.is_ascii_uppercase();
             let is_bang = c == '*';
-            let active = signal > 0 || is_uppercase || is_bang;
+            let is_special = matches!(c, '@' | '^');
+            let active = signal > 0 || is_uppercase || is_bang || is_special;
 
             if !active {
                 continue;
             }
 
             match c {
+                #[cfg(feature = "biophysics")]
+                '@' => {
+                    // Neuron
+                    // 1. Spiking Output
+                    if let Some(neuron) = vm.neurons.get(&(y, x)) {
+                        if neuron.v > 0.0 {
+                            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                            for (dy, dx) in neighbors {
+                                if let Some((ny, nx)) =
+                                    vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                                {
+                                    ctx.next_signals[ny][nx] =
+                                        ctx.next_signals[ny][nx].saturating_add(1);
+                                }
+                            }
+                        }
+                    } else if signal > 0 {
+                        // Neurogenesis if signaled and missing
+                    }
+
+                    // 2. Input Stimulus
+                    if signal > 0 {
+                        ctx.neuron_stimuli.push(NeuronStimulus {
+                            y,
+                            x,
+                            amount: 50.0,
+                        });
+                    }
+                }
+                #[cfg(feature = "biophysics")]
+                '^' => {
+                    // Synapse: Read South (Input), Stimulate North (Target)
+                    if let Some(val) = peek(vm, y, x, 1, 0) {
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64 - 1, x as i64) {
+                            let weight = val as f32;
+                            if weight > 0.0 {
+                                ctx.neuron_stimuli.push(NeuronStimulus {
+                                    y: ny,
+                                    x: nx,
+                                    amount: weight * 5.0,
+                                });
+                            }
+                        }
+                    }
+                }
                 '*' | '!' => {
                     // Bang
                     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
@@ -128,6 +187,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 }
                 '>' => propagate_directional(vm, y, x, 0, 1, 1, &mut ctx.next_signals),
                 '<' => propagate_directional(vm, y, x, 0, -1, 1, &mut ctx.next_signals),
+                #[cfg(not(feature = "biophysics"))]
                 '^' => propagate_directional(vm, y, x, -1, 0, 1, &mut ctx.next_signals),
                 'v' => propagate_directional(vm, y, x, 1, 0, 1, &mut ctx.next_signals),
                 '+' => {
@@ -215,6 +275,19 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 3.5 Apply Resonance & Mutations
     for w in ctx.resonance_writes {
         vm.resonance_grid[w.y][w.x] = (w.freq, w.amp);
+    }
+
+    #[cfg(feature = "biophysics")]
+    for s in ctx.neuron_stimuli {
+        let coord = (s.y, s.x);
+        if let Some(neuron) = vm.neurons.get_mut(&coord) {
+            neuron.i_inj += s.amount;
+        } else {
+            // Auto-Neurogenesis
+            let mut neuron = Neuron::new();
+            neuron.i_inj += s.amount;
+            vm.neurons.insert(coord, neuron);
+        }
     }
 
     for req in ctx.mutation_requests {
