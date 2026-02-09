@@ -12,10 +12,9 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Debug, Clone, Copy)]
 pub enum SoundEvent {
-    LockAcquired,
-    LockReleased,
-    Contention,
-    Waiting,
+    LockAcquired(usize),
+    LockReleased(usize),
+    Contention(usize),
 }
 
 pub struct AudioEngine {
@@ -96,47 +95,61 @@ fn write_data(
         s.active_notes.retain_mut(|(event, time)| {
             *time += 1.0 / sample_rate;
             let t = *time;
+            let event_val = *event; // Deref to value
 
-            let amp = match event {
-                SoundEvent::LockAcquired => {
-                    let freq = 150.0 * (-10.0 * t).exp().max(0.2);
+            let amp = match event_val {
+                SoundEvent::LockAcquired(id) => {
                     let env = (-5.0 * t).exp();
-                    (t * freq * 2.0 * PI).sin() * env
+                    match id % 4 {
+                        0 => { // Kick
+                            let freq = 60.0 * (-10.0 * t).exp().max(0.1);
+                            (t * freq * 2.0 * PI).sin() * env * 2.0
+                        },
+                        1 => { // African Bell (Cowbell-ish)
+                            let freq = 800.0;
+                            let bell_env = (-15.0 * t).exp();
+                            ((t * freq * 2.0 * PI).sin() + (t * freq * 1.5 * 2.0 * PI).sin()) * 0.5 * bell_env
+                        },
+                        2 => { // Snare-ish
+                            let noise = (rand::random::<f32>() * 2.0 - 1.0);
+                            let snare_env = (-20.0 * t).exp();
+                            let tone = (t * 200.0 * 2.0 * PI).sin() * (-10.0 * t).exp();
+                            (noise * 0.7 + tone * 0.3) * snare_env
+                        },
+                        _ => { // High Perc
+                            let freq = 1200.0;
+                            let perc_env = (-30.0 * t).exp();
+                            (t * freq * 2.0 * PI).sin() * perc_env * 0.5
+                        }
+                    }
                 }
-                SoundEvent::LockReleased => {
-                    let noise = (rand::random::<f32>() * 2.0 - 1.0);
-                    let env = (-15.0 * t).exp();
-                    noise * env * 0.5
-                }
-                SoundEvent::Contention => {
-                    let freq = 110.0;
-                    let phase = (t * freq).fract();
-                    let osc = phase * 2.0 - 1.0;
-                    let env = (-2.0 * t).exp();
-                    osc * env * 0.3
-                }
-                SoundEvent::Waiting => {
+                SoundEvent::LockReleased(_id) => {
                     let noise = (rand::random::<f32>() * 2.0 - 1.0);
                     let env = (-50.0 * t).exp();
-                    if t > 0.05 {
-                        0.0
-                    } else {
-                        noise * env * 0.2
-                    }
+                    noise * env * 0.05
+                }
+                SoundEvent::Contention(id) => {
+                    // Dissonant "Clash" sound
+                    let base_freq = 110.0 * ((id + 1) as f32);
+                    let freq = base_freq + (t * 500.0).sin() * 50.0; // FM Modulation
+                    let phase = (t * freq).fract();
+                    let osc = phase * 2.0 - 1.0; // Sawtooth-ish
+                    let env = (-5.0 * t).exp();
+                    osc * env * 0.3
                 }
             };
 
             sample += amp;
 
-            match event {
-                SoundEvent::LockAcquired => t < 0.5,
-                SoundEvent::LockReleased => t < 0.3,
-                SoundEvent::Contention => t < 1.0,
-                SoundEvent::Waiting => t < 0.1,
+            match event_val {
+                SoundEvent::LockAcquired(_) => t < 0.5,
+                SoundEvent::LockReleased(_) => t < 0.1,
+                SoundEvent::Contention(_) => t < 0.3,
             }
         });
 
-        sample = sample.tanh();
+        // Hard clip / Limiter
+        sample = sample.clamp(-1.0, 1.0);
 
         for channel_sample in frame.iter_mut() {
             *channel_sample = sample;
