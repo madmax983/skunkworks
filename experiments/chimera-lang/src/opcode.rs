@@ -1001,6 +1001,30 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Pray,
 
+    // String Theory (Nova)
+    /// **[Nova]** Creates a vibrating Cosmic String.
+    ///
+    /// **Stack:** `[ ..., length, tension, y, x ] -> [ ... ]`
+    /// **Effect:** Spawns a string starting at (x,y) extending in current direction.
+    #[cfg(feature = "nova")]
+    StringNew,
+    /// **[Nova]** Plucks the nearest Cosmic String.
+    ///
+    /// **Stack:** `[ ..., force ] -> [ ... ]`
+    /// **Effect:** Adds energy to the string's vibration.
+    #[cfg(feature = "nova")]
+    StringPluck,
+    /// **[Nova]** Tunes the tension of the nearest Cosmic String.
+    ///
+    /// **Stack:** `[ ..., tension ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    StringTune,
+    /// **[Nova]** Listens to the vibration of the nearest Cosmic String.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., amplitude ]`
+    #[cfg(feature = "nova")]
+    StringListen,
+
     // Astrology Features (Nova)
     /// **[Nova]** Gazes at the sky to measure star intensity and color.
     ///
