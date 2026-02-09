@@ -174,6 +174,8 @@ mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_fluid_test;
 #[cfg(all(test, feature = "nova"))]
+mod hydra_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_garden_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gastronomy_test;
@@ -209,6 +211,8 @@ mod nova_morphogenesis_test;
 mod nova_mutagen_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_necromancy_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_nightmare_test;
 #[cfg(all(test, feature = "oracle"))]
 mod nova_omen_test;
 #[cfg(all(test, feature = "nova"))]
@@ -266,6 +270,8 @@ mod nova_taxis_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_transposon_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_true_alchemy_test;
@@ -307,3 +313,6 @@ mod warden_memory_test;
 mod warden_parser_test;
 #[cfg(test)]
 mod warden_phylogeny_test;
+
+#[cfg(all(test, feature = "nova"))]
+mod havoc_recursive_prophecy;

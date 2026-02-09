@@ -11,10 +11,10 @@ use ratatui::{
     Frame,
 };
 use std::time::{Duration, Instant};
-use tui_shared::{
-    event::{GhostRecorder, GhostReplayer},
-    Tui,
-};
+use tui_shared::Tui;
+
+mod ghost;
+use ghost::{GhostRecorder, GhostReplayer};
 
 pub mod physics;
 pub mod recorder;

@@ -1,5 +1,5 @@
 use crate::physics::{self, MirrorType};
-use tui_shared::math::Vec2; // Fixed import
+use locus::Vec2; // Fixed import
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Cell {

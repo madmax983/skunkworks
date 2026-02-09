@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, GRID_SIZE};
+use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -77,6 +77,7 @@ struct SignalContext {
     resonance_writes: Vec<ResonanceWrite>,
     mutation_requests: Vec<MutationRequest>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
+    midi_events: Vec<MidiEvent>,
 }
 
 pub fn process_signals(vm: &mut ChimeraVM) {
@@ -89,6 +90,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         resonance_writes: Vec::new(),
         mutation_requests: Vec::new(),
         executions: Vec::new(),
+        midi_events: Vec::new(),
     };
 
     // 1. Scan Phase
@@ -115,7 +117,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             }
 
             match c {
-                '*' => {
+                '*' | '!' => {
+                    // Bang
                     let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
                     for (dy, dx) in neighbors {
                         if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
@@ -164,6 +167,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
                 'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
                 'H' | 'h' => exec_harvest(vm, y, x, signal, &mut ctx),
+                ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
+                ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
+                '?' => exec_random(vm, y, x, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -230,10 +236,74 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         }
     }
 
+    // 3.75 Apply MIDI
+    vm.midi_messages.extend(ctx.midi_events);
+
     // 4. Execution Phase
     for (op, args) in ctx.executions {
         vm.execute_gene_inner(op.clone(), &args);
     }
+}
+
+fn exec_midi_note(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Layout:
+    // . N .
+    // C : V
+    // . D .
+    // N: Note (North) - 0-35 (Base 48 -> C3 to B5)
+    // V: Velocity (East) - 0-35 (Scaled to 0-127)
+    // C: Channel (West) - 0-15
+    // D: Duration (South) - 0-35 (16th notes?)
+
+    let n_val = peek(vm, y, x, -1, 0).unwrap_or(0);
+    let v_val = peek(vm, y, x, 0, 1).unwrap_or(35); // Default full volume
+    let c_val = peek(vm, y, x, 0, -1).unwrap_or(0);
+    let d_val = peek(vm, y, x, 1, 0).unwrap_or(1);
+
+    // Mapping
+    // Note: 0-35 + 48 (C3)
+    let note = (n_val.clamp(0, 35) + 48) as u8;
+    // Velocity: 0-35 -> 0-127 (v * 127 / 35)
+    let velocity = ((v_val.clamp(0, 35) as f32 / 35.0) * 127.0) as u8;
+    let channel = c_val.clamp(0, 15) as u8;
+    let duration = d_val.clamp(1, 35) as u8;
+
+    ctx.midi_events.push(MidiEvent::NoteOn {
+        channel,
+        note,
+        velocity,
+        duration,
+    });
+}
+
+fn exec_midi_cc(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Layout:
+    // . K .
+    // C ; V
+    // . . .
+    // K: Knob/Controller (North)
+    // V: Value (East)
+    // C: Channel (West)
+
+    let k_val = peek(vm, y, x, -1, 0).unwrap_or(0);
+    let v_val = peek(vm, y, x, 0, 1).unwrap_or(0);
+    let c_val = peek(vm, y, x, 0, -1).unwrap_or(0);
+
+    let controller = k_val.clamp(0, 127) as u8;
+    let value = ((v_val.clamp(0, 35) as f32 / 35.0) * 127.0) as u8;
+    let channel = c_val.clamp(0, 15) as u8;
+
+    ctx.midi_events.push(MidiEvent::ControlChange {
+        channel,
+        controller,
+        value,
+    });
 }
 
 fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {

@@ -1,7 +1,9 @@
 use cgmath::{EuclideanSpace, InnerSpace, Point3, Vector3};
+use std::collections::HashMap;
 
 pub struct Quasicrystal {
     pub atoms: Vec<Point3<f32>>,
+    pub edges: Vec<(Point3<f32>, Point3<f32>)>,
 }
 
 // Golden Ratio
@@ -49,7 +51,9 @@ fn get_basis_vectors() -> (Vec<Vector3<f32>>, Vec<Vector3<f32>>) {
 
 pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
     let (basis_par, basis_perp) = get_basis_vectors();
+    let mut atom_map: HashMap<[i32; 6], Point3<f32>> = HashMap::new();
     let mut atoms = Vec::new();
+    let mut edges = Vec::new();
 
     // Iterate over 6D integer grid
     let range = -grid_radius..=grid_radius;
@@ -71,9 +75,6 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
                         + basis_perp[2] * (n3 as f32)
                         + basis_perp[3] * (n4 as f32);
 
-                    // Optimization: if partial sum is already too huge, maybe prune?
-                    // No, negative contributions can cancel it out.
-
                     for n5 in range.clone() {
                         for n6 in range.clone() {
                             let n5f = n5 as f32;
@@ -90,7 +91,11 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
                                     + basis_par[4] * n5f
                                     + basis_par[5] * n6f;
 
-                                atoms.push(Point3::from_vec(r_par));
+                                let p = Point3::from_vec(r_par);
+                                let idx = [n1, n2, n3, n4, n5, n6];
+
+                                atom_map.insert(idx, p);
+                                atoms.push(p);
                             }
                         }
                     }
@@ -99,7 +104,33 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
         }
     }
 
-    Quasicrystal { atoms }
+    // Generate edges
+    // Iterate over all atoms in the map
+    // For each atom, check neighbors (idx + basis_k)
+    // Since graph is undirected, we only add if neighbor is found AND to avoid duplicates,
+    // maybe enforce an ordering?
+    // Or just check +basis_k (not -basis_k)? No, we iterate all atoms, so checking +basis_k for all k=0..5 covers all edges once (u->v) if v exists.
+    // Because if u has neighbor v=u-e_k, then v has neighbor u=v+e_k.
+    // So checking only +basis_k is sufficient to find every edge exactly once.
+
+    for (idx, pos) in &atom_map {
+        for k in 0..6 {
+            let mut neighbor_idx = *idx;
+            neighbor_idx[k] += 1;
+
+            if let Some(neighbor_pos) = atom_map.get(&neighbor_idx) {
+                edges.push((*pos, *neighbor_pos));
+            }
+
+            // Also check -1? No, checking +1 for all nodes covers all edges.
+            // Wait. If node A is at (0,0,0,0,0,0) and B is at (1,0,0,0,0,0).
+            // When processing A, we check (1,0,0,0,0,0) -> Found B. Add A-B.
+            // When processing B, we check (2,0,0,0,0,0) -> Not found.
+            // Correct.
+        }
+    }
+
+    Quasicrystal { atoms, edges }
 }
 
 #[cfg(test)]
@@ -110,6 +141,8 @@ mod tests {
     fn test_generation_non_empty() {
         let qc = generate_icosahedral_lattice(2);
         assert!(!qc.atoms.is_empty());
+        assert!(!qc.edges.is_empty());
         println!("Generated {} atoms with radius 2", qc.atoms.len());
+        println!("Generated {} edges with radius 2", qc.edges.len());
     }
 }

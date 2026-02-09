@@ -13,6 +13,7 @@ pub struct DreamTrace {
     pub mutation_desc: String,
     pub mutated_strand: Option<Strand>,
     pub accepted: bool,
+    pub is_nightmare: bool,
     pub output_log: Vec<String>,
     pub grid_snapshot: Option<Vec<Vec<Value>>>,
 }
@@ -29,6 +30,7 @@ impl DreamTrace {
         mutation_desc: String,
         mutated_strand: Option<Strand>,
         accepted: bool,
+        is_nightmare: bool,
         output_log: Vec<String>,
         grid_snapshot: Option<Vec<Vec<Value>>>,
     ) -> Self {
@@ -42,6 +44,7 @@ impl DreamTrace {
             mutation_desc,
             mutated_strand,
             accepted,
+            is_nightmare,
             output_log,
             grid_snapshot,
         }

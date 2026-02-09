@@ -658,6 +658,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/hyperbolic-mold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
 
+
+### git-quipu
+- **Parents**: experiments/quipu-symphony + experiments/git-cantata
+- **Concept**: A TUI visualization of git history as an Incan Quipu. Cords are time, knots are commits.
+- **Novel trait**: Physical History. The commit log sways in the wind.
+- **Status**: experiments/git-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
 ### quipu-net
 - **Parents**: experiments/quipu-cradle + experiments/hive-mind-dependencies
 - **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings.

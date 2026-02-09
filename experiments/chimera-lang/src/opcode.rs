@@ -520,6 +520,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Decohere,
+    /// **[Nova]** Moves the current gene to a new location in the strand (Transposon).
+    ///
+    /// **Stack:** `[ ..., offset ] -> [ ... ]`
+    /// **Effect:** Moves current instruction `offset` genes away, replacing self with Nop. Jumps to new location.
+    #[cfg(feature = "nova")]
+    Transposon,
     /// **[Nova]** Writes a strand's code onto the grid physically.
     ///
     /// **Stack:** `[ ..., strand_idx, y, x, direction ] -> [ ... ]`
@@ -557,6 +563,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., strand_idx, ticks ] -> [ ..., success ]`
     #[cfg(feature = "nova")]
     Dream,
+    /// **[Nova]** Reduces local entropy to prevent Nightmares.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Lucid,
     /// **[Nova]** Calculates direction towards highest chemical concentration.
     ///
     /// **Stack:** `[ ..., channel ] -> [ ..., dy, dx ]`
@@ -1471,6 +1482,12 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Query,
 
+    /// **[Oracle]** Finds all solutions to a query.
+    ///
+    /// **Stack:** `[ ..., template, goal ] -> [ ..., result_list ]`
+    #[cfg(feature = "oracle")]
+    FindAll,
+
     /// **[Oracle]** Registers an Omen (Trigger).
     ///
     /// **Stack:** `[ ..., condition, effect ] -> [ ... ]`
@@ -1893,6 +1910,36 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Shuffle,
+
+    // Quipu Features (Topological Memory)
+    /// **[Nova]** Ties a knot with a value on the current Quipu Cord.
+    ///
+    /// **Stack:** `[ ..., value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Knot,
+    /// **[Nova]** Unties the last knot cluster from the current Quipu Cord.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    Unknot,
+    /// **[Nova]** Selects the active Quipu Cord.
+    ///
+    /// **Stack:** `[ ..., cord_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Cord,
+    /// **[Nova]** Reads the value of the current Quipu Cord.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    ReadCord,
+    /// **[Nova]** Entangles (adds) the value of another cord to the current one.
+    ///
+    /// **Stack:** `[ ..., other_cord_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tangle,
+
+    /// No Operation. Does nothing.
+    Nop,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

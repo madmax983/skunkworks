@@ -157,6 +157,9 @@ mod nova_optics_test;
 mod nova_orca_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod nova_orca_midi_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod nova_harvest_test;
 #[cfg(feature = "nova")]
 pub mod nova_paleontology;
@@ -167,6 +170,11 @@ mod nova_paleontology_test;
 pub mod nova_planes;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
+#[cfg(feature = "nova")]
+pub mod nova_quipu;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_quipu_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_pocket_test;
@@ -212,6 +220,22 @@ use resonance_audio::audio::AudioCommand;
 
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
+
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, PartialEq)]
+pub enum MidiEvent {
+    NoteOn {
+        channel: u8,
+        note: u8,
+        velocity: u8,
+        duration: u8,
+    },
+    ControlChange {
+        channel: u8,
+        controller: u8,
+        value: u8,
+    },
+}
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -515,8 +539,12 @@ pub struct ChimeraVM {
     pub strings: Vec<nova_strings::CosmicString>,
     #[cfg(feature = "nova")]
     pub ley_network: nova_ley::LeyNetwork,
+    #[cfg(feature = "nova")]
+    pub midi_messages: Vec<MidiEvent>,
     #[cfg(feature = "hive")]
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
+    #[cfg(feature = "nova")]
+    pub quipu: nova_quipu::QuipuState,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -773,8 +801,12 @@ impl ChimeraVM {
             strings: Vec::new(),
             #[cfg(feature = "nova")]
             ley_network,
+            #[cfg(feature = "nova")]
+            midi_messages: Vec::new(),
             #[cfg(feature = "hive")]
             hive_sockets: HashMap::new(),
+            #[cfg(feature = "nova")]
+            quipu: nova_quipu::QuipuState::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -973,6 +1005,10 @@ impl ChimeraVM {
         nova::diffuse_mutagen(self);
         nova::diffuse_entropy(self);
         nova_scent::process_scents(self);
+
+        nova_fluid::process_hydra_components(self);
+        nova_fluid::process_fluid(self);
+        nova_fluid::process_sensors(self);
 
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
@@ -1535,6 +1571,7 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
+            self.midi_messages.clear();
             if self.grid_history.len() >= MAX_HISTORY_DEPTH {
                 self.grid_history.pop_front();
             }
@@ -2091,6 +2128,49 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::Transposon => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(offset) => {
+                            if self.ip.0 < self.dna.helix.strands.len() {
+                                let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                                let current_idx = self.ip.1 as i64;
+                                let target_idx = current_idx + offset;
+
+                                if target_idx >= 0 && target_idx < strand_len as i64 {
+                                    let t_idx = target_idx as usize;
+                                    // Move: Copy to target, replace self with Nop
+                                    let gene =
+                                        self.dna.helix.strands[self.ip.0].genes[self.ip.1].clone();
+
+                                    // We need to modify the strand.
+                                    self.dna.helix.strands[self.ip.0].genes[self.ip.1] =
+                                        crate::ast::Gene {
+                                            op: OpCode::Nop,
+                                            args: vec![],
+                                        };
+                                    self.dna.helix.strands[self.ip.0].genes[t_idx] = gene;
+
+                                    // Jump to new location
+                                    return Some((self.ip.0, t_idx));
+                                } else {
+                                    self.output
+                                        .push("Error: Transposon target out of bounds".to_string());
+                                }
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Transposon requires Int offset".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for Transposon".to_string());
+                }
+                None
+            }
+
+            #[cfg(feature = "nova")]
             OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
@@ -2163,6 +2243,7 @@ impl ChimeraVM {
             | OpCode::Singularity
             | OpCode::Simulate
             | OpCode::Dream
+            | OpCode::Lucid
             | OpCode::Chemotaxis
             | OpCode::Identity
             | OpCode::Differentiate
@@ -2260,6 +2341,11 @@ impl ChimeraVM {
             | OpCode::Draw
             | OpCode::Fate
             | OpCode::Shuffle
+            | OpCode::Knot
+            | OpCode::Unknot
+            | OpCode::Cord
+            | OpCode::ReadCord
+            | OpCode::Tangle
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
@@ -2271,6 +2357,35 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
                 bard::exec_bard_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "oracle")]
+            OpCode::FindAll => {
+                if self.stack.len() >= 2 {
+                    let goal = self.stack.pop().unwrap();
+                    let template = self.stack.pop().unwrap();
+
+                    let mut solutions = Vec::new();
+                    oracle::solve(
+                        &[goal],
+                        HashMap::new(),
+                        &self.knowledge_base,
+                        self,
+                        &mut solutions,
+                        0,
+                    );
+
+                    let mut results = Vec::new();
+                    for subst in solutions {
+                        results.push(oracle::resolve(&template, &subst));
+                    }
+
+                    self.stack.push(Value::Junction(JunctionType::All, results));
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for findall".to_string());
+                }
                 None
             }
 
@@ -2403,6 +2518,8 @@ impl ChimeraVM {
             OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
                 nova_strings::exec_string_op(self, op, args)
             }
+
+            OpCode::Nop => None,
 
             OpCode::Unknown(name) => {
                 #[cfg(feature = "nova")]

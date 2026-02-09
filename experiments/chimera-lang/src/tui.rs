@@ -88,6 +88,10 @@ pub(crate) enum ViewMode {
     Babel,
     #[cfg(feature = "nova")]
     Strings,
+    #[cfg(feature = "nova")]
+    Quipu,
+    #[cfg(feature = "nova")]
+    Hydra,
 }
 
 enum InputMode {
@@ -492,6 +496,18 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Strings = app_state.view_mode {
                 render_strings(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Quipu = app_state.view_mode {
+                render_quipu(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Hydra = app_state.view_mode {
+                render_hydra(f, vm, app_state);
                 return;
             }
 
@@ -950,6 +966,34 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Quipu => {
+                                    // Edit cord value?
+                                    // Let's allow setting value of active cord
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    if let crate::vm::Value::Int(n) = val {
+                                        if let Some(cord) = vm.quipu.cords.get_mut(vm.quipu.active_cord) {
+                                            // Reset cord to this value?
+                                            // Tie replaces it?
+                                            // Let's reuse tie logic by clearing first?
+                                            // Or just make tie set it. My tie logic replaces.
+                                            cord.tie(n);
+                                            app_state.status_msg = format!("Cord {} set to {}", vm.quipu.active_cord, n);
+                                        }
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Hydra => {
+                                    // Enable editing grid from Hydra view
+                                    let (x, y) = app_state.grid_cursor;
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab => {
@@ -1120,7 +1164,11 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Babel => ViewMode::Strings,
                             #[cfg(feature = "nova")]
-                            ViewMode::Strings => ViewMode::Heatmap,
+                            ViewMode::Strings => ViewMode::Quipu,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Quipu => ViewMode::Hydra,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hydra => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1290,6 +1338,8 @@ where
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1565,6 +1615,14 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Strings => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1855,6 +1913,14 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Strings => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1973,6 +2039,18 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {
+                            if vm.quipu.active_cord + 1 < vm.quipu.cords.len() {
+                                vm.quipu.active_cord += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2081,6 +2159,18 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Orca => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Quipu => {
+                            if vm.quipu.active_cord > 0 {
+                                vm.quipu.active_cord -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2368,6 +2458,26 @@ where
                             ViewMode::Strings => {
                                 app_state.input_mode = InputMode::Normal;
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Quipu => {
+                                // Prepare buffer with current value
+                                if vm.quipu.active_cord < vm.quipu.cords.len() {
+                                    let val = vm.quipu.cords[vm.quipu.active_cord].read();
+                                    app_state.input_buffer = val.to_string();
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hydra => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
                         }
                     }
                     _ => {}
@@ -2646,6 +2756,68 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "oracle")]
+fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Left: Knowledge Base (Facts & Rules)
+    let mut kb_items = Vec::new();
+    if vm.knowledge_base.is_empty() {
+        kb_items.push(ListItem::new("Knowledge Base is empty."));
+    } else {
+        for (i, fact) in vm.knowledge_base.iter().enumerate() {
+            kb_items.push(ListItem::new(format!("{}: {}", i, fact)).style(Style::default().fg(Color::Cyan)));
+        }
+    }
+    let kb_list = List::new(kb_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Knowledge Base (Facts & Rules)"),
+    );
+    f.render_widget(kb_list, chunks[0]);
+
+    // Right: Omens & Query Results
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // Omens
+    let mut omen_items = Vec::new();
+    if vm.omens.is_empty() {
+        omen_items.push(ListItem::new("No active prophecies (Omens)."));
+    } else {
+        for (i, omen) in vm.omens.iter().enumerate() {
+            omen_items.push(ListItem::new(format!("{}: If {} Then {}", i, omen.condition, omen.effect)).style(Style::default().fg(Color::Yellow)));
+        }
+    }
+    let omen_list = List::new(omen_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Prophecies (Omens)"),
+    );
+    f.render_widget(omen_list, right_chunks[0]);
+
+    // Query Results
+    let mut result_items = Vec::new();
+    if app_state.query_results.is_empty() {
+        result_items.push(ListItem::new("No query results. Press '/' to query."));
+    } else {
+        for res in &app_state.query_results {
+            result_items.push(ListItem::new(res.clone()).style(Style::default().fg(Color::Green)));
+        }
+    }
+    let result_list = List::new(result_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Query: {}", app_state.query_input)),
+    );
+    f.render_widget(result_list, right_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
@@ -3098,6 +3270,10 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Babel => "BABEL (REGEX LAB)",
         #[cfg(feature = "nova")]
         ViewMode::Strings => "COSMIC STRINGS (VIBRATION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
     };
 
     let title = match app_state.input_mode {
@@ -4465,6 +4641,12 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 style = style.fg(Color::Magenta); // Discarded dreams
             }
 
+            let mut label_suffix = "";
+            if trace.is_nightmare {
+                style = style.fg(Color::Red).add_modifier(Modifier::BOLD);
+                label_suffix = " (NIGHTMARE)";
+            }
+
             if is_selected {
                 style = style.add_modifier(Modifier::BOLD | Modifier::UNDERLINED);
             }
@@ -4472,8 +4654,8 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             let icon = if trace.accepted { "✔" } else { "✖" };
             trace_items.push(
                 ListItem::new(format!(
-                    "{} Dream #{} (Strand {}) - {} Ticks",
-                    icon, i, trace.strand_idx, trace.duration
+                    "{} Dream #{} (Strand {}) - {} Ticks{}",
+                    icon, i, trace.strand_idx, trace.duration, label_suffix
                 ))
                 .style(style),
             );
@@ -4493,7 +4675,7 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .constraints([Constraint::Length(8), Constraint::Min(0)].as_ref())
             .split(chunks[1]);
 
-        let info_text = vec![
+        let mut info_text = vec![
             Line::from(format!("Mutation: {}", trace.mutation_desc)),
             Line::from(format!(
                 "Energy: {} -> {} (Cost: {})",
@@ -4506,12 +4688,20 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 if trace.status == 1 { "Alive" } else { "Dead" }
             )),
             Line::from(format!("Accepted: {}", trace.accepted)),
-            Line::from(""),
-            Line::from(Span::styled(
-                "Press ENTER to Realize (Lucid Dreaming)",
-                Style::default().fg(Color::Cyan),
-            )),
         ];
+
+        if trace.is_nightmare {
+            info_text.push(Line::from(Span::styled(
+                "TYPE: NIGHTMARE (FORCED)",
+                Style::default().fg(Color::Red).add_modifier(Modifier::BOLD),
+            )));
+        }
+
+        info_text.push(Line::from(""));
+        info_text.push(Line::from(Span::styled(
+            "Press ENTER to Realize (Lucid Dreaming)",
+            Style::default().fg(Color::Cyan),
+        )));
 
         let info = Paragraph::new(info_text).block(
             Block::default()
@@ -5768,14 +5958,15 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 crate::vm::Value::Str(s) => {
                     let c = s.chars().next().unwrap_or('.');
                     let color = match c {
-                        '*' => Color::Red,
+                        '*' | '!' => Color::Red,
+                        ':' | ';' => Color::Magenta,
                         '0'..='9' => Color::Cyan,
                         'a'..='z' => Color::Green,
                         'A'..='Z' => Color::Yellow,
                         _ => Color::DarkGray,
                     };
                     (c.to_string(), color)
-                },
+                }
                 crate::vm::Value::Int(n) => {
                     let v = (*n).rem_euclid(36);
                     let c = if v < 10 {
@@ -5783,16 +5974,23 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     } else {
                         ((v as u8 - 10) + b'a') as char
                     };
-                    let color = if *n == 0 { Color::DarkGray } else { Color::Cyan };
+                    let color = if *n == 0 {
+                        Color::DarkGray
+                    } else {
+                        Color::Cyan
+                    };
                     (c.to_string(), color)
-                },
+                }
                 _ => ("?".to_string(), Color::White),
             };
 
             style = style.fg(base_color);
 
             if signal > 0 {
-                style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                style = style
+                    .bg(Color::White)
+                    .fg(Color::Black)
+                    .add_modifier(Modifier::BOLD);
             }
 
             if app_state.grid_cursor == (x, y) {
@@ -5812,29 +6010,72 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let grid_widget = Paragraph::new(grid_lines).block(grid_block);
     f.render_widget(grid_widget, chunks[0]);
 
+    // Right Panel: Split into Manual and MIDI Log
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(chunks[1]);
+
     // Info Panel
     let info = vec![
         Line::from("ORCA MODE"),
         Line::from(" "),
         Line::from("Operators:"),
-        Line::from("  * Bang (Signal Source)"),
+        Line::from("  * ! Bang (Signal Source)"),
+        Line::from("  :   MIDI Note (N, V, C, D)"),
+        Line::from("  ;   MIDI CC   (K, V, C)"),
+        Line::from("  ?   Random"),
         Line::from("  N/S/E/W (Directional I/O)"),
         Line::from("  A/B/D (Math: + - /)"),
         Line::from("  M (Mutate), C (Clock)"),
-        Line::from("  Q (Query Neighbor)"),
-        Line::from("  H (Harvest Gene)"),
+        Line::from("  Q (Query), H (Harvest)"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
         Line::from("  Space to Step."),
         Line::from("  Arrow Keys to Move."),
-        Line::from("  Shift+O to Switch Mode."),
     ];
 
     let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Manual")
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Manual"),
     );
-    f.render_widget(info_widget, chunks[1]);
+    f.render_widget(info_widget, right_chunks[0]);
+
+    // MIDI Log
+    let mut midi_items = Vec::new();
+    if vm.midi_messages.is_empty() {
+        midi_items.push(ListItem::new("No MIDI Output").style(Style::default().fg(Color::DarkGray)));
+    } else {
+        for msg in &vm.midi_messages {
+            let s = match msg {
+                crate::vm::MidiEvent::NoteOn {
+                    channel,
+                    note,
+                    velocity,
+                    duration,
+                } => {
+                    format!("♪ Ch{} Note{} Vel{} Len{}", channel, note, velocity, duration)
+                }
+                crate::vm::MidiEvent::ControlChange {
+                    channel,
+                    controller,
+                    value,
+                } => {
+                    format!("≡ Ch{} CC{} Val{}", channel, controller, value)
+                }
+            };
+            midi_items.push(ListItem::new(s).style(Style::default().fg(Color::Magenta)));
+        }
+    }
+
+    let midi_list = List::new(midi_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("MIDI Output Log"),
+    );
+    f.render_widget(midi_list, right_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
@@ -5914,4 +6155,181 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     let list = List::new(items).block(Block::default().borders(Borders::ALL).title("String Stats"));
     f.render_widget(list, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Quipu (Knot Memory)"),
+        )
+        .x_bounds([0.0, 100.0])
+        .y_bounds([0.0, 50.0])
+        .paint(|ctx| {
+            // Draw Main Cord (Horizontal)
+            ctx.draw(&ratatui::widgets::canvas::Line {
+                x1: 5.0,
+                y1: 45.0,
+                x2: 95.0,
+                y2: 45.0,
+                color: Color::White,
+            });
+
+            // Draw Pendant Cords
+            let cord_count = vm.quipu.cords.len();
+            let spacing = 90.0 / (cord_count as f64 + 1.0);
+
+            for (i, cord) in vm.quipu.cords.iter().enumerate() {
+                let x = 5.0 + spacing * (i as f64 + 1.0);
+
+                // Draw Cord Line
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: x,
+                    y1: 45.0,
+                    x2: x,
+                    y2: 5.0,
+                    color: if i == vm.quipu.active_cord { Color::Yellow } else { Color::Gray },
+                });
+
+                // Draw Knots
+                // Top-down visually means y decreasing from 45.
+                let mut current_y = 40.0;
+
+                for cluster in &cord.clusters {
+                    for knot in cluster {
+                        let _color = match knot {
+                            crate::vm::nova_quipu::Knot::Simple => Color::Cyan,
+                            crate::vm::nova_quipu::Knot::Long(_) => Color::Green,
+                            crate::vm::nova_quipu::Knot::FigureEight => Color::Red,
+                        };
+
+                        let symbol = match knot {
+                            crate::vm::nova_quipu::Knot::Simple => "o",
+                            crate::vm::nova_quipu::Knot::Long(_v) => "L",
+                            crate::vm::nova_quipu::Knot::FigureEight => "8",
+                        };
+
+                        ctx.print(x - 0.5, current_y, symbol);
+                        current_y -= 2.0;
+                    }
+                    // Gap between clusters
+                    current_y -= 3.0;
+                }
+
+                // Draw Value at bottom
+                let val = cord.read();
+                ctx.print(x - 1.0, 2.0, val.to_string());
+            }
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    let info = Paragraph::new("Quipu Interface.\nActive Cord highlighted Yellow.\nOpcodes: Knot, Unknot, Cord, ReadCord, Tangle")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Fluid Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let wind = vm.wind_grid[y][x];
+            let moisture = vm.moisture_grid[y][x];
+
+            let mut style = Style::default();
+
+            // Background color based on moisture (Blue)
+            if moisture > 0 {
+                let intensity = (moisture / 4).clamp(0, 255) as u8;
+                style = style.bg(Color::Rgb(0, 0, intensity));
+                if intensity > 128 {
+                    style = style.fg(Color::White);
+                } else {
+                    style = style.fg(Color::Cyan);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            let mut ch = "·".to_string();
+
+            // Overlay Components
+            if let crate::vm::Value::Str(s) = val {
+                if matches!(s.as_str(), ">" | "<" | "^" | "v" | "@" | "~" | "#" | "!" | "X") {
+                    ch = s.clone();
+                    style = style.add_modifier(Modifier::BOLD);
+                    if s == "@" { style = style.fg(Color::Green); } // Pump
+                    if s == "~" { style = style.fg(Color::Red); }   // Drain
+                    if s == "#" { style = style.fg(Color::White).bg(Color::DarkGray); } // Wall
+                    if s == "!" { style = style.fg(Color::Yellow); } // Sensor
+                }
+            } else if wind != (0, 0) {
+                // Show wind direction if no component overlay
+                // Wind vector (dy, dx)
+                if wind.0.abs() > wind.1.abs() {
+                    if wind.0 > 0 { ch = "↓".to_string(); } else { ch = "↑".to_string(); }
+                } else {
+                    if wind.1 > 0 { ch = "→".to_string(); } else { ch = "←".to_string(); }
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Hydra (Fluid Dynamics)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let w = vm.wind_grid[cy][cx];
+    let m = vm.moisture_grid[cy][cx];
+
+    let info = vec![
+        Line::from("HYDRA SYSTEM"),
+        Line::from(" "),
+        Line::from(format!("Pressure: {}", m)),
+        Line::from(format!("Flow: ({}, {})", w.1, w.0)), // dx, dy
+        Line::from(" "),
+        Line::from("Components:"),
+        Line::from("  @  Pump (Source)"),
+        Line::from("  ~  Drain (Sink)"),
+        Line::from("  #  Wall (Block)"),
+        Line::from("  > < ^ v  Fan (Direct Flow)"),
+        Line::from("  !  Sensor (Trigger if Pressure > 100)"),
+        Line::from("  X  Valve (Default Closed)"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Fluid Gauge"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }

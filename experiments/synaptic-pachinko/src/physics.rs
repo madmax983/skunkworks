@@ -1,4 +1,4 @@
-pub use tui_shared::math::Vec2;
+pub use locus::Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum PacketKind {

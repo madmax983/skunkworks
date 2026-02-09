@@ -8,6 +8,7 @@ default = ["audio"]
 audio = ["dep:cpal"]
 
 [dependencies]
+locus = { workspace = true }
 ratatui = { workspace = true }
 crossterm = { workspace = true }
 anyhow = { workspace = true }

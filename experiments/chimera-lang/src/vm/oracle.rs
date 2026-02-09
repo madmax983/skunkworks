@@ -253,7 +253,7 @@ fn is_var(v: &Value) -> Option<String> {
     None
 }
 
-fn resolve(term: &Value, subst: &Subst) -> Value {
+pub fn resolve(term: &Value, subst: &Subst) -> Value {
     match term {
         Value::Str(s) if s.starts_with('?') => {
             if let Some(val) = subst.get(s) {
@@ -430,6 +430,94 @@ fn check_dynamic_predicates(
                         let fact_e = Value::Int(vm.energy);
                         if let Some(new_subst) = unify(arg_e, &fact_e, subst) {
                             solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "stack" => {
+                    // stack(List)
+                    if args.len() == 2 {
+                        let arg_list = &args[1];
+                        let stack_vals = vm.stack.clone();
+                        let fact_list = Value::Junction(JunctionType::All, stack_vals);
+
+                        if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "inventory" => {
+                    // inventory(List)
+                    if args.len() == 2 {
+                        let arg_list = &args[1];
+                        #[cfg(feature = "nova")]
+                        {
+                            let org_vals: Vec<Value> = vm
+                                .organelles
+                                .iter()
+                                .map(|o| Value::Str(format!("{:?}", o.kind)))
+                                .collect();
+                            let fact_list = Value::Junction(JunctionType::All, org_vals);
+                            if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
+                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                            }
+                        }
+                        #[cfg(not(feature = "nova"))]
+                        {
+                            let fact_list = Value::Junction(JunctionType::All, vec![]);
+                            if let Some(new_subst) = unify(arg_list, &fact_list, subst) {
+                                solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "dna_len" => {
+                    if args.len() == 2 {
+                        let arg_len = &args[1];
+                        let fact_len = Value::Int(vm.dna.helix.strands.len() as i64);
+                        if let Some(new_subst) = unify(arg_len, &fact_len, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
+                    }
+                }
+                "gene" => {
+                    // gene(Strand, Idx, Op)
+                    if args.len() == 4 {
+                        let arg_strand = &args[1];
+                        let arg_idx = &args[2];
+                        let arg_op = &args[3];
+
+                        for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                            let fact_s = Value::Int(s_idx as i64);
+                            if unify(arg_strand, &fact_s, subst).is_none() {
+                                continue;
+                            }
+
+                            for (g_idx, gene) in strand.genes.iter().enumerate() {
+                                let fact_idx = Value::Int(g_idx as i64);
+                                let fact_op = Value::Str(gene.op.to_string());
+
+                                let mut current = subst.clone();
+                                if let Some(s1) = unify(arg_strand, &fact_s, &current) {
+                                    current = s1;
+                                    if let Some(s2) = unify(arg_idx, &fact_idx, &current) {
+                                        current = s2;
+                                        if let Some(s3) = unify(arg_op, &fact_op, &current) {
+                                            solve(
+                                                remaining_goals,
+                                                s3,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
                         }
                         return true;
                     }

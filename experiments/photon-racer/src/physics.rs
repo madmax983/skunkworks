@@ -1,4 +1,4 @@
-use tui_shared::math::Vec2;
+use locus::Vec2;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum MirrorType {

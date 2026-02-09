@@ -65,3 +65,25 @@ fn test_projectile_collision() {
 
     assert!(vm.output.iter().any(|s| s.contains("IMPACT")));
 }
+
+#[test]
+fn test_fire_overflow() {
+    let mut vm = make_vm();
+
+    // Stack: power=1, dy=0, dx=3037000500 (Enough to overflow i64 when squared)
+    vm.stack.push(Value::Int(1)); // power
+    vm.stack.push(Value::Int(0)); // dy
+    vm.stack.push(Value::Int(3037000500)); // dx
+
+    // Set context to center
+    vm.context_loc = (8, 8);
+
+    // This should NOT panic if fixed
+    crate::vm::nova_ballistics::exec_fire(&mut vm);
+
+    assert_eq!(vm.projectiles.len(), 1);
+    let p = &vm.projectiles[0];
+    // Direction should still be valid (normalized)
+    // vx should be 1.0 (since dy=0)
+    assert!((p.vx - 1.0).abs() < 0.001);
+}

@@ -1,34 +1,26 @@
 use num_complex::Complex;
 use ratatui::{
     style::Color,
-    widgets::canvas::{Context, Line},
+    widgets::canvas::{Context, Line, Circle},
 };
 use std::f64::consts::PI;
 
 use crate::dungeon::{Dungeon, TileType};
+use crate::game::Game;
+use crate::entity::EntityKind;
 use poincare_disk::{neighbor_transform_a, Mobius, Point, TilingConsts};
 
 pub fn draw_dungeon(
     ctx: &mut Context,
-    dungeon: &Dungeon,
-    player_path: &[usize],
+    game: &Game,
     view_transform: &Mobius,
-    consts: &TilingConsts,
 ) {
-    // We start recursion from the player's current tile.
-    // However, the view_transform maps the player's local coordinates to the screen.
-    // If the player is at 'offset' in the current tile, view_transform should map 'offset' to (0,0).
-    // The recursive drawer assumes it draws a tile centered at 0 in its local frame,
-    // mapped to screen by 'transform'.
-
-    // So 'transform' passed to draw_tile is view_transform.
-
     draw_tile_recursive(
         ctx,
-        dungeon,
-        player_path.to_vec(),
+        game,
+        game.get_player().path.clone(),
         *view_transform,
-        consts,
+        &game.tiling_consts,
         0,
         None,
     );
@@ -36,7 +28,7 @@ pub fn draw_dungeon(
 
 fn draw_tile_recursive(
     ctx: &mut Context,
-    dungeon: &Dungeon,
+    game: &Game,
     path: Vec<usize>,
     transform: Mobius,
     consts: &TilingConsts,
@@ -44,13 +36,7 @@ fn draw_tile_recursive(
     from_dir: Option<usize>,
 ) {
     // 1. Check visibility/size
-    // Map center (0) to screen
     let screen_center = transform.apply(Point::new(0.0, 0.0));
-
-    // Simple cull: if too far and small?
-    // In Poincare disk, everything is inside unit circle.
-    // We stop if the "size" of the tile is too small.
-    // Approximate size: map a vertex and check distance to center.
     let v0_local = Complex::from_polar(consts.vertex_offset, PI / 4.0);
     let v0_screen = transform.apply(v0_local);
     let size = (v0_screen - screen_center).norm();
@@ -59,20 +45,18 @@ fn draw_tile_recursive(
         return;
     }
 
-    // Depth limit as safety
     if depth > 10 {
         return;
     }
 
     // 2. Get Tile Data
-    let tile = dungeon.get_tile(&path);
+    let tile = game.dungeon.get_tile(&path);
     let is_wall = match tile.tile_type {
         TileType::Wall => true,
         TileType::Floor => false,
     };
 
     // 3. Draw Geometry
-    // Vertices of the square
     let mut screen_verts = [Point::default(); 4];
     for i in 0..4 {
         let angle = (i as f64 * PI / 2.0) + (PI / 4.0);
@@ -83,7 +67,6 @@ fn draw_tile_recursive(
     let color = if is_wall {
         Color::DarkGray
     } else {
-        // Procedural color based on seed
         let c = tile.color_seed;
         match c % 6 {
             0 => Color::Red,
@@ -95,7 +78,6 @@ fn draw_tile_recursive(
         }
     };
 
-    // Draw edges
     for i in 0..4 {
         let p1 = screen_verts[i];
         let p2 = screen_verts[(i + 1) % 4];
@@ -108,7 +90,6 @@ fn draw_tile_recursive(
         });
     }
 
-    // If Wall, maybe draw an 'X' or fill (can't fill in Canvas easily)
     if is_wall {
         ctx.draw(&Line {
             x1: screen_verts[0].re,
@@ -126,16 +107,36 @@ fn draw_tile_recursive(
         });
     }
 
+    // Draw Entities in this tile
+    // Iterate all entities (or just optimize if needed)
+    for entity in &game.entities {
+        if entity.path == path {
+             let screen_pos = transform.apply(entity.offset);
+             let color = match entity.kind {
+                 EntityKind::Player => Color::Yellow,
+                 EntityKind::Enemy => Color::Red,
+                 EntityKind::Item => Color::Magenta,
+             };
+             let radius = match entity.kind {
+                 EntityKind::Player => 0.02,
+                 _ => 0.015,
+             };
+
+             ctx.draw(&Circle {
+                 x: screen_pos.re,
+                 y: screen_pos.im,
+                 radius,
+                 color,
+             });
+        }
+    }
+
     // 4. Recurse to neighbors
-    // We recurse even if wall? Yes, because we might see *past* a wall?
-    // In a dungeon, usually no. But for "impossible space" visualization, yes.
-    // Or maybe Walls block visibility? Let's say yes for "Dungeon" feel.
     if is_wall {
         return;
     }
 
     for i in 0..4 {
-        // Skip the direction we just came from to avoid infinite loops
         if let Some(from) = from_dir {
             if i == from {
                 continue;
@@ -147,14 +148,11 @@ fn draw_tile_recursive(
         let child_transform = transform.then(&step_transform);
 
         let next_path = Dungeon::canonicalize_step(path.clone(), i);
-
-        // The neighbor i of current node will see current node as neighbor (i + 2) % 4.
-        // So when recursing, the new 'from_dir' is (i + 2) % 4.
         let next_from_dir = (i + 2) % 4;
 
         draw_tile_recursive(
             ctx,
-            dungeon,
+            game,
             next_path,
             child_transform,
             consts,

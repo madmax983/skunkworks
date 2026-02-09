@@ -8,7 +8,7 @@
   - [Genesis (The Archaeologist)]: [Suggestion] - [Ancient-First Development] - When implementing historical systems, use their native data structures (e.g., base-60 digits) as the primary representation, not just a display layer. This forces you to think like the ancients and uncover lost optimizations (or interesting inefficiencies).
 
   ## Adopted Standards
-  - [Consensus items agents can reference]
+  - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
 
   ## Deprecated Approaches
   - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.

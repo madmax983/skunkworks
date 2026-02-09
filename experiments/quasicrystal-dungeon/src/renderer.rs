@@ -1,7 +1,7 @@
 use crate::math::Quasicrystal;
 use bytemuck::{Pod, Zeroable};
 use cgmath::prelude::*;
-use cgmath::{Deg, Matrix4, Point3, Vector3};
+use cgmath::{Deg, Matrix4, Point3, Quaternion, Vector3};
 use std::sync::Arc;
 use wgpu::util::DeviceExt;
 use winit::window::Window;
@@ -16,8 +16,8 @@ struct Vertex {
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Pod, Zeroable)]
 struct InstanceRaw {
-    model_pos: [f32; 3],
-    color: [f32; 3],
+    model: [[f32; 4]; 4],
+    color: [f32; 4],
 }
 
 #[repr(C)]
@@ -40,8 +40,6 @@ impl Camera {
     fn build_view_projection_matrix(&self) -> Matrix4<f32> {
         let view = Matrix4::look_at_rh(self.eye, self.target, self.up);
         let proj = cgmath::perspective(Deg(self.fovy), self.aspect, self.znear, self.zfar);
-        // wgpu has clip space Z 0..1, cgmath is -1..1.
-        // OPENGL_TO_WGPU_MATRIX
         let correction = Matrix4::new(
             1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.5, 1.0,
         );
@@ -69,7 +67,7 @@ pub struct State {
 }
 
 const VERTICES: &[Vertex] = &[
-    // Cube vertices
+    // Cube vertices (unchanged)
     // Front face
     Vertex {
         position: [-0.1, -0.1, 0.1],
@@ -318,15 +316,32 @@ impl State {
             array_stride: std::mem::size_of::<InstanceRaw>() as wgpu::BufferAddress,
             step_mode: wgpu::VertexStepMode::Instance,
             attributes: &[
+                // Model matrix (4x4)
                 wgpu::VertexAttribute {
                     offset: 0,
                     shader_location: 5,
-                    format: wgpu::VertexFormat::Float32x3,
+                    format: wgpu::VertexFormat::Float32x4,
                 },
                 wgpu::VertexAttribute {
-                    offset: std::mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
+                    offset: std::mem::size_of::<[f32; 4]>() as wgpu::BufferAddress,
                     shader_location: 6,
-                    format: wgpu::VertexFormat::Float32x3,
+                    format: wgpu::VertexFormat::Float32x4,
+                },
+                wgpu::VertexAttribute {
+                    offset: std::mem::size_of::<[f32; 8]>() as wgpu::BufferAddress,
+                    shader_location: 7,
+                    format: wgpu::VertexFormat::Float32x4,
+                },
+                wgpu::VertexAttribute {
+                    offset: std::mem::size_of::<[f32; 12]>() as wgpu::BufferAddress,
+                    shader_location: 8,
+                    format: wgpu::VertexFormat::Float32x4,
+                },
+                // Color
+                wgpu::VertexAttribute {
+                    offset: std::mem::size_of::<[f32; 16]>() as wgpu::BufferAddress,
+                    shader_location: 9,
+                    format: wgpu::VertexFormat::Float32x4,
                 },
             ],
         };
@@ -389,18 +404,49 @@ impl State {
         });
 
         // Convert QC to instances
-        let instances: Vec<InstanceRaw> = qc
-            .atoms
-            .iter()
-            .map(|p| {
-                let dist = p.to_vec().magnitude();
-                let c = (dist / 10.0).sin() * 0.5 + 0.5;
-                InstanceRaw {
-                    model_pos: [p.x, p.y, p.z],
-                    color: [c, 0.5, 1.0 - c],
-                }
-            })
-            .collect();
+        let mut instances: Vec<InstanceRaw> = Vec::new();
+
+        // Atoms
+        for p in &qc.atoms {
+            let dist = p.to_vec().magnitude();
+            let c = (dist / 10.0).sin() * 0.5 + 0.5;
+
+            let model = Matrix4::from_translation(Vector3::new(p.x, p.y, p.z))
+                * Matrix4::from_scale(0.5); // Make atoms smaller
+
+            instances.push(InstanceRaw {
+                model: model.into(),
+                color: [c, 0.5, 1.0 - c, 1.0],
+            });
+        }
+
+        // Edges
+        for (start, end) in &qc.edges {
+            let vec = end - start;
+            let len = vec.magnitude();
+            if len < 0.001 { continue; }
+            let dir = vec.normalize();
+            let mid = start + vec * 0.5;
+
+            // Rotation aligning Y-axis (0,1,0) to dir
+            let rot = Quaternion::between_vectors(Vector3::unit_y(), dir);
+
+            // Scale: Y becomes length L. X/Z become thickness.
+            // Original cube is -0.1 to 0.1 (height 0.2).
+            // Scale Y by L / 0.2.
+            // Scale X/Z by 0.2 (thickness factor).
+            let scale_y = len / 0.2;
+            let scale_xz = 0.2;
+
+            let model = Matrix4::from_translation(Vector3::new(mid.x, mid.y, mid.z))
+                * Matrix4::from(rot)
+                * Matrix4::from_nonuniform_scale(scale_xz, scale_y, scale_xz);
+
+            instances.push(InstanceRaw {
+                model: model.into(),
+                color: [0.8, 0.8, 0.8, 0.5], // Grey edges
+            });
+        }
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -490,7 +536,7 @@ impl State {
         let output = if let Some(surface) = &self.surface {
             surface.get_current_texture()?
         } else {
-            return Ok(()); // Should not happen in window loop
+            return Ok(());
         };
 
         let view = output
@@ -511,9 +557,9 @@ impl State {
                     resolve_target: None,
                     ops: wgpu::Operations {
                         load: wgpu::LoadOp::Clear(wgpu::Color {
-                            r: 0.1,
-                            g: 0.2,
-                            b: 0.3,
+                            r: 0.05,
+                            g: 0.05,
+                            b: 0.1,
                             a: 1.0,
                         }),
                         store: wgpu::StoreOp::Store,
@@ -545,7 +591,6 @@ impl State {
         Ok(())
     }
 
-    // Headless render to image
     pub async fn render_headless(&mut self) -> image::RgbaImage {
         let texture_size = wgpu::Extent3d {
             width: self.size.0,
@@ -608,7 +653,6 @@ impl State {
             render_pass.draw_indexed(0..self.num_indices, 0, 0..self.num_instances);
         }
 
-        // Copy to buffer
         let u32_size = std::mem::size_of::<u32>() as u32;
         let unpadded_bytes_per_row = u32_size * self.size.0;
         let align = 256;

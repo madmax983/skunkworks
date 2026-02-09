@@ -538,7 +538,7 @@ impl Topology {
                 if !(0..s).contains(&ny) {
                     let wrap_count = ny.div_euclid(s);
                     if wrap_count % 2 != 0 {
-                        nx = (s - 1) - nx; // Twist X
+                        nx = (s - 1).wrapping_sub(nx); // Twist X
                     }
                     ny = ny.rem_euclid(s);
                 }
@@ -554,7 +554,7 @@ impl Topology {
                 if !(0..s).contains(&nx) {
                     let wrap_count = nx.div_euclid(s);
                     if wrap_count % 2 != 0 {
-                        ny = (s - 1) - ny; // Twist Y
+                        ny = (s - 1).wrapping_sub(ny); // Twist Y
                     }
                     nx = nx.rem_euclid(s);
                 }
@@ -566,5 +566,26 @@ impl Topology {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod topology_tests {
+    use super::*;
+
+    #[test]
+    fn test_topology_overflow_klein() {
+        let topo = Topology::Klein;
+        // y = -16 (wraps once, odd), x = i64::MIN
+        // Should not panic
+        let _ = topo.normalize(-16, i64::MIN, 16);
+    }
+
+    #[test]
+    fn test_topology_overflow_mobius() {
+        let topo = Topology::Mobius;
+        // x = -16 (wraps once, odd), y = i64::MIN
+        // Should not panic
+        let _ = topo.normalize(i64::MIN, -16, 16);
     }
 }
