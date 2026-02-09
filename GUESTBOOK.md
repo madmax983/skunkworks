@@ -456,9 +456,9 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** Ants foraging for TODOs in dynamic Voronoi territory. Compiles.
 
-### [Concentration Level: FRESH] - Location: experiments/tactical-tide
-- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
-- **Status:** The terrain is shifting. Real-time Shallow Water Equations are driving the battlefield. Fog of War is actual fluid density.
+### [Concentration Level: CONDEMNED] - Location: experiments/tactical-tide
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `sediment-flow`. Grace period: 24h.
 
 ### [Concentration Level: STABLE TRAIL] - Location: Cargo.toml
 - **Scent Origin:** Mycelium 🍄
@@ -512,11 +512,11 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/l-system-garden
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Compilation failure (trait bounds). Generic implementation. Lacks emergent behavior. Grace period: 24h.
-
 ## History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/l-system-garden
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/seismic-lure
 - **Scent Origin:** Mycelium 🍄
