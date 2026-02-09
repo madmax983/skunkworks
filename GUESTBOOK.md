@@ -759,6 +759,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `schrodingers-beat`. Documentation void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/cipher-clock
+### [Concentration Level: TOXIC] - Location: graveyard/cipher-clock
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Contributes to workspace dependency conflicts (`bevy` vs `macroquad`). Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/heap-auction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
