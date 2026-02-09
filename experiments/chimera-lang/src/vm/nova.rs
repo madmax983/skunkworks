@@ -519,6 +519,14 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 // Clone VM
                 let mut sim_vm = vm.clone();
+
+                // Inherit and increment recursion depth to prevent infinite prophecy loops
+                sim_vm.recursion_depth += 1;
+                if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Recursion limit exceeded in prophecy".to_string());
+                    return None;
+                }
+
                 sim_vm.output.clear(); // Silence output
                 sim_vm.halted = false; // Ensure it can run (unless already dead?)
 
