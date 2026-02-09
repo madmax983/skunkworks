@@ -17,13 +17,15 @@ pub fn exec_babel_op(
                 if let Value::Str(type_str) = type_val {
                     let mut args = vec![Value::Str(type_str.clone())];
                     match type_str.as_str() {
-                        "Match" => {
+                        "Match" | "Regex" => {
                             if let Some(pattern) = vm.stack.pop() {
                                 args.push(pattern);
                                 vm.stack.push(Value::Junction(JunctionType::Any, args));
                             } else {
-                                vm.output
-                                    .push("Error: Stack underflow for Grammar(Match)".to_string());
+                                vm.output.push(format!(
+                                    "Error: Stack underflow for Grammar({})",
+                                    type_str
+                                ));
                             }
                         }
                         "Seq" | "Alt" => {
@@ -108,6 +110,17 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for ParserMatch".to_string());
             }
         }
+        OpCode::ParserRegex => {
+            if let Some(pattern) = vm.stack.pop() {
+                vm.stack.push(Value::Junction(
+                    JunctionType::Any,
+                    vec![Value::Str("Regex".to_string()), pattern],
+                ));
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for ParserRegex".to_string());
+            }
+        }
         OpCode::ParserSeq => {
             if vm.stack.len() >= 2 {
                 let p2 = vm.stack.pop().unwrap();
@@ -177,6 +190,25 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     if let Value::Str(pattern) = &args[1] {
                         if input.starts_with(pattern) {
                             return Ok((Value::Str(pattern.clone()), pattern.len()));
+                        }
+                    }
+                    return Err(());
+                }
+                "Regex" => {
+                    if args.len() < 2 {
+                        return Err(());
+                    }
+                    if let Value::Str(pattern) = &args[1] {
+                        // Compile regex. Note: This is inefficient to do every time.
+                        // In a real VM we'd cache this or pre-compile.
+                        // We prepend ^ to anchor to start of string for parser behavior
+                        let anchored = format!("^{}", pattern);
+                        if let Ok(re) = regex::Regex::new(&anchored) {
+                            if let Some(mat) = re.find(input) {
+                                let match_str = mat.as_str().to_string();
+                                let len = match_str.len();
+                                return Ok((Value::Str(match_str), len));
+                            }
                         }
                     }
                     return Err(());

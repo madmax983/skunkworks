@@ -84,6 +84,8 @@ pub(crate) enum ViewMode {
     Garden,
     #[cfg(feature = "nova")]
     Orca,
+    #[cfg(feature = "nova")]
+    Babel,
 }
 
 enum InputMode {
@@ -147,6 +149,14 @@ pub(crate) struct AppState {
     pub(crate) palette_open: bool,
     pub(crate) palette_idx: usize,
     pub(crate) palette_char: Option<char>,
+    #[cfg(feature = "nova")]
+    pub(crate) babel_pattern: String,
+    #[cfg(feature = "nova")]
+    pub(crate) babel_input: String,
+    #[cfg(feature = "nova")]
+    pub(crate) babel_result: String,
+    #[cfg(feature = "nova")]
+    pub(crate) babel_focus: usize, // 0=Pattern, 1=Input
 }
 
 impl AppState {
@@ -206,6 +216,14 @@ impl AppState {
             palette_open: false,
             palette_idx: 0,
             palette_char: None,
+            #[cfg(feature = "nova")]
+            babel_pattern: String::from("[a-z]+"),
+            #[cfg(feature = "nova")]
+            babel_input: String::from("hello"),
+            #[cfg(feature = "nova")]
+            babel_result: String::new(),
+            #[cfg(feature = "nova")]
+            babel_focus: 0,
         }
     }
 }
@@ -460,6 +478,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Orca = app_state.view_mode {
                 render_orca(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Babel = app_state.view_mode {
+                render_babel(f, vm, app_state);
                 return;
             }
 
@@ -901,6 +925,24 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Babel => {
+                                    // In Babel, Enter in Normal mode enters Editing mode.
+                                    // Editing happens directly on the strings, no buffer commit needed here.
+                                    // But we use input_buffer as scratchpad in other modes.
+                                    // Here we edit in place.
+                                    // So we just clear buffer and exit?
+                                    // Wait, if we are in Editing mode, keys append to buffer.
+                                    // We need to implement custom handling for Babel in Editing mode loop.
+                                    // See below.
+                                    app_state.input_mode = InputMode::Normal;
+                                }
+                            }
+                        }
+                        KeyCode::Tab => {
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Babel = app_state.view_mode {
+                                app_state.babel_focus = (app_state.babel_focus + 1) % 2;
                             }
                         }
                         KeyCode::Esc => {
@@ -908,10 +950,30 @@ where
                             app_state.input_buffer.clear();
                         }
                         KeyCode::Char(c) => {
-                            app_state.input_buffer.push(c);
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Babel = app_state.view_mode {
+                                let target = if app_state.babel_focus == 0 {
+                                    &mut app_state.babel_pattern
+                                } else {
+                                    &mut app_state.babel_input
+                                };
+                                target.push(c);
+                            } else {
+                                app_state.input_buffer.push(c);
+                            }
                         }
                         KeyCode::Backspace => {
-                            app_state.input_buffer.pop();
+                            #[cfg(feature = "nova")]
+                            if let ViewMode::Babel = app_state.view_mode {
+                                let target = if app_state.babel_focus == 0 {
+                                    &mut app_state.babel_pattern
+                                } else {
+                                    &mut app_state.babel_input
+                                };
+                                target.pop();
+                            } else {
+                                app_state.input_buffer.pop();
+                            }
                         }
                         _ => {}
                     }
@@ -1041,7 +1103,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Garden => ViewMode::Orca,
                             #[cfg(feature = "nova")]
-                            ViewMode::Orca => ViewMode::Heatmap,
+                            ViewMode::Orca => ViewMode::Babel,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Babel => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1207,6 +1271,8 @@ where
                     KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1221,6 +1287,22 @@ where
                             if let Some(c) = app_state.palette_char {
                                 let (x, y) = app_state.grid_cursor;
                                 vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
+                            } else if let ViewMode::Babel = app_state.view_mode {
+                                // Run Parse
+                                vm.stack.push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
+                                let _ = crate::vm::babel::exec_babel_op(
+                                    vm,
+                                    crate::opcode::OpCode::ParserRegex,
+                                    &[],
+                                );
+                                vm.stack.push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                                let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
+
+                                if let Some(res) = vm.stack.pop() {
+                                    app_state.babel_result = format!("{}", res);
+                                } else {
+                                    app_state.babel_result = "Stack Empty/Error".to_string();
+                                }
                             } else {
                                 vm.step();
                             }
@@ -1455,6 +1537,10 @@ where
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Babel => {
+                            app_state.babel_focus = (app_state.babel_focus + 1) % 2;
                         }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
@@ -1736,6 +1822,14 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Babel => {
+                            if app_state.babel_focus > 0 {
+                                app_state.babel_focus -= 1;
+                            } else {
+                                app_state.babel_focus = 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1744,6 +1838,8 @@ where
                         }
                     },
                     KeyCode::Right => match app_state.view_mode {
+                        #[cfg(feature = "nova")]
+                        ViewMode::Babel => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 < 15 {
@@ -1852,6 +1948,8 @@ where
                         }
                     },
                     KeyCode::Left => match app_state.view_mode {
+                        #[cfg(feature = "nova")]
+                        ViewMode::Babel => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 > 0 {
@@ -2220,6 +2318,10 @@ where
                                     _ => app_state.input_buffer = String::new(),
                                 }
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Babel => {
+                                // No buffer prep needed, editing in place
+                            }
                             #[cfg(feature = "elektra")]
                             ViewMode::Elektra => {
                                 // Enable editing grid from Elektra view (like Grid view)
@@ -2524,6 +2626,47 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Length(3), // Pattern
+                Constraint::Length(3), // Input
+                Constraint::Min(0),    // Result
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
+
+    let pattern_style = if app_state.babel_focus == 0 {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::White)
+    };
+
+    let input_style = if app_state.babel_focus == 1 {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::White)
+    };
+
+    let pattern_widget = Paragraph::new(app_state.babel_pattern.clone())
+        .block(Block::default().borders(Borders::ALL).title("Regex Pattern (Edit)"))
+        .style(pattern_style);
+    f.render_widget(pattern_widget, chunks[0]);
+
+    let input_widget = Paragraph::new(app_state.babel_input.clone())
+        .block(Block::default().borders(Borders::ALL).title("Test String (Edit)"))
+        .style(input_style);
+    f.render_widget(input_widget, chunks[1]);
+
+    let result_widget = Paragraph::new(app_state.babel_result.clone())
+        .block(Block::default().borders(Borders::ALL).title("Match Result (Enter to Run)"));
+    f.render_widget(result_widget, chunks[2]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
@@ -2931,6 +3074,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Schematic => "SCHEMATIC",
         #[cfg(feature = "elektra")]
         ViewMode::Elektra => "ELEKTRA (ANALOG SIMULATION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Babel => "BABEL (REGEX LAB)",
     };
 
     let title = match app_state.input_mode {
