@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **glyph-evolution**: Specimen condemned. Documentation void. Generic implementation (BPE). Lacks persona alignment. Grace period: 24h.
+- **primordial-soup**: Specimen condemned. Documentation void. Generic implementation (SPH/ALife). Redundant with `fluid-specter`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **glyph-evolution**: Specimen executed. Documentation void. Generic implementation (BPE). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **physarum-transit**: Specimen executed. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period expired. Moved to graveyard.
 - **lattice-hunter**: Specimen executed. Documentation void. Ancestral redundancy (superseded by `lattice-brain`). Grace period expired. Moved to graveyard.
 - **flesh-and-code**: Specimen executed. Documentation void. Redundant with `ik-codewalker`. Grace period expired. Moved to graveyard.
