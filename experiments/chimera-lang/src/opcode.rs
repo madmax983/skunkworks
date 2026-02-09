@@ -1449,6 +1449,13 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Divinate,
 
+    /// **[Oracle]** Searches for a strand satisfying a predicate and jumps to it.
+    ///
+    /// **Stack:** `[ ..., query ] -> [ ... ]`
+    /// **Effect:** Jumps to the first matching strand.
+    #[cfg(feature = "oracle")]
+    Seek,
+
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.
     ///
