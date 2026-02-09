@@ -209,4 +209,107 @@ mod tests {
         // Should be much lower than wire case due to high resistance/low conductivity
         assert!(v_air < 2.0, "Air should insulate");
     }
+
+    #[test]
+    fn test_electrogenesis_induction() {
+        // [ push(10) electrogenesis() induction() ]
+        // Context at (8,8) by default
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Electrogenesis,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Induction,
+                args: vec![],
+            },
+        ];
+        let mut vm = make_vm(genes);
+        vm.energy = 50;
+
+        // Execute Electrogenesis
+        vm.step(); // push(10)
+        vm.step(); // electrogenesis
+
+        // Voltage is set to 10.0.
+        assert_eq!(vm.voltage_grid[8][8], 10.0);
+
+        // Execute Induction
+        vm.step();
+
+        // Note: update_circuit runs before gene execution, causing voltage decay in Air.
+        // 10.0 decays to approx 3 (0.9^10 ~ 0.34).
+
+        assert_eq!(vm.voltage_grid[8][8], 0.0);
+        let val = vm.stack.pop().unwrap();
+        // Allow for decay
+        if let Value::Int(v) = val {
+             assert!(v >= 3 && v <= 10, "Voltage {} out of expected decay range", v);
+        } else {
+             panic!("Expected Int value");
+        }
+    }
+
+    #[test]
+    fn test_wire_growth() {
+        // [ push(1) wire_growth() ] (Direction 1 = East)
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::WireGrowth,
+                args: vec![],
+            },
+        ];
+        let mut vm = make_vm(genes);
+        vm.context_loc = (8, 8);
+
+        vm.step(); // push
+        vm.step(); // grow
+
+        // (8, 9) should be wire (Int(1))
+        assert_eq!(vm.grid[8][9], Value::Int(1));
+    }
+
+    #[test]
+    fn test_circuit_breaker() {
+        // [ push(5) push(1) circuit_breaker() ]
+        // Threshold 5, Jump to Strand 1
+        let strand0 = Strand {
+            genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
+                Gene { op: OpCode::CircuitBreaker, args: vec![] },
+            ],
+        };
+        let strand1 = Strand {
+             genes: vec![
+                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] },
+             ],
+        };
+
+        let dna = Dna {
+            helix: Helix { strands: vec![strand0, strand1] },
+        };
+        let mut vm = ChimeraVM::new(dna);
+        vm.context_loc = (8, 8);
+        vm.voltage_grid[8][8] = 10.0; // Higher than threshold 5
+        vm.resistance_grid[8][8] = -1.0; // Mark as Battery to prevent decay during steps
+
+        vm.step(); // push 5
+        vm.step(); // push 1
+        vm.step(); // breaker
+
+        // Should have jumped to strand 1
+        assert_eq!(vm.ip.0, 1);
+
+        vm.step(); // push 99
+        assert_eq!(vm.stack.last(), Some(&Value::Int(99)));
+    }
 }
