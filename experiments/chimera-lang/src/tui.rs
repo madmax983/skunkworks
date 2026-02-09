@@ -6260,6 +6260,7 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Sow(rule, id) - Define Species"),
         Line::from("  Evolve - Step Simulation"),
         Line::from("  Harvest(r) - Save Pattern"),
+        Line::from("  Genesis(id) - Metamorphic Reboot"),
         Line::from(" "),
         Line::from("Default: Species 1 (Life B3/S23)"),
     ];

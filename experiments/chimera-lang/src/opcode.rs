@@ -882,6 +882,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Alchemy,
 
+    /// **[Nova]** Triggers a metamorphic reboot based on a CA rule.
+    ///
+    /// **Stack:** `[ ..., rule_id ] -> [ ... ]`
+    /// **Effect:** Replaces entire DNA with genes derived from the Grid state.
+    #[cfg(feature = "nova")]
+    Genesis,
+
+    /// **[Nova]** Injects pure entropy into the system.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    /// **Effect:** Increases Havoc rate and local Entropy.
+    #[cfg(feature = "nova")]
+    Chaos,
+
     // Chemistry Features (Nova)
     /// **[Nova]** Mixes neighbors into a solution in the current cell.
     ///

@@ -2378,7 +2378,9 @@ impl ChimeraVM {
             | OpCode::Cord
             | OpCode::ReadCord
             | OpCode::Tangle
-            | OpCode::Pray => nova::exec_nova_op(self, op, args),
+            | OpCode::Pray
+            | OpCode::Genesis
+            | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),

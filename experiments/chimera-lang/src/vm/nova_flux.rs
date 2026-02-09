@@ -75,3 +75,38 @@ pub fn tick_wisp(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
 
     !organelle.halted
 }
+
+pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(amount) = val {
+            if amount > 0 {
+                let amt = amount.min(100) as i64;
+
+                // Increase Havoc rate (0.0 to 1.0)
+                vm.havoc.rate = (vm.havoc.rate + (amt as f64 / 1000.0)).clamp(0.0, 1.0);
+
+                // Increase Glitch Level
+                vm.glitch_level = (vm.glitch_level + (amt as f32 / 100.0)).clamp(0.0, 1.0);
+
+                // Inject Entropy
+                let rows = vm.grid.len();
+                let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+                let mut rng = rand::thread_rng();
+
+                for _ in 0..amt {
+                    let y = rng.gen_range(0..rows);
+                    let x = rng.gen_range(0..cols);
+                    vm.entropy_grid[y][x] = vm.entropy_grid[y][x].saturating_add(amt).min(100);
+                }
+
+                vm.energy = vm.energy.saturating_sub(amt);
+                vm.output.push(format!("CHAOS: Injected {} entropy. Havoc: {:.3}", amt, vm.havoc.rate));
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for chaos".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for chaos".to_string());
+    }
+    None
+}
