@@ -289,13 +289,21 @@ where
                 }
 
                 if app_state.fishing_hooked {
-                    // Fish fights back
-                    app_state.fishing_tension += 0.005;
+                    // Fish fights back (Randomly pulls)
+                    if rand::random::<f64>() < 0.2 {
+                        app_state.fishing_tension += 0.02;
+                    } else {
+                        // Passive decay when not being pulled
+                        app_state.fishing_tension -= 0.002;
+                    }
                     app_state.fishing_fish_y =
                         app_state.fishing_bobber_y + (rand::random::<f64>() - 0.5) * 2.0;
                 } else {
-                    app_state.fishing_tension = (app_state.fishing_tension - 0.01).max(0.0);
+                    app_state.fishing_tension -= 0.01;
                 }
+
+                // Clamp tension
+                app_state.fishing_tension = app_state.fishing_tension.clamp(0.0, 1.1); // Allow slight over for snap check
 
                 if app_state.fishing_tension >= 1.0 {
                     app_state.status_msg = "SNAP! Line broke.".to_string();
@@ -1387,8 +1395,8 @@ where
                                 if app_state.fishing_cast {
                                     // Reel
                                     if app_state.fishing_hooked {
-                                        app_state.fishing_bobber_y -= 5.0;
-                                        app_state.fishing_tension += 0.1; // Reeling increases tension
+                                        app_state.fishing_bobber_y -= 4.0;
+                                        app_state.fishing_tension += 0.05; // Reeling increases tension
 
                                         if app_state.fishing_bobber_y < 10.0 {
                                             // Caught!
@@ -2596,33 +2604,21 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
         .split(f.area());
 
+    let mut block = Block::default()
+        .borders(Borders::ALL)
+        .title("Fishing Minigame");
+
+    // Flash background if tension is critical
+    if app_state.fishing_tension > 0.9 && vm.tick_counter % 4 < 2 {
+        block = block.style(Style::default().bg(Color::Red));
+    }
+
     let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Fishing Minigame"),
-        )
+        .block(block)
         .x_bounds([0.0, 100.0])
         .y_bounds([0.0, 100.0])
         .paint(|ctx| {
-            // Water
-            ctx.draw(&Rectangle {
-                x: 0.0,
-                y: 0.0,
-                width: 100.0,
-                height: 50.0,
-                color: Color::Blue,
-            });
-
-            // Water Ripples
-            for i in 0..15 {
-                let speed = vm.tick_counter as f64 * 0.5;
-                let rx = (speed + i as f64 * 17.0) % 95.0 + 2.0;
-                let ry = 5.0 + (i as f64 * 7.0) % 40.0;
-                ctx.print(rx, ry, "~");
-            }
-
-            // Sky
+            // Sky Gradient
             ctx.draw(&Rectangle {
                 x: 0.0,
                 y: 50.0,
@@ -2630,6 +2626,40 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 height: 50.0,
                 color: Color::Cyan,
             });
+            // Top Sky (Darker)
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 75.0,
+                width: 100.0,
+                height: 25.0,
+                color: Color::Blue,
+            });
+
+            // Water Gradient
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 50.0,
+                color: Color::Blue,
+            });
+            // Deep Water
+            ctx.draw(&Rectangle {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 25.0,
+                color: Color::DarkGray,
+            });
+
+            // Water Ripples
+            for i in 0..20 {
+                let speed = vm.tick_counter as f64 * 0.2;
+                let rx = (speed + i as f64 * 13.0) % 95.0 + 2.0;
+                let ry = 5.0 + (i as f64 * 7.0) % 40.0;
+                let ch = if i % 2 == 0 { "~" } else { "-" };
+                ctx.print(rx, ry, ch);
+            }
 
             if app_state.fishing_cast {
                 // Fishing Line
@@ -2646,8 +2676,12 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
                 // Fish (Icon)
                 if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
-                    ctx.print(48.0, app_state.fishing_fish_y, "🐟");
+                    let fish_icon = if app_state.fishing_tension > 0.8 { "🦈" } else { "🐟" };
+                    ctx.print(48.0, app_state.fishing_fish_y, fish_icon);
                 }
+
+                // Instructions Overlay (Bottom Right)
+                ctx.print(60.0, 5.0, "SPACE: Reel");
             } else {
                 ctx.print(35.0, 60.0, "Press SPACE to Cast");
             }
@@ -2656,19 +2690,20 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(canvas, chunks[0]);
 
     // Tension Bar
-    let tension_color = if app_state.fishing_tension < 0.5 {
-        Color::Green
-    } else if app_state.fishing_tension < 0.8 {
-        Color::Yellow
+    let tension = app_state.fishing_tension;
+    let (tension_color, label) = if tension < 0.5 {
+        (Color::Green, "SAFE")
+    } else if tension < 0.8 {
+        (Color::Yellow, "WARNING")
     } else {
-        Color::Red
+        (Color::Red, "CRITICAL")
     };
 
     let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Tension"))
+        .block(Block::default().borders(Borders::ALL).title("Line Tension"))
         .gauge_style(Style::default().fg(tension_color))
-        .ratio(app_state.fishing_tension)
-        .label(format!("{:.0}%", app_state.fishing_tension * 100.0));
+        .ratio(tension.clamp(0.0, 1.0))
+        .label(format!("{} ({:.0}%)", label, tension * 100.0));
     f.render_widget(gauge, chunks[1]);
 }
 
