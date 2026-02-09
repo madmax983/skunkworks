@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/sonic-glyphs
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The alphabet is alive. Bezier curves are acting as non-Newtonian fluids. Audio impulses are shattering the glyphs into particle clouds.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The image is a computer. Lua VM embedded in the noise. Steganographic execution vector confirmed.
