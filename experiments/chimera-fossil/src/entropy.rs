@@ -1,6 +1,6 @@
+use comfy_table::{presets::UTF8_FULL, Cell, Color, ContentArrangement, Table};
 use rand::prelude::*;
 use rand::rngs::StdRng;
-use comfy_table::{Table, presets::UTF8_FULL, ContentArrangement, Cell, Color};
 
 #[derive(Debug, Clone)]
 pub struct Fossil {
@@ -154,13 +154,13 @@ impl std::fmt::Display for Fossil {
         ]);
 
         let is_pristine = integrity >= 100.0;
-        let bool_cell = Cell::new(is_pristine.to_string())
-            .fg(if is_pristine { Color::Green } else { Color::Red });
+        let bool_cell = Cell::new(is_pristine.to_string()).fg(if is_pristine {
+            Color::Green
+        } else {
+            Color::Red
+        });
 
-        table.add_row(vec![
-            Cell::new("Pristine?"),
-            bool_cell,
-        ]);
+        table.add_row(vec![Cell::new("Pristine?"), bool_cell]);
 
         write!(f, "{}", table)
     }

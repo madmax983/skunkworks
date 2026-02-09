@@ -61,7 +61,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> Result<()> 
     // Seed from 0 to 40
     for x in (0..100).step_by(3) {
         for y in (0..40).step_by(3) {
-             solver.add_particle(x as f32, y as f32, Species::Fluid);
+            solver.add_particle(x as f32, y as f32, Species::Fluid);
         }
     }
 
@@ -89,7 +89,11 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> Result<()> 
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title(" Hydro-Boids (q to quit) "))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(" Hydro-Boids (q to quit) "),
+                )
                 .x_bounds([0.0, width as f64])
                 .y_bounds([0.0, height as f64])
                 .paint(|ctx| {
@@ -97,35 +101,69 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> Result<()> 
                         let (char, color) = match p.species {
                             Species::Fluid => {
                                 // Density visualization
-                                if p.rho > 0.15 { ('#', Color::Blue) }
-                                else if p.rho > 0.10 { ('=', Color::Blue) }
-                                else if p.rho > 0.05 { ('-', Color::Cyan) }
-                                else { ('.', Color::DarkGray) }
-                            },
+                                if p.rho > 0.15 {
+                                    ('#', Color::Blue)
+                                } else if p.rho > 0.10 {
+                                    ('=', Color::Blue)
+                                } else if p.rho > 0.05 {
+                                    ('-', Color::Cyan)
+                                } else {
+                                    ('.', Color::DarkGray)
+                                }
+                            }
                             Species::Boid => {
                                 // Directional character
                                 // Y is Up.
                                 let angle = p.vy.atan2(p.vx);
-                                let c = if angle.abs() < PI/4.0 { '>' } // Right
-                                else if (angle - PI/2.0).abs() < PI/4.0 { '^' } // Up
-                                else if (angle + PI/2.0).abs() < PI/4.0 { 'v' } // Down
-                                else { '<' }; // Left
+                                let c = if angle.abs() < PI / 4.0 {
+                                    '>'
+                                }
+                                // Right
+                                else if (angle - PI / 2.0).abs() < PI / 4.0 {
+                                    '^'
+                                }
+                                // Up
+                                else if (angle + PI / 2.0).abs() < PI / 4.0 {
+                                    'v'
+                                }
+                                // Down
+                                else {
+                                    '<'
+                                }; // Left
                                 (c, Color::Yellow)
                             }
                         };
-                        ctx.print(p.x as f64, p.y as f64, Span::styled(char.to_string(), Style::default().fg(color)));
+                        ctx.print(
+                            p.x as f64,
+                            p.y as f64,
+                            Span::styled(char.to_string(), Style::default().fg(color)),
+                        );
                     }
                 });
 
             f.render_widget(canvas, chunks[0]);
 
-            let boid_count = solver.particles.iter().filter(|p| p.species == Species::Boid).count();
-            let fluid_count = solver.particles.iter().filter(|p| p.species == Species::Fluid).count();
+            let boid_count = solver
+                .particles
+                .iter()
+                .filter(|p| p.species == Species::Boid)
+                .count();
+            let fluid_count = solver
+                .particles
+                .iter()
+                .filter(|p| p.species == Species::Fluid)
+                .count();
             // Simple FPS
             let fps = 1.0 / frame_duration.as_secs_f64().max(0.001);
 
-            let status = format!("Boids: {} | Fluid: {} | FPS: {:.0}", boid_count, fluid_count, fps);
-            f.render_widget(Paragraph::new(status).style(Style::default().bg(Color::White).fg(Color::Black)), chunks[1]);
+            let status = format!(
+                "Boids: {} | Fluid: {} | FPS: {:.0}",
+                boid_count, fluid_count, fps
+            );
+            f.render_widget(
+                Paragraph::new(status).style(Style::default().bg(Color::White).fg(Color::Black)),
+                chunks[1],
+            );
         })?;
 
         // Input

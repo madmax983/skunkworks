@@ -4755,6 +4755,18 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Evolve => super::nova_garden::exec_evolve(vm),
         OpCode::Sow => super::nova_garden::exec_sow(vm),
         OpCode::Harvest => super::nova_garden::exec_harvest(vm),
+        OpCode::Draw => {
+            super::nova_arcana::exec_draw(vm);
+            None
+        }
+        OpCode::Fate => {
+            super::nova_arcana::exec_fate(vm);
+            None
+        }
+        OpCode::Shuffle => {
+            super::nova_arcana::exec_shuffle(vm);
+            None
+        }
         OpCode::Glitch => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(severity) = val {

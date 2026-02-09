@@ -43,7 +43,8 @@ pub fn process_metamorphism(vm: &mut ChimeraVM) {
         // Apply Pressure (Compression)
         if pressure > pressure_threshold {
             if compress_strand(strand) {
-                vm.output.push(format!("METAMORPHISM: Pressure compressed strand {}", idx));
+                vm.output
+                    .push(format!("METAMORPHISM: Pressure compressed strand {}", idx));
                 changed = true;
             }
         }
@@ -52,7 +53,8 @@ pub fn process_metamorphism(vm: &mut ChimeraVM) {
         // If we just compressed, we skip expansion to avoid immediate undoing (hysteresis)
         if !changed && heat > heat_threshold {
             if expand_strand(strand) {
-                vm.output.push(format!("METAMORPHISM: Heat expanded strand {}", idx));
+                vm.output
+                    .push(format!("METAMORPHISM: Heat expanded strand {}", idx));
             }
         }
     }
@@ -69,8 +71,8 @@ fn compress_strand(strand: &mut crate::ast::Strand) -> bool {
 
     while i + 2 < strand.genes.len() {
         let g1 = &strand.genes[i];
-        let g2 = &strand.genes[i+1];
-        let g3 = &strand.genes[i+2];
+        let g2 = &strand.genes[i + 1];
+        let g3 = &strand.genes[i + 2];
 
         if let (OpCode::Push, OpCode::Push) = (&g1.op, &g2.op) {
             if let (Some(n1), Some(n2)) = (get_int_arg(g1), get_int_arg(g2)) {
@@ -119,9 +121,18 @@ fn expand_strand(strand: &mut crate::ast::Strand) -> bool {
                     let half = val / 2;
                     let remainder = val - half;
 
-                    let g1 = Gene { op: OpCode::Push, args: vec![Nucleotide::Number(half)] };
-                    let g2 = Gene { op: OpCode::Push, args: vec![Nucleotide::Number(remainder)] };
-                    let g3 = Gene { op: OpCode::Add, args: vec![] };
+                    let g1 = Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(half)],
+                    };
+                    let g2 = Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::Number(remainder)],
+                    };
+                    let g3 = Gene {
+                        op: OpCode::Add,
+                        args: vec![],
+                    };
 
                     strand.genes.remove(i);
                     strand.genes.insert(i, g3);

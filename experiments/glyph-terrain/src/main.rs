@@ -73,26 +73,49 @@ async fn main() {
         }
 
         // Camera movement
-        let forward = vec3(cam_yaw.cos() * cam_pitch.cos(), cam_pitch.sin(), cam_yaw.sin() * cam_pitch.cos()).normalize();
+        let forward = vec3(
+            cam_yaw.cos() * cam_pitch.cos(),
+            cam_pitch.sin(),
+            cam_yaw.sin() * cam_pitch.cos(),
+        )
+        .normalize();
         let right = forward.cross(vec3(0.0, 1.0, 0.0)).normalize();
         let up = vec3(0.0, 1.0, 0.0);
 
-        let speed = if is_key_down(KeyCode::LeftShift) { 20.0 } else { 8.0 };
+        let speed = if is_key_down(KeyCode::LeftShift) {
+            20.0
+        } else {
+            8.0
+        };
         let mut move_dir = Vec3::ZERO;
 
-        if is_key_down(KeyCode::W) { move_dir += forward; }
-        if is_key_down(KeyCode::S) { move_dir -= forward; }
-        if is_key_down(KeyCode::A) { move_dir -= right; }
-        if is_key_down(KeyCode::D) { move_dir += right; }
-        if is_key_down(KeyCode::Space) { move_dir += up; }
-        if is_key_down(KeyCode::LeftControl) { move_dir -= up; }
+        if is_key_down(KeyCode::W) {
+            move_dir += forward;
+        }
+        if is_key_down(KeyCode::S) {
+            move_dir -= forward;
+        }
+        if is_key_down(KeyCode::A) {
+            move_dir -= right;
+        }
+        if is_key_down(KeyCode::D) {
+            move_dir += right;
+        }
+        if is_key_down(KeyCode::Space) {
+            move_dir += up;
+        }
+        if is_key_down(KeyCode::LeftControl) {
+            move_dir -= up;
+        }
 
         if move_dir.length_squared() > 0.0 {
             cam_pos += move_dir.normalize() * speed * dt;
         }
 
         // Trigger morph
-        if (is_key_pressed(KeyCode::Enter) || is_mouse_button_pressed(MouseButton::Left)) && !morphing {
+        if (is_key_pressed(KeyCode::Enter) || is_mouse_button_pressed(MouseButton::Left))
+            && !morphing
+        {
             target_char = match current_char {
                 'Z' => 'A',
                 c => ((c as u8) + 1) as char,
@@ -136,7 +159,7 @@ async fn main() {
             123 + (time as u32 / 10),
             NOISE_SCALE,
             NOISE_AMP,
-            GLYPH_AMP
+            GLYPH_AMP,
         );
 
         // --- Render ---
@@ -152,17 +175,46 @@ async fn main() {
         draw_mesh(&terrain_mesh);
 
         // Water plane
-        draw_plane(vec3(0.0, 1.5, 0.0), vec2(GRID_SCALE, GRID_SCALE), None, Color::new(0.0, 0.4, 0.8, 0.5));
+        draw_plane(
+            vec3(0.0, 1.5, 0.0),
+            vec2(GRID_SCALE, GRID_SCALE),
+            None,
+            Color::new(0.0, 0.4, 0.8, 0.5),
+        );
 
         set_default_camera();
 
         // UI
         draw_rectangle(10.0, 10.0, 500.0, 120.0, Color::new(0.0, 0.0, 0.0, 0.5));
-        draw_text(&format!("Current: {} | Target: {}", current_char, target_char), 20.0, 30.0, 30.0, WHITE);
-        draw_text("WASD+Shift: Fly | Tab: Capture Mouse | Enter/Click: Morph", 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Pos: {:.1}, {:.1}, {:.1}", cam_pos.x, cam_pos.y, cam_pos.z), 20.0, 90.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Current: {} | Target: {}", current_char, target_char),
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "WASD+Shift: Fly | Tab: Capture Mouse | Enter/Click: Morph",
+            20.0,
+            60.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            &format!("Pos: {:.1}, {:.1}, {:.1}", cam_pos.x, cam_pos.y, cam_pos.z),
+            20.0,
+            90.0,
+            20.0,
+            LIGHTGRAY,
+        );
         if morphing {
-            draw_text(&format!("Morphing: {:.0}%", morph_t * 100.0), 20.0, 120.0, 20.0, YELLOW);
+            draw_text(
+                &format!("Morphing: {:.0}%", morph_t * 100.0),
+                20.0,
+                120.0,
+                20.0,
+                YELLOW,
+            );
         }
 
         next_frame().await;

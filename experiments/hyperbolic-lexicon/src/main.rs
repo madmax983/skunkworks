@@ -25,25 +25,96 @@ struct Particle {
 
 fn create_phoneme(c: char) -> Phoneme {
     let features = match c {
-        'a' => Features { voice: 1.0, place: 0.5, manner: 1.0 },
-        'e' => Features { voice: 1.0, place: 0.3, manner: 0.8 },
-        'i' => Features { voice: 1.0, place: 0.2, manner: 0.9 },
-        'o' => Features { voice: 1.0, place: 0.7, manner: 0.8 },
-        'u' => Features { voice: 1.0, place: 0.8, manner: 0.9 },
-        'p' => Features { voice: 0.0, place: 0.0, manner: 0.0 },
-        't' => Features { voice: 0.0, place: 0.2, manner: 0.0 },
-        'k' => Features { voice: 0.0, place: 0.8, manner: 0.0 },
-        'b' => Features { voice: 1.0, place: 0.0, manner: 0.0 },
-        'd' => Features { voice: 1.0, place: 0.2, manner: 0.0 },
-        'g' => Features { voice: 1.0, place: 0.8, manner: 0.0 },
-        'm' => Features { voice: 1.0, place: 0.0, manner: 0.2 },
-        'n' => Features { voice: 1.0, place: 0.2, manner: 0.2 },
-        's' => Features { voice: 0.0, place: 0.2, manner: 0.4 },
-        'l' => Features { voice: 1.0, place: 0.3, manner: 0.6 },
-        'r' => Features { voice: 1.0, place: 0.3, manner: 0.5 },
-        _ => Features { voice: 0.5, place: 0.5, manner: 0.5 },
+        'a' => Features {
+            voice: 1.0,
+            place: 0.5,
+            manner: 1.0,
+        },
+        'e' => Features {
+            voice: 1.0,
+            place: 0.3,
+            manner: 0.8,
+        },
+        'i' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.9,
+        },
+        'o' => Features {
+            voice: 1.0,
+            place: 0.7,
+            manner: 0.8,
+        },
+        'u' => Features {
+            voice: 1.0,
+            place: 0.8,
+            manner: 0.9,
+        },
+        'p' => Features {
+            voice: 0.0,
+            place: 0.0,
+            manner: 0.0,
+        },
+        't' => Features {
+            voice: 0.0,
+            place: 0.2,
+            manner: 0.0,
+        },
+        'k' => Features {
+            voice: 0.0,
+            place: 0.8,
+            manner: 0.0,
+        },
+        'b' => Features {
+            voice: 1.0,
+            place: 0.0,
+            manner: 0.0,
+        },
+        'd' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.0,
+        },
+        'g' => Features {
+            voice: 1.0,
+            place: 0.8,
+            manner: 0.0,
+        },
+        'm' => Features {
+            voice: 1.0,
+            place: 0.0,
+            manner: 0.2,
+        },
+        'n' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.2,
+        },
+        's' => Features {
+            voice: 0.0,
+            place: 0.2,
+            manner: 0.4,
+        },
+        'l' => Features {
+            voice: 1.0,
+            place: 0.3,
+            manner: 0.6,
+        },
+        'r' => Features {
+            voice: 1.0,
+            place: 0.3,
+            manner: 0.5,
+        },
+        _ => Features {
+            voice: 0.5,
+            place: 0.5,
+            manner: 0.5,
+        },
     };
-    Phoneme { features, symbol: c }
+    Phoneme {
+        features,
+        symbol: c,
+    }
 }
 
 #[macroquad::main("Hyperbolic Lexicon")]
@@ -60,7 +131,10 @@ async fn main() {
         particles.push(Particle {
             pos: Point::new(rand::gen_range(-0.1, 0.1), rand::gen_range(-0.1, 0.1)),
             phoneme: create_phoneme(c),
-            vel: Point::new(rand::gen_range(-0.001, 0.001), rand::gen_range(-0.001, 0.001)),
+            vel: Point::new(
+                rand::gen_range(-0.001, 0.001),
+                rand::gen_range(-0.001, 0.001),
+            ),
         });
     }
 
@@ -89,10 +163,18 @@ async fn main() {
         // --- Input & Camera Movement ---
         let speed = 0.02;
         let mut move_vec = Point::new(0.0, 0.0);
-        if is_key_down(KeyCode::W) { move_vec.im += speed; }
-        if is_key_down(KeyCode::S) { move_vec.im -= speed; }
-        if is_key_down(KeyCode::A) { move_vec.re -= speed; }
-        if is_key_down(KeyCode::D) { move_vec.re += speed; }
+        if is_key_down(KeyCode::W) {
+            move_vec.im += speed;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec.im -= speed;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec.re -= speed;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec.re += speed;
+        }
 
         if move_vec.norm() > 0.0 {
             player_pos = mobius_add(player_pos, move_vec);
@@ -102,10 +184,7 @@ async fn main() {
         if is_key_pressed(KeyCode::Space) {
             // Trigger Drift (Great Vowel Shift)
             for p in &mut particles {
-                p.vel = Point::new(
-                    rand::gen_range(-0.01, 0.01),
-                    rand::gen_range(-0.01, 0.01),
-                );
+                p.vel = Point::new(rand::gen_range(-0.01, 0.01), rand::gen_range(-0.01, 0.01));
             }
         }
 
@@ -158,7 +237,13 @@ async fn main() {
                 );
 
                 draw_circle(screen_x, screen_y, 10.0, color);
-                draw_text(&p.phoneme.symbol.to_string(), screen_x - 5.0, screen_y - 15.0, 20.0, WHITE);
+                draw_text(
+                    &p.phoneme.symbol.to_string(),
+                    screen_x - 5.0,
+                    screen_y - 15.0,
+                    20.0,
+                    WHITE,
+                );
             }
         }
 

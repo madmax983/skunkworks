@@ -113,6 +113,6 @@ fn test_collision() {
     // Then (9,10) sees (8,10) has 1. So it waits.
 
     assert_eq!(vm.grid[8][10], Value::Int(1)); // First one made it
-    assert_eq!(vm.grid[8][9], Value::Int(0));  // First one cleared
+    assert_eq!(vm.grid[8][9], Value::Int(0)); // First one cleared
     assert_eq!(vm.grid[9][10], Value::Int(2)); // Second one blocked
 }

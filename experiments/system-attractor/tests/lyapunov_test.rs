@@ -1,7 +1,7 @@
+use macroquad::prelude::Vec3;
 use system_attractor::lyapunov::LyapunovMonitor;
 use system_attractor::simulation::LorenzParams;
 use system_attractor::simulation::{update_particles, Particle};
-use macroquad::prelude::Vec3;
 
 #[test]
 fn test_lyapunov_positive() {
@@ -32,6 +32,14 @@ fn test_lyapunov_positive() {
     println!("Lyapunov Exponent: {}", lambda);
 
     // For Lorenz with standard params, lambda is approx 0.9
-    assert!(lambda > 0.0, "Lyapunov exponent should be positive for chaotic system, got {}", lambda);
-    assert!(lambda < 2.0, "Lyapunov exponent should be reasonable, got {}", lambda);
+    assert!(
+        lambda > 0.0,
+        "Lyapunov exponent should be positive for chaotic system, got {}",
+        lambda
+    );
+    assert!(
+        lambda < 2.0,
+        "Lyapunov exponent should be reasonable, got {}",
+        lambda
+    );
 }
