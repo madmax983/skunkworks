@@ -2457,7 +2457,9 @@ impl ChimeraVM {
             | OpCode::Receiver
             | OpCode::Latch
             | OpCode::DAC
-            | OpCode::ADC => {
+            | OpCode::ADC
+            | OpCode::Trace
+            | OpCode::Fabricate => {
                 silicon::exec_silicon_op(self, op, args);
                 None
             }

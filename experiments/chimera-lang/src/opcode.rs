@@ -287,6 +287,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., val ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     ADC,
+    /// **[Silicon]** Traces a connected circuit and compiles it into DNA (Biologize).
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "silicon")]
+    Trace,
+    /// **[Silicon]** Executes a strand as a construction blueprint (Siliconize).
+    ///
+    /// **Stack:** `[ ..., strand_idx, y, x ] -> [ ... ]`
+    #[cfg(feature = "silicon")]
+    Fabricate,
 
     // Havoc Features (Chaos Engineering)
     /// **[Havoc]** Sets the fault injection rate.
