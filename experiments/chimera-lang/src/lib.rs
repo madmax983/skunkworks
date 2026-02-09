@@ -174,6 +174,8 @@ mod nova_garden_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gastronomy_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_guild_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;

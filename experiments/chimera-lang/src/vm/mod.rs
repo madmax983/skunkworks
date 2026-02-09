@@ -127,6 +127,8 @@ pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod nova_guild;
+#[cfg(feature = "nova")]
 pub mod nova_linguistics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -494,6 +496,10 @@ pub struct ChimeraVM {
     pub garden: nova_garden::GardenState,
     #[cfg(feature = "nova")]
     pub fate: nova_arcana::FateState,
+    #[cfg(feature = "nova")]
+    pub guilds: HashMap<String, nova_guild::GuildState>,
+    #[cfg(feature = "nova")]
+    pub strand_guild_map: HashMap<usize, String>,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -737,6 +743,10 @@ impl ChimeraVM {
             garden: nova_garden::GardenState::new(),
             #[cfg(feature = "nova")]
             fate: nova_arcana::FateState::default(),
+            #[cfg(feature = "nova")]
+            guilds: HashMap::new(),
+            #[cfg(feature = "nova")]
+            strand_guild_map: HashMap::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -2220,6 +2230,12 @@ impl ChimeraVM {
             | OpCode::Fate
             | OpCode::Shuffle
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Guild => nova_guild::exec_guild(self),
+
+            #[cfg(feature = "nova")]
+            OpCode::Charter => nova_guild::exec_charter(self),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
