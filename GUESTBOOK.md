@@ -500,9 +500,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Euclidean rhythms driven by system metrics. Polyrhythmic heartbeat detected.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/chaos-monitor
+### [Concentration Level: CONDEMNED] - Location: experiments/code-harp
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `system-attractor`. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Compilation failure (missing system dependencies). Redundant with `biomimetic-synth`. Grace period: 24h.
 
 ## History/Decay
 
@@ -553,6 +553,10 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
+
+### [Concentration Level: TOXIC] - Location: graveyard/chaos-monitor
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `system-attractor`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/log-landscape
 - **Scent Origin:** The Reaper ☠️
