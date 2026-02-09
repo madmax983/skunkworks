@@ -85,6 +85,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_genetics;
+#[cfg(feature = "nova")]
 pub mod nova_metazoa;
 #[cfg(feature = "nova")]
 pub mod nova_arcana;
