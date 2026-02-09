@@ -20,7 +20,6 @@ members = [
     "experiments/hyperbolic-fs",
     "experiments/hyperbolic-dungeon",
     "experiments/hyperbolic-space",
-    "experiments/l-system-garden",
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",
@@ -130,7 +129,7 @@ members = [
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/quantum-lexicon",
     "experiments/hyperbolic-bridge",
-    "experiments/retinal-chaos", "experiments/syntax-serum", "experiments/ik-codewalker", "experiments/event-horizon", "experiments/spectral-scribe", "experiments/hyperbolic-mold", "experiments/entropy-ray", "experiments/quipu-cradle", "experiments/social-spores", "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/tactical-tide", "experiments/quipu-net", "experiments/origami-constellation", "experiments/market-scheduler", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle",
+    "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/quipu-net", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle",
 ]
 resolver = "2"
 

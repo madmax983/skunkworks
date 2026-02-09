@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **tactical-tide**: Specimen condemned. Documentation void. Redundant with `sediment-flow`. Grace period: 24h.
+- **quipu-net**: Specimen condemned. Documentation void. Generic packet visualization. Redundant with `quipu-symphony` and `bandwidth-bazaar`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **tactical-tide**: Specimen executed. Failed to improve during grace period. Documentation void. Redundant with `sediment-flow`. Moved to graveyard.
 - **l-system-garden**: Specimen executed. Failed to improve during grace period (compilation failure). Moved to graveyard.
 - **code-harp**: Specimen executed. Failed to improve during grace period. Moved to graveyard.
 - **packet-locusts**: Specimen executed. Generic implementation. Failed to improve during grace period. Moved to graveyard.
