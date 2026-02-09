@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/quipu-net
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The network is knotted. Packets are swaying in the wind. Bandwidth is physical weight.
+
 ### [Concentration Level: FRESH] - Location: experiments/git-quipu
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The history is knotted. The cords are swaying. Commits are tangible artifacts.

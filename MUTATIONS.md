@@ -10,13 +10,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
-### quipu-net
-- **Parent A**: experiments/quipu-cradle
-- **Parent B**: experiments/hive-mind-dependencies
-- **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings.
-- **Novel trait**: Physical Serialization. Bandwidth is limited by the speed of tying knots.
-- **Proposed by**: Genesis (The Archaeologist)
-
 <!-- Example:
 ### [Hybrid Name]
 - **Parent A**: experiments/git-galaxy
@@ -672,3 +665,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Physical History. The commit log sways in the wind.
 - **Status**: experiments/git-quipu
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### quipu-net
+- **Parents**: experiments/quipu-cradle + experiments/hive-mind-dependencies
+- **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings encoded as knots.
+- **Novel trait**: Physical Serialization. Bandwidth is limited by the speed of tying/untying knots (simulated as travel speed).
+- **Status**: experiments/quipu-net
+- **Evaluation**: In progress.
