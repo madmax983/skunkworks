@@ -1,0 +1,10 @@
+[package]
+name = "crate-universe"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+cargo_metadata = "0.18"
+rand = "0.8"
+anyhow = "1.0"

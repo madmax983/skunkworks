@@ -148,6 +148,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Detritivores released. Bit rot is being consumed. The compost is alive.
 
+### [Concentration Level: FRESH] - Location: experiments/crate-universe
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The universe is expanding. Crates are orbiting the Root. Dependency gravity is simulated.
+
 ### [Concentration Level: FRESH] - Location: experiments/cryo-colony
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Termites are building with ice. The lattice melts and refreezes as agents traverse it. Hybrid vigor confirmed: Thermodynamics meets Swarm Intelligence.
