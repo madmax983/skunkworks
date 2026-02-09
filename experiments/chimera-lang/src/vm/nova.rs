@@ -1598,6 +1598,57 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        OpCode::Knot => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Int(n) => {
+                        vm.quipu.tie(n);
+                        vm.output.push(format!("KNOT: Tied {}", n));
+                    }
+                    _ => vm.output.push("Error: Type mismatch for knot".to_string()),
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for knot".to_string());
+            }
+            None
+        }
+        OpCode::Unknot => {
+            let val = vm.quipu.untie();
+            vm.stack.push(Value::Int(val));
+            vm.output.push(format!("UNKNOT: Untied {}", val));
+            None
+        }
+        OpCode::Cord => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.quipu.select_cord(idx as usize);
+                    vm.output.push(format!("CORD: Selected {}", idx));
+                } else {
+                    vm.output.push("Error: Type mismatch for cord".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for cord".to_string());
+            }
+            None
+        }
+        OpCode::ReadCord => {
+            let val = vm.quipu.read();
+            vm.stack.push(Value::Int(val));
+            None
+        }
+        OpCode::Tangle => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.quipu.tangle(idx as usize);
+                    vm.output.push(format!("TANGLE: Entangled with cord {}", idx));
+                } else {
+                    vm.output.push("Error: Type mismatch for tangle".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for tangle".to_string());
+            }
+            None
+        }
         OpCode::Offer => {
             // stack: price, item
             if vm.stack.len() >= 2 {

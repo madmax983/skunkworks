@@ -171,6 +171,11 @@ pub mod nova_planes;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
+pub mod nova_quipu;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_quipu_test;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_pocket_test;
 #[cfg(feature = "nova")]
@@ -538,6 +543,8 @@ pub struct ChimeraVM {
     pub midi_messages: Vec<MidiEvent>,
     #[cfg(feature = "hive")]
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
+    #[cfg(feature = "nova")]
+    pub quipu: nova_quipu::QuipuState,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -798,6 +805,8 @@ impl ChimeraVM {
             midi_messages: Vec::new(),
             #[cfg(feature = "hive")]
             hive_sockets: HashMap::new(),
+            #[cfg(feature = "nova")]
+            quipu: nova_quipu::QuipuState::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -2285,6 +2294,11 @@ impl ChimeraVM {
             | OpCode::Draw
             | OpCode::Fate
             | OpCode::Shuffle
+            | OpCode::Knot
+            | OpCode::Unknot
+            | OpCode::Cord
+            | OpCode::ReadCord
+            | OpCode::Tangle
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
