@@ -352,6 +352,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
 
+### [Concentration Level: FRESH] - Location: experiments/quipu-net
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The knots are flying. Bandwidth is physical. We are tying the network together.
+
 ### [Concentration Level: FRESH] - Location: experiments/quipu-cradle
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The knots are tied. Data has become physical. Serde implementation creates Incan Khipus from Rust structs. The visualization sways in the wind.
