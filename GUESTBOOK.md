@@ -407,6 +407,10 @@
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** Fluid simulation flowing over git history terrain.
 
+### [Concentration Level: HIGH] - Location: experiments/social-spores
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** Spores are drifting. Opinion dynamics modeled as fungal infection. Viral bursts are triggering massive release events. The zeitgeist is visible.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/silicon-samba
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Euclidean rhythms driven by system metrics. Polyrhythmic heartbeat detected.
