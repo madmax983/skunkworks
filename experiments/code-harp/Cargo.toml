@@ -1,0 +1,12 @@
+[package]
+name = "code-harp"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+cpal = "0.15"
+walkdir = "2"
+rand = "0.8"
+crossbeam-channel = "0.5"
+anyhow = "1.0"
