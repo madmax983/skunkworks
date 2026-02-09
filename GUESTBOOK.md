@@ -779,10 +779,14 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `schrodingers-beat`. Documentation void.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/cipher-clock
+### [Concentration Level: TOXIC] - Location: graveyard/cipher-clock
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Contributes to workspace dependency conflicts (`bevy` vs `macroquad`). Grace period: 24h.
+- **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
 
 ### [Concentration Level: FRESH] - Location: experiments/ik-codewalker
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The arm is reaching. Lazy CCD solver active. The parser is walking the syntax tree physically.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/biophysical-synth
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.
