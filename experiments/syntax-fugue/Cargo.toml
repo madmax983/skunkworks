@@ -1,0 +1,14 @@
+[package]
+name = "syntax-fugue"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+syn = { version = "2.0", features = ["full", "visit", "extra-traits"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+rodio = "0.19"
+ratatui = "0.26"
+crossterm = "0.27"
+rand = "0.8"
+anyhow = "1.0"
