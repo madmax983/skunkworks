@@ -2025,6 +2025,7 @@ impl ChimeraVM {
             OpCode::Grammar
             | OpCode::Parse
             | OpCode::ParserMatch
+            | OpCode::ParserRegex
             | OpCode::ParserSeq
             | OpCode::ParserAlt
             | OpCode::ParserMany

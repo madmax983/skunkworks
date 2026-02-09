@@ -141,4 +141,35 @@ mod tests {
             panic!("Expected Sequence Junction, got {:?}", vm.stack.last());
         }
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_babel_parser_regex() {
+        // [ push("[a-z]+") parser_regex() push("hello") parse() ]
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("[a-z]+".to_string())],
+            },
+            Gene {
+                op: OpCode::ParserRegex,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("hello".to_string())],
+            },
+            Gene {
+                op: OpCode::Parse,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted && vm.ip.0 < 1 {
+            vm.step();
+        }
+
+        assert!(vm.output.iter().any(|s| s.contains("PARSE: Success")));
+        assert_eq!(vm.stack.last(), Some(&Value::Str("hello".to_string())));
+    }
 }

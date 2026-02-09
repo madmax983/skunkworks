@@ -1706,6 +1706,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., pattern_string ] -> [ ..., parser_junction ]`
     #[cfg(feature = "nova")]
     ParserMatch,
+    /// **[Babel]** Creates a regex matcher.
+    ///
+    /// **Stack:** `[ ..., regex_pattern ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserRegex,
     /// **[Babel]** Creates a sequence parser (P1 then P2).
     ///
     /// **Stack:** `[ ..., p1, p2 ] -> [ ..., parser_junction ]`
