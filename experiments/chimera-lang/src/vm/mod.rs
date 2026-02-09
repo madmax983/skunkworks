@@ -182,6 +182,8 @@ pub mod nova_sovereignty;
 #[cfg(test)]
 mod nova_sovereignty_test;
 #[cfg(feature = "nova")]
+pub mod nova_strings;
+#[cfg(feature = "nova")]
 pub mod nova_ward;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
@@ -500,6 +502,8 @@ pub struct ChimeraVM {
     pub guilds: HashMap<String, nova_guild::GuildState>,
     #[cfg(feature = "nova")]
     pub strand_guild_map: HashMap<usize, String>,
+    #[cfg(feature = "nova")]
+    pub strings: Vec<nova_strings::CosmicString>,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -747,6 +751,8 @@ impl ChimeraVM {
             guilds: HashMap::new(),
             #[cfg(feature = "nova")]
             strand_guild_map: HashMap::new(),
+            #[cfg(feature = "nova")]
+            strings: Vec::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -1607,6 +1613,7 @@ impl ChimeraVM {
             nova_arcana::process_fate(self);
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
+            nova_strings::update_strings(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -2355,6 +2362,11 @@ impl ChimeraVM {
             OpCode::Dimension | OpCode::DRead | OpCode::DWrite | OpCode::DMerge | OpCode::DView => {
                 nova_planes::exec_planes_op(self, op, args);
                 None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
+                nova_strings::exec_string_op(self, op, args)
             }
 
             OpCode::Unknown(name) => {

@@ -86,6 +86,8 @@ pub(crate) enum ViewMode {
     Orca,
     #[cfg(feature = "nova")]
     Babel,
+    #[cfg(feature = "nova")]
+    Strings,
 }
 
 enum InputMode {
@@ -484,6 +486,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Babel = app_state.view_mode {
                 render_babel(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Strings = app_state.view_mode {
+                render_strings(f, vm, app_state);
                 return;
             }
 
@@ -937,6 +945,11 @@ where
                                     // See below.
                                     app_state.input_mode = InputMode::Normal;
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Strings => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab => {
@@ -1105,7 +1118,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Orca => ViewMode::Babel,
                             #[cfg(feature = "nova")]
-                            ViewMode::Babel => ViewMode::Heatmap,
+                            ViewMode::Babel => ViewMode::Strings,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Strings => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1273,6 +1288,8 @@ where
                     KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1542,6 +1559,8 @@ where
                         ViewMode::Babel => {
                             app_state.babel_focus = (app_state.babel_focus + 1) % 2;
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Strings => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1830,6 +1849,8 @@ where
                                 app_state.babel_focus = 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Strings => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1840,6 +1861,8 @@ where
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
                         ViewMode::Babel => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Strings => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 < 15 {
@@ -1950,6 +1973,8 @@ where
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
                         ViewMode::Babel => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Strings => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.0 > 0 {
@@ -2334,6 +2359,10 @@ where
                                     crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
                                     _ => app_state.input_buffer = String::new(),
                                 }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Strings => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                         }
                     }
@@ -3076,6 +3105,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Elektra => "ELEKTRA (ANALOG SIMULATION)",
         #[cfg(feature = "nova")]
         ViewMode::Babel => "BABEL (REGEX LAB)",
+        #[cfg(feature = "nova")]
+        ViewMode::Strings => "COSMIC STRINGS (VIBRATION)",
     };
 
     let title = match app_state.input_mode {
@@ -5812,4 +5843,83 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default().borders(Borders::ALL).title("Manual")
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Cosmic Strings (Vibrating Entities)"))
+        .x_bounds([0.0, 16.0])
+        .y_bounds([0.0, 16.0])
+        .paint(|ctx| {
+            // Draw Strings
+            for s in &vm.strings {
+                let amp = s.amplitude * (s.phase.sin());
+
+                // Draw as a sine wave segment? Or just a line perturbed by sine?
+                // Line segment from start to end
+                // We can subdivide it to show vibration
+                let steps = 20;
+                let dx = (s.end.0 - s.start.0) / steps as f64;
+                let dy = (s.end.1 - s.start.1) / steps as f64;
+
+                // Normal vector for vibration
+                let len = ((s.end.0 - s.start.0).powi(2) + (s.end.1 - s.start.1).powi(2)).sqrt();
+                let nx = -(s.end.1 - s.start.1) / len;
+                let ny = (s.end.0 - s.start.0) / len;
+
+                let mut prev_x = s.start.0;
+                let mut prev_y = s.start.1;
+
+                for i in 1..=steps {
+                    let t = i as f64 / steps as f64;
+                    let base_x = s.start.0 + (s.end.0 - s.start.0) * t;
+                    let base_y = s.start.1 + (s.end.1 - s.start.1) * t;
+
+                    // Standing wave: sin(n * pi * t)
+                    let wave = (t * std::f64::consts::PI).sin() * amp * 0.5; // Scale amp for visual
+
+                    let curr_x = base_x + nx * wave;
+                    let curr_y = base_y + ny * wave;
+
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1: prev_x,
+                        y1: prev_y,
+                        x2: curr_x,
+                        y2: curr_y,
+                        color: if s.amplitude > 5.0 { Color::Red } else { Color::Cyan },
+                    });
+
+                    prev_x = curr_x;
+                    prev_y = curr_y;
+                }
+            }
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    // String List
+    let mut items = Vec::new();
+    if vm.strings.is_empty() {
+        items.push(ListItem::new("No strings exist."));
+    } else {
+        for (i, s) in vm.strings.iter().enumerate() {
+            items.push(ListItem::new(format!(
+                "#{}: L={:.1} T={:.1} Amp={:.2} Freq={:.2}",
+                i,
+                ((s.end.0 - s.start.0).powi(2) + (s.end.1 - s.start.1).powi(2)).sqrt(),
+                s.tension,
+                s.amplitude,
+                s.frequency
+            )));
+        }
+    }
+
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("String Stats"));
+    f.render_widget(list, chunks[1]);
 }

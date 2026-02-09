@@ -250,6 +250,8 @@ mod nova_splice_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_spore_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_strings_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_superposition_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_symbiosis_test;
