@@ -1938,6 +1938,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tangle,
 
+    // Metazoa Features (Multicellularity)
+    /// **[Nova]** Bonds with a neighbor to form a Tissue.
+    ///
+    /// **Stack:** `[ ..., direction ] -> [ ..., tissue_id ]`
+    #[cfg(feature = "nova")]
+    Bond,
+    /// **[Nova]** Severs the bond with a neighbor.
+    ///
+    /// **Stack:** `[ ..., direction ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Unbond,
+    /// **[Nova]** Sends a signal to the entire Tissue.
+    ///
+    /// **Stack:** `[ ..., value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Signify,
+    /// **[Nova]** Pushes the current Tissue ID.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., tissue_id ]`
+    #[cfg(feature = "nova")]
+    Tissue,
+
     /// No Operation. Does nothing.
     Nop,
 

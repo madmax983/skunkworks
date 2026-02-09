@@ -202,6 +202,8 @@ mod nova_market_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_metazoa_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_meta_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_metamorphism_test;

@@ -85,6 +85,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_metazoa;
+#[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
@@ -545,6 +547,9 @@ pub struct ChimeraVM {
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
     #[cfg(feature = "nova")]
     pub quipu: nova_quipu::QuipuState,
+    #[cfg(feature = "nova")]
+    pub tissues: HashMap<usize, nova_metazoa::Tissue>,
+    pub organelle_id_counter: u64,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -807,6 +812,9 @@ impl ChimeraVM {
             hive_sockets: HashMap::new(),
             #[cfg(feature = "nova")]
             quipu: nova_quipu::QuipuState::new(),
+            #[cfg(feature = "nova")]
+            tissues: HashMap::new(),
+            organelle_id_counter: 0,
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -1371,6 +1379,7 @@ impl ChimeraVM {
                             if (self.membranes[cy][cx] & mask) == 0 {
                                 // Spawn ephemeral Ribosome
                                 if self.organelles.len() < MAX_ORGANELLES {
+                                    self.organelle_id_counter += 1;
                                     let new_org = Organelle {
                                         stack: Vec::new(),
                                         ip: (0, 0),
@@ -1383,6 +1392,8 @@ impl ChimeraVM {
                                         ttl: Some(1),
                                         name: "Spark".to_string(),
                                         traits: vec!["Ephemeral".to_string()],
+                                        id: self.organelle_id_counter,
+                                        tissue_id: None,
                                         genome_id: 0,
                                     };
                                     self.organelles.push(new_org);
@@ -2518,6 +2529,15 @@ impl ChimeraVM {
             OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
                 nova_strings::exec_string_op(self, op, args)
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Bond => nova_metazoa::exec_bond(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Unbond => nova_metazoa::exec_unbond(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Signify => nova_metazoa::exec_signify(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Tissue => nova_metazoa::exec_tissue(self, op, args),
 
             OpCode::Nop => None,
 
