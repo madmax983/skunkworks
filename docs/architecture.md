@@ -493,3 +493,33 @@ sequenceDiagram
     Chemistry->>Grid: Apply Effect(Solution, TargetArea)
     Note right of Grid: Acid: Destroy<br/>Elixir: Heal<br/>Mutagen: Mutate
 ```
+
+### Nova Feature: Hive Networking (ADR 020)
+
+The Hive system enables asynchronous UDP communication between Chimera VMs, facilitating distributed simulation and swarm behavior.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant HiveSocket as UDP Socket (Bound)
+    participant Ephemeral as UDP Socket (Temp)
+
+    Note over VM: OpCode::HiveBind(8080)
+    VM->>HiveSocket: bind("0.0.0.0:8080")
+    HiveSocket-->>VM: Ok(Arc<Socket>)
+
+    Note over VM: OpCode::HiveSend(msg, "1.2.3.4", 9090)
+    VM->>Ephemeral: bind("0.0.0.0:0")
+    Ephemeral->>Ephemeral: send_to(json(msg), "1.2.3.4:9090")
+    Ephemeral-->>VM: Ok
+
+    Note over VM: OpCode::HiveRecv(8080)
+    VM->>HiveSocket: recv_from()
+    alt Data Available
+        HiveSocket-->>VM: Ok(payload, src_addr)
+        VM->>VM: push(Junction(Dish, [src_port, src_ip, payload]))
+    else WouldBlock
+        HiveSocket-->>VM: Err(WouldBlock)
+        VM->>VM: push(0)
+    end
+```
