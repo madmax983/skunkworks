@@ -5,11 +5,19 @@
 //! In this model, the entire infinite hyperbolic plane is compressed into the interior of the unit disk ($|z| < 1$) in the complex plane.
 //! Straight lines in hyperbolic space appear as circular arcs orthogonal to the boundary of the disk.
 //!
+//! ## Theory
+//!
+//! In Euclidean geometry, parallel lines never meet. In Hyperbolic geometry, there are infinitely many lines parallel to a given line through a specific point. This strange property leads to a world where:
+//!
+//! *   **Space expands exponentially:** The circumference of a circle grows exponentially with its radius ($2\pi \sinh(r)$), not linearly ($2\pi r$).
+//! *   **Triangles are thin:** The sum of angles in a triangle is always less than 180 degrees.
+//! *   **The boundary is infinity:** As you move towards the edge of the disk ($|z| \to 1$), you are actually travelling towards infinity. It takes infinite time and energy to reach the edge.
+//!
 //! ## Core Concepts
 //!
-//! *   **Point**: Represents a location in the hyperbolic plane as a complex number $z$ where $|z| < 1$.
-//! *   **Mobius Transformations**: The "motions" (isometries) of the hyperbolic plane are represented by special Möbius transformations that map the unit disk to itself.
-//! *   **Hyperbolic Distance**: Distances grow infinitely large as you approach the boundary of the disk ($|z| = 1$).
+//! *   **Point**: A location in the hyperbolic plane, represented as a complex number $z$ where $|z| < 1$.
+//! *   **Isometry (Motion)**: Rigid motions (translations and rotations) are represented by **Möbius transformations**. These are the hyperbolic equivalent of moving objects around without stretching them.
+//! *   **Geodesic**: The "straight line" path between two points. In this model, they look like circular arcs perpendicular to the boundary.
 //!
 //! ## Example
 //!
@@ -26,6 +34,40 @@
 //! // Calculate the hyperbolic distance between them
 //! let dist = hyperbolic_dist(p1, p2);
 //! assert!(dist > 0.0);
+//! ```
+//!
+//! ## Scenario: A Walk in the Disk
+//!
+//! Imagine an ant starting at the center and walking 0.5 units to the right, then 0.5 units "up" (relative to its new position).
+//!
+//! ```
+//! use poincare_disk::{Point, mobius_add, hyperbolic_dist};
+//!
+//! // 1. Start at center
+//! let mut ant = Point::new(0.0, 0.0);
+//!
+//! // 2. Walk Right (0.5 units)
+//! let step_right = Point::new(0.5, 0.0);
+//! ant = mobius_add(ant, step_right);
+//!
+//! // 3. Walk "Up" (0.5 units relative to current position)
+//! // To move "relative to the ant", we interpret the ant's position as a translation
+//! // from the origin. We apply this translation to our local step vector.
+//! // Mathematically: new_pos = ant (+) step
+//! // In this library: mobius_add(z, a) computes a (+) z.
+//! // So we switch arguments: mobius_add(step, ant) = ant (+) step.
+//! let step_up = Point::new(0.0, 0.5);
+//! ant = mobius_add(step_up, ant);
+//!
+//! // 4. Where are we?
+//! // We are NOT at (0.5, 0.5) because the space is curved!
+//! println!("Ant is at: {}", ant);
+//! assert_ne!(ant, Point::new(0.5, 0.5));
+//!
+//! // But the distance from the second stop to the first stop is exactly 2*atanh(0.5)
+//! let dist_step_2 = hyperbolic_dist(ant, step_right);
+//! let expected_dist = 2.0 * 0.5f64.atanh();
+//! assert!((dist_step_2 - expected_dist).abs() < 1e-9);
 //! ```
 
 use num_complex::Complex;
@@ -126,6 +168,9 @@ pub fn hyperbolic_dist(a: Point, b: Point) -> f64 {
 ///
 /// They can be represented as $2 \times 2$ matrices acting on homogeneous coordinates.
 #[derive(Clone, Copy, Debug)]
+#[doc(alias = "Isometry")]
+#[doc(alias = "Automorphism")]
+#[doc(alias = "Transform")]
 pub struct Mobius {
     pub a: Complex<f64>,
     pub b: Complex<f64>,
@@ -231,17 +276,25 @@ impl Mobius {
 
     /// Returns the inverse of the transformation.
     ///
-    /// If $f(z) = \frac{az+b}{cz+d}$, then $f^{-1}(z) = \frac{dz-b}{-cz+a}$.
+    /// The inverse $f^{-1}$ undoes the effect of $f$.
+    /// If you move forward with `f`, you can move back with `inverse()`.
     ///
     /// # Examples
     ///
     /// ```
     /// use poincare_disk::{Mobius, Point};
-    /// let t = Mobius::translation(Point::new(0.5, 0.0));
-    /// let inv = t.inverse();
-    /// let p = Point::new(0.1, 0.1);
-    /// let identity_check = inv.apply(t.apply(p));
-    /// assert!((identity_check - p).norm() < 1e-9);
+    ///
+    /// // A transformation that moves the origin to (0.5, 0.0)
+    /// let forward = Mobius::translation(Point::new(0.5, 0.0));
+    ///
+    /// // The inverse moves (0.5, 0.0) back to the origin
+    /// let backward = forward.inverse();
+    ///
+    /// let p = Point::new(0.0, 0.0);
+    /// let moved = forward.apply(p);
+    /// let returned = backward.apply(moved);
+    ///
+    /// assert!((returned - p).norm() < 1e-9);
     /// ```
     pub fn inverse(&self) -> Self {
         Self {
@@ -254,25 +307,32 @@ impl Mobius {
 
     /// Composes two Möbius transformations.
     ///
-    /// Returns a new transformation representing $f(g(z))$, where $f$ is `self` and $g$ is `other`.
-    /// This corresponds to matrix multiplication.
+    /// Returns a new transformation that applies `other` first, and then `self`.
+    /// mathematically: $(f \circ g)(z) = f(g(z))$.
+    ///
+    /// Note: This is equivalent to multiplying the matrices $M_f \times M_g$.
     ///
     /// # Examples
     ///
     /// ```
     /// use poincare_disk::{Mobius, Point};
-    /// // Translate by 0.1, then by 0.2
-    /// let t1 = Mobius::translation(Point::new(0.1, 0.0));
-    /// let t2 = Mobius::translation(Point::new(0.2, 0.0));
     ///
-    /// // Combine: apply t2 THEN t1 ?? No, self.then(other) means self(other(z))
-    /// // So it applies 'other' first, then 'self'.
-    /// let combined = t1.then(&t2);
+    /// // 1. Rotate by 90 degrees
+    /// let rotate = Mobius::rotation(std::f64::consts::PI / 2.0);
+    ///
+    /// // 2. Translate by 0.5 to the right
+    /// let translate = Mobius::translation(Point::new(0.5, 0.0));
+    ///
+    /// // Combined: Translate FIRST, then Rotate.
+    /// // Imagine holding a camera: you step right, then turn 90 degrees left.
+    /// let step_then_turn = rotate.then(&translate);
     ///
     /// let origin = Point::new(0.0, 0.0);
-    /// // t2(0) = 0.2. t1(0.2) = (0.2+0.1)/(1+0.02) = 0.3 / 1.02 ≈ 0.294
-    /// let result = combined.apply(origin);
-    /// assert!(result.re > 0.29);
+    /// let result = step_then_turn.apply(origin);
+    ///
+    /// // Origin -> (0.5, 0.0) -> (0.0, 0.5)
+    /// assert!((result.im - 0.5).abs() < 1e-9);
+    /// assert!(result.re.abs() < 1e-9);
     /// ```
     pub fn then(&self, other: &Mobius) -> Self {
         // Matrix mul: self * other
@@ -364,14 +424,22 @@ impl Geodesic {
 /// Specifically, this struct calculates parameters for a regular $\{p, q\}$ tiling,
 /// where $p$ is the number of sides of each polygon (face) and $q$ is the number of polygons meeting at each vertex.
 ///
+/// Use this to generate Escher-like "Circle Limit" patterns.
+///
 /// For a tiling to exist in the hyperbolic plane, we must have $(p-2)(q-2) > 4$.
 /// For example, $\{4, 5\}$ (squares, 5 meeting at a vertex) satisfies this: $(2)(3) = 6 > 4$.
 pub struct TilingConsts {
-    /// The Euclidean distance from the origin to the center of an adjacent cell in the Poincaré disk model.
+    /// The **Euclidean distance** ($|z|$) from the origin to the center of an adjacent cell.
     ///
-    /// This corresponds to the hyperbolic translation distance required to move from one tile center to the next.
+    /// If you are at the center of a tile (at the origin), this is how far you must "translate"
+    /// to reach the center of a neighbor.
+    ///
+    /// Use `neighbor_transform_a` to get the actual translation point for a specific direction.
     pub neighbor_offset: f64,
-    /// Euclidean distance from the center of the polygon to one of its vertices.
+    /// The **Euclidean distance** ($|z|$) from the center of the polygon to one of its vertices.
+    ///
+    /// This is useful for drawing the polygon. If the polygon is centered at the origin,
+    /// its vertices lie on a circle of this radius.
     pub vertex_offset: f64,
 }
 
