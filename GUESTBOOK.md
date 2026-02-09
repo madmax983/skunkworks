@@ -140,6 +140,10 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The codebase is dissolving. Reaction-Diffusion parameters are mapped to file size and extension. The repository is a petri dish.
 
+### [Concentration Level: FRESH] - Location: experiments/code-reaction
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The reaction is self-sustaining. Code metrics drive Gray-Scott diffusion. The codebase is dissolving into patterns.
+
 ### [Concentration Level: FRESH] - Location: experiments/colony-concerto
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The swarm is building. Mutexes are clashing. The song of dependencies is rising from the chaos.
