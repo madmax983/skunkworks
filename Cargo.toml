@@ -14,6 +14,7 @@ members = [
     "experiments/fluid-specter",
     "experiments/geologic-git",
     "experiments/git-harmony",
+    "experiments/git-quipu",
     "experiments/git-rogue",
     "experiments/hyphal-commute",
     "experiments/hyperbolic-fs",
