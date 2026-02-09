@@ -1,7 +1,7 @@
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::{PI, TAU};
-use tui_shared::math::Vec2;
+use locus::Vec2;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Strategy {

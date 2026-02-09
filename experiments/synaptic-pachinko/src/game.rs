@@ -1,7 +1,7 @@
 use crate::audio::{NeuronHit, Snapshot};
 use crate::physics::{resolve_collision, NeuronPin, PacketKind, Particle};
 use rand::Rng;
-use tui_shared::math::Vec2;
+use locus::Vec2;
 
 pub struct GameState {
     pub width: f64,

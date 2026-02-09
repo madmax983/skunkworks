@@ -1,5 +1,5 @@
 use ratatui::style::Color;
-pub use tui_shared::math::Vec2;
+pub use locus::Vec2;
 
 pub struct Body {
     pub pos: Vec2,
