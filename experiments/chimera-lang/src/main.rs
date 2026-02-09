@@ -84,7 +84,36 @@ fn main() -> Result<()> {
         }
 
         println!("Execution complete.");
-        println!("Final Stack: {:?}", vm.stack);
+
+        let mut table = comfy_table::Table::new();
+        table.set_header(vec!["Index", "Type", "Value"]);
+
+        for (i, val) in vm.stack.iter().rev().enumerate() {
+            let type_str = match val {
+                chimera_lang::vm::Value::Int(_) => "Integer",
+                chimera_lang::vm::Value::Str(_) => "String",
+                chimera_lang::vm::Value::Junction(_, _) => "Junction",
+                chimera_lang::vm::Value::Superposition(_) => "Superposition",
+            };
+
+            let val_str = format!("{}", val);
+            let mut val_cell = comfy_table::Cell::new(&val_str);
+
+            // Mosaic Philosophy: "Colorize 'True' as Green."
+            if val_str == "1" || val_str.to_lowercase() == "true" {
+                val_cell = val_cell.fg(comfy_table::Color::Green);
+            }
+
+            table.add_row(vec![
+                comfy_table::Cell::new(i),
+                comfy_table::Cell::new(type_str),
+                val_cell,
+            ]);
+        }
+
+        println!("Final Stack (Top -> Bottom):");
+        println!("{table}");
+
         println!("Output Log:");
         for line in vm.output {
             println!("  {}", line);

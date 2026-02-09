@@ -2476,7 +2476,7 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_fishing(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
@@ -2500,6 +2500,14 @@ fn render_fishing(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
                 color: Color::Blue,
             });
 
+            // Water Ripples
+            for i in 0..15 {
+                let speed = vm.tick_counter as f64 * 0.5;
+                let rx = (speed + i as f64 * 17.0) % 95.0 + 2.0;
+                let ry = 5.0 + (i as f64 * 7.0) % 40.0;
+                ctx.print(rx, ry, "~");
+            }
+
             // Sky
             ctx.draw(&Rectangle {
                 x: 0.0,
@@ -2519,53 +2527,32 @@ fn render_fishing(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
                     color: Color::White,
                 });
 
-                // Bobber (Small Rectangle)
-                ctx.draw(&Rectangle {
-                    x: 49.0,
-                    y: app_state.fishing_bobber_y,
-                    width: 2.0,
-                    height: 2.0,
-                    color: Color::Red,
-                });
+                // Bobber (Icon)
+                ctx.print(49.0, app_state.fishing_bobber_y, "🔴");
 
-                // Fish (if visible/close)
-                ctx.draw(&ratatui::widgets::canvas::Line {
-                    x1: 48.0,
-                    y1: app_state.fishing_fish_y,
-                    x2: 52.0,
-                    y2: app_state.fishing_fish_y,
-                    color: Color::Green,
-                });
-                // Fish tail
-                ctx.draw(&ratatui::widgets::canvas::Line {
-                    x1: 48.0,
-                    y1: app_state.fishing_fish_y,
-                    x2: 46.0,
-                    y2: app_state.fishing_fish_y + 1.0,
-                    color: Color::Green,
-                });
-                ctx.draw(&ratatui::widgets::canvas::Line {
-                    x1: 48.0,
-                    y1: app_state.fishing_fish_y,
-                    x2: 46.0,
-                    y2: app_state.fishing_fish_y - 1.0,
-                    color: Color::Green,
-                });
+                // Fish (Icon)
+                if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
+                    ctx.print(48.0, app_state.fishing_fish_y, "🐟");
+                }
             } else {
-                ctx.print(40.0, 60.0, "Press SPACE to Cast");
+                ctx.print(35.0, 60.0, "Press SPACE to Cast");
             }
         });
 
     f.render_widget(canvas, chunks[0]);
 
     // Tension Bar
+    let tension_color = if app_state.fishing_tension < 0.5 {
+        Color::Green
+    } else if app_state.fishing_tension < 0.8 {
+        Color::Yellow
+    } else {
+        Color::Red
+    };
+
     let gauge = Gauge::default()
         .block(Block::default().borders(Borders::ALL).title("Tension"))
-        .gauge_style(Style::default().fg(if app_state.fishing_tension > 0.8 {
-            Color::Red
-        } else {
-            Color::Green
-        }))
+        .gauge_style(Style::default().fg(tension_color))
         .ratio(app_state.fishing_tension)
         .label(format!("{:.0}%", app_state.fishing_tension * 100.0));
     f.render_widget(gauge, chunks[1]);
