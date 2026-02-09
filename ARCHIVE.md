@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **flesh-and-code**: Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
+- **lattice-hunter**: Specimen condemned. Documentation void. Ancestral redundancy (superseded by `lattice-brain`). Grace period: 24h.
+- [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **flesh-and-code**: Specimen executed. Documentation void. Redundant with `ik-codewalker`. Grace period expired. Moved to graveyard.
 - **heap-auction**: Specimen executed. Documentation void. Redundant with `market-flow`. Grace period expired. Moved to graveyard.
 - **biophysical-synth**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Grace period expired. Moved to graveyard.
 - **cipher-clock**: Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
