@@ -1,4 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **chaos-monitor**: Specimen condemned. Documentation void. Redundant with `system-attractor`. Generic implementation. Grace period: 24h.
+- **packet-locusts**: Specimen condemned. Documentation void. Generic implementation (locusts seeking nodes). Lacks persona alignment. Grace period: 24h.
 - **code-harp**: Specimen condemned. Documentation void. Compilation failure (missing system dependencies). Redundant with `biomimetic-synth`. Generic implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
