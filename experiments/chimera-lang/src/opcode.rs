@@ -1762,6 +1762,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Lens,
 
+    // Sociology Features (Nova)
+    /// **[Nova]** Manages Guild membership and treasury.
+    ///
+    /// **Stack:** `[ ..., action, guild_name, amount/arg ] -> [ ... ]`
+    /// **Actions:** "Join", "Leave", "Deposit", "Withdraw", "Create".
+    #[cfg(feature = "nova")]
+    Guild,
+    /// **[Nova]** Manages Guild policies (for founders/leaders).
+    ///
+    /// **Stack:** `[ ..., action, arg, guild_name ] -> [ ... ]`
+    /// **Actions:** "Tax", "Kick", "Invite", "Motto".
+    #[cfg(feature = "nova")]
+    Charter,
+
     // Bureaucracy Features (Nova)
     /// **[Nova]** Increases local bureaucracy (Red Tape), making actions cost more energy.
     ///
