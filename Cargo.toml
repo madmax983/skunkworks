@@ -131,7 +131,6 @@ members = [
     "experiments/gravity-termites",
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
     "experiments/lichen-mesh",
-    "experiments/cipher-clock",
     "experiments/hyperbolic-lichen",
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/chaotic-conservatory", "experiments/retinal-glitch", "experiments/retinal-chaos", "experiments/syntax-serum",
