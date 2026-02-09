@@ -3,7 +3,7 @@ use std::f64::consts::PI;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
-use tui_shared::math::Vec2;
+use locus::Vec2;
 
 #[derive(Debug, Clone)]
 pub enum EntityType {

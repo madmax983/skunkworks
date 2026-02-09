@@ -14,7 +14,7 @@ use ratatui::{
 };
 use resonance_audio::audio::{AudioCommand, AudioModel};
 use std::time::{Duration, Instant};
-use tui_shared::math::Vec2;
+use locus::Vec2;
 use tui_shared::Tui;
 
 const WIDTH: usize = 80;
