@@ -14,3 +14,4 @@ anyhow = { workspace = true }
 pest = "2.7"
 pest_derive = "2.7"
 tui-shared = { path = "../../crates/tui-shared" }
+market-sim = { workspace = true }

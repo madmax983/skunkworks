@@ -174,4 +174,33 @@ mod tests {
         assert!(vm.signal_grid[1][5] > 0, "Beam missing at dist 4");
         assert_eq!(vm.signal_grid[1][6], 0, "Beam went too far");
     }
+
+    #[test]
+    fn test_orca_query() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 3 .  (Direction: 3 = West)
+        // B Q B  (West of Q is 'B'. East of Q is Target 'B')
+        // . . .
+        // Q at (1,1).
+        // North Input (0,1) is '3'.
+        // East Input (1,2) is 'B'.
+        // West Neighbor (1,0) is 'B'.
+        // Expected: Match -> Write '1' to South (2,1).
+
+        vm.grid[0][1] = Value::Str("3".to_string());
+        vm.grid[1][0] = Value::Str("B".to_string());
+        vm.grid[1][1] = Value::Str("Q".to_string());
+        vm.grid[1][2] = Value::Str("B".to_string());
+
+        // Signal Q
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "1"),
+            _ => panic!("Expected result 1, got {:?}", vm.grid[2][1]),
+        }
+    }
 }

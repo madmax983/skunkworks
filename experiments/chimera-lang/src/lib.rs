@@ -105,6 +105,8 @@ mod cladistics_test;
 mod cortex_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod cortex_view_test;
+#[cfg(all(test, feature = "elektra"))]
+mod elektra_test;
 #[cfg(all(test, feature = "nova"))]
 mod havoc_poly_crash;
 #[cfg(all(test, feature = "nova"))]
@@ -117,6 +119,8 @@ mod nova_akashic_test;
 mod nova_alchemy_crucible_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_alchemy_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_arcana_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_astrology_test;
 #[cfg(all(test, feature = "nova"))]
@@ -166,6 +170,8 @@ mod nova_dream_trace_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_garden_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_gastronomy_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
@@ -178,15 +184,17 @@ mod nova_isomer_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_linguistics_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_logistics_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_madness_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_market_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_metamorphism_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_meta_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_metamorphism_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_morphogenesis_test;
 #[cfg(all(test, feature = "nova"))]
@@ -203,6 +211,8 @@ mod nova_organelle_types_test;
 mod nova_phase_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_piet_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_planes_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_portal_test;
 #[cfg(all(test, feature = "nova"))]
@@ -254,6 +264,8 @@ mod nova_virus_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_ward_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_waste_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;
@@ -283,5 +295,3 @@ mod warden_memory_test;
 mod warden_parser_test;
 #[cfg(test)]
 mod warden_phylogeny_test;
-#[cfg(all(test, feature = "elektra"))]
-mod elektra_test;

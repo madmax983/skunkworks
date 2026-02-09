@@ -28,7 +28,11 @@ impl Retina {
     pub fn update(&mut self, input: &[f32]) -> Vec<(usize, usize)> {
         if input.len() != self.photoreceptors.len() {
             // Panic or ignore? Panic is safer for debugging mismatch.
-            panic!("Input size {} does not match retina size {}", input.len(), self.photoreceptors.len());
+            panic!(
+                "Input size {} does not match retina size {}",
+                input.len(),
+                self.photoreceptors.len()
+            );
         }
 
         self.photoreceptors.copy_from_slice(input);
@@ -112,6 +116,9 @@ mod tests {
             spike_count += spikes.len();
         }
 
-        assert!(spike_count > 0, "Retina should produce spikes for a spot stimulus");
+        assert!(
+            spike_count > 0,
+            "Retina should produce spikes for a spot stimulus"
+        );
     }
 }

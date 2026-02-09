@@ -1,9 +1,90 @@
 #![cfg(feature = "cortex")]
+//! # The Cortex System 🧠
+//!
+//! The `Cortex` module transforms the Chimera VM into a **Spiking Neural Network**.
+//!
+//! In this model:
+//! - **Neurons** are DNA Strands.
+//! - **Synapses** are directed links between strands.
+//! - **Action Potentials (Spikes)** are signals sent via `OpCode::Spark`.
+//! - **Membrane Potential** is the `activation_level` of a strand.
+//!
+//! ## Mechanics
+//!
+//! 1.  **Connectivity**: Strands can form one-way connections to other strands using `Link`.
+//! 2.  **Firing**: When a strand executes `Spark(n)`, it adds `n` to the activation level of all its postsynaptic targets.
+//! 3.  **Decay**: At the end of every tick, all activation levels decay by 1 (down to 0).
+//! 4.  **Gating**: Strands can conditionally execute code based on their own activation level using `Gate(threshold)`.
+//!
+//! ## Example: A Simple Oscillator
+//!
+//! ```ignore
+//! // Neuron A (Strand 0): Fires if stimulated, stimulates B
+//! gate(5)     // Wait for threshold 5
+//! push(10)    // Prepare spike strength
+//! spark()     // Fire 10 to Neuron B
+//!
+//! // Neuron B (Strand 1): Fires if stimulated, stimulates A (Loop)
+//! gate(5)
+//! push(10)
+//! spark()
+//! ```
+
 use super::ChimeraVM;
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::vm::Value;
 
+/// Executes Cortex-related OpCodes (Neural Network Logic).
+///
+/// This function handles the synaptic plasticity and signaling between strands.
+///
+/// # Supported Enzymes
+///
+/// - `Link`: Create a synapse from the current strand to a target.
+/// - `Sever`: Remove a synapse.
+/// - `Spark`: Fire a signal to all connected strands.
+/// - `Sense`: Read the current strand's activation level.
+/// - `Gate`: Conditional execution based on activation level.
+///
+/// # Examples
+///
+/// ```rust
+/// use chimera_lang::prelude::*;
+///
+/// // Create a 2-neuron network: A -> B
+/// // A: [ Link(B), Push(10), Spark ]
+/// // B: [ Sense ]
+///
+/// let genes_a = vec![
+///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Target B (Index 1)
+///     Gene { op: OpCode::Link, args: vec![] },                      // Link A->B
+///     Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+///     Gene { op: OpCode::Spark, args: vec![] },                     // Fire!
+/// ];
+///
+/// let genes_b = vec![
+///     Gene { op: OpCode::Sense, args: vec![] }, // Read activation
+/// ];
+///
+/// let dna = Dna { helix: Helix { strands: vec![Strand { genes: genes_a }, Strand { genes: genes_b }] } };
+/// let mut vm = ChimeraVM::new(dna);
+///
+/// // Step A: Link and Spark
+/// vm.step(); // push(1)
+/// vm.step(); // link()
+/// vm.step(); // push(10)
+/// vm.step(); // spark() -> B.activation += 10
+///
+/// // By default, `vm.step()` executes instructions sequentially.
+/// // After Strand A finishes (4 instructions), execution context would naturally move to Strand B.
+///
+/// // However, `Spark` increases activation immediately.
+/// // We verify that Strand B's activation level (Index 1) has increased.
+/// // Note: Activation decays by 1 at the end of every full tick cycle.
+///
+/// assert!(vm.activation_levels[1] >= 9);
+/// ```
 #[cfg(feature = "cortex")]
 pub fn exec_cortex_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) {
     match op {

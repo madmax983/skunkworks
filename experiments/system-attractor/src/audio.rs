@@ -17,7 +17,9 @@ pub mod audio_impl {
     impl Synth {
         pub fn new() -> Result<Self, anyhow::Error> {
             let host = cpal::default_host();
-            let device = host.default_output_device().ok_or(anyhow::anyhow!("No output device"))?;
+            let device = host
+                .default_output_device()
+                .ok_or(anyhow::anyhow!("No output device"))?;
             let config = device.default_output_config()?;
             let sample_rate = config.sample_rate().0 as f32;
             let channels = config.channels() as usize;

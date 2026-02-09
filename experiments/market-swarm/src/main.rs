@@ -1,5 +1,4 @@
 mod flock;
-mod market;
 mod synth;
 
 use anyhow::Result;
@@ -21,7 +20,7 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 use flock::Flock;
-use market::{Grid, Particle};
+use market_sim::{Grid, Particle};
 use synth::SynthState;
 
 struct App {
@@ -69,7 +68,7 @@ impl App {
             let bid_y = (self.market_price + offset) as usize;
             let x = rng.gen_range(0..self.grid.width);
             if bid_y < self.grid.height {
-                self.grid.set(x, bid_y, Particle::Bid);
+                self.grid.set(x, bid_y, Particle::Bid(0));
             }
         }
 
@@ -78,7 +77,7 @@ impl App {
             let ask_y = (self.market_price - offset) as isize;
             let x = rng.gen_range(0..self.grid.width);
             if ask_y >= 0 {
-                self.grid.set(x, ask_y as usize, Particle::Ask);
+                self.grid.set(x, ask_y as usize, Particle::Ask(0));
             }
         }
 
@@ -86,7 +85,11 @@ impl App {
             let is_bid = rng.gen_bool(0.5);
             let cx = rng.gen_range(10..self.grid.width - 10);
             let cy = if is_bid { self.grid.height - 8 } else { 5 };
-            let p = if is_bid { Particle::Bid } else { Particle::Ask };
+            let p = if is_bid {
+                Particle::Bid(0)
+            } else {
+                Particle::Ask(0)
+            };
             for dy in 0..4 {
                 for dx in 0..6 {
                     self.grid.set(cx + dx, cy + dy, p);
@@ -179,11 +182,11 @@ fn ui(f: &mut ratatui::Frame, app: &mut App) {
     for y in 0..app.grid.height {
         for x in 0..app.grid.width {
             match app.grid.get(x, y) {
-                Particle::Bid => {
+                Particle::Bid(_) => {
                     app.bids_buf
                         .push((x as f64, (app.grid.height - y - 1) as f64));
                 }
-                Particle::Ask => {
+                Particle::Ask(_) => {
                     app.asks_buf
                         .push((x as f64, (app.grid.height - y - 1) as f64));
                 }

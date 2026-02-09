@@ -1,5 +1,7 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **thread-frequency**: Specimen condemned. Documentation void. Redundant with `schrodingers-beat`. Grace period: 24h.
+- **heap-auction**: Specimen condemned. Documentation void. Redundant with `market-flow`/`ram-bazaar`. Generic implementation. Grace period: 24h.
+- **heap-auction**: Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **biophysical-synth**: Specimen condemned. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -11,6 +13,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cipher-clock**: Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
+- **cipher-clock**: Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
 - **resonance-chamber**: Specimen executed. Redundant with `ripple-tank`. TUI implementation offers lower fidelity. Moved to graveyard.
 - **system-bonsai**: Specimen executed. Documentation void. Redundant with `recursive-conservatory`. Moved to graveyard.
 - **metric-marionette**: Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`. Moved to graveyard.
@@ -29,6 +33,7 @@
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
 - **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
+- **thread-frequency**: Specimen executed. Documentation void. Redundant with `schrodingers-beat`. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
 - **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
 - **git_rhythm**: Specimen executed. Redundant with `git-cantata`. Violates naming convention (`snake_case`). Generic implementation. Moved to graveyard.

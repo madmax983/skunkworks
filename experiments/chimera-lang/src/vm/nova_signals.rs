@@ -155,6 +155,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'P' | 'p' => exec_play(vm, y, x, signal, &mut ctx),
                 'K' | 'k' => exec_kill(vm, y, x, signal, &mut ctx),
                 'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
+                'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -226,6 +227,37 @@ fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
         if signal > 0 {
             ctx.mutation_requests.push(MutationRequest {
                 strand_idx: s_idx as usize,
+            });
+        }
+    }
+}
+
+fn exec_query(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
+    if let (Some(dir_code), Some(target_val)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
+        let (dy, dx) = match dir_code % 4 {
+            0 => (-1, 0), // N
+            1 => (0, 1),  // E
+            2 => (1, 0),  // S
+            3 => (0, -1), // W
+            _ => (0, 0),
+        };
+
+        let target_char = val_to_char(target_val);
+        let actual_val = peek(vm, y, x, dy, dx);
+
+        let is_match = if let Some(val) = actual_val {
+            val_to_char(val) == target_char
+        } else {
+            false
+        };
+
+        let res = if is_match { 1 } else { 0 };
+
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+            ctx.grid_writes.push(GridWrite {
+                y: sy,
+                x: sx,
+                val: Value::Str(val_to_char(res).to_string()),
             });
         }
     }

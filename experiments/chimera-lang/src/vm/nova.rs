@@ -1326,6 +1326,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Tax => super::nova_sovereignty::exec_tax(vm),
         OpCode::Pocket => super::nova_pocket::exec_pocket(vm),
         OpCode::Unpocket => super::nova_pocket::exec_unpocket(vm),
+        OpCode::Logistics => super::nova_logistics::exec_logistics(vm, op, args),
         OpCode::Harmonize => {
             if vm.stack.len() >= 2 {
                 let s_val = vm.stack.pop().unwrap();
@@ -3151,6 +3152,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             vm.energy = vm.energy.saturating_sub(5);
                             vm.output
                                 .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+
+                            if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
+                                return Some(target);
+                            }
                         } else {
                             // Hit boundary
                             vm.energy = vm.energy.saturating_sub(2);
@@ -4035,6 +4040,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.energy = vm.energy.saturating_sub(20); // High cost
                         vm.output
                             .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
+
+                        if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
+                            return Some(target);
+                        }
                     } else {
                         vm.energy = vm.energy.saturating_sub(5);
                         vm.output.push("OSMOSIS: Blocked by boundary".to_string());
@@ -4751,69 +4760,19 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        OpCode::Evolve => {
-            let mut birth_rules = vec![3];
-            let mut survival_rules = vec![2, 3];
-            let mut used_custom_rule = false;
-
-            // Check if top of stack is a rule string
-            if let Some(Value::Str(s)) = vm.stack.last() {
-                if let Some((b, s)) = parse_life_rule(s) {
-                    birth_rules = b;
-                    survival_rules = s;
-                    used_custom_rule = true;
-                }
-            }
-
-            if used_custom_rule {
-                vm.stack.pop(); // Consume the rule string
-                vm.output.push(format!(
-                    "EVOLVE: Using rule B{:?}/S{:?}",
-                    birth_rules, survival_rules
-                ));
-            } else {
-                vm.output
-                    .push("EVOLVE: Using default rule B3/S23".to_string());
-            }
-
-            // Cellular Automata (Game of Life variant)
-            let rows = vm.grid.len();
-            let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
-            let mut next_grid = vm.grid.clone();
-
-            for y in 0..rows {
-                for x in 0..cols {
-                    // Count neighbors
-                    let mut neighbors = 0;
-                    for dy in -1..=1 {
-                        for dx in -1..=1 {
-                            if dy == 0 && dx == 0 {
-                                continue;
-                            }
-                            if let Some((ny, nx)) =
-                                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-                            {
-                                if !matches!(vm.grid[ny][nx], Value::Int(0)) {
-                                    neighbors += 1;
-                                }
-                            }
-                        }
-                    }
-
-                    let is_alive = !matches!(vm.grid[y][x], Value::Int(0));
-
-                    if !is_alive && birth_rules.contains(&neighbors) {
-                        // Birth: Becomes 1
-                        next_grid[y][x] = Value::Int(1);
-                    } else if is_alive && !survival_rules.contains(&neighbors) {
-                        // Death (Overpopulation or Underpopulation)
-                        next_grid[y][x] = Value::Int(0);
-                    }
-                    // Else survive (keep value)
-                }
-            }
-            vm.grid = next_grid;
-            vm.energy = vm.energy.saturating_sub(20);
+        OpCode::Evolve => super::nova_garden::exec_evolve(vm),
+        OpCode::Sow => super::nova_garden::exec_sow(vm),
+        OpCode::Harvest => super::nova_garden::exec_harvest(vm),
+        OpCode::Draw => {
+            super::nova_arcana::exec_draw(vm);
+            None
+        }
+        OpCode::Fate => {
+            super::nova_arcana::exec_fate(vm);
+            None
+        }
+        OpCode::Shuffle => {
+            super::nova_arcana::exec_shuffle(vm);
             None
         }
         OpCode::Glitch => {
@@ -5307,31 +5266,6 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         _ => None,
     }
-}
-
-fn parse_life_rule(rule: &str) -> Option<(Vec<u8>, Vec<u8>)> {
-    let parts: Vec<&str> = rule.split('/').collect();
-    if parts.len() != 2 {
-        return None;
-    }
-
-    let parse_part = |s: &str, prefix: char| -> Vec<u8> {
-        let s = s.trim();
-        let nums = if s.starts_with(prefix) { &s[1..] } else { s };
-
-        let mut digits = Vec::new();
-        for c in nums.chars() {
-            if let Some(d) = c.to_digit(10) {
-                digits.push(d as u8);
-            }
-        }
-        digits
-    };
-
-    let birth = parse_part(parts[0], 'B');
-    let survival = parse_part(parts[1], 'S');
-
-    Some((birth, survival))
 }
 
 fn glob_match(pattern: &str, target: &str) -> bool {

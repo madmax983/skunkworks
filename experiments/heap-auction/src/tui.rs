@@ -3,7 +3,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Paragraph, Sparkline, List, ListItem},
+    widgets::{Block, Borders, List, ListItem, Paragraph, Sparkline},
     Frame,
 };
 
@@ -21,13 +21,23 @@ pub fn draw(f: &mut Frame, system: &System) {
             None => Color::DarkGray,
         };
         // Price determines character intensity
-        let char = if block.price > 20.0 { "█" } else if block.price > 10.0 { "▓" } else { "▒" };
+        let char = if block.price > 20.0 {
+            "█"
+        } else if block.price > 10.0 {
+            "▓"
+        } else {
+            "▒"
+        };
 
         spans.push(Span::styled(char, Style::default().fg(color)));
     }
 
     let memory_paragraph = Paragraph::new(Line::from(spans))
-        .block(Block::default().borders(Borders::ALL).title("Heap Memory Auction"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Heap Memory Auction"),
+        )
         .wrap(ratatui::widgets::Wrap { trim: true });
 
     f.render_widget(memory_paragraph, chunks[0]);
@@ -39,9 +49,18 @@ pub fn draw(f: &mut Frame, system: &System) {
         .split(chunks[1]);
 
     // Price History
-    let prices: Vec<u64> = system.market.history.iter().map(|tx| tx.price as u64).collect();
+    let prices: Vec<u64> = system
+        .market
+        .history
+        .iter()
+        .map(|tx| tx.price as u64)
+        .collect();
     let sparkline = Sparkline::default()
-        .block(Block::default().borders(Borders::ALL).title("Market Price History"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Market Price History"),
+        )
         .data(&prices)
         .style(Style::default().fg(Color::Yellow));
     f.render_widget(sparkline, bottom_chunks[0]);
@@ -50,11 +69,24 @@ pub fn draw(f: &mut Frame, system: &System) {
     let mut agents = system.agents.clone();
     agents.sort_by(|a, b| b.balance.partial_cmp(&a.balance).unwrap());
 
-    let items: Vec<ListItem> = agents.iter().take(10).map(|a| {
-        ListItem::new(format!("Agent {}: ${:.2} ({:?}) [{} blocks]", a.id.0, a.balance, a.strategy, a.owned_blocks.len()))
-    }).collect();
+    let items: Vec<ListItem> = agents
+        .iter()
+        .take(10)
+        .map(|a| {
+            ListItem::new(format!(
+                "Agent {}: ${:.2} ({:?}) [{} blocks]",
+                a.id.0,
+                a.balance,
+                a.strategy,
+                a.owned_blocks.len()
+            ))
+        })
+        .collect();
 
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title("Top Agents (Wealth)"));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Top Agents (Wealth)"),
+    );
     f.render_widget(list, bottom_chunks[1]);
 }

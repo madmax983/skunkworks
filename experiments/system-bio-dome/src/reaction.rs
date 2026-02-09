@@ -1,6 +1,7 @@
 // 🧬 Allele A: Inherited from experiments/chem-sys
 // Represents the Biological substrate (Gray-Scott Reaction Diffusion)
 
+#[derive(Debug)]
 pub struct ChemicalSystem {
     pub width: usize,
     pub height: usize,
@@ -8,8 +9,8 @@ pub struct ChemicalSystem {
     pub v: Vec<f64>,
     next_u: Vec<f64>,
     next_v: Vec<f64>,
-    pub f: f64,  // feed rate - will be driven by Lorenz
-    pub k: f64,  // kill rate - will be driven by Lorenz
+    pub f: f64,  // feed rate
+    pub k: f64,  // kill rate
     pub du: f64, // diffusion u
     pub dv: f64, // diffusion v
 }
@@ -41,46 +42,36 @@ impl ChemicalSystem {
         let diag_w = 0.05;
 
         for y in 0..h {
+            // Pre-calculate Y neighbors with wrap-around
             let prev_y = if y == 0 { h - 1 } else { y - 1 };
             let next_y = if y == h - 1 { 0 } else { y + 1 };
 
+            let row = y * w;
+            let row_up = prev_y * w;
+            let row_down = next_y * w;
+
             for x in 0..w {
+                // X neighbors with wrap-around
                 let prev_x = if x == 0 { w - 1 } else { x - 1 };
                 let next_x = if x == w - 1 { 0 } else { x + 1 };
 
-                // Indices
-                let i = y * w + x;
-
-                let i_up = prev_y * w + x;
-                let i_down = next_y * w + x;
-                let i_left = y * w + prev_x;
-                let i_right = y * w + next_x;
-
-                let i_ul = prev_y * w + prev_x;
-                let i_ur = prev_y * w + next_x;
-                let i_dl = next_y * w + prev_x;
-                let i_dr = next_y * w + next_x;
-
+                let i = row + x;
                 let u = self.u[i];
                 let v = self.v[i];
 
-                // Calculate Laplacian
-                let lap_u = (self.u[i_up] + self.u[i_down] + self.u[i_left] + self.u[i_right])
-                    * adj_w
-                    + (self.u[i_ul] + self.u[i_ur] + self.u[i_dl] + self.u[i_dr]) * diag_w
-                    + u * center_w;
+                // Laplacian U
+                let sum_u_adj = self.u[row_up + x] + self.u[row_down + x] + self.u[row + prev_x] + self.u[row + next_x];
+                let sum_u_diag = self.u[row_up + prev_x] + self.u[row_up + next_x] + self.u[row_down + prev_x] + self.u[row_down + next_x];
+                let lap_u = sum_u_adj * adj_w + sum_u_diag * diag_w + u * center_w;
 
-                let lap_v = (self.v[i_up] + self.v[i_down] + self.v[i_left] + self.v[i_right])
-                    * adj_w
-                    + (self.v[i_ul] + self.v[i_ur] + self.v[i_dl] + self.v[i_dr]) * diag_w
-                    + v * center_w;
+                // Laplacian V
+                let sum_v_adj = self.v[row_up + x] + self.v[row_down + x] + self.v[row + prev_x] + self.v[row + next_x];
+                let sum_v_diag = self.v[row_up + prev_x] + self.v[row_up + next_x] + self.v[row_down + prev_x] + self.v[row_down + next_x];
+                let lap_v = sum_v_adj * adj_w + sum_v_diag * diag_w + v * center_w;
 
                 let uvv = u * v * v;
 
                 // Gray-Scott formulas
-                // du/dt = Du * lap_u - uv^2 + f * (1 - u)
-                // dv/dt = Dv * lap_v + uv^2 - (f + k) * v
-
                 let du_dt = self.du * lap_u - uvv + self.f * (1.0 - u);
                 let dv_dt = self.dv * lap_v + uvv - (self.f + self.k) * v;
 
@@ -89,7 +80,6 @@ impl ChemicalSystem {
             }
         }
 
-        // Swap buffers
         std::mem::swap(&mut self.u, &mut self.next_u);
         std::mem::swap(&mut self.v, &mut self.next_v);
     }

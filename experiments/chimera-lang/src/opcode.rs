@@ -50,7 +50,9 @@ use strum_macros::{AsRefStr, EnumIter, EnumString};
 ///
 /// Each opcode represents a fundamental action that the organism can perform,
 /// ranging from basic arithmetic to genetic engineering and inter-dimensional travel.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter,
+)]
 #[strum(serialize_all = "snake_case")]
 pub enum OpCode {
     /// Pushes a value onto the stack.
@@ -285,6 +287,18 @@ pub enum OpCode {
     /// **Stack:** `[ ..., val ] -> [ ... ]`
     #[cfg(feature = "silicon")]
     ADC,
+
+    // Havoc Features (Chaos Engineering)
+    /// **[Havoc]** Sets the fault injection rate.
+    ///
+    /// **Stack:** `[ ..., rate ] -> [ ... ]`
+    /// **Rate:** 0.0 to 1.0 (Probability per tick).
+    HavocRate,
+    /// **[Havoc]** Sets the scope of fault injection.
+    ///
+    /// **Stack:** `[ ..., mask ] -> [ ... ]`
+    /// **Mask:** 1=Memory, 2=Stack, 4=Execution.
+    HavocScope,
 
     // Elektra Features (Circuitry)
     /// **[Elektra]** Creates a Voltage Source (Battery) on the grid.
@@ -771,6 +785,18 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Evolve,
+    // Garden Features (Nova)
+    /// **[Nova]** Defines a Cellular Automata rule for a species.
+    ///
+    /// **Stack:** `[ ..., rule_string, species_id ] -> [ ... ]`
+    /// **Rule String:** e.g. "B3/S23" (Life), "B36/S23" (HighLife).
+    #[cfg(feature = "nova")]
+    Sow,
+    /// **[Nova]** Harvests the grid pattern into a compressed string.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ..., rle_string ]`
+    #[cfg(feature = "nova")]
+    Harvest,
     /// **[Nova]** Randomly corrupts the Grid or Stack.
     ///
     /// **Stack:** `[ ..., severity ] -> [ ... ]`
@@ -1270,6 +1296,12 @@ pub enum OpCode {
     /// **State:** 1=On, 0=Off.
     #[cfg(feature = "nova")]
     AutoCast,
+    /// **[Nova]** Inscribes a Ward (trap) on the current grid cell.
+    ///
+    /// **Stack:** `[ ..., persistence, strand_idx ] -> [ ... ]`
+    /// **Effect:** Writes a hidden trap that triggers the strand when stepped on.
+    #[cfg(feature = "nova")]
+    Ward,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -1488,6 +1520,35 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Volcano,
 
+    // Dimension Features (Nova)
+    /// **[Nova]** Switches to a different Grid Dimension (Plane).
+    ///
+    /// **Stack:** `[ ..., dimension_id ] -> [ ... ]`
+    /// **Effect:** Swaps the current grid with the target dimension's grid.
+    #[cfg(feature = "nova")]
+    Dimension,
+    /// **[Nova]** Reads a value from a specific dimension.
+    ///
+    /// **Stack:** `[ ..., y, x, dimension_id ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    DRead,
+    /// **[Nova]** Writes a value to a specific dimension.
+    ///
+    /// **Stack:** `[ ..., value, y, x, dimension_id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    DWrite,
+    /// **[Nova]** Merges a dimension into the current one.
+    ///
+    /// **Stack:** `[ ..., method, dimension_id ] -> [ ... ]`
+    /// **Method:** 0=Add, 1=Max, 2=Overwrite.
+    #[cfg(feature = "nova")]
+    DMerge,
+    /// **[Nova]** Pushes the current dimension ID to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dimension_id ]`
+    #[cfg(feature = "nova")]
+    DView,
+
     // Paleontology Features (Nova)
     /// **[Nova]** Fossilizes a strand into a compressed string on the grid.
     ///
@@ -1549,6 +1610,14 @@ pub enum OpCode {
     /// **Stack:** `[ ..., y, x ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     Atlas,
+
+    /// **[Nova]** Configures the Logistics Layer (Factory Automation).
+    ///
+    /// **Stack:** `[ ..., type, direction, y, x ] -> [ ... ]`
+    /// **Type:** 0=Clear, 1=Belt, 2=Sorter.
+    /// **Direction:** 0=N, 1=E, 2=S, 3=W.
+    #[cfg(feature = "nova")]
+    Logistics,
 
     /// **[Nova]** Compresses a grid area into a value on the stack.
     ///
@@ -1702,6 +1771,22 @@ pub enum OpCode {
     /// **Stack:** `[ ..., permit_str ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Permit,
+
+    /// **[Nova]** Draws a Fate Card (Arcana) from the deck.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., card_id ]`
+    #[cfg(feature = "nova")]
+    Draw,
+    /// **[Nova]** Checks the currently active Fate Card.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., card_id ]`
+    #[cfg(feature = "nova")]
+    Fate,
+    /// **[Nova]** Shuffles the Fate Deck.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shuffle,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

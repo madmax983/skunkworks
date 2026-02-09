@@ -48,6 +48,8 @@ pub const INITIAL_ENERGY: i64 = 50;
 #[cfg(feature = "nova")]
 pub const MAX_STRANDS: usize = 1024;
 #[cfg(feature = "nova")]
+pub const MAX_PROJECTILES: usize = 1024;
+#[cfg(feature = "nova")]
 pub const MAX_POCKET_RADIUS: i64 = 32;
 #[cfg(feature = "nova")]
 pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
@@ -69,6 +71,7 @@ pub mod dream;
 pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
+pub mod havoc;
 #[cfg(feature = "nova")]
 pub mod ipc;
 #[cfg(feature = "nova")]
@@ -79,6 +82,8 @@ pub mod microscope;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
+#[cfg(feature = "nova")]
+pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
@@ -116,6 +121,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_garden;
+#[cfg(feature = "nova")]
 pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
@@ -124,6 +131,8 @@ pub mod nova_linguistics;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_linguistics_test;
+#[cfg(feature = "nova")]
+pub mod nova_logistics;
 #[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
@@ -143,6 +152,8 @@ pub mod nova_paleontology;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_paleontology_test;
+#[cfg(feature = "nova")]
+pub mod nova_planes;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
@@ -168,6 +179,8 @@ pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_sovereignty_test;
+#[cfg(feature = "nova")]
+pub mod nova_ward;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -473,6 +486,15 @@ pub struct ChimeraVM {
     pub virus_library: Vec<memetics::Virus>,
     #[cfg(feature = "nova")]
     pub arena: Option<nova_arena::ArenaState>,
+    #[cfg(feature = "nova")]
+    pub planes: HashMap<i64, Vec<Vec<Value>>>,
+    #[cfg(feature = "nova")]
+    pub current_plane: i64,
+    #[cfg(feature = "nova")]
+    pub garden: nova_garden::GardenState,
+    #[cfg(feature = "nova")]
+    pub fate: nova_arcana::FateState,
+    pub havoc: havoc::HavocEngine,
 }
 
 impl ChimeraVM {
@@ -707,6 +729,15 @@ impl ChimeraVM {
             virus_library,
             #[cfg(feature = "nova")]
             arena: Some(nova_arena::ArenaState::new()),
+            #[cfg(feature = "nova")]
+            planes: HashMap::new(),
+            #[cfg(feature = "nova")]
+            current_plane: 0,
+            #[cfg(feature = "nova")]
+            garden: nova_garden::GardenState::new(),
+            #[cfg(feature = "nova")]
+            fate: nova_arcana::FateState::default(),
+            havoc: havoc::HavocEngine::new(),
         }
     }
 
@@ -1408,6 +1439,9 @@ impl ChimeraVM {
                     new_x = px;
                 }
                 self.context_loc = (new_y, new_x);
+                if let Some(target) = nova_ward::check_ward_trigger(self) {
+                    self.ip = target;
+                }
             }
         }
     }
@@ -1544,6 +1578,7 @@ impl ChimeraVM {
                 nova_egregore::Manifestation::None => {}
             }
 
+            nova_logistics::process_logistics(self);
             self.process_environment();
             nova_metamorphism::process_metamorphism(self);
             nova_signals::process_signals(self);
@@ -1554,6 +1589,7 @@ impl ChimeraVM {
             nova_ballistics::update_projectiles(self);
             nova_sovereignty::process_territory(self);
             nova_bureaucracy::process_red_tape(self);
+            nova_arcana::process_fate(self);
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
         }
@@ -1578,6 +1614,12 @@ impl ChimeraVM {
         #[cfg(feature = "elektra")]
         if !time_frozen {
             elektra::update_circuit(self);
+        }
+
+        if !time_frozen {
+            let mut havoc = std::mem::take(&mut self.havoc);
+            havoc.tick(self);
+            self.havoc = havoc;
         }
 
         if !time_frozen && self.chaos_mode {
@@ -1885,6 +1927,30 @@ impl ChimeraVM {
             OpCode::Virus => self.exec_grid_op(op),
             OpCode::JumpS | OpCode::BrzS => self.exec_flow_op(op, args),
             OpCode::SLen | OpCode::HelixLen | OpCode::GeneLen => self.exec_stack_op(op, args),
+
+            OpCode::HavocRate => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.havoc.rate = (n as f64) / 100.0,
+                        _ => self
+                            .output
+                            .push("Error: HavocRate requires Int (0-100)".to_string()),
+                    }
+                }
+                None
+            }
+            OpCode::HavocScope => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => self.havoc.scope = n as u8,
+                        _ => self
+                            .output
+                            .push("Error: HavocScope requires Int".to_string()),
+                    }
+                }
+                None
+            }
+
             #[cfg(feature = "cortex")]
             OpCode::Link | OpCode::Sever | OpCode::Spark | OpCode::Sense | OpCode::Gate => {
                 cortex::exec_cortex_op(self, op, args);
@@ -1912,6 +1978,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Ward => nova_ward::exec_ward(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
@@ -2138,6 +2207,12 @@ impl ChimeraVM {
             | OpCode::Fossilize
             | OpCode::Unearth
             | OpCode::CarbonDate
+            | OpCode::Logistics
+            | OpCode::Sow
+            | OpCode::Harvest
+            | OpCode::Draw
+            | OpCode::Fate
+            | OpCode::Shuffle
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
@@ -2253,6 +2328,12 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Form | OpCode::Sign | OpCode::Permit | OpCode::RedTape => {
                 nova_bureaucracy::exec_bureaucracy_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Dimension | OpCode::DRead | OpCode::DWrite | OpCode::DMerge | OpCode::DView => {
+                nova_planes::exec_planes_op(self, op, args);
                 None
             }
 

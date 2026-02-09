@@ -9,3 +9,4 @@ crossterm.workspace = true
 rand.workspace = true
 anyhow.workspace = true
 tui-shared = { path = "../../crates/tui-shared" }
+market-sim = { workspace = true }
