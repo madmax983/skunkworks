@@ -2128,6 +2128,49 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::Transposon => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(offset) => {
+                            if self.ip.0 < self.dna.helix.strands.len() {
+                                let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                                let current_idx = self.ip.1 as i64;
+                                let target_idx = current_idx + offset;
+
+                                if target_idx >= 0 && target_idx < strand_len as i64 {
+                                    let t_idx = target_idx as usize;
+                                    // Move: Copy to target, replace self with Nop
+                                    let gene =
+                                        self.dna.helix.strands[self.ip.0].genes[self.ip.1].clone();
+
+                                    // We need to modify the strand.
+                                    self.dna.helix.strands[self.ip.0].genes[self.ip.1] =
+                                        crate::ast::Gene {
+                                            op: OpCode::Nop,
+                                            args: vec![],
+                                        };
+                                    self.dna.helix.strands[self.ip.0].genes[t_idx] = gene;
+
+                                    // Jump to new location
+                                    return Some((self.ip.0, t_idx));
+                                } else {
+                                    self.output
+                                        .push("Error: Transposon target out of bounds".to_string());
+                                }
+                            }
+                        }
+                        _ => self
+                            .output
+                            .push("Error: Transposon requires Int offset".to_string()),
+                    }
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for Transposon".to_string());
+                }
+                None
+            }
+
+            #[cfg(feature = "nova")]
             OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
@@ -2318,6 +2361,35 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "oracle")]
+            OpCode::FindAll => {
+                if self.stack.len() >= 2 {
+                    let goal = self.stack.pop().unwrap();
+                    let template = self.stack.pop().unwrap();
+
+                    let mut solutions = Vec::new();
+                    oracle::solve(
+                        &[goal],
+                        HashMap::new(),
+                        &self.knowledge_base,
+                        self,
+                        &mut solutions,
+                        0,
+                    );
+
+                    let mut results = Vec::new();
+                    for subst in solutions {
+                        results.push(oracle::resolve(&template, &subst));
+                    }
+
+                    self.stack.push(Value::Junction(JunctionType::All, results));
+                } else {
+                    self.output
+                        .push("Error: Stack underflow for findall".to_string());
+                }
+                None
+            }
+
+            #[cfg(feature = "oracle")]
             OpCode::Assert
             | OpCode::Rule
             | OpCode::Retract
@@ -2446,6 +2518,8 @@ impl ChimeraVM {
             OpCode::StringNew | OpCode::StringPluck | OpCode::StringTune | OpCode::StringListen => {
                 nova_strings::exec_string_op(self, op, args)
             }
+
+            OpCode::Nop => None,
 
             OpCode::Unknown(name) => {
                 #[cfg(feature = "nova")]

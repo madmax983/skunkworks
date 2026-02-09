@@ -270,6 +270,8 @@ mod nova_taxis_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_transposon_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_true_alchemy_test;
