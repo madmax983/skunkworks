@@ -117,6 +117,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_garden;
+#[cfg(feature = "nova")]
 pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
@@ -482,6 +484,8 @@ pub struct ChimeraVM {
     pub planes: HashMap<i64, Vec<Vec<Value>>>,
     #[cfg(feature = "nova")]
     pub current_plane: i64,
+    #[cfg(feature = "nova")]
+    pub garden: nova_garden::GardenState,
     pub havoc: havoc::HavocEngine,
 }
 
@@ -721,6 +725,8 @@ impl ChimeraVM {
             planes: HashMap::new(),
             #[cfg(feature = "nova")]
             current_plane: 0,
+            #[cfg(feature = "nova")]
+            garden: nova_garden::GardenState::new(),
             havoc: havoc::HavocEngine::new(),
         }
     }
@@ -2181,6 +2187,8 @@ impl ChimeraVM {
             | OpCode::Unearth
             | OpCode::CarbonDate
             | OpCode::Logistics
+            | OpCode::Sow
+            | OpCode::Harvest
             | OpCode::Pray => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

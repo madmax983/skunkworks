@@ -783,6 +783,18 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Evolve,
+    // Garden Features (Nova)
+    /// **[Nova]** Defines a Cellular Automata rule for a species.
+    ///
+    /// **Stack:** `[ ..., rule_string, species_id ] -> [ ... ]`
+    /// **Rule String:** e.g. "B3/S23" (Life), "B36/S23" (HighLife).
+    #[cfg(feature = "nova")]
+    Sow,
+    /// **[Nova]** Harvests the grid pattern into a compressed string.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ..., rle_string ]`
+    #[cfg(feature = "nova")]
+    Harvest,
     /// **[Nova]** Randomly corrupts the Grid or Stack.
     ///
     /// **Stack:** `[ ..., severity ] -> [ ... ]`

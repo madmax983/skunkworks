@@ -80,6 +80,8 @@ pub(crate) enum ViewMode {
     Fishing,
     #[cfg(feature = "nova")]
     Arena,
+    #[cfg(feature = "nova")]
+    Garden,
 }
 
 enum InputMode {
@@ -444,6 +446,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Arena = app_state.view_mode {
                 render_arena(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Garden = app_state.view_mode {
+                render_garden(f, vm, app_state);
                 return;
             }
 
@@ -820,6 +828,12 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Garden => {
+                                    // Enable editing for Garden (Sowing rules)
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 #[cfg(feature = "elektra")]
                                 ViewMode::Elektra => {
                                     app_state.input_mode = InputMode::Normal;
@@ -956,7 +970,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Fishing => ViewMode::Arena,
                             #[cfg(feature = "nova")]
-                            ViewMode::Arena => ViewMode::Heatmap,
+                            ViewMode::Arena => ViewMode::Garden,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Garden => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1118,6 +1134,8 @@ where
                     KeyCode::Char('f') => app_state.view_mode = ViewMode::Fishing,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1351,6 +1369,12 @@ where
                         ViewMode::Fishing => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Arena => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Garden => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1619,6 +1643,12 @@ where
                         ViewMode::Fishing => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Arena => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Garden => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1721,6 +1751,12 @@ where
                         ViewMode::Fishing => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Arena => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Garden => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1817,6 +1853,12 @@ where
                         ViewMode::Fishing => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Arena => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Garden => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -2052,6 +2094,19 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Arena => {
                                 app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Garden => {
+                                // Enable editing grid from Garden view
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
                             }
                             #[cfg(feature = "elektra")]
                             ViewMode::Elektra => {
@@ -2755,6 +2810,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Fishing => "FISHING (MINIGAME)",
         #[cfg(feature = "nova")]
         ViewMode::Arena => "ARENA (COLOSSEUM)",
+        #[cfg(feature = "nova")]
+        ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -5250,4 +5307,114 @@ fn render_arena(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let log_items: Vec<ListItem> = arena.logs.iter().rev().map(|s| ListItem::new(s.clone())).collect();
     let logs_list = List::new(log_items).block(Block::default().borders(Borders::ALL).title("Battle Log (Space: Tick, R: Reset)"));
     f.render_widget(logs_list, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Garden Grid (Rainbow CA)
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            if let crate::vm::Value::Int(n) = val {
+                if *n > 0 {
+                    // Color based on Species ID
+                    let colors = [
+                        Color::Red,
+                        Color::Green,
+                        Color::Blue,
+                        Color::Yellow,
+                        Color::Magenta,
+                        Color::Cyan,
+                        Color::White,
+                    ];
+                    let bg = colors[(*n as usize) % colors.len()];
+                    style = style.bg(bg).fg(Color::Black);
+                    ch = format!("{}", n % 10);
+                } else {
+                    style = style.fg(Color::DarkGray);
+                }
+            } else {
+                style = style.fg(Color::Gray);
+                ch = "?".to_string();
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("The Garden"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Rules List
+    let mut rules_items = Vec::new();
+    if vm.garden.rules.is_empty() {
+        rules_items.push(ListItem::new("No species defined."));
+    } else {
+        let mut keys: Vec<_> = vm.garden.rules.keys().collect();
+        keys.sort();
+        for k in keys {
+            if let Some(rule) = vm.garden.rules.get(k) {
+                let r_str = format!("B{:?}/S{:?}", rule.birth, rule.survival);
+                let colors = [
+                        Color::Red,
+                        Color::Green,
+                        Color::Blue,
+                        Color::Yellow,
+                        Color::Magenta,
+                        Color::Cyan,
+                        Color::White,
+                    ];
+                let color = colors[(*k as usize) % colors.len()];
+                rules_items.push(ListItem::new(format!("Species {}: {}", k, r_str)).style(Style::default().fg(color)));
+            }
+        }
+    }
+
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    let rules_list = List::new(rules_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Active Species"),
+    );
+    f.render_widget(rules_list, right_chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from("Controls:"),
+        Line::from("  Sow(rule, id) - Define Species"),
+        Line::from("  Evolve - Step Simulation"),
+        Line::from("  Harvest(r) - Save Pattern"),
+        Line::from(" "),
+        Line::from("Default: Species 1 (Life B3/S23)"),
+    ];
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Guide"),
+    );
+    f.render_widget(info_widget, right_chunks[1]);
 }
