@@ -1,7 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **chaos-monitor**: Specimen condemned. Documentation void. Redundant with `system-attractor`. Generic implementation. Grace period: 24h.
-- **packet-locusts**: Specimen condemned. Documentation void. Generic implementation (locusts seeking nodes). Lacks persona alignment. Grace period: 24h.
-- **code-harp**: Specimen condemned. Documentation void. Compilation failure (missing system dependencies). Redundant with `biomimetic-synth`. Generic implementation. Grace period: 24h.
+- **l-system-garden**: Specimen condemned. Compilation failure (trait bounds). Generic implementation. Lacks emergent behavior. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -14,6 +12,8 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-harp**: Specimen executed. Failed to improve during grace period. Moved to graveyard.
+- **packet-locusts**: Specimen executed. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **chaos-monitor**: Specimen executed. Documentation void. Redundant with `system-attractor`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **log-landscape**: Specimen executed. Documentation void. Generic implementation. Redundant with `git-landscape`. Moved to graveyard.
 - **packet-pachinko**: Specimen executed. Ancestral redundancy with `synaptic-pachinko`. Moved to graveyard.

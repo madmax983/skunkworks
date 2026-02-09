@@ -132,10 +132,6 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The mainspring is wound. The escapement is ticking. The machine breathes.
 
-### [Concentration Level: FRESH] - Location: experiments/code-harp
-- **Scent Origin:** Genesis (The Bard) ⚛️🎵
-- **Status:** Playable instrument sonifying codebase metadata. Karplus-Strong string synthesis active.
-
 ### [Concentration Level: FRESH] - Location: experiments/code-phage
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The codebase is dissolving. Reaction-Diffusion parameters are mapped to file size and extension. The repository is a petri dish.
@@ -512,13 +508,9 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/code-harp
+### [Concentration Level: CONDEMNED] - Location: experiments/l-system-garden
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Compilation failure (missing system dependencies). Redundant with `biomimetic-synth`. Grace period: 24h.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/packet-locusts
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic implementation (locusts seeking nodes). Grace period: 24h.
+- **Status:** Specimen condemned. Compilation failure (trait bounds). Generic implementation. Lacks emergent behavior. Grace period: 24h.
 
 ## History/Decay
 
@@ -542,6 +534,14 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Documentation verified.
 
+
+### [Concentration Level: TOXIC] - Location: graveyard/code-harp
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Failed to improve during grace period. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: graveyard/packet-locusts
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/chaos-monitor
 - **Scent Origin:** The Reaper ☠️
