@@ -17,10 +17,8 @@ async fn main() {
     let files = Scanner::scan(path);
     let mut terrain = Terrain::from_files(&files);
 
-    // Initialize colors based on height
-    for i in 0..terrain.colors.len() {
-        terrain.colors[i] = get_color(terrain.heightmap[i]);
-    }
+    // Initial colors are set by Terrain::from_files based on file type.
+    // We do NOT overwrite them with height-based colors.
 
     let params = ErosionParams::default();
 
@@ -40,8 +38,6 @@ async fn main() {
     let mut raining = false;
     let droplets_per_frame = 1000;
 
-    let mut mesh = build_mesh(&terrain, scale);
-
     loop {
         // Input Handling
         if is_key_pressed(KeyCode::Escape) {
@@ -57,11 +53,7 @@ async fn main() {
         }
         if is_key_pressed(KeyCode::R) {
             terrain = Terrain::from_files(&files);
-            // Initialize colors based on height
-            for i in 0..terrain.colors.len() {
-                terrain.colors[i] = get_color(terrain.heightmap[i]);
-            }
-            mesh = build_mesh(&terrain, scale);
+            // Colors are reset by from_files
             if let Some(h) = &mut history {
                 h.reset();
                 commits_processed = 0;
@@ -93,6 +85,8 @@ async fn main() {
         // Simulation
         if raining {
             erosion::erode(&mut terrain, droplets_per_frame, &params);
+            // Thermal erosion (landslides) to smooth out spikes and move sediment naturally
+            erosion::thermal_erode(&mut terrain, 1, 0.5);
         }
 
         if replay_mode {
@@ -107,7 +101,8 @@ async fn main() {
                                 for _ in 0..50 {
                                     erosion::erode_at(&mut terrain, x as f32, y as f32, &params);
                                 }
-                                // Flash color
+                                // Flash color - maybe blend red instead of overwriting?
+                                // Overwriting is fine for "Heat" visualization
                                 terrain.colors[y * terrain.width + x] = RED;
                             }
                         }
@@ -119,21 +114,12 @@ async fn main() {
             }
         }
 
-        // Color Decay
-        for i in 0..terrain.colors.len() {
-            let target = get_color(terrain.heightmap[i]);
-            let current = terrain.colors[i];
-
-            terrain.colors[i] = Color {
-                r: current.r * 0.95 + target.r * 0.05,
-                g: current.g * 0.95 + target.g * 0.05,
-                b: current.b * 0.95 + target.b * 0.05,
-                a: 1.0,
-            };
-        }
+        // Color Decay - REMOVED to preserve sediment colors.
+        // If we want "heat" (Red) to decay, we should track heat separately or only decay Red pixels.
+        // For now, let's keep it simple: No decay. The "History" mode leaves red trails that stay or get eroded.
 
         // Always rebuild mesh (for colors and erosion)
-        mesh = build_mesh(&terrain, scale);
+        let mesh = build_mesh(&terrain, scale);
 
         // Render
         clear_background(LIGHTGRAY);
@@ -176,7 +162,7 @@ async fn main() {
         let status_text = if replay_mode {
             format!("REPLAYING HISTORY: {}/{}", commits_processed, total_commits)
         } else if raining {
-            "RAINING (Eroding)".to_string()
+            "RAINING (Hydraulic + Thermal Erosion)".to_string()
         } else {
             "PAUSED".to_string()
         };
@@ -199,6 +185,14 @@ async fn main() {
             "Controls: [Space] Rain | [H] Replay History | [R] Reset | [W/S] Zoom",
             10.0,
             80.0,
+            20.0,
+            DARKGRAY,
+        );
+
+        draw_text(
+            "Colors: Orange=Rust, Blue=Python, Yellow=JS",
+            10.0,
+            110.0,
             20.0,
             DARKGRAY,
         );
@@ -247,19 +241,5 @@ fn build_mesh(terrain: &Terrain, scale: f32) -> Mesh {
         vertices,
         indices,
         texture: None,
-    }
-}
-
-fn get_color(height: f32) -> Color {
-    if height < 2.0 {
-        BLUE // Water/Sediment
-    } else if height < 5.0 {
-        BEIGE // Sand
-    } else if height < 15.0 {
-        GREEN // Grass
-    } else if height < 30.0 {
-        DARKGRAY // Rock
-    } else {
-        WHITE // Snow
     }
 }

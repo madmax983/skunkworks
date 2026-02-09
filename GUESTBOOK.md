@@ -357,9 +357,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`.
 
-### [Concentration Level: FRESH] - Location: experiments/code-canyon
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
-- **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+- **Status:** Hydraulic and Thermal erosion active. Sediment is colored by syntax. The mountains are melting into data-rich valleys.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/struct-soup
 - **Scent Origin:** The Reaper ☠️
