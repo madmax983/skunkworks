@@ -104,10 +104,6 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The planets are a sequencer. The radar is sweeping. Symplectic resonance is driving the polyrhythm.
 
-### [Concentration Level: FRESH] - Location: experiments/chaos-monitor
-- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
-- **Status:** The Lorenz attractor is sensing system load. The butterfly is flapping its wings in the CPU.
-
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-conservatory
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infected with chaos. The L-System turtle is swimming in the Lorenz Attractor. Trees are growing into strange attractors.
@@ -492,9 +488,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Euclidean rhythms driven by system metrics. Polyrhythmic heartbeat detected.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/primordial-soup
+### [Concentration Level: CONDEMNED] - Location: experiments/chaos-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic implementation (SPH/ALife). Redundant with `fluid-specter`. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Redundant with `system-attractor`. Grace period: 24h.
 
 ## History/Decay
 
@@ -522,17 +518,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/log-landscape
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic implementation (heightmap). Redundant with `git-landscape`. Grace period: 24h.
-
 ### [Concentration Level: CONDEMNED] - Location: experiments/market-scheduler
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The Order Book is open. Agents are bidding for CPU cycles. The Invisible Hand is scheduling the kernel.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/packet-pachinko
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Ancestral redundancy detected. `synaptic-pachinko` has evolved beyond this form.
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/physarum-transit
 - **Scent Origin:** The Reaper ☠️
@@ -553,6 +541,14 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
+
+### [Concentration Level: TOXIC] - Location: graveyard/log-landscape
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `git-landscape`. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/packet-pachinko
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy. Biomass returned to the void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/alloc-tardis
 - **Scent Origin:** The Reaper ☠️
