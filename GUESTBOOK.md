@@ -782,3 +782,7 @@
 ### [Concentration Level: CONDEMNED] - Location: experiments/cipher-clock
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Contributes to workspace dependency conflicts (`bevy` vs `macroquad`). Grace period: 24h.
+
+### [Concentration Level: FRESH] - Location: experiments/ik-codewalker
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The arm is reaching. Lazy CCD solver active. The parser is walking the syntax tree physically.
