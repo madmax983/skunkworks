@@ -98,8 +98,16 @@ impl Pendant {
                     // 1 -> Figure Eight
                     // 2-9 -> Long Knot with N turns
                     match digit {
-                        1 => self.knots.push(Knot { value: 1, knot_type: KnotType::FigureEight, power: 0 }),
-                        2..=9 => self.knots.push(Knot { value: digit, knot_type: KnotType::Long(digit), power: 0 }),
+                        1 => self.knots.push(Knot {
+                            value: 1,
+                            knot_type: KnotType::FigureEight,
+                            power: 0,
+                        }),
+                        2..=9 => self.knots.push(Knot {
+                            value: digit,
+                            knot_type: KnotType::Long(digit),
+                            power: 0,
+                        }),
                         _ => {} // Should not happen
                     }
                 }
@@ -107,7 +115,11 @@ impl Pendant {
                     // Tens, Hundreds, etc. use clusters of Single knots.
                     // E.g., 30 -> 3 single knots at the tens position.
                     for _ in 0..digit {
-                        self.knots.push(Knot { value: 1, knot_type: KnotType::Single, power: p });
+                        self.knots.push(Knot {
+                            value: 1,
+                            knot_type: KnotType::Single,
+                            power: p,
+                        });
                     }
                 }
             }

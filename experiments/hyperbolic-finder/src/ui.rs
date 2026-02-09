@@ -27,7 +27,14 @@ impl Button {
         };
 
         draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, color);
-        draw_rectangle_lines(self.rect.x, self.rect.y, self.rect.w, self.rect.h, 2.0, WHITE);
+        draw_rectangle_lines(
+            self.rect.x,
+            self.rect.y,
+            self.rect.w,
+            self.rect.h,
+            2.0,
+            WHITE,
+        );
 
         draw_text(
             &self.text,

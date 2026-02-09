@@ -44,5 +44,9 @@ fn test_stable_orbit() {
     // Check if distance is still roughly 100.0
     // Allow small drift due to float precision, but if Euler was used, it would drift significantly.
     // With Symplectic Euler or Verlet, it should be very stable.
-    assert!((dist - 100.0).abs() < 1.0, "Orbit drifted too much: dist = {}", dist);
+    assert!(
+        (dist - 100.0).abs() < 1.0,
+        "Orbit drifted too much: dist = {}",
+        dist
+    );
 }

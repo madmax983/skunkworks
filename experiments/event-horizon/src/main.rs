@@ -45,7 +45,7 @@ async fn main() {
             // Actually, let's write "EVENT HORIZON" repeatedly
             let text = "EVENT HORIZON ";
             let char_idx = ((x + y * cols) as usize) % text.len();
-            let char_to_draw = &text[char_idx..char_idx+1];
+            let char_to_draw = &text[char_idx..char_idx + 1];
 
             draw_text(
                 char_to_draw,
@@ -85,7 +85,8 @@ async fn main() {
             ],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     loop {
         // Physics Step
@@ -104,8 +105,8 @@ async fn main() {
         }
 
         if is_mouse_button_pressed(MouseButton::Right) {
-             let (mx, my) = mouse_position();
-             universe.add_body(Body {
+            let (mx, my) = mouse_position();
+            universe.add_body(Body {
                 pos: Vec2::new(mx, my),
                 vel: Vec2::new(rand::gen_range(-5.0, 5.0), rand::gen_range(-5.0, 5.0)),
                 mass: 100.0,
@@ -114,7 +115,7 @@ async fn main() {
         }
 
         if is_key_pressed(KeyCode::Space) {
-             universe.bodies.clear();
+            universe.bodies.clear();
         }
 
         // Update Shader Uniforms
@@ -185,7 +186,13 @@ async fn main() {
             draw_circle_lines(body.pos.x, body.pos.y, body.radius, 1.0, WHITE);
         }
 
-        draw_text(format!("FPS: {}", get_fps()).as_str(), 10.0, 20.0, 20.0, WHITE);
+        draw_text(
+            format!("FPS: {}", get_fps()).as_str(),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

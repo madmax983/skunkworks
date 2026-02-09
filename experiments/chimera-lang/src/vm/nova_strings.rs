@@ -27,7 +27,11 @@ pub fn update_strings(vm: &mut ChimeraVM) {
     }
 }
 
-pub fn exec_string_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_string_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::StringNew => {
             if vm.stack.len() >= 4 {
@@ -36,7 +40,9 @@ pub fn exec_string_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> O
                 let t_val = vm.stack.pop().unwrap();
                 let l_val = vm.stack.pop().unwrap();
 
-                if let (Value::Int(x), Value::Int(y), Value::Int(t), Value::Int(l)) = (x_val, y_val, t_val, l_val) {
+                if let (Value::Int(x), Value::Int(y), Value::Int(t), Value::Int(l)) =
+                    (x_val, y_val, t_val, l_val)
+                {
                     let start_x = x as f64;
                     let start_y = y as f64;
                     let length = l as f64;
@@ -60,12 +66,17 @@ pub fn exec_string_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> O
                     };
 
                     vm.strings.push(s);
-                    vm.output.push(format!("STRING: Created len={} tension={}", length, tension));
+                    vm.output.push(format!(
+                        "STRING: Created len={} tension={}",
+                        length, tension
+                    ));
                 } else {
-                    vm.output.push("Error: Type mismatch for string_new".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for string_new".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for string_new".to_string());
+                vm.output
+                    .push("Error: Stack underflow for string_new".to_string());
             }
         }
         OpCode::StringPluck => {
@@ -101,13 +112,14 @@ pub fn exec_string_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> O
                 if let Some(idx) = nearest_idx {
                     if min_dist < 4.0 {
                         vm.strings[idx].amplitude += force as f64;
-                        vm.output.push(format!("STRING: Plucked amp={}", vm.strings[idx].amplitude));
+                        vm.output
+                            .push(format!("STRING: Plucked amp={}", vm.strings[idx].amplitude));
                     }
                 }
             }
         }
         OpCode::StringTune => {
-             if let Some(Value::Int(tension)) = vm.stack.pop() {
+            if let Some(Value::Int(tension)) = vm.stack.pop() {
                 let (cx, cy) = vm.context_loc;
                 let cx = cx as f64;
                 let cy = cy as f64;
@@ -142,41 +154,41 @@ pub fn exec_string_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> O
                         vm.output.push(format!("STRING: Tuned tension={}", tension));
                     }
                 }
-             }
+            }
         }
         OpCode::StringListen => {
-             let (cx, cy) = vm.context_loc;
-                let cx = cx as f64;
-                let cy = cy as f64;
+            let (cx, cy) = vm.context_loc;
+            let cx = cx as f64;
+            let cy = cy as f64;
 
-                let mut amp = 0.0;
-                let mut min_dist = f64::MAX;
+            let mut amp = 0.0;
+            let mut min_dist = f64::MAX;
 
-                for s in &vm.strings {
-                    let (x1, y1) = s.start;
-                    let (x2, y2) = s.end;
-                    let l2 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
-                    let dist = if l2 == 0.0 {
-                        (cx - x1).powi(2) + (cy - y1).powi(2)
-                    } else {
-                        let t = ((cx - x1) * (x2 - x1) + (cy - y1) * (y2 - y1)) / l2;
-                        let t = t.max(0.0).min(1.0);
-                        let px = x1 + t * (x2 - x1);
-                        let py = y1 + t * (y2 - y1);
-                        (cx - px).powi(2) + (cy - py).powi(2)
-                    };
-
-                    if dist < min_dist {
-                        min_dist = dist;
-                        amp = s.amplitude * (s.phase.sin().abs());
-                    }
-                }
-
-                if min_dist < 4.0 {
-                    vm.stack.push(Value::Int(amp as i64));
+            for s in &vm.strings {
+                let (x1, y1) = s.start;
+                let (x2, y2) = s.end;
+                let l2 = (x1 - x2).powi(2) + (y1 - y2).powi(2);
+                let dist = if l2 == 0.0 {
+                    (cx - x1).powi(2) + (cy - y1).powi(2)
                 } else {
-                    vm.stack.push(Value::Int(0));
+                    let t = ((cx - x1) * (x2 - x1) + (cy - y1) * (y2 - y1)) / l2;
+                    let t = t.max(0.0).min(1.0);
+                    let px = x1 + t * (x2 - x1);
+                    let py = y1 + t * (y2 - y1);
+                    (cx - px).powi(2) + (cy - py).powi(2)
+                };
+
+                if dist < min_dist {
+                    min_dist = dist;
+                    amp = s.amplitude * (s.phase.sin().abs());
                 }
+            }
+
+            if min_dist < 4.0 {
+                vm.stack.push(Value::Int(amp as i64));
+            } else {
+                vm.stack.push(Value::Int(0));
+            }
         }
         _ => {}
     }

@@ -1,3 +1,3 @@
-pub mod font;
-pub mod encoder;
 pub mod decoder;
+pub mod encoder;
+pub mod font;

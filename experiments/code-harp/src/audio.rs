@@ -1,6 +1,6 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::{FromSample, SizedSample};
-use crossbeam_channel::{Receiver, Sender, unbounded};
+use crossbeam_channel::{unbounded, Receiver, Sender};
 
 #[derive(Debug)]
 pub struct PluckEvent {
@@ -68,7 +68,9 @@ impl KarplusStrong {
 
 pub fn init() -> anyhow::Result<Sender<PluckEvent>> {
     let host = cpal::default_host();
-    let device = host.default_output_device().ok_or_else(|| anyhow::anyhow!("No output device"))?;
+    let device = host
+        .default_output_device()
+        .ok_or_else(|| anyhow::anyhow!("No output device"))?;
     let config = device.default_output_config()?;
     let sample_rate = config.sample_rate().0 as f32;
 
@@ -84,15 +86,19 @@ pub fn init() -> anyhow::Result<Sender<PluckEvent>> {
 
     std::thread::spawn(move || {
         let stream = match config.sample_format() {
-            cpal::SampleFormat::F32 => run::<f32>(&device, &config.into(), receiver.clone(), sample_rate),
-            cpal::SampleFormat::I16 => run::<i16>(&device, &config.into(), receiver.clone(), sample_rate),
+            cpal::SampleFormat::F32 => {
+                run::<f32>(&device, &config.into(), receiver.clone(), sample_rate)
+            }
+            cpal::SampleFormat::I16 => {
+                run::<i16>(&device, &config.into(), receiver.clone(), sample_rate)
+            }
             cpal::SampleFormat::U16 => run::<u16>(&device, &config.into(), receiver, sample_rate),
             _ => panic!("Unsupported sample format"),
         };
 
         if let Ok(_s) = stream {
-             // Keep the stream alive forever
-             std::thread::park();
+            // Keep the stream alive forever
+            std::thread::park();
         } else {
             eprintln!("Failed to create audio stream");
         }
@@ -122,7 +128,11 @@ where
                 if voices.len() >= 32 {
                     voices.remove(0); // Remove oldest
                 }
-                voices.push(KarplusStrong::new(sample_rate, event.frequency, event.damping));
+                voices.push(KarplusStrong::new(
+                    sample_rate,
+                    event.frequency,
+                    event.damping,
+                ));
             }
 
             // Fill buffer

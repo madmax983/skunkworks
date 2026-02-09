@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use quipu_cradle::quipu::{Pendant, Knot, KnotType};
+use quipu_cradle::quipu::{Knot, KnotType, Pendant};
 use quipu_cradle::serializer::to_quipu;
 use serde::Serialize;
 
@@ -41,7 +41,13 @@ async fn main() {
         clear_background(LIGHTGRAY);
 
         draw_text("Incan Quipu Data Serializer", 20.0, 30.0, 30.0, BLACK);
-        draw_text("Hover over knots to read values", 20.0, 50.0, 20.0, DARKGRAY);
+        draw_text(
+            "Hover over knots to read values",
+            20.0,
+            50.0,
+            20.0,
+            DARKGRAY,
+        );
 
         let time = get_time() as f32;
 
@@ -80,7 +86,7 @@ fn draw_pendant(pendant: &Pendant, start_x: f32, start_y: f32, angle: f32, depth
         pendant.color[0] as f32 / 255.0,
         pendant.color[1] as f32 / 255.0,
         pendant.color[2] as f32 / 255.0,
-        1.0
+        1.0,
     );
 
     draw_line(start_x, start_y, end_x, end_y, 2.0, color);
@@ -106,12 +112,12 @@ fn draw_pendant(pendant: &Pendant, start_x: f32, start_y: f32, angle: f32, depth
             // Interaction
             let mouse_pos = mouse_position();
             if (mouse_pos.0 - k_x).abs() < 10.0 && (mouse_pos.1 - k_y).abs() < 10.0 {
-                 draw_text(
+                draw_text(
                     &format!("Val: {}, Pow: 10^{}", knot.value, knot.power),
                     mouse_pos.0 + 10.0,
                     mouse_pos.1,
                     20.0,
-                    BLACK
+                    BLACK,
                 );
             }
         }
@@ -130,13 +136,13 @@ fn draw_pendant(pendant: &Pendant, start_x: f32, start_y: f32, angle: f32, depth
         for (s_idx, sub) in pendant.subsidiaries.iter().enumerate() {
             // Attach point
             let dist = (s_idx as f32 + 0.5) * step; // Shifted slightly so they don't overlap knots exactly
-             let attach_x = start_x + angle.sin() * dist;
-             let attach_y = start_y + angle.cos() * dist;
+            let attach_x = start_x + angle.sin() * dist;
+            let attach_y = start_y + angle.cos() * dist;
 
-             // Subsidiary angle: slightly offset from parent
-             let sub_angle = angle + 0.3; // Radian offset
+            // Subsidiary angle: slightly offset from parent
+            let sub_angle = angle + 0.3; // Radian offset
 
-             draw_pendant(sub, attach_x, attach_y, sub_angle, depth + 1);
+            draw_pendant(sub, attach_x, attach_y, sub_angle, depth + 1);
         }
     }
 }
@@ -150,16 +156,16 @@ fn draw_knot(knot: &Knot, x: f32, y: f32, color: Color) {
         KnotType::Long(turns) => {
             // Draw a longer shape (cylinder/rect)
             let h = 10.0 + (turns as f32) * 2.0;
-            draw_rectangle(x - 4.0, y - h/2.0, 8.0, h, color);
-            draw_rectangle_lines(x - 4.0, y - h/2.0, 8.0, h, 2.0, BLACK);
+            draw_rectangle(x - 4.0, y - h / 2.0, 8.0, h, color);
+            draw_rectangle_lines(x - 4.0, y - h / 2.0, 8.0, h, 2.0, BLACK);
             // Draw turns lines
             for t in 0..turns {
-                let ty = (y - h/2.0) + (t as f32) * 2.0 + 2.0;
+                let ty = (y - h / 2.0) + (t as f32) * 2.0 + 2.0;
                 draw_line(x - 4.0, ty, x + 4.0, ty, 1.0, BLACK);
             }
         }
         KnotType::FigureEight => {
-             draw_text("8", x - 5.0, y + 5.0, 20.0, BLACK);
+            draw_text("8", x - 5.0, y + 5.0, 20.0, BLACK);
         }
         KnotType::Empty => {}
     }

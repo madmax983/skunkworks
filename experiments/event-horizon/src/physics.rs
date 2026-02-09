@@ -30,10 +30,14 @@ impl Universe {
 
         for i in 0..n {
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let diff = self.bodies[j].pos - self.bodies[i].pos;
                 let dist_sq = diff.length_squared();
-                if dist_sq < 0.1 { continue; } // Softening
+                if dist_sq < 0.1 {
+                    continue;
+                } // Softening
                 let dist = dist_sq.sqrt();
 
                 let force_mag = g * self.bodies[j].mass / dist_sq;

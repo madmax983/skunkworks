@@ -53,9 +53,9 @@ pub fn apply_decay(data: &mut [u8], mode: DecayMode, intensity: f32) -> usize {
                 let length = rng.gen_range(5..50);
                 let end = (start + length).min(len);
                 let val = if rng.gen() { 0xFF } else { 0x00 };
-                 for byte in &mut data[start..end] {
-                     if *byte != val {
-                         *byte = val;
+                for byte in &mut data[start..end] {
+                    if *byte != val {
+                        *byte = val;
                         bits_flipped += 1;
                     }
                 }

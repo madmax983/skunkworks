@@ -60,9 +60,7 @@ pub fn thermal_erode(terrain: &mut Terrain, iterations: usize, talus_angle: f32)
                 let mut max_idx = 0;
 
                 // Check neighbors
-                let neighbors = [
-                    (x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)
-                ];
+                let neighbors = [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)];
 
                 for &(nx, ny) in &neighbors {
                     let nidx = ny * terrain.width + nx;
@@ -86,7 +84,7 @@ pub fn thermal_erode(terrain: &mut Terrain, iterations: usize, talus_angle: f32)
                         dest_c.r * (1.0 - blend_factor) + c.r * blend_factor,
                         dest_c.g * (1.0 - blend_factor) + c.g * blend_factor,
                         dest_c.b * (1.0 - blend_factor) + c.b * blend_factor,
-                        1.0
+                        1.0,
                     );
                 }
             }
@@ -184,9 +182,12 @@ fn trace_droplet(terrain: &mut Terrain, mut x: f32, mut y: f32, params: &Erosion
 
             let total_sediment = sediment + amount_to_erode;
             if total_sediment > 1e-6 {
-                let r = (sediment_color.r * sediment + eroded_color.r * amount_to_erode) / total_sediment;
-                let g = (sediment_color.g * sediment + eroded_color.g * amount_to_erode) / total_sediment;
-                let b = (sediment_color.b * sediment + eroded_color.b * amount_to_erode) / total_sediment;
+                let r = (sediment_color.r * sediment + eroded_color.r * amount_to_erode)
+                    / total_sediment;
+                let g = (sediment_color.g * sediment + eroded_color.g * amount_to_erode)
+                    / total_sediment;
+                let b = (sediment_color.b * sediment + eroded_color.b * amount_to_erode)
+                    / total_sediment;
                 sediment_color = Color::new(r, g, b, 1.0);
             }
 
@@ -256,12 +257,16 @@ fn deposit(terrain: &mut Terrain, x: usize, y: usize, u: f32, v: f32, amount: f3
             c1.r * (1.0 - t) + c2.r * t,
             c1.g * (1.0 - t) + c2.g * t,
             c1.b * (1.0 - t) + c2.b * t,
-            1.0
+            1.0,
         )
     };
 
     let idx00 = y * terrain.width + x;
-    terrain.colors[idx00] = blend(terrain.colors[idx00], color, blend_factor * (1.0 - u) * (1.0 - v));
+    terrain.colors[idx00] = blend(
+        terrain.colors[idx00],
+        color,
+        blend_factor * (1.0 - u) * (1.0 - v),
+    );
 
     let idx10 = y * terrain.width + x1;
     terrain.colors[idx10] = blend(terrain.colors[idx10], color, blend_factor * u * (1.0 - v));
@@ -307,7 +312,7 @@ fn erode_radius(terrain: &mut Terrain, x: usize, y: usize, amount: f32, radius: 
             color_sum.0 / weight_sum,
             color_sum.1 / weight_sum,
             color_sum.2 / weight_sum,
-            1.0
+            1.0,
         )
     } else {
         Color::new(0.0, 0.0, 0.0, 0.0)

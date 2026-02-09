@@ -1,9 +1,9 @@
 use macroquad::prelude::*;
-mod scanner;
 mod audio;
+mod scanner;
 
-use scanner::StringEntity;
 use audio::PluckEvent;
+use scanner::StringEntity;
 
 struct VisualString {
     entity: StringEntity,
@@ -15,12 +15,15 @@ struct VisualString {
 #[macroquad::main("Code Harp")]
 async fn main() {
     let raw_strings = scanner::scan_codebase(".");
-    let mut strings: Vec<VisualString> = raw_strings.into_iter().map(|s| VisualString {
-        entity: s,
-        vibration: 0.0,
-        phase: 0.0,
-        last_pluck: 0.0,
-    }).collect();
+    let mut strings: Vec<VisualString> = raw_strings
+        .into_iter()
+        .map(|s| VisualString {
+            entity: s,
+            vibration: 0.0,
+            phase: 0.0,
+            last_pluck: 0.0,
+        })
+        .collect();
 
     let audio_sender = match audio::init() {
         Ok(s) => Some(s),
@@ -88,18 +91,31 @@ async fn main() {
             yaw.to_radians().cos() * pitch.to_radians().cos(),
             pitch.to_radians().sin(),
             yaw.to_radians().sin() * pitch.to_radians().cos(),
-        ).normalize();
+        )
+        .normalize();
 
         let right = front.cross(vec3(0.0, 1.0, 0.0)).normalize();
         // let up = right.cross(front).normalize(); // Not used directly for movement usually
 
         let speed = 10.0 * dt;
-        if is_key_down(KeyCode::W) { camera.position += front * speed; }
-        if is_key_down(KeyCode::S) { camera.position -= front * speed; }
-        if is_key_down(KeyCode::A) { camera.position -= right * speed; }
-        if is_key_down(KeyCode::D) { camera.position += right * speed; }
-        if is_key_down(KeyCode::Q) { camera.position.y -= speed; }
-        if is_key_down(KeyCode::E) { camera.position.y += speed; }
+        if is_key_down(KeyCode::W) {
+            camera.position += front * speed;
+        }
+        if is_key_down(KeyCode::S) {
+            camera.position -= front * speed;
+        }
+        if is_key_down(KeyCode::A) {
+            camera.position -= right * speed;
+        }
+        if is_key_down(KeyCode::D) {
+            camera.position += right * speed;
+        }
+        if is_key_down(KeyCode::Q) {
+            camera.position.y -= speed;
+        }
+        if is_key_down(KeyCode::E) {
+            camera.position.y += speed;
+        }
 
         camera.target = camera.position + front;
 
@@ -114,7 +130,8 @@ async fn main() {
             let d = distance_point_segment(player_pos, s.entity.start, s.entity.end);
 
             // Pluck radius
-            if d < 1.0 { // 1.0 unit radius
+            if d < 1.0 {
+                // 1.0 unit radius
                 // If not plucked recently
                 if current_time - s.last_pluck > 0.2 {
                     s.last_pluck = current_time;
@@ -164,13 +181,31 @@ async fn main() {
         set_default_camera();
 
         draw_text("CODE HARP", 10.0, 30.0, 30.0, WHITE);
-        draw_text("WASD + Right Click to Fly. Touch strings to play.", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "WASD + Right Click to Fly. Touch strings to play.",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         if !hovered_path.is_empty() {
-             draw_text(&format!("Touching: {}", hovered_path), 10.0, 80.0, 20.0, YELLOW);
+            draw_text(
+                &format!("Touching: {}", hovered_path),
+                10.0,
+                80.0,
+                20.0,
+                YELLOW,
+            );
         }
 
-        draw_text(&format!("FPS: {}", get_fps()), screen_width() - 100.0, 30.0, 20.0, WHITE);
+        draw_text(
+            &format!("FPS: {}", get_fps()),
+            screen_width() - 100.0,
+            30.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await;
     }

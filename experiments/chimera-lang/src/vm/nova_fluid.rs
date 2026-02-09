@@ -7,10 +7,14 @@ use crate::opcode::OpCode;
 /// Simulates fluid dynamics (Advection and Diffusion) for the Atmosphere.
 ///
 /// Updates `wind_grid` and `moisture_grid`.
+///
+/// # Optimization
+/// Uses stack-allocated arrays `[[T; GRID_SIZE]; GRID_SIZE]` for intermediate buffers
+/// instead of heap-allocated `Vec<Vec<T>>` to avoid 34 allocations per tick.
 pub fn process_fluid(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
-    let mut new_moisture = vec![vec![0i64; size]; size];
-    let mut new_wind = vec![vec![(0i8, 0i8); size]; size];
+    let mut new_moisture = [[0i64; super::GRID_SIZE]; super::GRID_SIZE];
+    let mut new_wind = [[(0i8, 0i8); super::GRID_SIZE]; super::GRID_SIZE];
 
     // 1. Advection & Diffusion
     for y in 0..size {
@@ -80,7 +84,11 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
     }
 }
 
-pub fn exec_aeolus(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_aeolus(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Stack: [ ..., angle, strength ]
     if vm.stack.len() >= 2 {
         let str_val = vm.stack.pop().unwrap();
@@ -145,7 +153,11 @@ pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opti
     None
 }
 
-pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_tsunami(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Stack: [ ..., direction, power ]
     // Applies strong wind in a cone/line from current position
     if vm.stack.len() >= 2 {
@@ -155,10 +167,10 @@ pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
         if let (Value::Int(dir), Value::Int(pow)) = (dir_val, pow_val) {
             let power = pow.clamp(1, 20) as i8;
             let (dy, dx) = match dir.rem_euclid(4) {
-                0 => (0, 1),   // E
-                1 => (1, 0),   // S
-                2 => (0, -1),  // W
-                3 => (-1, 0),  // N
+                0 => (0, 1),  // E
+                1 => (1, 0),  // S
+                2 => (0, -1), // W
+                3 => (-1, 0), // N
                 _ => (0, 0),
             };
 
@@ -167,7 +179,8 @@ pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
 
             // Linear wave for 8 cells
             for i in 0..8 {
-                if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy * i, cx as i64 + dx * i) {
+                if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy * i, cx as i64 + dx * i)
+                {
                     vm.wind_grid[ny][nx] = (dy as i8 * power, dx as i8 * power);
                     // Also push moisture
                     vm.moisture_grid[ny][nx] = vm.moisture_grid[ny][nx].saturating_add(50);
@@ -176,12 +189,15 @@ pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
             }
 
             vm.energy = vm.energy.saturating_sub(15 + power as i64);
-            vm.output.push(format!("TSUNAMI: Wave affected {} cells", affected));
+            vm.output
+                .push(format!("TSUNAMI: Wave affected {} cells", affected));
         } else {
-            vm.output.push("Error: Type mismatch for Tsunami".to_string());
+            vm.output
+                .push("Error: Type mismatch for Tsunami".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for Tsunami".to_string());
+        vm.output
+            .push("Error: Stack underflow for Tsunami".to_string());
     }
     None
 }

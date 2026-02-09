@@ -952,7 +952,8 @@ where
                                 }
                             }
                         }
-                        KeyCode::Tab => {
+                        KeyCode::Tab =>
+                        {
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 app_state.babel_focus = (app_state.babel_focus + 1) % 2;
@@ -962,7 +963,8 @@ where
                             app_state.input_mode = InputMode::Normal;
                             app_state.input_buffer.clear();
                         }
-                        KeyCode::Char(c) => {
+                        KeyCode::Char(c) =>
+                        {
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 let target = if app_state.babel_focus == 0 {
@@ -975,7 +977,8 @@ where
                                 app_state.input_buffer.push(c);
                             }
                         }
-                        KeyCode::Backspace => {
+                        KeyCode::Backspace =>
+                        {
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 let target = if app_state.babel_focus == 0 {
@@ -1303,14 +1306,20 @@ where
                         #[cfg(feature = "nova")]
                         if let ViewMode::Babel = app_state.view_mode {
                             // Run Parse
-                            vm.stack.push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
+                            vm.stack
+                                .push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
                             let _ = crate::vm::babel::exec_babel_op(
                                 vm,
                                 crate::opcode::OpCode::ParserRegex,
                                 &[],
                             );
-                            vm.stack.push(crate::vm::Value::Str(app_state.babel_input.clone()));
-                            let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
+                            vm.stack
+                                .push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                            let _ = crate::vm::babel::exec_babel_op(
+                                vm,
+                                crate::opcode::OpCode::Parse,
+                                &[],
+                            );
 
                             if let Some(res) = vm.stack.pop() {
                                 app_state.babel_result = format!("{}", res);
@@ -2663,29 +2672,44 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
         .split(f.area());
 
     let pattern_style = if app_state.babel_focus == 0 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
 
     let input_style = if app_state.babel_focus == 1 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
 
     let pattern_widget = Paragraph::new(app_state.babel_pattern.clone())
-        .block(Block::default().borders(Borders::ALL).title("Regex Pattern (Edit)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Regex Pattern (Edit)"),
+        )
         .style(pattern_style);
     f.render_widget(pattern_widget, chunks[0]);
 
     let input_widget = Paragraph::new(app_state.babel_input.clone())
-        .block(Block::default().borders(Borders::ALL).title("Test String (Edit)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Test String (Edit)"),
+        )
         .style(input_style);
     f.render_widget(input_widget, chunks[1]);
 
-    let result_widget = Paragraph::new(app_state.babel_result.clone())
-        .block(Block::default().borders(Borders::ALL).title("Match Result (Enter to Run)"));
+    let result_widget = Paragraph::new(app_state.babel_result.clone()).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Match Result (Enter to Run)"),
+    );
     f.render_widget(result_widget, chunks[2]);
 }
 
@@ -5775,7 +5799,7 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                         _ => Color::DarkGray,
                     };
                     (c.to_string(), color)
-                },
+                }
                 crate::vm::Value::Int(n) => {
                     let v = (*n).rem_euclid(36);
                     let c = if v < 10 {
@@ -5783,16 +5807,23 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     } else {
                         ((v as u8 - 10) + b'a') as char
                     };
-                    let color = if *n == 0 { Color::DarkGray } else { Color::Cyan };
+                    let color = if *n == 0 {
+                        Color::DarkGray
+                    } else {
+                        Color::Cyan
+                    };
                     (c.to_string(), color)
-                },
+                }
                 _ => ("?".to_string(), Color::White),
             };
 
             style = style.fg(base_color);
 
             if signal > 0 {
-                style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                style = style
+                    .bg(Color::White)
+                    .fg(Color::Black)
+                    .add_modifier(Modifier::BOLD);
             }
 
             if app_state.grid_cursor == (x, y) {
@@ -5831,9 +5862,8 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Shift+O to Switch Mode."),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Manual")
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Manual"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -5845,7 +5875,11 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Cosmic Strings (Vibrating Entities)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Cosmic Strings (Vibrating Entities)"),
+        )
         .x_bounds([0.0, 16.0])
         .y_bounds([0.0, 16.0])
         .paint(|ctx| {
@@ -5884,7 +5918,11 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                         y1: prev_y,
                         x2: curr_x,
                         y2: curr_y,
-                        color: if s.amplitude > 5.0 { Color::Red } else { Color::Cyan },
+                        color: if s.amplitude > 5.0 {
+                            Color::Red
+                        } else {
+                            Color::Cyan
+                        },
                     });
 
                     prev_x = curr_x;

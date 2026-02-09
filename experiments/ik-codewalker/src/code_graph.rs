@@ -1,7 +1,7 @@
+use crate::components::*;
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use rand::Rng;
-use crate::components::*;
 
 pub struct CodeGraphPlugin;
 
@@ -36,7 +36,9 @@ fn setup_code_graph(mut commands: Commands) {
         let (parent, parent_pos, depth) = queue[head];
         head += 1;
 
-        if depth >= 4 { continue; }
+        if depth >= 4 {
+            continue;
+        }
 
         let num_children = rng.gen_range(1..=3);
 
@@ -46,7 +48,7 @@ fn setup_code_graph(mut commands: Commands) {
 
         for i in 0..num_children {
             // Random angle within a cone
-            let angle_offset = rng.gen_range(-spread/2.0..spread/2.0);
+            let angle_offset = rng.gen_range(-spread / 2.0..spread / 2.0);
             let angle = base_angle + angle_offset;
 
             let length = rng.gen_range(80.0..150.0);
@@ -55,7 +57,11 @@ fn setup_code_graph(mut commands: Commands) {
             let pos = parent_pos + offset;
 
             let node_type = if depth == 3 {
-                if rng.gen_bool(0.5) { NodeType::Variable } else { NodeType::ControlFlow }
+                if rng.gen_bool(0.5) {
+                    NodeType::Variable
+                } else {
+                    NodeType::ControlFlow
+                }
             } else {
                 NodeType::Function
             };
@@ -68,7 +74,7 @@ fn setup_code_graph(mut commands: Commands) {
 
             // Draw connection line
             let shape = shapes::Line(parent_pos, pos);
-             commands.spawn((
+            commands.spawn((
                 ShapeBundle {
                     path: GeometryBuilder::build_as(&shape),
                     ..default()
@@ -94,13 +100,17 @@ fn spawn_node(commands: &mut Commands, pos: Vec2, node_type: NodeType, name: Str
         center: Vec2::ZERO,
     };
 
-    commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shape),
-            spatial: SpatialBundle::from_transform(Transform::from_translation(pos.extend(0.0))),
-            ..default()
-        },
-        Fill::color(color),
-        CodeNode { name, node_type },
-    )).id()
+    commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shape),
+                spatial: SpatialBundle::from_transform(Transform::from_translation(
+                    pos.extend(0.0),
+                )),
+                ..default()
+            },
+            Fill::color(color),
+            CodeNode { name, node_type },
+        ))
+        .id()
 }

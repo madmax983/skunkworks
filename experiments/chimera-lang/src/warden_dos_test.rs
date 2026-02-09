@@ -212,8 +212,8 @@ mod tests {
 #[cfg(feature = "nova")]
 mod ribosome_dos_tests {
     use crate::ast::{Dna, Helix, Strand};
-    use crate::vm::{ChimeraVM, Value, MAX_ORGANELLES};
     use crate::vm::nova::{Organelle, OrganelleType};
+    use crate::vm::{ChimeraVM, Value, MAX_ORGANELLES};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -264,7 +264,11 @@ mod ribosome_dos_tests {
             }
         }
 
-        assert!(vm.organelles.len() <= MAX_ORGANELLES, "Organelle count exceeded limit! Got {}", vm.organelles.len());
+        assert!(
+            vm.organelles.len() <= MAX_ORGANELLES,
+            "Organelle count exceeded limit! Got {}",
+            vm.organelles.len()
+        );
 
         // We can't easily assert the log message if the explosion didn't actually happen in the previous test run.
         // But if it *does* happen (due to correct test setup or future regression), it should be caught.

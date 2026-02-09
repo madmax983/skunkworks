@@ -98,8 +98,6 @@ pub mod nova_bestiary;
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
-pub mod nova_fluid;
-#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
@@ -125,6 +123,8 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_fluid;
+#[cfg(feature = "nova")]
 pub mod nova_garden;
 #[cfg(feature = "nova")]
 pub mod nova_gastronomy;
@@ -132,6 +132,9 @@ pub mod nova_gastronomy;
 pub mod nova_geology;
 #[cfg(feature = "nova")]
 pub mod nova_guild;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_harvest_test;
 #[cfg(feature = "nova")]
 pub mod nova_linguistics;
 #[cfg(feature = "nova")]
@@ -153,9 +156,6 @@ mod nova_optics_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_orca_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_harvest_test;
 #[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
@@ -1340,8 +1340,9 @@ impl ChimeraVM {
                                     };
                                     self.organelles.push(new_org);
                                 } else {
-                                    self.output
-                                        .push("Error: Organelle limit exceeded in Bang".to_string());
+                                    self.output.push(
+                                        "Error: Organelle limit exceeded in Bang".to_string(),
+                                    );
                                 }
                             }
                         }

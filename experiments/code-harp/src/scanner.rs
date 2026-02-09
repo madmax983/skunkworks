@@ -13,10 +13,11 @@ pub struct StringEntity {
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {
-    entry.file_name()
-         .to_str()
-         .map(|s| s.starts_with('.') || s == "target" || s == "node_modules")
-         .unwrap_or(false)
+    entry
+        .file_name()
+        .to_str()
+        .map(|s| s.starts_with('.') || s == "target" || s == "node_modules")
+        .unwrap_or(false)
 }
 
 pub fn scan_codebase(root: &str) -> Vec<StringEntity> {
@@ -24,7 +25,9 @@ pub fn scan_codebase(root: &str) -> Vec<StringEntity> {
 
     // WalkDir::new returns a builder. into_iter() gives us the iterator which has filter_entry.
     // We want to skip hidden directories entirely.
-    let walker = WalkDir::new(root).into_iter().filter_entry(|e| !is_hidden(e));
+    let walker = WalkDir::new(root)
+        .into_iter()
+        .filter_entry(|e| !is_hidden(e));
 
     // Mapping parameters: Spiral Cylinder
     let mut angle = 0.0f32;
