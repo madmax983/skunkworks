@@ -37,7 +37,6 @@ members = [
     "experiments/penrose-build",
     "experiments/luminous-flock",
     "experiments/heap-arena",
-    "experiments/lattice-hunter",
     "experiments/crate-radar",
     "experiments/quantum-garden",
     "experiments/quasicrystal-dungeon",
@@ -132,7 +131,7 @@ members = [
     "experiments/hyperbolic-lichen",
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/quantum-lexicon",
-    "experiments/chaotic-conservatory", "experiments/retinal-glitch", "experiments/retinal-chaos", "experiments/syntax-serum", "experiments/ik-codewalker", "experiments/event-horizon", "experiments/spectral-scribe", "experiments/hyperbolic-mold",
+    "experiments/chaotic-conservatory", "experiments/retinal-glitch", "experiments/retinal-chaos", "experiments/syntax-serum", "experiments/ik-codewalker", "experiments/event-horizon", "experiments/spectral-scribe", "experiments/hyperbolic-mold", "experiments/entropy-ray",
 ]
 resolver = "2"
 
