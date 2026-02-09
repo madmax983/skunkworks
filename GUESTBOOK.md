@@ -47,6 +47,13 @@
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
+### [Concentration Level: CONDEMNED] - Location: experiments/glyph-evolution
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (BPE). Lacks persona alignment. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/physarum-transit
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`).
 
 ### [Concentration Level: FRESH] - Location: experiments/cam-automaton
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
