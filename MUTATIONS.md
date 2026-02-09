@@ -538,6 +538,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Gyroscopic Orientation. The world rotates as you traverse the hyperbolic manifold to maintain user-centric "Up".
 - **Status**: experiments/hyperbolic-hell
 - **Evaluation**: Compiles. Infinite descent verified.
+
 ### quipu-chimera
 - **Parents**: experiments/quipu-symphony + experiments/chimera-lang
 - **Concept**: A visualization where ChimeraVM execution is mapped to an Incan Quipu. The DNA strand is a vertical cord. Opcodes are knots. The Program Counter (PC) is a gravity-driven playhead. Execution is sonified.
@@ -592,7 +593,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Physically simulated Enigma machine using bevy + rapier2d.
 - **Novel trait**: Cryptography as physical mechanics.
 - **Status**: experiments/cipher-clock
-- **Evaluation**: Compiles (Fixed).
+- **Evaluation**: Compiles. Fixed.
 
 ### hydro-boids
 - **Parents**: experiments/luminous-flock + experiments/primordial-soup
@@ -649,3 +650,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Observation-Dependent Reality. The retina watches the screen, and where it sees activity (spikes), the words freeze. Unobserved words drift and mutate phonemes.
 - **Status**: experiments/quantum-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+
+### hyperbolic-mold
+- **Parents**: experiments/hyperbolic-browser + experiments/physarum-transit
+- **Concept**: Slime mold particles (Physarum) navigating the Poincaré Disk using hyperbolic geometry rules, depositing pheromones on a projected map.
+- **Novel trait**: Hyperbolic Transport. Agents follow geodesics (circles on screen), but diffusion is Euclidean.
+- **Status**: experiments/hyperbolic-mold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
