@@ -33,11 +33,12 @@ async fn run_headless() -> Result<()> {
     // Radius 3 -> ~100k atoms
     let qc = math::generate_icosahedral_lattice(3);
     info!("Generated {} atoms", qc.atoms.len());
+    info!("Generated {} edges", qc.edges.len());
 
     let mut state = State::new(None, 800, 600, &qc).await;
 
-    // Position camera
-    state.camera.eye = (10.0, 10.0, 10.0).into();
+    // Position camera inside the crystal
+    state.camera.eye = (2.0, 2.0, 2.0).into();
     state.camera.target = (0.0, 0.0, 0.0).into();
     state.update();
 
@@ -58,6 +59,7 @@ async fn run_window() -> Result<()> {
     info!("Generating Quasicrystal...");
     let qc = math::generate_icosahedral_lattice(3);
     info!("Generated {} atoms", qc.atoms.len());
+    info!("Generated {} edges", qc.edges.len());
 
     let mut state = State::new(Some(window.clone()), 800, 600, &qc).await;
 
@@ -93,7 +95,7 @@ async fn run_window() -> Result<()> {
                         // Camera controls
                         let forward = (state.camera.target - state.camera.eye).normalize();
                         let right = forward.cross(state.camera.up).normalize();
-                        let speed = 1.0;
+                        let speed = 0.5; // Slower speed for detailed inspection
 
                         match keycode {
                             KeyCode::KeyW => {

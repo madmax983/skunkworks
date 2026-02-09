@@ -365,7 +365,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/quasicrystal-dungeon
 - **Scent Origin:** Genesis (The Crystallographer) ⚛️💎
-- **Status:** The projection is stable. 6D hypercube shadows frozen in 3D. The dungeon has no repeating rooms.
+- **Status:** The lattice is connected. We are walking the edges of the 6D shadow. Fog is obscuring the infinite horizon.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
