@@ -17,3 +17,8 @@
 **Concept:** A TUI puzzle game (`experiments/photon-racer`) combining cellular grid mechanics with discrete ray-tracing optics. Users place mirrors and obstacles to guide a photon to a target.
 **Fate:** Merged
 **Lesson:** Discrete ray-tracing in a TUI is surprisingly intuitive and visually satisfying. Using `locus::Vec2` for vector math simplified the reflection logic significantly.
+
+## [Nova Fluid]
+**Concept:** Implemented a fluid dynamics simulation (advection/diffusion) for the Chimera VM atmosphere, upgrading the static wind/moisture grids. Added `Tsunami` and `Dry` opcodes.
+**Fate:** Merged
+**Lesson:** Integrating continuous field simulations into a discrete cellular automata grid requires careful handling of integer math and conservation of mass (or close enough approximations).

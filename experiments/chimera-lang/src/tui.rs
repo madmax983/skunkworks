@@ -1300,26 +1300,30 @@ where
                     }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Babel = app_state.view_mode {
+                            // Run Parse
+                            vm.stack.push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
+                            let _ = crate::vm::babel::exec_babel_op(
+                                vm,
+                                crate::opcode::OpCode::ParserRegex,
+                                &[],
+                            );
+                            vm.stack.push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                            let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
+
+                            if let Some(res) = vm.stack.pop() {
+                                app_state.babel_result = format!("{}", res);
+                            } else {
+                                app_state.babel_result = "Stack Empty/Error".to_string();
+                            }
+                            continue;
+                        }
+
                         if let ViewMode::Grid = app_state.view_mode {
                             if let Some(c) = app_state.palette_char {
                                 let (x, y) = app_state.grid_cursor;
                                 vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
-                            } else if let ViewMode::Babel = app_state.view_mode {
-                                // Run Parse
-                                vm.stack.push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
-                                let _ = crate::vm::babel::exec_babel_op(
-                                    vm,
-                                    crate::opcode::OpCode::ParserRegex,
-                                    &[],
-                                );
-                                vm.stack.push(crate::vm::Value::Str(app_state.babel_input.clone()));
-                                let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
-
-                                if let Some(res) = vm.stack.pop() {
-                                    app_state.babel_result = format!("{}", res);
-                                } else {
-                                    app_state.babel_result = "Stack Empty/Error".to_string();
-                                }
                             } else {
                                 vm.step();
                             }
