@@ -1,6 +1,6 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, GRID_SIZE};
+use super::{ChimeraVM, Value, GRID_SIZE, MAX_PROJECTILES};
 use rand::Rng;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -17,6 +17,7 @@ pub struct Projectile {
 
 pub fn update_projectiles(vm: &mut ChimeraVM) {
     let mut surviving_projectiles = Vec::new();
+    let mut limit_reached = false;
 
     for mut p in std::mem::take(&mut vm.projectiles) {
         // Update position
@@ -87,32 +88,40 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
                     surviving_projectiles.push(p_center);
 
                     // 2. Left
-                    let a1 = base_angle - angle_offset;
-                    let p1 = Projectile {
-                        x: p.x,
-                        y: p.y,
-                        vx: speed * a1.cos(),
-                        vy: speed * a1.sin(),
-                        power: p.power,
-                        ttl: p.ttl,
-                        owner: p.owner,
-                        last_hit: Some((iy, ix)),
-                    };
-                    surviving_projectiles.push(p1);
+                    if surviving_projectiles.len() < MAX_PROJECTILES {
+                        let a1 = base_angle - angle_offset;
+                        let p1 = Projectile {
+                            x: p.x,
+                            y: p.y,
+                            vx: speed * a1.cos(),
+                            vy: speed * a1.sin(),
+                            power: p.power,
+                            ttl: p.ttl,
+                            owner: p.owner,
+                            last_hit: Some((iy, ix)),
+                        };
+                        surviving_projectiles.push(p1);
+                    } else {
+                        limit_reached = true;
+                    }
 
                     // 3. Right
-                    let a2 = base_angle + angle_offset;
-                    let p2 = Projectile {
-                        x: p.x,
-                        y: p.y,
-                        vx: speed * a2.cos(),
-                        vy: speed * a2.sin(),
-                        power: p.power,
-                        ttl: p.ttl,
-                        owner: p.owner,
-                        last_hit: Some((iy, ix)),
-                    };
-                    surviving_projectiles.push(p2);
+                    if surviving_projectiles.len() < MAX_PROJECTILES {
+                        let a2 = base_angle + angle_offset;
+                        let p2 = Projectile {
+                            x: p.x,
+                            y: p.y,
+                            vx: speed * a2.cos(),
+                            vy: speed * a2.sin(),
+                            power: p.power,
+                            ttl: p.ttl,
+                            owner: p.owner,
+                            last_hit: Some((iy, ix)),
+                        };
+                        surviving_projectiles.push(p2);
+                    } else {
+                        limit_reached = true;
+                    }
                     continue;
                 } else if s.starts_with("LENS:") {
                     if let Ok(pow) = s.trim_start_matches("LENS:").parse::<i64>() {
@@ -173,6 +182,11 @@ pub fn update_projectiles(vm: &mut ChimeraVM) {
         surviving_projectiles.push(p);
     }
 
+    if limit_reached {
+        vm.output
+            .push("BALLISTICS: Projectile limit reached".to_string());
+    }
+
     vm.projectiles = surviving_projectiles;
 }
 
@@ -184,6 +198,12 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let pow_val = vm.stack.pop().unwrap();
 
         if let (Value::Int(dx), Value::Int(dy), Value::Int(pow)) = (dx_val, dy_val, pow_val) {
+            if vm.projectiles.len() >= MAX_PROJECTILES {
+                vm.output
+                    .push("FIRE: Projectile limit reached".to_string());
+                return None;
+            }
+
             let (cy, cx) = vm.context_loc;
 
             // Normalize direction vector
@@ -230,7 +250,14 @@ pub fn exec_salvo(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let cnt = count.clamp(1, 8);
             let mut rng = rand::thread_rng();
 
+            let mut fired = 0;
             for _ in 0..cnt {
+                if vm.projectiles.len() >= MAX_PROJECTILES {
+                    vm.output
+                        .push("SALVO: Projectile limit reached".to_string());
+                    break;
+                }
+
                 let angle = rng.gen_range(0.0..std::f64::consts::TAU);
                 let vx = angle.cos();
                 let vy = angle.sin();
@@ -246,10 +273,11 @@ pub fn exec_salvo(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     last_hit: None,
                 };
                 vm.projectiles.push(p);
+                fired += 1;
             }
 
-            vm.energy = vm.energy.saturating_sub((5 + pow) * cnt);
-            vm.output.push(format!("SALVO: Fired {} projectiles", cnt));
+            vm.energy = vm.energy.saturating_sub((5 + pow) * fired);
+            vm.output.push(format!("SALVO: Fired {} projectiles", fired));
         } else {
             vm.output.push("Error: Type mismatch for salvo".to_string());
         }
