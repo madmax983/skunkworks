@@ -50,6 +50,14 @@
 
 ## History/Decay
 
+### [Concentration Level: CONDEMNED] - Location: experiments/lattice-hunter
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Ancestral redundancy (superseded by `lattice-brain`). Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/flesh-and-code
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `ik-codewalker`. Grace period expired. Biomass returned to the void.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/system-bonsai
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with recursive-conservatory. Biomass returned to the void.
