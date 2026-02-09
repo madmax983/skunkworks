@@ -50,9 +50,13 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/lattice-hunter
+### [Concentration Level: CONDEMNED] - Location: experiments/physarum-transit
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Ancestral redundancy (superseded by `lattice-brain`). Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/lattice-hunter
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy (superseded by `lattice-brain`).
 
 ### [Concentration Level: TOXIC] - Location: graveyard/flesh-and-code
 - **Scent Origin:** The Reaper ☠️
@@ -610,10 +614,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/babylonian-forecaster
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Cuneiform is flowing. Time series predicted in base-60.
-
-### [Concentration Level: FRESH] - Location: experiments/physarum-transit
-- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
-- **Status:** The slime mold is designing the metro. 5000 hyphal tips are optimizing the route. Parallel processing active.
 
 ### [Concentration Level: FRESH] - Location: experiments/market-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
