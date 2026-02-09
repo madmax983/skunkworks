@@ -45,8 +45,7 @@ pub fn exec_logistics(
                             .push(format!("LOGISTICS: Belt:{} at {},{}", d_str, nx, ny));
                     }
                     _ => {
-                        vm.output
-                            .push("LOGISTICS: Unknown type".to_string());
+                        vm.output.push("LOGISTICS: Unknown type".to_string());
                     }
                 }
                 vm.energy = vm.energy.saturating_sub(5);
@@ -126,7 +125,9 @@ pub fn process_logistics(vm: &mut ChimeraVM) {
     let mut processed = vec![vec![false; GRID_SIZE]; GRID_SIZE];
 
     for ((sy, sx), (ty, tx)) in moves {
-        if processed[sy][sx] { continue; } // Already moved (unlikely with this logic)
+        if processed[sy][sx] {
+            continue;
+        } // Already moved (unlikely with this logic)
 
         let target_empty = matches!(vm.grid[ty][tx], Value::Int(0));
 

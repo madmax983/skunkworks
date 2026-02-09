@@ -50,7 +50,9 @@ use strum_macros::{AsRefStr, EnumIter, EnumString};
 ///
 /// Each opcode represents a fundamental action that the organism can perform,
 /// ranging from basic arithmetic to genetic engineering and inter-dimensional travel.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, EnumString, AsRefStr, EnumIter,
+)]
 #[strum(serialize_all = "snake_case")]
 pub enum OpCode {
     /// Pushes a value onto the stack.
@@ -1294,6 +1296,12 @@ pub enum OpCode {
     /// **State:** 1=On, 0=Off.
     #[cfg(feature = "nova")]
     AutoCast,
+    /// **[Nova]** Inscribes a Ward (trap) on the current grid cell.
+    ///
+    /// **Stack:** `[ ..., persistence, strand_idx ] -> [ ... ]`
+    /// **Effect:** Writes a hidden trap that triggers the strand when stepped on.
+    #[cfg(feature = "nova")]
+    Ward,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -1763,6 +1771,22 @@ pub enum OpCode {
     /// **Stack:** `[ ..., permit_str ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Permit,
+
+    /// **[Nova]** Draws a Fate Card (Arcana) from the deck.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., card_id ]`
+    #[cfg(feature = "nova")]
+    Draw,
+    /// **[Nova]** Checks the currently active Fate Card.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., card_id ]`
+    #[cfg(feature = "nova")]
+    Fate,
+    /// **[Nova]** Shuffles the Fate Deck.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Shuffle,
 
     /// Unknown or invalid instruction.
     #[strum(default)]

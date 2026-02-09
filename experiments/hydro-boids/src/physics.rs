@@ -41,10 +41,10 @@ pub struct FluidSolver {
     pub height: f32,
 
     // SPH Constants
-    pub h: f32,             // Smoothing radius
-    pub rest_density: f32,  // Target density
-    pub k: f32,             // Gas constant (pressure multiplier)
-    pub mu: f32,            // Viscosity coefficient
+    pub h: f32,            // Smoothing radius
+    pub rest_density: f32, // Target density
+    pub k: f32,            // Gas constant (pressure multiplier)
+    pub mu: f32,           // Viscosity coefficient
 
     // Boid Constants
     pub view_radius: f32,
@@ -125,7 +125,9 @@ impl FluidSolver {
             let mut fy = 0.0;
 
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;
                 let r2 = dx * dx + dy * dy;
@@ -135,7 +137,7 @@ impl FluidSolver {
 
                     // Pressure Force
                     let force_pressure = (self.particles[i].pressure + self.particles[j].pressure)
-                                       / (2.0 * self.particles[j].rho);
+                        / (2.0 * self.particles[j].rho);
                     let grad = spiky_grad_coeff * (self.h - r).powi(2);
                     let f_p = -force_pressure * grad;
 
@@ -180,13 +182,17 @@ impl FluidSolver {
             let mut count = 0;
 
             for j in 0..n {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 // Boids interact with other Boids for flocking
-                if self.particles[j].species != Species::Boid { continue; }
+                if self.particles[j].species != Species::Boid {
+                    continue;
+                }
 
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;
-                let d2 = dx*dx + dy*dy;
+                let d2 = dx * dx + dy * dy;
 
                 if d2 < view_radius_sq && d2 > 0.0 {
                     let d = d2.sqrt();
@@ -212,7 +218,7 @@ impl FluidSolver {
 
                 // Average and Normalize
                 if sep.0 != 0.0 || sep.1 != 0.0 {
-                    let len = (sep.0*sep.0 + sep.1*sep.1).sqrt();
+                    let len = (sep.0 * sep.0 + sep.1 * sep.1).sqrt();
                     sep.0 = (sep.0 / len) * self.max_speed;
                     sep.1 = (sep.1 / len) * self.max_speed;
                     // Steering = Desired - Velocity
@@ -222,7 +228,7 @@ impl FluidSolver {
 
                 ali.0 /= count_f;
                 ali.1 /= count_f;
-                let ali_len = (ali.0*ali.0 + ali.1*ali.1).sqrt();
+                let ali_len = (ali.0 * ali.0 + ali.1 * ali.1).sqrt();
                 if ali_len > 0.0 {
                     ali.0 = (ali.0 / ali_len) * self.max_speed;
                     ali.1 = (ali.1 / ali_len) * self.max_speed;
@@ -235,7 +241,7 @@ impl FluidSolver {
                 // Vector to target
                 coh.0 -= self.particles[i].x;
                 coh.1 -= self.particles[i].y;
-                let coh_len = (coh.0*coh.0 + coh.1*coh.1).sqrt();
+                let coh_len = (coh.0 * coh.0 + coh.1 * coh.1).sqrt();
                 if coh_len > 0.0 {
                     coh.0 = (coh.0 / coh_len) * self.max_speed;
                     coh.1 = (coh.1 / coh_len) * self.max_speed;
@@ -246,7 +252,7 @@ impl FluidSolver {
 
             // Limit forces
             let limit = |vx: f32, vy: f32, max: f32| {
-                let len = (vx*vx + vy*vy).sqrt();
+                let len = (vx * vx + vy * vy).sqrt();
                 if len > max {
                     (vx / len * max, vy / len * max)
                 } else {
@@ -259,8 +265,12 @@ impl FluidSolver {
             let (coh_x, coh_y) = limit(coh.0, coh.1, self.max_force);
 
             steering_forces[i] = (
-                sep_x * self.separation_weight + ali_x * self.alignment_weight + coh_x * self.cohesion_weight,
-                sep_y * self.separation_weight + ali_y * self.alignment_weight + coh_y * self.cohesion_weight
+                sep_x * self.separation_weight
+                    + ali_x * self.alignment_weight
+                    + coh_x * self.cohesion_weight,
+                sep_y * self.separation_weight
+                    + ali_y * self.alignment_weight
+                    + coh_y * self.cohesion_weight,
             );
         }
 
@@ -281,8 +291,9 @@ impl FluidSolver {
             p.vy *= 0.98;
 
             // Limit speed
-            let speed = (p.vx*p.vx + p.vy*p.vy).sqrt();
-            if speed > self.max_speed * 2.0 { // Allow bursts
+            let speed = (p.vx * p.vx + p.vy * p.vy).sqrt();
+            if speed > self.max_speed * 2.0 {
+                // Allow bursts
                 p.vx = (p.vx / speed) * self.max_speed * 2.0;
                 p.vy = (p.vy / speed) * self.max_speed * 2.0;
             }
@@ -291,8 +302,12 @@ impl FluidSolver {
             p.y += p.vy * dt;
 
             // Boundaries (Wrap around for X, Bounce for Y)
-            if p.x < 0.0 { p.x = self.width; }
-            if p.x > self.width { p.x = 0.0; }
+            if p.x < 0.0 {
+                p.x = self.width;
+            }
+            if p.x > self.width {
+                p.x = 0.0;
+            }
 
             if p.y < 0.0 {
                 p.y = 0.0;

@@ -357,9 +357,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`.
 
-### [Concentration Level: FRESH] - Location: experiments/code-canyon
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
-- **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+- **Status:** Hydraulic and Thermal erosion active. Sediment is colored by syntax. The mountains are melting into data-rich valleys.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/struct-soup
 - **Scent Origin:** The Reaper ☠️
@@ -778,3 +778,13 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/cipher-clock
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
+
+### [Concentration Level: FRESH] - Location: experiments/ik-codewalker
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The arm is reaching. Lazy CCD solver active. The parser is walking the syntax tree physically.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/biophysical-synth
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.

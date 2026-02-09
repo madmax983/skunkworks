@@ -71,11 +71,16 @@ pub fn exec_sow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         if let (Value::Int(id), Value::Str(rule_str)) = (id_val, rule_val) {
             if let Some((b, s)) = parse_life_rule(&rule_str) {
-                let rule = Rule { birth: b, survival: s };
+                let rule = Rule {
+                    birth: b,
+                    survival: s,
+                };
                 vm.garden.rules.insert(id, rule);
-                vm.output.push(format!("SOW: Species {} rule set to {}", id, rule_str));
+                vm.output
+                    .push(format!("SOW: Species {} rule set to {}", id, rule_str));
             } else {
-                vm.output.push(format!("SOW: Invalid rule format '{}'", rule_str));
+                vm.output
+                    .push(format!("SOW: Invalid rule format '{}'", rule_str));
             }
         } else {
             vm.output.push("Error: Type mismatch for sow".to_string());
@@ -109,10 +114,12 @@ pub fn exec_harvest(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.stack.push(Value::Str("".to_string()));
             }
         } else {
-            vm.output.push("Error: Type mismatch for harvest".to_string());
+            vm.output
+                .push("Error: Type mismatch for harvest".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for harvest".to_string());
+        vm.output
+            .push("Error: Stack underflow for harvest".to_string());
     }
     None
 }
@@ -135,7 +142,9 @@ pub fn exec_evolve(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             for dy in -1..=1 {
                 for dx in -1..=1 {
-                    if dy == 0 && dx == 0 { continue; }
+                    if dy == 0 && dx == 0 {
+                        continue;
+                    }
                     if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                         if let Value::Int(n) = vm.grid[ny][nx] {
                             if n > 0 {

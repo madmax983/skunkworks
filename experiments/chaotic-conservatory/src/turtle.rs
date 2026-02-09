@@ -1,5 +1,5 @@
+use crate::attractor::{lorenz_velocity, LorenzParams};
 use macroquad::prelude::*;
-use crate::attractor::{LorenzParams, lorenz_velocity};
 
 #[derive(Clone, Copy)]
 pub struct TurtleState {
@@ -15,7 +15,7 @@ pub struct ChaoticTurtle {
     pub lines: Vec<(Vec3, Vec3, Color)>, // Start, End, Color
     params: LorenzParams,
     flow_influence: f32, // How much the attractor affects direction (0.0 to 1.0)
-    step_size: f32, // Simulation step size
+    step_size: f32,      // Simulation step size
 }
 
 impl ChaoticTurtle {
@@ -51,11 +51,15 @@ impl ChaoticTurtle {
 
             // Blend heading with flow
             if flow.length_squared() > 0.0 {
-                self.state.heading = self.state.heading.lerp(flow, self.flow_influence).normalize();
+                self.state.heading = self
+                    .state
+                    .heading
+                    .lerp(flow, self.flow_influence)
+                    .normalize();
                 // Re-orthogonalize up vector
                 let right = self.state.heading.cross(self.state.up).normalize_or_zero();
                 if right.length_squared() > 0.0 {
-                     self.state.up = right.cross(self.state.heading).normalize();
+                    self.state.up = right.cross(self.state.heading).normalize();
                 }
             }
 

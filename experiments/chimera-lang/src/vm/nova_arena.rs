@@ -117,7 +117,10 @@ impl ArenaState {
                             dmg_out += 5 + (gladiator.stats.attack / 2);
                             action_desc = format!("uses {}", op);
                         }
-                        OpCode::Consume | OpCode::Photosynthesize | OpCode::Banquet | OpCode::Savor => {
+                        OpCode::Consume
+                        | OpCode::Photosynthesize
+                        | OpCode::Banquet
+                        | OpCode::Savor => {
                             heal_out += 2;
                             action_desc = format!("uses {}", op);
                         }
@@ -137,9 +140,10 @@ impl ArenaState {
 
             // Apply self heal
             if heal > 0 {
-                 let gladiator = &mut self.combatants[i];
-                 gladiator.stats.hp = (gladiator.stats.hp + heal).min(gladiator.stats.max_hp);
-                 self.logs.push_back(format!("{} heals for {}.", attacker_name, heal));
+                let gladiator = &mut self.combatants[i];
+                gladiator.stats.hp = (gladiator.stats.hp + heal).min(gladiator.stats.max_hp);
+                self.logs
+                    .push_back(format!("{} heals for {}.", attacker_name, heal));
             }
 
             // Deal damage to opponent (assuming 1v1 for now, targeting index 1-i)
@@ -156,10 +160,14 @@ impl ArenaState {
             let actual_damage = (raw_damage - (defense / 2)).max(1);
 
             target.stats.hp -= actual_damage;
-            self.logs.push_back(format!("{} {}! {} takes {} dmg.", attacker, action, target.name, actual_damage));
+            self.logs.push_back(format!(
+                "{} {}! {} takes {} dmg.",
+                attacker, action, target.name, actual_damage
+            ));
 
             if target.stats.hp <= 0 {
-                self.logs.push_back(format!("{} has been defeated!", target.name));
+                self.logs
+                    .push_back(format!("{} has been defeated!", target.name));
             }
         }
 
@@ -174,9 +182,9 @@ impl ArenaState {
             self.winner = Some(alive[0].name.clone());
             self.logs.push_back(format!("WINNER: {}!", alive[0].name));
         } else if alive.is_empty() {
-             self.active = false;
-             self.winner = None;
-             self.logs.push_back("DRAW! Everyone died.".to_string());
+            self.active = false;
+            self.winner = None;
+            self.logs.push_back("DRAW! Everyone died.".to_string());
         }
     }
 }

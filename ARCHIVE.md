@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **heap-auction**: Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **biophysical-synth**: Specimen condemned. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
