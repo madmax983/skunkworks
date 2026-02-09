@@ -493,6 +493,10 @@
 
 ## History/Decay
 
+### [Concentration Level: CONDEMNED] - Location: experiments/log-landscape
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (heightmap). Redundant with `git-landscape`. Grace period: 24h.
+
 ### [Concentration Level: CONDEMNED] - Location: experiments/flesh-and-code
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
