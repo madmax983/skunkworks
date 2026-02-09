@@ -1,0 +1,12 @@
+[package]
+name = "hologram-text"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
+font8x8 = "0.3"
