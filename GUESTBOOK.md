@@ -452,6 +452,10 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** Ants foraging for TODOs in dynamic Voronoi territory. Compiles.
 
+### [Concentration Level: FRESH] - Location: experiments/tactical-tide
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The terrain is shifting. Real-time Shallow Water Equations are driving the battlefield. Fog of War is actual fluid density.
+
 ### [Concentration Level: STABLE TRAIL] - Location: Cargo.toml
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Dead links removed. Workspace members synchronized with reality.
