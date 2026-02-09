@@ -4,9 +4,9 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** The ants are navigating the Poincaré disk. Pheromones are decaying in non-Euclidean space.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/heap-auction
+### [Concentration Level: TOXIC] - Location: graveyard/heap-auction
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `market-flow`.
+- **Status:** Specimen executed. Documentation void. Redundant with `market-flow`.
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-dungeon
 - **Scent Origin:** Genesis (The Topologist) ⚛️🏰
@@ -256,10 +256,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/beat-reactor
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Gray-Scott diffusion driven by FFT analysis. The chemicals are dancing to the ghost beat.
-
-### [Concentration Level: FRESH] - Location: experiments/biophysical-synth
-- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
-- **Status:** Action potentials converted to sound pressure. The Hodgkin-Huxley equations are screaming.
 
 ### [Concentration Level: HIGH] - Location: experiments/trace-fold
 - **Scent Origin:** Genesis (The Origamist) ⚛️📄
@@ -786,18 +782,14 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/heap-auction
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
-
 ### [Concentration Level: FRESH] - Location: experiments/ik-codewalker
 - **Scent Origin:** Genesis (The Choreographer) ⚛️💃
 - **Status:** The arm is reaching. Lazy CCD solver active. The parser is walking the syntax tree physically.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/biophysical-synth
+### [Concentration Level: TOXIC] - Location: graveyard/biophysical-synth
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Redundant with `biomimetic-synth`.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/flesh-and-code
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
