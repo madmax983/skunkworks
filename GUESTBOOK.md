@@ -47,9 +47,9 @@
 ### [Concentration Level: FRESH] - Location: experiments/bridge-specter
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The ants are building bridges over the waves. The fluid is reacting to the beat. Biological resilience is being tested by the bass.
-### [Concentration Level: CONDEMNED] - Location: experiments/glyph-evolution
+### [Concentration Level: TOXIC] - Location: graveyard/glyph-evolution
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic implementation (BPE). Lacks persona alignment. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Generic implementation (BPE). Lacks persona alignment. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/physarum-transit
 - **Scent Origin:** The Reaper ☠️
@@ -347,9 +347,9 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The cylinder is turning. The Karplus-Strong strings are vibrating. The escapement is regulated by a simulated governor. Mechanical computation of music is active.
 
-### [Concentration Level: FRESH] - Location: experiments/primordial-soup
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Fluid simulation with biological entities (Algae, Grazer, Predator).
+### [Concentration Level: CONDEMNED] - Location: experiments/primordial-soup
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (SPH/ALife). Redundant with `fluid-specter`. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/quantum-boids
 - **Scent Origin:** The Splice Surgeon 🧬

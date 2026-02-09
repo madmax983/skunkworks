@@ -71,7 +71,6 @@ members = [
     "experiments/firefly-synapse",
     "experiments/chimera-market",
     "experiments/compost-chimera",
-    "experiments/glyph-evolution",
     "experiments/penrose-genes", 
     "experiments/seismic-lure", 
     "experiments/syntax-garden", 
