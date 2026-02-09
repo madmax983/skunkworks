@@ -38,6 +38,8 @@ pub struct LorenzParams {
     pub sigma: f32,
     pub rho: f32,
     pub beta: f32,
+    pub jitter: f32,
+    pub color_shift: f32,
 }
 
 impl Default for LorenzParams {
@@ -46,6 +48,8 @@ impl Default for LorenzParams {
             sigma: SIGMA_BASE,
             rho: RHO_BASE,
             beta: BETA_VAL,
+            jitter: 0.0,
+            color_shift: 0.0,
         }
     }
 }
@@ -53,6 +57,7 @@ impl Default for LorenzParams {
 pub struct SystemMonitor {
     sys: System,
     pub params: LorenzParams,
+    last_update: f64,
 }
 
 impl Default for SystemMonitor {
@@ -71,10 +76,17 @@ impl SystemMonitor {
         Self {
             sys,
             params: LorenzParams::default(),
+            last_update: 0.0,
         }
     }
 
     pub fn update(&mut self) {
+        let now = get_time();
+        if now - self.last_update < 1.0 {
+            return;
+        }
+        self.last_update = now;
+
         self.sys.refresh_cpu();
         self.sys.refresh_memory();
 
@@ -102,6 +114,24 @@ impl SystemMonitor {
 
         // Beta: 8/3 ~ 2.66
         self.params.beta = BETA_VAL;
+
+        // Swap -> Jitter
+        let total_swap = self.sys.total_swap() as f32;
+        let used_swap = self.sys.used_swap() as f32;
+        let swap_usage = if total_swap > 0.0 {
+            used_swap / total_swap
+        } else {
+            0.0
+        };
+        self.params.jitter = swap_usage * 0.5; // Max 0.5 jitter
+
+        // Load Avg -> Color Shift
+        // Load Avg is usually 0 to N (cores). Normalize somewhat?
+        // Let's take 1 min load avg.
+        let load = System::load_average();
+        let load_val = load.one as f32;
+        // Assume load > 4.0 is high
+        self.params.color_shift = (load_val / 4.0).clamp(0.0, 1.0);
     }
 }
 
@@ -129,7 +159,8 @@ impl Simulation {
     }
 
     pub fn reset(&mut self) {
-        self.particles.par_iter_mut().for_each(|p| {
+        // Reset single-threaded to avoid rand concurrency issues
+        self.particles.iter_mut().for_each(|p| {
             *p = Particle::random();
         });
     }
@@ -138,7 +169,20 @@ impl Simulation {
 pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f32) {
     particles.par_iter_mut().for_each(|p| {
         // RK4 Integration
-        let next_pos = solve_rk4(p.pos, params, dt);
+        let mut next_pos = solve_rk4(p.pos, params, dt);
+
+        // Jitter (Swap usage)
+        if params.jitter > 0.01 {
+            // Deterministic noise based on position to avoid non-thread-safe RNG
+            let noise = ((p.pos.x * 12.9898 + p.pos.y * 78.233).sin() * 43758.5453).fract();
+            let noise2 = ((p.pos.y * 12.9898 + p.pos.z * 78.233).sin() * 43758.5453).fract();
+            let noise3 = ((p.pos.z * 12.9898 + p.pos.x * 78.233).sin() * 43758.5453).fract();
+
+            next_pos.x += (noise - 0.5) * params.jitter;
+            next_pos.y += (noise2 - 0.5) * params.jitter;
+            next_pos.z += (noise3 - 0.5) * params.jitter;
+        }
+
         let diff = next_pos - p.pos;
 
         p.pos = next_pos;
@@ -154,9 +198,14 @@ pub fn update_particles(particles: &mut [Particle], params: &LorenzParams, dt: f
         // Typical speed in Lorenz is around 10-50
         let t = (speed / 50.0).clamp(0.0, 1.0);
 
+        // Load Avg influences color shift (Hue shift simulation)
+        // Shift t by params.color_shift
+        let shifted_t = (t + params.color_shift).fract(); // Cycle through
+
         // Simple heatmap: Blue (slow) -> Red (fast)
         // R = t, G = 0, B = 1-t
-        p.color = Color::new(t, 0.2, 1.0 - t, 0.6);
+        // With shift:
+        p.color = Color::new(shifted_t, 0.2, 1.0 - shifted_t, 0.6);
     });
 }
 

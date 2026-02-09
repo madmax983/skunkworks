@@ -67,6 +67,12 @@ struct ResonanceWrite {
     amp: f32,
 }
 
+struct EntropyWrite {
+    y: usize,
+    x: usize,
+    val: i64,
+}
+
 struct MutationRequest {
     strand_idx: usize,
 }
@@ -84,6 +90,7 @@ struct SignalContext {
     dna_writes: Vec<DnaWrite>,
     dna_appends: Vec<DnaAppend>,
     resonance_writes: Vec<ResonanceWrite>,
+    entropy_writes: Vec<EntropyWrite>,
     mutation_requests: Vec<MutationRequest>,
     #[cfg(feature = "biophysics")]
     neuron_stimuli: Vec<NeuronStimulus>,
@@ -99,6 +106,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         dna_writes: Vec::new(),
         dna_appends: Vec::new(),
         resonance_writes: Vec::new(),
+        entropy_writes: Vec::new(),
         mutation_requests: Vec::new(),
         #[cfg(feature = "biophysics")]
         neuron_stimuli: Vec::new(),
@@ -227,6 +235,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
                 'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
                 'H' | 'h' => exec_harvest(vm, y, x, signal, &mut ctx),
+                'F' | 'f' => exec_flux(vm, y, x, signal, &mut ctx),
+                'J' | 'j' => exec_jam(vm, y, x, signal, &mut ctx),
                 ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
                 ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
                 '?' => exec_random(vm, y, x, &mut ctx),
@@ -272,7 +282,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 3. Update Signal State
     vm.signal_grid = ctx.next_signals;
 
-    // 3.5 Apply Resonance & Mutations
+    // 3.5 Apply Resonance, Entropy & Mutations
     for w in ctx.resonance_writes {
         vm.resonance_grid[w.y][w.x] = (w.freq, w.amp);
     }
@@ -288,6 +298,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             neuron.i_inj += s.amount;
             vm.neurons.insert(coord, neuron);
         }
+    }
+  
+    for w in ctx.entropy_writes {
+        vm.entropy_grid[w.y][w.x] = vm.entropy_grid[w.y][w.x].saturating_add(w.val).clamp(0, 100);
     }
 
     for req in ctx.mutation_requests {
@@ -673,6 +687,34 @@ where
                 x: sx,
                 val: Value::Str(val_to_char(res).to_string()),
             });
+        }
+    }
+}
+
+fn exec_flux(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if let Some(amount) = peek(vm, y, x, 0, -1) {
+        if signal > 0 {
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.entropy_writes.push(EntropyWrite {
+                    y: sy,
+                    x: sx,
+                    val: amount,
+                });
+            }
+        }
+    }
+}
+
+fn exec_jam(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if let Some(amount) = peek(vm, y, x, 0, -1) {
+        if signal > 0 {
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.entropy_writes.push(EntropyWrite {
+                    y: sy,
+                    x: sx,
+                    val: -amount,
+                });
+            }
         }
     }
 }

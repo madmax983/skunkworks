@@ -88,37 +88,38 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             vm.output.push("SILICON: Conducted one step".to_string());
         }
         OpCode::Wire => {
-            // stack: y, x (top)
-            if vm.stack.len() >= 2 {
+            // Fallback to context_loc if stack empty
+            let (y, x) = if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Int(1); // Conductor
-                    }
+                    (y, x)
                 } else {
-                    vm.output.push("Error: Type mismatch for wire".to_string());
+                    (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for wire".to_string());
+                (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            };
+
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                vm.grid[ny][nx] = Value::Int(1); // Conductor
             }
         }
         OpCode::Pulse => {
-            // stack: y, x (top)
-            if vm.stack.len() >= 2 {
+            let (y, x) = if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Int(2); // Electron Head
-                    }
+                    (y, x)
                 } else {
-                    vm.output.push("Error: Type mismatch for pulse".to_string());
+                    (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for pulse".to_string());
+                (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            };
+
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                vm.grid[ny][nx] = Value::Int(2); // Head
             }
         }
         OpCode::Silicon => {
@@ -128,147 +129,180 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 .push(format!("SILICON: Auto-conduction {}", status));
         }
         OpCode::Construct => {
-            // stack: type, dir, y, x (top)
-            if vm.stack.len() >= 4 {
+            // Check args first (from Trace)
+            let (t, d, y, x) = if _args.len() >= 2 {
+                let t = match &_args[0] {
+                    Nucleotide::Number(n) => *n,
+                    _ => 0,
+                };
+                let d = match &_args[1] {
+                    Nucleotide::Number(n) => *n,
+                    _ => 0,
+                };
+                (
+                    t,
+                    d,
+                    vm.context_loc.0 as i64,
+                    vm.context_loc.1 as i64,
+                )
+            } else if vm.stack.len() >= 4 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 let dir_val = vm.stack.pop().unwrap();
                 let type_val = vm.stack.pop().unwrap();
-
                 if let (Value::Int(t), Value::Int(d), Value::Int(y), Value::Int(x)) =
                     (type_val, dir_val, y_val, x_val)
                 {
-                    let type_str = match t {
-                        0 => "AND",
-                        1 => "OR",
-                        2 => "XOR",
-                        3 => "NAND",
-                        4 => "NOT",
-                        _ => "AND",
-                    };
-                    let dir_idx = d.rem_euclid(4);
-                    let s = format!("G:{}:{}", type_str, dir_idx);
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Str(s);
-                        vm.output.push(format!(
-                            "CONSTRUCT: {} gate facing {} at {},{}",
-                            type_str, dir_idx, nx, ny
-                        ));
-                    } else {
-                        vm.output
-                            .push("Error: Coordinates out of bounds for construct".to_string());
-                    }
+                    (t, d, y, x)
                 } else {
-                    vm.output
-                        .push("Error: Type mismatch for construct".to_string());
+                    (0, 0, 0, 0)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for construct".to_string());
+                (0, 0, -1, -1) // Invalid
+            };
+
+            if y != -1 {
+                let type_str = match t {
+                    0 => "AND",
+                    1 => "OR",
+                    2 => "XOR",
+                    3 => "NAND",
+                    4 => "NOT",
+                    _ => "AND",
+                };
+                let dir_idx = d.rem_euclid(4);
+                let s = format!("G:{}:{}", type_str, dir_idx);
+                if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                    vm.grid[ny][nx] = Value::Str(s);
+                    vm.output.push(format!(
+                        "CONSTRUCT: {} gate facing {} at {},{}",
+                        type_str, dir_idx, nx, ny
+                    ));
+                }
             }
         }
         OpCode::LogicGate => {
-            // Manual placement logic if needed, or introspection
-            // For now, no-op or placeholder
+            // Placeholder
         }
         OpCode::PinIn => {
-            // stack: y, x (top)
-            if vm.stack.len() >= 2 {
+            let (y, x) = if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Str("PIN:IN".to_string());
-                        vm.output.push(format!("PIN_IN: Created at {},{}", nx, ny));
-                    }
+                    (y, x)
                 } else {
-                    vm.output
-                        .push("Error: Type mismatch for pin_in".to_string());
+                    (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for pin_in".to_string());
+                (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            };
+
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                vm.grid[ny][nx] = Value::Str("PIN:IN".to_string());
+                vm.output.push(format!("PIN_IN: Created at {},{}", nx, ny));
             }
         }
         OpCode::PinOut => {
-            // stack: y, x (top)
-            if vm.stack.len() >= 2 {
+            let (y, x) = if vm.stack.len() >= 2 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Str("PIN:OUT".to_string());
-                        vm.output.push(format!("PIN_OUT: Created at {},{}", nx, ny));
-                    }
+                    (y, x)
                 } else {
-                    vm.output
-                        .push("Error: Type mismatch for pin_out".to_string());
+                    (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
                 }
             } else {
+                (vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            };
+
+            if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                vm.grid[ny][nx] = Value::Str("PIN:OUT".to_string());
                 vm.output
-                    .push("Error: Stack underflow for pin_out".to_string());
+                    .push(format!("PIN_OUT: Created at {},{}", nx, ny));
             }
         }
         OpCode::Emitter => {
-            // stack: freq, y, x (top)
-            if vm.stack.len() >= 3 {
+            let (f, y, x) = if _args.len() >= 1 {
+                let f = match &_args[0] {
+                    Nucleotide::Number(n) => *n,
+                    _ => 1,
+                };
+                (f, vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            } else if vm.stack.len() >= 3 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 let freq_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x), Value::Int(f)) = (y_val, x_val, freq_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Str(format!("EMIT:{}:0", f.max(1)));
-                        vm.output.push(format!("EMITTER: Created at {},{}", nx, ny));
-                    }
+                    (f, y, x)
                 } else {
-                    vm.output
-                        .push("Error: Type mismatch for emitter".to_string());
+                    (1, -1, -1)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for emitter".to_string());
+                (1, -1, -1)
+            };
+
+            if y != -1 {
+                if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                    vm.grid[ny][nx] = Value::Str(format!("EMIT:{}:0", f.max(1)));
+                    vm.output.push(format!("EMITTER: Created at {},{}", nx, ny));
+                }
             }
         }
         OpCode::Receiver => {
-            // stack: strand_idx, y, x (top)
-            if vm.stack.len() >= 3 {
+            let (s, y, x) = if _args.len() >= 1 {
+                let s = match &_args[0] {
+                    Nucleotide::Number(n) => *n,
+                    _ => 0,
+                };
+                (s, vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            } else if vm.stack.len() >= 3 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 let s_val = vm.stack.pop().unwrap();
                 if let (Value::Int(y), Value::Int(x), Value::Int(s)) = (y_val, x_val, s_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        vm.grid[ny][nx] = Value::Str(format!("RECV:{}", s));
-                        vm.output
-                            .push(format!("RECEIVER: Created at {},{}", nx, ny));
-                    }
+                    (s, y, x)
                 } else {
-                    vm.output
-                        .push("Error: Type mismatch for receiver".to_string());
+                    (0, -1, -1)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for receiver".to_string());
+                (0, -1, -1)
+            };
+
+            if y != -1 {
+                if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                    vm.grid[ny][nx] = Value::Str(format!("RECV:{}", s));
+                    vm.output
+                        .push(format!("RECEIVER: Created at {},{}", nx, ny));
+                }
             }
         }
         OpCode::Latch => {
-            // stack: state, y, x (top)
-            if vm.stack.len() >= 3 {
+            let (state, y, x) = if _args.len() >= 1 {
+                let s = match &_args[0] {
+                    Nucleotide::Number(n) => *n,
+                    _ => 0,
+                };
+                (s, vm.context_loc.0 as i64, vm.context_loc.1 as i64)
+            } else if vm.stack.len() >= 3 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
-                let state_val = vm.stack.pop().unwrap();
-                if let (Value::Int(y), Value::Int(x), Value::Int(s)) = (y_val, x_val, state_val) {
-                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
-                        let state = if s != 0 { 1 } else { 0 };
-                        vm.grid[ny][nx] = Value::Str(format!("LATCH:{}", state));
-                        vm.output
-                            .push(format!("LATCH: Created at {},{} state {}", nx, ny, state));
-                    }
+                let s_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x), Value::Int(s)) = (y_val, x_val, s_val) {
+                    (s, y, x)
                 } else {
-                    vm.output.push("Error: Type mismatch for latch".to_string());
+                    (0, -1, -1)
                 }
             } else {
-                vm.output
-                    .push("Error: Stack underflow for latch".to_string());
+                (0, -1, -1)
+            };
+
+            if y != -1 {
+                if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                    let s = if state != 0 { 1 } else { 0 };
+                    vm.grid[ny][nx] = Value::Str(format!("LATCH:{}", s));
+                    vm.output
+                        .push(format!("LATCH: Created at {},{} state {}", nx, ny, s));
+                }
             }
         }
         OpCode::DAC => {
@@ -332,8 +366,270 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     .push("Error: Stack underflow or type mismatch for ADC".to_string());
             }
         }
+        OpCode::Trace => {
+            // stack: y, x (top)
+            if vm.stack.len() >= 2 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        let strand_idx = trace_circuit(vm, ny, nx);
+                        vm.stack.push(Value::Int(strand_idx as i64));
+                        vm.output.push(format!(
+                            "TRACE: Compiled circuit at {},{} to strand {}",
+                            nx, ny, strand_idx
+                        ));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for trace".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for trace".to_string());
+            }
+        }
+        OpCode::Fabricate => {
+            // stack: strand_idx, y, x (top)
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let s_val = vm.stack.pop().unwrap();
+                if let (Value::Int(s), Value::Int(y), Value::Int(x)) = (s_val, y_val, x_val) {
+                    let s_idx = s as usize;
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        fabricate_circuit(vm, s_idx, ny, nx);
+                        vm.output.push(format!(
+                            "FABRICATE: Built circuit from strand {} at {},{}",
+                            s_idx, nx, ny
+                        ));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for fabricate".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for fabricate".to_string());
+            }
+        }
         _ => {}
     }
+}
+
+fn is_silicon_component(val: &Value) -> bool {
+    match val {
+        Value::Int(n) if *n >= 1 && *n <= 3 => true,
+        Value::Str(s) => {
+            s.starts_with("G:")
+                || s.starts_with("PIN")
+                || s.starts_with("EMIT")
+                || s.starts_with("RECV")
+                || s.starts_with("LATCH")
+        }
+        _ => false,
+    }
+}
+
+fn trace_circuit(vm: &mut ChimeraVM, start_y: usize, start_x: usize) -> usize {
+    let mut genes = Vec::new();
+    let mut visited = std::collections::HashSet::new();
+
+    // Recursive DFS helper
+    fn visit(
+        vm: &ChimeraVM,
+        y: usize,
+        x: usize,
+        visited: &mut std::collections::HashSet<(usize, usize)>,
+        genes: &mut Vec<crate::ast::Gene>,
+    ) {
+        visited.insert((y, x));
+
+        // 1. Identify Component and add OpCode
+        let val = &vm.grid[y][x];
+        match val {
+            Value::Int(1) => genes.push(crate::ast::Gene {
+                op: OpCode::Wire,
+                args: vec![],
+            }),
+            Value::Int(2) => genes.push(crate::ast::Gene {
+                op: OpCode::Pulse,
+                args: vec![],
+            }),
+            Value::Int(3) => genes.push(crate::ast::Gene {
+                op: OpCode::Wire,
+                args: vec![],
+            }), // Tail -> Wire
+            Value::Str(s) => {
+                if s == "PIN:IN" {
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::PinIn,
+                        args: vec![],
+                    });
+                } else if s == "PIN:OUT" {
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::PinOut,
+                        args: vec![],
+                    });
+                } else if s.starts_with("G:") {
+                    let parts: Vec<&str> = s.split(':').collect();
+                    if parts.len() == 3 {
+                        let type_map = match parts[1] {
+                            "AND" => 0,
+                            "OR" => 1,
+                            "XOR" => 2,
+                            "NAND" => 3,
+                            "NOT" => 4,
+                            _ => 0,
+                        };
+                        let dir = parts[2].parse::<i64>().unwrap_or(0);
+                        genes.push(crate::ast::Gene {
+                            op: OpCode::Construct,
+                            args: vec![
+                                crate::ast::Nucleotide::Number(type_map),
+                                crate::ast::Nucleotide::Number(dir),
+                            ],
+                        });
+                    }
+                } else if s.starts_with("EMIT:") {
+                    let parts: Vec<&str> = s.split(':').collect();
+                    if parts.len() >= 2 {
+                        let freq = parts[1].parse::<i64>().unwrap_or(1);
+                        genes.push(crate::ast::Gene {
+                            op: OpCode::Emitter,
+                            args: vec![crate::ast::Nucleotide::Number(freq)],
+                        });
+                    }
+                } else if s.starts_with("RECV:") {
+                    let s_idx = s.trim_start_matches("RECV:").parse::<i64>().unwrap_or(0);
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Receiver,
+                        args: vec![crate::ast::Nucleotide::Number(s_idx)],
+                    });
+                } else if s.starts_with("LATCH:") {
+                    let state = s.trim_start_matches("LATCH:").parse::<i64>().unwrap_or(0);
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Latch,
+                        args: vec![crate::ast::Nucleotide::Number(state)],
+                    });
+                }
+            }
+            _ => {}
+        }
+
+        // 2. Visit neighbors
+        let neighbors = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+        for (dy, dx) in neighbors {
+            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                if !visited.contains(&(ny, nx)) && is_silicon_component(&vm.grid[ny][nx]) {
+                    // Move there: Push dy, dx -> Migrate
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Push,
+                        args: vec![crate::ast::Nucleotide::Number(dy)],
+                    });
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Push,
+                        args: vec![crate::ast::Nucleotide::Number(dx)],
+                    });
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Migrate,
+                        args: vec![],
+                    });
+
+                    visit(vm, ny, nx, visited, genes);
+
+                    // Move back
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Push,
+                        args: vec![crate::ast::Nucleotide::Number(-dy)],
+                    });
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Push,
+                        args: vec![crate::ast::Nucleotide::Number(-dx)],
+                    });
+                    genes.push(crate::ast::Gene {
+                        op: OpCode::Migrate,
+                        args: vec![],
+                    });
+                }
+            }
+        }
+    }
+
+    if is_silicon_component(&vm.grid[start_y][start_x]) {
+        visit(vm, start_y, start_x, &mut visited, &mut genes);
+    }
+
+    // Create strand
+    #[cfg(feature = "nova")]
+    if vm.dna.helix.strands.len() < crate::vm::MAX_STRANDS {
+        vm.dna.helix.strands.push(crate::ast::Strand { genes });
+        vm.telomeres.push(50);
+        #[cfg(feature = "cortex")]
+        {
+            vm.activation_levels.push(0);
+            vm.synapse_map.push(Vec::new());
+        }
+        return vm.dna.helix.strands.len() - 1;
+    }
+
+    // Fallback if not Nova (should typically be enabled with silicon?)
+    #[cfg(not(feature = "nova"))]
+    {
+        vm.dna.helix.strands.push(crate::ast::Strand { genes });
+        return vm.dna.helix.strands.len() - 1;
+    }
+
+    #[cfg(feature = "nova")]
+    0 // Failure
+}
+
+fn fabricate_circuit(vm: &mut ChimeraVM, strand_idx: usize, start_y: usize, start_x: usize) {
+    if strand_idx >= vm.dna.helix.strands.len() {
+        return;
+    }
+
+    // Save state
+    let old_ip = vm.ip;
+    let old_ctx = vm.context_loc;
+    let old_mode = vm.silicon_mode;
+
+    vm.silicon_mode = false; // Pause physics
+    vm.context_loc = (start_y, start_x);
+    vm.ip = (strand_idx, 0);
+
+    // Execute strand synchronously
+    let limit = 1000;
+    for _ in 0..limit {
+        let strand_len = vm.dna.helix.strands[vm.ip.0].genes.len();
+        if vm.ip.1 >= strand_len {
+            break;
+        }
+
+        // Execute gene (manually calling inner to bypass main loop overhead/checks)
+        let (op, args) = {
+            let gene = &vm.dna.helix.strands[vm.ip.0].genes[vm.ip.1];
+            (gene.op.clone(), gene.args.clone())
+        };
+
+        // We use execute_gene_inner to run the op
+        let jump = vm.execute_gene_inner(op, &args);
+
+        if let Some(target) = jump {
+            vm.ip = target;
+        } else {
+            vm.ip.1 += 1;
+        }
+
+        if vm.ip.0 != strand_idx {
+            // Jumped out of strand? Stop fabrication.
+            break;
+        }
+    }
+
+    // Restore state
+    vm.ip = old_ip;
+    vm.context_loc = old_ctx;
+    vm.silicon_mode = old_mode;
 }
 
 /// Runs one step of the Circuit (Wireworld + Gates + Pins + Chaos) on the grid.

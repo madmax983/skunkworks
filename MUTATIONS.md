@@ -10,13 +10,6 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
-### quipu-net
-- **Parent A**: experiments/quipu-cradle
-- **Parent B**: experiments/hive-mind-dependencies
-- **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings.
-- **Novel trait**: Physical Serialization. Bandwidth is limited by the speed of tying knots.
-- **Proposed by**: Genesis (The Archaeologist)
-
 <!-- Example:
 ### [Hybrid Name]
 - **Parent A**: experiments/git-galaxy
@@ -671,4 +664,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI visualization of git history as an Incan Quipu. Cords are time, knots are commits.
 - **Novel trait**: Physical History. The commit log sways in the wind.
 - **Status**: experiments/git-quipu
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Confirmed functionality.
+
+### rhythmic-jungle
+- **Parents**: experiments/protocol-jungle + experiments/silicon-samba
+- **Concept**: Agents in a 2D space negotiate rhythmic patterns (Euclidean rhythms) to find consensus.
+- **Novel trait**: Rhythmic Consensus. The jungle settles into a shared groove.
+- **Status**: experiments/rhythmic-jungle
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### quipu-net
+- **Parents**: experiments/quipu-cradle + experiments/hive-mind-dependencies
+- **Concept**: A P2P network where packets are Quipu knots. Nodes exchange strings.
+- **Novel trait**: Physical Serialization. Bandwidth is limited by the speed of tying knots.
+- **Status**: experiments/quipu-net
+- **Evaluation**: MISSING. Directory not found. Specimen failed to gestate.
+
+### hyperbolic-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/hyperbolic-mold
+- **Concept**: Ants traversing the Poincaré Disk encounter a "Moat of Infinity" (Ring Gap) and must form living bridges to cross it.
+- **Novel trait**: Infinite Bridge Construction. Bridges span hyperbolic distances, allowing the colony to cross non-Euclidean voids.
+- **Status**: experiments/hyperbolic-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

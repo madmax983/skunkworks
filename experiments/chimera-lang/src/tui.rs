@@ -74,6 +74,8 @@ pub(crate) enum ViewMode {
     Heatmap,
     #[cfg(feature = "silicon")]
     Schematic,
+    #[cfg(feature = "silicon")]
+    Foundry,
     #[cfg(feature = "elektra")]
     Elektra,
     #[cfg(feature = "nova")]
@@ -519,6 +521,12 @@ where
             #[cfg(feature = "silicon")]
             if let ViewMode::Schematic = app_state.view_mode {
                 render_schematic(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "silicon")]
+            if let ViewMode::Foundry = app_state.view_mode {
+                render_foundry(f, vm, app_state);
                 return;
             }
 
@@ -994,6 +1002,17 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "silicon")]
+                                ViewMode::Foundry => {
+                                    // Same as Schematic/Grid?
+                                    // Allow editing grid in Foundry
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab => {
@@ -1194,7 +1213,9 @@ where
                                 }
                             }
                             #[cfg(feature = "silicon")]
-                            ViewMode::Schematic => {
+                            ViewMode::Schematic => ViewMode::Foundry,
+                            #[cfg(feature = "silicon")]
+                            ViewMode::Foundry => {
                                 #[cfg(feature = "elektra")]
                                 {
                                     ViewMode::Elektra
@@ -1228,7 +1249,7 @@ where
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
                     #[cfg(feature = "silicon")]
-                    KeyCode::Char('s') => app_state.view_mode = ViewMode::Schematic,
+                    KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
                     #[cfg(feature = "elektra")]
                     KeyCode::Char('E') => app_state.view_mode = ViewMode::Elektra,
                     KeyCode::Char('p') => {
@@ -1326,8 +1347,25 @@ where
                     KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('f') => app_state.view_mode = ViewMode::Fishing,
+                    KeyCode::Char('f') => {
+                        #[cfg(feature = "silicon")]
+                        if let ViewMode::Foundry = app_state.view_mode {
+                             // Fabricate current strand
+                             let (x, y) = app_state.grid_cursor;
+                             let s_idx = app_state.selected_strand;
+                             vm.stack.push(crate::vm::Value::Int(s_idx as i64));
+                             vm.stack.push(crate::vm::Value::Int(y as i64));
+                             vm.stack.push(crate::vm::Value::Int(x as i64));
+                             crate::vm::silicon::exec_silicon_op(vm, crate::opcode::OpCode::Fabricate, &[]);
+                             app_state.status_msg = format!("Fabricated strand {} at {},{}", s_idx, x, y);
+                             continue;
+                        }
+
+                        #[cfg(feature = "nova")]
+                        {
+                            app_state.view_mode = ViewMode::Fishing;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
                     #[cfg(feature = "nova")]
@@ -1457,8 +1495,8 @@ where
                             vm.step();
                         }
                     }
-                    #[cfg(feature = "nova")]
                     KeyCode::Char('s') => {
+                        #[cfg(feature = "nova")]
                         if let ViewMode::Kaleidoscope = app_state.view_mode {
                             // Step Piet
                             if vm.piet_state.is_none() {
@@ -1468,6 +1506,12 @@ where
                                 crate::vm::piet::step_piet_once(vm, &mut state);
                                 vm.piet_state = Some(state);
                             }
+                            continue;
+                        }
+
+                        #[cfg(feature = "silicon")]
+                        {
+                            app_state.view_mode = ViewMode::Schematic;
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1673,6 +1717,12 @@ where
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "silicon")]
                         ViewMode::Schematic => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Foundry => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -1839,6 +1889,12 @@ where
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "silicon")]
                         ViewMode::Schematic => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Foundry => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -1964,6 +2020,12 @@ where
                         ViewMode::Quantum => {}
                         #[cfg(feature = "silicon")]
                         ViewMode::Schematic => {}
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Foundry => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -2059,6 +2121,12 @@ where
                         ViewMode::Strings => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "silicon")]
+                        ViewMode::Foundry => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2177,6 +2245,20 @@ where
                         }
                     },
                     KeyCode::Enter => {
+                        #[cfg(feature = "silicon")]
+                        if let ViewMode::Foundry = app_state.view_mode {
+                             // Trace current circuit
+                             let (x, y) = app_state.grid_cursor;
+                             vm.stack.push(crate::vm::Value::Int(y as i64));
+                             vm.stack.push(crate::vm::Value::Int(x as i64));
+                             crate::vm::silicon::exec_silicon_op(vm, crate::opcode::OpCode::Trace, &[]);
+                             if let Some(crate::vm::Value::Int(idx)) = vm.stack.last() {
+                                 app_state.status_msg = format!("Traced circuit to strand {}", idx);
+                                 app_state.selected_strand = *idx as usize;
+                             }
+                             continue;
+                        }
+
                         app_state.input_mode = InputMode::Editing;
                         match app_state.view_mode {
                             #[cfg(feature = "nova")]
@@ -2251,6 +2333,19 @@ where
                                 }
                             }
                             ViewMode::Grid => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
+                            #[cfg(feature = "silicon")]
+                            ViewMode::Foundry => {
+                                // Prepare input buffer for editing
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
@@ -2756,6 +2851,157 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "silicon")]
+fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // Left: Schematic Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            // Reuse schematic styling logic
+             let (ch, style) = match val {
+                crate::vm::Value::Int(0) => (" ".to_string(), Style::default().fg(Color::DarkGray)),
+                crate::vm::Value::Int(1) => ("┼".to_string(), Style::default().fg(Color::DarkGray)), // Wire
+                crate::vm::Value::Int(2) => (
+                    "⚡".to_string(),
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD),
+                ), // Head
+                crate::vm::Value::Int(3) => (".".to_string(), Style::default().fg(Color::Red)), // Tail
+                crate::vm::Value::Str(s) => {
+                    if s.starts_with("G:") {
+                        let parts: Vec<&str> = s.split(':').collect();
+                        let sym = if parts.len() >= 2 {
+                            match parts[1] {
+                                "AND" => "&",
+                                "OR" => "≥",
+                                "XOR" => "=",
+                                "NAND" => "!",
+                                "NOT" => "¬",
+                                _ => "?",
+                            }
+                        } else {
+                            "G"
+                        };
+                        (
+                            sym.to_string(),
+                            Style::default()
+                                .fg(Color::Cyan)
+                                .add_modifier(Modifier::BOLD),
+                        )
+                    } else if s.starts_with("LATCH:") {
+                        let state = s.trim_start_matches("LATCH:");
+                        (
+                            format!("L{}", state),
+                            Style::default()
+                                .fg(Color::Magenta)
+                                .add_modifier(Modifier::BOLD),
+                        )
+                    } else if s.starts_with("EMIT:") {
+                        (
+                            "E".to_string(),
+                            Style::default()
+                                .fg(Color::Green)
+                                .add_modifier(Modifier::BOLD),
+                        )
+                    } else if s.starts_with("RECV:") {
+                        (
+                            "R".to_string(),
+                            Style::default()
+                                .fg(Color::Blue)
+                                .add_modifier(Modifier::BOLD),
+                        )
+                    } else if s == "PIN:IN" {
+                        (
+                            "I".to_string(),
+                            Style::default()
+                                .fg(Color::Yellow)
+                                .add_modifier(Modifier::BOLD),
+                        )
+                    } else if s == "PIN:OUT" {
+                        (
+                            "O".to_string(),
+                            Style::default()
+                                .fg(Color::Cyan)
+                                .add_modifier(Modifier::BOLD),
+                        )
+                    } else {
+                        ("?".to_string(), Style::default().fg(Color::White))
+                    }
+                }
+                _ => ("?".to_string(), Style::default().fg(Color::White)),
+            };
+
+            let mut final_style = style;
+            if app_state.grid_cursor == (x, y) {
+                final_style = final_style.bg(Color::White).fg(Color::Black);
+            }
+
+            line_spans.push(Span::styled(ch, final_style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Foundry (Silicon Grid)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Genetic Library (Strands)
+    // Allows selecting a strand to Fabricate
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(6)].as_ref())
+        .split(chunks[1]);
+
+    let mut strand_items = Vec::new();
+    for (i, strand) in vm.dna.helix.strands.iter().enumerate() {
+        let is_selected = i == app_state.selected_strand;
+        let style = if is_selected {
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::White)
+        };
+
+        strand_items.push(ListItem::new(format!("Strand {} ({} genes)", i, strand.genes.len())).style(style));
+    }
+
+    let strand_list = List::new(strand_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("DNA Library"),
+    );
+    f.render_widget(strand_list, right_chunks[0]);
+
+    // Help / Status
+    let help_text = vec![
+        Line::from("Foundry Operations:"),
+        Line::from("  Enter: TRACE (Circuit -> DNA)"),
+        Line::from("  F: FABRICATE (DNA -> Circuit)"),
+        Line::from("  Nav: Arrows (Move Cursor)"),
+        Line::from("  (Select Strand in Genome View)"),
+    ];
+
+    let help_widget = Paragraph::new(help_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Controls"),
+    );
+    f.render_widget(help_widget, right_chunks[1]);
 }
 
 #[cfg(feature = "oracle")]
@@ -3274,6 +3520,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
         #[cfg(feature = "nova")]
         ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
+        #[cfg(feature = "silicon")]
+        ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
 
     let title = match app_state.input_mode {
@@ -3500,6 +3748,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Alchemist => Color::Yellow,
                         crate::vm::nova::OrganelleType::Seed => Color::Green,
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
+                        crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -3511,6 +3760,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Alchemist => "A",
                         crate::vm::nova::OrganelleType::Seed => "S",
                         crate::vm::nova::OrganelleType::Choir => "♫",
+                        crate::vm::nova::OrganelleType::Wisp => "*",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
@@ -5547,9 +5797,12 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Overlay Void Organelles
             let mut is_void = false;
+            let mut is_wisp = false;
             if let Some(org) = vm.organelles.iter().find(|o| o.context_loc == (y, x)) {
                 if org.kind == crate::vm::nova::OrganelleType::Void {
                     is_void = true;
+                } else if org.kind == crate::vm::nova::OrganelleType::Wisp {
+                    is_wisp = true;
                 }
             }
 
@@ -5559,6 +5812,11 @@ fn render_void(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     .fg(Color::Black)
                     .add_modifier(Modifier::BOLD);
                 line_spans.push(Span::styled("Ø", style));
+            } else if is_wisp {
+                style = style
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+                line_spans.push(Span::styled("*", style));
             } else {
                 // If cursor
                 if app_state.grid_cursor == (x, y) {

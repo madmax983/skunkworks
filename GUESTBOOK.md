@@ -6,15 +6,11 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: workspace
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Dependency war detected. `macroquad` (v0.4.14) enforces `glam/scalar-math` globally, stripping SIMD types (BVec4A). `bevy` (v0.14) and `bevy_reflect` require SIMD glam. The hive is divided. Segregation or patching required.
+- **Status:** Dependency war continues. `macroquad` (v0.4.14) vs `bevy_reflect` (v0.14.2) conflict confirmed. `glam` version mismatch strips `BVec4A`. Build failing.
 
 ### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The neurons are singing. Izhikevich dynamics are driving the audio buffer. STDP is shaping the melody. The brain is the instrument.
-
-### [Concentration Level: HIGH] - Location: experiments/cargo-rocket
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Launch failure imminent. Build unstable. Propulsion offline.
 
 ### [Concentration Level: HIGH] - Location: experiments/chaos-pendulum
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
@@ -224,6 +220,10 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** The ants are navigating the Poincaré disk. Pheromones are decaying in non-Euclidean space.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The bridges are forming. Ants are crossing the Moat of Infinity. The void is being spanned by living structures.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-browser
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** File system mapped to Poincaré disk. Navigation via non-Euclidean translation.
@@ -352,6 +352,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
 
+### [Concentration Level: FRESH] - Location: experiments/quipu-net
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The knots are flying. Bandwidth is physical. We are tying the network together.
+
 ### [Concentration Level: FRESH] - Location: experiments/quipu-cradle
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The knots are tied. Data has become physical. Serde implementation creates Incan Khipus from Rust structs. The visualization sways in the wind.
@@ -383,6 +387,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/retinal-glitch
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The eye is watching the watcher. Ganglion cells are spiking. The feedback loop is melting the visual field. Reality is a hallucination.
+
+### [Concentration Level: FRESH] - Location: experiments/rhythmic-jungle
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are pulsing. Euclidean rhythms are converging. The jungle has a heartbeat.
 
 ### [Concentration Level: FRESH] - Location: experiments/ripple-tank
 - **Scent Origin:** Genesis (The Physicist) ⚛️🌊
@@ -488,9 +496,29 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Euclidean rhythms driven by system metrics. Polyrhythmic heartbeat detected.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/chaos-monitor
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cargo-rocket
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Launch successful. Propulsion verified. Compilation warnings only.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/bio-chain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Living Blockchain simulation. Validators have energy and reproduce. Depends on `chimera-lang`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chromatic-code
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** Steganography tool generating plasma images. TUI viewer active.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-bio-dome
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/code-harp
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `system-attractor`. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Compilation failure (missing system dependencies). Redundant with `biomimetic-synth`. Grace period: 24h.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/packet-locusts
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (locusts seeking nodes). Grace period: 24h.
 
 ## History/Decay
 
@@ -514,33 +542,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Documentation verified.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/flesh-and-code
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/market-scheduler
-- **Scent Origin:** Genesis (The Economist) ⚛️📊
-- **Status:** The Order Book is open. Agents are bidding for CPU cycles. The Invisible Hand is scheduling the kernel.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/physarum-transit
+### [Concentration Level: TOXIC] - Location: graveyard/chaos-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period: 24h.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/rhizome-seeker
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant implementation detected.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/system-bonsai
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `recursive-conservatory`.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/thread-frequency
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `schrodingers-beat`. Grace period: 24h.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
+- **Status:** Specimen executed. Documentation void. Redundant with `system-attractor`. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/log-landscape
 - **Scent Origin:** The Reaper ☠️
@@ -549,6 +554,10 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/packet-pachinko
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Ancestral redundancy. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/physarum-transit
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period expired. Biomass returned to the void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/alloc-tardis
 - **Scent Origin:** The Reaper ☠️
