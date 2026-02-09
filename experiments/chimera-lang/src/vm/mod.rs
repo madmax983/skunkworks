@@ -157,6 +157,9 @@ mod nova_optics_test;
 mod nova_orca_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
+mod nova_orca_midi_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
 mod nova_harvest_test;
 #[cfg(feature = "nova")]
 pub mod nova_paleontology;
@@ -212,6 +215,22 @@ use resonance_audio::audio::AudioCommand;
 
 #[cfg(feature = "nova")]
 use self::nova::{Organelle, Spore};
+
+#[cfg(feature = "nova")]
+#[derive(Debug, Clone, PartialEq)]
+pub enum MidiEvent {
+    NoteOn {
+        channel: u8,
+        note: u8,
+        velocity: u8,
+        duration: u8,
+    },
+    ControlChange {
+        channel: u8,
+        controller: u8,
+        value: u8,
+    },
+}
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -515,6 +534,8 @@ pub struct ChimeraVM {
     pub strings: Vec<nova_strings::CosmicString>,
     #[cfg(feature = "nova")]
     pub ley_network: nova_ley::LeyNetwork,
+    #[cfg(feature = "nova")]
+    pub midi_messages: Vec<MidiEvent>,
     #[cfg(feature = "hive")]
     pub hive_sockets: HashMap<u16, std::sync::Arc<std::net::UdpSocket>>,
     pub havoc: havoc::HavocEngine,
@@ -773,6 +794,8 @@ impl ChimeraVM {
             strings: Vec::new(),
             #[cfg(feature = "nova")]
             ley_network,
+            #[cfg(feature = "nova")]
+            midi_messages: Vec::new(),
             #[cfg(feature = "hive")]
             hive_sockets: HashMap::new(),
             havoc: havoc::HavocEngine::new(),
@@ -1535,6 +1558,7 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         {
+            self.midi_messages.clear();
             if self.grid_history.len() >= MAX_HISTORY_DEPTH {
                 self.grid_history.pop_front();
             }

@@ -5768,14 +5768,15 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 crate::vm::Value::Str(s) => {
                     let c = s.chars().next().unwrap_or('.');
                     let color = match c {
-                        '*' => Color::Red,
+                        '*' | '!' => Color::Red,
+                        ':' | ';' => Color::Magenta,
                         '0'..='9' => Color::Cyan,
                         'a'..='z' => Color::Green,
                         'A'..='Z' => Color::Yellow,
                         _ => Color::DarkGray,
                     };
                     (c.to_string(), color)
-                },
+                }
                 crate::vm::Value::Int(n) => {
                     let v = (*n).rem_euclid(36);
                     let c = if v < 10 {
@@ -5783,16 +5784,23 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     } else {
                         ((v as u8 - 10) + b'a') as char
                     };
-                    let color = if *n == 0 { Color::DarkGray } else { Color::Cyan };
+                    let color = if *n == 0 {
+                        Color::DarkGray
+                    } else {
+                        Color::Cyan
+                    };
                     (c.to_string(), color)
-                },
+                }
                 _ => ("?".to_string(), Color::White),
             };
 
             style = style.fg(base_color);
 
             if signal > 0 {
-                style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                style = style
+                    .bg(Color::White)
+                    .fg(Color::Black)
+                    .add_modifier(Modifier::BOLD);
             }
 
             if app_state.grid_cursor == (x, y) {
@@ -5812,29 +5820,72 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let grid_widget = Paragraph::new(grid_lines).block(grid_block);
     f.render_widget(grid_widget, chunks[0]);
 
+    // Right Panel: Split into Manual and MIDI Log
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(chunks[1]);
+
     // Info Panel
     let info = vec![
         Line::from("ORCA MODE"),
         Line::from(" "),
         Line::from("Operators:"),
-        Line::from("  * Bang (Signal Source)"),
+        Line::from("  * ! Bang (Signal Source)"),
+        Line::from("  :   MIDI Note (N, V, C, D)"),
+        Line::from("  ;   MIDI CC   (K, V, C)"),
+        Line::from("  ?   Random"),
         Line::from("  N/S/E/W (Directional I/O)"),
         Line::from("  A/B/D (Math: + - /)"),
         Line::from("  M (Mutate), C (Clock)"),
-        Line::from("  Q (Query Neighbor)"),
-        Line::from("  H (Harvest Gene)"),
+        Line::from("  Q (Query), H (Harvest)"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
         Line::from("  Space to Step."),
         Line::from("  Arrow Keys to Move."),
-        Line::from("  Shift+O to Switch Mode."),
     ];
 
     let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Manual")
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Manual"),
     );
-    f.render_widget(info_widget, chunks[1]);
+    f.render_widget(info_widget, right_chunks[0]);
+
+    // MIDI Log
+    let mut midi_items = Vec::new();
+    if vm.midi_messages.is_empty() {
+        midi_items.push(ListItem::new("No MIDI Output").style(Style::default().fg(Color::DarkGray)));
+    } else {
+        for msg in &vm.midi_messages {
+            let s = match msg {
+                crate::vm::MidiEvent::NoteOn {
+                    channel,
+                    note,
+                    velocity,
+                    duration,
+                } => {
+                    format!("♪ Ch{} Note{} Vel{} Len{}", channel, note, velocity, duration)
+                }
+                crate::vm::MidiEvent::ControlChange {
+                    channel,
+                    controller,
+                    value,
+                } => {
+                    format!("≡ Ch{} CC{} Val{}", channel, controller, value)
+                }
+            };
+            midi_items.push(ListItem::new(s).style(Style::default().fg(Color::Magenta)));
+        }
+    }
+
+    let midi_list = List::new(midi_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("MIDI Output Log"),
+    );
+    f.render_widget(midi_list, right_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
