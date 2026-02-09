@@ -1296,6 +1296,12 @@ pub enum OpCode {
     /// **State:** 1=On, 0=Off.
     #[cfg(feature = "nova")]
     AutoCast,
+    /// **[Nova]** Inscribes a Ward (trap) on the current grid cell.
+    ///
+    /// **Stack:** `[ ..., persistence, strand_idx ] -> [ ... ]`
+    /// **Effect:** Writes a hidden trap that triggers the strand when stepped on.
+    #[cfg(feature = "nova")]
+    Ward,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`

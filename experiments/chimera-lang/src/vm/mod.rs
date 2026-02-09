@@ -177,6 +177,8 @@ pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_sovereignty_test;
+#[cfg(feature = "nova")]
+pub mod nova_ward;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -1439,6 +1441,9 @@ impl ChimeraVM {
                     new_x = px;
                 }
                 self.context_loc = (new_y, new_x);
+                if let Some(target) = nova_ward::check_ward_trigger(self) {
+                    self.ip = target;
+                }
             }
         }
     }
@@ -1975,6 +1980,9 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Ward => nova_ward::exec_ward(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),

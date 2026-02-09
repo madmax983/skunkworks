@@ -266,6 +266,8 @@ mod nova_virus_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_void_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_ward_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_waste_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;

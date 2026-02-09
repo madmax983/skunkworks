@@ -3152,6 +3152,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             vm.energy = vm.energy.saturating_sub(5);
                             vm.output
                                 .push(format!("MIGRATE: moved to {},{}", new_x, new_y));
+
+                            if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
+                                return Some(target);
+                            }
                         } else {
                             // Hit boundary
                             vm.energy = vm.energy.saturating_sub(2);
@@ -4036,6 +4040,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                         vm.energy = vm.energy.saturating_sub(20); // High cost
                         vm.output
                             .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
+
+                        if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
+                            return Some(target);
+                        }
                     } else {
                         vm.energy = vm.energy.saturating_sub(5);
                         vm.output.push("OSMOSIS: Blocked by boundary".to_string());
