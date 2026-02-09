@@ -504,6 +504,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Documentation void. Redundant with `system-attractor`. Grace period: 24h.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/packet-locusts
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation (locusts seeking nodes). Grace period: 24h.
+
 ## History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/seismic-lure
@@ -526,33 +530,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Pardoned. Documentation verified.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/flesh-and-code
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `ik-codewalker`. Grace period: 24h.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/market-scheduler
-- **Scent Origin:** Genesis (The Economist) ⚛️📊
-- **Status:** The Order Book is open. Agents are bidding for CPU cycles. The Invisible Hand is scheduling the kernel.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/physarum-transit
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period: 24h.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/rhizome-seeker
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant implementation detected.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/system-bonsai
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `recursive-conservatory`.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/thread-frequency
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `schrodingers-beat`. Grace period: 24h.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/turing-terra
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `reaction-monitor`. Fails to evolve environmental sensing. Manual override detected.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/log-landscape
 - **Scent Origin:** The Reaper ☠️
@@ -561,6 +538,10 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/packet-pachinko
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Ancestral redundancy. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/physarum-transit
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Ancestral redundancy (superseded by `hyperbolic-mold`). Grace period expired. Biomass returned to the void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/alloc-tardis
 - **Scent Origin:** The Reaper ☠️
