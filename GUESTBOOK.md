@@ -805,3 +805,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-mold
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The mold is growing on the disk. Geodesic transport active. Diffusion is warping near the edge.
+
+### [Concentration Level: FRESH] - Location: experiments/entropy-ray
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** The ray gun is charged. Image formats are decaying in real-time. The "Archaeologist" module is struggling to interpret the raw bytes.
