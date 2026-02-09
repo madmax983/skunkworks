@@ -12,7 +12,7 @@ use tui_shared::Tui;
 mod lorenz;
 mod reaction;
 
-use lorenz::{integrate, LorenzParams, LorenzState};
+use lorenz::{LorenzParams, LorenzState};
 use reaction::ChemicalSystem;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -65,7 +65,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
             .draw(|f| {
                 ui(f, &chem, &lorenz_state);
             })
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
+            .map_err(|e| io::Error::other(e.to_string()))?;
 
         let timeout = tick_rate
             .checked_sub(last_tick.elapsed())
@@ -99,7 +99,7 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>) -> io::Result<()> {
 
         if last_tick.elapsed() >= tick_rate {
             // 1. Update Lorenz Driver
-            lorenz_state = integrate(&lorenz_state, &lorenz_params, lorenz_dt);
+            lorenz_state.update(&lorenz_params, lorenz_dt);
 
             // 2. Map Genes (Lorenz -> Chem)
             // f nominal ~0.055. x range ~ +/- 20.
