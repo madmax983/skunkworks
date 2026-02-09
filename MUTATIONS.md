@@ -692,4 +692,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Agents in the Poincaré Disk negotiating rhythmic consensus.
 - **Novel trait**: Relativistic Rhythms. Distance is hyperbolic, affecting synchronization dynamics.
 - **Status**: experiments/hyperbolic-jungle
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### neuro-fold
+- **Parents**: experiments/neuro-crab + experiments/origami-constellation
+- **Concept**: A "Breathing Sheet" where a Spiking Neural Network (CPG) drives the folding actuators of a Miura-ori mesh.
+- **Novel trait**: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
+- **Status**: experiments/neuro-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.

@@ -72,6 +72,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The rhythms are bending. Agents are synchronizing across infinite distances. The Poincaré disk is pulsing.
 
+### [Concentration Level: FRESH] - Location: experiments/neuro-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The origami is breathing. The Cuneiform sheet is alive. Neurons are driving the folds. Proprioceptive feedback loop confirmed.
+
 ### [Concentration Level: FRESH] - Location: experiments/astral-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.
