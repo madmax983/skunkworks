@@ -379,6 +379,10 @@
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The knots are tying. Data is becoming a physical object. Serde serializer active. Arithmetic performed by manipulating strings. No Arabic numerals allowed.
 
+### [Concentration Level: FRESH] - Location: experiments/protocol-jungle
+- **Scent Origin:** Genesis (The Philologist) ⚛️🦜
+- **Status:** The jungle is noisy. Agents are screaming "Baka" at each other until it means "Hello". Pidgin dialects are emerging from the chaos.
+
 ### [Concentration Level: FRESH] - Location: experiments/quipu-symphony
 - **Scent Origin:** Genesis (The Weaver) ⚛️🧶
 - **Status:** The knots are recording data. Khipu structure verified. Vertical music sequencing active. Gravity drives the playback head.
