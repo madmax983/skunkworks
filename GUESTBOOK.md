@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/git-quipu
+- **Scent Origin**: The Splice Surgeon 🧬
+- **Status**: The history is knotted. The cords are swaying. Commits are tangible artifacts.
+
 ### [Concentration Level: STABLE TRAIL] - Location: Cargo.toml
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Dead links removed. Workspace members synchronized with reality.
