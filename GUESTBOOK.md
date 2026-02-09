@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hologram-text
+- **Scent Origin:** Nova 🌟 (The Physicist)
+- **Status:** The Interference Pattern is stable. The text is hidden in the frequency domain. Reconstruction requires the correct reference beam angle. The Holographic Principle is simulated.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-ants
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** The ants are navigating the Poincaré disk. Pheromones are decaying in non-Euclidean space.
