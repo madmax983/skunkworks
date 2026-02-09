@@ -96,6 +96,8 @@ pub mod nova_bestiary;
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
+pub mod nova_fluid;
+#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
@@ -2222,6 +2224,8 @@ impl ChimeraVM {
             | OpCode::Gaze
             | OpCode::Starfall
             | OpCode::Align
+            | OpCode::Tsunami
+            | OpCode::Dry
             | OpCode::Harmonize
             | OpCode::Choir
             | OpCode::Mix

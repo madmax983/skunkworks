@@ -37,7 +37,6 @@ members = [
     "experiments/penrose-build",
     "experiments/luminous-flock",
     "experiments/heap-arena",
-    "experiments/lattice-hunter",
     "experiments/crate-radar",
     "experiments/quantum-garden",
     "experiments/quasicrystal-dungeon",

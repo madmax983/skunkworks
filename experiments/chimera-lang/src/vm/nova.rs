@@ -1826,69 +1826,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.stack.push(Value::Int(g));
             None
         }
-        OpCode::Aeolus => {
-            // Stack: [ ..., angle, strength ]
-            if vm.stack.len() >= 2 {
-                let str_val = vm.stack.pop().unwrap();
-                let ang_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(ang), Value::Int(str)) = (ang_val, str_val) {
-                    let strength = str.clamp(0, 10) as i8;
-                    let (dy, dx) = match ang.rem_euclid(8) {
-                        0 => (-1, 0),  // N
-                        1 => (-1, 1),  // NE
-                        2 => (0, 1),   // E
-                        3 => (1, 1),   // SE
-                        4 => (1, 0),   // S
-                        5 => (1, -1),  // SW
-                        6 => (0, -1),  // W
-                        7 => (-1, -1), // NW
-                        _ => (0, 0),
-                    };
-
-                    let vec = (dy * strength, dx * strength);
-                    let (cy, cx) = vm.context_loc;
-                    vm.wind_grid[cy][cx] = vec;
-
-                    vm.energy = vm.energy.saturating_sub(5);
-                    vm.output
-                        .push(format!("AEOLUS: Wind set to {:?} at {},{}", vec, cx, cy));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for Aeolus".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for Aeolus".to_string());
-            }
-            None
-        }
-        OpCode::Storm => {
-            // Stack: [ ..., intensity, radius ]
-            if vm.stack.len() >= 2 {
-                let rad_val = vm.stack.pop().unwrap();
-                let int_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(int), Value::Int(rad)) = (int_val, rad_val) {
-                    if rad > 0 && int > 0 {
-                        let (cy, cx) = vm.context_loc;
-                        let coords = vm.get_circular_coords(cx as i64, cy as i64, rad);
-                        for (tx, ty) in coords {
-                            vm.moisture_grid[ty][tx] = vm.moisture_grid[ty][tx].saturating_add(int);
-                        }
-                        vm.energy = vm.energy.saturating_sub(int / 2 + rad);
-                        vm.output
-                            .push(format!("STORM: Rain intensity {} at {},{}", int, cx, cy));
-                    }
-                } else {
-                    vm.output.push("Error: Type mismatch for Storm".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for Storm".to_string());
-            }
-            None
-        }
+        OpCode::Aeolus => super::nova_fluid::exec_aeolus(vm, op, args),
+        OpCode::Storm => super::nova_fluid::exec_storm(vm, op, args),
+        OpCode::Tsunami => super::nova_fluid::exec_tsunami(vm, op, args),
+        OpCode::Dry => super::nova_fluid::exec_dry(vm, op, args),
         OpCode::SenseWind => {
             let (cy, cx) = vm.context_loc;
             let (dy, dx) = vm.wind_grid[cy][cx];

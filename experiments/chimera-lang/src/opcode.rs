@@ -1143,6 +1143,16 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., moisture ]`
     #[cfg(feature = "nova")]
     SenseMoisture,
+    /// **[Nova]** Creates a strong directional wind wave.
+    ///
+    /// **Stack:** `[ ..., power, direction ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Tsunami,
+    /// **[Nova]** Removes moisture from a circular area.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Dry,
 
     // Olfactory Features (Nova)
     /// **[Nova]** Emits a scent trail (Pheromone).
