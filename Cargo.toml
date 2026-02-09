@@ -115,6 +115,7 @@ members = [
     "experiments/klein-magnetron", 
     "experiments/code-canyon", 
     "experiments/code-phage",  
+    "experiments/code-reaction",
     "experiments/lattice-brain",
     "experiments/jpeg-garden",
     "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster",
