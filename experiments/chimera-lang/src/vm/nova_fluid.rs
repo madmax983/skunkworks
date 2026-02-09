@@ -19,6 +19,80 @@ fn calculate_decay(w_dy: i8, w_dx: i8, moisture: i64) -> (i8, i8, i64) {
     (decayed_dy, decayed_dx, decayed_moisture)
 }
 
+/// Applies active effects from Hydra components (Pumps, Fans).
+pub fn process_hydra_components(vm: &mut ChimeraVM) {
+    let size = super::GRID_SIZE;
+    for y in 0..size {
+        for x in 0..size {
+            if let Value::Str(s) = &vm.grid[y][x] {
+                match s.as_str() {
+                    ">" => vm.wind_grid[y][x] = (0, 5),
+                    "<" => vm.wind_grid[y][x] = (0, -5),
+                    "^" => vm.wind_grid[y][x] = (-5, 0),
+                    "v" => vm.wind_grid[y][x] = (5, 0),
+                    "@" => {
+                        // Pump: Generate pressure
+                        vm.moisture_grid[y][x] = vm.moisture_grid[y][x].saturating_add(50).min(MAX_MOISTURE);
+                    }
+                    "~" => {
+                        // Drain: Remove pressure
+                        vm.moisture_grid[y][x] = vm.moisture_grid[y][x].saturating_sub(50);
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+}
+
+/// Checks sensors and triggers execution if pressure is high.
+pub fn process_sensors(vm: &mut ChimeraVM) {
+    let size = super::GRID_SIZE;
+    let threshold = 100;
+
+    // Collect triggers to execute (to avoid borrowing vm mutably during iteration)
+    let mut triggers = Vec::new();
+
+    for y in 0..size {
+        for x in 0..size {
+            if let Value::Str(s) = &vm.grid[y][x] {
+                if s == "!" {
+                    let pressure = vm.moisture_grid[y][x];
+                    if pressure > threshold {
+                        // Check neighbor for code
+                        // Default: Right neighbor? Or all neighbors?
+                        // Let's check East neighbor for now (0, 1)
+                        if let Some((ny, nx)) = vm.normalize_coords(y as i64, x as i64 + 1) {
+                            triggers.push((ny, nx));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    for (y, x) in triggers {
+        let val = vm.grid[y][x].clone();
+        match val {
+            Value::Str(s) => {
+                let old_loc = vm.context_loc;
+                vm.context_loc = (y, x);
+                if let Ok(op) = s.parse::<OpCode>() {
+                    // Sensors cost energy to fire?
+                    if vm.energy > 0 {
+                        let _ = vm.execute_gene(op, &[]);
+                    }
+                }
+                vm.context_loc = old_loc;
+            }
+            Value::Int(n) => {
+                vm.stack.push(Value::Int(n));
+            }
+            _ => {}
+        }
+    }
+}
+
 /// Simulates fluid dynamics (Advection and Diffusion) for the Atmosphere.
 ///
 /// Updates `wind_grid` and `moisture_grid`.
@@ -27,52 +101,75 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
     let mut new_moisture = vec![vec![0i64; size]; size];
     let mut new_wind: Vec<Vec<WindVector>> = vec![vec![(0i8, 0i8); size]; size];
 
+    // Helper to check for walls
+    let is_solid = |vm: &ChimeraVM, y: usize, x: usize| -> bool {
+        if let Value::Str(s) = &vm.grid[y][x] {
+            s == "#" || s == "X" // Wall or Valve (Closed by default)
+        } else {
+            false
+        }
+    };
+
     // 1. Advection & Diffusion
     for y in 0..size {
         for x in 0..size {
+            if is_solid(vm, y, x) {
+                // Solids don't advect, but they might reflect?
+                // For now, just skip processing them as sources.
+                // But we must preserve their state if any?
+                // Walls don't hold moisture/wind usually.
+                continue;
+            }
+
             let (w_dy, w_dx) = vm.wind_grid[y][x];
             let moisture = vm.moisture_grid[y][x];
 
             let (decayed_dy, decayed_dx, decayed_moisture) = calculate_decay(w_dy, w_dx, moisture);
-
-            // Add self to new_wind (Inertia)
-            new_wind[y][x].0 += decayed_dy;
-            new_wind[y][x].1 += decayed_dx;
 
             if decayed_moisture <= 0 && w_dy == 0 && w_dx == 0 {
                 continue;
             }
 
             // Distribute moisture based on wind
-            // Target: (y + dy, x + dx)
-            // But we need to handle non-integer/fractional distribution for smoothness?
-            // For discrete grid with i8 wind:
-            // Just move a chunk to the target neighbor.
-
             let target_y = y as i64 + (w_dy as i64);
             let target_x = x as i64 + (w_dx as i64);
 
             if let Some((ny, nx)) = vm.normalize_coords(target_y, target_x) {
-                // Advection: Move moisture to target
-                // Some stays behind (drag)
-                let moved = decayed_moisture / 2;
-                let stayed = decayed_moisture - moved;
-                new_moisture[ny][nx] = new_moisture[ny][nx].saturating_add(moved);
-                new_moisture[y][x] = new_moisture[y][x].saturating_add(stayed);
+                if is_solid(vm, ny, nx) {
+                    // Hit a wall: Reflect wind
+                    new_wind[y][x].0 -= decayed_dy;
+                    new_wind[y][x].1 -= decayed_dx;
+                    // Moisture stays here
+                    new_moisture[y][x] = new_moisture[y][x].saturating_add(decayed_moisture);
+                } else {
+                    // Advection: Move wind and moisture to target
+                    new_wind[ny][nx].0 += decayed_dy;
+                    new_wind[ny][nx].1 += decayed_dx;
+
+                    let moved = decayed_moisture / 2;
+                    let stayed = decayed_moisture - moved;
+                    new_moisture[ny][nx] = new_moisture[ny][nx].saturating_add(moved);
+                    new_moisture[y][x] = new_moisture[y][x].saturating_add(stayed);
+                }
             } else {
-                // Hit wall/boundary - lose moisture (absorb)
+                // Hit boundary - lose moisture (absorb)
                 new_moisture[y][x] += decayed_moisture / 2;
             }
         }
     }
 
     // Update Grids
-    // Clamp values
     for y in 0..size {
         for x in 0..size {
-            vm.moisture_grid[y][x] = new_moisture[y][x].min(MAX_MOISTURE); // Cap moisture
-            vm.wind_grid[y][x].0 = new_wind[y][x].0.clamp(-MAX_WIND, MAX_WIND);
-            vm.wind_grid[y][x].1 = new_wind[y][x].1.clamp(-MAX_WIND, MAX_WIND);
+            // If cell is solid, clear its fluid state (it blocks)
+            if is_solid(vm, y, x) {
+                vm.moisture_grid[y][x] = 0;
+                vm.wind_grid[y][x] = (0, 0);
+            } else {
+                vm.moisture_grid[y][x] = new_moisture[y][x].min(MAX_MOISTURE);
+                vm.wind_grid[y][x].0 = new_wind[y][x].0.clamp(-MAX_WIND, MAX_WIND);
+                vm.wind_grid[y][x].1 = new_wind[y][x].1.clamp(-MAX_WIND, MAX_WIND);
+            }
         }
     }
 }

@@ -90,6 +90,8 @@ pub(crate) enum ViewMode {
     Strings,
     #[cfg(feature = "nova")]
     Quipu,
+    #[cfg(feature = "nova")]
+    Hydra,
 }
 
 enum InputMode {
@@ -500,6 +502,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Quipu = app_state.view_mode {
                 render_quipu(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Hydra = app_state.view_mode {
+                render_hydra(f, vm, app_state);
                 return;
             }
 
@@ -976,6 +984,16 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Hydra => {
+                                    // Enable editing grid from Hydra view
+                                    let (x, y) = app_state.grid_cursor;
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab => {
@@ -1148,7 +1166,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Strings => ViewMode::Quipu,
                             #[cfg(feature = "nova")]
-                            ViewMode::Quipu => ViewMode::Heatmap,
+                            ViewMode::Quipu => ViewMode::Hydra,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hydra => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1318,6 +1338,8 @@ where
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1595,6 +1617,12 @@ where
                         ViewMode::Strings => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Quipu => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1887,6 +1915,12 @@ where
                         ViewMode::Strings => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Quipu => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -2011,6 +2045,12 @@ where
                                 vm.quipu.active_cord += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2127,6 +2167,12 @@ where
                         ViewMode::Quipu => {
                             if vm.quipu.active_cord > 0 {
                                 vm.quipu.active_cord -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hydra => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
                             }
                         }
                     },
@@ -2418,6 +2464,18 @@ where
                                 if vm.quipu.active_cord < vm.quipu.cords.len() {
                                     let val = vm.quipu.cords[vm.quipu.active_cord].read();
                                     app_state.input_buffer = val.to_string();
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hydra => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
                                 }
                             }
                         }
@@ -3152,6 +3210,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Strings => "COSMIC STRINGS (VIBRATION)",
         #[cfg(feature = "nova")]
         ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
     };
 
     let title = match app_state.input_mode {
@@ -6112,4 +6172,102 @@ fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let info = Paragraph::new("Quipu Interface.\nActive Cord highlighted Yellow.\nOpcodes: Knot, Unknot, Cord, ReadCord, Tangle")
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(info, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Fluid Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let wind = vm.wind_grid[y][x];
+            let moisture = vm.moisture_grid[y][x];
+
+            let mut style = Style::default();
+
+            // Background color based on moisture (Blue)
+            if moisture > 0 {
+                let intensity = (moisture / 4).clamp(0, 255) as u8;
+                style = style.bg(Color::Rgb(0, 0, intensity));
+                if intensity > 128 {
+                    style = style.fg(Color::White);
+                } else {
+                    style = style.fg(Color::Cyan);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            let mut ch = "·".to_string();
+
+            // Overlay Components
+            if let crate::vm::Value::Str(s) = val {
+                if matches!(s.as_str(), ">" | "<" | "^" | "v" | "@" | "~" | "#" | "!" | "X") {
+                    ch = s.clone();
+                    style = style.add_modifier(Modifier::BOLD);
+                    if s == "@" { style = style.fg(Color::Green); } // Pump
+                    if s == "~" { style = style.fg(Color::Red); }   // Drain
+                    if s == "#" { style = style.fg(Color::White).bg(Color::DarkGray); } // Wall
+                    if s == "!" { style = style.fg(Color::Yellow); } // Sensor
+                }
+            } else if wind != (0, 0) {
+                // Show wind direction if no component overlay
+                // Wind vector (dy, dx)
+                if wind.0.abs() > wind.1.abs() {
+                    if wind.0 > 0 { ch = "↓".to_string(); } else { ch = "↑".to_string(); }
+                } else {
+                    if wind.1 > 0 { ch = "→".to_string(); } else { ch = "←".to_string(); }
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Hydra (Fluid Dynamics)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let w = vm.wind_grid[cy][cx];
+    let m = vm.moisture_grid[cy][cx];
+
+    let info = vec![
+        Line::from("HYDRA SYSTEM"),
+        Line::from(" "),
+        Line::from(format!("Pressure: {}", m)),
+        Line::from(format!("Flow: ({}, {})", w.1, w.0)), // dx, dy
+        Line::from(" "),
+        Line::from("Components:"),
+        Line::from("  @  Pump (Source)"),
+        Line::from("  ~  Drain (Sink)"),
+        Line::from("  #  Wall (Block)"),
+        Line::from("  > < ^ v  Fan (Direct Flow)"),
+        Line::from("  !  Sensor (Trigger if Pressure > 100)"),
+        Line::from("  X  Valve (Default Closed)"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Fluid Gauge"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }

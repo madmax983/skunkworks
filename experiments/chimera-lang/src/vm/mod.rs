@@ -1006,6 +1006,10 @@ impl ChimeraVM {
         nova::diffuse_entropy(self);
         nova_scent::process_scents(self);
 
+        nova_fluid::process_hydra_components(self);
+        nova_fluid::process_fluid(self);
+        nova_fluid::process_sensors(self);
+
         for row in self.hormone_grid.iter_mut() {
             for cell in row.iter_mut() {
                 for val in cell.iter_mut() {
