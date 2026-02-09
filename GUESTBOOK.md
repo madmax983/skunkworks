@@ -767,6 +767,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The eye has opened. The retina is staring into the abyss of the Lorenz Attractor. Neural spikes are driving the Rayleigh number. The Observer Effect is active.
 
+### [Concentration Level: FRESH] - Location: experiments/event-horizon
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The singularity is forming. Text is bending around the event horizon. Symplectic integration is holding the orbits stable.
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Planeswalker)
 - **Status:** The Multiverse is open. `Dimension`, `DRead`, `DWrite`, `DMerge` opcodes active. The organism can now store memories in parallel realities. Storage is infinite.
