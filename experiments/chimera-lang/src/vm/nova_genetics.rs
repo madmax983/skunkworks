@@ -36,7 +36,7 @@ pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
 /// Reshuffles the entire DNA based on the current Grid state.
 ///
 /// **OpCode:** `Metamorphosis`
-/// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0).
+/// **Effect:** Clears DNA, reads Grid as DNA, resets Energy to 50, IP to (0,0), Stack to [].
 pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let rows = vm.grid.len();
     let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
@@ -225,7 +225,7 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 ///
 /// **OpCode:** `Splice`
 /// **Stack:** `[ ..., method, strand_b, strand_a ] -> [ ..., new_strand_idx ]`
-/// **Methods:** 0=Interleave, 1=Crossover, 2=Merge.
+/// **Methods:** 0=Interleave, 1=Uniform Crossover, 2=Midpoint Split.
 pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // stack: method, strand_b, strand_a (bottom)
     if vm.stack.len() >= 3 {
@@ -1365,6 +1365,139 @@ pub fn exec_decompile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     } else {
         vm.output
             .push("Error: Stack underflow for decompile".to_string());
+    }
+    None
+}
+
+/// Triggers a metamorphic reboot based on a CA rule.
+///
+/// **OpCode:** `Genesis`
+/// **Stack:** `[ ..., rule_id ] -> [ ... ]`
+/// **Effect:** Replaces entire DNA with genes derived from the Grid state using CA rules.
+pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(rule_id) = val {
+            // Retrieve Rule
+            let rule = if let Some(r) = vm.garden.rules.get(&rule_id) {
+                r.clone()
+            } else {
+                vm.output.push(format!("GENESIS: Rule {} not found", rule_id));
+                return None;
+            };
+
+            // Calculate "Born" cells
+            let rows = vm.grid.len();
+            let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+            let mut new_genes = Vec::new();
+
+            for y in 0..rows {
+                for x in 0..cols {
+                    // Count neighbors
+                    let mut neighbors_count = 0;
+                    for dy in -1..=1 {
+                        for dx in -1..=1 {
+                            if dy == 0 && dx == 0 {
+                                continue;
+                            }
+                            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                                if let Value::Int(n) = &vm.grid[ny][nx] {
+                                    if *n > 0 {
+                                        neighbors_count += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    let val = &vm.grid[y][x];
+                    let is_alive = match val {
+                        Value::Int(n) if *n > 0 => true,
+                        _ => false,
+                    };
+
+                    let mut keep = false;
+                    if is_alive {
+                        if rule.survival.contains(&neighbors_count) {
+                            keep = true;
+                        }
+                    } else if rule.birth.contains(&neighbors_count) {
+                        keep = true;
+                    }
+
+                    if keep {
+                        // Create gene from cell value
+                        match val {
+                            Value::Int(n) => {
+                                new_genes.push(crate::ast::Gene {
+                                    op: OpCode::Push,
+                                    args: vec![crate::ast::Nucleotide::Number(*n)],
+                                });
+                            }
+                            Value::Str(s) => {
+                                // Try to parse as OpCode
+                                let op = s.parse().unwrap_or(OpCode::Unknown(s.clone()));
+                                new_genes.push(crate::ast::Gene {
+                                    op,
+                                    args: vec![], // No args for simple genesis
+                                });
+                            }
+                            _ => {
+                                // Default gene
+                                new_genes.push(crate::ast::Gene {
+                                    op: OpCode::Nop,
+                                    args: vec![],
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            if new_genes.is_empty() {
+                vm.output.push("GENESIS: The void remains... (No genes created)".to_string());
+                return None;
+            }
+
+            // Wipe State
+            vm.dna.helix.strands.clear();
+            vm.organelles.clear();
+            vm.epigenome.clear();
+            vm.telomeres.clear();
+            #[cfg(feature = "cortex")]
+            {
+                vm.activation_levels.clear();
+                vm.synapse_map.clear();
+            }
+            vm.symbiotes.clear();
+            vm.reflexes.clear();
+
+            // Create New Strand
+            vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes });
+            vm.telomeres.push(100);
+            #[cfg(feature = "cortex")]
+            {
+                vm.activation_levels.push(0);
+                vm.synapse_map.push(Vec::new());
+            }
+
+            // Reset Execution
+            vm.energy = crate::vm::INITIAL_ENERGY;
+            vm.ip = (0, 0);
+            vm.stack.clear();
+
+            vm.output.push("GENESIS: A new world is born from the ashes.".to_string());
+
+            // Register root
+            vm.cladistics = crate::vm::cladistics::Cladistics::new();
+            vm.cladistics.register_strand(0, None, vm.tick_counter, "Genesis".to_string());
+
+            return Some((0, 0));
+
+        } else {
+            vm.output.push("Error: Type mismatch for genesis".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for genesis".to_string());
     }
     None
 }
