@@ -10,6 +10,7 @@ crossbeam = "0.8"
 parking_lot = "0.12"
 rand = { workspace = true }
 ratatui = { workspace = true }
+sysinfo = "0.30"
 
 [dependencies.cpal]
 version = "0.15"

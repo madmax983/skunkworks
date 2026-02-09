@@ -1,4 +1,4 @@
-use crate::drummer::DrummerState;
+use crate::drummer::{DrummerState, DrummerUpdate};
 use crossbeam::channel::Receiver;
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -9,24 +9,28 @@ use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
-    widgets::{Block, Borders, Paragraph},
+    widgets::{Block, Borders, Gauge, Paragraph},
     Terminal,
 };
 use std::io;
+use std::sync::atomic::{AtomicU8, Ordering};
+use std::sync::Arc;
 use std::time::Duration;
 
 pub struct App {
     pub drummer_count: usize,
-    pub states: Vec<DrummerState>,
-    pub rx: Receiver<(usize, DrummerState)>,
+    pub updates: Vec<Option<DrummerUpdate>>,
+    pub rx: Receiver<DrummerUpdate>,
+    pub cpu_load: Arc<AtomicU8>,
 }
 
 impl App {
-    pub fn new(drummer_count: usize, rx: Receiver<(usize, DrummerState)>) -> Self {
+    pub fn new(drummer_count: usize, rx: Receiver<DrummerUpdate>, cpu_load: Arc<AtomicU8>) -> Self {
         Self {
             drummer_count,
-            states: vec![DrummerState::Sleeping; drummer_count],
+            updates: vec![None; drummer_count],
             rx,
+            cpu_load,
         }
     }
 }
@@ -57,24 +61,32 @@ fn run_loop<B: ratatui::backend::Backend>(
 ) -> io::Result<()> {
     loop {
         // Drain channel
-        while let Ok((id, state)) = app.rx.try_recv() {
-            if id < app.states.len() {
-                app.states[id] = state;
+        while let Ok(update) = app.rx.try_recv() {
+            if update.id < app.updates.len() {
+                let id = update.id;
+                app.updates[id] = Some(update);
             }
         }
 
         terminal
             .draw(|f| {
-                // Use area() instead of size() (deprecated)
                 let size = f.area();
 
                 let chunks = Layout::default()
                     .direction(Direction::Vertical)
                     .margin(1)
-                    .constraints([Constraint::Percentage(10), Constraint::Percentage(90)].as_ref())
+                    .constraints(
+                        [
+                            Constraint::Length(3), // Title
+                            Constraint::Length(3), // CPU
+                            Constraint::Min(0),    // Drummers
+                        ]
+                        .as_ref(),
+                    )
                     .split(size);
 
-                let title = Paragraph::new("⚛️ Genesis: Schrödinger's Beat ⚛️")
+                // Title
+                let title = Paragraph::new("⚛️ Genesis: Schrödinger's Beat (Euclidean + Mutex) ⚛️")
                     .style(
                         Style::default()
                             .fg(Color::Cyan)
@@ -83,6 +95,17 @@ fn run_loop<B: ratatui::backend::Backend>(
                     .block(Block::default().borders(Borders::ALL));
                 f.render_widget(title, chunks[0]);
 
+                // CPU Load
+                let load = app.cpu_load.load(Ordering::Relaxed);
+                let label = format!("System Entropy (CPU): {}%", load);
+                let gauge = Gauge::default()
+                    .block(Block::default().title("Metric Modulation").borders(Borders::ALL))
+                    .gauge_style(Style::default().fg(Color::Magenta))
+                    .ratio(load as f64 / 100.0)
+                    .label(label);
+                f.render_widget(gauge, chunks[1]);
+
+                // Drummers
                 let constraints: Vec<Constraint> = (0..app.drummer_count)
                     .map(|_| Constraint::Ratio(1, app.drummer_count as u32))
                     .collect();
@@ -90,26 +113,57 @@ fn run_loop<B: ratatui::backend::Backend>(
                 let thread_chunks = Layout::default()
                     .direction(Direction::Vertical)
                     .constraints(constraints)
-                    .split(chunks[1]);
+                    .split(chunks[2]);
 
-                for (i, state) in app.states.iter().enumerate() {
-                    let (color, text) = match state {
-                        DrummerState::Sleeping => (Color::Gray, "SLEEPING"),
-                        DrummerState::Trying => (Color::Yellow, "TRYING..."),
-                        DrummerState::Acquired => (Color::Green, "!!! ACQUIRED !!!"),
-                        DrummerState::Contested => (Color::Red, "XXX CONTESTED XXX"),
-                        DrummerState::Releasing => (Color::Blue, "RELEASING"),
-                    };
+                for (i, update_opt) in app.updates.iter().enumerate() {
+                    let block = Block::default()
+                        .borders(Borders::ALL)
+                        .title(format!("Thread #{}", i));
 
-                    let p = Paragraph::new(format!("Thread #{}: {}", i, text))
-                        .style(Style::default().fg(Color::White).bg(color))
-                        .block(
-                            Block::default()
-                                .borders(Borders::ALL)
-                                .title(format!("Thread {}", i)),
+                    if let Some(update) = update_opt {
+                        let (color, state_text) = match update.state {
+                            DrummerState::Sleeping => (Color::Gray, "SLEEPING"),
+                            DrummerState::Trying => (Color::Yellow, "TRYING..."),
+                            DrummerState::Acquired => (Color::Green, "!!! ACQUIRED !!!"),
+                            DrummerState::Contested => (Color::Red, "XXX CONTESTED XXX"),
+                            DrummerState::Releasing => (Color::Blue, "RELEASING"),
+                        };
+
+                        // Visualization of Euclidean Ring
+                        // Active Step highlighted
+                        let mut ring_vis = String::new();
+                        for (idx, &is_beat) in update.pattern.iter().enumerate() {
+                            if idx == update.step {
+                                if is_beat {
+                                    ring_vis.push_str("[●]"); // Current Beat
+                                } else {
+                                    ring_vis.push_str("[○]"); // Current Rest
+                                }
+                            } else {
+                                if is_beat {
+                                    ring_vis.push_str(" • "); // Beat
+                                } else {
+                                    ring_vis.push_str(" · "); // Rest
+                                }
+                            }
+                        }
+
+                        let content = format!(
+                            "{}\nState: {}\nPattern: {}",
+                            ring_vis, state_text,
+                            update.pattern.iter().map(|&b| if b {'1'} else {'0'}).collect::<String>()
                         );
 
-                    f.render_widget(p, thread_chunks[i]);
+                        let p = Paragraph::new(content)
+                            .style(Style::default().fg(color))
+                            .block(block);
+                        f.render_widget(p, thread_chunks[i]);
+                    } else {
+                        let p = Paragraph::new("Waiting for thread...")
+                            .style(Style::default().fg(Color::DarkGray))
+                            .block(block);
+                        f.render_widget(p, thread_chunks[i]);
+                    }
                 }
             })
             .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{:?}", e)))?;
