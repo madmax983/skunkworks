@@ -203,13 +203,19 @@ impl Izhikevich {
     /// let v = neuron.update(1.0, 5.0);
     /// ```
     pub fn update(&mut self, dt: f32, extra_current: f32) -> f32 {
+        if dt <= 0.0 || dt.is_nan() || extra_current.is_nan() {
+            return self.v;
+        }
+
         // Internal substeps for numerical stability
         let substeps = 2;
         let dt_sub = dt / substeps as f32;
 
         for _ in 0..substeps {
             // Decay the injected current
-            self.current_decay *= 0.95; // Exponential decay
+            // 0.95 per unit time (dt=1.0)
+            let decay_factor = 0.95f32.powf(dt_sub * 2.0);
+            self.current_decay *= decay_factor;
 
             let total_current = extra_current + self.current_decay;
 
@@ -284,14 +290,17 @@ mod tests {
     #[test]
     fn test_nan_resilience() {
         let mut n = Izhikevich::new();
+        let original_v = n.v;
         // Inject NaN current
         n.update(0.1, f32::NAN);
-        // v should become NaN, but function should not panic
-        assert!(n.v.is_nan());
+        // v should NOT become NaN, it should remain valid (defense in depth)
+        assert!(!n.v.is_nan());
+        assert_eq!(n.v, original_v);
 
-        // Check if subsequent updates panic
-        n.update(0.1, 0.0);
-        assert!(n.v.is_nan());
+        // Also check dt
+        n.update(f32::NAN, 0.0);
+        assert!(!n.v.is_nan());
+        assert_eq!(n.v, original_v);
     }
 
     #[test]
@@ -307,5 +316,32 @@ mod tests {
             (n.current_decay - expected).abs() < tolerance,
             "Decay should match 0.95^2 per update call"
         );
+    }
+
+    #[test]
+    fn test_decay_consistency() {
+        // Test that decay is time-dependent, not call-count dependent.
+        // update(1.0) should have roughly same decay as 10 * update(0.1)
+
+        let mut n1 = Izhikevich::new();
+        n1.inject(100.0);
+        n1.update(1.0, 0.0); // One big step
+
+        let mut n2 = Izhikevich::new();
+        n2.inject(100.0);
+        for _ in 0..10 {
+            n2.update(0.1, 0.0); // 10 small steps
+        }
+
+        // With the bug (0.95 per substep regardless of dt),
+        // n1 decays 0.95^2 = 0.9025
+        // n2 decays 0.95^20 = 0.358
+        // Difference is huge (~54.4)
+
+        // With the fix (time dependent), they should be close.
+        let diff = (n1.current_decay - n2.current_decay).abs();
+
+        // This assertion will FAIL with the bug
+        assert!(diff < 5.0, "Decay is inconsistent! Big step: {}, Small steps: {}, Diff: {}", n1.current_decay, n2.current_decay, diff);
     }
 }
