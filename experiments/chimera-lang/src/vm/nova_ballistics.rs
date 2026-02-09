@@ -207,7 +207,7 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let (cy, cx) = vm.context_loc;
 
             // Normalize direction vector
-            let len = ((dx * dx + dy * dy) as f64).sqrt();
+            let len = ((dx as f64).powi(2) + (dy as f64).powi(2)).sqrt();
             let (vx, vy) = if len > 0.0 {
                 ((dx as f64) / len, (dy as f64) / len)
             } else {
