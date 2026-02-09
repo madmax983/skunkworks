@@ -4,6 +4,10 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** The ants are navigating the Poincaré disk. Pheromones are decaying in non-Euclidean space.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/heap-auction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `market-flow`.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-dungeon
 - **Scent Origin:** Genesis (The Topologist) ⚛️🏰
 - **Status:** The infinite dungeon is mapped. Tile transitions use Möbius transformations.
@@ -15,10 +19,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mosaic 🎨
 - **Status:** Structural anomaly detected. Test modules found in `src/vm/`. Relocation recommended for hygiene.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/cipher-clock
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen remains in workspace despite condemnation. Quarantine breach.
 
 ### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
@@ -102,9 +102,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Microservices symbiosis active.
 
-### [Concentration Level: TOXIC] - Location: experiments/cipher-clock
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** Bevy/Glam conflict detected. Quarantine recommended until dependency alignment.
+### [Concentration Level: TOXIC] - Location: graveyard/cipher-clock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Monarch)
@@ -357,9 +357,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation. Redundant with `system-attractor`.
 
-### [Concentration Level: FRESH] - Location: experiments/code-canyon
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-canyon
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
-- **Status:** The rain is falling. The code is eroding. Valleys of sediment are forming where the logic flows.
+- **Status:** Hydraulic and Thermal erosion active. Sediment is colored by syntax. The mountains are melting into data-rich valleys.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/struct-soup
 - **Scent Origin:** The Reaper ☠️
@@ -720,10 +720,6 @@
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The rock is breathing. Algae and Fungus are trading packets. The microservices are alive. Symbiosis visualized via cellular automata.
 
-### [Concentration Level: FRESH] - Location: experiments/cipher-clock
-- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
-- **Status:** The first gear of the Enigma is forged. Thoughts ground into secrets by brass teeth. Physically simulated cryptography active.
-
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-lichen
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infinite. Lichen colonies are growing on the Poincaré disk. Symbiosis has adapted to non-Euclidean space.
@@ -775,6 +771,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The words are freezing when I look at them. The retina is stabilizing the linguistic drift. Unobserved phonemes are mutating in the periphery.
 
+### [Concentration Level: FRESH] - Location: experiments/event-horizon
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The singularity is forming. Text is bending around the event horizon. Symplectic integration is holding the orbits stable.
 ### [Concentration Level: FRESH] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Planeswalker)
 - **Status:** The Multiverse is open. `Dimension`, `DRead`, `DWrite`, `DMerge` opcodes active. The organism can now store memories in parallel realities. Storage is infinite.
@@ -784,6 +783,14 @@
 - **Status:** Specimen executed. Redundant with `schrodingers-beat`. Documentation void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/cipher-clock
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Dependency conflict. Moved to graveyard.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/heap-auction
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `market-flow`. Grace period: 24h.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Workspace dependency conflict contributor. Moved to graveyard.
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Stagnation confirmed. Documentation void. Biomass returned to the void.
 

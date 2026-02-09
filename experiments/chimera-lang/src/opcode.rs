@@ -1296,6 +1296,12 @@ pub enum OpCode {
     /// **State:** 1=On, 0=Off.
     #[cfg(feature = "nova")]
     AutoCast,
+    /// **[Nova]** Inscribes a Ward (trap) on the current grid cell.
+    ///
+    /// **Stack:** `[ ..., persistence, strand_idx ] -> [ ... ]`
+    /// **Effect:** Writes a hidden trap that triggers the strand when stepped on.
+    #[cfg(feature = "nova")]
+    Ward,
     /// **[Nova]** Reduces a Junction to a single value.
     ///
     /// **Stack:** `[ ..., junction, init, function ] -> [ ..., result ]`
@@ -1442,6 +1448,13 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., triggered_count ]`
     #[cfg(feature = "oracle")]
     Divinate,
+
+    /// **[Oracle]** Searches for a strand satisfying a predicate and jumps to it.
+    ///
+    /// **Stack:** `[ ..., query ] -> [ ... ]`
+    /// **Effect:** Jumps to the first matching strand.
+    #[cfg(feature = "oracle")]
+    Seek,
 
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.

@@ -48,6 +48,8 @@ pub const INITIAL_ENERGY: i64 = 50;
 #[cfg(feature = "nova")]
 pub const MAX_STRANDS: usize = 1024;
 #[cfg(feature = "nova")]
+pub const MAX_PROJECTILES: usize = 1024;
+#[cfg(feature = "nova")]
 pub const MAX_POCKET_RADIUS: i64 = 32;
 #[cfg(feature = "nova")]
 pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
@@ -177,6 +179,8 @@ pub mod nova_sovereignty;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_sovereignty_test;
+#[cfg(feature = "nova")]
+pub mod nova_ward;
 pub mod oracle;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
@@ -1292,21 +1296,26 @@ impl ChimeraVM {
                             };
                             if (self.membranes[cy][cx] & mask) == 0 {
                                 // Spawn ephemeral Ribosome
-                                let new_org = Organelle {
-                                    stack: Vec::new(),
-                                    ip: (0, 0),
-                                    context_loc: (ny, nx),
-                                    call_stack: Vec::new(),
-                                    recursion_depth: 0,
-                                    halted: false,
-                                    kind: nova::OrganelleType::Ribosome,
-                                    direction: (dy as i8, dx as i8),
-                                    ttl: Some(1),
-                                    name: "Spark".to_string(),
-                                    traits: vec!["Ephemeral".to_string()],
-                                    genome_id: 0,
-                                };
-                                self.organelles.push(new_org);
+                                if self.organelles.len() < MAX_ORGANELLES {
+                                    let new_org = Organelle {
+                                        stack: Vec::new(),
+                                        ip: (0, 0),
+                                        context_loc: (ny, nx),
+                                        call_stack: Vec::new(),
+                                        recursion_depth: 0,
+                                        halted: false,
+                                        kind: nova::OrganelleType::Ribosome,
+                                        direction: (dy as i8, dx as i8),
+                                        ttl: Some(1),
+                                        name: "Spark".to_string(),
+                                        traits: vec!["Ephemeral".to_string()],
+                                        genome_id: 0,
+                                    };
+                                    self.organelles.push(new_org);
+                                } else {
+                                    self.output
+                                        .push("Error: Organelle limit exceeded in Bang".to_string());
+                                }
                             }
                         }
                     }
@@ -1435,6 +1444,9 @@ impl ChimeraVM {
                     new_x = px;
                 }
                 self.context_loc = (new_y, new_x);
+                if let Some(target) = nova_ward::check_ward_trigger(self) {
+                    self.ip = target;
+                }
             }
         }
     }
@@ -1973,6 +1985,9 @@ impl ChimeraVM {
             OpCode::Inscribe => nova_sigil::exec_inscribe(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Ward => nova_ward::exec_ward(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::AutoCast => nova_sigil::exec_auto_cast(self, op, args),
 
             #[cfg(feature = "nova")]
@@ -2217,10 +2232,8 @@ impl ChimeraVM {
             | OpCode::Retract
             | OpCode::Query
             | OpCode::Augury
-            | OpCode::Divinate => {
-                oracle::exec_oracle_op(self, op, args);
-                None
-            }
+            | OpCode::Divinate
+            | OpCode::Seek => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
