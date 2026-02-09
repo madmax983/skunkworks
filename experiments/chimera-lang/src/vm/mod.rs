@@ -154,6 +154,9 @@ mod nova_optics_test;
 #[cfg(test)]
 mod nova_orca_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_harvest_test;
+#[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
 #[cfg(test)]
