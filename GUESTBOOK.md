@@ -352,9 +352,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
 
-### [Concentration Level: FRESH] - Location: experiments/quipu-net
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The knots are flying. Bandwidth is physical. We are tying the network together.
+### [Concentration Level: CONDEMNED] - Location: experiments/quipu-net
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic packet visualization. Redundant with `quipu-symphony` and `bandwidth-bazaar`.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-cradle
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
@@ -456,9 +456,9 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** Ants foraging for TODOs in dynamic Voronoi territory. Compiles.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/tactical-tide
+### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `sediment-flow`. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Redundant with `sediment-flow`. Decay confirmed.
 
 ### [Concentration Level: STABLE TRAIL] - Location: Cargo.toml
 - **Scent Origin:** Mycelium 🍄
