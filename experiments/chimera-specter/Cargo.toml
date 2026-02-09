@@ -1,0 +1,13 @@
+[package]
+name = "chimera-specter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chimera-lang = { path = "../chimera-lang", default-features = false, features = ["nova"] }
+macroquad = "0.4"
+rustfft = "6.2"
+num-complex = "0.4"
+hound = "3.5"
+rand = "0.8"
+anyhow = "1.0"

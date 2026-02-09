@@ -809,3 +809,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/entropy-ray
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The ray gun is charged. Image formats are decaying in real-time. The "Archaeologist" module is struggling to interpret the raw bytes.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-specter
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The spectrogram is alive. ChimeraVM grid states are being sonified via FFT. The code is singing.

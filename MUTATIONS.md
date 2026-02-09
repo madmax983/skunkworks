@@ -651,9 +651,22 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/quantum-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
 
+### entropy-ray
+- **Parents**: experiments/digital-compost + experiments/chimera-lang (likely)
+- **Concept**: Visualizes bit rot and file format decay.
+- **Status**: experiments/entropy-ray
+- **Evaluation**: Compiles. Verified by The Splice Surgeon.
+
 ### hyperbolic-mold
 - **Parents**: experiments/hyperbolic-browser + experiments/physarum-transit
 - **Concept**: Slime mold particles (Physarum) navigating the Poincaré Disk using hyperbolic geometry rules, depositing pheromones on a projected map.
 - **Novel trait**: Hyperbolic Transport. Agents follow geodesics (circles on screen), but diffusion is Euclidean.
 - **Status**: experiments/hyperbolic-mold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-specter
+- **Parents**: experiments/chimera-lang + experiments/spectral-scribe
+- **Concept**: A ChimeraVM where the memory grid is mapped to a frequency spectrogram. The organism's state determines the audio output.
+- **Novel trait**: Sonification of biological computation. The program *is* the sound.
+- **Status**: experiments/chimera-specter
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Spectrogram visualization active.

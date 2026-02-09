@@ -1,66 +1,55 @@
+import subprocess
 import os
 import re
-import subprocess
-import sys
 
-def get_hybrids_from_mutations():
+def get_hybrid_experiments():
     hybrids = []
-    with open('MUTATIONS.md', 'r') as f:
-        content = f.read()
-
-    # Look for "### <name>" under "Spawned Hybrids"
-    # We can just grep all ### headers and filter by existence in experiments/
-    headers = re.findall(r'^###\s+([\w-]+)', content, re.MULTILINE)
-
-    valid_hybrids = []
-    for h in headers:
-        if os.path.isdir(f"experiments/{h}"):
-            valid_hybrids.append(h)
-
-    return valid_hybrids
-
-def check_guestbook(hybrid_name):
-    with open('GUESTBOOK.md', 'r') as f:
-        if hybrid_name in f.read():
-            return True
-    return False
-
-def check_compilation(hybrid_name):
-    print(f"Checking {hybrid_name}...")
     try:
-        # verify Cargo.toml exists
-        if not os.path.exists(f"experiments/{hybrid_name}/Cargo.toml"):
-            return False, "No Cargo.toml"
-
-        result = subprocess.run(
-            ["cargo", "check", "-p", hybrid_name],
-            capture_output=True,
-            text=True
-        )
-        return result.returncode == 0, result.stderr if result.returncode != 0 else ""
+        with open("Cargo.toml", "r") as f:
+            content = f.read()
+            # Simple regex to find strings inside members list
+            # Note: This is fragile but works for the current format
+            # Looking for "experiments/..." inside quotes
+            matches = re.findall(r'"experiments/([^"]+)"', content)
+            hybrids = matches
     except Exception as e:
-        return False, str(e)
+        print(f"Error reading Cargo.toml: {e}")
+    return hybrids
 
-def main():
-    hybrids = get_hybrids_from_mutations()
-    results = {}
+results = {}
 
-    print(f"Found {len(hybrids)} hybrids to evaluate.")
+print("🧬 Evaluator: Beginning assessment of ALL hybrids...")
 
-    for h in hybrids:
-        compiles, error = check_compilation(h)
-        noticed = check_guestbook(h)
-        results[h] = {
-            "compiles": compiles,
-            "noticed": noticed,
-            "error_snippet": error[:100].replace('\n', ' ') if error else ""
-        }
+hybrids = get_hybrid_experiments()
 
-    print("\n--- RESULTS ---")
-    for h, data in results.items():
-        status = "✅" if data['compiles'] else "❌"
-        guest = "👀" if data['noticed'] else "Wait"
-        print(f"| {h} | {status} | {guest} | {data['error_snippet']} |")
+if not hybrids:
+    print("No hybrids found in Cargo.toml workspace members.")
+else:
+    print(f"Found {len(hybrids)} hybrids.")
 
-if __name__ == "__main__":
-    main()
+for hybrid in hybrids:
+    print(f"Checking {hybrid}...")
+    try:
+        # Check if directory exists
+        if not os.path.exists(f"experiments/{hybrid}"):
+            results[hybrid] = "MISSING DIRECTORY"
+            continue
+
+        # Try to compile
+        cmd = ["cargo", "build", "-p", hybrid, "--quiet"]
+        process = subprocess.run(cmd, capture_output=True, text=True, check=False)
+
+        if process.returncode == 0:
+            results[hybrid] = "COMPILES"
+        else:
+            # Short error summary
+            err_lines = process.stderr.strip().split('\n')
+            last_err = err_lines[-1] if err_lines else "Unknown error"
+            results[hybrid] = f"FAILED: {last_err[:100]}"
+
+    except Exception as e:
+        results[hybrid] = f"ERROR: {str(e)}"
+
+print("\n🧬 Evaluation Results:")
+for h, r in results.items():
+    print(f"- {h}: {r}")
