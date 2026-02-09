@@ -82,6 +82,8 @@ pub(crate) enum ViewMode {
     Arena,
     #[cfg(feature = "nova")]
     Garden,
+    #[cfg(feature = "nova")]
+    Orca,
 }
 
 enum InputMode {
@@ -455,6 +457,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Orca = app_state.view_mode {
+                render_orca(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -694,6 +702,16 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Orca => {
+                                    // Grid Editing Logic
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Microscope => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -864,6 +882,16 @@ where
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
+                    if app_state.view_mode == ViewMode::Orca {
+                        if c == ' ' {
+                            // Let Space fall through
+                        } else if c.is_ascii_graphic() {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.grid[y][x] = crate::vm::Value::Str(c.to_string());
+                            continue;
+                        }
+                    }
+
                     if c != 'q' && c != ' ' && c != 'm' && c != 'c' && vm.handle_input(c) {
                         continue;
                     }
@@ -972,7 +1000,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Arena => ViewMode::Garden,
                             #[cfg(feature = "nova")]
-                            ViewMode::Garden => ViewMode::Heatmap,
+                            ViewMode::Garden => ViewMode::Orca,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Orca => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1136,6 +1166,8 @@ where
                     KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1371,6 +1403,12 @@ where
                         ViewMode::Arena => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Garden => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -1649,6 +1687,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -1757,6 +1801,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         ViewMode::Genome => {}
@@ -1859,6 +1909,12 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Orca => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         app_state.input_mode = InputMode::Editing;
@@ -1935,6 +1991,19 @@ where
                                 }
                             }
                             ViewMode::Grid => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Orca => {
+                                // Enable editing grid from Orca view
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
@@ -2812,6 +2881,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Arena => "ARENA (COLOSSEUM)",
         #[cfg(feature = "nova")]
         ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
+        #[cfg(feature = "nova")]
+        ViewMode::Orca => "ORCA (SIGNAL GRID)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -5417,4 +5488,92 @@ fn render_garden(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Guide"),
     );
     f.render_widget(info_widget, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let signal = vm.signal_grid[y][x];
+            let mut style = Style::default();
+
+            let (ch, base_color) = match val {
+                crate::vm::Value::Str(s) => {
+                    let c = s.chars().next().unwrap_or('.');
+                    let color = match c {
+                        '*' => Color::Red,
+                        '0'..='9' => Color::Cyan,
+                        'a'..='z' => Color::Green,
+                        'A'..='Z' => Color::Yellow,
+                        _ => Color::DarkGray,
+                    };
+                    (c.to_string(), color)
+                },
+                crate::vm::Value::Int(n) => {
+                    let v = (*n).rem_euclid(36);
+                    let c = if v < 10 {
+                        ((v as u8) + b'0') as char
+                    } else {
+                        ((v as u8 - 10) + b'a') as char
+                    };
+                    let color = if *n == 0 { Color::DarkGray } else { Color::Cyan };
+                    (c.to_string(), color)
+                },
+                _ => ("?".to_string(), Color::White),
+            };
+
+            style = style.fg(base_color);
+
+            if signal > 0 {
+                style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_block = Block::default()
+        .borders(Borders::ALL)
+        .title("ORCA GRID (Signal Processing)");
+
+    let grid_widget = Paragraph::new(grid_lines).block(grid_block);
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let info = vec![
+        Line::from("ORCA MODE"),
+        Line::from(" "),
+        Line::from("Operators:"),
+        Line::from("  * Bang (Signal Source)"),
+        Line::from("  N/S/E/W (Directional I/O)"),
+        Line::from("  A/B/D (Math: + - /)"),
+        Line::from("  M (Mutate), C (Clock)"),
+        Line::from("  Q (Query Neighbor)"),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Type to place operators."),
+        Line::from("  Space to Step."),
+        Line::from("  Arrow Keys to Move."),
+        Line::from("  Shift+O to Switch Mode."),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default().borders(Borders::ALL).title("Manual")
+    );
+    f.render_widget(info_widget, chunks[1]);
 }
