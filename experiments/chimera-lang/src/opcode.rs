@@ -908,6 +908,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    /// **[Nova]** Toggles Logic Chemistry (Logos) mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Enables/Disables background processing of Logic Chemistry reactions.
+    #[cfg(feature = "nova")]
+    Logos,
+
     // Chemistry Features (Nova)
     /// **[Nova]** Mixes neighbors into a solution in the current cell.
     ///

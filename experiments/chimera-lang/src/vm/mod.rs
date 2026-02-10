@@ -153,6 +153,8 @@ mod nova_linguistics_test;
 #[cfg(feature = "nova")]
 pub mod nova_logistics;
 #[cfg(feature = "nova")]
+pub mod nova_logos;
+#[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_metamorphism;
@@ -578,6 +580,8 @@ pub struct ChimeraVM {
     pub quipu: nova_quipu::QuipuState,
     #[cfg(feature = "nova")]
     pub tissues: HashMap<usize, nova_metazoa::Tissue>,
+    #[cfg(feature = "nova")]
+    pub logos_mode: bool,
     pub organelle_id_counter: u64,
     pub havoc: havoc::HavocEngine,
     pub glitch_level: f32,
@@ -844,6 +848,8 @@ impl ChimeraVM {
             quipu: nova_quipu::QuipuState::new(),
             #[cfg(feature = "nova")]
             tissues: HashMap::new(),
+            #[cfg(feature = "nova")]
+            logos_mode: false,
             organelle_id_counter: 0,
             havoc: havoc::HavocEngine::new(),
             glitch_level: 0.0,
@@ -1721,6 +1727,7 @@ impl ChimeraVM {
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
             nova_strings::update_strings(self);
+            nova_logos::process_logos(self);
         }
 
         #[cfg(feature = "biophysics")]
@@ -2597,6 +2604,9 @@ impl ChimeraVM {
             OpCode::Signify => nova_metazoa::exec_signify(self, op, args),
             #[cfg(feature = "nova")]
             OpCode::Tissue => nova_metazoa::exec_tissue(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Logos => nova_logos::exec_logos_op(self, op, args),
 
             OpCode::Nop => None,
 
