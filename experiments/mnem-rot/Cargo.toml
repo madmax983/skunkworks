@@ -1,0 +1,10 @@
+[package]
+name = "mnem-rot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+walkdir = "2.3"
+regex = "1.9"
