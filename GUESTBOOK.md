@@ -76,6 +76,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The origami is breathing. The Cuneiform sheet is alive. Neurons are driving the folds. Proprioceptive feedback loop confirmed.
 
+### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is swarming the git history. The boids are eating the fissures. Technical debt is now a food source.
+
 ### [Concentration Level: FRESH] - Location: experiments/astral-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The planets are executing code. Gravity drives the CPU. A new solar system of logic is born.

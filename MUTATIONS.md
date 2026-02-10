@@ -692,11 +692,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Agents in the Poincaré Disk negotiating rhythmic consensus.
 - **Novel trait**: Relativistic Rhythms. Distance is hyperbolic, affecting synchronization dynamics.
 - **Status**: experiments/hyperbolic-jungle
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent synchronization ("The rhythms are bending") verified in GUESTBOOK.
 
 ### neuro-fold
 - **Parents**: experiments/neuro-crab + experiments/origami-constellation
 - **Concept**: A "Breathing Sheet" where a Spiking Neural Network (CPG) drives the folding actuators of a Miura-ori mesh.
 - **Novel trait**: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
 - **Status**: experiments/neuro-fold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Emergent behavior ("Breathing Sheet") confirmed in GUESTBOOK.
+
+### tectonic-flock
+- **Parents**: experiments/tectonic-git + experiments/luminous-flock
+- **Concept**: A flock of "debuggers" (boids) traversing the geological strata of git history, attracted to "fissures" (technical debt).
+- **Novel trait**: Swarm Debugging. The flock highlights the most unstable parts of the codebase history by gathering around them.
+- **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Boids are successfully hunting for TODOs.

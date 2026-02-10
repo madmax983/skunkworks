@@ -1,0 +1,12 @@
+[package]
+name = "tectonic-flock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.30"
+crossterm = "0.28.1"
+anyhow = "1.0"
+rand = "0.8"
+locus = { workspace = true }
+tui-shared = { workspace = true }
