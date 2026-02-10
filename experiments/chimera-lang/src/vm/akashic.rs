@@ -15,35 +15,62 @@ use std::io::{Read, Write};
 const AKASHIC_FILE: &str = ".chimera_akashic.json";
 
 #[cfg(feature = "nova")]
-fn load_records() -> HashMap<String, Value> {
-    if let Ok(mut file) = std::fs::File::open(AKASHIC_FILE) {
-        if let Ok(metadata) = file.metadata() {
-            if metadata.len() > MAX_AKASHIC_SIZE {
-                return HashMap::new();
+fn load_records() -> Result<HashMap<String, Value>, String> {
+    match std::fs::File::open(AKASHIC_FILE) {
+        Ok(file) => {
+            if let Ok(metadata) = file.metadata() {
+                if metadata.len() > MAX_AKASHIC_SIZE {
+                    return Err(format!(
+                        "Akashic Record too large (> {} bytes)",
+                        MAX_AKASHIC_SIZE
+                    ));
+                }
+            }
+            let mut content = String::new();
+            // Use take to strictly enforce limit even if metadata lied
+            if file
+                .take(MAX_AKASHIC_SIZE)
+                .read_to_string(&mut content)
+                .is_ok()
+            {
+                serde_json::from_str(&content).map_err(|e| format!("Akashic Parse Error: {}", e))
+            } else {
+                Err("Failed to read Akashic Record".to_string())
             }
         }
-        let mut content = String::new();
-        if file.read_to_string(&mut content).is_ok() {
-            if let Ok(map) = serde_json::from_str(&content) {
-                return map;
-            }
-        }
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(HashMap::new()),
+        Err(e) => Err(format!("Failed to open Akashic Record: {}", e)),
     }
-    HashMap::new()
 }
 
 #[cfg(feature = "nova")]
-fn save_records(records: &HashMap<String, Value>) {
-    if let Ok(content) = serde_json::to_string_pretty(records) {
-        if let Ok(mut file) = OpenOptions::new()
+fn save_records(records: &HashMap<String, Value>) -> Result<(), String> {
+    let content = serde_json::to_string_pretty(records).map_err(|e| e.to_string())?;
+
+    if content.len() as u64 > MAX_AKASHIC_SIZE {
+        return Err(format!(
+            "Akashic Record exceeds limit ({} > {})",
+            content.len(),
+            MAX_AKASHIC_SIZE
+        ));
+    }
+
+    let temp_file = format!("{}.tmp", AKASHIC_FILE);
+    {
+        let mut file = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
-            .open(AKASHIC_FILE)
-        {
-            let _ = file.write_all(content.as_bytes());
-        }
+            .open(&temp_file)
+            .map_err(|e| format!("Failed to create temp file: {}", e))?;
+        file.write_all(content.as_bytes())
+            .map_err(|e| format!("Failed to write temp file: {}", e))?;
+        file.sync_all()
+            .map_err(|e| format!("Failed to sync temp file: {}", e))?;
     }
+
+    std::fs::rename(&temp_file, AKASHIC_FILE)
+        .map_err(|e| format!("Failed to commit Akashic Record: {}", e))
 }
 
 #[cfg(feature = "nova")]
@@ -55,11 +82,23 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 let key_val = vm.stack.pop().unwrap();
 
                 if let Value::Str(key) = key_val {
-                    let mut records = load_records();
-                    records.insert(key.clone(), value);
-                    save_records(&records);
-                    vm.output.push(format!("AKASHIC: Wrote '{}'", key));
-                    vm.energy = vm.energy.saturating_sub(10);
+                    match load_records() {
+                        Ok(mut records) => {
+                            records.insert(key.clone(), value);
+                            match save_records(&records) {
+                                Ok(_) => {
+                                    vm.output.push(format!("AKASHIC: Wrote '{}'", key));
+                                    vm.energy = vm.energy.saturating_sub(10);
+                                }
+                                Err(e) => {
+                                    vm.output.push(format!("Error: Akashic Write Failed: {}", e));
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            vm.output.push(format!("Error: Akashic Load Failed: {}", e));
+                        }
+                    }
                 } else {
                     vm.output
                         .push("Error: Key must be a string for AkashicWrite".to_string());
@@ -72,15 +111,22 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::AkashicRead => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(key) = val {
-                    let records = load_records();
-                    if let Some(value) = records.get(&key) {
-                        vm.stack.push(value.clone());
-                        vm.output.push(format!("AKASHIC: Read '{}'", key));
-                    } else {
-                        vm.stack.push(Value::Int(0)); // Default if missing
-                        vm.output.push(format!("AKASHIC: Key '{}' not found", key));
+                    match load_records() {
+                        Ok(records) => {
+                            if let Some(value) = records.get(&key) {
+                                vm.stack.push(value.clone());
+                                vm.output.push(format!("AKASHIC: Read '{}'", key));
+                            } else {
+                                vm.stack.push(Value::Int(0)); // Default if missing
+                                vm.output.push(format!("AKASHIC: Key '{}' not found", key));
+                            }
+                            vm.energy = vm.energy.saturating_sub(5);
+                        }
+                        Err(e) => {
+                            vm.output.push(format!("Error: Akashic Load Failed: {}", e));
+                            vm.stack.push(Value::Int(0)); // Maintain stack balance
+                        }
                     }
-                    vm.energy = vm.energy.saturating_sub(5);
                 } else {
                     vm.output
                         .push("Error: Key must be a string for AkashicRead".to_string());
