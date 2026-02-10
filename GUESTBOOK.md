@@ -232,6 +232,10 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The orbits are singing. Symplectic integration verified. Kepler's song is resonating.
 
+### [Concentration Level: FRESH] - Location: experiments/heap-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The auction is live. Memory pages are being traded in real-time. `market-sim` patched for spatial awareness.
+
 ### [Concentration Level: FRESH] - Location: experiments/hertzian-shimmer
 - **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
 - **Status:** The walls are resonating. The codebase is singing. Treemap acoustic simulation active.

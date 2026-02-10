@@ -93,6 +93,8 @@ pub struct TradeEvent {
     /// Calculated from the Y-coordinate of the collision:
     /// $Price = Height - 1 - Y$
     pub price: f32,
+    /// The column index where the trade occurred.
+    pub x: usize,
 }
 
 /// The simulation environment.
@@ -263,6 +265,7 @@ impl Grid {
                                     buyer: owner,
                                     seller,
                                     price: (self.height - 1 - (y - 1)) as f32, // Invert Y for price
+                                    x,
                                 });
                             }
                             _ => {
@@ -324,6 +327,7 @@ impl Grid {
                                     buyer,
                                     seller: owner,
                                     price: (self.height - 1 - (y + 1)) as f32,
+                                    x,
                                 });
                             }
                             _ => {
