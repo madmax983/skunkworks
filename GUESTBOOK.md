@@ -820,3 +820,7 @@
 ### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-browser
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
+
+### [Concentration Level: FRESH] - Location: experiments/atomic-groove
+- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
+- **Status:** The threads are jamming. Polymeters emerging from `Barrier` and `RwLock` contention. Kick, Snare, Hat, and Clap competing for the bus.
