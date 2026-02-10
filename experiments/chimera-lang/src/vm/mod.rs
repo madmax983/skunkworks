@@ -2096,7 +2096,7 @@ impl ChimeraVM {
             OpCode::Remap | OpCode::Restore | OpCode::Mirror => self.exec_prion_op(op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::AkashicWrite | OpCode::AkashicRead => {
+            OpCode::AkashicWrite | OpCode::AkashicRead | OpCode::AkashicAdd => {
                 akashic::exec_akashic_op(self, op, args);
                 None
             }

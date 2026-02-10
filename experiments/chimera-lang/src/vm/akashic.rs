@@ -12,11 +12,56 @@ use std::fs::OpenOptions;
 use std::io::{Read, Write};
 
 #[cfg(feature = "nova")]
-const AKASHIC_FILE: &str = ".chimera_akashic.json";
+fn get_akashic_path() -> String {
+    std::env::var("CHIMERA_AKASHIC_FILE").unwrap_or_else(|_| ".chimera_akashic.json".to_string())
+}
+
+#[cfg(feature = "nova")]
+fn get_lock_path() -> String {
+    std::env::var("CHIMERA_LOCK_FILE").unwrap_or_else(|_| ".chimera_akashic.lock".to_string())
+}
+
+#[cfg(feature = "nova")]
+struct FileLock {
+    path: String,
+}
+
+#[cfg(feature = "nova")]
+impl FileLock {
+    fn lock() -> Self {
+        let path = get_lock_path();
+        let start = std::time::Instant::now();
+        loop {
+            if OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&path)
+                .is_ok()
+            {
+                return FileLock { path };
+            }
+
+            // Timeout after 60 seconds to prevent permanent deadlock if a process crashes
+            // This is a safety valve, not a primary mechanism.
+            if start.elapsed().as_secs() > 60 {
+                let _ = std::fs::remove_file(&path);
+            }
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+    }
+}
+
+#[cfg(feature = "nova")]
+impl Drop for FileLock {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_file(&self.path);
+    }
+}
 
 #[cfg(feature = "nova")]
 fn load_records() -> HashMap<String, Value> {
-    if let Ok(mut file) = std::fs::File::open(AKASHIC_FILE) {
+    let path = get_akashic_path();
+    if let Ok(mut file) = std::fs::File::open(path) {
         if let Ok(metadata) = file.metadata() {
             if metadata.len() > MAX_AKASHIC_SIZE {
                 return HashMap::new();
@@ -35,11 +80,12 @@ fn load_records() -> HashMap<String, Value> {
 #[cfg(feature = "nova")]
 fn save_records(records: &HashMap<String, Value>) {
     if let Ok(content) = serde_json::to_string_pretty(records) {
+        let path = get_akashic_path();
         if let Ok(mut file) = OpenOptions::new()
             .write(true)
             .create(true)
             .truncate(true)
-            .open(AKASHIC_FILE)
+            .open(path)
         {
             let _ = file.write_all(content.as_bytes());
         }
@@ -55,6 +101,7 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                 let key_val = vm.stack.pop().unwrap();
 
                 if let Value::Str(key) = key_val {
+                    let _lock = FileLock::lock();
                     let mut records = load_records();
                     records.insert(key.clone(), value);
                     save_records(&records);
@@ -72,6 +119,7 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         OpCode::AkashicRead => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Str(key) = val {
+                    let _lock = FileLock::lock();
                     let records = load_records();
                     if let Some(value) = records.get(&key) {
                         vm.stack.push(value.clone());
@@ -88,6 +136,33 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
             } else {
                 vm.output
                     .push("Error: Stack underflow for AkashicRead".to_string());
+            }
+        }
+        OpCode::AkashicAdd => {
+            if vm.stack.len() >= 2 {
+                let value = vm.stack.pop().unwrap();
+                let key_val = vm.stack.pop().unwrap();
+
+                if let Value::Str(key) = key_val {
+                    if let Value::Int(inc) = value {
+                        let _lock = FileLock::lock();
+                        let mut records = load_records();
+                        let current = match records.get(&key) {
+                            Some(Value::Int(n)) => *n,
+                            _ => 0,
+                        };
+                        records.insert(key.clone(), Value::Int(current + inc));
+                        save_records(&records);
+                        vm.output.push(format!("AKASHIC: Add {} to '{}'", inc, key));
+                    } else {
+                        vm.output.push("Error: Value must be Int for AkashicAdd".to_string());
+                    }
+                    vm.energy = vm.energy.saturating_sub(10);
+                } else {
+                    vm.output.push("Error: Key must be a string for AkashicAdd".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for AkashicAdd".to_string());
             }
         }
         _ => {}

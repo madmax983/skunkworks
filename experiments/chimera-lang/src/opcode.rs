@@ -1357,6 +1357,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., key ] -> [ ..., value ]`
     #[cfg(feature = "nova")]
     AkashicRead,
+    /// **[Nova]** Atomically adds a value to a key in the Akashic Record.
+    ///
+    /// **Stack:** `[ ..., key, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    AkashicAdd,
 
     /// **[Nova]** Dumps the flight recorder (blackbox) to the stack.
     ///
