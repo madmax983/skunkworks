@@ -1016,6 +1016,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Retroscope,
 
+    /// **[Nova]** Reverts the Grid state to a previous point in time.
+    ///
+    /// **Stack:** `[ ..., ticks ] -> [ ... ]`
+    /// **Effect:** Overwrites current grid with the state from `ticks` ago.
+    #[cfg(feature = "nova")]
+    Retrograde,
+
     // Egregore Features (Collective Consciousness)
     /// **[Nova]** Connects to the collective Egregore mind.
     ///

@@ -85,6 +85,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_chronos;
+#[cfg(feature = "nova")]
 pub mod nova_genetics;
 #[cfg(feature = "nova")]
 pub mod nova_metazoa;
@@ -228,7 +230,9 @@ use crossbeam_channel::{Receiver, Sender};
 use resonance_audio::audio::AudioCommand;
 
 #[cfg(feature = "nova")]
-use self::nova::{Organelle, Spore};
+use self::nova::Organelle;
+#[cfg(feature = "nova")]
+use self::nova_chronos::Spore;
 
 #[cfg(feature = "nova")]
 #[derive(Debug, Clone, PartialEq)]
@@ -2380,6 +2384,7 @@ impl ChimeraVM {
             | OpCode::Tangle
             | OpCode::Pray
             | OpCode::Genesis
+            | OpCode::Retrograde
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

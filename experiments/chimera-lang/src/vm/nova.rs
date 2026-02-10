@@ -12,8 +12,8 @@
 //! - **Quantum Entanglement**: Linked strands that share mutations.
 //! - **Phases of Matter**: Shift between Corporeal, Ethereal (pass walls), Crystalline (immobile), and Flux (fast).
 
-use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, ChromaCell, Value, MAX_STRANDS};
-use crate::ast::{Dna, Nucleotide};
+use super::{nova_bestiary, nova_biome::Biome, ChimeraVM, Value, MAX_STRANDS};
+use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
@@ -37,56 +37,6 @@ pub enum Phase {
     Flux,
 }
 
-/// Represents a "time-travel" snapshot of the VM state.
-///
-/// Used by the `Sporulate` and `Germinate` opcodes to save and restore the entire simulation state.
-/// This includes the grid, stack, energy, DNA, and all Nova subsystems (epigenetics, portals, etc.).
-#[derive(Clone)]
-pub struct Spore {
-    pub phase: Phase,
-    pub chirality: crate::vm::Chirality,
-    pub dna: Dna,
-    pub stack: Vec<Value>,
-    pub ip: (usize, usize),
-    pub output: Vec<String>,
-    pub halted: bool,
-    pub energy: i64,
-    pub grid: Vec<Vec<Value>>,
-    pub chaos_mode: bool,
-    pub recursion_depth: usize,
-    pub context_loc: (usize, usize),
-    pub epigenome: HashSet<(usize, usize)>,
-    pub telomeres: Vec<i64>,
-    pub hormone_grid: Vec<Vec<[i64; 3]>>,
-    pub waste_grid: Vec<Vec<i64>>,
-    pub mutagen_grid: Vec<Vec<i64>>,
-    pub light_grid: Vec<Vec<i64>>,
-    pub call_stack: Vec<(usize, usize)>,
-    pub input_buffer: VecDeque<char>,
-    pub receptors: HashMap<char, usize>,
-    pub entangled_pairs: HashMap<usize, usize>,
-    pub portals: HashMap<(usize, usize), (usize, usize)>,
-    pub membranes: Vec<Vec<u8>>,
-    pub chroma_grid: Vec<Vec<ChromaCell>>,
-    pub sonar_target: Option<(usize, usize)>,
-    pub symbiotes: Vec<(usize, usize)>,
-    pub ether: HashMap<i64, VecDeque<Value>>,
-    pub reflexes: HashMap<i64, usize>,
-    pub remap_table: HashMap<OpCode, OpCode>,
-    pub direction: isize,
-    pub mycelium: HashMap<(usize, usize), Vec<(usize, usize)>>,
-    pub immune_system: HashSet<u64>,
-    pub dictionary: HashMap<String, usize>,
-    pub gravity_grid: Vec<Vec<i64>>,
-    pub wind_grid: Vec<Vec<(i8, i8)>>,
-    pub moisture_grid: Vec<Vec<i64>>,
-    pub entropy_grid: Vec<Vec<i64>>,
-    pub relativity_mode: bool,
-    #[cfg(feature = "cortex")]
-    pub synapse_map: Vec<Vec<usize>>,
-    #[cfg(feature = "cortex")]
-    pub activation_levels: Vec<i64>,
-}
 
 /// Defines the specialized behavior of an Organelle.
 #[derive(Debug, Clone, PartialEq)]
@@ -1206,43 +1156,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        OpCode::TimeWarp => {
-            // stack: radius, factor (top)
-            if vm.stack.len() >= 2 {
-                let factor_val = vm.stack.pop().unwrap();
-                let radius_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(r), Value::Int(f)) = (radius_val, factor_val) {
-                    if r > 0 {
-                        let factor = f.clamp(0, 10) as u8;
-                        let (cy, cx) = vm.context_loc;
-                        let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
-                        let count = coords.len();
-
-                        for (tx, ty) in coords {
-                            vm.time_grid[ty][tx] = factor;
-                        }
-
-                        // Cost depends on area and factor magnitude
-                        let cost_multiplier = if factor == 0 { 2 } else { factor as i64 };
-                        vm.energy = vm
-                            .energy
-                            .saturating_sub((count as i64 * cost_multiplier) / 2);
-                        vm.output.push(format!(
-                            "TIME_WARP: Set time factor {} at {},{} r={}",
-                            factor, cx, cy, r
-                        ));
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for time_warp".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for time_warp".to_string());
-            }
-            None
-        }
+        OpCode::TimeWarp => super::nova_chronos::exec_time_warp(vm),
         OpCode::RetinaDraw => {
             // Stack: [ ..., packed_color, char_code, y, x ]
             if vm.stack.len() >= 4 {
@@ -1319,12 +1233,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        OpCode::Chronos => {
-            let (cy, cx) = vm.context_loc;
-            let factor = vm.time_grid[cy][cx];
-            vm.stack.push(Value::Int(factor as i64));
-            None
-        }
+        OpCode::Chronos => super::nova_chronos::exec_chronos(vm),
         OpCode::Retroscope => super::nova_relativity::exec_retroscope(vm),
         OpCode::Relativity => {
             vm.relativity_mode = !vm.relativity_mode;
@@ -1487,29 +1396,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        OpCode::Chronostasis => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(ticks) = val {
-                    if ticks > 0 {
-                        vm.chronostasis_timer = ticks as usize;
-                        let cost = 50 + ticks;
-                        vm.energy = vm.energy.saturating_sub(cost);
-                        vm.output
-                            .push(format!("CHRONOSTASIS: Time frozen for {} ticks", ticks));
-                    } else {
-                        vm.output
-                            .push("Error: Invalid ticks for chronostasis".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for chronostasis".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for chronostasis".to_string());
-            }
-            None
-        }
+        OpCode::Chronostasis => super::nova_chronos::exec_chronostasis(vm),
         OpCode::Simulate => exec_simulate(vm),
         OpCode::SensePigment => {
             let (cy, cx) = vm.context_loc;
@@ -1701,134 +1588,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
-        OpCode::Sporulate => {
-            if vm.spores.len() >= crate::vm::MAX_SPORES {
-                vm.output.push("Error: Spore limit exceeded".to_string());
-                return None;
-            }
-
-            // Create snapshot
-            let spore = Spore {
-                phase: vm.phase,
-                chirality: vm.chirality,
-                dna: vm.dna.clone(),
-                stack: vm.stack.clone(),
-                ip: vm.ip,
-                output: vm.output.clone(),
-                halted: vm.halted,
-                energy: vm.energy,
-                grid: vm.grid.clone(),
-                chaos_mode: vm.chaos_mode,
-                recursion_depth: vm.recursion_depth,
-                context_loc: vm.context_loc,
-                epigenome: vm.epigenome.clone(),
-                telomeres: vm.telomeres.clone(),
-                hormone_grid: vm.hormone_grid.clone(),
-                waste_grid: vm.waste_grid.clone(),
-                mutagen_grid: vm.mutagen_grid.clone(),
-                light_grid: vm.light_grid.clone(),
-                call_stack: vm.call_stack.clone(),
-                input_buffer: vm.input_buffer.clone(),
-                receptors: vm.receptors.clone(),
-                entangled_pairs: vm.entangled_pairs.clone(),
-                portals: vm.portals.clone(),
-                membranes: vm.membranes.clone(),
-                chroma_grid: vm.chroma_grid.clone(),
-                sonar_target: vm.sonar_target,
-                symbiotes: vm.symbiotes.clone(),
-                ether: vm.ether.clone(),
-                reflexes: vm.reflexes.clone(),
-                remap_table: vm.remap_table.clone(),
-                direction: vm.direction,
-                mycelium: vm.mycelium.clone(),
-                immune_system: vm.immune_system.clone(),
-                dictionary: vm.dictionary.clone(),
-                gravity_grid: vm.gravity_grid.clone(),
-                wind_grid: vm.wind_grid.clone(),
-                moisture_grid: vm.moisture_grid.clone(),
-                entropy_grid: vm.entropy_grid.clone(),
-                relativity_mode: vm.relativity_mode,
-                #[cfg(feature = "cortex")]
-                synapse_map: vm.synapse_map.clone(),
-                #[cfg(feature = "cortex")]
-                activation_levels: vm.activation_levels.clone(),
-            };
-
-            let id = vm.spores.len();
-            vm.spores.push(spore);
-            vm.stack.push(Value::Int(id as i64));
-            vm.energy = vm.energy.saturating_sub(50); // High cost for time travel
-            vm.output.push(format!("SPORULATE: Created Spore {}", id));
-            None
-        }
-        OpCode::Germinate => {
-            // stack: spore_id
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(id) = val {
-                    let idx = id as usize;
-                    if idx < vm.spores.len() {
-                        let spore = &vm.spores[idx];
-                        // Restore state
-                        vm.phase = spore.phase;
-                        vm.chirality = spore.chirality;
-                        vm.dna = spore.dna.clone();
-                        vm.stack = spore.stack.clone();
-                        vm.ip = spore.ip;
-                        vm.output = spore.output.clone();
-                        vm.halted = spore.halted;
-                        vm.energy = spore.energy;
-                        vm.grid = spore.grid.clone();
-                        vm.chaos_mode = spore.chaos_mode;
-                        vm.recursion_depth = spore.recursion_depth;
-                        vm.context_loc = spore.context_loc;
-                        vm.epigenome = spore.epigenome.clone();
-                        vm.telomeres = spore.telomeres.clone();
-                        vm.hormone_grid = spore.hormone_grid.clone();
-                        vm.waste_grid = spore.waste_grid.clone();
-                        vm.mutagen_grid = spore.mutagen_grid.clone();
-                        vm.light_grid = spore.light_grid.clone();
-                        vm.call_stack = spore.call_stack.clone();
-                        vm.input_buffer = spore.input_buffer.clone();
-                        vm.receptors = spore.receptors.clone();
-                        vm.entangled_pairs = spore.entangled_pairs.clone();
-                        vm.portals = spore.portals.clone();
-                        vm.membranes = spore.membranes.clone();
-                        vm.chroma_grid = spore.chroma_grid.clone();
-                        vm.sonar_target = spore.sonar_target;
-                        vm.symbiotes = spore.symbiotes.clone();
-                        vm.ether = spore.ether.clone();
-                        vm.reflexes = spore.reflexes.clone();
-                        vm.remap_table = spore.remap_table.clone();
-                        vm.direction = spore.direction;
-                        vm.mycelium = spore.mycelium.clone();
-                        vm.immune_system = spore.immune_system.clone();
-                        vm.dictionary = spore.dictionary.clone();
-                        vm.gravity_grid = spore.gravity_grid.clone();
-                        vm.wind_grid = spore.wind_grid.clone();
-                        vm.moisture_grid = spore.moisture_grid.clone();
-                        vm.entropy_grid = spore.entropy_grid.clone();
-                        vm.relativity_mode = spore.relativity_mode;
-                        #[cfg(feature = "cortex")]
-                        {
-                            vm.synapse_map = spore.synapse_map.clone();
-                            vm.activation_levels = spore.activation_levels.clone();
-                        }
-
-                        vm.output.push(format!("GERMINATE: Restored Spore {}", idx));
-                    } else {
-                        vm.output
-                            .push("Error: Spore index out of bounds".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for germinate".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for germinate".to_string());
-            }
-            None
-        }
+        OpCode::Sporulate => super::nova_chronos::exec_sporulate(vm),
+        OpCode::Germinate => super::nova_chronos::exec_germinate(vm),
+        OpCode::Retrograde => super::nova_chronos::exec_retrograde(vm),
         OpCode::Incubate => super::nova_genetics::exec_incubate(vm),
         OpCode::Methylate => super::nova_genetics::exec_methylate(vm),
         OpCode::Demethylate => super::nova_genetics::exec_demethylate(vm),
