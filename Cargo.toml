@@ -12,7 +12,6 @@ members = [
     "experiments/fissure-tracker",
     "experiments/fluid-rain",
     "experiments/fluid-specter",
-    "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-quipu",
     "experiments/git-rogue",

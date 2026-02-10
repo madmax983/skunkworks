@@ -3033,9 +3033,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
 
-                vm.stack
-                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
-                vm.energy = vm.energy.saturating_sub(10);
+                let result = Value::Junction(crate::ast::JunctionType::Any, results);
+                if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Map result depth limit exceeded".to_string());
+                } else {
+                    vm.stack.push(result);
+                    vm.energy = vm.energy.saturating_sub(10);
+                }
             } else {
                 vm.output.push("Error: Stack underflow for map".to_string());
             }
@@ -3080,8 +3084,12 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     // Discard extra items if any
                 }
 
-                vm.stack.push(acc);
-                vm.energy = vm.energy.saturating_sub(10);
+                if acc.depth() > crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Fold result depth limit exceeded".to_string());
+                } else {
+                    vm.stack.push(acc);
+                    vm.energy = vm.energy.saturating_sub(10);
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for fold".to_string());
@@ -3137,9 +3145,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     }
                 }
 
-                vm.stack
-                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
-                vm.energy = vm.energy.saturating_sub(10);
+                let result = Value::Junction(crate::ast::JunctionType::Any, results);
+                if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Filter result depth limit exceeded".to_string());
+                } else {
+                    vm.stack.push(result);
+                    vm.energy = vm.energy.saturating_sub(10);
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for filter".to_string());
@@ -3177,9 +3189,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     ));
                 }
 
-                vm.stack
-                    .push(Value::Junction(crate::ast::JunctionType::Any, results));
-                vm.energy = vm.energy.saturating_sub(5);
+                let result = Value::Junction(crate::ast::JunctionType::Any, results);
+                if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Zip result depth limit exceeded".to_string());
+                } else {
+                    vm.stack.push(result);
+                    vm.energy = vm.energy.saturating_sub(5);
+                }
             } else {
                 vm.output.push("Error: Stack underflow for zip".to_string());
             }
@@ -3688,10 +3704,17 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if vm.stack.len() >= 2 {
                 let b = vm.stack.pop().unwrap();
                 let a = vm.stack.pop().unwrap();
-                // 50/50 split
-                vm.stack
-                    .push(Value::Superposition(vec![(a, 0.5), (b, 0.5)]));
-                vm.energy = vm.energy.saturating_sub(10);
+
+                let depth_a = a.depth();
+                let depth_b = b.depth();
+                if depth_a.max(depth_b) + 1 > crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Superpose depth limit exceeded".to_string());
+                } else {
+                    // 50/50 split
+                    vm.stack
+                        .push(Value::Superposition(vec![(a, 0.5), (b, 0.5)]));
+                    vm.energy = vm.energy.saturating_sub(10);
+                }
             } else {
                 vm.output
                     .push("Error: Stack underflow for superpose".to_string());

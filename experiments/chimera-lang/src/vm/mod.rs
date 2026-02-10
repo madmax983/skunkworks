@@ -307,6 +307,24 @@ impl std::fmt::Display for Value {
     }
 }
 
+impl Value {
+    /// Recursively calculates the depth of nested structures.
+    ///
+    /// - Int/Str: Depth 0
+    /// - Junction/Superposition: 1 + max(children.depth())
+    pub fn depth(&self) -> usize {
+        match self {
+            Value::Int(_) | Value::Str(_) => 0,
+            Value::Junction(_, vals) => {
+                1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0)
+            }
+            Value::Superposition(states) => {
+                1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)
+            }
+        }
+    }
+}
+
 /// The execution engine for the Chimera language.
 ///
 /// Holds the entire state of a simulation instance.
@@ -2420,7 +2438,12 @@ impl ChimeraVM {
                         results.push(oracle::resolve(&template, &subst));
                     }
 
-                    self.stack.push(Value::Junction(JunctionType::All, results));
+                    let new_val = Value::Junction(JunctionType::All, results);
+                    if new_val.depth() > MAX_RECURSION_DEPTH {
+                        self.output.push("Error: FindAll depth limit exceeded".to_string());
+                    } else {
+                        self.stack.push(new_val);
+                    }
                 } else {
                     self.output
                         .push("Error: Stack underflow for findall".to_string());
@@ -4110,3 +4133,17 @@ mod tests {
     }
 }
 mod nova_sequencer_test;
+
+#[cfg(test)]
+mod sentry_value_test {
+    use super::*;
+    use crate::ast::{Dna, Helix};
+
+    #[test]
+    fn test_value_depth() {
+        let v = Value::Int(0);
+        assert_eq!(v.depth(), 0);
+        let v2 = Value::Junction(crate::ast::JunctionType::Any, vec![v]);
+        assert_eq!(v2.depth(), 1);
+    }
+}
