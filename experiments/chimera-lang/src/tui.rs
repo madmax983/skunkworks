@@ -3314,44 +3314,125 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+#[cfg(feature = "nova")]
+fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(
-            [
-                Constraint::Length(3), // Pattern
-                Constraint::Length(3), // Input
-                Constraint::Min(0),    // Result
-            ]
-            .as_ref(),
-        )
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
         .split(f.area());
 
-    let pattern_style = if app_state.babel_focus == 0 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    // Grid View showing Towers
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut ch = "·".to_string();
+            let mut style = Style::default().fg(Color::DarkGray);
+
+            // Check if active tower here
+            if vm.towers.contains_key(&(y, x)) {
+                ch = "T".to_string();
+                style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+            } else {
+                // Check if influenced by any tower
+                for ((ty, tx), tower) in &vm.towers {
+                    let dy = (*ty as i64).saturating_sub(y as i64);
+                    let dx = (*tx as i64).saturating_sub(x as i64);
+                    let dist_sq = dy * dy + dx * dx;
+                    let r_sq = (tower.radius as i64) * (tower.radius as i64);
+                    if dist_sq <= r_sq {
+                        style = style.bg(Color::Rgb(50, 50, 50)); // Highlight influence
+                        break;
+                    }
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Babel Map (T=Tower)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let mut info_text = vec![
+        Line::from(format!("Cursor: {},{}", cx, cy)),
+        Line::from(" "),
+    ];
+
+    if let Some(tower) = vm.towers.get(&(cy, cx)) {
+        info_text.push(Line::from(format!("Tower Radius: {}", tower.radius)));
+        info_text.push(Line::from("Dialect Rules:"));
+        for (from, to) in &tower.dialect {
+            info_text.push(Line::from(format!("  {} -> {}", from, to)));
+        }
     } else {
-        Style::default().fg(Color::White)
-    };
+        // Check influence
+        let mut influenced = false;
+        for ((ty, tx), tower) in &vm.towers {
+            let dy = (*ty as i64).saturating_sub(cy as i64);
+            let dx = (*tx as i64).saturating_sub(cx as i64);
+            let dist_sq = dy * dy + dx * dx;
+            let r_sq = (tower.radius as i64) * (tower.radius as i64);
+            if dist_sq <= r_sq {
+                info_text.push(Line::from(format!("Influenced by Tower at {},{}", tx, ty)));
+                info_text.push(Line::from("Dialect Rules:"));
+                for (from, to) in &tower.dialect {
+                    info_text.push(Line::from(format!("  {} -> {}", from, to)));
+                }
+                influenced = true;
+                break;
+            }
+        }
+        if !influenced {
+            info_text.push(Line::from("No linguistic field active here."));
+        }
+    }
 
-    let input_style = if app_state.babel_focus == 1 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
-    } else {
-        Style::default().fg(Color::White)
-    };
+    // Input fields for regex lab (existing functionality)
+    info_text.push(Line::from(" "));
+    info_text.push(Line::from("Regex Lab:"));
+    info_text.push(Line::from(vec![
+        Span::raw("Pattern: "),
+        Span::styled(
+            &app_state.babel_pattern,
+            if app_state.babel_focus == 0 {
+                Style::default().fg(Color::Yellow)
+            } else {
+                Style::default()
+            },
+        ),
+    ]));
+    info_text.push(Line::from(vec![
+        Span::raw("Input:   "),
+        Span::styled(
+            &app_state.babel_input,
+            if app_state.babel_focus == 1 {
+                Style::default().fg(Color::Yellow)
+            } else {
+                Style::default()
+            },
+        ),
+    ]));
+    info_text.push(Line::from(format!("Result: {}", app_state.babel_result)));
 
-    let pattern_widget = Paragraph::new(app_state.babel_pattern.clone())
-        .block(Block::default().borders(Borders::ALL).title("Regex Pattern (Edit)"))
-        .style(pattern_style);
-    f.render_widget(pattern_widget, chunks[0]);
-
-    let input_widget = Paragraph::new(app_state.babel_input.clone())
-        .block(Block::default().borders(Borders::ALL).title("Test String (Edit)"))
-        .style(input_style);
-    f.render_widget(input_widget, chunks[1]);
-
-    let result_widget = Paragraph::new(app_state.babel_result.clone())
-        .block(Block::default().borders(Borders::ALL).title("Match Result (Enter to Run)"));
-    f.render_widget(result_widget, chunks[2]);
+    let info_widget = Paragraph::new(info_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Linguistic Field Analysis"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

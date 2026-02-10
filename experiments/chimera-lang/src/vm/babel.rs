@@ -3,6 +3,14 @@
 use super::{ChimeraVM, Value};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Tower {
+    pub radius: usize,
+    pub dialect: HashMap<OpCode, OpCode>,
+}
 
 /// Executes Babel-related OpCodes.
 pub fn exec_babel_op(
@@ -167,6 +175,64 @@ pub fn exec_babel_op(
             } else {
                 vm.output
                     .push("Error: Stack underflow for ParserOpt".to_string());
+            }
+        }
+        OpCode::Babel => {
+            // Stack: [ ..., radius ]
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(r) = val {
+                    let radius = r.max(0) as usize;
+                    let (y, x) = vm.context_loc;
+                    vm.towers
+                        .entry((y, x))
+                        .and_modify(|t| t.radius = radius)
+                        .or_insert(Tower {
+                            radius,
+                            dialect: HashMap::new(),
+                        });
+                    vm.output
+                        .push(format!("BABEL: Tower erected at {},{} (r={})", x, y, radius));
+                } else {
+                    vm.output
+                        .push("Error: Babel radius must be an integer".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Babel".to_string());
+            }
+        }
+        OpCode::Tongue => {
+            // Stack: [ ..., to_op, from_op ]
+            if vm.stack.len() >= 2 {
+                let to_val = vm.stack.pop().unwrap();
+                let from_val = vm.stack.pop().unwrap();
+
+                if let (Value::Str(from_s), Value::Str(to_s)) = (from_val, to_val) {
+                    if let (Ok(from_op), Ok(to_op)) =
+                        (from_s.parse::<OpCode>(), to_s.parse::<OpCode>())
+                    {
+                        let (y, x) = vm.context_loc;
+                        if let Some(tower) = vm.towers.get_mut(&(y, x)) {
+                            tower.dialect.insert(from_op.clone(), to_op.clone());
+                            vm.output.push(format!(
+                                "TONGUE: In tower at {},{}: {} means {}",
+                                x, y, from_op, to_op
+                            ));
+                        } else {
+                            vm.output
+                                .push(format!("TONGUE: No tower at {},{}", x, y));
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Invalid OpCode strings for Tongue".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Tongue requires two strings".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Tongue".to_string());
             }
         }
         _ => {}

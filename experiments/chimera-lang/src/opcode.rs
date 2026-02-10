@@ -1914,6 +1914,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     ParserOpt,
 
+    /// **[Babel]** Creates a Tower of Babel at the current location.
+    ///
+    /// **Stack:** `[ ..., radius ] -> [ ... ]`
+    /// **Effect:** Creates a spatial linguistic field that alters OpCode meaning.
+    #[cfg(feature = "nova")]
+    Babel,
+
+    /// **[Babel]** Adds a translation rule to the local Tower.
+    ///
+    /// **Stack:** `[ ..., from_op_str, to_op_str ] -> [ ... ]`
+    /// **Effect:** In the Tower's radius, `from_op` behaves like `to_op`.
+    #[cfg(feature = "nova")]
+    Tongue,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///

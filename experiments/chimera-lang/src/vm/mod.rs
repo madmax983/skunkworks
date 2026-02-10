@@ -587,6 +587,8 @@ pub struct ChimeraVM {
     pub glitch_level: f32,
     #[cfg(feature = "nova")]
     pub logos_mode: bool,
+    #[cfg(feature = "nova")]
+    pub towers: HashMap<(usize, usize), babel::Tower>,
 }
 
 impl ChimeraVM {
@@ -857,6 +859,8 @@ impl ChimeraVM {
             glitch_level: 0.0,
             #[cfg(feature = "nova")]
             logos_mode: false,
+            #[cfg(feature = "nova")]
+            towers: HashMap::new(),
         }
     }
 
@@ -1923,7 +1927,33 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         let effective_op = {
-            if let Some(dialect) = self.dialects.get(&self.ip.0) {
+            // Check Tower of Babel (Spatial Dialect)
+            // Deterministic selection: Closest tower wins. Tie-break by (y, x).
+            let mut best_tower_mapped = None;
+            let mut min_dist_sq = i64::MAX;
+            let mut best_coords = (usize::MAX, usize::MAX);
+
+            for ((ty, tx), tower) in &self.towers {
+                let (cy, cx) = self.context_loc;
+                let dy = (*ty as i64).saturating_sub(cy as i64);
+                let dx = (*tx as i64).saturating_sub(cx as i64);
+                let dist_sq = dy * dy + dx * dx;
+                let r_sq = (tower.radius as i64) * (tower.radius as i64);
+
+                if dist_sq <= r_sq {
+                    if dist_sq < min_dist_sq || (dist_sq == min_dist_sq && (*ty, *tx) < best_coords) {
+                        if let Some(mapped) = tower.dialect.get(&op) {
+                            best_tower_mapped = Some(mapped.clone());
+                            min_dist_sq = dist_sq;
+                            best_coords = (*ty, *tx);
+                        }
+                    }
+                }
+            }
+
+            if let Some(mapped) = best_tower_mapped {
+                mapped
+            } else if let Some(dialect) = self.dialects.get(&self.ip.0) {
                 if let Some(mapped) = dialect.get(&op) {
                     mapped.clone()
                 } else {
@@ -2173,7 +2203,9 @@ impl ChimeraVM {
             | OpCode::ParserSeq
             | OpCode::ParserAlt
             | OpCode::ParserMany
-            | OpCode::ParserOpt => {
+            | OpCode::ParserOpt
+            | OpCode::Babel
+            | OpCode::Tongue => {
                 babel::exec_babel_op(self, op, args);
                 None
             }
