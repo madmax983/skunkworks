@@ -169,9 +169,104 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for ParserOpt".to_string());
             }
         }
+        OpCode::Transform => {
+            if vm.stack.len() >= 2 {
+                let target = vm.stack.pop().unwrap();
+                let rules = vm.stack.pop().unwrap();
+
+                if let Some(res) = apply_transform(target, &rules, 0) {
+                    vm.stack.push(res);
+                } else {
+                    vm.output
+                        .push("Error: Transform depth limit exceeded".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Transform".to_string());
+            }
+        }
         _ => {}
     }
     None
+}
+
+fn apply_transform(target: Value, rules: &Value, depth: usize) -> Option<Value> {
+    if depth > crate::vm::MAX_RECURSION_DEPTH {
+        return None;
+    }
+
+    // 1. Try to match rules at this level
+    if let Value::Junction(JunctionType::Any, rule_list) = rules {
+        for rule in rule_list {
+            if let Value::Junction(JunctionType::All, parts) = rule {
+                if parts.len() >= 2 {
+                    let pattern = &parts[0];
+                    let template = &parts[1];
+                    if matches_pattern(&target, pattern) {
+                        return Some(template.clone());
+                    }
+                }
+            }
+        }
+    }
+
+    // 2. If no match, recurse if Junction
+    match target {
+        Value::Junction(t, children) => {
+            let mut new_children = Vec::new();
+            for child in children {
+                if let Some(new_child) = apply_transform(child, rules, depth + 1) {
+                    new_children.push(new_child);
+                } else {
+                    return None;
+                }
+            }
+            Some(Value::Junction(t, new_children))
+        }
+        _ => Some(target),
+    }
+}
+
+fn matches_pattern(target: &Value, pattern: &Value) -> bool {
+    match (target, pattern) {
+        (Value::Int(a), Value::Int(b)) => a == b,
+        (Value::Str(t), Value::Str(p)) => glob_match(p, t),
+        (Value::Junction(t1, c1), Value::Junction(t2, c2)) => {
+            if t1 != t2 || c1.len() != c2.len() {
+                return false;
+            }
+            for (child, pat) in c1.iter().zip(c2.iter()) {
+                if !matches_pattern(child, pat) {
+                    return false;
+                }
+            }
+            true
+        }
+        // Wildcard match for strings
+        (_, Value::Str(s)) if s == "_" => true,
+        _ => false,
+    }
+}
+
+fn glob_match(pattern: &str, target: &str) -> bool {
+    if let Some((p_head, p_tail)) = pattern.split_once('*') {
+        if !target.starts_with(p_head) {
+            return false;
+        }
+        let t_rest = &target[p_head.len()..];
+        if p_tail.is_empty() {
+            return true;
+        }
+
+        for i in 0..=t_rest.len() {
+            if t_rest.is_char_boundary(i) && glob_match(p_tail, &t_rest[i..]) {
+                return true;
+            }
+        }
+        false
+    } else {
+        pattern == target
+    }
 }
 
 /// Runs a parser on an input string.

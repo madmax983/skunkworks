@@ -1906,6 +1906,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
     #[cfg(feature = "nova")]
     ParserOpt,
+    /// **[Babel]** Transforms a Junction based on a set of rewrite rules (Term Rewriting).
+    ///
+    /// **Stack:** `[ ..., rule_junction, target_junction ] -> [ ..., result_junction ]`
+    #[cfg(feature = "nova")]
+    Transform,
 
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
