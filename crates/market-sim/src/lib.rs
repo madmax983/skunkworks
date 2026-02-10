@@ -59,14 +59,16 @@ pub enum Particle {
 
     /// A Buyer's order (Bid).
     ///
-    /// Moves **UP** (towards lower y-indices, representing higher prices).
-    /// Contains the `ID` of the buyer.
+    /// * **Movement**: Up (decreases Y index).
+    /// * **Goal**: Reach higher prices (lower Y).
+    /// * **Payload**: Contains the `ID` of the buyer.
     Bid(usize),
 
     /// A Seller's order (Ask).
     ///
-    /// Moves **DOWN** (towards higher y-indices, representing lower prices).
-    /// Contains the `ID` of the seller.
+    /// * **Movement**: Down (increases Y index).
+    /// * **Goal**: Reach lower prices (higher Y).
+    /// * **Payload**: Contains the `ID` of the seller.
     Ask(usize),
 
     /// The remnant of a successful transaction.
@@ -99,6 +101,7 @@ pub struct TradeEvent {
 ///
 /// *   **Width**: Represents simulated time or parallel order streams.
 /// *   **Height**: Represents the Price axis.
+#[derive(Debug)]
 pub struct Grid {
     /// Width of the grid (number of columns).
     pub width: usize,
@@ -158,6 +161,16 @@ impl Grid {
     /// Retrieves the particle at the specified coordinates.
     ///
     /// Returns `Particle::Empty` if coordinates are out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use market_sim::{Grid, Particle};
+    /// let mut grid = Grid::new(5, 5);
+    /// grid.set(0, 0, Particle::Bid(1));
+    /// assert_eq!(grid.get(0, 0), Particle::Bid(1));
+    /// assert_eq!(grid.get(10, 10), Particle::Empty); // Out of bounds
+    /// ```
     pub fn get(&self, x: usize, y: usize) -> Particle {
         if x >= self.width || y >= self.height {
             return Particle::Empty;
@@ -168,6 +181,15 @@ impl Grid {
     /// Sets the particle at the specified coordinates.
     ///
     /// Does nothing if coordinates are out of bounds.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use market_sim::{Grid, Particle};
+    /// let mut grid = Grid::new(5, 5);
+    /// grid.set(1, 1, Particle::Ask(2));
+    /// assert_eq!(grid.get(1, 1), Particle::Ask(2));
+    /// ```
     pub fn set(&mut self, x: usize, y: usize, p: Particle) {
         if x < self.width && y < self.height {
             self.cells[y * self.width + x] = p;
@@ -211,19 +233,10 @@ impl Grid {
         }
 
         // Pass 1: Bids (Up)
-        // Iterate Top to Bottom so we don't move the same particle twice in one pass?
-        // Actually for UP movement, we should iterate Top to Bottom (0..height).
-        // If we process row 0, then row 1...
-        // Row 1 moves to Row 0. Now it's in Row 0. Next loop iteration (Row 2) moves...
-        // Wait. If we iterate 0..height:
-        // y=0: Check.
-        // y=1: Move to 0. Marked updated.
-        // y=2: Move to 1. Marked updated.
-        // This is correct. If we iterated Bottom to Top (height..0):
-        // y=9: Move to 8.
-        // y=8: (Now contains particle from 9). Move to 7.
-        // One particle would teleport to the top in a single frame!
-        // So: Iterating 0..height prevents teleportation for Upward movement.
+        // We iterate Top to Bottom (0..height) to prevent "teleportation".
+        // If we iterated Bottom to Top, a particle moving from y=9 to y=8
+        // would be processed again at y=8 and move to y=7, potentially traversing
+        // the entire grid in a single tick.
         for y in 0..self.height {
             for &x in &self.scan_x {
                 let idx = y * self.width + x;
@@ -282,13 +295,9 @@ impl Grid {
 
         // Pass 2: Asks (Down)
         // For DOWN movement, we must iterate Bottom to Top (height..0) to prevent teleportation.
-        // y=9: Check.
-        // y=8: Move to 9.
-        // y=7: Move to 8.
-        // If we iterated 0..height:
-        // y=0: Move to 1.
-        // y=1: (Now has particle). Move to 2.
-        // Teleportation!
+        // If we iterated Top to Bottom, a particle moving from y=0 to y=1
+        // would be processed again at y=1 and move to y=2, potentially traversing
+        // the entire grid in a single tick.
         for y in (0..self.height).rev() {
             for &x in &self.scan_x {
                 let idx = y * self.width + x;
@@ -380,5 +389,87 @@ impl Grid {
         }
 
         trade_events
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bid_movement() {
+        let mut grid = Grid::new(10, 10);
+        // Place a bid at (5, 5)
+        grid.set(5, 5, Particle::Bid(1));
+
+        grid.update();
+
+        // Should move UP (y - 1) -> (5, 4)
+        assert_eq!(grid.get(5, 4), Particle::Bid(1));
+        assert_eq!(grid.get(5, 5), Particle::Empty);
+    }
+
+    #[test]
+    fn test_ask_movement() {
+        let mut grid = Grid::new(10, 10);
+        // Place an ask at (5, 5)
+        grid.set(5, 5, Particle::Ask(2));
+
+        grid.update();
+
+        // Should move DOWN (y + 1) -> (5, 6)
+        assert_eq!(grid.get(5, 6), Particle::Ask(2));
+        assert_eq!(grid.get(5, 5), Particle::Empty);
+    }
+
+    #[test]
+    fn test_collision_move_into_each_other() {
+        let mut grid = Grid::new(10, 10);
+        // Bid at (5, 5). Moves to 4.
+        grid.set(5, 5, Particle::Bid(1));
+        // Ask at (5, 3). Moves to 4.
+        grid.set(5, 3, Particle::Ask(2));
+
+        // Note:
+        // Pass 1 (Bids): Bid at 5 checks 4.
+        // If 4 is empty, it moves to 4.
+        // Pass 2 (Asks): Ask at 3 checks 4.
+        // Now 4 contains the Bid! Collision!
+
+        let events = grid.update();
+
+        assert_eq!(events.len(), 1);
+        let event = events[0];
+        assert_eq!(event.buyer, 1);
+        assert_eq!(event.seller, 2);
+        // Price calculation: Height - 1 - Y.
+        // Collision happened at y=4.
+        // Price = 10 - 1 - 4 = 5.0.
+        assert_eq!(event.price, 5.0);
+
+        // Grid should show a Trade particle at (5, 4)
+        match grid.get(5, 4) {
+            // Age starts at 5, but decays by 1 in the same tick (Pass 3)
+            Particle::Trade { age } => assert_eq!(age, 4),
+            _ => panic!("Expected Trade particle at (5, 4), found {:?}", grid.get(5, 4)),
+        }
+    }
+
+    #[test]
+    fn test_collision_bid_hits_ask() {
+        // Test the case where Bid moves directly into Ask
+        let mut grid = Grid::new(10, 10);
+        // Bid at (5, 5). Moves to 4.
+        grid.set(5, 5, Particle::Bid(1));
+        // Ask at (5, 4).
+        grid.set(5, 4, Particle::Ask(2));
+
+        // Pass 1 (Bids): Bid at 5 checks 4.
+        // 4 contains Ask. Collision!
+        // Bid removed. Ask removed (replaced by Trade).
+
+        let events = grid.update();
+        assert_eq!(events.len(), 1);
+        assert_eq!(events[0].price, 5.0); // 10 - 1 - 4
     }
 }
