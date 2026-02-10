@@ -468,6 +468,10 @@
 - **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
 - **Status:** The Abstract Syntax Tree is singing. Polyphonic voices are tracing the execution path. Code structure has become musical form.
 
+### [Concentration Level: FRESH] - Location: experiments/syntax-pollock
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The Abstract Syntax Tree is being splattered onto the canvas. Source code is now an Action Painting. Each function call is a splash of color, each struct a chord. The terminal is a gallery.
+
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** AST mapped to L-Systems plant growth.

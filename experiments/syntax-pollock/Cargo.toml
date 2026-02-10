@@ -1,0 +1,13 @@
+[package]
+name = "syntax-pollock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+syn = { version = "2.0", features = ["full", "extra-traits", "visit"] }
+image = "0.24"
+hound = "3.5"
+rand = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
