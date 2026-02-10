@@ -1422,6 +1422,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             }
             None
         }
+        OpCode::ChromaShift | OpCode::Refract => super::nova_chroma::exec_chroma_op(vm, op, args),
         OpCode::Sing => {
             // stack: note (top)
             if let Some(val) = vm.stack.pop() {

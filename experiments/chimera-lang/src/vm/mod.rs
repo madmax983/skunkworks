@@ -121,6 +121,8 @@ pub mod nova_cartography;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
 #[cfg(feature = "nova")]
+pub mod nova_chroma;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
 #[cfg(feature = "nova")]
@@ -587,6 +589,8 @@ pub struct ChimeraVM {
     pub glitch_level: f32,
     #[cfg(feature = "nova")]
     pub logos_mode: bool,
+    #[cfg(feature = "nova")]
+    pub chroma_shift_mode: bool,
 }
 
 impl ChimeraVM {
@@ -857,6 +861,8 @@ impl ChimeraVM {
             glitch_level: 0.0,
             #[cfg(feature = "nova")]
             logos_mode: false,
+            #[cfg(feature = "nova")]
+            chroma_shift_mode: false,
         }
     }
 
@@ -1735,6 +1741,10 @@ impl ChimeraVM {
             if self.logos_mode {
                 nova_logos::process_logos(self);
             }
+
+            if self.chroma_shift_mode {
+                nova_chroma::process_chroma_interaction(self);
+            }
         }
 
         #[cfg(feature = "biophysics")]
@@ -2433,6 +2443,9 @@ impl ChimeraVM {
                 self.output.push(format!("LOGOS: Logic Chemistry {}", status));
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::ChromaShift | OpCode::Refract => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {

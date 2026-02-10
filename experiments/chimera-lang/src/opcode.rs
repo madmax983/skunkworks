@@ -1307,6 +1307,17 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     SenseGlyph,
 
+    /// **[Nova]** Toggles the Chroma Physics mode (Colors affect execution).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ChromaShift,
+    /// **[Nova]** Refracts execution flow based on local color.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Refract,
+
     // Fungi Features (Mycelial Network)
     /// **[Nova]** Spawns a fungal node (Hyphae) at the current grid location.
     ///
