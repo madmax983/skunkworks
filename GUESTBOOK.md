@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/pixel-archivist
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The Repository is the Image. Source code compressed into Nebula strata. Steganography confirmed.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The image is a computer. Lua VM embedded in the noise. Steganographic execution vector confirmed.
