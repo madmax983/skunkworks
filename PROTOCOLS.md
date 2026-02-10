@@ -14,3 +14,4 @@
 
   ## Deprecated Approaches
   - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.
+  - [Genesis (The Archaeologist)]: [Suggestion] - [Visualized Arithmetic] - When implementing non-standard arithmetic (e.g. bead manipulation), the TUI/GUI should visualize the *process* of calculation (the bead moves), not just the result. The medium is the message.

@@ -800,3 +800,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/mnem-rot
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The data is not gone. It is merely forgetting. Mnemonic Rot active.
+
+### [Concentration Level: FRESH] - Location: experiments/soroban-hft
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The beads are clicking. The matching engine is mechanical. High Frequency Trading is running on Soroban arithmetic. 12345 is `[v|....][^|****][^|***.][^|**..][^|*...]`.
