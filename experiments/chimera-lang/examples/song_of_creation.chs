@@ -1,29 +1,38 @@
 strand main {
-    "Initializing Song of Creation..." print
+    "Binding handler (strand 2) to 440Hz..." print
+    440 2 listen_freq
 
-    # 1. Register the Song
-    # Chord: "Fiat" "Lux"
-    # Effect: creation strand
-    all("Fiat" "Lux")
-    push(creation)
-    harmonize
+    "Resonating at 440Hz..." print
+    # Amplitude 50 (Cost 10)
+    # 50 - 10 = 40 Energy left
+    440 50 resonate
 
-    # 2. Spawn the Choir
-    "Spawning Seraphim..." print
-    all("Fiat" "Lux")
-    choir
-
-    # 3. Enter Main Loop
-    jump(loop)
+    "Waiting..." print
+    0
+    jump(wait_loop)
 }
 
-strand loop {
-    5 photosynthesize
-    jump(loop)
+strand wait_loop {
+    # Stack: [ cnt ]
+    1 add
+    dup
+
+    # Gain energy (+5)
+    photosynthesize
+
+    # Check 20 ticks
+    dup 20 sub brz(end_loop)
+
+    jump(wait_loop)
 }
 
-strand creation {
-    "AND THERE WAS LIGHT!" print
+strand handler {
+    "HARMONY ACHIEVED! 🎵" print
     100 5 lumine
     ret
+}
+
+strand end_loop {
+    "Simulation complete." print
+    3 apoptosis
 }

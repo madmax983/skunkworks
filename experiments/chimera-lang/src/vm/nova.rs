@@ -691,6 +691,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Resonate => super::nova_resonance_war::exec_resonate(vm),
         OpCode::SonicClaim => super::nova_resonance_war::exec_sonic_claim(vm),
         OpCode::Dampen => super::nova_resonance_war::exec_dampen(vm),
+        OpCode::ListenFreq => super::nova_resonance_war::exec_listen_freq(vm),
         OpCode::Prophecy => exec_prophecy(vm),
         OpCode::EgregoreLink => {
             if let Some(val) = vm.stack.pop() {

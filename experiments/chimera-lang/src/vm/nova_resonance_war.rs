@@ -48,6 +48,35 @@ pub fn exec_resonate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+pub fn exec_listen_freq(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // Stack: [ ..., frequency, strand_idx ]
+    if vm.stack.len() >= 2 {
+        let s_val = vm.stack.pop().unwrap();
+        let f_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(s), Value::Int(f)) = (s_val, f_val) {
+            let strand_idx = s as usize;
+            if strand_idx < vm.dna.helix.strands.len() {
+                vm.harmonic_reflexes.insert(f, strand_idx);
+                vm.output.push(format!(
+                    "LISTEN_FREQ: Bound strand {} to {}Hz",
+                    strand_idx, f
+                ));
+            } else {
+                vm.output
+                    .push("Error: Invalid strand index for listen_freq".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for listen_freq".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for listen_freq".to_string());
+    }
+    None
+}
+
 pub fn exec_sonic_claim(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     // Stack: [ ..., target_frequency ]
     if let Some(val) = vm.stack.pop() {
@@ -139,9 +168,27 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
     let size = super::GRID_SIZE;
     let mut new_grid = vm.resonance_grid.clone();
 
+    // Global harmonic analysis
+    let mut total_amp = 0.0;
+    let mut weighted_freq_sum = 0.0;
+
     for y in 0..size {
         for x in 0..size {
             let (self_freq, self_amp) = vm.resonance_grid[y][x];
+
+            // Sonic Mutagenesis (Environment Effects)
+            if self_amp > 50.0 {
+                if self_freq < 200.0 {
+                    // Bass: Gravity
+                    vm.gravity_grid[y][x] = vm.gravity_grid[y][x].saturating_add(10);
+                } else if self_freq > 400.0 && self_freq < 600.0 {
+                    // Mid: Radiation
+                    vm.mutagen_grid[y][x] = vm.mutagen_grid[y][x].saturating_add(5);
+                } else if self_freq > 1000.0 {
+                    // Treble: Light
+                    vm.light_grid[y][x] = vm.light_grid[y][x].saturating_add(10);
+                }
+            }
 
             if self_amp < 0.1 {
                 new_grid[y][x] = (0.0, 0.0);
@@ -195,8 +242,30 @@ pub fn process_resonance(vm: &mut ChimeraVM) {
             new_amp *= 0.95;
 
             new_grid[y][x] = (new_freq, new_amp);
+
+            // Accumulate for global harmony
+            if new_amp > 10.0 {
+                total_amp += new_amp;
+                weighted_freq_sum += new_freq * new_amp;
+            }
         }
     }
 
     vm.resonance_grid = new_grid;
+
+    // Check Harmonic Reflexes
+    if total_amp > 0.0 {
+        let dominant_freq = (weighted_freq_sum / total_amp).round() as i64;
+        // Check for binding
+        if let Some(&strand_idx) = vm.harmonic_reflexes.get(&dominant_freq) {
+            // Trigger interrupt if not already running it
+            if vm.ip.0 != strand_idx {
+                vm.output.push(format!(
+                    "HARMONIC REFLEX: {}Hz triggered Strand {}",
+                    dominant_freq, strand_idx
+                ));
+                vm.interrupt(strand_idx);
+            }
+        }
+    }
 }
