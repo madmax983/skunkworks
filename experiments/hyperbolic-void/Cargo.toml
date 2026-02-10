@@ -1,0 +1,13 @@
+[package]
+name = "hyperbolic-void"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+winit = "0.29"
+wgpu = "0.20"
+pollster = "0.3"
+bytemuck = { version = "1.16", features = ["derive"] }
+cgmath = "0.18"
+log = "0.4"
+env_logger = "0.11"
