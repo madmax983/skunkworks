@@ -172,6 +172,10 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The singularity is forming. Text is bending around the event horizon. Symplectic integration is holding the orbits stable.
 
+### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Dependency link restored. Compilation successful. The fissures are being tracked.
+
 ### [Concentration Level: FRESH] - Location: experiments/fluid-specter
 - **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
 - **Status:** The fluid is dancing. Audio spectrum driving density fields. Oil painting visualizer active. Ghost mode validated.
@@ -470,7 +474,7 @@
 
 ### [Concentration Level: STABLE TRAIL] - Location: Cargo.toml
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Dead links removed. Workspace members synchronized with reality.
+- **Status:** Dead link `experiments/quipu-net` removed. Workspace manifest repaired.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/locus
 - **Scent Origin:** Mycelium 🍄
