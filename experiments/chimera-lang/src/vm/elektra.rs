@@ -267,6 +267,53 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
 
 #[allow(clippy::needless_range_loop)]
 pub fn update_circuit(vm: &mut ChimeraVM) {
+    let grid_size = GRID_SIZE;
+
+    // Phase 0: Active Logic Gates (Tesla-Biolum)
+    for y in 0..grid_size {
+        for x in 0..grid_size {
+            if let Value::Str(s) = &vm.grid[y][x] {
+                let is_gate = matches!(s.as_str(), "&" | "|" | "^" | "!" | "~");
+                if is_gate {
+                    // Sense inputs (Neighbors)
+                    let mut active_inputs = 0;
+                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+                    for (dy, dx) in neighbors {
+                        let ny = y as i64 + dy;
+                        let nx = x as i64 + dx;
+                        if ny >= 0 && ny < grid_size as i64 && nx >= 0 && nx < grid_size as i64 {
+                            if vm.voltage_grid[ny as usize][nx as usize] > 50.0 {
+                                active_inputs += 1;
+                            }
+                        }
+                    }
+
+                    // Logic
+                    let output_high = match s.as_str() {
+                        "&" => active_inputs >= 2,
+                        "|" => active_inputs >= 1,
+                        "^" => active_inputs == 1,
+                        "!" => active_inputs == 0,
+                        "~" => active_inputs < 2,
+                        _ => false,
+                    };
+
+                    // Drive Output
+                    if output_high {
+                        vm.voltage_grid[y][x] = 100.0;
+                        vm.resistance_grid[y][x] = -1.0; // Source
+                    } else {
+                        vm.voltage_grid[y][x] = 0.0;
+                        vm.resistance_grid[y][x] = -2.0; // Sink
+                    }
+
+                    // Metabolism
+                    vm.energy = vm.energy.saturating_sub(1);
+                }
+            }
+        }
+    }
+
     // Iterative solver for potential
     // V[new] = avg(V[neighbors])
     // Resistance affects coupling.
@@ -275,7 +322,6 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
     // Sources (R < 0) are fixed.
 
     let iterations = 10;
-    let grid_size = GRID_SIZE;
 
     // Temporary grid for next step
     let mut next_voltage = vm.voltage_grid.clone();
@@ -301,6 +347,7 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                     Value::Int(0) => 0.0,                                  // Air
                     Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
                     Value::Int(_) => 0.01,                                 // Other matter
+                    Value::Str(s) if matches!(s.as_str(), "&" | "|" | "^" | "!" | "~") => 10.0, // Gates
                     _ => 0.0,                                              // Air
                 };
 
@@ -326,6 +373,7 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                             Value::Int(0) => 0.0,
                             Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
                             Value::Int(_) => 0.01,
+                            Value::Str(s) if matches!(s.as_str(), "&" | "|" | "^" | "!" | "~") => 10.0, // Gates
                             _ => 0.0,
                         };
 
@@ -361,6 +409,7 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 Value::Int(0) => 0.0,
                 Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
                 Value::Int(_) => 0.01,
+                Value::Str(s) if matches!(s.as_str(), "&" | "|" | "^" | "!" | "~") => 10.0, // Gates
                 _ => 0.0,
             };
 
