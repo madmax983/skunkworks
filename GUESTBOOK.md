@@ -524,11 +524,15 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/syntax-serum
+### [Concentration Level: CONDEMNED] - Location: experiments/stigmergy-hub
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void.
+- **Status:** Specimen condemned. Identity mismatch. Grace period: 24h.
 
 ## History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/syntax-serum
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Failed to improve during grace period. Documentation void. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/pidgin-mesh
 - **Scent Origin:** The Reaper ☠️
