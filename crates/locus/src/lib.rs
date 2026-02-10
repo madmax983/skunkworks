@@ -502,30 +502,41 @@ impl Topology {
     ///
     /// * `y` - The Y coordinate (row).
     /// * `x` - The X coordinate (column).
-    /// * `size` - The size of the grid (assumed square: size x size).
-    pub fn normalize(&self, y: i64, x: i64, size: usize) -> Option<(usize, usize)> {
-        let s = size as i64;
+    /// * `width` - The width of the grid.
+    /// * `height` - The height of the grid.
+    pub fn normalize(
+        &self,
+        y: i64,
+        x: i64,
+        width: usize,
+        height: usize,
+    ) -> Option<(usize, usize)> {
+        let w = width as i64;
+        let h = height as i64;
         match self {
             Topology::Plane | Topology::Hyperbolic => {
-                if (0..s).contains(&y) && (0..s).contains(&x) {
+                if (0..h).contains(&y) && (0..w).contains(&x) {
                     Some((y as usize, x as usize))
                 } else {
                     None
                 }
             }
-            Topology::Torus => Some((y.rem_euclid(s) as usize, x.rem_euclid(s) as usize)),
+            Topology::Torus => Some((
+                y.rem_euclid(h) as usize,
+                x.rem_euclid(w) as usize,
+            )),
             Topology::CylinderH => {
                 // Wraps X, Bounded Y
-                if (0..s).contains(&y) {
-                    Some((y as usize, x.rem_euclid(s) as usize))
+                if (0..h).contains(&y) {
+                    Some((y as usize, x.rem_euclid(w) as usize))
                 } else {
                     None
                 }
             }
             Topology::CylinderV => {
                 // Bounded X, Wraps Y
-                if (0..s).contains(&x) {
-                    Some((y.rem_euclid(s) as usize, x as usize))
+                if (0..w).contains(&x) {
+                    Some((y.rem_euclid(h) as usize, x as usize))
                 } else {
                     None
                 }
@@ -535,14 +546,17 @@ impl Topology {
                 let mut nx = x;
                 let mut ny = y;
 
-                if !(0..s).contains(&ny) {
-                    let wrap_count = ny.div_euclid(s);
+                if !(0..h).contains(&ny) {
+                    let wrap_count = ny.div_euclid(h);
+                    // Normalize X to [0, w-1] before flipping
+                    nx = nx.rem_euclid(w);
                     if wrap_count % 2 != 0 {
-                        nx = (s - 1).wrapping_sub(nx); // Twist X
+                        nx = (w - 1) - nx; // Twist X
                     }
-                    ny = ny.rem_euclid(s);
+                    ny = ny.rem_euclid(h);
+                } else {
+                    nx = nx.rem_euclid(w);
                 }
-                nx = nx.rem_euclid(s);
 
                 Some((ny as usize, nx as usize))
             }
@@ -551,15 +565,18 @@ impl Topology {
                 let mut nx = x;
                 let mut ny = y;
 
-                if !(0..s).contains(&nx) {
-                    let wrap_count = nx.div_euclid(s);
+                if !(0..w).contains(&nx) {
+                    let wrap_count = nx.div_euclid(w);
+                    nx = nx.rem_euclid(w);
                     if wrap_count % 2 != 0 {
-                        ny = (s - 1).wrapping_sub(ny); // Twist Y
+                        // Use wrapping_sub to avoid panic on overflow if ny is out of bounds
+                        ny = (h - 1).wrapping_sub(ny); // Twist Y
                     }
-                    nx = nx.rem_euclid(s);
+                } else {
+                    nx = nx.rem_euclid(w);
                 }
 
-                if (0..s).contains(&ny) {
+                if (0..h).contains(&ny) {
                     Some((ny as usize, nx as usize))
                 } else {
                     None
@@ -577,15 +594,78 @@ mod topology_tests {
     fn test_topology_overflow_klein() {
         let topo = Topology::Klein;
         // y = -16 (wraps once, odd), x = i64::MIN
-        // Should not panic
-        let _ = topo.normalize(-16, i64::MIN, 16);
+        // Should not panic and return valid coordinate
+        let res = topo.normalize(-16, i64::MIN, 16, 16);
+        assert!(res.is_some());
+        let (y, x) = res.unwrap();
+        assert!(y < 16);
+        assert!(x < 16);
     }
 
     #[test]
     fn test_topology_overflow_mobius() {
         let topo = Topology::Mobius;
         // x = -16 (wraps once, odd), y = i64::MIN
-        // Should not panic
-        let _ = topo.normalize(i64::MIN, -16, 16);
+        // Should not panic.
+        let _ = topo.normalize(i64::MIN, -16, 16, 16);
+    }
+
+    #[test]
+    fn test_klein_wrapping() {
+        let topo = Topology::Klein;
+        let width = 10;
+        let height = 10;
+        // Normal wrapping (even wrap)
+        // y = 20 -> wraps to 0. No twist. x=5 -> 5.
+        assert_eq!(topo.normalize(20, 5, width, height), Some((0, 5)));
+
+        // Twisted wrapping (odd wrap)
+        // y = 10 -> wraps to 0. 1 wrap (odd). Twist x.
+        // x = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(10, 2, width, height), Some((0, 7)));
+
+        // Twisted wrapping (odd wrap) with negative y
+        // y = -1 -> wraps to 9. -1 div 10 = -1 (odd). Twist x.
+        // x = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(-1, 2, width, height), Some((9, 7)));
+
+        // X out of bounds + Twist
+        // y = 10 (twist). x = 12.
+        // x normalized: 12 % 10 = 2.
+        // twist: 9 - 2 = 7.
+        assert_eq!(topo.normalize(10, 12, width, height), Some((0, 7)));
+    }
+
+    #[test]
+    fn test_rectangular_klein() {
+        let topo = Topology::Klein;
+        let width = 10;
+        let height = 20;
+
+        // y = -1 -> y wraps to 19. Twist x.
+        // x = 2 -> x = 10-1-2 = 7.
+        assert_eq!(topo.normalize(-1, 2, width, height), Some((19, 7)));
+    }
+
+    #[test]
+    fn test_mobius_wrapping() {
+        let topo = Topology::Mobius;
+        let width = 10;
+        let height = 10;
+
+        // Normal wrapping (even wrap)
+        // x = 20 -> 0. y=5 -> 5.
+        assert_eq!(topo.normalize(5, 20, width, height), Some((5, 0)));
+
+        // Twisted wrapping (odd wrap)
+        // x = 10 -> 0. 1 wrap. Twist y.
+        // y = 2 -> 9 - 2 = 7.
+        assert_eq!(topo.normalize(2, 10, width, height), Some((7, 0)));
+
+        // Twisted wrapping + Y out of bounds
+        // x = 10 (twist). y = 12.
+        // twist y: 9 - 12 = -3.
+        // -3 out of bounds. -> None.
+        assert_eq!(topo.normalize(12, 10, width, height), None);
     }
 }

@@ -1,4 +1,5 @@
 use rand::Rng;
+use locus::Topology;
 
 pub struct LifeGrid {
     pub width: usize,
@@ -23,28 +24,13 @@ impl LifeGrid {
     }
 
     pub fn get_index(&self, x: isize, y: isize) -> usize {
-        let mut target_x = x;
-        let mut target_y = y;
-
-        // Handle Y-axis (Möbius twist)
-        if target_y < 0 {
-            target_y = self.height as isize - 1; // Map to bottom
-                                                 // Twist X
-            target_x = self.width as isize - 1 - target_x;
-        } else if target_y >= self.height as isize {
-            target_y = 0; // Map to top
-                          // Twist X
-            target_x = self.width as isize - 1 - target_x;
+        // Use shared Klein topology logic from locus crate
+        if let Some((ny, nx)) = Topology::Klein.normalize(y as i64, x as i64, self.width, self.height) {
+            ny * self.width + nx
+        } else {
+            // Should not happen for Klein topology as it wraps indefinitely
+            0
         }
-
-        // Handle X-axis (Cylinder wrap)
-        // Note: target_x might be negative or >= width after the twist or initial offset
-        let w = self.width as isize;
-        let final_x = ((target_x % w) + w) % w;
-
-        let final_y = target_y as usize;
-
-        final_y * self.width + final_x as usize
     }
 
     pub fn update(&mut self) {
