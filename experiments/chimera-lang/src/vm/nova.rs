@@ -37,7 +37,6 @@ pub enum Phase {
     Flux,
 }
 
-
 /// Defines the specialized behavior of an Organelle.
 #[derive(Debug, Clone, PartialEq)]
 pub enum OrganelleType {
@@ -94,24 +93,29 @@ pub struct Organelle {
     pub genome_id: u64,
 }
 
+/// Pre-calculated neighbor offsets (dy, dx) and their corresponding bitmasks.
+///
+/// Optimization: Used to avoid repeated calls to `get_direction_mask` inside hot loops.
+/// Mappings: N=1, S=2, E=4, W=8.
+const NEIGHBOR_DIRECTIONS: [(i64, i64, u8); 4] = [
+    (-1, 0, 1), // N
+    (1, 0, 2),  // S
+    (0, -1, 8), // W
+    (0, 1, 4),  // E
+];
+
 fn get_open_neighbors(
     vm: &ChimeraVM,
     y: usize,
     x: usize,
 ) -> impl Iterator<Item = (usize, usize)> + '_ {
-    [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    NEIGHBOR_DIRECTIONS
         .into_iter()
-        .filter_map(move |(dy, dx)| {
-            let blocked = if let Some(mask) = get_direction_mask(dy, dx) {
-                (vm.membranes[y][x] & mask) != 0
-            } else {
-                false
-            };
-
-            if !blocked {
-                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
-            } else {
+        .filter_map(move |(dy, dx, mask)| {
+            if (vm.membranes[y][x] & mask) != 0 {
                 None
+            } else {
+                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
             }
         })
 }
@@ -142,12 +146,9 @@ fn diffuse_scalar_grid<F>(
             let mut sum = (source[y][x] as i128) * (inertia as i128) * weight_center;
             let mut total_weight = (inertia as i128) * weight_center;
 
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (membranes[y][x] & mask) != 0 {
-                        continue;
-                    }
+            for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
+                if (membranes[y][x] & mask) != 0 {
+                    continue;
                 }
 
                 if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, size) {
@@ -207,12 +208,9 @@ pub fn diffuse_hormones(vm: &mut ChimeraVM) {
             let mut total_weight = (inertia as i128) * weight_center;
 
             // Manual neighbor iteration to calculate wind bias
-            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-            for (dy, dx) in neighbors {
-                if let Some(mask) = get_direction_mask(dy, dx) {
-                    if (vm.membranes[y][x] & mask) != 0 {
-                        continue;
-                    }
+            for (dy, dx, mask) in NEIGHBOR_DIRECTIONS {
+                if (vm.membranes[y][x] & mask) != 0 {
+                    continue;
                 }
                 if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
                     let (w_dy, w_dx) = vm.wind_grid[ny][nx];
@@ -455,7 +453,8 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 // Inherit and increment recursion depth to prevent infinite prophecy loops
                 sim_vm.recursion_depth += 1;
                 if sim_vm.recursion_depth > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output.push("Error: Recursion limit exceeded in prophecy".to_string());
+                    vm.output
+                        .push("Error: Recursion limit exceeded in prophecy".to_string());
                     return None;
                 }
 
@@ -504,7 +503,6 @@ fn exec_prophecy(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
-
 
 /// Runs a sandboxed simulation of a specific strand.
 ///
@@ -672,8 +670,6 @@ fn exec_brainfuck(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
-
-
 
 /// Executes a Nova-specific OpCode.
 ///
@@ -1003,7 +999,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     _ => vm.output.push("Error: Type mismatch for knot".to_string()),
                 }
             } else {
-                vm.output.push("Error: Stack underflow for knot".to_string());
+                vm.output
+                    .push("Error: Stack underflow for knot".to_string());
             }
             None
         }
@@ -1022,7 +1019,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                     vm.output.push("Error: Type mismatch for cord".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for cord".to_string());
+                vm.output
+                    .push("Error: Stack underflow for cord".to_string());
             }
             None
         }
@@ -1035,12 +1033,15 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(idx) = val {
                     vm.quipu.tangle(idx as usize);
-                    vm.output.push(format!("TANGLE: Entangled with cord {}", idx));
+                    vm.output
+                        .push(format!("TANGLE: Entangled with cord {}", idx));
                 } else {
-                    vm.output.push("Error: Type mismatch for tangle".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for tangle".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for tangle".to_string());
+                vm.output
+                    .push("Error: Stack underflow for tangle".to_string());
             }
             None
         }
@@ -2204,7 +2205,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                         if is_nightmare {
                             success = true; // Nightmares are forced
-                            vm.output.push("NIGHTMARE: The Void invades the dream...".to_string());
+                            vm.output
+                                .push("NIGHTMARE: The Void invades the dream...".to_string());
                         }
 
                         // Pay Cost (Base 50 + ticks/2)
