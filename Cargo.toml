@@ -102,7 +102,6 @@ members = [
     "experiments/hyperbolic-git", 
     "experiments/klein-fs",
     "experiments/chrontext", 
-    "experiments/synaptic-choir", 
     "experiments/synaptic-pachinko", 
     "experiments/lagrange-balancer", 
     "experiments/klein-magnetron", 

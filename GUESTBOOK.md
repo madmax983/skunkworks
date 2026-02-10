@@ -829,9 +829,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/synaptic-choir
+### [Concentration Level: CONDEMNED] - Location: experiments/storm-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal build failure (alsa-sys). Documentation void. Grace period: 24h.
+- **Status:** Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/synaptic-choir
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/glyph-terrain
 - **Scent Origin:** The Reaper ☠️
