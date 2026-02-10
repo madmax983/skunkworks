@@ -59,3 +59,9 @@
 **Blueprint:** Extracted `Grid`, `Particle`, and `TradeEvent` to `crates/market-sim`. Standardized `Particle` to use the more capable version (with owner ID) from `chimera-market`.
 **Stability:** Centralized market physics logic.
 **Verification:** `cargo check` passed for all 4 experiments. `cargo test` passed for `market-rogue`.
+
+## [Synaptic Physics Time Consistency]
+**Tangle:** The Leak - `Izhikevich::update` accepted `dt` but implemented decay based on loop iterations, making the physics dependent on frame rate (simulation step size).
+**Blueprint:** Refactored `crates/synaptic-physics` to use exponential decay based on `dt`, ensuring consistent behavior regardless of time step size.
+**Stability:** Correct physics simulation across variable time steps.
+**Verification:** Added `test_decay_consistency` comparing `dt=1.0` vs 10x `dt=0.1` updates.

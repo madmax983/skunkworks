@@ -207,9 +207,14 @@ impl Izhikevich {
         let substeps = 2;
         let dt_sub = dt / substeps as f32;
 
+        // Base decay: 0.95 per 0.5 time units.
+        // Formula: factor = base ^ (dt / base_dt)
+        // factor = 0.95 ^ (dt_sub / 0.5) = 0.95 ^ (2.0 * dt_sub)
+        let decay_factor = 0.95_f32.powf(dt_sub * 2.0);
+
         for _ in 0..substeps {
             // Decay the injected current
-            self.current_decay *= 0.95; // Exponential decay
+            self.current_decay *= decay_factor;
 
             let total_current = extra_current + self.current_decay;
 
@@ -306,6 +311,37 @@ mod tests {
         assert!(
             (n.current_decay - expected).abs() < tolerance,
             "Decay should match 0.95^2 per update call"
+        );
+    }
+}
+
+#[cfg(test)]
+mod consistency_test {
+    use super::*;
+
+    #[test]
+    fn test_decay_consistency() {
+        let mut n1 = Izhikevich::new();
+        let mut n2 = Izhikevich::new();
+
+        n1.inject(100.0);
+        n2.inject(100.0);
+
+        // n1: 1 step of 1.0
+        n1.update(1.0, 0.0);
+
+        // n2: 10 steps of 0.1
+        for _ in 0..10 {
+            n2.update(0.1, 0.0);
+        }
+
+        println!("n1 decay: {}, n2 decay: {}", n1.current_decay, n2.current_decay);
+
+        assert!(
+            (n1.current_decay - n2.current_decay).abs() < 1.0,
+            "Decay should be consistent across time steps. n1={}, n2={}",
+            n1.current_decay,
+            n2.current_decay
         );
     }
 }
