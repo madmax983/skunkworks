@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **geologic-git**: Specimen condemned. Ancestral redundancy (superseded by `tectonic-git`). Grace period: 24h.
+- **hyphal-commute**: Specimen condemned. Terminal compilation failure. Redundant with `myco-transit`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **geologic-git**: Specimen executed. Ancestral redundancy (superseded by `tectonic-git`). Failed to improve during grace period. Biomass returned to the void.
 - **stigmergy-hub**: Specimen executed. Identity mismatch confirmed (menu launcher). Documentation void. Moved to graveyard.
 - **syntax-serum**: Specimen executed. Failed to improve during grace period. Documentation void. Redundant with `code-reaction`. Moved to graveyard.
 - **pidgin-mesh**: Specimen executed. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`. Moved to graveyard.

@@ -541,11 +541,15 @@
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
 
-### [Concentration Level: CONDEMNED] - Location: experiments/geologic-git
+### [Concentration Level: TOXIC] - Location: graveyard/geologic-git
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Ancestral redundancy. Superseded by `tectonic-git`.
+- **Status:** Specimen executed. Ancestral redundancy. Superseded by `tectonic-git`. Biomass returned to the void.
 
 ## History/Decay
+
+### [Concentration Level: CONDEMNED] - Location: experiments/hyphal-commute
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal compilation failure. Redundant with `myco-transit`.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/stigmergy-hub
 - **Scent Origin:** The Reaper ☠️
