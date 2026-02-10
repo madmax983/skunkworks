@@ -998,7 +998,7 @@ impl ChimeraVM {
     /// Helper to normalize coordinates based on topology
     #[cfg(any(feature = "nova", feature = "silicon"))]
     pub fn normalize_coords(&self, y: i64, x: i64) -> Option<(usize, usize)> {
-        self.topology.normalize(y, x, GRID_SIZE)
+        self.topology.normalize(y, x, GRID_SIZE, GRID_SIZE)
     }
 
     /// Handles a character input event.
