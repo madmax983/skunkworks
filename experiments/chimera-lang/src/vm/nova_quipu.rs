@@ -1,3 +1,5 @@
+#[cfg(feature = "nova")]
+use super::{ChimeraVM, Value};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -30,7 +32,9 @@ pub struct Cord {
 
 impl Cord {
     pub fn new() -> Self {
-        Self { clusters: Vec::new() }
+        Self {
+            clusters: Vec::new(),
+        }
     }
 
     /// Reads the integer value of the cord
@@ -150,4 +154,72 @@ impl QuipuState {
             self.cords[self.active_cord].tie(val_a.wrapping_add(val_b));
         }
     }
+}
+
+// --- VM Execution Logic ---
+
+#[cfg(feature = "nova")]
+pub fn exec_knot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        match val {
+            Value::Int(n) => {
+                vm.quipu.tie(n);
+                vm.output.push(format!("KNOT: Tied {}", n));
+            }
+            _ => vm.output.push("Error: Type mismatch for knot".to_string()),
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for knot".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_unknot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let val = vm.quipu.untie();
+    vm.stack.push(Value::Int(val));
+    vm.output.push(format!("UNKNOT: Untied {}", val));
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_cord(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(idx) = val {
+            vm.quipu.select_cord(idx as usize);
+            vm.output.push(format!("CORD: Selected {}", idx));
+        } else {
+            vm.output.push("Error: Type mismatch for cord".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for cord".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_read_cord(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let val = vm.quipu.read();
+    vm.stack.push(Value::Int(val));
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_tangle(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(idx) = val {
+            vm.quipu.tangle(idx as usize);
+            vm.output
+                .push(format!("TANGLE: Entangled with cord {}", idx));
+        } else {
+            vm.output
+                .push("Error: Type mismatch for tangle".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for tangle".to_string());
+    }
+    None
 }

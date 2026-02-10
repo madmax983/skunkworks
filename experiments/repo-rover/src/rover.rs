@@ -1,5 +1,5 @@
-use std::f64::consts::PI;
 use locus::Vec2;
+use std::f64::consts::PI;
 
 pub struct Rover {
     pub pos: Vec2,

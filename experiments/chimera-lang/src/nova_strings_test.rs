@@ -18,11 +18,26 @@ mod tests {
         // [ push(5) push(10) push(8) push(8) string_new() ]
         // len=5, tension=10, y=8, x=8
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // Length
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // Tension
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // X
-            Gene { op: OpCode::StringNew, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // Length
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }, // Tension
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // Y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // X
+            Gene {
+                op: OpCode::StringNew,
+                args: vec![],
+            },
         ];
         let mut vm = make_vm(genes);
         // 4 pushes + 1 op = 5 steps
@@ -42,21 +57,45 @@ mod tests {
     fn test_string_pluck_listen() {
         // Corrected genes for proximity
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // Y=8
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }, // X=8
-            Gene { op: OpCode::StringNew, args: vec![] },
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-            Gene { op: OpCode::StringPluck, args: vec![] }, // Context loc 8,8
-
-            Gene { op: OpCode::StringListen, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // Y=8
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            }, // X=8
+            Gene {
+                op: OpCode::StringNew,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(50)],
+            },
+            Gene {
+                op: OpCode::StringPluck,
+                args: vec![],
+            }, // Context loc 8,8
+            Gene {
+                op: OpCode::StringListen,
+                args: vec![],
+            },
         ];
 
         let mut vm = make_vm(genes);
         // Execute creation (5 steps)
-        for _ in 0..5 { vm.step(); }
+        for _ in 0..5 {
+            vm.step();
+        }
 
         assert_eq!(vm.strings.len(), 1);
 

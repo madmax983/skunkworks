@@ -60,13 +60,25 @@ impl ChemicalSystem {
                 let v = self.v[i];
 
                 // Laplacian U
-                let sum_u_adj = self.u[row_up + x] + self.u[row_down + x] + self.u[row + prev_x] + self.u[row + next_x];
-                let sum_u_diag = self.u[row_up + prev_x] + self.u[row_up + next_x] + self.u[row_down + prev_x] + self.u[row_down + next_x];
+                let sum_u_adj = self.u[row_up + x]
+                    + self.u[row_down + x]
+                    + self.u[row + prev_x]
+                    + self.u[row + next_x];
+                let sum_u_diag = self.u[row_up + prev_x]
+                    + self.u[row_up + next_x]
+                    + self.u[row_down + prev_x]
+                    + self.u[row_down + next_x];
                 let lap_u = sum_u_adj * adj_w + sum_u_diag * diag_w + u * center_w;
 
                 // Laplacian V
-                let sum_v_adj = self.v[row_up + x] + self.v[row_down + x] + self.v[row + prev_x] + self.v[row + next_x];
-                let sum_v_diag = self.v[row_up + prev_x] + self.v[row_up + next_x] + self.v[row_down + prev_x] + self.v[row_down + next_x];
+                let sum_v_adj = self.v[row_up + x]
+                    + self.v[row_down + x]
+                    + self.v[row + prev_x]
+                    + self.v[row + next_x];
+                let sum_v_diag = self.v[row_up + prev_x]
+                    + self.v[row_up + next_x]
+                    + self.v[row_down + prev_x]
+                    + self.v[row_down + next_x];
                 let lap_v = sum_v_adj * adj_w + sum_v_diag * diag_w + v * center_w;
 
                 let uvv = u * v * v;

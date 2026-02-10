@@ -364,16 +364,28 @@ mod tests {
         // FindAll pops Template and Goal. So stack is [42].
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("?S".to_string())] }, // Template
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(
-                JunctionType::Any,
-                vec![
-                    Nucleotide::String("stack".to_string()),
-                    Nucleotide::String("?S".to_string()),
-                ]
-            )] }, // Goal
-            Gene { op: OpCode::FindAll, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(42)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("?S".to_string())],
+            }, // Template
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Nucleotide::String("stack".to_string()),
+                        Nucleotide::String("?S".to_string()),
+                    ],
+                )],
+            }, // Goal
+            Gene {
+                op: OpCode::FindAll,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

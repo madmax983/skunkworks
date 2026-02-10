@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum BeeState {
@@ -81,7 +81,7 @@ impl Bee {
 
                 // Return to hive if too far (optional, keeps them from wandering off screen)
                 if self.position.distance(hive_pos) > 500.0 {
-                     self.velocity += (hive_pos - self.position).normalize() * 0.1;
+                    self.velocity += (hive_pos - self.position).normalize() * 0.1;
                 }
             }
             BeeState::Returning => {
@@ -96,12 +96,12 @@ impl Bee {
                     // Angle based on source pos
                     if let Some(idx) = self.target_site_index {
                         if let Some(source) = sources.get(idx) {
-                             let vec_to_source = source.position - hive_pos;
-                             self.dance_angle = vec_to_source.y.atan2(vec_to_source.x);
-                             self.dance_duration = 100.0 * self.memory_quality; // Dance longer for better quality
-                             self.waggle_intensity = self.memory_quality;
-                             self.dance_timer = self.dance_duration;
-                             self.state = BeeState::Dancing;
+                            let vec_to_source = source.position - hive_pos;
+                            self.dance_angle = vec_to_source.y.atan2(vec_to_source.x);
+                            self.dance_duration = 100.0 * self.memory_quality; // Dance longer for better quality
+                            self.waggle_intensity = self.memory_quality;
+                            self.dance_timer = self.dance_duration;
+                            self.state = BeeState::Dancing;
                         } else {
                             // Source disappeared?
                             self.state = BeeState::Observing;
@@ -135,8 +135,8 @@ impl Bee {
                 self.velocity = Vec2::ZERO;
                 // Slowly drift around hive
                 self.position += vec2(rng.gen_range(-0.5..0.5), rng.gen_range(-0.5..0.5));
-                 if self.position.distance(hive_pos) > hive_radius {
-                     self.position = hive_pos + (self.position - hive_pos).normalize() * hive_radius;
+                if self.position.distance(hive_pos) > hive_radius {
+                    self.position = hive_pos + (self.position - hive_pos).normalize() * hive_radius;
                 }
 
                 // Watch dances
@@ -168,8 +168,7 @@ impl Bee {
                         self.position += self.velocity;
 
                         // Add some randomness/error
-                         self.velocity += vec2(rng.gen_range(-0.2..0.2), rng.gen_range(-0.2..0.2));
-
+                        self.velocity += vec2(rng.gen_range(-0.2..0.2), rng.gen_range(-0.2..0.2));
 
                         if self.position.distance(source.position) < source.radius {
                             // Arrived at source.
@@ -204,7 +203,11 @@ mod tests {
         }
 
         // Check that bees are moving (not all at 0,0)
-        let moving_bees = world.bees.iter().filter(|b| b.position != vec2(0.0, 0.0)).count();
+        let moving_bees = world
+            .bees
+            .iter()
+            .filter(|b| b.position != vec2(0.0, 0.0))
+            .count();
         assert!(moving_bees > 0);
     }
 }
@@ -253,7 +256,9 @@ impl World {
 
     pub fn update(&mut self) {
         // Collect active dances
-        let active_dances: Vec<DanceInfo> = self.bees.iter()
+        let active_dances: Vec<DanceInfo> = self
+            .bees
+            .iter()
             .filter(|b| b.state == BeeState::Dancing && b.target_site_index.is_some())
             .map(|b| DanceInfo {
                 target_index: b.target_site_index.unwrap(),
@@ -265,7 +270,12 @@ impl World {
 
         // Update bees
         for bee in &mut self.bees {
-            bee.update(&self.sources, &active_dances, self.hive_position, self.hive_radius);
+            bee.update(
+                &self.sources,
+                &active_dances,
+                self.hive_position,
+                self.hive_radius,
+            );
         }
     }
 }

@@ -54,7 +54,7 @@ impl TextGlitcher {
 
         // High intensity block corruption
         if intensity > 0.5 && rng.gen::<f32>() < 0.1 {
-             result.push_str(" [DATA LOSS] ");
+            result.push_str(" [DATA LOSS] ");
         }
 
         result

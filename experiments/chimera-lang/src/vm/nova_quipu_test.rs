@@ -50,14 +50,31 @@ fn test_quipu_multiple_knots() {
     // So Knot(10) sets cord to 10. Knot(5) sets cord to 5.
 
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-        Gene { op: OpCode::Knot, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-        Gene { op: OpCode::Knot, args: vec![] },
-        Gene { op: OpCode::ReadCord, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            op: OpCode::Knot,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        },
+        Gene {
+            op: OpCode::Knot,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::ReadCord,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
-    for _ in 0..5 { vm.step(); }
+    for _ in 0..5 {
+        vm.step();
+    }
 
     assert_eq!(vm.stack.pop(), Some(Value::Int(5)));
 }
@@ -65,9 +82,18 @@ fn test_quipu_multiple_knots() {
 #[test]
 fn test_quipu_unknot() {
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-        Gene { op: OpCode::Knot, args: vec![] },
-        Gene { op: OpCode::Unknot, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        },
+        Gene {
+            op: OpCode::Knot,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Unknot,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     vm.step(); // Push
@@ -88,31 +114,68 @@ fn test_quipu_tangle() {
 
     let genes = vec![
         // Set Cord 0 to 100
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-        Gene { op: OpCode::Cord, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-        Gene { op: OpCode::Knot, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            op: OpCode::Cord,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(100)],
+        },
+        Gene {
+            op: OpCode::Knot,
+            args: vec![],
+        },
         // Set Cord 1 to 50
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Cord, args: vec![] },
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(50)] },
-        Gene { op: OpCode::Knot, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Cord,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(50)],
+        },
+        Gene {
+            op: OpCode::Knot,
+            args: vec![],
+        },
         // Select Cord 0
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-        Gene { op: OpCode::Cord, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            op: OpCode::Cord,
+            args: vec![],
+        },
         // Tangle with Cord 1
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-        Gene { op: OpCode::Tangle, args: vec![] },
-
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        },
+        Gene {
+            op: OpCode::Tangle,
+            args: vec![],
+        },
         // Read Cord 0
-        Gene { op: OpCode::ReadCord, args: vec![] },
+        Gene {
+            op: OpCode::ReadCord,
+            args: vec![],
+        },
     ];
 
     let mut vm = make_vm(genes);
-    for _ in 0..13 { vm.step(); }
+    for _ in 0..13 {
+        vm.step();
+    }
 
     assert_eq!(vm.stack.pop(), Some(Value::Int(150)));
 }

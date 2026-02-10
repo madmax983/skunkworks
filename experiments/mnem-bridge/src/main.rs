@@ -1,5 +1,5 @@
-use mnem_bridge::model::{State, Terrain, World};
 use macroquad::prelude::*;
+use mnem_bridge::model::{State, Terrain, World};
 
 const GRID_WIDTH: usize = 100;
 const GRID_HEIGHT: usize = 60;
@@ -120,7 +120,7 @@ async fn main() {
                     } else {
                         Color::new(1.0, h * 2.0, 0.0, 1.0)
                     }
-                },
+                }
                 State::Returning => GREEN,
             };
 
@@ -144,7 +144,13 @@ async fn main() {
         if let Some(payload) = hovered_payload {
             // Draw background for text
             let text_w = measure_text(&payload, None, 20, 1.0).width;
-            draw_rectangle(mouse_pos.x + 15.0, mouse_pos.y - 15.0, text_w + 10.0, 30.0, BLACK);
+            draw_rectangle(
+                mouse_pos.x + 15.0,
+                mouse_pos.y - 15.0,
+                text_w + 10.0,
+                30.0,
+                BLACK,
+            );
             draw_text(&payload, mouse_pos.x + 20.0, mouse_pos.y + 5.0, 20.0, WHITE);
         }
 

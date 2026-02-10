@@ -1,7 +1,7 @@
 use crate::boid::Boid;
-use crate::git::{GitScanner, CommitData};
-use crate::strata::Strata;
 use crate::fissure::Fissure;
+use crate::git::{CommitData, GitScanner};
+use crate::strata::Strata;
 use locus::Vec2;
 use rand::Rng;
 
@@ -22,10 +22,30 @@ impl World {
         let commits = GitScanner::scan().unwrap_or_else(|_| {
             // Fallback for no-git env
             vec![
-                CommitData { hash: "init".into(), timestamp: 0, stress_level: 0.0, details: "Initial".into() },
-                CommitData { hash: "fix".into(), timestamp: 100, stress_level: 5.0, details: "Fix panic".into() },
-                CommitData { hash: "feat".into(), timestamp: 200, stress_level: 0.0, details: "Add feature".into() },
-                CommitData { hash: "refactor".into(), timestamp: 300, stress_level: 2.0, details: "Refactor".into() },
+                CommitData {
+                    hash: "init".into(),
+                    timestamp: 0,
+                    stress_level: 0.0,
+                    details: "Initial".into(),
+                },
+                CommitData {
+                    hash: "fix".into(),
+                    timestamp: 100,
+                    stress_level: 5.0,
+                    details: "Fix panic".into(),
+                },
+                CommitData {
+                    hash: "feat".into(),
+                    timestamp: 200,
+                    stress_level: 0.0,
+                    details: "Add feature".into(),
+                },
+                CommitData {
+                    hash: "refactor".into(),
+                    timestamp: 300,
+                    stress_level: 2.0,
+                    details: "Refactor".into(),
+                },
             ]
         });
 
@@ -66,7 +86,10 @@ impl World {
         // 3. Create Boids
         let mut boids = Vec::new();
         for _ in 0..100 {
-            boids.push(Boid::new(rng.gen_range(0.0..width), rng.gen_range(0.0..height)));
+            boids.push(Boid::new(
+                rng.gen_range(0.0..width),
+                rng.gen_range(0.0..height),
+            ));
         }
 
         Self {
@@ -116,7 +139,9 @@ impl World {
 
             // Flocking
             for j in 0..count {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let b2 = &self.boids[j];
                 let dist_sq = p1.distance_squared(b2.position);
 
@@ -158,7 +183,8 @@ impl World {
                     if screen_y >= 0.0 && screen_y <= self.height {
                         let screen_pt = Vec2::new(pt.x, screen_y);
                         let d_sq = p1.distance_squared(screen_pt);
-                        if d_sq < (dna.view_radius * 3.0).powi(2) { // Can see fissures further away
+                        if d_sq < (dna.view_radius * 3.0).powi(2) {
+                            // Can see fissures further away
                             if d_sq < closest_fissure_dist {
                                 closest_fissure_dist = d_sq;
                                 closest_fissure_pt = screen_pt;
@@ -216,8 +242,13 @@ impl World {
             boid.update_physics(self.width, self.height);
             // Flash phase update (keep it simple, random drift for now, or copy sync logic if wanted)
             boid.phase += boid.dna.natural_freq;
-            if boid.phase >= 1.0 { boid.phase -= 1.0; boid.flash_timer = 5; }
-            if boid.flash_timer > 0 { boid.flash_timer -= 1; }
+            if boid.phase >= 1.0 {
+                boid.phase -= 1.0;
+                boid.flash_timer = 5;
+            }
+            if boid.flash_timer > 0 {
+                boid.flash_timer -= 1;
+            }
         }
     }
 }

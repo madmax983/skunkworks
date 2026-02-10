@@ -1,5 +1,5 @@
-use rand::Rng;
 use crate::glitch::TextGlitcher;
+use rand::Rng;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum State {
@@ -153,7 +153,7 @@ impl World {
 
                 // Corrupt payload
                 if rng.gen::<f32>() < 0.05 {
-                     ant.payload = TextGlitcher::corrupt(&ant.payload, 1.0 - ant.health);
+                    ant.payload = TextGlitcher::corrupt(&ant.payload, 1.0 - ant.health);
                 }
 
                 if ant.health <= 0.0 {
@@ -171,7 +171,14 @@ impl World {
                         updates.push((i, x, y, State::Foraging, Some((x, y, Terrain::Gap)), false));
                     } else {
                         // Reinforce bridge
-                        updates.push((i, x, y, State::Bridging, Some((x, y, Terrain::Bridge)), false));
+                        updates.push((
+                            i,
+                            x,
+                            y,
+                            State::Bridging,
+                            Some((x, y, Terrain::Bridge)),
+                            false,
+                        ));
                     }
                 }
                 State::Foraging | State::Returning => {
@@ -222,7 +229,7 @@ impl World {
                                 ny,
                                 State::Bridging,
                                 Some((nx, ny, Terrain::Bridge)),
-                                false
+                                false,
                             ));
                         } else {
                             // Just move

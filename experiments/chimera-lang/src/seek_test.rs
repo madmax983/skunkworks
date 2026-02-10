@@ -24,12 +24,10 @@ mod tests {
 
         // Strand 2: [ photosynthesize() ]
         let strand2 = Strand {
-            genes: vec![
-                Gene {
-                    op: OpCode::Photosynthesize,
-                    args: vec![],
-                },
-            ],
+            genes: vec![Gene {
+                op: OpCode::Photosynthesize,
+                args: vec![],
+            }],
         };
 
         let dna = Dna {

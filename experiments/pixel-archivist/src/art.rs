@@ -1,6 +1,6 @@
 use image::{DynamicImage, Rgb, RgbImage};
-use rand::{Rng, SeedableRng};
 use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
 use sha2::{Digest, Sha256};
 
 pub fn generate_cover(data: &[u8]) -> DynamicImage {
@@ -35,38 +35,38 @@ pub fn generate_cover(data: &[u8]) -> DynamicImage {
     // 3. Draw "Nebula" clouds
     let num_clouds = rng.gen_range(10..30);
     for _ in 0..num_clouds {
-         let cx = rng.gen_range(0..width) as f32;
-         let cy = rng.gen_range(0..height) as f32;
-         let radius = rng.gen_range(20.0..width as f32 / 3.0);
+        let cx = rng.gen_range(0..width) as f32;
+        let cy = rng.gen_range(0..height) as f32;
+        let radius = rng.gen_range(20.0..width as f32 / 3.0);
 
-         // Random galaxy colors
-         let r_base = rng.gen_range(0..100);
-         let g_base = rng.gen_range(0..100);
-         let b_base = rng.gen_range(50..200);
+        // Random galaxy colors
+        let r_base = rng.gen_range(0..100);
+        let g_base = rng.gen_range(0..100);
+        let b_base = rng.gen_range(50..200);
 
-         let x_min = (cx - radius).max(0.0) as u32;
-         let x_max = (cx + radius).min(width as f32) as u32;
-         let y_min = (cy - radius).max(0.0) as u32;
-         let y_max = (cy + radius).min(height as f32) as u32;
+        let x_min = (cx - radius).max(0.0) as u32;
+        let x_max = (cx + radius).min(width as f32) as u32;
+        let y_min = (cy - radius).max(0.0) as u32;
+        let y_max = (cy + radius).min(height as f32) as u32;
 
-         for y in y_min..y_max {
-             for x in x_min..x_max {
-                 let dx = x as f32 - cx;
-                 let dy = y as f32 - cy;
-                 let dist = (dx*dx + dy*dy).sqrt();
-                 if dist < radius {
-                     let alpha = (1.0 - (dist / radius).powf(0.5)).max(0.0);
-                     let pixel = img.get_pixel_mut(x, y);
-                     let existing = pixel.0;
+        for y in y_min..y_max {
+            for x in x_min..x_max {
+                let dx = x as f32 - cx;
+                let dy = y as f32 - cy;
+                let dist = (dx * dx + dy * dy).sqrt();
+                if dist < radius {
+                    let alpha = (1.0 - (dist / radius).powf(0.5)).max(0.0);
+                    let pixel = img.get_pixel_mut(x, y);
+                    let existing = pixel.0;
 
-                     let new_r = (existing[0] as f32 + r_base as f32 * alpha).min(255.0) as u8;
-                     let new_g = (existing[1] as f32 + g_base as f32 * alpha).min(255.0) as u8;
-                     let new_b = (existing[2] as f32 + b_base as f32 * alpha).min(255.0) as u8;
+                    let new_r = (existing[0] as f32 + r_base as f32 * alpha).min(255.0) as u8;
+                    let new_g = (existing[1] as f32 + g_base as f32 * alpha).min(255.0) as u8;
+                    let new_b = (existing[2] as f32 + b_base as f32 * alpha).min(255.0) as u8;
 
-                     *pixel = Rgb([new_r, new_g, new_b]);
-                 }
-             }
-         }
+                    *pixel = Rgb([new_r, new_g, new_b]);
+                }
+            }
+        }
     }
 
     // 4. Stars

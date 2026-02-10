@@ -279,7 +279,9 @@ async fn main() {
         draw_text(&format!("Beta: {:.2}", p.beta), 10.0, 140.0, 20.0, GREEN);
         draw_text(
             &format!("Jitter (Swap): {:.3}", p.jitter),
-            10.0, 160.0, 20.0,
+            10.0,
+            160.0,
+            20.0,
             MAGENTA,
         );
         draw_text(

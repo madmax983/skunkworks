@@ -1,7 +1,7 @@
 use crate::laban::LabanEffort;
+use locus::Vec2;
 use rand::Rng;
 use std::f64::consts::PI;
-use locus::Vec2;
 
 pub struct Rover {
     pub pos: Vec2,

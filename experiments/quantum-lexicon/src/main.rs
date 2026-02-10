@@ -4,9 +4,9 @@ mod retina;
 mod shader;
 
 use macroquad::prelude::*;
+use phonology::{Features, Phoneme};
 use poincare_disk::{mobius_add, mobius_sub, Point, TilingConsts};
 use retina::Retina;
-use phonology::{Features, Phoneme};
 
 const EYE_RES: usize = 128;
 
@@ -14,36 +14,127 @@ struct Particle {
     pos: Point,
     phoneme: Phoneme,
     vel: Point,
-    stability: f32, // 0.0 = Chaos, 1.0 = Frozen
+    stability: f32,                  // 0.0 = Chaos, 1.0 = Frozen
     target_phoneme: Option<Phoneme>, // If stabilizing, drift towards this
 }
 
 fn create_phoneme(c: char) -> Phoneme {
     let features = match c {
-        'a' => Features { voice: 1.0, place: 0.5, manner: 1.0 },
-        'e' => Features { voice: 1.0, place: 0.3, manner: 0.8 },
-        'i' => Features { voice: 1.0, place: 0.2, manner: 0.9 },
-        'o' => Features { voice: 1.0, place: 0.7, manner: 0.8 },
-        'u' => Features { voice: 1.0, place: 0.8, manner: 0.9 },
-        'p' => Features { voice: 0.0, place: 0.0, manner: 0.0 },
-        't' => Features { voice: 0.0, place: 0.2, manner: 0.0 },
-        'k' => Features { voice: 0.0, place: 0.8, manner: 0.0 },
-        'b' => Features { voice: 1.0, place: 0.0, manner: 0.0 },
-        'd' => Features { voice: 1.0, place: 0.2, manner: 0.0 },
-        'g' => Features { voice: 1.0, place: 0.8, manner: 0.0 },
-        'm' => Features { voice: 1.0, place: 0.0, manner: 0.2 },
-        'n' => Features { voice: 1.0, place: 0.2, manner: 0.2 },
-        's' => Features { voice: 0.0, place: 0.2, manner: 0.4 },
-        'l' => Features { voice: 1.0, place: 0.3, manner: 0.6 },
-        'r' => Features { voice: 1.0, place: 0.3, manner: 0.5 },
-        'c' => Features { voice: 0.0, place: 0.8, manner: 0.4 }, // Hard C /k/ or Soft C /s/
-        'h' => Features { voice: 0.0, place: 1.0, manner: 0.4 },
-        'q' => Features { voice: 0.0, place: 0.9, manner: 0.0 },
-        'x' => Features { voice: 0.0, place: 0.8, manner: 0.4 },
-        'y' => Features { voice: 1.0, place: 0.2, manner: 0.9 },
-        _ => Features { voice: 0.5, place: 0.5, manner: 0.5 },
+        'a' => Features {
+            voice: 1.0,
+            place: 0.5,
+            manner: 1.0,
+        },
+        'e' => Features {
+            voice: 1.0,
+            place: 0.3,
+            manner: 0.8,
+        },
+        'i' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.9,
+        },
+        'o' => Features {
+            voice: 1.0,
+            place: 0.7,
+            manner: 0.8,
+        },
+        'u' => Features {
+            voice: 1.0,
+            place: 0.8,
+            manner: 0.9,
+        },
+        'p' => Features {
+            voice: 0.0,
+            place: 0.0,
+            manner: 0.0,
+        },
+        't' => Features {
+            voice: 0.0,
+            place: 0.2,
+            manner: 0.0,
+        },
+        'k' => Features {
+            voice: 0.0,
+            place: 0.8,
+            manner: 0.0,
+        },
+        'b' => Features {
+            voice: 1.0,
+            place: 0.0,
+            manner: 0.0,
+        },
+        'd' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.0,
+        },
+        'g' => Features {
+            voice: 1.0,
+            place: 0.8,
+            manner: 0.0,
+        },
+        'm' => Features {
+            voice: 1.0,
+            place: 0.0,
+            manner: 0.2,
+        },
+        'n' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.2,
+        },
+        's' => Features {
+            voice: 0.0,
+            place: 0.2,
+            manner: 0.4,
+        },
+        'l' => Features {
+            voice: 1.0,
+            place: 0.3,
+            manner: 0.6,
+        },
+        'r' => Features {
+            voice: 1.0,
+            place: 0.3,
+            manner: 0.5,
+        },
+        'c' => Features {
+            voice: 0.0,
+            place: 0.8,
+            manner: 0.4,
+        }, // Hard C /k/ or Soft C /s/
+        'h' => Features {
+            voice: 0.0,
+            place: 1.0,
+            manner: 0.4,
+        },
+        'q' => Features {
+            voice: 0.0,
+            place: 0.9,
+            manner: 0.0,
+        },
+        'x' => Features {
+            voice: 0.0,
+            place: 0.8,
+            manner: 0.4,
+        },
+        'y' => Features {
+            voice: 1.0,
+            place: 0.2,
+            manner: 0.9,
+        },
+        _ => Features {
+            voice: 0.5,
+            place: 0.5,
+            manner: 0.5,
+        },
     };
-    Phoneme { features, symbol: c }
+    Phoneme {
+        features,
+        symbol: c,
+    }
 }
 
 #[macroquad::main("Quantum Lexicon")]
@@ -72,7 +163,10 @@ async fn main() {
             particles.push(Particle {
                 pos,
                 phoneme: create_phoneme(c),
-                vel: Point::new(rand::gen_range(-0.002, 0.002), rand::gen_range(-0.002, 0.002)),
+                vel: Point::new(
+                    rand::gen_range(-0.002, 0.002),
+                    rand::gen_range(-0.002, 0.002),
+                ),
                 stability: 0.0,
                 target_phoneme: Some(create_phoneme(c)),
             });
@@ -94,7 +188,8 @@ async fn main() {
             ],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     let start_time = get_time();
     let mut retina_input = vec![0.0; EYE_RES * EYE_RES];
@@ -103,10 +198,18 @@ async fn main() {
         // --- Input ---
         let speed = 0.02;
         let mut move_vec = Point::new(0.0, 0.0);
-        if is_key_down(KeyCode::W) { move_vec.im += speed; }
-        if is_key_down(KeyCode::S) { move_vec.im -= speed; }
-        if is_key_down(KeyCode::A) { move_vec.re -= speed; }
-        if is_key_down(KeyCode::D) { move_vec.re += speed; }
+        if is_key_down(KeyCode::W) {
+            move_vec.im += speed;
+        }
+        if is_key_down(KeyCode::S) {
+            move_vec.im -= speed;
+        }
+        if is_key_down(KeyCode::A) {
+            move_vec.re -= speed;
+        }
+        if is_key_down(KeyCode::D) {
+            move_vec.re += speed;
+        }
         if move_vec.norm() > 0.0 {
             player_pos = mobius_add(player_pos, move_vec);
         }
@@ -146,7 +249,8 @@ async fn main() {
         for (i, pixel) in image.bytes.chunks(4).enumerate() {
             if i < retina_input.len() {
                 // Luminance
-                retina_input[i] = (pixel[0] as f32 + pixel[1] as f32 + pixel[2] as f32) / (3.0 * 255.0);
+                retina_input[i] =
+                    (pixel[0] as f32 + pixel[1] as f32 + pixel[2] as f32) / (3.0 * 255.0);
             }
         }
 
@@ -180,9 +284,11 @@ async fn main() {
             for p in &mut particles {
                 let z_local = mobius_sub(p.pos, player_pos);
                 // Distance in projected space
-                let dist_sq = (z_local.re - spike_pos.re).powi(2) + (z_local.im - spike_pos.im).powi(2);
+                let dist_sq =
+                    (z_local.re - spike_pos.re).powi(2) + (z_local.im - spike_pos.im).powi(2);
 
-                if dist_sq < 0.05 { // Influence radius
+                if dist_sq < 0.05 {
+                    // Influence radius
                     p.stability += 0.2;
                 }
             }
@@ -198,9 +304,12 @@ async fn main() {
                 // Or maybe revert to "correct" letter if we had one.
                 if let Some(target) = &p.target_phoneme {
                     // Interpolate features towards target
-                    p.phoneme.features.voice += (target.features.voice - p.phoneme.features.voice) * 0.1;
-                    p.phoneme.features.place += (target.features.place - p.phoneme.features.place) * 0.1;
-                    p.phoneme.features.manner += (target.features.manner - p.phoneme.features.manner) * 0.1;
+                    p.phoneme.features.voice +=
+                        (target.features.voice - p.phoneme.features.voice) * 0.1;
+                    p.phoneme.features.place +=
+                        (target.features.place - p.phoneme.features.place) * 0.1;
+                    p.phoneme.features.manner +=
+                        (target.features.manner - p.phoneme.features.manner) * 0.1;
 
                     // If close enough, snap symbol
                     if (p.phoneme.features.voice - target.features.voice).abs() < 0.1 {
@@ -213,14 +322,20 @@ async fn main() {
 
                 // Mutation (Phonetic Drift)
                 if rand::gen_range(0.0, 1.0) < 0.05 {
-                    p.phoneme.features.voice = (p.phoneme.features.voice + rand::gen_range(-0.1, 0.1)).clamp(0.0, 1.0);
-                    p.phoneme.features.place = (p.phoneme.features.place + rand::gen_range(-0.1, 0.1)).clamp(0.0, 1.0);
-                    p.phoneme.features.manner = (p.phoneme.features.manner + rand::gen_range(-0.1, 0.1)).clamp(0.0, 1.0);
+                    p.phoneme.features.voice =
+                        (p.phoneme.features.voice + rand::gen_range(-0.1, 0.1)).clamp(0.0, 1.0);
+                    p.phoneme.features.place =
+                        (p.phoneme.features.place + rand::gen_range(-0.1, 0.1)).clamp(0.0, 1.0);
+                    p.phoneme.features.manner =
+                        (p.phoneme.features.manner + rand::gen_range(-0.1, 0.1)).clamp(0.0, 1.0);
 
                     // Change symbol based on features (Reverse lookup would be hard, so just randomize char occasionally)
                     if rand::gen_range(0.0, 1.0) < 0.01 {
-                         let chars = ['a','e','i','o','u','p','t','k','b','d','g','m','n','s','l','r','?','!'];
-                         p.phoneme.symbol = chars[rand::gen_range(0, chars.len())];
+                        let chars = [
+                            'a', 'e', 'i', 'o', 'u', 'p', 't', 'k', 'b', 'd', 'g', 'm', 'n', 's',
+                            'l', 'r', '?', '!',
+                        ];
+                        p.phoneme.symbol = chars[rand::gen_range(0, chars.len())];
                     }
                 }
             }
@@ -267,12 +382,33 @@ async fn main() {
         for (sx, sy) in &spikes {
             let x = (*sx as f32 / EYE_RES as f32) * sw;
             let y = (*sy as f32 / EYE_RES as f32) * sh;
-            draw_rectangle(x, y, sw/EYE_RES as f32, sh/EYE_RES as f32, Color::new(1.0, 1.0, 1.0, 0.3));
+            draw_rectangle(
+                x,
+                y,
+                sw / EYE_RES as f32,
+                sh / EYE_RES as f32,
+                Color::new(1.0, 1.0, 1.0, 0.3),
+            );
         }
 
         draw_text("Quantum Lexicon", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Stability: {:.2}", particles.iter().map(|p| p.stability).sum::<f32>() / particles.len() as f32), 10.0, 50.0, 20.0, WHITE);
-        draw_text("Look at the words to freeze them.", 10.0, sh - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!(
+                "Stability: {:.2}",
+                particles.iter().map(|p| p.stability).sum::<f32>() / particles.len() as f32
+            ),
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Look at the words to freeze them.",
+            10.0,
+            sh - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

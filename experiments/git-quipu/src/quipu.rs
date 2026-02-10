@@ -48,7 +48,9 @@ impl CommitCord {
         let (tens, units) = Self::decompose(data.insertions);
         if tens > 0 {
             let mut k = Vec::new();
-            for _ in 0..tens { k.push(Knot::Simple); }
+            for _ in 0..tens {
+                k.push(Knot::Simple);
+            }
             clusters.push(k);
         } else {
             clusters.push(Vec::new()); // Empty space for zero tens
@@ -62,12 +64,13 @@ impl CommitCord {
         }
         clusters.push(unit_knots);
 
-
         // 3. Deletions (Bottom Cluster)
         let (tens, units) = Self::decompose(data.deletions);
         if tens > 0 {
             let mut k = Vec::new();
-            for _ in 0..tens { k.push(Knot::Simple); }
+            for _ in 0..tens {
+                k.push(Knot::Simple);
+            }
             clusters.push(k);
         } else {
             clusters.push(Vec::new());

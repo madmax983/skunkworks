@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Meaning {
@@ -143,7 +143,10 @@ impl Agent {
 
     pub fn learn(&mut self, symbol: Symbol, meaning: Meaning) {
         // Remove any existing mapping for this symbol to avoid ambiguity
-        let keys_to_remove: Vec<Meaning> = self.protocol.vocabulary.iter()
+        let keys_to_remove: Vec<Meaning> = self
+            .protocol
+            .vocabulary
+            .iter()
             .filter(|(_, s)| **s == symbol)
             .map(|(m, _)| *m)
             .collect();

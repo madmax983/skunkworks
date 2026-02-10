@@ -40,20 +40,26 @@ mod tests {
         vm.grid[7][7] = Value::Int(2); // Should not change
 
         // Query: cell(?X, ?Y, 1)
-        let query = Value::Junction(JunctionType::Any, vec![
-            Value::Str("cell".to_string()),
-            Value::Str("?X".to_string()),
-            Value::Str("?Y".to_string()),
-            Value::Int(1),
-        ]);
+        let query = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("cell".to_string()),
+                Value::Str("?X".to_string()),
+                Value::Str("?Y".to_string()),
+                Value::Int(1),
+            ],
+        );
 
         // Transform: cell(?X, ?Y, 99)
-        let transform = Value::Junction(JunctionType::Any, vec![
-            Value::Str("cell".to_string()),
-            Value::Str("?X".to_string()),
-            Value::Str("?Y".to_string()),
-            Value::Int(99),
-        ]);
+        let transform = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("cell".to_string()),
+                Value::Str("?X".to_string()),
+                Value::Str("?Y".to_string()),
+                Value::Int(99),
+            ],
+        );
 
         vm.stack.push(query);
         vm.stack.push(transform);
@@ -83,20 +89,26 @@ mod tests {
         let mut vm = ChimeraVM::new(dna);
 
         // Query: gene(0, ?Idx, "push")
-        let query = Value::Junction(JunctionType::Any, vec![
-            Value::Str("gene".to_string()),
-            Value::Int(0),
-            Value::Str("?Idx".to_string()),
-            Value::Str("push".to_string()),
-        ]);
+        let query = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("gene".to_string()),
+                Value::Int(0),
+                Value::Str("?Idx".to_string()),
+                Value::Str("push".to_string()),
+            ],
+        );
 
         // Transform: gene(0, ?Idx, "drop")
-        let transform = Value::Junction(JunctionType::Any, vec![
-            Value::Str("gene".to_string()),
-            Value::Int(0),
-            Value::Str("?Idx".to_string()),
-            Value::Str("drop".to_string()),
-        ]);
+        let transform = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("gene".to_string()),
+                Value::Int(0),
+                Value::Str("?Idx".to_string()),
+                Value::Str("drop".to_string()),
+            ],
+        );
 
         vm.stack.push(query);
         vm.stack.push(transform);

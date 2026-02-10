@@ -1,12 +1,14 @@
 #[cfg(test)]
 mod tests {
-    use crate::vm::{ChimeraVM, Value};
-    use crate::opcode::OpCode;
     use crate::ast::{Dna, Helix, Strand};
+    use crate::opcode::OpCode;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes: vec![] }] },
+            helix: Helix {
+                strands: vec![Strand { genes: vec![] }],
+            },
         };
         ChimeraVM::new(dna)
     }
@@ -34,7 +36,7 @@ mod tests {
 
         // Decay
         vm.step(); // Step decays by * 0.95
-        // 0.5 * 0.95 = 0.475
+                   // 0.5 * 0.95 = 0.475
         assert!(vm.glitch_level < 0.5);
     }
 }

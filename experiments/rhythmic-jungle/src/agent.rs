@@ -1,6 +1,6 @@
-use macroquad::prelude::*;
 use crate::rhythm::EuclideanGenerator;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 pub const INTERACTION_RADIUS: f32 = 30.0;
 pub const INTERACTION_COOLDOWN: f32 = 2.0;
@@ -101,19 +101,19 @@ impl Agent {
         let mut rng = ::rand::thread_rng();
 
         if rng.gen_bool(0.1) {
-             if self.rhythm.pulses < other.rhythm.pulses {
-                 self.rhythm.set_params(16, self.rhythm.pulses + 1);
-             } else if self.rhythm.pulses > other.rhythm.pulses {
-                 self.rhythm.set_params(16, self.rhythm.pulses - 1);
-             }
+            if self.rhythm.pulses < other.rhythm.pulses {
+                self.rhythm.set_params(16, self.rhythm.pulses + 1);
+            } else if self.rhythm.pulses > other.rhythm.pulses {
+                self.rhythm.set_params(16, self.rhythm.pulses - 1);
+            }
         }
 
         if rng.gen_bool(0.1) {
-             if other.rhythm.pulses < self.rhythm.pulses {
-                 other.rhythm.set_params(16, other.rhythm.pulses + 1);
-             } else if other.rhythm.pulses > self.rhythm.pulses {
-                 other.rhythm.set_params(16, other.rhythm.pulses - 1);
-             }
+            if other.rhythm.pulses < self.rhythm.pulses {
+                other.rhythm.set_params(16, other.rhythm.pulses + 1);
+            } else if other.rhythm.pulses > self.rhythm.pulses {
+                other.rhythm.set_params(16, other.rhythm.pulses - 1);
+            }
         }
 
         // Return true if they are somewhat synchronized (similar BPM or Pulses)

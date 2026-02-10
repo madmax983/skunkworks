@@ -21,7 +21,9 @@ impl Muscle {
             self.activation += self.strength;
         }
         self.activation *= self.decay;
-        if self.activation > 1.0 { self.activation = 1.0; }
+        if self.activation > 1.0 {
+            self.activation = 1.0;
+        }
     }
 }
 
@@ -98,8 +100,12 @@ impl Crab {
         // R3: 30 deg (PI/6) -> Bottom Right
 
         let base_angles = vec![
-            -5.0*PI/6.0, PI, 5.0*PI/6.0,
-            -PI/6.0, 0.0, PI/6.0,
+            -5.0 * PI / 6.0,
+            PI,
+            5.0 * PI / 6.0,
+            -PI / 6.0,
+            0.0,
+            PI / 6.0,
         ];
 
         for i in 0..6 {
@@ -117,9 +123,13 @@ impl Crab {
         // Neighbors inhibit each other to encourage anti-phase
 
         let neighbor_pairs = vec![
-            (0, 1), (1, 2), // Left chain
-            (3, 4), (4, 5), // Right chain
-            (0, 3), (1, 4), (2, 5) // Cross links
+            (0, 1),
+            (1, 2), // Left chain
+            (3, 4),
+            (4, 5), // Right chain
+            (0, 3),
+            (1, 4),
+            (2, 5), // Cross links
         ];
 
         for (a_leg, b_leg) in neighbor_pairs {

@@ -2,8 +2,8 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::ChimeraVM;
     use crate::vm::nova_signals::process_signals;
+    use crate::vm::ChimeraVM;
     use crate::vm::Value;
 
     fn make_vm() -> ChimeraVM {
@@ -79,7 +79,7 @@ mod tests {
         }
 
         if !vm.organelles.is_empty() {
-             assert_eq!(vm.organelles[0].kind, crate::vm::nova::OrganelleType::Wisp);
+            assert_eq!(vm.organelles[0].kind, crate::vm::nova::OrganelleType::Wisp);
         }
     }
 }

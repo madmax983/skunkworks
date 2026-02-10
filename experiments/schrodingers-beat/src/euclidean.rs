@@ -33,7 +33,10 @@ mod tests {
         // 5: 7<3 F
         // 6: 2<3 T
         // 7: 5<3 F
-        assert_eq!(pattern, vec![true, false, false, true, false, false, true, false]);
+        assert_eq!(
+            pattern,
+            vec![true, false, false, true, false, false, true, false]
+        );
     }
 
     #[test]

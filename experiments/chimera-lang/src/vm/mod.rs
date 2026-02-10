@@ -85,12 +85,6 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
-pub mod nova_chronos;
-#[cfg(feature = "nova")]
-pub mod nova_genetics;
-#[cfg(feature = "nova")]
-pub mod nova_metazoa;
-#[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
@@ -104,13 +98,6 @@ pub mod nova_bestiary;
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
-pub mod nova_fluid;
-#[cfg(feature = "nova")]
-pub mod nova_flux;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_flux_test;
-#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
@@ -120,6 +107,8 @@ pub mod nova_bureaucracy;
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
+#[cfg(feature = "nova")]
+pub mod nova_chronos;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_chronos_local_test;
@@ -136,13 +125,25 @@ pub mod nova_cymatics;
 #[cfg(feature = "nova")]
 pub mod nova_egregore;
 #[cfg(feature = "nova")]
+pub mod nova_fluid;
+#[cfg(feature = "nova")]
+pub mod nova_flux;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_flux_test;
+#[cfg(feature = "nova")]
 pub mod nova_garden;
 #[cfg(feature = "nova")]
 pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
+pub mod nova_genetics;
+#[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
 pub mod nova_guild;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_harvest_test;
 #[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
@@ -159,6 +160,8 @@ pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_metamorphism;
 #[cfg(feature = "nova")]
+pub mod nova_metazoa;
+#[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_optics;
@@ -167,13 +170,10 @@ pub mod nova_optics;
 mod nova_optics_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_orca_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
 mod nova_orca_midi_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_harvest_test;
+mod nova_orca_test;
 #[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
@@ -184,13 +184,13 @@ pub mod nova_planes;
 #[cfg(feature = "nova")]
 pub mod nova_pocket;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_pocket_test;
+#[cfg(feature = "nova")]
 pub mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_quipu_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_pocket_test;
 #[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
@@ -317,9 +317,7 @@ impl Value {
     pub fn depth(&self) -> usize {
         match self {
             Value::Int(_) | Value::Str(_) => 0,
-            Value::Junction(_, vals) => {
-                1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0)
-            }
+            Value::Junction(_, vals) => 1 + vals.iter().map(|v| v.depth()).max().unwrap_or(0),
             Value::Superposition(states) => {
                 1 + states.iter().map(|(v, _)| v.depth()).max().unwrap_or(0)
             }
@@ -1444,8 +1442,9 @@ impl ChimeraVM {
                                     };
                                     self.organelles.push(new_org);
                                 } else {
-                                    self.output
-                                        .push("Error: Organelle limit exceeded in Bang".to_string());
+                                    self.output.push(
+                                        "Error: Organelle limit exceeded in Bang".to_string(),
+                                    );
                                 }
                             }
                         }
@@ -2436,7 +2435,8 @@ impl ChimeraVM {
             OpCode::Logos => {
                 self.logos_mode = !self.logos_mode;
                 let status = if self.logos_mode { "ON" } else { "OFF" };
-                self.output.push(format!("LOGOS: Logic Chemistry {}", status));
+                self.output
+                    .push(format!("LOGOS: Logic Chemistry {}", status));
                 None
             }
 
@@ -2469,7 +2469,8 @@ impl ChimeraVM {
 
                     let new_val = Value::Junction(JunctionType::All, results);
                     if new_val.depth() > MAX_RECURSION_DEPTH {
-                        self.output.push("Error: FindAll depth limit exceeded".to_string());
+                        self.output
+                            .push("Error: FindAll depth limit exceeded".to_string());
                     } else {
                         self.stack.push(new_val);
                     }

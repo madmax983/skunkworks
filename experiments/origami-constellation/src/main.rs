@@ -1,16 +1,20 @@
-mod pbd;
 mod mesh_gen;
+mod pbd;
 
-use macroquad::prelude::*;
 use macroquad::models::{Mesh, Vertex};
-use pbd::Constraint;
+use macroquad::prelude::*;
 use mesh_gen::generate_miura_ori;
+use pbd::Constraint;
 
 #[macroquad::main("Origami Constellation")]
 async fn main() {
     let mesh_data = generate_miura_ori(10, 10);
     // Destructure to avoid partial move issues
-    let mesh_gen::MeshData { mut system, indices, actuators } = mesh_data;
+    let mesh_gen::MeshData {
+        mut system,
+        indices,
+        actuators,
+    } = mesh_data;
 
     // Camera state
     let mut cam_yaw: f32 = 0.0;
@@ -35,7 +39,10 @@ async fn main() {
     loop {
         // Input
         let mouse_pos = mouse_position();
-        let delta = vec2(mouse_pos.0 - last_mouse_pos.0, mouse_pos.1 - last_mouse_pos.1);
+        let delta = vec2(
+            mouse_pos.0 - last_mouse_pos.0,
+            mouse_pos.1 - last_mouse_pos.1,
+        );
         last_mouse_pos = mouse_pos;
 
         if is_mouse_button_down(MouseButton::Left) {
@@ -100,8 +107,8 @@ async fn main() {
 
         for i in (0..indices.len()).step_by(3) {
             let idx0 = indices[i] as usize;
-            let idx1 = indices[i+1] as usize;
-            let idx2 = indices[i+2] as usize;
+            let idx1 = indices[i + 1] as usize;
+            let idx2 = indices[i + 2] as usize;
 
             let v0 = system.particles[idx0].pos;
             let v1 = system.particles[idx1].pos;
@@ -118,9 +125,24 @@ async fn main() {
 
             let color_bytes: [u8; 4] = color.into();
             let normal_v4 = vec4(normal.x, normal.y, normal.z, 1.0);
-            mesh.vertices.push(Vertex { position: v0, uv: vec2(0.,0.), color: color_bytes, normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v1, uv: vec2(0.,0.), color: color_bytes, normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v2, uv: vec2(0.,0.), color: color_bytes, normal: normal_v4 });
+            mesh.vertices.push(Vertex {
+                position: v0,
+                uv: vec2(0., 0.),
+                color: color_bytes,
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v1,
+                uv: vec2(0., 0.),
+                color: color_bytes,
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v2,
+                uv: vec2(0., 0.),
+                color: color_bytes,
+                normal: normal_v4,
+            });
 
             mesh.indices.push(start_idx);
             mesh.indices.push(start_idx + 1);
@@ -137,8 +159,20 @@ async fn main() {
 
         set_default_camera();
 
-        draw_text(&format!("Fold: {:.0}%", (1.0 - fold_factor) * 100.0), 10.0, 30.0, 30.0, WHITE);
-        draw_text("Controls: Left/Right Arrow to Fold", 10.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Fold: {:.0}%", (1.0 - fold_factor) * 100.0),
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Controls: Left/Right Arrow to Fold",
+            10.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
         draw_text("Orbit: Mouse Drag | Zoom: Scroll", 10.0, 80.0, 20.0, WHITE);
 
         next_frame().await

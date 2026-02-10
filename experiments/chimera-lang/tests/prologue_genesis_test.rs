@@ -55,26 +55,62 @@ mod tests {
 
         let genes = vec![
             // Sow Rule 2: B1/S1 (Anything with 1 neighbor is born/survives)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("B1/S1".to_string())] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Sow, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("B1/S1".to_string())],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Sow,
+                args: vec![],
+            },
             // Write some "Life" to grid
             // Grid[0][0] = 5 (Push(5))
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // Grid[0][1] = "add"
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("add".to_string())] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("add".to_string())],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // Genesis(2)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Genesis, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Genesis,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -88,14 +124,22 @@ mod tests {
         // Total 13 steps.
 
         for _ in 0..20 {
-            if vm.dna.helix.strands.len() == 1 && vm.dna.helix.strands[0].genes.len() > 2 && vm.tick_counter == 0 {
-                 // Genesis resets tick_counter? No, I didn't reset tick_counter in code, but I reset IP.
-                 // Wait, exec_genesis resets IP to (0,0).
-                 // And clears old DNA.
-                 // So if we detect a new strand that is NOT our original setup, we know it worked.
+            if vm.dna.helix.strands.len() == 1
+                && vm.dna.helix.strands[0].genes.len() > 2
+                && vm.tick_counter == 0
+            {
+                // Genesis resets tick_counter? No, I didn't reset tick_counter in code, but I reset IP.
+                // Wait, exec_genesis resets IP to (0,0).
+                // And clears old DNA.
+                // So if we detect a new strand that is NOT our original setup, we know it worked.
             }
             vm.step();
-            if vm.output.last().map(|s| s.contains("born")).unwrap_or(false) {
+            if vm
+                .output
+                .last()
+                .map(|s| s.contains("born"))
+                .unwrap_or(false)
+            {
                 break;
             }
         }

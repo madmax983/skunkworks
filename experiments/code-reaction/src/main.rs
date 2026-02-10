@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 
 mod scanner;
-use scanner::{Scanner, FileMetric};
+use scanner::{FileMetric, Scanner};
 use walkdir::WalkDir;
 
 const WIDTH: u32 = 1024;
@@ -106,7 +106,8 @@ impl State {
                 ],
                 ..Default::default()
             },
-        ).unwrap();
+        )
+        .unwrap();
 
         Self {
             state_a,
@@ -168,7 +169,7 @@ impl State {
     }
 
     fn seed(&mut self) {
-         set_camera(&Camera2D {
+        set_camera(&Camera2D {
             zoom: vec2(2.0 / WIDTH as f32, 2.0 / HEIGHT as f32),
             target: vec2(WIDTH as f32 / 2.0, HEIGHT as f32 / 2.0),
             render_target: Some(self.state_a.clone()),
@@ -176,7 +177,12 @@ impl State {
         });
 
         // Initial seed in center
-        draw_circle(WIDTH as f32 / 2.0, HEIGHT as f32 / 2.0, 20.0, Color::new(0.0, 1.0, 0.0, 1.0)); // V = 1.0
+        draw_circle(
+            WIDTH as f32 / 2.0,
+            HEIGHT as f32 / 2.0,
+            20.0,
+            Color::new(0.0, 1.0, 0.0, 1.0),
+        ); // V = 1.0
 
         set_default_camera();
     }
@@ -190,7 +196,8 @@ async fn main() {
 
     loop {
         // Ping Pong Simulation Steps
-        for _ in 0..16 { // Speed up simulation
+        for _ in 0..16 {
+            // Speed up simulation
             let source = state.state_a.clone();
             let dest = state.state_b.clone();
 
@@ -201,9 +208,15 @@ async fn main() {
                 ..Default::default()
             });
 
-            state.material.set_texture("StateTexture", source.texture.clone());
-            state.material.set_texture("CatalystTexture", state.catalyst_map.texture.clone());
-            state.material.set_uniform("ScreenSize", vec2(WIDTH as f32, HEIGHT as f32));
+            state
+                .material
+                .set_texture("StateTexture", source.texture.clone());
+            state
+                .material
+                .set_texture("CatalystTexture", state.catalyst_map.texture.clone());
+            state
+                .material
+                .set_uniform("ScreenSize", vec2(WIDTH as f32, HEIGHT as f32));
 
             gl_use_material(&state.material);
 
@@ -246,17 +259,29 @@ async fn main() {
             },
         );
 
-        draw_text(format!("FPS: {}", get_fps()).as_str(), 10.0, 20.0, 30.0, WHITE);
-        draw_text(format!("Files: {}", state.metrics.len()).as_str(), 10.0, 50.0, 30.0, LIGHTGRAY);
+        draw_text(
+            format!("FPS: {}", get_fps()).as_str(),
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            format!("Files: {}", state.metrics.len()).as_str(),
+            10.0,
+            50.0,
+            30.0,
+            LIGHTGRAY,
+        );
 
         if is_mouse_button_down(MouseButton::Left) {
-             let (mx, my) = mouse_position();
-             // Convert screen to render target coords
-             let tx = mx / screen_width() * WIDTH as f32;
-             let ty = my / screen_height() * HEIGHT as f32;
+            let (mx, my) = mouse_position();
+            // Convert screen to render target coords
+            let tx = mx / screen_width() * WIDTH as f32;
+            let ty = my / screen_height() * HEIGHT as f32;
 
-             // Inject chemical into state_a
-             set_camera(&Camera2D {
+            // Inject chemical into state_a
+            set_camera(&Camera2D {
                 zoom: vec2(2.0 / WIDTH as f32, 2.0 / HEIGHT as f32),
                 target: vec2(WIDTH as f32 / 2.0, HEIGHT as f32 / 2.0),
                 render_target: Some(state.state_a.clone()),

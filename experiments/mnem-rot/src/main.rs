@@ -59,17 +59,18 @@ async fn main() {
 
         // Repulsion
         for i in 0..graph.nodes.len() {
-            for j in i+1..graph.nodes.len() {
+            for j in i + 1..graph.nodes.len() {
                 let diff = graph.nodes[i].pos - graph.nodes[j].pos;
                 let dist_sq = diff.length_squared().max(1.0);
-                if dist_sq < 250000.0 { // Optimization radius
+                if dist_sq < 250000.0 {
+                    // Optimization radius
                     let force = diff.normalize() * (5000.0 / dist_sq);
                     forces[i] += force;
                     forces[j] -= force;
                 }
             }
             // Center attraction (Gravity)
-            let center = vec2(screen_width()/2.0, screen_height()/2.0) - offset;
+            let center = vec2(screen_width() / 2.0, screen_height() / 2.0) - offset;
             let to_center = (center - graph.nodes[i].pos) * 0.01;
             forces[i] += to_center;
         }
@@ -100,14 +101,18 @@ async fn main() {
 
             // Decay
             node.health -= entropy * dt * 0.05;
-            if node.health < 0.1 { node.health = 0.1; }
+            if node.health < 0.1 {
+                node.health = 0.1;
+            }
 
             // Interaction
             if node.pos.distance(world_mouse) < 20.0 {
                 hovered_node = Some(i);
                 // Heal
                 node.health += dt * 5.0; // Fast heal
-                if node.health > 1.0 { node.health = 1.0; }
+                if node.health > 1.0 {
+                    node.health = 1.0;
+                }
             }
         }
 
@@ -119,7 +124,8 @@ async fn main() {
             if edge.from < graph.nodes.len() && edge.to < graph.nodes.len() {
                 let n1 = graph.nodes[edge.from].pos * zoom + offset;
                 let n2 = graph.nodes[edge.to].pos * zoom + offset;
-                let avg_health = (graph.nodes[edge.from].health + graph.nodes[edge.to].health) / 2.0;
+                let avg_health =
+                    (graph.nodes[edge.from].health + graph.nodes[edge.to].health) / 2.0;
 
                 // Jitter if low health
                 let jitter = if avg_health < 0.5 {
@@ -128,7 +134,14 @@ async fn main() {
                     vec2(0.0, 0.0)
                 };
 
-                draw_line(n1.x + jitter.x, n1.y + jitter.y, n2.x + jitter.x, n2.y + jitter.y, 2.0 * zoom, Color::new(0.5, 0.5, 0.5, avg_health));
+                draw_line(
+                    n1.x + jitter.x,
+                    n1.y + jitter.y,
+                    n2.x + jitter.x,
+                    n2.y + jitter.y,
+                    2.0 * zoom,
+                    Color::new(0.5, 0.5, 0.5, avg_health),
+                );
             }
         }
 
@@ -148,7 +161,7 @@ async fn main() {
 
             // Draw name if healthy enough or hovered
             if node.health > 0.6 || hovered_node == Some(i) {
-                 draw_text(&node.name, pos.x + 10.0, pos.y, 14.0 * zoom, WHITE);
+                draw_text(&node.name, pos.x + 10.0, pos.y, 14.0 * zoom, WHITE);
             }
         }
 
@@ -156,11 +169,23 @@ async fn main() {
         if let Some(idx) = hovered_node {
             let node = &graph.nodes[idx];
             // Panel
-            draw_rectangle(10.0, 10.0, 400.0, screen_height() - 20.0, Color::new(0.05, 0.05, 0.05, 0.95));
+            draw_rectangle(
+                10.0,
+                10.0,
+                400.0,
+                screen_height() - 20.0,
+                Color::new(0.05, 0.05, 0.05, 0.95),
+            );
             draw_rectangle_lines(10.0, 10.0, 400.0, screen_height() - 20.0, 2.0, WHITE);
 
             draw_text(&node.name, 20.0, 40.0, 30.0, GREEN);
-            draw_text(&format!("Health: {:.0}%", node.health * 100.0), 20.0, 70.0, 20.0, WHITE);
+            draw_text(
+                &format!("Health: {:.0}%", node.health * 100.0),
+                20.0,
+                70.0,
+                20.0,
+                WHITE,
+            );
 
             // Content
             let intensity = 1.0 - node.health;
@@ -175,8 +200,20 @@ async fn main() {
             }
         }
 
-        draw_text(&format!("Entropy: {:.4}", entropy), screen_width() - 200.0, 30.0, 20.0, RED);
-        draw_text("Right Click: Pan | Scroll: Zoom | Hover: Heal", 10.0, screen_height() - 10.0, 16.0, GRAY);
+        draw_text(
+            &format!("Entropy: {:.4}", entropy),
+            screen_width() - 200.0,
+            30.0,
+            20.0,
+            RED,
+        );
+        draw_text(
+            "Right Click: Pan | Scroll: Zoom | Hover: Heal",
+            10.0,
+            screen_height() - 10.0,
+            16.0,
+            GRAY,
+        );
 
         next_frame().await
     }

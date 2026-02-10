@@ -32,10 +32,10 @@ fn main() -> anyhow::Result<()> {
     let pulse_ms = 125;
 
     let configs = vec![
-        (3, 8, kick_mutex.clone()),    // Tresillo (Length 8)
-        (5, 12, kick_mutex.clone()),   // African Bell (Length 12)
-        (4, 16, snare_mutex.clone()),  // 4-on-floor (Length 16)
-        (7, 16, snare_mutex.clone()),  // Samba-ish (Length 16)
+        (3, 8, kick_mutex.clone()),   // Tresillo (Length 8)
+        (5, 12, kick_mutex.clone()),  // African Bell (Length 12)
+        (4, 16, snare_mutex.clone()), // 4-on-floor (Length 16)
+        (7, 16, snare_mutex.clone()), // Samba-ish (Length 16)
     ];
 
     for (i, (k, n, resource)) in configs.into_iter().enumerate() {

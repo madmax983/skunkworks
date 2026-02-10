@@ -36,11 +36,17 @@ impl Game {
     }
 
     pub fn get_player(&self) -> &Entity {
-        self.entities.iter().find(|e| e.id == self.player_id).expect("Player not found")
+        self.entities
+            .iter()
+            .find(|e| e.id == self.player_id)
+            .expect("Player not found")
     }
 
     pub fn get_player_mut(&mut self) -> &mut Entity {
-        self.entities.iter_mut().find(|e| e.id == self.player_id).expect("Player not found")
+        self.entities
+            .iter_mut()
+            .find(|e| e.id == self.player_id)
+            .expect("Player not found")
     }
 
     pub fn update(&mut self) {
@@ -66,9 +72,9 @@ impl Game {
             let next_step = Self::get_next_step(&entity.path, &player_path);
 
             let target_point_in_local = if let Some(dir) = next_step {
-                 neighbor_transform_a(dir, &self.tiling_consts)
+                neighbor_transform_a(dir, &self.tiling_consts)
             } else {
-                 player_offset
+                player_offset
             };
 
             // 2. Move
@@ -99,7 +105,7 @@ impl Game {
         // Apply updates
         for (id, new_pos, current_path) in updates {
             let mut best_neighbor = None;
-             let mut best_dist_sq = new_pos.norm_sqr();
+            let mut best_dist_sq = new_pos.norm_sqr();
 
             for i in 0..4 {
                 let neighbor_pos = neighbor_transform_a(i, &self.tiling_consts);
@@ -114,7 +120,7 @@ impl Game {
 
             if let Some((idx, neighbor_pos)) = best_neighbor {
                 let next_path = Dungeon::canonicalize_step(current_path.clone(), idx);
-                 if let Some(e) = self.entities.iter_mut().find(|e| e.id == id) {
+                if let Some(e) = self.entities.iter_mut().find(|e| e.id == id) {
                     e.path = next_path;
                     e.offset = neighbor_pos;
                 }
@@ -126,12 +132,14 @@ impl Game {
         }
 
         if !attacks.is_empty() {
-             self.message = "Attacked by Enemy!".to_string();
+            self.message = "Attacked by Enemy!".to_string();
         }
     }
 
     fn get_next_step(start: &[usize], end: &[usize]) -> Option<usize> {
-        if start == end { return None; }
+        if start == end {
+            return None;
+        }
 
         if end.starts_with(start) {
             return Some(end[start.len()]);
@@ -177,7 +185,11 @@ impl Game {
 
             let (is_wall, tile_seed, tile_type) = {
                 let tile = self.dungeon.get_tile(&next_path);
-                (matches!(tile.tile_type, TileType::Wall), tile.color_seed, tile.tile_type)
+                (
+                    matches!(tile.tile_type, TileType::Wall),
+                    tile.color_seed,
+                    tile.tile_type,
+                )
             };
 
             if is_wall {
@@ -193,11 +205,10 @@ impl Game {
             self.dungeon.mark_visited(&next_path);
 
             self.message = format!("Entered {:?} (Seed: {})", tile_type, tile_seed);
-
         } else {
-             if let Some(player) = self.entities.iter_mut().find(|e| e.id == self.player_id) {
-                 player.offset = candidate_offset;
-             }
+            if let Some(player) = self.entities.iter_mut().find(|e| e.id == self.player_id) {
+                player.offset = candidate_offset;
+            }
         }
     }
 }

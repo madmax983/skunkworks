@@ -1,7 +1,7 @@
-use num_complex::Complex;
-use poincare_disk::{mobius_add, Point, hyperbolic_dist};
 use crate::rhythm::EuclideanGenerator;
 use ::rand::Rng;
+use num_complex::Complex;
+use poincare_disk::{hyperbolic_dist, mobius_add, Point};
 use std::f64::consts::PI;
 
 // Hyperbolic distance for interaction.
@@ -71,7 +71,7 @@ impl Agent {
 
         // Randomly turn sometimes
         if rng.gen_bool(0.02) {
-             self.angle += rng.gen_range(-1.0..1.0);
+            self.angle += rng.gen_range(-1.0..1.0);
         }
 
         // 2. Rhythm Update
@@ -109,18 +109,18 @@ impl Agent {
             // Converge Pulses (Mutation)
             let mut rng = ::rand::thread_rng();
             if rng.gen_bool(0.1) {
-                 if self.rhythm.pulses < other.rhythm.pulses {
-                     self.rhythm.set_params(16, self.rhythm.pulses + 1);
-                 } else if self.rhythm.pulses > other.rhythm.pulses {
-                     self.rhythm.set_params(16, self.rhythm.pulses - 1);
-                 }
+                if self.rhythm.pulses < other.rhythm.pulses {
+                    self.rhythm.set_params(16, self.rhythm.pulses + 1);
+                } else if self.rhythm.pulses > other.rhythm.pulses {
+                    self.rhythm.set_params(16, self.rhythm.pulses - 1);
+                }
             }
             if rng.gen_bool(0.1) {
-                 if other.rhythm.pulses < self.rhythm.pulses {
-                     other.rhythm.set_params(16, other.rhythm.pulses + 1);
-                 } else if other.rhythm.pulses > self.rhythm.pulses {
-                     other.rhythm.set_params(16, other.rhythm.pulses - 1);
-                 }
+                if other.rhythm.pulses < self.rhythm.pulses {
+                    other.rhythm.set_params(16, other.rhythm.pulses + 1);
+                } else if other.rhythm.pulses > self.rhythm.pulses {
+                    other.rhythm.set_params(16, other.rhythm.pulses - 1);
+                }
             }
 
             return true;

@@ -1,10 +1,9 @@
-
+use anyhow::{Context, Result};
 use std::env;
 use std::fs;
-use anyhow::{Context, Result};
 use syn::visit::Visit;
-use syntax_fugue::parser::SyntaxListener;
 use syntax_fugue::audio::Synthesizer;
+use syntax_fugue::parser::SyntaxListener;
 use syntax_fugue::tui::run_tui;
 
 fn main() -> Result<()> {
@@ -17,11 +16,10 @@ fn main() -> Result<()> {
     };
 
     println!("🎵 Parsing {}...", path);
-    let code = fs::read_to_string(path)
-        .with_context(|| format!("Failed to read file: {}", path))?;
+    let code =
+        fs::read_to_string(path).with_context(|| format!("Failed to read file: {}", path))?;
 
-    let ast = syn::parse_file(&code)
-        .with_context(|| "Failed to parse Rust file")?;
+    let ast = syn::parse_file(&code).with_context(|| "Failed to parse Rust file")?;
 
     let mut listener = SyntaxListener::new(12345); // Seed
     listener.visit_file(&ast);

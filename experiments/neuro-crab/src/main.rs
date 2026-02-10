@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
 
-mod neuron;
-mod network;
 mod crab;
+mod network;
+mod neuron;
 
 use crab::Crab;
 
@@ -37,7 +37,8 @@ async fn main() {
 
         for leg in &crab.legs {
             // Leg base position
-            let attach_pos = center + vec2(leg.base_angle.cos(), leg.base_angle.sin()) * body_radius;
+            let attach_pos =
+                center + vec2(leg.base_angle.cos(), leg.base_angle.sin()) * body_radius;
 
             // Leg segments
             // Thigh (short)
@@ -51,7 +52,14 @@ async fn main() {
             // Add slight curve or offset? Nah, straight leg for now.
             let foot_pos = knee_pos + vec2(thigh_angle.cos(), thigh_angle.sin()) * shin_len;
 
-            draw_line(attach_pos.x, attach_pos.y, knee_pos.x, knee_pos.y, 8.0, DARKGREEN);
+            draw_line(
+                attach_pos.x,
+                attach_pos.y,
+                knee_pos.x,
+                knee_pos.y,
+                8.0,
+                DARKGREEN,
+            );
             draw_line(knee_pos.x, knee_pos.y, foot_pos.x, foot_pos.y, 4.0, GREEN);
 
             draw_circle(knee_pos.x, knee_pos.y, 4.0, YELLOW);
@@ -65,7 +73,13 @@ async fn main() {
         let cell_h = raster_h / 12.0;
 
         // Draw background for raster
-        draw_rectangle(0.0, raster_y, screen_width(), raster_h, Color::new(0.1, 0.1, 0.1, 1.0));
+        draw_rectangle(
+            0.0,
+            raster_y,
+            screen_width(),
+            raster_h,
+            Color::new(0.1, 0.1, 0.1, 1.0),
+        );
 
         for (t, spikes) in spike_history.iter().enumerate() {
             let x = t as f32 * cell_w;
@@ -85,7 +99,13 @@ async fn main() {
         draw_text("L1 E", 5.0, raster_y + cell_h * 1.8, 10.0, WHITE);
 
         // UI
-        draw_text(&format!("Drive Current: {:.1}", drive), 10.0, 30.0, 30.0, WHITE);
+        draw_text(
+            &format!("Drive Current: {:.1}", drive),
+            10.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
         draw_text("Move mouse X to control speed", 10.0, 60.0, 20.0, GRAY);
 
         next_frame().await

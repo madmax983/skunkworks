@@ -1,8 +1,7 @@
-
-use syn::{visit, ItemFn, ExprLoop, ExprWhile, ExprMatch, ExprIf};
-use crate::music::{FugueEvent, Note, Mode};
-use rand::{Rng, SeedableRng};
+use crate::music::{FugueEvent, Mode, Note};
 use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
+use syn::{visit, ExprIf, ExprLoop, ExprMatch, ExprWhile, ItemFn};
 
 pub struct SyntaxListener {
     pub events: Vec<FugueEvent>,
@@ -47,7 +46,7 @@ impl<'ast> visit::Visit<'ast> for SyntaxListener {
         self.events.push(FugueEvent::SubjectEntry {
             name: name.clone(),
             voice_id: self.current_voice,
-            notes
+            notes,
         });
 
         // Enter function body
@@ -62,7 +61,7 @@ impl<'ast> visit::Visit<'ast> for SyntaxListener {
         let notes = self.generate_theme("loop", 4);
         self.events.push(FugueEvent::Ostinato {
             voice_id: self.current_voice,
-            pattern: notes
+            pattern: notes,
         });
         visit::visit_expr_loop(self, node);
     }
@@ -71,19 +70,23 @@ impl<'ast> visit::Visit<'ast> for SyntaxListener {
         let notes = self.generate_theme("while", 4);
         self.events.push(FugueEvent::Ostinato {
             voice_id: self.current_voice,
-            pattern: notes
+            pattern: notes,
         });
         visit::visit_expr_while(self, node);
     }
 
     fn visit_expr_match(&mut self, node: &'ast ExprMatch) {
-        self.events.push(FugueEvent::Modulation { to_mode: Mode::Dorian }); // Example
+        self.events.push(FugueEvent::Modulation {
+            to_mode: Mode::Dorian,
+        }); // Example
         visit::visit_expr_match(self, node);
-        self.events.push(FugueEvent::Modulation { to_mode: Mode::Ionian }); // Return
+        self.events.push(FugueEvent::Modulation {
+            to_mode: Mode::Ionian,
+        }); // Return
     }
 
     fn visit_expr_if(&mut self, node: &'ast ExprIf) {
-         self.events.push(FugueEvent::Episode { intensity: 0.5 });
-         visit::visit_expr_if(self, node);
+        self.events.push(FugueEvent::Episode { intensity: 0.5 });
+        visit::visit_expr_if(self, node);
     }
 }

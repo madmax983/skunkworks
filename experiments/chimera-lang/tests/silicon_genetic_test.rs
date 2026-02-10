@@ -130,7 +130,10 @@ mod tests {
         );
         // (5,7) Emitter
         match &vm.grid[5][7] {
-            Value::Str(s) => assert!(s.starts_with("EMIT"), "Reconstructed (5,7) should be Emitter"),
+            Value::Str(s) => assert!(
+                s.starts_with("EMIT"),
+                "Reconstructed (5,7) should be Emitter"
+            ),
             _ => panic!("Expected Emitter at (5,7)"),
         }
     }

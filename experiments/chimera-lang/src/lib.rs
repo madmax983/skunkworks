@@ -94,6 +94,8 @@ pub mod prelude {
 }
 
 #[cfg(all(test, feature = "nova"))]
+mod alchemist_test;
+#[cfg(all(test, feature = "nova"))]
 mod babel_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod biophysics_test;
@@ -105,6 +107,8 @@ mod cladistics_test;
 mod cortex_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod cortex_view_test;
+#[cfg(all(test, feature = "nova"))]
+mod crucible_test;
 #[cfg(all(test, feature = "elektra"))]
 mod elektra_test;
 #[cfg(all(test, feature = "nova"))]
@@ -114,11 +118,13 @@ mod havoc_repro;
 #[cfg(all(test, feature = "hive"))]
 mod hive_test;
 #[cfg(all(test, feature = "nova"))]
+mod hydra_test;
+#[cfg(all(test, feature = "oracle"))]
+mod manifest_test;
+#[cfg(all(test, feature = "nova"))]
 mod microscope_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
-#[cfg(all(test, feature = "nova"))]
-mod crucible_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_arcana_test;
 #[cfg(all(test, feature = "nova"))]
@@ -168,19 +174,17 @@ mod nova_dream_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_dream_trace_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_fungi_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_fluid_test;
 #[cfg(all(test, feature = "nova"))]
-mod hydra_test;
+mod nova_fungi_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_garden_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_gastronomy_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_guild_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_gravity_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_guild_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_hormone_test;
 #[cfg(all(test, feature = "nova"))]
@@ -200,11 +204,11 @@ mod nova_market_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_membrane_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_metazoa_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_meta_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_metamorphism_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_metazoa_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_morphogenesis_test;
 #[cfg(all(test, feature = "nova"))]
@@ -270,11 +274,9 @@ mod nova_taxis_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_transposon_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
-mod alchemist_test;
+mod nova_transposon_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_virus_test;
 #[cfg(all(test, feature = "nova"))]
@@ -285,10 +287,6 @@ mod nova_ward_test;
 mod nova_waste_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;
-#[cfg(all(test, feature = "oracle"))]
-mod manifest_test;
-#[cfg(all(test, feature = "oracle"))]
-mod seek_test;
 #[cfg(all(test, feature = "nova"))]
 mod prion_test;
 #[cfg(all(test, feature = "resonance"))]
@@ -297,6 +295,8 @@ mod resonance_test;
 mod ribosome_test;
 #[cfg(all(test, feature = "nova"))]
 mod ribozyme_test;
+#[cfg(all(test, feature = "oracle"))]
+mod seek_test;
 #[cfg(all(test, feature = "nova"))]
 mod sentry_brainfuck_test;
 #[cfg(test)]

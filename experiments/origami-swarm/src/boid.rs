@@ -1,7 +1,7 @@
-use macroquad::prelude::*;
-use crate::pbd::{PbdSystem, Constraint};
 use crate::network::Network;
+use crate::pbd::{Constraint, PbdSystem};
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 const SIM_STEPS: usize = 2;
 
@@ -68,11 +68,19 @@ impl OrigamiBoid {
         // Mesh Indices (2 Triangles)
         // Top side
         let mesh_indices = vec![
-            i_head as u16, i_tail as u16, i_left as u16,
-            i_head as u16, i_right as u16, i_tail as u16,
+            i_head as u16,
+            i_tail as u16,
+            i_left as u16,
+            i_head as u16,
+            i_right as u16,
+            i_tail as u16,
             // Bottom side (reverse winding)
-            i_head as u16, i_left as u16, i_tail as u16,
-            i_head as u16, i_tail as u16, i_right as u16,
+            i_head as u16,
+            i_left as u16,
+            i_tail as u16,
+            i_head as u16,
+            i_tail as u16,
+            i_right as u16,
         ];
 
         // 2. Create Brain (CPG)
@@ -95,7 +103,13 @@ impl OrigamiBoid {
             system,
             brain,
             center_of_mass: pos,
-            velocity: vec3(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize() * 0.5,
+            velocity: vec3(
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
+                rng.gen_range(-1.0..1.0),
+            )
+            .normalize()
+                * 0.5,
             phase: rng.gen::<f32>(),
             pacemaker_neuron: pacemaker,
             actuator_idx,
@@ -128,7 +142,14 @@ impl OrigamiBoid {
         }
     }
 
-    pub fn update_flocking(&mut self, neighbors: &[Vec3], neighbor_vels: &[Vec3], neighbor_phases: &[f32], bounds_min: Vec3, bounds_max: Vec3) {
+    pub fn update_flocking(
+        &mut self,
+        neighbors: &[Vec3],
+        neighbor_vels: &[Vec3],
+        neighbor_phases: &[f32],
+        bounds_min: Vec3,
+        bounds_max: Vec3,
+    ) {
         let mut separation = Vec3::ZERO;
         let mut alignment = Vec3::ZERO;
         let mut cohesion = Vec3::ZERO;
@@ -147,7 +168,8 @@ impl OrigamiBoid {
             if dist_sq > 0.0 && dist_sq < view_radius * view_radius {
                 // Separation
                 if dist_sq < separate_radius * separate_radius {
-                    let diff = (self.center_of_mass - other_pos).normalize_or_zero() / dist_sq.sqrt();
+                    let diff =
+                        (self.center_of_mass - other_pos).normalize_or_zero() / dist_sq.sqrt();
                     separation += diff;
                 }
 
@@ -208,12 +230,24 @@ impl OrigamiBoid {
         let size = bounds_max - bounds_min;
         let mut center_shift = Vec3::ZERO;
 
-        if self.center_of_mass.x < bounds_min.x { center_shift.x += size.x; }
-        if self.center_of_mass.x > bounds_max.x { center_shift.x -= size.x; }
-        if self.center_of_mass.y < bounds_min.y { center_shift.y += size.y; }
-        if self.center_of_mass.y > bounds_max.y { center_shift.y -= size.y; }
-        if self.center_of_mass.z < bounds_min.z { center_shift.z += size.z; }
-        if self.center_of_mass.z > bounds_max.z { center_shift.z -= size.z; }
+        if self.center_of_mass.x < bounds_min.x {
+            center_shift.x += size.x;
+        }
+        if self.center_of_mass.x > bounds_max.x {
+            center_shift.x -= size.x;
+        }
+        if self.center_of_mass.y < bounds_min.y {
+            center_shift.y += size.y;
+        }
+        if self.center_of_mass.y > bounds_max.y {
+            center_shift.y -= size.y;
+        }
+        if self.center_of_mass.z < bounds_min.z {
+            center_shift.z += size.z;
+        }
+        if self.center_of_mass.z > bounds_max.z {
+            center_shift.z -= size.z;
+        }
 
         if center_shift != Vec3::ZERO {
             // Teleport particles
@@ -258,10 +292,23 @@ impl OrigamiBoid {
         };
 
         // Smoothly interpolate current factor
-        if let Constraint::Actuator { factor, min_len, max_len, stiffness, p1, p2 } = self.system.constraints[self.actuator_idx] {
+        if let Constraint::Actuator {
+            factor,
+            min_len,
+            max_len,
+            stiffness,
+            p1,
+            p2,
+        } = self.system.constraints[self.actuator_idx]
+        {
             let new_factor = factor + (target_factor - factor) * 0.1;
             self.system.constraints[self.actuator_idx] = Constraint::Actuator {
-                p1, p2, min_len, max_len, stiffness, factor: new_factor
+                p1,
+                p2,
+                min_len,
+                max_len,
+                stiffness,
+                factor: new_factor,
             };
         }
 

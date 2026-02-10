@@ -1,20 +1,16 @@
 use num_complex::Complex;
 use ratatui::{
     style::Color,
-    widgets::canvas::{Context, Line, Circle},
+    widgets::canvas::{Circle, Context, Line},
 };
 use std::f64::consts::PI;
 
 use crate::dungeon::{Dungeon, TileType};
-use crate::game::Game;
 use crate::entity::EntityKind;
+use crate::game::Game;
 use poincare_disk::{neighbor_transform_a, Mobius, Point, TilingConsts};
 
-pub fn draw_dungeon(
-    ctx: &mut Context,
-    game: &Game,
-    view_transform: &Mobius,
-) {
+pub fn draw_dungeon(ctx: &mut Context, game: &Game, view_transform: &Mobius) {
     draw_tile_recursive(
         ctx,
         game,
@@ -111,23 +107,23 @@ fn draw_tile_recursive(
     // Iterate all entities (or just optimize if needed)
     for entity in &game.entities {
         if entity.path == path {
-             let screen_pos = transform.apply(entity.offset);
-             let color = match entity.kind {
-                 EntityKind::Player => Color::Yellow,
-                 EntityKind::Enemy => Color::Red,
-                 EntityKind::Item => Color::Magenta,
-             };
-             let radius = match entity.kind {
-                 EntityKind::Player => 0.02,
-                 _ => 0.015,
-             };
+            let screen_pos = transform.apply(entity.offset);
+            let color = match entity.kind {
+                EntityKind::Player => Color::Yellow,
+                EntityKind::Enemy => Color::Red,
+                EntityKind::Item => Color::Magenta,
+            };
+            let radius = match entity.kind {
+                EntityKind::Player => 0.02,
+                _ => 0.015,
+            };
 
-             ctx.draw(&Circle {
-                 x: screen_pos.re,
-                 y: screen_pos.im,
-                 radius,
-                 color,
-             });
+            ctx.draw(&Circle {
+                x: screen_pos.re,
+                y: screen_pos.im,
+                radius,
+                color,
+            });
         }
     }
 

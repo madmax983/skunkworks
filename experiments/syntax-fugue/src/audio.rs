@@ -1,8 +1,7 @@
-
-use std::time::Duration;
-use rodio::{OutputStream, Sink, Source};
-use crate::music::{FugueEvent};
+use crate::music::FugueEvent;
 use anyhow::Result;
+use rodio::{OutputStream, Sink, Source};
+use std::time::Duration;
 
 pub struct Synthesizer {
     _stream: OutputStream,
@@ -30,9 +29,14 @@ impl Synthesizer {
     // Non-blocking: queues notes to the appropriate sink
     pub fn play_event(&self, event: &FugueEvent) {
         match event {
-            FugueEvent::SubjectEntry { voice_id, notes, .. } |
-            FugueEvent::CounterSubject { voice_id, notes } |
-            FugueEvent::Ostinato { voice_id, pattern: notes } => {
+            FugueEvent::SubjectEntry {
+                voice_id, notes, ..
+            }
+            | FugueEvent::CounterSubject { voice_id, notes }
+            | FugueEvent::Ostinato {
+                voice_id,
+                pattern: notes,
+            } => {
                 let voice_idx = voice_id % self.sinks.len();
                 let sink = &self.sinks[voice_idx];
 
@@ -44,10 +48,10 @@ impl Synthesizer {
 
                     sink.append(source);
                 }
-            },
+            }
             FugueEvent::Modulation { .. } => {
                 // Could change a global tuning parameter here if we wanted
-            },
+            }
             _ => {}
         }
     }

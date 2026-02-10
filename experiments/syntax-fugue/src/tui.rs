@@ -1,19 +1,18 @@
-
-use std::time::{Duration, Instant};
+use crate::audio::Synthesizer;
+use crate::music::FugueEvent;
+use anyhow::Result;
+use crossterm::{
+    event::{self, Event, KeyCode},
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+};
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use crossterm::{
-    event::{self, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use anyhow::Result;
-use crate::audio::Synthesizer;
-use crate::music::{FugueEvent};
+use std::time::{Duration, Instant};
 
 pub fn run_tui(synthesizer: Synthesizer, events: Vec<FugueEvent>) -> Result<()> {
     enable_raw_mode()?;
@@ -52,14 +51,25 @@ fn run_app<B: ratatui::backend::Backend>(
                 .split(f.size());
 
             // Render played events (scrolling log)
-            let log_text = messages.iter().rev().take(f.size().height as usize - 5).rev().cloned().collect::<Vec<String>>().join("\n");
+            let log_text = messages
+                .iter()
+                .rev()
+                .take(f.size().height as usize - 5)
+                .rev()
+                .cloned()
+                .collect::<Vec<String>>()
+                .join("\n");
             let events_widget = Paragraph::new(log_text)
                 .block(Block::default().title("Fugue Log").borders(Borders::ALL));
 
             f.render_widget(events_widget, chunks[0]);
 
             // Status bar
-            let status = format!("Events: {}/{} | Press 'q' to quit", current_event_idx, events.len());
+            let status = format!(
+                "Events: {}/{} | Press 'q' to quit",
+                current_event_idx,
+                events.len()
+            );
             let status_widget = Paragraph::new(status)
                 .block(Block::default().title("Status").borders(Borders::ALL));
 
@@ -96,11 +106,11 @@ fn run_app<B: ratatui::backend::Backend>(
                 FugueEvent::Silence { duration_ms } => {
                     wait_until = Some(now + Duration::from_millis(*duration_ms));
                 }
-                FugueEvent::SubjectEntry { notes, .. } |
-                FugueEvent::Ostinato { pattern: notes, .. } => {
-                     // Wait for duration of one note to create staggered entry (canon effect)
+                FugueEvent::SubjectEntry { notes, .. }
+                | FugueEvent::Ostinato { pattern: notes, .. } => {
+                    // Wait for duration of one note to create staggered entry (canon effect)
                     if !notes.is_empty() {
-                         wait_until = Some(now + Duration::from_millis(notes[0].duration_ms));
+                        wait_until = Some(now + Duration::from_millis(notes[0].duration_ms));
                     }
                 }
                 _ => {}

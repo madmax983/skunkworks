@@ -31,7 +31,12 @@ impl Network {
     }
 
     pub fn add_synapse(&mut self, from: usize, to: usize, weight: f32) {
-        self.synapses.push(Synapse { from, to, weight, delay: 0 });
+        self.synapses.push(Synapse {
+            from,
+            to,
+            weight,
+            delay: 0,
+        });
     }
 
     pub fn step(&mut self, external_inputs: &[f32]) {
@@ -91,6 +96,9 @@ mod tests {
         let v_after = network.neurons[b].v;
 
         // B should be inhibited
-        assert!(v_after < v_before_impact - 1.0, "Post-synaptic neuron should be inhibited by spike");
+        assert!(
+            v_after < v_before_impact - 1.0,
+            "Post-synaptic neuron should be inhibited by spike"
+        );
     }
 }

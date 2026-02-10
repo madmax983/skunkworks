@@ -111,7 +111,8 @@ pub fn exec_bond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Optio
 
                 vm.stack.push(Value::Int(final_tissue_id as i64));
                 vm.energy = vm.energy.saturating_sub(10);
-                vm.output.push(format!("BOND: Joined tissue {}", final_tissue_id));
+                vm.output
+                    .push(format!("BOND: Joined tissue {}", final_tissue_id));
             } else {
                 vm.stack.push(Value::Int(0)); // Fail
                 vm.output.push("BOND: No neighbor found".to_string());
@@ -121,12 +122,17 @@ pub fn exec_bond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Optio
             vm.output.push("BOND: Boundary reached".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for bond".to_string());
+        vm.output
+            .push("Error: Stack underflow for bond".to_string());
     }
     None
 }
 
-pub fn exec_unbond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_unbond(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Stack: [ ... ] -> [ ... ] (Just leaves current tissue)
     // Actually, maybe argument is unused?
     // "Severs the bond with a neighbor" implied directional severing, but tissue model is a set.
@@ -161,7 +167,11 @@ pub fn exec_unbond(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opt
     None
 }
 
-pub fn exec_signify(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_signify(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Stack: [ ..., value ]
     if let Some(val) = vm.stack.pop() {
         let (cy, cx) = vm.context_loc;
@@ -179,7 +189,9 @@ pub fn exec_signify(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
                 let members = tissue.members.clone();
                 let mut count = 0;
                 for &member_id in &members {
-                    if member_id == my_id { continue; }
+                    if member_id == my_id {
+                        continue;
+                    }
                     // Find member
                     for org in &mut vm.organelles {
                         if org.id == member_id {
@@ -189,18 +201,24 @@ pub fn exec_signify(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
                     }
                 }
                 vm.energy = vm.energy.saturating_sub(count * 2);
-                vm.output.push(format!("SIGNIFY: Sent to {} members", count));
+                vm.output
+                    .push(format!("SIGNIFY: Sent to {} members", count));
             }
         } else {
             vm.output.push("SIGNIFY: Not in a tissue".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for signify".to_string());
+        vm.output
+            .push("Error: Stack underflow for signify".to_string());
     }
     None
 }
 
-pub fn exec_tissue(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_tissue(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     let mut tid = 0;
     for org in &vm.organelles {

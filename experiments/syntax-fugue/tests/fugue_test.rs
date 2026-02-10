@@ -1,7 +1,6 @@
-
-use syntax_fugue::parser::SyntaxListener;
-use syntax_fugue::music::FugueEvent;
 use syn::visit::Visit;
+use syntax_fugue::music::FugueEvent;
+use syntax_fugue::parser::SyntaxListener;
 
 #[test]
 fn test_parse_simple_fugue() {
@@ -32,13 +31,17 @@ fn test_parse_simple_fugue() {
     // 2. Ostinato (loop)
     // 3. Silence (end of main)
 
-    let subject = events.iter().find(|e| matches!(e, FugueEvent::SubjectEntry { .. }));
+    let subject = events
+        .iter()
+        .find(|e| matches!(e, FugueEvent::SubjectEntry { .. }));
     assert!(subject.is_some(), "SubjectEntry not found");
 
     if let Some(FugueEvent::SubjectEntry { name, .. }) = subject {
         assert_eq!(name, "main");
     }
 
-    let ostinato = events.iter().find(|e| matches!(e, FugueEvent::Ostinato { .. }));
+    let ostinato = events
+        .iter()
+        .find(|e| matches!(e, FugueEvent::Ostinato { .. }));
     assert!(ostinato.is_some(), "Ostinato not found");
 }

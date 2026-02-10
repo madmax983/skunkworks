@@ -6,11 +6,7 @@ use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
-pub fn exec_ward(
-    vm: &mut ChimeraVM,
-    _op: OpCode,
-    _args: &[Nucleotide],
-) -> Option<(usize, usize)> {
+pub fn exec_ward(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., persistence, strand_idx ]
     if vm.stack.len() >= 2 {
         let idx_val = vm.stack.pop().unwrap();
@@ -32,7 +28,8 @@ pub fn exec_ward(
             vm.output.push("Error: Type mismatch for ward".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for ward".to_string());
+        vm.output
+            .push("Error: Stack underflow for ward".to_string());
     }
     None
 }
@@ -61,10 +58,8 @@ pub fn check_ward_trigger(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                             // So we must save (current_ip + 1) as return.
                             vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
 
-                            vm.output.push(format!(
-                                "WARD: Triggered strand {} at {},{}",
-                                idx, cx, cy
-                            ));
+                            vm.output
+                                .push(format!("WARD: Triggered strand {} at {},{}", idx, cx, cy));
 
                             // Handle persistence
                             if persistence <= 0 {

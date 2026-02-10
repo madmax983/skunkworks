@@ -42,7 +42,10 @@ mod tests {
 
         assert!(!vm.dream_traces.is_empty());
         let trace = vm.dream_traces.last().unwrap();
-        assert!(trace.is_nightmare, "Should be a nightmare due to high entropy");
+        assert!(
+            trace.is_nightmare,
+            "Should be a nightmare due to high entropy"
+        );
         assert!(trace.accepted, "Nightmares should be forced accepted");
     }
 

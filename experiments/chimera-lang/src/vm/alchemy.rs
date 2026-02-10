@@ -29,7 +29,11 @@ impl Crucible {
 }
 
 #[cfg(feature = "nova")]
-pub fn exec_crucible_op(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_crucible_op(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(mode) = val {
             match mode {
@@ -155,7 +159,8 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                                 }
                             }
                             if modified {
-                                vm.output.push(format!("ALCHEMY: Heated Strand {} (Fire)", idx));
+                                vm.output
+                                    .push(format!("ALCHEMY: Heated Strand {} (Fire)", idx));
                             }
                         }
                         "Water" => {
@@ -169,7 +174,8 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                                 }
                             }
                             if modified {
-                                vm.output.push(format!("ALCHEMY: Cooled Strand {} (Water)", idx));
+                                vm.output
+                                    .push(format!("ALCHEMY: Cooled Strand {} (Water)", idx));
                             }
                         }
                         "Void" => {
@@ -184,7 +190,8 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                                 }
                             }
                             if modified {
-                                vm.output.push(format!("ALCHEMY: Corrupted Strand {} (Void)", idx));
+                                vm.output
+                                    .push(format!("ALCHEMY: Corrupted Strand {} (Void)", idx));
                             }
                         }
                         "Life" => {
@@ -201,7 +208,8 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                             }
                             new_genes = grown_genes;
                             if modified {
-                                vm.output.push(format!("ALCHEMY: Grew Strand {} (Life)", idx));
+                                vm.output
+                                    .push(format!("ALCHEMY: Grew Strand {} (Life)", idx));
                             }
                         }
                         _ => {}

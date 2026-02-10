@@ -1,9 +1,9 @@
+use git::GitScanner;
 use macroquad::prelude::*;
 use terrain::Terrain;
-use git::GitScanner;
 
-mod terrain;
 mod git;
+mod terrain;
 
 #[cfg(test)]
 mod terrain_test;
@@ -21,7 +21,7 @@ async fn main() {
         Ok(c) => {
             println!("Loaded {} commits.", c.len());
             c
-        },
+        }
         Err(e) => {
             eprintln!("Failed to load git history: {}", e);
             vec![]
@@ -80,10 +80,14 @@ async fn main() {
                     terrain.uplift(x, y, 2.0);
 
                     // Also uplift neighbors slightly for a "mountain" feel
-                    terrain.uplift(x+1, y, 1.0);
-                    terrain.uplift(x, y+1, 1.0);
-                    if x > 0 { terrain.uplift(x-1, y, 1.0); }
-                    if y > 0 { terrain.uplift(x, y-1, 1.0); }
+                    terrain.uplift(x + 1, y, 1.0);
+                    terrain.uplift(x, y + 1, 1.0);
+                    if x > 0 {
+                        terrain.uplift(x - 1, y, 1.0);
+                    }
+                    if y > 0 {
+                        terrain.uplift(x, y - 1, 1.0);
+                    }
                 }
             }
             commit_idx = end_idx;
@@ -131,13 +135,25 @@ async fn main() {
 
         // UI
         draw_text(
-            &format!("Commits: {}/{} | Speed: {} | Erosion: {}", commit_idx, commits.len(), speed, erosion_steps),
+            &format!(
+                "Commits: {}/{} | Speed: {} | Erosion: {}",
+                commit_idx,
+                commits.len(),
+                speed,
+                erosion_steps
+            ),
             10.0,
             20.0,
             30.0,
             WHITE,
         );
-        draw_text("[Space] Pause/Resume [R] Reset [Arrows] Speed/Erosion", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "[Space] Pause/Resume [R] Reset [Arrows] Speed/Erosion",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
