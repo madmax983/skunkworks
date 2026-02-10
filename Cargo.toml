@@ -23,7 +23,6 @@ members = [
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",
-    "experiments/pidgin-mesh",
     "experiments/semantic-spy",
     "experiments/stigmergy-hub",
     "experiments/storm-monitor",
