@@ -44,6 +44,8 @@ struct App {
     pub(crate) steps: usize,
     pub(crate) loss_history: Vec<u64>,
     pub(crate) paused: bool,
+    pub(crate) last_action: String,
+    pub(crate) last_action_time: Instant,
 }
 
 impl App {
@@ -74,6 +76,8 @@ impl App {
             steps: 0,
             loss_history: Vec::with_capacity(100),
             paused: false,
+            last_action: String::from("Ready"),
+            last_action_time: Instant::now(),
         }
     }
 
@@ -116,11 +120,21 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
             if let Event::Key(key) = event::read()? {
                 match key.code {
                     KeyCode::Char('q') => return Ok(()),
-                    KeyCode::Char('p') => app.paused = !app.paused,
+                    KeyCode::Char('p') => {
+                        app.paused = !app.paused;
+                        app.last_action = if app.paused {
+                            "Paused".to_string()
+                        } else {
+                            "Resumed".to_string()
+                        };
+                        app.last_action_time = Instant::now();
+                    }
                     KeyCode::Char('r') => {
                         app.network = Network::new(vec![2, 5, 4, 1], 0.1);
                         app.steps = 0;
                         app.loss_history.clear();
+                        app.last_action = "Network Reset".to_string();
+                        app.last_action_time = Instant::now();
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('S') => {
@@ -128,7 +142,11 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                         let json = snap.to_json_pretty();
                         if let Err(e) = std::fs::write("neuro_snapshot.json", json) {
                             eprintln!("Failed to save snapshot: {}", e);
+                            app.last_action = "Snapshot Failed".to_string();
+                        } else {
+                            app.last_action = "Snapshot Saved".to_string();
                         }
+                        app.last_action_time = Instant::now();
                     }
                     _ => {}
                 }
@@ -186,9 +204,18 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
     .alignment(Alignment::Center);
     f.render_widget(title, chunks[0]);
 
+    let last_loss = app
+        .loss_history
+        .last()
+        .map(|&v| v as f64 / 1000.0)
+        .unwrap_or(0.0);
+
     let stats_block = Block::default()
         .borders(Borders::ALL)
-        .title(format!(" Loss (Steps: {}) ", app.steps))
+        .title(format!(
+            " Loss: {:.4} (Steps: {}) ",
+            last_loss, app.steps
+        ))
         .border_style(Style::default().fg(Color::Yellow));
 
     let sparkline = Sparkline::default()
@@ -218,7 +245,23 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
     f.render_widget(status, chunks[2]);
 }
 
-fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
+fn draw_footer(f: &mut Frame, app: &App, area: Rect) {
+    // Check if we should show a status message
+    if app.last_action_time.elapsed() < Duration::from_secs(2) && !app.last_action.is_empty() {
+        let status_msg = Span::styled(
+            format!(" {} ", app.last_action),
+            Style::default()
+                .bg(Color::Magenta)
+                .fg(Color::White)
+                .add_modifier(Modifier::BOLD),
+        );
+        let paragraph = Paragraph::new(status_msg)
+            .alignment(Alignment::Center)
+            .style(Style::default().bg(Color::Rgb(20, 20, 20)));
+        f.render_widget(paragraph, area);
+        return;
+    }
+
     let btn_style = Style::default()
         .bg(Color::Cyan)
         .fg(Color::Black)
@@ -269,12 +312,12 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                     if out[0] > 0.5 {
                         ctx.draw(&Points {
                             coords: &[(x, y)],
-                            color: Color::Rgb(0, 60, 60), // Cyan background
+                            color: Color::Rgb(0, 30, 30), // Dark Cyan background
                         });
                     } else {
                         ctx.draw(&Points {
                             coords: &[(x, y)],
-                            color: Color::Rgb(60, 0, 60), // Magenta background
+                            color: Color::Rgb(30, 0, 30), // Dark Magenta background
                         });
                     }
                 }
@@ -282,16 +325,16 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
 
             // Draw dataset points
             for (i, input) in app.inputs.iter().enumerate() {
-                let color = if app.targets[i][0] > 0.5 {
-                    Color::Cyan
+                let (color, symbol) = if app.targets[i][0] > 0.5 {
+                    (Color::Cyan, "●") // Inside: Cyan Circle
                 } else {
-                    Color::Magenta
+                    (Color::Magenta, "×") // Outside: Magenta Cross
                 };
                 // Use a character to make data points pop against the block background
                 ctx.print(
                     input[0],
                     input[1],
-                    Span::styled("●", Style::default().fg(color)),
+                    Span::styled(symbol, Style::default().fg(color).add_modifier(Modifier::BOLD)),
                 );
             }
         });
@@ -343,7 +386,7 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                             continue;
                         }
 
-                        let color = if w > 0.0 { Color::Green } else { Color::Red };
+                        let color = if w > 0.0 { Color::Cyan } else { Color::Magenta };
 
                         ctx.draw(&Line {
                             x1: from_pos.0,
