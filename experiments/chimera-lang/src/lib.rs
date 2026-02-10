@@ -118,9 +118,7 @@ mod microscope_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_akashic_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_alchemy_crucible_test;
-#[cfg(all(test, feature = "nova"))]
-mod nova_alchemy_test;
+mod crucible_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_arcana_test;
 #[cfg(all(test, feature = "nova"))]
@@ -276,7 +274,7 @@ mod nova_transposon_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_topology_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_true_alchemy_test;
+mod alchemist_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_virus_test;
 #[cfg(all(test, feature = "nova"))]
