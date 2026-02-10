@@ -55,4 +55,37 @@ mod tests {
             panic!("Expected new strand index");
         }
     }
+
+    #[test]
+    fn test_crucible_genetic_heat() {
+        use crate::ast::{Gene, Nucleotide};
+        use crate::opcode::OpCode;
+
+        let mut vm = make_vm();
+
+        // Strand 0: push(5)
+        let strand = Strand {
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }],
+        };
+        vm.dna.helix.strands.push(strand);
+        vm.telomeres = vec![50];
+
+        // Add Strand 0 and "Fire"
+        vm.crucible.add(Value::Int(0));
+        vm.crucible.add(Value::Str("Fire".to_string()));
+
+        alchemy::transmute_crucible(&mut vm);
+
+        // Should create Strand 1 with push(6)
+        assert_eq!(vm.dna.helix.strands.len(), 2);
+        let new_strand = &vm.dna.helix.strands[1];
+        if let Nucleotide::Number(n) = &new_strand.genes[0].args[0] {
+            assert_eq!(*n, 6);
+        } else {
+            panic!("Expected number arg");
+        }
+    }
 }

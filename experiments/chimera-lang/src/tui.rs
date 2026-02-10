@@ -4656,7 +4656,7 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let crucible_list = List::new(crucible_items).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("Crucible (A: Add, X: Clear, T: Transmute)"),
+            .title("Crucible (A: Add, X: Clear, T: Transmute) [Recipes: Fire/Water/Void/Life + Strand]"),
     );
     f.render_widget(crucible_list, chunks[1]);
 

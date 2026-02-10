@@ -2421,6 +2421,12 @@ impl ChimeraVM {
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Crucible => {
+                alchemy::exec_crucible_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),
 
             #[cfg(feature = "nova")]

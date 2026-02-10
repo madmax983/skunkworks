@@ -1,4 +1,8 @@
 #[cfg(feature = "nova")]
+use crate::ast::{Nucleotide, Strand};
+#[cfg(feature = "nova")]
+use crate::opcode::OpCode;
+#[cfg(feature = "nova")]
 use crate::vm::{ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
@@ -22,6 +26,51 @@ impl Crucible {
     pub fn clear(&mut self) {
         self.contents.clear();
     }
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_crucible_op(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(mode) = val {
+            match mode {
+                0 => {
+                    // Add
+                    if let Some(item) = vm.stack.pop() {
+                        vm.crucible.add(item.clone());
+                        vm.output.push(format!("CRUCIBLE: Added {}", item));
+                    } else {
+                        vm.output.push("CRUCIBLE: Stack empty".to_string());
+                    }
+                }
+                1 => {
+                    // Clear
+                    vm.crucible.clear();
+                    vm.output.push("CRUCIBLE: Cleared".to_string());
+                }
+                2 => {
+                    // Transmute
+                    transmute_crucible(vm);
+                }
+                3 => {
+                    // Withdraw
+                    if let Some(item) = vm.crucible.contents.pop() {
+                        vm.stack.push(item.clone());
+                        vm.output.push(format!("CRUCIBLE: Withdrew {}", item));
+                    } else {
+                        vm.output.push("CRUCIBLE: Empty".to_string());
+                    }
+                }
+                _ => {
+                    vm.output.push("CRUCIBLE: Invalid mode".to_string());
+                }
+            }
+        } else {
+            vm.output.push("CRUCIBLE: Mode must be Int".to_string());
+        }
+    } else {
+        vm.output.push("CRUCIBLE: Stack underflow".to_string());
+    }
+    None
 }
 
 #[cfg(feature = "nova")]
@@ -71,50 +120,203 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
         result = Some(Value::Str("Gold".to_string()));
         cost = 50;
     } else if ingredients.len() == 2 {
-        // Genetic Splicing Recipe: Two Strand Indices
-        if let (Value::Int(a), Value::Int(b)) = (&ingredients[0], &ingredients[1]) {
-            let idx_a = *a as usize;
-            let idx_b = *b as usize;
-            if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
-                // Splice logic (Interleave)
-                let genes_a = &vm.dna.helix.strands[idx_a].genes;
-                let genes_b = &vm.dna.helix.strands[idx_b].genes;
-                let mut new_genes = Vec::new();
-                let max_len = genes_a.len().max(genes_b.len());
-                for i in 0..max_len {
-                    if i < genes_a.len() {
-                        new_genes.push(genes_a[i].clone());
+        let mut strand_idx = None;
+        let mut modifier = None;
+        let mut strand_idx_b = None;
+
+        // Check for [Strand, Modifier] or [Strand, Strand]
+        if let (Value::Int(a), Value::Str(s)) = (&ingredients[0], &ingredients[1]) {
+            strand_idx = Some(*a as usize);
+            modifier = Some(s.as_str());
+        } else if let (Value::Str(s), Value::Int(a)) = (&ingredients[0], &ingredients[1]) {
+            strand_idx = Some(*a as usize);
+            modifier = Some(s.as_str());
+        } else if let (Value::Int(a), Value::Int(b)) = (&ingredients[0], &ingredients[1]) {
+            strand_idx = Some(*a as usize);
+            strand_idx_b = Some(*b as usize);
+        }
+
+        if let Some(idx) = strand_idx {
+            if idx < vm.dna.helix.strands.len() {
+                if let Some(mod_str) = modifier {
+                    // Genetic Modification Recipes
+                    let mut new_genes = vm.dna.helix.strands[idx].genes.clone();
+                    let mut modified = false;
+
+                    match mod_str {
+                        "Fire" => {
+                            // Heat: Increase numeric args
+                            for gene in &mut new_genes {
+                                for arg in &mut gene.args {
+                                    if let Nucleotide::Number(n) = arg {
+                                        *n = n.saturating_add(1);
+                                        modified = true;
+                                    }
+                                }
+                            }
+                            if modified {
+                                vm.output.push(format!("ALCHEMY: Heated Strand {} (Fire)", idx));
+                            }
+                        }
+                        "Water" => {
+                            // Cold: Decrease numeric args
+                            for gene in &mut new_genes {
+                                for arg in &mut gene.args {
+                                    if let Nucleotide::Number(n) = arg {
+                                        *n = n.saturating_sub(1);
+                                        modified = true;
+                                    }
+                                }
+                            }
+                            if modified {
+                                vm.output.push(format!("ALCHEMY: Cooled Strand {} (Water)", idx));
+                            }
+                        }
+                        "Void" => {
+                            // Corruption: Random Nop
+                            let mut rng = rand::thread_rng();
+                            use rand::Rng;
+                            for gene in &mut new_genes {
+                                if rng.gen_bool(0.1) {
+                                    gene.op = OpCode::Nop;
+                                    gene.args.clear();
+                                    modified = true;
+                                }
+                            }
+                            if modified {
+                                vm.output.push(format!("ALCHEMY: Corrupted Strand {} (Void)", idx));
+                            }
+                        }
+                        "Life" => {
+                            // Growth: Duplicate random genes
+                            let mut rng = rand::thread_rng();
+                            use rand::Rng;
+                            let mut grown_genes = Vec::new();
+                            for gene in new_genes {
+                                grown_genes.push(gene.clone());
+                                if rng.gen_bool(0.1) {
+                                    grown_genes.push(gene);
+                                    modified = true;
+                                }
+                            }
+                            new_genes = grown_genes;
+                            if modified {
+                                vm.output.push(format!("ALCHEMY: Grew Strand {} (Life)", idx));
+                            }
+                        }
+                        _ => {}
                     }
-                    if i < genes_b.len() {
-                        new_genes.push(genes_b[i].clone());
+
+                    if modified {
+                        vm.dna.helix.strands.push(Strand { genes: new_genes });
+                        vm.telomeres.push(50);
+                        #[cfg(feature = "cortex")]
+                        {
+                            vm.activation_levels.push(0);
+                            vm.synapse_map.push(Vec::new());
+                        }
+                        let new_idx = vm.dna.helix.strands.len() - 1;
+                        vm.cladistics.register_strand(
+                            new_idx,
+                            Some(idx),
+                            vm.tick_counter,
+                            format!("Alchemy: {}", mod_str),
+                        );
+                        result = Some(Value::Int(new_idx as i64));
+                        cost = 25;
+                    }
+                } else if let Some(idx_b) = strand_idx_b {
+                    // Standard Splicing (Interleave)
+                    if idx_b < vm.dna.helix.strands.len() {
+                        let genes_a = &vm.dna.helix.strands[idx].genes;
+                        let genes_b = &vm.dna.helix.strands[idx_b].genes;
+                        let mut new_genes = Vec::new();
+                        let max_len = genes_a.len().max(genes_b.len());
+                        for i in 0..max_len {
+                            if i < genes_a.len() {
+                                new_genes.push(genes_a[i].clone());
+                            }
+                            if i < genes_b.len() {
+                                new_genes.push(genes_b[i].clone());
+                            }
+                        }
+
+                        vm.dna.helix.strands.push(Strand { genes: new_genes });
+                        vm.telomeres.push(50);
+                        #[cfg(feature = "cortex")]
+                        {
+                            vm.activation_levels.push(0);
+                            vm.synapse_map.push(Vec::new());
+                        }
+                        let new_idx = vm.dna.helix.strands.len() - 1;
+
+                        vm.cladistics.register_strand(
+                            new_idx,
+                            Some(idx),
+                            vm.tick_counter,
+                            "Alchemy: Splice".to_string(),
+                        );
+
+                        result = Some(Value::Int(new_idx as i64));
+                        cost = 30;
+                        vm.output.push(format!(
+                            "ALCHEMY: Spliced Strand {} & {} -> {}",
+                            idx, idx_b, new_idx
+                        ));
                     }
                 }
+            }
+        }
+    } else if ingredients.len() == 3 {
+        // Fusion: [Strand A, Strand B, "Life"]
+        let mut strand_a = None;
+        let mut strand_b = None;
+        let mut has_life = false;
 
-                vm.dna
-                    .helix
-                    .strands
-                    .push(crate::ast::Strand { genes: new_genes });
-                vm.telomeres.push(50);
-                #[cfg(feature = "cortex")]
-                {
-                    vm.activation_levels.push(0);
-                    vm.synapse_map.push(Vec::new());
+        for v in &ingredients {
+            match v {
+                Value::Int(i) => {
+                    if strand_a.is_none() {
+                        strand_a = Some(*i as usize);
+                    } else if strand_b.is_none() {
+                        strand_b = Some(*i as usize);
+                    }
                 }
-                let new_idx = vm.dna.helix.strands.len() - 1;
+                Value::Str(s) if s == "Life" => has_life = true,
+                _ => {}
+            }
+        }
 
-                vm.cladistics.register_strand(
-                    new_idx,
-                    Some(idx_a), // Primary parent
-                    vm.tick_counter,
-                    "Alchemy".to_string(),
-                );
+        if has_life {
+            if let (Some(idx_a), Some(idx_b)) = (strand_a, strand_b) {
+                if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
+                    // Fusion: Append B to A
+                    let mut new_genes = vm.dna.helix.strands[idx_a].genes.clone();
+                    new_genes.extend(vm.dna.helix.strands[idx_b].genes.clone());
 
-                result = Some(Value::Int(new_idx as i64));
-                cost = 30;
-                vm.output.push(format!(
-                    "ALCHEMY: Spliced Strand {} & {} -> {}",
-                    idx_a, idx_b, new_idx
-                ));
+                    vm.dna.helix.strands.push(Strand { genes: new_genes });
+                    vm.telomeres.push(50);
+                    #[cfg(feature = "cortex")]
+                    {
+                        vm.activation_levels.push(0);
+                        vm.synapse_map.push(Vec::new());
+                    }
+                    let new_idx = vm.dna.helix.strands.len() - 1;
+
+                    vm.cladistics.register_strand(
+                        new_idx,
+                        Some(idx_a),
+                        vm.tick_counter,
+                        "Alchemy: Fusion".to_string(),
+                    );
+
+                    result = Some(Value::Int(new_idx as i64));
+                    cost = 40;
+                    vm.output.push(format!(
+                        "ALCHEMY: Fused Strand {} & {} -> {}",
+                        idx_a, idx_b, new_idx
+                    ));
+                }
             }
         }
     }
