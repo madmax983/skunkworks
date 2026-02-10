@@ -15,7 +15,6 @@ members = [
     "experiments/git-harmony",
     "experiments/git-quipu",
     "experiments/git-rogue",
-    "experiments/hyphal-commute",
     "experiments/hyperbolic-dungeon",
     "experiments/hyperbolic-space",
     "experiments/market-flow",

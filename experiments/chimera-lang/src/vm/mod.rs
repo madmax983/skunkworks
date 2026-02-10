@@ -153,6 +153,8 @@ mod nova_linguistics_test;
 #[cfg(feature = "nova")]
 pub mod nova_logistics;
 #[cfg(feature = "nova")]
+pub mod nova_logos;
+#[cfg(feature = "nova")]
 pub mod nova_market;
 #[cfg(feature = "nova")]
 pub mod nova_metamorphism;
@@ -581,6 +583,8 @@ pub struct ChimeraVM {
     pub organelle_id_counter: u64,
     pub havoc: havoc::HavocEngine,
     pub glitch_level: f32,
+    #[cfg(feature = "nova")]
+    pub logos_mode: bool,
 }
 
 impl ChimeraVM {
@@ -847,6 +851,8 @@ impl ChimeraVM {
             organelle_id_counter: 0,
             havoc: havoc::HavocEngine::new(),
             glitch_level: 0.0,
+            #[cfg(feature = "nova")]
+            logos_mode: false,
         }
     }
 
@@ -1721,6 +1727,10 @@ impl ChimeraVM {
             #[cfg(feature = "resonance")]
             nova_resonance_war::process_resonance(self);
             nova_strings::update_strings(self);
+
+            if self.logos_mode {
+                nova_logos::process_logos(self);
+            }
         }
 
         #[cfg(feature = "biophysics")]
@@ -2410,6 +2420,14 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Charter => nova_guild::exec_charter(self),
+
+            #[cfg(feature = "nova")]
+            OpCode::Logos => {
+                self.logos_mode = !self.logos_mode;
+                let status = if self.logos_mode { "ON" } else { "OFF" };
+                self.output.push(format!("LOGOS: Logic Chemistry {}", status));
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {

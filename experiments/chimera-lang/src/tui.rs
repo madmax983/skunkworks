@@ -96,6 +96,8 @@ pub(crate) enum ViewMode {
     Hydra,
     #[cfg(feature = "nova")]
     Chronos,
+    #[cfg(feature = "nova")]
+    Logos,
 }
 
 enum InputMode {
@@ -535,6 +537,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Logos = app_state.view_mode {
+                render_logos(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -860,6 +868,23 @@ where
                                     // Enable editing grid from Chronos view
                                     let (x, y) = app_state.grid_cursor;
                                     let val = parse_grid_value(&app_state.input_buffer);
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Logos => {
+                                    // Enable editing grid from Logos view
+                                    let (x, y) = app_state.grid_cursor;
+                                    // Should parse as String usually for Atoms
+                                    // parse_grid_value handles numbers.
+                                    let val = if app_state.input_buffer.starts_with('?') {
+                                        // Variable
+                                        crate::vm::Value::Str(app_state.input_buffer.clone())
+                                    } else {
+                                        parse_grid_value(&app_state.input_buffer)
+                                    };
                                     vm.grid[y][x] = val;
                                     app_state.status_msg = format!("Grid updated at {},{}", x, y);
                                     app_state.input_mode = InputMode::Normal;
@@ -1257,7 +1282,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Hydra => ViewMode::Chronos,
                             #[cfg(feature = "nova")]
-                            ViewMode::Chronos => ViewMode::Heatmap,
+                            ViewMode::Chronos => ViewMode::Logos,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Logos => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1450,6 +1477,8 @@ where
                     KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('T') => app_state.view_mode = ViewMode::Chronos,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('U') => app_state.view_mode = ViewMode::Logos,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1693,6 +1722,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Logos => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Void => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1895,6 +1930,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Logos => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2092,6 +2133,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Logos => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -2224,6 +2271,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Logos => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2457,6 +2510,12 @@ where
                                     crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
                                     _ => app_state.input_buffer = String::new(),
                                 }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Logos => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                app_state.input_buffer = format!("{}", val);
                             }
                             #[cfg(feature = "silicon")]
                             ViewMode::Foundry => {
@@ -3710,6 +3769,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
         #[cfg(feature = "nova")]
         ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4232,6 +4293,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Quipu, "Quipu", "Tab"));
         views.push((ViewMode::Hydra, "Hydra", "Y"));
         views.push((ViewMode::Chronos, "Chronos", "T"));
+        views.push((ViewMode::Logos, "Logos", "U"));
     }
     views
 }
@@ -6990,4 +7052,82 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title(format!("Echoes at {},{}", cx, cy)),
     );
     f.render_widget(echo_list, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+
+            // Highlight active atoms
+            let s = match val {
+                crate::vm::Value::Str(s) => s.clone(),
+                crate::vm::Value::Int(n) => n.to_string(),
+                crate::vm::Value::Junction(_, _) => "J".to_string(),
+                _ => ".".to_string(),
+            };
+
+            // Color based on type?
+            if matches!(val, crate::vm::Value::Junction(_, _)) {
+                style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
+            } else if matches!(val, crate::vm::Value::Str(_)) {
+                style = style.fg(Color::Cyan);
+            } else if matches!(val, crate::vm::Value::Int(0)) {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            // Truncate to 3 chars for grid alignment
+            let display = format!("{:^3.3}", s);
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let status = if vm.logos_mode { "ON" } else { "OFF" };
+    let color = if vm.logos_mode { Color::Green } else { Color::Red };
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(Span::styled(format!("LOGOS GRID (Mode: {})", status), Style::default().fg(color))),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Info
+    let (cx, cy) = app_state.grid_cursor;
+    let val = &vm.grid[cy][cx];
+
+    let info = vec![
+        Line::from(format!("Cell: {},{}", cx, cy)),
+        Line::from(format!("Value: {}", val)),
+        Line::from(" "),
+        Line::from("Logos Rules:"),
+        Line::from("  reaction(A, B, C)"),
+        Line::from("  If A, B adjacent -> A=C, B=0"),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  U: Toggle View"),
+        Line::from("  OpCode::Logos to Toggle Mode"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Logic Chemistry"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }
