@@ -1,25 +1,27 @@
 # Hyperbolic Finder ⚛️🗺️
 
-> "Circles grow exponentially."
+> "Circles grow exponentially. So do your files."
 
-A file system explorer mapped onto the Poincaré Disk model of hyperbolic geometry.
+A file system explorer mapped onto the Poincaré Disk model of hyperbolic geometry, featuring **Memory Visualization**.
 
 ## Concept
-In hyperbolic space, area grows exponentially with radius. This allows us to visualize large hierarchies (like file systems) by placing deeper nodes "closer" to the boundary of the disk, where they occupy exponentially less visual space until focused.
+In hyperbolic space, area grows exponentially with radius. This allows us to visualize large hierarchies (like file systems) by placing deeper nodes "closer" to the boundary of the disk.
 
-When you click a node, the entire space is transformed (Möbius transform) to bring that node to the center.
+This project combines:
+1.  **Hyperbolic Geometry**: Infinite space in a finite disk.
+2.  **Memory Visualization**: Angular sectors and node sizes are proportional to the contained file size (recursive). This creates a "Hyperbolic Sunburst" effect where large folders dominate the view.
 
 ## Controls
 - **Left Click**: Navigate to a folder/file (Center it).
+- **Drag**: Pan the view (Möbius transformation).
 - **Backspace**: Return to Root (Center at 0,0).
 
 ## Tech Stack
 - **Rust**
 - **Macroquad** (Rendering)
-- **Num-Complex** (Complex number math for transformations)
+- **Poincaré Disk** (Math)
 
-## Math
-The visualization uses the **Poincaré Disk Model**.
-- **Points**: Complex numbers $z$ where $|z| < 1$.
-- **Distance**: $d(a,b) = 2 \tanh^{-1} | \frac{a-b}{1-\bar{a}b} |$
-- **Movement**: Isometries are Möbius transformations of the form $f(z) = \frac{z-a}{1-\bar{a}z}$.
+## Math & Features
+- **Proportional Layout**: Siblings are allocated angular space proportional to `sqrt(total_size)`. Large folders get more room.
+- **Size Scaling**: Node radius scales logarithmically with file size. Large files appear massive.
+- **Dynamic Hit Testing**: Interaction areas scale with node size, making it easier to select large items.
