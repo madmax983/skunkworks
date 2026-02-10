@@ -1,6 +1,10 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: FRESH] - Location: experiments/mnem-bridge
+### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
+
+### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The bridge is memory. The ants are holding the line against entropy. Glitches are appearing in the structure.
 
