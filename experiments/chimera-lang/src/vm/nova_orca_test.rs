@@ -203,4 +203,59 @@ mod tests {
             _ => panic!("Expected result 1, got {:?}", vm.grid[2][1]),
         }
     }
+
+    #[test]
+    fn test_orca_modulo() {
+        let mut vm = make_vm();
+        vm.grid[0][1] = Value::Str("5".to_string());
+        vm.grid[1][2] = Value::Str("2".to_string());
+        vm.grid[1][1] = Value::Str("%".to_string());
+        vm.signal_grid[1][1] = 1;
+        process_signals(&mut vm);
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "1"),
+            _ => panic!("Expected result 1, got {:?}", vm.grid[2][1]),
+        }
+    }
+
+    #[test]
+    fn test_orca_logic() {
+        let mut vm = make_vm();
+        vm.grid[0][1] = Value::Str("5".to_string());
+        vm.grid[1][2] = Value::Str("3".to_string());
+        vm.grid[1][1] = Value::Str("&".to_string());
+        vm.signal_grid[1][1] = 1;
+        process_signals(&mut vm);
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "1"),
+            _ => panic!("Expected result 1, got {:?}", vm.grid[2][1]),
+        }
+    }
+
+    #[test]
+    fn test_orca_ether() {
+        let mut vm = make_vm();
+        vm.grid[0][1] = Value::Str("1".to_string());
+        vm.grid[1][2] = Value::Str("A".to_string());
+        vm.grid[1][1] = Value::Str("[".to_string());
+        vm.signal_grid[1][1] = 1;
+        process_signals(&mut vm);
+
+        let queue = vm.ether.get(&1).expect("Expected queue for channel 1");
+        assert_eq!(queue.len(), 1);
+        match &queue[0] {
+            Value::Str(s) => assert_eq!(s, "a"),
+            _ => panic!("Expected 'a' in ether"),
+        }
+
+        vm.grid[1][1] = Value::Str("]".to_string());
+        vm.grid[2][1] = Value::Str(".".to_string());
+        vm.signal_grid[1][1] = 1;
+        process_signals(&mut vm);
+
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "a"),
+            _ => panic!("Expected result 'a', got {:?}", vm.grid[2][1]),
+        }
+    }
 }
