@@ -446,6 +446,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub reflexes: HashMap<i64, usize>,
     #[cfg(feature = "nova")]
+    pub harmonic_reflexes: HashMap<i64, usize>,
+    #[cfg(feature = "nova")]
     pub remap_table: HashMap<OpCode, OpCode>,
     #[cfg(feature = "nova")]
     pub direction: isize,
@@ -711,6 +713,8 @@ impl ChimeraVM {
             activation_levels,
             #[cfg(feature = "nova")]
             reflexes: HashMap::new(),
+            #[cfg(feature = "nova")]
+            harmonic_reflexes: HashMap::new(),
             #[cfg(feature = "nova")]
             remap_table: HashMap::new(),
             #[cfg(feature = "nova")]
@@ -2228,6 +2232,7 @@ impl ChimeraVM {
             OpCode::Resonate
             | OpCode::SonicClaim
             | OpCode::Dampen
+            | OpCode::ListenFreq
             | OpCode::ChronosSplice
             | OpCode::Emit
             | OpCode::Smell

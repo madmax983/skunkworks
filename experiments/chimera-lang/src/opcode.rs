@@ -1525,6 +1525,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., radius, amount ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Dampen,
+    /// **[Cymatics]** Registers a strand to trigger when a global frequency is dominant.
+    ///
+    /// **Stack:** `[ ..., frequency, strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    ListenFreq,
 
     // Oracle Features (Logic Engine)
     /// **[Oracle]** Adds a fact or rule to the Knowledge Base.
