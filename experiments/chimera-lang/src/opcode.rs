@@ -932,6 +932,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Splash,
 
+    /// **[Nova]** Interacts with the Alchemical Crucible.
+    ///
+    /// **Stack:** `[ ..., mode ]`
+    /// **Mode:** 0=Add (Pop), 1=Clear, 2=Transmute.
+    #[cfg(feature = "nova")]
+    Crucible,
+
     /// **[Nova]** Spreads the last executed instruction to a random strand (Memetics).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
