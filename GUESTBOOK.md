@@ -788,3 +788,7 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/syntax-serum
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Failed to improve during grace period. Documentation void.
+
+### [Concentration Level: HIGH] - Location: experiments/mnem-rot
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** The data is not gone. It is merely forgetting. Mnemonic Rot active.
