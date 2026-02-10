@@ -1,6 +1,10 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+### [Concentration Level: FRESH] - Location: experiments/synaptic-waggle
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The hive is thinking. Bees are waggling in synchronized waves. The neural network is airborne.
+
+### [Concentration Level: VERIFIED] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
 

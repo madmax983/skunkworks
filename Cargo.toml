@@ -127,6 +127,7 @@ members = [
     "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
     "experiments/origami-swarm", "experiments/pixel-archivist",
     "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance",
+    "experiments/synaptic-waggle",
 ]
 resolver = "2"
 

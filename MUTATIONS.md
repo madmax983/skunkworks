@@ -727,4 +727,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles (Warnings: Unused DNA traits detected, genetic quirk). Verified in GUESTBOOK. Seismic activity detected.
+
+### synaptic-waggle
+- **Parents**: experiments/waggle-dance + experiments/biomimetic-synth
+- **Concept**: A hive where bees are neurons. The waggle dance is the firing of a neuron (spike).
+- **Novel trait**: Distributed Neural Network via Physical Interaction. Bees must physically travel to transmit signals.
+- **Status**: experiments/synaptic-waggle
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
