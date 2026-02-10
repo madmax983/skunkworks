@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/heap-fungus
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The heap is a forest floor. Garbage collection visualized as fungal decomposition. The cycle of allocation and rot is active.
+
 ### [Concentration Level: FRESH] - Location: experiments/mnem-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The bridge is memory. The ants are holding the line against entropy. Glitches are appearing in the structure.

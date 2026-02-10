@@ -12,7 +12,6 @@ members = [
     "experiments/fissure-tracker",
     "experiments/fluid-rain",
     "experiments/fluid-specter",
-    "experiments/geologic-git",
     "experiments/git-harmony",
     "experiments/git-quipu",
     "experiments/git-rogue",
@@ -128,7 +127,7 @@ members = [
     "experiments/hyperbolic-bridge",
     "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
     "experiments/origami-swarm", "experiments/pixel-archivist",
-    "experiments/mnem-rot", "experiments/mnem-bridge",
+    "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/heap-fungus",
 ]
 resolver = "2"
 
