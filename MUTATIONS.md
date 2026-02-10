@@ -700,3 +700,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
 - **Status**: experiments/neuro-fold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+
+### origami-swarm
+- **Parents**: experiments/neuro-fold + experiments/luminous-flock
+- **Concept**: Physically simulated soft-body boids (origami birds) driven by Spiking Neural Networks.
+- **Novel trait**: Synchronized Flapping. The flock's brains synchronize phase, causing them to flap in unison.
+- **Status**: experiments/origami-swarm
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
