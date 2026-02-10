@@ -361,6 +361,18 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     CircuitBreaker,
 
+    /// **[Elektra]** Discharges high voltage to damage/charge nearby entities.
+    ///
+    /// **Stack:** `[ ..., power, radius ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    TeslaCoil,
+
+    /// **[Elektra + Nova]** Resurrects a dead strand using high voltage.
+    ///
+    /// **Stack:** `[ ..., graveyard_idx ] -> [ ..., new_strand_idx ]`
+    #[cfg(all(feature = "elektra", feature = "nova"))]
+    Galvanize,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///

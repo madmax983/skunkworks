@@ -167,6 +167,99 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                 }
             }
         }
+        OpCode::TeslaCoil => {
+            // [power, radius]
+            if vm.stack.len() >= 2 {
+                let r_val = vm.stack.pop().unwrap();
+                let p_val = vm.stack.pop().unwrap();
+                if let (Value::Int(r), Value::Int(p)) = (r_val, p_val) {
+                    let (cy, cx) = vm.context_loc;
+                    let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
+
+                    vm.output.push(format!(
+                        "TESLA COIL: Discharging {} power radius {} at {},{}",
+                        p, r, cx, cy
+                    ));
+
+                    // Check voltage at source
+                    if vm.voltage_grid[cy][cx] >= p as f32 {
+                        vm.voltage_grid[cy][cx] -= p as f32;
+
+                        // Damage organics
+                        #[cfg(feature = "nova")]
+                        {
+                            let mut hit_count = 0;
+                            for (x, y) in coords {
+                                // Check organelles
+                                for org in vm.organelles.iter_mut() {
+                                    if org.context_loc == (y, x) {
+                                        org.halted = true; // Stunned/Killed
+                                        hit_count += 1;
+                                    }
+                                }
+                            }
+                            if hit_count > 0 {
+                                vm.output
+                                    .push(format!("TESLA COIL: Fried {} organelles", hit_count));
+                            }
+                        }
+                    } else {
+                        vm.output
+                            .push("TESLA COIL: Insufficient voltage".to_string());
+                    }
+                }
+            }
+        }
+        #[cfg(all(feature = "elektra", feature = "nova"))]
+        OpCode::Galvanize => {
+            // [graveyard_idx] -> [new_strand_idx]
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    let idx = idx as usize;
+                    let (y, x) = vm.context_loc;
+                    let voltage = vm.voltage_grid[y][x];
+
+                    if voltage > 100.0 {
+                        if idx < vm.graveyard.len() {
+                            let mut strand = vm.graveyard[idx].clone();
+                            vm.graveyard.remove(idx); // Exhume
+
+                            // Apply mutation due to shock
+                            if !strand.genes.is_empty() {
+                                use rand::Rng;
+                                let mut rng = rand::thread_rng();
+                                let g_idx = rng.gen_range(0..strand.genes.len());
+                                // Randomly change an argument
+                                if !strand.genes[g_idx].args.is_empty() {
+                                    strand.genes[g_idx].args[0] =
+                                        Nucleotide::Number(rng.gen_range(0..100));
+                                }
+                            }
+
+                            vm.dna.helix.strands.push(strand);
+                            let new_idx = vm.dna.helix.strands.len() - 1;
+                            vm.stack.push(Value::Int(new_idx as i64));
+
+                            vm.voltage_grid[y][x] = 0.0; // Discharge
+                            vm.output.push(format!(
+                                "GALVANIZE: IT'S ALIVE! Strand {} resurrected as {}",
+                                idx, new_idx
+                            ));
+                        } else {
+                            vm.output
+                                .push("GALVANIZE: Invalid graveyard index".to_string());
+                            vm.stack.push(Value::Int(-1));
+                        }
+                    } else {
+                        vm.output.push(format!(
+                            "GALVANIZE: Insufficient voltage ({:.1}V < 100.0V)",
+                            voltage
+                        ));
+                        vm.stack.push(Value::Int(-1));
+                    }
+                }
+            }
+        }
         _ => {}
     }
     None
