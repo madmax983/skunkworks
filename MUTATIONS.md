@@ -706,7 +706,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Physically simulated soft-body boids (origami birds) driven by Spiking Neural Networks.
 - **Novel trait**: Synchronized Flapping. The flock's brains synchronize phase, causing them to flap in unison.
 - **Status**: experiments/origami-swarm
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed. Verified.
 
 ### mnem-rot
 - **Parents**: experiments/mnem-rot (Genesis)
@@ -720,4 +720,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Army ants forming bridges where the structural integrity is tied to the semantic integrity of the memories they carry.
 - **Novel trait**: Semantic Structural Engineering. Bridges collapse as memories fade (glitch).
 - **Status**: experiments/mnem-bridge
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Predicted.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Glitches appearing in structure.
+
+### tectonic-flock
+- **Parents**: experiments/tectonic-git + experiments/luminous-flock
+- **Concept**: Boids flocking around geological fissures in git history.
+- **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
+- **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
