@@ -895,6 +895,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Logos,
 
+    /// **[Nova]** Toggles Alchemical Reactor mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Enables/Disables cellular automata reactions on the grid.
+    #[cfg(feature = "nova")]
+    Reactor,
+
     /// **[Nova]** Transmutes the current grid cell based on neighbors (Alchemy).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

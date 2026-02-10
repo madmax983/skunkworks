@@ -98,6 +98,8 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    #[cfg(feature = "nova")]
+    Reactor,
 }
 
 enum InputMode {
@@ -540,6 +542,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Logos = app_state.view_mode {
                 render_logos(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Reactor = app_state.view_mode {
+                render_reactor(f, vm, app_state);
                 return;
             }
 
@@ -1100,6 +1108,21 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Reactor => {
+                                    // Enable editing grid from Reactor view
+                                    let (x, y) = app_state.grid_cursor;
+                                    // Should parse as String usually for Reagents
+                                    let val = if app_state.input_buffer.len() == 1 {
+                                        crate::vm::Value::Str(app_state.input_buffer.clone())
+                                    } else {
+                                        parse_grid_value(&app_state.input_buffer)
+                                    };
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 #[cfg(feature = "silicon")]
                                 ViewMode::Foundry => {
                                     // Same as Schematic/Grid?
@@ -1292,7 +1315,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Chronos => ViewMode::Logos,
                             #[cfg(feature = "nova")]
-                            ViewMode::Logos => ViewMode::Heatmap,
+                            ViewMode::Logos => ViewMode::Reactor,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Reactor => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1651,6 +1676,8 @@ where
                                 arena.reset();
                                 app_state.status_msg = "Arena Reset".to_string();
                             }
+                        } else {
+                            app_state.view_mode = ViewMode::Reactor;
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1742,6 +1769,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Logos => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -1955,6 +1988,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2158,6 +2197,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -2296,6 +2341,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Logos => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2536,6 +2587,12 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Logos => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                app_state.input_buffer = format!("{}", val);
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Reactor => {
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 app_state.input_buffer = format!("{}", val);
@@ -3814,6 +3871,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
         #[cfg(feature = "nova")]
         ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Reactor => "ALCHEMICAL REACTOR",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4337,8 +4396,107 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hydra, "Hydra", "Y"));
         views.push((ViewMode::Chronos, "Chronos", "T"));
         views.push((ViewMode::Logos, "Logos", "U"));
+        views.push((ViewMode::Reactor, "Reactor", "Shift+R"));
     }
     views
+}
+
+#[cfg(feature = "nova")]
+fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let heat = vm.reactor.heat_grid[y][x];
+            let mut style = Style::default();
+
+            // Visualization
+            // Heat glows Red/Orange
+            if heat > 0.0 {
+                let intensity = (heat * 5.0).clamp(0.0, 255.0) as u8;
+                if intensity > 100 {
+                    style = style.bg(Color::Rgb(intensity, intensity / 2, 0)).fg(Color::Black);
+                } else {
+                    style = style.fg(Color::Rgb(255, 255 - intensity, 255 - intensity));
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            let s = match val {
+                crate::vm::Value::Str(s) => {
+                    match s.as_str() {
+                        "^" => { style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD); "^".to_string() },
+                        "v" => { style = style.fg(Color::Green).add_modifier(Modifier::BOLD); "v".to_string() },
+                        "*" => { style = style.fg(Color::White); "*".to_string() },
+                        "@" => { style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD); "@".to_string() },
+                        "~" => { style = style.fg(Color::Magenta); "~".to_string() },
+                        _ => s.chars().next().unwrap_or('?').to_string(),
+                    }
+                },
+                crate::vm::Value::Int(n) => {
+                    style = style.fg(Color::White);
+                    n.to_string()
+                },
+                _ => ".".to_string(),
+            };
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let display = format!("{:^3.3}", s);
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let status = if vm.reactor_mode { "ON" } else { "OFF" };
+    let color = if vm.reactor_mode { Color::Green } else { Color::Red };
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title(Span::styled(
+            format!("ALCHEMICAL REACTOR (Mode: {})", status),
+            Style::default().fg(color),
+        )),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Info
+    let (cx, cy) = app_state.grid_cursor;
+    let val = &vm.grid[cy][cx];
+    let heat = vm.reactor.heat_grid[cy][cx];
+
+    let info = vec![
+        Line::from(format!("Cell: {},{}", cx, cy)),
+        Line::from(format!("Value: {}", val)),
+        Line::from(format!("Heat: {:.2}", heat)),
+        Line::from(" "),
+        Line::from("Reagents:"),
+        Line::from("  ^ (Mercury) - Increment"),
+        Line::from("  v (Sulfur)  - Decrement"),
+        Line::from("  * (Salt)    - Inert"),
+        Line::from("  ~ (Aether)  - Flow"),
+        Line::from("  @ (Stone)   - Transmute"),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Shift+R: Toggle View"),
+        Line::from("  OpCode::Reactor to Toggle Mode"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Reactor State"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }
 
 fn render_view_selector(f: &mut Frame, app_state: &AppState) {

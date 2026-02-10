@@ -192,6 +192,8 @@ pub mod nova_quipu;
 #[cfg(test)]
 mod nova_quipu_test;
 #[cfg(feature = "nova")]
+pub mod nova_reactor;
+#[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
 pub mod nova_resonance_war;
@@ -585,6 +587,10 @@ pub struct ChimeraVM {
     pub glitch_level: f32,
     #[cfg(feature = "nova")]
     pub logos_mode: bool,
+    #[cfg(feature = "nova")]
+    pub reactor_mode: bool,
+    #[cfg(feature = "nova")]
+    pub reactor: nova_reactor::ReactorState,
 }
 
 impl ChimeraVM {
@@ -855,6 +861,10 @@ impl ChimeraVM {
             glitch_level: 0.0,
             #[cfg(feature = "nova")]
             logos_mode: false,
+            #[cfg(feature = "nova")]
+            reactor_mode: false,
+            #[cfg(feature = "nova")]
+            reactor: nova_reactor::ReactorState::new(),
         }
     }
 
@@ -1734,6 +1744,10 @@ impl ChimeraVM {
             if self.logos_mode {
                 nova_logos::process_logos(self);
             }
+
+            if self.reactor_mode {
+                nova_reactor::process_reactor(self);
+            }
         }
 
         #[cfg(feature = "biophysics")]
@@ -2417,7 +2431,8 @@ impl ChimeraVM {
             | OpCode::Pray
             | OpCode::Genesis
             | OpCode::Retrograde
-            | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+            | OpCode::Chaos
+            | OpCode::Reactor => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Crucible => {

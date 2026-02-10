@@ -982,6 +982,13 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Poly => super::nova_genetics::exec_poly(vm, args),
         OpCode::Metamorphosis => super::nova_genetics::exec_metamorphosis(vm),
         OpCode::Genesis => super::nova_genetics::exec_genesis(vm),
+        OpCode::Reactor => {
+            vm.reactor_mode = !vm.reactor_mode;
+            let status = if vm.reactor_mode { "ON" } else { "OFF" };
+            vm.output
+                .push(format!("REACTOR: Alchemical Reactor {}", status));
+            None
+        }
         OpCode::Chaos => super::nova_flux::exec_chaos(vm),
         OpCode::Piet => {
             if let Some(val) = vm.stack.pop() {
