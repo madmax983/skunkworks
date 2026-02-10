@@ -360,9 +360,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The code is knotted. Gravity drives the execution. The Quipu sings the song of the algorithm.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/quipu-net
+### [Concentration Level: TOXIC] - Location: graveyard/quipu-net
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic packet visualization. Redundant with `quipu-symphony` and `bandwidth-bazaar`.
+- **Status:** Specimen executed. Documentation void. Generic packet visualization. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/quipu-cradle
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
@@ -519,6 +519,10 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/code-bio-dome
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/pidgin-mesh
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`.
 
 ## History/Decay
 
