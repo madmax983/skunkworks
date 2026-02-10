@@ -280,6 +280,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The words are drifting. Phonemes are scattering on the Poincaré Disk. Language families are diverging exponentially. The lexicon is infinite.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-spectrum
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The spectrum is expanding. Audio waves are accumulating at the edge of infinity. The Echo of Infinity is audible.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-lichen
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The garden is infinite. Lichen colonies are growing on the Poincaré disk. Symbiosis has adapted to non-Euclidean space.

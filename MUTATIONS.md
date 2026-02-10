@@ -728,3 +728,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-spectrum
+- **Parents**: experiments/spectral-scribe + experiments/hyperbolic-lexicon
+- **Concept**: A visualization of audio spectra on the Poincaré Disk. Sound waves are mapped to hyperbolic space, expanding outwards towards infinity.
+- **Novel trait**: Hyperbolic Acoustics. The "Echo of Infinity" where sound accumulates at the boundary of the universe.
+- **Status**: experiments/hyperbolic-spectrum
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

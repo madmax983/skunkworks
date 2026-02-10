@@ -1,0 +1,13 @@
+[package]
+name = "hyperbolic-spectrum"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rustfft = "6.2"
+hound = "3.5"
+font8x8 = "0.3"
+rand = "0.8"
+poincare-disk = { path = "../../crates/poincare-disk" }
+anyhow = { workspace = true }
