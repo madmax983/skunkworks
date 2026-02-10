@@ -425,7 +425,7 @@ classDiagram
   class Core
   class Storage
   Core --> Storage : Uses (Trait Bound)
-  %% Removed the circular dependency arrow (ADR 006)
+  %% Removed the circular dependency arrow
 ```
 
 ### Storage Flow
