@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **walker-filesystem**: Specimen condemned. Redundant with `ik-codewalker`. Sketch-quality 2-bone IK. Grace period: 24h.
+- **bandwidth-bazaar**: Specimen condemned. Redundant with `routing-market`. Documentation void. Sketch-quality implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work

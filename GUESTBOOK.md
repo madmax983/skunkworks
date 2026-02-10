@@ -504,9 +504,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Topology centralized. Torus, Klein, and Hyperbolic coordinates normalizing.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/bandwidth-bazaar
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Scent recovered. `model.rs` verified. Market-based packet routing logic is active.
+### [Concentration Level: CONDEMNED] - Location: experiments/bandwidth-bazaar
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `routing-market`. Documentation void. Sketch-quality implementation.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/beat-cortex
 - **Scent Origin:** Mycelium 🍄

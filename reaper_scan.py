@@ -1,54 +1,73 @@
-import os
-import glob
 
-def scan_experiments():
+import os
+import sys
+
+def scan_experiment(path):
+    score = 100
+    issues = []
+
+    # Check README
+    readme_path = os.path.join(path, "README.md")
+    if not os.path.exists(readme_path):
+        score -= 50
+        issues.append("Missing README.md")
+    elif os.path.getsize(readme_path) < 100:
+        score -= 20
+        issues.append("README.md too small")
+
+    # Check Cargo.toml
+    cargo_path = os.path.join(path, "Cargo.toml")
+    if not os.path.exists(cargo_path):
+        score -= 100
+        issues.append("Missing Cargo.toml")
+
+    # Check src/main.rs or src/lib.rs
+    src_path = os.path.join(path, "src")
+    main_rs = os.path.join(src_path, "main.rs")
+    lib_rs = os.path.join(src_path, "lib.rs")
+
+    if not os.path.exists(src_path):
+        score -= 50
+        issues.append("Missing src/ directory")
+    elif not (os.path.exists(main_rs) or os.path.exists(lib_rs)):
+        score -= 50
+        issues.append("Missing main.rs/lib.rs")
+    else:
+        # Check TODOs
+        todo_count = 0
+        file_size = 0
+        target_file = main_rs if os.path.exists(main_rs) else lib_rs
+        with open(target_file, 'r', errors='ignore') as f:
+            content = f.read()
+            todo_count = content.count("TODO") + content.count("todo!")
+            file_size = len(content)
+
+        if todo_count > 5:
+            score -= 10
+            issues.append(f"High TODO count ({todo_count})")
+        if file_size < 500:
+            score -= 20
+            issues.append(f"Small source file ({file_size} bytes)")
+
+    return score, issues
+
+def main():
     root = "experiments"
     results = []
 
-    if not os.path.exists(root):
-        print("No experiments directory found.")
-        return
+    for name in os.listdir(root):
+        path = os.path.join(root, name)
+        if os.path.isdir(path):
+            score, issues = scan_experiment(path)
+            results.append((score, name, issues))
 
-    for exp in os.listdir(root):
-        exp_path = os.path.join(root, exp)
-        if not os.path.isdir(exp_path):
-            continue
+    # Sort by score (ascending)
+    results.sort(key=lambda x: x[0])
 
-        readme_exists = os.path.exists(os.path.join(exp_path, "README.md"))
-        cargo_exists = os.path.exists(os.path.join(exp_path, "Cargo.toml"))
-
-        loc = 0
-        todos = 0
-        src_dir = os.path.join(exp_path, "src")
-        if os.path.exists(src_dir):
-            for r, d, f in os.walk(src_dir):
-                for file in f:
-                    if file.endswith(".rs"):
-                        try:
-                            with open(os.path.join(r, file), 'r', encoding='utf-8', errors='ignore') as rs:
-                                content = rs.readlines()
-                                loc += len(content)
-                                for line in content:
-                                    if "TODO" in line:
-                                        todos += 1
-                        except:
-                            pass
-
-        results.append({
-            "name": exp,
-            "readme": readme_exists,
-            "cargo": cargo_exists,
-            "loc": loc,
-            "todos": todos
-        })
-
-    # Sort by LOC (ascending) and then by missing README
-    results.sort(key=lambda x: (x["readme"], x["loc"]))
-
-    print(f"{'Name':<30} | {'README':<6} | {'Cargo':<6} | {'LOC':<6} | {'TODOs':<6}")
-    print("-" * 70)
-    for r in results[:20]:
-        print(f"{r['name']:<30} | {str(r['readme']):<6} | {str(r['cargo']):<6} | {r['loc']:<6} | {r['todos']:<6}")
+    print(f"{'Score':<10} {'Name':<30} {'Issues'}")
+    print("-" * 80)
+    for score, name, issues in results[:10]: # Top 10 worst
+        print(f"{score:<10} {name:<30} {', '.join(issues)}")
 
 if __name__ == "__main__":
-    scan_experiments()
+    main()
