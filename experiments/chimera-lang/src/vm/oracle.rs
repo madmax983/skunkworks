@@ -240,7 +240,112 @@ pub fn exec_oracle_op(
             }
             None
         }
+        OpCode::Manifest => {
+            if vm.stack.len() >= 2 {
+                let transform_template = vm.stack.pop().unwrap();
+                let query_template = vm.stack.pop().unwrap();
+
+                // Extract goal from template if it's a Junction(All)
+                let goals = match query_template {
+                    Value::Junction(JunctionType::All, ref args) => args.clone(),
+                    _ => vec![query_template.clone()],
+                };
+
+                let mut solutions = Vec::new();
+                solve(
+                    &goals,
+                    HashMap::new(),
+                    &vm.knowledge_base,
+                    vm,
+                    &mut solutions,
+                    0,
+                );
+
+                let count = solutions.len();
+                if count > 0 {
+                    vm.output.push(format!("MANIFEST: Found {} matches", count));
+                    for subst in solutions {
+                        let effect = resolve(&transform_template, &subst);
+                        apply_manifestation(vm, &effect);
+                    }
+                } else {
+                    vm.output.push("MANIFEST: No matches found".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for manifest".to_string());
+            }
+            None
+        }
         _ => None,
+    }
+}
+
+fn apply_manifestation(vm: &mut ChimeraVM, effect: &Value) {
+    if let Value::Junction(JunctionType::Any, args) = effect {
+        if let Some(Value::Str(pred)) = args.first() {
+            match pred.as_str() {
+                "cell" => {
+                    // cell(X, Y, Val)
+                    if args.len() == 4 {
+                        if let (Value::Int(x), Value::Int(y), val) = (&args[1], &args[2], &args[3])
+                        {
+                            if x >= &0
+                                && *x < crate::vm::GRID_SIZE as i64
+                                && y >= &0
+                                && *y < crate::vm::GRID_SIZE as i64
+                            {
+                                vm.grid[*y as usize][*x as usize] = val.clone();
+                            }
+                        }
+                    }
+                }
+                "gene" => {
+                    // gene(Strand, Idx, Op)
+                    // gene(Strand, Idx, Op, Arg)
+                    if args.len() >= 4 {
+                        if let (Value::Int(s), Value::Int(i), Value::Str(op_str)) =
+                            (&args[1], &args[2], &args[3])
+                        {
+                            if let Ok(op) = op_str.parse::<OpCode>() {
+                                if *s >= 0 && (*s as usize) < vm.dna.helix.strands.len() {
+                                    let strand = &mut vm.dna.helix.strands[*s as usize];
+                                    if *i >= 0 && (*i as usize) < strand.genes.len() {
+                                        strand.genes[*i as usize].op = op;
+                                        if args.len() >= 5 {
+                                            // Apply arg if present
+                                            if let Value::Int(arg_val) = &args[4] {
+                                                if !strand.genes[*i as usize].args.is_empty() {
+                                                    strand.genes[*i as usize].args[0] =
+                                                        Nucleotide::Number(*arg_val);
+                                                } else {
+                                                    strand.genes[*i as usize]
+                                                        .args
+                                                        .push(Nucleotide::Number(*arg_val));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                "energy" => {
+                    if args.len() == 2 {
+                        if let Value::Int(amt) = &args[1] {
+                            vm.energy = *amt;
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    } else if let Value::Junction(JunctionType::All, effects) = effect {
+        // Handle list of effects
+        for e in effects {
+            apply_manifestation(vm, e);
+        }
     }
 }
 

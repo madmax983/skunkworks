@@ -1574,6 +1574,12 @@ pub enum OpCode {
     #[cfg(feature = "oracle")]
     Seek,
 
+    /// **[Oracle]** Applies a transformation to all states matching a query.
+    ///
+    /// **Stack:** `[ ..., query_template, transform_template ] -> [ ... ]`
+    #[cfg(feature = "oracle")]
+    Manifest,
+
     // Git Features (Repository Interaction)
     /// **[Git]** Pushes a list of recent commit hashes to the stack.
     ///

@@ -2435,7 +2435,8 @@ impl ChimeraVM {
             | OpCode::Query
             | OpCode::Augury
             | OpCode::Divinate
-            | OpCode::Seek => oracle::exec_oracle_op(self, op, args),
+            | OpCode::Seek
+            | OpCode::Manifest => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
             OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
