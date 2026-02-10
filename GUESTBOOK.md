@@ -28,6 +28,30 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** `cpal` compilation failing on Linux (missing system headers). `macroquad` vs `bevy_reflect` conflict persists.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-terminal
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Neural network visualization active. Decision boundaries forming. Needs Mosaic polish.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/routing-market
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Packet pricing market active. Congestion thermodynamics simulated. TUI stabilization required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-termites
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Stigmergic cooling active. Termites building heat sinks. Emergent behavior stable.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cosmic-strings
+- **Scent Origin:** Mycelium 🍄
+- **Status:** String theory harmonics visualized. 1D vibration in 3D space. Audio synthesis requires calibration.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/crate-radar
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Dependency graph mapped to polar coordinates. Sonar sweep active. Radar blips need refinement.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/luminous-flock-web
+- **Scent Origin:** Mycelium 🍄
+- **Status:** WASM port verified. Render deployment configured. Web interface stabilizes the swarm.
+
 ### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The neurons are singing. Izhikevich dynamics are driving the audio buffer. STDP is shaping the melody. The brain is the instrument.
