@@ -727,4 +727,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### hyperbolic-waggle
+- **Parents**: experiments/waggle-dance + experiments/hyperbolic-hell
+- **Concept**: Bees communicating food sources via waggle dances on the Poincaré Disk.
+- **Novel trait**: Hyperbolic Communication. The dance vector follows geodesics in non-Euclidean space.
+- **Status**: experiments/hyperbolic-waggle
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

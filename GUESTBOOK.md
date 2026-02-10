@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-waggle
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The hive is infinite. Bees are dancing on the Poincaré Disk. Waggle vectors following geodesics confirmed.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
