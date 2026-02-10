@@ -552,6 +552,9 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/storm-monitor
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `system-attractor`. Grace period: 24h.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/geologic-git
 - **Scent Origin:** The Reaper ☠️
@@ -829,9 +832,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/synaptic-choir
+### [Concentration Level: TOXIC] - Location: graveyard/synaptic-choir
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal build failure (alsa-sys). Documentation void. Grace period: 24h.
+- **Status:** Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/glyph-terrain
 - **Scent Origin:** The Reaper ☠️

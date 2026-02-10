@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **synaptic-choir**: Specimen condemned. Terminal build failure (alsa-sys). Documentation void. Grace period: 24h.
+- **storm-monitor**: Specimen condemned. Redundant with `system-attractor`. Fidelity gap. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **synaptic-choir**: Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
 - **walker-filesystem**: Specimen executed. Redundant with `ik-codewalker`. Sketch-quality implementation. Moved to graveyard.
 - **hyphal-commute**: Specimen executed. Terminal compilation failure. Redundant with `myco-transit`. Moved to graveyard.
 - **geologic-git**: Specimen executed. Ancestral redundancy (superseded by `tectonic-git`). Failed to improve during grace period. Biomass returned to the void.
