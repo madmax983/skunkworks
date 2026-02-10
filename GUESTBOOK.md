@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/mnem-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The bridge is memory. The ants are holding the line against entropy. Glitches are appearing in the structure.
+
 ### [Concentration Level: FRESH] - Location: experiments/origami-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is synchronized. The CPGs are coupled. The origami cranes are breathing.

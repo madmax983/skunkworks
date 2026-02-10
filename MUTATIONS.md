@@ -707,3 +707,17 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Synchronized Flapping. The flock's brains synchronize phase, causing them to flap in unison.
 - **Status**: experiments/origami-swarm
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Confirmed.
+
+### mnem-rot
+- **Parents**: experiments/mnem-rot (Genesis)
+- **Concept**: A visualization of knowledge graph decay where nodes rot and text glitches over time.
+- **Novel trait**: Mnemonic Decay. Information requires active maintenance (healing) to persist.
+- **Status**: experiments/mnem-rot
+- **Evaluation**: Compiles. Verified by Splice Surgeon.
+
+### mnem-bridge
+- **Parents**: experiments/mnem-rot + experiments/biomimetic-bridge
+- **Concept**: Army ants forming bridges where the structural integrity is tied to the semantic integrity of the memories they carry.
+- **Novel trait**: Semantic Structural Engineering. Bridges collapse as memories fade (glitch).
+- **Status**: experiments/mnem-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Hybrid Vigor Predicted.
