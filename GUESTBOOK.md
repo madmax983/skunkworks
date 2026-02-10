@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/origami-swarm
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The flock is synchronized. The CPGs are coupled. The origami cranes are breathing.
+
 ### [Concentration Level: FRESH] - Location: experiments/pixel-archivist
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The Repository is the Image. Source code compressed into Nebula strata. Steganography confirmed.
