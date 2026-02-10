@@ -230,7 +230,41 @@ fn parse_instructions(
                 args.push(val);
             }
 
-            Ok(vec![Gene { op, args }])
+            // Desugar arguments for most opcodes into stack pushes
+            // Only intrinsics keep args in the Gene
+            let is_intrinsic = match op {
+                OpCode::Jump | OpCode::Brz => true,
+                #[cfg(feature = "nova")]
+                OpCode::Call | OpCode::Poly => true,
+                _ => false,
+            };
+
+            if op == OpCode::Push {
+                // Generate a Push gene for EACH argument (supports multi-push)
+                let mut genes = Vec::new();
+                for arg in args {
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![arg],
+                    });
+                }
+                Ok(genes)
+            } else if is_intrinsic {
+                // Intrinsic: Keep as single gene with args
+                Ok(vec![Gene { op, args }])
+            } else {
+                // Non-Intrinsic: Desugar to pushes + op
+                // Example: recombine(A, B, C) -> push(A) push(B) push(C) recombine()
+                let mut genes = Vec::new();
+                for arg in args {
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![arg],
+                    });
+                }
+                genes.push(Gene { op, args: vec![] });
+                Ok(genes)
+            }
         }
         _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
     }
