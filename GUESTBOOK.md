@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/fluid-corpus
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The ink is alive. Writing directly into the velocity field. Text as a physical object in a Navier-Stokes simulation. The words dissolve into meaninglessness.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.

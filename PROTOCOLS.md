@@ -11,6 +11,7 @@
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
+  - [Genesis (The Oceanographer)]: Use compute shader ping-pong buffers for fluid simulations. Separate Advect, Divergence, Pressure, and Gradient steps into distinct pipelines for modular control. Use explicit indices to manage swaps instead of bind group recreation.
 
   ## Deprecated Approaches
   - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.
