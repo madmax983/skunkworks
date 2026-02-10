@@ -286,6 +286,8 @@ mod nova_waste_test;
 #[cfg(all(test, feature = "oracle"))]
 mod oracle_test;
 #[cfg(all(test, feature = "oracle"))]
+mod manifest_test;
+#[cfg(all(test, feature = "oracle"))]
 mod seek_test;
 #[cfg(all(test, feature = "nova"))]
 mod prion_test;
