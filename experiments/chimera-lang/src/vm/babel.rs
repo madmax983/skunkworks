@@ -3,6 +3,7 @@
 use super::{ChimeraVM, Value};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+use rand::Rng;
 
 /// Executes Babel-related OpCodes.
 pub fn exec_babel_op(
@@ -11,6 +12,28 @@ pub fn exec_babel_op(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
+        OpCode::GrammarMutate => {
+            if let Some(g) = vm.stack.pop() {
+                let mutated = mutate_grammar(&g);
+                vm.stack.push(mutated);
+                vm.output.push("GRAMMAR MUTATED".to_string());
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for GrammarMutate".to_string());
+            }
+        }
+        OpCode::GrammarBreed => {
+            if vm.stack.len() >= 2 {
+                let g2 = vm.stack.pop().unwrap();
+                let g1 = vm.stack.pop().unwrap();
+                let child = breed_grammar(&g1, &g2);
+                vm.stack.push(child);
+                vm.output.push("GRAMMAR BRED".to_string());
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for GrammarBreed".to_string());
+            }
+        }
         OpCode::Grammar => {
             // Stack: [ ..., type_str, ...args ]
             if let Some(type_val) = vm.stack.pop() {
@@ -281,4 +304,92 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
     } else {
         Err(())
     }
+}
+
+fn mutate_grammar(val: &Value) -> Value {
+    let mut rng = rand::thread_rng();
+    if rng.gen_bool(0.1) {
+        // 10% chance to completely replace with a random primitive
+        return random_primitive_grammar();
+    }
+
+    match val {
+        Value::Junction(t, args) => {
+            // Deep copy args to mutate
+            let mut new_args = args.clone();
+            if !new_args.is_empty() {
+                if let Value::Str(type_str) = &new_args[0] {
+                    match type_str.as_str() {
+                        "Match" => {
+                            if new_args.len() > 1 {
+                                if let Value::Str(s) = &mut new_args[1] {
+                                    // Mutate string
+                                    if !s.is_empty() && rng.gen_bool(0.5) {
+                                        // For simplicity, append a random char
+                                        let c = (rng.gen_range(0..26) + b'a') as char;
+                                        s.push(c);
+                                    } else if !s.is_empty() {
+                                        // Or remove
+                                        s.pop();
+                                    }
+                                }
+                            }
+                        }
+                        "Seq" | "Alt" => {
+                            // Mutate children
+                            for i in 1..new_args.len() {
+                                if rng.gen_bool(0.3) {
+                                    new_args[i] = mutate_grammar(&new_args[i]);
+                                }
+                            }
+                            // Chance to swap
+                            if new_args.len() >= 3 && rng.gen_bool(0.2) {
+                                new_args.swap(1, 2);
+                            }
+                        }
+                        "Many" | "Opt" => {
+                            if new_args.len() > 1 {
+                                new_args[1] = mutate_grammar(&new_args[1]);
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            Value::Junction(*t, new_args)
+        }
+        _ => val.clone(),
+    }
+}
+
+fn random_primitive_grammar() -> Value {
+    let mut rng = rand::thread_rng();
+    let c = ((rng.gen_range(0..26) + b'a') as char).to_string();
+    Value::Junction(
+        JunctionType::Any,
+        vec![Value::Str("Match".to_string()), Value::Str(c)],
+    )
+}
+
+fn breed_grammar(p1: &Value, p2: &Value) -> Value {
+    let mut rng = rand::thread_rng();
+    if rng.gen_bool(0.5) {
+        return p1.clone(); // Fallback
+    }
+
+    // Attempt structured crossover
+    if let (Value::Junction(t1, args1), Value::Junction(_t2, args2)) = (p1, p2) {
+        if !args1.is_empty() && !args2.is_empty() {
+            let mut new_args = args1.clone();
+            // Replace last arg of p1 with last arg of p2 (Subtree crossover)
+            if new_args.len() > 1 && args2.len() > 1 {
+                let idx1 = new_args.len() - 1;
+                let idx2 = args2.len() - 1;
+                new_args[idx1] = args2[idx2].clone();
+            }
+            return Value::Junction(*t1, new_args);
+        }
+    }
+
+    p2.clone()
 }

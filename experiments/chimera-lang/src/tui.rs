@@ -1382,8 +1382,21 @@ where
                             }
                         }
                     }
-                    #[cfg(feature = "biophysics")]
-                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+                    KeyCode::Char('b') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Babel = app_state.view_mode {
+                             let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::GrammarBreed, &[]);
+                             if let Some(res) = vm.stack.last() {
+                                app_state.babel_result = format!("Bred: {}", res);
+                            }
+                            continue;
+                        }
+
+                        #[cfg(feature = "biophysics")]
+                        {
+                            app_state.view_mode = ViewMode::Cortex;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('a') => {
                         if let ViewMode::Alchemy = app_state.view_mode {
@@ -1693,7 +1706,19 @@ where
                                 (app_state.kaleidoscope_light_idx + 1) % 3;
                         }
                     }
-                    KeyCode::Char('m') => vm.mutate(),
+                    KeyCode::Char('m') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Babel = app_state.view_mode {
+                            let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::GrammarMutate, &[]);
+                            if let Some(res) = vm.stack.last() {
+                                app_state.babel_result = format!("Mutated: {}", res);
+                            }
+                        } else {
+                            vm.mutate();
+                        }
+                        #[cfg(not(feature = "nova"))]
+                        vm.mutate();
+                    }
                     KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
                     KeyCode::Down => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -3314,8 +3339,13 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
-    let chunks = Layout::default()
+fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let main_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let left_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
@@ -3325,7 +3355,7 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(main_chunks[0]);
 
     let pattern_style = if app_state.babel_focus == 0 {
         Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
@@ -3342,16 +3372,27 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
     let pattern_widget = Paragraph::new(app_state.babel_pattern.clone())
         .block(Block::default().borders(Borders::ALL).title("Regex Pattern (Edit)"))
         .style(pattern_style);
-    f.render_widget(pattern_widget, chunks[0]);
+    f.render_widget(pattern_widget, left_chunks[0]);
 
     let input_widget = Paragraph::new(app_state.babel_input.clone())
         .block(Block::default().borders(Borders::ALL).title("Test String (Edit)"))
         .style(input_style);
-    f.render_widget(input_widget, chunks[1]);
+    f.render_widget(input_widget, left_chunks[1]);
 
+    let controls = "Controls: Space: Parse | M: Mutate (Top) | B: Breed (Top 2)";
     let result_widget = Paragraph::new(app_state.babel_result.clone())
-        .block(Block::default().borders(Borders::ALL).title("Match Result (Enter to Run)"));
-    f.render_widget(result_widget, chunks[2]);
+        .block(Block::default().borders(Borders::ALL).title(format!("Match Result - {}", controls)));
+    f.render_widget(result_widget, left_chunks[2]);
+
+    // Right Panel: Stack (Grammar Population)
+    let mut stack_items = Vec::new();
+    for (i, val) in vm.stack.iter().rev().enumerate() {
+        stack_items.push(ListItem::new(format!("{}: {}", i, val)).style(Style::default().fg(Color::Cyan)));
+    }
+    let stack_list = List::new(stack_items).block(
+        Block::default().borders(Borders::ALL).title("Grammar Population (Stack)")
+    );
+    f.render_widget(stack_list, main_chunks[1]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

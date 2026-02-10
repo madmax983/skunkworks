@@ -1920,6 +1920,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
     #[cfg(feature = "nova")]
     ParserOpt,
+    /// **[Babel]** Randomly mutates a grammar.
+    ///
+    /// **Stack:** `[ ..., grammar_junction ] -> [ ..., mutated_grammar_junction ]`
+    #[cfg(feature = "nova")]
+    GrammarMutate,
+    /// **[Babel]** Breeds two grammars to produce a child.
+    ///
+    /// **Stack:** `[ ..., g1, g2 ] -> [ ..., child_grammar ]`
+    #[cfg(feature = "nova")]
+    GrammarBreed,
 
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.

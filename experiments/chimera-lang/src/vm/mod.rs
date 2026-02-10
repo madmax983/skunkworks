@@ -2173,7 +2173,9 @@ impl ChimeraVM {
             | OpCode::ParserSeq
             | OpCode::ParserAlt
             | OpCode::ParserMany
-            | OpCode::ParserOpt => {
+            | OpCode::ParserOpt
+            | OpCode::GrammarMutate
+            | OpCode::GrammarBreed => {
                 babel::exec_babel_op(self, op, args);
                 None
             }

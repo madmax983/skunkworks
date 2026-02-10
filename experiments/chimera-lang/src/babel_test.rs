@@ -172,4 +172,75 @@ mod tests {
         assert!(vm.output.iter().any(|s| s.contains("PARSE: Success")));
         assert_eq!(vm.stack.last(), Some(&Value::Str("hello".to_string())));
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_babel_grammar_mutate() {
+        // [ push("A") parser_match() grammar_mutate() ]
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("A".to_string())],
+            },
+            Gene {
+                op: OpCode::ParserMatch,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::GrammarMutate,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted && vm.ip.0 < 1 {
+            vm.step();
+        }
+
+        assert!(vm.output.iter().any(|s| s.contains("GRAMMAR MUTATED")));
+        if let Some(Value::Junction(_, args)) = vm.stack.last() {
+            // It should still be a grammar (Junction)
+            assert!(!args.is_empty());
+        } else {
+            panic!("Expected Grammar Junction, got {:?}", vm.stack.last());
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_babel_grammar_breed() {
+        // [ push("A") parser_match() push("B") parser_match() grammar_breed() ]
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("A".to_string())],
+            },
+            Gene {
+                op: OpCode::ParserMatch,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("B".to_string())],
+            },
+            Gene {
+                op: OpCode::ParserMatch,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::GrammarBreed,
+                args: vec![],
+            },
+        ];
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        while !vm.halted && vm.ip.0 < 1 {
+            vm.step();
+        }
+
+        assert!(vm.output.iter().any(|s| s.contains("GRAMMAR BRED")));
+        if let Some(Value::Junction(_, args)) = vm.stack.last() {
+            assert!(!args.is_empty());
+        } else {
+            panic!("Expected Grammar Junction, got {:?}", vm.stack.last());
+        }
+    }
 }
