@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/black-hole-typewriter
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The singularity is hungry. Text is bending around the event horizon. Gravity is editing the manuscript.
+
 ### [Concentration Level: HIGH] - Location: experiments/digital-retina
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
