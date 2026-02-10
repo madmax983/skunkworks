@@ -1,254 +1,144 @@
-mod git;
-mod lbm;
-mod terrain;
-
-use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use git::GitScanner;
-use lbm::Fluid;
-use ratatui::{
-    prelude::*,
-    widgets::{
-        canvas::{Canvas, Rectangle},
-        Block, Borders, Paragraph,
-    },
-};
-use std::time::{Duration, Instant};
+use macroquad::prelude::*;
 use terrain::Terrain;
+use git::GitScanner;
 
-struct App {
-    terrain: Terrain,
-    fluid: Fluid,
-    commits: Vec<git::Commit>,
-    commit_idx: usize,
-    speed: usize,
-    paused: bool,
-    should_quit: bool,
-}
+mod terrain;
+mod git;
 
-impl App {
-    fn new() -> Result<Self> {
-        // Handle git scanner failure gracefully
-        let commits = match GitScanner::load_history() {
-            Ok(c) => c,
-            Err(_) => vec![], // Empty if no git repo or error
-        };
-        let width = 120;
-        let height = 60;
-        Ok(Self {
-            terrain: Terrain::new(width, height),
-            fluid: Fluid::new(width, height),
-            commits,
-            commit_idx: 0,
-            speed: 1,
-            paused: false,
-            should_quit: false,
-        })
-    }
+#[cfg(test)]
+mod terrain_test;
 
-    fn update(&mut self) {
-        if !self.paused && self.commit_idx < self.commits.len() {
-            let end_idx = (self.commit_idx + self.speed).min(self.commits.len());
+#[macroquad::main("Sediment Flow")]
+async fn main() {
+    let width = 300;
+    let height = 300;
 
-            for i in self.commit_idx..end_idx {
-                let commit = &self.commits[i];
-                for file in &commit.files {
-                    let path_str = file.to_string_lossy();
-                    let (x, y) =
-                        GitScanner::map_path(&path_str, self.terrain.width, self.terrain.height);
+    let mut terrain = Terrain::new(width, height);
 
-                    // Uplift (Magma/Growth)
-                    self.terrain.uplift(x, y, 5.0);
-                }
-            }
-            self.commit_idx = end_idx;
-        }
-
-        // Sync Terrain to Fluid Obstacles
-        self.fluid.clear_obstacles();
-        for y in 0..self.terrain.height {
-            for x in 0..self.terrain.width {
-                if self.terrain.get_height(x, y) > 10.0 {
-                    self.fluid.add_obstacle(x, y);
-                }
-            }
-        }
-
-        // Step Fluid
-        self.fluid.step();
-    }
-}
-
-fn main() -> Result<()> {
-    // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = std::io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
-
-    // Init App
-    let mut app = match App::new() {
-        Ok(app) => app,
+    // Load git history
+    println!("Loading git history...");
+    let commits = match GitScanner::load_history() {
+        Ok(c) => {
+            println!("Loaded {} commits.", c.len());
+            c
+        },
         Err(e) => {
-            disable_raw_mode()?;
-            execute!(std::io::stdout(), LeaveAlternateScreen)?;
-            eprintln!("Error initializing: {}", e);
-            return Err(e);
+            eprintln!("Failed to load git history: {}", e);
+            vec![]
         }
     };
 
-    let tick_rate = Duration::from_millis(33);
-    let mut last_tick = Instant::now();
+    let mut commit_idx = 0;
+    let mut paused = false;
+    let mut speed = 5; // Commits per frame
+    let mut erosion_steps = 2000; // Droplets per frame
+
+    let mut image = Image::gen_image_color(width as u16, height as u16, BLACK);
+    let texture = Texture2D::from_image(&image);
+
+    // Camera / View
+    // Just fit to screen
 
     loop {
-        terminal.draw(|f| ui(f, &app))?;
+        // Controls
+        if is_key_pressed(KeyCode::Space) {
+            paused = !paused;
+        }
+        if is_key_pressed(KeyCode::R) {
+            terrain = Terrain::new(width, height);
+            commit_idx = 0;
+            image = Image::gen_image_color(width as u16, height as u16, BLACK);
+        }
+        if is_key_down(KeyCode::Right) {
+            speed += 1;
+        }
+        if is_key_down(KeyCode::Left) && speed > 0 {
+            speed -= 1;
+        }
+        if is_key_down(KeyCode::Up) {
+            erosion_steps += 100;
+        }
+        if is_key_down(KeyCode::Down) && erosion_steps > 100 {
+            erosion_steps -= 100;
+        }
+        if is_key_pressed(KeyCode::S) {
+            get_screen_data().export_png("sediment_flow.png");
+            println!("Saved screenshot to sediment_flow.png");
+        }
 
-        let timeout = tick_rate
-            .checked_sub(last_tick.elapsed())
-            .unwrap_or_else(|| Duration::from_secs(0));
+        // 1. Uplift (Geological Time)
+        if !paused && commit_idx < commits.len() {
+            let end_idx = (commit_idx + speed).min(commits.len());
+            for i in commit_idx..end_idx {
+                let commit = &commits[i];
+                for file in &commit.files {
+                    let path_str = file.to_string_lossy();
+                    let (x, y) = GitScanner::map_path(&path_str, width, height);
 
-        if event::poll(timeout)? {
-            if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') | KeyCode::Esc => app.should_quit = true,
-                        KeyCode::Char(' ') => app.paused = !app.paused,
-                        KeyCode::Char('+') => app.speed = (app.speed * 2).min(100),
-                        KeyCode::Char('-') => app.speed = (app.speed / 2).max(1),
-                        KeyCode::Char('r') => {
-                            let width = 120;
-                            let height = 60;
-                            app.terrain = Terrain::new(width, height);
-                            app.fluid = Fluid::new(width, height);
-                            app.commit_idx = 0;
-                        }
-                        _ => {}
-                    }
+                    // Uplift amount based on file length? Or constant?
+                    // Constant for now, maybe small random
+                    terrain.uplift(x, y, 2.0);
+
+                    // Also uplift neighbors slightly for a "mountain" feel
+                    terrain.uplift(x+1, y, 1.0);
+                    terrain.uplift(x, y+1, 1.0);
+                    if x > 0 { terrain.uplift(x-1, y, 1.0); }
+                    if y > 0 { terrain.uplift(x, y-1, 1.0); }
                 }
             }
+            commit_idx = end_idx;
         }
 
-        if last_tick.elapsed() >= tick_rate {
-            app.update();
-            last_tick = Instant::now();
+        // 2. Erosion (Hydraulic Process)
+        for _ in 0..erosion_steps {
+            let rx = rand::gen_range(0.0, width as f64);
+            let ry = rand::gen_range(0.0, height as f64);
+            terrain.erode_droplet(rx, ry);
         }
+        terrain.decay_water();
 
-        if app.should_quit {
-            break;
+        // 3. Render to Texture
+        for y in 0..height {
+            for x in 0..width {
+                let color = terrain.get_color(x, y);
+                image.set_pixel(x as u32, y as u32, color);
+            }
         }
+        texture.update(&image);
+
+        // 4. Draw to Screen
+        clear_background(BLACK);
+
+        let screen_w = screen_width();
+        let screen_h = screen_height();
+        let scale = (screen_w / width as f32).min(screen_h / height as f32);
+
+        let draw_w = width as f32 * scale;
+        let draw_h = height as f32 * scale;
+        let offset_x = (screen_w - draw_w) / 2.0;
+        let offset_y = (screen_h - draw_h) / 2.0;
+
+        draw_texture_ex(
+            &texture,
+            offset_x,
+            offset_y,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(draw_w, draw_h)),
+                ..Default::default()
+            },
+        );
+
+        // UI
+        draw_text(
+            &format!("Commits: {}/{} | Speed: {} | Erosion: {}", commit_idx, commits.len(), speed, erosion_steps),
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text("[Space] Pause/Resume [R] Reset [Arrows] Speed/Erosion", 10.0, 50.0, 20.0, GRAY);
+
+        next_frame().await
     }
-
-    // Cleanup
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
-
-    Ok(())
-}
-
-fn ui(f: &mut Frame, app: &App) {
-    let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Min(0), Constraint::Length(3)])
-        .split(f.area());
-
-    let w = app.terrain.width as f64;
-    let h = app.terrain.height as f64;
-
-    let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title(" Sediment Flow: Fluid Dynamics on Code Terrain "),
-        )
-        .x_bounds([0.0, w])
-        .y_bounds([0.0, h])
-        .paint(|ctx| {
-            // Draw Terrain & Fluid
-            // We iterate over the grid
-            for y in 0..app.terrain.height {
-                for x in 0..app.terrain.width {
-                    // Coordinate flip for rendering (Canvas 0,0 is bottom-left usually)
-                    // Terrain 0,0 is usually top-left.
-                    // Let's invert Y.
-                    let render_y = (app.terrain.height - 1 - y) as f64;
-
-                    let height = app.terrain.get_height(x, y);
-                    let is_obstacle = app.fluid.obstacles[y * app.fluid.width + x];
-
-                    // Fluid properties
-                    // Safety check for bounds
-                    let idx = y * app.fluid.width + x;
-                    if idx >= app.fluid.rho.len() {
-                        continue;
-                    }
-
-                    let _rho = app.fluid.rho[idx];
-                    let ux = app.fluid.u_x[idx];
-                    let uy = app.fluid.u_y[idx];
-                    let velocity = (ux * ux + uy * uy).sqrt();
-
-                    let color = if is_obstacle {
-                        // Terrain
-                        if height < 20.0 {
-                            Color::DarkGray
-                        } else if height < 50.0 {
-                            Color::Gray
-                        } else {
-                            Color::White
-                        }
-                    } else {
-                        // Fluid
-                        // Visualize curl or velocity?
-                        // Simple velocity:
-                        if velocity > 0.1 {
-                            // Cyan for fast fluid
-                            Color::Cyan
-                        } else if velocity > 0.05 {
-                            Color::Blue
-                        } else {
-                            // Empty space / calm fluid
-                            Color::Reset
-                        }
-                    };
-
-                    if color != Color::Reset {
-                        ctx.draw(&Rectangle {
-                            x: x as f64,
-                            y: render_y,
-                            width: 1.0,
-                            height: 1.0,
-                            color,
-                        });
-                    }
-                }
-            }
-        });
-
-    f.render_widget(canvas, chunks[0]);
-
-    // Status
-    let progress = if !app.commits.is_empty() {
-        (app.commit_idx as f64 / app.commits.len() as f64) * 100.0
-    } else {
-        0.0
-    };
-
-    let status = format!(
-        "Commit: {}/{} | Progress: {:.1}% | Speed: {} | [Space] Pause [+/-] Speed [r] Reset [q] Quit",
-        app.commit_idx,
-        app.commits.len(),
-        progress,
-        app.speed,
-    );
-
-    f.render_widget(
-        Paragraph::new(status).block(Block::default().borders(Borders::ALL)),
-        chunks[1],
-    );
 }
