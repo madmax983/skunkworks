@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/waggle-market
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Invisible Hand is dancing. Bees are recruiting traders to arbitrage opportunities. Momentum trading is emergent.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.

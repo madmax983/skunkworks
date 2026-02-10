@@ -699,7 +699,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Breathing Sheet" where a Spiking Neural Network (CPG) drives the folding actuators of a Miura-ori mesh.
 - **Novel trait**: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
 - **Status**: experiments/neuro-fold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Breathing Miura-ori mesh observed.
 
 ### origami-swarm
 - **Parents**: experiments/neuro-fold + experiments/luminous-flock
@@ -727,4 +727,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified. Boids swarming around fissures observed.
+
+### waggle-market
+- **Parents**: experiments/waggle-dance + crates/market-sim
+- **Concept**: A market simulation where the "Invisible Hand" is a swarm of bees dancing to signal arbitrage opportunities.
+- **Novel trait**: Biological Liquidity. Price discovery driven by waggle dance recruitment.
+- **Status**: experiments/waggle-market
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
