@@ -261,12 +261,17 @@ classDiagram
         +[[Val; 16]; 16] cells
     }
 
+    class QuipuState {
+        <<Nova Feature>>
+    }
+
     class ExternalApp {
         <<Consumer>>
     }
 
     ChimeraVM *-- Dna : Owns
     ChimeraVM *-- PetriDish : Owns
+    ChimeraVM *-- QuipuState : Owns
     ExternalApp ..> ChimeraVM : Embeds
 ```
 
@@ -522,4 +527,57 @@ sequenceDiagram
         HiveSocket-->>VM: Err(WouldBlock)
         VM->>VM: push(0)
     end
+```
+
+### Nova Feature: Quipu Memory System (ADR 021)
+
+The Quipu system provides a topological memory store based on knotted cords, offering persistent integer registers.
+
+```mermaid
+classDiagram
+    direction TB
+    class QuipuState {
+        +Vec~Cord~ cords
+        +usize active_cord
+        +tie(val: i64)
+        +read() i64
+        +tangle(other_idx)
+    }
+
+    class Cord {
+        +Vec~Knot~ clusters
+    }
+
+    class Knot {
+        <<Enum>>
+        Simple
+        Long
+        FigureEight
+    }
+
+    QuipuState *-- Cord : Owns
+    Cord *-- Knot : Contains
+```
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Quipu as QuipuState
+    participant Cord
+
+    Note over VM: OpCode::Cord(0)
+    VM->>Quipu: select_cord(0)
+
+    Note over VM: OpCode::Knot(123)
+    VM->>Quipu: tie(123)
+    Quipu->>Cord: clear()
+    Quipu->>Cord: append(Cluster(Simple))
+    Quipu->>Cord: append(Cluster(Simple, Simple))
+    Quipu->>Cord: append(Cluster(Long(3)))
+
+    Note over VM: OpCode::ReadCord()
+    VM->>Quipu: read()
+    Quipu->>Cord: sum_knots()
+    Cord-->>Quipu: 123
+    Quipu-->>VM: push(123)
 ```
