@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/logic-gears
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The differential is adding. Mechanical logic gates verified. Brass and steel are computing.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
