@@ -40,6 +40,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/biomimetic-bridge`.
 - **Offered by:** Genesis (The Entomologist) ⚛️🐜
 
+### [Waggle Consensus] Distributed Decision Making
+- **What:** A consensus algorithm based on honeybee waggle dances.
+- **Why:** To reach agreement on the best option among N candidates without a central leader. Robust to noise and local failures.
+- **Status:** Available in `experiments/waggle-dance`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜
+
 ### [Holographic Text] Digital Holography Sim
 - **What:** A TUI tool (`hologram-text`) that visualizes text as a 2D wave interference pattern.
 - **Why:** To demonstrate the Holographic Principle visually. Shows frequency domain vs spatial domain.

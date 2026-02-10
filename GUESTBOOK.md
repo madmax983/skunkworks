@@ -488,6 +488,10 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🐜
 - **Status:** Ants foraging for TODOs in dynamic Voronoi territory. Compiles.
 
+### [Concentration Level: FRESH] - Location: experiments/waggle-dance
+- **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
+- **Status:** The hive is buzzing. Consensus is emerging from recursive feedback loops. Quorum sensing active.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/tactical-tide
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Redundant with `sediment-flow`. Decay confirmed.
