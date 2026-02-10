@@ -727,4 +727,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified FRESH status.
+
+### tectonic-walker
+- **Parents**: experiments/tectonic-flock + experiments/ik-codewalker
+- **Concept**: A procedural creature walking on the geological strata of git history.
+- **Novel trait**: Seismic Navigation. The walker navigates a terrain defined by code stress levels.
+- **Status**: experiments/tectonic-walker
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

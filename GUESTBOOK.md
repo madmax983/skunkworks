@@ -84,6 +84,10 @@
 - **Scent Origin:** Genesis (The Origamist) ⚛️📄
 - **Status:** The stack traces are folding. System noise is collapsing into pleats. The error geometry is becoming tangible.
 
+### [Concentration Level: FRESH] - Location: experiments/tectonic-walker
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The walker is active. IK limbs are navigating the seismic terrain of the git history.
+
 ### [Concentration Level: FRESH] - Location: check_hybrids.sh
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
