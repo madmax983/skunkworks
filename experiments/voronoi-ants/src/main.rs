@@ -344,9 +344,8 @@ fn main() -> Result<()> {
         if event::poll(timeout)? {
             if let Event::Key(key) = event::read()? {
                 if key.kind == KeyEventKind::Press {
-                    match key.code {
-                        KeyCode::Char('q') => app.should_quit = true,
-                        _ => {}
+                    if let KeyCode::Char('q') = key.code {
+                        app.should_quit = true;
                     }
                 }
             }
@@ -408,27 +407,50 @@ struct VoronoiWidget<'a> {
 impl<'a> Widget for VoronoiWidget<'a> {
     fn render(self, area: Rect, buf: &mut ratatui::buffer::Buffer) {
         // Optimizing Nearest Neighbor Search:
-        // Checking 60 ants for every pixel (e.g. 5000 pixels) is 300k ops. Fast enough.
+        // Hoisting invariants to avoid repeated calculations in the inner loop.
+        // Uses forward differencing for dx^2 and pre-calculated dy^2.
+
+        // State: dx_sq, delta, dy_sq, color
+        let mut row_state: Vec<(f64, f64, f64, Color)> = Vec::with_capacity(self.world.ants.len());
 
         for y in 0..area.height {
-            for x in 0..area.width {
-                let px = x as f64;
-                let py = y as f64;
+            let py = y as f64;
 
+            // Pre-calculate Y-invariants and init X-state for this row
+            row_state.clear();
+            for ant in &self.world.ants {
+                let dy = (py - ant.pos.y) * 2.0;
+                let dy_sq = dy * dy;
+
+                // Initial x=0 state
+                // dx = 0.0 - ant.pos.x = -ant.pos.x
+                // dx^2 = (-ant.pos.x)^2
+                // delta = 2(0 - ant.pos.x) + 1 = 1 - 2*ant.pos.x
+                let dx_sq = ant.pos.x * ant.pos.x;
+                let delta = 1.0 - 2.0 * ant.pos.x;
+
+                row_state.push((dx_sq, delta, dy_sq, ant.color));
+            }
+
+            for x in 0..area.width {
                 // Voronoi Logic
                 let mut min_dist_sq = f64::MAX;
                 let mut nearest_color = Color::Reset;
 
-                for ant in &self.world.ants {
-                    let dx = px - ant.pos.x;
-                    // Adjust aspect ratio for distance metric to make cells look nicer
-                    let dy = (py - ant.pos.y) * 2.0;
-                    let dist_sq = dx * dx + dy * dy;
+                // We iterate mutably to update dx_sq and delta
+                for state in &mut row_state {
+                    let dist_sq = state.0 + state.2; // dx_sq + dy_sq
 
                     if dist_sq < min_dist_sq {
                         min_dist_sq = dist_sq;
-                        nearest_color = ant.color;
+                        nearest_color = state.3;
                     }
+
+                    // Forward differencing for next x:
+                    // dx^2 += delta
+                    // delta += 2.0
+                    state.0 += state.1;
+                    state.1 += 2.0;
                 }
 
                 // Draw Cell Background
@@ -478,5 +500,81 @@ impl<'a> Widget for VoronoiWidget<'a> {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ratatui::buffer::Buffer;
+    use ratatui::layout::Rect;
+    use ratatui::style::Color;
+    use std::time::Instant;
+
+    #[test]
+    fn test_render_voronoi() {
+        let ants = vec![
+            Ant {
+                pos: Vec2::new(2.0, 2.0),
+                vel: Vec2::new(0.0, 0.0),
+                has_food: false,
+                color: Color::Red,
+            },
+            Ant {
+                pos: Vec2::new(8.0, 2.0),
+                vel: Vec2::new(0.0, 0.0),
+                has_food: false,
+                color: Color::Blue,
+            },
+        ];
+
+        let world = World {
+            width: 10.0,
+            height: 10.0,
+            ants,
+            foods: vec![],
+            pheromones: PheromoneGrid::new(10, 10),
+            total_collected: 0,
+        };
+
+        let mut buffer = Buffer::empty(Rect::new(0, 0, 10, 10));
+        let area = Rect::new(0, 0, 10, 10);
+
+        // Verify correctness (small grid)
+        let w = VoronoiWidget { world: &world };
+        w.render(area, &mut buffer);
+
+        // (2,2) -> Red
+        let cell_2_2 = buffer.cell((2, 2)).unwrap();
+        assert_eq!(cell_2_2.bg, Color::Red);
+
+        // (8,2) -> Blue
+        let cell_8_2 = buffer.cell((8, 2)).unwrap();
+        assert_eq!(cell_8_2.bg, Color::Blue);
+
+        // (5,2) -> Red (tie breaker first)
+        let cell_5_2 = buffer.cell((5, 2)).unwrap();
+        assert_eq!(cell_5_2.bg, Color::Red);
+
+        // (6,2) -> Blue
+        let cell_6_2 = buffer.cell((6, 2)).unwrap();
+        assert_eq!(cell_6_2.bg, Color::Blue);
+
+        // Benchmark (Large Grid)
+        let large_area = Rect::new(0, 0, 100, 100);
+        let mut large_buffer = Buffer::empty(large_area);
+        // We reuse the same world (ants are at 2.0, 2.0 and 8.0, 2.0)
+
+        let start = Instant::now();
+        let iterations = 100;
+        for _ in 0..iterations {
+            let w = VoronoiWidget { world: &world };
+            w.render(large_area, &mut large_buffer);
+        }
+        println!(
+            "Time per {} iters (100x100): {:?}",
+            iterations,
+            start.elapsed()
+        );
     }
 }

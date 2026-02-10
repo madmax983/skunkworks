@@ -23,7 +23,7 @@ pub fn scan_codebase(root: &Path) -> Result<Vec<FileNode>> {
         }
 
         let path = entry.path();
-        if path.extension().map_or(false, |ext| ext == "rs") {
+        if path.extension().is_some_and(|ext| ext == "rs") {
             // Count TODOs
             let (todo_count, line_count) = analyze_file(path).unwrap_or((0, 0));
 
