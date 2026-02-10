@@ -258,4 +258,51 @@ mod tests {
             _ => panic!("Expected result 'a', got {:?}", vm.grid[2][1]),
         }
     }
+
+    #[test]
+    fn test_orca_unzip() {
+        use crate::ast::{Gene, Nucleotide};
+        use crate::opcode::OpCode;
+
+        let mut vm = make_vm();
+        // Create a dummy strand 0 with gene: Push(5)
+        let gene = Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(5)],
+        };
+        let strand = Strand { genes: vec![gene] };
+        vm.dna.helix.strands.push(strand);
+
+        // Layout:
+        // . . .
+        // 0 U 0 (Strand 0, Gene 0)
+        // . . .
+
+        vm.grid[1][0] = Value::Str("0".to_string());
+        vm.grid[1][1] = Value::Str("U".to_string());
+        vm.grid[1][2] = Value::Str("0".to_string());
+
+        // Signal U
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        // Expect "push" at (2,1), (2,2), (2,3), (2,4)
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "p"),
+            _ => panic!("Expected 'p', got {:?}", vm.grid[2][1]),
+        }
+        match &vm.grid[2][2] {
+            Value::Str(s) => assert_eq!(s, "u"),
+            _ => panic!("Expected 'u', got {:?}", vm.grid[2][2]),
+        }
+        match &vm.grid[2][3] {
+            Value::Str(s) => assert_eq!(s, "s"),
+            _ => panic!("Expected 's', got {:?}", vm.grid[2][3]),
+        }
+        match &vm.grid[2][4] {
+            Value::Str(s) => assert_eq!(s, "h"),
+            _ => panic!("Expected 'h', got {:?}", vm.grid[2][4]),
+        }
+    }
 }

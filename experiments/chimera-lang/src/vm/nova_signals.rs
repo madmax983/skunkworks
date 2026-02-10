@@ -273,6 +273,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '|' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a | b),
                 '[' => exec_ether_send(vm, y, x, signal, &mut ctx),
                 ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
+                'U' | 'u' => exec_unzip(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -445,6 +446,33 @@ fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
             ctx.mutation_requests.push(MutationRequest {
                 strand_idx: s_idx as usize,
             });
+        }
+    }
+}
+
+fn exec_unzip(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Inputs: West (Strand Index), East (Gene Index)
+    if let (Some(s_idx), Some(g_idx)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, 0, 1)) {
+        let s = s_idx as usize;
+        let g = g_idx as usize;
+        if s < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[s];
+            if g < strand.genes.len() {
+                let op_str = strand.genes[g].op.to_string(); // e.g., "push"
+                for (i, c) in op_str.chars().enumerate() {
+                    // Write to (y + 1, x + i)
+                    if let Some((wy, wx)) = vm.normalize_coords(y as i64 + 1, x as i64 + i as i64) {
+                        ctx.grid_writes.push(GridWrite {
+                            y: wy,
+                            x: wx,
+                            val: Value::Str(c.to_string()),
+                        });
+                    }
+                }
+            }
         }
     }
 }
