@@ -6,9 +6,24 @@ use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
+use std::fs;
+use std::path::PathBuf;
 
 pub const MAX_EPIGENOME_SIZE: usize = 1024;
 pub const MAX_INCUBATE_LENGTH: usize = 1024;
+
+fn get_viral_path(vm: &ChimeraVM, filename: &str) -> Option<PathBuf> {
+    let root = vm.sandbox_root.join("viral_vectors");
+    if !root.exists() {
+        let _ = fs::create_dir(&root);
+    }
+    // Simple sanitization
+    if filename.chars().all(|c| c.is_alphanumeric() || c == '.' || c == '_') {
+        Some(root.join(filename))
+    } else {
+        None
+    }
+}
 
 /// Helper to convert a Value to a Nucleotide (static AST node)
 pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
@@ -217,6 +232,153 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     } else {
         vm.output
             .push("Error: Stack underflow for chronos_splice".to_string());
+    }
+    None
+}
+
+pub fn exec_inject(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Str(filename) = val {
+            if let Some(path) = get_viral_path(vm, &filename) {
+                if path.exists() {
+                    match fs::read_to_string(&path) {
+                        Ok(content) => {
+                            match ChimeraParser::parse(Rule::dna, &content) {
+                                Ok(mut pairs) => {
+                                    if let Some(dna_pair) = pairs.next() {
+                                        match crate::ast::Dna::try_from_pair(dna_pair) {
+                                            Ok(dna) => {
+                                                if !dna.helix.strands.is_empty() {
+                                                    let mut rng = rand::thread_rng();
+                                                    let idx = rng.gen_range(0..dna.helix.strands.len());
+                                                    let strand = dna.helix.strands[idx].clone();
+
+                                                    if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                                                        vm.output.push("INJECT ERROR: Strand limit exceeded".to_string());
+                                                    } else {
+                                                        vm.dna.helix.strands.push(strand);
+                                                        vm.telomeres.push(50);
+                                                        #[cfg(feature = "cortex")]
+                                                        {
+                                                            vm.activation_levels.push(0);
+                                                            vm.synapse_map.push(Vec::new());
+                                                        }
+                                                        let new_idx = vm.dna.helix.strands.len() - 1;
+
+                                                        vm.cladistics.register_strand(
+                                                            new_idx,
+                                                            Some(vm.ip.0),
+                                                            vm.tick_counter,
+                                                            format!("Inject({})", filename)
+                                                        );
+
+                                                        vm.stack.push(Value::Int(new_idx as i64));
+                                                        vm.energy = vm.energy.saturating_sub(50);
+                                                        vm.output.push(format!("INJECT: Assimilated strand from {}", filename));
+                                                    }
+                                                } else {
+                                                    vm.output.push("INJECT: Viral vector empty".to_string());
+                                                }
+                                            }
+                                            Err(e) => vm.output.push(format!("INJECT ERROR: {}", e)),
+                                        }
+                                    }
+                                }
+                                Err(e) => vm.output.push(format!("INJECT ERROR: {}", e)),
+                            }
+                        }
+                        Err(e) => vm.output.push(format!("INJECT ERROR: {}", e)),
+                    }
+                } else {
+                    vm.output.push(format!("INJECT: Vector {} not found", filename));
+                }
+            } else {
+                vm.output.push("INJECT ERROR: Invalid filename".to_string());
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for inject".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for inject".to_string());
+    }
+    None
+}
+
+pub fn exec_excrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: filename, strand_idx (top)
+    if vm.stack.len() >= 2 {
+        let s_val = vm.stack.pop().unwrap();
+        let f_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(idx), Value::Str(filename)) = (s_val, f_val) {
+            let s_idx = idx as usize;
+            if s_idx < vm.dna.helix.strands.len() {
+                if let Some(path) = get_viral_path(vm, &filename) {
+                    let strand = &vm.dna.helix.strands[s_idx];
+
+                    // Format strand as string
+                    fn format_nucleotide(n: &crate::ast::Nucleotide, depth: usize) -> String {
+                        if depth > crate::vm::MAX_RECURSION_DEPTH {
+                            return "...".to_string();
+                        }
+                        match n {
+                            crate::ast::Nucleotide::Number(i) => i.to_string(),
+                            crate::ast::Nucleotide::String(s) => format!("\"{}\"", s),
+                            crate::ast::Nucleotide::Identifier(s) => s.clone(),
+                            crate::ast::Nucleotide::Junction(t, args) => {
+                                let t_str = match t {
+                                    crate::ast::JunctionType::Any => "any",
+                                    crate::ast::JunctionType::All => "all",
+                                    crate::ast::JunctionType::Dish => "dish",
+                                };
+                                let args_str: Vec<String> = args
+                                    .iter()
+                                    .map(|arg| format_nucleotide(arg, depth + 1))
+                                    .collect();
+                                format!("{}({})", t_str, args_str.join(" "))
+                            }
+                        }
+                    }
+
+                    let mut s = String::from("strand virus {\n");
+                    for gene in &strand.genes {
+                        s.push_str("  ");
+                        s.push_str(gene.op.as_ref());
+                        if !gene.args.is_empty() {
+                            s.push('(');
+                            for (i, arg) in gene.args.iter().enumerate() {
+                                if i > 0 {
+                                    s.push(' ');
+                                }
+                                s.push_str(&format_nucleotide(arg, 0));
+                            }
+                            s.push(')');
+                        }
+                        s.push('\n');
+                    }
+                    s.push_str("}\n");
+
+                    // Wrap in helix structure for valid parsing on Inject
+                    let content = format!("helix {{\n{}}}", s);
+
+                    match fs::write(&path, content) {
+                        Ok(_) => {
+                            vm.energy = vm.energy.saturating_sub(20);
+                            vm.output.push(format!("EXCRETE: Wrote strand {} to {}", s_idx, filename));
+                        }
+                        Err(e) => vm.output.push(format!("EXCRETE ERROR: {}", e)),
+                    }
+                } else {
+                    vm.output.push("EXCRETE ERROR: Invalid filename".to_string());
+                }
+            } else {
+                vm.output.push("Error: Strand index out of bounds for excrete".to_string());
+            }
+        } else {
+            vm.output.push("Error: Type mismatch for excrete".to_string());
+        }
+    } else {
+        vm.output.push("Error: Stack underflow for excrete".to_string());
     }
     None
 }

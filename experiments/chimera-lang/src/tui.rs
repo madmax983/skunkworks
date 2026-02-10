@@ -96,6 +96,8 @@ pub(crate) enum ViewMode {
     Hydra,
     #[cfg(feature = "nova")]
     Chronos,
+    #[cfg(feature = "nova")]
+    Vector,
 }
 
 enum InputMode {
@@ -532,6 +534,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Chronos = app_state.view_mode {
                 render_chronos(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Vector = app_state.view_mode {
+                render_vector(f, vm, app_state);
                 return;
             }
 
@@ -1081,6 +1089,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Vector => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab => {
@@ -1257,7 +1270,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Hydra => ViewMode::Chronos,
                             #[cfg(feature = "nova")]
-                            ViewMode::Chronos => ViewMode::Heatmap,
+                            ViewMode::Chronos => ViewMode::Vector,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Vector => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1450,6 +1465,8 @@ where
                     KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('T') => app_state.view_mode = ViewMode::Chronos,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('w') => app_state.view_mode = ViewMode::Vector,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1758,6 +1775,8 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Vector => {}
                         ViewMode::Grid => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -2074,6 +2093,8 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Vector => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2098,6 +2119,8 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Vector => {}
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2240,6 +2263,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Vector => {}
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2666,6 +2691,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Strings => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Vector => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -3710,6 +3739,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
         #[cfg(feature = "nova")]
         ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Vector => "VECTOR (VIRAL EXCHANGE)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4232,6 +4263,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Quipu, "Quipu", "Tab"));
         views.push((ViewMode::Hydra, "Hydra", "Y"));
         views.push((ViewMode::Chronos, "Chronos", "T"));
+        views.push((ViewMode::Vector, "Vector", "w"));
     }
     views
 }
@@ -6990,4 +7022,55 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title(format!("Echoes at {},{}", cx, cy)),
     );
     f.render_widget(echo_list, right_chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_vector(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Left: Viral Vector Directory
+    let root = vm.sandbox_root.join("viral_vectors");
+    let mut files = Vec::new();
+    if let Ok(entries) = std::fs::read_dir(root) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                if let Ok(name) = entry.file_name().into_string() {
+                    files.push(ListItem::new(name).style(Style::default().fg(Color::Cyan)));
+                }
+            }
+        }
+    }
+    if files.is_empty() {
+        files.push(ListItem::new("No viral vectors found."));
+    }
+
+    let file_list = List::new(files).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Viral Vectors (Host Filesystem)"),
+    );
+    f.render_widget(file_list, chunks[0]);
+
+    // Right: Status / Info
+    let info = vec![
+        Line::from("VIRAL VECTOR INTERFACE"),
+        Line::from(" "),
+        Line::from("Mechanics:"),
+        Line::from("  Inject(filename) - Load DNA from disk"),
+        Line::from("  Excrete(filename, idx) - Write DNA to disk"),
+        Line::from(" "),
+        Line::from("Warning:"),
+        Line::from("  Unchecked viral exchange may lead to"),
+        Line::from("  system instability or total infection."),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Vector Status"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }

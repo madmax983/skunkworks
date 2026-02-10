@@ -1605,6 +1605,11 @@ impl ChimeraVM {
                 self.grid_history.pop_front();
             }
             self.grid_history.push_back(self.grid.clone());
+
+            // Prune dead cladistics nodes every 100 ticks to prevent memory leak
+            if self.tick_counter % 100 == 0 {
+                self.cladistics.prune_dead_nodes();
+            }
         }
 
         #[cfg(feature = "nova")]
@@ -2386,6 +2391,12 @@ impl ChimeraVM {
             | OpCode::Genesis
             | OpCode::Retrograde
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Inject => nova_genetics::exec_inject(self),
+
+            #[cfg(feature = "nova")]
+            OpCode::Excrete => nova_genetics::exec_excrete(self),
 
             #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),

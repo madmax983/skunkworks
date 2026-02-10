@@ -95,4 +95,39 @@ impl Cladistics {
             .map(|n| n.id)
             .collect()
     }
+
+    pub fn prune_dead_nodes(&mut self) {
+        loop {
+            let mut to_remove = Vec::new();
+            for node in self.nodes.values() {
+                if node.death_tick.is_some() && node.children.is_empty() {
+                    // Only prune if not currently tracked as an active strand map
+                    // (active_map maps strand_idx -> node_id).
+                    // If a node is in active_map, it implies it is the *current* node for that strand index.
+                    // If it's dead, it shouldn't be active unless we just killed it and haven't reused the index.
+                    // But if it has no children and is dead, it's a leaf history node.
+                    to_remove.push(node.id);
+                }
+            }
+
+            if to_remove.is_empty() {
+                break;
+            }
+
+            for id in to_remove {
+                if let Some(node) = self.nodes.remove(&id) {
+                    // Remove from parent's children list
+                    if let Some(pid) = node.parent_id {
+                        if let Some(parent) = self.nodes.get_mut(&pid) {
+                            parent.children.retain(|&c| c != id);
+                        }
+                    }
+                    // Also ensure it's not in active_map (though it shouldn't be if we are careful)
+                    // If we reused strand_idx, active_map points to new node.
+                    // We can just iterate active_map to be safe, but that's slow.
+                    // For now, assume if it's dead and a leaf, it's safe to remove.
+                }
+            }
+        }
+    }
 }

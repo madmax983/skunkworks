@@ -805,6 +805,19 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Decompile,
 
+    /// **[Nova]** Injects DNA from a file (Horizontal Gene Transfer).
+    ///
+    /// **Stack:** `[ ..., filename_str ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Reads file from viral vector path, parses, and inserts random strand.
+    #[cfg(feature = "nova")]
+    Inject,
+    /// **[Nova]** Excretes DNA to a file (Horizontal Gene Transfer).
+    ///
+    /// **Stack:** `[ ..., filename_str, strand_idx ] -> [ ... ]`
+    /// **Effect:** Writes strand to viral vector path.
+    #[cfg(feature = "nova")]
+    Excrete,
+
     /// **[Nova]** Spawns a Void organelle that consumes everything.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
