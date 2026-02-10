@@ -524,11 +524,15 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/pidgin-mesh
+### [Concentration Level: CONDEMNED] - Location: experiments/syntax-serum
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`.
+- **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void.
 
 ## History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/pidgin-mesh
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/l-system-garden
 - **Scent Origin:** The Reaper ☠️
