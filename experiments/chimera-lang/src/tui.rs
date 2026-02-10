@@ -15,12 +15,12 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table},
+    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table, ListState},
     Frame, Terminal,
 };
 use std::io;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
     Genome,
     Grid,
@@ -167,12 +167,18 @@ pub(crate) struct AppState {
     pub(crate) babel_result: String,
     #[cfg(feature = "nova")]
     pub(crate) babel_focus: usize, // 0=Pattern, 1=Input
+    pub(crate) show_view_selector: bool,
+    pub(crate) view_selector_state: std::cell::RefCell<ListState>,
 }
 
 impl AppState {
     pub(crate) fn new() -> Self {
+        let mut view_selector_state = ListState::default();
+        view_selector_state.select(Some(0));
         Self {
             view_mode: ViewMode::Genome,
+            show_view_selector: false,
+            view_selector_state: std::cell::RefCell::new(view_selector_state),
             input_mode: InputMode::Normal,
             selected_strand: 0,
             selected_gene: 0,
@@ -561,6 +567,38 @@ where
 
         if event::poll(std::time::Duration::from_millis(100))? {
             if let Event::Key(key) = event::read()? {
+                if app_state.show_view_selector {
+                    let views = get_all_views();
+                    let mut list_state = app_state.view_selector_state.borrow_mut();
+                    let selected = list_state.selected().unwrap_or(0);
+
+                    match key.code {
+                        KeyCode::Esc => app_state.show_view_selector = false,
+                        KeyCode::Up => {
+                            if selected > 0 {
+                                list_state.select(Some(selected - 1));
+                            } else {
+                                list_state.select(Some(views.len().saturating_sub(1)));
+                            }
+                        }
+                        KeyCode::Down => {
+                            if selected + 1 < views.len() {
+                                list_state.select(Some(selected + 1));
+                            } else {
+                                list_state.select(Some(0));
+                            }
+                        }
+                        KeyCode::Enter => {
+                            if selected < views.len() {
+                                app_state.view_mode = views[selected].0;
+                            }
+                            app_state.show_view_selector = false;
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
                 if app_state.palette_open {
                     match key.code {
                         KeyCode::Esc | KeyCode::Char('p') => app_state.palette_open = false,
@@ -1418,6 +1456,13 @@ where
                             app_state.query_mode = true;
                             app_state.query_input.clear();
                             app_state.query_results.clear();
+                        }
+                    }
+                    KeyCode::Char('?') => {
+                        app_state.show_view_selector = !app_state.show_view_selector;
+                        // Reset index when opening
+                        if app_state.show_view_selector {
+                            app_state.view_selector_state.borrow_mut().select(Some(0));
                         }
                     }
                     KeyCode::Char('q') => return Ok(()),
@@ -2852,6 +2897,19 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             }
 
             if app_state.fishing_cast {
+                // Splash / Ripple around bobber
+                if app_state.fishing_bobber_y < 50.0 {
+                     // Bobber is underwater/surface
+                     let phase = (vm.tick_counter % 6) / 2;
+                     let (left, right) = match phase {
+                         0 => ("(", ")"),
+                         1 => ("<", ">"),
+                         _ => ("{", "}"),
+                     };
+                     ctx.print(48.0, app_state.fishing_bobber_y, left);
+                     ctx.print(51.0, app_state.fishing_bobber_y, right);
+                }
+
                 // Fishing Line
                 ctx.draw(&ratatui::widgets::canvas::Line {
                     x1: 50.0,
@@ -4113,6 +4171,116 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     if app_state.palette_open {
         render_palette(f, app_state);
     }
+
+    if app_state.show_view_selector {
+        render_view_selector(f, app_state);
+    }
+}
+
+fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
+    let mut views = vec![
+        (ViewMode::Genome, "Genome", "Tab"),
+        (ViewMode::Grid, "Grid", "Tab"),
+        (ViewMode::Microscope, "Microscope", "Tab"),
+        (ViewMode::Heatmap, "Heatmap", "h"),
+    ];
+
+    #[cfg(feature = "biophysics")]
+    views.push((ViewMode::Cortex, "Cortex", "b"));
+
+    #[cfg(feature = "resonance")]
+    views.push((ViewMode::Resonance, "Resonance", "Tab"));
+
+    #[cfg(feature = "elektra")]
+    views.push((ViewMode::Elektra, "Elektra", "E"));
+
+    #[cfg(feature = "silicon")]
+    {
+        views.push((ViewMode::Schematic, "Schematic", "s"));
+        views.push((ViewMode::Foundry, "Foundry", "F"));
+    }
+
+    #[cfg(feature = "nova")]
+    {
+        views.push((ViewMode::Grimoire, "Grimoire", "Tab"));
+        views.push((ViewMode::Laboratory, "Laboratory", "Tab"));
+        views.push((ViewMode::Topology, "Topology", "Tab"));
+        views.push((ViewMode::Graveyard, "Graveyard", "Tab"));
+        views.push((ViewMode::PianoRoll, "Piano Roll", "p"));
+        views.push((ViewMode::Retina, "Retina", "Tab"));
+        views.push((ViewMode::Quantum, "Quantum", "Tab"));
+        views.push((ViewMode::Dream, "Dream Catcher", "Tab"));
+        views.push((ViewMode::Phylogeny, "Phylogeny", "Tab"));
+        views.push((ViewMode::Alchemy, "Alchemy", "Tab"));
+        views.push((ViewMode::Memetics, "Memetics", "Tab"));
+        views.push((ViewMode::Egregore, "Egregore", "Tab"));
+        views.push((ViewMode::Bestiary, "Bestiary", "z"));
+        views.push((ViewMode::Kaleidoscope, "Kaleidoscope", "k"));
+        views.push((ViewMode::Void, "Void", "Tab"));
+        views.push((ViewMode::Signals, "Signals", "Tab"));
+        views.push((ViewMode::Sovereignty, "Sovereignty", "Tab"));
+        views.push((ViewMode::Spectrogram, "Spectrogram", "Tab"));
+        views.push((ViewMode::Market, "Market", "$"));
+        views.push((ViewMode::Ballistics, "Ballistics", "!"));
+        views.push((ViewMode::Scent, "Scent", "~"));
+        views.push((ViewMode::Fishing, "Fishing", "f"));
+        views.push((ViewMode::Arena, "Arena", "V"));
+        views.push((ViewMode::Garden, "Garden", "G"));
+        views.push((ViewMode::Orca, "Orca", "O"));
+        views.push((ViewMode::Babel, "Babel", "L"));
+        views.push((ViewMode::Strings, "Strings", "="));
+        views.push((ViewMode::Quipu, "Quipu", "Tab"));
+        views.push((ViewMode::Hydra, "Hydra", "Y"));
+        views.push((ViewMode::Chronos, "Chronos", "T"));
+    }
+    views
+}
+
+fn render_view_selector(f: &mut Frame, app_state: &AppState) {
+    let area = f.area();
+    let width = 60;
+    let height = 30;
+    let x = (area.width.saturating_sub(width)) / 2;
+    let y = (area.height.saturating_sub(height)) / 2;
+    let rect = ratatui::layout::Rect {
+        x,
+        y,
+        width,
+        height,
+    };
+
+    f.render_widget(ratatui::widgets::Clear, rect);
+
+    let views = get_all_views();
+
+    let current_selected = app_state.view_selector_state.borrow().selected().unwrap_or(0);
+
+    let items: Vec<ListItem> = views
+        .iter()
+        .enumerate()
+        .map(|(i, (_mode, name, key))| {
+            let style = if i == current_selected {
+                Style::default()
+                    .fg(Color::Black)
+                    .bg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::Cyan)
+            };
+            ListItem::new(format!("{:<20} [{}]", name, key)).style(style)
+        })
+        .collect();
+
+    let block = Block::default()
+        .borders(Borders::ALL)
+        .title("View Selector (? to Toggle)");
+
+    let list = List::new(items)
+        .block(block)
+        .highlight_style(Style::default().add_modifier(Modifier::BOLD));
+
+    let mut state = app_state.view_selector_state.borrow_mut();
+    f.render_stateful_widget(list, rect, &mut *state);
 }
 
 fn render_palette(f: &mut Frame, app_state: &AppState) {

@@ -23,7 +23,6 @@ members = [
     "experiments/myco-transit",
     "experiments/neuro-terminal",
     "experiments/semantic-spy",
-    "experiments/stigmergy-hub",
     "experiments/storm-monitor",
     "experiments/system-bio-dome",
     "experiments/thermo-termites",
