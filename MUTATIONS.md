@@ -728,3 +728,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-strings
+- **Parents**: experiments/cosmic-strings + experiments/poincare-crawl
+- **Concept**: Vibrating strings on the Poincaré Disk.
+- **Novel trait**: Hyperbolic Physics. String tension and vibration obey non-Euclidean geometry.
+- **Status**: experiments/hyperbolic-strings
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. "The universe is hyperbolic."
