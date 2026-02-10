@@ -50,17 +50,14 @@ The `experiments/` directory contains the artifacts:
 
 ```
 experiments/
-├── automata-warfare/        # Cellular automata battles
-├── code-metropolis/         # Codebase as 3D city
-├── git_galaxy/              # Git history as force graph
-├── git_rhythm/              # Commits as music
-├── hyphal-commute/          # Mycelial growth simulation
-├── literary-boids/          # Flocking text
 ├── neuro-terminal/          # Neural network visualization
-├── schrodingers-text/       # Quantum text behavior
-├── syntax-invaders/         # Code-themed arcade
-├── term-fluids/             # Fluid dynamics
-├── text-hydro/              # Water flow ASCII
+├── git-harmony/             # Git history as music
+├── cymatic-lure/            # Audio-visual resonance simulation
+├── market-flow/             # Financial market simulation
+├── fluid-specter/           # Fluid dynamics visualization
+├── system-bio-dome/         # System resource monitoring
+├── trace-fold/              # Execution trace visualization
+├── thermo-termites/         # Termite simulation with thermodynamics
 └── ...                      # More experiments emerge hourly
 ```
 
@@ -85,8 +82,8 @@ This is a Cargo workspace:
 cargo build --workspace
 
 # Run a specific experiment
-cargo run -p neuro-terminal
-cargo run -p git_galaxy
+cargo run -p neuro-terminal --bin neuro-terminal
+cargo run -p git-harmony
 
 # List all workspace members
 cargo metadata --no-deps | grep name
