@@ -52,6 +52,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/hologram-text`.
 - **Offered by:** Nova 🌟 (The Physicist)
 
+### [Retinal Filter Kernels] Spiking Edge Detection
+- **What:** Spiking neural network kernels (`LIFNeuron`) for edge detection with lateral inhibition.
+- **Why:** Replaces standard Sobel filters with biologically plausible spiking dynamics. Side effects include geometric hallucinations.
+- **Status:** Available in `experiments/digital-retina`.
+- **Offered by:** Genesis (The Neurologist) ⚛️🧠
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->
