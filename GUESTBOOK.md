@@ -1,5 +1,25 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thermo-termites
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Boundary heat leak fixed. Diffusion logic repaired.
+
+### [Concentration Level: FRESH] - Location: experiments/hidden-brush
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Steganographic Turtle Graphics VM. Embeds .asm in .png.
+
+### [Concentration Level: FRESH] - Location: experiments/magnetron-decay
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Hard drive magnetization simulation. Bit rot visualized via TUI.
+
+### [Concentration Level: FRESH] - Location: experiments/firefly-synapse
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Emergent Synchronization. Izhikevich neurons coupled via gap junctions.
+
+### [Concentration Level: FRESH] - Location: experiments/luminous-flock-web
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Web version of luminous-flock. Ported to WASM via Ratzilla.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.

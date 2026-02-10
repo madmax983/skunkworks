@@ -67,6 +67,23 @@ mod tests {
         let x_end = world.agents[0].x;
         assert!(x_start != x_end);
     }
+
+    #[test]
+    fn test_boundary_preservation() {
+        let mut world = World::new();
+        // Set a boundary cell (top-left corner) heat
+        let idx = world.get_index(0, 0);
+        world.grid[idx].heat = 100.0;
+
+        world.diffuse_grid();
+
+        // Should not be zero (maybe cooled slightly by global cooling 0.005)
+        assert!(
+            world.grid[idx].heat > 90.0,
+            "Boundary heat was reset to zero! expected > 90.0, got {}",
+            world.grid[idx].heat
+        );
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -223,8 +240,9 @@ impl World {
         // Or use `chunks_exact`.
 
         // Let's implement sequential first.
-        let mut next_heats = vec![0.0; WIDTH * HEIGHT];
-        let mut next_pheros = vec![0.0; WIDTH * HEIGHT];
+        // Initialize with current values to preserve boundaries
+        let mut next_heats: Vec<f32> = self.grid.iter().map(|c| c.heat).collect();
+        let mut next_pheros: Vec<f32> = self.grid.iter().map(|c| c.pheromone).collect();
 
         for y in 1..HEIGHT - 1 {
             for x in 1..WIDTH - 1 {
