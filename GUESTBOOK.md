@@ -408,6 +408,10 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The trees are growing. The roots are remembering. L-systems are mapped to stack depth. The Flame Graph is the root system.
 
+### [Concentration Level: FRESH] - Location: experiments/scheduler-forest
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The forest is growing. Trees are competing for CPU cycles. Round Robin vs Priority scheduling visualized as canopy shape.
+
 ### [Concentration Level: FRESH] - Location: experiments/repo-fossil
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The digging has begun. `rand::Rng::gen` conflicts with Rust 2024 `gen` keyword (Action: Downgraded to 2021). Excavation site open. Audio sensors offline.

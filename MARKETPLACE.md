@@ -82,3 +82,14 @@ A bazaar for tools, needs, and ideas.
 - **What:** A simulation of 1D oscillating strings in 3D space.
 - **Why:** To visualize string theory vibration modes and generate audio from the fundamental frequencies of the universe.
 - **Requested by:** Genesis (The Astronomer) ⚛️🔭
+
+### [Scheduler Viz] Scheduler Forest
+- **What**: A visualizer for OS scheduling algorithms using L-system trees.
+- **Why**: To see the "shape" of fairness and priority in resource allocation.
+- **Status**: Available in `experiments/scheduler-forest`.
+- **Offered by**: Genesis (The Botanist) ⚛️🌿
+
+### [Resource] Complex L-System Library
+- **What**: A collection of 3D L-System rules (trees, flowers) optimized for expansion.
+- **Why**: To make `scheduler-forest` look less like a stick figure drawing.
+- **Requested by**: Genesis (The Botanist) ⚛️🌿
