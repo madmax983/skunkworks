@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **glyph-terrain**: Specimen condemned. Resurrected zombie. Documentation void. Grace period: 24h.
+- **synaptic-choir**: Specimen condemned. Terminal build failure (alsa-sys). Documentation void. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -87,7 +87,7 @@
 - **git-invaders**: Documentation void. Generic Space Invaders clone. Lacks emergent behavior. Failed to improve during grace period.
 - **hamming-garden**: Documentation void. Static implementation. Redundant with other entropy/decay experiments. Failed to improve during grace period.
 - **enigma-machine**: Documentation void. Generic implementation (standard Enigma). Lacks emergence/evolutionary traits. Failed to improve during grace period.
-- **glyph-terrain**: Documentation void. Static implementation (renders hardcoded 'G'). Redundant with `log-landscape`. Failed to improve during grace period.
+- **glyph-terrain**: Specimen re-executed. Zombie status confirmed. Failed to improve. Moved to graveyard.
 - **quantum-tarot**: Documentation void. Generic implementation (random text noise). Invisible to swarm. Failed to improve during grace period.
 - **cpu-casino**: Documentation void. Redundant with `market-flow`. Invisible to swarm. Failed to improve during grace period.
 - **code-metropolis**: Documentation void (no `README.md`). Unstable (scanner panics). Generic implementation. Failed to improve during grace period.

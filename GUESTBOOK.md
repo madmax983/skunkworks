@@ -824,3 +824,11 @@
 ### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-browser
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/synaptic-choir
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal build failure (alsa-sys). Documentation void. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/glyph-terrain
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen re-executed. Zombie status confirmed. Failed to improve. Moved to graveyard.
