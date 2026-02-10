@@ -161,8 +161,12 @@ fn find_closest_node(
     let z_prime = mobius_sub(node.pos, view_center);
     let dist = (z_prime - click_z).norm();
 
+    // Adjust effective hit radius based on node size
+    let size_factor = (node.total_size as f64).max(1.0).log10();
+    let effective_radius = hit_radius * (1.0 + size_factor * 0.2);
+
     let mut best_match = None;
-    let mut min_dist = hit_radius;
+    let mut min_dist = effective_radius;
 
     if dist < min_dist {
         best_match = Some(node.pos);
@@ -227,9 +231,25 @@ fn draw_node_recursive(
 
     // Draw Node
     let scale = 1.0 - z_prime.norm_sqr();
-    let radius = (5.0 * scale as f32 + 2.0).max(1.0);
+
+    // Scale node size based on total content size (Memory Visualization)
+    // log10(bytes) gives a nice 0-12 range for typical files
+    let size_factor = (node.total_size as f64).max(1.0).log10() as f32;
+    // Base size depends on hyperbolic scale (distance from center)
+    // We boost larger files/folders to make them stand out as "heavy" objects
+    let radius = ((5.0 + size_factor * 1.5) * scale as f32 + 2.0).max(1.0);
 
     let color = get_color(node.node.file_type);
+
+    // If it's a large directory, draw a "halo" to indicate mass
+    if node.total_size > 1_000_000 {
+        draw_circle(
+            screen_pos.x,
+            screen_pos.y,
+            radius + 2.0 * scale as f32,
+            Color::new(color.r, color.g, color.b, 0.3),
+        );
+    }
 
     draw_circle(screen_pos.x, screen_pos.y, radius, color);
 
