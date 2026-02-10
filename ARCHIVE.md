@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-serum**: Specimen condemned. Documentation void. Redundant with `code-reaction`. Inferior implementation (hardcoded values vs metric-driven). Grace period: 24h.
+- **stigmergy-hub**: Specimen condemned. Identity mismatch (menu launcher masquerading as swarm experiment). Documentation void. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **syntax-serum**: Specimen executed. Failed to improve during grace period. Documentation void. Redundant with `code-reaction`. Moved to graveyard.
 - **pidgin-mesh**: Specimen executed. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`. Moved to graveyard.
 - **quipu-net**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **tactical-tide**: Specimen executed. Failed to improve during grace period. Documentation void. Redundant with `sediment-flow`. Moved to graveyard.

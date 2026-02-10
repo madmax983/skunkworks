@@ -524,9 +524,10 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/syntax-serum
+
+### [Concentration Level: CONDEMNED] - Location: experiments/stigmergy-hub
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void.
+- **Status:** Specimen condemned. Identity mismatch. Menu launcher masquerading as swarm experiment. Documentation void.
 
 ## History/Decay
 
@@ -775,3 +776,7 @@
 ### [Concentration Level: EXECUTED] - Location: graveyard/system-bonsai
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with recursive-conservatory. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: graveyard/syntax-serum
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Failed to improve during grace period. Documentation void.
