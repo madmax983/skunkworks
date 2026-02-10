@@ -806,6 +806,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         }
         OpCode::Fire => super::nova_ballistics::exec_fire(vm),
         OpCode::Salvo => super::nova_ballistics::exec_salvo(vm),
+        OpCode::Laser => super::nova_optics::exec_laser(vm),
         OpCode::Reflector => super::nova_optics::exec_reflector(vm),
         OpCode::Prism => super::nova_optics::exec_prism(vm),
         OpCode::Lens => super::nova_optics::exec_lens(vm),

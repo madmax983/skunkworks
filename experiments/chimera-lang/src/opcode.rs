@@ -1934,6 +1934,12 @@ pub enum OpCode {
     Salvo,
 
     // Optics Features (Nova)
+    /// **[Nova]** Fires a photon (Light Particle).
+    ///
+    /// **Stack:** `[ ..., wavelength, intensity, dy, dx ] -> [ ... ]`
+    /// **Wavelength:** 0=Red, 1=Green, 2=Blue.
+    #[cfg(feature = "nova")]
+    Laser,
     /// **[Nova]** Creates a reflective surface on the grid.
     ///
     /// **Stack:** `[ ..., orientation, y, x ] -> [ ... ]`

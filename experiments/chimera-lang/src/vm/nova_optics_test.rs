@@ -193,4 +193,49 @@ mod tests {
         // Should be 3 projectiles now
         assert_eq!(vm.projectiles.len(), 3, "Prism did not split projectile");
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_optics_laser_photon() {
+        let genes = vec![
+            // Laser(Red=0, Int=10, dy=0, dx=1)
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // Red
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // Intensity
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // dy
+            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dx
+            Gene { op: OpCode::Laser, args: vec![] },
+        ];
+
+        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let mut vm = ChimeraVM::new(dna);
+        vm.context_loc = (5, 5); // Start at 5,5
+
+        // Execute Laser
+        for _ in 0..5 {
+            vm.step();
+        }
+
+        assert_eq!(vm.photons.len(), 1);
+        let p = &vm.photons[0];
+        assert_eq!(p.x, 5);
+        assert_eq!(p.y, 5);
+        assert_eq!(p.dx, 1);
+        assert_eq!(p.dy, 0);
+        assert_eq!(p.wavelength, crate::vm::nova_optics::Wavelength::Red);
+
+        // Step Physics
+        crate::vm::nova_optics::process_optics(&mut vm);
+
+        // Photon should move to 6,5
+        // Note: x is 2nd arg to grid[], y is 1st.
+        // Photon x=5 -> 6. Grid[5][6].
+
+        assert_eq!(vm.photons.len(), 1);
+        let p2 = &vm.photons[0];
+        assert_eq!(p2.x, 6);
+        assert_eq!(p2.y, 5);
+
+        // Light grid should have accumulated intensity at new pos
+        assert!(vm.light_grid[5][6] > 0);
+    }
 }

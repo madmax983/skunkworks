@@ -409,6 +409,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub projectiles: Vec<nova_ballistics::Projectile>,
     #[cfg(feature = "nova")]
+    pub photons: Vec<nova_optics::Photon>,
+    #[cfg(feature = "nova")]
     pub pheromones: Vec<nova_scent::Scent>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
@@ -678,6 +680,8 @@ impl ChimeraVM {
             time_grid,
             #[cfg(feature = "nova")]
             projectiles: Vec::new(),
+            #[cfg(feature = "nova")]
+            photons: Vec::new(),
             #[cfg(feature = "nova")]
             pheromones: Vec::new(),
             #[cfg(feature = "nova")]
@@ -1724,6 +1728,7 @@ impl ChimeraVM {
                 nova_relativity::update_relativity(self);
             }
             nova_ballistics::update_projectiles(self);
+            nova_optics::process_optics(self);
             nova_sovereignty::process_territory(self);
             nova_bureaucracy::process_red_tape(self);
             nova_arcana::process_fate(self);
@@ -2248,6 +2253,7 @@ impl ChimeraVM {
             | OpCode::Track
             | OpCode::Fire
             | OpCode::Salvo
+            | OpCode::Laser
             | OpCode::Reflector
             | OpCode::Prism
             | OpCode::Lens

@@ -87,6 +87,8 @@ pub(crate) enum ViewMode {
     #[cfg(feature = "nova")]
     Orca,
     #[cfg(feature = "nova")]
+    Optics,
+    #[cfg(feature = "nova")]
     Babel,
     #[cfg(feature = "nova")]
     Strings,
@@ -508,6 +510,12 @@ where
             }
 
             #[cfg(feature = "nova")]
+            if let ViewMode::Optics = app_state.view_mode {
+                render_optics(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
             if let ViewMode::Babel = app_state.view_mode {
                 render_babel(f, vm, app_state);
                 return;
@@ -900,6 +908,16 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Optics => {
+                                    // Grid Editing Logic
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                                 ViewMode::Microscope => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1280,7 +1298,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Garden => ViewMode::Orca,
                             #[cfg(feature = "nova")]
-                            ViewMode::Orca => ViewMode::Babel,
+                            ViewMode::Orca => ViewMode::Optics,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Optics => ViewMode::Babel,
                             #[cfg(feature = "nova")]
                             ViewMode::Babel => ViewMode::Strings,
                             #[cfg(feature = "nova")]
@@ -1482,6 +1502,8 @@ where
                     KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('*') => app_state.view_mode = ViewMode::Optics,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
@@ -1788,6 +1810,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Orca => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Optics => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
@@ -2111,6 +2139,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Optics => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Babel => {
                             if app_state.babel_focus > 0 {
                                 app_state.babel_focus -= 1;
@@ -2265,6 +2299,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Optics => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Quipu => {
                             if vm.quipu.active_cord + 1 < vm.quipu.cords.len() {
                                 vm.quipu.active_cord += 1;
@@ -2407,6 +2447,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Optics => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Quipu => {
                             if vm.quipu.active_cord > 0 {
                                 vm.quipu.active_cord -= 1;
@@ -2512,6 +2558,18 @@ where
                                 }
                             }
                             ViewMode::Grid => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Optics => {
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
@@ -3797,6 +3855,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Garden => "THE GARDEN OF EDEN (Cellular Automata)",
         #[cfg(feature = "nova")]
         ViewMode::Orca => "ORCA (SIGNAL GRID)",
+        #[cfg(feature = "nova")]
+        ViewMode::Optics => "OPTICS (PHOTONIC LOGIC)",
         ViewMode::Heatmap => "HEATMAP",
         #[cfg(feature = "silicon")]
         ViewMode::Schematic => "SCHEMATIC",
@@ -4331,6 +4391,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Arena, "Arena", "V"));
         views.push((ViewMode::Garden, "Garden", "G"));
         views.push((ViewMode::Orca, "Orca", "O"));
+        views.push((ViewMode::Optics, "Optics", "*"));
         views.push((ViewMode::Babel, "Babel", "L"));
         views.push((ViewMode::Strings, "Strings", "="));
         views.push((ViewMode::Quipu, "Quipu", "Tab"));
@@ -7215,6 +7276,124 @@ fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Logic Chemistry"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_optics(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let light = vm.light_grid[y][x];
+            let mut style = Style::default();
+
+            // Background based on light intensity
+            if light > 0 {
+                let intensity = (light * 10).clamp(0, 255) as u8;
+                style = style.bg(Color::Rgb(intensity, intensity, intensity));
+                if intensity > 128 {
+                    style = style.fg(Color::Black);
+                } else {
+                    style = style.fg(Color::White);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            let mut ch = "·".to_string();
+
+            // Overlay Photons
+            let mut photon_here = None;
+            for p in &vm.photons {
+                if p.x == x && p.y == y {
+                    photon_here = Some(p);
+                    break;
+                }
+            }
+
+            if let Some(p) = photon_here {
+                ch = "*".to_string();
+                let color = match p.wavelength {
+                    crate::vm::nova_optics::Wavelength::Red => Color::Red,
+                    crate::vm::nova_optics::Wavelength::Green => Color::Green,
+                    crate::vm::nova_optics::Wavelength::Blue => Color::Blue,
+                };
+                style = style.fg(color).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+            } else if let crate::vm::Value::Str(s) = val {
+                if s.starts_with("REFLECTOR:") {
+                    let ori: i64 = s.split(':').nth(1).unwrap_or("0").parse().unwrap_or(0);
+                    ch = match ori {
+                        0 => "|".to_string(),
+                        1 => "-".to_string(),
+                        2 => "/".to_string(),
+                        3 => "\\".to_string(),
+                        _ => "?".to_string(),
+                    };
+                    style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD);
+                } else if s.starts_with("PRISM:") {
+                    ch = "∆".to_string();
+                    style = style.fg(Color::Magenta).add_modifier(Modifier::BOLD);
+                } else if s.starts_with("LENS:") {
+                    ch = "O".to_string();
+                    style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+                } else if s == "#" {
+                    ch = "#".to_string();
+                    style = style.fg(Color::White).bg(Color::DarkGray);
+                }
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title("Optical Table"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Info
+    let (cx, cy) = app_state.grid_cursor;
+    let light_val = vm.light_grid[cy][cx];
+    let cell_val = &vm.grid[cy][cx];
+
+    let info = vec![
+        Line::from(format!("Cell: {},{}", cx, cy)),
+        Line::from(format!("Light Intensity: {}", light_val)),
+        Line::from(format!("Content: {}", cell_val)),
+        Line::from(" "),
+        Line::from("Photons:"),
+        Line::from(format!("  Active Count: {}", vm.photons.len())),
+        Line::from(" "),
+        Line::from("Components:"),
+        Line::from("  REFLECTOR:0-3 (| - / \\)"),
+        Line::from("  PRISM:0-3"),
+        Line::from("  LENS:Power"),
+        Line::from("  # (Wall)"),
+        Line::from(" "),
+        Line::from("Opcodes:"),
+        Line::from("  Laser(wave, int, dy, dx)"),
+        Line::from("  Reflector(ori, y, x)"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Photonic State"),
     );
     f.render_widget(info_widget, chunks[1]);
 }
