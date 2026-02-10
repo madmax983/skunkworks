@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **pidgin-mesh**: Specimen condemned. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`. Grace period: 24h.
+- **hyperbolic-fs**: Specimen condemned. Documentation void. Generic implementation. Redundant with `hyperbolic-browser`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **pidgin-mesh**: Specimen executed. Documentation void. Generic tui-shared implementation. Redundant with `protocol-jungle`. Moved to graveyard.
 - **quipu-net**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **tactical-tide**: Specimen executed. Failed to improve during grace period. Documentation void. Redundant with `sediment-flow`. Moved to graveyard.
 - **l-system-garden**: Specimen executed. Failed to improve during grace period (compilation failure). Moved to graveyard.

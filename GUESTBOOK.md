@@ -526,6 +526,14 @@
 
 ## History/Decay
 
+### [Concentration Level: CONDEMNED] - Location: experiments/hyperbolic-fs
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic implementation. Redundant with `hyperbolic-browser`. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/pidgin-mesh
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic tui-shared implementation. Moved to graveyard.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/l-system-garden
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
