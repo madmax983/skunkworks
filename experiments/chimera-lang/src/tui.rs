@@ -98,6 +98,8 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    #[cfg(feature = "nova")]
+    Playground,
 }
 
 enum InputMode {
@@ -169,6 +171,10 @@ pub(crate) struct AppState {
     pub(crate) babel_result: String,
     #[cfg(feature = "nova")]
     pub(crate) babel_focus: usize, // 0=Pattern, 1=Input
+    #[cfg(feature = "nova")]
+    pub(crate) playground_running: bool,
+    #[cfg(feature = "nova")]
+    pub(crate) playground_drag_source: Option<(usize, usize)>,
     pub(crate) show_view_selector: bool,
     pub(crate) view_selector_state: std::cell::RefCell<ListState>,
 }
@@ -242,6 +248,10 @@ impl AppState {
             babel_result: String::new(),
             #[cfg(feature = "nova")]
             babel_focus: 0,
+            #[cfg(feature = "nova")]
+            playground_running: false,
+            #[cfg(feature = "nova")]
+            playground_drag_source: None,
         }
     }
 }
@@ -288,6 +298,13 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        #[cfg(feature = "nova")]
+        if let ViewMode::Playground = app_state.view_mode {
+            if app_state.playground_running {
+                vm.step();
+            }
+        }
+
         #[cfg(feature = "nova")]
         if let ViewMode::Fishing = app_state.view_mode {
             if app_state.fishing_cast {
@@ -540,6 +557,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Logos = app_state.view_mode {
                 render_logos(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Playground = app_state.view_mode {
+                render_playground(f, vm, app_state);
                 return;
             }
 
@@ -885,6 +908,16 @@ where
                                     } else {
                                         parse_grid_value(&app_state.input_buffer)
                                     };
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Playground => {
+                                    // Enable editing grid from Playground view
+                                    let (x, y) = app_state.grid_cursor;
+                                    let val = parse_grid_value(&app_state.input_buffer);
                                     vm.grid[y][x] = val;
                                     app_state.status_msg = format!("Grid updated at {},{}", x, y);
                                     app_state.input_mode = InputMode::Normal;
@@ -1284,7 +1317,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Chronos => ViewMode::Logos,
                             #[cfg(feature = "nova")]
-                            ViewMode::Logos => ViewMode::Heatmap,
+                            ViewMode::Logos => ViewMode::Playground,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Playground => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1350,7 +1385,10 @@ where
                     #[cfg(feature = "elektra")]
                     KeyCode::Char('E') => app_state.view_mode = ViewMode::Elektra,
                     KeyCode::Char('p') => {
-                        if let ViewMode::Grid = app_state.view_mode {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Playground = app_state.view_mode {
+                            app_state.playground_running = !app_state.playground_running;
+                        } else if let ViewMode::Grid = app_state.view_mode {
                             app_state.palette_open = !app_state.palette_open;
                         } else {
                             #[cfg(feature = "nova")]
@@ -1415,7 +1453,10 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('x') => {
-                        if let ViewMode::Graveyard = app_state.view_mode {
+                        if let ViewMode::Playground = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.grid[y][x] = crate::vm::Value::Int(0);
+                        } else if let ViewMode::Graveyard = app_state.view_mode {
                             if app_state.selected_graveyard_strand < vm.graveyard.len() {
                                 vm.graveyard.remove(app_state.selected_graveyard_strand);
                                 app_state.status_msg = "Exterminated strand.".to_string();
@@ -1495,7 +1536,32 @@ where
                         }
                     }
                     KeyCode::Char('q') => return Ok(()),
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('g') => {
+                        if let ViewMode::Playground = app_state.view_mode {
+                            app_state.playground_drag_source = Some(app_state.grid_cursor);
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('d') => {
+                        if let ViewMode::Playground = app_state.view_mode {
+                            if let Some((sx, sy)) = app_state.playground_drag_source {
+                                let (tx, ty) = app_state.grid_cursor;
+                                let temp = vm.grid[sy][sx].clone();
+                                vm.grid[sy][sx] = vm.grid[ty][tx].clone();
+                                vm.grid[ty][tx] = temp;
+                                app_state.playground_drag_source = None;
+                            }
+                        }
+                    }
                     KeyCode::Char(' ') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Playground = app_state.view_mode {
+                            if !app_state.playground_running {
+                                vm.step();
+                            }
+                            continue;
+                        }
                         #[cfg(feature = "nova")]
                         if let ViewMode::Babel = app_state.view_mode {
                             // Run Parse
@@ -1728,6 +1794,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Playground => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Void => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1936,6 +2008,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Playground => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2139,6 +2217,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Playground => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -2277,6 +2361,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Logos => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Playground => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2516,6 +2606,18 @@ where
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 app_state.input_buffer = format!("{}", val);
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Playground => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
                             }
                             #[cfg(feature = "silicon")]
                             ViewMode::Foundry => {
@@ -3771,6 +3873,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
         #[cfg(feature = "nova")]
         ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Playground => "ALCHEMICAL PLAYGROUND",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4238,6 +4342,86 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
     }
 }
 
+#[cfg(feature = "nova")]
+fn render_playground(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(20), Constraint::Percentage(60), Constraint::Percentage(20)].as_ref())
+        .split(f.area());
+
+    // Left: Palette (Instructions)
+    let palette_items = vec![
+        ListItem::new("Basic: Push, Add, Sub, Mul"),
+        ListItem::new("Flow: Jump, Brz, Loop"),
+        ListItem::new("Grid: GRead, GWrite"),
+        ListItem::new("Life: Mitosis, Apoptosis"),
+        ListItem::new("Nova: Transmute, TimeWarp"),
+    ];
+    let palette_list = List::new(palette_items)
+        .block(Block::default().borders(Borders::ALL).title("Alchemical Palette"));
+    f.render_widget(palette_list, chunks[0]);
+
+    // Center: Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let mut style = Style::default();
+
+            // Highlight active execution trail
+            let trail = vm.execution_trail[y * 16 + x];
+            if trail > 0 {
+                let intensity = (trail as u16 * 2).clamp(0, 255) as u8;
+                style = style.bg(Color::Rgb(0, 0, intensity));
+            }
+
+            // Cursor
+            if app_state.grid_cursor == (x, y) {
+                style = style.bg(Color::White).fg(Color::Black).add_modifier(Modifier::BOLD);
+                if let Some(_) = app_state.playground_drag_source {
+                    style = style.bg(Color::Yellow); // Dragging target
+                }
+            } else if let Some(src) = app_state.playground_drag_source {
+                if src == (x, y) {
+                    style = style.bg(Color::Green).fg(Color::Black); // Source
+                }
+            }
+
+            let s = format!("{}", val);
+            let display = if s.len() > 3 {
+                format!("{:.3}", s)
+            } else {
+                format!("{:^3}", s)
+            };
+
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_title = if app_state.playground_running { "Playground (RUNNING)" } else { "Playground (PAUSED)" };
+    let grid_widget = Paragraph::new(grid_lines)
+        .block(Block::default().borders(Borders::ALL).title(grid_title));
+    f.render_widget(grid_widget, chunks[1]);
+
+    // Right: Inspector / Stack
+    let mut info_items = Vec::new();
+    let (cx, cy) = app_state.grid_cursor;
+    info_items.push(ListItem::new(format!("Cursor: {},{}", cx, cy)));
+    info_items.push(ListItem::new(format!("Value: {:?}", vm.grid[cy][cx])));
+    info_items.push(ListItem::new(""));
+    info_items.push(ListItem::new("Stack Top:"));
+    for val in vm.stack.iter().rev().take(10) {
+        info_items.push(ListItem::new(format!("{}", val)));
+    }
+
+    let info_list = List::new(info_items)
+        .block(Block::default().borders(Borders::ALL).title("Inspector"));
+    f.render_widget(info_list, chunks[2]);
+}
+
 fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
     let mut views = vec![
         (ViewMode::Genome, "Genome", "Tab"),
@@ -4294,6 +4478,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hydra, "Hydra", "Y"));
         views.push((ViewMode::Chronos, "Chronos", "T"));
         views.push((ViewMode::Logos, "Logos", "U"));
+        views.push((ViewMode::Playground, "Playground", "P"));
     }
     views
 }
