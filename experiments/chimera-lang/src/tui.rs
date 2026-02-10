@@ -5413,6 +5413,12 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     .bg(Color::Blue)
                     .add_modifier(Modifier::BOLD);
                 "-".to_string() // Ground
+            } else if r == -3.0 {
+                style = style
+                    .fg(Color::Cyan)
+                    .bg(Color::Black)
+                    .add_modifier(Modifier::BOLD);
+                "?".to_string() // OracleGate
             } else {
                 // Current flow?
                 let i = vm.current_grid[y][x];
@@ -5462,6 +5468,8 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         "BATTERY (Source)"
     } else if r == -2.0 {
         "GROUND (Sink)"
+    } else if r == -3.0 {
+        "ORACLE GATE"
     } else {
         "Passive"
     };

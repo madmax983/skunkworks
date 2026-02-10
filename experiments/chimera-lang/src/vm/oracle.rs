@@ -817,6 +817,22 @@ fn parse_kb_entry(entry: &Value) -> (Value, Vec<Value>) {
     (entry.clone(), Vec::new())
 }
 
+/// Helper to check if a goal can be proven given the current state.
+/// This is used by external modules (like Elektra) to query the Oracle.
+pub fn prove(vm: &ChimeraVM, goal: Value) -> bool {
+    let mut solutions = Vec::new();
+    let subst = HashMap::new();
+    solve(
+        &[goal],
+        subst,
+        &vm.knowledge_base,
+        vm,
+        &mut solutions,
+        0,
+    );
+    !solutions.is_empty()
+}
+
 fn rename_vars(val: &Value, suffix: usize) -> Value {
     match val {
         Value::Str(s) if s.starts_with('?') => Value::Str(format!("{}_{}", s, suffix)),

@@ -361,6 +361,12 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     CircuitBreaker,
 
+    /// **[Elektra]** Creates a gate that conducts only if a Logic Rule is satisfied.
+    ///
+    /// **Stack:** `[ ..., rule_junction, y, x ] -> [ ... ]`
+    #[cfg(all(feature = "elektra", feature = "oracle"))]
+    OracleGate,
+
     // Nova Features
     /// **[Nova]** Expands an L-System axiom using rules and iterations.
     ///

@@ -2492,6 +2492,9 @@ impl ChimeraVM {
             | OpCode::Shock
             | OpCode::Lightning => elektra::exec_elektra_op(self, op, args),
 
+            #[cfg(all(feature = "elektra", feature = "oracle"))]
+            OpCode::OracleGate => elektra::exec_elektra_op(self, op, args),
+
             #[cfg(feature = "hive")]
             OpCode::HiveBind | OpCode::HiveSend | OpCode::HiveRecv | OpCode::HiveClose => {
                 hive::exec_hive_op(self, op, args);

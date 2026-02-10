@@ -1,9 +1,32 @@
 use super::{ChimeraVM, Value, GRID_SIZE};
-use crate::ast::Nucleotide;
+use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+use std::collections::HashMap;
 
 pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
+        #[cfg(all(feature = "elektra", feature = "oracle"))]
+        OpCode::OracleGate => {
+            // [rule_junction, y, x]
+            if vm.stack.len() >= 3 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let rule = vm.stack.pop().unwrap();
+                if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
+                    if x >= 0 && x < GRID_SIZE as i64 && y >= 0 && y < GRID_SIZE as i64 {
+                        let ux = x as usize;
+                        let uy = y as usize;
+                        // Store as Junction(Any, ["OracleGate", rule])
+                        vm.grid[uy][ux] = Value::Junction(
+                            JunctionType::Any,
+                            vec![Value::Str("OracleGate".to_string()), rule],
+                        );
+                        vm.resistance_grid[uy][ux] = -3.0; // Marker
+                        vm.output.push(format!("ORACLEGATE: Installed at {},{}", x, y));
+                    }
+                }
+            }
+        }
         OpCode::Electrogenesis => {
             // [amount]
             if let Some(val) = vm.stack.pop() {
@@ -181,6 +204,30 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
     // If R is low (Wire), coupling is high.
     // Sources (R < 0) are fixed.
 
+    // Pre-calculate OracleGate states
+    #[cfg(all(feature = "elektra", feature = "oracle"))]
+    let mut gate_states = HashMap::new();
+    #[cfg(all(feature = "elektra", feature = "oracle"))]
+    {
+        for y in 0..GRID_SIZE {
+            for x in 0..GRID_SIZE {
+                if vm.resistance_grid[y][x] == -3.0 {
+                    let cell_val = &vm.grid[y][x];
+                    let conducting = if let Value::Junction(_, args) = cell_val {
+                        if args.len() >= 2 && args[0] == Value::Str("OracleGate".to_string()) {
+                            crate::vm::oracle::prove(vm, args[1].clone())
+                        } else {
+                            false
+                        }
+                    } else {
+                        false
+                    };
+                    gate_states.insert((y, x), conducting);
+                }
+            }
+        }
+    }
+
     let iterations = 10;
     let grid_size = GRID_SIZE;
 
@@ -192,8 +239,9 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
             for x in 0..grid_size {
                 let r_self = vm.resistance_grid[y][x];
 
-                // Fixed nodes
-                if r_self < 0.0 {
+                // Fixed nodes (Battery=-1.0, Ground=-2.0)
+                // OracleGate (-3.0) is DYNAMIC, so we treat it as variable resistance
+                if r_self == -1.0 || r_self == -2.0 {
                     next_voltage[y][x] = vm.voltage_grid[y][x];
                     continue;
                 }
@@ -204,12 +252,22 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 // For now, resistance_grid > 0 is just "initialized".
                 // We trust grid content more for wiring.
                 let cell_val = &vm.grid[y][x];
-                let conductivity = match cell_val {
+                #[allow(unused_mut)]
+                let mut conductivity = match cell_val {
                     Value::Int(0) => 0.0,                                  // Air
                     Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
                     Value::Int(_) => 0.01,                                 // Other matter
                     _ => 0.0,                                              // Air
                 };
+
+                #[cfg(all(feature = "elektra", feature = "oracle"))]
+                if r_self == -3.0 {
+                    if let Some(true) = gate_states.get(&(y, x)) {
+                        conductivity = 10.0; // Conducting
+                    } else {
+                        conductivity = 0.0; // Open circuit
+                    }
+                }
 
                 if conductivity <= 0.001 {
                     // Insulator, V decays to 0
