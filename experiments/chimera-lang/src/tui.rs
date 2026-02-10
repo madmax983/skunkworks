@@ -94,6 +94,8 @@ pub(crate) enum ViewMode {
     Quipu,
     #[cfg(feature = "nova")]
     Hydra,
+    #[cfg(feature = "nova")]
+    Chronos,
 }
 
 enum InputMode {
@@ -521,6 +523,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Chronos = app_state.view_mode {
+                render_chronos(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -804,6 +812,16 @@ where
                                     // Grid Editing Logic
                                     let val = parse_grid_value(&app_state.input_buffer);
                                     let (x, y) = app_state.grid_cursor;
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Chronos => {
+                                    // Enable editing grid from Chronos view
+                                    let (x, y) = app_state.grid_cursor;
+                                    let val = parse_grid_value(&app_state.input_buffer);
                                     vm.grid[y][x] = val;
                                     app_state.status_msg = format!("Grid updated at {},{}", x, y);
                                     app_state.input_mode = InputMode::Normal;
@@ -1199,7 +1217,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Quipu => ViewMode::Hydra,
                             #[cfg(feature = "nova")]
-                            ViewMode::Hydra => ViewMode::Heatmap,
+                            ViewMode::Hydra => ViewMode::Chronos,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Chronos => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1390,6 +1410,8 @@ where
                     KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('T') => app_state.view_mode = ViewMode::Chronos,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1620,6 +1642,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Chronos => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Void => {
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
@@ -1816,6 +1844,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Chronos => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2007,6 +2041,12 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Chronos => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -2133,6 +2173,12 @@ where
                         ViewMode::Strings => {}
                         ViewMode::Genome => {}
                         ViewMode::Grid => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Chronos => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2345,6 +2391,18 @@ where
                                 }
                             }
                             ViewMode::Grid => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = &vm.grid[y][x];
+                                match val {
+                                    crate::vm::Value::Int(n) => {
+                                        app_state.input_buffer = n.to_string()
+                                    }
+                                    crate::vm::Value::Str(s) => app_state.input_buffer = s.clone(),
+                                    _ => app_state.input_buffer = String::new(),
+                                }
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Chronos => {
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 match val {
@@ -3592,6 +3650,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Quipu => "QUIPU (TOPOLOGICAL MEMORY)",
         #[cfg(feature = "nova")]
         ViewMode::Hydra => "HYDRA (FLUIDIC LOGIC)",
+        #[cfg(feature = "nova")]
+        ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -6663,4 +6723,103 @@ fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Fluid Gauge"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Left: Time Grid (Dilation Factors)
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let factor = vm.time_grid[y][x];
+            let mut style = Style::default();
+
+            // Dilation visualization
+            // 0: Stasis (Blue/Black)
+            // 1: Normal (Gray)
+            // >1: Accelerated (Yellow/Red)
+            let ch = match factor {
+                0 => "ZZ",
+                1 => " .",
+                _ => ">>",
+            };
+
+            style = match factor {
+                0 => style.fg(Color::Blue).bg(Color::Black),
+                1 => style.fg(Color::DarkGray),
+                n if n < 5 => style.fg(Color::Yellow),
+                _ => style.fg(Color::Red).add_modifier(Modifier::BOLD),
+            };
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch.to_string(), style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Time Dilation Field"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: History / Echoes
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // History Info
+    let history_len = vm.grid_history.len();
+    let (cx, cy) = app_state.grid_cursor;
+
+    let info = vec![
+        Line::from(format!("History Depth: {} / {}", history_len, crate::vm::MAX_HISTORY_DEPTH)),
+        Line::from(format!("Chronostasis Timer: {} ticks", vm.chronostasis_timer)),
+        Line::from(" "),
+        Line::from(format!("Cursor: {},{}", cx, cy)),
+        Line::from(" "),
+        Line::from("Opcodes:"),
+        Line::from("  TimeWarp(factor, radius)"),
+        Line::from("  Chronostasis(ticks)"),
+        Line::from("  Retrograde(ticks)"),
+        Line::from("  Sporulate / Germinate"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Chronos Status"),
+    );
+    f.render_widget(info_widget, right_chunks[0]);
+
+    // Cell History (Echoes)
+    // Show the history of the selected cell
+    let mut echoes = Vec::new();
+    for (i, snapshot) in vm.grid_history.iter().rev().enumerate() {
+        let val = &snapshot[cy][cx];
+        echoes.push(ListItem::new(format!("-{}: {}", i + 1, val)));
+    }
+
+    if echoes.is_empty() {
+        echoes.push(ListItem::new("No history recorded."));
+    }
+
+    let echo_list = List::new(echoes).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Echoes at {},{}", cx, cy)),
+    );
+    f.render_widget(echo_list, right_chunks[1]);
 }
