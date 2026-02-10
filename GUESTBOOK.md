@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-automaton
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Vehicles are navigating the Poincaré Disk. Möbius transformations are driving the wheels. The world is infinite.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.

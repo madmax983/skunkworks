@@ -699,7 +699,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Breathing Sheet" where a Spiking Neural Network (CPG) drives the folding actuators of a Miura-ori mesh.
 - **Novel trait**: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
 - **Status**: experiments/neuro-fold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Verified in GUESTBOOK.
 
 ### origami-swarm
 - **Parents**: experiments/neuro-fold + experiments/luminous-flock
@@ -727,4 +727,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### hyperbolic-automaton
+- **Parents**: experiments/hyperbolic-hell + experiments/chimera-automaton
+- **Concept**: Autonomous vehicles navigating the infinite Poincaré Disk.
+- **Novel trait**: Non-Euclidean Navigation. Agents must adapt to exponential space expansion.
+- **Status**: experiments/hyperbolic-automaton
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
