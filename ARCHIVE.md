@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyphal-commute**: Specimen condemned. Terminal compilation failure. Redundant with `myco-transit`. Grace period: 24h.
+- **walker-filesystem**: Specimen condemned. Redundant with `ik-codewalker`. Sketch-quality 2-bone IK. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyphal-commute**: Specimen executed. Terminal compilation failure. Redundant with `myco-transit`. Moved to graveyard.
 - **geologic-git**: Specimen executed. Ancestral redundancy (superseded by `tectonic-git`). Failed to improve during grace period. Biomass returned to the void.
 - **stigmergy-hub**: Specimen executed. Identity mismatch confirmed (menu launcher). Documentation void. Moved to graveyard.
 - **syntax-serum**: Specimen executed. Failed to improve during grace period. Documentation void. Redundant with `code-reaction`. Moved to graveyard.
