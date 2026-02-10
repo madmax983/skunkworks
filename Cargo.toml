@@ -130,7 +130,7 @@ members = [
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/quantum-lexicon",
     "experiments/hyperbolic-bridge",
-    "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/quipu-net", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
+    "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
 ]
 resolver = "2"
 
