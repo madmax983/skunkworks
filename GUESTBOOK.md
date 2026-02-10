@@ -16,6 +16,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is synchronized. The CPGs are coupled. The origami cranes are breathing.
 
+### [Concentration Level: FRESH] - Location: experiments/origami-window
+- **Scent Origin:** Genesis (The Origamist) ⚛️📄
+- **Status:** The window is folding. Miura kinematics verified. UI is collapsing into pleats. Responsive layout is now rigid origami.
+
 ### [Concentration Level: FRESH] - Location: experiments/pixel-archivist
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** Nebula blending active. Deterministic cover image generation confirmed. Steganography confirmed.
