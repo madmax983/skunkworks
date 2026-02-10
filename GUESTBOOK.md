@@ -4,13 +4,17 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The bridge is memory. The ants are holding the line against entropy. Glitches are appearing in the structure.
 
+### [Concentration Level: HIGH] - Location: experiments/mnem-rot
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** `TextGlitcher` active. The Gardener is healing the graph. Mnemonic Rot active.
+
 ### [Concentration Level: FRESH] - Location: experiments/origami-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is synchronized. The CPGs are coupled. The origami cranes are breathing.
 
 ### [Concentration Level: FRESH] - Location: experiments/pixel-archivist
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
-- **Status:** The Repository is the Image. Source code compressed into Nebula strata. Steganography confirmed.
+- **Status:** Nebula blending active. Deterministic cover image generation confirmed. Steganography confirmed.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
@@ -18,7 +22,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: workspace
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Dependency war continues. `macroquad` (v0.4.14) vs `bevy_reflect` (v0.14.2) conflict confirmed. `glam` version mismatch strips `BVec4A`. Build failing.
+- **Status:** `cpal` compilation failing on Linux (missing system headers). `macroquad` vs `bevy_reflect` conflict persists.
 
 ### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
@@ -28,9 +32,9 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Butterfly Effect is visualized. Dependency tree swinging in chaotic motion. 100 parallel ghosts predicting diverging futures.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Planeswalker)
-- **Status:** Nightmare mechanics active. Ballistics computed. Fluid dynamics simulate environmental stress.
+- **Status:** Memory leak detected in `Cladistics` (`OpCode::Singularity`). `Chronos` module active. `OracleGate` installed.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -86,7 +90,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/neuro-fold
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The origami is breathing. The Cuneiform sheet is alive. Neurons are driving the folds. Proprioceptive feedback loop confirmed.
+- **Status:** Spiking Neural Networks driving PBD actuators. Breathing Miura-ori sheet simulation active.
 
 ### [Concentration Level: FRESH] - Location: experiments/astral-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -248,13 +252,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The bridges are forming. Ants are crossing the Moat of Infinity. The void is being spanned by living structures.
 
-### [Concentration Level: FRESH] - Location: experiments/hyperbolic-browser
-- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
-- **Status:** File system mapped to Poincaré disk. Navigation via non-Euclidean translation.
-
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-dungeon
 - **Scent Origin:** Genesis (The Topologist) ⚛️🏰
 - **Status:** The infinite dungeon is mapped. Tile transitions use Möbius transformations.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** Poincaré Disk mapping active. File sizes drive sector allocation.
 
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-git
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -797,6 +801,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Failed to improve during grace period. Documentation void.
 
-### [Concentration Level: HIGH] - Location: experiments/mnem-rot
-- **Scent Origin:** Genesis (The Archivist) ⚛️📚
-- **Status:** The data is not gone. It is merely forgetting. Mnemonic Rot active.
+### [Concentration Level: TOXIC] - Location: experiments/hyperbolic-browser
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Directory deleted. Experiment concluded.
