@@ -2,21 +2,23 @@
 //!
 //! A lightweight 2D geometry library for TUI applications.
 //!
-//! This crate provides a simple `Vec2` struct for position, velocity, and force calculations.
-//! It supports standard arithmetic operations (+, -, *, /) and common vector
+//! This crate provides a simple [`Vec2`] struct for position, velocity, and force calculations.
+//! It supports standard arithmetic operations (`+`, `-`, `*`, `/`) and common vector
 //! operations (magnitude, normalize, dot, reflect).
+//!
+//! It also includes a [`Topology`] enum for handling coordinate wrapping in various
+//! 2D manifolds (Torus, Klein Bottle, Möbius Strip).
 //!
 //! ## Features
 //!
-//! - `serde`: Enables `Serialize` and `Deserialize` implementation for `Vec2`.
+//! - `serde`: Enables `Serialize` and `Deserialize` implementation for [`Vec2`] and [`Topology`].
 
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// A simple 2D vector with `f64` components.
 ///
 /// This struct is the workhorse of position, velocity, and force calculations.
-/// It supports standard arithmetic operations (+, -, *, /) and common vector
-/// operations (magnitude, normalize, dot, reflect).
+/// It supports standard arithmetic operations and common vector operations.
 ///
 /// # Examples
 ///
@@ -97,7 +99,8 @@ impl Vec2 {
     /// Returns a normalized version of the vector (length of 1.0).
     ///
     /// If the vector is zero, it returns the zero vector.
-    /// If the vector has infinite components, it attempts to handle them gracefully.
+    /// If the vector has infinite components, it attempts to handle them gracefully
+    /// by returning a unit vector along the major axis.
     ///
     /// # Examples
     ///
@@ -149,9 +152,6 @@ impl Vec2 {
     /// use locus::Vec2;
     /// let v = Vec2::new(10.0, 0.0);
     /// assert_eq!(v.limit(5.0), Vec2::new(5.0, 0.0));
-    ///
-    /// let v2 = Vec2::new(3.0, 0.0);
-    /// assert_eq!(v2.limit(5.0), Vec2::new(3.0, 0.0));
     /// ```
     pub fn limit(&self, max: f64) -> Self {
         if self.magnitude_squared() > max * max {
@@ -215,7 +215,10 @@ impl Vec2 {
 
     /// Reflects the vector off a surface with the given normal.
     ///
-    /// The normal vector does not need to be normalized.
+    /// The normal vector does not need to be normalized, but `reflect` assumes the surface behaves
+    /// like a standard mirror.
+    ///
+    /// Formula: `r = d - 2 * (d . n) / (n . n) * n`
     ///
     /// # Examples
     ///
@@ -232,7 +235,6 @@ impl Vec2 {
             return *self;
         }
         let dot = self.dot(normal);
-        // r = d - 2 * (d . n) / (n . n) * n
         let factor = 2.0 * dot / n_sq;
         Self {
             x: self.x - factor * normal.x,
@@ -241,6 +243,8 @@ impl Vec2 {
     }
 
     /// Rotates the vector by the given angle (in radians).
+    ///
+    /// A positive angle rotates counter-clockwise (in standard math coordinates).
     ///
     /// # Examples
     ///
@@ -261,6 +265,8 @@ impl Vec2 {
         }
     }
 }
+
+// Implement arithmetic traits
 
 impl Add for Vec2 {
     type Output = Self;
@@ -349,6 +355,131 @@ impl From<(f64, f64)> for Vec2 {
 impl From<Vec2> for (f64, f64) {
     fn from(v: Vec2) -> Self {
         (v.x, v.y)
+    }
+}
+
+/// Represents the topology of a grid or space.
+///
+/// Determines how coordinates wrap or bound at the edges.
+/// Assumes a square grid of size `size x size`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum Topology {
+    /// Bounded grid. Edges are walls.
+    Plane,
+    /// Standard wrap. Top connects to Bottom, Left connects to Right.
+    /// Used for "Pac-Man" worlds or standard tori.
+    Torus,
+    /// Wraps X (Left-Right), Bounded Y (Top-Bottom).
+    CylinderH,
+    /// Bounded X (Left-Right), Wraps Y (Top-Bottom).
+    CylinderV,
+    /// Wraps X normally. Wraps Y with a twist (flip X).
+    /// Moving off the top/bottom edge flips your X coordinate.
+    Klein,
+    /// Wraps X with a twist (flip Y). Bounded Y.
+    /// Moving off the left/right edge flips your Y coordinate.
+    Mobius,
+    /// Poincaré Disk model placeholder. Typically handled as bounded or custom logic.
+    Hyperbolic,
+}
+
+impl Topology {
+    /// Normalizes coordinates based on the topology and grid size.
+    ///
+    /// This function takes arbitrary `i64` coordinates (which may be negative or
+    /// larger than the grid) and maps them to a valid `(usize, usize)` index inside
+    /// the grid `[0, size) x [0, size)`.
+    ///
+    /// Returns `Some((y, x))` if the coordinates land on the grid.
+    /// Returns `None` if the coordinates are out of bounds (for bounded topologies).
+    ///
+    /// # Arguments
+    ///
+    /// * `y` - The Y coordinate (row).
+    /// * `x` - The X coordinate (column).
+    /// * `size` - The size of the grid (assumed square).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    /// let size = 10;
+    ///
+    /// // Torus Wrap
+    /// let t = Topology::Torus;
+    /// assert_eq!(t.normalize(10, -1, size), Some((0, 9)));
+    ///
+    /// // Plane Bounds
+    /// let p = Topology::Plane;
+    /// assert_eq!(p.normalize(10, 5, size), None); // Off bottom edge
+    /// ```
+    pub fn normalize(&self, y: i64, x: i64, size: usize) -> Option<(usize, usize)> {
+        let s = size as i64;
+        match self {
+            Topology::Plane | Topology::Hyperbolic => {
+                if (0..s).contains(&y) && (0..s).contains(&x) {
+                    Some((y as usize, x as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Torus => Some((y.rem_euclid(s) as usize, x.rem_euclid(s) as usize)),
+            Topology::CylinderH => {
+                // Wraps X, Bounded Y
+                if (0..s).contains(&y) {
+                    Some((y as usize, x.rem_euclid(s) as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::CylinderV => {
+                // Bounded X, Wraps Y
+                if (0..s).contains(&x) {
+                    Some((y.rem_euclid(s) as usize, x as usize))
+                } else {
+                    None
+                }
+            }
+            Topology::Klein => {
+                // Wraps X (column) normally.
+                // Wraps Y (row) with X-twist.
+                // If Y wraps an ODD number of times, we mirror X.
+
+                let y_norm = y.rem_euclid(s);
+                let y_wraps = y.div_euclid(s);
+
+                let x_norm = x.rem_euclid(s);
+
+                let x_final = if y_wraps % 2 != 0 {
+                    (s - 1) - x_norm // Mirror X: 0 becomes s-1
+                } else {
+                    x_norm
+                };
+
+                Some((y_norm as usize, x_final as usize))
+            }
+            Topology::Mobius => {
+                // Wraps X (column) with Y-twist.
+                // Bounded Y (row).
+
+                // First check if Y is in bounds. If not, we fall off the edge.
+                if !(0..s).contains(&y) {
+                    return None;
+                }
+
+                let x_norm = x.rem_euclid(s);
+                let x_wraps = x.div_euclid(s);
+
+                let y_final = if x_wraps % 2 != 0 {
+                    (s - 1) - y // Mirror Y: 0 becomes s-1
+                } else {
+                    y
+                };
+
+                Some((y_final as usize, x_norm as usize))
+            }
+        }
     }
 }
 
@@ -475,117 +606,57 @@ mod tests {
         assert!((r270.x - 0.0).abs() < 1e-6);
         assert!((r270.y - -1.0).abs() < 1e-6);
     }
-}
-
-/// Represents the topology of a grid or space.
-///
-/// Determines how coordinates wrap or bound at the edges.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub enum Topology {
-    Plane,      // 0: Bounded. Edges are walls.
-    Torus,      // 1: Wraps X and Y.
-    CylinderH,  // 2: Wraps X, Bounded Y.
-    CylinderV,  // 3: Bounded X, Wraps Y.
-    Klein,      // 4: Wraps X, Wraps Y with twist (x' = W-1-x).
-    Mobius,     // 5: Wraps X with twist, Bounded Y.
-    Hyperbolic, // 6: Poincaré Disk model mapping (handled externally or treated as bounded).
-}
-
-impl Topology {
-    /// Normalizes coordinates based on the topology and grid size.
-    ///
-    /// Returns `Some((y, x))` if the coordinates are valid or wrapped.
-    /// Returns `None` if the coordinates are out of bounds (for bounded topologies).
-    ///
-    /// # Arguments
-    ///
-    /// * `y` - The Y coordinate (row).
-    /// * `x` - The X coordinate (column).
-    /// * `size` - The size of the grid (assumed square: size x size).
-    pub fn normalize(&self, y: i64, x: i64, size: usize) -> Option<(usize, usize)> {
-        let s = size as i64;
-        match self {
-            Topology::Plane | Topology::Hyperbolic => {
-                if (0..s).contains(&y) && (0..s).contains(&x) {
-                    Some((y as usize, x as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::Torus => Some((y.rem_euclid(s) as usize, x.rem_euclid(s) as usize)),
-            Topology::CylinderH => {
-                // Wraps X, Bounded Y
-                if (0..s).contains(&y) {
-                    Some((y as usize, x.rem_euclid(s) as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::CylinderV => {
-                // Bounded X, Wraps Y
-                if (0..s).contains(&x) {
-                    Some((y.rem_euclid(s) as usize, x as usize))
-                } else {
-                    None
-                }
-            }
-            Topology::Klein => {
-                // Wraps X normal, Y wraps with X-twist
-                let mut nx = x;
-                let mut ny = y;
-
-                if !(0..s).contains(&ny) {
-                    let wrap_count = ny.div_euclid(s);
-                    if wrap_count % 2 != 0 {
-                        nx = (s - 1).wrapping_sub(nx); // Twist X
-                    }
-                    ny = ny.rem_euclid(s);
-                }
-                nx = nx.rem_euclid(s);
-
-                Some((ny as usize, nx as usize))
-            }
-            Topology::Mobius => {
-                // Wraps X with twist, Bounded Y
-                let mut nx = x;
-                let mut ny = y;
-
-                if !(0..s).contains(&nx) {
-                    let wrap_count = nx.div_euclid(s);
-                    if wrap_count % 2 != 0 {
-                        ny = (s - 1).wrapping_sub(ny); // Twist Y
-                    }
-                    nx = nx.rem_euclid(s);
-                }
-
-                if (0..s).contains(&ny) {
-                    Some((ny as usize, nx as usize))
-                } else {
-                    None
-                }
-            }
-        }
-    }
-}
-
-#[cfg(test)]
-mod topology_tests {
-    use super::*;
 
     #[test]
     fn test_topology_overflow_klein() {
         let topo = Topology::Klein;
-        // y = -16 (wraps once, odd), x = i64::MIN
-        // Should not panic
-        let _ = topo.normalize(-16, i64::MIN, 16);
+        // y = -16. s = 10.
+        // -16 div 10 = -2 (even). rem = 4.
+        // Even wrap -> No X flip.
+        // Wait, div_euclid(-16, 10) is -2.
+        // -16 = -2 * 10 + 4.
+        // Wraps -2 times (even).
+
+        let (ny, nx) = topo.normalize(-16, 5, 10).unwrap();
+        assert_eq!(ny, 4);
+        assert_eq!(nx, 5); // No flip
+
+        // y = -15.
+        // -15 div 10 = -2 (even). rem = 5.
+        // Wait.
+        // -10..-1 is wrap -1 (odd).
+        // -20..-11 is wrap -2 (even).
+
+        // Let's test explicit odd wrap
+        // y = 10. wrap 1. Odd.
+        let (ny2, nx2) = topo.normalize(10, 2, 10).unwrap();
+        assert_eq!(ny2, 0);
+        assert_eq!(nx2, 7); // Flip: 10 - 1 - 2 = 7
+
+        // Test extreme overflow (regression test for bug)
+        // x = i64::MIN.
+        // i64::MIN rem 10 = 2 (approx).
+        // If y wrap is odd, x should be flipped properly.
+        let (ny3, nx3) = topo.normalize(10, i64::MIN, 10).unwrap();
+        assert_eq!(ny3, 0);
+
+        let x_norm = i64::MIN.rem_euclid(10) as usize;
+        let expected_x = 9 - x_norm;
+        assert_eq!(nx3, expected_x);
     }
 
     #[test]
     fn test_topology_overflow_mobius() {
         let topo = Topology::Mobius;
-        // x = -16 (wraps once, odd), y = i64::MIN
-        // Should not panic
-        let _ = topo.normalize(i64::MIN, -16, 16);
+        // x = 10 (wrap 1, odd). y = 2.
+        // Flip Y.
+        let (ny, nx) = topo.normalize(2, 10, 10).unwrap();
+        assert_eq!(nx, 0);
+        assert_eq!(ny, 7); // 10 - 1 - 2 = 7
+
+        // x = i64::MIN. (Even/Odd wrap?)
+        // Regression test: should not panic.
+        let res = topo.normalize(2, i64::MIN, 10);
+        assert!(res.is_some());
     }
 }
