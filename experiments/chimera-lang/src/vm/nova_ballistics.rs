@@ -199,8 +199,7 @@ pub fn exec_fire(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         if let (Value::Int(dx), Value::Int(dy), Value::Int(pow)) = (dx_val, dy_val, pow_val) {
             if vm.projectiles.len() >= MAX_PROJECTILES {
-                vm.output
-                    .push("FIRE: Projectile limit reached".to_string());
+                vm.output.push("FIRE: Projectile limit reached".to_string());
                 return None;
             }
 
@@ -277,7 +276,8 @@ pub fn exec_salvo(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
 
             vm.energy = vm.energy.saturating_sub((5 + pow) * fired);
-            vm.output.push(format!("SALVO: Fired {} projectiles", fired));
+            vm.output
+                .push(format!("SALVO: Fired {} projectiles", fired));
         } else {
             vm.output.push("Error: Type mismatch for salvo".to_string());
         }

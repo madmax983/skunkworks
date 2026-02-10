@@ -411,8 +411,8 @@ impl State {
             let dist = p.to_vec().magnitude();
             let c = (dist / 10.0).sin() * 0.5 + 0.5;
 
-            let model = Matrix4::from_translation(Vector3::new(p.x, p.y, p.z))
-                * Matrix4::from_scale(0.5); // Make atoms smaller
+            let model =
+                Matrix4::from_translation(Vector3::new(p.x, p.y, p.z)) * Matrix4::from_scale(0.5); // Make atoms smaller
 
             instances.push(InstanceRaw {
                 model: model.into(),
@@ -424,7 +424,9 @@ impl State {
         for (start, end) in &qc.edges {
             let vec = end - start;
             let len = vec.magnitude();
-            if len < 0.001 { continue; }
+            if len < 0.001 {
+                continue;
+            }
             let dir = vec.normalize();
             let mid = start + vec * 0.5;
 

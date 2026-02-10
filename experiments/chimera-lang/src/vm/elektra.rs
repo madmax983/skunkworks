@@ -2,7 +2,11 @@ use super::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 
-pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_elektra_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     match op {
         OpCode::Electrogenesis => {
             // [amount]
@@ -13,9 +17,11 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                         vm.energy -= cost;
                         let (y, x) = vm.context_loc;
                         vm.voltage_grid[y][x] += amount as f32;
-                        vm.output.push(format!("ELECTROGENESIS: +{}V at {},{}", amount, x, y));
+                        vm.output
+                            .push(format!("ELECTROGENESIS: +{}V at {},{}", amount, x, y));
                     } else {
-                        vm.output.push("ELECTROGENESIS: Not enough energy".to_string());
+                        vm.output
+                            .push("ELECTROGENESIS: Not enough energy".to_string());
                     }
                 }
             }
@@ -29,7 +35,10 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                 vm.energy = vm.energy.saturating_add(energy_gain);
                 vm.voltage_grid[y][x] = 0.0; // Absorb charge
                 vm.stack.push(Value::Int(energy_gain));
-                vm.output.push(format!("INDUCTION: Absorbed {}V -> {} Energy", v, energy_gain));
+                vm.output.push(format!(
+                    "INDUCTION: Absorbed {}V -> {} Energy",
+                    v, energy_gain
+                ));
             } else {
                 vm.stack.push(Value::Int(0));
             }
@@ -62,7 +71,7 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                             vm.energy -= 5;
                             vm.output.push(format!("WIREGROWTH: Wire at {},{}", nx, ny));
                         } else {
-                             vm.output.push("WIREGROWTH: Out of bounds".to_string());
+                            vm.output.push("WIREGROWTH: Out of bounds".to_string());
                         }
                     } else {
                         vm.output.push("WIREGROWTH: Not enough energy".to_string());
@@ -81,8 +90,9 @@ pub fn exec_elektra_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> 
                     let v = vm.voltage_grid[y][x];
                     if v > threshold as f32 {
                         if strand_idx >= 0 {
-                             vm.output.push(format!("CIRCUITBREAKER: Tripped at {}V > {}", v, threshold));
-                             return Some((strand_idx as usize, 0));
+                            vm.output
+                                .push(format!("CIRCUITBREAKER: Tripped at {}V > {}", v, threshold));
+                            return Some((strand_idx as usize, 0));
                         }
                     }
                 }

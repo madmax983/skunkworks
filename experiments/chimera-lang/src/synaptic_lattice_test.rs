@@ -2,10 +2,10 @@
 #[cfg(test)]
 mod tests {
     use crate::ast::{Dna, Helix};
-    use crate::vm::nova_signals::process_signals;
-    use crate::vm::{ChimeraVM, Value};
     #[cfg(feature = "biophysics")]
     use crate::vm::neuron::Neuron;
+    use crate::vm::nova_signals::process_signals;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -67,9 +67,21 @@ mod tests {
         process_signals(&mut vm);
 
         // Check neighbors for signal
-        assert_eq!(vm.signal_grid[0][1], 1, "North neighbor should receive signal");
-        assert_eq!(vm.signal_grid[2][1], 1, "South neighbor should receive signal");
-        assert_eq!(vm.signal_grid[1][0], 1, "West neighbor should receive signal");
-        assert_eq!(vm.signal_grid[1][2], 1, "East neighbor should receive signal");
+        assert_eq!(
+            vm.signal_grid[0][1], 1,
+            "North neighbor should receive signal"
+        );
+        assert_eq!(
+            vm.signal_grid[2][1], 1,
+            "South neighbor should receive signal"
+        );
+        assert_eq!(
+            vm.signal_grid[1][0], 1,
+            "West neighbor should receive signal"
+        );
+        assert_eq!(
+            vm.signal_grid[1][2], 1,
+            "East neighbor should receive signal"
+        );
     }
 }

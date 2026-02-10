@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use poincare_disk::{mobius_add, neighbor_transform_a, mobius_sub, Point, TilingConsts};
+use poincare_disk::{mobius_add, mobius_sub, neighbor_transform_a, Point, TilingConsts};
 use std::collections::HashSet;
 
 // Helper to hash points approximately for visited set
@@ -58,8 +58,9 @@ pub fn draw_tiling(view_center: Point, screen_center: Vec2, disk_radius: f32) {
 
         // Cull if too small or too far in view space
         let dist_sq = view_pos.norm_sqr();
-        if dist_sq > 0.99 { // Very close to boundary
-             continue;
+        if dist_sq > 0.99 {
+            // Very close to boundary
+            continue;
         }
 
         // Draw edges to neighbors
@@ -98,7 +99,13 @@ pub fn draw_tiling(view_center: Point, screen_center: Vec2, disk_radius: f32) {
 
             // Draw edge
             if dist_sq < 0.98 || n_view.norm_sqr() < 0.98 {
-                draw_geodesic(view_pos, n_view, screen_center, disk_radius, Color::new(0.2, 0.3, 0.4, 0.2));
+                draw_geodesic(
+                    view_pos,
+                    n_view,
+                    screen_center,
+                    disk_radius,
+                    Color::new(0.2, 0.3, 0.4, 0.2),
+                );
             }
 
             if visited.insert(GridPoint::from_point(neighbor)) {

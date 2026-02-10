@@ -35,19 +35,46 @@ mod tests {
 
         // 2. Write "prophecy" to Grid at (8,8)
         // Note: OpCodes are snake_case.
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::String("prophecy".to_string())] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] });
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("prophecy".to_string())],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        });
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // 3. Write "*" (Bang) to Grid at (8,7) to trigger signal on (8,8)
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::String("*".to_string())] });
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(7)] }); // y=7
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] }); // x=8
-        genes.push(Gene { op: OpCode::GWrite, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("*".to_string())],
+        });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(7)],
+        }); // y=7
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(8)],
+        }); // x=8
+        genes.push(Gene {
+            op: OpCode::GWrite,
+            args: vec![],
+        });
 
         // 4. Wait loop
-        genes.push(Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(genes.len() as i64)] });
+        genes.push(Gene {
+            op: OpCode::Jump,
+            args: vec![Nucleotide::Number(genes.len() as i64)],
+        });
 
         let mut vm = ChimeraVM::new(make_dna(genes));
 

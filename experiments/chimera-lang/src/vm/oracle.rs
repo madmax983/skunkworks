@@ -200,8 +200,7 @@ pub fn exec_oracle_op(
                     }
                     val @ Value::Junction(_, _) => val,
                     _ => {
-                        vm.output
-                            .push("Error: Invalid query for seek".to_string());
+                        vm.output.push("Error: Invalid query for seek".to_string());
                         return None;
                     }
                 };
@@ -227,12 +226,10 @@ pub fn exec_oracle_op(
                             return Some((*idx as usize, 0));
                         }
                     } else {
-                        vm.output
-                            .push("SEEK: ?Target not bound to Int".to_string());
+                        vm.output.push("SEEK: ?Target not bound to Int".to_string());
                     }
                 } else {
-                    vm.output
-                        .push("SEEK: No matching strand found".to_string());
+                    vm.output.push("SEEK: No matching strand found".to_string());
                 }
             } else {
                 vm.output
@@ -886,14 +883,7 @@ fn check_dynamic_predicates(
                                 let mut current_subst = subst.clone();
                                 if let Some(s1) = unify(arg_strand, &fact_strand, &current_subst) {
                                     if let Some(s2) = unify(arg_op, &fact_op, &s1) {
-                                        solve(
-                                            remaining_goals,
-                                            s2,
-                                            kb,
-                                            vm,
-                                            solutions,
-                                            depth + 1,
-                                        );
+                                        solve(remaining_goals, s2, kb, vm, solutions, depth + 1);
                                     }
                                 }
                             }

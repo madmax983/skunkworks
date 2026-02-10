@@ -1,6 +1,7 @@
 use anyhow::Result;
 use crossbeam_channel::{bounded, Receiver, Sender};
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use locus::Vec2;
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
@@ -14,7 +15,6 @@ use ratatui::{
 };
 use resonance_audio::audio::{AudioCommand, AudioModel};
 use std::time::{Duration, Instant};
-use locus::Vec2;
 use tui_shared::Tui;
 
 const WIDTH: usize = 80;

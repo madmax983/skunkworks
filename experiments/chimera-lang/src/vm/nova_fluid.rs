@@ -32,7 +32,8 @@ pub fn process_hydra_components(vm: &mut ChimeraVM) {
                     "v" => vm.wind_grid[y][x] = (5, 0),
                     "@" => {
                         // Pump: Generate pressure
-                        vm.moisture_grid[y][x] = vm.moisture_grid[y][x].saturating_add(50).min(MAX_MOISTURE);
+                        vm.moisture_grid[y][x] =
+                            vm.moisture_grid[y][x].saturating_add(50).min(MAX_MOISTURE);
                     }
                     "~" => {
                         // Drain: Remove pressure
@@ -174,10 +175,15 @@ pub fn process_fluid(vm: &mut ChimeraVM) {
     }
 }
 
-pub fn exec_aeolus(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_aeolus(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Stack: [ ..., angle, strength ]
     if vm.stack.len() < 2 {
-        vm.output.push("Error: Stack underflow for Aeolus".to_string());
+        vm.output
+            .push("Error: Stack underflow for Aeolus".to_string());
         return None;
     }
 
@@ -185,7 +191,8 @@ pub fn exec_aeolus(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opt
     let ang_val = vm.stack.pop().unwrap();
 
     let (Value::Int(ang), Value::Int(str)) = (ang_val, str_val) else {
-        vm.output.push("Error: Type mismatch for Aeolus".to_string());
+        vm.output
+            .push("Error: Type mismatch for Aeolus".to_string());
         return None;
     };
 
@@ -215,7 +222,8 @@ pub fn exec_aeolus(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opt
 pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Stack: [ ..., intensity, radius ]
     if vm.stack.len() < 2 {
-        vm.output.push("Error: Stack underflow for Storm".to_string());
+        vm.output
+            .push("Error: Stack underflow for Storm".to_string());
         return None;
     }
 
@@ -242,11 +250,16 @@ pub fn exec_storm(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Opti
     None
 }
 
-pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_tsunami(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Stack: [ ..., direction, power ]
     // Applies strong wind in a cone/line from current position
     if vm.stack.len() < 2 {
-        vm.output.push("Error: Stack underflow for Tsunami".to_string());
+        vm.output
+            .push("Error: Stack underflow for Tsunami".to_string());
         return None;
     }
 
@@ -254,16 +267,17 @@ pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
     let dir_val = vm.stack.pop().unwrap();
 
     let (Value::Int(dir), Value::Int(pow)) = (dir_val, pow_val) else {
-        vm.output.push("Error: Type mismatch for Tsunami".to_string());
+        vm.output
+            .push("Error: Type mismatch for Tsunami".to_string());
         return None;
     };
 
     let power = pow.clamp(1, MAX_WIND as i64 * 2) as i8;
     let (dy, dx) = match dir.rem_euclid(4) {
-        0 => (0, 1),   // E
-        1 => (1, 0),   // S
-        2 => (0, -1),  // W
-        3 => (-1, 0),  // N
+        0 => (0, 1),  // E
+        1 => (1, 0),  // S
+        2 => (0, -1), // W
+        3 => (-1, 0), // N
         _ => (0, 0),
     };
 
@@ -275,13 +289,15 @@ pub fn exec_tsunami(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
         if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy * i, cx as i64 + dx * i) {
             vm.wind_grid[ny][nx] = (dy as i8 * power, dx as i8 * power);
             // Also push moisture
-            vm.moisture_grid[ny][nx] = vm.moisture_grid[ny][nx].saturating_add(TSUNAMI_MOISTURE_ADD);
+            vm.moisture_grid[ny][nx] =
+                vm.moisture_grid[ny][nx].saturating_add(TSUNAMI_MOISTURE_ADD);
             affected += 1;
         }
     }
 
     vm.energy = vm.energy.saturating_sub(TSUNAMI_BASE_COST + power as i64);
-    vm.output.push(format!("TSUNAMI: Wave affected {} cells", affected));
+    vm.output
+        .push(format!("TSUNAMI: Wave affected {} cells", affected));
     None
 }
 

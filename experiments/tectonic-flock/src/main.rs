@@ -1,15 +1,18 @@
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
-    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
-    widgets::{Block, Borders, Paragraph, canvas::{Canvas, Line, Context}},
+    widgets::{
+        canvas::{Canvas, Context, Line},
+        Block, Borders, Paragraph,
+    },
+    Terminal,
 };
-use tui_shared::Tui;
 use std::time::{Duration, Instant};
+use tui_shared::Tui;
 
 mod boid;
 mod fissure;
@@ -92,7 +95,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Tectonic Flock"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Tectonic Flock"),
+        )
         .x_bounds([0.0, app.world.width])
         .y_bounds([0.0, app.world.height]) // Invert Y? Canvas is usually bottom-left 0,0.
         // If Strata 0 is top, we might need to invert or just accept it grows up.
@@ -112,7 +119,10 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         app.world.fissures.len(),
         app.world.scroll_y
     );
-    f.render_widget(Paragraph::new(info).style(Style::default().bg(Color::Blue)), chunks[1]);
+    f.render_widget(
+        Paragraph::new(info).style(Style::default().bg(Color::Blue)),
+        chunks[1],
+    );
 }
 
 fn draw_world(ctx: &mut Context, world: &World) {
@@ -149,7 +159,14 @@ fn draw_world(ctx: &mut Context, world: &World) {
 
             // Label with hash?
             if screen_y > 1.0 && screen_y < world.height - 1.0 {
-               ctx.print(1.0, screen_y, Span::styled(format!("{}", &strata.commit.hash[..7]), Style::default().fg(color)));
+                ctx.print(
+                    1.0,
+                    screen_y,
+                    Span::styled(
+                        format!("{}", &strata.commit.hash[..7]),
+                        Style::default().fg(color),
+                    ),
+                );
             }
         }
     }
@@ -157,18 +174,20 @@ fn draw_world(ctx: &mut Context, world: &World) {
     // 2. Draw Fissures
     for fissure in &world.fissures {
         // Draw lines between points
-        if fissure.points.len() < 2 { continue; }
+        if fissure.points.len() < 2 {
+            continue;
+        }
 
-        for i in 0..fissure.points.len()-1 {
+        for i in 0..fissure.points.len() - 1 {
             let p1 = fissure.points[i];
-            let p2 = fissure.points[i+1];
+            let p2 = fissure.points[i + 1];
 
             let s_y1 = p1.y - world.scroll_y;
             let s_y2 = p2.y - world.scroll_y;
 
             // Simple clip check
             if (s_y1 >= 0.0 && s_y1 <= world.height) || (s_y2 >= 0.0 && s_y2 <= world.height) {
-                 ctx.draw(&Line {
+                ctx.draw(&Line {
                     x1: p1.x,
                     y1: s_y1,
                     x2: p2.x,
@@ -187,6 +206,10 @@ fn draw_world(ctx: &mut Context, world: &World) {
             (boid.dna.char_representation.to_string(), boid.dna.color)
         };
 
-        ctx.print(boid.position.x, boid.position.y, Span::styled(char_str, Style::default().fg(color)));
+        ctx.print(
+            boid.position.x,
+            boid.position.y,
+            Span::styled(char_str, Style::default().fg(color)),
+        );
     }
 }

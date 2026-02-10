@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
-use rayon::prelude::*;
 use num_complex::Complex;
+use rayon::prelude::*;
 
 mod agent;
 mod rhythm;
-use agent::{Agent, INTERACTION_RADIUS, INTERACTION_COOLDOWN};
+use agent::{Agent, INTERACTION_COOLDOWN, INTERACTION_RADIUS};
 use poincare_disk::{hyperbolic_dist, Point};
 
 fn pulses_to_color(pulses: usize) -> Color {
@@ -87,7 +87,14 @@ async fn main() {
         });
 
         for (start, end, _, alpha) in &interaction_lines {
-             draw_line(start.0, start.1, end.0, end.1, 1.0, Color::new(0.0, 1.0, 0.0, *alpha));
+            draw_line(
+                start.0,
+                start.1,
+                end.0,
+                end.1,
+                1.0,
+                Color::new(0.0, 1.0, 0.0, *alpha),
+            );
         }
 
         // Draw Agents
@@ -107,10 +114,22 @@ async fn main() {
 
         // UI
         draw_text("Hyperbolic Jungle", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", num_agents), 20.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Agents: {}", num_agents),
+            20.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         let avg_bpm: f32 = agents.iter().map(|a| a.bpm).sum::<f32>() / agents.len() as f32;
-        draw_text(&format!("Avg BPM: {:.1}", avg_bpm), 20.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Avg BPM: {:.1}", avg_bpm),
+            20.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }
@@ -119,10 +138,10 @@ async fn main() {
 fn complex_to_screen(z: Point, center: Vec2, radius: f32) -> (f32, f32) {
     let x = center.x + z.re as f32 * radius;
     let y = center.y + z.im as f32 * radius; // Invert Y? Complex plane usually Y is up, screen Y is down.
-    // Let's keep Y up for now to match standard math orientation if needed, but for visual chaos it doesn't matter much.
-    // Actually screen Y is down. So +Im -> +Y means Up -> Down.
-    // Usually we want +Im -> Up (Screen -Y).
-    // Let's invert imaginary part mapping.
+                                             // Let's keep Y up for now to match standard math orientation if needed, but for visual chaos it doesn't matter much.
+                                             // Actually screen Y is down. So +Im -> +Y means Up -> Down.
+                                             // Usually we want +Im -> Up (Screen -Y).
+                                             // Let's invert imaginary part mapping.
     let y = center.y - z.im as f32 * radius;
     (x, y)
 }

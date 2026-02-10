@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, Value, ChromaCell};
 use super::nova::Phase;
+use super::{ChimeraVM, ChromaCell, Value};
 use crate::ast::Dna;
 use crate::opcode::OpCode;
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -167,13 +167,16 @@ pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 vm.output.push(format!("GERMINATE: Restored Spore {}", idx));
             } else {
-                vm.output.push("Error: Spore index out of bounds".to_string());
+                vm.output
+                    .push("Error: Spore index out of bounds".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for germinate".to_string());
+            vm.output
+                .push("Error: Type mismatch for germinate".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for germinate".to_string());
+        vm.output
+            .push("Error: Stack underflow for germinate".to_string());
     }
     None
 }
@@ -195,17 +198,21 @@ pub fn exec_time_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 let cost_multiplier = if factor == 0 { 2 } else { factor as i64 };
-                vm.energy = vm.energy.saturating_sub((count as i64 * cost_multiplier) / 2);
+                vm.energy = vm
+                    .energy
+                    .saturating_sub((count as i64 * cost_multiplier) / 2);
                 vm.output.push(format!(
                     "TIME_WARP: Set time factor {} at {},{} r={}",
                     factor, cx, cy, r
                 ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for time_warp".to_string());
+            vm.output
+                .push("Error: Type mismatch for time_warp".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for time_warp".to_string());
+        vm.output
+            .push("Error: Stack underflow for time_warp".to_string());
     }
     None
 }
@@ -224,15 +231,19 @@ pub fn exec_chronostasis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.chronostasis_timer = ticks as usize;
                 let cost = 50 + ticks;
                 vm.energy = vm.energy.saturating_sub(cost);
-                vm.output.push(format!("CHRONOSTASIS: Time frozen for {} ticks", ticks));
+                vm.output
+                    .push(format!("CHRONOSTASIS: Time frozen for {} ticks", ticks));
             } else {
-                vm.output.push("Error: Invalid ticks for chronostasis".to_string());
+                vm.output
+                    .push("Error: Invalid ticks for chronostasis".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for chronostasis".to_string());
+            vm.output
+                .push("Error: Type mismatch for chronostasis".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for chronostasis".to_string());
+        vm.output
+            .push("Error: Stack underflow for chronostasis".to_string());
     }
     None
 }
@@ -253,18 +264,23 @@ pub fn exec_retrograde(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.grid = past_grid;
 
                     vm.energy = vm.energy.saturating_sub(ticks * 2);
-                    vm.output.push(format!("RETROGRADE: Reverted grid to {} ticks ago", ticks));
+                    vm.output
+                        .push(format!("RETROGRADE: Reverted grid to {} ticks ago", ticks));
                 } else {
-                    vm.output.push("RETROGRADE: Ticks exceed history depth".to_string());
+                    vm.output
+                        .push("RETROGRADE: Ticks exceed history depth".to_string());
                 }
             } else {
-                vm.output.push("Error: Invalid ticks for retrograde".to_string());
+                vm.output
+                    .push("Error: Invalid ticks for retrograde".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for retrograde".to_string());
+            vm.output
+                .push("Error: Type mismatch for retrograde".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for retrograde".to_string());
+        vm.output
+            .push("Error: Stack underflow for retrograde".to_string());
     }
     None
 }

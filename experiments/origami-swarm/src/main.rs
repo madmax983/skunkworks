@@ -1,10 +1,10 @@
-mod pbd;
-mod neuron;
-mod network;
 mod boid;
+mod network;
+mod neuron;
+mod pbd;
 
-use macroquad::prelude::*;
 use boid::OrigamiBoid;
+use macroquad::prelude::*;
 
 #[macroquad::main("Origami Swarm")]
 async fn main() {
@@ -121,13 +121,19 @@ async fn main() {
             }
             */
             // Yes, I wrote it.
-             boid.draw();
+            boid.draw();
         }
 
         set_default_camera();
 
         draw_text("ORIGAMI SWARM", 10.0, 30.0, 30.0, WHITE);
-        draw_text(format!("Boids: {}", num_boids).as_str(), 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            format!("Boids: {}", num_boids).as_str(),
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         // Sync Visualizer
         let mut sum_sin = 0.0;
@@ -136,8 +142,15 @@ async fn main() {
             sum_sin += (p * std::f32::consts::TAU).sin();
             sum_cos += (p * std::f32::consts::TAU).cos();
         }
-        let r = ((sum_sin / num_boids as f32).powi(2) + (sum_cos / num_boids as f32).powi(2)).sqrt();
-        draw_text(format!("Synchronization: {:.3}", r).as_str(), 10.0, 70.0, 20.0, if r > 0.8 { GREEN } else { RED });
+        let r =
+            ((sum_sin / num_boids as f32).powi(2) + (sum_cos / num_boids as f32).powi(2)).sqrt();
+        draw_text(
+            format!("Synchronization: {:.3}", r).as_str(),
+            10.0,
+            70.0,
+            20.0,
+            if r > 0.8 { GREEN } else { RED },
+        );
 
         next_frame().await
     }

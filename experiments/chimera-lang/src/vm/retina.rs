@@ -1,4 +1,6 @@
 #[cfg(feature = "nova")]
+use super::{ChimeraVM, Value};
+#[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "nova")]
@@ -51,4 +53,62 @@ impl Retina {
             }
         }
     }
+}
+
+// --- VM Execution Logic ---
+
+#[cfg(feature = "nova")]
+pub fn exec_retina_draw(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 4 {
+        let x_val = vm.stack.pop().unwrap();
+        let y_val = vm.stack.pop().unwrap();
+        let char_val = vm.stack.pop().unwrap();
+        let color_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(x), Value::Int(y), Value::Int(c), Value::Int(rgb)) =
+            (x_val, y_val, char_val, color_val)
+        {
+            let r = ((rgb >> 16) & 0xFF) as u8;
+            let g = ((rgb >> 8) & 0xFF) as u8;
+            let b = (rgb & 0xFF) as u8;
+            let ch = (c as u8) as char;
+
+            vm.retina.draw(y as usize, x as usize, ch, r, g, b);
+            vm.energy = vm.energy.saturating_sub(1);
+        } else {
+            vm.output
+                .push("Error: Type mismatch for retina_draw".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for retina_draw".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_retina_clear(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(rgb) = val {
+            let r = ((rgb >> 16) & 0xFF) as u8;
+            let g = ((rgb >> 8) & 0xFF) as u8;
+            let b = (rgb & 0xFF) as u8;
+            vm.retina.clear(r, g, b);
+            vm.energy = vm.energy.saturating_sub(10);
+        } else {
+            vm.output
+                .push("Error: Type mismatch for retina_clear".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for retina_clear".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_retina_size(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    vm.stack.push(Value::Int(vm.retina.width as i64));
+    vm.stack.push(Value::Int(vm.retina.height as i64));
+    None
 }

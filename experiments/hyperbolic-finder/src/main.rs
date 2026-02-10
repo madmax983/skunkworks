@@ -3,11 +3,11 @@ mod layout;
 mod tiling;
 mod ui;
 
-use ui::Button;
 use fs::{scan_dir, FileType};
 use layout::{layout_tree, LayoutNode};
 use macroquad::prelude::*;
 use poincare_disk::{mobius_add, mobius_sub, Point};
+use ui::Button;
 
 const DISK_SCALE: f32 = 0.45;
 
@@ -150,7 +150,6 @@ async fn main() -> anyhow::Result<()> {
         next_frame().await
     }
 }
-
 
 fn find_closest_node(
     node: &LayoutNode,

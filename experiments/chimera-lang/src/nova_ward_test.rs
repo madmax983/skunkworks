@@ -13,29 +13,57 @@ mod tests {
 
         let s0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Persistence
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Strand Idx
-                Gene { op: OpCode::Ward, args: vec![] },
-
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // dy
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dx
-                Gene { op: OpCode::Migrate, args: vec![] },
-
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // dy
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(-1)] }, // dx
-                Gene { op: OpCode::Migrate, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Persistence
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Strand Idx
+                Gene {
+                    op: OpCode::Ward,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                }, // dy
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // dx
+                Gene {
+                    op: OpCode::Migrate,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                }, // dy
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(-1)],
+                }, // dx
+                Gene {
+                    op: OpCode::Migrate,
+                    args: vec![],
+                },
+            ],
         };
 
         // Strand 1: [ Push(999) ]
         let s1 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(999)] },
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(999)],
+            }],
         };
 
         let mut vm = ChimeraVM::new(Dna {
-            helix: Helix { strands: vec![s0, s1] },
+            helix: Helix {
+                strands: vec![s0, s1],
+            },
         });
 
         // Run

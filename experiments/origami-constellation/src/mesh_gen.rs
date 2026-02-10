@@ -3,7 +3,7 @@ use macroquad::prelude::*;
 
 pub struct MeshData {
     pub system: PbdSystem,
-    pub indices: Vec<u16>, // For rendering triangles
+    pub indices: Vec<u16>,     // For rendering triangles
     pub actuators: Vec<usize>, // Indices into constraints
 }
 
@@ -43,8 +43,12 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
             let p11 = (i + 1) * (rows + 1) + (j + 1);
 
             // Triangles: Split along p01-p10 diagonal
-            indices.push(p00 as u16); indices.push(p01 as u16); indices.push(p10 as u16);
-            indices.push(p10 as u16); indices.push(p01 as u16); indices.push(p11 as u16);
+            indices.push(p00 as u16);
+            indices.push(p01 as u16);
+            indices.push(p10 as u16);
+            indices.push(p10 as u16);
+            indices.push(p01 as u16);
+            indices.push(p11 as u16);
 
             // Edges (Structural)
             // We add all edges of the quad + diagonal.
@@ -67,7 +71,9 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
             let p_left = (i - 1) * (rows + 1) + j;
             let p_right = (i + 1) * (rows + 1) + j;
 
-            let dist = system.particles[p_left].pos.distance(system.particles[p_right].pos);
+            let dist = system.particles[p_left]
+                .pos
+                .distance(system.particles[p_right].pos);
             let folded_dist = dist * 0.2;
 
             // Mountain vs Valley assignment?
@@ -87,7 +93,9 @@ pub fn generate_miura_ori(rows: usize, cols: usize) -> MeshData {
             let p_top = i * (rows + 1) + (j - 1);
             let p_bottom = i * (rows + 1) + (j + 1);
 
-            let dist = system.particles[p_top].pos.distance(system.particles[p_bottom].pos);
+            let dist = system.particles[p_top]
+                .pos
+                .distance(system.particles[p_bottom].pos);
             let folded_dist = dist * 0.2;
 
             system.add_actuator_constraint(p_top, p_bottom, folded_dist, dist, 0.5);

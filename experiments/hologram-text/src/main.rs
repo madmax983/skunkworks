@@ -56,12 +56,15 @@ impl App {
         // To center it at DC for viewing, we need to shift by -20 bins.
         // So reconstruction angle should be -20.
 
-        self.reconstruction_data = self.hologram.reconstruct(self.reconstruction_angle_x, self.reconstruction_angle_y);
+        self.reconstruction_data = self
+            .hologram
+            .reconstruct(self.reconstruction_angle_x, self.reconstruction_angle_y);
     }
 
     fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<()> {
         loop {
-            terminal.draw(|f| self.ui(f))
+            terminal
+                .draw(|f| self.ui(f))
                 .map_err(|e| io::Error::other(e.to_string()))?;
 
             if event::poll(Duration::from_millis(50))? {
@@ -72,29 +75,29 @@ impl App {
                             KeyCode::Left => {
                                 self.reconstruction_angle_x -= 1;
                                 self.update_reconstruction();
-                            },
+                            }
                             KeyCode::Right => {
                                 self.reconstruction_angle_x += 1;
                                 self.update_reconstruction();
-                            },
+                            }
                             KeyCode::Up => {
                                 self.reconstruction_angle_y += 1;
                                 self.update_reconstruction();
-                            },
+                            }
                             KeyCode::Down => {
                                 self.reconstruction_angle_y -= 1;
                                 self.update_reconstruction();
-                            },
+                            }
                             KeyCode::Char(c) => {
                                 if c.is_alphanumeric() || c == ' ' {
                                     self.text_buffer.push(c);
                                     self.update_hologram();
                                 }
-                            },
+                            }
                             KeyCode::Backspace => {
                                 self.text_buffer.pop();
                                 self.update_hologram();
-                            },
+                            }
                             KeyCode::Enter => {
                                 // Reset angles to match recording
                                 // Recording is at +20, +10. We need shift -20, -10 to bring it back to DC.
@@ -102,7 +105,7 @@ impl App {
                                 self.reconstruction_angle_y = -10;
                                 self.update_reconstruction();
                                 self.status_msg = "Reset to Recording Angle.".into();
-                            },
+                            }
                             _ => {}
                         }
                     }
@@ -127,9 +130,16 @@ impl App {
             .split(chunks[1]);
 
         // Header
-        let title = Paragraph::new(format!(" HOLOGRAM TEXT - Text Buffer: {} ", self.text_buffer))
-            .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
-            .block(Block::default().borders(Borders::ALL));
+        let title = Paragraph::new(format!(
+            " HOLOGRAM TEXT - Text Buffer: {} ",
+            self.text_buffer
+        ))
+        .style(
+            Style::default()
+                .fg(Color::Cyan)
+                .add_modifier(Modifier::BOLD),
+        )
+        .block(Block::default().borders(Borders::ALL));
         f.render_widget(title, chunks[0]);
 
         // Left Panel: Hologram (Frequency Domain)
@@ -138,7 +148,11 @@ impl App {
 
         // We draw points where magnitude is high
         let canvas_hologram = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title(" Hologram (Frequency Domain) "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Hologram (Frequency Domain) "),
+            )
             .marker(ratatui::symbols::Marker::Braille)
             .x_bounds([0.0, self.hologram.width as f64])
             .y_bounds([0.0, self.hologram.height as f64])
@@ -173,7 +187,11 @@ impl App {
         let max_recon = recon_mag.iter().cloned().fold(0.0_f64, f64::max);
 
         let canvas_recon = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title(" Reconstruction (Spatial Domain) "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Reconstruction (Spatial Domain) "),
+            )
             .marker(ratatui::symbols::Marker::Braille)
             .x_bounds([0.0, self.hologram.width as f64])
             .y_bounds([0.0, self.hologram.height as f64])

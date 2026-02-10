@@ -104,19 +104,19 @@ impl Terrain {
 
 fn get_color_for_extension(ext: &str) -> Color {
     match ext {
-        "rs" => Color::new(0.8, 0.4, 0.0, 1.0),       // Rust Orange
-        "py" => Color::new(0.2, 0.6, 0.8, 1.0),       // Python Blue
+        "rs" => Color::new(0.8, 0.4, 0.0, 1.0),        // Rust Orange
+        "py" => Color::new(0.2, 0.6, 0.8, 1.0),        // Python Blue
         "js" | "ts" => Color::new(0.9, 0.9, 0.2, 1.0), // JS Yellow
-        "md" => Color::new(0.6, 0.6, 0.6, 1.0),       // Markdown Gray
-        "toml" => Color::new(0.4, 0.2, 0.1, 1.0),     // TOML Brown
-        "json" => Color::new(0.8, 0.8, 0.2, 1.0),     // JSON Yellow-ish
-        "html" => Color::new(0.9, 0.4, 0.2, 1.0),     // HTML Orange
-        "css" => Color::new(0.2, 0.4, 0.8, 1.0),      // CSS Blue
-        "c" | "h" => Color::new(0.4, 0.4, 0.4, 1.0),  // C Gray
+        "md" => Color::new(0.6, 0.6, 0.6, 1.0),        // Markdown Gray
+        "toml" => Color::new(0.4, 0.2, 0.1, 1.0),      // TOML Brown
+        "json" => Color::new(0.8, 0.8, 0.2, 1.0),      // JSON Yellow-ish
+        "html" => Color::new(0.9, 0.4, 0.2, 1.0),      // HTML Orange
+        "css" => Color::new(0.2, 0.4, 0.8, 1.0),       // CSS Blue
+        "c" | "h" => Color::new(0.4, 0.4, 0.4, 1.0),   // C Gray
         "cpp" | "hpp" => Color::new(0.0, 0.3, 0.7, 1.0), // C++ Dark Blue
-        "sh" => Color::new(0.0, 0.8, 0.0, 1.0),       // Shell Green
+        "sh" => Color::new(0.0, 0.8, 0.0, 1.0),        // Shell Green
         "png" | "jpg" | "jpeg" => Color::new(0.8, 0.2, 0.8, 1.0), // Images Purple
-        _ => Color::new(0.8, 0.8, 0.8, 1.0),          // Default White/Gray
+        _ => Color::new(0.8, 0.8, 0.8, 1.0),           // Default White/Gray
     }
 }
 

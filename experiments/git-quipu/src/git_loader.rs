@@ -55,11 +55,11 @@ pub fn load_recent_commits(repo_path: &str, limit: usize) -> Result<Vec<CommitDa
         } else {
             // Initial commit
             if let Ok(tree) = commit.tree() {
-                 let diff = repo.diff_tree_to_tree(None, Some(&tree), None)?;
-                 let stats = diff.stats()?;
-                 insertions = stats.insertions();
-                 deletions = stats.deletions();
-                 files_changed = stats.files_changed();
+                let diff = repo.diff_tree_to_tree(None, Some(&tree), None)?;
+                let stats = diff.stats()?;
+                insertions = stats.insertions();
+                deletions = stats.deletions();
+                files_changed = stats.files_changed();
             }
         }
 

@@ -99,7 +99,11 @@ fn run_loop<B: ratatui::backend::Backend>(
                 let load = app.cpu_load.load(Ordering::Relaxed);
                 let label = format!("System Entropy (CPU): {}%", load);
                 let gauge = Gauge::default()
-                    .block(Block::default().title("Metric Modulation").borders(Borders::ALL))
+                    .block(
+                        Block::default()
+                            .title("Metric Modulation")
+                            .borders(Borders::ALL),
+                    )
                     .gauge_style(Style::default().fg(Color::Magenta))
                     .ratio(load as f64 / 100.0)
                     .label(label);
@@ -150,8 +154,13 @@ fn run_loop<B: ratatui::backend::Backend>(
 
                         let content = format!(
                             "{}\nState: {}\nPattern: {}",
-                            ring_vis, state_text,
-                            update.pattern.iter().map(|&b| if b {'1'} else {'0'}).collect::<String>()
+                            ring_vis,
+                            state_text,
+                            update
+                                .pattern
+                                .iter()
+                                .map(|&b| if b { '1' } else { '0' })
+                                .collect::<String>()
                         );
 
                         let p = Paragraph::new(content)

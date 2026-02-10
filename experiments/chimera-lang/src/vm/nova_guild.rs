@@ -113,8 +113,7 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.strand_guild_map.remove(&caller);
                 vm.output.push(format!("GUILD: Left '{}'", name));
             } else {
-                vm.output
-                    .push(format!("GUILD: Not a member of '{}'", name));
+                vm.output.push(format!("GUILD: Not a member of '{}'", name));
             }
         }
         "Deposit" => {
@@ -146,10 +145,8 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.output
                         .push(format!("GUILD: Deposited {} to '{}'", amount, name));
                 } else {
-                    vm.output.push(format!(
-                        "GUILD: Must be a member of '{}' to deposit",
-                        name
-                    ));
+                    vm.output
+                        .push(format!("GUILD: Must be a member of '{}' to deposit", name));
                 }
             } else {
                 vm.output
@@ -196,7 +193,9 @@ pub fn exec_guild(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     .push("Error: Withdraw amount must be integer".to_string());
             }
         }
-        _ => vm.output.push(format!("GUILD: Unknown action '{}'", action)),
+        _ => vm
+            .output
+            .push(format!("GUILD: Unknown action '{}'", action)),
     }
 
     None
@@ -235,7 +234,8 @@ pub fn exec_charter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let caller = vm.ip.0;
 
     if !vm.guilds.contains_key(&name) {
-        vm.output.push(format!("CHARTER: Guild '{}' not found", name));
+        vm.output
+            .push(format!("CHARTER: Guild '{}' not found", name));
         return None;
     }
 

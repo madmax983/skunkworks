@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, Value, MAX_STRANDS};
-use crate::ast::{Nucleotide};
+use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
@@ -798,10 +798,8 @@ pub fn exec_telomerase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     if idx < vm.telomeres.len() {
                         vm.telomeres[idx] = vm.telomeres[idx].saturating_add(amount);
                         vm.energy = vm.energy.saturating_sub(25); // High cost
-                        vm.output.push(format!(
-                            "TELOMERASE: Extended strand {} by {}",
-                            idx, amount
-                        ));
+                        vm.output
+                            .push(format!("TELOMERASE: Extended strand {} by {}", idx, amount));
                     }
                 }
             }
@@ -967,9 +965,8 @@ pub fn exec_apoptosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.output
                         .push(format!("APOPTOSIS: Cleared strand {}", s_idx));
                 } else {
-                    vm.output.push(
-                        "Error: Strand index out of bounds for apoptosis".to_string(),
-                    );
+                    vm.output
+                        .push("Error: Strand index out of bounds for apoptosis".to_string());
                 }
             }
             _ => vm
@@ -1045,14 +1042,12 @@ pub fn exec_integrase(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         // This skips the inserted gene (if at g_idx) and the current gene (now at g_idx+1).
                         // Correct.
                     } else {
-                        vm.output.push(
-                            "Error: Gene index out of bounds for integrase".to_string(),
-                        );
+                        vm.output
+                            .push("Error: Gene index out of bounds for integrase".to_string());
                     }
                 } else {
-                    vm.output.push(
-                        "Error: Strand index out of bounds for integrase".to_string(),
-                    );
+                    vm.output
+                        .push("Error: Strand index out of bounds for integrase".to_string());
                 }
             }
             _ => vm
@@ -1119,9 +1114,8 @@ pub fn exec_excision(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                             }
                         }
                     } else {
-                        vm.output.push(
-                            "Error: Gene index out of bounds for excision".to_string(),
-                        );
+                        vm.output
+                            .push("Error: Gene index out of bounds for excision".to_string());
                     }
                 } else {
                     vm.output
@@ -1264,9 +1258,8 @@ pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     match crate::ast::Strand::try_from_pair(pair) {
                         Ok(strand) => {
                             if vm.dna.helix.strands.len() >= MAX_STRANDS {
-                                vm.output.push(
-                                    "COMPILE ERROR: Strand limit exceeded".to_string(),
-                                );
+                                vm.output
+                                    .push("COMPILE ERROR: Strand limit exceeded".to_string());
                             } else {
                                 vm.dna.helix.strands.push(strand);
                                 vm.telomeres.push(50);
@@ -1381,7 +1374,8 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let rule = if let Some(r) = vm.garden.rules.get(&rule_id) {
                 r.clone()
             } else {
-                vm.output.push(format!("GENESIS: Rule {} not found", rule_id));
+                vm.output
+                    .push(format!("GENESIS: Rule {} not found", rule_id));
                 return None;
             };
 
@@ -1399,7 +1393,9 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                             if dy == 0 && dx == 0 {
                                 continue;
                             }
-                            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                            if let Some((ny, nx)) =
+                                vm.normalize_coords(y as i64 + dy, x as i64 + dx)
+                            {
                                 if let Value::Int(n) = &vm.grid[ny][nx] {
                                     if *n > 0 {
                                         neighbors_count += 1;
@@ -1454,7 +1450,8 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
 
             if new_genes.is_empty() {
-                vm.output.push("GENESIS: The void remains... (No genes created)".to_string());
+                vm.output
+                    .push("GENESIS: The void remains... (No genes created)".to_string());
                 return None;
             }
 
@@ -1472,7 +1469,10 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.reflexes.clear();
 
             // Create New Strand
-            vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes });
+            vm.dna
+                .helix
+                .strands
+                .push(crate::ast::Strand { genes: new_genes });
             vm.telomeres.push(100);
             #[cfg(feature = "cortex")]
             {
@@ -1485,19 +1485,22 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.ip = (0, 0);
             vm.stack.clear();
 
-            vm.output.push("GENESIS: A new world is born from the ashes.".to_string());
+            vm.output
+                .push("GENESIS: A new world is born from the ashes.".to_string());
 
             // Register root
             vm.cladistics = crate::vm::cladistics::Cladistics::new();
-            vm.cladistics.register_strand(0, None, vm.tick_counter, "Genesis".to_string());
+            vm.cladistics
+                .register_strand(0, None, vm.tick_counter, "Genesis".to_string());
 
             return Some((0, 0));
-
         } else {
-            vm.output.push("Error: Type mismatch for genesis".to_string());
+            vm.output
+                .push("Error: Type mismatch for genesis".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for genesis".to_string());
+        vm.output
+            .push("Error: Stack underflow for genesis".to_string());
     }
     None
 }

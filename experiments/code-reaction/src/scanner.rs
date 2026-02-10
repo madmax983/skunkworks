@@ -57,7 +57,8 @@ mod tests {
     #[test]
     fn test_scanner_metrics() {
         // Create a temporary file with known content
-        let content = "fn main() {\n    let x = 1;\n    if x > 0 {\n        println!(\"Hello\");\n    }\n}";
+        let content =
+            "fn main() {\n    let x = 1;\n    if x > 0 {\n        println!(\"Hello\");\n    }\n}";
         // Lines: 6
         // Size: len(content)
         // Complexity:

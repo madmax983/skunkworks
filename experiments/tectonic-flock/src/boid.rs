@@ -1,7 +1,7 @@
+use locus::Vec2;
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
-use locus::Vec2;
 
 #[derive(Clone, Debug)]
 pub struct Dna {

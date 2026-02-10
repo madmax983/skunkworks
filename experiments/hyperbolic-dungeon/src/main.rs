@@ -1,7 +1,7 @@
 pub mod dungeon;
-pub mod render;
-pub mod game;
 pub mod entity;
+pub mod game;
+pub mod render;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
@@ -19,7 +19,7 @@ use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
 use game::Game;
-use poincare_disk::{Mobius};
+use poincare_disk::Mobius;
 use render::draw_dungeon;
 
 fn main() -> Result<()> {
@@ -99,11 +99,7 @@ fn ui(f: &mut Frame, game: &mut Game) {
             let player = game.get_player();
             let view_transform = Mobius::inverse_translation(player.offset);
 
-            draw_dungeon(
-                ctx,
-                game,
-                &view_transform,
-            );
+            draw_dungeon(ctx, game, &view_transform);
         });
 
     f.render_widget(canvas, canvas_area);

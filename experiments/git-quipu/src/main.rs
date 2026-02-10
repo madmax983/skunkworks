@@ -35,7 +35,7 @@ struct App {
 impl App {
     fn new() -> Result<Self> {
         let repo_path = "."; // Current directory
-        // Try to load up to 100 commits
+                             // Try to load up to 100 commits
         let commit_data = match load_recent_commits(repo_path, 100) {
             Ok(data) => data,
             Err(_) => {
@@ -155,7 +155,9 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             }
 
             for i in start_idx..end_idx {
-                if i >= app.commits.len() { break; }
+                if i >= app.commits.len() {
+                    break;
+                }
                 let cord = &app.commits[i];
 
                 // Visual index in current window

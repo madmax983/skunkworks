@@ -82,10 +82,10 @@ impl GearTrain {
 
 pub struct CipherMachine {
     pub train: GearTrain,
-    pub drive_shaft: usize, // Advances 1 tick per operation
-    pub key_rotor: usize,   // Driven by shaft
+    pub drive_shaft: usize,  // Advances 1 tick per operation
+    pub key_rotor: usize,    // Driven by shaft
     pub input_handle: usize, // User input
-    pub diff_output: usize, // Result
+    pub diff_output: usize,  // Result
     pub current_input_char: char,
 }
 

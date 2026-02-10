@@ -1,8 +1,8 @@
 use crate::phonology::{Evolver, SoundLaw};
+pub use locus::Vec2;
 use rand::Rng;
 use ratatui::style::Color;
 use std::f64::consts::TAU;
-pub use locus::Vec2;
 
 #[derive(Clone, Debug)]
 pub struct DNA {

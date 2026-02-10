@@ -41,12 +41,7 @@ fn build_sized_tree(mut node: DirNode) -> LayoutNode {
     }
 }
 
-fn update_layout_positions(
-    node: &mut LayoutNode,
-    angle_start: f64,
-    angle_end: f64,
-    depth: usize,
-) {
+fn update_layout_positions(node: &mut LayoutNode, angle_start: f64, angle_end: f64, depth: usize) {
     // Reduced step size to make deeper nodes visible in the disk before hitting the boundary.
     let step_h = 0.8;
     let r_h = depth as f64 * step_h;
@@ -70,11 +65,15 @@ fn update_layout_positions(
         // Calculate weights for proportional allocation
         // Use sqrt(size) to dampen the effect of massive files
         // Ensure a minimum weight so small files don't disappear
-        let weights: Vec<f64> = node.children.iter().map(|c| {
-            let s = c.total_size as f64;
-            // 1000.0 is arbitrary minimum 'virtual' bytes for visibility
-            (s.max(1000.0)).sqrt()
-        }).collect();
+        let weights: Vec<f64> = node
+            .children
+            .iter()
+            .map(|c| {
+                let s = c.total_size as f64;
+                // 1000.0 is arbitrary minimum 'virtual' bytes for visibility
+                (s.max(1000.0)).sqrt()
+            })
+            .collect();
 
         let total_weight: f64 = weights.iter().sum();
 
@@ -170,6 +169,9 @@ mod tests {
         // 31622 / 31.6 = ~1000.
         // So width_large should be ~1000x width_small.
 
-        assert!(width_large > width_small * 2.0, "Large file should have significantly more angular space");
+        assert!(
+            width_large > width_small * 2.0,
+            "Large file should have significantly more angular space"
+        );
     }
 }

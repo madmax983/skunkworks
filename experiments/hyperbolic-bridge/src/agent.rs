@@ -28,7 +28,11 @@ pub struct Agent {
 
 impl Agent {
     pub fn new(pos: Point, angle: f64) -> Self {
-        Self { pos, angle, state: State::Foraging }
+        Self {
+            pos,
+            angle,
+            state: State::Foraging,
+        }
     }
 
     pub fn update(&mut self, trail_map: &[f32], params: SimParams) {
@@ -40,9 +44,11 @@ impl Agent {
         }
 
         // Sensors (reuse from hyperbolic-mold)
-        let sensor_l_vec = Complex::from_polar(params.sensor_dist, self.angle - params.sensor_angle);
+        let sensor_l_vec =
+            Complex::from_polar(params.sensor_dist, self.angle - params.sensor_angle);
         let sensor_c_vec = Complex::from_polar(params.sensor_dist, self.angle);
-        let sensor_r_vec = Complex::from_polar(params.sensor_dist, self.angle + params.sensor_angle);
+        let sensor_r_vec =
+            Complex::from_polar(params.sensor_dist, self.angle + params.sensor_angle);
 
         let sensor_l_pos = mobius_add(self.pos, sensor_l_vec);
         let sensor_c_pos = mobius_add(self.pos, sensor_c_vec);
@@ -65,8 +71,8 @@ impl Agent {
             // We need a threshold. Deposit amount is usually ~0.5 per frame.
             // If density > 2.0, likely occupied by a few ants or a persistent trail.
             if current_density > 2.0 {
-                 self.state = State::Bridging;
-                 return;
+                self.state = State::Bridging;
+                return;
             }
         }
 
@@ -93,24 +99,24 @@ impl Agent {
 
         // If trying to enter gap and NOT bridging
         if new_r > 0.4 && new_r < 0.6 {
-             // If we are moving into the gap, check if there is a "bridge" (high density) ahead.
-             let density_ahead = sample_map(trail_map, params.width, params.height, new_pos);
-             let density_current = sample_map(trail_map, params.width, params.height, self.pos);
+            // If we are moving into the gap, check if there is a "bridge" (high density) ahead.
+            let density_ahead = sample_map(trail_map, params.width, params.height, new_pos);
+            let density_current = sample_map(trail_map, params.width, params.height, self.pos);
 
-             // If density ahead is low, it's a void.
-             if density_ahead < 0.5 {
-                 // But if we are crowded at the edge (or on a bridge tip), we can extend the bridge!
-                 if density_current > 2.0 {
-                     // Extend bridge into the void
-                     self.pos = new_pos;
-                     self.state = State::Bridging;
-                     return;
-                 } else {
-                     // Void and not crowded enough to extend. Turn around.
-                     self.angle += PI;
-                     return;
-                 }
-             }
+            // If density ahead is low, it's a void.
+            if density_ahead < 0.5 {
+                // But if we are crowded at the edge (or on a bridge tip), we can extend the bridge!
+                if density_current > 2.0 {
+                    // Extend bridge into the void
+                    self.pos = new_pos;
+                    self.state = State::Bridging;
+                    return;
+                } else {
+                    // Void and not crowded enough to extend. Turn around.
+                    self.angle += PI;
+                    return;
+                }
+            }
         }
 
         // Boundary check

@@ -101,22 +101,28 @@ fn write_data(
                 SoundEvent::LockAcquired(id) => {
                     let env = (-5.0 * t).exp();
                     match id % 4 {
-                        0 => { // Kick
+                        0 => {
+                            // Kick
                             let freq = 60.0 * (-10.0 * t).exp().max(0.1);
                             (t * freq * 2.0 * PI).sin() * env * 2.0
-                        },
-                        1 => { // African Bell (Cowbell-ish)
+                        }
+                        1 => {
+                            // African Bell (Cowbell-ish)
                             let freq = 800.0;
                             let bell_env = (-15.0 * t).exp();
-                            ((t * freq * 2.0 * PI).sin() + (t * freq * 1.5 * 2.0 * PI).sin()) * 0.5 * bell_env
-                        },
-                        2 => { // Snare-ish
+                            ((t * freq * 2.0 * PI).sin() + (t * freq * 1.5 * 2.0 * PI).sin())
+                                * 0.5
+                                * bell_env
+                        }
+                        2 => {
+                            // Snare-ish
                             let noise = (rand::random::<f32>() * 2.0 - 1.0);
                             let snare_env = (-20.0 * t).exp();
                             let tone = (t * 200.0 * 2.0 * PI).sin() * (-10.0 * t).exp();
                             (noise * 0.7 + tone * 0.3) * snare_env
-                        },
-                        _ => { // High Perc
+                        }
+                        _ => {
+                            // High Perc
                             let freq = 1200.0;
                             let perc_env = (-30.0 * t).exp();
                             (t * freq * 2.0 * PI).sin() * perc_env * 0.5

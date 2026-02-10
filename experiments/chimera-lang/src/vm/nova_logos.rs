@@ -1,9 +1,9 @@
 #![cfg(feature = "nova")]
 
-use crate::vm::{ChimeraVM, Value};
 use crate::ast::JunctionType;
 #[cfg(feature = "oracle")]
 use crate::vm::oracle;
+use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "oracle")]
 use std::collections::HashMap;
 
@@ -63,21 +63,16 @@ pub fn process_logos(vm: &mut ChimeraVM) {
                             );
 
                             let mut solutions = Vec::new();
-                            oracle::solve(
-                                &[query],
-                                HashMap::new(),
-                                kb,
-                                vm,
-                                &mut solutions,
-                                0,
-                            );
+                            oracle::solve(&[query], HashMap::new(), kb, vm, &mut solutions, 0);
 
                             if let Some(sol) = solutions.first() {
                                 if let Some(result) = sol.get("?Result") {
                                     // Found a reaction!
                                     // Determine outcome
                                     let (res_agent, res_reagent) = match result {
-                                        Value::Junction(JunctionType::All, parts) if parts.len() == 2 => {
+                                        Value::Junction(JunctionType::All, parts)
+                                            if parts.len() == 2 =>
+                                        {
                                             (parts[0].clone(), parts[1].clone())
                                         }
                                         val => (val.clone(), Value::Int(0)), // Default: Agent transforms, Reagent consumed
@@ -100,7 +95,8 @@ pub fn process_logos(vm: &mut ChimeraVM) {
                 vm.grid[y][x] = val;
             }
             vm.energy = vm.energy.saturating_add(count as i64 * 2); // Exothermic
-            vm.output.push(format!("LOGOS: {} reactions occurred", count));
+            vm.output
+                .push(format!("LOGOS: {} reactions occurred", count));
         }
     }
 }

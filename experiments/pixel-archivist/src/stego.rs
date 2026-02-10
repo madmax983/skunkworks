@@ -10,10 +10,18 @@ pub fn embed(mut cover: DynamicImage, data: &[u8]) -> Result<DynamicImage> {
 
     let (width, height) = cover.dimensions();
     if pixels_needed > (width as u64 * height as u64) {
-        return Err(anyhow!("Image too small to hold data. Needed {} pixels, got {}", pixels_needed, width as u64 * height as u64));
+        return Err(anyhow!(
+            "Image too small to hold data. Needed {} pixels, got {}",
+            pixels_needed,
+            width as u64 * height as u64
+        ));
     }
 
-    let mut byte_iter = len.to_le_bytes().to_vec().into_iter().chain(data.iter().cloned());
+    let mut byte_iter = len
+        .to_le_bytes()
+        .to_vec()
+        .into_iter()
+        .chain(data.iter().cloned());
     let mut current_byte = byte_iter.next();
     let mut bit_cursor = 0; // 0..8
 
@@ -64,7 +72,7 @@ pub fn extract(image: &DynamicImage) -> Result<Vec<u8>> {
     for y in 0..height {
         for x in 0..width {
             let pixel = image.get_pixel(x, y);
-             for channel_idx in 0..3 {
+            for channel_idx in 0..3 {
                 let val = pixel[channel_idx];
                 let bits = val & 0x03;
 
@@ -75,7 +83,12 @@ pub fn extract(image: &DynamicImage) -> Result<Vec<u8>> {
                     if len.is_none() {
                         header_bytes.push(current_byte);
                         if header_bytes.len() == 4 {
-                            len = Some(u32::from_le_bytes([header_bytes[0], header_bytes[1], header_bytes[2], header_bytes[3]]));
+                            len = Some(u32::from_le_bytes([
+                                header_bytes[0],
+                                header_bytes[1],
+                                header_bytes[2],
+                                header_bytes[3],
+                            ]));
                         }
                     } else {
                         bytes.push(current_byte);
@@ -88,18 +101,24 @@ pub fn extract(image: &DynamicImage) -> Result<Vec<u8>> {
                     current_byte = 0;
                     bit_cursor = 0;
                 }
-             }
-             if let Some(l) = len {
-                 if bytes.len() as u32 == l {
-                     return Ok(bytes);
-                 }
-             }
+            }
+            if let Some(l) = len {
+                if bytes.len() as u32 == l {
+                    return Ok(bytes);
+                }
+            }
         }
     }
 
     if let Some(l) = len {
-         return Err(anyhow!("Incomplete data. Expected {} bytes, got {}", l, bytes.len()));
+        return Err(anyhow!(
+            "Incomplete data. Expected {} bytes, got {}",
+            l,
+            bytes.len()
+        ));
     }
 
-    Err(anyhow!("Failed to read header (image might be empty or too small)"))
+    Err(anyhow!(
+        "Failed to read header (image might be empty or too small)"
+    ))
 }

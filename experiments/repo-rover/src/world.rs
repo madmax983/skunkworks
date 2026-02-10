@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
+use locus::Vec2;
 use std::f64::consts::PI;
 use std::fs;
 use std::path::{Path, PathBuf};
-use locus::Vec2;
 
 #[derive(Debug, Clone)]
 pub enum EntityType {

@@ -2,8 +2,8 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::nova_ley::LeyNetwork;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
         let dna = Dna {
@@ -16,9 +16,10 @@ mod tests {
 
     #[test]
     fn test_ley_sense() {
-        let mut vm = make_vm(vec![
-            Gene { op: OpCode::LeySense, args: vec![] }
-        ]);
+        let mut vm = make_vm(vec![Gene {
+            op: OpCode::LeySense,
+            args: vec![],
+        }]);
 
         // Manually configure network
         vm.ley_network.nodes.clear();
@@ -30,16 +31,17 @@ mod tests {
 
         // Stack: [ ..., dy, dx, dist, power ]
         assert_eq!(vm.stack.pop(), Some(Value::Int(100))); // Power
-        assert_eq!(vm.stack.pop(), Some(Value::Int(1)));   // Dist
-        assert_eq!(vm.stack.pop(), Some(Value::Int(-1)));  // dx
-        assert_eq!(vm.stack.pop(), Some(Value::Int(0)));   // dy
+        assert_eq!(vm.stack.pop(), Some(Value::Int(1))); // Dist
+        assert_eq!(vm.stack.pop(), Some(Value::Int(-1))); // dx
+        assert_eq!(vm.stack.pop(), Some(Value::Int(0))); // dy
     }
 
     #[test]
     fn test_ley_tap() {
-        let mut vm = make_vm(vec![
-            Gene { op: OpCode::LeyTap, args: vec![] }
-        ]);
+        let mut vm = make_vm(vec![Gene {
+            op: OpCode::LeyTap,
+            args: vec![],
+        }]);
 
         vm.ley_network.nodes.clear();
         vm.ley_network.connections.clear();
@@ -58,25 +60,37 @@ mod tests {
         let success = vm.energy == initial_energy + 9;
         let overload = vm.energy == initial_energy - 6;
 
-        assert!(success || overload, "Energy was {}, expected {} (success) or {} (overload)", vm.energy, initial_energy + 9, initial_energy - 6);
+        assert!(
+            success || overload,
+            "Energy was {}, expected {} (success) or {} (overload)",
+            vm.energy,
+            initial_energy + 9,
+            initial_energy - 6
+        );
 
         if success {
-             assert_eq!(vm.stack.pop(), Some(Value::Int(10)));
-             // Node power should drain
-             assert_eq!(vm.ley_network.nodes[0].power, 9);
+            assert_eq!(vm.stack.pop(), Some(Value::Int(10)));
+            // Node power should drain
+            assert_eq!(vm.ley_network.nodes[0].power, 9);
         } else {
-             // Overload pushes negative damage
-             assert_eq!(vm.stack.pop(), Some(Value::Int(-5)));
-             // Node power halved
-             assert_eq!(vm.ley_network.nodes[0].power, 5);
+            // Overload pushes negative damage
+            assert_eq!(vm.stack.pop(), Some(Value::Int(-5)));
+            // Node power halved
+            assert_eq!(vm.ley_network.nodes[0].power, 5);
         }
     }
 
     #[test]
     fn test_ley_warp() {
         let mut vm = make_vm(vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Target Node 1
-            Gene { op: OpCode::LeyWarp, args: vec![] }
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // Target Node 1
+            Gene {
+                op: OpCode::LeyWarp,
+                args: vec![],
+            },
         ]);
 
         vm.ley_network.nodes.clear();
@@ -101,9 +115,18 @@ mod tests {
     #[test]
     fn test_ley_shift() {
         let mut vm = make_vm(vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // dy
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // dx
-            Gene { op: OpCode::LeyShift, args: vec![] }
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // dy
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            }, // dx
+            Gene {
+                op: OpCode::LeyShift,
+                args: vec![],
+            },
         ]);
 
         vm.ley_network.nodes.clear();

@@ -9,9 +9,8 @@ pub fn spawn_monitor() -> Arc<AtomicU8> {
     let cpu_load_clone = cpu_load.clone();
 
     thread::spawn(move || {
-        let mut sys = System::new_with_specifics(
-            RefreshKind::new().with_cpu(CpuRefreshKind::everything()),
-        );
+        let mut sys =
+            System::new_with_specifics(RefreshKind::new().with_cpu(CpuRefreshKind::everything()));
 
         // Initial sleep to establish baseline for CPU usage calculation
         thread::sleep(Duration::from_millis(200));

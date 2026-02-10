@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
-use rayon::prelude::*;
 use num_complex::Complex;
+use rayon::prelude::*;
 
 mod agent;
 use agent::{Agent, SimParams, State};
@@ -14,13 +14,15 @@ async fn main() {
     let num_agents = 5000;
 
     // Initialize agents in the center
-    let mut agents: Vec<Agent> = (0..num_agents).map(|_| {
-        let r = rand::gen_range(0.0, 0.3); // Start safely inside
-        let theta = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
-        let pos = Complex::from_polar(r, theta);
-        let angle = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
-        Agent::new(pos, angle)
-    }).collect();
+    let mut agents: Vec<Agent> = (0..num_agents)
+        .map(|_| {
+            let r = rand::gen_range(0.0, 0.3); // Start safely inside
+            let theta = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
+            let pos = Complex::from_polar(r, theta);
+            let angle = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
+            Agent::new(pos, angle)
+        })
+        .collect();
 
     // Trail map (density field)
     let mut trail_map = vec![0.0f32; width * height];
@@ -52,15 +54,15 @@ async fn main() {
         // 2. Deposit Pheromones (Sequential for now)
         for agent in &agents {
             if agent.pos.norm_sqr() < 1.0 {
-                 let x = ((agent.pos.re + 1.0) * 0.5 * (width as f64)) as usize;
-                 let y = ((agent.pos.im + 1.0) * 0.5 * (height as f64)) as usize;
+                let x = ((agent.pos.re + 1.0) * 0.5 * (width as f64)) as usize;
+                let y = ((agent.pos.im + 1.0) * 0.5 * (height as f64)) as usize;
 
-                 if x < width && y < height {
-                     trail_map[y * width + x] += deposit_amount;
-                     if trail_map[y * width + x] > 10.0 {
-                         trail_map[y * width + x] = 10.0;
-                     }
-                 }
+                if x < width && y < height {
+                    trail_map[y * width + x] += deposit_amount;
+                    if trail_map[y * width + x] > 10.0 {
+                        trail_map[y * width + x] = 10.0;
+                    }
+                }
             }
         }
 
@@ -93,16 +95,16 @@ async fn main() {
         // 4. Render to Texture (Pheromones)
         let bytes = &mut image.bytes;
         bytes.par_chunks_mut(4).enumerate().for_each(|(i, pixel)| {
-             if i < trail_map.len() {
-                 let density = trail_map[i];
-                 let val = (density * 255.0).min(255.0) as u8;
+            if i < trail_map.len() {
+                let density = trail_map[i];
+                let val = (density * 255.0).min(255.0) as u8;
 
-                 // Greenish pheromones
-                 pixel[0] = 0;       // R
-                 pixel[1] = val;     // G
-                 pixel[2] = val / 2; // B
-                 pixel[3] = 255;     // A
-             }
+                // Greenish pheromones
+                pixel[0] = 0; // R
+                pixel[1] = val; // G
+                pixel[2] = val / 2; // B
+                pixel[3] = 255; // A
+            }
         });
 
         texture.update(&image);
@@ -138,7 +140,13 @@ async fn main() {
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 20.0, 30.0, WHITE);
         draw_text(&format!("Agents: {}", num_agents), 20.0, 50.0, 30.0, WHITE);
         let bridging_count = agents.iter().filter(|a| a.state == State::Bridging).count();
-        draw_text(&format!("Bridges: {}", bridging_count), 20.0, 80.0, 30.0, YELLOW);
+        draw_text(
+            &format!("Bridges: {}", bridging_count),
+            20.0,
+            80.0,
+            30.0,
+            YELLOW,
+        );
 
         next_frame().await
     }

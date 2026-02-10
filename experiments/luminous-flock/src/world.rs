@@ -1,6 +1,6 @@
 use crate::boid::Boid;
-use std::f64::consts::PI;
 use locus::Vec2;
+use std::f64::consts::PI;
 
 pub struct World {
     pub boids: Vec<Boid>,

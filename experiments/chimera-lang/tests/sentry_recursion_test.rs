@@ -1,7 +1,7 @@
-use chimera_lang::vm::{ChimeraVM, Value};
 use chimera_lang::ast::{Dna, Helix};
 use chimera_lang::opcode::OpCode;
 use chimera_lang::vm::nova::exec_nova_op;
+use chimera_lang::vm::{ChimeraVM, Value};
 
 #[test]
 fn test_superpose_depth_limit_enforced() {
@@ -27,9 +27,16 @@ fn test_superpose_depth_limit_enforced() {
     // If check passed (bug), stack len is 1.
     // If check failed (correct), stack len is 0.
     if vm.stack.len() == 1 {
-        panic!("Superpose allowed deep value creation! Stack depth: {}", vm.stack[0].depth());
+        panic!(
+            "Superpose allowed deep value creation! Stack depth: {}",
+            vm.stack[0].depth()
+        );
     }
 
     let output = vm.output.last().cloned().unwrap_or_default();
-    assert!(output.contains("depth limit exceeded"), "Expected depth limit error, got: '{}'", output);
+    assert!(
+        output.contains("depth limit exceeded"),
+        "Expected depth limit error, got: '{}'",
+        output
+    );
 }

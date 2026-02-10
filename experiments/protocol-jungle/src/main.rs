@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
-use ::rand::Rng; // Disambiguate external rand
+use ::rand::Rng;
+use macroquad::prelude::*; // Disambiguate external rand
 
 mod model;
 use model::{Agent, Meaning, Symbol};
@@ -75,7 +75,12 @@ async fn main() {
 
                     // Visual feedback
                     let color = if success { GREEN } else { RED };
-                    interaction_lines.push(((agent_i.x, agent_i.y), (agent_j.x, agent_j.y), color, 1.0));
+                    interaction_lines.push((
+                        (agent_i.x, agent_i.y),
+                        (agent_j.x, agent_j.y),
+                        color,
+                        1.0,
+                    ));
 
                     // Store last result for visual state
                     agent_i.last_interaction_result = Some(success);
@@ -91,7 +96,14 @@ async fn main() {
         });
 
         for (start, end, color, alpha) in &interaction_lines {
-            draw_line(start.0, start.1, end.0, end.1, 2.0, Color::new(color.r, color.g, color.b, *alpha));
+            draw_line(
+                start.0,
+                start.1,
+                end.0,
+                end.1,
+                2.0,
+                Color::new(color.r, color.g, color.b, *alpha),
+            );
         }
 
         // Draw agents
@@ -116,15 +128,27 @@ async fn main() {
             if let Some(success) = agent.last_interaction_result {
                 let glow_color = if success { GREEN } else { RED };
                 if agent.cooldown > INTERACTION_COOLDOWN - 0.5 {
-                     draw_circle_lines(agent.x, agent.y, 10.0, 2.0, glow_color);
+                    draw_circle_lines(agent.x, agent.y, 10.0, 2.0, glow_color);
                 }
             }
         }
 
         // UI
         draw_text("Protocol Jungle", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("Outer Ring: Greeting | Inner Ring: Ack", 10.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Outer Ring: Greeting | Inner Ring: Ack",
+            10.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

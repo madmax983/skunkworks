@@ -31,14 +31,18 @@ mod tests {
         let final_bottom_height = terrain.get_height(15, 10);
 
         // Check erosion at the top
-        assert!(final_top_height < initial_top_height, "Top should erode (Initial: {}, Final: {})", initial_top_height, final_top_height);
+        assert!(
+            final_top_height < initial_top_height,
+            "Top should erode (Initial: {}, Final: {})",
+            initial_top_height,
+            final_top_height
+        );
 
         // Check deposition at the bottom (or at least somewhere downhill)
         // Note: Sediment might wash off the map if not careful, but with 1000 drops, some should deposit.
         // Or at least, the "valley" should fill up if we had a valley.
         // With a pure slope, it might just wash away.
         // Let's make a "valley" shape: \/
-
     }
 
     #[test]
@@ -69,6 +73,11 @@ mod tests {
 
         let final_pit_height = terrain.get_height(10, 10);
 
-        assert!(final_pit_height > initial_pit_height, "Pit should fill with sediment (Initial: {}, Final: {})", initial_pit_height, final_pit_height);
+        assert!(
+            final_pit_height > initial_pit_height,
+            "Pit should fill with sediment (Initial: {}, Final: {})",
+            initial_pit_height,
+            final_pit_height
+        );
     }
 }

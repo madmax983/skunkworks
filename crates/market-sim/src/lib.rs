@@ -77,7 +77,7 @@ pub enum Particle {
     /// serving as a visual indicator of market activity.
     Trade {
         /// How many frames this particle will persist before disappearing.
-        age: u8
+        age: u8,
     },
 }
 
@@ -111,7 +111,6 @@ pub struct Grid {
     pub cells: Vec<Particle>,
 
     // --- Statistics ---
-
     /// Number of trades that occurred in the last update.
     pub trade_count: usize,
     /// Total number of active Bids currently in the grid.
@@ -122,7 +121,6 @@ pub struct Grid {
     pub center_of_mass: f32,
 
     // --- Internal Simulation State ---
-
     /// Tracks which cells have been updated in the current tick to prevent double-movement.
     updated: Vec<bool>,
     /// Randomized column iteration order to prevent directional bias.
@@ -451,7 +449,10 @@ mod tests {
         match grid.get(5, 4) {
             // Age starts at 5, but decays by 1 in the same tick (Pass 3)
             Particle::Trade { age } => assert_eq!(age, 4),
-            _ => panic!("Expected Trade particle at (5, 4), found {:?}", grid.get(5, 4)),
+            _ => panic!(
+                "Expected Trade particle at (5, 4), found {:?}",
+                grid.get(5, 4)
+            ),
         }
     }
 

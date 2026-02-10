@@ -38,12 +38,17 @@ mod tests {
 
         assert_eq!(vm.midi_messages.len(), 1);
         match &vm.midi_messages[0] {
-            MidiEvent::NoteOn { channel, note, velocity, duration } => {
+            MidiEvent::NoteOn {
+                channel,
+                note,
+                velocity,
+                duration,
+            } => {
                 assert_eq!(*channel, 0);
                 assert_eq!(*note, 48); // 0 + 48 = C3
                 assert_eq!(*velocity, 127); // 'z' (35) -> 1.0 -> 127
                 assert_eq!(*duration, 4);
-            },
+            }
             _ => panic!("Expected NoteOn"),
         }
     }
@@ -68,12 +73,16 @@ mod tests {
 
         assert_eq!(vm.midi_messages.len(), 1);
         match &vm.midi_messages[0] {
-            MidiEvent::ControlChange { channel, controller, value } => {
+            MidiEvent::ControlChange {
+                channel,
+                controller,
+                value,
+            } => {
                 assert_eq!(*channel, 1);
                 assert_eq!(*controller, 1);
                 // Value: 10/35 * 127 approx 36
                 assert_eq!(*value, 36);
-            },
+            }
             _ => panic!("Expected ControlChange"),
         }
     }
@@ -101,7 +110,7 @@ mod tests {
             Value::Str(s) => {
                 let v = s.chars().next().unwrap();
                 assert!(v >= '0' && v <= '9');
-            },
+            }
             _ => panic!("Expected string output at (2,1)"),
         }
     }

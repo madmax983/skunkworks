@@ -3,8 +3,8 @@ use macroquad::prelude::*;
 mod agent;
 mod rhythm;
 
-use agent::{Agent, INTERACTION_RADIUS, INTERACTION_COOLDOWN};
 use ::rand::Rng;
+use agent::{Agent, INTERACTION_COOLDOWN, INTERACTION_RADIUS};
 
 const AGENT_COUNT: usize = 50;
 
@@ -78,7 +78,12 @@ async fn main() {
 
                     // Visual feedback
                     let color = if success { GREEN } else { RED };
-                    interaction_lines.push(((agent_i.x, agent_i.y), (agent_j.x, agent_j.y), color, 1.0));
+                    interaction_lines.push((
+                        (agent_i.x, agent_i.y),
+                        (agent_j.x, agent_j.y),
+                        color,
+                        1.0,
+                    ));
                 }
             }
         }
@@ -90,7 +95,14 @@ async fn main() {
         });
 
         for (start, end, color, alpha) in &interaction_lines {
-            draw_line(start.0, start.1, end.0, end.1, 2.0, Color::new(color.r, color.g, color.b, *alpha));
+            draw_line(
+                start.0,
+                start.1,
+                end.0,
+                end.1,
+                2.0,
+                Color::new(color.r, color.g, color.b, *alpha),
+            );
         }
 
         // Draw agents
@@ -114,12 +126,30 @@ async fn main() {
 
         // UI
         draw_text("Rhythmic Jungle", 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text("Color: Rhythm Density (Blue=Sparse, Red=Dense)", 10.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
+        draw_text(
+            "Color: Rhythm Density (Blue=Sparse, Red=Dense)",
+            10.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         // Calculate average BPM
         let avg_bpm: f32 = agents.iter().map(|a| a.bpm).sum::<f32>() / agents.len() as f32;
-        draw_text(&format!("Avg BPM: {:.1}", avg_bpm), 10.0, 90.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Avg BPM: {:.1}", avg_bpm),
+            10.0,
+            90.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await;
     }

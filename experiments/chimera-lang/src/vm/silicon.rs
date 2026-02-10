@@ -139,12 +139,7 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     Nucleotide::Number(n) => *n,
                     _ => 0,
                 };
-                (
-                    t,
-                    d,
-                    vm.context_loc.0 as i64,
-                    vm.context_loc.1 as i64,
-                )
+                (t, d, vm.context_loc.0 as i64, vm.context_loc.1 as i64)
             } else if vm.stack.len() >= 4 {
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
@@ -217,8 +212,7 @@ pub fn exec_silicon_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
 
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                 vm.grid[ny][nx] = Value::Str("PIN:OUT".to_string());
-                vm.output
-                    .push(format!("PIN_OUT: Created at {},{}", nx, ny));
+                vm.output.push(format!("PIN_OUT: Created at {},{}", nx, ny));
             }
         }
         OpCode::Emitter => {

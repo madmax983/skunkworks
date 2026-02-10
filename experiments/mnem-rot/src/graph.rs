@@ -1,8 +1,8 @@
 use macroquad::prelude::*;
-use walkdir::WalkDir;
 use regex::Regex;
-use std::fs;
 use std::collections::HashMap;
+use std::fs;
+use walkdir::WalkDir;
 
 #[derive(Clone)]
 pub struct Node {
@@ -64,8 +64,8 @@ impl Graph {
             if entry.path().extension().map_or(false, |ext| ext == "rs") {
                 let name = entry.file_name().to_string_lossy().to_string();
                 if let Ok(content) = fs::read_to_string(entry.path()) {
-                     let id = self.add_node(name.clone(), content);
-                     file_map.insert(name, id);
+                    let id = self.add_node(name.clone(), content);
+                    file_map.insert(name, id);
                 }
             }
         }
@@ -85,7 +85,7 @@ impl Graph {
 
                     if let Some(&target_id) = file_map.get(&target_rs) {
                         if target_id != node.id {
-                             new_edges.push((node.id, target_id));
+                            new_edges.push((node.id, target_id));
                         }
                     }
                 }
@@ -96,6 +96,10 @@ impl Graph {
             self.add_edge(from, to);
         }
 
-        println!("Scanned {} nodes, {} edges", self.nodes.len(), self.edges.len());
+        println!(
+            "Scanned {} nodes, {} edges",
+            self.nodes.len(),
+            self.edges.len()
+        );
     }
 }

@@ -75,21 +75,53 @@ mod tests {
             JunctionType::Any,
             vec![
                 Value::Str("reaction".to_string()),
-                Value::Junction(JunctionType::Any, vec![Value::Str("combine".to_string()), Value::Str("?A".to_string())]),
-                Value::Junction(JunctionType::Any, vec![Value::Str("combine".to_string()), Value::Str("?B".to_string())]),
-                Value::Junction(JunctionType::Any, vec![Value::Str("merged".to_string()), Value::Str("?A".to_string()), Value::Str("?B".to_string())]),
+                Value::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Value::Str("combine".to_string()),
+                        Value::Str("?A".to_string()),
+                    ],
+                ),
+                Value::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Value::Str("combine".to_string()),
+                        Value::Str("?B".to_string()),
+                    ],
+                ),
+                Value::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Value::Str("merged".to_string()),
+                        Value::Str("?A".to_string()),
+                        Value::Str("?B".to_string()),
+                    ],
+                ),
             ],
         );
         vm.knowledge_base.push(reaction_fact);
 
-        vm.grid[2][2] = Value::Junction(JunctionType::Any, vec![Value::Str("combine".to_string()), Value::Int(1)]);
-        vm.grid[2][3] = Value::Junction(JunctionType::Any, vec![Value::Str("combine".to_string()), Value::Int(2)]);
+        vm.grid[2][2] = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("combine".to_string()), Value::Int(1)],
+        );
+        vm.grid[2][3] = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("combine".to_string()), Value::Int(2)],
+        );
 
         vm.logos_mode = true;
         vm.step();
 
         // Expected: merged(1, 2) at [2][2]
-        let expected = Value::Junction(JunctionType::Any, vec![Value::Str("merged".to_string()), Value::Int(1), Value::Int(2)]);
+        let expected = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("merged".to_string()),
+                Value::Int(1),
+                Value::Int(2),
+            ],
+        );
         assert_eq!(vm.grid[2][2], expected);
         assert_eq!(vm.grid[2][3], Value::Int(0));
     }

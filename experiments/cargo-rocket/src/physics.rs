@@ -1,5 +1,5 @@
-use ratatui::style::Color;
 pub use locus::Vec2;
+use ratatui::style::Color;
 
 pub struct Body {
     pub pos: Vec2,

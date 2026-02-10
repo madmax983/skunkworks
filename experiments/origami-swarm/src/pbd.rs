@@ -68,7 +68,14 @@ impl PbdSystem {
         });
     }
 
-    pub fn add_actuator_constraint(&mut self, p1: usize, p2: usize, min_len: f32, max_len: f32, stiff: f32) {
+    pub fn add_actuator_constraint(
+        &mut self,
+        p1: usize,
+        p2: usize,
+        min_len: f32,
+        max_len: f32,
+        stiff: f32,
+    ) {
         self.constraints.push(Constraint::Actuator {
             p1,
             p2,
@@ -86,7 +93,9 @@ impl PbdSystem {
     pub fn step(&mut self, dt: f32, iterations: usize) {
         // Integrate
         for p in &mut self.particles {
-            if p.inv_mass == 0.0 { continue; }
+            if p.inv_mass == 0.0 {
+                continue;
+            }
             p.vel += Vec3::new(0.0, 0.0, 0.0) * dt; // No gravity for space simulation
             p.prev_pos = p.pos;
             p.pos += p.vel * dt;
@@ -101,7 +110,9 @@ impl PbdSystem {
 
         // Update Velocity
         for p in &mut self.particles {
-            if p.inv_mass == 0.0 { continue; }
+            if p.inv_mass == 0.0 {
+                continue;
+            }
             p.vel = (p.pos - p.prev_pos) / dt;
             // Damping
             p.vel *= 0.95;
@@ -111,10 +122,22 @@ impl PbdSystem {
     fn solve_constraint(&mut self, idx: usize) {
         let constraint = self.constraints[idx];
         match constraint {
-            Constraint::Distance { p1, p2, rest_length, stiffness } => {
+            Constraint::Distance {
+                p1,
+                p2,
+                rest_length,
+                stiffness,
+            } => {
                 self.solve_distance(p1, p2, rest_length, stiffness);
             }
-            Constraint::Actuator { p1, p2, min_len, max_len, factor, stiffness } => {
+            Constraint::Actuator {
+                p1,
+                p2,
+                min_len,
+                max_len,
+                factor,
+                stiffness,
+            } => {
                 let target_len = min_len + (max_len - min_len) * factor;
                 self.solve_distance(p1, p2, target_len, stiffness);
             }
@@ -132,16 +155,24 @@ impl PbdSystem {
         let pos2 = self.particles[p2].pos;
         let w1 = self.particles[p1].inv_mass;
         let w2 = self.particles[p2].inv_mass;
-        if w1 + w2 == 0.0 { return; }
+        if w1 + w2 == 0.0 {
+            return;
+        }
 
         let delta = pos1 - pos2;
         let len = delta.length();
-        if len == 0.0 { return; } // Avoid division by zero
+        if len == 0.0 {
+            return;
+        } // Avoid division by zero
 
         let diff = (len - target_len) / len;
         let correction = delta * diff * stiffness / (w1 + w2);
 
-        if w1 > 0.0 { self.particles[p1].pos -= correction * w1; }
-        if w2 > 0.0 { self.particles[p2].pos += correction * w2; }
+        if w1 > 0.0 {
+            self.particles[p1].pos -= correction * w1;
+        }
+        if w2 > 0.0 {
+            self.particles[p2].pos += correction * w2;
+        }
     }
 }

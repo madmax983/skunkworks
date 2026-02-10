@@ -693,21 +693,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Dampen => super::nova_resonance_war::exec_dampen(vm),
         OpCode::ListenFreq => super::nova_resonance_war::exec_listen_freq(vm),
         OpCode::Prophecy => exec_prophecy(vm),
-        OpCode::EgregoreLink => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Str(name) = val {
-                    vm.egregore.link(vm.ip.0);
-                    vm.output.push(format!("EGREGORE: Linked to {}", name));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for egregore_link".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for egregore_link".to_string());
-            }
-            None
-        }
+        OpCode::EgregoreLink => super::nova_egregore::exec_egregore_link(vm),
         OpCode::Lucid => {
             // stack: amount
             if let Some(val) = vm.stack.pop() {
@@ -823,394 +809,31 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Reflector => super::nova_optics::exec_reflector(vm),
         OpCode::Prism => super::nova_optics::exec_prism(vm),
         OpCode::Lens => super::nova_optics::exec_lens(vm),
-        OpCode::Sacrifice => {
-            let s_idx = vm.ip.0;
-            if s_idx < vm.dna.helix.strands.len() {
-                vm.egregore.sacrifice(100);
-
-                // Kill strand
-                vm.dna.helix.strands[s_idx].genes.clear();
-                vm.epigenome.retain(|(s, _)| *s != s_idx);
-                vm.cladistics.kill_strand(s_idx, vm.tick_counter);
-
-                vm.output
-                    .push(format!("SACRIFICE: Strand {} given to the Void", s_idx));
-                vm.halted = true; // Suicide
-            }
-            None
-        }
+        OpCode::Sacrifice => super::nova_egregore::exec_sacrifice(vm),
         OpCode::Gaze => super::nova_astrology::exec_gaze(vm),
         OpCode::Starfall => super::nova_astrology::exec_starfall(vm),
         OpCode::Align => super::nova_astrology::exec_align(vm),
-        OpCode::Pray => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(amount) = val {
-                    if amount > 0 && vm.energy >= amount {
-                        vm.energy -= amount;
-                        vm.egregore.pray(amount);
-                        vm.output.push(format!("PRAY: Donated {} energy", amount));
-                    } else {
-                        vm.output.push("PRAY: Insufficient energy".to_string());
-                    }
-                } else {
-                    vm.output.push("Error: Type mismatch for pray".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for pray".to_string());
-            }
-            None
-        }
-        OpCode::EgregoreTithe => {
-            // stack: amount
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(amount) = val {
-                    if amount > 0 && vm.energy >= amount {
-                        vm.energy -= amount;
-                        vm.egregore.tithe(amount);
-                        vm.output.push(format!("EGREGORE: Tithed {}", amount));
-                    } else {
-                        vm.output
-                            .push("EGREGORE: Insufficient energy to tithe".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for egregore_tithe".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for egregore_tithe".to_string());
-            }
-            None
-        }
-        OpCode::EgregoreChannel => {
-            // stack: channel_name, value (top)
-            if vm.stack.len() >= 2 {
-                let val = vm.stack.pop().unwrap();
-                let name_val = vm.stack.pop().unwrap();
-                if let Value::Str(name) = name_val {
-                    vm.egregore.push_channel(name.clone(), val.clone());
-                    vm.output
-                        .push(format!("EGREGORE: Sent to channel {}", name));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for egregore_channel".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for egregore_channel".to_string());
-            }
-            None
-        }
-        OpCode::EgregoreDictate => {
-            // stack: parameter_name, vote_value (top)
-            if vm.stack.len() >= 2 {
-                let val = vm.stack.pop().unwrap();
-                let name_val = vm.stack.pop().unwrap();
-                if let Value::Str(name) = name_val {
-                    vm.egregore.vote(name.clone(), val.clone());
-                    vm.output.push(format!("EGREGORE: Voted on {}", name));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for egregore_dictate".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for egregore_dictate".to_string());
-            }
-            None
-        }
-        OpCode::EgregoreQuery => {
-            // stack: key (top)
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Str(key) = val {
-                    // check param first
-                    if let Some(v) = vm.egregore.get_param(&key) {
-                        vm.stack.push(v);
-                    } else if let Some(v) = vm.egregore.read_channel(&key) {
-                        vm.stack.push(v);
-                    } else {
-                        vm.stack.push(Value::Int(0)); // Not found
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for egregore_query".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for egregore_query".to_string());
-            }
-            None
-        }
-        OpCode::EgregoreSummon => {
-            // stack: ritual_name
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Str(ritual) = val {
-                    let cost = 100; // Base cost
-                    if vm.egregore.faith >= cost {
-                        vm.egregore.faith -= cost;
-                        match ritual.as_str() {
-                            "Rain" => {
-                                for row in vm.moisture_grid.iter_mut() {
-                                    for cell in row.iter_mut() {
-                                        *cell = cell.saturating_add(50);
-                                    }
-                                }
-                                vm.output.push("EGREGORE: Summoned RAIN".to_string());
-                            }
-                            "Dawn" => {
-                                for row in vm.light_grid.iter_mut() {
-                                    for cell in row.iter_mut() {
-                                        *cell = 100;
-                                    }
-                                }
-                                vm.output.push("EGREGORE: Summoned DAWN".to_string());
-                            }
-                            "Apocalypse" => {
-                                // Randomly kill half of organelles
-                                vm.organelles.retain(|_| rand::random::<bool>());
-                                vm.output.push("EGREGORE: Summoned APOCALYPSE".to_string());
-                            }
-                            _ => {
-                                vm.egregore.faith += cost; // Refund
-                                vm.output
-                                    .push(format!("EGREGORE: Unknown ritual {}", ritual));
-                            }
-                        }
-                    } else {
-                        vm.output.push("EGREGORE: Insufficient faith".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for egregore_summon".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for egregore_summon".to_string());
-            }
-            None
-        }
-        OpCode::Knot => {
-            if let Some(val) = vm.stack.pop() {
-                match val {
-                    Value::Int(n) => {
-                        vm.quipu.tie(n);
-                        vm.output.push(format!("KNOT: Tied {}", n));
-                    }
-                    _ => vm.output.push("Error: Type mismatch for knot".to_string()),
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for knot".to_string());
-            }
-            None
-        }
-        OpCode::Unknot => {
-            let val = vm.quipu.untie();
-            vm.stack.push(Value::Int(val));
-            vm.output.push(format!("UNKNOT: Untied {}", val));
-            None
-        }
-        OpCode::Cord => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(idx) = val {
-                    vm.quipu.select_cord(idx as usize);
-                    vm.output.push(format!("CORD: Selected {}", idx));
-                } else {
-                    vm.output.push("Error: Type mismatch for cord".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for cord".to_string());
-            }
-            None
-        }
-        OpCode::ReadCord => {
-            let val = vm.quipu.read();
-            vm.stack.push(Value::Int(val));
-            None
-        }
-        OpCode::Tangle => {
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(idx) = val {
-                    vm.quipu.tangle(idx as usize);
-                    vm.output
-                        .push(format!("TANGLE: Entangled with cord {}", idx));
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for tangle".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for tangle".to_string());
-            }
-            None
-        }
-        OpCode::Offer => {
-            // stack: price, item
-            if vm.stack.len() >= 2 {
-                let item_val = vm.stack.pop().unwrap();
-                let price_val = vm.stack.pop().unwrap();
-                if let Value::Int(price) = price_val {
-                    if price > 0 {
-                        // Store item as string representation for now
-                        let item_str = match &item_val {
-                            Value::Str(s) => s.clone(),
-                            _ => format!("{}", item_val),
-                        };
-                        let order_id = vm.market.place_ask(vm.ip.0, item_str, price);
-                        vm.stack.push(Value::Int(order_id as i64));
-                        vm.output
-                            .push(format!("OFFER: Sell '{}' for {}", item_val, price));
-                    } else {
-                        vm.output.push("OFFER: Price must be positive".to_string());
-                    }
-                } else {
-                    vm.output.push("Error: Type mismatch for offer".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for offer".to_string());
-            }
-            None
-        }
-        OpCode::Buy => {
-            // stack: max_price, query
-            if vm.stack.len() >= 2 {
-                let query_val = vm.stack.pop().unwrap();
-                let max_price_val = vm.stack.pop().unwrap();
-                if let (Value::Int(max_price), Value::Str(query)) = (max_price_val, query_val) {
-                    if let Some((item_str, cost)) =
-                        vm.market.match_buy(vm.ip.0, query.clone(), max_price)
-                    {
-                        vm.stack.push(Value::Str(item_str));
-                        vm.stack.push(Value::Int(cost));
-                        vm.output
-                            .push(format!("BUY: Bought '{}' for {}", query, cost));
-                    } else {
-                        vm.stack.push(Value::Int(0)); // Failed
-                        vm.output
-                            .push(format!("BUY: No match for '{}' <= {}", query, max_price));
-                    }
-                } else {
-                    vm.output.push("Error: Type mismatch for buy".to_string());
-                }
-            } else {
-                vm.output.push("Error: Stack underflow for buy".to_string());
-            }
-            None
-        }
-        OpCode::Invest => {
-            // stack: amount
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(amount) = val {
-                    if amount > 0 && vm.energy >= amount {
-                        vm.energy -= amount;
-                        vm.market.credit(vm.ip.0, amount);
-                        vm.output
-                            .push(format!("INVEST: Converted {} Energy to Credits", amount));
-                    } else {
-                        vm.output.push("INVEST: Insufficient energy".to_string());
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for invest".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for invest".to_string());
-            }
-            None
-        }
-        OpCode::Divest => {
-            // stack: amount
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(amount) = val {
-                    if amount > 0 {
-                        if vm.market.debit(vm.ip.0, amount) {
-                            vm.energy = vm.energy.saturating_add(amount);
-                            vm.output
-                                .push(format!("DIVEST: Converted {} Credits to Energy", amount));
-                        } else {
-                            vm.output.push("DIVEST: Insufficient credits".to_string());
-                        }
-                    }
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for divest".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for divest".to_string());
-            }
-            None
-        }
-        OpCode::Balance => {
-            let bal = vm.market.get_balance(vm.ip.0);
-            vm.stack.push(Value::Int(bal));
-            None
-        }
-        OpCode::Ticker => {
-            if let Some((_, price)) = vm.market.history.back() {
-                vm.stack.push(Value::Int(*price));
-            } else {
-                vm.stack.push(Value::Int(0));
-            }
-            None
-        }
+        OpCode::Pray => super::nova_egregore::exec_pray(vm),
+        OpCode::EgregoreTithe => super::nova_egregore::exec_egregore_tithe(vm),
+        OpCode::EgregoreChannel => super::nova_egregore::exec_egregore_channel(vm),
+        OpCode::EgregoreDictate => super::nova_egregore::exec_egregore_dictate(vm),
+        OpCode::EgregoreQuery => super::nova_egregore::exec_egregore_query(vm),
+        OpCode::EgregoreSummon => super::nova_egregore::exec_egregore_summon(vm),
+        OpCode::Knot => super::nova_quipu::exec_knot(vm),
+        OpCode::Unknot => super::nova_quipu::exec_unknot(vm),
+        OpCode::Cord => super::nova_quipu::exec_cord(vm),
+        OpCode::ReadCord => super::nova_quipu::exec_read_cord(vm),
+        OpCode::Tangle => super::nova_quipu::exec_tangle(vm),
+        OpCode::Offer => super::nova_market::exec_offer(vm),
+        OpCode::Buy => super::nova_market::exec_buy(vm),
+        OpCode::Invest => super::nova_market::exec_invest(vm),
+        OpCode::Divest => super::nova_market::exec_divest(vm),
+        OpCode::Balance => super::nova_market::exec_balance(vm),
+        OpCode::Ticker => super::nova_market::exec_ticker(vm),
         OpCode::TimeWarp => super::nova_chronos::exec_time_warp(vm),
-        OpCode::RetinaDraw => {
-            // Stack: [ ..., packed_color, char_code, y, x ]
-            if vm.stack.len() >= 4 {
-                let x_val = vm.stack.pop().unwrap();
-                let y_val = vm.stack.pop().unwrap();
-                let char_val = vm.stack.pop().unwrap();
-                let color_val = vm.stack.pop().unwrap();
-
-                if let (Value::Int(x), Value::Int(y), Value::Int(c), Value::Int(rgb)) =
-                    (x_val, y_val, char_val, color_val)
-                {
-                    let r = ((rgb >> 16) & 0xFF) as u8;
-                    let g = ((rgb >> 8) & 0xFF) as u8;
-                    let b = (rgb & 0xFF) as u8;
-                    let ch = (c as u8) as char;
-
-                    vm.retina.draw(y as usize, x as usize, ch, r, g, b);
-                    vm.energy = vm.energy.saturating_sub(1);
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for retina_draw".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for retina_draw".to_string());
-            }
-            None
-        }
-        OpCode::RetinaClear => {
-            // Stack: [ ..., packed_color ]
-            if let Some(val) = vm.stack.pop() {
-                if let Value::Int(rgb) = val {
-                    let r = ((rgb >> 16) & 0xFF) as u8;
-                    let g = ((rgb >> 8) & 0xFF) as u8;
-                    let b = (rgb & 0xFF) as u8;
-                    vm.retina.clear(r, g, b);
-                    vm.energy = vm.energy.saturating_sub(10);
-                } else {
-                    vm.output
-                        .push("Error: Type mismatch for retina_clear".to_string());
-                }
-            } else {
-                vm.output
-                    .push("Error: Stack underflow for retina_clear".to_string());
-            }
-            None
-        }
-        OpCode::RetinaSize => {
-            vm.stack.push(Value::Int(vm.retina.width as i64));
-            vm.stack.push(Value::Int(vm.retina.height as i64));
-            None
-        }
+        OpCode::RetinaDraw => super::retina::exec_retina_draw(vm),
+        OpCode::RetinaClear => super::retina::exec_retina_clear(vm),
+        OpCode::RetinaSize => super::retina::exec_retina_size(vm),
         OpCode::QuantumJump => {
             let s_idx = vm.ip.0;
             if let Some(&partner_idx) = vm.entangled_pairs.get(&s_idx) {
@@ -3036,7 +2659,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 let result = Value::Junction(crate::ast::JunctionType::Any, results);
                 if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output.push("Error: Map result depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Map result depth limit exceeded".to_string());
                 } else {
                     vm.stack.push(result);
                     vm.energy = vm.energy.saturating_sub(10);
@@ -3086,7 +2710,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 }
 
                 if acc.depth() > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output.push("Error: Fold result depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Fold result depth limit exceeded".to_string());
                 } else {
                     vm.stack.push(acc);
                     vm.energy = vm.energy.saturating_sub(10);
@@ -3148,7 +2773,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 let result = Value::Junction(crate::ast::JunctionType::Any, results);
                 if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output.push("Error: Filter result depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Filter result depth limit exceeded".to_string());
                 } else {
                     vm.stack.push(result);
                     vm.energy = vm.energy.saturating_sub(10);
@@ -3192,7 +2818,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 let result = Value::Junction(crate::ast::JunctionType::Any, results);
                 if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output.push("Error: Zip result depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Zip result depth limit exceeded".to_string());
                 } else {
                     vm.stack.push(result);
                     vm.energy = vm.energy.saturating_sub(5);
@@ -3709,7 +3336,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 let depth_a = a.depth();
                 let depth_b = b.depth();
                 if depth_a.max(depth_b) + 1 > crate::vm::MAX_RECURSION_DEPTH {
-                    vm.output.push("Error: Superpose depth limit exceeded".to_string());
+                    vm.output
+                        .push("Error: Superpose depth limit exceeded".to_string());
                 } else {
                     // 50/50 split
                     vm.stack

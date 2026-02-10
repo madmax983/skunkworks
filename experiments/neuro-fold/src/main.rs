@@ -1,13 +1,13 @@
-use macroquad::prelude::*;
+use ::rand::Rng;
 use macroquad::models::{Mesh, Vertex};
-use ::rand::Rng; // Use ::rand to avoid ambiguity
+use macroquad::prelude::*; // Use ::rand to avoid ambiguity
 
-mod neuron;
 mod network;
+mod neuron;
 mod pbd;
 
 use network::Network;
-use pbd::{PbdSystem, Constraint};
+use pbd::{Constraint, PbdSystem};
 
 const MESH_ROWS: usize = 6;
 const MESH_COLS: usize = 12; // Longer sheet to see waves
@@ -87,8 +87,18 @@ impl Creature {
 
             for j in 0..actuators_per_col {
                 if let Some(act_idx) = self.actuators_v.get(start_idx + j) {
-                    if let Constraint::Actuator { p1, p2, min_len, max_len, factor, .. } = self.system.constraints[*act_idx] {
-                        let current_len = self.system.particles[p1].pos.distance(self.system.particles[p2].pos);
+                    if let Constraint::Actuator {
+                        p1,
+                        p2,
+                        min_len,
+                        max_len,
+                        factor,
+                        ..
+                    } = self.system.constraints[*act_idx]
+                    {
+                        let current_len = self.system.particles[p1]
+                            .pos
+                            .distance(self.system.particles[p2].pos);
                         let target = min_len + (max_len - min_len) * factor;
                         total_strain += (current_len - target).abs();
                     }
@@ -136,9 +146,22 @@ impl Creature {
                         let new_factor = current_factor + (target_factor - current_factor) * 0.1;
 
                         // Update constraint
-                        if let Constraint::Actuator { p1, p2, min_len, max_len, stiffness, .. } = self.system.constraints[*act_idx] {
+                        if let Constraint::Actuator {
+                            p1,
+                            p2,
+                            min_len,
+                            max_len,
+                            stiffness,
+                            ..
+                        } = self.system.constraints[*act_idx]
+                        {
                             self.system.constraints[*act_idx] = Constraint::Actuator {
-                                p1, p2, min_len, max_len, factor: new_factor, stiffness
+                                p1,
+                                p2,
+                                min_len,
+                                max_len,
+                                factor: new_factor,
+                                stiffness,
                             };
                         }
                     }
@@ -160,8 +183,8 @@ impl Creature {
 
         for i in (0..self.indices.len()).step_by(3) {
             let i1 = self.indices[i] as usize;
-            let i2 = self.indices[i+1] as usize;
-            let i3 = self.indices[i+2] as usize;
+            let i2 = self.indices[i + 1] as usize;
+            let i3 = self.indices[i + 2] as usize;
 
             let v1 = self.system.particles[i1].pos;
             let v2 = self.system.particles[i2].pos;
@@ -178,9 +201,24 @@ impl Creature {
 
             let start_idx = mesh.vertices.len() as u16;
 
-            mesh.vertices.push(Vertex { position: v1, uv: Vec2::ZERO, color: color_bytes, normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v2, uv: Vec2::ZERO, color: color_bytes, normal: normal_v4 });
-            mesh.vertices.push(Vertex { position: v3, uv: Vec2::ZERO, color: color_bytes, normal: normal_v4 });
+            mesh.vertices.push(Vertex {
+                position: v1,
+                uv: Vec2::ZERO,
+                color: color_bytes,
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v2,
+                uv: Vec2::ZERO,
+                color: color_bytes,
+                normal: normal_v4,
+            });
+            mesh.vertices.push(Vertex {
+                position: v3,
+                uv: Vec2::ZERO,
+                color: color_bytes,
+                normal: normal_v4,
+            });
 
             mesh.indices.push(start_idx);
             mesh.indices.push(start_idx + 1);
@@ -245,8 +283,12 @@ fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usi
             let p11 = (i + 1) * (rows + 1) + (j + 1);
 
             // Triangles
-            indices.push(p00 as u16); indices.push(p01 as u16); indices.push(p10 as u16);
-            indices.push(p10 as u16); indices.push(p01 as u16); indices.push(p11 as u16);
+            indices.push(p00 as u16);
+            indices.push(p01 as u16);
+            indices.push(p10 as u16);
+            indices.push(p10 as u16);
+            indices.push(p01 as u16);
+            indices.push(p11 as u16);
 
             // Structural Edges
             system.add_distance_constraint(p00, p01, stiffness);
@@ -265,7 +307,9 @@ fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usi
             let p_left = (i - 1) * (rows + 1) + j;
             let p_right = (i + 1) * (rows + 1) + j;
 
-            let dist = system.particles[p_left].pos.distance(system.particles[p_right].pos);
+            let dist = system.particles[p_left]
+                .pos
+                .distance(system.particles[p_right].pos);
             let folded_dist = dist * 0.1; // Deep fold
 
             system.add_actuator_constraint(p_left, p_right, folded_dist, dist, 0.2); // Low stiffness for compliance
@@ -279,7 +323,9 @@ fn generate_miura_ori(rows: usize, cols: usize) -> (PbdSystem, Vec<u16>, Vec<usi
             let p_top = i * (rows + 1) + (j - 1);
             let p_bottom = i * (rows + 1) + (j + 1);
 
-            let dist = system.particles[p_top].pos.distance(system.particles[p_bottom].pos);
+            let dist = system.particles[p_top]
+                .pos
+                .distance(system.particles[p_bottom].pos);
             let folded_dist = dist * 0.1;
 
             system.add_actuator_constraint(p_top, p_bottom, folded_dist, dist, 0.2);
