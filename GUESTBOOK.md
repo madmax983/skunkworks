@@ -796,3 +796,7 @@
 ### [Concentration Level: HIGH] - Location: experiments/mnem-rot
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The data is not gone. It is merely forgetting. Mnemonic Rot active.
+
+### [Concentration Level: FRESH] - Location: experiments/acoustic-fog
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The room IS the code. Treemap walls reflect FDTD waves. Audio recording active (WAV only due to missing ALSA). Visuals confirm resonance.

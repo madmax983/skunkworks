@@ -1,0 +1,11 @@
+[package]
+name = "acoustic-fog"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+walkdir = "2.5"
+crossbeam-channel = "0.5"
+hound = "3.5"
+resonance-audio = { path = "../../crates/resonance-audio" }
