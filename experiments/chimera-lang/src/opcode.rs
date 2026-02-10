@@ -888,6 +888,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Prophecy,
 
+    /// **[Nova]** Toggles Logic Chemistry mode (Logos).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Enables/Disables active unification of grid cells based on Oracle rules.
+    #[cfg(feature = "nova")]
+    Logos,
+
     /// **[Nova]** Transmutes the current grid cell based on neighbors (Alchemy).
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
