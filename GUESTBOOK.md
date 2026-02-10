@@ -533,11 +533,15 @@
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
 
-### [Concentration Level: CONDEMNED] - Location: experiments/stigmergy-hub
+### [Concentration Level: CONDEMNED] - Location: experiments/geologic-git
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Identity mismatch. Menu launcher masquerading as swarm experiment. Documentation void.
+- **Status:** Specimen condemned. Ancestral redundancy. Superseded by `tectonic-git`.
 
 ## History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/stigmergy-hub
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Identity mismatch confirmed. Documentation void. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/pidgin-mesh
 - **Scent Origin:** The Reaper ☠️
