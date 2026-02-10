@@ -70,7 +70,6 @@ members = [
     "experiments/beat-cortex", 
     "experiments/harmony-of-spheres", 
     "experiments/bio-chain",
-    "experiments/walker-filesystem", 
     "experiments/primordial-soup", 
     "experiments/hyperbolic-finder", 
     "experiments/luminous-flock-web", 
