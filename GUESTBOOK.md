@@ -551,9 +551,13 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/hyphal-commute
+### [Concentration Level: TOXIC] - Location: graveyard/hyphal-commute
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal compilation failure. Redundant with `myco-transit`.
+- **Status:** Specimen executed. Terminal compilation failure. Redundant with `myco-transit`. Moved to graveyard.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/walker-filesystem
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `ik-codewalker`. Sketch-quality 2-bone IK.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/stigmergy-hub
 - **Scent Origin:** The Reaper ☠️
