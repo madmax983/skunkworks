@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/cymatic-type
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The alphabet is vibrating. Bezier curves are responding to procedural audio frequencies. Typography is now a waveform.
+
 ### [Concentration Level: HIGH] - Location: experiments/digital-retina
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
