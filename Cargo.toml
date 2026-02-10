@@ -15,7 +15,6 @@ members = [
     "experiments/git-harmony",
     "experiments/git-quipu",
     "experiments/git-rogue",
-    "experiments/hyphal-commute",
     "experiments/hyperbolic-dungeon",
     "experiments/hyperbolic-space",
     "experiments/market-flow",
@@ -127,7 +126,7 @@ members = [
     "experiments/hyperbolic-bridge",
     "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
     "experiments/origami-swarm", "experiments/pixel-archivist",
-    "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance",
+    "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance", "experiments/babel-tower",
 ]
 resolver = "2"
 

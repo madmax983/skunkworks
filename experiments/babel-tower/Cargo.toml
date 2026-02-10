@@ -1,0 +1,15 @@
+[package]
+name = "babel-tower"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+regex = "1.10"
+ratatui = { version = "0.26" }
+crossterm = "0.27"
+syn = { version = "2.0", features = ["full", "visit-mut", "parsing", "extra-traits"] }
+quote = "1.0"
+proc-macro2 = "1.0"
+rand = "0.8"
+unicode-segmentation = "1.10"
+anyhow = "1.0"
