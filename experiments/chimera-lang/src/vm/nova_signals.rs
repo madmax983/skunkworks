@@ -77,6 +77,17 @@ struct MutationRequest {
     strand_idx: usize,
 }
 
+struct EtherWrite {
+    channel: i64,
+    val: Value,
+}
+
+struct EtherRead {
+    channel: i64,
+    y: usize,
+    x: usize,
+}
+
 #[cfg(feature = "biophysics")]
 struct NeuronStimulus {
     y: usize,
@@ -92,6 +103,8 @@ struct SignalContext {
     resonance_writes: Vec<ResonanceWrite>,
     entropy_writes: Vec<EntropyWrite>,
     mutation_requests: Vec<MutationRequest>,
+    ether_writes: Vec<EtherWrite>,
+    ether_reads: Vec<EtherRead>,
     #[cfg(feature = "biophysics")]
     neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
@@ -108,6 +121,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         resonance_writes: Vec::new(),
         entropy_writes: Vec::new(),
         mutation_requests: Vec::new(),
+        ether_writes: Vec::new(),
+        ether_reads: Vec::new(),
         #[cfg(feature = "biophysics")]
         neuron_stimuli: Vec::new(),
         executions: Vec::new(),
@@ -240,6 +255,24 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
                 ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
                 '?' => exec_random(vm, y, x, &mut ctx),
+                '%' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
+                    if b != 0 {
+                        a.rem_euclid(b)
+                    } else {
+                        0
+                    }
+                }),
+                '=' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
+                    if a == b {
+                        1
+                    } else {
+                        0
+                    }
+                }),
+                '&' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a & b),
+                '|' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a | b),
+                '[' => exec_ether_send(vm, y, x, signal, &mut ctx),
+                ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -276,6 +309,19 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     for w in ctx.dna_appends {
         if w.strand_idx < vm.dna.helix.strands.len() {
             vm.dna.helix.strands[w.strand_idx].genes.push(w.gene);
+        }
+    }
+
+    // 2.75 Apply Ether Ops
+    for w in ctx.ether_writes {
+        vm.ether.entry(w.channel).or_default().push_back(w.val);
+    }
+
+    for r in ctx.ether_reads {
+        if let Some(queue) = vm.ether.get_mut(&r.channel) {
+            if let Some(val) = queue.pop_front() {
+                vm.grid[r.y][r.x] = val;
+            }
         }
     }
 
@@ -735,6 +781,35 @@ fn read_write_directional(
                 y: wy,
                 x: wx,
                 val: Value::Str(val_to_char(val).to_string()),
+            });
+        }
+    }
+}
+
+fn exec_ether_send(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Inputs: North (Channel), East (Value)
+    if let (Some(channel), Some(val)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
+        ctx.ether_writes.push(EtherWrite {
+            channel,
+            val: Value::Str(val_to_char(val).to_string()),
+        });
+    }
+}
+
+fn exec_ether_recv(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Input: North (Channel)
+    if let Some(channel) = peek(vm, y, x, -1, 0) {
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+            ctx.ether_reads.push(EtherRead {
+                channel,
+                y: sy,
+                x: sx,
             });
         }
     }
