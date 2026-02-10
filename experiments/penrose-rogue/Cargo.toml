@@ -1,0 +1,15 @@
+[package]
+name = "penrose-rogue"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+wgpu = "0.19"
+winit = { version = "0.29", features = ["rwh_05"] }
+cgmath = "0.18"
+bytemuck = { version = "1.14", features = ["derive"] }
+pollster = "0.3"
+image = "0.24"
+env_logger = "0.11"
+log = "0.4"
+anyhow = { workspace = true }
