@@ -1,3 +1,11 @@
+#[cfg(feature = "nova")]
+use super::ChimeraVM;
+#[cfg(feature = "nova")]
+use crate::ast::Nucleotide;
+#[cfg(feature = "nova")]
+use crate::opcode::OpCode;
+#[cfg(feature = "nova")]
+use crate::vm::Value;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
@@ -17,6 +25,73 @@ impl Knot {
     }
 }
 
+#[cfg(feature = "nova")]
+pub fn exec_quipu_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    match op {
+        OpCode::Knot => {
+            if let Some(val) = vm.stack.pop() {
+                match val {
+                    Value::Int(n) => {
+                        vm.quipu.tie(n);
+                        vm.output.push(format!("KNOT: Tied {}", n));
+                    }
+                    _ => vm.output.push("Error: Type mismatch for knot".to_string()),
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for knot".to_string());
+            }
+            None
+        }
+        OpCode::Unknot => {
+            let val = vm.quipu.untie();
+            vm.stack.push(Value::Int(val));
+            vm.output.push(format!("UNKNOT: Untied {}", val));
+            None
+        }
+        OpCode::Cord => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.quipu.select_cord(idx as usize);
+                    vm.output.push(format!("CORD: Selected {}", idx));
+                } else {
+                    vm.output.push("Error: Type mismatch for cord".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for cord".to_string());
+            }
+            None
+        }
+        OpCode::ReadCord => {
+            let val = vm.quipu.read();
+            vm.stack.push(Value::Int(val));
+            None
+        }
+        OpCode::Tangle => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    vm.quipu.tangle(idx as usize);
+                    vm.output
+                        .push(format!("TANGLE: Entangled with cord {}", idx));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for tangle".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for tangle".to_string());
+            }
+            None
+        }
+        _ => None,
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Cord {
     // Clusters of knots. Index 0 = Highest power of 10 stored?
@@ -28,9 +103,17 @@ pub struct Cord {
     pub clusters: Vec<Vec<Knot>>,
 }
 
+impl Default for Cord {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Cord {
     pub fn new() -> Self {
-        Self { clusters: Vec::new() }
+        Self {
+            clusters: Vec::new(),
+        }
     }
 
     /// Reads the integer value of the cord
@@ -99,6 +182,12 @@ impl Cord {
 pub struct QuipuState {
     pub cords: Vec<Cord>,
     pub active_cord: usize,
+}
+
+impl Default for QuipuState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl QuipuState {

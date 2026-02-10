@@ -1,4 +1,12 @@
 #[cfg(feature = "nova")]
+use super::ChimeraVM;
+#[cfg(feature = "nova")]
+use crate::ast::Nucleotide;
+#[cfg(feature = "nova")]
+use crate::opcode::OpCode;
+#[cfg(feature = "nova")]
+use crate::vm::Value;
+#[cfg(feature = "nova")]
 use serde::{Deserialize, Serialize};
 #[cfg(feature = "nova")]
 use std::collections::VecDeque;
@@ -127,5 +135,127 @@ impl MarketState {
         }
 
         None
+    }
+}
+
+pub fn exec_market_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    match op {
+        OpCode::Offer => {
+            // stack: price, item
+            if vm.stack.len() >= 2 {
+                let item_val = vm.stack.pop().unwrap();
+                let price_val = vm.stack.pop().unwrap();
+                if let Value::Int(price) = price_val {
+                    if price > 0 {
+                        // Store item as string representation for now
+                        let item_str = match &item_val {
+                            Value::Str(s) => s.clone(),
+                            _ => format!("{}", item_val),
+                        };
+                        let order_id = vm.market.place_ask(vm.ip.0, item_str, price);
+                        vm.stack.push(Value::Int(order_id as i64));
+                        vm.output
+                            .push(format!("OFFER: Sell '{}' for {}", item_val, price));
+                    } else {
+                        vm.output.push("OFFER: Price must be positive".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for offer".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for offer".to_string());
+            }
+            None
+        }
+        OpCode::Buy => {
+            // stack: max_price, query
+            if vm.stack.len() >= 2 {
+                let query_val = vm.stack.pop().unwrap();
+                let max_price_val = vm.stack.pop().unwrap();
+                if let (Value::Int(max_price), Value::Str(query)) = (max_price_val, query_val) {
+                    if let Some((item_str, cost)) =
+                        vm.market.match_buy(vm.ip.0, query.clone(), max_price)
+                    {
+                        vm.stack.push(Value::Str(item_str));
+                        vm.stack.push(Value::Int(cost));
+                        vm.output
+                            .push(format!("BUY: Bought '{}' for {}", query, cost));
+                    } else {
+                        vm.stack.push(Value::Int(0)); // Failed
+                        vm.output
+                            .push(format!("BUY: No match for '{}' <= {}", query, max_price));
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for buy".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for buy".to_string());
+            }
+            None
+        }
+        OpCode::Invest => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.market.credit(vm.ip.0, amount);
+                        vm.output
+                            .push(format!("INVEST: Converted {} Energy to Credits", amount));
+                    } else {
+                        vm.output.push("INVEST: Insufficient energy".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for invest".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for invest".to_string());
+            }
+            None
+        }
+        OpCode::Divest => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 {
+                        if vm.market.debit(vm.ip.0, amount) {
+                            vm.energy = vm.energy.saturating_add(amount);
+                            vm.output
+                                .push(format!("DIVEST: Converted {} Credits to Energy", amount));
+                        } else {
+                            vm.output.push("DIVEST: Insufficient credits".to_string());
+                        }
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for divest".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for divest".to_string());
+            }
+            None
+        }
+        OpCode::Balance => {
+            let bal = vm.market.get_balance(vm.ip.0);
+            vm.stack.push(Value::Int(bal));
+            None
+        }
+        OpCode::Ticker => {
+            if let Some((_, price)) = vm.market.history.back() {
+                vm.stack.push(Value::Int(*price));
+            } else {
+                vm.stack.push(Value::Int(0));
+            }
+            None
+        }
+        _ => None,
     }
 }

@@ -15,7 +15,7 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph, Row, Table, ListState},
+    widgets::{Block, Borders, Gauge, List, ListItem, ListState, Paragraph, Row, Table},
     Frame, Terminal,
 };
 use std::io;
@@ -1048,13 +1048,18 @@ where
                                     // Let's allow setting value of active cord
                                     let val = parse_grid_value(&app_state.input_buffer);
                                     if let crate::vm::Value::Int(n) = val {
-                                        if let Some(cord) = vm.quipu.cords.get_mut(vm.quipu.active_cord) {
+                                        if let Some(cord) =
+                                            vm.quipu.cords.get_mut(vm.quipu.active_cord)
+                                        {
                                             // Reset cord to this value?
                                             // Tie replaces it?
                                             // Let's reuse tie logic by clearing first?
                                             // Or just make tie set it. My tie logic replaces.
                                             cord.tie(n);
-                                            app_state.status_msg = format!("Cord {} set to {}", vm.quipu.active_cord, n);
+                                            app_state.status_msg = format!(
+                                                "Cord {} set to {}",
+                                                vm.quipu.active_cord, n
+                                            );
                                         }
                                     }
                                     app_state.input_mode = InputMode::Normal;
@@ -1083,7 +1088,8 @@ where
                                 }
                             }
                         }
-                        KeyCode::Tab => {
+                        KeyCode::Tab =>
+                        {
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 app_state.babel_focus = (app_state.babel_focus + 1) % 2;
@@ -1093,7 +1099,8 @@ where
                             app_state.input_mode = InputMode::Normal;
                             app_state.input_buffer.clear();
                         }
-                        KeyCode::Char(c) => {
+                        KeyCode::Char(c) =>
+                        {
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 let target = if app_state.babel_focus == 0 {
@@ -1106,7 +1113,8 @@ where
                                 app_state.input_buffer.push(c);
                             }
                         }
-                        KeyCode::Backspace => {
+                        KeyCode::Backspace =>
+                        {
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 let target = if app_state.babel_focus == 0 {
@@ -1420,15 +1428,20 @@ where
                     KeyCode::Char('f') => {
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
-                             // Fabricate current strand
-                             let (x, y) = app_state.grid_cursor;
-                             let s_idx = app_state.selected_strand;
-                             vm.stack.push(crate::vm::Value::Int(s_idx as i64));
-                             vm.stack.push(crate::vm::Value::Int(y as i64));
-                             vm.stack.push(crate::vm::Value::Int(x as i64));
-                             crate::vm::silicon::exec_silicon_op(vm, crate::opcode::OpCode::Fabricate, &[]);
-                             app_state.status_msg = format!("Fabricated strand {} at {},{}", s_idx, x, y);
-                             continue;
+                            // Fabricate current strand
+                            let (x, y) = app_state.grid_cursor;
+                            let s_idx = app_state.selected_strand;
+                            vm.stack.push(crate::vm::Value::Int(s_idx as i64));
+                            vm.stack.push(crate::vm::Value::Int(y as i64));
+                            vm.stack.push(crate::vm::Value::Int(x as i64));
+                            crate::vm::silicon::exec_silicon_op(
+                                vm,
+                                crate::opcode::OpCode::Fabricate,
+                                &[],
+                            );
+                            app_state.status_msg =
+                                format!("Fabricated strand {} at {},{}", s_idx, x, y);
+                            continue;
                         }
 
                         #[cfg(feature = "nova")]
@@ -1470,14 +1483,20 @@ where
                         #[cfg(feature = "nova")]
                         if let ViewMode::Babel = app_state.view_mode {
                             // Run Parse
-                            vm.stack.push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
+                            vm.stack
+                                .push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
                             let _ = crate::vm::babel::exec_babel_op(
                                 vm,
                                 crate::opcode::OpCode::ParserRegex,
                                 &[],
                             );
-                            vm.stack.push(crate::vm::Value::Str(app_state.babel_input.clone()));
-                            let _ = crate::vm::babel::exec_babel_op(vm, crate::opcode::OpCode::Parse, &[]);
+                            vm.stack
+                                .push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                            let _ = crate::vm::babel::exec_babel_op(
+                                vm,
+                                crate::opcode::OpCode::Parse,
+                                &[],
+                            );
 
                             if let Some(res) = vm.stack.pop() {
                                 app_state.babel_result = format!("{}", res);
@@ -2350,16 +2369,20 @@ where
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
-                             // Trace current circuit
-                             let (x, y) = app_state.grid_cursor;
-                             vm.stack.push(crate::vm::Value::Int(y as i64));
-                             vm.stack.push(crate::vm::Value::Int(x as i64));
-                             crate::vm::silicon::exec_silicon_op(vm, crate::opcode::OpCode::Trace, &[]);
-                             if let Some(crate::vm::Value::Int(idx)) = vm.stack.last() {
-                                 app_state.status_msg = format!("Traced circuit to strand {}", idx);
-                                 app_state.selected_strand = *idx as usize;
-                             }
-                             continue;
+                            // Trace current circuit
+                            let (x, y) = app_state.grid_cursor;
+                            vm.stack.push(crate::vm::Value::Int(y as i64));
+                            vm.stack.push(crate::vm::Value::Int(x as i64));
+                            crate::vm::silicon::exec_silicon_op(
+                                vm,
+                                crate::opcode::OpCode::Trace,
+                                &[],
+                            );
+                            if let Some(crate::vm::Value::Int(idx)) = vm.stack.last() {
+                                app_state.status_msg = format!("Traced circuit to strand {}", idx);
+                                app_state.selected_strand = *idx as usize;
+                            }
+                            continue;
                         }
 
                         app_state.input_mode = InputMode::Editing;
@@ -2899,15 +2922,15 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             if app_state.fishing_cast {
                 // Splash / Ripple around bobber
                 if app_state.fishing_bobber_y < 50.0 {
-                     // Bobber is underwater/surface
-                     let phase = (vm.tick_counter % 6) / 2;
-                     let (left, right) = match phase {
-                         0 => ("(", ")"),
-                         1 => ("<", ">"),
-                         _ => ("{", "}"),
-                     };
-                     ctx.print(48.0, app_state.fishing_bobber_y, left);
-                     ctx.print(51.0, app_state.fishing_bobber_y, right);
+                    // Bobber is underwater/surface
+                    let phase = (vm.tick_counter % 6) / 2;
+                    let (left, right) = match phase {
+                        0 => ("(", ")"),
+                        1 => ("<", ">"),
+                        _ => ("{", "}"),
+                    };
+                    ctx.print(48.0, app_state.fishing_bobber_y, left);
+                    ctx.print(51.0, app_state.fishing_bobber_y, right);
                 }
 
                 // Fishing Line
@@ -2924,7 +2947,11 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
                 // Fish (Icon)
                 if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
-                    let fish_icon = if app_state.fishing_tension > 0.8 { "🦈" } else { "🐟" };
+                    let fish_icon = if app_state.fishing_tension > 0.8 {
+                        "🦈"
+                    } else {
+                        "🐟"
+                    };
                     ctx.print(48.0, app_state.fishing_fish_y, fish_icon);
                 }
 
@@ -3055,7 +3082,7 @@ fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         for x in 0..16 {
             let val = &vm.grid[y][x];
             // Reuse schematic styling logic
-             let (ch, style) = match val {
+            let (ch, style) = match val {
                 crate::vm::Value::Int(0) => (" ".to_string(), Style::default().fg(Color::DarkGray)),
                 crate::vm::Value::Int(1) => ("┼".to_string(), Style::default().fg(Color::DarkGray)), // Wire
                 crate::vm::Value::Int(2) => (
@@ -3165,14 +3192,13 @@ fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Style::default().fg(Color::White)
         };
 
-        strand_items.push(ListItem::new(format!("Strand {} ({} genes)", i, strand.genes.len())).style(style));
+        strand_items.push(
+            ListItem::new(format!("Strand {} ({} genes)", i, strand.genes.len())).style(style),
+        );
     }
 
-    let strand_list = List::new(strand_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("DNA Library"),
-    );
+    let strand_list =
+        List::new(strand_items).block(Block::default().borders(Borders::ALL).title("DNA Library"));
     f.render_widget(strand_list, right_chunks[0]);
 
     // Help / Status
@@ -3184,11 +3210,8 @@ fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  (Select Strand in Genome View)"),
     ];
 
-    let help_widget = Paragraph::new(help_text).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Controls"),
-    );
+    let help_widget =
+        Paragraph::new(help_text).block(Block::default().borders(Borders::ALL).title("Controls"));
     f.render_widget(help_widget, right_chunks[1]);
 }
 
@@ -3205,7 +3228,9 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         kb_items.push(ListItem::new("Knowledge Base is empty."));
     } else {
         for (i, fact) in vm.knowledge_base.iter().enumerate() {
-            kb_items.push(ListItem::new(format!("{}: {}", i, fact)).style(Style::default().fg(Color::Cyan)));
+            kb_items.push(
+                ListItem::new(format!("{}: {}", i, fact)).style(Style::default().fg(Color::Cyan)),
+            );
         }
     }
     let kb_list = List::new(kb_items).block(
@@ -3227,7 +3252,10 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         omen_items.push(ListItem::new("No active prophecies (Omens)."));
     } else {
         for (i, omen) in vm.omens.iter().enumerate() {
-            omen_items.push(ListItem::new(format!("{}: If {} Then {}", i, omen.condition, omen.effect)).style(Style::default().fg(Color::Yellow)));
+            omen_items.push(
+                ListItem::new(format!("{}: If {} Then {}", i, omen.condition, omen.effect))
+                    .style(Style::default().fg(Color::Yellow)),
+            );
         }
     }
     let omen_list = List::new(omen_items).block(
@@ -3269,29 +3297,44 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
         .split(f.area());
 
     let pattern_style = if app_state.babel_focus == 0 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
 
     let input_style = if app_state.babel_focus == 1 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
 
     let pattern_widget = Paragraph::new(app_state.babel_pattern.clone())
-        .block(Block::default().borders(Borders::ALL).title("Regex Pattern (Edit)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Regex Pattern (Edit)"),
+        )
         .style(pattern_style);
     f.render_widget(pattern_widget, chunks[0]);
 
     let input_widget = Paragraph::new(app_state.babel_input.clone())
-        .block(Block::default().borders(Borders::ALL).title("Test String (Edit)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Test String (Edit)"),
+        )
         .style(input_style);
     f.render_widget(input_widget, chunks[1]);
 
-    let result_widget = Paragraph::new(app_state.babel_result.clone())
-        .block(Block::default().borders(Borders::ALL).title("Match Result (Enter to Run)"));
+    let result_widget = Paragraph::new(app_state.babel_result.clone()).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Match Result (Enter to Run)"),
+    );
     f.render_widget(result_widget, chunks[2]);
 }
 
@@ -4253,7 +4296,11 @@ fn render_view_selector(f: &mut Frame, app_state: &AppState) {
 
     let views = get_all_views();
 
-    let current_selected = app_state.view_selector_state.borrow().selected().unwrap_or(0);
+    let current_selected = app_state
+        .view_selector_state
+        .borrow()
+        .selected()
+        .unwrap_or(0);
 
     let items: Vec<ListItem> = views
         .iter()
@@ -6595,17 +6642,15 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Arrow Keys to Move."),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Manual"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Manual"));
     f.render_widget(info_widget, right_chunks[0]);
 
     // MIDI Log
     let mut midi_items = Vec::new();
     if vm.midi_messages.is_empty() {
-        midi_items.push(ListItem::new("No MIDI Output").style(Style::default().fg(Color::DarkGray)));
+        midi_items
+            .push(ListItem::new("No MIDI Output").style(Style::default().fg(Color::DarkGray)));
     } else {
         for msg in &vm.midi_messages {
             let s = match msg {
@@ -6615,7 +6660,10 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     velocity,
                     duration,
                 } => {
-                    format!("♪ Ch{} Note{} Vel{} Len{}", channel, note, velocity, duration)
+                    format!(
+                        "♪ Ch{} Note{} Vel{} Len{}",
+                        channel, note, velocity, duration
+                    )
                 }
                 crate::vm::MidiEvent::ControlChange {
                     channel,
@@ -6645,7 +6693,11 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Cosmic Strings (Vibrating Entities)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Cosmic Strings (Vibrating Entities)"),
+        )
         .x_bounds([0.0, 16.0])
         .y_bounds([0.0, 16.0])
         .paint(|ctx| {
@@ -6684,7 +6736,11 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                         y1: prev_y,
                         x2: curr_x,
                         y2: curr_y,
-                        color: if s.amplitude > 5.0 { Color::Red } else { Color::Cyan },
+                        color: if s.amplitude > 5.0 {
+                            Color::Red
+                        } else {
+                            Color::Cyan
+                        },
                     });
 
                     prev_x = curr_x;
@@ -6754,7 +6810,11 @@ fn render_quipu(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                     y1: 45.0,
                     x2: x,
                     y2: 5.0,
-                    color: if i == vm.quipu.active_cord { Color::Yellow } else { Color::Gray },
+                    color: if i == vm.quipu.active_cord {
+                        Color::Yellow
+                    } else {
+                        Color::Gray
+                    },
                 });
 
                 // Draw Knots
@@ -6830,21 +6890,40 @@ fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Overlay Components
             if let crate::vm::Value::Str(s) = val {
-                if matches!(s.as_str(), ">" | "<" | "^" | "v" | "@" | "~" | "#" | "!" | "X") {
+                if matches!(
+                    s.as_str(),
+                    ">" | "<" | "^" | "v" | "@" | "~" | "#" | "!" | "X"
+                ) {
                     ch = s.clone();
                     style = style.add_modifier(Modifier::BOLD);
-                    if s == "@" { style = style.fg(Color::Green); } // Pump
-                    if s == "~" { style = style.fg(Color::Red); }   // Drain
-                    if s == "#" { style = style.fg(Color::White).bg(Color::DarkGray); } // Wall
-                    if s == "!" { style = style.fg(Color::Yellow); } // Sensor
+                    if s == "@" {
+                        style = style.fg(Color::Green);
+                    } // Pump
+                    if s == "~" {
+                        style = style.fg(Color::Red);
+                    } // Drain
+                    if s == "#" {
+                        style = style.fg(Color::White).bg(Color::DarkGray);
+                    } // Wall
+                    if s == "!" {
+                        style = style.fg(Color::Yellow);
+                    } // Sensor
                 }
             } else if wind != (0, 0) {
                 // Show wind direction if no component overlay
                 // Wind vector (dy, dx)
                 if wind.0.abs() > wind.1.abs() {
-                    if wind.0 > 0 { ch = "↓".to_string(); } else { ch = "↑".to_string(); }
+                    if wind.0 > 0 {
+                        ch = "↓".to_string();
+                    } else {
+                        ch = "↑".to_string();
+                    }
                 } else {
-                    if wind.1 > 0 { ch = "→".to_string(); } else { ch = "←".to_string(); }
+                    if wind.1 > 0 {
+                        ch = "→".to_string();
+                    } else {
+                        ch = "←".to_string();
+                    }
                 }
             }
 
@@ -6885,11 +6964,8 @@ fn render_hydra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  X  Valve (Default Closed)"),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Fluid Gauge"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Fluid Gauge"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -6953,8 +7029,15 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let (cx, cy) = app_state.grid_cursor;
 
     let info = vec![
-        Line::from(format!("History Depth: {} / {}", history_len, crate::vm::MAX_HISTORY_DEPTH)),
-        Line::from(format!("Chronostasis Timer: {} ticks", vm.chronostasis_timer)),
+        Line::from(format!(
+            "History Depth: {} / {}",
+            history_len,
+            crate::vm::MAX_HISTORY_DEPTH
+        )),
+        Line::from(format!(
+            "Chronostasis Timer: {} ticks",
+            vm.chronostasis_timer
+        )),
         Line::from(" "),
         Line::from(format!("Cursor: {},{}", cx, cy)),
         Line::from(" "),

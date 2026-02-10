@@ -72,7 +72,10 @@ mod tests {
         let tissue_id_val = vm.stack.pop().unwrap();
         if let Value::Int(tid) = tissue_id_val {
             assert!(tid > 0, "Should have created a tissue");
-            assert!(vm.tissues.contains_key(&(tid as usize)), "Tissue should exist");
+            assert!(
+                vm.tissues.contains_key(&(tid as usize)),
+                "Tissue should exist"
+            );
             let tissue = &vm.tissues[&(tid as usize)];
             assert!(tissue.members.contains(&id1));
             assert!(tissue.members.contains(&id2));

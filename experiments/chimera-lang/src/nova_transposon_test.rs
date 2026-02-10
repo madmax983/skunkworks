@@ -45,12 +45,30 @@ mod tests {
         // So let's push two values.
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Transposon, args: vec![] }, // Index 2
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // Index 3
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(200)] }, // Index 4
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(300)] }, // Index 5
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Transposon,
+                args: vec![],
+            }, // Index 2
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }, // Index 3
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(200)],
+            }, // Index 4
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(300)],
+            }, // Index 5
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

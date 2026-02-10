@@ -40,7 +40,8 @@ pub fn process_flux(vm: &mut ChimeraVM) {
             genome_id: 0,
         };
         vm.organelles.push(wisp);
-        vm.output.push(format!("FLUX: Wisp manifested at {},{}", x, y));
+        vm.output
+            .push(format!("FLUX: Wisp manifested at {},{}", x, y));
     }
 }
 
@@ -63,12 +64,12 @@ pub fn tick_wisp(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
     if rng.gen_bool(0.1) {
         let (gy, gx) = organelle.context_loc;
         if matches!(vm.grid[gy][gx], Value::Int(0)) {
-             vm.grid[gy][gx] = Value::Int(rng.gen_range(0..100));
+            vm.grid[gy][gx] = Value::Int(rng.gen_range(0..100));
         } else {
-             // Mutate existing value
-             if let Value::Int(n) = &mut vm.grid[gy][gx] {
-                 *n = n.wrapping_add(rng.gen_range(-10..=10));
-             }
+            // Mutate existing value
+            if let Value::Int(n) = &mut vm.grid[gy][gx] {
+                *n = n.wrapping_add(rng.gen_range(-10..=10));
+            }
         }
         vm.output.push(format!("WISP: Glitch at {},{}", gx, gy));
     }
@@ -100,13 +101,17 @@ pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
 
                 vm.energy = vm.energy.saturating_sub(amt);
-                vm.output.push(format!("CHAOS: Injected {} entropy. Havoc: {:.3}", amt, vm.havoc.rate));
+                vm.output.push(format!(
+                    "CHAOS: Injected {} entropy. Havoc: {:.3}",
+                    amt, vm.havoc.rate
+                ));
             }
         } else {
             vm.output.push("Error: Type mismatch for chaos".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for chaos".to_string());
+        vm.output
+            .push("Error: Stack underflow for chaos".to_string());
     }
     None
 }

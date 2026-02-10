@@ -1,5 +1,8 @@
 #![cfg(feature = "nova")]
 
+use super::ChimeraVM;
+use crate::ast::Nucleotide;
+use crate::opcode::OpCode;
 use crate::vm::Value;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
@@ -161,5 +164,194 @@ impl Egregore {
         } else {
             None
         }
+    }
+}
+
+pub fn exec_egregore_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    match op {
+        OpCode::EgregoreLink => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(name) = val {
+                    vm.egregore.link(vm.ip.0);
+                    vm.output.push(format!("EGREGORE: Linked to {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_link".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_link".to_string());
+            }
+            None
+        }
+        OpCode::EgregoreTithe => {
+            // stack: amount
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.egregore.tithe(amount);
+                        vm.output.push(format!("EGREGORE: Tithed {}", amount));
+                    } else {
+                        vm.output
+                            .push("EGREGORE: Insufficient energy to tithe".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_tithe".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_tithe".to_string());
+            }
+            None
+        }
+        OpCode::EgregoreChannel => {
+            // stack: channel_name, value (top)
+            if vm.stack.len() >= 2 {
+                let val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+                if let Value::Str(name) = name_val {
+                    vm.egregore.push_channel(name.clone(), val.clone());
+                    vm.output
+                        .push(format!("EGREGORE: Sent to channel {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_channel".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_channel".to_string());
+            }
+            None
+        }
+        OpCode::EgregoreDictate => {
+            // stack: parameter_name, vote_value (top)
+            if vm.stack.len() >= 2 {
+                let val = vm.stack.pop().unwrap();
+                let name_val = vm.stack.pop().unwrap();
+                if let Value::Str(name) = name_val {
+                    vm.egregore.vote(name.clone(), val.clone());
+                    vm.output.push(format!("EGREGORE: Voted on {}", name));
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_dictate".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_dictate".to_string());
+            }
+            None
+        }
+        OpCode::EgregoreQuery => {
+            // stack: key (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(key) = val {
+                    // check param first
+                    if let Some(v) = vm.egregore.get_param(&key) {
+                        vm.stack.push(v);
+                    } else if let Some(v) = vm.egregore.read_channel(&key) {
+                        vm.stack.push(v);
+                    } else {
+                        vm.stack.push(Value::Int(0)); // Not found
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_query".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_query".to_string());
+            }
+            None
+        }
+        OpCode::EgregoreSummon => {
+            // stack: ritual_name
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Str(ritual) = val {
+                    let cost = 100; // Base cost
+                    if vm.egregore.faith >= cost {
+                        vm.egregore.faith -= cost;
+                        match ritual.as_str() {
+                            "Rain" => {
+                                for row in vm.moisture_grid.iter_mut() {
+                                    for cell in row.iter_mut() {
+                                        *cell = cell.saturating_add(50);
+                                    }
+                                }
+                                vm.output.push("EGREGORE: Summoned RAIN".to_string());
+                            }
+                            "Dawn" => {
+                                for row in vm.light_grid.iter_mut() {
+                                    for cell in row.iter_mut() {
+                                        *cell = 100;
+                                    }
+                                }
+                                vm.output.push("EGREGORE: Summoned DAWN".to_string());
+                            }
+                            "Apocalypse" => {
+                                // Randomly kill half of organelles
+                                vm.organelles.retain(|_| rand::random::<bool>());
+                                vm.output.push("EGREGORE: Summoned APOCALYPSE".to_string());
+                            }
+                            _ => {
+                                vm.egregore.faith += cost; // Refund
+                                vm.output
+                                    .push(format!("EGREGORE: Unknown ritual {}", ritual));
+                            }
+                        }
+                    } else {
+                        vm.output.push("EGREGORE: Insufficient faith".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for egregore_summon".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for egregore_summon".to_string());
+            }
+            None
+        }
+        OpCode::Sacrifice => {
+            let s_idx = vm.ip.0;
+            if s_idx < vm.dna.helix.strands.len() {
+                vm.egregore.sacrifice(100);
+
+                // Kill strand
+                vm.dna.helix.strands[s_idx].genes.clear();
+                vm.epigenome.retain(|(s, _)| *s != s_idx);
+                vm.cladistics.kill_strand(s_idx, vm.tick_counter);
+
+                vm.output
+                    .push(format!("SACRIFICE: Strand {} given to the Void", s_idx));
+                vm.halted = true; // Suicide
+            }
+            None
+        }
+        OpCode::Pray => {
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(amount) = val {
+                    if amount > 0 && vm.energy >= amount {
+                        vm.energy -= amount;
+                        vm.egregore.pray(amount);
+                        vm.output.push(format!("PRAY: Donated {} energy", amount));
+                    } else {
+                        vm.output.push("PRAY: Insufficient energy".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for pray".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for pray".to_string());
+            }
+            None
+        }
+        _ => None,
     }
 }

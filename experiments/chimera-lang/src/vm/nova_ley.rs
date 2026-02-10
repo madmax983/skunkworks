@@ -91,11 +91,7 @@ impl LeyNetwork {
     }
 }
 
-pub fn exec_ley_op(
-    vm: &mut ChimeraVM,
-    op: OpCode,
-    _args: &[Nucleotide],
-) -> Option<(usize, usize)> {
+pub fn exec_ley_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
     match op {
         OpCode::LeySense => exec_ley_sense(vm),
         OpCode::LeyTap => exec_ley_tap(vm),
@@ -132,7 +128,8 @@ fn exec_ley_sense(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 fn exec_ley_tap(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     if let Some((idx, dist)) = vm.ley_network.find_nearest(cy, cx) {
-        if dist < 1.5 { // Within 1 cell (diagonal is 1.414)
+        if dist < 1.5 {
+            // Within 1 cell (diagonal is 1.414)
             let node = &mut vm.ley_network.nodes[idx];
             let gain = node.power;
 
@@ -142,7 +139,8 @@ fn exec_ley_tap(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 // Overload!
                 let damage = gain / 2;
                 vm.energy = vm.energy.saturating_sub(damage);
-                vm.output.push(format!("LEY_TAP: Overload! Lost {} energy", damage));
+                vm.output
+                    .push(format!("LEY_TAP: Overload! Lost {} energy", damage));
                 vm.stack.push(Value::Int(-damage));
 
                 // Explode grid
@@ -183,12 +181,15 @@ fn exec_ley_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         let target_node = &vm.ley_network.nodes[tid];
                         vm.context_loc = (target_node.y, target_node.x);
                         vm.energy = vm.energy.saturating_sub(20);
-                        vm.output.push(format!("LEY_WARP: Teleported to Node {}", tid));
+                        vm.output
+                            .push(format!("LEY_WARP: Teleported to Node {}", tid));
                     } else {
-                        vm.output.push(format!("LEY_WARP: No connection to Node {}", tid));
+                        vm.output
+                            .push(format!("LEY_WARP: No connection to Node {}", tid));
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for ley_warp".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for ley_warp".to_string());
                 }
             } else {
                 // Auto-warp to first connection
@@ -196,7 +197,8 @@ fn exec_ley_warp(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     let target_node = &vm.ley_network.nodes[first];
                     vm.context_loc = (target_node.y, target_node.x);
                     vm.energy = vm.energy.saturating_sub(20);
-                    vm.output.push(format!("LEY_WARP: Teleported to Node {}", first));
+                    vm.output
+                        .push(format!("LEY_WARP: Teleported to Node {}", first));
                 } else {
                     vm.output.push("LEY_WARP: Dead end".to_string());
                 }
@@ -221,19 +223,24 @@ fn exec_ley_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     let old_y = vm.ley_network.nodes[idx].y;
                     let old_x = vm.ley_network.nodes[idx].x;
 
-                    if let Some((ny, nx)) = vm.normalize_coords(old_y as i64 + dy, old_x as i64 + dx) {
+                    if let Some((ny, nx)) =
+                        vm.normalize_coords(old_y as i64 + dy, old_x as i64 + dx)
+                    {
                         vm.ley_network.nodes[idx].y = ny;
                         vm.ley_network.nodes[idx].x = nx;
                         vm.energy = vm.energy.saturating_sub(50);
-                        vm.output.push(format!("LEY_SHIFT: Moved Node {} to {},{}", idx, nx, ny));
+                        vm.output
+                            .push(format!("LEY_SHIFT: Moved Node {} to {},{}", idx, nx, ny));
                     } else {
                         vm.output.push("LEY_SHIFT: Out of bounds".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for ley_shift".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for ley_shift".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for ley_shift".to_string());
+                vm.output
+                    .push("Error: Stack underflow for ley_shift".to_string());
             }
         } else {
             vm.output.push("LEY_SHIFT: Not on a Ley Node".to_string());

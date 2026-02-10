@@ -1,8 +1,8 @@
 #![cfg(feature = "nova")]
 
-use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
+use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -176,11 +176,8 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
                     // 2. Input Stimulus
                     if signal > 0 {
-                        ctx.neuron_stimuli.push(NeuronStimulus {
-                            y,
-                            x,
-                            amount: 50.0,
-                        });
+                        ctx.neuron_stimuli
+                            .push(NeuronStimulus { y, x, amount: 50.0 });
                     }
                 }
                 #[cfg(feature = "biophysics")]
@@ -262,13 +259,19 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                         0
                     }
                 }),
-                '=' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
-                    if a == b {
-                        1
-                    } else {
-                        0
-                    }
-                }),
+                '=' => binary_op(
+                    vm,
+                    y,
+                    x,
+                    &mut ctx.grid_writes,
+                    |a, b| {
+                        if a == b {
+                            1
+                        } else {
+                            0
+                        }
+                    },
+                ),
                 '&' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a & b),
                 '|' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a | b),
                 '[' => exec_ether_send(vm, y, x, signal, &mut ctx),
@@ -345,9 +348,11 @@ pub fn process_signals(vm: &mut ChimeraVM) {
             vm.neurons.insert(coord, neuron);
         }
     }
-  
+
     for w in ctx.entropy_writes {
-        vm.entropy_grid[w.y][w.x] = vm.entropy_grid[w.y][w.x].saturating_add(w.val).clamp(0, 100);
+        vm.entropy_grid[w.y][w.x] = vm.entropy_grid[w.y][w.x]
+            .saturating_add(w.val)
+            .clamp(0, 100);
     }
 
     for req in ctx.mutation_requests {

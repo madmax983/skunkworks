@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_dna(genes: Vec<Gene>) -> Dna {
         Dna {
@@ -21,23 +21,45 @@ mod tests {
 
         let genes = vec![
             // 0: Push 10
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
             // 1: Push 0 (y)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // 2: Push 0 (x)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // 3: GWrite (Grid -> 10)
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // 4: Push 20
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(20)],
+            },
             // 5: Push 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // 6: Push 0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // 7: GWrite (Grid -> 20)
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // 8: Push 5 (Go back 5 ticks to be safe? Or calculate exact)
             // Ticks passed:
             // 0, 1, 2, 3 (Write 10)
@@ -76,9 +98,14 @@ mod tests {
 
             // Retrograde(N) reads `len - 1 - N`.
             // N=2 => `9 - 2` = 7. Value at 7 is 10.
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Retrograde, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::Retrograde,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

@@ -248,9 +248,13 @@ mod tests {
         let val = vm.stack.pop().unwrap();
         // Allow for decay
         if let Value::Int(v) = val {
-             assert!(v >= 3 && v <= 10, "Voltage {} out of expected decay range", v);
+            assert!(
+                v >= 3 && v <= 10,
+                "Voltage {} out of expected decay range",
+                v
+            );
         } else {
-             panic!("Expected Int value");
+            panic!("Expected Int value");
         }
     }
 
@@ -283,19 +287,31 @@ mod tests {
         // Threshold 5, Jump to Strand 1
         let strand0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::CircuitBreaker, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(5)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::CircuitBreaker,
+                    args: vec![],
+                },
             ],
         };
         let strand1 = Strand {
-             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] },
-             ],
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(99)],
+            }],
         };
 
         let dna = Dna {
-            helix: Helix { strands: vec![strand0, strand1] },
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
         };
         let mut vm = ChimeraVM::new(dna);
         vm.context_loc = (8, 8);
