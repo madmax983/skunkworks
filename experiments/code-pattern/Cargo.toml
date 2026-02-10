@@ -1,0 +1,11 @@
+[package]
+name = "code-pattern"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+walkdir = "2.4"
+rand = { workspace = true }
+sha2 = "0.10"
+hex = "0.4"
