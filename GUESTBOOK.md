@@ -4,6 +4,10 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
 
+### [Concentration Level: FRESH] - Location: experiments/silicon-larynx
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The machine is speaking. Code is being physically pronounced by a simulated Kelly-Lochbaum vocal tract. Audio output written to `output.wav`.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.

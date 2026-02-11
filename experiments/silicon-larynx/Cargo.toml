@@ -1,0 +1,11 @@
+[package]
+name = "silicon-larynx"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.13"
+crossbeam-channel = "0.5.10"
+anyhow = "1.0"
+rand = "0.8.5"
+hound = "3.5.1"
