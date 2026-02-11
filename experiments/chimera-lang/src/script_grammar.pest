@@ -12,11 +12,15 @@ strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
 instruction = {
     block |
     literal |
+    crispr_block |
     call |
     arrow_jump |
     question_branch |
     simple_op
 }
+
+crispr_block = { "crispr" ~ "(" ~ identifier ~ ")" ~ "{" ~ pattern_def ~ instruction* ~ "}" }
+pattern_def = { "pattern" ~ ":" ~ identifier ~ ("," ~ identifier)* }
 
 block = { "{" ~ instruction* ~ "}" }
 
