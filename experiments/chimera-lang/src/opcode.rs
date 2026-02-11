@@ -1920,6 +1920,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
     #[cfg(feature = "nova")]
     ParserOpt,
+    /// **[Babel]** Generates a string from a Grammar.
+    ///
+    /// **Stack:** `[ ..., grammar_junction ] -> [ ..., generated_string ]`
+    #[cfg(feature = "nova")]
+    Generate,
+    /// **[Babel]** Writes a string to the Tablet (Output Buffer).
+    ///
+    /// **Stack:** `[ ..., string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Scribe,
 
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
