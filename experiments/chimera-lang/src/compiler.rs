@@ -27,53 +27,45 @@ fn preprocess(
     let mut expanded = String::new();
     for line in source.lines() {
         let trimmed = line.trim();
-        if trimmed.starts_with("include") {
-            // Extract filename
-            // Format: include "filename"
-            let parts: Vec<&str> = trimmed.split_whitespace().collect();
-            if parts.len() >= 2 {
-                let raw_filename = parts[1];
-                // Strip quotes if present
-                let filename = raw_filename.trim_matches('"');
-
-                if let Some(bp) = base_path {
-                    let path = bp.join(filename);
-
-                    // Canonicalize to detect cycles accurately (resolves symlinks, .., etc.)
-                    // Note: This requires the file to exist.
-                    let abs_path = if path.exists() {
-                        path.canonicalize()?
-                    } else {
-                        // If file doesn't exist, read_to_string will fail later with a good message.
-                        // But for cycle detection, we use the best path we have.
-                        path.clone()
-                    };
-
-                    if !visited.insert(abs_path.clone()) {
-                        return Err(anyhow!("Recursive include detected: {:?}", abs_path));
-                    }
-
-                    let content = fs::read_to_string(&path)
-                        .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
-
-                    // Recursive preprocess
-                    let sub_expanded = preprocess(&content, Some(bp), visited, depth + 1)?;
-                    expanded.push_str(&sub_expanded);
-                    expanded.push('\n');
-
-                    // Remove from visited set to allow inclusion in sibling branches (diamond problem)
-                    // but prevent cycles in the current recursion stack.
-                    visited.remove(&abs_path);
-                } else {
-                    return Err(anyhow!("Cannot include files without a base path"));
-                }
-            } else {
-                return Err(anyhow!("Invalid include statement: {}", trimmed));
-            }
-        } else {
+        if !trimmed.starts_with("include") {
             expanded.push_str(line);
             expanded.push('\n');
+            continue;
         }
+
+        // Handle include
+        let parts: Vec<&str> = trimmed.split_whitespace().collect();
+        if parts.len() < 2 {
+            return Err(anyhow!("Invalid include statement: {}", trimmed));
+        }
+
+        let raw_filename = parts[1];
+        let filename = raw_filename.trim_matches('"');
+
+        let Some(bp) = base_path else {
+            return Err(anyhow!("Cannot include files without a base path"));
+        };
+
+        let path = bp.join(filename);
+
+        let abs_path = if path.exists() {
+            path.canonicalize()?
+        } else {
+            path.clone()
+        };
+
+        if !visited.insert(abs_path.clone()) {
+            return Err(anyhow!("Recursive include detected: {:?}", abs_path));
+        }
+
+        let content = fs::read_to_string(&path)
+            .map_err(|e| anyhow!("Failed to include file {:?}: {}", path, e))?;
+
+        let sub_expanded = preprocess(&content, Some(bp), visited, depth + 1)?;
+        expanded.push_str(&sub_expanded);
+        expanded.push('\n');
+
+        visited.remove(&abs_path);
     }
     Ok(expanded)
 }
@@ -138,6 +130,198 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     })
 }
 
+struct CompilerContext<'a, 'i> {
+    strand_map: &'a HashMap<String, usize>,
+    macro_map: &'a HashMap<String, pest::iterators::Pairs<'i, Rule>>,
+    anonymous_strands: &'a mut Vec<Strand>,
+    depth: usize,
+}
+
+impl<'a, 'i> CompilerContext<'a, 'i> {
+    fn parse_instruction(&mut self, pair: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        if self.depth > 50 {
+            return Err(anyhow!("Macro recursion depth exceeded"));
+        }
+
+        let inner = pair.into_inner().next().unwrap();
+        match inner.as_rule() {
+            Rule::block => self.parse_block(inner),
+            Rule::literal => self.parse_literal_instruction(inner),
+            Rule::simple_op => self.parse_simple_op(inner),
+            Rule::arrow_jump => self.parse_arrow_jump(inner),
+            Rule::question_branch => self.parse_question_branch(inner),
+            Rule::call => self.parse_call(inner),
+            Rule::crispr_block => self.parse_crispr_block(inner),
+            _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
+        }
+    }
+
+    fn parse_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut genes = Vec::new();
+        self.depth += 1;
+        for instr in inner.into_inner() {
+            let sub = self.parse_instruction(instr)?;
+            genes.extend(sub);
+        }
+        self.depth -= 1;
+
+        let index = self.strand_map.len() + self.anonymous_strands.len();
+        self.anonymous_strands.push(Strand { genes });
+
+        Ok(vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(index as i64)],
+        }])
+    }
+
+    fn parse_literal_instruction(
+        &self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
+        let val = parse_literal(inner, self.strand_map)?;
+        Ok(vec![Gene {
+            op: OpCode::Push,
+            args: vec![val],
+        }])
+    }
+
+    fn parse_simple_op(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let name = inner.clone().into_inner().next().unwrap().as_str();
+        if let Some(body) = self.macro_map.get(name) {
+            let mut macro_genes = Vec::new();
+            self.depth += 1;
+            for instr in body.clone() {
+                let sub = self.parse_instruction(instr)?;
+                macro_genes.extend(sub);
+            }
+            self.depth -= 1;
+            return Ok(macro_genes);
+        }
+
+        if let Some(&idx) = self.strand_map.get(name) {
+            return Ok(vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(idx as i64)],
+            }]);
+        }
+
+        let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
+        Ok(vec![Gene { op, args: vec![] }])
+    }
+
+    fn parse_arrow_jump(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let target_name = parts.next().unwrap().as_str();
+        let arg = resolve_target(target_name, self.strand_map);
+        Ok(vec![Gene {
+            op: OpCode::Jump,
+            args: vec![arg],
+        }])
+    }
+
+    fn parse_question_branch(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let target_name = parts.next().unwrap().as_str();
+        let arg = resolve_target(target_name, self.strand_map);
+        Ok(vec![Gene {
+            op: OpCode::Brz,
+            args: vec![arg],
+        }])
+    }
+
+    fn parse_call(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let name = parts.next().unwrap().as_str();
+        let args_pair = parts.next().unwrap();
+
+        let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
+        let mut args = Vec::new();
+
+        for arg_pair in args_pair.into_inner() {
+            let val = parse_argument(arg_pair, self.strand_map)?;
+            args.push(val);
+        }
+
+        let is_intrinsic = match op {
+            OpCode::Jump | OpCode::Brz => true,
+            #[cfg(feature = "nova")]
+            OpCode::Call | OpCode::Poly => true,
+            _ => false,
+        };
+
+        if op == OpCode::Push {
+            let mut genes = Vec::new();
+            for arg in args {
+                genes.push(Gene {
+                    op: OpCode::Push,
+                    args: vec![arg],
+                });
+            }
+            Ok(genes)
+        } else if is_intrinsic {
+            Ok(vec![Gene { op, args }])
+        } else {
+            let mut genes = Vec::new();
+            for arg in args {
+                genes.push(Gene {
+                    op: OpCode::Push,
+                    args: vec![arg],
+                });
+            }
+            genes.push(Gene { op, args: vec![] });
+            Ok(genes)
+        }
+    }
+
+    fn parse_crispr_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let target_name = parts.next().unwrap().as_str();
+
+        let pattern_pair = parts.next().unwrap();
+        let mut pattern_genes = Vec::new();
+        for op_pair in pattern_pair.into_inner() {
+            if op_pair.as_rule() == Rule::identifier {
+                let op_str = op_pair.as_str();
+                let op = OpCode::from_str(op_str)
+                    .map_err(|_| anyhow!("Unknown opcode in pattern: {}", op_str))?;
+                pattern_genes.push(Gene { op, args: vec![] });
+            }
+        }
+
+        let guide_idx = self.strand_map.len() + self.anonymous_strands.len();
+        self.anonymous_strands.push(Strand {
+            genes: pattern_genes,
+        });
+
+        let mut genes = Vec::new();
+
+        let target_arg = resolve_target(target_name, self.strand_map);
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![target_arg],
+        });
+
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(guide_idx as i64)],
+        });
+
+        genes.push(Gene {
+            op: OpCode::CrisprScan,
+            args: vec![],
+        });
+
+        self.depth += 1;
+        for instr in parts {
+            let sub = self.parse_instruction(instr)?;
+            genes.extend(sub);
+        }
+        self.depth -= 1;
+
+        Ok(genes)
+    }
+}
+
 fn parse_instructions(
     pair: pest::iterators::Pair<Rule>,
     strand_map: &HashMap<String, usize>,
@@ -145,205 +329,13 @@ fn parse_instructions(
     anonymous_strands: &mut Vec<Strand>,
     depth: usize,
 ) -> Result<Vec<Gene>> {
-    if depth > 50 {
-        return Err(anyhow!("Macro recursion depth exceeded"));
-    }
-
-    // pair is `instruction`
-    let inner = pair.into_inner().next().unwrap();
-    match inner.as_rule() {
-        Rule::block => {
-            let mut genes = Vec::new();
-            for instr in inner.into_inner() {
-                let sub =
-                    parse_instructions(instr, strand_map, macro_map, anonymous_strands, depth + 1)?;
-                genes.extend(sub);
-            }
-            // Create new strand
-            let index = strand_map.len() + anonymous_strands.len();
-            anonymous_strands.push(Strand { genes });
-
-            // Return push(index)
-            Ok(vec![Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(index as i64)],
-            }])
-        }
-        Rule::literal => {
-            let val = parse_literal(inner, strand_map)?;
-            Ok(vec![Gene {
-                op: OpCode::Push,
-                args: vec![val],
-            }])
-        }
-        Rule::simple_op => {
-            let name = inner.clone().into_inner().next().unwrap().as_str();
-            // Check macro
-            if let Some(body) = macro_map.get(name) {
-                let mut macro_genes = Vec::new();
-                for instr in body.clone() {
-                    let sub = parse_instructions(
-                        instr,
-                        strand_map,
-                        macro_map,
-                        anonymous_strands,
-                        depth + 1,
-                    )?;
-                    macro_genes.extend(sub);
-                }
-                return Ok(macro_genes);
-            }
-
-            // Check if it's a strand name (Push index)
-            if let Some(&idx) = strand_map.get(name) {
-                return Ok(vec![Gene {
-                    op: OpCode::Push,
-                    args: vec![Nucleotide::Number(idx as i64)],
-                }]);
-            }
-
-            let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
-            Ok(vec![Gene { op, args: vec![] }])
-        }
-        Rule::arrow_jump => {
-            // "->" ~ identifier
-            let mut parts = inner.into_inner();
-            let target_name = parts.next().unwrap().as_str();
-            let arg = resolve_target(target_name, strand_map);
-            Ok(vec![Gene {
-                op: OpCode::Jump,
-                args: vec![arg],
-            }])
-        }
-        Rule::question_branch => {
-            // "?" ~ identifier
-            let mut parts = inner.into_inner();
-            let target_name = parts.next().unwrap().as_str();
-            let arg = resolve_target(target_name, strand_map);
-            Ok(vec![Gene {
-                op: OpCode::Brz,
-                args: vec![arg],
-            }])
-        }
-        Rule::call => {
-            let mut parts = inner.into_inner();
-            let name = parts.next().unwrap().as_str();
-            let args_pair = parts.next().unwrap();
-
-            let op = OpCode::from_str(name).map_err(|_| anyhow!("Unknown opcode: {}", name))?;
-            let mut args = Vec::new();
-
-            for arg_pair in args_pair.into_inner() {
-                let val = parse_argument(arg_pair, strand_map)?;
-                args.push(val);
-            }
-
-            // Desugar arguments for most opcodes into stack pushes
-            // Only intrinsics keep args in the Gene
-            let is_intrinsic = match op {
-                OpCode::Jump | OpCode::Brz => true,
-                #[cfg(feature = "nova")]
-                OpCode::Call | OpCode::Poly => true,
-                _ => false,
-            };
-
-            if op == OpCode::Push {
-                // Generate a Push gene for EACH argument (supports multi-push)
-                let mut genes = Vec::new();
-                for arg in args {
-                    genes.push(Gene {
-                        op: OpCode::Push,
-                        args: vec![arg],
-                    });
-                }
-                Ok(genes)
-            } else if is_intrinsic {
-                // Intrinsic: Keep as single gene with args
-                Ok(vec![Gene { op, args }])
-            } else {
-                // Non-Intrinsic: Desugar to pushes + op
-                // Example: recombine(A, B, C) -> push(A) push(B) push(C) recombine()
-                let mut genes = Vec::new();
-                for arg in args {
-                    genes.push(Gene {
-                        op: OpCode::Push,
-                        args: vec![arg],
-                    });
-                }
-                genes.push(Gene { op, args: vec![] });
-                Ok(genes)
-            }
-        }
-        Rule::crispr_block => {
-            let mut parts = inner.into_inner();
-            let target_name = parts.next().unwrap().as_str();
-
-            // pattern_def is next
-            let pattern_pair = parts.next().unwrap();
-            // pattern_pair rule is pattern_def. inner is identifier list.
-            let mut pattern_genes = Vec::new();
-            for op_pair in pattern_pair.into_inner() {
-                // pattern_def inner contains "pattern", ":" literals which pest might skip if atomic?
-                // Wait, pattern_def = { "pattern" ~ ":" ~ identifier ~ ("," ~ identifier)* }
-                // The identifiers are the only thing produced if others are silent?
-                // But literals are produced if not atomic/silent.
-                // Looking at grammar: pattern_def is not atomic (@).
-                // "pattern" and ":" are literals.
-                // We must filter for identifiers or loop carefully.
-                // Actually, pest pairs iterator skips string literals defined in rule usually?
-                // No, it depends.
-                // Let's assume we iterate and check rule.
-                if op_pair.as_rule() == Rule::identifier {
-                    let op_str = op_pair.as_str();
-                    let op = OpCode::from_str(op_str)
-                        .map_err(|_| anyhow!("Unknown opcode in pattern: {}", op_str))?;
-                    pattern_genes.push(Gene { op, args: vec![] });
-                }
-            }
-
-            // Register Guide Strand
-            let guide_idx = strand_map.len() + anonymous_strands.len();
-            anonymous_strands.push(Strand {
-                genes: pattern_genes,
-            });
-
-            let mut genes = Vec::new();
-
-            // Push Target Index
-            let target_arg = resolve_target(target_name, strand_map);
-            genes.push(Gene {
-                op: OpCode::Push,
-                args: vec![target_arg],
-            });
-
-            // Push Guide Index
-            genes.push(Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(guide_idx as i64)],
-            });
-
-            // CrisprScan
-            genes.push(Gene {
-                op: OpCode::CrisprScan,
-                args: vec![],
-            });
-
-            // Process body instructions
-            for instr in parts {
-                let sub = parse_instructions(
-                    instr,
-                    strand_map,
-                    macro_map,
-                    anonymous_strands,
-                    depth + 1,
-                )?;
-                genes.extend(sub);
-            }
-
-            Ok(genes)
-        }
-        _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
-    }
+    let mut ctx = CompilerContext {
+        strand_map,
+        macro_map,
+        anonymous_strands,
+        depth,
+    };
+    ctx.parse_instruction(pair)
 }
 
 fn resolve_target(name: &str, strand_map: &HashMap<String, usize>) -> Nucleotide {
