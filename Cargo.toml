@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "crates/git-associates",
     "crates/locus",
     "crates/market-sim",
     "crates/synaptic-physics",
@@ -134,6 +135,7 @@ anyhow = "1.0"
 crossterm = "0.28"
 rand = "0.8"
 ratatui = "0.30"
+git2 = "0.18"
 tui-semantic = { path = "crates/tui-semantic" }
 tui-shared = { path = "crates/tui-shared" }
 resonance-audio = { path = "crates/resonance-audio" }

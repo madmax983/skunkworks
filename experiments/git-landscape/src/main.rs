@@ -1,9 +1,8 @@
 mod audio;
-mod git;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use git::CommitData;
+use git_associates::{GitModel, model::Commit};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::Color,
@@ -27,7 +26,7 @@ const WIDTH: usize = 100; // Number of X buckets (File Hash buckets)
 const DEPTH: usize = 60; // Number of Z rows (Visible Commits)
 
 struct App {
-    commits: Vec<CommitData>,   // All loaded commits (Oldest -> Newest)
+    commits: Vec<Commit>,   // All loaded commits (Oldest -> Newest)
     terrain: VecDeque<Vec<u8>>, // Current visible terrain (Rows of heights)
     commit_idx: usize,          // Index of next commit to enter the horizon
     speed: f64,                 // Flight speed (commits per second)
@@ -38,7 +37,9 @@ struct App {
 
 impl App {
     fn new(path: &str) -> Result<Self> {
-        let commits = git::get_repo_history(path, 1000)?; // Load up to 1000 commits
+        let model = GitModel::open(path)?;
+        let mut commits = model.history(1000)?; // Load up to 1000 commits
+        commits.reverse(); // Oldest -> Newest
 
         // Initialize flat terrain
         let mut terrain = VecDeque::new();
@@ -96,10 +97,10 @@ impl App {
         self.commit_idx += 1;
     }
 
-    fn generate_row(&self, commit: &CommitData) -> Vec<u8> {
+    fn generate_row(&self, commit: &Commit) -> Vec<u8> {
         let mut row = vec![0u8; WIDTH];
 
-        for change in &commit.changes {
+        for change in &commit.files {
             // Hash file path to get bucket
             let mut hasher = std::collections::hash_map::DefaultHasher::new();
             change.path.hash(&mut hasher);

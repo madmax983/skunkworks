@@ -1,4 +1,4 @@
-use crate::parser::{DiffState, LineChange};
+use git_associates::model::{DiffStats, LineChange};
 #[cfg(feature = "audio")]
 use rodio::{OutputStream, Sink, Source};
 use std::collections::hash_map::DefaultHasher;
@@ -13,7 +13,7 @@ pub struct Synthesizer {
     _stream_handle: Option<rodio::OutputStreamHandle>,
 
     // State
-    diff: DiffState,
+    diff: DiffStats,
     current_file_idx: usize,
     current_hunk_idx: usize,
     current_line_idx: usize,
@@ -35,7 +35,7 @@ pub struct VisualNote {
 }
 
 impl Synthesizer {
-    pub fn new(diff: DiffState) -> Self {
+    pub fn new(diff: DiffStats) -> Self {
         #[cfg(feature = "audio")]
         let (stream, stream_handle) = match OutputStream::try_default() {
             Ok((s, h)) => (Some(s), Some(h)),
