@@ -9,6 +9,8 @@ use crossterm::{
 };
 use pest::Parser;
 #[cfg(feature = "nova")]
+use rand::Rng;
+#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
@@ -3669,7 +3671,41 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     );
     f.render_widget(input_widget, bottom_chunks[0]);
 
-    // 4. Controls (Bottom Right)
+    // 4. Babel Chaos & Controls (Bottom Right)
+    let right_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+        .split(bottom_chunks[1]);
+
+    let integrity = vm.babel_state.integrity;
+    let gauge = Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title("Linguistic Integrity"))
+        .gauge_style(Style::default().fg(if integrity > 0.8 {
+            Color::Green
+        } else if integrity > 0.4 {
+            Color::Yellow
+        } else {
+            Color::Red
+        }))
+        .ratio(integrity);
+    f.render_widget(gauge, right_chunks[0]);
+
+    let lower_right = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(right_chunks[1]);
+
+    let mut map_items = Vec::new();
+    if vm.babel_state.chaos_map.is_empty() {
+        map_items.push(ListItem::new("No active confusions."));
+    } else {
+        for (k, v) in &vm.babel_state.chaos_map {
+            map_items.push(ListItem::new(format!("{} -> {}", k, v)).style(Style::default().fg(Color::Magenta)));
+        }
+    }
+    let map_list = List::new(map_items).block(Block::default().borders(Borders::ALL).title("Chaos Mappings"));
+    f.render_widget(map_list, lower_right[0]);
+
     let controls = vec![
         Line::from("Controls:"),
         Line::from("  M: Mutate Grammar (Evolve)"),
@@ -3683,7 +3719,7 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .borders(Borders::ALL)
             .title("Lab Controls"),
     );
-    f.render_widget(control_widget, bottom_chunks[1]);
+    f.render_widget(control_widget, lower_right[1]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
@@ -4490,7 +4526,31 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         .output
         .iter()
         .rev()
-        .map(|val| ListItem::new(val.clone()))
+        .map(|val| {
+            // Apply Babel Glitch
+            #[cfg(feature = "nova")]
+            let content = if vm.babel_state.integrity < 0.9 {
+                let mut rng = rand::thread_rng();
+                if rng.gen_bool(1.0 - vm.babel_state.integrity) {
+                    val.chars().map(|c| {
+                        if rng.gen_bool(0.3) {
+                            let glitch_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
+                            glitch_chars[rng.gen_range(0..glitch_chars.len())]
+                        } else {
+                            c
+                        }
+                    }).collect()
+                } else {
+                    val.clone()
+                }
+            } else {
+                val.clone()
+            };
+            #[cfg(not(feature = "nova"))]
+            let content = val.clone();
+
+            ListItem::new(content)
+        })
         .collect();
 
     if !app_state.status_msg.is_empty() {

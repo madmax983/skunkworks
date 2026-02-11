@@ -1943,6 +1943,22 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Scribe,
 
+    /// **[Babel]** Increases linguistic chaos (Glossolalia).
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Glossolalia,
+    /// **[Babel]** Restores linguistic integrity.
+    ///
+    /// **Stack:** `[ ..., amount ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Clarify,
+    /// **[Babel]** Randomly reshuffles language mappings.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Confuse,
+
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
     ///

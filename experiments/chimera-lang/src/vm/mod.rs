@@ -60,6 +60,8 @@ pub mod akashic;
 pub mod alchemy;
 #[cfg(feature = "nova")]
 pub mod babel;
+#[cfg(feature = "nova")]
+pub mod babel_chaos;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
@@ -592,6 +594,8 @@ pub struct ChimeraVM {
     pub tablet: Vec<String>,
     pub chaos_struct: chimera_chaos::ChimeraChaos,
     pub catalysts: Vec<catalyst::Catalyst>,
+    #[cfg(feature = "nova")]
+    pub babel_state: babel_chaos::BabelState,
 }
 
 impl ChimeraVM {
@@ -866,6 +870,8 @@ impl ChimeraVM {
             tablet: Vec::new(),
             chaos_struct: chimera_chaos::ChimeraChaos::new(),
             catalysts: Vec::new(),
+            #[cfg(feature = "nova")]
+            babel_state: babel_chaos::BabelState::new(),
         }
     }
 
@@ -1924,7 +1930,7 @@ impl ChimeraVM {
 
         #[cfg(feature = "nova")]
         let effective_op = {
-            if let Some(dialect) = self.dialects.get(&self.ip.0) {
+            let mut final_op = if let Some(dialect) = self.dialects.get(&self.ip.0) {
                 if let Some(mapped) = dialect.get(&op) {
                     mapped.clone()
                 } else {
@@ -1932,7 +1938,21 @@ impl ChimeraVM {
                 }
             } else {
                 self.remap_table.get(&op).unwrap_or(&op).clone()
+            };
+
+            // Babel Drift
+            if self.babel_state.integrity < 1.0 {
+                let mut rng = rand::thread_rng();
+                if rng.gen_bool(1.0 - self.babel_state.integrity) {
+                    if let Some(chaos_op) = self.babel_state.chaos_map.get(&final_op) {
+                        final_op = chaos_op.clone();
+                    } else if self.babel_state.integrity < 0.2 && rng.gen_bool(0.1) {
+                        // Total breakdown
+                        final_op = self.babel_state.get_random_op();
+                    }
+                }
             }
+            final_op
         };
         #[cfg(not(feature = "nova"))]
         let effective_op = op;
@@ -2498,6 +2518,12 @@ impl ChimeraVM {
             | OpCode::Synthesize
             | OpCode::Catalyze
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Glossolalia | OpCode::Clarify | OpCode::Confuse => {
+                babel_chaos::exec_babel_chaos_op(self, op, args);
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Crucible => {
