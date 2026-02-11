@@ -111,6 +111,7 @@ members = [
     "experiments/jpeg-garden",
     "experiments/klein-flock", "experiments/sono-scapes", "experiments/sono-boids", "experiments/babylonian-forecaster",
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
+    "experiments/bridge-balancer",
     "experiments/bridge-specter", "experiments/silicon-samba",
     "experiments/hyperbolic-hell",
     "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/bandwidth-bazaar", "experiments/biomimetic-synth", "experiments/celestial-cantata", "experiments/astral-chimera",
