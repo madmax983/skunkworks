@@ -3417,30 +3417,35 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 }
 
 fn glob_match(pattern: &str, target: &str) -> bool {
-    if let Some((p_head, p_tail)) = pattern.split_once('*') {
-        if !target.starts_with(p_head) {
+    let p_chars: Vec<char> = pattern.chars().collect();
+    let t_chars: Vec<char> = target.chars().collect();
+    let mut p_idx = 0;
+    let mut t_idx = 0;
+    let mut last_wildcard_idx = None;
+    let mut next_to_wildcard_idx = 0;
+
+    while t_idx < t_chars.len() {
+        if p_idx < p_chars.len() && (p_chars[p_idx] == t_chars[t_idx]) {
+            p_idx += 1;
+            t_idx += 1;
+        } else if p_idx < p_chars.len() && p_chars[p_idx] == '*' {
+            last_wildcard_idx = Some(p_idx);
+            next_to_wildcard_idx = t_idx + 1;
+            p_idx += 1;
+        } else if let Some(wildcard_idx) = last_wildcard_idx {
+            p_idx = wildcard_idx + 1;
+            t_idx = next_to_wildcard_idx;
+            next_to_wildcard_idx += 1;
+        } else {
             return false;
         }
-        let t_rest = &target[p_head.len()..];
-        if p_tail.is_empty() {
-            return true;
-        }
-
-        for i in 0..=t_rest.len() {
-            // Optimization: if p_tail doesn't have *, we can check ends_with directly?
-            // But p_tail might have *. Recursion handles it.
-            // Only optimize matching char boundaries to avoid panic?
-            // split_once uses byte indices but string slicing requires char boundaries.
-            // split_once returns valid &str so p_head is valid.
-            // t_rest slicing [i..] needs to be on char boundary.
-            if t_rest.is_char_boundary(i) && glob_match(p_tail, &t_rest[i..]) {
-                return true;
-            }
-        }
-        false
-    } else {
-        pattern == target
     }
+
+    while p_idx < p_chars.len() && p_chars[p_idx] == '*' {
+        p_idx += 1;
+    }
+
+    p_idx == p_chars.len()
 }
 
 fn execute_ephemeral_strand(vm: &mut ChimeraVM, strand: &crate::ast::Strand) {
