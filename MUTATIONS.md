@@ -728,3 +728,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### tectonic-bridge
+- **Parents**: experiments/tectonic-git + experiments/biomimetic-bridge
+- **Concept**: A swarm of "Refactor Ants" building bridges over the fissures of technical debt in a git history landscape.
+- **Novel trait**: Traversability of Technical Debt. The swarm visualizes the difficulty of navigating the code history.
+- **Status**: experiments/tectonic-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
