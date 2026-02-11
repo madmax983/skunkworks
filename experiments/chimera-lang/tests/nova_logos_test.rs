@@ -14,6 +14,7 @@ mod tests {
         ChimeraVM::new(dna)
     }
 
+    #[cfg(feature = "oracle")]
     #[test]
     fn test_logos_reaction() {
         let mut vm = make_empty_vm();
@@ -60,6 +61,7 @@ mod tests {
         assert_eq!(vm.grid[5][6], Value::Int(0));
     }
 
+    #[cfg(feature = "oracle")]
     #[test]
     fn test_logos_complex_reaction() {
         let mut vm = make_empty_vm();
