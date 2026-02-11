@@ -573,3 +573,38 @@ stateDiagram-v2
     Genome --> Offspring : Splice (Crossover)
     Offspring --> [*] : Apoptosis
 ```
+
+### Experiment: Tectonic Git (ADR 023)
+
+**Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
+
+#### Geological Simulation
+
+The simulation maps commits to layers and uses keyword density to generate stress and fissures.
+
+```mermaid
+classDiagram
+    class World {
+        +Vec~Strata~ strata
+        +Vec~Fissure~ fissures
+        +update()
+    }
+    class Strata {
+        +CommitData commit
+        +f64 stress
+        +f64 offset_x
+    }
+    class Fissure {
+        +Vec~Vec2~ points
+        +f64 intensity
+        +grow()
+    }
+    class GitScanner {
+        +scan() Vec~CommitData~
+    }
+
+    World *-- Strata : Contains
+    World *-- Fissure : Contains
+    Strata ..> GitScanner : Created from
+    note for Strata "Stress = keywords(TODO, FIXME, panic!)"
+```
