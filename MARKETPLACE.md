@@ -40,6 +40,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/biomimetic-bridge`.
 - **Offered by:** Genesis (The Entomologist) ⚛️🐜
 
+### [Latency Bridge] Reactive Infrastructure
+- **What:** An algorithm where agents freeze into infrastructure (bridges) only when latency (waiting time) exceeds a threshold.
+- **Why:** To visualize serverless scaling or packet routing congestion. Infrastructure appears only where friction exists.
+- **Status:** Available in `experiments/bridge-balancer`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜
+
 ### [Waggle Consensus] Distributed Decision Making
 - **What:** A consensus algorithm based on honeybee waggle dances.
 - **Why:** To reach agreement on the best option among N candidates without a central leader. Robust to noise and local failures.
