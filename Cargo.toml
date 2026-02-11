@@ -128,6 +128,7 @@ members = [
     "experiments/broken-mirror",
     "experiments/chimera-fold", "experiments/git-phase", "experiments/tesseract-timeseries", "experiments/vascular-valley", "experiments/biotic-chaos",
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/kinetic-folds",
+    "experiments/magma-git",
 ]
 resolver = "2"
 

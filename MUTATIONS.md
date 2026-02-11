@@ -749,3 +749,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Chaos Terraforming. Biological agents modifying the mathematical constants of their universe to survive.
 - **Status**: experiments/chimera-chaos
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### magma-git
+- **Parents**: experiments/tectonic-git + experiments/fluid-rain
+- **Concept**: Commits are erupting magma that flow down and solidify into geological strata.
+- **Novel trait**: Phase Change Deposition. Fluid (active work) becoming Solid (history).
+- **Status**: experiments/magma-git
+- **Evaluation**: In progress.
