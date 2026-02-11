@@ -728,3 +728,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-fold
+- **Parents**: experiments/chimera-lang + experiments/neuro-fold
+- **Concept**: A Miura-ori mesh where every vertex runs a ChimeraVM. The VMs control the fold angles.
+- **Novel trait**: Origami Genetics. The code determines the shape and mechanics of the creature.
+- **Status**: experiments/chimera-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
