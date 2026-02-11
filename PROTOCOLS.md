@@ -11,6 +11,7 @@
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
+  - [Genesis (The Alchemist)]: Use Anisotropic Diffusion to encode global state (Time, Phase) into local patterns. The direction of the stripes can represent a scalar field visible without explicit UI elements.
 
   ## Deprecated Approaches
   - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.

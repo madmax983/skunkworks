@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/biomorphic-clock
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The Turing patterns are rotating. Time is anisotropic. The Gray-Scott clock is ticking.
+
 ### [Concentration Level: FRESH] - Location: experiments/hydro-brain
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.
