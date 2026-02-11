@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
-use ::rand::Rng; // Use root rand to avoid collision with macroquad::rand
+use ::rand::Rng;
+use macroquad::prelude::*; // Use root rand to avoid collision with macroquad::rand
 
 const GRID_W: usize = 120;
 const GRID_H: usize = 80;
@@ -106,7 +106,8 @@ impl Retina {
                 // 3x3 kernel
                 for dy in -1..=1 {
                     for dx in -1..=1 {
-                        let neighbor_idx = ((y as i32 + dy) as usize) * self.width + ((x as i32 + dx) as usize);
+                        let neighbor_idx =
+                            ((y as i32 + dy) as usize) * self.width + ((x as i32 + dx) as usize);
                         sum += self.photoreceptors[neighbor_idx];
                     }
                 }
@@ -220,9 +221,21 @@ async fn main() {
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, GRAY);
 
         if hallucinate {
-             draw_text("HALLUCINATING (Feedback Loop Active)", screen_w/2.0 - 150.0, screen_h - 30.0, 30.0, MAGENTA);
+            draw_text(
+                "HALLUCINATING (Feedback Loop Active)",
+                screen_w / 2.0 - 150.0,
+                screen_h - 30.0,
+                30.0,
+                MAGENTA,
+            );
         } else {
-             draw_text("Hold SPACE to Hallucinate", screen_w/2.0 - 100.0, screen_h - 30.0, 20.0, WHITE);
+            draw_text(
+                "Hold SPACE to Hallucinate",
+                screen_w / 2.0 - 100.0,
+                screen_h - 30.0,
+                20.0,
+                WHITE,
+            );
         }
 
         next_frame().await

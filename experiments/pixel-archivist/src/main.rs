@@ -115,8 +115,8 @@ fn run_pack(dir: &PathBuf, output: &PathBuf) -> Result<()> {
     Ok(())
 }
 
-use macroquad::prelude::*;
 use art::StarMap;
+use macroquad::prelude::*;
 
 async fn gui_main(path: Option<PathBuf>) {
     let mut texture: Option<Texture2D> = None;
@@ -189,12 +189,18 @@ async fn gui_main(path: Option<PathBuf>) {
                     let screen_r = star.radius * scale_x.max(scale_y); // Approximate
 
                     // Draw subtle indicator
-                    draw_circle_lines(screen_x, screen_y, screen_r + 2.0, 1.0, Color::new(1.0, 1.0, 1.0, 0.3));
+                    draw_circle_lines(
+                        screen_x,
+                        screen_y,
+                        screen_r + 2.0,
+                        1.0,
+                        Color::new(1.0, 1.0, 1.0, 0.3),
+                    );
 
                     // Hover check
                     let dx = screen_x - mouse_pos.0;
                     let dy = screen_y - mouse_pos.1;
-                    if dx*dx + dy*dy < (screen_r + 5.0).powi(2) {
+                    if dx * dx + dy * dy < (screen_r + 5.0).powi(2) {
                         // Highlight
                         draw_circle_lines(screen_x, screen_y, screen_r + 4.0, 2.0, YELLOW);
 
@@ -206,7 +212,7 @@ async fn gui_main(path: Option<PathBuf>) {
                             mouse_pos.1 - 20.0,
                             dims.width + 10.0,
                             dims.height + 10.0,
-                            Color::new(0.0, 0.0, 0.0, 0.8)
+                            Color::new(0.0, 0.0, 0.0, 0.8),
                         );
                         draw_text(&text, mouse_pos.0 + 15.0, mouse_pos.1 - 5.0, 20.0, WHITE);
                     }

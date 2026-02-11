@@ -1,8 +1,8 @@
-use chimera_lang::vm::ChimeraVM;
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::ChimeraVM;
 use std::fs::File;
-use std::io::{Write, Read};
+use std::io::{Read, Write};
 
 #[test]
 fn test_akashic_corruption_prevention() {
@@ -11,7 +11,8 @@ fn test_akashic_corruption_prevention() {
     let corrupted_content = "INVALID JSON CONTENT";
     {
         let mut file = File::create(filename).expect("Failed to create test file");
-        file.write_all(corrupted_content.as_bytes()).expect("Failed to write test file");
+        file.write_all(corrupted_content.as_bytes())
+            .expect("Failed to write test file");
     }
 
     // 2. Create DNA program: [ Push("value"), Push("key"), AkashicWrite ]
@@ -61,17 +62,28 @@ fn test_akashic_corruption_prevention() {
     // 4. Verify file content
     let mut file = File::open(filename).expect("Failed to open test file");
     let mut content = String::new();
-    file.read_to_string(&mut content).expect("Failed to read test file");
+    file.read_to_string(&mut content)
+        .expect("Failed to read test file");
 
     // Clean up
     let _ = std::fs::remove_file(filename);
 
     // Assert that content is UNCHANGED (still corrupted)
     // If it was overwritten, it would be {"test_key":"test_value"}
-    assert_eq!(content, corrupted_content, "Akashic Record was overwritten! Data Loss detected!");
+    assert_eq!(
+        content, corrupted_content,
+        "Akashic Record was overwritten! Data Loss detected!"
+    );
 
     // Assert that VM reported an error (optional but good)
     // The exact error message depends on implementation, but should contain "Error" or "fail"
-    let error_found = vm.output.iter().any(|s| s.to_lowercase().contains("error") || s.contains("fail"));
-    assert!(error_found, "VM did not report an error for corrupted file. Output: {:?}", vm.output);
+    let error_found = vm
+        .output
+        .iter()
+        .any(|s| s.to_lowercase().contains("error") || s.contains("fail"));
+    assert!(
+        error_found,
+        "VM did not report an error for corrupted file. Output: {:?}",
+        vm.output
+    );
 }

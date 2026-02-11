@@ -259,3 +259,177 @@ fn test_ribosome_io() {
     let ribosome = &vm.organelles[0];
     assert_eq!(ribosome.stack.last().unwrap(), &Value::Int(99));
 }
+#[cfg(test)]
+mod tests {
+    use crate::ast::{Dna, Gene, Helix, Strand};
+    use crate::opcode::OpCode;
+    use crate::vm::{nova::Organelle, nova::OrganelleType, ChimeraVM, Value};
+
+    fn make_empty_vm() -> ChimeraVM {
+        // Create a dummy strand so the VM doesn't halt immediately
+        let genes = vec![Gene {
+            op: OpCode::Nop,
+            args: vec![],
+        }];
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
+        ChimeraVM::new(dna)
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_ribosome_bang() {
+        let mut vm = make_empty_vm();
+
+        // Setup Ribosome at (8,8)
+        let org = Organelle {
+            stack: Vec::new(),
+            ip: (0, 0),
+            context_loc: (8, 8),
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: OrganelleType::Ribosome,
+            direction: (0, 1),
+            ttl: None,
+            name: "Tester".to_string(),
+            traits: vec![],
+            id: 1,
+            tissue_id: None,
+            genome_id: 0,
+        };
+        vm.organelles.push(org);
+
+        // Put "*" (Bang) at (8,8)
+        vm.grid[8][8] = Value::Str("*".to_string());
+
+        // Run step (which calls process_organelles -> tick_organelle -> process_ribosome)
+        vm.step();
+
+        // Bang should spawn "Spark" organelles in open neighbors
+        // (8,8) has neighbors (7,8), (9,8), (8,7), (8,9)
+        // Check if we have more organelles
+        assert!(vm.organelles.len() > 1, "Bang should spawn sparks");
+
+        // Find a spark
+        let spark = vm.organelles.iter().find(|o| o.name == "Spark");
+        assert!(spark.is_some(), "Should find a Spark organelle");
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_ribosome_offset_read() {
+        let mut vm = make_empty_vm();
+
+        // Setup Ribosome at (8,8)
+        let mut org = Organelle {
+            stack: Vec::new(),
+            ip: (0, 0),
+            context_loc: (8, 8),
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: OrganelleType::Ribosome,
+            direction: (0, 1),
+            ttl: None,
+            name: "Tester".to_string(),
+            traits: vec![],
+            id: 1,
+            tissue_id: None,
+            genome_id: 0,
+        };
+        // Prepare stack for "o": [dy, dx] -> [val]
+        // Let's read (8+1, 8+1) = (9,9)
+        org.stack.push(Value::Int(1)); // dy
+        org.stack.push(Value::Int(1)); // dx
+        vm.organelles.push(org);
+
+        // Put "o" at (8,8)
+        vm.grid[8][8] = Value::Str("o".to_string());
+        // Put target value at (9,9)
+        vm.grid[9][9] = Value::Int(42);
+
+        vm.step();
+
+        // Check stack of the ribosome (it's updated in place in the list,
+        // but step() moves it to next_organelles, so we find it there)
+        // Note: step() also extends organelles, so the original one (modified) should be there.
+        // We pushed only 1, so it should be at index 0.
+        let updated_org = &vm.organelles[0];
+        assert_eq!(updated_org.stack.last(), Some(&Value::Int(42)));
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_ribosome_offset_write() {
+        let mut vm = make_empty_vm();
+
+        // Setup Ribosome at (8,8)
+        let mut org = Organelle {
+            stack: Vec::new(),
+            ip: (0, 0),
+            context_loc: (8, 8),
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: OrganelleType::Ribosome,
+            direction: (0, 1),
+            ttl: None,
+            name: "Tester".to_string(),
+            traits: vec![],
+            id: 1,
+            tissue_id: None,
+            genome_id: 0,
+        };
+        // Prepare stack for "x": [val, dy, dx] -> []
+        // Write 99 to (8-1, 8-1) = (7,7)
+        org.stack.push(Value::Int(99)); // val
+        org.stack.push(Value::Int(-1)); // dy
+        org.stack.push(Value::Int(-1)); // dx
+        vm.organelles.push(org);
+
+        // Put "x" at (8,8)
+        vm.grid[8][8] = Value::Str("x".to_string());
+
+        vm.step();
+
+        // Check grid
+        assert_eq!(vm.grid[7][7], Value::Int(99));
+    }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_void_consume() {
+        let mut vm = make_empty_vm();
+
+        // Setup Void at (5,5)
+        let org = Organelle {
+            stack: Vec::new(),
+            ip: (0, 0),
+            context_loc: (5, 5),
+            call_stack: Vec::new(),
+            recursion_depth: 0,
+            halted: false,
+            kind: OrganelleType::Void,
+            direction: (0, 0),
+            ttl: None,
+            name: "Void".to_string(),
+            traits: vec![],
+            id: 1,
+            tissue_id: None,
+            genome_id: 0,
+        };
+        vm.organelles.push(org);
+
+        // Put something at (5,5)
+        vm.grid[5][5] = Value::Int(123);
+
+        vm.step();
+
+        // Check if consumed
+        assert_eq!(vm.grid[5][5], Value::Int(0));
+    }
+}

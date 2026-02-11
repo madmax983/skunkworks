@@ -1,10 +1,10 @@
 use macroquad::prelude::*;
 
-mod scanner;
 mod hilbert;
+mod scanner;
 
-use scanner::Scanner;
 use hilbert::d2xy;
+use scanner::Scanner;
 
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 512;
@@ -175,12 +175,11 @@ impl SimulationState {
                 fragment: RENDER_FRAGMENT_SHADER,
             },
             MaterialParams {
-                uniforms: vec![
-                    UniformDesc::new("Texture", UniformType::Int1),
-                ],
+                uniforms: vec![UniformDesc::new("Texture", UniformType::Int1)],
                 ..Default::default()
             },
-        ).unwrap();
+        )
+        .unwrap();
 
         Self {
             texture_a,
@@ -215,7 +214,7 @@ impl SimulationState {
         // Then draw a circle or splash of parameters there.
 
         let n = 9; // 2^9 = 512.
-        // Wait, d2xy(n, d) returns x,y in range [0, 2^n - 1].
+                   // Wait, d2xy(n, d) returns x,y in range [0, 2^n - 1].
 
         for (i, metric) in metrics.iter().enumerate() {
             // Hilbert mapping
@@ -240,7 +239,10 @@ impl SimulationState {
             let hash_val = metric.hash_val;
 
             if i % 100 == 0 {
-                println!("Mapping file {}: Size={} Depth={}", metric.path, metric.size, metric.depth);
+                println!(
+                    "Mapping file {}: Size={} Depth={}",
+                    metric.path, metric.size, metric.depth
+                );
             }
 
             // Draw a blob in the param image
@@ -260,8 +262,8 @@ impl SimulationState {
                     let py = y as i32 + dy;
 
                     if px >= 0 && px < WIDTH as i32 && py >= 0 && py < HEIGHT as i32 {
-                        let dist = (dx*dx + dy*dy) as f32;
-                        if dist <= radius*radius {
+                        let dist = (dx * dx + dy * dy) as f32;
+                        if dist <= radius * radius {
                             image.set_pixel(px as u32, py as u32, col);
                         }
                     }
@@ -275,7 +277,7 @@ impl SimulationState {
 
     fn seed(&mut self) {
         set_camera(&Camera2D {
-            zoom: vec2(1.0, 1.0), // Maps -1..1 to screen.
+            zoom: vec2(1.0, 1.0),   // Maps -1..1 to screen.
             target: vec2(0.0, 0.0), // Center
             render_target: Some(self.texture_a.clone()),
             ..Default::default()
@@ -355,9 +357,12 @@ async fn main() {
                 ..Default::default()
             });
 
-            sim.material.set_texture("StateTexture", source.texture.clone());
-            sim.material.set_texture("ParamTexture", sim.param_texture.clone());
-            sim.material.set_uniform("ScreenSize", vec2(WIDTH as f32, HEIGHT as f32));
+            sim.material
+                .set_texture("StateTexture", source.texture.clone());
+            sim.material
+                .set_texture("ParamTexture", sim.param_texture.clone());
+            sim.material
+                .set_uniform("ScreenSize", vec2(WIDTH as f32, HEIGHT as f32));
 
             gl_use_material(&sim.material);
 
@@ -383,7 +388,8 @@ async fn main() {
         // Render to Screen
         clear_background(BLACK);
 
-        sim.render_material.set_texture("Texture", sim.texture_a.texture.clone());
+        sim.render_material
+            .set_texture("Texture", sim.texture_a.texture.clone());
         gl_use_material(&sim.render_material);
 
         // Draw centered
@@ -412,10 +418,10 @@ async fn main() {
             // Convert to texture coords
             let tx = (mx - offset.x) / scale;
             let ty = (my - offset.y) / scale; // Flip Y? Render target is flipped when drawn, but coordinates?
-            // Actually, when we draw TO the render target, 0,0 is top-left usually.
-            // But when we draw the render target texture to screen, we flipped it.
-            // So if we click top-left on screen, it corresponds to top-left on texture (if flip is correct).
-            // Let's assume standard mapping.
+                                              // Actually, when we draw TO the render target, 0,0 is top-left usually.
+                                              // But when we draw the render target texture to screen, we flipped it.
+                                              // So if we click top-left on screen, it corresponds to top-left on texture (if flip is correct).
+                                              // Let's assume standard mapping.
             let ty = HEIGHT as f32 - ty; // Flip mouse Y to match texture coordinate system if needed
 
             if tx >= 0.0 && tx < WIDTH as f32 && ty >= 0.0 && ty < HEIGHT as f32 {
@@ -427,8 +433,20 @@ async fn main() {
             sim.seed();
         }
 
-        draw_text(format!("Steps: {}", sim.step_count).as_str(), 10.0, 20.0, 30.0, WHITE);
-        draw_text("Left Click: Add Catalyst | R: Reset", 10.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(
+            format!("Steps: {}", sim.step_count).as_str(),
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Left Click: Add Catalyst | R: Reset",
+            10.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

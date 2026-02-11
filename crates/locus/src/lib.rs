@@ -504,13 +504,7 @@ impl Topology {
     /// * `x` - The X coordinate (column).
     /// * `width` - The width of the grid.
     /// * `height` - The height of the grid.
-    pub fn normalize(
-        &self,
-        y: i64,
-        x: i64,
-        width: usize,
-        height: usize,
-    ) -> Option<(usize, usize)> {
+    pub fn normalize(&self, y: i64, x: i64, width: usize, height: usize) -> Option<(usize, usize)> {
         let w = width as i64;
         let h = height as i64;
         match self {
@@ -521,10 +515,7 @@ impl Topology {
                     None
                 }
             }
-            Topology::Torus => Some((
-                y.rem_euclid(h) as usize,
-                x.rem_euclid(w) as usize,
-            )),
+            Topology::Torus => Some((y.rem_euclid(h) as usize, x.rem_euclid(w) as usize)),
             Topology::CylinderH => {
                 // Wraps X, Bounded Y
                 if (0..h).contains(&y) {

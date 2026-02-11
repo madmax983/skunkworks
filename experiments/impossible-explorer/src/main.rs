@@ -1,10 +1,10 @@
 mod fs_system;
 mod world;
 
-use macroquad::prelude::*;
-use macroquad::miniquad::gl;
-use world::{Room, Portal};
 use fs_system::scan_dir;
+use macroquad::miniquad::gl;
+use macroquad::prelude::*;
+use world::{Portal, Room};
 
 const MOVE_SPEED: f32 = 0.2;
 const LOOK_SPEED: f32 = 0.003;
@@ -62,11 +62,12 @@ impl FirstPersonCamera {
     }
 
     fn forward(&self) -> Vec3 {
-         vec3(
+        vec3(
             self.yaw.cos() * self.pitch.cos(),
             self.pitch.sin(),
             self.yaw.sin() * self.pitch.cos(),
-        ).normalize()
+        )
+        .normalize()
     }
 
     fn up(&self) -> Vec3 {
@@ -141,26 +142,30 @@ async fn main() {
             // Simple sphere check for now
             if dist < 2.0 {
                 // Determine orientation to adjust yaw
-                 let p_abs = portal.pos.abs();
-                 let r_size = root_room.size;
-                 let mut yaw_adjust = 0.0;
+                let p_abs = portal.pos.abs();
+                let r_size = root_room.size;
+                let mut yaw_adjust = 0.0;
 
-                if (p_abs.z - r_size.z/2.0).abs() < 1.0 {
-                    if portal.pos.z > 0.0 { // Front (+Z)
+                if (p_abs.z - r_size.z / 2.0).abs() < 1.0 {
+                    if portal.pos.z > 0.0 {
+                        // Front (+Z)
                         // Walking +Z. Target -Z. Rotate 180.
                         yaw_adjust = std::f32::consts::PI;
-                    } else { // Back (-Z)
+                    } else {
+                        // Back (-Z)
                         // Walking -Z. Target -Z. Rotate 0.
                         yaw_adjust = 0.0;
                     }
-                } else if (p_abs.x - r_size.x/2.0).abs() < 1.0 {
-                     if portal.pos.x > 0.0 { // Right (+X)
-                         // Walking +X. Target -Z. Rotate -90.
-                         yaw_adjust = -std::f32::consts::FRAC_PI_2;
-                     } else { // Left (-X)
-                         // Walking -X. Target -Z. Rotate +90.
-                         yaw_adjust = std::f32::consts::FRAC_PI_2;
-                     }
+                } else if (p_abs.x - r_size.x / 2.0).abs() < 1.0 {
+                    if portal.pos.x > 0.0 {
+                        // Right (+X)
+                        // Walking +X. Target -Z. Rotate -90.
+                        yaw_adjust = -std::f32::consts::FRAC_PI_2;
+                    } else {
+                        // Left (-X)
+                        // Walking -X. Target -Z. Rotate +90.
+                        yaw_adjust = std::f32::consts::FRAC_PI_2;
+                    }
                 }
 
                 if let Some(target_room) = portal.loaded_room.take() {
@@ -194,23 +199,59 @@ async fn main() {
 
         draw_grid(20, 1.0, BLACK, GRAY);
 
-        render_scene(&root_room, Vec3::ZERO, Quat::IDENTITY, 2, &camera, &cam_obj, None);
+        render_scene(
+            &root_room,
+            Vec3::ZERO,
+            Quat::IDENTITY,
+            2,
+            &camera,
+            &cam_obj,
+            None,
+        );
 
         set_default_camera();
 
         // Crosshair
-        draw_line(screen_width()/2.0 - 10.0, screen_height()/2.0, screen_width()/2.0 + 10.0, screen_height()/2.0, 2.0, BLACK);
-        draw_line(screen_width()/2.0, screen_height()/2.0 - 10.0, screen_width()/2.0, screen_height()/2.0 + 10.0, 2.0, BLACK);
+        draw_line(
+            screen_width() / 2.0 - 10.0,
+            screen_height() / 2.0,
+            screen_width() / 2.0 + 10.0,
+            screen_height() / 2.0,
+            2.0,
+            BLACK,
+        );
+        draw_line(
+            screen_width() / 2.0,
+            screen_height() / 2.0 - 10.0,
+            screen_width() / 2.0,
+            screen_height() / 2.0 + 10.0,
+            2.0,
+            BLACK,
+        );
 
         draw_text("WASD to Move, Mouse to Look", 10.0, 20.0, 30.0, BLACK);
         draw_text(&format!("Pos: {}", camera.pos), 10.0, 50.0, 20.0, BLACK);
-        draw_text(&format!("Current: {:?}", root_room.path), 10.0, 80.0, 20.0, BLACK);
+        draw_text(
+            &format!("Current: {:?}", root_room.path),
+            10.0,
+            80.0,
+            20.0,
+            BLACK,
+        );
 
         next_frame().await
     }
 }
 
-fn render_scene(room: &Room, pos: Vec3, rot: Quat, depth: i32, camera: &FirstPersonCamera, cam_obj: &Camera3D, parent_scissor: Option<(i32, i32, i32, i32)>) {
+fn render_scene(
+    room: &Room,
+    pos: Vec3,
+    rot: Quat,
+    depth: i32,
+    camera: &FirstPersonCamera,
+    cam_obj: &Camera3D,
+    parent_scissor: Option<(i32, i32, i32, i32)>,
+) {
     if depth < 0 {
         return;
     }
@@ -222,29 +263,30 @@ fn render_scene(room: &Room, pos: Vec3, rot: Quat, depth: i32, camera: &FirstPer
 
     for portal in &room.portals {
         if let Some(target_room) = &portal.loaded_room {
-             let mut portal_rot = Quat::IDENTITY;
+            let mut portal_rot = Quat::IDENTITY;
             let p_abs = portal.pos.abs();
             let r_size = room.size;
 
-            if (p_abs.z - r_size.z/2.0).abs() < 1.0 {
+            if (p_abs.z - r_size.z / 2.0).abs() < 1.0 {
                 if portal.pos.z > 0.0 {
                     portal_rot = Quat::IDENTITY;
                 } else {
                     portal_rot = Quat::from_rotation_y(std::f32::consts::PI);
                 }
-            } else if (p_abs.x - r_size.x/2.0).abs() < 1.0 {
+            } else if (p_abs.x - r_size.x / 2.0).abs() < 1.0 {
                 if portal.pos.x > 0.0 {
-                     portal_rot = Quat::from_rotation_y(-std::f32::consts::FRAC_PI_2);
+                    portal_rot = Quat::from_rotation_y(-std::f32::consts::FRAC_PI_2);
                 } else {
-                     portal_rot = Quat::from_rotation_y(std::f32::consts::FRAC_PI_2);
+                    portal_rot = Quat::from_rotation_y(std::f32::consts::FRAC_PI_2);
                 }
             }
 
             let total_portal_rot = rot * portal_rot;
             let portal_world_pos = rot * portal.pos + pos;
 
-            if let Some(mut rect) = calculate_scissor_rect(portal_world_pos, portal.size, total_portal_rot, camera) {
-
+            if let Some(mut rect) =
+                calculate_scissor_rect(portal_world_pos, portal.size, total_portal_rot, camera)
+            {
                 if let Some(parent) = parent_scissor {
                     rect = intersect_rect(rect, parent);
                 }
@@ -264,7 +306,15 @@ fn render_scene(room: &Room, pos: Vec3, rot: Quat, depth: i32, camera: &FirstPer
 
                 let target_pos = portal_world_pos - (target_rot * target_entrance_local);
 
-                render_scene(target_room, target_pos, target_rot, depth - 1, camera, cam_obj, Some(rect));
+                render_scene(
+                    target_room,
+                    target_pos,
+                    target_rot,
+                    depth - 1,
+                    camera,
+                    cam_obj,
+                    Some(rect),
+                );
 
                 // Flush the inner room walls before restoring scissor
                 set_camera(cam_obj);
@@ -292,15 +342,20 @@ fn intersect_rect(a: (i32, i32, i32, i32), b: (i32, i32, i32, i32)) -> (i32, i32
     (x1, y1, (x2 - x1).max(0), (y2 - y1).max(0))
 }
 
-fn calculate_scissor_rect(pos: Vec3, size: Vec2, rot: Quat, camera: &FirstPersonCamera) -> Option<(i32, i32, i32, i32)> {
+fn calculate_scissor_rect(
+    pos: Vec3,
+    size: Vec2,
+    rot: Quat,
+    camera: &FirstPersonCamera,
+) -> Option<(i32, i32, i32, i32)> {
     let half_w = size.x / 2.0;
     let half_h = size.y / 2.0;
 
     let corners_local = [
         vec3(-half_w, -half_h, 0.0),
-        vec3( half_w, -half_h, 0.0),
-        vec3( half_w,  half_h, 0.0),
-        vec3(-half_w,  half_h, 0.0),
+        vec3(half_w, -half_h, 0.0),
+        vec3(half_w, half_h, 0.0),
+        vec3(-half_w, half_h, 0.0),
     ];
 
     let mut min_x = f32::MAX;
@@ -317,11 +372,11 @@ fn calculate_scissor_rect(pos: Vec3, size: Vec2, rot: Quat, camera: &FirstPerson
 
         let to_pt = world_pt - cam_pos;
         if to_pt.dot(cam_forward) > 0.0 {
-             all_behind = false;
+            all_behind = false;
         }
 
         if let Some(screen_pt) = world_to_screen(world_pt, camera) {
-             min_x = min_x.min(screen_pt.x);
+            min_x = min_x.min(screen_pt.x);
             max_x = max_x.max(screen_pt.x);
             min_y = min_y.min(screen_pt.y);
             max_y = max_y.max(screen_pt.y);

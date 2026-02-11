@@ -1,5 +1,5 @@
-use rand::Rng;
 use locus::Topology;
+use rand::Rng;
 
 pub struct LifeGrid {
     pub width: usize,
@@ -25,7 +25,9 @@ impl LifeGrid {
 
     pub fn get_index(&self, x: isize, y: isize) -> usize {
         // Use shared Klein topology logic from locus crate
-        if let Some((ny, nx)) = Topology::Klein.normalize(y as i64, x as i64, self.width, self.height) {
+        if let Some((ny, nx)) =
+            Topology::Klein.normalize(y as i64, x as i64, self.width, self.height)
+        {
             ny * self.width + nx
         } else {
             // Should not happen for Klein topology as it wraps indefinitely

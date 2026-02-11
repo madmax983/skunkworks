@@ -1,12 +1,12 @@
 use image::{DynamicImage, Rgb, RgbImage};
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use std::path::Path;
-use serde::{Serialize, Deserialize};
-use walkdir::WalkDir;
-use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+use std::path::Path;
+use walkdir::WalkDir;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Star {
@@ -38,47 +38,51 @@ pub fn calculate_dimensions(data_len: usize) -> (u32, u32) {
     (width, height)
 }
 
-pub fn generate_star_map_from_entries(entries: &[(String, u64)], width: u32, height: u32) -> StarMap {
+pub fn generate_star_map_from_entries(
+    entries: &[(String, u64)],
+    width: u32,
+    height: u32,
+) -> StarMap {
     let mut stars = Vec::new();
 
     // Position determinism uses individual path hash
 
     for (relative_path, size) in entries {
-         // Deterministic position based on path hash
-         let mut h = DefaultHasher::new();
-         relative_path.hash(&mut h);
-         let path_hash = h.finish();
-         let mut path_rng = StdRng::seed_from_u64(path_hash);
+        // Deterministic position based on path hash
+        let mut h = DefaultHasher::new();
+        relative_path.hash(&mut h);
+        let path_hash = h.finish();
+        let mut path_rng = StdRng::seed_from_u64(path_hash);
 
-         // Use padding to avoid edge clipping
-         let padding = 20.0;
-         let x = path_rng.gen_range(padding..(width as f32 - padding));
-         let y = path_rng.gen_range(padding..(height as f32 - padding));
+        // Use padding to avoid edge clipping
+        let padding = 20.0;
+        let x = path_rng.gen_range(padding..(width as f32 - padding));
+        let y = path_rng.gen_range(padding..(height as f32 - padding));
 
-         // Size based on file size (logarithmic)
-         let radius = (*size as f64 + 1.0).log2().max(2.0) as f32;
+        // Size based on file size (logarithmic)
+        let radius = (*size as f64 + 1.0).log2().max(2.0) as f32;
 
-         // Color based on extension
-         let path_obj = Path::new(relative_path);
-         let ext = path_obj.extension().and_then(|s| s.to_str()).unwrap_or("");
-         let color = match ext {
-             "rs" => [255, 100, 100], // Red for Rust
-             "toml" => [100, 255, 100], // Green for Config
-             "md" => [100, 100, 255], // Blue for Docs
-             "json" => [255, 255, 100], // Yellow for Data
-             "png" | "jpg" => [255, 100, 255], // Magenta for Images
-             "sh" => [100, 255, 255], // Cyan for Scripts
-             _ => [220, 220, 220], // White for others
-         };
+        // Color based on extension
+        let path_obj = Path::new(relative_path);
+        let ext = path_obj.extension().and_then(|s| s.to_str()).unwrap_or("");
+        let color = match ext {
+            "rs" => [255, 100, 100],          // Red for Rust
+            "toml" => [100, 255, 100],        // Green for Config
+            "md" => [100, 100, 255],          // Blue for Docs
+            "json" => [255, 255, 100],        // Yellow for Data
+            "png" | "jpg" => [255, 100, 255], // Magenta for Images
+            "sh" => [100, 255, 255],          // Cyan for Scripts
+            _ => [220, 220, 220],             // White for others
+        };
 
-         stars.push(Star {
-             path: relative_path.clone(),
-             size: *size,
-             color,
-             x,
-             y,
-             radius,
-         });
+        stars.push(Star {
+            path: relative_path.clone(),
+            size: *size,
+            color,
+            x,
+            y,
+            radius,
+        });
     }
     StarMap { stars }
 }
@@ -93,7 +97,11 @@ pub fn generate_star_map(dir: &Path, width: u32, height: u32) -> StarMap {
             // Store relative path
             let relative_path = match path.strip_prefix(dir) {
                 Ok(p) => p.to_string_lossy().to_string(),
-                Err(_) => path.file_name().unwrap_or_default().to_string_lossy().to_string()
+                Err(_) => path
+                    .file_name()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .to_string(),
             };
             let metadata = entry.metadata().ok();
             let size = metadata.map(|m| m.len()).unwrap_or(0);
@@ -103,8 +111,12 @@ pub fn generate_star_map(dir: &Path, width: u32, height: u32) -> StarMap {
     generate_star_map_from_entries(&entries, width, height)
 }
 
-
-pub fn generate_cover(data: &[u8], width: u32, height: u32, starmap: Option<&StarMap>) -> DynamicImage {
+pub fn generate_cover(
+    data: &[u8],
+    width: u32,
+    height: u32,
+    starmap: Option<&StarMap>,
+) -> DynamicImage {
     // 2. Hash data for seed
     let mut hasher = Sha256::new();
     hasher.update(data);
@@ -168,7 +180,7 @@ pub fn generate_cover(data: &[u8], width: u32, height: u32, starmap: Option<&Sta
             // Draw circle
             for dy in -r..=r {
                 for dx in -r..=r {
-                    if dx*dx + dy*dy <= r*r {
+                    if dx * dx + dy * dy <= r * r {
                         let px = cx + dx;
                         let py = cy + dy;
                         if px >= 0 && px < width as i32 && py >= 0 && py < height as i32 {

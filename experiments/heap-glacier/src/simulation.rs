@@ -18,12 +18,16 @@ impl HeapTerrain {
     }
 
     pub fn allocate(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         self.ice[y * self.width + x] += amount;
     }
 
     pub fn deallocate(&mut self, x: usize, y: usize, amount: f32) {
-        if x >= self.width || y >= self.height { return; }
+        if x >= self.width || y >= self.height {
+            return;
+        }
         let idx = y * self.width + x;
         let melt = amount.min(self.ice[idx]);
         self.ice[idx] -= melt;
@@ -49,8 +53,10 @@ impl HeapTerrain {
 
                 // 4-neighbor check
                 let neighbors = [
-                    (x.wrapping_sub(1), y), (x + 1, y),
-                    (x, y.wrapping_sub(1)), (x, y + 1)
+                    (x.wrapping_sub(1), y),
+                    (x + 1, y),
+                    (x, y.wrapping_sub(1)),
+                    (x, y + 1),
                 ];
 
                 for (nx, ny) in neighbors {
@@ -87,7 +93,7 @@ impl HeapTerrain {
 
                 // Static erosion (dissolution) just for sitting water
                 if self.water[idx] > 0.0 {
-                     new_bedrock[idx] -= 0.01; // Ensure even static water does something for the test
+                    new_bedrock[idx] -= 0.01; // Ensure even static water does something for the test
                 }
             }
         }
@@ -95,7 +101,9 @@ impl HeapTerrain {
         // Evaporation
         for w in new_water.iter_mut() {
             *w *= 0.99;
-            if *w < 0.01 { *w = 0.0; }
+            if *w < 0.01 {
+                *w = 0.0;
+            }
         }
 
         self.water = new_water;
@@ -103,17 +111,23 @@ impl HeapTerrain {
     }
 
     pub fn get_bedrock(&self, x: usize, y: usize) -> f32 {
-        if x >= self.width || y >= self.height { return 0.0; }
+        if x >= self.width || y >= self.height {
+            return 0.0;
+        }
         self.bedrock[y * self.width + x]
     }
 
     pub fn get_ice(&self, x: usize, y: usize) -> f32 {
-        if x >= self.width || y >= self.height { return 0.0; }
+        if x >= self.width || y >= self.height {
+            return 0.0;
+        }
         self.ice[y * self.width + x]
     }
 
     pub fn get_water(&self, x: usize, y: usize) -> f32 {
-        if x >= self.width || y >= self.height { return 0.0; }
+        if x >= self.width || y >= self.height {
+            return 0.0;
+        }
         self.water[y * self.width + x]
     }
 }

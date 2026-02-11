@@ -1,7 +1,7 @@
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::Path;
 use walkdir::WalkDir;
-use sha2::{Sha256, Digest};
 
 #[derive(Debug, Clone)]
 pub struct FileMetric {
@@ -35,7 +35,11 @@ impl Scanner {
 
         // Calculate depth relative to root
         let root_path = Path::new(root);
-        let depth = path.strip_prefix(root_path).unwrap_or(path).components().count();
+        let depth = path
+            .strip_prefix(root_path)
+            .unwrap_or(path)
+            .components()
+            .count();
 
         // Hash path for stability
         let mut hasher = Sha256::new();

@@ -1242,48 +1242,7 @@ impl ChimeraVM {
                 self.process_ribosome(organelle);
             }
             nova::OrganelleType::Void => {
-                let (cy, cx) = self.context_loc;
-
-                // Entropy Trail
-                self.entropy_grid[cy][cx] = self.entropy_grid[cy][cx].saturating_add(10).min(100);
-
-                // Void consumes grid cell if not 0
-                let val = self.grid[cy][cx].clone();
-                if !matches!(val, Value::Int(0)) {
-                    self.grid[cy][cx] = Value::Int(0);
-                    self.energy = self.energy.saturating_add(1);
-                    self.output.push(format!("VOID: Consumed at {},{}", cx, cy));
-
-                    // Void Song: Check for elemental strings
-                    if let Value::Str(s) = val {
-                        let note = match s.as_str() {
-                            "Fire" => Some("Do"),
-                            "Water" => Some("Re"),
-                            "Earth" => Some("Mi"),
-                            "Air" => Some("Fa"),
-                            "Spirit" => Some("Sol"),
-                            _ => None,
-                        };
-
-                        if let Some(n) = note {
-                            self.chorus_buffer.push_back(n.to_string());
-                            if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
-                                self.chorus_buffer.pop_front();
-                            }
-                            self.output.push(format!("VOID SONG: {}", n));
-                            if let Some(_target) = nova::check_chorus_chords(self) {
-                                // Void ignores calls, but maybe we can trigger global effect?
-                                // For now, ignore jump for Void.
-                            }
-                        }
-                    }
-                }
-
-                // Brownian Motion
-                let mut rng = rand::thread_rng();
-                let dy = rng.gen_range(-1..=1);
-                let dx = rng.gen_range(-1..=1);
-                organelle.direction = (dy, dx);
+                self.process_void_organelle(organelle);
             }
             nova::OrganelleType::Alchemist => {
                 let (cy, cx) = self.context_loc;
@@ -1308,38 +1267,7 @@ impl ChimeraVM {
                 }
             }
             nova::OrganelleType::Choir => {
-                let song_len = organelle.traits.len();
-                if song_len > 0 {
-                    let idx = organelle.recursion_depth % song_len;
-                    let note = &organelle.traits[idx];
-
-                    self.chorus_buffer.push_back(note.clone());
-                    if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
-                        self.chorus_buffer.pop_front();
-                    }
-                    self.output.push(format!("CHOIR: {}", note));
-
-                    if let Some(target) = nova::check_chorus_chords(self) {
-                        // Choir triggers HOST to jump
-                        // self.ip is the HOST IP context (because we swapped)
-                        // wait, tick_organelle SWAPPED self.ip with organelle.ip.
-                        // So self.ip is ORGANELLE IP.
-                        // organelle.ip is HOST IP.
-
-                        // We want to update HOST IP.
-                        // So we update organelle.ip.
-
-                        if organelle.call_stack.len() < MAX_CALL_STACK_DEPTH {
-                            organelle.call_stack.push(organelle.ip); // Save old Host IP
-                            organelle.ip = (target, 0); // Jump Host to target
-                            self.output
-                                .push(format!("CHOIR: Triggered host jump to {}", target));
-                        }
-                    }
-
-                    organelle.recursion_depth = (organelle.recursion_depth + 1) % song_len;
-                    self.energy = self.energy.saturating_sub(1);
-                }
+                self.process_choir_organelle(organelle);
             }
             nova::OrganelleType::Worker => {}
         }
@@ -1376,6 +1304,88 @@ impl ChimeraVM {
     }
 
     #[cfg(feature = "nova")]
+    fn process_void_organelle(&mut self, organelle: &mut Organelle) {
+        let (cy, cx) = self.context_loc;
+
+        // Entropy Trail
+        self.entropy_grid[cy][cx] = self.entropy_grid[cy][cx].saturating_add(10).min(100);
+
+        // Void consumes grid cell if not 0
+        let val = self.grid[cy][cx].clone();
+        if !matches!(val, Value::Int(0)) {
+            self.grid[cy][cx] = Value::Int(0);
+            self.energy = self.energy.saturating_add(1);
+            self.output.push(format!("VOID: Consumed at {},{}", cx, cy));
+
+            // Void Song: Check for elemental strings
+            if let Value::Str(s) = val {
+                let note = match s.as_str() {
+                    "Fire" => Some("Do"),
+                    "Water" => Some("Re"),
+                    "Earth" => Some("Mi"),
+                    "Air" => Some("Fa"),
+                    "Spirit" => Some("Sol"),
+                    _ => None,
+                };
+
+                if let Some(n) = note {
+                    self.chorus_buffer.push_back(n.to_string());
+                    if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
+                        self.chorus_buffer.pop_front();
+                    }
+                    self.output.push(format!("VOID SONG: {}", n));
+                    if let Some(_target) = nova::check_chorus_chords(self) {
+                        // Void ignores calls, but maybe we can trigger global effect?
+                        // For now, ignore jump for Void.
+                    }
+                }
+            }
+        }
+
+        // Brownian Motion
+        let mut rng = rand::thread_rng();
+        let dy = rng.gen_range(-1..=1);
+        let dx = rng.gen_range(-1..=1);
+        organelle.direction = (dy, dx);
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_choir_organelle(&mut self, organelle: &mut Organelle) {
+        let song_len = organelle.traits.len();
+        if song_len > 0 {
+            let idx = organelle.recursion_depth % song_len;
+            let note = &organelle.traits[idx];
+
+            self.chorus_buffer.push_back(note.clone());
+            if self.chorus_buffer.len() > MAX_CHORUS_SIZE {
+                self.chorus_buffer.pop_front();
+            }
+            self.output.push(format!("CHOIR: {}", note));
+
+            if let Some(target) = nova::check_chorus_chords(self) {
+                // Choir triggers HOST to jump
+                // self.ip is the HOST IP context (because we swapped)
+                // wait, tick_organelle SWAPPED self.ip with organelle.ip.
+                // So self.ip is ORGANELLE IP.
+                // organelle.ip is HOST IP.
+
+                // We want to update HOST IP.
+                // So we update organelle.ip.
+
+                if organelle.call_stack.len() < MAX_CALL_STACK_DEPTH {
+                    organelle.call_stack.push(organelle.ip); // Save old Host IP
+                    organelle.ip = (target, 0); // Jump Host to target
+                    self.output
+                        .push(format!("CHOIR: Triggered host jump to {}", target));
+                }
+            }
+
+            organelle.recursion_depth = (organelle.recursion_depth + 1) % song_len;
+            self.energy = self.energy.saturating_sub(1);
+        }
+    }
+
+    #[cfg(feature = "nova")]
     fn ribosome_binary_op<F>(&mut self, op: F)
     where
         F: Fn(i64, i64) -> Option<i64>,
@@ -1386,6 +1396,80 @@ impl ChimeraVM {
             if let (Value::Int(ia), Value::Int(ib)) = (a, b) {
                 if let Some(res) = op(ia, ib) {
                     self.stack.push(Value::Int(res));
+                }
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_ribosome_bang(&mut self, cy: usize, cx: usize) {
+        // Bang: Trigger all neighbors
+        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        for (dy, dx) in neighbors {
+            if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                let mask = match (dy, dx) {
+                    (-1, 0) => 1,
+                    (1, 0) => 2,
+                    (0, 1) => 4,
+                    (0, -1) => 8,
+                    _ => 0,
+                };
+                if (self.membranes[cy][cx] & mask) == 0 {
+                    // Spawn ephemeral Ribosome
+                    if self.organelles.len() < MAX_ORGANELLES {
+                        self.organelle_id_counter += 1;
+                        let new_org = Organelle {
+                            stack: Vec::new(),
+                            ip: (0, 0),
+                            context_loc: (ny, nx),
+                            call_stack: Vec::new(),
+                            recursion_depth: 0,
+                            halted: false,
+                            kind: nova::OrganelleType::Ribosome,
+                            direction: (dy as i8, dx as i8),
+                            ttl: Some(1),
+                            name: "Spark".to_string(),
+                            traits: vec!["Ephemeral".to_string()],
+                            id: self.organelle_id_counter,
+                            tissue_id: None,
+                            genome_id: 0,
+                        };
+                        self.organelles.push(new_org);
+                    } else {
+                        self.output
+                            .push("Error: Organelle limit exceeded in Bang".to_string());
+                    }
+                }
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_ribosome_read(&mut self, cy: usize, cx: usize, push_zero_on_fail: bool) {
+        // Offset Read: [dy, dx] -> [val]
+        if self.stack.len() >= 2 {
+            let x_off = self.stack.pop().unwrap();
+            let y_off = self.stack.pop().unwrap();
+            if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                    self.stack.push(self.grid[ny][nx].clone());
+                } else if push_zero_on_fail {
+                    self.stack.push(Value::Int(0));
+                }
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_ribosome_write(&mut self, cy: usize, cx: usize) {
+        // Offset Write: [val, dy, dx] -> []
+        if self.stack.len() >= 3 {
+            let x_off = self.stack.pop().unwrap();
+            let y_off = self.stack.pop().unwrap();
+            let val = self.stack.pop().unwrap();
+            if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
+                if let Some((ny, nx)) = self.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
+                    self.grid[ny][nx] = val;
                 }
             }
         }
@@ -1406,81 +1490,9 @@ impl ChimeraVM {
                 "v" => organelle.direction = (1, 0),
                 "+" => self.ribosome_binary_op(|a, b| Some(a.wrapping_add(b))),
                 "-" => self.ribosome_binary_op(|a, b| Some(a.wrapping_sub(b))),
-                "*" => {
-                    // Bang: Trigger all neighbors
-                    let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
-                    for (dy, dx) in neighbors {
-                        if let Some((ny, nx)) =
-                            self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                        {
-                            let mask = match (dy, dx) {
-                                (-1, 0) => 1,
-                                (1, 0) => 2,
-                                (0, 1) => 4,
-                                (0, -1) => 8,
-                                _ => 0,
-                            };
-                            if (self.membranes[cy][cx] & mask) == 0 {
-                                // Spawn ephemeral Ribosome
-                                if self.organelles.len() < MAX_ORGANELLES {
-                                    self.organelle_id_counter += 1;
-                                    let new_org = Organelle {
-                                        stack: Vec::new(),
-                                        ip: (0, 0),
-                                        context_loc: (ny, nx),
-                                        call_stack: Vec::new(),
-                                        recursion_depth: 0,
-                                        halted: false,
-                                        kind: nova::OrganelleType::Ribosome,
-                                        direction: (dy as i8, dx as i8),
-                                        ttl: Some(1),
-                                        name: "Spark".to_string(),
-                                        traits: vec!["Ephemeral".to_string()],
-                                        id: self.organelle_id_counter,
-                                        tissue_id: None,
-                                        genome_id: 0,
-                                    };
-                                    self.organelles.push(new_org);
-                                } else {
-                                    self.output.push(
-                                        "Error: Organelle limit exceeded in Bang".to_string(),
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-                "o" => {
-                    // Offset Read: [dy, dx] -> [val]
-                    if self.stack.len() >= 2 {
-                        let x_off = self.stack.pop().unwrap();
-                        let y_off = self.stack.pop().unwrap();
-                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
-                            if let Some((ny, nx)) =
-                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                            {
-                                self.stack.push(self.grid[ny][nx].clone());
-                            } else {
-                                self.stack.push(Value::Int(0));
-                            }
-                        }
-                    }
-                }
-                "x" => {
-                    // Offset Write: [val, dy, dx] -> []
-                    if self.stack.len() >= 3 {
-                        let x_off = self.stack.pop().unwrap();
-                        let y_off = self.stack.pop().unwrap();
-                        let val = self.stack.pop().unwrap();
-                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
-                            if let Some((ny, nx)) =
-                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                            {
-                                self.grid[ny][nx] = val;
-                            }
-                        }
-                    }
-                }
+                "*" => self.process_ribosome_bang(cy, cx),
+                "o" => self.process_ribosome_read(cy, cx, true),
+                "x" => self.process_ribosome_write(cy, cx),
                 "?" => {
                     let mut rng = rand::thread_rng();
                     self.stack.push(Value::Int(rng.gen_range(0..10)));
@@ -1518,33 +1530,8 @@ impl ChimeraVM {
                         self.stack.push(Value::Int(if i == 0 { 1 } else { 0 }));
                     }
                 }
-                ":" => {
-                    if self.stack.len() >= 2 {
-                        let x_off = self.stack.pop().unwrap();
-                        let y_off = self.stack.pop().unwrap();
-                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
-                            if let Some((ny, nx)) =
-                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                            {
-                                self.stack.push(self.grid[ny][nx].clone());
-                            }
-                        }
-                    }
-                }
-                ";" => {
-                    if self.stack.len() >= 3 {
-                        let x_off = self.stack.pop().unwrap();
-                        let y_off = self.stack.pop().unwrap();
-                        let val = self.stack.pop().unwrap();
-                        if let (Value::Int(dx), Value::Int(dy)) = (x_off, y_off) {
-                            if let Some((ny, nx)) =
-                                self.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                            {
-                                self.grid[ny][nx] = val;
-                            }
-                        }
-                    }
-                }
+                ":" => self.process_ribosome_read(cy, cx, false),
+                ";" => self.process_ribosome_write(cy, cx),
                 _ => {
                     if let Ok(op) = s.parse::<OpCode>() {
                         let _ = self.execute_gene_inner(op, &[]);
@@ -2050,6 +2037,120 @@ impl ChimeraVM {
         None
     }
 
+    #[cfg(feature = "nova")]
+    fn exec_transposon(&mut self) -> Option<(usize, usize)> {
+        if let Some(val) = self.stack.pop() {
+            match val {
+                Value::Int(offset) => {
+                    if self.ip.0 < self.dna.helix.strands.len() {
+                        let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
+                        let current_idx = self.ip.1 as i64;
+                        let target_idx = current_idx + offset;
+
+                        if target_idx >= 0 && target_idx < strand_len as i64 {
+                            let t_idx = target_idx as usize;
+                            // Move: Copy to target, replace self with Nop
+                            let gene = self.dna.helix.strands[self.ip.0].genes[self.ip.1].clone();
+
+                            // We need to modify the strand.
+                            self.dna.helix.strands[self.ip.0].genes[self.ip.1] = crate::ast::Gene {
+                                op: OpCode::Nop,
+                                args: vec![],
+                            };
+                            self.dna.helix.strands[self.ip.0].genes[t_idx] = gene;
+
+                            // Jump to new location
+                            return Some((self.ip.0, t_idx));
+                        } else {
+                            self.output
+                                .push("Error: Transposon target out of bounds".to_string());
+                        }
+                    }
+                }
+                _ => self
+                    .output
+                    .push("Error: Transposon requires Int offset".to_string()),
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Transposon".to_string());
+        }
+        None
+    }
+
+    fn handle_unknown_opcode(&mut self, name: &str) -> Option<(usize, usize)> {
+        #[cfg(feature = "nova")]
+        if let Some(&strand_idx) = self.dictionary.get(name) {
+            if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
+                self.output.push("Error: Call stack overflow".to_string());
+                return None;
+            }
+            self.call_stack.push((self.ip.0, self.ip.1 + 1));
+            return Some((strand_idx, 0));
+        }
+
+        let mut hint = "";
+        let n = name;
+
+        // Nova Features
+        if matches!(
+            n,
+            "mitosis"
+                | "apoptosis"
+                | "spawn"
+                | "incubate"
+                | "telomerase"
+                | "methylate"
+                | "demethylate"
+                | "recombine"
+                | "splice"
+                | "crispr_scan"
+                | "cas9_cut"
+                | "ligase"
+                | "entangle"
+                | "decohere"
+                | "simulate"
+                | "dream"
+        ) {
+            hint = " (Hint: Nova feature. Enable 'nova' feature?)";
+        }
+
+        // Cortex Features
+        if matches!(n, "link" | "sever" | "spark" | "sense" | "gate") {
+            hint = " (Hint: Cortex feature. Enable 'cortex' feature?)";
+        }
+
+        // Biophysics Features
+        if matches!(n, "neuro_genesis" | "stimulate" | "dendrite" | "axon") {
+            hint = " (Hint: Biophysics feature. Enable 'biophysics' feature?)";
+        }
+
+        // Silicon Features
+        if matches!(
+            n,
+            "conduct" | "wire" | "pulse" | "silicon" | "construct" | "logic_gate"
+        ) {
+            hint = " (Hint: Silicon feature. Enable 'silicon' feature?)";
+        }
+
+        // Elektra Features
+        if matches!(
+            n,
+            "battery" | "ground" | "sense_volt" | "shock" | "lightning"
+        ) {
+            hint = " (Hint: Elektra feature. Enable 'elektra' feature?)";
+        }
+
+        // Hive Features
+        if matches!(n, "hive_bind" | "hive_send" | "hive_recv" | "hive_close") {
+            hint = " (Hint: Hive feature. Enable 'hive' feature?)";
+        }
+
+        self.output
+            .push(format!("Unknown enzyme: {}{}", name, hint));
+        None
+    }
+
     pub(crate) fn execute_gene_inner(
         &mut self,
         op: OpCode,
@@ -2195,47 +2296,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Transposon => {
-                if let Some(val) = self.stack.pop() {
-                    match val {
-                        Value::Int(offset) => {
-                            if self.ip.0 < self.dna.helix.strands.len() {
-                                let strand_len = self.dna.helix.strands[self.ip.0].genes.len();
-                                let current_idx = self.ip.1 as i64;
-                                let target_idx = current_idx + offset;
-
-                                if target_idx >= 0 && target_idx < strand_len as i64 {
-                                    let t_idx = target_idx as usize;
-                                    // Move: Copy to target, replace self with Nop
-                                    let gene =
-                                        self.dna.helix.strands[self.ip.0].genes[self.ip.1].clone();
-
-                                    // We need to modify the strand.
-                                    self.dna.helix.strands[self.ip.0].genes[self.ip.1] =
-                                        crate::ast::Gene {
-                                            op: OpCode::Nop,
-                                            args: vec![],
-                                        };
-                                    self.dna.helix.strands[self.ip.0].genes[t_idx] = gene;
-
-                                    // Jump to new location
-                                    return Some((self.ip.0, t_idx));
-                                } else {
-                                    self.output
-                                        .push("Error: Transposon target out of bounds".to_string());
-                                }
-                            }
-                        }
-                        _ => self
-                            .output
-                            .push("Error: Transposon requires Int offset".to_string()),
-                    }
-                } else {
-                    self.output
-                        .push("Error: Stack underflow for Transposon".to_string());
-                }
-                None
-            }
+            OpCode::Transposon => self.exec_transposon(),
 
             #[cfg(feature = "nova")]
             OpCode::Resonate
@@ -2630,78 +2691,7 @@ impl ChimeraVM {
 
             OpCode::Nop => None,
 
-            OpCode::Unknown(name) => {
-                #[cfg(feature = "nova")]
-                if let Some(&strand_idx) = self.dictionary.get(&name) {
-                    if self.call_stack.len() >= MAX_CALL_STACK_DEPTH {
-                        self.output.push("Error: Call stack overflow".to_string());
-                        return None;
-                    }
-                    self.call_stack.push((self.ip.0, self.ip.1 + 1));
-                    return Some((strand_idx, 0));
-                }
-
-                let mut hint = "";
-                let n = name.as_str();
-
-                // Nova Features
-                if matches!(
-                    n,
-                    "mitosis"
-                        | "apoptosis"
-                        | "spawn"
-                        | "incubate"
-                        | "telomerase"
-                        | "methylate"
-                        | "demethylate"
-                        | "recombine"
-                        | "splice"
-                        | "crispr_scan"
-                        | "cas9_cut"
-                        | "ligase"
-                        | "entangle"
-                        | "decohere"
-                        | "simulate"
-                        | "dream"
-                ) {
-                    hint = " (Hint: Nova feature. Enable 'nova' feature?)";
-                }
-
-                // Cortex Features
-                if matches!(n, "link" | "sever" | "spark" | "sense" | "gate") {
-                    hint = " (Hint: Cortex feature. Enable 'cortex' feature?)";
-                }
-
-                // Biophysics Features
-                if matches!(n, "neuro_genesis" | "stimulate" | "dendrite" | "axon") {
-                    hint = " (Hint: Biophysics feature. Enable 'biophysics' feature?)";
-                }
-
-                // Silicon Features
-                if matches!(
-                    n,
-                    "conduct" | "wire" | "pulse" | "silicon" | "construct" | "logic_gate"
-                ) {
-                    hint = " (Hint: Silicon feature. Enable 'silicon' feature?)";
-                }
-
-                // Elektra Features
-                if matches!(
-                    n,
-                    "battery" | "ground" | "sense_volt" | "shock" | "lightning"
-                ) {
-                    hint = " (Hint: Elektra feature. Enable 'elektra' feature?)";
-                }
-
-                // Hive Features
-                if matches!(n, "hive_bind" | "hive_send" | "hive_recv" | "hive_close") {
-                    hint = " (Hint: Hive feature. Enable 'hive' feature?)";
-                }
-
-                self.output
-                    .push(format!("Unknown enzyme: {}{}", name, hint));
-                None
-            }
+            OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
         }
     }
 

@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 
 const GRID_WIDTH: usize = 400;
 const GRID_HEIGHT: usize = 300;
@@ -163,9 +163,8 @@ async fn main() {
 
         // City attraction (simplistic: just high pheromone)
         for (cx, cy) in &cities {
-             grid.deposit(*cx, *cy, 1.0);
+            grid.deposit(*cx, *cy, 1.0);
         }
-
 
         // Render to texture (optimized direct byte access)
         for (i, cell) in grid.cells.iter().enumerate() {
@@ -205,7 +204,13 @@ async fn main() {
         texture.update(&image);
         draw_texture(&texture, 0.0, 0.0, WHITE);
 
-        draw_text("Slime Train: Mycelial Transit Network", 10.0, 20.0, 30.0, WHITE);
+        draw_text(
+            "Slime Train: Mycelial Transit Network",
+            10.0,
+            20.0,
+            30.0,
+            WHITE,
+        );
 
         next_frame().await
     }
@@ -239,13 +244,19 @@ mod tests {
         let (l, c, r) = sensors;
 
         // Verify sensors picked it up
-        assert!(r > c && r > l, "Right sensor should detect highest concentration");
+        assert!(
+            r > c && r > l,
+            "Right sensor should detect highest concentration"
+        );
 
         // Rotate
         let initial_angle = agent.angle;
         agent.rotate(sensors);
 
         // Should have turned Right (positive angle increase)
-        assert!(agent.angle > initial_angle, "Agent should turn towards the right (South-East)");
+        assert!(
+            agent.angle > initial_angle,
+            "Agent should turn towards the right (South-East)"
+        );
     }
 }

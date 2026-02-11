@@ -4,9 +4,9 @@
 use crate::ast::JunctionType;
 #[cfg(feature = "oracle")]
 use crate::vm::oracle;
+use crate::vm::ChimeraVM;
 #[cfg(feature = "oracle")]
 use crate::vm::Value;
-use crate::vm::ChimeraVM;
 #[cfg(feature = "oracle")]
 use std::collections::HashMap;
 
