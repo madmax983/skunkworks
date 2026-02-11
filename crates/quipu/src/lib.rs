@@ -16,6 +16,15 @@ impl Knot {
             Knot::FigureEight => 1,
         }
     }
+
+    /// Returns the symbol for TUI display (from quipu-symphony)
+    pub fn symbol(&self) -> String {
+        match self {
+            Knot::Simple => "●".to_string(),
+            Knot::Long(v) => format!("≡{}", v),
+            Knot::FigureEight => "∞".to_string(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -116,57 +125,8 @@ impl Add for Cord {
     type Output = Cord;
 
     fn add(self, rhs: Self) -> Self::Output {
-        let max_len = std::cmp::max(self.clusters.len(), rhs.clusters.len());
-        let mut result_clusters = Vec::new();
-        let mut carry = 0;
-
-        for i in 0..=max_len {
-            // Go one past max to handle final carry
-            if i == max_len && carry == 0 {
-                break;
-            }
-
-            let mut sum = carry;
-
-            // Add self knots
-            if i < self.clusters.len() {
-                for k in &self.clusters[i] {
-                    sum += k.value() as u64;
-                }
-            }
-
-            // Add rhs knots
-            if i < rhs.clusters.len() {
-                for k in &rhs.clusters[i] {
-                    sum += k.value() as u64;
-                }
-            }
-
-            // Determine new digit and carry
-            let digit = (sum % 10) as u8;
-            carry = sum / 10;
-
-            // Create knots for digit
-            let knots = if digit == 0 {
-                Vec::new()
-            } else if i == 0 {
-                // Units logic
-                if digit == 1 {
-                    vec![Knot::FigureEight]
-                } else {
-                    vec![Knot::Long(digit)]
-                }
-            } else {
-                // Tens+ logic
-                vec![Knot::Simple; digit as usize]
-            };
-
-            result_clusters.push(knots);
-        }
-
-        Cord {
-            clusters: result_clusters,
-        }
+        let val = self.value() + rhs.value();
+        Cord::from(val)
     }
 }
 
@@ -176,6 +136,8 @@ impl Sub for Cord {
     fn sub(self, rhs: Self) -> Self::Output {
         // Only implementing positive result subtraction
         if self.value() < rhs.value() {
+            // In a real library we might want to return Result or panic,
+            // but for now panic fits the original behavior.
             panic!("Quipu subtraction resulted in negative value (not supported by Incas!)");
         }
 
@@ -196,5 +158,63 @@ impl fmt::Display for Quipu {
             write!(f, "Cord {}:\n{}\n", i, cord)?;
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_knot_values() {
+        assert_eq!(Knot::Simple.value(), 1);
+        assert_eq!(Knot::FigureEight.value(), 1);
+        assert_eq!(Knot::Long(5).value(), 5);
+    }
+
+    #[test]
+    fn test_cord_from_u64() {
+        let val = 123;
+        let cord = Cord::from(val);
+        // 123 -> Units: 3, Tens: 2, Hundreds: 1
+        // clusters[0]: 3 units -> Long(3)
+        // clusters[1]: 2 tens -> 2 Simple
+        // clusters[2]: 1 hundred -> 1 Simple
+
+        assert_eq!(cord.clusters.len(), 3);
+
+        // Units
+        assert_eq!(cord.clusters[0].len(), 1);
+        assert_eq!(cord.clusters[0][0], Knot::Long(3));
+
+        // Tens
+        assert_eq!(cord.clusters[1].len(), 2);
+        assert_eq!(cord.clusters[1][0], Knot::Simple);
+
+        // Hundreds
+        assert_eq!(cord.clusters[2].len(), 1);
+        assert_eq!(cord.clusters[2][0], Knot::Simple);
+    }
+
+    #[test]
+    fn test_cord_value() {
+        let cord = Cord::from(456);
+        assert_eq!(cord.value(), 456);
+    }
+
+    #[test]
+    fn test_cord_add() {
+        let c1 = Cord::from(100);
+        let c2 = Cord::from(25);
+        let sum = c1 + c2;
+        assert_eq!(sum.value(), 125);
+    }
+
+    #[test]
+    fn test_cord_sub() {
+        let c1 = Cord::from(100);
+        let c2 = Cord::from(25);
+        let diff = c1 - c2;
+        assert_eq!(diff.value(), 75);
     }
 }

@@ -4,7 +4,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use quipu_serializer::quipu::{Cord, Quipu};
+use quipu::{Cord, Quipu};
 use quipu_serializer::ser::to_quipu;
 use ratatui::{
     backend::CrosstermBackend,

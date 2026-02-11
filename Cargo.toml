@@ -3,6 +3,7 @@ members = [
     "crates/git-associates",
     "crates/locus",
     "crates/market-sim",
+    "crates/quipu",
     "crates/synaptic-physics",
     "crates/tui-semantic",
     "crates/tui-shared",
@@ -147,3 +148,4 @@ poincare-disk = { path = "crates/poincare-disk" }
 locus = { path = "crates/locus" }
 market-sim = { path = "crates/market-sim" }
 synaptic-physics = { path = "crates/synaptic-physics" }
+quipu = { path = "crates/quipu" }
