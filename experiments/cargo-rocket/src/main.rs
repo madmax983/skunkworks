@@ -13,14 +13,12 @@ use ratatui::{
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-mod ghost;
-use ghost::{GhostRecorder, GhostReplayer};
-
 pub mod physics;
 pub mod recorder;
 pub mod world;
 
 use physics::{System, Vec2};
+use recorder::{Recorder, Replayer};
 
 struct App {
     system: System,
@@ -101,9 +99,9 @@ fn main() -> Result<()> {
     let mut app = App::new(system);
     let mut tui = Tui::init()?;
 
-    let mut recorder = GhostRecorder::new();
+    let mut recorder = Recorder::new();
     let mut replayer = if let Some(data) = replay_data {
-        Some(GhostReplayer::new(data.events))
+        Some(Replayer::new(data.events))
     } else {
         recorder.start();
         None

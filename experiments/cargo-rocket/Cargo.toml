@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 locus = { workspace = true }
 anyhow = { workspace = true }
-crossterm = { workspace = true }
+crossterm = { workspace = true, features = ["serde"] }
 rand = { workspace = true }
 ratatui = { workspace = true }
 tui-shared = { workspace = true }
