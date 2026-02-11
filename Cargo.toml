@@ -99,7 +99,6 @@ members = [
     "experiments/git-landscape", 
     "experiments/chimera-tardis",
     "experiments/hyperbolic-git", 
-    "experiments/klein-fs",
     "experiments/chrontext", 
     "experiments/synaptic-pachinko", 
     "experiments/lagrange-balancer", 
