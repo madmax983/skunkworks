@@ -54,7 +54,7 @@ fn run_demo() {
         ],
     };
 
-    vm.dna.helix.strands.push(reader_strand);
+    vm.add_strand(reader_strand);
 
     println!("🧪 Incubating narrative...");
 

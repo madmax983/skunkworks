@@ -858,6 +858,23 @@ impl ChimeraVM {
         }
     }
 
+    /// Adds a new strand to the helix and initializes its biological state (telomeres, etc).
+    /// Returns the index of the new strand.
+    pub fn add_strand(&mut self, strand: crate::ast::Strand) -> usize {
+        self.dna.helix.strands.push(strand);
+
+        #[cfg(feature = "nova")]
+        self.telomeres.push(50);
+
+        #[cfg(feature = "cortex")]
+        {
+            self.activation_levels.push(0);
+            self.synapse_map.push(Vec::new());
+        }
+
+        self.dna.helix.strands.len() - 1
+    }
+
     pub fn inject_genes(&mut self, genes: Vec<crate::ast::Gene>) {
         if self.ip.0 < self.dna.helix.strands.len() {
             let count = genes.len();
