@@ -5,10 +5,11 @@ use market_sim::{Grid, Particle};
 use rand::Rng;
 use ratatui::{
     layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     symbols::Marker,
+    text::{Line, Span},
     widgets::{
-        Block, Borders, Paragraph, Sparkline,
+        Block, Borders, Gauge, Paragraph, Sparkline,
         canvas::{Canvas, Points},
     },
 };
@@ -110,7 +111,7 @@ fn main() -> anyhow::Result<()> {
                 .constraints([
                     Constraint::Min(0),    // Market Grid
                     Constraint::Length(8), // Waveform
-                    Constraint::Length(1), // Status
+                    Constraint::Length(3), // Status
                 ])
                 .split(f.area());
 
@@ -195,16 +196,63 @@ fn main() -> anyhow::Result<()> {
                 f.render_widget(sparkline, chunks[1]);
             }
 
-            // Status
-            let status = Paragraph::new(format!(
-                "Freq: {:.1}Hz | Noise: {:.2} | Trades: {} | Orders: {}",
-                app.synth.price_frequency,
-                app.synth.trade_intensity,
-                app.grid.trade_count,
-                app.grid.total_bids + app.grid.total_asks
-            ))
-            .style(Style::default().bg(Color::DarkGray));
-            f.render_widget(status, chunks[2]);
+            // Status Dashboard
+            let dashboard_chunks = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints([
+                    Constraint::Percentage(45), // Market Data
+                    Constraint::Percentage(35), // Synth Data
+                    Constraint::Percentage(20), // Controls
+                ])
+                .split(chunks[2]);
+
+            // 1. Market Data
+            let market_text = Line::from(vec![
+                Span::raw("Orders: "),
+                Span::styled(
+                    format!("{}", app.grid.total_bids + app.grid.total_asks),
+                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD),
+                ),
+                Span::raw(" ("),
+                Span::styled(format!("B:{}", app.grid.total_bids), Style::default().fg(Color::Green)),
+                Span::raw(", "),
+                Span::styled(format!("A:{}", app.grid.total_asks), Style::default().fg(Color::Red)),
+                Span::raw(") | Trades: "),
+                Span::styled(
+                    format!("{}", app.grid.trade_count),
+                    Style::default().fg(Color::White).add_modifier(Modifier::BOLD),
+                ),
+            ]);
+            let market_widget = Paragraph::new(market_text)
+                .block(Block::default().borders(Borders::ALL).title(" Market Data "));
+            f.render_widget(market_widget, dashboard_chunks[0]);
+
+            // 2. Synth Data
+            let synth_block = Block::default().borders(Borders::ALL).title(" Synth ");
+            let synth_inner = synth_block.inner(dashboard_chunks[1]);
+            f.render_widget(synth_block, dashboard_chunks[1]);
+
+            let synth_layout = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints([Constraint::Percentage(40), Constraint::Percentage(60)])
+                .split(synth_inner);
+
+            let freq_text = Paragraph::new(format!("{:.0}Hz", app.synth.price_frequency))
+                .alignment(ratatui::layout::Alignment::Center);
+            f.render_widget(freq_text, synth_layout[0]);
+
+            let noise_gauge = Gauge::default()
+                .gauge_style(Style::default().fg(Color::Magenta))
+                .ratio(app.synth.trade_intensity.clamp(0.0, 1.0) as f64)
+                .label(format!("{:.2}", app.synth.trade_intensity));
+            f.render_widget(noise_gauge, synth_layout[1]);
+
+            // 3. Controls
+            let controls_text = Paragraph::new("Q:Quit R:Reset")
+                .style(Style::default().fg(Color::Cyan))
+                .block(Block::default().borders(Borders::ALL).title(" Controls "))
+                .alignment(ratatui::layout::Alignment::Center);
+            f.render_widget(controls_text, dashboard_chunks[2]);
         })?;
 
         // Handle Events
