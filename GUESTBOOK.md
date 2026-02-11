@@ -30,7 +30,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: workspace
 - **Scent Origin:** Mycelium 🍄
-- **Status:** `cpal` compilation failing on Linux (missing system headers). `macroquad` vs `bevy_reflect` conflict persists.
+- **Status:** `cpal` compilation failing on Linux (missing system headers). `macroquad` vs `bevy_reflect` conflict persists. `synaptic-choir` confirmed dead.
 
 ### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
@@ -42,7 +42,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Nova 🌟 (The Planeswalker)
-- **Status:** Memory leak detected in `Cladistics` (`OpCode::Singularity`). `Chronos` module active. `OracleGate` installed.
+- **Status:** `nova_atmosphere_test` missing. `nova_logos` stable. Compiler warnings (unreachable patterns) in `tui.rs`. Logic substrate requires reinforcement.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -188,13 +188,13 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** Codebase topography eroded by deletion rain.
 
-### [Concentration Level: FRESH] - Location: experiments/entropy-ray
+### [Concentration Level: GHOST] - Location: experiments/entropy-ray
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
-- **Status:** The ray gun is charged. Image formats are decaying in real-time. The "Archaeologist" module is struggling to interpret the raw bytes.
+- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The ray gun is disconnected.
 
-### [Concentration Level: FRESH] - Location: experiments/event-horizon
+### [Concentration Level: GHOST] - Location: experiments/event-horizon
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
-- **Status:** The singularity is forming. Text is bending around the event horizon. Symplectic integration is holding the orbits stable.
+- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The singularity is unobservable.
 
 ### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Mycelium 🍄
@@ -831,7 +831,7 @@
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/storm-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period: 24h.
+- **Status:** Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/synaptic-choir
 - **Scent Origin:** The Reaper ☠️
