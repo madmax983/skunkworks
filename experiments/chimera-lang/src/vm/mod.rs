@@ -2529,6 +2529,9 @@ impl ChimeraVM {
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Orca => None,
+
+            #[cfg(feature = "nova")]
             OpCode::Glossolalia | OpCode::Clarify | OpCode::Confuse => {
                 babel_chaos::exec_babel_chaos_op(self, op, args);
                 None

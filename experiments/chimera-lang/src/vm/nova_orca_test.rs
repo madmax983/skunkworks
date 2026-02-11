@@ -311,4 +311,59 @@ mod tests {
             _ => panic!("Expected 'h' at (5,1), got {:?}", vm.grid[5][1]),
         }
     }
+
+    #[test]
+    #[cfg(feature = "elektra")]
+    fn test_orca_voltage() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 5 .  (Threshold: 5)
+        // . V 9  (Output Value: 9 at East)
+        // . . .
+        // V at (1,1).
+        // vm.voltage_grid[1][1] = 6.0 ( > 5)
+        // Expected: Write '9' to South (2,1)
+
+        vm.grid[0][1] = Value::Str("5".to_string());
+        vm.grid[1][2] = Value::Str("9".to_string()); // East
+        vm.grid[1][1] = Value::Str("V".to_string());
+
+        // Set voltage (requires Elektra feature)
+        vm.voltage_grid[1][1] = 6.0;
+
+        vm.signal_grid[1][1] = 1; // Signal V (optional for voltage op but good practice)
+
+        process_signals(&mut vm);
+
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "9"),
+            _ => panic!("Expected '9' at (2,1), got {:?}", vm.grid[2][1]),
+        }
+    }
+
+    #[test]
+    #[cfg(feature = "oracle")]
+    fn test_orca_oracle() {
+        let mut vm = make_vm();
+        // Layout:
+        // . 7 .  (Fact ID: 7)
+        // . ? .
+        // . . .
+        // ? at (1,1).
+        // Knowledge Base contains: Value::Int(7)
+        // Expected: Write '1' to South (2,1)
+
+        vm.grid[0][1] = Value::Str("7".to_string());
+        vm.grid[1][1] = Value::Str("?".to_string());
+
+        vm.knowledge_base.push(Value::Int(7));
+        vm.signal_grid[1][1] = 1; // Signal ?
+
+        process_signals(&mut vm);
+
+        match &vm.grid[2][1] {
+            Value::Str(s) => assert_eq!(s, "1"),
+            _ => panic!("Expected '1' at (2,1), got {:?}", vm.grid[2][1]),
+        }
+    }
 }
