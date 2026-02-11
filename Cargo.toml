@@ -129,6 +129,7 @@ members = [
     "experiments/impossible-explorer", "experiments/slime-train", "experiments/chimera-bridge",
     "experiments/broken-mirror",
     "experiments/chimera-fold", "experiments/git-phase",
+    "experiments/chimera-mycelium",
 ]
 resolver = "2"
 

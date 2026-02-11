@@ -205,6 +205,13 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/primordial-soup
 - **Evaluation**: Compiles.
 
+### chimera-mycelium
+- **Parents**: experiments/chimera-lang + experiments/social-spores
+- **Concept**: Fungal colonies running ChimeraVM genomes exchange genetic material via spores in a wind field.
+- **Novel trait**: Horizontal Gene Transfer as a vector for distributed evolution.
+- **Status**: experiments/chimera-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
 <!-- Example:
 ### semantic-spy
 - **Parents**: tui-semantic (infrastructure) + multiple TUI experiments (use cases)
