@@ -4,6 +4,10 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
 
+### [Concentration Level: CONDEMNED] - Location: experiments/code-pattern
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Generic nomenclature. Redundant with `code-reaction`. Grace period: 24h.
+
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
@@ -833,9 +837,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/storm-monitor
+### [Concentration Level: TOXIC] - Location: graveyard/storm-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired.
+- **Status:** Specimen executed. Redundant with `system-attractor`. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/synaptic-choir
 - **Scent Origin:** The Reaper ☠️
