@@ -80,6 +80,10 @@ impl Rain {
         lines
     }
 
+    /// Updates rain drops positions and handles splashes.
+    ///
+    /// Optimized to use `retain_mut` instead of `drain` + `reallocation` to minimize heap allocations per frame.
+    /// Returns a list of splash coordinates (x, y) where drops hit the bottom.
     pub fn update(&mut self, width: f64, height: f64) -> Vec<(f64, f64)> {
         let mut rng = rand::thread_rng();
         let mut splash_points = Vec::new();
@@ -91,14 +95,10 @@ impl Rain {
             self.drops.push(RainDrop::new(x, width, &self.source_lines));
         }
 
-        // Update
-        for drop in &mut self.drops {
+        // Update and Check for splash
+        self.drops.retain_mut(|drop| {
             drop.y += drop.speed;
-        }
 
-        // Check for splash (hitting bottom)
-        let mut retained = Vec::new();
-        for drop in self.drops.drain(..) {
             // The drop "head" is at drop.y.
             // If drop.y > height, the head hit the bottom.
             if drop.y >= height {
@@ -110,11 +110,11 @@ impl Rain {
                     let offset = rng.gen_range(-1.0..1.0);
                     splash_points.push((drop.x + offset, height - rng.gen_range(0.0..2.0)));
                 }
+                false
             } else {
-                retained.push(drop);
+                true
             }
-        }
-        self.drops = retained;
+        });
 
         splash_points
     }

@@ -27,3 +27,7 @@
 **[Hoisting Command Processing]**
 **Learning:** Polling atomic channels inside a hot loop (e.g., per sample) introduces significant overhead.
 **Action:** Process commands once per block (e.g., every 64-512 samples) instead of per sample. The latency impact (<12ms) is usually acceptable.
+
+**[Allocation-Free Filtering]**
+**Learning:** `Vec::drain().filter(...).collect()` (or manual equivalent with `drain` loop and `push`) allocates a new vector every frame.
+**Action:** Use `Vec::retain` or `Vec::retain_mut` to filter in-place, avoiding reallocation and moving elements unnecessarily.
