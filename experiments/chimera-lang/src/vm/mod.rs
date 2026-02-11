@@ -1774,6 +1774,15 @@ impl ChimeraVM {
             self.glitch_level = 0.0;
         }
 
+        // Link Glitch Level to Babel Integrity
+        #[cfg(feature = "nova")]
+        {
+            let chaos = (1.0 - self.babel_state.integrity).max(0.0) as f32;
+            if chaos > self.glitch_level {
+                self.glitch_level = chaos;
+            }
+        }
+
         if !time_frozen {
             self.chaos_struct.tick();
         }
