@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Multiple experiments severed from the workspace lattice (`Cargo.toml`). Reconnection or pruning required.
+- **Details:** `entropy-ray`, `event-horizon`, `chaotic-conservatory`, `ik-codewalker`, `retinal-chaos`, `retinal-glitch`, `social-spores`, `spectral-scribe`, `quipu-cradle`, `hyperbolic-mold`.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-balancer
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridge is breathing. Packets are forming structures to span the latency gap. Dynamic load balancing is emerging from swarm behavior.
@@ -50,7 +55,7 @@
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Compiler warnings in `tui.rs`, `nova_logos.rs`, `memetics.rs` neutralized. `nova_atmosphere_test` located but `aeolus` winds are erratic (test failing). Logic substrate hardening.
+- **Status:** Compiler warnings in `tui.rs`, `nova_logos.rs`, `memetics.rs` neutralized. `nova_atmosphere_test` located but `aeolus` winds are erratic (test failing). Logic substrate hardening. Security protocols reinforced. `warden_exploit_test.rs` active.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬
