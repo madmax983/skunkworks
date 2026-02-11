@@ -21,7 +21,6 @@ members = [
     "experiments/myco-transit",
     "experiments/neuro-terminal",
     "experiments/semantic-spy",
-    "experiments/storm-monitor",
     "experiments/system-bio-dome",
     "experiments/thermo-termites",
     "experiments/trace-fold",
