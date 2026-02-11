@@ -63,6 +63,7 @@ pub mod babel;
 pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
+pub mod catalyst;
 #[cfg(feature = "nova")]
 pub mod cladistics;
 pub mod chimera_chaos;
@@ -590,6 +591,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub tablet: Vec<String>,
     pub chaos_struct: chimera_chaos::ChimeraChaos,
+    pub catalysts: Vec<catalyst::Catalyst>,
 }
 
 impl ChimeraVM {
@@ -863,6 +865,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             tablet: Vec::new(),
             chaos_struct: chimera_chaos::ChimeraChaos::new(),
+            catalysts: Vec::new(),
         }
     }
 
@@ -2492,6 +2495,8 @@ impl ChimeraVM {
             | OpCode::Pray
             | OpCode::Genesis
             | OpCode::Retrograde
+            | OpCode::Synthesize
+            | OpCode::Catalyze
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
