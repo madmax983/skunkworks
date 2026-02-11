@@ -134,6 +134,8 @@ mod nova_atmosphere_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_ballistics_test;
 #[cfg(all(test, feature = "nova"))]
+mod nova_ballistics_optics_test;
+#[cfg(all(test, feature = "nova"))]
 mod nova_bang_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_bard_test;
