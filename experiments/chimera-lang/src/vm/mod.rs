@@ -65,6 +65,7 @@ pub mod bard;
 pub mod blackbox;
 #[cfg(feature = "nova")]
 pub mod cladistics;
+pub mod chimera_chaos;
 pub mod cortex;
 pub mod dream;
 #[cfg(feature = "elektra")]
@@ -588,6 +589,7 @@ pub struct ChimeraVM {
     pub logos_mode: bool,
     #[cfg(feature = "nova")]
     pub tablet: Vec<String>,
+    pub chaos_struct: chimera_chaos::ChimeraChaos,
 }
 
 impl ChimeraVM {
@@ -860,6 +862,7 @@ impl ChimeraVM {
             logos_mode: false,
             #[cfg(feature = "nova")]
             tablet: Vec::new(),
+            chaos_struct: chimera_chaos::ChimeraChaos::new(),
         }
     }
 
@@ -1760,6 +1763,10 @@ impl ChimeraVM {
         self.glitch_level *= 0.95;
         if self.glitch_level < 0.01 {
             self.glitch_level = 0.0;
+        }
+
+        if !time_frozen {
+            self.chaos_struct.tick();
         }
 
         if !time_frozen && self.chaos_mode {

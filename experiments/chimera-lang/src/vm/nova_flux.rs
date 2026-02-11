@@ -79,32 +79,65 @@ pub fn tick_wisp(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
 
 pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
-        if let Value::Int(amount) = val {
-            if amount > 0 {
-                let amt = amount.min(100) as i64;
-
-                // Increase Havoc rate (0.0 to 1.0)
-                vm.havoc.rate = (vm.havoc.rate + (amt as f64 / 1000.0)).clamp(0.0, 1.0);
-
-                // Increase Glitch Level
-                vm.glitch_level = (vm.glitch_level + (amt as f32 / 100.0)).clamp(0.0, 1.0);
-
-                // Inject Entropy
-                let rows = vm.grid.len();
-                let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
-                let mut rng = rand::thread_rng();
-
-                for _ in 0..amt {
-                    let y = rng.gen_range(0..rows);
-                    let x = rng.gen_range(0..cols);
-                    vm.entropy_grid[y][x] = vm.entropy_grid[y][x].saturating_add(amt).min(100);
+        if let Value::Int(arg) = val {
+            match arg {
+                0 => {
+                    // Read local chaos value (0-100)
+                    let (cy, cx) = vm.context_loc;
+                    // Safely wrap coordinates
+                    let wy = cy % 16;
+                    let wx = cx % 16;
+                    let val = vm.chaos_struct.grid[wy][wx];
+                    let mapped = (val * 100.0) as i64;
+                    vm.stack.push(Value::Int(mapped));
                 }
+                1 => {
+                    // Write local chaos parameter 'r' (3.0-4.0)
+                    if let Some(Value::Int(v)) = vm.stack.pop() {
+                        let (cy, cx) = vm.context_loc;
+                        let wy = cy % 16;
+                        let wx = cx % 16;
+                        let r = 3.0 + ((v as f64) / 100.0).clamp(0.0, 1.0);
+                        vm.chaos_struct.r_grid[wy][wx] = r;
+                        vm.output.push(format!("CHAOS: Set r={} at {},{}", r, wx, wy));
+                    }
+                }
+                2 => {
+                    // Write global coupling 'e' (0.0-1.0)
+                    if let Some(Value::Int(v)) = vm.stack.pop() {
+                        let e = ((v as f64) / 100.0).clamp(0.0, 1.0);
+                        vm.chaos_struct.coupling = e;
+                        vm.output.push(format!("CHAOS: Set coupling={}", e));
+                    }
+                }
+                amount if amount > 0 => {
+                    // Legacy entropy injection
+                    let amt = amount.min(100) as i64;
 
-                vm.energy = vm.energy.saturating_sub(amt);
-                vm.output.push(format!(
-                    "CHAOS: Injected {} entropy. Havoc: {:.3}",
-                    amt, vm.havoc.rate
-                ));
+                    // Increase Havoc rate (0.0 to 1.0)
+                    vm.havoc.rate = (vm.havoc.rate + (amt as f64 / 1000.0)).clamp(0.0, 1.0);
+
+                    // Increase Glitch Level
+                    vm.glitch_level = (vm.glitch_level + (amt as f32 / 100.0)).clamp(0.0, 1.0);
+
+                    // Inject Entropy
+                    let rows = vm.grid.len();
+                    let cols = if rows > 0 { vm.grid[0].len() } else { 0 };
+                    let mut rng = rand::thread_rng();
+
+                    for _ in 0..amt {
+                        let y = rng.gen_range(0..rows);
+                        let x = rng.gen_range(0..cols);
+                        vm.entropy_grid[y][x] = vm.entropy_grid[y][x].saturating_add(amt).min(100);
+                    }
+
+                    vm.energy = vm.energy.saturating_sub(amt);
+                    vm.output.push(format!(
+                        "CHAOS: Injected {} entropy. Havoc: {:.3}",
+                        amt, vm.havoc.rate
+                    ));
+                }
+                _ => {}
             }
         } else {
             vm.output.push("Error: Type mismatch for chaos".to_string());

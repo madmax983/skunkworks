@@ -99,6 +99,7 @@ pub(crate) enum ViewMode {
     #[cfg(feature = "nova")]
     Logos,
     Pandemonium,
+    BioticChaos,
 }
 
 enum InputMode {
@@ -556,6 +557,11 @@ where
 
             if let ViewMode::Pandemonium = app_state.view_mode {
                 render_pandemonium(f, vm, app_state);
+                return;
+            }
+
+            if let ViewMode::BioticChaos = app_state.view_mode {
+                render_biotic_chaos(f, vm, app_state);
                 return;
             }
 
@@ -1132,6 +1138,17 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                ViewMode::BioticChaos => {
+                                    // Allow editing Chaos Grid?
+                                    // Parse buffer as float
+                                    if let Ok(v) = app_state.input_buffer.parse::<f64>() {
+                                        let (x, y) = app_state.grid_cursor;
+                                        vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
+                                        app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1315,7 +1332,8 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Logos => ViewMode::Pandemonium,
                             #[cfg(feature = "nova")]
-                            ViewMode::Pandemonium => ViewMode::Heatmap,
+                            ViewMode::Pandemonium => ViewMode::BioticChaos,
+                            ViewMode::BioticChaos => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -2022,6 +2040,11 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        ViewMode::BioticChaos => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -2210,6 +2233,11 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        ViewMode::BioticChaos => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -2357,6 +2385,11 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        ViewMode::BioticChaos => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -2474,6 +2507,11 @@ where
                         }
                         #[cfg(feature = "silicon")]
                         ViewMode::Foundry => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
+                        ViewMode::BioticChaos => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
@@ -2682,6 +2720,11 @@ where
                                         app_state.input_buffer = s;
                                     }
                                 }
+                            }
+                            ViewMode::BioticChaos => {
+                                let (x, y) = app_state.grid_cursor;
+                                let val = vm.chaos_struct.grid[y][x];
+                                app_state.input_buffer = format!("{:.4}", val);
                             }
                             ViewMode::Grid => {
                                 let (x, y) = app_state.grid_cursor;
@@ -4034,6 +4077,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
         #[cfg(feature = "nova")]
         ViewMode::Pandemonium => "PANDEMONIUM REACTOR (GENOMIC CHAOS)",
+        ViewMode::BioticChaos => "BIOTIC CHAOS (COUPLED MAP LATTICE)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4558,6 +4602,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Chronos, "Chronos", "T"));
         views.push((ViewMode::Logos, "Logos", "U"));
         views.push((ViewMode::Pandemonium, "Pandemonium", "P"));
+        views.push((ViewMode::BioticChaos, "Biotic Chaos", "Tab"));
     }
     views
 }
@@ -7513,5 +7558,92 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     ];
 
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Controls"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = vm.chaos_struct.grid[y][x];
+            let r = vm.chaos_struct.r_grid[y][x];
+
+            // Value 0.0 - 1.0 mapped to color intensity
+            let intensity = (val * 255.0).clamp(0.0, 255.0) as u8;
+
+            let mut style = Style::default();
+            // Color based on r (Growth rate)
+            // 3.0 (Blue) -> 3.5 (Green) -> 3.8 (Yellow) -> 4.0 (Red)
+            let (cr, cg, cb) = if r < 3.5 {
+                (0, intensity, 255 - intensity) // Blue-Cyan
+            } else if r < 3.7 {
+                (0, 255, intensity) // Green
+            } else if r < 3.9 {
+                (255, 255, 0) // Yellow
+            } else {
+                (255, 0, 0) // Red (Chaos)
+            };
+
+            style = style.fg(Color::Rgb(cr, cg, cb));
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let ch = if val < 0.2 {
+                "·"
+            } else if val < 0.4 {
+                "░"
+            } else if val < 0.6 {
+                "▒"
+            } else if val < 0.8 {
+                "▓"
+            } else {
+                "█"
+            };
+
+            line_spans.push(Span::styled(ch.to_string(), style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title("Biotic Chaos (CML)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info
+    let (cx, cy) = app_state.grid_cursor;
+    let val = vm.chaos_struct.grid[cy][cx];
+    let r = vm.chaos_struct.r_grid[cy][cx];
+
+    let info = vec![
+        Line::from("COUPLED MAP LATTICE"),
+        Line::from(" "),
+        Line::from(format!("Pos: {},{}", cx, cy)),
+        Line::from(format!("Value: {:.4}", val)),
+        Line::from(format!("Growth (r): {:.4}", r)),
+        Line::from(format!("Coupling (e): {:.4}", vm.chaos_struct.coupling)),
+        Line::from(" "),
+        Line::from("Behavior:"),
+        Line::from("  r < 3.5: Stable/Periodic"),
+        Line::from("  r > 3.57: Chaos"),
+        Line::from(" "),
+        Line::from("Interactions:"),
+        Line::from("  chaos(0) -> Read Value"),
+        Line::from("  chaos(1, v) -> Set r (3.0 + v/100)"),
+        Line::from("  chaos(2, v) -> Set coupling (v/100)"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default().borders(Borders::ALL).title("Parameters"),
+    );
     f.render_widget(info_widget, chunks[1]);
 }
