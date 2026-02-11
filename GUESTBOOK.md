@@ -1,5 +1,13 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-magnetron
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The data is eating the disk. Organisms are thriving in the low-coercivity zones. The Head is scrubbing the infestation.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Compilation error in `nova_signals` resolved. Logic substrate stabilized.
+
 ### [Concentration Level: FRESH] - Location: experiments/hydro-brain
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.

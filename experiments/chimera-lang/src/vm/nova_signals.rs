@@ -2,7 +2,9 @@
 
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
-use super::{oracle, ChimeraVM, MidiEvent, Value, GRID_SIZE};
+#[cfg(feature = "oracle")]
+use super::oracle;
+use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;

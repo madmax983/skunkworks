@@ -131,6 +131,7 @@ members = [
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/kinetic-folds", "experiments/swap-meet",
     "experiments/cochlea-sim",
     "experiments/hydro-brain", "experiments/newtonian-graph",
+    "experiments/chimera-magnetron",
 ]
 resolver = "2"
 

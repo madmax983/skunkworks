@@ -734,25 +734,32 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Army ants forming bridges where each ant is a computing node (ChimeraVM). The bridge structure computes its own stability.
 - **Novel trait**: Structural Computation. The bridge must "think" to stay standing.
 - **Status**: experiments/chimera-bridge
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
 
 ### chimera-fold
 - **Parents**: experiments/origami-swarm + experiments/chimera-lang
 - **Concept**: Origami boids where folding patterns and flight behavior are driven by an evolving ChimeraVM.
 - **Novel trait**: Evo-Folding. The code drives the crease patterns.
 - **Status**: experiments/chimera-fold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
 
 ### chimera-chaos
 - **Parents**: experiments/chimera-lang + experiments/biotic-chaos
 - **Concept**: ChimeraVM organisms inhabiting a Coupled Map Lattice (CML). Agents feed on the logistic map values and can modify the local chaos parameter `r`.
 - **Novel trait**: Chaos Terraforming. Biological agents modifying the mathematical constants of their universe to survive.
 - **Status**: experiments/chimera-chaos
-- **Evaluation**: Compiles. Verified by The Splice Surgeon. TUI operational.
+- **Evaluation**: Compiles. Verified. TUI operational.
 
 ### hydro-brain
 - **Parents**: experiments/neuro-terminal + experiments/fluid-rain
 - **Concept**: A "Hydraulic Neural Network" where information flow is fluid flow. Neurons are buckets, spikes are splashes.
 - **Novel trait**: Analog Hydraulic Computing. The physics of the medium (fluid) determines the temporal properties of the computation.
 - **Status**: experiments/hydro-brain
+- **Evaluation**: Compiles. Verified.
+
+### chimera-magnetron
+- **Parents**: experiments/magnetron-decay + experiments/chimera-lang
+- **Concept**: Data Extremophiles. ChimeraVM organisms living on the tracks of a decaying hard drive.
+- **Novel trait**: Data Parasitism. Organisms consume the physical integrity (magnetization) of the medium to survive.
+- **Status**: experiments/chimera-magnetron
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
