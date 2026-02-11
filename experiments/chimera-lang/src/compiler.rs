@@ -112,19 +112,48 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     let mut strands_ast = Vec::new();
     let mut anonymous_strands = Vec::new();
 
-    // Pass 2: Generate Genes
-    for pair in program.into_inner() {
-        if pair.as_rule() == Rule::strand_def {
-            let mut inner = pair.into_inner();
-            let _name = inner.next().unwrap(); // skip name
-            let mut genes = Vec::new();
+    // Pass 2: Generate Genes and Collect Rules
+    let mut rules_genes = Vec::new();
 
-            for instr in inner {
-                let generated =
-                    parse_instructions(instr, &strand_map, &macro_map, &mut anonymous_strands, 0)?;
-                genes.extend(generated);
+    for pair in program.into_inner() {
+        match pair.as_rule() {
+            Rule::strand_def => {
+                let mut inner = pair.into_inner();
+                let _name = inner.next().unwrap(); // skip name
+                let mut genes = Vec::new();
+
+                for instr in inner {
+                    let generated = parse_instructions(
+                        instr,
+                        &strand_map,
+                        &macro_map,
+                        &mut anonymous_strands,
+                        0,
+                    )?;
+                    genes.extend(generated);
+                }
+                strands_ast.push(Strand { genes });
             }
-            strands_ast.push(Strand { genes });
+            Rule::rule_def => {
+                let generated = parse_rule_def(pair, &strand_map)?;
+                rules_genes.extend(generated);
+            }
+            _ => {}
+        }
+    }
+
+    // Prepend logic rules to the first strand (or create a main strand if none exist)
+    if !rules_genes.is_empty() {
+        if strands_ast.is_empty() {
+            strands_ast.push(Strand { genes: rules_genes });
+        } else {
+            // Find the first defined strand and prepend
+            // Note: pass 1 collected strand names. The first one in source order is at index 0.
+            let first_strand = &mut strands_ast[0];
+            // Must insert at beginning
+            for gene in rules_genes.into_iter().rev() {
+                first_strand.genes.insert(0, gene);
+            }
         }
     }
 
@@ -377,6 +406,7 @@ fn parse_argument(
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
         Rule::literal => parse_literal(inner, strand_map),
+        Rule::term => parse_term(inner, strand_map),
         Rule::identifier => {
             let id = inner.as_str();
             // Try to resolve as strand index
@@ -386,6 +416,11 @@ fn parse_argument(
                 // Keep as identifier
                 Ok(Nucleotide::Identifier(id.to_string()))
             }
+        }
+        Rule::variable => {
+            // Variables like ?X are treated as strings
+            let var_name = inner.as_str();
+            Ok(Nucleotide::String(var_name.to_string()))
         }
         Rule::junction => {
             let mut parts = inner.into_inner();
@@ -406,6 +441,55 @@ fn parse_argument(
         }
         _ => unreachable!("Unexpected argument rule: {:?}", inner.as_rule()),
     }
+}
+
+fn parse_term(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Nucleotide> {
+    let mut parts = pair.into_inner();
+    let name = parts.next().unwrap().as_str();
+    let mut args = vec![Nucleotide::String(name.to_string())];
+
+    if let Some(arg_list) = parts.next() {
+        for arg_pair in arg_list.into_inner() {
+            args.push(parse_argument(arg_pair, strand_map)?);
+        }
+    }
+
+    Ok(Nucleotide::Junction(crate::ast::JunctionType::Any, args))
+}
+
+fn parse_rule_def(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Vec<Gene>> {
+    let mut parts = pair.into_inner();
+    let head_pair = parts.next().unwrap();
+    let body_list_pair = parts.next().unwrap();
+
+    let head_nuc = parse_term(head_pair, strand_map)?;
+
+    let mut body_terms = Vec::new();
+    for term_pair in body_list_pair.into_inner() {
+        body_terms.push(parse_term(term_pair, strand_map)?);
+    }
+    let body_nuc = Nucleotide::Junction(crate::ast::JunctionType::All, body_terms);
+
+    Ok(vec![
+        Gene {
+            op: OpCode::Push,
+            args: vec![head_nuc],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![body_nuc],
+        },
+        Gene {
+            op: OpCode::Rule,
+            args: vec![],
+        },
+    ])
 }
 
 #[cfg(test)]

@@ -1,9 +1,13 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
 
-program = { SOI ~ (include_stmt | macro_def | strand_def)* ~ EOI }
+program = { SOI ~ (include_stmt | macro_def | strand_def | rule_def)* ~ EOI }
 
 include_stmt = { "include" ~ string }
+
+rule_def = { "rule" ~ term ~ ":-" ~ body_list }
+term = { identifier ~ "(" ~ argument_list? ~ ")" }
+body_list = { term ~ ("," ~ term)* }
 
 macro_def = { "macro" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
@@ -33,7 +37,9 @@ question_branch = { "?" ~ identifier }
 simple_op = { identifier }
 
 argument_list = { argument ~ ("," ~ argument)* }
-argument = { literal | junction | identifier }
+argument = { literal | junction | term | identifier | variable }
+
+variable = @{ "?" ~ ASCII_ALPHANUMERIC+ }
 
 junction = { junction_type ~ "(" ~ argument_list ~ ")" }
 junction_type = { "any" | "all" }
