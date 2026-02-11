@@ -123,6 +123,9 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
     } else if check_recipe(&["Energy", "Lead"]) {
         result = Some(Value::Str("Gold".to_string()));
         cost = 50;
+    } else if check_recipe(&["Mercury", "Salt", "Sulfur"]) {
+        result = Some(Value::Str("Philosopher's Stone".to_string()));
+        cost = 100;
     } else if ingredients.len() == 2 {
         let mut strand_idx = None;
         let mut modifier = None;
@@ -211,6 +214,56 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                                 vm.output
                                     .push(format!("ALCHEMY: Grew Strand {} (Life)", idx));
                             }
+                        }
+                        "Time" => {
+                            // Reverse genes
+                            new_genes.reverse();
+                            modified = true;
+                            vm.output
+                                .push(format!("ALCHEMY: Reversed Strand {} (Time)", idx));
+                        }
+                        "Gravity" => {
+                            // Sort genes
+                            new_genes.sort_by_key(|g| g.op.to_string());
+                            modified = true;
+                            vm.output
+                                .push(format!("ALCHEMY: Sorted Strand {} (Gravity)", idx));
+                        }
+                        "Light" => {
+                            // Clone (Duplicate whole strand)
+                            let copy = new_genes.clone();
+                            new_genes.extend(copy);
+                            modified = true;
+                            vm.output
+                                .push(format!("ALCHEMY: Doubled Strand {} (Light)", idx));
+                        }
+                        "Shadow" => {
+                            // Invert Logic
+                            for gene in &mut new_genes {
+                                gene.op = match gene.op {
+                                    OpCode::Add => OpCode::Sub,
+                                    OpCode::Sub => OpCode::Add,
+                                    OpCode::Mul => OpCode::Div,
+                                    OpCode::Div => OpCode::Mul,
+                                    OpCode::Photosynthesize => OpCode::Consume,
+                                    OpCode::Consume => OpCode::Photosynthesize,
+                                    OpCode::GRead => OpCode::GWrite,
+                                    OpCode::GWrite => OpCode::GRead,
+                                    _ => gene.op.clone(),
+                                };
+                            }
+                            modified = true;
+                            vm.output
+                                .push(format!("ALCHEMY: Inverted Strand {} (Shadow)", idx));
+                        }
+                        "Chaos" => {
+                            // Shuffle
+                            use rand::seq::SliceRandom;
+                            let mut rng = rand::thread_rng();
+                            new_genes.shuffle(&mut rng);
+                            modified = true;
+                            vm.output
+                                .push(format!("ALCHEMY: Shuffled Strand {} (Chaos)", idx));
                         }
                         _ => {}
                     }

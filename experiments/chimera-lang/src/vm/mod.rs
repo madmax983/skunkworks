@@ -3226,7 +3226,15 @@ impl ChimeraVM {
                 if let Some(val) = self.stack.pop() {
                     match val {
                         Value::Int(n) => self.energy = self.energy.saturating_add(n),
-                        Value::Str(s) => self.energy = self.energy.saturating_add(s.len() as i64),
+                        Value::Str(s) => {
+                            if s == "Philosopher's Stone" {
+                                self.energy = self.energy.saturating_add(1000);
+                                self.output
+                                    .push("CONSUME: The Elixir of Life! (+1000 Energy)".to_string());
+                            } else {
+                                self.energy = self.energy.saturating_add(s.len() as i64);
+                            }
+                        }
                         Value::Junction(_, _) => {
                             self.output
                                 .push("Error: Cannot consume junction".to_string());
@@ -4176,3 +4184,7 @@ mod sentry_value_test {
         assert_eq!(v2.depth(), 1);
     }
 }
+
+#[cfg(test)]
+#[cfg(feature = "nova")]
+mod alchemy_crucible_test;

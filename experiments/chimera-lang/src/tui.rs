@@ -1843,8 +1843,8 @@ where
                         #[cfg(feature = "nova")]
                         ViewMode::Alchemy => {
                             if app_state.alchemy_selection == 0 {
-                                if app_state.alchemy_shelf_idx < 7 {
-                                    // 8 items
+                                if app_state.alchemy_shelf_idx < 15 {
+                                    // 16 items
                                     app_state.alchemy_shelf_idx += 1;
                                 }
                             } else {
@@ -4667,7 +4667,8 @@ fn render_alchemy(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Shelf
     let elements = [
-        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy",
+        "Fire", "Water", "Earth", "Air", "Life", "Death", "Lead", "Energy", "Sulfur", "Mercury",
+        "Salt", "Time", "Gravity", "Light", "Shadow", "Chaos",
     ];
     let mut shelf_items = Vec::new();
     for (i, elem) in elements.iter().enumerate() {
