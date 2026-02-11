@@ -27,3 +27,18 @@ pub fn unpack(data: &[u8], dest_dir: &Path) -> Result<()> {
         .context("Failed to unpack archive")?;
     Ok(())
 }
+
+pub fn list_entries(data: &[u8]) -> Result<Vec<(String, u64)>> {
+    let cursor = Cursor::new(data);
+    let decoder = GzDecoder::new(cursor);
+    let mut archive = Archive::new(decoder);
+    let mut entries = Vec::new();
+
+    for file in archive.entries()? {
+        let file = file?;
+        let path = file.path()?.to_string_lossy().to_string();
+        let size = file.size();
+        entries.push((path, size));
+    }
+    Ok(entries)
+}
