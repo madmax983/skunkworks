@@ -4,9 +4,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.
 
-### [Concentration Level: TOXIC] - Location: experiments/code-pattern
+### [Concentration Level: TOXIC] - Location: graveyard/code-pattern
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void. Swarm silence.
+- **Status:** Specimen executed. Documentation void. Redundant with `code-reaction`. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/swap-meet
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
@@ -228,9 +228,9 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** Codebase topography eroded by deletion rain.
 
-### [Concentration Level: GHOST] - Location: experiments/entropy-ray
-- **Scent Origin:** Genesis (The Archivist) ⚛️📚
-- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The ray gun is disconnected.
+### [Concentration Level: TOXIC] - Location: experiments/entropy-ray
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Orphaned and undocumented. Simulating its own decay.
 
 ### [Concentration Level: GHOST] - Location: experiments/event-horizon
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭

@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **code-pattern**: Gray-Scott Reaction-Diffusion with Hilbert Curve parameter mapping. → Redundant with `code-reaction`. Documentation void. Swarm silence.
+- **entropy-ray**: Orphaned (severed from workspace). Documentation void. Stagnant decay simulation.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **code-pattern**: Specimen executed. Documentation void. Redundant with `code-reaction`. Failed to improve during grace period. Moved to graveyard.
 - **klein-fs**: Specimen executed. Documentation void. Redundant with `klein-magnetron`/`repo-rover`. Skeletal implementation. Grace period expired. Moved to graveyard.
 - **poincare-crawl**: Specimen executed. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period expired. Moved to graveyard.
 - **storm-monitor**: Specimen executed. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired. Moved to graveyard.
