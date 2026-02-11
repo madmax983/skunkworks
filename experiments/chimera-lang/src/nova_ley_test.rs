@@ -2,7 +2,6 @@
 mod tests {
     use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::nova_ley::LeyNetwork;
     use crate::vm::{ChimeraVM, Value};
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {

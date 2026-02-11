@@ -3055,7 +3055,7 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         for x in 0..16 {
             let owner = vm.sovereignty_grid[y][x];
             let mut style = Style::default();
-            let mut ch = " ".to_string();
+            let ch;
 
             if let Some(id) = owner {
                 // Generate color from id
@@ -6770,8 +6770,8 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 // Line segment from start to end
                 // We can subdivide it to show vibration
                 let steps = 20;
-                let dx = (s.end.0 - s.start.0) / steps as f64;
-                let dy = (s.end.1 - s.start.1) / steps as f64;
+                let _dx = (s.end.0 - s.start.0) / steps as f64;
+                let _dy = (s.end.1 - s.start.1) / steps as f64;
 
                 // Normal vector for vibration
                 let len = ((s.end.0 - s.start.0).powi(2) + (s.end.1 - s.start.1).powi(2)).sqrt();
