@@ -1007,6 +1007,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Metamorphosis,
 
+    /// **[Nova]** Explicitly marks a new species node in the cladistics tree.
+    ///
+    /// **Stack:** `[ ..., name_str ] -> [ ... ]`
+    /// **Effect:** Creates a new CladeNode for the current strand, preserving lineage.
+    #[cfg(feature = "nova")]
+    Speciate,
+
     /// **[Nova]** Executes the Grid Colors as a Piet program.
     ///
     /// **Stack:** `[ ..., steps ] -> [ ... ]`

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CladeNode {
     pub id: usize,
-    pub parent_id: Option<usize>,
+    pub parents: Vec<usize>,
     pub birth_tick: u64,
     pub death_tick: Option<u64>,
     pub event: String,
@@ -37,22 +37,23 @@ impl Cladistics {
     pub fn register_strand(
         &mut self,
         strand_idx: usize,
-        parent_strand_idx: Option<usize>,
+        parent_strand_indices: Vec<usize>,
         tick: u64,
         event: String,
     ) {
         let id = self.next_node_id;
         self.next_node_id += 1;
 
-        let parent_node_id = if let Some(pidx) = parent_strand_idx {
-            self.active_map.get(&pidx).cloned()
-        } else {
-            None
-        };
+        let mut parent_node_ids = Vec::new();
+        for pidx in parent_strand_indices {
+            if let Some(&pid) = self.active_map.get(&pidx) {
+                parent_node_ids.push(pid);
+            }
+        }
 
         let node = CladeNode {
             id,
-            parent_id: parent_node_id,
+            parents: parent_node_ids.clone(),
             birth_tick: tick,
             death_tick: None,
             event,
@@ -61,7 +62,7 @@ impl Cladistics {
             strand_idx,
         };
 
-        if let Some(pid) = parent_node_id {
+        for pid in parent_node_ids {
             if let Some(parent) = self.nodes.get_mut(&pid) {
                 parent.children.push(id);
             }
@@ -91,7 +92,7 @@ impl Cladistics {
     pub fn get_roots(&self) -> Vec<usize> {
         self.nodes
             .values()
-            .filter(|n| n.parent_id.is_none())
+            .filter(|n| n.parents.is_empty())
             .map(|n| n.id)
             .collect()
     }

@@ -125,7 +125,7 @@ pub fn exec_unearth(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                                         // Register ancestry
                                         vm.cladistics.register_strand(
                                             new_idx,
-                                            Some(vm.ip.0),
+                                            vec![vm.ip.0],
                                             vm.tick_counter,
                                             "Unearth".to_string(),
                                         );

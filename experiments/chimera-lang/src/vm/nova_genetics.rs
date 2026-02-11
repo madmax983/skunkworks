@@ -132,7 +132,7 @@ pub fn exec_metamorphosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         // Register new strands as roots
         for i in 0..vm.dna.helix.strands.len() {
             vm.cladistics
-                .register_strand(i, None, vm.tick_counter, "Metamorphosis".to_string());
+                .register_strand(i, vec![], vm.tick_counter, "Metamorphosis".to_string());
         }
 
         vm.energy = 50;
@@ -192,7 +192,7 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                     vm.cladistics.register_strand(
                         new_idx,
-                        Some(idx),
+                        vec![idx],
                         vm.tick_counter,
                         format!("ChronosSplice({}, {})", id, idx),
                     );
@@ -321,7 +321,7 @@ pub fn exec_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                     vm.cladistics.register_strand(
                         new_idx,
-                        Some(idx_a),
+                        vec![idx_a, idx_b],
                         vm.tick_counter,
                         format!("Splice({}, {})", idx_a, idx_b),
                     );
@@ -545,7 +545,7 @@ pub fn exec_cas9_cut(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                     vm.cladistics.register_strand(
                         new_strand_idx,
-                        Some(s_idx),
+                        vec![s_idx],
                         vm.tick_counter,
                         "Cas9Cut".to_string(),
                     );
@@ -722,7 +722,7 @@ pub fn exec_incubate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     let new_idx = vm.dna.helix.strands.len() - 1;
                     vm.cladistics.register_strand(
                         new_idx,
-                        Some(vm.ip.0),
+                        vec![vm.ip.0],
                         vm.tick_counter,
                         "Incubate".to_string(),
                     );
@@ -908,7 +908,7 @@ pub fn exec_mitosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                     vm.cladistics.register_strand(
                         new_s_idx,
-                        Some(s_idx),
+                        vec![s_idx],
                         vm.tick_counter,
                         "Mitosis".to_string(),
                     );
@@ -1160,6 +1160,29 @@ pub fn exec_meme(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+pub fn exec_speciate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Str(name) = val {
+            let s_idx = vm.ip.0;
+            vm.cladistics.register_strand(
+                s_idx,
+                vec![s_idx],
+                vm.tick_counter,
+                format!("Speciate: {}", name),
+            );
+            vm.output
+                .push(format!("SPECIATE: New era '{}' for strand {}", name, s_idx));
+        } else {
+            vm.output
+                .push("Error: Speciate requires a name string".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for speciate".to_string());
+    }
+    None
+}
+
 pub fn exec_drift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(val) = vm.stack.pop() {
         if let Value::Int(prob) = val {
@@ -1272,7 +1295,7 @@ pub fn exec_compile(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                                 vm.cladistics.register_strand(
                                     new_idx,
-                                    Some(vm.ip.0),
+                                    vec![vm.ip.0],
                                     vm.tick_counter,
                                     "Compile".to_string(),
                                 );
@@ -1491,7 +1514,7 @@ pub fn exec_genesis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             // Register root
             vm.cladistics = crate::vm::cladistics::Cladistics::new();
             vm.cladistics
-                .register_strand(0, None, vm.tick_counter, "Genesis".to_string());
+                .register_strand(0, vec![], vm.tick_counter, "Genesis".to_string());
 
             return Some((0, 0));
         } else {

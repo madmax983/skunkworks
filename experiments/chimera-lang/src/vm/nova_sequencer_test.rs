@@ -156,7 +156,7 @@ mod tests {
 
         // Addcladistics
         vm.cladistics
-            .register_strand(0, None, 0, "Init".to_string());
+            .register_strand(0, vec![], 0, "Init".to_string());
 
         // Layout:
         // . * .

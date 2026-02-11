@@ -226,7 +226,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
                         let new_idx = vm.dna.helix.strands.len() - 1;
                         vm.cladistics.register_strand(
                             new_idx,
-                            Some(idx),
+                            vec![idx],
                             vm.tick_counter,
                             format!("Alchemy: {}", mod_str),
                         );
@@ -260,7 +260,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
 
                         vm.cladistics.register_strand(
                             new_idx,
-                            Some(idx),
+                            vec![idx, idx_b],
                             vm.tick_counter,
                             "Alchemy: Splice".to_string(),
                         );
@@ -313,7 +313,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
 
                     vm.cladistics.register_strand(
                         new_idx,
-                        Some(idx_a),
+                        vec![idx_a, idx_b],
                         vm.tick_counter,
                         "Alchemy: Fusion".to_string(),
                     );

@@ -5469,6 +5469,10 @@ fn layout_tree_node(
     vm: &ChimeraVM,
     max_depth: &mut f64,
 ) -> f64 {
+    if let Some((_, y)) = positions.get(&node_id) {
+        return *y;
+    }
+
     if depth > *max_depth {
         *max_depth = depth;
     }
@@ -5480,12 +5484,17 @@ fn layout_tree_node(
             *current_y += 1.0;
         } else {
             let mut sum_y = 0.0;
-            let count = node.children.len() as f64;
+            let mut count = 0.0;
             for child_id in &node.children {
                 sum_y +=
                     layout_tree_node(*child_id, depth + 1.0, current_y, positions, vm, max_depth);
+                count += 1.0;
             }
-            my_y = sum_y / count;
+            if count > 0.0 {
+                my_y = sum_y / count;
+            } else {
+                *current_y += 1.0;
+            }
         }
         positions.insert(node_id, (depth, my_y));
     }
@@ -5548,9 +5557,9 @@ fn render_phylogeny(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                         color,
                     });
 
-                    // Draw link to parent
-                    if let Some(pid) = node.parent_id {
-                        if let Some((px, py)) = positions.get(&pid) {
+                    // Draw links to parents
+                    for pid in &node.parents {
+                        if let Some((px, py)) = positions.get(pid) {
                             ctx.draw(&Line {
                                 x1: *px,
                                 y1: *py,

@@ -29,7 +29,7 @@ mod tests {
 
         // Register strand 0 manually for test accuracy
         vm.cladistics
-            .register_strand(0, None, 0, "Genesis".to_string());
+            .register_strand(0, vec![], 0, "Genesis".to_string());
 
         vm.step(); // push
         vm.step(); // mitosis
@@ -43,7 +43,7 @@ mod tests {
         let parent = vm.cladistics.nodes.get(&parent_node_id).unwrap();
         let child = vm.cladistics.nodes.get(&child_node_id).unwrap();
 
-        assert_eq!(child.parent_id, Some(parent_node_id));
+        assert_eq!(child.parents, vec![parent_node_id]);
         assert!(parent.children.contains(&child_node_id));
         assert_eq!(child.event, "Mitosis");
     }
@@ -63,7 +63,7 @@ mod tests {
         ];
         let mut vm = ChimeraVM::new(make_dna(genes));
         vm.cladistics
-            .register_strand(0, None, 0, "Genesis".to_string());
+            .register_strand(0, vec![], 0, "Genesis".to_string());
 
         let old_node_id = *vm.cladistics.active_map.get(&0).unwrap();
 
@@ -80,7 +80,7 @@ mod tests {
         let new_node = vm.cladistics.nodes.get(&new_node_id).unwrap();
 
         assert!(old_node.death_tick.is_some());
-        assert_eq!(new_node.parent_id, Some(old_node_id));
+        assert_eq!(new_node.parents, vec![old_node_id]);
         assert_eq!(new_node.event, "Reincarnate");
     }
 }

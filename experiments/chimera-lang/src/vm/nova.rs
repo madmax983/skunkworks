@@ -978,6 +978,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         | OpCode::Outbreak
         | OpCode::Sanitize => super::memetics::exec_memetics_op(vm, op, args),
         OpCode::Meme => super::nova_genetics::exec_meme(vm),
+        OpCode::Speciate => super::nova_genetics::exec_speciate(vm),
         OpCode::Drift => super::nova_genetics::exec_drift(vm),
         OpCode::Poly => super::nova_genetics::exec_poly(vm, args),
         OpCode::Metamorphosis => super::nova_genetics::exec_metamorphosis(vm),
@@ -3195,7 +3196,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                 vm.cladistics.register_strand(
                     new_idx,
-                    Some(vm.ip.0),
+                    vec![vm.ip.0],
                     vm.tick_counter,
                     "Exhume".to_string(),
                 );
@@ -3291,7 +3292,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
 
                             vm.cladistics.register_strand(
                                 new_idx,
-                                Some(s_idx),
+                                vec![s_idx],
                                 vm.tick_counter,
                                 "Reincarnate".to_string(),
                             );

@@ -2417,6 +2417,7 @@ impl ChimeraVM {
             | OpCode::Pray
             | OpCode::Genesis
             | OpCode::Retrograde
+            | OpCode::Speciate
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
