@@ -76,3 +76,8 @@
 **Bloat:** Manual `integrate` function in `system-bio-dome/lorenz.rs` and verbose neighbor calculation in `reaction.rs`.
 **Cut:** Moved `integrate` to `LorenzState::update` and simplified neighbor loops.
 **Saved:** Reduced cognitive load, ~20 lines of code, and improved encapsulation.
+
+## [Reduction]
+**Bloat:** `scan_x: Vec<usize>` in `market-sim` Grid was used to randomly iterate columns, requiring allocation and shuffling logic.
+**Cut:** Removed the vector and replaced it with a boolean flag to iterate `0..width` or `width..0`.
+**Saved:** 1 Vec allocation per Grid, removed shuffle/initialization logic, reduced struct size.

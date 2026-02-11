@@ -123,8 +123,6 @@ pub struct Grid {
     // --- Internal Simulation State ---
     /// Tracks which cells have been updated in the current tick to prevent double-movement.
     updated: Vec<bool>,
-    /// Randomized column iteration order to prevent directional bias.
-    scan_x: Vec<usize>,
 }
 
 impl Grid {
@@ -152,7 +150,6 @@ impl Grid {
             total_asks: 0,
             center_of_mass: height as f32 / 2.0,
             updated: vec![false; width * height],
-            scan_x: (0..width).collect(),
         }
     }
 
@@ -221,14 +218,7 @@ impl Grid {
         self.updated.fill(false);
 
         // Randomize column scan order to prevent left-bias or right-bias in movement
-        if rng.gen_bool(0.5) {
-            self.scan_x.iter_mut().enumerate().for_each(|(i, v)| *v = i);
-        } else {
-            self.scan_x
-                .iter_mut()
-                .enumerate()
-                .for_each(|(i, v)| *v = self.width - 1 - i);
-        }
+        let reverse_x = rng.gen_bool(0.5);
 
         // Pass 1: Bids (Up)
         // We iterate Top to Bottom (0..height) to prevent "teleportation".
@@ -236,7 +226,8 @@ impl Grid {
         // would be processed again at y=8 and move to y=7, potentially traversing
         // the entire grid in a single tick.
         for y in 0..self.height {
-            for &x in &self.scan_x {
+            for i in 0..self.width {
+                let x = if reverse_x { self.width - 1 - i } else { i };
                 let idx = y * self.width + x;
                 if self.updated[idx] {
                     continue;
@@ -297,7 +288,8 @@ impl Grid {
         // would be processed again at y=1 and move to y=2, potentially traversing
         // the entire grid in a single tick.
         for y in (0..self.height).rev() {
-            for &x in &self.scan_x {
+            for i in 0..self.width {
+                let x = if reverse_x { self.width - 1 - i } else { i };
                 let idx = y * self.width + x;
                 if self.updated[idx] {
                     continue;
