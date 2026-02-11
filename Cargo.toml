@@ -126,6 +126,7 @@ members = [
     "experiments/origami-swarm", "experiments/pixel-archivist",
     "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance", "experiments/digital-retina", "experiments/code-pattern", "experiments/heap-glacier",
     "experiments/impossible-explorer",
+    "experiments/soroban-market",
 ]
 resolver = "2"
 
