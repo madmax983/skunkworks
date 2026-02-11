@@ -122,9 +122,11 @@ pub struct Grid {
 
     // --- Internal Simulation State ---
     /// Tracks which cells have been updated in the current tick to prevent double-movement.
-    updated: Vec<bool>,
-    /// Randomized column iteration order to prevent directional bias.
-    scan_x: Vec<usize>,
+    /// Uses a generation-based check to avoid O(N) clearing every frame.
+    updated: Vec<u8>,
+    /// The current generation of updates. Increments every frame.
+    /// When it wraps to 0, the `updated` vector is cleared.
+    updated_gen: u8,
 }
 
 impl Grid {
@@ -151,8 +153,8 @@ impl Grid {
             total_bids: 0,
             total_asks: 0,
             center_of_mass: height as f32 / 2.0,
-            updated: vec![false; width * height],
-            scan_x: (0..width).collect(),
+            updated: vec![0; width * height],
+            updated_gen: 0,
         }
     }
 
@@ -212,117 +214,150 @@ impl Grid {
     pub fn update(&mut self) -> Vec<TradeEvent> {
         let mut rng = rand::thread_rng();
         let mut trade_events = Vec::new();
-        let mut trades = 0;
+
+        // Stats accumulators
         let mut bids = 0;
         let mut asks = 0;
         let mut weighted_y_sum = 0.0;
         let mut mass_sum = 0.0;
+        let mut trades_created_count = 0;
 
-        self.updated.fill(false);
-
-        // Randomize column scan order to prevent left-bias or right-bias in movement
-        if rng.gen_bool(0.5) {
-            self.scan_x.iter_mut().enumerate().for_each(|(i, v)| *v = i);
-        } else {
-            self.scan_x
-                .iter_mut()
-                .enumerate()
-                .for_each(|(i, v)| *v = self.width - 1 - i);
+        // Generation-based update tracking
+        self.updated_gen = self.updated_gen.wrapping_add(1);
+        if self.updated_gen == 0 {
+            self.updated.fill(0);
+            self.updated_gen = 1;
         }
+        let current_gen = self.updated_gen;
 
-        // Pass 1: Bids (Up)
-        // We iterate Top to Bottom (0..height) to prevent "teleportation".
-        // If we iterated Bottom to Top, a particle moving from y=9 to y=8
-        // would be processed again at y=8 and move to y=7, potentially traversing
-        // the entire grid in a single tick.
+        // Determine scan direction (randomized per frame)
+        let forward_scan = rng.gen_bool(0.5);
+
+        // Pass 1: Bids (Up) & Trade Decay
         for y in 0..self.height {
-            for &x in &self.scan_x {
+            for i in 0..self.width {
+                let x = if forward_scan { i } else { self.width - 1 - i };
                 let idx = y * self.width + x;
-                if self.updated[idx] {
+
+                if self.updated[idx] == current_gen {
                     continue;
                 }
 
-                if let Particle::Bid(owner) = self.cells[idx] {
-                    if y > 0 {
-                        let target_idx = (y - 1) * self.width + x;
-                        match self.cells[target_idx] {
-                            Particle::Empty => {
-                                self.cells[target_idx] = Particle::Bid(owner);
-                                self.cells[idx] = Particle::Empty;
-                                self.updated[target_idx] = true;
-                            }
-                            Particle::Ask(seller) => {
-                                // Collision!
-                                self.cells[target_idx] = Particle::Trade { age: 5 };
-                                self.cells[idx] = Particle::Empty;
-                                self.updated[target_idx] = true;
-                                trades += 1;
-                                trade_events.push(TradeEvent {
-                                    buyer: owner,
-                                    seller,
-                                    price: (self.height - 1 - (y - 1)) as f32, // Invert Y for price
-                                });
-                            }
-                            _ => {
-                                // Sideways logic: Try to step around blockage
-                                let dxs = if rng.gen_bool(0.5) { [-1, 1] } else { [1, -1] };
-                                for dx in dxs {
-                                    let nx = x as isize + dx;
-                                    if nx >= 0 && nx < self.width as isize {
-                                        let nx = nx as usize;
-                                        let n_idx = y * self.width + nx;
-                                        if !self.updated[n_idx]
-                                            && matches!(self.cells[n_idx], Particle::Empty)
-                                        {
-                                            self.cells[n_idx] = Particle::Bid(owner);
-                                            self.cells[idx] = Particle::Empty;
-                                            self.updated[n_idx] = true;
-                                            break;
+                match self.cells[idx] {
+                    Particle::Bid(owner) => {
+                        // Movement Logic
+                        let mut final_y = Some(y); // Where the bid ends up (for stats)
+
+                        if y > 0 {
+                            let target_idx = (y - 1) * self.width + x;
+                            match self.cells[target_idx] {
+                                Particle::Empty => {
+                                    self.cells[target_idx] = Particle::Bid(owner);
+                                    self.cells[idx] = Particle::Empty;
+                                    self.updated[target_idx] = current_gen;
+                                    final_y = Some(y - 1);
+                                }
+                                Particle::Ask(seller) => {
+                                    // Collision!
+                                    self.cells[target_idx] = Particle::Trade { age: 5 };
+                                    self.cells[idx] = Particle::Empty;
+                                    self.updated[target_idx] = current_gen;
+                                    trades_created_count += 1;
+                                    trade_events.push(TradeEvent {
+                                        buyer: owner,
+                                        seller,
+                                        price: (self.height - 1 - (y - 1)) as f32, // Invert Y for price
+                                    });
+                                    final_y = None; // Destroyed
+                                }
+                                _ => {
+                                    // Sideways logic: Try to step around blockage
+                                    let dxs = if rng.gen_bool(0.5) { [-1, 1] } else { [1, -1] };
+                                    for dx in dxs {
+                                        let nx = x as isize + dx;
+                                        if nx >= 0 && nx < self.width as isize {
+                                            let nx = nx as usize;
+                                            let n_idx = y * self.width + nx;
+                                            // Check updated generation and empty
+                                            if self.updated[n_idx] != current_gen
+                                                && matches!(self.cells[n_idx], Particle::Empty)
+                                            {
+                                                self.cells[n_idx] = Particle::Bid(owner);
+                                                self.cells[idx] = Particle::Empty;
+                                                self.updated[n_idx] = current_gen;
+                                                final_y = Some(y); // Same y, different x
+                                                break;
+                                            }
                                         }
                                     }
                                 }
                             }
+                        } else {
+                            // Reached top (Maximum Price), expire.
+                            self.cells[idx] = Particle::Empty;
+                            final_y = None;
                         }
-                    } else {
-                        // Reached top (Maximum Price), expire.
-                        self.cells[idx] = Particle::Empty;
+
+                        // Stats Update
+                        if let Some(pos_y) = final_y {
+                            bids += 1;
+                            weighted_y_sum += (self.height - pos_y) as f32;
+                            mass_sum += 1.0;
+                        }
                     }
+                    Particle::Trade { age } => {
+                        // Decay Logic
+                        if age > 1 {
+                            self.cells[idx] = Particle::Trade { age: age - 1 };
+                        } else {
+                            self.cells[idx] = Particle::Empty;
+                        }
+                    }
+                    _ => {}
                 }
             }
         }
 
         // Pass 2: Asks (Down)
-        // For DOWN movement, we must iterate Bottom to Top (height..0) to prevent teleportation.
-        // If we iterated Top to Bottom, a particle moving from y=0 to y=1
-        // would be processed again at y=1 and move to y=2, potentially traversing
-        // the entire grid in a single tick.
         for y in (0..self.height).rev() {
-            for &x in &self.scan_x {
+            for i in 0..self.width {
+                let x = if forward_scan { i } else { self.width - 1 - i };
                 let idx = y * self.width + x;
-                if self.updated[idx] {
+
+                if self.updated[idx] == current_gen {
                     continue;
                 }
 
                 if let Particle::Ask(owner) = self.cells[idx] {
+                    let mut final_y = Some(y);
+
                     if y < self.height - 1 {
                         let target_idx = (y + 1) * self.width + x;
                         match self.cells[target_idx] {
                             Particle::Empty => {
                                 self.cells[target_idx] = Particle::Ask(owner);
                                 self.cells[idx] = Particle::Empty;
-                                self.updated[target_idx] = true;
+                                self.updated[target_idx] = current_gen;
+                                final_y = Some(y + 1);
                             }
                             Particle::Bid(buyer) => {
                                 // Collision!
                                 self.cells[target_idx] = Particle::Trade { age: 5 };
                                 self.cells[idx] = Particle::Empty;
-                                self.updated[target_idx] = true;
-                                trades += 1;
+                                self.updated[target_idx] = current_gen;
+                                trades_created_count += 1;
                                 trade_events.push(TradeEvent {
                                     buyer,
                                     seller: owner,
                                     price: (self.height - 1 - (y + 1)) as f32,
                                 });
+                                final_y = None;
+
+                                    // Fix: The Bid at target_idx was counted in Pass 1.
+                                    // Since we just destroyed it, we must decrement the stats.
+                                    bids -= 1;
+                                    weighted_y_sum -= (self.height - (y + 1)) as f32;
+                                    mass_sum -= 1.0;
                             }
                             _ => {
                                 // Sideways logic
@@ -332,12 +367,13 @@ impl Grid {
                                     if nx >= 0 && nx < self.width as isize {
                                         let nx = nx as usize;
                                         let n_idx = y * self.width + nx;
-                                        if !self.updated[n_idx]
+                                        if self.updated[n_idx] != current_gen
                                             && matches!(self.cells[n_idx], Particle::Empty)
                                         {
                                             self.cells[n_idx] = Particle::Ask(owner);
                                             self.cells[idx] = Particle::Empty;
-                                            self.updated[n_idx] = true;
+                                            self.updated[n_idx] = current_gen;
+                                            final_y = Some(y);
                                             break;
                                         }
                                     }
@@ -347,39 +383,20 @@ impl Grid {
                     } else {
                         // Reached bottom (Minimum Price), expire.
                         self.cells[idx] = Particle::Empty;
+                        final_y = None;
                     }
-                }
-            }
-        }
 
-        // Pass 3: Stats & Cleanup
-        for y in 0..self.height {
-            for x in 0..self.width {
-                let idx = y * self.width + x;
-                match self.cells[idx] {
-                    Particle::Trade { age } => {
-                        if age > 0 {
-                            self.cells[idx] = Particle::Trade { age: age - 1 };
-                        } else {
-                            self.cells[idx] = Particle::Empty;
-                        }
-                    }
-                    Particle::Bid(_) => {
-                        bids += 1;
-                        weighted_y_sum += (self.height - y) as f32; // Height - y gives "height from bottom"
-                        mass_sum += 1.0;
-                    }
-                    Particle::Ask(_) => {
+                    // Stats Update
+                    if let Some(pos_y) = final_y {
                         asks += 1;
-                        weighted_y_sum += (self.height - y) as f32;
+                        weighted_y_sum += (self.height - pos_y) as f32;
                         mass_sum += 1.0;
                     }
-                    _ => {}
                 }
             }
         }
 
-        self.trade_count = trades;
+        self.trade_count = trades_created_count;
         self.total_bids = bids;
         self.total_asks = asks;
         if mass_sum > 0.0 {
@@ -447,8 +464,10 @@ mod tests {
 
         // Grid should show a Trade particle at (5, 4)
         match grid.get(5, 4) {
-            // Age starts at 5, but decays by 1 in the same tick (Pass 3)
-            Particle::Trade { age } => assert_eq!(age, 4),
+            // Age starts at 5. Since Pass 3 (decay) was merged into Pass 1/2,
+            // and the trade is created *after* the cell is processed (or skipped),
+            // it doesn't decay in the creation frame.
+            Particle::Trade { age } => assert_eq!(age, 5),
             _ => panic!(
                 "Expected Trade particle at (5, 4), found {:?}",
                 grid.get(5, 4)
