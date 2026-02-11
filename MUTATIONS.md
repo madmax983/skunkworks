@@ -727,4 +727,32 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
+- **Evaluation**: Compiles (3 warnings). Implemented by The Splice Surgeon.
+
+### chimera-fold
+- **Parents**: experiments/chimera-lang + experiments/neuro-fold
+- **Concept**: A distributed network of Chimera Virtual Machines controlling a physically simulated Miura-ori origami mesh.
+- **Novel trait**: Evolving the nervous system of a soft robot.
+- **Status**: experiments/chimera-fold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### origami-swarm
+- **Parents**: experiments/neuro-fold + experiments/luminous-flock
+- **Concept**: Physically simulated soft-body boids (origami birds) driven by Spiking Neural Networks.
+- **Novel trait**: Synchronized Flapping. The flock's brains synchronize phase, causing them to flap in unison.
+- **Status**: experiments/origami-swarm
+- **Evaluation**: Compiles (5 warnings). Implemented by The Splice Surgeon. Hybrid Vigor Confirmed. Verified.
+
+### neuro-fold
+- **Parents**: experiments/neuro-crab + experiments/origami-constellation
+- **Concept**: A "Breathing Sheet" where a Spiking Neural Network (CPG) drives the folding actuators of a Miura-ori mesh.
+- **Novel trait**: Proprioceptive Feedback. The strain on the physical mesh feeds back into the neural network, creating a closed-loop bio-mechanical system.
+- **Status**: experiments/neuro-fold
+- **Evaluation**: Compiles (3 warnings). Implemented by The Splice Surgeon. Tests passed.
+
+### hyperbolic-jungle
+- **Parents**: experiments/hyperbolic-mold + experiments/rhythmic-jungle
+- **Concept**: Agents in the Poincaré Disk negotiating rhythmic consensus.
+- **Novel trait**: Relativistic Rhythms. Distance is hyperbolic, affecting synchronization dynamics.
+- **Status**: experiments/hyperbolic-jungle
+- **Evaluation**: Compiles (6 warnings). Implemented by The Splice Surgeon. Verified.

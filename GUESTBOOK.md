@@ -4,7 +4,11 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
 
-### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+### [Concentration Level: FRESH] - Location: experiments/chimera-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The mesh is breathing. Distributed VMs are controlling the actuators. Peristaltic motion detected.
+
+### [Concentration Level: VERIFIED] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
 
@@ -16,7 +20,7 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** `TextGlitcher` active. The Gardener is healing the graph. Mnemonic Rot active.
 
-### [Concentration Level: FRESH] - Location: experiments/origami-swarm
+### [Concentration Level: VERIFIED] - Location: experiments/origami-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is synchronized. The CPGs are coupled. The origami cranes are breathing.
 
@@ -92,11 +96,11 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
 
-### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
+### [Concentration Level: VERIFIED] - Location: experiments/hyperbolic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The rhythms are bending. Agents are synchronizing across infinite distances. The Poincaré disk is pulsing.
 
-### [Concentration Level: FRESH] - Location: experiments/neuro-fold
+### [Concentration Level: VERIFIED] - Location: experiments/neuro-fold
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Spiking Neural Networks driving PBD actuators. Breathing Miura-ori sheet simulation active.
 
