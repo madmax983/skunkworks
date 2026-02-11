@@ -1,0 +1,11 @@
+[package]
+name = "cochlea-sim"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
+# rodio is optional for now, sticking to visual only for robustness in headless env

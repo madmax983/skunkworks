@@ -657,6 +657,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** 4D projection engine stable. Rotor4 math verified. Time series visualization active.
 
+### [Concentration Level: FRESH] - Location: experiments/cochlea-sim
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The ear is listening to the ghost beat. Mechanical transduction verified. Spikes are scrolling.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/klein-fs
