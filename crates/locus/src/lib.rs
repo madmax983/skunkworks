@@ -511,6 +511,9 @@ impl Topology {
         width: usize,
         height: usize,
     ) -> Option<(usize, usize)> {
+        if width == 0 || height == 0 {
+            return None;
+        }
         let w = width as i64;
         let h = height as i64;
         match self {
