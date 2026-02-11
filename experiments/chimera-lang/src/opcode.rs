@@ -915,6 +915,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    // Catalyst Features (Nova)
+    /// **[Nova]** Creates a new Catalyst from a strand.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ..., catalyst_id ]`
+    #[cfg(feature = "nova")]
+    Synthesize,
+    /// **[Nova]** Applies a Catalyst to mutate a target strand.
+    ///
+    /// **Stack:** `[ ..., catalyst_id, target_strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Catalyze,
+
     // Chemistry Features (Nova)
     /// **[Nova]** Mixes neighbors into a solution in the current cell.
     ///

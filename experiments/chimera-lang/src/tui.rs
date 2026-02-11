@@ -100,6 +100,7 @@ pub(crate) enum ViewMode {
     Logos,
     Pandemonium,
     BioticChaos,
+    Catalyst,
 }
 
 enum InputMode {
@@ -176,6 +177,7 @@ pub(crate) struct AppState {
     pub(crate) pandemonium_cursor: (f64, f64),
     pub(crate) pandemonium_radius: f64,
     pub(crate) pandemonium_selected_tool: usize, // 0=Mutate, 1=Scramble, 2=Purge, 3=Duplicate
+    pub(crate) catalyst_scroll: usize,
     pub(crate) show_view_selector: bool,
     pub(crate) view_selector_state: std::cell::RefCell<ListState>,
 }
@@ -254,6 +256,7 @@ impl AppState {
             pandemonium_cursor: (0.0, 0.0),
             pandemonium_radius: 5.0,
             pandemonium_selected_tool: 0,
+            catalyst_scroll: 0,
         }
     }
 }
@@ -562,6 +565,11 @@ where
 
             if let ViewMode::BioticChaos = app_state.view_mode {
                 render_biotic_chaos(f, vm, app_state);
+                return;
+            }
+
+            if let ViewMode::Catalyst = app_state.view_mode {
+                render_catalyst(f, vm, app_state);
                 return;
             }
 
@@ -1149,6 +1157,10 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                ViewMode::Catalyst => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1333,7 +1345,8 @@ where
                             ViewMode::Logos => ViewMode::Pandemonium,
                             #[cfg(feature = "nova")]
                             ViewMode::Pandemonium => ViewMode::BioticChaos,
-                            ViewMode::BioticChaos => ViewMode::Heatmap,
+                            ViewMode::BioticChaos => ViewMode::Catalyst,
+                            ViewMode::Catalyst => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1908,6 +1921,11 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        ViewMode::Catalyst => {
+                            if !vm.catalysts.is_empty() && app_state.catalyst_scroll + 1 < vm.catalysts.len() {
+                                app_state.catalyst_scroll += 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
                             if app_state.grid_cursor.1 < 15 {
@@ -2320,6 +2338,11 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        ViewMode::Catalyst => {
+                            if app_state.catalyst_scroll > 0 {
+                                app_state.catalyst_scroll -= 1;
+                            }
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.1 > 0 {
@@ -2390,6 +2413,7 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
@@ -2516,6 +2540,7 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        ViewMode::Catalyst => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 > 0 {
@@ -2657,6 +2682,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Alchemy => {
                                 // Prevent entering edit mode for Alchemy (uses keys instead)
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            ViewMode::Catalyst => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4078,6 +4106,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         #[cfg(feature = "nova")]
         ViewMode::Pandemonium => "PANDEMONIUM REACTOR (GENOMIC CHAOS)",
         ViewMode::BioticChaos => "BIOTIC CHAOS (COUPLED MAP LATTICE)",
+        ViewMode::Catalyst => "CATALYST CHAMBER (DIRECTED EVOLUTION)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4603,6 +4632,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Logos, "Logos", "U"));
         views.push((ViewMode::Pandemonium, "Pandemonium", "P"));
         views.push((ViewMode::BioticChaos, "Biotic Chaos", "Tab"));
+        views.push((ViewMode::Catalyst, "Catalyst Chamber", "Tab"));
     }
     views
 }
@@ -7646,4 +7676,71 @@ fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
         Block::default().borders(Borders::ALL).title("Parameters"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Catalyst List
+    let mut items = Vec::new();
+    if vm.catalysts.is_empty() {
+        items.push(ListItem::new("No Catalysts synthesized."));
+        items.push(ListItem::new(""));
+        items.push(ListItem::new("Use 'Synthesize(strand_idx)' to create one."));
+    } else {
+        for (i, cat) in vm.catalysts.iter().enumerate() {
+            let style = if i == app_state.catalyst_scroll {
+                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::Cyan)
+            };
+
+            let status = if cat.charge > 0 { "ACTIVE" } else { "DEPLETED" };
+
+            let content = format!(
+                "#{}: ID {:x} | Charge: {} | Stability: {:.2} | [{}]",
+                i, cat.id, cat.charge, cat.stability, status
+            );
+
+            items.push(ListItem::new(Span::styled(content, style)));
+        }
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Catalyst Storage"),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Recipe Detail
+    let mut recipe_lines = Vec::new();
+    if !vm.catalysts.is_empty() && app_state.catalyst_scroll < vm.catalysts.len() {
+        let cat = &vm.catalysts[app_state.catalyst_scroll];
+        recipe_lines.push(Line::from(vec![
+            Span::styled(format!("Catalyst #{} Analysis", cat.id), Style::default().add_modifier(Modifier::BOLD)),
+        ]));
+        recipe_lines.push(Line::from(""));
+        recipe_lines.push(Line::from("Recipe (Gene Pattern):"));
+
+        for (i, op) in cat.recipe.iter().enumerate() {
+            recipe_lines.push(Line::from(format!("  {}: {}", i, op)));
+        }
+
+        if cat.recipe.is_empty() {
+            recipe_lines.push(Line::from("  (Empty Recipe)"));
+        }
+    } else {
+        recipe_lines.push(Line::from("Select a Catalyst to view details."));
+    }
+
+    let detail = Paragraph::new(recipe_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Molecular Structure"),
+    );
+    f.render_widget(detail, chunks[1]);
 }

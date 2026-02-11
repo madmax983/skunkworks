@@ -277,6 +277,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '|' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| a | b),
                 '[' => exec_ether_send(vm, y, x, signal, &mut ctx),
                 ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
+                '#' => exec_catalyze(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -452,6 +453,22 @@ fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
                 strand_idx: s_idx as usize,
             });
         }
+    }
+}
+
+fn exec_catalyze(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Inputs: North (Catalyst ID), East (Target Strand)
+    if let (Some(cat_id), Some(strand_idx)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
+        ctx.executions.push((
+            OpCode::Catalyze,
+            vec![
+                Nucleotide::Number(cat_id),
+                Nucleotide::Number(strand_idx),
+            ],
+        ));
     }
 }
 
