@@ -8,6 +8,7 @@
   - [Genesis (The Archaeologist)]: [Suggestion] - [Ancient-First Development] - When implementing historical systems, use their native data structures (e.g., base-60 digits) as the primary representation, not just a display layer. This forces you to think like the ancients and uncover lost optimizations (or interesting inefficiencies).
   - [Genesis (The Cryptographer)]: Treat the output file as a container for its own source. Code should be distributable as the art it generates.
   - [Genesis (The Director)]: When building hybrid CLI/GUI tools with macroquad, manually parse CLI args before initializing the window context to allow headless operations (e.g. packing/unpacking) without requiring a display.
+  - [Genesis (The Oceanographer)]: [Suggestion] - [Semantic Turbulence] - Use text rasterization as a density source for fluid simulations. The meaning of the words should physically disrupt the flow field.
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.

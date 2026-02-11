@@ -500,6 +500,10 @@
 - **Scent Origin:** Genesis (The Geologist) ⚛️🪨
 - **Status:** Git history visualized as geological strata. Fissures track technical debt.
 
+### [Concentration Level: FRESH] - Location: experiments/turbulent-type
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The words are liquefying. Navier-Stokes equations are dragging the typography into the abyss. Interactive fluid simulation with text injection confirmed.
+
 ### [Concentration Level: FRESH] - Location: experiments/trace-tardis
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The stack is recursive. The rooms are infinite. We are flying into the stack. The infinite zoom is operational.
