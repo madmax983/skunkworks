@@ -539,6 +539,46 @@ fn exec_harvest(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Signal
 }
 
 fn exec_query(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
+    #[cfg(feature = "oracle")]
+    if vm.logos_mode {
+        use crate::ast::JunctionType;
+        use std::collections::HashMap;
+        use super::oracle;
+
+        let query_term = Value::Junction(
+            JunctionType::Any,
+            vec![
+                Value::Str("query".to_string()),
+                Value::Int(y as i64),
+                Value::Int(x as i64),
+                Value::Str("?Result".to_string()),
+            ],
+        );
+
+        let mut solutions = Vec::new();
+        oracle::solve(
+            &[query_term],
+            HashMap::new(),
+            &vm.knowledge_base,
+            vm,
+            &mut solutions,
+            0,
+        );
+
+        if let Some(sol) = solutions.first() {
+            if let Some(res) = sol.get("?Result") {
+                 if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                    ctx.grid_writes.push(GridWrite {
+                        y: sy,
+                        x: sx,
+                        val: res.clone(),
+                    });
+                }
+            }
+        }
+        return;
+    }
+
     if let (Some(dir_code), Some(target_val)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
         let (dy, dx) = match dir_code % 4 {
             0 => (-1, 0), // N

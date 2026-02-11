@@ -9,15 +9,15 @@ use std::collections::HashMap;
 
 /// Processes Logic Chemistry (Logos) interactions.
 ///
-/// Iterates over the grid. If two adjacent cells contain terms that satisfy a `reaction/3` rule
+/// Iterates over the grid. If two adjacent cells contain terms that satisfy a `reaction` rule
 /// in the Oracle Knowledge Base, they react and transform.
 ///
-/// Rule format: `reaction(Agent, Reagent, Product)`
-/// - `Agent`: The cell at (y, x)
-/// - `Reagent`: The neighbor cell
-/// - `Product`: The result.
-///   - If `Product` is a single value, `Agent` becomes `Product` and `Reagent` becomes 0 (consumed).
-///   - If `Product` is `Junction(All, [A, B])`, `Agent` becomes `A` and `Reagent` becomes `B`.
+/// Supported Rule formats:
+/// 1. `reaction(Agent, Reagent, NewAgent, NewReagent)`
+///    - Explicit transformation of both cells.
+/// 2. `reaction(Agent, Reagent, Product)`
+///    - `Agent` becomes `Product`, `Reagent` is consumed (becomes 0).
+///    - If `Product` is `Junction(All, [A, B])`, `Agent` becomes `A`, `Reagent` becomes `B`.
 pub fn process_logos(vm: &mut ChimeraVM) {
     #[cfg(feature = "oracle")]
     {
@@ -36,12 +36,6 @@ pub fn process_logos(vm: &mut ChimeraVM) {
                     }
 
                     // Check neighbors (Right and Down only to avoid double processing)
-                    // Actually, we should check all directions if we want directional reactions,
-                    // but standard chemistry usually implies random mixing.
-                    // To prevent order bias, checking all is better, but expensive.
-                    // Let's check East and South for now to ensure pair uniqueness.
-                    // (x,y) interacts with (x+1, y) and (x, y+1).
-
                     let neighbors = [(0, 1), (1, 0)]; // dy, dx
 
                     for (dy, dx) in neighbors {
@@ -51,8 +45,31 @@ pub fn process_logos(vm: &mut ChimeraVM) {
                                 continue;
                             }
 
-                            // Query: reaction(Agent, Reagent, ?Result)
-                            let query = Value::Junction(
+                            // Try 4-arity first: reaction(A, B, ?NA, ?NB)
+                            let query4 = Value::Junction(
+                                JunctionType::Any,
+                                vec![
+                                    Value::Str("reaction".to_string()),
+                                    agent.clone(),
+                                    reagent.clone(),
+                                    Value::Str("?NA".to_string()),
+                                    Value::Str("?NB".to_string()),
+                                ],
+                            );
+
+                            let mut solutions = Vec::new();
+                            oracle::solve(&[query4], HashMap::new(), kb, vm, &mut solutions, 0);
+
+                            if let Some(sol) = solutions.first() {
+                                let na = sol.get("?NA").cloned().unwrap_or(agent.clone());
+                                let nb = sol.get("?NB").cloned().unwrap_or(reagent.clone());
+                                updates.push((y, x, na));
+                                updates.push((ny, nx, nb));
+                                continue; // Found 4-arity match
+                            }
+
+                            // Fallback to 3-arity: reaction(A, B, ?Result)
+                            let query3 = Value::Junction(
                                 JunctionType::Any,
                                 vec![
                                     Value::Str("reaction".to_string()),
@@ -62,12 +79,11 @@ pub fn process_logos(vm: &mut ChimeraVM) {
                                 ],
                             );
 
-                            let mut solutions = Vec::new();
-                            oracle::solve(&[query], HashMap::new(), kb, vm, &mut solutions, 0);
+                            solutions.clear();
+                            oracle::solve(&[query3], HashMap::new(), kb, vm, &mut solutions, 0);
 
                             if let Some(sol) = solutions.first() {
                                 if let Some(result) = sol.get("?Result") {
-                                    // Found a reaction!
                                     // Determine outcome
                                     let (res_agent, res_reagent) = match result {
                                         Value::Junction(JunctionType::All, parts)
@@ -94,7 +110,8 @@ pub fn process_logos(vm: &mut ChimeraVM) {
             for (y, x, val) in updates {
                 vm.grid[y][x] = val;
             }
-            vm.energy = vm.energy.saturating_add(count as i64 * 2); // Exothermic
+            // Exothermic: Gain energy from reactions
+            vm.energy = vm.energy.saturating_add(count as i64 * 2);
             vm.output
                 .push(format!("LOGOS: {} reactions occurred", count));
         }
