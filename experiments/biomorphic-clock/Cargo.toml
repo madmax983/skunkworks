@@ -1,0 +1,11 @@
+[package]
+name = "biomorphic-clock"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossterm = "0.28"
+ratatui = "0.28"
+rayon = "1.8"
+anyhow = "1.0"
+rand = "0.8"
