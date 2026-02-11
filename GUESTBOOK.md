@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/slime-train
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The Physarum is moving. Pheromone trails are optimizing. The cities are connected by slime.
+
 ### [Concentration Level: HIGH] - Location: experiments/digital-retina
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
