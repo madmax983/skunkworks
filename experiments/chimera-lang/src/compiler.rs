@@ -275,72 +275,68 @@ fn parse_instructions(
             }
         }
         Rule::crispr_block => {
-            let mut parts = inner.into_inner();
-            let target_name = parts.next().unwrap().as_str();
+            #[cfg(not(feature = "nova"))]
+            return Err(anyhow!("CrisprScan requires 'nova' feature"));
 
-            // pattern_def is next
-            let pattern_pair = parts.next().unwrap();
-            // pattern_pair rule is pattern_def. inner is identifier list.
-            let mut pattern_genes = Vec::new();
-            for op_pair in pattern_pair.into_inner() {
-                // pattern_def inner contains "pattern", ":" literals which pest might skip if atomic?
-                // Wait, pattern_def = { "pattern" ~ ":" ~ identifier ~ ("," ~ identifier)* }
-                // The identifiers are the only thing produced if others are silent?
-                // But literals are produced if not atomic/silent.
-                // Looking at grammar: pattern_def is not atomic (@).
-                // "pattern" and ":" are literals.
-                // We must filter for identifiers or loop carefully.
-                // Actually, pest pairs iterator skips string literals defined in rule usually?
-                // No, it depends.
-                // Let's assume we iterate and check rule.
-                if op_pair.as_rule() == Rule::identifier {
-                    let op_str = op_pair.as_str();
-                    let op = OpCode::from_str(op_str)
-                        .map_err(|_| anyhow!("Unknown opcode in pattern: {}", op_str))?;
-                    pattern_genes.push(Gene { op, args: vec![] });
+            #[cfg(feature = "nova")]
+            {
+                let mut parts = inner.into_inner();
+                let target_name = parts.next().unwrap().as_str();
+
+                // pattern_def is next
+                let pattern_pair = parts.next().unwrap();
+                // pattern_pair rule is pattern_def. inner is identifier list.
+                let mut pattern_genes = Vec::new();
+                for op_pair in pattern_pair.into_inner() {
+                    if op_pair.as_rule() == Rule::identifier {
+                        let op_str = op_pair.as_str();
+                        let op = OpCode::from_str(op_str)
+                            .map_err(|_| anyhow!("Unknown opcode in pattern: {}", op_str))?;
+                        pattern_genes.push(Gene { op, args: vec![] });
+                    }
                 }
+
+                // Register Guide Strand
+                let guide_idx = strand_map.len() + anonymous_strands.len();
+                anonymous_strands.push(Strand {
+                    genes: pattern_genes,
+                });
+
+                let mut genes = Vec::new();
+
+                // Push Target Index
+                let target_arg = resolve_target(target_name, strand_map);
+                genes.push(Gene {
+                    op: OpCode::Push,
+                    args: vec![target_arg],
+                });
+
+                // Push Guide Index
+                genes.push(Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(guide_idx as i64)],
+                });
+
+                // CrisprScan
+                genes.push(Gene {
+                    op: OpCode::CrisprScan,
+                    args: vec![],
+                });
+
+                // Process body instructions
+                for instr in parts {
+                    let sub = parse_instructions(
+                        instr,
+                        strand_map,
+                        macro_map,
+                        anonymous_strands,
+                        depth + 1,
+                    )?;
+                    genes.extend(sub);
+                }
+
+                Ok(genes)
             }
-
-            // Register Guide Strand
-            let guide_idx = strand_map.len() + anonymous_strands.len();
-            anonymous_strands.push(Strand {
-                genes: pattern_genes,
-            });
-
-            let mut genes = Vec::new();
-
-            // Push Target Index
-            let target_arg = resolve_target(target_name, strand_map);
-            genes.push(Gene {
-                op: OpCode::Push,
-                args: vec![target_arg],
-            });
-
-            // Push Guide Index
-            genes.push(Gene {
-                op: OpCode::Push,
-                args: vec![Nucleotide::Number(guide_idx as i64)],
-            });
-
-            // CrisprScan
-            genes.push(Gene {
-                op: OpCode::CrisprScan,
-                args: vec![],
-            });
-
-            // Process body instructions
-            for instr in parts {
-                let sub = parse_instructions(
-                    instr,
-                    strand_map,
-                    macro_map,
-                    anonymous_strands,
-                    depth + 1,
-                )?;
-                genes.extend(sub);
-            }
-
-            Ok(genes)
         }
         _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
     }

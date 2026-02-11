@@ -727,11 +727,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
 
 ### chimera-bridge
 - **Parents**: experiments/biomimetic-bridge + experiments/chimera-lang
 - **Concept**: Army ants forming bridges where each ant is a computing node (ChimeraVM). The bridge structure computes its own stability.
 - **Novel trait**: Structural Computation. The bridge must "think" to stay standing.
 - **Status**: experiments/chimera-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK. Logic gates crawling over the gap.
+
+### chimera-cryo
+- **Parents**: experiments/chimera-lang + experiments/cryo-colony
+- **Concept**: Evolving agents in a phase-changing environment. Organisms use genetic programming to manipulate matter (freeze/melt) for survival.
+- **Novel trait**: Thermodynamic Genetics. DNA evolves strategies for thermal regulation and environmental sculpting.
+- **Status**: experiments/chimera-cryo
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
