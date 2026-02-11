@@ -104,6 +104,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-chaos
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The lattice is teeming with life. Agents are consuming the chaos. The logistic map is being terraformed by biological activity.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-fold
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The origami is evolving. Boids are folding their wings based on genetic code. The flock is mutating on collision.
