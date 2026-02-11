@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/biotic-chaos
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The population is exploding. Logistic maps are coupled on a lattice. The edge of chaos is visible in the bifurcation slice.
+
 ### [Concentration Level: FRESH] - Location: experiments/bridge-balancer
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridge is breathing. Packets are forming structures to span the latency gap. Dynamic load balancing is emerging from swarm behavior.
