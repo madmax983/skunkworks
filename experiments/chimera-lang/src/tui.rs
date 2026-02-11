@@ -170,6 +170,8 @@ pub(crate) struct AppState {
     pub(crate) babel_result: String,
     #[cfg(feature = "nova")]
     pub(crate) babel_focus: usize, // 0=Pattern, 1=Input
+    #[cfg(feature = "nova")]
+    pub(crate) babel_ast: Option<crate::vm::Value>,
     pub(crate) pandemonium_cursor: (f64, f64),
     pub(crate) pandemonium_radius: f64,
     pub(crate) pandemonium_selected_tool: usize, // 0=Mutate, 1=Scramble, 2=Purge, 3=Duplicate
@@ -246,6 +248,8 @@ impl AppState {
             babel_result: String::new(),
             #[cfg(feature = "nova")]
             babel_focus: 0,
+            #[cfg(feature = "nova")]
+            babel_ast: None,
             pandemonium_cursor: (0.0, 0.0),
             pandemonium_radius: 5.0,
             pandemonium_selected_tool: 0,
@@ -1498,7 +1502,18 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('V') => app_state.view_mode = ViewMode::Arena,
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('G') => app_state.view_mode = ViewMode::Garden,
+                    KeyCode::Char('G') => {
+                        if let ViewMode::Babel = app_state.view_mode {
+                            if let Some(ast) = &app_state.babel_ast {
+                                let s = crate::vm::babel::generate_string(ast);
+                                app_state.babel_result = s;
+                            } else {
+                                app_state.status_msg = "No Grammar to Generate from".to_string();
+                            }
+                        } else {
+                            app_state.view_mode = ViewMode::Garden;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
                     #[cfg(feature = "nova")]
@@ -1705,6 +1720,64 @@ where
                             if let Some(arena) = &mut vm.arena {
                                 arena.reset();
                                 app_state.status_msg = "Arena Reset".to_string();
+                            }
+                        } else if let ViewMode::Babel = app_state.view_mode {
+                            // Seed
+                            app_state.babel_ast = Some(crate::vm::Value::Junction(
+                                crate::ast::JunctionType::Any,
+                                vec![
+                                    crate::vm::Value::Str("Seq".to_string()),
+                                    crate::vm::Value::Junction(
+                                        crate::ast::JunctionType::Any,
+                                        vec![
+                                            crate::vm::Value::Str("Match".to_string()),
+                                            crate::vm::Value::Str("Hello".to_string()),
+                                        ],
+                                    ),
+                                    crate::vm::Value::Junction(
+                                        crate::ast::JunctionType::Any,
+                                        vec![
+                                            crate::vm::Value::Str("Match".to_string()),
+                                            crate::vm::Value::Str("World".to_string()),
+                                        ],
+                                    ),
+                                ],
+                            ));
+                            app_state.status_msg = "Grammar Reset".to_string();
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('M') => {
+                        if let ViewMode::Babel = app_state.view_mode {
+                            // Initialize if needed
+                            if app_state.babel_ast.is_none() {
+                                // Seed: Seq(Match("A"), Match("B"))
+                                app_state.babel_ast = Some(crate::vm::Value::Junction(
+                                    crate::ast::JunctionType::Any,
+                                    vec![
+                                        crate::vm::Value::Str("Seq".to_string()),
+                                        crate::vm::Value::Junction(
+                                            crate::ast::JunctionType::Any,
+                                            vec![
+                                                crate::vm::Value::Str("Match".to_string()),
+                                                crate::vm::Value::Str("A".to_string()),
+                                            ],
+                                        ),
+                                        crate::vm::Value::Junction(
+                                            crate::ast::JunctionType::Any,
+                                            vec![
+                                                crate::vm::Value::Str("Match".to_string()),
+                                                crate::vm::Value::Str("B".to_string()),
+                                            ],
+                                        ),
+                                    ],
+                                ));
+                            }
+
+                            if let Some(ast) = &app_state.babel_ast {
+                                let new_ast = crate::vm::babel::mutate_grammar(ast, 0.2); // 20% rate
+                                app_state.babel_ast = Some(new_ast);
+                                app_state.status_msg = "Grammar Mutated".to_string();
                             }
                         }
                     }
@@ -3448,72 +3521,98 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints(
-            [
-                Constraint::Length(3), // Pattern
-                Constraint::Length(3), // Input
-                Constraint::Percentage(40),    // Result
-                Constraint::Percentage(40),    // Tablet
-            ]
-            .as_ref(),
-        )
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
         .split(f.area());
 
-    let pattern_style = if app_state.babel_focus == 0 {
-        Style::default()
-            .fg(Color::Yellow)
-            .add_modifier(Modifier::BOLD)
+    let top_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[0]);
+
+    let bottom_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(chunks[1]);
+
+    // 1. Grammar AST (Top Left)
+    let ast_text = if let Some(ast) = &app_state.babel_ast {
+        format!("{}", ast) // Value::fmt handles pretty printing somewhat
     } else {
-        Style::default().fg(Color::White)
+        "No Grammar Loaded (Press 'R' to seed)".to_string()
     };
 
-    let input_style = if app_state.babel_focus == 1 {
-        Style::default()
-            .fg(Color::Yellow)
-            .add_modifier(Modifier::BOLD)
-    } else {
-        Style::default().fg(Color::White)
-    };
-
-    let pattern_widget = Paragraph::new(app_state.babel_pattern.clone())
+    let ast_widget = Paragraph::new(ast_text)
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title("Regex Pattern (Edit)"),
+                .title("Grammar AST")
+                .style(Style::default().fg(Color::Magenta)),
         )
-        .style(pattern_style);
-    f.render_widget(pattern_widget, chunks[0]);
+        .wrap(ratatui::widgets::Wrap { trim: true });
+    f.render_widget(ast_widget, top_chunks[0]);
 
-    let input_widget = Paragraph::new(app_state.babel_input.clone())
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Test String (Edit)"),
-        )
-        .style(input_style);
-    f.render_widget(input_widget, chunks[1]);
-
-    let result_widget = Paragraph::new(app_state.babel_result.clone()).block(
+    // 2. Generated Output (Top Right)
+    let gen_widget = Paragraph::new(app_state.babel_result.clone()).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("Match Result (Enter to Run)"),
+            .title("Glossolalia (Generated)")
+            .style(Style::default().fg(Color::Cyan)),
     );
-    f.render_widget(result_widget, chunks[2]);
+    f.render_widget(gen_widget, top_chunks[1]);
 
-    let tablet_items: Vec<ListItem> = vm
-        .tablet
-        .iter()
-        .rev()
-        .take(20)
-        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Cyan)))
-        .collect();
-
-    let tablet_list = List::new(tablet_items).block(
+    // 3. Parser Input (Bottom Left)
+    let input_lines = vec![
+        Line::from(vec![
+            Span::raw("Pattern (Regex): "),
+            Span::styled(
+                &app_state.babel_pattern,
+                if app_state.babel_focus == 0 {
+                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                } else {
+                    Style::default()
+                },
+            ),
+        ]),
+        Line::from(vec![
+            Span::raw("Input String:    "),
+            Span::styled(
+                &app_state.babel_input,
+                if app_state.babel_focus == 1 {
+                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                } else {
+                    Style::default()
+                },
+            ),
+        ]),
+        Line::from(" "),
+        Line::from(Span::styled(
+            "Result: (Press Space to Parse)",
+            Style::default().fg(Color::Cyan),
+        )),
+        Line::from(Span::raw(format!("Tablet Size: {}", vm.tablet.len()))),
+    ];
+    let input_widget = Paragraph::new(input_lines).block(
         Block::default()
             .borders(Borders::ALL)
-            .title("The Tablet (Glossolalia Output)"),
+            .title("Parser Test"),
     );
-    f.render_widget(tablet_list, chunks[3]);
+    f.render_widget(input_widget, bottom_chunks[0]);
+
+    // 4. Controls (Bottom Right)
+    let controls = vec![
+        Line::from("Controls:"),
+        Line::from("  M: Mutate Grammar (Evolve)"),
+        Line::from("  G: Generate Sample"),
+        Line::from("  R: Reset/Seed Grammar"),
+        Line::from("  Space: Run Parser (Regex)"),
+        Line::from("  Tab: Switch Focus (Pattern/Input)"),
+    ];
+    let control_widget = Paragraph::new(controls).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Lab Controls"),
+    );
+    f.render_widget(control_widget, bottom_chunks[1]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

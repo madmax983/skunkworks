@@ -76,6 +76,29 @@ pub fn exec_babel_op(
                                 ));
                             }
                         }
+                        "Mutate" => {
+                            // Stack: [ ..., rate, grammar ] -> [ ..., mutated ]
+                            // We already popped "Mutate" as type_str.
+                            // The arguments popped earlier (args) was just [type_str].
+                            // We need to pop real args from stack.
+                            // Actually, exec_babel_op logic for Grammar op is:
+                            // Pop type_str. Then switch on it to pop args.
+                            if vm.stack.len() >= 2 {
+                                let rate_val = vm.stack.pop().unwrap();
+                                let grammar_val = vm.stack.pop().unwrap();
+
+                                let rate = if let Value::Int(r) = rate_val {
+                                    (r as f64) / 100.0
+                                } else {
+                                    0.1
+                                };
+
+                                let mutated = mutate_grammar(&grammar_val, rate);
+                                vm.stack.push(mutated);
+                            } else {
+                                vm.output.push("Error: Stack underflow for Grammar(Mutate)".to_string());
+                            }
+                        }
                         _ => {
                             vm.output
                                 .push(format!("Error: Unknown Grammar type '{}'", type_str));
@@ -308,6 +331,13 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
 
 /// Generates a string from a Grammar.
 pub fn generate_string(parser: &Value) -> String {
+    generate_string_depth(parser, 0)
+}
+
+fn generate_string_depth(parser: &Value, depth: usize) -> String {
+    if depth > 50 {
+        return "...".to_string();
+    }
     if let Value::Junction(JunctionType::Any, args) = parser {
         if args.is_empty() {
             return String::new();
@@ -333,14 +363,14 @@ pub fn generate_string(parser: &Value) -> String {
                 "Seq" => {
                     let mut res = String::new();
                     for child in args.iter().skip(1) {
-                        res.push_str(&generate_string(child));
+                        res.push_str(&generate_string_depth(child, depth + 1));
                     }
                     return res;
                 }
                 "Alt" => {
                     if args.len() > 1 {
                         let idx = rng.gen_range(1..args.len());
-                        return generate_string(&args[idx]);
+                        return generate_string_depth(&args[idx], depth + 1);
                     }
                 }
                 "Many" => {
@@ -348,7 +378,7 @@ pub fn generate_string(parser: &Value) -> String {
                         let count = rng.gen_range(0..4); // Generate 0-3 times
                         let mut res = String::new();
                         for _ in 0..count {
-                            res.push_str(&generate_string(&args[1]));
+                            res.push_str(&generate_string_depth(&args[1], depth + 1));
                         }
                         return res;
                     }
@@ -356,7 +386,7 @@ pub fn generate_string(parser: &Value) -> String {
                 "Opt" => {
                     if args.len() >= 2 {
                         if rng.gen_bool(0.5) {
-                            return generate_string(&args[1]);
+                            return generate_string_depth(&args[1], depth + 1);
                         }
                     }
                 }
@@ -365,4 +395,115 @@ pub fn generate_string(parser: &Value) -> String {
         }
     }
     String::new()
+}
+
+pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
+    let mut rng = rand::thread_rng();
+    if !rng.gen_bool(rate.clamp(0.0, 1.0)) {
+        return grammar.clone();
+    }
+
+    if let Value::Junction(JunctionType::Any, args) = grammar {
+        if args.is_empty() {
+            return grammar.clone();
+        }
+        if let Value::Str(type_str) = &args[0] {
+            // Chance to change the structure completely (Drift)
+            if rng.gen_bool(0.05) {
+                // Return a random simple grammar
+                let simple_types = ["Match", "Regex"];
+                let t = simple_types[rng.gen_range(0..simple_types.len())];
+                let pattern = match t {
+                    "Match" => "glitch",
+                    "Regex" => "[a-z]{3}",
+                    _ => "void",
+                };
+                return Value::Junction(
+                    JunctionType::Any,
+                    vec![Value::Str(t.to_string()), Value::Str(pattern.to_string())],
+                );
+            }
+
+            match type_str.as_str() {
+                "Match" => {
+                    // Mutate literal
+                    if args.len() >= 2 {
+                        if let Value::Str(s) = &args[1] {
+                            let mut chars: Vec<char> = s.chars().collect();
+                            if !chars.is_empty() {
+                                let idx = rng.gen_range(0..chars.len());
+                                let mutation_type = rng.gen_range(0..3);
+                                match mutation_type {
+                                    0 => {
+                                        // Change char
+                                        chars[idx] = rng.gen_range(b'a'..=b'z') as char;
+                                    }
+                                    1 => {
+                                        // Delete char
+                                        if chars.len() > 1 {
+                                            chars.remove(idx);
+                                        }
+                                    }
+                                    2 => {
+                                        // Insert char
+                                        chars.insert(idx, rng.gen_range(b'a'..=b'z') as char);
+                                    }
+                                    _ => {}
+                                }
+                            } else {
+                                chars.push('a');
+                            }
+                            return Value::Junction(
+                                JunctionType::Any,
+                                vec![
+                                    Value::Str("Match".to_string()),
+                                    Value::Str(chars.into_iter().collect()),
+                                ],
+                            );
+                        }
+                    }
+                }
+                "Seq" => {
+                    // Swap or mutate children
+                    let mut new_args = args.clone();
+                    // Mutate children
+                    for i in 1..new_args.len() {
+                        new_args[i] = mutate_grammar(&new_args[i], rate);
+                    }
+                    // Swap
+                    if new_args.len() > 2 && rng.gen_bool(0.3) {
+                        let idx1 = rng.gen_range(1..new_args.len());
+                        let idx2 = rng.gen_range(1..new_args.len());
+                        new_args.swap(idx1, idx2);
+                    }
+                    return Value::Junction(JunctionType::Any, new_args);
+                }
+                "Alt" => {
+                    // Similar to Seq
+                    let mut new_args = args.clone();
+                    for i in 1..new_args.len() {
+                        new_args[i] = mutate_grammar(&new_args[i], rate);
+                    }
+                    // Chance to become Seq?
+                    if rng.gen_bool(0.1) {
+                        new_args[0] = Value::Str("Seq".to_string());
+                    }
+                    return Value::Junction(JunctionType::Any, new_args);
+                }
+                "Many" | "Opt" => {
+                    let mut new_args = args.clone();
+                    if new_args.len() >= 2 {
+                        new_args[1] = mutate_grammar(&new_args[1], rate);
+                    }
+                    // Chance to unwrap?
+                    if rng.gen_bool(0.1) && new_args.len() >= 2 {
+                        return new_args[1].clone();
+                    }
+                    return Value::Junction(JunctionType::Any, new_args);
+                }
+                _ => {}
+            }
+        }
+    }
+    grammar.clone()
 }
