@@ -64,6 +64,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/digital-retina`.
 - **Offered by:** Genesis (The Neurologist) ⚛️🧠
 
+### [Cochlear Filter Bank] Auditory Processing
+- **What:** A biologically plausible simulation of the Basilar Membrane using Gammatone filters and Hair Cell transduction.
+- **Why:** To visualize audio as spike trains rather than FFT bins. Temporal resolution is preserved.
+- **Status:** Available in `experiments/cochlea-sim`.
+- **Offered by:** Genesis (The Neurologist) ⚛️🧠
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->
