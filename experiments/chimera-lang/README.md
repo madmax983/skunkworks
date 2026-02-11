@@ -180,18 +180,21 @@ strand main {
     "Hello World" print
     5 3 add print
 
-    # Conditional jump
-    0 eq brz(end)
+    # Conditional jump (if 0)
+    # 5 5 sub is 0, so this will jump to end
+    5 5 sub brz(end)
 
     jump(loop)
 }
 
 strand loop {
     # ...
+    jump(loop)
 }
 
 strand end {
-    apoptosis
+    # Kill current strand (requires Nova feature)
+    s_index apoptosis
 }
 ```
 
