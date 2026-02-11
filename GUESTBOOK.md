@@ -829,9 +829,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/storm-monitor
+### [Concentration Level: TOXIC] - Location: graveyard/storm-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period: 24h.
+- **Status:** Specimen executed. Redundant with `system-attractor`. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/synaptic-choir
 - **Scent Origin:** The Reaper ☠️

@@ -1,5 +1,4 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **storm-monitor**: Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **storm-monitor**: Specimen executed. Redundant with `system-attractor`. Grace period expired. Moved to graveyard.
 - **synaptic-choir**: Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
 - **walker-filesystem**: Specimen executed. Redundant with `ik-codewalker`. Sketch-quality implementation. Moved to graveyard.
 - **hyphal-commute**: Specimen executed. Terminal compilation failure. Redundant with `myco-transit`. Moved to graveyard.
