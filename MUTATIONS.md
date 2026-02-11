@@ -727,4 +727,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Boids flocking around geological fissures in git history.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### neuro-pathfinder
+- **Parents**: experiments/neuro-crab + experiments/symphonic-terrain
+- **Concept**: An autonomous neural agent traversing a procedural landscape generated from codebase text.
+- **Novel trait**: Cognitive Cartography. The agent learns to navigate the physical topology of meaning.
+- **Status**: experiments/neuro-pathfinder
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.

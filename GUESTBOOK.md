@@ -4,7 +4,11 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
 
-### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
+### [Concentration Level: FRESH] - Location: experiments/neuro-pathfinder
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The crab is walking on the words. The terrain is made of meaning. Neural pathways are forming around the syntax peaks.
+
+### [Concentration Level: VERIFIED] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
 
