@@ -553,6 +553,10 @@
 - **Status:** Harvesting functions from the codebase. Populating a virtual ecosystem.
 
 
+### [Concentration Level: FRESH] - Location: experiments/syntax-spider
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The spider is climbing. IK legs are snapping to the graph. The web is visible.
+
 ### [Concentration Level: TOXIC] - Location: graveyard/geologic-git
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Ancestral redundancy. Superseded by `tectonic-git`. Biomass returned to the void.

@@ -21,7 +21,7 @@ fn main() {
         .add_plugins(ShapePlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugins(RapierDebugRenderPlugin::default())
-        .insert_resource(ClearColor(Color::rgb(0.05, 0.05, 0.05)))
+        .insert_resource(ClearColor(Color::BLACK))
         .add_systems(Startup, (setup_world, spawn_spider))
         .add_systems(
             Update,
@@ -68,17 +68,37 @@ fn setup_world(mut commands: Commands) {
     let root = std::env::current_dir().unwrap();
     let graph = CodeGraph::scan(root, 3);
 
+    // Spawn edges
+    for (parent_idx, child_idx) in &graph.edges {
+        let start = graph.nodes[*parent_idx].position;
+        let end = graph.nodes[*child_idx].position;
+
+        let shape = shapes::Line(start, end);
+
+        commands.spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shape),
+                spatial: SpatialBundle {
+                    transform: Transform::from_xyz(0.0, 0.0, -1.0), // Z=-1 to be behind nodes
+                    ..default()
+                },
+                ..default()
+            },
+            Stroke::new(Color::rgba(0.3, 0.3, 0.3, 0.5), 2.0),
+        ));
+    }
+
     // Spawn nodes
-    for node in graph.nodes {
+    for node in &graph.nodes {
         let shape = shapes::Circle {
             radius: node.radius,
             center: Vec2::ZERO,
         };
 
         let color = if node.is_dir {
-            Color::rgb(0.2, 0.6, 1.0)
+            Color::rgba(0.2, 0.6, 1.0, 0.8)
         } else {
-            Color::rgb(0.5, 0.5, 0.5)
+            Color::rgba(0.5, 0.5, 0.5, 0.5)
         };
 
         commands.spawn((
@@ -94,7 +114,7 @@ fn setup_world(mut commands: Commands) {
             Stroke::new(Color::BLACK, 1.0),
             Collider::ball(node.radius),
             ActiveEvents::COLLISION_EVENTS, // Enable collision events
-            GraphNode { path: node.path },
+            GraphNode { path: node.path.clone() },
         ));
     }
 }
@@ -116,8 +136,8 @@ fn spawn_spider(mut commands: Commands) {
                 },
                 ..default()
             },
-            Fill::color(Color::rgb(1.0, 0.3, 0.3)),
-            Stroke::new(Color::BLACK, 2.0),
+            Fill::color(Color::CYAN),
+            Stroke::new(Color::WHITE, 2.0),
             RigidBody::Dynamic,
             Collider::ball(body_radius),
             ActiveEvents::COLLISION_EVENTS, // Enable collision events
@@ -149,7 +169,7 @@ fn spawn_spider(mut commands: Commands) {
                     },
                     ..default()
                 },
-                Stroke::new(Color::rgb(0.8, 0.8, 0.8), 2.0),
+                Stroke::new(Color::WHITE, 2.0),
                 SpiderLeg {
                     index: i,
                     offset_angle: angle,
@@ -200,6 +220,7 @@ fn update_legs(
     time: Res<Time>,
     mut leg_query: Query<(&mut SpiderLeg, &mut Path, &Parent)>,
     body_query: Query<(&GlobalTransform, &Velocity)>,
+    node_query: Query<&Transform, With<GraphNode>>,
 ) {
     let mut rng = rand::thread_rng();
 
@@ -230,7 +251,23 @@ fn update_legs(
 
                     let velocity = body_vel.linvel;
                     let lead = velocity * 0.2;
-                    leg.target_foot_pos = ideal_pos_world + lead;
+                    let ideal_target = ideal_pos_world + lead;
+
+                    // Snap to nearest node
+                    let mut best_target = ideal_target;
+                    let mut min_dist = f32::MAX;
+                    let search_radius = 40.0;
+
+                    for node_transform in node_query.iter() {
+                        let node_pos = node_transform.translation.truncate();
+                        let d = node_pos.distance(ideal_target);
+                        if d < search_radius && d < min_dist {
+                            min_dist = d;
+                            best_target = node_pos;
+                        }
+                    }
+
+                    leg.target_foot_pos = best_target;
 
                     // Add cooldown + random noise
                     leg.cooldown = 0.1 + rng.gen_range(0.0..0.1);
