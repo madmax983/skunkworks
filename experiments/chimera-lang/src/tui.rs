@@ -3342,8 +3342,29 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .split(f.area());
+
+    // Registry
+    let mut rules: Vec<_> = vm.grammars.keys().collect();
+    rules.sort();
+    let mut rule_items = Vec::new();
+    if rules.is_empty() {
+        rule_items.push(ListItem::new("No rules defined."));
+    } else {
+        for rule in rules {
+            rule_items.push(ListItem::new(format!("Rule: {}", rule)));
+        }
+    }
+    let registry_list = List::new(rule_items).block(
+        Block::default().borders(Borders::ALL).title("Grammar Registry")
+    );
+    f.render_widget(registry_list, chunks[0]);
+
+    let right_chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
@@ -3353,7 +3374,7 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             ]
             .as_ref(),
         )
-        .split(f.area());
+        .split(chunks[1]);
 
     let pattern_style = if app_state.babel_focus == 0 {
         Style::default()
@@ -3378,7 +3399,7 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
                 .title("Regex Pattern (Edit)"),
         )
         .style(pattern_style);
-    f.render_widget(pattern_widget, chunks[0]);
+    f.render_widget(pattern_widget, right_chunks[0]);
 
     let input_widget = Paragraph::new(app_state.babel_input.clone())
         .block(
@@ -3387,14 +3408,14 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
                 .title("Test String (Edit)"),
         )
         .style(input_style);
-    f.render_widget(input_widget, chunks[1]);
+    f.render_widget(input_widget, right_chunks[1]);
 
     let result_widget = Paragraph::new(app_state.babel_result.clone()).block(
         Block::default()
             .borders(Borders::ALL)
             .title("Match Result (Enter to Run)"),
     );
-    f.render_widget(result_widget, chunks[2]);
+    f.render_widget(result_widget, right_chunks[2]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {

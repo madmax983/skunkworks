@@ -105,6 +105,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 // Store the instructions (rest of inner)
                 macro_map.insert(name.to_string(), inner);
             }
+            Rule::grammar_def => {
+                let mut inner = pair.into_inner();
+                let name = inner.next().unwrap().as_str();
+                let idx = strand_map.len();
+                if strand_map.insert(name.to_string(), idx).is_some() {
+                    return Err(anyhow!("Duplicate strand/grammar name: {}", name));
+                }
+            }
             _ => {}
         }
     }
@@ -125,6 +133,26 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 genes.extend(generated);
             }
             strands_ast.push(Strand { genes });
+        } else if pair.as_rule() == Rule::grammar_def {
+            #[cfg(feature = "nova")]
+            {
+                let mut inner = pair.into_inner();
+                let _name = inner.next().unwrap(); // skip name
+                let mut genes = Vec::new();
+
+                for rule in inner {
+                    let generated = parse_rule_def(rule, &strand_map)?;
+                    genes.extend(generated);
+                }
+                // Append Ret to grammar strand so it returns if called
+                genes.push(Gene {
+                    op: OpCode::Ret,
+                    args: vec![],
+                });
+                strands_ast.push(Strand { genes });
+            }
+            #[cfg(not(feature = "nova"))]
+            return Err(anyhow!("Grammars require 'nova' feature"));
         }
     }
 
@@ -351,6 +379,161 @@ fn resolve_target(name: &str, strand_map: &HashMap<String, usize>) -> Nucleotide
         Nucleotide::Number(idx as i64)
     } else {
         Nucleotide::Identifier(name.to_string())
+    }
+}
+
+#[cfg(feature = "nova")]
+fn parse_rule_def(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Vec<Gene>> {
+    let mut inner = pair.into_inner();
+    let name = inner.next().unwrap().as_str(); // rule identifier
+    let expr = inner.next().unwrap(); // rule_expr
+
+    let mut genes = parse_rule_expr(expr, strand_map)?;
+
+    // DefineRule(name)
+    genes.push(Gene {
+        op: OpCode::Push,
+        args: vec![Nucleotide::String(name.to_string())],
+    });
+    genes.push(Gene {
+        op: OpCode::DefineRule,
+        args: vec![],
+    });
+
+    Ok(genes)
+}
+
+#[cfg(feature = "nova")]
+fn parse_rule_expr(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Vec<Gene>> {
+    // rule_expr = { rule_term ~ ( "|" ~ rule_term )* }
+    let mut inner = pair.into_inner();
+    let first_term = inner.next().unwrap();
+    let mut genes = parse_rule_term(first_term, strand_map)?;
+
+    for term in inner {
+        let term_genes = parse_rule_term(term, strand_map)?;
+        genes.extend(term_genes);
+        // Combine with ParserAlt
+        genes.push(Gene {
+            op: OpCode::ParserAlt,
+            args: vec![],
+        });
+    }
+    Ok(genes)
+}
+
+#[cfg(feature = "nova")]
+fn parse_rule_term(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Vec<Gene>> {
+    // rule_term = { rule_factor ~ ( rule_factor )* }
+    let mut inner = pair.into_inner();
+    let first = inner.next().unwrap();
+    let mut genes = parse_rule_factor(first, strand_map)?;
+
+    for factor in inner {
+        let factor_genes = parse_rule_factor(factor, strand_map)?;
+        genes.extend(factor_genes);
+        // Combine with ParserSeq
+        genes.push(Gene {
+            op: OpCode::ParserSeq,
+            args: vec![],
+        });
+    }
+    Ok(genes)
+}
+
+#[cfg(feature = "nova")]
+fn parse_rule_factor(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Vec<Gene>> {
+    // rule_factor = { rule_atom ~ ( "+" | "*" | "?" )? }
+    let mut inner = pair.into_inner();
+    let atom = inner.next().unwrap();
+    let mut genes = parse_rule_atom(atom, strand_map)?;
+
+    if let Some(modifier) = inner.next() {
+        match modifier.as_str() {
+            "?" => {
+                genes.push(Gene {
+                    op: OpCode::ParserOpt,
+                    args: vec![],
+                });
+            }
+            "*" => {
+                genes.push(Gene {
+                    op: OpCode::ParserMany,
+                    args: vec![],
+                });
+            }
+            "+" => {
+                // p+ = Dup -> Many -> Seq
+                genes.push(Gene {
+                    op: OpCode::Dup,
+                    args: vec![],
+                });
+                genes.push(Gene {
+                    op: OpCode::ParserMany,
+                    args: vec![],
+                });
+                genes.push(Gene {
+                    op: OpCode::ParserSeq,
+                    args: vec![],
+                });
+            }
+            _ => {}
+        }
+    }
+    Ok(genes)
+}
+
+#[cfg(feature = "nova")]
+fn parse_rule_atom(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Vec<Gene>> {
+    let inner = pair.into_inner().next().unwrap();
+    match inner.as_rule() {
+        Rule::literal => {
+            // "string"
+            if let Ok(Nucleotide::String(s)) = parse_literal(inner, strand_map) {
+                Ok(vec![
+                    Gene {
+                        op: OpCode::Push,
+                        args: vec![Nucleotide::String(s)],
+                    },
+                    Gene {
+                        op: OpCode::ParserMatch,
+                        args: vec![],
+                    },
+                ])
+            } else {
+                Err(anyhow!("Rule literal must be string"))
+            }
+        }
+        Rule::rule_ref => {
+            let name = inner.into_inner().next().unwrap().as_str();
+            Ok(vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String(name.to_string())],
+                },
+                Gene {
+                    op: OpCode::CallRule,
+                    args: vec![],
+                },
+            ])
+        }
+        Rule::rule_expr => parse_rule_expr(inner, strand_map),
+        _ => Err(anyhow!("Unexpected rule atom")),
     }
 }
 

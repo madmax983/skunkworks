@@ -1,13 +1,22 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 COMMENT = _{ ("//" ~ (!"\n" ~ ANY)*) | ("/*" ~ (!"*/" ~ ANY)* ~ "*/") | ("#" ~ (!"\n" ~ ANY)*) }
 
-program = { SOI ~ (include_stmt | macro_def | strand_def)* ~ EOI }
+program = { SOI ~ (include_stmt | macro_def | strand_def | grammar_def)* ~ EOI }
 
 include_stmt = { "include" ~ string }
 
 macro_def = { "macro" ~ identifier ~ "{" ~ instruction* ~ "}" }
 
 strand_def = { "strand" ~ identifier ~ "{" ~ instruction* ~ "}" }
+
+grammar_def = { "grammar" ~ identifier ~ "{" ~ rule_def* ~ "}" }
+rule_def = { "rule" ~ identifier ~ "{" ~ rule_expr ~ "}" }
+
+rule_expr = { rule_term ~ ( "|" ~ rule_term )* }
+rule_term = { rule_factor ~ ( rule_factor )* }
+rule_factor = { rule_atom ~ ( "+" | "*" | "?" )? }
+rule_atom = { literal | rule_ref | "(" ~ rule_expr ~ ")" }
+rule_ref = { identifier }
 
 instruction = {
     block |

@@ -1920,6 +1920,16 @@ pub enum OpCode {
     /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
     #[cfg(feature = "nova")]
     ParserOpt,
+    /// **[Babel]** Binds a parser object to a rule name in the grammar registry.
+    ///
+    /// **Stack:** `[ ..., parser_junction, rule_name_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    DefineRule,
+    /// **[Babel]** Creates a parser that calls another rule by name (recursion).
+    ///
+    /// **Stack:** `[ ..., rule_name_str ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    CallRule,
 
     // Ballistics Features (Nova)
     /// **[Nova]** Fires a projectile with velocity and power.
