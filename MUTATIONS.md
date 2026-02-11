@@ -728,3 +728,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Seismic Swarming. Swarm intelligence identifying "earthquake zones" in the code.
 - **Status**: experiments/tectonic-flock
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/chimera-lang
+- **Concept**: Army ants forming bridges where each ant is a computing node (ChimeraVM). The bridge structure computes its own stability.
+- **Novel trait**: Structural Computation. The bridge must "think" to stay standing.
+- **Status**: experiments/chimera-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

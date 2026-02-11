@@ -96,6 +96,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The bridge is thinking. Ants are computing optimal structures. Logic gates are crawling over the gap.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The rhythms are bending. Agents are synchronizing across infinite distances. The Poincaré disk is pulsing.
