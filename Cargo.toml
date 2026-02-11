@@ -36,7 +36,6 @@ members = [
     "experiments/quipu-symphony",
     "experiments/quantum-boids",
     "experiments/git-harmonograph",
-    "experiments/poincare-crawl",
     "experiments/phonetic-flock",
     "experiments/photon-racer",
     "experiments/voronoi-ants",

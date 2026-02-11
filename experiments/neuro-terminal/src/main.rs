@@ -20,6 +20,12 @@ use std::{
 };
 use tui_shared::Tui;
 
+const COLOR_POS: Color = Color::Cyan;
+const COLOR_NEG: Color = Color::Magenta;
+const COLOR_BG_POS: Color = Color::Rgb(0, 30, 30);
+const COLOR_BG_NEG: Color = Color::Rgb(30, 0, 30);
+const COLOR_BG_DARK: Color = Color::Rgb(20, 20, 20);
+
 fn main() -> Result<()> {
     let mut tui = Tui::init()?;
 
@@ -175,12 +181,10 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
 
     let title_block = Block::default()
         .borders(Borders::ALL)
-        .border_style(Style::default().fg(Color::Cyan));
+        .border_style(Style::default().fg(COLOR_POS));
     let title = Paragraph::new(Span::styled(
         " NEURO-TERMINAL 🧠 ",
-        Style::default()
-            .fg(Color::Cyan)
-            .add_modifier(Modifier::BOLD),
+        Style::default().fg(COLOR_POS).add_modifier(Modifier::BOLD),
     ))
     .block(title_block)
     .alignment(Alignment::Center);
@@ -189,20 +193,18 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
     let stats_block = Block::default()
         .borders(Borders::ALL)
         .title(format!(" Loss (Steps: {}) ", app.steps))
-        .border_style(Style::default().fg(Color::Yellow));
+        .border_style(Style::default().fg(COLOR_POS));
 
     let sparkline = Sparkline::default()
         .block(stats_block)
         .data(&app.loss_history)
-        .style(Style::default().fg(Color::Yellow));
+        .style(Style::default().fg(COLOR_POS));
     f.render_widget(sparkline, chunks[1]);
 
     let status_style = if app.paused {
-        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)
+        Style::default().fg(COLOR_NEG).add_modifier(Modifier::BOLD)
     } else {
-        Style::default()
-            .fg(Color::Green)
-            .add_modifier(Modifier::BOLD)
+        Style::default().fg(COLOR_POS).add_modifier(Modifier::BOLD)
     };
     let status_block = Block::default()
         .borders(Borders::ALL)
@@ -220,10 +222,10 @@ fn draw_header(f: &mut Frame, app: &App, area: Rect) {
 
 fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
     let btn_style = Style::default()
-        .bg(Color::Cyan)
+        .bg(COLOR_POS)
         .fg(Color::Black)
         .add_modifier(Modifier::BOLD);
-    let desc_style = Style::default().bg(Color::Rgb(20, 20, 20)).fg(Color::Gray);
+    let desc_style = Style::default().bg(COLOR_BG_DARK).fg(Color::Gray);
 
     let keys = vec![
         Span::styled(" Q ", btn_style),
@@ -244,7 +246,7 @@ fn draw_footer(f: &mut Frame, _app: &App, area: Rect) {
     let line = ratatui::text::Line::from(keys);
     let paragraph = Paragraph::new(line)
         .alignment(Alignment::Center)
-        .style(Style::default().bg(Color::Rgb(20, 20, 20)));
+        .style(Style::default().bg(COLOR_BG_DARK));
     f.render_widget(paragraph, area);
 }
 
@@ -269,12 +271,12 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
                     if out[0] > 0.5 {
                         ctx.draw(&Points {
                             coords: &[(x, y)],
-                            color: Color::Rgb(0, 60, 60), // Cyan background
+                            color: COLOR_BG_POS,
                         });
                     } else {
                         ctx.draw(&Points {
                             coords: &[(x, y)],
-                            color: Color::Rgb(60, 0, 60), // Magenta background
+                            color: COLOR_BG_NEG,
                         });
                     }
                 }
@@ -283,15 +285,15 @@ fn draw_decision_boundary(f: &mut Frame, app: &App, area: Rect) {
             // Draw dataset points
             for (i, input) in app.inputs.iter().enumerate() {
                 let color = if app.targets[i][0] > 0.5 {
-                    Color::Cyan
+                    COLOR_POS
                 } else {
-                    Color::Magenta
+                    COLOR_NEG
                 };
                 // Use a character to make data points pop against the block background
                 ctx.print(
                     input[0],
                     input[1],
-                    Span::styled("●", Style::default().fg(color)),
+                    Span::styled("■", Style::default().fg(color)),
                 );
             }
         });
@@ -343,7 +345,7 @@ fn draw_network(f: &mut Frame, app: &App, area: Rect) {
                             continue;
                         }
 
-                        let color = if w > 0.0 { Color::Green } else { Color::Red };
+                        let color = if w > 0.0 { COLOR_POS } else { COLOR_NEG };
 
                         ctx.draw(&Line {
                             x1: from_pos.0,
