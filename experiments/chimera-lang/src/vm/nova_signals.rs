@@ -2,10 +2,11 @@
 
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
-use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
-use crate::ast::Nucleotide;
+use super::{oracle, ChimeraVM, MidiEvent, Value, GRID_SIZE};
+use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
+use std::collections::HashMap;
 
 fn char_to_val(c: char) -> Option<i64> {
     match c {
@@ -252,7 +253,11 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'J' | 'j' => exec_jam(vm, y, x, signal, &mut ctx),
                 ':' => exec_midi_note(vm, y, x, signal, &mut ctx),
                 ';' => exec_midi_cc(vm, y, x, signal, &mut ctx),
-                '?' => exec_random(vm, y, x, &mut ctx),
+                #[cfg(feature = "oracle")]
+                '?' => exec_oracle(vm, y, x, &mut ctx),
+                #[cfg(not(feature = "oracle"))]
+                '?' => exec_random(vm, y, x, &mut ctx), // Fallback
+                'V' => exec_voltage(vm, y, x, signal, &mut ctx),
                 '%' => binary_op(vm, y, x, &mut ctx.grid_writes, |a, b| {
                     if b != 0 {
                         a.rem_euclid(b)
@@ -451,6 +456,100 @@ fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
         if signal > 0 {
             ctx.mutation_requests.push(MutationRequest {
                 strand_idx: s_idx as usize,
+            });
+        }
+    }
+}
+
+fn exec_voltage(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+    // V: Voltmeter
+    // North: Threshold (Default 0)
+    // East: Output Value (Default '1')
+    // Read local voltage from vm.voltage_grid
+    // If Voltage > Threshold, Write Output to South
+
+    // Only active if signaled? Or passive?
+    // Most Orca operators are active only on signal/bang.
+    // But some like variables are passive.
+    // Let's make it active on signal OR if it's a sensor (passive).
+    // Sensors in Orca usually run every frame.
+    // Let's make it run every frame (signal ignored or used as modulation?).
+    // If we require signal, it becomes a "Sample & Hold".
+    // Let's follow standard pattern: runs if active (scanned).
+    // In scan loop, `active` is true if signal > 0 OR uppercase.
+    // `V` is uppercase. So it runs.
+
+    // If signal > 0, maybe output higher voltage?
+    // No, let's stick to logic.
+
+    #[cfg(feature = "elektra")]
+    {
+        let threshold = peek(vm, y, x, -1, 0).unwrap_or(0);
+        let output_val = peek(vm, y, x, 0, 1).unwrap_or(1); // Default to '1'
+
+        // Check bounds
+        if y < vm.voltage_grid.len() && x < vm.voltage_grid[0].len() {
+            let voltage = vm.voltage_grid[y][x];
+            if voltage > threshold as f32 {
+                if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                    ctx.grid_writes.push(GridWrite {
+                        y: sy,
+                        x: sx,
+                        val: Value::Str(val_to_char(output_val).to_string()),
+                    });
+                }
+            }
+        }
+    }
+}
+
+#[cfg(feature = "oracle")]
+fn exec_oracle(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
+    // ?: Oracle Query
+    // North: Fact ID (Int)
+    // Query KB for fact(ID).
+    // If found, Output '1' to South.
+
+    let fact_id = peek(vm, y, x, -1, 0).unwrap_or(0);
+
+    // Construct query: fact(ID)
+    // We assume facts in KB are just Values.
+    // If KB contains Value::Int(fact_id), it's a match.
+    // Or if KB contains `fact(fact_id)`.
+    // Let's support both.
+
+    let mut found = false;
+
+    // Direct check
+    let query_val = Value::Int(fact_id);
+    if vm.knowledge_base.contains(&query_val) {
+        found = true;
+    } else {
+        // Predicate check: fact(ID)
+        let goal = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("fact".to_string()), query_val],
+        );
+        let mut solutions = Vec::new();
+        oracle::solve(
+            &[goal],
+            HashMap::new(),
+            &vm.knowledge_base,
+            vm,
+            &mut solutions,
+            0,
+        );
+        if !solutions.is_empty() {
+            found = true;
+        }
+    }
+
+    if found {
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+            ctx.grid_writes.push(GridWrite {
+                y: sy,
+                x: sx,
+                val: Value::Str("1".to_string()),
             });
         }
     }

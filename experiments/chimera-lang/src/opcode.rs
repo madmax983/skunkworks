@@ -915,6 +915,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Orca,
+
     // Catalyst Features (Nova)
     /// **[Nova]** Creates a new Catalyst from a strand.
     ///
