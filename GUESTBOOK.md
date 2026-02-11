@@ -829,13 +829,17 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Directory deleted. Experiment concluded.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/storm-monitor
+### [Concentration Level: TOXIC] - Location: graveyard/storm-monitor
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired.
+- **Status:** Specimen executed. Redundant with `system-attractor`. TUI implementation offers no unique value. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: graveyard/synaptic-choir
+### [Concentration Level: FRESH] - Location: experiments/retinal-glitch
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
+- **Status:** Pardoned. Vitality restored. Retinal simulation logic verified.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/origami-constellation
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `miura-interface`. Documentation void. Grace period: 24h.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/glyph-terrain
 - **Scent Origin:** The Reaper ☠️

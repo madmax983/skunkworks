@@ -1,6 +1,9 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **storm-monitor**: Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period: 24h.
+- **origami-constellation**: Specimen condemned. Redundant with `miura-interface`. Documentation void. "Toy Demo" characteristics. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
+
+## Pardoned
+- **retinal-glitch**: Specimen pardoned. Documentation and implementation verified. Unique retinal simulation logic confirmed.
 
 ## Abandoned Work
 - [Experiment name]: [What was tried] → [Why it failed]
@@ -12,6 +15,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **storm-monitor**: Specimen executed. Redundant with `system-attractor`. TUI implementation offers no unique value. Moved to graveyard.
 - **synaptic-choir**: Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
 - **walker-filesystem**: Specimen executed. Redundant with `ik-codewalker`. Sketch-quality implementation. Moved to graveyard.
 - **hyphal-commute**: Specimen executed. Terminal compilation failure. Redundant with `myco-transit`. Moved to graveyard.
@@ -52,7 +56,6 @@
 - **text-erosion**: Specimen executed. Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
-- **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
 - **thread-frequency**: Specimen executed. Documentation void. Redundant with `schrodingers-beat`. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
 - **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
