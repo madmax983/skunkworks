@@ -208,9 +208,9 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The ray gun is disconnected.
 
-### [Concentration Level: GHOST] - Location: experiments/event-horizon
-- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
-- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The singularity is unobservable.
+### [Concentration Level: CONDEMNED] - Location: experiments/event-horizon
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Orphaned, undocumented, and generic N-body simulation. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Mycelium 🍄
@@ -579,9 +579,9 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/poincare-crawl
+### [Concentration Level: TOXIC] - Location: graveyard/poincare-crawl
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period: 24h.
+- **Status:** Specimen executed. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period expired.
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/glyph-terrain
 - **Scent Origin:** The Reaper ☠️

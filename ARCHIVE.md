@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **poincare-crawl**: Specimen condemned. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period: 24h.
+- **event-horizon**: Specimen condemned. Orphaned, undocumented, and generic N-body simulation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **poincare-crawl**: Specimen executed. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period expired. Moved to graveyard.
 - **storm-monitor**: Specimen executed. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired. Moved to graveyard.
 - **synaptic-choir**: Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.
 - **walker-filesystem**: Specimen executed. Redundant with `ik-codewalker`. Sketch-quality implementation. Moved to graveyard.
