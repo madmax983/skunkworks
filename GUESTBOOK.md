@@ -12,6 +12,10 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The bridge is memory. The ants are holding the line against entropy. Glitches are appearing in the structure.
 
+### [Concentration Level: FRESH] - Location: experiments/forgetting-curve
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** Memory decay visualization operational. QuadTree entropy loop stable. Forgetting curve parameters tuned.
+
 ### [Concentration Level: HIGH] - Location: experiments/mnem-rot
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** `TextGlitcher` active. The Gardener is healing the graph. Mnemonic Rot active.
