@@ -31,3 +31,7 @@
 - Bids (Buyers) start at Y=Height-1 (Lowest Price) and bubble up (index decreases) to find sellers.
 - Asks (Sellers) start at Y=0 (Highest Price) and fall down (index increases) to find buyers.
 Collisions happen when they meet in the middle. The documentation must make this coordinate system explicit.
+
+## 2026-06-03 - Vec2 vs Topology Coordinates
+**Confusion:** Users (and Bard) mixed up `Vec2(x, y)` (Cartesian: horizontal, vertical) and `Topology::normalize(y, x)` (Matrix: row, col). This led to off-by-one errors and incorrect wrapping behavior.
+**Clarification:** `Vec2` is designed for continuous physics (X-right, Y-down/up), while `Topology` operates on discrete grid indices (Row-major: Y-down, X-right). Documentation must explicitly warn about swapping coordinates when bridging these systems.

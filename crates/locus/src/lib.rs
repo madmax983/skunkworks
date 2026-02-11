@@ -1,14 +1,45 @@
-//! # Locus
+//! # Locus 📍
 //!
-//! A lightweight 2D geometry library for TUI applications.
+//! A lightweight 2D geometry library for TUI applications and grid-based simulations.
 //!
-//! This crate provides a simple `Vec2` struct for position, velocity, and force calculations.
-//! It supports standard arithmetic operations (+, -, *, /) and common vector
-//! operations (magnitude, normalize, dot, reflect).
+//! `locus` provides the fundamental primitives for moving, measuring, and mapping coordinates
+//! in discrete or continuous space.
 //!
 //! ## Features
 //!
-//! - `serde`: Enables `Serialize` and `Deserialize` implementation for `Vec2`.
+//! - **`Vec2`**: A robust 2D vector struct for physics and movement.
+//! - **`Topology`**: A system for defining how your world wraps (Plane, Torus, Klein Bottle, etc.).
+//! - **`serde`**: (Optional) Enables `Serialize` and `Deserialize`.
+//!
+//! ## Example: The Hero's Journey (Moving on a Torus)
+//!
+//! ```
+//! use locus::{Vec2, Topology};
+//!
+//! fn main() {
+//!     let width = 20;
+//!     let height = 10;
+//!     let topo = Topology::Torus;
+//!
+//!     // Start at position (x=19.0, y=5.0) - at the right edge
+//!     let mut position = Vec2::new(19.0, 5.0);
+//!     let velocity = Vec2::new(1.0, 0.0); // Moving right
+//!
+//!     // Move
+//!     position += velocity;
+//!
+//!     // Normalize using Topology to find the grid cell
+//!     // Note: Topology expects (row, col) i.e. (y, x) integers
+//!     let y_idx = position.y.round() as i64;
+//!     let x_idx = position.x.round() as i64;
+//!
+//!     if let Some((ny, nx)) = topo.normalize(y_idx, x_idx, width, height) {
+//!         // Should wrap to left side (x=0)
+//!         assert_eq!(nx, 0);
+//!         assert_eq!(ny, 5);
+//!     }
+//! }
+//! ```
 
 use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -31,6 +62,8 @@ use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssi
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[doc(alias = "Point")]
+#[doc(alias = "Vector")]
 pub struct Vec2 {
     /// The X component (horizontal).
     pub x: f64,
@@ -67,8 +100,11 @@ impl Vec2 {
 
     /// Calculates the squared magnitude (length) of the vector.
     ///
-    /// This is faster than `magnitude()` because it avoids a square root calculation.
-    /// Use this when you only need to compare lengths (e.g., checking if distance < radius).
+    /// # Performance
+    ///
+    /// This method is significantly faster than [`magnitude`](Self::magnitude) because it avoids
+    /// the expensive square root operation. Prefer this for distance comparisons
+    /// (e.g., `dist_sq < radius * radius`).
     ///
     /// # Examples
     ///
@@ -482,8 +518,25 @@ mod tests {
 /// Determines how coordinates wrap or bound at the edges. This allows for simulating
 /// different geometric surfaces (like a donut-shaped world or a Klein bottle)
 /// using a simple 2D grid.
+///
+/// # Bridging the Gap: Vectors vs. Grids
+///
+/// Be mindful when converting between continuous space (like [`Vec2`]) and discrete grids.
+/// - [`Vec2`] uses `(x, y)` (Cartesian coordinates).
+/// - [`Topology::normalize`] uses `(y, x)` (Row-Major / Matrix indexing).
+///
+/// When using them together, ensure you swap the components correctly.
+///
+/// ```rust
+/// use locus::{Vec2, Topology};
+/// let pos = Vec2::new(10.5, 5.2);
+/// let (y, x) = (pos.y as i64, pos.x as i64);
+/// // Topology::normalize(y, x, ...);
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[doc(alias = "wrapping")]
+#[doc(alias = "boundary")]
 pub enum Topology {
     /// **Plane**: A standard bounded grid.
     ///
@@ -540,13 +593,15 @@ impl Topology {
     /// larger than the grid dimensions) and maps them to a valid `(row, col)` index
     /// within the grid, if possible.
     ///
-    /// Returns `Some((row, col))` (i.e., `(y, x)`) if the coordinates are valid or successfully wrapped.
-    /// Returns `None` if the coordinates are out of bounds (for bounded topologies).
+    /// # Returns
+    ///
+    /// * `Some((row, col))` (i.e., `(y, x)`) if the coordinates are valid or successfully wrapped.
+    /// * `None` if the coordinates are out of bounds (for bounded topologies).
     ///
     /// # Arguments
     ///
-    /// * `y` - The Y coordinate (row).
-    /// * `x` - The X coordinate (column).
+    /// * `y` - The Y coordinate (row/vertical).
+    /// * `x` - The X coordinate (column/horizontal).
     /// * `width` - The width of the grid (number of columns).
     /// * `height` - The height of the grid (number of rows).
     ///
@@ -555,19 +610,27 @@ impl Topology {
     /// ```
     /// use locus::Topology;
     ///
-    /// // Torus wraps both dimensions
+    /// // ---------------------------------------------------------
+    /// // Torus: The Classic Video Game World (Wraps Both Ways)
+    /// // ---------------------------------------------------------
     /// let topo = Topology::Torus;
-    /// // (-1, -1) wraps to (height-1, width-1)
+    /// // Wrapping off top-left corner (-1, -1) -> Bottom-Right (9, 9)
     /// assert_eq!(topo.normalize(-1, -1, 10, 10), Some((9, 9)));
     ///
-    /// // Plane returns None for out of bounds
+    /// // ---------------------------------------------------------
+    /// // Plane: Hard Boundaries (No Wrapping)
+    /// // ---------------------------------------------------------
     /// let plane = Topology::Plane;
     /// assert_eq!(plane.normalize(-1, 0, 10, 10), None);
     ///
-    /// // Klein bottle twists X when Y wraps
+    /// // ---------------------------------------------------------
+    /// // Klein Bottle: A Twist in the Fabric
+    /// // ---------------------------------------------------------
+    /// // Wraps X normally, but twists X when wrapping Y.
     /// let klein = Topology::Klein;
+    ///
     /// // Moving off the top edge (y=-1) wraps to bottom (y=9)
-    /// // AND flips the X coordinate (x=2 becomes x=10-1-2 = 7)
+    /// // BUT flips the X coordinate (x=2 becomes width-1-2 = 7)
     /// assert_eq!(klein.normalize(-1, 2, 10, 10), Some((9, 7)));
     /// ```
     pub fn normalize(&self, y: i64, x: i64, width: usize, height: usize) -> Option<(usize, usize)> {
