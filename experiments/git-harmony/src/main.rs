@@ -16,8 +16,8 @@ use ratatui::{
     },
 };
 use std::io;
+use git_associates::GitModel;
 
-pub mod parser;
 pub mod synthesizer;
 
 use synthesizer::Synthesizer;
@@ -32,7 +32,11 @@ fn main() -> Result<()> {
 
     // Logic
     // We try to get diff, if it fails (e.g. no git repo), we handle it
-    let diff = parser::get_diff()?;
+    let diff = match GitModel::open(".") {
+        Ok(model) => model.diff_workdir().unwrap_or_default(),
+        Err(_) => git_associates::model::DiffStats::default(),
+    };
+
     let mut synth = Synthesizer::new(diff);
 
     // Loop

@@ -1,4 +1,4 @@
-use crate::git::CommitData;
+use git_associates::model::Commit;
 #[cfg(feature = "audio")]
 use rodio::{OutputStream, OutputStreamHandle, Sink, Source};
 #[cfg(feature = "audio")]
@@ -40,10 +40,10 @@ impl AudioEngine {
         Self {}
     }
 
-    pub fn play_commit(&self, _commit: &CommitData) {
+    pub fn play_commit(&self, _commit: &Commit) {
         #[cfg(feature = "audio")]
         if let Some(state) = &self.state {
-            if _commit.changes.is_empty() {
+            if _commit.files.is_empty() {
                 return;
             }
             let source = CommitSource::new(_commit.clone());
@@ -62,7 +62,7 @@ impl AudioEngine {
 
 #[cfg(feature = "audio")]
 struct CommitSource {
-    commit: CommitData,
+    commit: Commit,
     current_file_idx: usize,
     samples_played_in_file: usize,
     sample_rate: u32,
@@ -73,7 +73,7 @@ struct CommitSource {
 
 #[cfg(feature = "audio")]
 impl CommitSource {
-    fn new(commit: CommitData) -> Self {
+    fn new(commit: Commit) -> Self {
         Self {
             commit,
             current_file_idx: 0,
@@ -90,11 +90,11 @@ impl Iterator for CommitSource {
     type Item = f32;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.current_file_idx >= self.commit.changes.len() {
+        if self.current_file_idx >= self.commit.files.len() {
             return None;
         }
 
-        let change = &self.commit.changes[self.current_file_idx];
+        let change = &self.commit.files[self.current_file_idx];
 
         // Synth Parameters
         let base_freq = 220.0 + (self.commit.hash.as_bytes()[0] as f32);
@@ -161,7 +161,7 @@ impl Source for CommitSource {
     }
 
     fn total_duration(&self) -> Option<Duration> {
-        let total_samples = self.commit.changes.len() * self.samples_per_file;
+        let total_samples = self.commit.files.len() * self.samples_per_file;
         Some(Duration::from_secs_f32(
             total_samples as f32 / self.sample_rate as f32,
         ))

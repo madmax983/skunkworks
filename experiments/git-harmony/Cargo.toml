@@ -1,18 +1,16 @@
 [package]
 name = "git-harmony"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
-anyhow = { workspace = true }
-crossterm = { workspace = true }
-rand = { workspace = true }
-ratatui = { workspace = true }
-
-[dependencies.rodio]
-version = "0.17"
-optional = true
+anyhow.workspace = true
+crossterm.workspace = true
+git-associates = { path = "../../crates/git-associates" }
+ratatui.workspace = true
+tui-shared = { path = "../../crates/tui-shared" }
+rodio = { version = "0.19", optional = true }
 
 [features]
 default = []
-audio = ["rodio"]
+audio = ["dep:rodio"]

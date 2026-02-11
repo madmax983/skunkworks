@@ -1,5 +1,5 @@
-use anyhow::{Context, Result};
-use git2::{Repository, Sort};
+use anyhow::Result;
+use git_associates::GitModel;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -13,46 +13,32 @@ pub struct Node {
 }
 
 pub fn crawl(path: &str, limit: usize) -> Result<Vec<Node>> {
-    let repo = Repository::discover(path).context("Failed to discover repository")?;
-    let mut revwalk = repo.revwalk()?;
-    revwalk.set_sorting(Sort::TIME)?;
-    revwalk.push_head()?;
+    let model = GitModel::open(path)?;
+    let commits = model.history(limit)?;
 
     let mut nodes = Vec::new();
     // Use an index map to quickly find node by hash in the vector
     let mut node_indices: HashMap<String, usize> = HashMap::new();
 
-    for (i, oid) in revwalk.enumerate() {
-        if i >= limit {
-            break;
-        }
-        let oid = oid?;
-        let commit = repo.find_commit(oid)?;
-        let hash = oid.to_string();
-
-        if node_indices.contains_key(&hash) {
+    for commit in commits {
+        if node_indices.contains_key(&commit.hash) {
             continue;
         }
 
-        let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
-        let message = commit.message().unwrap_or("No message").trim().to_string();
-        let author = commit.author().name().unwrap_or("Unknown").to_string();
-
         let node = Node {
-            hash: hash.clone(),
-            short_hash: hash[..7].to_string(),
-            message,
-            author,
-            parents,
+            hash: commit.hash.clone(),
+            short_hash: commit.short_hash.clone(),
+            message: commit.message.clone(),
+            author: commit.author.clone(),
+            parents: commit.parents.clone(),
             children: Vec::new(),
         };
 
-        node_indices.insert(hash.clone(), nodes.len());
+        node_indices.insert(commit.hash.clone(), nodes.len());
         nodes.push(node);
     }
 
     // Post-process to populate children
-    // We can't modify `nodes` while iterating, so we build a map of parent -> children first.
     let mut parent_to_children: HashMap<String, Vec<String>> = HashMap::new();
 
     for node in &nodes {

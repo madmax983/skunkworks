@@ -1,0 +1,9 @@
+[package]
+name = "git-associates"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow.workspace = true
+git2.workspace = true
+chrono = "0.4"

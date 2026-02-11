@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow.workspace = true
 crossterm.workspace = true
-git2 = "0.18"
+git-associates = { path = "../../crates/git-associates" }
 rand.workspace = true
 ratatui.workspace = true
 tui-shared = { path = "../../crates/tui-shared" }

@@ -1,96 +1,52 @@
-use anyhow::{Context, Result};
-use std::io::{BufRead, BufReader};
-use std::process::{Command, Stdio};
+use anyhow::Result;
+use git_associates::{GitModel, model::LineChange};
 
 #[derive(Debug, Clone)]
 pub struct CommitData {
     pub hash: String,
     pub timestamp: i64,
-    pub stress_level: f64, // Normalized stress score
-    pub details: String,   // Description of what caused stress
+    pub stress_level: f64,
+    pub details: String,
 }
 
 pub struct GitScanner;
 
 impl GitScanner {
     pub fn scan() -> Result<Vec<CommitData>> {
-        let output = Command::new("git")
-            .args([
-                "log",
-                "--reverse",
-                "--pretty=format:COMMIT %H %at",
-                "-p", // Patch output
-            ])
-            .stdout(Stdio::piped())
-            .spawn()
-            .context("Failed to spawn git command")?
-            .stdout
-            .context("Failed to open git stdout")?;
+        // Try to open git repo, if fails return empty list? Original panicked or returned Err.
+        let model = GitModel::open(".")?;
+        let commits = model.history_with_diffs(500)?; // Load 500 commits with diffs
 
-        let reader = BufReader::new(output);
-        let mut commits = Vec::new();
+        let mut data = Vec::new();
 
-        let mut current_hash = String::new();
-        let mut current_ts = 0;
-        let mut current_stress = 0.0;
-        let mut in_commit = false;
-
-        for line_res in reader.lines() {
-            let line = line_res?;
-
-            if line.starts_with("COMMIT ") {
-                // Save previous
-                if in_commit {
-                    commits.push(CommitData {
-                        hash: current_hash.clone(),
-                        timestamp: current_ts,
-                        stress_level: current_stress,
-                        details: format!("Stress: {:.1}", current_stress),
-                    });
-                }
-
-                // Start new
-                let parts: Vec<&str> = line.split_whitespace().collect();
-                if parts.len() >= 3 {
-                    current_hash = parts[1].to_string();
-                    current_ts = parts[2].parse().unwrap_or(0);
-                    current_stress = 0.0;
-                    in_commit = true;
-                }
-            } else if in_commit {
-                // Analyze diff lines
-                if line.starts_with('+') && !line.starts_with("+++") {
-                    // Check for stress keywords
-                    let content = &line[1..];
-                    if content.contains("TODO") {
-                        current_stress += 1.0;
-                    }
-                    if content.contains("FIXME") {
-                        current_stress += 2.0;
-                    }
-                    if content.contains("unwrap()") {
-                        current_stress += 1.5;
-                    }
-                    if content.contains("panic!") {
-                        current_stress += 5.0;
-                    }
-                    if content.contains("unsafe") {
-                        current_stress += 3.0;
+        for commit in commits {
+            let mut stress = 0.0;
+            // Analyze files
+            for file in &commit.files {
+                for hunk in &file.hunks {
+                    for line in &hunk.lines {
+                         if let LineChange::Added(content) = line {
+                             if content.contains("TODO") { stress += 1.0; }
+                             if content.contains("FIXME") { stress += 2.0; }
+                             if content.contains("unwrap()") { stress += 1.5; }
+                             if content.contains("panic!") { stress += 5.0; }
+                             if content.contains("unsafe") { stress += 3.0; }
+                         }
                     }
                 }
             }
-        }
 
-        // Push last one
-        if in_commit {
-            commits.push(CommitData {
-                hash: current_hash,
-                timestamp: current_ts,
-                stress_level: current_stress,
-                details: format!("Stress: {:.1}", current_stress),
+            data.push(CommitData {
+                hash: commit.hash,
+                timestamp: commit.timestamp.timestamp(),
+                stress_level: stress,
+                details: format!("Stress: {:.1}", stress),
             });
         }
 
-        Ok(commits)
+        // Replay order: Oldest -> Newest
+        data.reverse();
+
+        Ok(data)
     }
 }

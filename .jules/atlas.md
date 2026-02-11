@@ -59,3 +59,9 @@
 **Blueprint:** Extracted `Grid`, `Particle`, and `TradeEvent` to `crates/market-sim`. Standardized `Particle` to use the more capable version (with owner ID) from `chimera-market`.
 **Stability:** Centralized market physics logic.
 **Verification:** `cargo check` passed for all 4 experiments. `cargo test` passed for `market-rogue`.
+
+## [Git Logic Consolidation]
+**Tangle:** The Sprawl - Duplicate git parsing logic in `git-rogue` (git2 crawler), `git-landscape` (git2 history), `git-harmony` (Command diff), and `tectonic-git` (Command log).
+**Blueprint:** Created `crates/git-associates`, a shared crate using `git2` to handle history, diffs, and graph crawling. Refactored all 4 experiments to use it.
+**Stability:** Centralized git logic, standardized types (`Commit`, `FileChange`), and reduced code duplication.
+**Verification:** Verified with `cargo check` for all affected crates. Disabled `audio` feature by default in `git-harmony` and `git-landscape` to fix build issues with `alsa-sys`.

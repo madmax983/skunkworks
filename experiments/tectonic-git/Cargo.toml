@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ratatui = "0.30"
-crossterm = "0.28.1"
-anyhow = "1.0"
-rand = "0.8"
+ratatui.workspace = true
+crossterm.workspace = true
+anyhow.workspace = true
+rand.workspace = true
 chrono = "0.4"
+git-associates = { path = "../../crates/git-associates" }
