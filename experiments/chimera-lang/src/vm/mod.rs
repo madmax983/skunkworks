@@ -586,6 +586,8 @@ pub struct ChimeraVM {
     pub glitch_level: f32,
     #[cfg(feature = "nova")]
     pub logos_mode: bool,
+    #[cfg(feature = "nova")]
+    pub tablet: Vec<String>,
 }
 
 impl ChimeraVM {
@@ -856,6 +858,8 @@ impl ChimeraVM {
             glitch_level: 0.0,
             #[cfg(feature = "nova")]
             logos_mode: false,
+            #[cfg(feature = "nova")]
+            tablet: Vec::new(),
         }
     }
 
@@ -2274,7 +2278,9 @@ impl ChimeraVM {
             | OpCode::ParserSeq
             | OpCode::ParserAlt
             | OpCode::ParserMany
-            | OpCode::ParserOpt => {
+            | OpCode::ParserOpt
+            | OpCode::Generate
+            | OpCode::Scribe => {
                 babel::exec_babel_op(self, op, args);
                 None
             }

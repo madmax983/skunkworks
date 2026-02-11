@@ -1,5 +1,5 @@
 #![cfg(feature = "oracle")]
-use super::{ChimeraVM, Value};
+use super::{babel, ChimeraVM, Value};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use serde::{Deserialize, Serialize};
@@ -523,6 +523,25 @@ fn check_dynamic_predicates(
                             }
                         }
                         return true; // Handled
+                    }
+                }
+                "generate" => {
+                    // generate(Grammar, Output)
+                    if args.len() == 3 {
+                        let arg_grammar = &args[1];
+                        let arg_output = &args[2];
+
+                        // Resolve grammar (it might be a variable bound to a grammar, or a grammar literal)
+                        let resolved_grammar = resolve(arg_grammar, subst);
+
+                        // Generate
+                        let generated = babel::generate_string(&resolved_grammar);
+                        let fact_generated = Value::Str(generated);
+
+                        if let Some(new_subst) = unify(arg_output, &fact_generated, subst) {
+                            solve(remaining_goals, new_subst, kb, vm, solutions, depth + 1);
+                        }
+                        return true;
                     }
                 }
                 "energy" => {

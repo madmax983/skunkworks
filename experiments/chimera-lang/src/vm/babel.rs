@@ -3,6 +3,7 @@
 use super::{ChimeraVM, Value};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
+use rand::Rng;
 
 /// Executes Babel-related OpCodes.
 pub fn exec_babel_op(
@@ -11,6 +12,28 @@ pub fn exec_babel_op(
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
     match op {
+        OpCode::Generate => {
+            if let Some(grammar) = vm.stack.pop() {
+                let generated = generate_string(&grammar);
+                vm.stack.push(Value::Str(generated));
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Generate".to_string());
+            }
+        }
+        OpCode::Scribe => {
+            if let Some(val) = vm.stack.pop() {
+                let s = match val {
+                    Value::Str(s) => s,
+                    _ => format!("{}", val),
+                };
+                vm.tablet.push(s.clone());
+                vm.output.push(format!("SCRIBE: {}", s));
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for Scribe".to_string());
+            }
+        }
         OpCode::Grammar => {
             // Stack: [ ..., type_str, ...args ]
             if let Some(type_val) = vm.stack.pop() {
@@ -281,4 +304,65 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
     } else {
         Err(())
     }
+}
+
+/// Generates a string from a Grammar.
+pub fn generate_string(parser: &Value) -> String {
+    if let Value::Junction(JunctionType::Any, args) = parser {
+        if args.is_empty() {
+            return String::new();
+        }
+        if let Value::Str(type_str) = &args[0] {
+            let mut rng = rand::thread_rng();
+            match type_str.as_str() {
+                "Match" => {
+                    if args.len() >= 2 {
+                        if let Value::Str(pattern) = &args[1] {
+                            return pattern.clone();
+                        }
+                    }
+                }
+                "Regex" => {
+                    if args.len() >= 2 {
+                        if let Value::Str(pattern) = &args[1] {
+                            // Simple mock generation
+                            return format!("~{}~", pattern);
+                        }
+                    }
+                }
+                "Seq" => {
+                    let mut res = String::new();
+                    for child in args.iter().skip(1) {
+                        res.push_str(&generate_string(child));
+                    }
+                    return res;
+                }
+                "Alt" => {
+                    if args.len() > 1 {
+                        let idx = rng.gen_range(1..args.len());
+                        return generate_string(&args[idx]);
+                    }
+                }
+                "Many" => {
+                    if args.len() >= 2 {
+                        let count = rng.gen_range(0..4); // Generate 0-3 times
+                        let mut res = String::new();
+                        for _ in 0..count {
+                            res.push_str(&generate_string(&args[1]));
+                        }
+                        return res;
+                    }
+                }
+                "Opt" => {
+                    if args.len() >= 2 {
+                        if rng.gen_bool(0.5) {
+                            return generate_string(&args[1]);
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    String::new()
 }

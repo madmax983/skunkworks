@@ -3445,14 +3445,15 @@ fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints(
             [
                 Constraint::Length(3), // Pattern
                 Constraint::Length(3), // Input
-                Constraint::Min(0),    // Result
+                Constraint::Percentage(40),    // Result
+                Constraint::Percentage(40),    // Tablet
             ]
             .as_ref(),
         )
@@ -3498,6 +3499,21 @@ fn render_babel(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Match Result (Enter to Run)"),
     );
     f.render_widget(result_widget, chunks[2]);
+
+    let tablet_items: Vec<ListItem> = vm
+        .tablet
+        .iter()
+        .rev()
+        .take(20)
+        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Cyan)))
+        .collect();
+
+    let tablet_list = List::new(tablet_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("The Tablet (Glossolalia Output)"),
+    );
+    f.render_widget(tablet_list, chunks[3]);
 }
 
 fn render_microscope(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
