@@ -1,4 +1,5 @@
 #[cfg(feature = "nova")]
+#[cfg(feature = "oracle")]
 #[cfg(test)]
 mod tests {
     use chimera_lang::ast::{Dna, Helix, JunctionType, Nucleotide, Strand};

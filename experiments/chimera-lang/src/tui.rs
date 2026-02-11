@@ -6696,6 +6696,7 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  A/B/D (Math: + - /)"),
         Line::from("  M (Mutate), C (Clock)"),
         Line::from("  Q (Query), H (Harvest)"),
+        Line::from("  V (Vessel/Spawn)"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
