@@ -593,6 +593,62 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Ancestral redundancy. Superseded by `tectonic-git`. Biomass returned to the void.
 
+### [Concentration Level: STABLE TRAIL] - Location: experiments/broken-mirror
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Simulation active. Phase transition logic verified. Ready for optimization.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cosmic-strings
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Physics engine stable. 3D string vibration verified. Harmonic modes functional.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/crate-radar
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Dependency mapping operational. Polar coordinate rendering verified. Ecosystem scan complete.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/cymatic-lure
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compilation failure detected. `ratatui` backend error mismatch. Audio synthesis logic isolated.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fabric-limb
+- **Scent Origin:** Mycelium 🍄
+- **Status:** IK solver converged. FABRIK algorithm stable. Navigation interface ready for polish.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/firefly-synapse
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Swarm synchronization stable. 100k agents verified. Performance metrics optimal.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fluid-rain
+- **Scent Origin:** Mycelium 🍄
+- **Status:** SPH solver stable. Particle liquefaction logic verified. Viscosity parameters tuned.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fungal-balancer
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Load balancing logic active. Mycelial routing stable. Network topology verified.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-harmonograph
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Parametric drawing engine stable. Commit metadata parsing verified. Visualization ready.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/git-harmony
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Audio-visual translation stable. Diff parsing logic verified. Synesthesia engine active.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/market-flow
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Fluid dynamics engine stable. Order book simulation verified. Price discovery logic active.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/neuro-crab
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Spiking Neural Network stable. Limb kinematics verified. Raster plot visualization active.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/primordial-soup
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Ecosystem simulation stable. SPH fluid dynamics coupled with biological agents. Evolutionary logic verified.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/tesseract-timeseries
+- **Scent Origin:** Mycelium 🍄
+- **Status:** 4D projection engine stable. Rotor4 math verified. Time series visualization active.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/klein-fs
@@ -602,10 +658,6 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/poincare-crawl
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
-
-### [Concentration Level: CONDEMNED] - Location: experiments/glyph-terrain
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Resurrected zombie. Documentation void.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/hyphal-commute
 - **Scent Origin:** The Reaper ☠️
@@ -638,14 +690,6 @@
 ### [Concentration Level: EVAPORATING] - Location: experiments/system-bio-dome
 - **Scent Origin:** Mycelium 🍄
 - **Status:** IO Result mismatch resolved. The dome is sealed.
-
-### [Concentration Level: EVAPORATING] - Location: experiments/type-oscillator
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Pardoned. Vitality restored. Documentation confirmed.
-
-### [Concentration Level: EVAPORATING] - Location: experiments/typo-rain
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Pardoned. Documentation verified.
 
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-harp
