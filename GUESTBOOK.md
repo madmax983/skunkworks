@@ -579,9 +579,13 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/poincare-crawl
+### [Concentration Level: CONDEMNED] - Location: experiments/klein-fs
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Redundant with `klein-magnetron`. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/poincare-crawl
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/glyph-terrain
 - **Scent Origin:** The Reaper ☠️
