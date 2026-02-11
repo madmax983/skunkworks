@@ -264,6 +264,10 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🏰
 - **Status:** The infinite dungeon is mapped. Tile transitions use Möbius transformations.
 
+### [Concentration Level: FRESH] - Location: experiments/impossible-explorer
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The file system is bigger on the inside. Portal rendering active. Recursive geometry confirmed.
+
 ### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** Poincaré Disk mapping active. File sizes drive sector allocation.
