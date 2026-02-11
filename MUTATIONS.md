@@ -748,4 +748,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: ChimeraVM organisms inhabiting a Coupled Map Lattice (CML). Agents feed on the logistic map values and can modify the local chaos parameter `r`.
 - **Novel trait**: Chaos Terraforming. Biological agents modifying the mathematical constants of their universe to survive.
 - **Status**: experiments/chimera-chaos
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Verified by The Splice Surgeon. TUI operational.
+
+### hydro-brain
+- **Parents**: experiments/neuro-terminal + experiments/fluid-rain
+- **Concept**: A "Hydraulic Neural Network" where information flow is fluid flow. Neurons are buckets, spikes are splashes.
+- **Novel trait**: Analog Hydraulic Computing. The physics of the medium (fluid) determines the temporal properties of the computation.
+- **Status**: experiments/hydro-brain
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

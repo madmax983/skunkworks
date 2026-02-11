@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/hydro-brain
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.
+
 ### [Concentration Level: TOXIC] - Location: experiments/code-pattern
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void. Swarm silence.
