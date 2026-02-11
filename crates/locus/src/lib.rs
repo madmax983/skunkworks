@@ -511,6 +511,9 @@ impl Topology {
         width: usize,
         height: usize,
     ) -> Option<(usize, usize)> {
+        if width == 0 || height == 0 {
+            return None;
+        }
         let w = width as i64;
         let h = height as i64;
         match self {
@@ -667,5 +670,24 @@ mod topology_tests {
         // twist y: 9 - 12 = -3.
         // -3 out of bounds. -> None.
         assert_eq!(topo.normalize(12, 10, width, height), None);
+    }
+
+    #[test]
+    fn test_zero_dimensions() {
+        let topos = [
+            Topology::Plane,
+            Topology::Torus,
+            Topology::CylinderH,
+            Topology::CylinderV,
+            Topology::Klein,
+            Topology::Mobius,
+            Topology::Hyperbolic,
+        ];
+
+        for topo in topos {
+            assert_eq!(topo.normalize(0, 0, 0, 10), None);
+            assert_eq!(topo.normalize(0, 0, 10, 0), None);
+            assert_eq!(topo.normalize(0, 0, 0, 0), None);
+        }
     }
 }
