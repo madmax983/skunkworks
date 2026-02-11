@@ -151,7 +151,8 @@ fn diffuse_scalar_grid<F>(
                     continue;
                 }
 
-                if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, size, size) {
+                if let Some((ny, nx)) = topology.normalize(y as i64 + dy, x as i64 + dx, size, size)
+                {
                     let (w_dy, w_dx) = wind[ny][nx];
                     // Wind flow from neighbor (ny, nx) to here (y, x).
                     let flow = -(w_dy as i128 * dy as i128 + w_dx as i128 * dx as i128);

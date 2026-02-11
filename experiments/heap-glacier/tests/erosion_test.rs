@@ -4,7 +4,10 @@ use heap_glacier::simulation::HeapTerrain;
 fn test_allocation_increases_ice() {
     let mut terrain = HeapTerrain::new(10, 10);
     terrain.allocate(5, 5, 5.0);
-    assert!(terrain.get_ice(5, 5) > 0.0, "Ice should increase after allocation");
+    assert!(
+        terrain.get_ice(5, 5) > 0.0,
+        "Ice should increase after allocation"
+    );
 }
 
 #[test]
@@ -15,7 +18,10 @@ fn test_deallocation_creates_water() {
     terrain.allocate(5, 5, 5.0);
 
     terrain.deallocate(5, 5, 5.0);
-    assert!(terrain.get_water(5, 5) > 0.0, "Water should appear after deallocation");
+    assert!(
+        terrain.get_water(5, 5) > 0.0,
+        "Water should appear after deallocation"
+    );
 }
 
 #[test]
@@ -31,5 +37,8 @@ fn test_erosion_lowers_bedrock() {
     // Run simulation
     terrain.tick();
 
-    assert!(terrain.get_bedrock(5, 5) < initial_bedrock, "Bedrock should erode under water flow");
+    assert!(
+        terrain.get_bedrock(5, 5) < initial_bedrock,
+        "Bedrock should erode under water flow"
+    );
 }

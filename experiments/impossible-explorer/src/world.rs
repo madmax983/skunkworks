@@ -32,14 +32,16 @@ impl Room {
             vec3(0.0, -self.size.y / 2.0 - 0.5, 0.0),
             vec3(self.size.x, 1.0, self.size.z),
             GRAY,
-            pos, rot
+            pos,
+            rot,
         );
         // Ceiling
         draw_transformed_cube(
             vec3(0.0, self.size.y / 2.0 + 0.5, 0.0),
             vec3(self.size.x, 1.0, self.size.z),
             DARKGRAY,
-            pos, rot
+            pos,
+            rot,
         );
 
         let wall_thickness = 1.0;
@@ -47,31 +49,35 @@ impl Room {
         // Walls
         // Back
         draw_transformed_cube(
-            vec3(0.0, 0.0, -self.size.z / 2.0 - wall_thickness/2.0),
+            vec3(0.0, 0.0, -self.size.z / 2.0 - wall_thickness / 2.0),
             vec3(self.size.x, self.size.y, wall_thickness),
             self.color,
-            pos, rot
+            pos,
+            rot,
         );
         // Front
         draw_transformed_cube(
-            vec3(0.0, 0.0, self.size.z / 2.0 + wall_thickness/2.0),
+            vec3(0.0, 0.0, self.size.z / 2.0 + wall_thickness / 2.0),
             vec3(self.size.x, self.size.y, wall_thickness),
             self.color,
-            pos, rot
+            pos,
+            rot,
         );
         // Left
         draw_transformed_cube(
-            vec3(-self.size.x / 2.0 - wall_thickness/2.0, 0.0, 0.0),
+            vec3(-self.size.x / 2.0 - wall_thickness / 2.0, 0.0, 0.0),
             vec3(wall_thickness, self.size.y, self.size.z),
             self.color,
-            pos, rot
+            pos,
+            rot,
         );
         // Right
         draw_transformed_cube(
-            vec3(self.size.x / 2.0 + wall_thickness/2.0, 0.0, 0.0),
+            vec3(self.size.x / 2.0 + wall_thickness / 2.0, 0.0, 0.0),
             vec3(wall_thickness, self.size.y, self.size.z),
             self.color,
-            pos, rot
+            pos,
+            rot,
         );
 
         // Render Portal Frames (Wireframe only for now, manual transform tricky for wires)
@@ -83,11 +89,12 @@ impl Room {
             // Or just draw small cubes at corners
             // For MVP, skip wires if rotation is used, or implement wires transform
             // Let's just draw a transformed cube for frame
-             draw_transformed_cube(
+            draw_transformed_cube(
                 portal.pos,
                 vec3(portal.size.x, portal.size.y, 0.2),
                 BLACK,
-                pos, rot
+                pos,
+                rot,
             );
         }
     }
@@ -103,19 +110,22 @@ fn draw_transformed_cube(local_pos: Vec3, size: Vec3, color: Color, world_pos: V
 
     let corners = [
         vec3(-1.0, -1.0, -1.0),
-        vec3( 1.0, -1.0, -1.0),
-        vec3( 1.0,  1.0, -1.0),
-        vec3(-1.0,  1.0, -1.0),
-        vec3(-1.0, -1.0,  1.0),
-        vec3( 1.0, -1.0,  1.0),
-        vec3( 1.0,  1.0,  1.0),
-        vec3(-1.0,  1.0,  1.0),
+        vec3(1.0, -1.0, -1.0),
+        vec3(1.0, 1.0, -1.0),
+        vec3(-1.0, 1.0, -1.0),
+        vec3(-1.0, -1.0, 1.0),
+        vec3(1.0, -1.0, 1.0),
+        vec3(1.0, 1.0, 1.0),
+        vec3(-1.0, 1.0, 1.0),
     ];
 
-    let vertices: Vec<Vec3> = corners.iter().map(|c| {
-        let p = local_pos + *c * half_size;
-        rot * p + world_pos
-    }).collect();
+    let vertices: Vec<Vec3> = corners
+        .iter()
+        .map(|c| {
+            let p = local_pos + *c * half_size;
+            rot * p + world_pos
+        })
+        .collect();
 
     // Draw 6 faces as quads (2 triangles each)
     // Indices for triangles
@@ -134,8 +144,8 @@ fn draw_transformed_cube(local_pos: Vec3, size: Vec3, color: Color, world_pos: V
 
     for i in (0..indices.len()).step_by(3) {
         let v1 = vertices[indices[i]];
-        let v2 = vertices[indices[i+1]];
-        let v3 = vertices[indices[i+2]];
+        let v2 = vertices[indices[i + 1]];
+        let v3 = vertices[indices[i + 2]];
 
         // Use wireframe for "Tron" aesthetic and simplicity
         draw_line_3d(v1, v2, color);

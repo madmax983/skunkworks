@@ -91,7 +91,8 @@ pub fn exec_akashic_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                                     vm.energy = vm.energy.saturating_sub(10);
                                 }
                                 Err(e) => {
-                                    vm.output.push(format!("Error: Akashic Write Failed: {}", e));
+                                    vm.output
+                                        .push(format!("Error: Akashic Write Failed: {}", e));
                                 }
                             }
                         }

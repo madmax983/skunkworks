@@ -1,4 +1,4 @@
-use crate::world::{Room, Portal};
+use crate::world::{Portal, Room};
 use macroquad::prelude::*;
 use std::fs;
 use std::path::Path;
@@ -48,18 +48,22 @@ pub fn scan_dir(path: &Path) -> Room {
                     let size = vec2(2.5, 4.0); // Door size
 
                     match wall_idx {
-                        0 => { // Back Wall (Negative Z)
+                        0 => {
+                            // Back Wall (Negative Z)
                             pos = vec3(wall_offset, -2.0, -room_size.z / 2.0);
-                        },
-                        1 => { // Right Wall (Positive X)
+                        }
+                        1 => {
+                            // Right Wall (Positive X)
                             pos = vec3(room_size.x / 2.0, -2.0, wall_offset);
-                        },
-                        2 => { // Front Wall (Positive Z)
+                        }
+                        2 => {
+                            // Front Wall (Positive Z)
                             pos = vec3(-wall_offset, -2.0, room_size.z / 2.0);
-                        },
-                        3 => { // Left Wall (Negative X)
+                        }
+                        3 => {
+                            // Left Wall (Negative X)
                             pos = vec3(-room_size.x / 2.0, -2.0, -wall_offset);
-                        },
+                        }
                         _ => {}
                     }
 
