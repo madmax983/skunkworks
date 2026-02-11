@@ -523,3 +523,53 @@ sequenceDiagram
         VM->>VM: push(0)
     end
 ```
+
+### Nova Feature: Oracle (ADR 021)
+
+The Oracle module provides a Prolog-like inference engine, allowing the VM to query its own state and perform logical reasoning.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Oracle
+    participant KB as Knowledge Base
+
+    Note over VM: OpCode::Query(Goal)
+    VM->>Oracle: solve(Goal)
+    Oracle->>KB: fetch_facts()
+    loop Unification
+        Oracle->>Oracle: unify(Goal, Fact)
+        alt Success
+            Oracle-->>VM: push(Solution)
+        else Failure
+            Oracle->>Oracle: backtrack()
+        end
+    end
+
+    Note over VM: OpCode::Seek(Predicate)
+    VM->>Oracle: solve(has_feature(?Target, Predicate))
+    Oracle-->>VM: bind(?Target = StrandIdx)
+    VM->>VM: jump_to(StrandIdx)
+```
+
+### Nova Feature: Incubator (ADR 022)
+
+The Incubator system enables the environment to influence the genome ("Abiogenesis") and allows organisms to edit their own DNA ("CRISPR").
+
+```mermaid
+stateDiagram-v2
+    state Environment {
+        GridCells
+    }
+    state Genome {
+        Strand_A
+        Strand_B
+    }
+
+    [*] --> Environment
+    Environment --> Genome : Incubate(Grid -> Code)
+    Genome --> Genome : CRISPR (Cut/Splice/Edit)
+    Genome --> Offspring : Mitosis (Clone)
+    Genome --> Offspring : Splice (Crossover)
+    Offspring --> [*] : Apoptosis
+```
