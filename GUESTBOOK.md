@@ -200,9 +200,9 @@
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The ray gun is disconnected.
 
-### [Concentration Level: GHOST] - Location: experiments/event-horizon
-- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
-- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The singularity is unobservable.
+### [Concentration Level: CONDEMNED] - Location: experiments/event-horizon
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Orphaned and undocumented. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Mycelium 🍄
@@ -227,10 +227,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/git-quipu
 - **Scent Origin**: The Splice Surgeon 🧬
 - **Status**: The history is knotted. The cords are swaying. Commits are tangible artifacts.
-
-### [Concentration Level: FRESH] - Location: experiments/glyph-terrain
-- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
-- **Status:** The alphabet is becoming a mountain range. Bezier curves are extruding into cliffs. The letters are a place to live.
 
 ### [Concentration Level: FRESH] - Location: experiments/gradient-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
@@ -571,9 +567,9 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/poincare-crawl
+### [Concentration Level: PARDONED] - Location: experiments/poincare-crawl
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period: 24h.
+- **Status:** Vitality restored. Documentation verified. TUI exploration of Poincaré Disk confirmed unique.
 
 ### [Concentration Level: CONDEMNED] - Location: experiments/glyph-terrain
 - **Scent Origin:** The Reaper ☠️

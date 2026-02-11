@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **poincare-crawl**: Specimen condemned. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period: 24h.
+- **event-horizon**: Specimen condemned. Orphaned and undocumented. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
