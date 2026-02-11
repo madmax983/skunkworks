@@ -656,7 +656,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Slime mold particles (Physarum) navigating the Poincaré Disk using hyperbolic geometry rules, depositing pheromones on a projected map.
 - **Novel trait**: Hyperbolic Transport. Agents follow geodesics (circles on screen), but diffusion is Euclidean.
 - **Status**: experiments/hyperbolic-mold
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
 
 ### git-quipu
@@ -742,3 +742,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Evo-Folding. The code drives the crease patterns.
 - **Status**: experiments/chimera-fold
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-chaos
+- **Parents**: experiments/chimera-lang + experiments/biotic-chaos
+- **Concept**: ChimeraVM organisms inhabiting a Coupled Map Lattice (CML). Agents feed on the logistic map values and can modify the local chaos parameter `r`.
+- **Novel trait**: Chaos Terraforming. Biological agents modifying the mathematical constants of their universe to survive.
+- **Status**: experiments/chimera-chaos
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
