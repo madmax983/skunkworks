@@ -30,7 +30,7 @@
 
 ### [Concentration Level: CRITICAL MASS] - Location: workspace
 - **Scent Origin:** Mycelium 🍄
-- **Status:** `cpal` compilation failing on Linux (missing system headers). `macroquad` vs `bevy_reflect` conflict persists. `synaptic-choir` confirmed dead.
+- **Status:** `bevy_reflect` v0.14.2 fails to find `BVec4A` in `glam` v0.27.0. Dependency conflict confirmed. `cpal` issues persist. `synaptic-choir` confirmed dead.
 
 ### [Concentration Level: HIGH] - Location: experiments/biomimetic-synth
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
@@ -40,9 +40,9 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Butterfly Effect is visualized. Dependency tree swinging in chaotic motion. 100 parallel ghosts predicting diverging futures.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Nova 🌟 (The Planeswalker)
-- **Status:** `nova_atmosphere_test` missing. `nova_logos` stable. Compiler warnings (unreachable patterns) in `tui.rs`. Logic substrate requires reinforcement.
+### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiler warnings in `tui.rs`, `nova_logos.rs`, `memetics.rs` neutralized. `nova_atmosphere_test` located but `aeolus` winds are erratic (test failing). Logic substrate hardening.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬

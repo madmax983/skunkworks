@@ -294,7 +294,7 @@ pub fn exec_memetics_op(
                                 if let Value::Str(s) = &mut vm.grid[y][x] {
                                     if !s.is_empty() {
                                         // Simple mutation: bitflip a char
-                                        let idx = rng.gen_range(0..s.len());
+                                        let _idx = rng.gen_range(0..s.len());
                                         // Rust strings are utf8, modifying in place is hard.
                                         // Just replace with random char or "GLITCH"
                                         *s = format!("GLITCH_{}", rng.gen_range(0..999));

@@ -4167,7 +4167,6 @@ mod nova_sequencer_test;
 #[cfg(test)]
 mod sentry_value_test {
     use super::*;
-    use crate::ast::{Dna, Helix};
 
     #[test]
     fn test_value_depth() {

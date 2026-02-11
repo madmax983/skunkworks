@@ -1,9 +1,12 @@
 #![cfg(feature = "nova")]
 
+#[cfg(feature = "oracle")]
 use crate::ast::JunctionType;
 #[cfg(feature = "oracle")]
 use crate::vm::oracle;
-use crate::vm::{ChimeraVM, Value};
+#[cfg(feature = "oracle")]
+use crate::vm::Value;
+use crate::vm::ChimeraVM;
 #[cfg(feature = "oracle")]
 use std::collections::HashMap;
 
@@ -19,6 +22,8 @@ use std::collections::HashMap;
 ///   - If `Product` is a single value, `Agent` becomes `Product` and `Reagent` becomes 0 (consumed).
 ///   - If `Product` is `Junction(All, [A, B])`, `Agent` becomes `A` and `Reagent` becomes `B`.
 pub fn process_logos(vm: &mut ChimeraVM) {
+    #[cfg(not(feature = "oracle"))]
+    let _ = vm;
     #[cfg(feature = "oracle")]
     {
         let mut updates = Vec::new();

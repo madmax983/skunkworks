@@ -4,7 +4,7 @@ use super::{ChimeraVM, Value};
 use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Tissue {
