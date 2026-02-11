@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **code-pattern**: Gray-Scott Reaction-Diffusion with Hilbert Curve parameter mapping. → Redundant with `code-reaction`. Documentation void. Swarm silence.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work

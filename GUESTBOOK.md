@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/code-pattern
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void. Swarm silence.
+
 ### [Concentration Level: FRESH] - Location: experiments/swap-meet
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The market is open. Memory blocks are being auctioned. Rent diffusion is creating gentrified heap addresses. Bankruptcy events triggering massive garbage collection.
