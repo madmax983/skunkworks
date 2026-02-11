@@ -479,31 +479,97 @@ mod tests {
 
 /// Represents the topology of a grid or space.
 ///
-/// Determines how coordinates wrap or bound at the edges.
+/// Determines how coordinates wrap or bound at the edges. This allows for simulating
+/// different geometric surfaces (like a donut-shaped world or a Klein bottle)
+/// using a simple 2D grid.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Topology {
-    Plane,      // 0: Bounded. Edges are walls.
-    Torus,      // 1: Wraps X and Y.
-    CylinderH,  // 2: Wraps X, Bounded Y.
-    CylinderV,  // 3: Bounded X, Wraps Y.
-    Klein,      // 4: Wraps X, Wraps Y with twist (x' = W-1-x).
-    Mobius,     // 5: Wraps X with twist, Bounded Y.
-    Hyperbolic, // 6: Poincaré Disk model mapping (handled externally or treated as bounded).
+    /// **Plane**: A standard bounded grid.
+    ///
+    /// Edges are hard walls. Coordinates outside `[0, width)` or `[0, height)` are invalid.
+    Plane,
+
+    /// **Torus**: Wraps both X and Y.
+    ///
+    /// * `x` wraps to `x % width`
+    /// * `y` wraps to `y % height`
+    ///
+    /// This simulates a world where walking off the right edge brings you to the left,
+    /// and walking off the bottom brings you to the top.
+    Torus,
+
+    /// **Horizontal Cylinder**: Wraps X (Horizontal), Bounded Y (Vertical).
+    ///
+    /// The grid forms a tube running horizontally.
+    /// * `x` wraps around.
+    /// * `y` is bounded (hard walls at top/bottom).
+    CylinderH,
+
+    /// **Vertical Cylinder**: Bounded X (Horizontal), Wraps Y (Vertical).
+    ///
+    /// The grid forms a tube running vertically.
+    /// * `x` is bounded (hard walls at left/right).
+    /// * `y` wraps around.
+    CylinderV,
+
+    /// **Klein Bottle**: Wraps X normally. Wraps Y with a twist in X.
+    ///
+    /// A non-orientable surface.
+    /// * `x` wraps normally (`x % width`).
+    /// * `y` wraps (`y % height`), but if it wraps, `x` is mirrored: `x' = (width - 1) - x`.
+    Klein,
+
+    /// **Möbius Strip**: Wraps X with a twist, Bounded Y.
+    ///
+    /// A non-orientable surface with a boundary.
+    /// * If `x` wraps (off left/right), `y` is mirrored: `y' = (height - 1) - y`.
+    /// * `y` is bounded (cannot wrap).
+    Mobius,
+
+    /// **Hyperbolic**: Poincaré Disk model mapping.
+    ///
+    /// Typically handled externally or treated as bounded.
+    Hyperbolic,
 }
 
 impl Topology {
     /// Normalizes coordinates based on the topology and grid size.
     ///
-    /// Returns `Some((y, x))` if the coordinates are valid or wrapped.
+    /// This function takes arbitrary signed coordinates (which may be negative or
+    /// larger than the grid dimensions) and maps them to a valid `(row, col)` index
+    /// within the grid, if possible.
+    ///
+    /// Returns `Some((row, col))` (i.e., `(y, x)`) if the coordinates are valid or successfully wrapped.
     /// Returns `None` if the coordinates are out of bounds (for bounded topologies).
     ///
     /// # Arguments
     ///
     /// * `y` - The Y coordinate (row).
     /// * `x` - The X coordinate (column).
-    /// * `width` - The width of the grid.
-    /// * `height` - The height of the grid.
+    /// * `width` - The width of the grid (number of columns).
+    /// * `height` - The height of the grid (number of rows).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use locus::Topology;
+    ///
+    /// // Torus wraps both dimensions
+    /// let topo = Topology::Torus;
+    /// // (-1, -1) wraps to (height-1, width-1)
+    /// assert_eq!(topo.normalize(-1, -1, 10, 10), Some((9, 9)));
+    ///
+    /// // Plane returns None for out of bounds
+    /// let plane = Topology::Plane;
+    /// assert_eq!(plane.normalize(-1, 0, 10, 10), None);
+    ///
+    /// // Klein bottle twists X when Y wraps
+    /// let klein = Topology::Klein;
+    /// // Moving off the top edge (y=-1) wraps to bottom (y=9)
+    /// // AND flips the X coordinate (x=2 becomes x=10-1-2 = 7)
+    /// assert_eq!(klein.normalize(-1, 2, 10, 10), Some((9, 7)));
+    /// ```
     pub fn normalize(&self, y: i64, x: i64, width: usize, height: usize) -> Option<(usize, usize)> {
         let w = width as i64;
         let h = height as i64;
