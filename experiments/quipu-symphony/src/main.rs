@@ -1,7 +1,6 @@
 #![allow(dead_code, unused_imports)]
 
 mod audio;
-mod quipu;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
@@ -21,7 +20,7 @@ use std::{
 use tui_shared::Tui;
 
 use crate::audio::{AudioEngine, AudioEvent};
-use crate::quipu::{Cord, Knot};
+use quipu::{Cord, Knot};
 
 struct CordTrack {
     cord: Cord,

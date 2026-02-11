@@ -1,4 +1,4 @@
-use quipu_serializer::quipu::{Cord, Knot};
+use quipu::{Cord, Knot};
 
 #[test]
 fn test_addition() {

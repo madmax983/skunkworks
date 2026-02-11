@@ -1,4 +1,4 @@
-use crate::quipu::{Cord, Quipu};
+use quipu::{Cord, Quipu};
 use serde::{ser, Serialize};
 use std::fmt::Display;
 use thiserror::Error;

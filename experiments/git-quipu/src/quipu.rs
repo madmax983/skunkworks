@@ -1,26 +1,5 @@
 use crate::git_loader::CommitData;
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Knot {
-    Simple,      // Used for higher powers (10s, 100s) or counts
-    Long(u8),    // Used for units 2-9
-    FigureEight, // Used for unit 1
-}
-
-impl Knot {
-    pub fn value(&self) -> u8 {
-        match self {
-            Knot::Simple => 1, // Or 10 depending on context, but base value 1
-            Knot::Long(v) => *v,
-            Knot::FigureEight => 1,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct Cord {
-    pub clusters: Vec<Vec<Knot>>,
-}
+pub use quipu::{Cord, Knot};
 
 #[derive(Debug, Clone)]
 pub struct CommitCord {

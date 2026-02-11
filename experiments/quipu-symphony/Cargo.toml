@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+quipu = { workspace = true }
 anyhow = { workspace = true }
 crossbeam-channel = "0.5"
 crossterm = { workspace = true }
