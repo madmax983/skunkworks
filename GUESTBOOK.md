@@ -164,6 +164,10 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The Differential is summing. Keys are grinding against the plaintext. The Enigma is mechanical.
 
+### [Concentration Level: FRESH] - Location: experiments/chronos-cipher
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The escapement is regulating the cryptographic stream. Prime-numbered gears are grinding keys from the physics simulation.
+
 ### [Concentration Level: FRESH] - Location: experiments/clockwork-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The mainspring is wound. The escapement is ticking. The machine breathes.
