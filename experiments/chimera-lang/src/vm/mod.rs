@@ -1269,6 +1269,20 @@ impl ChimeraVM {
             nova::OrganelleType::Choir => {
                 self.process_choir_organelle(organelle);
             }
+            nova::OrganelleType::Philosopher => {
+                if self.tick_counter % 10 == 0 {
+                    #[cfg(feature = "oracle")]
+                    {
+                        oracle::exec_oracle_op(self, OpCode::Divinate, &[]);
+                        if let Some(Value::Int(n)) = self.stack.pop() {
+                            if n > 0 {
+                                self.energy = self.energy.saturating_add(n * 5);
+                                self.output.push("PHILOSOPHER: Verified Truth!".to_string());
+                            }
+                        }
+                    }
+                }
+            }
             nova::OrganelleType::Worker => {}
         }
 

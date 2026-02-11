@@ -74,6 +74,16 @@ pub fn analyze_traits(strand: &Strand) -> Vec<String> {
             traits.push("Phased".to_string());
         }
     }
+    if let Some(&count) = op_counts.get(&OpCode::Augury) {
+        if count > 0 {
+            traits.push("Prophetic".to_string());
+        }
+    }
+    if let Some(&count) = op_counts.get(&OpCode::Divinate) {
+        if count > 0 {
+            traits.push("Prophetic".to_string());
+        }
+    }
 
     if traits.is_empty() {
         traits.push("Dormant".to_string());
@@ -118,6 +128,8 @@ pub fn generate_name(seed: u64, traits: &[String]) -> String {
         "Siren"
     } else if traits.contains(&"Dreamer".to_string()) {
         "Visionary"
+    } else if traits.contains(&"Prophetic".to_string()) {
+        "Oracle"
     } else {
         nouns[rng.gen_range(0..nouns.len())]
     };
@@ -139,6 +151,8 @@ pub fn generate_face(seed: u64, traits: &[String]) -> Vec<String> {
         ["x", "x"]
     } else if traits.contains(&"Phased".to_string()) {
         ["@", "@"]
+    } else if traits.contains(&"Prophetic".to_string()) {
+        ["*", "*"]
     } else {
         [".", "."]
     };

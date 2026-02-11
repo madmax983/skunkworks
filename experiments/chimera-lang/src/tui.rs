@@ -4043,6 +4043,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => Color::Green,
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
+                        crate::vm::nova::OrganelleType::Philosopher => Color::Magenta,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -4055,6 +4056,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => "S",
                         crate::vm::nova::OrganelleType::Choir => "♫",
                         crate::vm::nova::OrganelleType::Wisp => "*",
+                        crate::vm::nova::OrganelleType::Philosopher => "P",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
@@ -4773,6 +4775,15 @@ fn render_grimoire(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             );
             for res in &app_state.query_results {
                 kb_items.push(ListItem::new(res.clone()).style(Style::default().fg(Color::Cyan)));
+            }
+        }
+
+        if !vm.omens.is_empty() {
+            kb_items.push(
+                ListItem::new("--- Active Omens ---").style(Style::default().fg(Color::Yellow)),
+            );
+            for omen in &vm.omens {
+                kb_items.push(ListItem::new(format!("If {} Then {}", omen.condition, omen.effect)).style(Style::default().fg(Color::LightMagenta)));
             }
         }
 
