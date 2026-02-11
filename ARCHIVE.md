@@ -1,5 +1,4 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **klein-fs**: Specimen condemned. Documentation void. Redundant with `klein-magnetron`/`repo-rover`. Skeletal implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **klein-fs**: Specimen executed. Documentation void. Redundant with `klein-magnetron`/`repo-rover`. Skeletal implementation. Grace period expired. Moved to graveyard.
 - **poincare-crawl**: Specimen executed. Redundant with `hyperbolic-dungeon` and `hyperbolic-space`. TUI sketch. Grace period expired. Moved to graveyard.
 - **storm-monitor**: Specimen executed. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period expired. Moved to graveyard.
 - **synaptic-choir**: Specimen executed. Terminal build failure (alsa-sys). Documentation void. Moved to graveyard.

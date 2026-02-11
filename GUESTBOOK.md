@@ -591,9 +591,9 @@
 
 ## History/Decay
 
-### [Concentration Level: CONDEMNED] - Location: experiments/klein-fs
+### [Concentration Level: TOXIC] - Location: graveyard/klein-fs
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `klein-magnetron`. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Redundant with `klein-magnetron`. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/poincare-crawl
 - **Scent Origin:** The Reaper ☠️
