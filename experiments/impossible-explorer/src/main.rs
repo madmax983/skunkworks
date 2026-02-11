@@ -1,9 +1,10 @@
 mod fs_system;
+mod safe_gl;
 mod world;
 
 use fs_system::scan_dir;
-use macroquad::miniquad::gl;
 use macroquad::prelude::*;
+use safe_gl::{clear_depth_buffer, ScopedScissor};
 use world::{Portal, Room};
 
 const MOVE_SPEED: f32 = 0.2;
@@ -295,38 +296,27 @@ fn render_scene(
                     continue;
                 }
 
-                unsafe {
-                    gl::glEnable(gl::GL_SCISSOR_TEST);
-                    gl::glScissor(rect.0, rect.1, rect.2, rect.3);
-                    gl::glClear(gl::GL_DEPTH_BUFFER_BIT);
-                }
+                {
+                    let _guard = ScopedScissor::new(rect.0, rect.1, rect.2, rect.3, parent_scissor);
+                    clear_depth_buffer();
 
-                let target_rot = total_portal_rot;
-                let target_entrance_local = vec3(0.0, -2.0, target_room.size.z / 2.0);
+                    let target_rot = total_portal_rot;
+                    let target_entrance_local = vec3(0.0, -2.0, target_room.size.z / 2.0);
 
-                let target_pos = portal_world_pos - (target_rot * target_entrance_local);
+                    let target_pos = portal_world_pos - (target_rot * target_entrance_local);
 
-                render_scene(
-                    target_room,
-                    target_pos,
-                    target_rot,
-                    depth - 1,
-                    camera,
-                    cam_obj,
-                    Some(rect),
-                );
+                    render_scene(
+                        target_room,
+                        target_pos,
+                        target_rot,
+                        depth - 1,
+                        camera,
+                        cam_obj,
+                        Some(rect),
+                    );
 
-                // Flush the inner room walls before restoring scissor
-                set_camera(cam_obj);
-
-                if let Some(parent) = parent_scissor {
-                    unsafe {
-                        gl::glScissor(parent.0, parent.1, parent.2, parent.3);
-                    }
-                } else {
-                    unsafe {
-                        gl::glDisable(gl::GL_SCISSOR_TEST);
-                    }
+                    // Flush the inner room walls before restoring scissor
+                    set_camera(cam_obj);
                 }
             }
         }
@@ -409,4 +399,22 @@ fn calculate_scissor_rect(
     let w = (max_x - min_x) as i32;
 
     Some((x, y, w, h))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_intersect_rect() {
+        let r1 = (0, 0, 100, 100);
+        let r2 = (50, 50, 100, 100);
+        let intersection = intersect_rect(r1, r2);
+        assert_eq!(intersection, (50, 50, 50, 50));
+
+        let r3 = (200, 200, 50, 50);
+        let intersection_none = intersect_rect(r1, r3);
+        assert_eq!(intersection_none.2, 0);
+        assert_eq!(intersection_none.3, 0);
+    }
 }
