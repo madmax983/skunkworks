@@ -1,6 +1,35 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, Value};
+use crate::opcode::OpCode;
+use rand::seq::SliceRandom;
+
+pub fn get_synonym(op: &OpCode) -> Option<String> {
+    let synonyms = match op {
+        OpCode::Push => vec!["Shove", "Thrust", "Inject", "Place", "Deposit"],
+        OpCode::Add => vec!["Sum", "Plus", "Combine", "Total", "Augment"],
+        OpCode::Sub => vec!["Minus", "Reduce", "Deduct", "Lower", "Diminish"],
+        OpCode::Mul => vec!["Scale", "Grow", "Magnify", "Product", "Expand"],
+        OpCode::Div => vec!["Split", "Fracture", "Slice", "Share", "Cleave"],
+        OpCode::Jump => vec!["Leap", "Bound", "Hop", "Skip", "Fly"],
+        OpCode::Print => vec!["Say", "Yell", "Scream", "Whisper", "Echo"],
+        OpCode::Meme => vec!["Idea", "Thought", "Concept", "Virus", "Message"],
+        OpCode::Drift => vec!["Shift", "Wander", "Evolve", "Mutate", "Flow"],
+        OpCode::Consume => vec!["Eat", "Devour", "Absorb", "Ingest", "Feast"],
+        OpCode::Photosynthesize => vec!["Bask", "Absorb", "Recharge", "Sunbathe", "Bloom"],
+        OpCode::GRead => vec!["Peek", "Scan", "Observe", "View", "Inspect"],
+        OpCode::GWrite => vec!["Paint", "Draw", "Etch", "Carve", "Scribe"],
+        OpCode::Brz => vec!["Zero?", "Empty?", "Void?", "Nothing?"],
+        _ => vec![],
+    };
+
+    if synonyms.is_empty() {
+        None
+    } else {
+        let mut rng = rand::thread_rng();
+        synonyms.choose(&mut rng).map(|s| s.to_string())
+    }
+}
 
 /// Calculates the Levenshtein distance between two strings.
 ///

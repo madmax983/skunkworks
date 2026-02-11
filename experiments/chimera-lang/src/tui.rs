@@ -4599,7 +4599,7 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .constraints([Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(34)].as_ref())
         .split(f.area());
 
     // Left: Meme Pool
@@ -4623,7 +4623,7 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         List::new(meme_items).block(Block::default().borders(Borders::ALL).title("Meme Pool"));
     f.render_widget(meme_list, chunks[0]);
 
-    // Right: Dialect (Shibboleths)
+    // Middle: Dialect (Shibboleths)
     // Show dialect for CURRENT strand (ip.0)
     let s_idx = vm.ip.0;
     let mut dialect_items = Vec::new();
@@ -4649,6 +4649,25 @@ fn render_memetics(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             .title(format!("Dialect (Strand {})", s_idx)),
     );
     f.render_widget(dialect_list, chunks[1]);
+
+    // Right: Vocabulary (Global Drift)
+    let mut vocab_items = Vec::new();
+    if vm.vocabulary.is_empty() {
+        vocab_items.push(ListItem::new("Standard Vocabulary"));
+    } else {
+        let mut keys: Vec<_> = vm.vocabulary.keys().collect();
+        keys.sort();
+        for key in keys {
+            if let Some(op) = vm.vocabulary.get(key) {
+                vocab_items.push(ListItem::new(format!("{} -> {}", key, op))
+                    .style(Style::default().fg(Color::Green)));
+            }
+        }
+    }
+    let vocab_list = List::new(vocab_items).block(
+        Block::default().borders(Borders::ALL).title("Global Vocabulary (Drift)")
+    );
+    f.render_widget(vocab_list, chunks[2]);
 }
 
 #[cfg(feature = "nova")]

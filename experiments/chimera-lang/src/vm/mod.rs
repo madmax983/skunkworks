@@ -533,6 +533,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub dialects: HashMap<usize, HashMap<OpCode, OpCode>>,
     #[cfg(feature = "nova")]
+    pub vocabulary: HashMap<String, OpCode>,
+    #[cfg(feature = "nova")]
     pub piet_state: Option<piet::PietState>,
     #[cfg(feature = "nova")]
     pub sky: nova_astrology::Sky,
@@ -802,6 +804,8 @@ impl ChimeraVM {
             meme_pool: memetics::MemePool::new(),
             #[cfg(feature = "nova")]
             dialects: HashMap::new(),
+            #[cfg(feature = "nova")]
+            vocabulary: HashMap::new(),
             #[cfg(feature = "nova")]
             piet_state: None,
             #[cfg(feature = "nova")]
@@ -2639,6 +2643,11 @@ impl ChimeraVM {
                     }
                     self.call_stack.push((self.ip.0, self.ip.1 + 1));
                     return Some((strand_idx, 0));
+                }
+
+                #[cfg(feature = "nova")]
+                if let Some(op) = self.vocabulary.get(&name).cloned() {
+                    return self.execute_gene_inner(op, args);
                 }
 
                 let mut hint = "";

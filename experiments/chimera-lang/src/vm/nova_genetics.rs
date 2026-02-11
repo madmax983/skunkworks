@@ -6,6 +6,7 @@ use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
 use rand::Rng;
+use super::nova_linguistics::get_synonym;
 
 pub const MAX_EPIGENOME_SIZE: usize = 1024;
 pub const MAX_INCUBATE_LENGTH: usize = 1024;
@@ -1167,39 +1168,22 @@ pub fn exec_drift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let mut rng = rand::thread_rng();
             let mut changes = 0;
 
-            let enzymes = [
-                OpCode::Push,
-                OpCode::Add,
-                OpCode::Sub,
-                OpCode::Mul,
-                OpCode::Div,
-                OpCode::Dup,
-                OpCode::Print,
-                OpCode::Swap,
-                OpCode::Drop,
-                OpCode::Jump,
-                OpCode::Brz,
-                OpCode::Photosynthesize,
-                OpCode::Consume,
-                OpCode::GRead,
-                OpCode::GWrite,
-                OpCode::Genome,
-                OpCode::Meme,
-                OpCode::Poly, // Self-reference!
-            ];
-
             for strand in &mut vm.dna.helix.strands {
                 for gene in &mut strand.genes {
                     if rng.gen_range(0..100) < p {
-                        let new_op = enzymes[rng.gen_range(0..enzymes.len())].clone();
-                        gene.op = new_op;
-                        changes += 1;
+                        if let Some(synonym) = get_synonym(&gene.op) {
+                            // Register mapping first
+                            vm.vocabulary.insert(synonym.clone(), gene.op.clone());
+                            // Apply drift
+                            gene.op = OpCode::Unknown(synonym);
+                            changes += 1;
+                        }
                     }
                 }
             }
 
             vm.energy = vm.energy.saturating_sub(50 + changes);
-            vm.output.push(format!("DRIFT: Mutated {} genes", changes));
+            vm.output.push(format!("DRIFT: Mutated {} genes into synonyms", changes));
         } else {
             vm.output.push("Error: Type mismatch for drift".to_string());
         }
