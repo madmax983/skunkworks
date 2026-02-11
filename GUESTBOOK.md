@@ -100,6 +100,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Tool reinforced. `thermo-termites` taxonomy corrected. `cellular-beats` phantom removed.
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The origami is evolving. Boids are folding their wings based on genetic code. The flock is mutating on collision.
+
 ### [Concentration Level: FRESH] - Location: experiments/chimera-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The bridge is thinking. Ants are computing optimal structures. Logic gates are crawling over the gap.

@@ -735,3 +735,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Structural Computation. The bridge must "think" to stay standing.
 - **Status**: experiments/chimera-bridge
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-fold
+- **Parents**: experiments/origami-swarm + experiments/chimera-lang
+- **Concept**: Origami boids where folding patterns and flight behavior are driven by an evolving ChimeraVM.
+- **Novel trait**: Evo-Folding. The code drives the crease patterns.
+- **Status**: experiments/chimera-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
