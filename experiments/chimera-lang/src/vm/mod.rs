@@ -585,6 +585,8 @@ pub struct ChimeraVM {
     pub glitch_level: f32,
     #[cfg(feature = "nova")]
     pub logos_mode: bool,
+    #[cfg(feature = "nova")]
+    pub incubator: Option<nova_genetics::Incubator>,
 }
 
 impl ChimeraVM {
@@ -855,6 +857,8 @@ impl ChimeraVM {
             glitch_level: 0.0,
             #[cfg(feature = "nova")]
             logos_mode: false,
+            #[cfg(feature = "nova")]
+            incubator: None,
         }
     }
 

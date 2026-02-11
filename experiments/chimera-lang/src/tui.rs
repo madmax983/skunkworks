@@ -98,6 +98,8 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    #[cfg(feature = "nova")]
+    Incubator,
 }
 
 enum InputMode {
@@ -288,6 +290,11 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        #[cfg(feature = "nova")]
+        if let Some(incubator) = &mut vm.incubator {
+            incubator.tick();
+        }
+
         #[cfg(feature = "nova")]
         if let ViewMode::Fishing = app_state.view_mode {
             if app_state.fishing_cast {
@@ -540,6 +547,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Logos = app_state.view_mode {
                 render_logos(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Incubator = app_state.view_mode {
+                render_incubator(f, vm, app_state);
                 return;
             }
 
@@ -1100,6 +1113,21 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Incubator => {
+                                    if let Some(incubator) = &vm.incubator {
+                                        if let Some(best) = incubator.best_strand() {
+                                            if incubator.target_strand_idx < vm.dna.helix.strands.len() {
+                                                vm.dna.helix.strands[incubator.target_strand_idx] = best;
+                                                app_state.status_msg = format!(
+                                                    "Injected evolved strand {}",
+                                                    incubator.target_strand_idx
+                                                );
+                                            }
+                                        }
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                }
                                 #[cfg(feature = "silicon")]
                                 ViewMode::Foundry => {
                                     // Same as Schematic/Grid?
@@ -1292,7 +1320,8 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Chronos => ViewMode::Logos,
                             #[cfg(feature = "nova")]
-                            ViewMode::Logos => ViewMode::Heatmap,
+                            ViewMode::Logos => ViewMode::Incubator,
+                            ViewMode::Incubator => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1369,6 +1398,22 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('I') => {
+                        if let ViewMode::Genome = app_state.view_mode {
+                            // Init incubator
+                            let incubator = crate::vm::nova_genetics::Incubator::new(
+                                vm,
+                                app_state.selected_strand,
+                                16,
+                            );
+                            vm.incubator = Some(incubator);
+                            app_state.view_mode = ViewMode::Incubator;
+                            app_state.status_msg = "Incubator Initialized".to_string();
+                        } else {
+                            app_state.view_mode = ViewMode::Incubator;
+                        }
+                    }
                     KeyCode::Char('i') => {
                         app_state.input_mode = InputMode::Injection;
                         app_state.input_buffer.clear();
@@ -1655,6 +1700,14 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('S') => {
+                        if let ViewMode::Incubator = app_state.view_mode {
+                            if let Some(incubator) = &mut vm.incubator {
+                                incubator.running = !incubator.running;
+                                let status = if incubator.running { "Running" } else { "Stopped" };
+                                app_state.status_msg = format!("Incubator {}", status);
+                            }
+                            continue;
+                        }
                         if let ViewMode::Arena = app_state.view_mode {
                             if let Some(arena) = &mut vm.arena {
                                 // Add random gladiators if empty
@@ -1746,6 +1799,8 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Incubator => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Void => {
                             if app_state.grid_cursor.1 < 15 {
@@ -1955,6 +2010,8 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Incubator => {}
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2158,6 +2215,8 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Incubator => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -2300,6 +2359,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Incubator => {}
                         #[cfg(feature = "silicon")]
                         ViewMode::Foundry => {
                             if app_state.grid_cursor.0 > 0 {
@@ -2447,6 +2508,21 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Alchemy => {
                                 // Prevent entering edit mode for Alchemy (uses keys instead)
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Incubator => {
+                                if let Some(incubator) = &vm.incubator {
+                                    if let Some(best) = incubator.best_strand() {
+                                        if incubator.target_strand_idx < vm.dna.helix.strands.len() {
+                                            vm.dna.helix.strands[incubator.target_strand_idx] = best;
+                                            app_state.status_msg = format!(
+                                                "Injected evolved strand {}",
+                                                incubator.target_strand_idx
+                                            );
+                                        }
+                                    }
+                                }
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -3125,6 +3201,121 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_incubator(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .split(f.area());
+
+    // Left: Status & Controls
+    let left_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(10), Constraint::Min(0)].as_ref())
+        .split(chunks[0]);
+
+    if let Some(incubator) = &vm.incubator {
+        let status = if incubator.running { "RUNNING" } else { "STOPPED" };
+        let info = vec![
+            Line::from(format!("Status: {}", status)),
+            Line::from(format!("Generation: {}", incubator.generation)),
+            Line::from(format!("Population: {}", incubator.population.len())),
+            Line::from(format!("Max Ticks: {}", incubator.max_ticks_per_gen)),
+            Line::from(format!(
+                "Progress: {}/{}",
+                incubator.current_ticks, incubator.max_ticks_per_gen
+            )),
+            Line::from(format!("Best Fitness: {}", incubator.best_fitness)),
+            Line::from(" "),
+            Line::from("Controls:"),
+            Line::from("  S: Start/Stop"),
+            Line::from("  Enter: Inject Best"),
+        ];
+
+        let info_widget = Paragraph::new(info).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Incubator Status"),
+        );
+        f.render_widget(info_widget, left_chunks[0]);
+
+        // Fitness History
+        // Cast i64 to u64 for Sparkline (saturating at 0)
+        let history: Vec<u64> = incubator
+            .history
+            .iter()
+            .map(|&v| v.max(0) as u64)
+            .collect();
+        let sparkline = ratatui::widgets::Sparkline::default()
+            .block(
+                Block::default()
+                    .title("Fitness History")
+                    .borders(Borders::ALL),
+            )
+            .data(&history)
+            .style(Style::default().fg(Color::Green));
+        f.render_widget(sparkline, left_chunks[1]);
+
+        // Right: Population List & Best Genome
+        let right_chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+            .split(chunks[1]);
+
+        // Population
+        let mut pop_items = Vec::new();
+        for (i, v) in incubator.population.iter().enumerate() {
+            let fitness = v.energy + if v.halted { 0 } else { 10 };
+            let style = if i == 0 {
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(Color::White)
+            };
+            pop_items.push(
+                ListItem::new(format!(
+                    "#{}: Energy={} Halted={} (Fit: {})",
+                    i, v.energy, v.halted, fitness
+                ))
+                .style(style),
+            );
+        }
+        let pop_list = List::new(pop_items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Population"),
+        );
+        f.render_widget(pop_list, right_chunks[0]);
+
+        // Best Genome Preview
+        let mut gene_items = Vec::new();
+        if let Some(best) = incubator.best_strand() {
+            for gene in &best.genes {
+                gene_items.push(
+                    ListItem::new(format!("{}", gene.op))
+                        .style(Style::default().fg(Color::Cyan)),
+                );
+            }
+        } else {
+            gene_items.push(ListItem::new("No best strand."));
+        }
+
+        let preview_list = List::new(gene_items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Best Genome"),
+        );
+        f.render_widget(preview_list, right_chunks[1]);
+    } else {
+        let warning =
+            Paragraph::new("Incubator not initialized.\nSelect a strand in Genome view and press 'I'.")
+                .block(Block::default().borders(Borders::ALL).title("Incubator"))
+                .alignment(ratatui::layout::Alignment::Center);
+        f.render_widget(warning, chunks[0]);
+    }
 }
 
 #[cfg(feature = "silicon")]
@@ -3814,6 +4005,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
         #[cfg(feature = "nova")]
         ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Incubator => "INCUBATOR (EVOLUTION)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4337,6 +4530,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hydra, "Hydra", "Y"));
         views.push((ViewMode::Chronos, "Chronos", "T"));
         views.push((ViewMode::Logos, "Logos", "U"));
+        views.push((ViewMode::Incubator, "Incubator", "I"));
     }
     views
 }

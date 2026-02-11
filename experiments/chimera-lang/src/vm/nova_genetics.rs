@@ -5,10 +5,159 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use crate::{ChimeraParser, Rule};
 use pest::Parser;
+use rand::seq::SliceRandom;
 use rand::Rng;
 
 pub const MAX_EPIGENOME_SIZE: usize = 1024;
 pub const MAX_INCUBATE_LENGTH: usize = 1024;
+
+#[derive(Clone)]
+pub struct Incubator {
+    pub population: Vec<ChimeraVM>,
+    pub generation: usize,
+    pub running: bool,
+    pub max_ticks_per_gen: usize,
+    pub current_ticks: usize,
+    pub target_strand_idx: usize,
+    pub best_fitness: i64,
+    pub history: Vec<i64>, // Track max fitness over generations
+}
+
+impl Incubator {
+    pub fn new(template_vm: &ChimeraVM, strand_idx: usize, pop_size: usize) -> Self {
+        let mut population = Vec::with_capacity(pop_size);
+        for _ in 0..pop_size {
+            let mut vm = template_vm.clone();
+            // Reset state for fairness
+            vm.ip = (strand_idx, 0);
+            vm.energy = 50;
+            vm.stack.clear();
+            vm.output.clear();
+            vm.halted = false;
+            // Clear incubator to prevent infinite recursion
+            vm.incubator = None;
+            population.push(vm);
+        }
+
+        Self {
+            population,
+            generation: 0,
+            running: false,
+            max_ticks_per_gen: 100,
+            current_ticks: 0,
+            target_strand_idx: strand_idx,
+            best_fitness: 0,
+            history: Vec::new(),
+        }
+    }
+
+    pub fn tick(&mut self) {
+        if !self.running {
+            return;
+        }
+
+        for vm in &mut self.population {
+            if !vm.halted {
+                vm.step();
+            }
+        }
+
+        self.current_ticks += 1;
+        if self.current_ticks >= self.max_ticks_per_gen {
+            self.evolve();
+        }
+    }
+
+    pub fn evolve(&mut self) {
+        let mut rng = rand::thread_rng();
+
+        // 1. Calculate Fitness (Energy + alive bonus)
+        // We sort descending by fitness
+        self.population.sort_by(|a, b| {
+            let fitness_a = a.energy + if a.halted { 0 } else { 10 };
+            let fitness_b = b.energy + if b.halted { 0 } else { 10 };
+            fitness_b.cmp(&fitness_a)
+        });
+
+        let best_vm = &self.population[0];
+        let current_best_fitness = best_vm.energy + if best_vm.halted { 0 } else { 10 };
+        self.best_fitness = current_best_fitness;
+        self.history.push(current_best_fitness);
+
+        // 2. Selection (Top 50% survive)
+        let survivors_count = self.population.len() / 2;
+        let survivors: Vec<ChimeraVM> = self.population.iter().take(survivors_count).cloned().collect();
+
+        // 3. Reproduction (Fill the rest)
+        let mut next_gen = survivors.clone();
+
+        while next_gen.len() < self.population.len() {
+            // Select parents
+            let parent_a = survivors.choose(&mut rng).unwrap();
+            let parent_b = survivors.choose(&mut rng).unwrap();
+
+            // Clone parent A as base
+            let mut child = parent_a.clone();
+
+            // Crossover (Splice)
+            // We assume the target strand is the one we are evolving.
+            let s_idx = self.target_strand_idx;
+            if s_idx < child.dna.helix.strands.len() && s_idx < parent_b.dna.helix.strands.len() {
+                let genes_a = &parent_a.dna.helix.strands[s_idx].genes;
+                let genes_b = &parent_b.dna.helix.strands[s_idx].genes;
+
+                // Simple Uniform Crossover
+                let len = genes_a.len().min(genes_b.len());
+                let mut new_genes = Vec::new();
+                for i in 0..len {
+                    if rng.gen_bool(0.5) {
+                        new_genes.push(genes_a[i].clone());
+                    } else {
+                        new_genes.push(genes_b[i].clone());
+                    }
+                }
+                child.dna.helix.strands[s_idx].genes = new_genes;
+            }
+
+            // Mutation
+            child.mutate(); // Uses built-in random mutation
+
+            // Reset State
+            child.energy = 50;
+            child.ip = (s_idx, 0);
+            child.stack.clear();
+            child.output.clear();
+            child.halted = false;
+            // Note: Grid state is inherited from parent A. This might be desired (Lamarckian) or not.
+            // For now, let's keep it Lamarckian as it's more interesting in Chimera context.
+
+            next_gen.push(child);
+        }
+
+        // Reset survivors for next run
+        for vm in &mut next_gen {
+            vm.energy = 50;
+            vm.ip = (self.target_strand_idx, 0);
+            vm.halted = false;
+            // Keep stack/grid?
+            // If we reset everything, they lose "learned" state.
+            // But if we don't, energy accumulates? No, we reset energy.
+        }
+
+        self.population = next_gen;
+        self.generation += 1;
+        self.current_ticks = 0;
+    }
+
+    pub fn best_strand(&self) -> Option<crate::ast::Strand> {
+        if let Some(best) = self.population.first() {
+            if self.target_strand_idx < best.dna.helix.strands.len() {
+                return Some(best.dna.helix.strands[self.target_strand_idx].clone());
+            }
+        }
+        None
+    }
+}
 
 /// Helper to convert a Value to a Nucleotide (static AST node)
 pub fn value_to_nucleotide(v: &Value, depth: usize) -> Option<Nucleotide> {
