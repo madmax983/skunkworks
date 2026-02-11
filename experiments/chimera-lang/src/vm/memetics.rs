@@ -21,6 +21,7 @@ pub struct Virus {
     pub color: (u8, u8, u8), // RGB
     pub pattern: String,     // Target text pattern (contains match)
     pub mutation_rate: u8,   // 0-100
+    pub genes: Vec<Gene>,    // Payload
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -212,11 +213,19 @@ pub fn exec_memetics_op(
                         rng.gen_range(50..255),
                     );
 
+                    // Capture current strand genes as payload
+                    let genes = if vm.ip.0 < vm.dna.helix.strands.len() {
+                        vm.dna.helix.strands[vm.ip.0].genes.clone()
+                    } else {
+                        Vec::new()
+                    };
+
                     let virus = Virus {
                         name: name.clone(),
                         color,
                         pattern: pattern.clone(),
                         mutation_rate,
+                        genes,
                     };
 
                     let virus_id = vm.virus_library.len();
@@ -247,6 +256,37 @@ pub fn exec_memetics_op(
             let mut next_viral_grid = vm.viral_grid.clone();
             let mut spread_count = 0;
             let mut mutation_count = 0;
+
+            // Retro-viral Injection
+            let (cy, cx) = vm.context_loc;
+            let mut injected = false;
+            if let Some(state) = vm.viral_grid[cy][cx] {
+                if state.infection_level > 90 {
+                    // Critical mass at current execution location
+                    if state.virus_id < vm.virus_library.len() {
+                        let (genes, name) = {
+                            let virus = &vm.virus_library[state.virus_id];
+                            (virus.genes.clone(), virus.name.clone())
+                        };
+
+                        if !genes.is_empty() {
+                            let gene_count = genes.len();
+                            vm.inject_genes(genes);
+                            vm.output.push(format!(
+                                "RETROVIRUS: {} injected {} genes into strand {}",
+                                name,
+                                gene_count,
+                                vm.ip.0
+                            ));
+                            // Reduce local infection to prevent immediate re-injection loop
+                            if let Some(s) = &mut next_viral_grid[cy][cx] {
+                                s.infection_level = s.infection_level.saturating_sub(50);
+                            }
+                            injected = true;
+                        }
+                    }
+                }
+            }
 
             for y in 0..size {
                 for x in 0..size {
@@ -330,10 +370,12 @@ pub fn exec_memetics_op(
             }
 
             vm.viral_grid = next_viral_grid;
-            if spread_count > 0 || mutation_count > 0 {
+            if spread_count > 0 || mutation_count > 0 || injected {
                 vm.output.push(format!(
-                    "OUTBREAK: Spread to {} cells, mutated {} items",
-                    spread_count, mutation_count
+                    "OUTBREAK: Spread {} cells, Mutated {}, Injected {}",
+                    spread_count,
+                    mutation_count,
+                    if injected { 1 } else { 0 }
                 ));
             }
             None
