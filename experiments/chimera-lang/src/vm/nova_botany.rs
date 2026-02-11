@@ -3,7 +3,7 @@ use crate::vm::{nova::Organelle, ChimeraVM, Value};
 
 #[cfg(feature = "nova")]
 pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
-    // Stack: rules, axiom (top)
+    // Stack: [mapping], rules, axiom (top)
     if vm.stack.len() < 2 {
         vm.output
             .push("Error: Stack underflow for plant".to_string());
@@ -12,6 +12,35 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     let axiom_val = vm.stack.pop().unwrap();
     let rules_val = vm.stack.pop().unwrap();
+
+    let mut traits = vec!["Fractal".to_string()];
+
+    // Check for optional mapping (3rd arg)
+    // We look for a Junction containing strings starting with "M:"
+    if let Some(val) = vm.stack.last() {
+        if let Value::Junction(_, items) = val {
+            let is_mapping = items.iter().any(|v| {
+                if let Value::Str(s) = v {
+                    s.starts_with("M:")
+                } else {
+                    false
+                }
+            });
+
+            if is_mapping {
+                // Pop it
+                if let Some(Value::Junction(_, items)) = vm.stack.pop() {
+                    for item in items {
+                        if let Value::Str(s) = item {
+                            if s.starts_with("M:") {
+                                traits.push(s);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     // Validate types
     if let Value::Str(_) = &axiom_val {
@@ -44,7 +73,7 @@ pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 direction: (0, 1), // Default East
                 ttl: Some(1000),   // Finite life
                 name: "Procedural Seed".to_string(),
-                traits: vec!["Fractal".to_string()],
+                traits,
                 id: vm.organelle_id_counter,
                 tissue_id: None,
                 genome_id: 0,
@@ -70,6 +99,18 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
     // Note: vm.stack contains the organelle's data due to swap in tick_organelle
     if vm.stack.len() < 4 {
         return false;
+    }
+
+    // Parse Mapping from Traits
+    let mut mapping = std::collections::HashMap::new();
+    for trait_str in &organelle.traits {
+        if let Some(rest) = trait_str.strip_prefix("M:") {
+            if let Some((key_s, val_s)) = rest.split_once('=') {
+                if let Some(key_c) = key_s.chars().next() {
+                    mapping.insert(key_c, val_s.to_string());
+                }
+            }
+        }
     }
 
     // Peek/Pop state
@@ -119,11 +160,11 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
                     next_idx = i;
                     vm.energy = vm.energy.saturating_sub(1);
                 } else {
-                    interpret_char(vm, organelle, c, &mut turtle_stack_val);
+                    interpret_char(vm, organelle, c, &mut turtle_stack_val, &mapping);
                     grew = true;
                 }
             } else {
-                interpret_char(vm, organelle, c, &mut turtle_stack_val);
+                interpret_char(vm, organelle, c, &mut turtle_stack_val, &mapping);
                 grew = true;
             }
 
@@ -164,9 +205,22 @@ fn interpret_char(
     organelle: &mut Organelle,
     c: char,
     turtle_stack: &mut Value,
+    mapping: &std::collections::HashMap<char, String>,
 ) {
     let (cy, cx) = vm.context_loc;
     let (dy, dx) = organelle.direction;
+
+    // Check mapping first
+    if let Some(mapped_val) = mapping.get(&c) {
+        vm.grid[cy][cx] = Value::Str(mapped_val.clone());
+        // Default behavior: Move Forward if mapped
+        if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64) {
+            if matches!(vm.grid[ny][nx], Value::Int(0)) {
+                vm.context_loc = (ny, nx);
+            }
+        }
+        return;
+    }
 
     match c {
         'F' | 'G' => {
