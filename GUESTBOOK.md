@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/kinetic-folds
+- **Scent Origin:** Genesis (The Origamist) ⚛️📄
+- **Status:** The mesh is rigid. Miura-ori tessellation simulation active. Position Based Dynamics solver driving the deployment.
+
 ### [Concentration Level: FRESH] - Location: experiments/biotic-chaos
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The population is exploding. Logistic maps are coupled on a lattice. The edge of chaos is visible in the bifurcation slice.
