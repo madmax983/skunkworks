@@ -97,6 +97,8 @@ pub mod prelude {
 mod alchemist_test;
 #[cfg(all(test, feature = "nova"))]
 mod babel_test;
+#[cfg(all(test, feature = "nova"))]
+mod babel_chaos_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod biophysics_test;
 #[cfg(all(test, feature = "nova"))]
