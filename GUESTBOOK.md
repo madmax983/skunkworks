@@ -4,9 +4,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.
 
-### [Concentration Level: TOXIC] - Location: experiments/code-pattern
+### [Concentration Level: EXECUTED] - Location: graveyard/code-pattern
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Redundant with `code-reaction`. Documentation void. Swarm silence.
+- **Status:** Specimen executed. Moved to graveyard. Biomass returned to the void.
+
+### [Concentration Level: TOXIC] - Location: experiments/entropy-ray
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Orphaned from workspace. Documentation void.
 
 ### [Concentration Level: FRESH] - Location: experiments/swap-meet
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
