@@ -98,6 +98,7 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    Pandemonium,
 }
 
 enum InputMode {
@@ -169,6 +170,9 @@ pub(crate) struct AppState {
     pub(crate) babel_result: String,
     #[cfg(feature = "nova")]
     pub(crate) babel_focus: usize, // 0=Pattern, 1=Input
+    pub(crate) pandemonium_cursor: (f64, f64),
+    pub(crate) pandemonium_radius: f64,
+    pub(crate) pandemonium_selected_tool: usize, // 0=Mutate, 1=Scramble, 2=Purge, 3=Duplicate
     pub(crate) show_view_selector: bool,
     pub(crate) view_selector_state: std::cell::RefCell<ListState>,
 }
@@ -242,6 +246,9 @@ impl AppState {
             babel_result: String::new(),
             #[cfg(feature = "nova")]
             babel_focus: 0,
+            pandemonium_cursor: (0.0, 0.0),
+            pandemonium_radius: 5.0,
+            pandemonium_selected_tool: 0,
         }
     }
 }
@@ -540,6 +547,11 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Logos = app_state.view_mode {
                 render_logos(f, vm, app_state);
+                return;
+            }
+
+            if let ViewMode::Pandemonium = app_state.view_mode {
+                render_pandemonium(f, vm, app_state);
                 return;
             }
 
@@ -887,6 +899,11 @@ where
                                     };
                                     vm.grid[y][x] = val;
                                     app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Pandemonium => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1292,7 +1309,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Chronos => ViewMode::Logos,
                             #[cfg(feature = "nova")]
-                            ViewMode::Logos => ViewMode::Heatmap,
+                            ViewMode::Logos => ViewMode::Pandemonium,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Pandemonium => ViewMode::Heatmap,
                             ViewMode::Heatmap => {
                                 #[cfg(feature = "silicon")]
                                 {
@@ -1492,6 +1511,8 @@ where
                     KeyCode::Char('T') => app_state.view_mode = ViewMode::Chronos,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('U') => app_state.view_mode = ViewMode::Logos,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('P') => app_state.view_mode = ViewMode::Pandemonium,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1547,6 +1568,40 @@ where
                             if let ViewMode::Arena = app_state.view_mode {
                                 if let Some(arena) = &mut vm.arena {
                                     arena.tick();
+                                }
+                            } else if let ViewMode::Pandemonium = app_state.view_mode {
+                                let cx = app_state.pandemonium_cursor.0;
+                                let cy = app_state.pandemonium_cursor.1;
+
+                                let mut best_dist = 1.0;
+                                let mut target = None;
+
+                                let mut linear_idx = 0;
+                                for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                                    for (g_idx, _) in strand.genes.iter().enumerate() {
+                                        let t = (linear_idx as f64) * 0.1;
+                                        let gr = t * 0.5;
+                                        let gx = gr * t.cos();
+                                        let gy = gr * t.sin();
+
+                                        let dist = ((gx - cx).powi(2) + (gy - cy).powi(2)).sqrt();
+                                        if dist < best_dist {
+                                            best_dist = dist;
+                                            target = Some((s_idx, g_idx));
+                                        }
+                                        linear_idx += 1;
+                                    }
+                                }
+
+                                if let Some((s, g)) = target {
+                                    match app_state.pandemonium_selected_tool {
+                                        0 => crate::vm::pandemonium::apply_mutation(vm, s, g),
+                                        1 => crate::vm::pandemonium::apply_scramble(vm, s, g, app_state.pandemonium_radius),
+                                        2 => crate::vm::pandemonium::apply_purge(vm, s, g, app_state.pandemonium_radius),
+                                        3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
+                                        _ => {}
+                                    }
+                                    app_state.status_msg = format!("Pandemonium applied at {},{}", s, g);
                                 }
                             } else if let ViewMode::Fishing = app_state.view_mode {
                                 if app_state.fishing_cast {
@@ -1679,6 +1734,30 @@ where
                         }
                     }
                     #[cfg(feature = "nova")]
+                    KeyCode::Char('1') => {
+                        if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_selected_tool = 0;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('2') => {
+                        if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_selected_tool = 1;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('3') => {
+                        if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_selected_tool = 2;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('4') => {
+                        if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_selected_tool = 3;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
                     KeyCode::Char('[') => {
                         if let ViewMode::Kaleidoscope = app_state.view_mode {
                             if app_state.kaleidoscope_hue_idx > 0 {
@@ -1686,6 +1765,8 @@ where
                             } else {
                                 app_state.kaleidoscope_hue_idx = 5;
                             }
+                        } else if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_radius = (app_state.pandemonium_radius - 1.0).max(1.0);
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1693,6 +1774,8 @@ where
                         if let ViewMode::Kaleidoscope = app_state.view_mode {
                             app_state.kaleidoscope_hue_idx =
                                 (app_state.kaleidoscope_hue_idx + 1) % 6;
+                        } else if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_radius += 1.0;
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1745,6 +1828,10 @@ where
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Pandemonium => {
+                            app_state.pandemonium_cursor.1 += 1.0;
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Void => {
@@ -1955,6 +2042,10 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Pandemonium => {
+                            app_state.pandemonium_cursor.1 -= 1.0;
+                        }
                         ViewMode::Microscope => {}
                         #[cfg(feature = "resonance")]
                         ViewMode::Resonance => {}
@@ -2158,6 +2249,10 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Pandemonium => {
+                            app_state.pandemonium_cursor.0 += 1.0;
+                        }
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
                             if app_state.grid_cursor.0 < 15 {
@@ -2299,6 +2394,10 @@ where
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
                             }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Pandemonium => {
+                            app_state.pandemonium_cursor.0 -= 1.0;
                         }
                         #[cfg(feature = "silicon")]
                         ViewMode::Foundry => {
@@ -2539,6 +2638,10 @@ where
                                 let (x, y) = app_state.grid_cursor;
                                 let val = &vm.grid[y][x];
                                 app_state.input_buffer = format!("{}", val);
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Pandemonium => {
+                                app_state.input_mode = InputMode::Normal; // No editing mode for now
                             }
                             #[cfg(feature = "silicon")]
                             ViewMode::Foundry => {
@@ -3814,6 +3917,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Chronos => "CHRONOS (TIME DILATION & HISTORY)",
         #[cfg(feature = "nova")]
         ViewMode::Logos => "LOGOS (LOGIC CHEMISTRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Pandemonium => "PANDEMONIUM REACTOR (GENOMIC CHAOS)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4337,6 +4442,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hydra, "Hydra", "Y"));
         views.push((ViewMode::Chronos, "Chronos", "T"));
         views.push((ViewMode::Logos, "Logos", "U"));
+        views.push((ViewMode::Pandemonium, "Pandemonium", "P"));
     }
     views
 }
@@ -7216,5 +7322,81 @@ fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .borders(Borders::ALL)
             .title("Logic Chemistry"),
     );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Pandemonium Reactor"))
+        .paint(|ctx| {
+            let mut linear_idx = 0;
+            for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
+                for (g_idx, _gene) in strand.genes.iter().enumerate() {
+                    let theta = (linear_idx as f64) * 0.1;
+                    let r = theta * 0.5;
+                    let x = r * theta.cos();
+                    let y = r * theta.sin();
+
+                    let color = if s_idx == vm.ip.0 && g_idx == vm.ip.1 {
+                        Color::Yellow
+                    } else if s_idx % 2 == 0 {
+                        Color::Cyan
+                    } else {
+                        Color::Magenta
+                    };
+
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1: x, y1: y, x2: x+0.2, y2: y+0.2, color
+                    });
+
+                    linear_idx += 1;
+                }
+            }
+
+            // Draw Reticle
+            let (cx, cy) = app_state.pandemonium_cursor;
+            let radius = app_state.pandemonium_radius;
+
+            ctx.draw(&ratatui::widgets::canvas::Circle {
+                x: cx,
+                y: cy,
+                radius,
+                color: Color::Red,
+            });
+
+            ctx.print(cx, cy, "+");
+        })
+        .x_bounds([-100.0, 100.0])
+        .y_bounds([-100.0, 100.0]);
+
+    f.render_widget(canvas, chunks[0]);
+
+    // Info Panel
+    let tool_name = match app_state.pandemonium_selected_tool {
+        0 => "Mutate (Single Gene)",
+        1 => "Scramble (Radius)",
+        2 => "Purge (Radius)",
+        3 => "Duplicate (Single Gene)",
+        _ => "Unknown",
+    };
+
+    let info = vec![
+        Line::from("PANDEMONIUM REACTOR"),
+        Line::from(" "),
+        Line::from(format!("Tool: {} (1-4)", tool_name)),
+        Line::from(format!("Radius: {:.1} ([ / ])", app_state.pandemonium_radius)),
+        Line::from(format!("Cursor: {:.1}, {:.1}", app_state.pandemonium_cursor.0, app_state.pandemonium_cursor.1)),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Arrows: Move Cursor"),
+        Line::from("  Space: Apply Tool"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Controls"));
     f.render_widget(info_widget, chunks[1]);
 }

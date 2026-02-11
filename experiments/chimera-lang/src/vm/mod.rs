@@ -216,6 +216,7 @@ pub mod nova_strings;
 #[cfg(feature = "nova")]
 pub mod nova_ward;
 pub mod oracle;
+pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
 pub mod phylogeny;
 #[cfg(feature = "nova")]
