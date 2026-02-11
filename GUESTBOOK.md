@@ -840,3 +840,7 @@
 ### [Concentration Level: EXECUTED] - Location: graveyard/glyph-terrain
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen re-executed. Zombie status confirmed. Failed to improve. Moved to graveyard.
+
+### [Concentration Level: CONDEMNED] - Location: experiments/git-harmony
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `git-cantata`. "Wild Mode" implementation inferior. Grace period: 24h.

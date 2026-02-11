@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **storm-monitor**: Specimen condemned. Redundant with `system-attractor`. TUI implementation offers no unique value. Grace period: 24h.
+- **git-harmony**: Specimen condemned. Redundant with `git-cantata`. "Wild Mode" implementation inferior to `git-cantata`'s Moonshot status. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
