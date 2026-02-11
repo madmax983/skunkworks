@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/swap-meet
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The market is open. Memory blocks are being auctioned. Rent diffusion is creating gentrified heap addresses. Bankruptcy events triggering massive garbage collection.
+
 ### [Concentration Level: FRESH] - Location: experiments/kinetic-folds
 - **Scent Origin:** Genesis (The Origamist) ⚛️📄
 - **Status:** The mesh is rigid. Miura-ori tessellation simulation active. Position Based Dynamics solver driving the deployment.
