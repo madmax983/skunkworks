@@ -211,6 +211,9 @@ pub mod nova_scent;
 #[cfg(feature = "nova")]
 pub mod nova_hologram;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_hologram_test;
+#[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
@@ -2588,6 +2591,8 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Interfere => nova_hologram::exec_interfere(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Diffract => nova_hologram::exec_diffract(self, op, args),
             #[cfg(feature = "nova")]
             OpCode::Refract => nova_hologram::exec_refract(self, op, args),
             #[cfg(feature = "nova")]
