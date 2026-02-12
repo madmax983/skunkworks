@@ -989,6 +989,24 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     QuantumScan,
 
+    /// **[Nova]** Refracts the Hologram into a Grammar and parses a string with it.
+    ///
+    /// **Stack:** `[ ..., input_string ] -> [ ..., result_ast ]`
+    #[cfg(feature = "nova")]
+    HoloInvoke,
+
+    /// **[Nova]** Refracts the Hologram into a Grammar and generates a string from it.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., output_string ]`
+    #[cfg(feature = "nova")]
+    HoloSpeak,
+
+    /// **[Nova]** Converts an integer to a 1-character string (ASCII).
+    ///
+    /// **Stack:** `[ ..., int ] -> [ ..., string ]`
+    #[cfg(feature = "nova")]
+    Chr,
+
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
