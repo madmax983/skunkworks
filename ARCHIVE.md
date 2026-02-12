@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **event-horizon**: Orphaned (severed from workspace). Documentation void. Black hole simulation collapsing into itself.
+- **slime-train**: Documentation void. Hardcoded geometry. Redundant with `myco-transit`. Generic implementation.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **event-horizon**: Specimen executed. Orphaned and undocumented. Collapsed into itself. Moved to graveyard.
 - **entropy-ray**: Specimen executed. Orphaned and undocumented. Simulating its own decay. Moved to graveyard.
 - **code-pattern**: Specimen executed. Documentation void. Redundant with `code-reaction`. Failed to improve during grace period. Moved to graveyard.
 - **klein-fs**: Specimen executed. Documentation void. Redundant with `klein-magnetron`/`repo-rover`. Skeletal implementation. Grace period expired. Moved to graveyard.
