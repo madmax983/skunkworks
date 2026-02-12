@@ -868,4 +868,173 @@ mod topology_tests {
         // -3 out of bounds. -> None.
         assert_eq!(topo.normalize(12, 10, width, height), None);
     }
+
+    #[test]
+    fn test_plane_bounds_simple() {
+        let topo = Topology::Plane;
+        let w = 10;
+        let h = 10;
+
+        assert_eq!(topo.normalize(0, 0, w, h), Some((0, 0)));
+        assert_eq!(topo.normalize(9, 9, w, h), Some((9, 9)));
+        assert_eq!(topo.normalize(-1, 0, w, h), None);
+        assert_eq!(topo.normalize(0, -1, w, h), None);
+        assert_eq!(topo.normalize(10, 0, w, h), None);
+        assert_eq!(topo.normalize(0, 10, w, h), None);
+    }
+
+    #[test]
+    fn test_torus_wrapping_simple() {
+        let topo = Topology::Torus;
+        let w = 10;
+        let h = 10;
+
+        assert_eq!(topo.normalize(0, 0, w, h), Some((0, 0)));
+        assert_eq!(topo.normalize(-1, -1, w, h), Some((9, 9)));
+        assert_eq!(topo.normalize(10, 10, w, h), Some((0, 0)));
+        assert_eq!(topo.normalize(25, 15, w, h), Some((5, 5))); // 25%10=5, 15%10=5
+        assert_eq!(topo.normalize(-11, -21, w, h), Some((9, 9))); // -11 -> 9, -21 -> 9
+    }
+
+    #[test]
+    fn test_cylinder_wrapping() {
+        let h_cyl = Topology::CylinderH; // Wraps X, Bounded Y
+        let v_cyl = Topology::CylinderV; // Bounded X, Wraps Y
+        let w = 10;
+        let h = 10;
+
+        // Cylinder H
+        assert_eq!(h_cyl.normalize(5, 15, w, h), Some((5, 5))); // Wraps X
+        assert_eq!(h_cyl.normalize(5, -5, w, h), Some((5, 5))); // Wraps X
+        assert_eq!(h_cyl.normalize(-1, 5, w, h), None); // Bounded Y
+        assert_eq!(h_cyl.normalize(10, 5, w, h), None); // Bounded Y
+
+        // Cylinder V
+        assert_eq!(v_cyl.normalize(15, 5, w, h), Some((5, 5))); // Wraps Y
+        assert_eq!(v_cyl.normalize(-5, 5, w, h), Some((5, 5))); // Wraps Y
+        assert_eq!(v_cyl.normalize(5, -1, w, h), None); // Bounded X
+        assert_eq!(v_cyl.normalize(5, 10, w, h), None); // Bounded X
+    }
+}
+
+#[cfg(test)]
+mod prop_tests {
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn test_plane_bounds(
+            y in any::<i64>(),
+            x in any::<i64>(),
+            width in 1..=usize::MAX,
+            height in 1..=usize::MAX
+        ) {
+            let res = Topology::Plane.normalize(y, x, width, height);
+
+            let in_y = if height > i64::MAX as usize { y >= 0 } else { y >= 0 && y < height as i64 };
+            let in_x = if width > i64::MAX as usize { x >= 0 } else { x >= 0 && x < width as i64 };
+
+            if in_y && in_x {
+                prop_assert_eq!(res, Some((y as usize, x as usize)));
+            } else {
+                prop_assert_eq!(res, None);
+            }
+        }
+
+        #[test]
+        fn test_torus_wrapping(
+            y in any::<i64>(),
+            x in any::<i64>(),
+            width in 1..=usize::MAX,
+            height in 1..=usize::MAX
+        ) {
+            let res = Topology::Torus.normalize(y, x, width, height);
+            prop_assert!(res.is_some());
+            let (ny, nx) = res.unwrap();
+
+            prop_assert!(ny < height);
+            prop_assert!(nx < width);
+        }
+
+        #[test]
+        fn test_cylinder_h_wrapping(
+            y in any::<i64>(),
+            x in any::<i64>(),
+            width in 1..=usize::MAX,
+            height in 1..=usize::MAX
+        ) {
+             let res = Topology::CylinderH.normalize(y, x, width, height);
+             let in_y = if height > i64::MAX as usize { y >= 0 } else { y >= 0 && y < height as i64 };
+
+             if in_y {
+                 prop_assert!(res.is_some());
+                 let (ny, nx) = res.unwrap();
+                 prop_assert_eq!(ny, y as usize);
+                 prop_assert!(nx < width);
+             } else {
+                 prop_assert_eq!(res, None);
+             }
+        }
+
+        #[test]
+        fn test_cylinder_v_wrapping(
+            y in any::<i64>(),
+            x in any::<i64>(),
+            width in 1..=usize::MAX,
+            height in 1..=usize::MAX
+        ) {
+             let res = Topology::CylinderV.normalize(y, x, width, height);
+             let in_x = if width > i64::MAX as usize { x >= 0 } else { x >= 0 && x < width as i64 };
+
+             if in_x {
+                 prop_assert!(res.is_some());
+                 let (ny, nx) = res.unwrap();
+                 prop_assert!(ny < height);
+                 prop_assert_eq!(nx, x as usize);
+             } else {
+                 prop_assert_eq!(res, None);
+             }
+        }
+
+        #[test]
+        fn test_klein_bounds(
+            y in any::<i64>(),
+            x in any::<i64>(),
+            width in 1..=usize::MAX,
+            height in 1..=usize::MAX
+        ) {
+            let res = Topology::Klein.normalize(y, x, width, height);
+            prop_assert!(res.is_some());
+            let (ny, nx) = res.unwrap();
+            prop_assert!(ny < height);
+            prop_assert!(nx < width);
+        }
+
+        #[test]
+        fn test_mobius_bounds(
+            y in any::<i64>(),
+            x in any::<i64>(),
+            width in 1..=usize::MAX,
+            height in 1..=usize::MAX
+        ) {
+            let res = Topology::Mobius.normalize(y, x, width, height);
+            // Mobius returns None if twisted y is out of bounds
+            if let Some((ny, nx)) = res {
+                prop_assert!(ny < height);
+                prop_assert!(nx < width);
+            }
+        }
+
+        #[test]
+        fn test_normalize_zero_dimensions_safe(
+            y in any::<i64>(),
+            x in any::<i64>(),
+        ) {
+             // 0 dimensions should always return None
+             prop_assert_eq!(Topology::Plane.normalize(y, x, 0, 10), None);
+             prop_assert_eq!(Topology::Plane.normalize(y, x, 10, 0), None);
+             prop_assert_eq!(Topology::Torus.normalize(y, x, 0, 0), None);
+        }
+    }
 }
