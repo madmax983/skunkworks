@@ -1,0 +1,13 @@
+[package]
+name = "holographic-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rustfft = "6.2"
+num-complex = "0.4"
+rand = "0.8"
+font8x8 = "0.3"

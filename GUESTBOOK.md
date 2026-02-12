@@ -4,6 +4,10 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The Turing patterns are rotating. Time is anisotropic. The Gray-Scott clock is ticking.
 
+### [Concentration Level: FRESH] - Location: experiments/holographic-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The genome is everywhere. The organisms are tuning into the interference pattern. Reality is a frequency.
+
 ### [Concentration Level: FRESH] - Location: experiments/hydro-brain
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.

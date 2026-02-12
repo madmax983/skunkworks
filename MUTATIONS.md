@@ -755,4 +755,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Hydraulic Neural Network" where information flow is fluid flow. Neurons are buckets, spikes are splashes.
 - **Novel trait**: Analog Hydraulic Computing. The physics of the medium (fluid) determines the temporal properties of the computation.
 - **Status**: experiments/hydro-brain
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
+
+### holographic-chimera
+- **Parents**: experiments/chimera-lang + experiments/hologram-text
+- **Concept**: Organisms whose genome is an interference pattern in the environment. They "tune" into instructions by changing their reference beam angle.
+- **Novel trait**: Holographic DNA. The code is non-local and distributed across the entire world frequency domain.
+- **Status**: experiments/holographic-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational.
+
+### bio-chain
+- **Parents**: experiments/chimera-lang + experiments/blockchain-demo (implied)
+- **Concept**: A blockchain where validators are living organisms (ChimeraVMs) that evolve. Consensus via hormone secretion.
+- **Novel trait**: Proof-of-Life. Security via Natural Selection.
+- **Status**: experiments/bio-chain
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified in GUESTBOOK.
