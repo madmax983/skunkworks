@@ -696,6 +696,17 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., width, height ]`
     #[cfg(feature = "nova")]
     RetinaSize,
+    /// **[Nova]** Reads a row of the Retina buffer.
+    ///
+    /// **Stack:** `[ ..., row_index ] -> [ ..., junction_of_pixels ]`
+    #[cfg(feature = "nova")]
+    Scanline,
+    /// **[Nova]** Writes a Junction of values to the Retina buffer with glitch effects.
+    ///
+    /// **Stack:** `[ ..., y, x, junction, mode ] -> [ ... ]`
+    /// **Mode:** 0=Linear, 1=Scatter, 2=XOR, 3=Sort.
+    #[cfg(feature = "nova")]
+    Rasterize,
 
     // Quantum Features (Superposition)
     /// **[Nova]** Instantly jumps to the entangled partner strand.

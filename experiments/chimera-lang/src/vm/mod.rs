@@ -2750,6 +2750,8 @@ impl ChimeraVM {
             | OpCode::RetinaDraw
             | OpCode::RetinaClear
             | OpCode::RetinaSize
+            | OpCode::Scanline
+            | OpCode::Rasterize
             | OpCode::EgregoreLink
             | OpCode::EgregoreTithe
             | OpCode::EgregoreChannel
