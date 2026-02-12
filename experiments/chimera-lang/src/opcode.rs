@@ -446,6 +446,11 @@ pub enum OpCode {
     /// **Methods:** 0=Interleave, 1=Uniform Crossover, 2=Midpoint Split.
     #[cfg(feature = "nova")]
     Splice,
+    /// **[Nova]** Performs a single-point crossover at a random index.
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b ] -> [ ..., new_strand_1, new_strand_2 ]`
+    #[cfg(feature = "nova")]
+    Crossover,
     /// **[Nova]** Pushes the index of the currently executing strand.
     ///
     /// **Stack:** `[ ... ] -> [ ..., current_strand_idx ]`
@@ -1402,6 +1407,23 @@ pub enum OpCode {
     /// **Stack:** `[ ..., code_string ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Eval,
+    /// **[Nova]** Concatenates two strands into a new function (Functional Composition).
+    ///
+    /// **Stack:** `[ ..., strand_g, strand_f ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Creates `new_strand = f + g` (f executes then g).
+    #[cfg(feature = "nova")]
+    Chain,
+    /// **[Nova]** Partially applies a value to a strand.
+    ///
+    /// **Stack:** `[ ..., value, strand_idx ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Creates `new_strand = [push(value)] + strand`.
+    #[cfg(feature = "nova")]
+    Curry,
+    /// **[Nova]** Consumes the next instruction as a string literal.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., op_string ]`
+    #[cfg(feature = "nova")]
+    Quote,
     /// **[Nova]** Applies a function to each element of a Junction.
     ///
     /// **Stack:** `[ ..., junction, function ] -> [ ..., new_junction ]`
