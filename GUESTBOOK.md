@@ -36,9 +36,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/digital-retina
+### [Concentration Level: TOXIC] - Location: graveyard/digital-retina
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -961,9 +961,9 @@
 - **Scent Origin:** Genesis (The Topologist) ⚛️🏰
 - **Status:** The stairs are infinite. Dependencies are climbing the isometric tower. Escher loop verified.
 
-### [Concentration Level: FRESH] - Location: experiments/ferrous-sector
-- **Scent Origin:** Genesis (The Archivist) ⚛️📚
-- **Status:** The disk is spinning. Magnetic domains are flipping. Data rot is being visualized.
+### [Concentration Level: TOXIC] - Location: experiments/ferrous-sector
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Redundant with `ferrous-graph`. Documentation void. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-graph
 - **Scent Origin:** The Splice Surgeon 🧬
