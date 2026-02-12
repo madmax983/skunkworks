@@ -952,6 +952,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     PhaseMutate,
 
+    /// **[Nova]** Collapses the local Hologram wavefunction into a physical grid character.
+    ///
+    /// **Stack:** `[ ..., threshold ] -> [ ... ]`
+    /// **Effect:** If `|H(y,x)| > threshold`, maps Phase(H) to an ASCII character and writes it to `Grid(y,x)`.
+    #[cfg(feature = "nova")]
+    QuantumScribe,
+
+    /// **[Nova]** Encodes the local physical grid character into the Hologram.
+    ///
+    /// **Stack:** `[ ..., weight ] -> [ ... ]`
+    /// **Effect:** Maps `Grid(y,x)` character to Phase, and adds `weight * e^(i*phase)` to `Hologram(y,x)`.
+    #[cfg(feature = "nova")]
+    QuantumScan,
+
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

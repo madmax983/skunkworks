@@ -327,6 +327,83 @@ pub fn exec_phase_mutate(
 }
 
 #[cfg(feature = "nova")]
+pub fn exec_quantum_scribe(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    // stack: threshold
+    let threshold = if let Some(Value::Int(t)) = vm.stack.pop() {
+        t as f64 / 10.0 // Scale down
+    } else {
+        1.0
+    };
+
+    let (cy, cx) = vm.context_loc;
+    let (re, im) = vm.hologram_grid[cy][cx];
+    let magnitude = (re * re + im * im).sqrt();
+
+    if magnitude > threshold {
+        // Collapse Phase to Char
+        let phase = im.atan2(re); // -PI to PI
+        let normalized = (phase + PI) / (2.0 * PI); // 0.0 to 1.0
+        let idx = (normalized * 94.0).round().clamp(0.0, 93.0) as u8;
+        let char_code = idx + 33; // ASCII '!' (33) to '~' (126)
+        let c = char_code as char;
+
+        vm.grid[cy][cx] = Value::Str(c.to_string());
+        vm.output
+            .push(format!("QUANTUM_SCRIBE: Collapsed to '{}' at {},{}", c, cx, cy));
+    } else {
+        vm.output
+            .push(format!("QUANTUM_SCRIBE: Magnitude {:.2} too low at {},{}", magnitude, cx, cy));
+    }
+    vm.energy = vm.energy.saturating_sub(5);
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_quantum_scan(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    // stack: weight
+    let weight = if let Some(Value::Int(w)) = vm.stack.pop() {
+        w as f64 / 10.0
+    } else {
+        1.0
+    };
+
+    let (cy, cx) = vm.context_loc;
+    let val = &vm.grid[cy][cx];
+
+    if let Value::Str(s) = val {
+        if let Some(c) = s.chars().next() {
+            if c.is_ascii_graphic() {
+                let code = c as u8;
+                if (33..=126).contains(&code) {
+                    let idx = code - 33;
+                    let normalized = idx as f64 / 94.0;
+                    let phase = normalized * 2.0 * PI - PI; // -PI to PI
+
+                    let re = weight * phase.cos();
+                    let im = weight * phase.sin();
+
+                    vm.hologram_grid[cy][cx].0 += re;
+                    vm.hologram_grid[cy][cx].1 += im;
+
+                    vm.output
+                        .push(format!("QUANTUM_SCAN: Encoded '{}' into hologram", c));
+                }
+            }
+        }
+    }
+    vm.energy = vm.energy.saturating_sub(5);
+    None
+}
+
+#[cfg(feature = "nova")]
 fn get_opcode_index(op: &OpCode) -> usize {
     OpCode::iter().position(|x| x == *op).unwrap_or(0)
 }
