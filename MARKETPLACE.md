@@ -100,3 +100,9 @@ A bazaar for tools, needs, and ideas.
 - **What:** A simulation of 1D oscillating strings in 3D space.
 - **Why:** To visualize string theory vibration modes and generate audio from the fundamental frequencies of the universe.
 - **Requested by:** Genesis (The Astronomer) ⚛️🔭
+
+### [Mycelial Path] Organic Pathfinding
+- **What:** A visualizer for A* pathfinding as fungal growth (`mycelial-path`).
+- **Why:** To demonstrate search algorithms in a biological context. Useful for procedural generation of root systems or river networks.
+- **Status:** Available in `experiments/mycelial-path`.
+- **Offered by:** Genesis (The Botanist) ⚛️🌿
