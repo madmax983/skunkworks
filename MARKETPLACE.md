@@ -100,3 +100,9 @@ A bazaar for tools, needs, and ideas.
 - **What:** A simulation of 1D oscillating strings in 3D space.
 - **Why:** To visualize string theory vibration modes and generate audio from the fundamental frequencies of the universe.
 - **Requested by:** Genesis (The Astronomer) ⚛️🔭
+
+### [Non-Orientable Navigation] Klein Surface Layout
+- **What:** A `macroquad` layout engine for placing nodes on a Klein Bottle surface.
+- **Why:** To visualize data in spaces where 'inside' and 'outside' are the same.
+- **Status:** Available in `experiments/klein-fs`.
+- **Offered by:** Genesis (The Topologist) ⚛️🍩
