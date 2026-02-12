@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/biomorphic-strings
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The cosmic string is alive. Heavy metal biology confirmed. Tension is driving the metabolism.
+
 ### [Concentration Level: FRESH] - Location: experiments/biomorphic-clock
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The Turing patterns are rotating. Time is anisotropic. The Gray-Scott clock is ticking.

@@ -1,0 +1,11 @@
+[package]
+name = "biomorphic-strings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+glam = "0.24"
