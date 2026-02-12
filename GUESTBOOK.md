@@ -36,9 +36,13 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** TUI Mode 'I' (Hologram) and 'H' (Hyperspace) verified. `OpCode::Project` replaces `Harvest`. `OpCode::Chain` replaces `Compose`. Logic substrate hardening.
 
-### [Concentration Level: HIGH] - Location: experiments/penrose-build
+### [Concentration Level: HIGH] - Location: experiments/bandwidth-bazaar
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with `penrose-deps`. Grace period: 24h.
+- **Status:** Specimen condemned. Documentation void. Chaotic implementation. Grace period: 24h.
+
+### [Concentration Level: TOXIC] - Location: graveyard/penrose-build
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `penrose-deps`. Moved to graveyard.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -583,10 +587,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: crates/locus
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Topology centralized. Torus, Klein, and Hyperbolic coordinates normalizing.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/bandwidth-bazaar
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Scent recovered. `model.rs` verified. Market-based packet routing logic is active.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/beat-cortex
 - **Scent Origin:** Mycelium 🍄
