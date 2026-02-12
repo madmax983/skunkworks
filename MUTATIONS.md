@@ -784,3 +784,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
 - **Status**: experiments/quipu-automaton
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### harmonic-scribe
+- **Parents**: experiments/harmonic-engine + experiments/spqr-rsa
+- **Concept**: A mechanical differential analyzer that calculates using Roman Numerals.
+- **Novel trait**: Analog-to-Digital conversion where continuous gear rotation is discretized into Roman Numerals.
+- **Status**: experiments/harmonic-scribe
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

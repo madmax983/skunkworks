@@ -1,0 +1,13 @@
+[package]
+name = "harmonic-scribe"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+harmonic-engine = { path = "../harmonic-engine" }
+spqr-rsa = { path = "../spqr-rsa" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rapier2d = "0.27"
+nalgebra = "0.33"
