@@ -231,6 +231,11 @@ mod nova_sovereignty_test;
 pub mod nova_strings;
 #[cfg(feature = "nova")]
 pub mod nova_ward;
+#[cfg(feature = "nova")]
+pub mod nova_weaver;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_weaver_test;
 pub mod oracle;
 pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
@@ -2630,6 +2635,9 @@ impl ChimeraVM {
             | OpCode::Synthesize
             | OpCode::Catalyze
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::EntropySurge => {

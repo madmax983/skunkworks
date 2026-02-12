@@ -107,6 +107,8 @@ pub(crate) enum ViewMode {
     Hyperspace,
     #[cfg(feature = "nova")]
     Hologram,
+    #[cfg(feature = "nova")]
+    Weaver,
 }
 
 enum InputMode {
@@ -588,6 +590,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Hologram = app_state.view_mode {
                 render_hologram(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Weaver = app_state.view_mode {
+                render_weaver(f, vm, app_state);
                 return;
             }
 
@@ -1208,6 +1216,12 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Weaver => {
+                                    // Use input buffer as pattern
+                                    app_state.input_mode = InputMode::Normal;
+                                    // Don't clear buffer, keep it for preview
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1455,6 +1469,8 @@ where
                             ViewMode::Hyperspace => ViewMode::Genome,
                             #[cfg(feature = "nova")]
                             ViewMode::Hologram => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Weaver => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1614,6 +1630,8 @@ where
                     KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => app_state.view_mode = ViewMode::Hologram,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -2141,9 +2159,9 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             match app_state.selected_strand {
-                                // 0=A, 1=B, 2=Method
+                                // 0=A, 1=B, 2=Method/Pattern
                                 0 => {
                                     if app_state.lab_parent_a > 0 {
                                         app_state.lab_parent_a -= 1;
@@ -2155,8 +2173,10 @@ where
                                     }
                                 }
                                 2 => {
-                                    if app_state.lab_method > 0 {
-                                        app_state.lab_method -= 1;
+                                    if let ViewMode::Laboratory = app_state.view_mode {
+                                        if app_state.lab_method > 0 {
+                                            app_state.lab_method -= 1;
+                                        }
                                     }
                                 }
                                 _ => {}
@@ -2247,7 +2267,7 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method
@@ -2262,8 +2282,10 @@ where
                                     }
                                 }
                                 2 => {
-                                    if app_state.lab_method < 2 {
-                                        app_state.lab_method += 1;
+                                    if let ViewMode::Laboratory = app_state.view_mode {
+                                        if app_state.lab_method < 2 {
+                                            app_state.lab_method += 1;
+                                        }
                                     }
                                 }
                                 _ => {}
@@ -2509,7 +2531,7 @@ where
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
                                 app_state.selected_strand += 1;
                             } else {
@@ -2667,7 +2689,7 @@ where
                         ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
                             } else {
@@ -2795,6 +2817,10 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Hologram => {
                                 app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Weaver => {
+                                // Allow editing mode for Pattern entry
                             }
                             ViewMode::Genome => {
                                 if app_state.selected_strand < vm.dna.helix.strands.len() {
@@ -4263,6 +4289,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Hyperspace => "HYPERSPACE (RECURSION TUNNEL)",
         #[cfg(feature = "nova")]
         ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Weaver => "THE WEAVER",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4818,6 +4846,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Catalyst, "Catalyst Chamber", "Tab"));
         views.push((ViewMode::Hyperspace, "Hyperspace", "H"));
         views.push((ViewMode::Hologram, "Hologram", "I"));
+        views.push((ViewMode::Weaver, "The Weaver", "W"));
     }
     views
 }
@@ -6271,6 +6300,145 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Circuit Analyzer"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(25), // Strand A
+                Constraint::Percentage(25), // Strand B
+                Constraint::Percentage(50), // Loom
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
+
+    // Helper to render strand preview (reused concept from Laboratory)
+    let render_strand = |idx: usize, title: &str, is_focused: bool| {
+        let mut items = Vec::new();
+        if idx < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[idx];
+            for gene in &strand.genes {
+                items.push(ListItem::new(format!("{}", gene.op)));
+            }
+        } else {
+            items.push(ListItem::new("Invalid Strand"));
+        }
+
+        let border_style = if is_focused {
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::White)
+        };
+
+        List::new(items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(format!("{} (Idx: {})", title, idx))
+                .border_style(border_style),
+        )
+    };
+
+    // Strand A
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_a,
+            "Warp A",
+            app_state.selected_strand == 0,
+        ),
+        chunks[0],
+    );
+
+    // Strand B
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_b,
+            "Warp B",
+            app_state.selected_strand == 1,
+        ),
+        chunks[1],
+    );
+
+    // Loom (Pattern & Result)
+    let loom_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+        .split(chunks[2]);
+
+    let pattern_str = &app_state.input_buffer;
+    let pattern_display = if pattern_str.is_empty() {
+        "Type pattern (Enter to edit)... e.g. ABAB".to_string()
+    } else {
+        pattern_str.clone()
+    };
+
+    let pattern_widget = Paragraph::new(pattern_display).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Weaving Pattern (A/B/X/0)")
+            .border_style(Style::default().fg(Color::Cyan)),
+    );
+    f.render_widget(pattern_widget, loom_chunks[0]);
+
+    // Preview Result
+    let mut preview_items = Vec::new();
+    let idx_a = app_state.lab_parent_a;
+    let idx_b = app_state.lab_parent_b;
+
+    if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
+        let strand_a = &vm.dna.helix.strands[idx_a];
+        let strand_b = &vm.dna.helix.strands[idx_b];
+        let mut ptr_a = 0;
+        let mut ptr_b = 0;
+
+        for c in pattern_str.chars() {
+            match c.to_ascii_uppercase() {
+                'A' => {
+                    if ptr_a < strand_a.genes.len() {
+                        preview_items.push(
+                            ListItem::new(format!("{}", strand_a.genes[ptr_a].op))
+                                .style(Style::default().fg(Color::Green)),
+                        );
+                        ptr_a += 1;
+                    }
+                }
+                'B' => {
+                    if ptr_b < strand_b.genes.len() {
+                        preview_items.push(
+                            ListItem::new(format!("{}", strand_b.genes[ptr_b].op))
+                                .style(Style::default().fg(Color::Blue)),
+                        );
+                        ptr_b += 1;
+                    }
+                }
+                'X' => {
+                    preview_items.push(
+                        ListItem::new("Random(A/B)").style(Style::default().fg(Color::Magenta)),
+                    );
+                    // Increment both? No, random logic is complex to preview statically.
+                    // Just showing placeholder.
+                }
+                '0' => {
+                    preview_items.push(
+                        ListItem::new("Nop (Skip)").style(Style::default().fg(Color::DarkGray)),
+                    );
+                }
+                _ => {}
+            }
+        }
+    }
+
+    let preview_list = List::new(preview_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Weft (Result Preview)"),
+    );
+    f.render_widget(preview_list, loom_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
