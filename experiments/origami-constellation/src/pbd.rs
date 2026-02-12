@@ -89,6 +89,39 @@ impl PbdSystem {
         self.constraints.push(Constraint::Pin { p, pos });
     }
 
+    pub fn reset(&mut self) {
+        self.particles.clear();
+        self.constraints.clear();
+    }
+
+    pub fn get_stress(&self, idx: usize) -> f32 {
+        let constraint = self.constraints[idx];
+        match constraint {
+            Constraint::Distance {
+                p1,
+                p2,
+                rest_length,
+                ..
+            } => {
+                let dist = self.particles[p1].pos.distance(self.particles[p2].pos);
+                (dist - rest_length).abs() / rest_length.max(0.001)
+            }
+            Constraint::Actuator {
+                p1,
+                p2,
+                min_len,
+                max_len,
+                factor,
+                ..
+            } => {
+                let target_len = min_len + (max_len - min_len) * factor;
+                let dist = self.particles[p1].pos.distance(self.particles[p2].pos);
+                (dist - target_len).abs() / target_len.max(0.001)
+            }
+            Constraint::Pin { .. } => 0.0,
+        }
+    }
+
     pub fn step(&mut self, dt: f32, iterations: usize) {
         // Integrate
         for p in &mut self.particles {
