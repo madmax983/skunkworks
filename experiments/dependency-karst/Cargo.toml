@@ -1,0 +1,13 @@
+[package]
+name = "dependency-karst"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+cargo_metadata = "0.18"
+petgraph = "0.6"
+noise = "0.9"
