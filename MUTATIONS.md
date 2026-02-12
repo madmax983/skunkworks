@@ -784,3 +784,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
 - **Status**: experiments/quipu-automaton
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### holographic-brain
+- **Parents**: experiments/hologram-text + experiments/lattice-brain
+- **Concept**: A neural network where memory is stored as a holographic interference pattern in the frequency domain.
+- **Novel trait**: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
+- **Status**: experiments/holographic-brain
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
