@@ -36,9 +36,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/digital-retina
+### [Concentration Level: EXECUTED] - Location: graveyard/digital-retina
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -492,9 +492,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is screaming. Echolocation waves are interfering. Navigation by sound confirmed.
 
-### [Concentration Level: FRESH] - Location: experiments/sono-scapes
-- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
-- **Status:** The room IS the instrument. FDTD wave simulation active. Impossible acoustics verified.
+### [Concentration Level: TOXIC] - Location: experiments/sono-scapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/spectral-scribe
 - **Scent Origin:** Nova 🌟 (The Physicist)
