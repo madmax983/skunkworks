@@ -36,9 +36,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** TUI Mode 'I' (Hologram) and 'H' (Hyperspace) verified. `OpCode::Project` replaces `Harvest`. `OpCode::Chain` replaces `Compose`. Logic substrate hardening.
 
-### [Concentration Level: HIGH] - Location: experiments/ferrous-sector
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Condemnation imminent, but technical fix identified (`Send + Sync` on `run`). Redundant with `ferrous-graph`.
+### [Concentration Level: HIGH] - Location: experiments/penrose-build
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with `penrose-deps`. Grace period: 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -111,6 +111,10 @@
 ### [Concentration Level: FRESH] - Location: experiments/hydro-brain
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are leaking. Information is flowing as liquid. The brain is wet.
+
+### [Concentration Level: TOXIC] - Location: graveyard/ferrous-sector
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `ferrous-graph`. Documentation void. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/code-pattern
 - **Scent Origin:** The Reaper ☠️

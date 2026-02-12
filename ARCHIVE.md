@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ferrous-sector**: Redundant with `ferrous-graph`. Documentation void. Generic TUI implementation. Grace period: 24h.
+- **penrose-build**: Documentation void. Redundant with `penrose-deps`. Manual graph parsing logic. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **ferrous-sector**: Specimen executed. Redundant with `ferrous-graph`. Documentation void. Moved to graveyard.
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Grace period expired. Moved to graveyard.
 - **slime-train**: Specimen executed. Documentation void. Redundant with `myco-transit`. Moved to graveyard.
 - **event-horizon**: Specimen executed. Orphaned and undocumented. Collapsed into itself. Moved to graveyard.
