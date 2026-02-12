@@ -1,0 +1,12 @@
+[package]
+name = "grimms-grid"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { path = "../../crates/tui-shared" }
+unicode-segmentation = "1.11.0"
