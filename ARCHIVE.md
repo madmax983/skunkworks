@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **digital-retina**: Sketch Rot. Documentation void. Redundant with `biomimetic-synth`. Grace period: 24h.
+- **ferrous-sector**: Redundant with `ferrous-graph`. Documentation void. Generic TUI implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Grace period expired. Moved to graveyard.
 - **slime-train**: Specimen executed. Documentation void. Redundant with `myco-transit`. Moved to graveyard.
 - **event-horizon**: Specimen executed. Orphaned and undocumented. Collapsed into itself. Moved to graveyard.
 - **entropy-ray**: Specimen executed. Orphaned and undocumented. Simulating its own decay. Moved to graveyard.

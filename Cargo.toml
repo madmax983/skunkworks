@@ -125,7 +125,7 @@ members = [
     "experiments/hyperbolic-bridge",
     "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
     "experiments/origami-swarm", "experiments/pixel-archivist",
-    "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance", "experiments/digital-retina", "experiments/heap-glacier",
+    "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance", "experiments/heap-glacier",
     "experiments/impossible-explorer", "experiments/chimera-bridge",
     "experiments/broken-mirror",
     "experiments/chimera-fold", "experiments/git-phase", "experiments/tesseract-timeseries", "experiments/vascular-valley", "experiments/biotic-chaos",
