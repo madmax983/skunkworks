@@ -783,11 +783,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A mechanical differential analyzer driven by Inca Quipu cords.
 - **Novel trait**: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
 - **Status**: experiments/quipu-automaton
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
 
 ### holographic-brain
 - **Parents**: experiments/hologram-text + experiments/lattice-brain
 - **Concept**: A neural network where memory is stored as a holographic interference pattern in the frequency domain.
 - **Novel trait**: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
 - **Status**: experiments/holographic-brain
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
+
+### chimera-hologram
+- **Parents**: experiments/holographic-brain + experiments/chimera-lang
+- **Concept**: Subjective Code Execution. The genome is a holographic interference pattern.
+- **Novel trait**: Phase-Dependent Phenotype. The program code changes based on the observer's viewing angle (Reference Beam Phase).
+- **Status**: experiments/chimera-hologram
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed.

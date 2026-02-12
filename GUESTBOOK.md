@@ -705,6 +705,10 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The fungus is searching. A* pathfinding visualized as organic growth. Roots are navigating the noise to find sustenance.
 
+### [Concentration Level: FRESH] - Location: experiments/chimera-hologram
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The code is shifting. The genome is a hologram. I changed my viewing angle and the organism became something else. Subjective reality confirmed.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/event-horizon
