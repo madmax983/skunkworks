@@ -209,6 +209,8 @@ mod nova_retina_test;
 #[cfg(feature = "nova")]
 pub mod nova_scent;
 #[cfg(feature = "nova")]
+pub mod nova_hologram;
+#[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
@@ -602,6 +604,10 @@ pub struct ChimeraVM {
     pub catalysts: Vec<catalyst::Catalyst>,
     #[cfg(feature = "nova")]
     pub babel_state: babel_chaos::BabelState,
+    #[cfg(feature = "nova")]
+    pub hologram_grid: Vec<Vec<(f64, f64)>>,
+    #[cfg(feature = "nova")]
+    pub hologram_mode: bool,
 }
 
 impl ChimeraVM {
@@ -889,6 +895,10 @@ impl ChimeraVM {
             catalysts: Vec::new(),
             #[cfg(feature = "nova")]
             babel_state: babel_chaos::BabelState::new(),
+            #[cfg(feature = "nova")]
+            hologram_grid: vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE],
+            #[cfg(feature = "nova")]
+            hologram_mode: false,
         }
     }
 
@@ -2573,6 +2583,20 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Crucible => {
                 alchemy::exec_crucible_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Interfere => nova_hologram::exec_interfere(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Refract => nova_hologram::exec_refract(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Project => nova_hologram::exec_project(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Hologram => {
+                self.hologram_mode = !self.hologram_mode;
+                let status = if self.hologram_mode { "ON" } else { "OFF" };
+                self.output.push(format!("HOLOGRAM: Visualization {}", status));
                 None
             }
 

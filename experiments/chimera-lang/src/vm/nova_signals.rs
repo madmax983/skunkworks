@@ -249,7 +249,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'K' | 'k' => exec_kill(vm, y, x, signal, &mut ctx),
                 'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
                 'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
-                'H' | 'h' => exec_harvest(vm, y, x, signal, &mut ctx),
+                'H' | 'h' => exec_project_signal(vm, y, x, signal, &mut ctx),
                 'U' | 'u' => exec_unzip(vm, y, x, signal, &mut ctx),
                 'F' | 'f' => exec_flux(vm, y, x, signal, &mut ctx),
                 'J' | 'j' => exec_jam(vm, y, x, signal, &mut ctx),
@@ -630,58 +630,6 @@ fn exec_unzip(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCo
     }
 }
 
-fn exec_harvest(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
-    if signal == 0 {
-        return;
-    }
-
-    // Inputs: West (Strand), East (Length), North (Offset Y)
-    let s_idx = peek(vm, y, x, 0, -1);
-    let len = peek(vm, y, x, 0, 1);
-    let off_y = peek(vm, y, x, -1, 0).unwrap_or(1); // Default offset 1
-
-    if let (Some(s), Some(l)) = (s_idx, len) {
-        let mut op_str = String::new();
-        // Read l chars starting from (y + off_y, x)
-        for i in 0..l {
-            if let Some(val) = peek(vm, y, x, off_y, i) {
-                op_str.push(val_to_char(val));
-            } else {
-                op_str.push(' ');
-            }
-        }
-
-        // Trim
-        let clean_op = op_str.trim();
-        if let Ok(op) = clean_op.parse::<OpCode>() {
-            ctx.dna_appends.push(DnaAppend {
-                strand_idx: s as usize,
-                gene: crate::ast::Gene {
-                    op,
-                    args: vec![], // No args support yet
-                },
-            });
-
-            // Success Output
-            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                ctx.grid_writes.push(GridWrite {
-                    y: sy,
-                    x: sx,
-                    val: Value::Str("1".to_string()),
-                });
-            }
-        } else {
-            // Failure Output
-            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                ctx.grid_writes.push(GridWrite {
-                    y: sy,
-                    x: sx,
-                    val: Value::Str("0".to_string()),
-                });
-            }
-        }
-    }
-}
 
 fn exec_query(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
     if let (Some(dir_code), Some(target_val)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
@@ -993,5 +941,11 @@ fn exec_ether_recv(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Sig
                 x: sx,
             });
         }
+    }
+}
+
+fn exec_project_signal(_vm: &ChimeraVM, _y: usize, _x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal > 0 {
+        ctx.executions.push((OpCode::Project, vec![]));
     }
 }

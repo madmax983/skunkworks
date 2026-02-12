@@ -105,6 +105,8 @@ pub(crate) enum ViewMode {
     Catalyst,
     #[cfg(feature = "nova")]
     Hyperspace,
+    #[cfg(feature = "nova")]
+    Hologram,
 }
 
 enum InputMode {
@@ -580,6 +582,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Hyperspace = app_state.view_mode {
                 render_hyperspace(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Hologram = app_state.view_mode {
+                render_hologram(f, vm, app_state);
                 return;
             }
 
@@ -1175,6 +1183,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Hologram => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1420,6 +1433,8 @@ where
                             ViewMode::Laboratory => ViewMode::Genome,
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hologram => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1577,6 +1592,8 @@ where
                     KeyCode::Char('P') => app_state.view_mode = ViewMode::Pandemonium,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('I') => app_state.view_mode = ViewMode::Hologram,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -2084,6 +2101,12 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method
@@ -2279,6 +2302,12 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Memetics => {}
@@ -2437,6 +2466,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
@@ -2566,6 +2601,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                         ViewMode::Catalyst => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
@@ -2715,6 +2756,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hologram => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4174,6 +4219,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Catalyst => "CATALYST CHAMBER (DIRECTED EVOLUTION)",
         #[cfg(feature = "nova")]
         ViewMode::Hyperspace => "HYPERSPACE (RECURSION TUNNEL)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4725,6 +4772,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::BioticChaos, "Biotic Chaos", "Tab"));
         views.push((ViewMode::Catalyst, "Catalyst Chamber", "Tab"));
         views.push((ViewMode::Hyperspace, "Hyperspace", "H"));
+        views.push((ViewMode::Hologram, "Hologram", "I"));
     }
     views
 }
@@ -7925,5 +7973,108 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         Line::from("  Call/Ret: Manual flow"),
     ];
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Metrics"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // Hologram Grid Visualization
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let (re, im) = vm.hologram_grid[y][x];
+            let magnitude = (re * re + im * im).sqrt();
+            let phase = im.atan2(re); // -PI to PI
+
+            // Visualizing Magnitude as Character density
+            let ch = if magnitude < 0.1 {
+                " ".to_string()
+            } else if magnitude < 1.0 {
+                "·".to_string()
+            } else if magnitude < 2.0 {
+                "~".to_string()
+            } else if magnitude < 5.0 {
+                "x".to_string()
+            } else if magnitude < 10.0 {
+                "%".to_string()
+            } else {
+                "#".to_string()
+            };
+
+            // Visualizing Phase as Color
+            // Map -PI..PI to Hue spectrum
+            let hue = (phase + std::f64::consts::PI) / (2.0 * std::f64::consts::PI); // 0.0 to 1.0
+
+            let color = if magnitude < 0.1 {
+                Color::DarkGray
+            } else if hue < 0.16 {
+                Color::Red
+            } else if hue < 0.33 {
+                Color::Yellow
+            } else if hue < 0.5 {
+                Color::Green
+            } else if hue < 0.66 {
+                Color::Cyan
+            } else if hue < 0.83 {
+                Color::Blue
+            } else {
+                Color::Magenta
+            };
+
+            let mut style = Style::default().fg(color);
+
+            if magnitude > 10.0 {
+                style = style.add_modifier(Modifier::BOLD);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Interference Pattern (Re/Im)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let (re, im) = vm.hologram_grid[cy][cx];
+    let mag = (re*re + im*im).sqrt();
+    let phase = im.atan2(re);
+
+    let info = vec![
+        Line::from("HOLOGRAPHIC PLATE"),
+        Line::from(" "),
+        Line::from(format!("Cursor: {},{}", cx, cy)),
+        Line::from(format!("Real: {:.4}", re)),
+        Line::from(format!("Imag: {:.4}", im)),
+        Line::from(format!("Mag:  {:.4}", mag)),
+        Line::from(format!("Phase:{:.4} rad", phase)),
+        Line::from(" "),
+        Line::from("Operations:"),
+        Line::from("  Interfere(s) -> Encode Strand"),
+        Line::from("  Refract()    -> Decode to Strand"),
+        Line::from("  Project()    -> Manifest on Grid"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Wave Analysis"),
+    );
     f.render_widget(info_widget, chunks[1]);
 }

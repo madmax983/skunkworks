@@ -920,6 +920,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    // Holographic Features (Nova)
+    /// **[Nova]** Encodes a strand into the Hologram Grid (Interference).
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Interfere,
+    /// **[Nova]** Decodes the Hologram Grid into a new strand (Refraction).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Refract,
+    /// **[Nova]** Projects the Hologram intensity onto the main Grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Project,
+    /// **[Nova]** Toggles Holographic View/Mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Hologram,
+
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`
