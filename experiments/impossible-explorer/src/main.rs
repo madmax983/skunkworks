@@ -297,7 +297,7 @@ fn render_scene(
                 }
 
                 {
-                    let _guard = ScopedScissor::new(rect.0, rect.1, rect.2, rect.3, parent_scissor);
+                    let _guard = ScopedScissor::new(rect.0, rect.1, rect.2, rect.3);
                     clear_depth_buffer();
 
                     let target_rot = total_portal_rot;

@@ -115,6 +115,7 @@ members = [
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
     "experiments/bridge-balancer",
     "experiments/bridge-specter", "experiments/silicon-samba",
+    "experiments/social-spores",
     "experiments/hyperbolic-hell",
     "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/celestial-cantata", "experiments/astral-chimera",
     "experiments/gravity-termites",

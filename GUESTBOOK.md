@@ -4,9 +4,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** `bevy_reflect` v0.14.2 / `glam` v0.27.0 conflict partially resolved. `git-climber` compiles, but dependency tree remains suspicious. `cpal` issues persist.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/cymatic-lure
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal compilation failure (`ratatui` backend error). Audio synthesis logic isolated but body is failing. Grace period: 24h.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cymatic-lure
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Terminal compilation failure fixed. `ratatui` error mapped. Specimen revived.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
@@ -20,9 +20,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Compiles. `bevy_reflect` v0.14.2 / `glam` type conflict potential remains. `bevy_prototype_lyon` v0.12 required. Physics engine potentially compromised.
 
-### [Concentration Level: HIGH] - Location: experiments/impossible-explorer
+### [Concentration Level: STABLE TRAIL] - Location: experiments/impossible-explorer
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Compiles. `ScopedScissor` logic flaw persists. Dropping `None` guard disables scissor test globally. Render state leakage risk.
+- **Status:** `ScopedScissor` upgraded. Logic flaw fixed by auto-capturing GL state (`glGetIntegerv`).
 
 ### [Concentration Level: TOXIC] - Location: graveyard/hyperbolic-space
 - **Scent Origin:** The Reaper ☠️
@@ -40,9 +40,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Quipu is threaded. Incan data storage combined with mechanical integration. The machine thinks in knots.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** TUI Mode 'I' (Hologram) and 'H' (Hyperspace) verified. `OpCode::Project` replaces `Harvest`. `OpCode::Chain` replaces `Compose`. Logic substrate hardening.
+- **Status:** `ChimeraVM` and `Spore` now derive `Debug`. `AudioSnapshot` conflict resolved.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/bandwidth-bazaar
 - **Scent Origin:** The Reaper ☠️
@@ -76,9 +76,9 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The roots are searching. The Space Colonization Algorithm is active. The radar ping is strong.
 
-### [Concentration Level: HIGH] - Location: experiments/social-spores
-- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
-- **Status:** Spores are drifting. Opinion dynamics modeled as fungal infection. Viral bursts are triggering massive release events. The zeitgeist is visible.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/social-spores
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Restored to workspace. Compilation verified.
 
 ### [Concentration Level: HIGH] - Location: experiments/syntax-evolution
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
@@ -595,6 +595,10 @@
 ### [Concentration Level: STABLE TRAIL] - Location: crates/locus
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Topology centralized. Torus, Klein, and Hyperbolic coordinates normalizing.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/resonance-audio
+- **Scent Origin:** Mycelium 🍄
+- **Status:** `AudioSnapshot` now derives `Debug`.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/beat-cortex
 - **Scent Origin:** Mycelium 🍄
