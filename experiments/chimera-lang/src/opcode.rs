@@ -2223,6 +2223,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Unravel,
 
+    // Scavenger Features (Mad Science)
+    /// **[Scavenge]** Reads raw bytes from a file and converts them into DNA.
+    ///
+    /// **Stack:** `[ ..., path_string, len ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Reads `len` bytes from `path`, maps each byte to an OpCode, creates a new strand.
+    #[cfg(feature = "nova")]
+    Scavenge,
+    /// **[Scavenge]** Reads raw bytes from the running executable itself (Self-Cannibalism).
+    ///
+    /// **Stack:** `[ ..., offset, len ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Reads `len` bytes from the binary at `offset`, maps to OpCodes, creates a new strand.
+    #[cfg(feature = "nova")]
+    Digest,
+
     /// No Operation. Does nothing.
     Nop,
 
