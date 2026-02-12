@@ -936,6 +936,11 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Project,
+    /// **[Nova]** Diffracts a strand into the Hologram Grid (Ghost/Split).
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Diffract,
     /// **[Nova]** Toggles Holographic View/Mode.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

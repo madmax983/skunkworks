@@ -89,7 +89,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
     let mut cost = 0;
 
     // Recipe Helper
-    let check_recipe = |target: &[&str]| -> bool {
+    let _check_recipe = |target: &[&str]| -> bool {
         if ingredients.len() != target.len() {
             return false;
         }

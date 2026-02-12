@@ -490,7 +490,7 @@ fn exec_stack_io(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Signa
     }
 }
 
-fn exec_voltage(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+fn exec_voltage(_vm: &ChimeraVM, _y: usize, _x: usize, _signal: u8, _ctx: &mut SignalContext) {
     // V: Voltmeter
     // North: Threshold (Default 0)
     // East: Output Value (Default '1')
@@ -513,6 +513,12 @@ fn exec_voltage(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut Signa
 
     #[cfg(feature = "elektra")]
     {
+        // Remove underscore prefixes to use them
+        let vm = _vm;
+        let y = _y;
+        let x = _x;
+        let ctx = _ctx;
+
         let threshold = peek(vm, y, x, -1, 0).unwrap_or(0);
         let output_val = peek(vm, y, x, 0, 1).unwrap_or(1); // Default to '1'
 

@@ -6,11 +6,17 @@ use crate::ast::{Gene, Nucleotide};
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
 use std::f64::consts::PI;
+#[cfg(feature = "nova")]
+use strum::IntoEnumIterator;
 
 #[cfg(feature = "nova")]
 pub fn exec_interfere(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
     // Input: Strand Index
-    // Effect: Adds interference pattern to Hologram Grid
+    // Effect: Adds interference pattern to Hologram Grid using DFT Encoding
+    // Gene Index i -> Frequency (u, v)
+    // OpCode -> Phase
+    // Argument -> Amplitude
+
     let mut strand_idx = 0;
     if let Some(Nucleotide::Number(n)) = args.first() {
         strand_idx = *n as usize;
@@ -22,30 +28,35 @@ pub fn exec_interfere(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> O
 
     if strand_idx < vm.dna.helix.strands.len() {
         let strand = &vm.dna.helix.strands[strand_idx];
-        let center_x = (GRID_SIZE as f64 - 1.0) / 2.0;
-        let center_y = (GRID_SIZE as f64 - 1.0) / 2.0;
+        let op_count = OpCode::iter().count() as f64;
+        let n_grid = GRID_SIZE as f64;
 
         for (i, gene) in strand.genes.iter().enumerate() {
-            // Encode OpCode into Frequency (k)
-            let op_hash = calculate_hash(&gene.op);
-            let k = (op_hash % 20) as f64 * 0.5 + 1.0; // 1.0 to 10.5
+            if i >= 16 { break; } // Limit to 16 genes per hologram layer
 
-            // Encode Index into Phase (phi)
-            let phi = (i as f64) * (PI / 4.0);
+            // Map Index to Frequency (u, v)
+            // Avoid DC (0,0) and Nyquist boundaries to be safe
+            // i=0..15
+            let u = ((i % 4) * 2 + 1) as f64; // 1, 3, 5, 7
+            let v = ((i / 4) * 2 + 1) as f64; // 1, 3, 5, 7
 
-            // Add wave to grid
+            // Encode OpCode into Phase
+            let op_idx = get_opcode_index(&gene.op) as f64;
+            let phi = (op_idx / op_count) * 2.0 * PI;
+
+            // Encode Argument into Amplitude
+            let mut amplitude = 1.0;
+            if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                amplitude = 1.0 + (*n as f64).abs() / 50.0;
+            }
+
+            // Inverse DFT (Accumulate)
+            // H[y][x] += A * e^(i(2pi(ux+vy)/N + phi))
             for y in 0..GRID_SIZE {
                 for x in 0..GRID_SIZE {
-                    let dx = x as f64 - center_x;
-                    let dy = y as f64 - center_y;
-                    let r = (dx * dx + dy * dy).sqrt();
-
-                    // Wave: e^(i(kr + phi))
-                    let angle = k * r + phi;
-                    let re = angle.cos();
-                    let im = angle.sin();
-
-                    // Accumulate
+                    let angle = 2.0 * PI * (u * (x as f64) + v * (y as f64)) / n_grid + phi;
+                    let re = amplitude * angle.cos();
+                    let im = amplitude * angle.sin();
                     vm.hologram_grid[y][x].0 += re;
                     vm.hologram_grid[y][x].1 += im;
                 }
@@ -60,83 +71,135 @@ pub fn exec_interfere(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> O
 }
 
 #[cfg(feature = "nova")]
-pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
-    // Input: None (uses Hologram Grid)
-    // Effect: Decodes hologram into a new strand
+pub fn exec_diffract(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+    // Input: Strand Index
+    // Effect: Encodes strand with a spatial shift (Phase ramp in freq domain).
+    // When refracted normally, the phases will be shifted, scrambling OpCodes.
 
-    // We scan for known OpCodes.
-    // This is computationally expensive, so we limit the search.
-    // We check frequencies corresponding to standard OpCodes.
-
-    let center_x = (GRID_SIZE as f64 - 1.0) / 2.0;
-    let center_y = (GRID_SIZE as f64 - 1.0) / 2.0;
-
-    let mut detected_genes: Vec<(usize, OpCode, f64)> = Vec::new();
-
-    // List of OpCodes to scan for (subset for performance)
-    let scan_ops = vec![
-        OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
-        OpCode::Dup, OpCode::Print, OpCode::Jump, OpCode::Brz,
-        OpCode::Photosynthesize, OpCode::Consume, OpCode::GRead, OpCode::GWrite,
-        OpCode::Mitosis, OpCode::Apoptosis, OpCode::Hologram, OpCode::Project
-    ];
-
-    for op in scan_ops {
-        let op_hash = calculate_hash(&op);
-        let k = (op_hash % 20) as f64 * 0.5 + 1.0;
-
-        // Scan for this k at different phases (indices)
-        // Limit to 16 genes length
-        for i in 0..16 {
-            let phi = (i as f64) * (PI / 4.0);
-
-            // Calculate overlap (Dot Product)
-            let mut sum_re = 0.0;
-            // let mut sum_im = 0.0;
-
-            for y in 0..GRID_SIZE {
-                for x in 0..GRID_SIZE {
-                    let dx = x as f64 - center_x;
-                    let dy = y as f64 - center_y;
-                    let r = (dx * dx + dy * dy).sqrt();
-                    let angle = k * r + phi;
-
-                    // Hologram value H
-                    let (h_re, h_im) = vm.hologram_grid[y][x];
-
-                    // Reference wave R* = e^(-i(kr+phi)) = cos - i sin
-                    let r_re = angle.cos();
-                    let r_im = -angle.sin();
-
-                    // H * R* = (h_re + i h_im)(r_re + i r_im)
-                    // Real part = h_re*r_re - h_im*r_im
-                    let prod_re = h_re * r_re - h_im * r_im;
-                    sum_re += prod_re;
-                }
-            }
-
-            // Normalize
-            let resonance = sum_re / (GRID_SIZE * GRID_SIZE) as f64;
-
-            if resonance > 0.5 { // Threshold
-                detected_genes.push((i, op.clone(), resonance));
-            }
+    let mut strand_idx = 0;
+    if let Some(Nucleotide::Number(n)) = args.first() {
+        strand_idx = *n as usize;
+    } else if let Some(val) = vm.stack.pop() {
+        if let Value::Int(n) = val {
+            strand_idx = n as usize;
         }
     }
 
-    // Sort by index and pick best match for each index
-    detected_genes.sort_by(|a, b| {
-        a.0.cmp(&b.0).then(b.2.partial_cmp(&a.2).unwrap())
-    });
+    if strand_idx < vm.dna.helix.strands.len() {
+        let strand = &vm.dna.helix.strands[strand_idx];
+        let op_count = OpCode::iter().count() as f64;
+        let n_grid = GRID_SIZE as f64;
 
-    // De-duplicate indices (take strongest)
+        // Spatial shift
+        let shift_x = 4.0;
+        let shift_y = 4.0;
+
+        for (i, gene) in strand.genes.iter().enumerate() {
+            if i >= 16 { break; }
+
+            let u = ((i % 4) * 2 + 1) as f64;
+            let v = ((i / 4) * 2 + 1) as f64;
+
+            let op_idx = get_opcode_index(&gene.op) as f64;
+            let phi = (op_idx / op_count) * 2.0 * PI;
+            let amplitude = 0.5;
+
+            for y in 0..GRID_SIZE {
+                for x in 0..GRID_SIZE {
+                    // Shifted coords: x' = x - shift_x
+                    let xx = x as f64 - shift_x;
+                    let yy = y as f64 - shift_y;
+
+                    let angle = 2.0 * PI * (u * xx + v * yy) / n_grid + phi;
+                    let re = amplitude * angle.cos();
+                    let im = amplitude * angle.sin();
+
+                    vm.hologram_grid[y][x].0 += re;
+                    vm.hologram_grid[y][x].1 += im;
+                }
+            }
+        }
+        vm.output.push(format!("DIFFRACT: Created ghost of strand {}", strand_idx));
+        vm.energy = vm.energy.saturating_sub(15);
+    }
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+    let op_codes: Vec<OpCode> = OpCode::iter().collect();
+    let op_count = op_codes.len() as f64;
+    let n_grid = GRID_SIZE as f64;
+    let grid_area = (GRID_SIZE * GRID_SIZE) as f64;
+
     let mut genes = Vec::new();
-    let mut last_idx = -1;
 
-    for (idx, op, _strength) in detected_genes {
-        if idx as i32 > last_idx {
-            genes.push(Gene { op, args: vec![] });
-            last_idx = idx as i32;
+    for i in 0..16 {
+        let u = ((i % 4) * 2 + 1) as f64;
+        let v = ((i / 4) * 2 + 1) as f64;
+
+        // DFT: Sum H[y][x] * e^(-i 2pi (ux+vy)/N)
+        let mut sum_re = 0.0;
+        let mut sum_im = 0.0;
+
+        for y in 0..GRID_SIZE {
+            for x in 0..GRID_SIZE {
+                let angle = 2.0 * PI * (u * (x as f64) + v * (y as f64)) / n_grid;
+                let r_re = angle.cos();
+                let r_im = -angle.sin();
+
+                let (h_re, h_im) = vm.hologram_grid[y][x];
+
+                sum_re += h_re * r_re - h_im * r_im;
+                sum_im += h_re * r_im + h_im * r_re;
+            }
+        }
+
+        // Normalize
+        // If we added A*e^iphi, sum should be A * N^2 * e^iphi ?
+        // Sum of e^... * e^-... = Sum(1) = N^2.
+        // So divide by N^2.
+        let z_re = sum_re / grid_area;
+        let z_im = sum_im / grid_area;
+
+        let magnitude = (z_re * z_re + z_im * z_im).sqrt();
+
+        if magnitude > 0.1 {
+            // Decode Phase
+            let phase = z_im.atan2(z_re);
+            let phase_norm = if phase < 0.0 { phase + 2.0 * PI } else { phase };
+
+            // Round to nearest OpCode slot
+            // phase = (idx / count) * 2PI
+            // idx = phase * count / 2PI
+            let idx_float = (phase_norm * op_count) / (2.0 * PI);
+            let idx = idx_float.round() as usize % op_codes.len();
+
+            let detected_op = op_codes[idx].clone();
+
+            // Decode Amplitude
+            // A = 1.0 + Arg/50.0
+            // Arg = (A - 1.0) * 50.0
+            let est_amplitude = magnitude;
+            let mut args = Vec::new();
+
+            if est_amplitude > 1.02 { // Tolerance for 1.0
+                let val = ((est_amplitude - 1.0) * 50.0).round() as i64;
+                // Clamp or check validity?
+                // The shift might cause amplitude noise too.
+                if val != 0 {
+                    args.push(Nucleotide::Number(val));
+                }
+            }
+
+            genes.push(Gene { op: detected_op, args });
+        } else {
+            // No signal at this frequency
+            // Stop at first gap? Or allow gaps (Nop)?
+            // If we stop, we might miss genes if there's a Nop encoded as "No Signal" (if we did that).
+            // But we encoded everything with A >= 1.0.
+            // So low magnitude means END of strand.
+            break;
         }
     }
 
@@ -169,12 +232,11 @@ pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
 
 #[cfg(feature = "nova")]
 pub fn exec_project(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
-    // Project hologram intensity to Grid
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             let (re, im) = vm.hologram_grid[y][x];
             let magnitude = (re * re + im * im).sqrt();
-            let val = (magnitude * 10.0) as i64; // Scale
+            let val = (magnitude * 10.0) as i64;
             if val > 0 {
                 vm.grid[y][x] = Value::Int(val);
             }
@@ -186,9 +248,6 @@ pub fn exec_project(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
 }
 
 #[cfg(feature = "nova")]
-fn calculate_hash(op: &OpCode) -> u64 {
-    use std::hash::{Hash, Hasher};
-    let mut hasher = std::collections::hash_map::DefaultHasher::new();
-    op.hash(&mut hasher);
-    hasher.finish()
+fn get_opcode_index(op: &OpCode) -> usize {
+    OpCode::iter().position(|x| x == *op).unwrap_or(0)
 }
