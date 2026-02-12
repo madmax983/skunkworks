@@ -1,20 +1,15 @@
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    event::{self, Event, KeyCode},
 };
 use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
 use nalgebra::Vector2;
 use ratatui::{prelude::*, widgets::*};
-use std::{error::Error, io, time::Duration};
+use std::{error::Error, time::Duration};
+use tui_shared::{widgets::LogList, Tui};
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup Terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Setup Simulation
     let mut world = PhysicsWorld::new();
@@ -55,11 +50,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         }
 
         // Draw
-        terminal.draw(|f| {
+        tui.terminal.draw(|f| {
             let chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Min(0), Constraint::Length(3)])
+                .split(f.area());
+
+            let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
                 .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
-                .split(f.area());
+                .split(chunks[0]);
 
             let canvas = ratatui::widgets::canvas::Canvas::default()
                 .block(
@@ -154,28 +154,20 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .x_bounds([-40.0, 40.0])
                 .y_bounds([-30.0, 30.0]);
 
-            f.render_widget(canvas, chunks[0]);
+            f.render_widget(canvas, main_chunks[0]);
 
-            let log: Vec<ListItem> = event_log
-                .iter()
-                .rev()
-                .map(|s| ListItem::new(Line::from(s.as_str())))
-                .collect();
+            let log_list = LogList::new(event_log.clone().into_iter().rev().collect())
+                .block(Block::default().borders(Borders::ALL).title("Music Log"));
+            f.render_widget(log_list, main_chunks[1]);
 
-            let list =
-                List::new(log).block(Block::default().borders(Borders::ALL).title("Music Log"));
-            f.render_widget(list, chunks[1]);
+            // Footer
+            let footer = Paragraph::new("Press 'q' to quit")
+                .block(Block::default().borders(Borders::ALL))
+                .alignment(Alignment::Center);
+            f.render_widget(footer, chunks[1]);
         })?;
     }
 
-    // Restore Terminal
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
-
+    // Restore Terminal happens automatically on Drop of `tui`
     Ok(())
 }
