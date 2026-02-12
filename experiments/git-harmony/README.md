@@ -14,10 +14,14 @@ It reads the current `git diff`, parsing additions and deletions as musical even
 Run inside a git repository (or this one):
 
 ```bash
+# Visual-only mode (Default)
 cargo run -p git-harmony
+
+# Audio-visual mode (Requires audio hardware)
+cargo run -p git-harmony --features audio
 ```
 
 ## "Wild Mode" Features
-- **Generative Audio:** Uses `rodio` to synthesize sine waves based on the hash of the code content.
+- **Generative Audio:** Uses `rodio` to synthesize sine waves based on the hash of the code content (Requires `--features audio`).
 - **Visual Synesthesia:** A `ratatui` Canvas visualizes the "notes" flowing through time.
 - **Resilient:** Works even without audio hardware (visual-only mode).
