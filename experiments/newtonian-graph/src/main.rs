@@ -11,11 +11,12 @@ use crossterm::{
 };
 use ratatui::{
     backend::{Backend, CrosstermBackend},
+    layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
     widgets::{
         canvas::{Canvas, Line},
-        Block, Borders,
+        Block, Borders, Paragraph,
     },
     Terminal,
 };
@@ -107,10 +108,29 @@ where
         terminal.draw(|f| {
             let size = f.area(); // updated for ratatui 0.26+
 
+            let chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .constraints([Constraint::Min(0), Constraint::Length(1)])
+                .split(size);
+
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Newtonian Graph"))
-                .x_bounds([pan.x as f64 - 100.0 * zoom as f64, pan.x as f64 + 100.0 * zoom as f64])
-                .y_bounds([pan.y as f64 - 100.0 * zoom as f64, pan.y as f64 + 100.0 * zoom as f64])
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title(format!(
+                            "Newtonian Graph | Nodes: {} | Edges: {}",
+                            graph.nodes.len(),
+                            graph.edges.len()
+                        )),
+                )
+                .x_bounds([
+                    pan.x as f64 - 100.0 * zoom as f64,
+                    pan.x as f64 + 100.0 * zoom as f64,
+                ])
+                .y_bounds([
+                    pan.y as f64 - 100.0 * zoom as f64,
+                    pan.y as f64 + 100.0 * zoom as f64,
+                ])
                 .paint(|ctx| {
                     // Edges
                     for &(i, j) in &universe.edges {
@@ -129,22 +149,30 @@ where
                     for body in &universe.bodies {
                         // Trail
                         for i in 0..body.trail.len().saturating_sub(1) {
-                             ctx.draw(&Line {
+                            ctx.draw(&Line {
                                 x1: body.trail[i].x as f64,
                                 y1: body.trail[i].y as f64,
-                                x2: body.trail[i+1].x as f64,
-                                y2: body.trail[i+1].y as f64,
+                                x2: body.trail[i + 1].x as f64,
+                                y2: body.trail[i + 1].y as f64,
                                 color: Color::Gray,
                             });
                         }
 
                         // Point
                         let symbol = if body.radius > 5.0 { "O" } else { "o" };
-                        ctx.print(body.pos.x as f64, body.pos.y as f64, Span::styled(symbol, Style::default().fg(body.color)));
+                        ctx.print(
+                            body.pos.x as f64,
+                            body.pos.y as f64,
+                            Span::styled(symbol, Style::default().fg(body.color)),
+                        );
                     }
                 });
 
-            f.render_widget(canvas, size);
+            f.render_widget(canvas, chunks[0]);
+
+            let controls = Paragraph::new("Controls: [Q] Quit | [+/-] Zoom | [Arrows] Pan | [R] Reset")
+                .style(Style::default().fg(Color::White).bg(Color::DarkGray));
+            f.render_widget(controls, chunks[1]);
         })?;
 
         let timeout = tick_rate
@@ -155,6 +183,10 @@ where
             if let Event::Key(key) = event::read()? {
                 match key.code {
                     KeyCode::Char('q') => return Ok(()),
+                    KeyCode::Char('r') => {
+                        zoom = 1.0;
+                        pan = Vec2::ZERO;
+                    }
                     KeyCode::Char('+') => zoom *= 0.9,
                     KeyCode::Char('-') => zoom *= 1.1,
                     KeyCode::Up => pan.y += 10.0 * zoom,
