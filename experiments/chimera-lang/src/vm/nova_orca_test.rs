@@ -366,4 +366,54 @@ mod tests {
             _ => panic!("Expected '1' at (2,1), got {:?}", vm.grid[2][1]),
         }
     }
+
+    #[test]
+    fn test_orca_stack_io() {
+        let mut vm = make_vm();
+        // Test Push
+        // Layout:
+        // . 1 .  (Mode: 1 = Push)
+        // . $ 7  (East: 7)
+        // . . .
+
+        vm.grid[0][1] = Value::Str("1".to_string());
+        vm.grid[1][1] = Value::Str("$".to_string());
+        vm.grid[1][2] = Value::Str("7".to_string());
+
+        vm.signal_grid[1][1] = 1;
+
+        process_signals(&mut vm);
+
+        // Stack should have 7
+        assert_eq!(vm.stack.len(), 1);
+        match vm.stack[0] {
+            Value::Int(n) => assert_eq!(n, 7),
+            Value::Str(ref s) => assert_eq!(s, "7"), // Depending on how we read East
+            _ => panic!("Expected 7 on stack"),
+        }
+
+        // Test Pop
+        // Layout at (3,3):
+        // . 0 . (Mode: 0 = Pop)
+        // . $ .
+        // . . .
+
+        vm.grid[3][3] = Value::Str("$".to_string());
+        vm.grid[2][3] = Value::Str("0".to_string());
+
+        // Stack has 7.
+        vm.signal_grid[3][3] = 1;
+
+        process_signals(&mut vm);
+
+        // Stack should be empty
+        assert_eq!(vm.stack.len(), 0);
+
+        // Grid at South (4,3) should be 7
+        match &vm.grid[4][3] {
+            Value::Str(s) => assert_eq!(s, "7"),
+            Value::Int(n) => assert_eq!(*n, 7),
+            _ => panic!("Expected 7 at South, got {:?}", vm.grid[4][3]),
+        }
+    }
 }

@@ -591,6 +591,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub logos_mode: bool,
     #[cfg(feature = "nova")]
+    pub orca_mode: bool,
+    #[cfg(feature = "nova")]
     pub tablet: Vec<String>,
     pub chaos_struct: chimera_chaos::ChimeraChaos,
     pub catalysts: Vec<catalyst::Catalyst>,
@@ -866,6 +868,8 @@ impl ChimeraVM {
             glitch_level: 0.0,
             #[cfg(feature = "nova")]
             logos_mode: false,
+            #[cfg(feature = "nova")]
+            orca_mode: true,
             #[cfg(feature = "nova")]
             tablet: Vec::new(),
             chaos_struct: chimera_chaos::ChimeraChaos::new(),
@@ -1722,7 +1726,9 @@ impl ChimeraVM {
             self.process_environment();
             nova_flux::process_flux(self);
             nova_metamorphism::process_metamorphism(self);
-            nova_signals::process_signals(self);
+            if self.orca_mode {
+                nova_signals::process_signals(self);
+            }
             nova_sigil::process_passive_sigils(self);
             if self.relativity_mode {
                 nova_relativity::update_relativity(self);
@@ -2529,7 +2535,13 @@ impl ChimeraVM {
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
-            OpCode::Orca => None,
+            OpCode::Orca => {
+                self.orca_mode = !self.orca_mode;
+                let status = if self.orca_mode { "ON" } else { "OFF" };
+                self.output
+                    .push(format!("ORCA: Signal Processing {}", status));
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Glossolalia | OpCode::Clarify | OpCode::Confuse => {
