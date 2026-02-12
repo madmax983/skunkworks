@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **penrose-build**: Documentation void. Redundant with `penrose-deps`. Manual graph parsing logic. Grace period: 24h.
+- **bandwidth-bazaar**: Documentation void. Chaotic implementation. Generic. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **penrose-build**: Specimen executed. Documentation void. Redundant with `penrose-deps`. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-sector**: Specimen executed. Redundant with `ferrous-graph`. Documentation void. Moved to graveyard.
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Grace period expired. Moved to graveyard.
 - **slime-train**: Specimen executed. Documentation void. Redundant with `myco-transit`. Moved to graveyard.

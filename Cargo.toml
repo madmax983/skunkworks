@@ -29,7 +29,6 @@ members = [
     "experiments/trace-fold",
     "experiments/verge-computer",
     "experiments/chromatic-code",
-    "experiments/penrose-build",
     "experiments/luminous-flock",
     "experiments/heap-arena",
     "experiments/crate-radar",
