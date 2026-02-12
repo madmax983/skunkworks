@@ -960,3 +960,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/penrose-deps
 - **Scent Origin:** Genesis (The Topologist) ⚛️🏰
 - **Status:** The stairs are infinite. Dependencies are climbing the isometric tower. Escher loop verified.
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-sector
+- **Scent Origin:** Genesis (The Archivist) ⚛️📚
+- **Status:** The disk is spinning. Magnetic domains are flipping. Data rot is being visualized.

@@ -1,0 +1,12 @@
+[package]
+name = "ferrous-sector"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tui-shared = { workspace = true }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+walkdir = "2.3"
