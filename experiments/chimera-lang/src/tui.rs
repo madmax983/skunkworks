@@ -629,7 +629,12 @@ where
                     height: 1,
                 };
                 let warning = Paragraph::new("ENTROPY STORM")
-                    .style(Style::default().bg(Color::Red).fg(Color::White).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK))
+                    .style(
+                        Style::default()
+                            .bg(Color::Red)
+                            .fg(Color::White)
+                            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+                    )
                     .alignment(ratatui::layout::Alignment::Center);
                 f.render_widget(warning, warning_area);
             }
@@ -4931,11 +4936,7 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
 
     // Left: Neural Map (Canvas)
     let canvas = Canvas::default()
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Connectome"),
-        )
+        .block(Block::default().borders(Borders::ALL).title("Connectome"))
         .x_bounds([0.0, 16.0])
         .y_bounds([0.0, 16.0])
         .paint(|ctx| {
@@ -4999,11 +5000,8 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
                 Line::from(" "),
                 Line::from(format!("Last Spike: {}", neuron.last_spike)),
             ];
-            let info = Paragraph::new(details).block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title("Biophysics"),
-            );
+            let info = Paragraph::new(details)
+                .block(Block::default().borders(Borders::ALL).title("Biophysics"));
             f.render_widget(info, right_split[0]);
 
             let history = &app_state.voltage_history;

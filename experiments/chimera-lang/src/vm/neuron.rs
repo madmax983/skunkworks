@@ -199,7 +199,8 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                                 xs, ys, xt, yt
                             ));
                         } else {
-                            vm.output.push("AXON: Neurons must exist at both ends".to_string());
+                            vm.output
+                                .push("AXON: Neurons must exist at both ends".to_string());
                         }
                     } else {
                         vm.output.push("AXON: Invalid coordinates".to_string());
@@ -208,7 +209,8 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                     vm.output.push("Error: Type mismatch for axon".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for axon".to_string());
+                vm.output
+                    .push("Error: Stack underflow for axon".to_string());
             }
         }
         _ => {}

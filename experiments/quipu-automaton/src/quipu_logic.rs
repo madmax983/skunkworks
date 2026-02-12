@@ -98,7 +98,8 @@ impl QuipuMachine {
         let mut to_remove = Vec::new();
         self.knot_bodies.retain(|(_, handle)| {
             if let Some(body) = physics.rigid_body_set.get(*handle) {
-                if body.translation().y < -20.0 { // Below bottom
+                if body.translation().y < -20.0 {
+                    // Below bottom
                     to_remove.push(*handle);
                     return false;
                 }

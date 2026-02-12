@@ -33,9 +33,7 @@ impl PhysicsWorld {
         let sensor_handle = rigid_body_set.insert(sensor_rb);
 
         // Sensor Collider: A Ball (to allow smooth sliding)
-        let sensor_collider = ColliderBuilder::ball(1.5)
-            .restitution(0.5)
-            .build();
+        let sensor_collider = ColliderBuilder::ball(1.5).restitution(0.5).build();
         collider_set.insert_with_parent(sensor_collider, sensor_handle, &mut rigid_body_set);
 
         // 2. Create Integrator Wheel
@@ -72,7 +70,8 @@ impl PhysicsWorld {
             .build();
         let handle = self.rigid_body_set.insert(rb);
         let collider = ColliderBuilder::ball(radius).build();
-        self.collider_set.insert_with_parent(collider, handle, &mut self.rigid_body_set);
+        self.collider_set
+            .insert_with_parent(collider, handle, &mut self.rigid_body_set);
         handle
     }
 
