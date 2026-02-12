@@ -1846,6 +1846,43 @@ impl ChimeraVM {
             }
         }
 
+        #[cfg(feature = "nova")]
+        if !time_frozen && self.glitch_level > 0.8 {
+            let mut rng = rand::thread_rng();
+
+            // Throttle message
+            if self.tick_counter % 10 == 0 {
+                self.output.push("ENTROPY STORM ACTIVE".to_string());
+            }
+
+            // Spontaneous Tunneling (5%)
+            if rng.gen_bool(0.05) {
+                if let Some(target) = nova_flux::exec_quantum_tunnel(self) {
+                    self.ip = target;
+                }
+            }
+
+            // Reality Flux (5%)
+            if rng.gen_bool(0.05) {
+                let rows = self.grid.len();
+                if rows > 0 {
+                    let cols = self.grid[0].len();
+                    let ry = rng.gen_range(0..rows);
+                    let rx = rng.gen_range(0..cols);
+                    self.grid[ry][rx] = Value::Int(rng.gen_range(0..100));
+                    self.output
+                        .push(format!("STORM: Reality warp at {},{}", rx, ry));
+                }
+            }
+
+            // Amnesia (1%)
+            if rng.gen_bool(0.01) {
+                self.stack.pop();
+                self.output
+                    .push("STORM: Memory lost (Stack Pop)".to_string());
+            }
+        }
+
         if self.check_starvation() {
             return;
         }
@@ -2579,6 +2616,14 @@ impl ChimeraVM {
             | OpCode::Synthesize
             | OpCode::Catalyze
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::EntropySurge => {
+                nova_flux::exec_entropy_surge(self);
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::QuantumTunnel => nova_flux::exec_quantum_tunnel(self),
 
             #[cfg(feature = "nova")]
             OpCode::Chain | OpCode::Curry | OpCode::Quote => {

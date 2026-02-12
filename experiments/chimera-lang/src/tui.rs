@@ -619,6 +619,20 @@ where
             if vm.glitch_level > 0.01 {
                 apply_glitch_fx(f.buffer_mut(), vm.glitch_level);
             }
+
+            if vm.glitch_level > 0.8 {
+                let area = f.area();
+                let warning_area = ratatui::layout::Rect {
+                    x: area.width.saturating_sub(20) / 2,
+                    y: 0,
+                    width: 20,
+                    height: 1,
+                };
+                let warning = Paragraph::new("ENTROPY STORM")
+                    .style(Style::default().bg(Color::Red).fg(Color::White).add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK))
+                    .alignment(ratatui::layout::Alignment::Center);
+                f.render_widget(warning, warning_area);
+            }
         })?;
 
         if event::poll(std::time::Duration::from_millis(100))? {

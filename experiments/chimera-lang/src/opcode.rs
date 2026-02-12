@@ -881,6 +881,16 @@ pub enum OpCode {
     /// **Cost:** Energy proportional to amount.
     #[cfg(feature = "nova")]
     Stabilize,
+    /// **[Nova]** Increases global entropy and injects chaos into a random grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EntropySurge,
+    /// **[Nova]** Forcefully jumps the IP to a random gene in the current strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    QuantumTunnel,
     /// **[Nova]** Instantly converts a grid cell to high entropy.
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
