@@ -1,14 +1,99 @@
+//! # Quipu 🧶
+//!
+//! > "The Quipu is a device for recording information, consisting of a main cord with smaller cords of different colors attached to it and knotted in various ways." - *Garcilaso de la Vega*
+//!
+//! A library for modeling the **Quipu** (Khipu), the ancient Inca recording device used for accounting and census data.
+//! This crate provides data structures to represent Knots, Cords, and the Quipu itself, allowing you to perform
+//! arithmetic operations using the logic of the Inca civilization.
+//!
+//! ## The Inca Number System
+//!
+//! The Incas used a **base-10 positional system**, similar to ours, but represented vertically on hanging cords:
+//!
+//! - **The Top:** Higher powers of 10 (Hundreds, Thousands, etc.).
+//! - **The Bottom:** The Units place ($10^0$).
+//! - **The Zero:** Represented by an empty space (no knot) in a position.
+//!
+//! ## Knots
+//!
+//! There are three types of knots used to represent numbers:
+//!
+//! 1.  **Simple Knot (●):** Represents `1` in the Tens place and higher.
+//! 2.  **Long Knot (≡L):** Represents `2` to `9` in the Units place. The number of turns indicates the value.
+//! 3.  **Figure-Eight Knot (∞):** Represents `1` in the Units place.
+//!
+//! ## Example: The Hero's Journey (Accounting for the Harvest)
+//!
+//! Imagine you are a *Quipucamayoc* (Keeper of the Quipu), recording the harvest of potatoes and maize.
+//!
+//! ```
+//! use quipu::{Quipu, Cord, Knot};
+//!
+//! // 1. Create a new Quipu to record the harvest.
+//! let mut harvest_record = Quipu::new();
+//!
+//! // 2. Record 123 sacks of potatoes.
+//! //    - 1 Hundred (Simple)
+//! //    - 2 Tens (Simple, Simple)
+//! //    - 3 Units (Long Knot with 3 turns)
+//! let potatoes = Cord::from(123);
+//! harvest_record.add_cord(potatoes);
+//!
+//! // 3. Record 45 sacks of maize.
+//! //    - 4 Tens (Simple x4)
+//! //    - 5 Units (Long Knot with 5 turns)
+//! let maize = Cord::from(45);
+//! harvest_record.add_cord(maize);
+//!
+//! // 4. Calculate the total harvest.
+//! //    The Incas performed arithmetic by moving knots or combining cords.
+//! let total = harvest_record.cords[0].clone() + harvest_record.cords[1].clone();
+//!
+//! assert_eq!(total.value(), 168);
+//!
+//! // Display the total cord (TUI representation)
+//! // Output:
+//! // ●          (1 Hundred)
+//! // ● ● ● ● ● ● (6 Tens)
+//! // ≡8         (8 Units)
+//! println!("{}", total);
+//! ```
+
 use std::fmt;
 use std::ops::{Add, Sub};
 
+/// Represents a single knot on a Quipu cord.
+///
+/// Knots are the fundamental digits of the Inca number system.
+/// Their value depends on their type and position (though position is handled by [`Cord`]).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Knot {
-    Simple,      // Value: 1 (Used for Tens+)
-    Long(u8),    // Value: 2-9 (Used for Units)
-    FigureEight, // Value: 1 (Used for Units)
+    /// **Simple Knot (s)**: Value 1. Used for all positions *except* Units.
+    ///
+    /// Visually represented as a small dot.
+    Simple,
+    /// **Long Knot (L)**: Value 2-9. Used *only* for the Units position.
+    ///
+    /// The `u8` payload represents the number of turns (and thus the value).
+    Long(u8),
+    /// **Figure-Eight Knot (E)**: Value 1. Used *only* for the Units position.
+    ///
+    /// A special knot used because a Simple knot in the units place could be mistaken for a Long knot with 1 turn (which doesn't exist).
+    FigureEight,
 }
 
 impl Knot {
+    /// Returns the numeric value of the knot.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Knot;
+    ///
+    /// assert_eq!(Knot::Simple.value(), 1);
+    /// assert_eq!(Knot::FigureEight.value(), 1);
+    /// assert_eq!(Knot::Long(5).value(), 5);
+    /// ```
     pub fn value(&self) -> u8 {
         match self {
             Knot::Simple => 1,
@@ -17,7 +102,11 @@ impl Knot {
         }
     }
 
-    /// Returns the symbol for TUI display (from quipu-symphony)
+    /// Returns the symbol used for TUI display.
+    ///
+    /// - `●`: Simple Knot
+    /// - `≡N`: Long Knot (where N is the value)
+    /// - `∞`: Figure-Eight Knot
     pub fn symbol(&self) -> String {
         match self {
             Knot::Simple => "●".to_string(),
@@ -27,19 +116,50 @@ impl Knot {
     }
 }
 
+/// A hanging cord representing a single integer number.
+///
+/// The cord is divided into clusters of knots, representing powers of 10.
+///
+/// - **Index 0:** Units ($10^0$)
+/// - **Index 1:** Tens ($10^1$)
+/// - **Index 2:** Hundreds ($10^2$)
+/// - ...and so on.
+///
+/// # Example
+///
+/// ```
+/// use quipu::Cord;
+///
+/// let cord = Cord::from(205);
+/// // This cord will have:
+/// // - Index 0 (Units): Knot::Long(5)
+/// // - Index 1 (Tens): Empty (Zero)
+/// // - Index 2 (Hundreds): 2 Simple Knots
+/// assert_eq!(cord.value(), 205);
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct Cord {
-    // Index 0 = Units (10^0)
-    // Index 1 = Tens (10^1)
-    // ...
+    /// The clusters of knots, ordered from Units (index 0) to highest power.
     pub clusters: Vec<Vec<Knot>>,
 }
 
 impl Cord {
+    /// Creates a new, empty Cord (representing 0).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    /// let cord = Cord::new();
+    /// assert_eq!(cord.value(), 0);
+    /// ```
     pub fn new() -> Self {
         Self::default()
     }
 
+    /// Calculates the total integer value of the cord.
+    ///
+    /// Iterates through the clusters, summing the knot values and applying the power-of-10 multiplier.
     pub fn value(&self) -> u64 {
         let mut total: u64 = 0;
         let mut multiplier: u64 = 1;
@@ -55,10 +175,26 @@ impl Cord {
         total
     }
 
-    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if underflow occurred.
+    /// Performs checked subtraction.
     ///
-    /// This is safer than the `Sub` implementation which panics on underflow (since Quipus
-    /// cannot represent negative numbers).
+    /// Computes `self - rhs`, returning `None` if the result would be negative (underflow).
+    /// This is safer than the standard `Sub` trait, which may panic or wrap unexpectedly
+    /// depending on implementation, although the Inca system strictly deals with natural numbers.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let c100 = Cord::from(100);
+    /// let c50 = Cord::from(50);
+    ///
+    /// let result = c100.checked_sub(&c50);
+    /// assert_eq!(result.unwrap().value(), 50);
+    ///
+    /// let underflow = c50.checked_sub(&c100);
+    /// assert!(underflow.is_none());
+    /// ```
     pub fn checked_sub(&self, rhs: &Self) -> Option<Self> {
         let v1 = self.value();
         let v2 = rhs.value();
@@ -147,6 +283,13 @@ impl Add for Cord {
 impl Sub for Cord {
     type Output = Cord;
 
+    /// Subtracts one Cord from another.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the result would be negative (i.e., `rhs > self`).
+    /// The Inca number system does not support negative numbers.
+    /// Use [`Cord::checked_sub`] for safe subtraction.
     fn sub(self, rhs: Self) -> Self::Output {
         // Only implementing positive result subtraction
         if self.value() < rhs.value() {
@@ -160,9 +303,37 @@ impl Sub for Cord {
     }
 }
 
+/// A full Quipu: A collection of cords hanging from a main primary cord.
+///
+/// This acts as a database or ledger.
+///
+/// # Example
+///
+/// ```
+/// use quipu::{Quipu, Cord};
+///
+/// let mut q = Quipu::new();
+/// q.add_cord(Cord::from(10));
+/// q.add_cord(Cord::from(20));
+///
+/// assert_eq!(q.cords.len(), 2);
+/// ```
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct Quipu {
+    /// The list of pendant cords attached to the main cord.
     pub cords: Vec<Cord>,
+}
+
+impl Quipu {
+    /// Creates a new, empty Quipu.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Adds a cord to the Quipu.
+    pub fn add_cord(&mut self, cord: Cord) {
+        self.cords.push(cord);
+    }
 }
 
 impl fmt::Display for Quipu {
