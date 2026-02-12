@@ -30,12 +30,8 @@ impl GitModel {
         revwalk.push_head()?;
 
         let mut commits = Vec::new();
-        let mut count = 0;
 
-        for oid in revwalk {
-            if count >= limit {
-                break;
-            }
+        for oid in revwalk.take(limit) {
             let oid = oid?;
             let commit = self.repo.find_commit(oid)?;
 
@@ -62,8 +58,6 @@ impl GitModel {
                 stats: Some(stats),
                 files,
             });
-
-            count += 1;
         }
 
         Ok(commits)
@@ -86,76 +80,8 @@ impl GitModel {
             .repo
             .diff_tree_to_tree(parent_tree.as_ref(), Some(&tree), None)?;
 
-        let mut files = Vec::new();
-        let mut total_insertions = 0;
-        let mut total_deletions = 0;
-
-        // Populate diff internal structure (optional for stats but needed for hunks sometimes)
-        // diff.print(git2::DiffFormat::Patch, |_delta, _hunk, _line| true)?;
-
-        for i in 0..diff.deltas().len() {
-            if let Ok(patch) = git2::Patch::from_diff(&diff, i) {
-                if let Some(patch) = patch {
-                    let delta = patch.delta();
-                    let path = delta
-                        .new_file()
-                        .path()
-                        .or(delta.old_file().path())
-                        .map(|p| p.to_string_lossy().to_string())
-                        .unwrap_or_else(|| "unknown".to_string());
-
-                    let extension = Path::new(&path)
-                        .extension()
-                        .and_then(|e| e.to_str())
-                        .unwrap_or("")
-                        .to_string();
-
-                    let stats = patch.line_stats().unwrap_or((0, 0, 0));
-                    let insertions = stats.1;
-                    let deletions = stats.2;
-
-                    total_insertions += insertions;
-                    total_deletions += deletions;
-
-                    let mut hunks = Vec::new();
-                    if include_hunks {
-                        for h_idx in 0..patch.num_hunks() {
-                            if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
-                                let mut hunk_lines = Vec::new();
-                                for l_idx in 0..lines_count {
-                                    if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                                        let content = std::str::from_utf8(line.content())
-                                            .unwrap_or("")
-                                            .to_string();
-                                        match line.origin() {
-                                            '+' => hunk_lines.push(LineChange::Added(content)),
-                                            '-' => hunk_lines.push(LineChange::Removed(content)),
-                                            ' ' => hunk_lines.push(LineChange::Context(content)),
-                                            _ => {}
-                                        }
-                                    }
-                                }
-                                hunks.push(Hunk {
-                                    header: std::str::from_utf8(hunk_info.header())
-                                        .unwrap_or("")
-                                        .to_string(),
-                                    lines: hunk_lines,
-                                });
-                            }
-                        }
-                    }
-
-                    files.push(FileChange {
-                        path,
-                        extension,
-                        insertions,
-                        deletions,
-                        is_binary: delta.flags().contains(DiffFlags::BINARY),
-                        hunks,
-                    });
-                }
-            }
-        }
+        let (total_insertions, total_deletions, files) =
+            self.process_diff_internal(&diff, include_hunks)?;
 
         Ok((
             CommitStats {
@@ -172,91 +98,103 @@ impl GitModel {
         diff_opts.include_untracked(true);
 
         let head = self.repo.head().ok();
-        let tree = if let Some(h) = head {
-            if let Ok(peel) = h.peel_to_tree() {
-                Some(peel)
-            } else {
-                None
-            }
-        } else {
-            None
-        };
+        let tree = head.as_ref().and_then(|h| h.peel_to_tree().ok());
 
         let diff = self
             .repo
             .diff_tree_to_workdir_with_index(tree.as_ref(), Some(&mut diff_opts))?;
 
-        let mut files = Vec::new();
-        let mut total_added = 0;
-        let mut total_removed = 0;
-
-        for i in 0..diff.deltas().len() {
-            if let Ok(patch) = git2::Patch::from_diff(&diff, i) {
-                if let Some(patch) = patch {
-                    let delta = patch.delta();
-                    let path = delta
-                        .new_file()
-                        .path()
-                        .or(delta.old_file().path())
-                        .map(|p| p.to_string_lossy().to_string())
-                        .unwrap_or_else(|| "unknown".to_string());
-
-                    let extension = Path::new(&path)
-                        .extension()
-                        .and_then(|e| e.to_str())
-                        .unwrap_or("")
-                        .to_string();
-
-                    let stats = patch.line_stats().unwrap_or((0, 0, 0));
-                    let added = stats.1;
-                    let removed = stats.2;
-
-                    total_added += added;
-                    total_removed += removed;
-
-                    // Extract Hunks (Always include for workdir diff as it is usually small)
-                    let mut hunks = Vec::new();
-                    for h_idx in 0..patch.num_hunks() {
-                        if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
-                            let mut hunk_lines = Vec::new();
-                            for l_idx in 0..lines_count {
-                                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                                    let content = std::str::from_utf8(line.content())
-                                        .unwrap_or("")
-                                        .to_string();
-                                    match line.origin() {
-                                        '+' => hunk_lines.push(LineChange::Added(content)),
-                                        '-' => hunk_lines.push(LineChange::Removed(content)),
-                                        ' ' => hunk_lines.push(LineChange::Context(content)),
-                                        _ => {}
-                                    }
-                                }
-                            }
-                            hunks.push(Hunk {
-                                header: std::str::from_utf8(hunk_info.header())
-                                    .unwrap_or("")
-                                    .to_string(),
-                                lines: hunk_lines,
-                            });
-                        }
-                    }
-
-                    files.push(FileChange {
-                        path,
-                        extension,
-                        insertions: added,
-                        deletions: removed,
-                        is_binary: delta.flags().contains(DiffFlags::BINARY),
-                        hunks,
-                    });
-                }
-            }
-        }
+        // Always include hunks for workdir diff
+        let (total_added, total_removed, files) = self.process_diff_internal(&diff, true)?;
 
         Ok(DiffStats {
             files,
             total_added,
             total_removed,
         })
+    }
+
+    fn process_diff_internal(
+        &self,
+        diff: &git2::Diff,
+        include_hunks: bool,
+    ) -> Result<(usize, usize, Vec<FileChange>)> {
+        let mut files = Vec::new();
+        let mut total_insertions = 0;
+        let mut total_deletions = 0;
+
+        for i in 0..diff.deltas().len() {
+            let Ok(Some(patch)) = git2::Patch::from_diff(diff, i) else {
+                continue;
+            };
+
+            let delta = patch.delta();
+            let path = delta
+                .new_file()
+                .path()
+                .or(delta.old_file().path())
+                .map(|p| p.to_string_lossy().to_string())
+                .unwrap_or_else(|| "unknown".to_string());
+
+            let extension = Path::new(&path)
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("")
+                .to_string();
+
+            let stats = patch.line_stats().unwrap_or((0, 0, 0));
+            let insertions = stats.1;
+            let deletions = stats.2;
+
+            total_insertions += insertions;
+            total_deletions += deletions;
+
+            let hunks = if include_hunks {
+                Self::extract_hunks(&patch)
+            } else {
+                Vec::new()
+            };
+
+            files.push(FileChange {
+                path,
+                extension,
+                insertions,
+                deletions,
+                is_binary: delta.flags().contains(DiffFlags::BINARY),
+                hunks,
+            });
+        }
+
+        Ok((total_insertions, total_deletions, files))
+    }
+
+    fn extract_hunks(patch: &git2::Patch) -> Vec<Hunk> {
+        let mut hunks = Vec::new();
+        for h_idx in 0..patch.num_hunks() {
+            let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) else {
+                continue;
+            };
+            let mut hunk_lines = Vec::new();
+            for l_idx in 0..lines_count {
+                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
+                    let content = std::str::from_utf8(line.content())
+                        .unwrap_or("")
+                        .to_string();
+                    match line.origin() {
+                        '+' => hunk_lines.push(LineChange::Added(content)),
+                        '-' => hunk_lines.push(LineChange::Removed(content)),
+                        ' ' => hunk_lines.push(LineChange::Context(content)),
+                        _ => {}
+                    }
+                }
+            }
+            hunks.push(Hunk {
+                header: std::str::from_utf8(hunk_info.header())
+                    .unwrap_or("")
+                    .to_string(),
+                lines: hunk_lines,
+            });
+        }
+        hunks
     }
 }
