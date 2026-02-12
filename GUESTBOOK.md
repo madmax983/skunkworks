@@ -72,9 +72,13 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The Butterfly Effect is visualized. Dependency tree swinging in chaotic motion. 100 parallel ghosts predicting diverging futures.
 
-### [Concentration Level: HIGH] - Location: experiments/chimera-lang
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Compiler warnings in `tui.rs`, `nova_logos.rs`, `memetics.rs` neutralized. `nova_atmosphere_test` located but `aeolus` winds are erratic (test failing). Logic substrate hardening.
+- **Status:** High metabolic rate detected. New `BioticChaos` and `Catalyst` organs grew recently. `OpCode::Synthesize` and `OpCode::Catalyze` are active. Monitor for mutations.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/cymatic-lure
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compilation failure detected. `ratatui` backend error mismatch. Audio synthesis logic isolated. The tissue is inflamed.
 
 ### [Concentration Level: HIGH] - Location: experiments/chimera-market
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -236,9 +240,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen condemned. Orphaned and undocumented. Simulating its own decay.
 
-### [Concentration Level: GHOST] - Location: experiments/event-horizon
-- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
-- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The singularity is unobservable.
+### [Concentration Level: TOXIC] - Location: experiments/event-horizon
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. Move to graveyard pending.
 
 ### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Mycelium 🍄
@@ -387,6 +391,14 @@
 ### [Concentration Level: FRESH] - Location: experiments/market-rogue
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Roguelike market simulation based on git history. Compiles.
+
+### [Concentration Level: FRESH] - Location: experiments/magnetron-decay
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Digital archaeology simulation active. Hard drive wear modeling functional.
+
+### [Concentration Level: FRESH] - Location: experiments/newtonian-graph
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing dependency graph as N-body simulation. Bodies attracted by imports.
 
 ### [Concentration Level: FRESH] - Location: experiments/market-swarm
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -560,6 +572,10 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Topology centralized. Torus, Klein, and Hyperbolic coordinates normalizing.
 
+### [Concentration Level: STABLE TRAIL] - Location: crates/quipu
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Knots and Cords successfully centralized. The fibrous network is strong.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/bandwidth-bazaar
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Scent recovered. `model.rs` verified. Market-based packet routing logic is active.
@@ -620,10 +636,6 @@
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/crate-radar
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Dependency mapping operational. Polar coordinate rendering verified. Ecosystem scan complete.
-
-### [Concentration Level: CRITICAL MASS] - Location: experiments/cymatic-lure
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Compilation failure detected. `ratatui` backend error mismatch. Audio synthesis logic isolated.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/fabric-limb
 - **Scent Origin:** Mycelium 🍄
