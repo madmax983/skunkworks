@@ -1,124 +1,95 @@
-use std::sync::{Arc, RwLock};
+use macroquad::audio::{load_sound_from_bytes, play_sound_once, Sound};
+use std::collections::BTreeMap;
 
-#[derive(Clone, Copy, Debug)]
-pub struct Oscillator {
-    pub frequency: f32,
-    pub amplitude: f32,
-    // Phase is maintained by the audio thread
+pub struct AudioEngine {
+    // Map frequency to Sound
+    notes: BTreeMap<u32, Sound>,
 }
 
-pub struct SharedState {
-    pub oscillators: Vec<Oscillator>,
-    pub master_volume: f32,
-}
+impl AudioEngine {
+    pub async fn new() -> Self {
+        let mut notes = BTreeMap::new();
 
-impl Default for SharedState {
-    fn default() -> Self {
-        Self::new()
+        // Pentatonic Scale: C, D, E, G, A
+        // Base frequencies (C4 = 261.63)
+        // C3 to C6
+        let base_freqs = [261.63, 293.66, 329.63, 392.00, 440.00];
+
+        let mut frequencies = Vec::new();
+        // 3 Octaves: 0.5x, 1.0x, 2.0x
+        for octave in [0.5, 1.0, 2.0, 4.0] {
+            for &f in &base_freqs {
+                frequencies.push(f * octave);
+            }
+        }
+
+        for freq in frequencies {
+            let wav_data = generate_sine_wave(freq, 0.5); // 0.5 seconds decay
+            let sound = load_sound_from_bytes(&wav_data).await.expect("Failed to load sound");
+            notes.insert(freq as u32, sound);
+        }
+
+        Self { notes }
     }
-}
 
-impl SharedState {
-    pub fn new() -> Self {
-        Self {
-            oscillators: Vec::new(),
-            master_volume: 0.1,
+    pub fn play_closest(&self, freq: f32) {
+        if self.notes.is_empty() { return; }
+
+        // Find closest key
+        let target = freq as u32;
+        let mut closest_freq = 0;
+        let mut min_diff = u32::MAX;
+
+        for &k in self.notes.keys() {
+            let diff = k.abs_diff(target);
+            if diff < min_diff {
+                min_diff = diff;
+                closest_freq = k;
+            }
+        }
+
+        if let Some(sound) = self.notes.get(&closest_freq) {
+            play_sound_once(sound);
         }
     }
 }
 
-pub struct AudioHandle {
-    #[cfg(feature = "audio")]
-    pub _stream: Option<cpal::Stream>,
-}
+fn generate_sine_wave(freq: f32, duration_secs: f32) -> Vec<u8> {
+    let sample_rate = 44100;
+    let num_samples = (sample_rate as f32 * duration_secs) as usize;
+    let mut buffer = Vec::with_capacity(44 + num_samples * 2);
 
-#[cfg(not(feature = "audio"))]
-pub fn init_audio(_state: Arc<RwLock<SharedState>>) -> Result<AudioHandle, anyhow::Error> {
-    Ok(AudioHandle {})
-}
+    // WAV Header
+    // RIFF
+    buffer.extend_from_slice(b"RIFF");
+    let file_size = 36 + num_samples * 2;
+    buffer.extend_from_slice(&(file_size as u32).to_le_bytes());
+    buffer.extend_from_slice(b"WAVE");
 
-#[cfg(feature = "audio")]
-use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+    // fmt
+    buffer.extend_from_slice(b"fmt ");
+    buffer.extend_from_slice(&(16u32).to_le_bytes()); // Chunk size
+    buffer.extend_from_slice(&(1u16).to_le_bytes()); // PCM
+    buffer.extend_from_slice(&(1u16).to_le_bytes()); // Channels (Mono)
+    buffer.extend_from_slice(&(sample_rate as u32).to_le_bytes()); // Sample rate
+    let byte_rate = sample_rate * 2; // 16 bit = 2 bytes
+    buffer.extend_from_slice(&(byte_rate as u32).to_le_bytes());
+    buffer.extend_from_slice(&(2u16).to_le_bytes()); // Block align
+    buffer.extend_from_slice(&(16u16).to_le_bytes()); // Bits per sample
 
-#[cfg(feature = "audio")]
-pub fn init_audio(state: Arc<RwLock<SharedState>>) -> Result<AudioHandle, anyhow::Error> {
-    let host = cpal::default_host();
-    let device = host
-        .default_output_device()
-        .ok_or(anyhow::anyhow!("No output device available"))?;
-    let config = device.default_output_config()?;
+    // data
+    buffer.extend_from_slice(b"data");
+    let data_size = num_samples * 2;
+    buffer.extend_from_slice(&(data_size as u32).to_le_bytes());
 
-    let stream = match config.sample_format() {
-        cpal::SampleFormat::F32 => run::<f32>(&device, &config.into(), state),
-        cpal::SampleFormat::I16 => run::<i16>(&device, &config.into(), state),
-        cpal::SampleFormat::U16 => run::<u16>(&device, &config.into(), state),
-        _ => return Err(anyhow::anyhow!("Unsupported sample format")),
-    }?;
+    // Samples
+    for i in 0..num_samples {
+        let t = i as f32 / sample_rate as f32;
+        let envelope = (1.0 - t / duration_secs).powf(2.0); // Simple quadratic decay
+        let sample = (t * freq * 2.0 * std::f32::consts::PI).sin();
+        let value = (sample * envelope * 16000.0) as i16; // 16000 volume (half max)
+        buffer.extend_from_slice(&value.to_le_bytes());
+    }
 
-    Ok(AudioHandle {
-        _stream: Some(stream),
-    })
-}
-
-#[cfg(feature = "audio")]
-fn run<T>(
-    device: &cpal::Device,
-    config: &cpal::StreamConfig,
-    state: Arc<RwLock<SharedState>>,
-) -> Result<cpal::Stream, anyhow::Error>
-where
-    T: cpal::Sample + cpal::SizedSample + cpal::FromSample<f32>,
-{
-    let sample_rate = config.sample_rate.0 as f32;
-    let channels = config.channels as usize;
-    let mut phases: Vec<f32> = Vec::new();
-
-    let err_fn = |err| eprintln!("an error occurred on stream: {}", err);
-
-    let stream = device.build_output_stream(
-        config,
-        move |data: &mut [T], _: &cpal::OutputCallbackInfo| {
-            let (oscillators, master_vol) = {
-                if let Ok(s) = state.read() {
-                    (s.oscillators.clone(), s.master_volume)
-                } else {
-                    return;
-                }
-            };
-
-            if phases.len() < oscillators.len() {
-                phases.resize(oscillators.len(), 0.0);
-            }
-
-            for frame in data.chunks_mut(channels) {
-                let mut sample_value = 0.0;
-
-                for (i, osc) in oscillators.iter().enumerate() {
-                    if i >= phases.len() {
-                        break;
-                    }
-
-                    let val = (phases[i] * 2.0 * std::f32::consts::PI).sin();
-                    sample_value += val * osc.amplitude;
-
-                    phases[i] += osc.frequency / sample_rate;
-                    if phases[i] > 1.0 {
-                        phases[i] -= 1.0;
-                    }
-                }
-
-                sample_value *= master_vol;
-                sample_value = sample_value.clamp(-1.0, 1.0);
-
-                let sample: T = T::from_sample(sample_value);
-                for sample_out in frame.iter_mut() {
-                    *sample_out = sample;
-                }
-            }
-        },
-        err_fn,
-        None,
-    )?;
-
-    Ok(stream)
+    buffer
 }

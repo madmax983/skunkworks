@@ -18,3 +18,8 @@
 ### [Concentration Level: HIGH] - Location: experiments/origami-spores
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The paper is folding itself. Spores are airborne. Structural integrity at 80% and dropping.
+
+### [Concentration Level: FRESH] - Location: experiments/harmony-of-spheres
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The spheres are singing. Symplectic integrators are stable. Audio is procedural (WAV generation in memory).
+- **Note:** Resonance rings (press H) allow snapping to musical intervals. Kepler's laws are now audible.
