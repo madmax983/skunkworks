@@ -8,7 +8,6 @@ members = [
     "crates/tui-semantic",
     "crates/tui-shared",
     "experiments/code-bio-dome",
-    "experiments/cymatic-lure",
     "experiments/cymatic-ocean",
     "experiments/cymatic-text",
     "experiments/digital-compost",
