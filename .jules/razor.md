@@ -76,3 +76,8 @@
 **Bloat:** Manual `integrate` function in `system-bio-dome/lorenz.rs` and verbose neighbor calculation in `reaction.rs`.
 **Cut:** Moved `integrate` to `LorenzState::update` and simplified neighbor loops.
 **Saved:** Reduced cognitive load, ~20 lines of code, and improved encapsulation.
+
+## [Reduction]
+**Bloat:** `Protocol` and `Symbol` wrapper structs in `experiments/protocol-jungle`.
+**Cut:** Removed wrapper structs, used `HashMap<Meaning, u8>` directly in `Agent`, and flattened `Agent` logic.
+**Saved:** ~50 lines of code, 2 unnecessary abstractions.
