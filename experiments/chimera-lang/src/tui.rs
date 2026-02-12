@@ -1613,8 +1613,6 @@ where
                         }
                     }
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
-                    #[cfg(feature = "nova")]
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
@@ -1629,9 +1627,52 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('I') => app_state.view_mode = ViewMode::Hologram,
-                    #[cfg(feature = "nova")]
                     KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('I') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            // Interfere (DNA -> Hologram)
+                            let idx = app_state.selected_strand;
+                            vm.stack.push(crate::vm::Value::Int(idx as i64));
+                            crate::vm::nova_hologram::exec_interfere(
+                                vm,
+                                crate::opcode::OpCode::Interfere,
+                                &[],
+                            );
+                            app_state.status_msg = format!("Interfered strand {}", idx);
+                        } else {
+                            app_state.view_mode = ViewMode::Hologram;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('O') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            // Refract (Hologram -> DNA)
+                            crate::vm::nova_hologram::exec_refract(
+                                vm,
+                                crate::opcode::OpCode::Refract,
+                                &[],
+                            );
+                        } else {
+                            app_state.view_mode = ViewMode::Orca;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('+') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.hologram_grid[y][x].0 += 0.1;
+                            vm.hologram_grid[y][x].1 += 0.1;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('-') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.hologram_grid[y][x].0 -= 0.1;
+                            vm.hologram_grid[y][x].1 -= 0.1;
+                        }
+                    }
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
