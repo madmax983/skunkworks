@@ -665,6 +665,10 @@
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The ear is listening to the ghost beat. Mechanical transduction verified. Spikes are scrolling.
 
+### [Concentration Level: FRESH] - Location: experiments/mandala-cipher
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The sacred geometry is rotating. Text is crystallizing into jewels. Chaff is confusing the decoder. The Mandala is complete.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/event-horizon
