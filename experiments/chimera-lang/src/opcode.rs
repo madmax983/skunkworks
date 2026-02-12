@@ -946,6 +946,11 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Hologram,
+    /// **[Nova]** Applies phase shift noise to the hologram grid (Mutation).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    PhaseMutate,
 
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///

@@ -2598,13 +2598,9 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Project => nova_hologram::exec_project(self, op, args),
             #[cfg(feature = "nova")]
-            OpCode::Hologram => {
-                self.hologram_mode = !self.hologram_mode;
-                let status = if self.hologram_mode { "ON" } else { "OFF" };
-                self.output
-                    .push(format!("HOLOGRAM: Visualization {}", status));
-                None
-            }
+            OpCode::Hologram => nova_hologram::exec_hologram(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::PhaseMutate => nova_hologram::exec_phase_mutate(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),

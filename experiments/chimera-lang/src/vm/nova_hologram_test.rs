@@ -117,3 +117,40 @@ fn test_diffract_ghost() {
     // Let's assert that it's DIFFERENT than Interfere.
     // If we run Interfere on same grid, it should interfere constructively or destructively.
 }
+
+#[test]
+fn test_phase_mutate_scrambles_dna() {
+    let mut vm = make_vm();
+    // 1. Create a strand
+    let genes = vec![Gene {
+        op: OpCode::Push,
+        args: vec![Nucleotide::Number(42)],
+    }];
+    vm.dna.helix.strands.push(Strand { genes: genes.clone() });
+
+    // 2. Interfere
+    crate::vm::nova_hologram::exec_interfere(&mut vm, OpCode::Interfere, &[Nucleotide::Number(0)]);
+
+    // 3. Mutate (Phase Shift)
+    // We expect this to change the hologram grid
+    let old_grid = vm.hologram_grid.clone();
+    crate::vm::nova_hologram::exec_phase_mutate(&mut vm, OpCode::PhaseMutate, &[]);
+
+    assert_ne!(vm.hologram_grid, old_grid, "Hologram grid should change after mutation");
+
+    // 4. Refract (Decode)
+    // Ideally this produces a strand that is DIFFERENT from the original
+    crate::vm::nova_hologram::exec_refract(&mut vm, OpCode::Refract, &[]);
+
+    assert!(vm.dna.helix.strands.len() >= 2, "Should have refracted a strand");
+    let mutated_strand = &vm.dna.helix.strands.last().unwrap();
+
+    // Check if it's different.
+    let is_identical = if mutated_strand.genes.len() == genes.len() {
+        mutated_strand.genes.iter().zip(&genes).all(|(a, b)| a.op == b.op)
+    } else {
+        false
+    };
+
+    assert!(!is_identical, "Mutated strand should not be identical to original");
+}

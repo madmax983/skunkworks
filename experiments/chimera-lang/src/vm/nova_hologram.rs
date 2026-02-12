@@ -5,6 +5,8 @@ use crate::ast::{Gene, Nucleotide};
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
+use rand::Rng;
+#[cfg(feature = "nova")]
 use std::f64::consts::PI;
 #[cfg(feature = "nova")]
 use strum::IntoEnumIterator;
@@ -282,6 +284,43 @@ pub fn exec_project(
     }
     vm.output
         .push("PROJECT: Manifested hologram on grid".to_string());
+    vm.energy = vm.energy.saturating_sub(10);
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_hologram(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    vm.hologram_mode = !vm.hologram_mode;
+    let status = if vm.hologram_mode { "ON" } else { "OFF" };
+    vm.output.push(format!("HOLOGRAM: Visualization {}", status));
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_phase_mutate(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    let mut rng = rand::thread_rng();
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            let (re, im) = vm.hologram_grid[y][x];
+            let magnitude = (re * re + im * im).sqrt();
+            if magnitude > 0.001 {
+                let phase = im.atan2(re);
+                let noise = rng.gen_range(-0.5..0.5); // Tune this?
+                let new_phase = phase + noise;
+                vm.hologram_grid[y][x] = (magnitude * new_phase.cos(), magnitude * new_phase.sin());
+            }
+        }
+    }
+    vm.output
+        .push("PHASE_MUTATE: Scrambled hologram phase".to_string());
     vm.energy = vm.energy.saturating_sub(10);
     None
 }
