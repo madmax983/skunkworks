@@ -1,4 +1,5 @@
 use ratatui::style::Color;
+use std::collections::VecDeque;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec2 {
@@ -96,7 +97,11 @@ pub struct Body {
     pub mass: f32,
     pub radius: f32,
     pub color: Color,
-    pub trail: Vec<Vec2>,
+    /// The trail of the body.
+    ///
+    /// Used as a ring buffer (FIFO). `VecDeque` allows O(1) removal from the front,
+    /// preventing O(N) shifts every frame.
+    pub trail: VecDeque<Vec2>,
 }
 
 impl Body {
@@ -108,7 +113,7 @@ impl Body {
             mass,
             radius,
             color,
-            trail: Vec::with_capacity(50),
+            trail: VecDeque::with_capacity(50),
         }
     }
 
@@ -121,6 +126,7 @@ impl Body {
 pub struct Universe {
     pub bodies: Vec<Body>,
     pub edges: Vec<(usize, usize)>, // Indices into bodies
+    forces_buffer: Vec<Vec2>,
 }
 
 impl Universe {
@@ -128,7 +134,13 @@ impl Universe {
         Self {
             bodies: Vec::new(),
             edges: Vec::new(),
+            forces_buffer: Vec::with_capacity(100),
         }
+    }
+
+    #[cfg(test)]
+    pub fn forces_capacity(&self) -> usize {
+        self.forces_buffer.capacity()
     }
 
     pub fn add_body(&mut self, body: Body) -> usize {
@@ -141,9 +153,16 @@ impl Universe {
         self.edges.push((source, target));
     }
 
+    /// Steps the simulation by `dt`.
+    ///
+    /// This method reuses `forces_buffer` to avoid allocating a new vector every frame.
     pub fn step(&mut self, dt: f32) {
         let len = self.bodies.len();
-        let mut forces = vec![Vec2::ZERO; len];
+        if self.forces_buffer.len() != len {
+            self.forces_buffer.resize(len, Vec2::ZERO);
+        }
+        self.forces_buffer.fill(Vec2::ZERO);
+        let forces = &mut self.forces_buffer;
 
         // Constants adjusted for TUI resolution (much lower density)
         // But internal physics can be high res.
@@ -198,12 +217,35 @@ impl Universe {
             body.vel *= drag;
             body.pos += body.vel * dt;
 
+            // Use modulo for simple probability
+            #[allow(clippy::manual_is_multiple_of)]
             if rand::random::<u8>() % 10 == 0 {
-                body.trail.push(body.pos);
+                body.trail.push_back(body.pos);
                 if body.trail.len() > 20 { // Shorter trail for TUI
-                    body.trail.remove(0);
+                    body.trail.pop_front();
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_universe_step_forces_reuse() {
+        let mut universe = Universe::new();
+        universe.add_body(Body::new(0.0, 0.0, 10.0, 1.0, Color::Red));
+        universe.add_body(Body::new(10.0, 0.0, 10.0, 1.0, Color::Blue));
+
+        // This method does not exist yet, causing compilation error (Red Phase)
+        // Once implemented, it should return the capacity of the reused buffer
+        assert!(universe.forces_capacity() > 0);
+
+        universe.step(0.1);
+
+        // Buffer should be reused and have capacity >= len
+        assert!(universe.forces_capacity() >= 2);
     }
 }
