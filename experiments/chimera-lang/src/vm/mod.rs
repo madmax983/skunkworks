@@ -144,6 +144,8 @@ pub mod nova_genetics;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
+pub mod grimoire;
+#[cfg(feature = "nova")]
 pub mod nova_guild;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -743,7 +745,16 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             score: Vec::new(),
             #[cfg(feature = "oracle")]
-            knowledge_base: Vec::new(),
+            knowledge_base: {
+                #[cfg(feature = "nova")]
+                {
+                    grimoire::load_standard_library()
+                }
+                #[cfg(not(feature = "nova"))]
+                {
+                    Vec::new()
+                }
+            },
             #[cfg(feature = "oracle")]
             omens: Vec::new(),
             #[cfg(feature = "resonance")]

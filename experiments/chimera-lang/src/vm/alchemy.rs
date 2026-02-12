@@ -1,5 +1,5 @@
 #[cfg(feature = "nova")]
-use crate::ast::{Nucleotide, Strand};
+use crate::ast::{JunctionType, Nucleotide, Strand};
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
@@ -108,22 +108,42 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
         true
     };
 
-    if check_recipe(&["Fire", "Water"]) {
-        result = Some(Value::Str("Steam".to_string()));
-        cost = 5;
-    } else if check_recipe(&["Earth", "Fire"]) {
-        result = Some(Value::Str("Lava".to_string()));
-        cost = 5;
-    } else if check_recipe(&["Air", "Water"]) {
-        result = Some(Value::Str("Cloud".to_string()));
-        cost = 5;
-    } else if check_recipe(&["Life", "Death"]) {
-        result = Some(Value::Str("Spirit".to_string()));
-        cost = 20;
-    } else if check_recipe(&["Energy", "Lead"]) {
-        result = Some(Value::Str("Gold".to_string()));
-        cost = 50;
-    } else if ingredients.len() == 2 {
+    // Logic-driven Transmutation
+    if ingredients.len() == 2 {
+        #[cfg(feature = "oracle")]
+        {
+            let i1 = ingredients[0].clone();
+            let i2 = ingredients[1].clone();
+            let goal = Value::Junction(JunctionType::Any, vec![
+                Value::Str("reaction".to_string()),
+                i1,
+                i2,
+                Value::Str("?Result".to_string())
+            ]);
+
+            let mut solutions = Vec::new();
+            crate::vm::oracle::solve(
+                &[goal],
+                std::collections::HashMap::new(),
+                &vm.knowledge_base,
+                vm,
+                &mut solutions,
+                0,
+            );
+
+            if let Some(sol) = solutions.first() {
+                let res_var = Value::Str("?Result".to_string());
+                let resolved = crate::vm::oracle::resolve(&res_var, sol);
+                // Ensure we got a concrete value, not a variable
+                if !matches!(resolved, Value::Str(ref s) if s.starts_with('?')) {
+                    result = Some(resolved);
+                    cost = 5;
+                }
+            }
+        }
+    }
+
+    if result.is_none() && ingredients.len() == 2 {
         let mut strand_idx = None;
         let mut modifier = None;
         let mut strand_idx_b = None;
