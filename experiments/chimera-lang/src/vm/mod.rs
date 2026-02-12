@@ -66,15 +66,17 @@ pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod catalyst;
+pub mod chimera_chaos;
 #[cfg(feature = "nova")]
 pub mod cladistics;
-pub mod chimera_chaos;
 pub mod cortex;
 pub mod dream;
 #[cfg(feature = "elektra")]
 pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
+#[cfg(feature = "nova")]
+pub mod grimoire;
 pub mod havoc;
 #[cfg(feature = "hive")]
 pub mod hive;
@@ -146,12 +148,15 @@ pub mod nova_genetics;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
-pub mod grimoire;
-#[cfg(feature = "nova")]
 pub mod nova_guild;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_harvest_test;
+#[cfg(feature = "nova")]
+pub mod nova_hologram;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_hologram_test;
 #[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
@@ -208,11 +213,6 @@ pub mod nova_resonance_war;
 mod nova_retina_test;
 #[cfg(feature = "nova")]
 pub mod nova_scent;
-#[cfg(feature = "nova")]
-pub mod nova_hologram;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_hologram_test;
 #[cfg(feature = "nova")]
 pub mod nova_security;
 #[cfg(feature = "nova")]
@@ -2601,7 +2601,8 @@ impl ChimeraVM {
             OpCode::Hologram => {
                 self.hologram_mode = !self.hologram_mode;
                 let status = if self.hologram_mode { "ON" } else { "OFF" };
-                self.output.push(format!("HOLOGRAM: Visualization {}", status));
+                self.output
+                    .push(format!("HOLOGRAM: Visualization {}", status));
                 None
             }
 

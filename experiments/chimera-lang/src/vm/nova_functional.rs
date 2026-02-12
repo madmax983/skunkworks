@@ -33,7 +33,8 @@ fn exec_chain(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             if f < helix_len && g < helix_len {
                 if helix_len >= MAX_STRANDS {
-                    vm.output.push("CHAIN ERROR: Strand limit exceeded".to_string());
+                    vm.output
+                        .push("CHAIN ERROR: Strand limit exceeded".to_string());
                     return None;
                 }
 
@@ -63,7 +64,8 @@ fn exec_chain(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.energy = vm.energy.saturating_sub(15);
                 vm.output.push(format!("CHAIN: Created strand {}", new_idx));
             } else {
-                vm.output.push("CHAIN ERROR: Invalid strand index".to_string());
+                vm.output
+                    .push("CHAIN ERROR: Invalid strand index".to_string());
             }
         } else {
             vm.output.push("CHAIN ERROR: Type mismatch".to_string());
@@ -86,7 +88,8 @@ fn exec_curry(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let s = s_idx as usize;
             if s < vm.dna.helix.strands.len() {
                 if vm.dna.helix.strands.len() >= MAX_STRANDS {
-                    vm.output.push("CURRY ERROR: Strand limit exceeded".to_string());
+                    vm.output
+                        .push("CURRY ERROR: Strand limit exceeded".to_string());
                     return None;
                 }
 
@@ -120,10 +123,12 @@ fn exec_curry(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.energy = vm.energy.saturating_sub(10);
                     vm.output.push(format!("CURRY: Created strand {}", new_idx));
                 } else {
-                    vm.output.push("CURRY ERROR: Cannot curry complex value".to_string());
+                    vm.output
+                        .push("CURRY ERROR: Cannot curry complex value".to_string());
                 }
             } else {
-                vm.output.push("CURRY ERROR: Invalid strand index".to_string());
+                vm.output
+                    .push("CURRY ERROR: Invalid strand index".to_string());
             }
         } else {
             vm.output.push("CURRY ERROR: Type mismatch".to_string());
@@ -151,7 +156,8 @@ fn exec_quote(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             vm.output.push(format!("QUOTE: {}", next_gene.op));
         } else {
-            vm.output.push("QUOTE ERROR: Unexpected end of strand".to_string());
+            vm.output
+                .push("QUOTE ERROR: Unexpected end of strand".to_string());
         }
     }
     None

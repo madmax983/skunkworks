@@ -1,9 +1,9 @@
-mod lattice;
 mod agent;
+mod lattice;
 
-use macroquad::prelude::*;
-use lattice::Lattice;
 use agent::Agent;
+use lattice::Lattice;
+use macroquad::prelude::*;
 
 const GRID_W: usize = 400;
 const GRID_H: usize = 300;
@@ -46,30 +46,30 @@ async fn main() {
 
         // Perturb
         if is_mouse_button_down(MouseButton::Right) {
-             let (mx, my) = mouse_position();
-             let screen_w = screen_width();
-             let screen_h = screen_height();
-             let lattice_h = screen_h; // Full screen for now
+            let (mx, my) = mouse_position();
+            let screen_w = screen_width();
+            let screen_h = screen_height();
+            let lattice_h = screen_h; // Full screen for now
 
-             if my <= lattice_h {
-                 let gx = (mx / screen_w * GRID_W as f32) as usize;
-                 let gy = (my / lattice_h * GRID_H as f32) as usize;
-                 lattice.perturb(gx, gy, 10);
-             }
+            if my <= lattice_h {
+                let gx = (mx / screen_w * GRID_W as f32) as usize;
+                let gy = (my / lattice_h * GRID_H as f32) as usize;
+                lattice.perturb(gx, gy, 10);
+            }
         }
 
         // Spawn Agent
         if is_mouse_button_pressed(MouseButton::Left) {
-             let (mx, my) = mouse_position();
-             let screen_w = screen_width();
-             let screen_h = screen_height();
-             let lattice_h = screen_h;
+            let (mx, my) = mouse_position();
+            let screen_w = screen_width();
+            let screen_h = screen_height();
+            let lattice_h = screen_h;
 
-             if my <= lattice_h {
-                 let gx = (mx / screen_w * GRID_W as f32) as usize;
-                 let gy = (my / lattice_h * GRID_H as f32) as usize;
-                 agents.push(Agent::new(agents.len(), gx, gy));
-             }
+            if my <= lattice_h {
+                let gx = (mx / screen_w * GRID_W as f32) as usize;
+                let gy = (my / lattice_h * GRID_H as f32) as usize;
+                agents.push(Agent::new(agents.len(), gx, gy));
+            }
         }
 
         // --- Update ---
@@ -105,10 +105,10 @@ async fn main() {
             let v_norm = val.clamp(0.0, 1.0);
 
             let color = Color::new(
-                v_norm * r_norm,      // Red increases with Chaos & Value
-                v_norm * 0.5,         // Green is constant-ish
+                v_norm * r_norm,         // Red increases with Chaos & Value
+                v_norm * 0.5,            // Green is constant-ish
                 v_norm * (1.0 - r_norm), // Blue increases with Stability & Value
-                1.0
+                1.0,
             );
 
             image.set_pixel(x as u32, y as u32, color);
@@ -121,10 +121,16 @@ async fn main() {
         let screen_h = screen_height();
 
         // Draw Lattice
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_w, screen_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_w, screen_h)),
+                ..Default::default()
+            },
+        );
 
         // Draw Agents
         for agent in &agents {
@@ -137,8 +143,20 @@ async fn main() {
         // --- UI ---
         draw_text("Chimera Chaos", 10.0, 20.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Agents: {}", agents.len()), 10.0, 60.0, 20.0, YELLOW);
-        draw_text("Left Click: Spawn Agent | Right Click: Perturb", 10.0, 80.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Agents: {}", agents.len()),
+            10.0,
+            60.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            "Left Click: Spawn Agent | Right Click: Perturb",
+            10.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

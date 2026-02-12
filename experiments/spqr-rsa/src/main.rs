@@ -2,14 +2,14 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
     prelude::*,
     widgets::{Block, Borders, Paragraph, Wrap},
 };
+use spqr_rsa::crypto::{KeyPair, decrypt, encrypt, generate_keys};
 use spqr_rsa::roman::Roman;
-use spqr_rsa::crypto::{generate_keys, encrypt, decrypt, KeyPair};
 use std::io;
 use std::time::Duration;
 
@@ -94,7 +94,7 @@ where
                             }
                         }
                         KeyCode::Char('d') => {
-                             if let Some(ref keys) = app.keys {
+                            if let Some(ref keys) = app.keys {
                                 if let Some(ref c) = app.cipher {
                                     app.status = "DECRYPTING...".to_string();
                                     terminal.draw(|f| ui(f, app))?;
@@ -104,7 +104,7 @@ where
                                 } else {
                                     app.status = "NOTHING TO DECRYPT. Press 'E'.".to_string();
                                 }
-                             }
+                            }
                         }
                         _ => {}
                     }
@@ -141,7 +141,11 @@ fn ui(f: &mut Frame, app: &App) {
     }
 
     let keys_block = Paragraph::new(key_text)
-        .block(Block::default().title("CLAVES (Keys)").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title("CLAVES (Keys)")
+                .borders(Borders::ALL),
+        )
         .wrap(Wrap { trim: true });
     f.render_widget(keys_block, chunks[1]);
 
@@ -158,11 +162,18 @@ fn ui(f: &mut Frame, app: &App) {
     }
 
     let process_block = Paragraph::new(process_text)
-        .block(Block::default().title("OPERATIO (Operation)").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title("OPERATIO (Operation)")
+                .borders(Borders::ALL),
+        )
         .wrap(Wrap { trim: true });
     f.render_widget(process_block, chunks[2]);
 
-    let footer = Paragraph::new(format!("STATUS: {} | [G]enerate [E]ncrypt [D]ecrypt [Q]uit", app.status))
-        .block(Block::default().borders(Borders::ALL));
+    let footer = Paragraph::new(format!(
+        "STATUS: {} | [G]enerate [E]ncrypt [D]ecrypt [Q]uit",
+        app.status
+    ))
+    .block(Block::default().borders(Borders::ALL));
     f.render_widget(footer, chunks[3]);
 }

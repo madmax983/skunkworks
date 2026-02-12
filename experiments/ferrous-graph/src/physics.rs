@@ -27,7 +27,10 @@ impl Vec2 {
         if l == 0.0 {
             Self::ZERO
         } else {
-            Self { x: self.x / l, y: self.y / l }
+            Self {
+                x: self.x / l,
+                y: self.y / l,
+            }
         }
     }
 }
@@ -35,7 +38,10 @@ impl Vec2 {
 impl std::ops::Add for Vec2 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self {
-        Self { x: self.x + rhs.x, y: self.y + rhs.y }
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
     }
 }
 
@@ -49,7 +55,10 @@ impl std::ops::AddAssign for Vec2 {
 impl std::ops::Sub for Vec2 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self {
-        Self { x: self.x - rhs.x, y: self.y - rhs.y }
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
     }
 }
 
@@ -63,7 +72,10 @@ impl std::ops::SubAssign for Vec2 {
 impl std::ops::Mul<f32> for Vec2 {
     type Output = Self;
     fn mul(self, rhs: f32) -> Self {
-        Self { x: self.x * rhs, y: self.y * rhs }
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
     }
 }
 
@@ -77,17 +89,22 @@ impl std::ops::MulAssign<f32> for Vec2 {
 impl std::ops::Div<f32> for Vec2 {
     type Output = Self;
     fn div(self, rhs: f32) -> Self {
-        Self { x: self.x / rhs, y: self.y / rhs }
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
     }
 }
 
 impl std::ops::Neg for Vec2 {
     type Output = Self;
     fn neg(self) -> Self {
-        Self { x: -self.x, y: -self.y }
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub struct Body {
@@ -167,7 +184,8 @@ impl Universe {
                 let delta = p2 - p1;
                 let dist_sq = delta.length_squared().max(100.0);
 
-                let force = (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
+                let force =
+                    (g_repulse * self.bodies[i].mass.sqrt() * self.bodies[j].mass.sqrt()) / dist_sq;
                 let dir = delta.normalize_or_zero();
 
                 let f_vec = -dir * force;
@@ -179,17 +197,17 @@ impl Universe {
 
         // 2. Attraction
         for &(i, j) in &self.edges {
-             let p1 = self.bodies[i].pos;
-             let p2 = self.bodies[j].pos;
-             let delta = p2 - p1;
-             let dist_sq = delta.length_squared().max(100.0);
+            let p1 = self.bodies[i].pos;
+            let p2 = self.bodies[j].pos;
+            let delta = p2 - p1;
+            let dist_sq = delta.length_squared().max(100.0);
 
-             let force = (g_edge * self.bodies[i].mass * self.bodies[j].mass) / dist_sq;
-             let dir = delta.normalize_or_zero();
+            let force = (g_edge * self.bodies[i].mass * self.bodies[j].mass) / dist_sq;
+            let dir = delta.normalize_or_zero();
 
-             let f_vec = dir * force;
-             forces[i] += f_vec;
-             forces[j] -= f_vec;
+            let f_vec = dir * force;
+            forces[i] += f_vec;
+            forces[j] -= f_vec;
         }
 
         // 3. Central Pull, Integration, and Magnetism
@@ -202,7 +220,11 @@ impl Universe {
             let gx = (body.pos.x + 100.0) as i32;
             let gy = (body.pos.y + 100.0) as i32;
 
-            if gx >= 0 && gx < self.platter.width as i32 && gy >= 0 && gy < self.platter.height as i32 {
+            if gx >= 0
+                && gx < self.platter.width as i32
+                && gy >= 0
+                && gy < self.platter.height as i32
+            {
                 let x = gx as usize;
                 let y = gy as usize;
 
@@ -210,10 +232,26 @@ impl Universe {
                 self.platter.magnetize(x, y, mag_write * dt);
 
                 // Read from platter (Gradient)
-                let left = if x > 0 { self.platter.get_magnetism(x-1, y) } else { 0.0 };
-                let right = if x < self.platter.width-1 { self.platter.get_magnetism(x+1, y) } else { 0.0 };
-                let down = if y > 0 { self.platter.get_magnetism(x, y-1) } else { 0.0 }; // smaller y index
-                let up = if y < self.platter.height-1 { self.platter.get_magnetism(x, y+1) } else { 0.0 }; // larger y index
+                let left = if x > 0 {
+                    self.platter.get_magnetism(x - 1, y)
+                } else {
+                    0.0
+                };
+                let right = if x < self.platter.width - 1 {
+                    self.platter.get_magnetism(x + 1, y)
+                } else {
+                    0.0
+                };
+                let down = if y > 0 {
+                    self.platter.get_magnetism(x, y - 1)
+                } else {
+                    0.0
+                }; // smaller y index
+                let up = if y < self.platter.height - 1 {
+                    self.platter.get_magnetism(x, y + 1)
+                } else {
+                    0.0
+                }; // larger y index
 
                 // Wait, if grid Y matches physics Y (0 is -100, 200 is +100), then:
                 // y-1 is physically lower (more negative).

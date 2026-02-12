@@ -1,4 +1,3 @@
-use std::{collections::VecDeque, time::Duration};
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode},
@@ -6,11 +5,12 @@ use crossterm::{
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
+use std::{collections::VecDeque, time::Duration};
 
-mod signal;
+mod cochlea;
 mod dsp;
 mod neuron;
-mod cochlea;
+mod signal;
 mod tui;
 
 use signal::SAMPLE_RATE;
@@ -113,12 +113,11 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
             let available = waveform_history.len();
             let start_idx = available.saturating_sub(samples_needed);
 
-            let visible_waveform: Vec<f32> = waveform_history.iter()
-                .skip(start_idx)
-                .cloned()
-                .collect();
+            let visible_waveform: Vec<f32> =
+                waveform_history.iter().skip(start_idx).cloned().collect();
 
-            let visible_spikes: Vec<(f64, usize)> = spike_history.iter()
+            let visible_spikes: Vec<(f64, usize)> = spike_history
+                .iter()
                 .filter(|&&(t, _)| t >= start && t <= end)
                 .cloned()
                 .collect();
@@ -130,7 +129,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                 &potentials_history,
                 num_channels,
                 start,
-                end
+                end,
             );
         })?;
 

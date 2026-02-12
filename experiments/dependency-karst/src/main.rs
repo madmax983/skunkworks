@@ -1,15 +1,15 @@
-use std::io::{stdout};
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use ratatui::{backend::CrosstermBackend, Terminal};
 use dependency_karst::graph::load_graph;
 use dependency_karst::layout::Layout;
 use dependency_karst::simulation::{VoxelGrid, GRID_SIZE};
-use dependency_karst::tui::{TuiState, CaveWidget};
+use dependency_karst::tui::{CaveWidget, TuiState};
+use ratatui::{backend::CrosstermBackend, Terminal};
+use std::io::stdout;
 
 fn main() -> Result<()> {
     // Setup Terminal
@@ -44,26 +44,38 @@ fn main() -> Result<()> {
                     match key.code {
                         KeyCode::Esc => running = false,
                         KeyCode::Char('w') | KeyCode::Up => {
-                            if state.cursor_y > 0 { state.cursor_y -= 1; }
+                            if state.cursor_y > 0 {
+                                state.cursor_y -= 1;
+                            }
                         }
                         KeyCode::Char('s') | KeyCode::Down => {
-                            if state.cursor_y < GRID_SIZE - 1 { state.cursor_y += 1; }
+                            if state.cursor_y < GRID_SIZE - 1 {
+                                state.cursor_y += 1;
+                            }
                         }
                         KeyCode::Char('a') | KeyCode::Left => {
-                            if state.cursor_x > 0 { state.cursor_x -= 1; }
+                            if state.cursor_x > 0 {
+                                state.cursor_x -= 1;
+                            }
                         }
                         KeyCode::Char('d') | KeyCode::Right => {
-                            if state.cursor_x < GRID_SIZE - 1 { state.cursor_x += 1; }
+                            if state.cursor_x < GRID_SIZE - 1 {
+                                state.cursor_x += 1;
+                            }
                         }
                         KeyCode::Char('e') | KeyCode::PageUp => {
-                            if state.slice_z < GRID_SIZE - 1 { state.slice_z += 1; }
+                            if state.slice_z < GRID_SIZE - 1 {
+                                state.slice_z += 1;
+                            }
                         }
                         KeyCode::Char('q') | KeyCode::PageDown => {
-                             if state.slice_z > 0 { state.slice_z -= 1; }
+                            if state.slice_z > 0 {
+                                state.slice_z -= 1;
+                            }
                         }
-                         KeyCode::Char('r') | KeyCode::Enter => {
-                             // Run erosion step
-                             grid.erode(&graph, &layout.positions);
+                        KeyCode::Char('r') | KeyCode::Enter => {
+                            // Run erosion step
+                            grid.erode(&graph, &layout.positions);
                         }
                         _ => {}
                     }

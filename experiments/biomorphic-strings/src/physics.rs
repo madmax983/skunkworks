@@ -84,8 +84,16 @@ impl BioString {
         let mut next_state: Vec<(f32, f32)> = Vec::with_capacity(len);
 
         for i in 0..len {
-            let (left_u, left_v) = if i == 0 { current_state[i] } else { current_state[i-1] };
-            let (right_u, right_v) = if i == len - 1 { current_state[i] } else { current_state[i+1] };
+            let (left_u, left_v) = if i == 0 {
+                current_state[i]
+            } else {
+                current_state[i - 1]
+            };
+            let (right_u, right_v) = if i == len - 1 {
+                current_state[i]
+            } else {
+                current_state[i + 1]
+            };
             let (center_u, center_v) = current_state[i];
 
             // 1D Laplacian: (left + right - 2*center)
@@ -99,8 +107,8 @@ impl BioString {
             // Calculate local stretch
             let mut stretch_factor = 1.0;
             if i < len - 1 {
-                 let dist = self.nodes[i].pos.distance(self.nodes[i+1].pos);
-                 stretch_factor = dist / self.rest_length;
+                let dist = self.nodes[i].pos.distance(self.nodes[i + 1].pos);
+                stretch_factor = dist / self.rest_length;
             }
 
             // Modulate feed rate by stretch (high tension = faster metabolism)

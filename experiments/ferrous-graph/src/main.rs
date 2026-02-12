@@ -1,6 +1,6 @@
-mod scanner;
 mod physics;
 mod platter;
+mod scanner;
 
 use std::io;
 use std::time::{Duration, Instant};
@@ -115,15 +115,11 @@ where
                 .split(size);
 
             let canvas = Canvas::default()
-                .block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title(format!(
-                            "Ferrous Graph | Nodes: {} | Edges: {} | Magnetic Decay Active",
-                            graph.nodes.len(),
-                            graph.edges.len()
-                        )),
-                )
+                .block(Block::default().borders(Borders::ALL).title(format!(
+                    "Ferrous Graph | Nodes: {} | Edges: {} | Magnetic Decay Active",
+                    graph.nodes.len(),
+                    graph.edges.len()
+                )))
                 .x_bounds([
                     pan.x as f64 - 100.0 * zoom as f64,
                     pan.x as f64 + 100.0 * zoom as f64,
@@ -192,8 +188,9 @@ where
 
             f.render_widget(canvas, chunks[0]);
 
-            let controls = Paragraph::new("Controls: [Q] Quit | [+/-] Zoom | [Arrows] Pan | [R] Reset")
-                .style(Style::default().fg(Color::White).bg(Color::DarkGray));
+            let controls =
+                Paragraph::new("Controls: [Q] Quit | [+/-] Zoom | [Arrows] Pan | [R] Reset")
+                    .style(Style::default().fg(Color::White).bg(Color::DarkGray));
             f.render_widget(controls, chunks[1]);
         })?;
 

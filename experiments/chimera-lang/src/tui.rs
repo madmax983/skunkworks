@@ -1169,7 +1169,8 @@ where
                                     if let Ok(v) = app_state.input_buffer.parse::<f64>() {
                                         let (x, y) = app_state.grid_cursor;
                                         vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
-                                        app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
+                                        app_state.status_msg =
+                                            format!("Chaos Grid updated at {},{}", x, y);
                                     }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1677,12 +1678,23 @@ where
                                 if let Some((s, g)) = target {
                                     match app_state.pandemonium_selected_tool {
                                         0 => crate::vm::pandemonium::apply_mutation(vm, s, g),
-                                        1 => crate::vm::pandemonium::apply_scramble(vm, s, g, app_state.pandemonium_radius),
-                                        2 => crate::vm::pandemonium::apply_purge(vm, s, g, app_state.pandemonium_radius),
+                                        1 => crate::vm::pandemonium::apply_scramble(
+                                            vm,
+                                            s,
+                                            g,
+                                            app_state.pandemonium_radius,
+                                        ),
+                                        2 => crate::vm::pandemonium::apply_purge(
+                                            vm,
+                                            s,
+                                            g,
+                                            app_state.pandemonium_radius,
+                                        ),
                                         3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
                                         _ => {}
                                     }
-                                    app_state.status_msg = format!("Pandemonium applied at {},{}", s, g);
+                                    app_state.status_msg =
+                                        format!("Pandemonium applied at {},{}", s, g);
                                 }
                             } else if let ViewMode::Fishing = app_state.view_mode {
                                 if app_state.fishing_cast {
@@ -1905,7 +1917,8 @@ where
                                 app_state.kaleidoscope_hue_idx = 5;
                             }
                         } else if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_radius = (app_state.pandemonium_radius - 1.0).max(1.0);
+                            app_state.pandemonium_radius =
+                                (app_state.pandemonium_radius - 1.0).max(1.0);
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1957,7 +1970,9 @@ where
                             }
                         }
                         ViewMode::Catalyst => {
-                            if !vm.catalysts.is_empty() && app_state.catalyst_scroll + 1 < vm.catalysts.len() {
+                            if !vm.catalysts.is_empty()
+                                && app_state.catalyst_scroll + 1 < vm.catalysts.len()
+                            {
                                 app_state.catalyst_scroll += 1;
                             }
                         }
@@ -2098,8 +2113,8 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Hologram => {
                             if app_state.grid_cursor.1 < 15 {
@@ -2299,8 +2314,8 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Hologram => {
                             if app_state.grid_cursor.1 > 0 {
@@ -3714,7 +3729,9 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Span::styled(
                 &app_state.babel_pattern,
                 if app_state.babel_focus == 0 {
-                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD)
                 } else {
                     Style::default()
                 },
@@ -3725,7 +3742,9 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Span::styled(
                 &app_state.babel_input,
                 if app_state.babel_focus == 1 {
-                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD)
                 } else {
                     Style::default()
                 },
@@ -3738,11 +3757,8 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         )),
         Line::from(Span::raw(format!("Tablet Size: {}", vm.tablet.len()))),
     ];
-    let input_widget = Paragraph::new(input_lines).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Parser Test"),
-    );
+    let input_widget = Paragraph::new(input_lines)
+        .block(Block::default().borders(Borders::ALL).title("Parser Test"));
     f.render_widget(input_widget, bottom_chunks[0]);
 
     // 4. Babel Chaos & Controls (Bottom Right)
@@ -3753,7 +3769,11 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let integrity = vm.babel_state.integrity;
     let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Linguistic Integrity"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Linguistic Integrity"),
+        )
         .gauge_style(Style::default().fg(if integrity > 0.8 {
             Color::Green
         } else if integrity > 0.4 {
@@ -3774,10 +3794,16 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         map_items.push(ListItem::new("No active confusions."));
     } else {
         for (k, v) in &vm.babel_state.chaos_map {
-            map_items.push(ListItem::new(format!("{} -> {}", k, v)).style(Style::default().fg(Color::Magenta)));
+            map_items.push(
+                ListItem::new(format!("{} -> {}", k, v)).style(Style::default().fg(Color::Magenta)),
+            );
         }
     }
-    let map_list = List::new(map_items).block(Block::default().borders(Borders::ALL).title("Chaos Mappings"));
+    let map_list = List::new(map_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Chaos Mappings"),
+    );
     f.render_widget(map_list, lower_right[0]);
 
     let controls = vec![
@@ -3788,11 +3814,8 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Space: Run Parser (Regex)"),
         Line::from("  Tab: Switch Focus (Pattern/Input)"),
     ];
-    let control_widget = Paragraph::new(controls).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Lab Controls"),
-    );
+    let control_widget = Paragraph::new(controls)
+        .block(Block::default().borders(Borders::ALL).title("Lab Controls"));
     f.render_widget(control_widget, lower_right[1]);
 }
 
@@ -4610,14 +4633,17 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             let content = if vm.babel_state.integrity < 0.9 {
                 let mut rng = rand::thread_rng();
                 if rng.gen_bool(1.0 - vm.babel_state.integrity) {
-                    val.chars().map(|c| {
-                        if rng.gen_bool(0.3) {
-                            let glitch_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
-                            glitch_chars[rng.gen_range(0..glitch_chars.len())]
-                        } else {
-                            c
-                        }
-                    }).collect()
+                    val.chars()
+                        .map(|c| {
+                            if rng.gen_bool(0.3) {
+                                let glitch_chars =
+                                    ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
+                                glitch_chars[rng.gen_range(0..glitch_chars.len())]
+                            } else {
+                                c
+                            }
+                        })
+                        .collect()
                 } else {
                     val.clone()
                 }
@@ -7662,7 +7688,11 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Pandemonium Reactor"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Pandemonium Reactor"),
+        )
         .paint(|ctx| {
             let mut linear_idx = 0;
             for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
@@ -7681,7 +7711,11 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     };
 
                     ctx.draw(&ratatui::widgets::canvas::Line {
-                        x1: x, y1: y, x2: x+0.2, y2: y+0.2, color
+                        x1: x,
+                        y1: y,
+                        x2: x + 0.2,
+                        y2: y + 0.2,
+                        color,
                     });
 
                     linear_idx += 1;
@@ -7719,15 +7753,22 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("PANDEMONIUM REACTOR"),
         Line::from(" "),
         Line::from(format!("Tool: {} (1-4)", tool_name)),
-        Line::from(format!("Radius: {:.1} ([ / ])", app_state.pandemonium_radius)),
-        Line::from(format!("Cursor: {:.1}, {:.1}", app_state.pandemonium_cursor.0, app_state.pandemonium_cursor.1)),
+        Line::from(format!(
+            "Radius: {:.1} ([ / ])",
+            app_state.pandemonium_radius
+        )),
+        Line::from(format!(
+            "Cursor: {:.1}, {:.1}",
+            app_state.pandemonium_cursor.0, app_state.pandemonium_cursor.1
+        )),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Arrows: Move Cursor"),
         Line::from("  Space: Apply Tool"),
     ];
 
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Controls"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Controls"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -7785,7 +7826,9 @@ fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
     }
 
     let grid_widget = Paragraph::new(grid_lines).block(
-        Block::default().borders(Borders::ALL).title("Biotic Chaos (CML)"),
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Biotic Chaos (CML)"),
     );
     f.render_widget(grid_widget, chunks[0]);
 
@@ -7812,9 +7855,8 @@ fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
         Line::from("  chaos(2, v) -> Set coupling (v/100)"),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Parameters"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Parameters"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -7833,7 +7875,9 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     } else {
         for (i, cat) in vm.catalysts.iter().enumerate() {
             let style = if i == app_state.catalyst_scroll {
-                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
             } else {
                 Style::default().fg(Color::Cyan)
             };
@@ -7860,9 +7904,10 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let mut recipe_lines = Vec::new();
     if !vm.catalysts.is_empty() && app_state.catalyst_scroll < vm.catalysts.len() {
         let cat = &vm.catalysts[app_state.catalyst_scroll];
-        recipe_lines.push(Line::from(vec![
-            Span::styled(format!("Catalyst #{} Analysis", cat.id), Style::default().add_modifier(Modifier::BOLD)),
-        ]));
+        recipe_lines.push(Line::from(vec![Span::styled(
+            format!("Catalyst #{} Analysis", cat.id),
+            Style::default().add_modifier(Modifier::BOLD),
+        )]));
         recipe_lines.push(Line::from(""));
         recipe_lines.push(Line::from("Recipe (Gene Pattern):"));
 
@@ -7927,7 +7972,9 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let step = relative_depth as f64;
                 let scale = 100.0 * (1.0 - (step / (max_steps + 2.0)));
 
-                if scale <= 0.0 { break; }
+                if scale <= 0.0 {
+                    break;
+                }
 
                 let rect_w = scale;
                 let rect_h = scale * 0.6;
@@ -7954,7 +8001,11 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                     } else {
                         format!("Current: Strand {}:{}", vm.ip.0, vm.ip.1)
                     };
-                    ctx.print(center_x - rect_w / 2.0 + 2.0, center_y + rect_h / 2.0 - 5.0, label);
+                    ctx.print(
+                        center_x - rect_w / 2.0 + 2.0,
+                        center_y + rect_h / 2.0 - 5.0,
+                        label,
+                    );
                 }
             }
         })
@@ -7972,7 +8023,8 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         Line::from("  Compose, Curry, Quote: Functional Ops"),
         Line::from("  Call/Ret: Manual flow"),
     ];
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Metrics"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Metrics"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -8053,7 +8105,7 @@ fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Info Panel
     let (cx, cy) = app_state.grid_cursor;
     let (re, im) = vm.hologram_grid[cy][cx];
-    let mag = (re*re + im*im).sqrt();
+    let mag = (re * re + im * im).sqrt();
     let phase = im.atan2(re);
 
     let info = vec![

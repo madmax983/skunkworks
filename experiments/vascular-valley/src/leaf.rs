@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use noise::{NoiseFn, Fbm, Perlin};
+use noise::{Fbm, NoiseFn, Perlin};
 
 pub struct LeafMap {
     pub width: usize,

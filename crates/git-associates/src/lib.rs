@@ -2,8 +2,8 @@ pub mod model;
 
 use anyhow::{Context, Result};
 use chrono::{TimeZone, Utc};
-use git2::{Repository, Sort, DiffFlags};
-use model::{Commit, CommitStats, FileChange, DiffStats, Hunk, LineChange};
+use git2::{DiffFlags, Repository, Sort};
+use model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
 use std::path::Path;
 
 pub struct GitModel {
@@ -48,7 +48,9 @@ impl GitModel {
             let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
 
             // Stats
-            let (stats, files) = self.get_commit_diff(&commit, include_hunks).unwrap_or_default();
+            let (stats, files) = self
+                .get_commit_diff(&commit, include_hunks)
+                .unwrap_or_default();
 
             commits.push(Commit {
                 hash,
@@ -71,12 +73,18 @@ impl GitModel {
         self.history(limit)
     }
 
-    fn get_commit_diff(&self, commit: &git2::Commit, include_hunks: bool) -> Result<(CommitStats, Vec<FileChange>)> {
+    fn get_commit_diff(
+        &self,
+        commit: &git2::Commit,
+        include_hunks: bool,
+    ) -> Result<(CommitStats, Vec<FileChange>)> {
         let tree = commit.tree()?;
         let parent = commit.parent(0).ok();
         let parent_tree = parent.as_ref().and_then(|p| p.tree().ok());
 
-        let diff = self.repo.diff_tree_to_tree(parent_tree.as_ref(), Some(&tree), None)?;
+        let diff = self
+            .repo
+            .diff_tree_to_tree(parent_tree.as_ref(), Some(&tree), None)?;
 
         let mut files = Vec::new();
         let mut total_insertions = 0;
@@ -88,8 +96,11 @@ impl GitModel {
         for i in 0..diff.deltas().len() {
             if let Ok(patch) = git2::Patch::from_diff(&diff, i) {
                 if let Some(patch) = patch {
-                     let delta = patch.delta();
-                    let path = delta.new_file().path().or(delta.old_file().path())
+                    let delta = patch.delta();
+                    let path = delta
+                        .new_file()
+                        .path()
+                        .or(delta.old_file().path())
                         .map(|p| p.to_string_lossy().to_string())
                         .unwrap_or_else(|| "unknown".to_string());
 
@@ -108,24 +119,28 @@ impl GitModel {
 
                     let mut hunks = Vec::new();
                     if include_hunks {
-                         for h_idx in 0..patch.num_hunks() {
+                        for h_idx in 0..patch.num_hunks() {
                             if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
-                                 let mut hunk_lines = Vec::new();
-                                 for l_idx in 0..lines_count {
-                                     if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                                         let content = std::str::from_utf8(line.content()).unwrap_or("").to_string();
-                                         match line.origin() {
-                                             '+' => hunk_lines.push(LineChange::Added(content)),
-                                             '-' => hunk_lines.push(LineChange::Removed(content)),
-                                             ' ' => hunk_lines.push(LineChange::Context(content)),
-                                             _ => {},
-                                         }
-                                     }
-                                 }
-                                 hunks.push(Hunk {
-                                     header: std::str::from_utf8(hunk_info.header()).unwrap_or("").to_string(),
-                                     lines: hunk_lines,
-                                 });
+                                let mut hunk_lines = Vec::new();
+                                for l_idx in 0..lines_count {
+                                    if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
+                                        let content = std::str::from_utf8(line.content())
+                                            .unwrap_or("")
+                                            .to_string();
+                                        match line.origin() {
+                                            '+' => hunk_lines.push(LineChange::Added(content)),
+                                            '-' => hunk_lines.push(LineChange::Removed(content)),
+                                            ' ' => hunk_lines.push(LineChange::Context(content)),
+                                            _ => {}
+                                        }
+                                    }
+                                }
+                                hunks.push(Hunk {
+                                    header: std::str::from_utf8(hunk_info.header())
+                                        .unwrap_or("")
+                                        .to_string(),
+                                    lines: hunk_lines,
+                                });
                             }
                         }
                     }
@@ -142,11 +157,14 @@ impl GitModel {
             }
         }
 
-        Ok((CommitStats {
-            insertions: total_insertions,
-            deletions: total_deletions,
-            files_changed: files.len(),
-        }, files))
+        Ok((
+            CommitStats {
+                insertions: total_insertions,
+                deletions: total_deletions,
+                files_changed: files.len(),
+            },
+            files,
+        ))
     }
 
     pub fn diff_workdir(&self) -> Result<DiffStats> {
@@ -164,17 +182,22 @@ impl GitModel {
             None
         };
 
-        let diff = self.repo.diff_tree_to_workdir_with_index(tree.as_ref(), Some(&mut diff_opts))?;
+        let diff = self
+            .repo
+            .diff_tree_to_workdir_with_index(tree.as_ref(), Some(&mut diff_opts))?;
 
         let mut files = Vec::new();
         let mut total_added = 0;
         let mut total_removed = 0;
 
         for i in 0..diff.deltas().len() {
-             if let Ok(patch) = git2::Patch::from_diff(&diff, i) {
+            if let Ok(patch) = git2::Patch::from_diff(&diff, i) {
                 if let Some(patch) = patch {
                     let delta = patch.delta();
-                    let path = delta.new_file().path().or(delta.old_file().path())
+                    let path = delta
+                        .new_file()
+                        .path()
+                        .or(delta.old_file().path())
                         .map(|p| p.to_string_lossy().to_string())
                         .unwrap_or_else(|| "unknown".to_string());
 
@@ -195,22 +218,26 @@ impl GitModel {
                     let mut hunks = Vec::new();
                     for h_idx in 0..patch.num_hunks() {
                         if let Ok((hunk_info, lines_count)) = patch.hunk(h_idx) {
-                             let mut hunk_lines = Vec::new();
-                             for l_idx in 0..lines_count {
-                                 if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
-                                     let content = std::str::from_utf8(line.content()).unwrap_or("").to_string();
-                                     match line.origin() {
-                                         '+' => hunk_lines.push(LineChange::Added(content)),
-                                         '-' => hunk_lines.push(LineChange::Removed(content)),
-                                         ' ' => hunk_lines.push(LineChange::Context(content)),
-                                         _ => {},
-                                     }
-                                 }
-                             }
-                             hunks.push(Hunk {
-                                 header: std::str::from_utf8(hunk_info.header()).unwrap_or("").to_string(),
-                                 lines: hunk_lines,
-                             });
+                            let mut hunk_lines = Vec::new();
+                            for l_idx in 0..lines_count {
+                                if let Ok(line) = patch.line_in_hunk(h_idx, l_idx) {
+                                    let content = std::str::from_utf8(line.content())
+                                        .unwrap_or("")
+                                        .to_string();
+                                    match line.origin() {
+                                        '+' => hunk_lines.push(LineChange::Added(content)),
+                                        '-' => hunk_lines.push(LineChange::Removed(content)),
+                                        ' ' => hunk_lines.push(LineChange::Context(content)),
+                                        _ => {}
+                                    }
+                                }
+                            }
+                            hunks.push(Hunk {
+                                header: std::str::from_utf8(hunk_info.header())
+                                    .unwrap_or("")
+                                    .to_string(),
+                                lines: hunk_lines,
+                            });
                         }
                     }
 

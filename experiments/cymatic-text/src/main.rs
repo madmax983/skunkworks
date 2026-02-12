@@ -1,11 +1,11 @@
-mod outline;
 mod audio;
 mod deformation;
+mod outline;
 
-use macroquad::prelude::*;
-use outline::{load_glyph, GlyphCurve, BezierSegment};
 use audio::AudioReactor;
 use deformation::deform;
+use macroquad::prelude::*;
+use outline::{load_glyph, BezierSegment, GlyphCurve};
 use rusttype::Font;
 
 #[macroquad::main("Cymatic Text")]
@@ -53,7 +53,7 @@ async fn main() {
             0.5 + reactor.spectrum.low * 0.5,
             0.2 + reactor.spectrum.mid * 0.8,
             0.4 + reactor.spectrum.high * 0.6,
-            1.0
+            1.0,
         );
 
         for base_curve in &base_glyphs {
@@ -67,9 +67,26 @@ async fn main() {
             // Translate
             for seg in &mut positioned_curve.segments {
                 match seg {
-                    BezierSegment::Line { start, end } => { *start += offset; *end += offset; }
-                    BezierSegment::Quad { start, ctrl, end } => { *start += offset; *ctrl += offset; *end += offset; }
-                    BezierSegment::Cubic { start, ctrl1, ctrl2, end } => { *start += offset; *ctrl1 += offset; *ctrl2 += offset; *end += offset; }
+                    BezierSegment::Line { start, end } => {
+                        *start += offset;
+                        *end += offset;
+                    }
+                    BezierSegment::Quad { start, ctrl, end } => {
+                        *start += offset;
+                        *ctrl += offset;
+                        *end += offset;
+                    }
+                    BezierSegment::Cubic {
+                        start,
+                        ctrl1,
+                        ctrl2,
+                        end,
+                    } => {
+                        *start += offset;
+                        *ctrl1 += offset;
+                        *ctrl2 += offset;
+                        *end += offset;
+                    }
                 }
             }
             positioned_curve.min += offset;
@@ -100,9 +117,27 @@ async fn main() {
         // Spectrum Bars
         let h = screen_height();
         let w = screen_width();
-        draw_rectangle(w - 100.0, h - 50.0 - reactor.spectrum.low * 200.0, 20.0, reactor.spectrum.low * 200.0, RED);
-        draw_rectangle(w - 70.0, h - 50.0 - reactor.spectrum.mid * 200.0, 20.0, reactor.spectrum.mid * 200.0, GREEN);
-        draw_rectangle(w - 40.0, h - 50.0 - reactor.spectrum.high * 200.0, 20.0, reactor.spectrum.high * 200.0, BLUE);
+        draw_rectangle(
+            w - 100.0,
+            h - 50.0 - reactor.spectrum.low * 200.0,
+            20.0,
+            reactor.spectrum.low * 200.0,
+            RED,
+        );
+        draw_rectangle(
+            w - 70.0,
+            h - 50.0 - reactor.spectrum.mid * 200.0,
+            20.0,
+            reactor.spectrum.mid * 200.0,
+            GREEN,
+        );
+        draw_rectangle(
+            w - 40.0,
+            h - 50.0 - reactor.spectrum.high * 200.0,
+            20.0,
+            reactor.spectrum.high * 200.0,
+            BLUE,
+        );
 
         next_frame().await
     }
@@ -115,10 +150,15 @@ fn draw_curve(curve: &GlyphCurve, color: Color, thickness: f32) {
                 draw_line(start.x, start.y, end.x, end.y, thickness, color);
             }
             BezierSegment::Quad { start, ctrl, end } => {
-                 draw_quad_bezier(*start, *ctrl, *end, color, thickness);
+                draw_quad_bezier(*start, *ctrl, *end, color, thickness);
             }
-            BezierSegment::Cubic { start, ctrl1, ctrl2, end } => {
-                 draw_cubic_bezier(*start, *ctrl1, *ctrl2, *end, color, thickness);
+            BezierSegment::Cubic {
+                start,
+                ctrl1,
+                ctrl2,
+                end,
+            } => {
+                draw_cubic_bezier(*start, *ctrl1, *ctrl2, *end, color, thickness);
             }
         }
     }
@@ -143,9 +183,9 @@ fn draw_cubic_bezier(p0: Vec2, p1: Vec2, p2: Vec2, p3: Vec2, color: Color, thick
         let t = i as f32 / steps as f32;
         let inv_t = 1.0 - t;
         let next = inv_t * inv_t * inv_t * p0
-                 + 3.0 * inv_t * inv_t * t * p1
-                 + 3.0 * inv_t * t * t * p2
-                 + t * t * t * p3;
+            + 3.0 * inv_t * inv_t * t * p1
+            + 3.0 * inv_t * t * t * p2
+            + t * t * t * p3;
         draw_line(prev.x, prev.y, next.x, next.y, thickness, color);
         prev = next;
     }

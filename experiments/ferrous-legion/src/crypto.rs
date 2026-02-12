@@ -1,10 +1,10 @@
-use crate::roman::Roman;
 use crate::math::pow_mod;
+use crate::roman::Roman;
 use num_bigint::{BigUint, RandBigInt};
-use num_traits::{One, Zero};
-use num_integer::Integer; // For gcd, extended_gcd?
-// num-bigint doesn't implement Integer for BigUint directly in a way that gives extended_gcd easily for BigUint (signed return).
-// Actually BigInt (signed) does.
+use num_integer::Integer;
+use num_traits::{One, Zero}; // For gcd, extended_gcd?
+                             // num-bigint doesn't implement Integer for BigUint directly in a way that gives extended_gcd easily for BigUint (signed return).
+                             // Actually BigInt (signed) does.
 use num_bigint::BigInt;
 
 pub struct KeyPair {
@@ -59,7 +59,9 @@ pub fn generate_keys(bits: usize) -> KeyPair {
 fn gen_prime(bits: usize, rng: &mut impl RandBigInt) -> BigUint {
     loop {
         let n = rng.gen_biguint(bits as u64);
-        if n.is_even() { continue; }
+        if n.is_even() {
+            continue;
+        }
         if is_prime(&n) {
             return n;
         }
@@ -68,7 +70,9 @@ fn gen_prime(bits: usize, rng: &mut impl RandBigInt) -> BigUint {
 
 fn is_prime(n: &BigUint) -> bool {
     // Miller-Rabin test
-    if *n <= BigUint::from(3u32) { return *n > BigUint::one(); }
+    if *n <= BigUint::from(3u32) {
+        return *n > BigUint::one();
+    }
 
     let n_minus_1 = n - 1u32;
     let mut d = n_minus_1.clone();
@@ -82,10 +86,14 @@ fn is_prime(n: &BigUint) -> bool {
     let bases = [2u32, 3, 5, 7, 11, 13, 17, 19, 23];
     for b in bases {
         let b_uint = BigUint::from(b);
-        if n == &b_uint { return true; }
+        if n == &b_uint {
+            return true;
+        }
         // If n < b, just checking b % n logic holds, but miller_rabin usually expects [2, n-2].
         // Given we generate large bits, n > 23 usually.
-        if !miller_rabin_test(n, &n_minus_1, &d, s, &b_uint) { return false; }
+        if !miller_rabin_test(n, &n_minus_1, &d, s, &b_uint) {
+            return false;
+        }
     }
     true
 }
@@ -95,7 +103,7 @@ fn miller_rabin_test(n: &BigUint, n_minus_1: &BigUint, d: &BigUint, s: u32, a: &
     if x == BigUint::one() || x == *n_minus_1 {
         return true;
     }
-    for _ in 0..s-1 {
+    for _ in 0..s - 1 {
         x = x.modpow(&BigUint::from(2u32), n);
         if x == *n_minus_1 {
             return true;

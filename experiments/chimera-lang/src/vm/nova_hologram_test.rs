@@ -16,11 +16,22 @@ fn test_hologram_interfere_refract_perfect() {
     // Create a complex strand
     // push(42) add() print()
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(42)] },
-        Gene { op: OpCode::Add, args: vec![] }, // Add (needs stack setup usually, but we just test storage)
-        Gene { op: OpCode::Print, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(42)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        }, // Add (needs stack setup usually, but we just test storage)
+        Gene {
+            op: OpCode::Print,
+            args: vec![],
+        },
     ];
-    let strand = Strand { genes: genes.clone() };
+    let strand = Strand {
+        genes: genes.clone(),
+    };
     vm.dna.helix.strands.push(strand);
 
     // Interfere (Encode Strand 0)
@@ -32,7 +43,7 @@ fn test_hologram_interfere_refract_perfect() {
     let mut energy = 0.0;
     for row in &vm.hologram_grid {
         for (re, im) in row {
-            energy += re*re + im*im;
+            energy += re * re + im * im;
         }
     }
     assert!(energy > 0.0, "Hologram grid should have energy");
@@ -40,7 +51,11 @@ fn test_hologram_interfere_refract_perfect() {
     // Refract (Decode)
     crate::vm::nova_hologram::exec_refract(&mut vm, OpCode::Refract, &[]);
 
-    assert_eq!(vm.dna.helix.strands.len(), 2, "Should have reconstructed a strand");
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        2,
+        "Should have reconstructed a strand"
+    );
     let new_strand = &vm.dna.helix.strands[1];
 
     assert_eq!(new_strand.genes.len(), genes.len(), "Length mismatch");
@@ -48,10 +63,17 @@ fn test_hologram_interfere_refract_perfect() {
     for (i, gene) in new_strand.genes.iter().enumerate() {
         assert_eq!(gene.op, genes[i].op, "OpCode mismatch at {}", i);
         if !genes[i].args.is_empty() {
-             assert_eq!(gene.args.len(), genes[i].args.len(), "Arg count mismatch at {}", i);
-             if let (Nucleotide::Number(a), Nucleotide::Number(b)) = (&gene.args[0], &genes[i].args[0]) {
-                 assert_eq!(a, b, "Arg value mismatch at {}", i);
-             }
+            assert_eq!(
+                gene.args.len(),
+                genes[i].args.len(),
+                "Arg count mismatch at {}",
+                i
+            );
+            if let (Nucleotide::Number(a), Nucleotide::Number(b)) =
+                (&gene.args[0], &genes[i].args[0])
+            {
+                assert_eq!(a, b, "Arg value mismatch at {}", i);
+            }
         }
     }
 }
@@ -59,7 +81,10 @@ fn test_hologram_interfere_refract_perfect() {
 #[test]
 fn test_diffract_ghost() {
     let mut vm = make_vm();
-    let genes = vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }];
+    let genes = vec![Gene {
+        op: OpCode::Push,
+        args: vec![Nucleotide::Number(10)],
+    }];
     vm.dna.helix.strands.push(Strand { genes });
 
     let args = vec![Nucleotide::Number(0)];
@@ -69,7 +94,7 @@ fn test_diffract_ghost() {
     let mut energy = 0.0;
     for row in &vm.hologram_grid {
         for (re, im) in row {
-            energy += re*re + im*im;
+            energy += re * re + im * im;
         }
     }
     assert!(energy > 0.0, "Diffract should add energy");

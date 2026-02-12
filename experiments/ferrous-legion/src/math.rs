@@ -1,7 +1,7 @@
-use crate::roman::{Roman, Symbol, BaseSymbol};
-use std::ops::{Add, Sub, Mul, Div, Rem};
+use crate::roman::{BaseSymbol, Roman, Symbol};
 use num_bigint::BigUint;
-use num_traits::{Zero, One, ToPrimitive};
+use num_traits::{One, ToPrimitive, Zero};
+use std::ops::{Add, Div, Mul, Rem, Sub};
 
 impl Roman {
     // Fully expand to additive form (e.g., IV -> IIII)
@@ -18,7 +18,8 @@ impl Roman {
         // Scan and replace patterns.
         // We can do this with a stack.
         let mut stack: Vec<Symbol> = Vec::new();
-        for sym in self.digits.iter().rev() { // Process from smallest
+        for sym in self.digits.iter().rev() {
+            // Process from smallest
             stack.push(*sym);
             self.collapse_stack(&mut stack);
         }
@@ -33,7 +34,9 @@ impl Roman {
         // 5 M -> (V)
         // 2 (V) -> (X)
         loop {
-            if stack.len() < 2 { break; }
+            if stack.len() < 2 {
+                break;
+            }
             let last = stack[stack.len() - 1];
             let prev = stack[stack.len() - 2];
 
@@ -61,7 +64,9 @@ impl Roman {
                         }
                     }
                     if all_match {
-                        for _ in 0..5 { stack.pop(); }
+                        for _ in 0..5 {
+                            stack.pop();
+                        }
                         let next = self.next_symbol(last);
                         stack.push(next);
                         continue;
@@ -81,8 +86,8 @@ impl Roman {
             BaseSymbol::C => Symbol::new(BaseSymbol::D, s.vinculum),
             BaseSymbol::D => Symbol::new(BaseSymbol::M, s.vinculum),
             BaseSymbol::M => Symbol::new(BaseSymbol::V, s.vinculum + 1), // M -> (V) implies 5000? No.
-            // Wait. 5 M = 5000. (V) = 5000. Correct.
-            // But 2 D = M (1000). Correct.
+                                                                         // Wait. 5 M = 5000. (V) = 5000. Correct.
+                                                                         // But 2 D = M (1000). Correct.
         }
     }
 }
@@ -142,7 +147,9 @@ impl Mul for Roman {
 impl Div for Roman {
     type Output = Roman;
     fn div(self, rhs: Self) -> Self::Output {
-        if rhs.is_zero() { panic!("Division by zero"); }
+        if rhs.is_zero() {
+            panic!("Division by zero");
+        }
         let val = self.value() / rhs.value();
         Roman::from_biguint(val)
     }
@@ -151,7 +158,9 @@ impl Div for Roman {
 impl Rem for Roman {
     type Output = Roman;
     fn rem(self, rhs: Self) -> Self::Output {
-         if rhs.is_zero() { panic!("Division by zero"); }
+        if rhs.is_zero() {
+            panic!("Division by zero");
+        }
         let val = self.value() % rhs.value();
         Roman::from_biguint(val)
     }

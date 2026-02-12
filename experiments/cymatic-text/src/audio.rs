@@ -1,5 +1,3 @@
-
-
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Spectrum {
     pub low: f32,

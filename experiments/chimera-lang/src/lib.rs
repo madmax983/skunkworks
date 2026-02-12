@@ -96,9 +96,9 @@ pub mod prelude {
 #[cfg(all(test, feature = "nova"))]
 mod alchemist_test;
 #[cfg(all(test, feature = "nova"))]
-mod babel_test;
-#[cfg(all(test, feature = "nova"))]
 mod babel_chaos_test;
+#[cfg(all(test, feature = "nova"))]
+mod babel_test;
 #[cfg(all(test, feature = "biophysics"))]
 mod biophysics_test;
 #[cfg(all(test, feature = "nova"))]
@@ -134,9 +134,9 @@ mod nova_astrology_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_atmosphere_test;
 #[cfg(all(test, feature = "nova"))]
-mod nova_ballistics_test;
-#[cfg(all(test, feature = "nova"))]
 mod nova_ballistics_optics_test;
+#[cfg(all(test, feature = "nova"))]
+mod nova_ballistics_test;
 #[cfg(all(test, feature = "nova"))]
 mod nova_bang_test;
 #[cfg(all(test, feature = "nova"))]

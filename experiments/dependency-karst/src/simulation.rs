@@ -1,9 +1,9 @@
+use crate::graph::CrateGraph;
 use crate::layout::Vec3;
 use noise::{NoiseFn, Perlin};
 use petgraph::graph::NodeIndex;
-use crate::graph::CrateGraph;
-use std::collections::HashMap;
 use rand::Rng;
+use std::collections::HashMap;
 
 pub const GRID_SIZE: usize = 64;
 
@@ -37,9 +37,9 @@ impl VoxelGrid {
                     let idx = x + y * size + z * size * size;
                     // Perlin noise typically returns -1.0 to 1.0
                     if val > 0.2 {
-                         voxels[idx] = Voxel::Crack;
+                        voxels[idx] = Voxel::Crack;
                     } else {
-                         voxels[idx] = Voxel::Rock;
+                        voxels[idx] = Voxel::Rock;
                     }
                 }
             }
@@ -73,27 +73,27 @@ impl VoxelGrid {
     }
 
     pub fn erode(&mut self, graph: &CrateGraph, positions: &HashMap<NodeIndex, Vec3>) {
-         let size_f = self.width as f32;
+        let size_f = self.width as f32;
 
-         for edge in graph.edge_indices() {
-             if let Some((u, v)) = graph.edge_endpoints(edge) {
-                 // Check if nodes exist in layout (they should)
-                 if let (Some(start), Some(end)) = (positions.get(&u), positions.get(&v)) {
-                     let start_grid = (
-                         (start.x * size_f) as isize,
-                         (start.y * size_f) as isize,
-                         (start.z * size_f) as isize
-                     );
-                     let end_grid = (
-                         (end.x * size_f) as isize,
-                         (end.y * size_f) as isize,
-                         (end.z * size_f) as isize
-                     );
+        for edge in graph.edge_indices() {
+            if let Some((u, v)) = graph.edge_endpoints(edge) {
+                // Check if nodes exist in layout (they should)
+                if let (Some(start), Some(end)) = (positions.get(&u), positions.get(&v)) {
+                    let start_grid = (
+                        (start.x * size_f) as isize,
+                        (start.y * size_f) as isize,
+                        (start.z * size_f) as isize,
+                    );
+                    let end_grid = (
+                        (end.x * size_f) as isize,
+                        (end.y * size_f) as isize,
+                        (end.z * size_f) as isize,
+                    );
 
-                     self.carve_line(start_grid, end_grid);
-                 }
-             }
-         }
+                    self.carve_line(start_grid, end_grid);
+                }
+            }
+        }
     }
 
     fn carve_line(&mut self, start: (isize, isize, isize), end: (isize, isize, isize)) {
@@ -104,10 +104,12 @@ impl VoxelGrid {
         let dy = (y2 - y1) as f32;
         let dz = (z2 - z1) as f32;
 
-        let dist = (dx*dx + dy*dy + dz*dz).sqrt();
+        let dist = (dx * dx + dy * dy + dz * dz).sqrt();
         let steps = dist as usize;
 
-        if steps == 0 { return; }
+        if steps == 0 {
+            return;
+        }
 
         let step_x = dx / steps as f32;
         let step_y = dy / steps as f32;
@@ -120,22 +122,22 @@ impl VoxelGrid {
         let mut rng = rand::thread_rng();
 
         for _ in 0..=steps {
-             // Wiggle
-             let wx = rng.gen_range(-0.5..0.5);
-             let wy = rng.gen_range(-0.5..0.5);
-             let wz = rng.gen_range(-0.5..0.5);
+            // Wiggle
+            let wx = rng.gen_range(-0.5..0.5);
+            let wy = rng.gen_range(-0.5..0.5);
+            let wz = rng.gen_range(-0.5..0.5);
 
-             let tx = (curr_x + wx).round() as isize;
-             let ty = (curr_y + wy).round() as isize;
-             let tz = (curr_z + wz).round() as isize;
+            let tx = (curr_x + wx).round() as isize;
+            let ty = (curr_y + wy).round() as isize;
+            let tz = (curr_z + wz).round() as isize;
 
-             if tx >= 0 && ty >= 0 && tz >= 0 {
-                 self.set(tx as usize, ty as usize, tz as usize, Voxel::Air);
-             }
+            if tx >= 0 && ty >= 0 && tz >= 0 {
+                self.set(tx as usize, ty as usize, tz as usize, Voxel::Air);
+            }
 
-             curr_x += step_x;
-             curr_y += step_y;
-             curr_z += step_z;
+            curr_x += step_x;
+            curr_y += step_y;
+            curr_z += step_z;
         }
     }
 }
@@ -143,8 +145,8 @@ impl VoxelGrid {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use petgraph::Graph;
     use crate::layout::Layout;
+    use petgraph::Graph;
 
     #[test]
     fn test_erosion() {

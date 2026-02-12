@@ -1,11 +1,11 @@
-mod platter;
 mod decay;
+mod platter;
 mod ui;
 
-use anyhow::Result;
-use tui_shared::Tui;
 use crate::ui::App;
+use anyhow::Result;
 use std::env;
+use tui_shared::Tui;
 
 fn main() -> Result<()> {
     // Determine path to load. Default to "src" if available, else "."
@@ -14,7 +14,9 @@ fn main() -> Result<()> {
     } else {
         "."
     };
-    let path = env::args().nth(1).unwrap_or_else(|| default_path.to_string());
+    let path = env::args()
+        .nth(1)
+        .unwrap_or_else(|| default_path.to_string());
 
     let mut tui = Tui::init()?;
     let mut app = App::new(&path);

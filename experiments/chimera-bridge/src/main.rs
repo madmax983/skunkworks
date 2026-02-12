@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
 mod model;
-use model::{World, Terrain, State};
+use model::{State, Terrain, World};
 
 #[macroquad::main("Chimera Bridge")]
 async fn main() {
@@ -50,7 +50,13 @@ async fn main() {
             for x in 0..width {
                 let p = world.pheromones[y * width + x];
                 if p > 0.1 {
-                    draw_rectangle(x as f32 * cell_w, y as f32 * cell_h, cell_w, cell_h, Color::new(0.0, 1.0, 0.0, p * 0.5));
+                    draw_rectangle(
+                        x as f32 * cell_w,
+                        y as f32 * cell_h,
+                        cell_w,
+                        cell_h,
+                        Color::new(0.0, 1.0, 0.0, p * 0.5),
+                    );
                 }
             }
         }
@@ -68,10 +74,15 @@ async fn main() {
             // But let's draw them to show the VM state maybe?
             // Use VM stack top to modulate color?
 
-            let vm_val = ant.vm.stack.last().map(|v| match v {
-                chimera_lang::vm::Value::Int(i) => *i as f32,
-                _ => 0.0
-            }).unwrap_or(0.0);
+            let vm_val = ant
+                .vm
+                .stack
+                .last()
+                .map(|v| match v {
+                    chimera_lang::vm::Value::Int(i) => *i as f32,
+                    _ => 0.0,
+                })
+                .unwrap_or(0.0);
 
             // Modulate color based on VM value
             let dynamic_color = if ant.state == State::Bridging {
@@ -81,12 +92,24 @@ async fn main() {
             };
 
             if ant.state != State::Bridging {
-                draw_rectangle(ant.x as f32 * cell_w, ant.y as f32 * cell_h, cell_w, cell_h, dynamic_color);
+                draw_rectangle(
+                    ant.x as f32 * cell_w,
+                    ant.y as f32 * cell_h,
+                    cell_w,
+                    cell_h,
+                    dynamic_color,
+                );
             }
         }
 
         draw_text("Chimera Bridge", 10.0, 20.0, 30.0, WHITE);
-        draw_text("Ants run ChimeraVM to decide bridging behavior", 10.0, 50.0, 20.0, WHITE);
+        draw_text(
+            "Ants run ChimeraVM to decide bridging behavior",
+            10.0,
+            50.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

@@ -1,5 +1,5 @@
+use spqr_rsa::crypto::{decrypt, encrypt, generate_keys};
 use spqr_rsa::roman::Roman;
-use spqr_rsa::crypto::{generate_keys, encrypt, decrypt};
 use std::str::FromStr;
 
 #[test]
@@ -39,7 +39,10 @@ fn test_roman_arithmetic() {
 fn test_rsa_roundtrip() {
     // Generate small keys for speed (16 bits)
     let keys = generate_keys(16);
-    println!("Public: {}, Private: {}, Mod: {}", keys.public, keys.private, keys.modulus);
+    println!(
+        "Public: {}, Private: {}, Mod: {}",
+        keys.public, keys.private, keys.modulus
+    );
 
     // Message "XLII" = 42
     let msg = Roman::from_str("XLII").unwrap();

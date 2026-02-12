@@ -1,12 +1,12 @@
-mod state;
-mod simulation;
 mod renderer;
+mod simulation;
+mod state;
 
 use anyhow::Result;
 use log::{error, info};
-use state::State;
-use simulation::Simulation;
 use renderer::Renderer;
+use simulation::Simulation;
+use state::State;
 use std::sync::Arc;
 use winit::{
     event::*,
@@ -26,7 +26,12 @@ fn main() -> Result<()> {
     );
 
     let mut state = pollster::block_on(State::new(window.clone()));
-    let mut simulation = Simulation::new(&state.device, &state.queue, state.size.width, state.size.height);
+    let mut simulation = Simulation::new(
+        &state.device,
+        &state.queue,
+        state.size.width,
+        state.size.height,
+    );
     let renderer = Renderer::new(&state.device, state.config.format);
 
     info!("Broken Mirror initialized.");
@@ -59,26 +64,35 @@ fn main() -> Result<()> {
                         simulation.params.mouse_x = (position.x / state.size.width as f64) as f32;
                         simulation.params.mouse_y = (position.y / state.size.height as f64) as f32;
                     }
-                    WindowEvent::MouseInput { state: mstate, button, .. } => {
-                         match button {
-                            MouseButton::Left => {
-                                simulation.params.mouse_active = if *mstate == ElementState::Pressed { 1 } else { 0 };
-                            }
-                            MouseButton::Right => {
-                                simulation.params.mouse_active = if *mstate == ElementState::Pressed { 2 } else { 0 };
-                            }
-                            _ => {}
+                    WindowEvent::MouseInput {
+                        state: mstate,
+                        button,
+                        ..
+                    } => match button {
+                        MouseButton::Left => {
+                            simulation.params.mouse_active = if *mstate == ElementState::Pressed {
+                                1
+                            } else {
+                                0
+                            };
                         }
-                    }
-                    WindowEvent::MouseWheel { delta, .. } => {
-                        match delta {
-                            MouseScrollDelta::LineDelta(_, y) => {
-                                simulation.params.temperature = (simulation.params.temperature + y * 0.1).max(0.0).min(10.0);
-                                info!("Temperature: {:.2}", simulation.params.temperature);
-                            }
-                            _ => {}
+                        MouseButton::Right => {
+                            simulation.params.mouse_active = if *mstate == ElementState::Pressed {
+                                2
+                            } else {
+                                0
+                            };
                         }
-                    }
+                        _ => {}
+                    },
+                    WindowEvent::MouseWheel { delta, .. } => match delta {
+                        MouseScrollDelta::LineDelta(_, y) => {
+                            simulation.params.temperature =
+                                (simulation.params.temperature + y * 0.1).max(0.0).min(10.0);
+                            info!("Temperature: {:.2}", simulation.params.temperature);
+                        }
+                        _ => {}
+                    },
                     WindowEvent::RedrawRequested => {
                         simulation.update_uniforms(&state.queue);
 
@@ -99,11 +113,16 @@ fn main() -> Result<()> {
                             }
                         };
 
-                        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+                        let view = output
+                            .texture
+                            .create_view(&wgpu::TextureViewDescriptor::default());
 
-                        let mut encoder = state.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-                            label: Some("Render Encoder"),
-                        });
+                        let mut encoder =
+                            state
+                                .device
+                                .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                                    label: Some("Render Encoder"),
+                                });
 
                         // Simulation Step
                         simulation.step(&mut encoder);

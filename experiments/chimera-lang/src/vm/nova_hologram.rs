@@ -10,7 +10,11 @@ use std::f64::consts::PI;
 use strum::IntoEnumIterator;
 
 #[cfg(feature = "nova")]
-pub fn exec_interfere(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_interfere(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Input: Strand Index
     // Effect: Adds interference pattern to Hologram Grid using DFT Encoding
     // Gene Index i -> Frequency (u, v)
@@ -32,7 +36,9 @@ pub fn exec_interfere(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> O
         let n_grid = GRID_SIZE as f64;
 
         for (i, gene) in strand.genes.iter().enumerate() {
-            if i >= 16 { break; } // Limit to 16 genes per hologram layer
+            if i >= 16 {
+                break;
+            } // Limit to 16 genes per hologram layer
 
             // Map Index to Frequency (u, v)
             // Avoid DC (0,0) and Nyquist boundaries to be safe
@@ -62,16 +68,24 @@ pub fn exec_interfere(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> O
                 }
             }
         }
-        vm.output.push(format!("INTERFERE: Encoded strand {} into hologram", strand_idx));
+        vm.output.push(format!(
+            "INTERFERE: Encoded strand {} into hologram",
+            strand_idx
+        ));
         vm.energy = vm.energy.saturating_sub(20);
     } else {
-        vm.output.push("INTERFERE: Invalid strand index".to_string());
+        vm.output
+            .push("INTERFERE: Invalid strand index".to_string());
     }
     None
 }
 
 #[cfg(feature = "nova")]
-pub fn exec_diffract(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_diffract(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     // Input: Strand Index
     // Effect: Encodes strand with a spatial shift (Phase ramp in freq domain).
     // When refracted normally, the phases will be shifted, scrambling OpCodes.
@@ -95,7 +109,9 @@ pub fn exec_diffract(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> Op
         let shift_y = 4.0;
 
         for (i, gene) in strand.genes.iter().enumerate() {
-            if i >= 16 { break; }
+            if i >= 16 {
+                break;
+            }
 
             let u = ((i % 4) * 2 + 1) as f64;
             let v = ((i / 4) * 2 + 1) as f64;
@@ -119,14 +135,19 @@ pub fn exec_diffract(vm: &mut ChimeraVM, _op: OpCode, args: &[Nucleotide]) -> Op
                 }
             }
         }
-        vm.output.push(format!("DIFFRACT: Created ghost of strand {}", strand_idx));
+        vm.output
+            .push(format!("DIFFRACT: Created ghost of strand {}", strand_idx));
         vm.energy = vm.energy.saturating_sub(15);
     }
     None
 }
 
 #[cfg(feature = "nova")]
-pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_refract(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     let op_codes: Vec<OpCode> = OpCode::iter().collect();
     let op_count = op_codes.len() as f64;
     let n_grid = GRID_SIZE as f64;
@@ -183,7 +204,8 @@ pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
             let est_amplitude = magnitude;
             let mut args = Vec::new();
 
-            if est_amplitude > 1.02 { // Tolerance for 1.0
+            if est_amplitude > 1.02 {
+                // Tolerance for 1.0
                 let val = ((est_amplitude - 1.0) * 50.0).round() as i64;
                 // Clamp or check validity?
                 // The shift might cause amplitude noise too.
@@ -192,7 +214,10 @@ pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
                 }
             }
 
-            genes.push(Gene { op: detected_op, args });
+            genes.push(Gene {
+                op: detected_op,
+                args,
+            });
         } else {
             // No signal at this frequency
             // Stop at first gap? Or allow gaps (Nop)?
@@ -205,8 +230,8 @@ pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
 
     if !genes.is_empty() {
         if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
-             vm.output.push("REFRACT: Strand limit exceeded".to_string());
-             return None;
+            vm.output.push("REFRACT: Strand limit exceeded".to_string());
+            return None;
         }
 
         vm.dna.helix.strands.push(crate::ast::Strand { genes });
@@ -218,20 +243,33 @@ pub fn exec_refract(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
         }
 
         let new_idx = vm.dna.helix.strands.len() - 1;
-        vm.cladistics.register_strand(new_idx, Some(vm.ip.0), vm.tick_counter, "Refraction".to_string());
+        vm.cladistics.register_strand(
+            new_idx,
+            Some(vm.ip.0),
+            vm.tick_counter,
+            "Refraction".to_string(),
+        );
 
         vm.stack.push(Value::Int(new_idx as i64));
         vm.energy = vm.energy.saturating_sub(30);
-        vm.output.push(format!("REFRACT: Reconstructed strand {} from hologram", new_idx));
+        vm.output.push(format!(
+            "REFRACT: Reconstructed strand {} from hologram",
+            new_idx
+        ));
     } else {
-        vm.output.push("REFRACT: No coherent pattern found".to_string());
+        vm.output
+            .push("REFRACT: No coherent pattern found".to_string());
     }
 
     None
 }
 
 #[cfg(feature = "nova")]
-pub fn exec_project(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_project(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     for y in 0..GRID_SIZE {
         for x in 0..GRID_SIZE {
             let (re, im) = vm.hologram_grid[y][x];
@@ -242,7 +280,8 @@ pub fn exec_project(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) -> Op
             }
         }
     }
-    vm.output.push("PROJECT: Manifested hologram on grid".to_string());
+    vm.output
+        .push("PROJECT: Manifested hologram on grid".to_string());
     vm.energy = vm.energy.saturating_sub(10);
     None
 }

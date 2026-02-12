@@ -1,8 +1,8 @@
 #![cfg(all(test, feature = "nova"))]
 
 use crate::ast::{Dna, Helix, Strand};
+use crate::vm::nova_ballistics::{update_projectiles, Projectile};
 use crate::vm::{ChimeraVM, Value};
-use crate::vm::nova_ballistics::{Projectile, update_projectiles};
 
 fn make_vm() -> ChimeraVM {
     let dna = Dna {
@@ -202,7 +202,7 @@ fn test_loop_prevention() {
     // Let's manually set position to 8.5 so it stays in cell 8
     vm.projectiles[0].x = 8.5;
     vm.projectiles[0].vx = -0.1; // Moving left slowly
-    // Next x = 8.4. Still in cell 8.
+                                 // Next x = 8.4. Still in cell 8.
 
     update_projectiles(&mut vm);
 

@@ -80,7 +80,9 @@ pub fn draw_stair_path(u1: i32, v1: i32, w1: i32, u2: i32, v2: i32, w2: i32, col
     let steps_v = (v2 - v1).abs();
     let steps_total = steps_u + steps_v;
 
-    if steps_total == 0 { return; }
+    if steps_total == 0 {
+        return;
+    }
 
     // We want to ascend/descend smoothly?
     // "Impossible Stair": Always ascend.
@@ -107,13 +109,29 @@ pub fn draw_stair_path(u1: i32, v1: i32, w1: i32, u2: i32, v2: i32, w2: i32, col
 
     // Draw segments
     for _ in 0..steps_u {
-        draw_step_segment(curr_u, curr_v, curr_w, curr_u + du, curr_v, curr_w + step_h, color);
+        draw_step_segment(
+            curr_u,
+            curr_v,
+            curr_w,
+            curr_u + du,
+            curr_v,
+            curr_w + step_h,
+            color,
+        );
         curr_u += du;
         curr_w += step_h;
     }
 
     for _ in 0..steps_v {
-        draw_step_segment(curr_u, curr_v, curr_w, curr_u, curr_v + dv, curr_w + step_h, color);
+        draw_step_segment(
+            curr_u,
+            curr_v,
+            curr_w,
+            curr_u,
+            curr_v + dv,
+            curr_w + step_h,
+            color,
+        );
         curr_v += dv;
         curr_w += step_h;
     }

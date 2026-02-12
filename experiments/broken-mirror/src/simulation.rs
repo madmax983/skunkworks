@@ -1,6 +1,6 @@
-use wgpu::util::DeviceExt;
 use bytemuck::{Pod, Zeroable};
 use rand::Rng;
+use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Pod, Zeroable)]
@@ -57,7 +57,12 @@ impl Simulation {
         };
 
         // Initialize A with data
-        let texture_a = device.create_texture_with_data(queue, &texture_desc, wgpu::util::TextureDataOrder::LayerMajor, data_bytes);
+        let texture_a = device.create_texture_with_data(
+            queue,
+            &texture_desc,
+            wgpu::util::TextureDataOrder::LayerMajor,
+            data_bytes,
+        );
         // B is empty initially
         let texture_b = device.create_texture(&texture_desc);
 
@@ -194,7 +199,11 @@ impl Simulation {
 
     pub fn update_uniforms(&mut self, queue: &wgpu::Queue) {
         self.params.time += 0.016;
-        queue.write_buffer(&self.uniform_buffer, 0, bytemuck::cast_slice(&[self.params]));
+        queue.write_buffer(
+            &self.uniform_buffer,
+            0,
+            bytemuck::cast_slice(&[self.params]),
+        );
     }
 
     pub fn step(&mut self, encoder: &mut wgpu::CommandEncoder) {

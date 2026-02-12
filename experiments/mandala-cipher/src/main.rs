@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use mandala_cipher::{encode, MandalaConfig, Mandala, Shape, Color as JewelColor};
+use mandala_cipher::{encode, Color as JewelColor, Mandala, MandalaConfig, Shape};
 
 #[macroquad::main("Mandala Cipher")]
 async fn main() {
@@ -30,7 +30,9 @@ async fn main() {
 
         if is_key_pressed(KeyCode::S) {
             let img = get_screen_data();
-            if let Some(buffer) = image::RgbaImage::from_raw(img.width as u32, img.height as u32, img.bytes) {
+            if let Some(buffer) =
+                image::RgbaImage::from_raw(img.width as u32, img.height as u32, img.bytes)
+            {
                 match buffer.save("mandala_output.png") {
                     Ok(_) => println!("Saved to mandala_output.png"),
                     Err(e) => println!("Error saving image: {}", e),
@@ -46,7 +48,13 @@ async fn main() {
 
         // UI
         draw_text(&format!("Payload: {}", payload), 20.0, 30.0, 30.0, WHITE);
-        draw_text("Type to encode... [S] to Save PNG", 20.0, screen_height() - 20.0, 20.0, GRAY);
+        draw_text(
+            "Type to encode... [S] to Save PNG",
+            20.0,
+            screen_height() - 20.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -93,7 +101,9 @@ fn draw_mandala(mandala: &Mandala, global_rotation: f32) {
 
                 match jewel.shape {
                     Shape::Circle => draw_circle(pos.x, pos.y, size, color),
-                    Shape::Square => draw_rectangle(pos.x - size, pos.y - size, size * 2.0, size * 2.0, color),
+                    Shape::Square => {
+                        draw_rectangle(pos.x - size, pos.y - size, size * 2.0, size * 2.0, color)
+                    }
                     Shape::Triangle => draw_poly(pos.x, pos.y, 3, size, rot, color),
                     Shape::Diamond => draw_poly(pos.x, pos.y, 4, size, rot + 45.0, color),
                 }

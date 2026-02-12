@@ -33,7 +33,11 @@ impl Jewel {
 
     pub fn from_nibble(n: u8) -> Self {
         let n = n & 0xF;
-        let shape = if n % 2 == 0 { Shape::Circle } else { Shape::Square };
+        let shape = if n % 2 == 0 {
+            Shape::Circle
+        } else {
+            Shape::Square
+        };
         let color_idx = n / 2;
         let color = match color_idx {
             0 => Color::Red,
@@ -69,7 +73,11 @@ impl Jewel {
 
     pub fn random_chaff() -> Self {
         let mut rng = rand::thread_rng();
-        let shape = if rng.gen_bool(0.5) { Shape::Triangle } else { Shape::Diamond };
+        let shape = if rng.gen_bool(0.5) {
+            Shape::Triangle
+        } else {
+            Shape::Diamond
+        };
         let color = match rng.gen_range(0..8) {
             0 => Color::Red,
             1 => Color::Green,

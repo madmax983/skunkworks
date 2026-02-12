@@ -38,7 +38,10 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
         let path = entry.path();
 
         // Skip target and hidden directories
-        if path.components().any(|c| c.as_os_str().to_string_lossy().starts_with('.') || c.as_os_str() == "target") {
+        if path
+            .components()
+            .any(|c| c.as_os_str().to_string_lossy().starts_with('.') || c.as_os_str() == "target")
+        {
             continue;
         }
 
@@ -128,5 +131,8 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
     raw_edges.sort_by(|a, b| a.source.cmp(&b.source).then(a.target.cmp(&b.target)));
     raw_edges.dedup_by(|a, b| a.source == b.source && a.target == b.target);
 
-    Ok(Graph { nodes, edges: raw_edges })
+    Ok(Graph {
+        nodes,
+        edges: raw_edges,
+    })
 }

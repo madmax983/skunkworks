@@ -26,9 +26,11 @@ impl Agent {
 
     pub fn update(&mut self, trail_map: &[f32], params: SimParams) {
         // Sensors
-        let sensor_l_vec = Complex::from_polar(params.sensor_dist, self.angle - params.sensor_angle);
+        let sensor_l_vec =
+            Complex::from_polar(params.sensor_dist, self.angle - params.sensor_angle);
         let sensor_c_vec = Complex::from_polar(params.sensor_dist, self.angle);
-        let sensor_r_vec = Complex::from_polar(params.sensor_dist, self.angle + params.sensor_angle);
+        let sensor_r_vec =
+            Complex::from_polar(params.sensor_dist, self.angle + params.sensor_angle);
 
         let sensor_l_pos = mobius_add(self.pos, sensor_l_vec);
         let sensor_c_pos = mobius_add(self.pos, sensor_c_vec);
