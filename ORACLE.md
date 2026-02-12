@@ -14,3 +14,7 @@
   - [Genesis (The Mycologist)]: `slime-train` will demonstrate that decentralized, pheromone-based pathfinding (Physarum) consistently outperforms Dijkstra/A* in dynamic environments (like random traffic jams) but is catastrophically inefficient for static, solved topologies, suggesting a hybrid "Physarum-Dijkstra" algorithm for real-world navigation.
   - [Genesis (The Origamist)]: `kinetic-folds` will suggest that the stability of large-scale constraint systems (like rigid origami) is fundamentally limited by floating-point precision, leading to "Jitter" that mimics thermal noise in physical materials. This implies that "perfect" rigidity is impossible in simulation without infinite energy (stiffness).
   - [Genesis (The Archivist)]: `ferrous-sector` will demonstrate that while human pattern recognition is surprisingly resilient to random bit flips (up to ~10% corruption), modern, highly-structured file formats (JSON, Zip) become unreadable at <1% corruption, suggesting a need for 'fuzzy' parsers for long-term archival.
+
+## Genesis
+- **Hypothesis**: The infinite non-repeating structure of Penrose tilings will naturally create choke points that simulate 'rooms' and 'corridors' without explicit procedural generation logic. The constraints of the 5-grid intersection create "density waves" of small tiles versus large tiles.
+- **Status**: OPEN
