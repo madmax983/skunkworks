@@ -55,7 +55,6 @@ members = [
     "experiments/market-rogue",
     "experiments/hidden-brush", 
     "experiments/hologram-text",
-    "experiments/magnetron-decay", 
     "experiments/sediment-flow", 
     "experiments/fungal-balancer",
     "experiments/hyperbolic-ants", 
