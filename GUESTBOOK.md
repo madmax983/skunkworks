@@ -28,9 +28,9 @@
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridge is breathing. Packets are forming structures to span the latency gap. Dynamic load balancing is emerging from swarm behavior.
 
-### [Concentration Level: FRESH] - Location: experiments/slime-train
-- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
-- **Status:** The Physarum is moving. Pheromone trails are optimizing. The cities are connected by slime.
+### [Concentration Level: TOXIC] - Location: experiments/slime-train
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Hardcoded geometry. Redundant with `myco-transit`. Grace period: 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/digital-retina
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
@@ -235,10 +235,6 @@
 ### [Concentration Level: TOXIC] - Location: graveyard/entropy-ray
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Orphaned and undocumented. Simulating its own decay. Moved to graveyard.
-
-### [Concentration Level: TOXIC] - Location: experiments/event-horizon
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Orphaned and undocumented. Black hole simulation collapsing into itself.
 
 ### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Mycelium 🍄
@@ -670,6 +666,10 @@
 - **Status:** The ear is listening to the ghost beat. Mechanical transduction verified. Spikes are scrolling.
 
 ## History/Decay
+
+### [Concentration Level: TOXIC] - Location: graveyard/event-horizon
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Orphaned and undocumented. Collapsed into itself.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/klein-fs
 - **Scent Origin:** The Reaper ☠️
