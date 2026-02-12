@@ -325,7 +325,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 ### trace-tardis
 - **Parents**: experiments/trace-fold + experiments/alloc-tardis
-- **Concept**: Recursive visualization of stack traces where each stack frame is a room containing the next frame as a portal.
+- **Concept**: Recursive visualization of stack traces where each stack frames is a room containing the next frame as a portal.
 - **Novel trait**: Infinite zoom into the execution path ("Bigger on the inside").
 - **Status**: experiments/trace-tardis
 - **Evaluation**: Compiles. Verified in GUESTBOOK.
@@ -756,3 +756,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Analog Hydraulic Computing. The physics of the medium (fluid) determines the temporal properties of the computation.
 - **Status**: experiments/hydro-brain
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### biomorphic-strings
+- **Parents**: experiments/cosmic-strings + experiments/biomorphic-clock
+- **Concept**: A "Cosmic String" physics simulation where the string itself is a medium for a Gray-Scott reaction-diffusion system.
+- **Novel trait**: Heavy Metal Biology. Chemical concentration increases mass; physical tension accelerates metabolism.
+- **Status**: experiments/biomorphic-strings
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Parents validated.
