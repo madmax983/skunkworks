@@ -776,4 +776,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI visualization where Roman Numeral particles interact via "Magnetic Arithmetic".
 - **Novel trait**: Physical accumulation of value.
 - **Status**: experiments/ferrous-legion
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles (Warnings: Unused crypto functions). Implemented by The Splice Surgeon.
+
+### harmonic-chimera
+- **Parents**: experiments/harmonic-engine + experiments/chimera-lang
+- **Concept**: Mechanical Genetic Programming. A ChimeraVM constructs a mechanical computer (Ball-and-Disk Integrators) to solve a physical task (maintain stable oscillation).
+- **Novel trait**: Constructive Physics. The genetic code is a blueprint for a physical machine.
+- **Status**: experiments/harmonic-chimera
+- **Evaluation**: Compiles. TUI operational. Initial fitness low (random genesis).

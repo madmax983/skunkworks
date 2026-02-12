@@ -996,3 +996,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/harmonic-engine
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The gears are singing. Mechanical integration of differential equations verified. The Ball-and-Disk integrator is driving the melody.
+
+### [Concentration Level: FRESH] - Location: experiments/harmonic-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The code is building its own body. Mechanical Genetic Programming active. Chimera agents are constructing differential analyzers to survive.

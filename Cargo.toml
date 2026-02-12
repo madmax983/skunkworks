@@ -136,6 +136,7 @@ members = [
     "experiments/biomorphic-strings",
     "experiments/ferrous-graph", "experiments/spqr-rsa",
     "experiments/ferrous-legion", "experiments/harmonic-engine",
+    "experiments/harmonic-chimera",
 ]
 resolver = "2"
 
