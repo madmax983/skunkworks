@@ -147,9 +147,12 @@ pub fn exec_resonance_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                             let push_x = (dx / dist * 2.0).round() as i64;
                             let push_y = (dy / dist * 2.0).round() as i64;
 
-                            if let Some((ny, nx)) =
-                                topology.normalize(oy as i64 + push_y, ox as i64 + push_x, width, height)
-                            {
+                            if let Some((ny, nx)) = topology.normalize(
+                                oy as i64 + push_y,
+                                ox as i64 + push_x,
+                                width,
+                                height,
+                            ) {
                                 vm.organelles[i].context_loc = (ny, nx);
                             }
                         }
