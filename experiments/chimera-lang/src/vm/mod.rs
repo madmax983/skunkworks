@@ -136,6 +136,8 @@ pub mod nova_flux;
 #[cfg(test)]
 mod nova_flux_test;
 #[cfg(feature = "nova")]
+pub mod nova_functional;
+#[cfg(feature = "nova")]
 pub mod nova_garden;
 #[cfg(feature = "nova")]
 pub mod nova_gastronomy;
@@ -2544,6 +2546,14 @@ impl ChimeraVM {
             | OpCode::Synthesize
             | OpCode::Catalyze
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Chain | OpCode::Curry | OpCode::Quote => {
+                nova_functional::exec_functional_op(self, op, args)
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::Crossover => nova_genetics::exec_crossover(self),
 
             #[cfg(feature = "nova")]
             OpCode::Orca => {

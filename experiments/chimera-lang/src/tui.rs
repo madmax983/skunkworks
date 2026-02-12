@@ -103,6 +103,8 @@ pub(crate) enum ViewMode {
     Pandemonium,
     BioticChaos,
     Catalyst,
+    #[cfg(feature = "nova")]
+    Hyperspace,
 }
 
 enum InputMode {
@@ -575,6 +577,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Hyperspace = app_state.view_mode {
+                render_hyperspace(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Heatmap = app_state.view_mode {
                 render_heatmap(f, vm, app_state);
                 return;
@@ -710,7 +718,6 @@ where
                                                             args.iter().map(nuc_to_val).collect(),
                                                         )
                                                     }
-                                                    _ => crate::vm::Value::Str("?".to_string()),
                                                 }
                                             }
 
@@ -1163,6 +1170,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Hyperspace => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1406,6 +1418,8 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Laboratory => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hyperspace => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1561,6 +1575,8 @@ where
                     KeyCode::Char('U') => app_state.view_mode = ViewMode::Logos,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('P') => app_state.view_mode = ViewMode::Pandemonium,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -2065,6 +2081,8 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Laboratory => {
                             match app_state.selected_strand {
@@ -2258,6 +2276,8 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -2415,6 +2435,8 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hyperspace => {}
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
@@ -2542,6 +2564,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hyperspace => {}
                         ViewMode::Catalyst => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
@@ -2687,6 +2711,10 @@ where
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Catalyst => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hyperspace => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -3524,6 +3552,7 @@ fn render_foundry(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "oracle")]
+#[allow(dead_code)]
 fn render_wisdom(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -4143,6 +4172,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Pandemonium => "PANDEMONIUM REACTOR (GENOMIC CHAOS)",
         ViewMode::BioticChaos => "BIOTIC CHAOS (COUPLED MAP LATTICE)",
         ViewMode::Catalyst => "CATALYST CHAMBER (DIRECTED EVOLUTION)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hyperspace => "HYPERSPACE (RECURSION TUNNEL)",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4693,6 +4724,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Pandemonium, "Pandemonium", "P"));
         views.push((ViewMode::BioticChaos, "Biotic Chaos", "Tab"));
         views.push((ViewMode::Catalyst, "Catalyst Chamber", "Tab"));
+        views.push((ViewMode::Hyperspace, "Hyperspace", "H"));
     }
     views
 }
@@ -7803,4 +7835,95 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Molecular Structure"),
     );
     f.render_widget(detail, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(80), Constraint::Percentage(20)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Hyperspace Tunnel (Recursion Depth)"),
+        )
+        .paint(|ctx| {
+            let center_x = 50.0;
+            let center_y = 50.0;
+            // Draw frames from Root (Outer) to Current (Inner)
+            // Limit to last 10 frames to avoid clutter
+            let stack_len = vm.call_stack.len();
+            let start_idx = stack_len.saturating_sub(10);
+
+            for i in start_idx..=stack_len {
+                let relative_depth = i - start_idx;
+                // Scale decreases as we go deeper (inner)
+                // Root (0) -> Large
+                // Current -> Small
+                // But we want perspective.
+                // Outer ring = Caller. Inner ring = Callee.
+
+                // Let's invert: i=0 (Root) is smallest? No, tunnel view.
+                // You move INTO the tunnel.
+                // So Current is far away (small). Root is behind you (large).
+                // Or: You are AT Current. Callers are enclosing you.
+                // So Current is Center/Large? No, call stack is "below" or "around".
+
+                // Let's stick to: Root is Outer (Large), Current is Inner (Small).
+                // It looks like a tunnel going forward.
+
+                let max_steps = 10.0;
+                let step = relative_depth as f64;
+                let scale = 100.0 * (1.0 - (step / (max_steps + 2.0)));
+
+                if scale <= 0.0 { break; }
+
+                let rect_w = scale;
+                let rect_h = scale * 0.6;
+
+                let color = if i == stack_len {
+                    Color::Yellow // Current
+                } else {
+                    Color::Cyan // Caller
+                };
+
+                ctx.draw(&Rectangle {
+                    x: center_x - rect_w / 2.0,
+                    y: center_y - rect_h / 2.0,
+                    width: rect_w,
+                    height: rect_h,
+                    color,
+                });
+
+                // Label
+                if scale > 20.0 {
+                    let label = if i < stack_len {
+                        let (s, g) = vm.call_stack[i];
+                        format!("Stack[{}]: Strand {}:{}", i, s, g)
+                    } else {
+                        format!("Current: Strand {}:{}", vm.ip.0, vm.ip.1)
+                    };
+                    ctx.print(center_x - rect_w / 2.0 + 2.0, center_y + rect_h / 2.0 - 5.0, label);
+                }
+            }
+        })
+        .x_bounds([0.0, 100.0])
+        .y_bounds([0.0, 100.0]);
+
+    f.render_widget(canvas, chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from(format!("Recursion Depth: {}", vm.recursion_depth)),
+        Line::from(format!("Call Stack Size: {}", vm.call_stack.len())),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Compose, Curry, Quote: Functional Ops"),
+        Line::from("  Call/Ret: Manual flow"),
+    ];
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Metrics"));
+    f.render_widget(info_widget, chunks[1]);
 }

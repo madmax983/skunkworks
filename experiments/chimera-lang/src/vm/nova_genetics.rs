@@ -221,6 +221,83 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Performs a single-point crossover at a random index.
+///
+/// **OpCode:** `Crossover`
+/// **Stack:** `[ ..., strand_a, strand_b ] -> [ ..., new_strand_1, new_strand_2 ]`
+pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let b_val = vm.stack.pop().unwrap();
+        let a_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(idx_a), Value::Int(idx_b)) = (a_val, b_val) {
+            let a = idx_a as usize;
+            let b = idx_b as usize;
+            let helix_len = vm.dna.helix.strands.len();
+
+            if a < helix_len && b < helix_len {
+                if helix_len + 1 >= MAX_STRANDS {
+                    vm.output.push("CROSSOVER ERROR: Strand limit exceeded".to_string());
+                    return None;
+                }
+
+                let genes_a = &vm.dna.helix.strands[a].genes;
+                let genes_b = &vm.dna.helix.strands[b].genes;
+                let len_a = genes_a.len();
+                let len_b = genes_b.len();
+                let min_len = len_a.min(len_b);
+
+                if min_len > 0 {
+                    let mut rng = rand::thread_rng();
+                    let cut = rng.gen_range(0..min_len);
+
+                    let mut new_genes_1 = genes_a[0..cut].to_vec();
+                    new_genes_1.extend_from_slice(&genes_b[cut..]);
+
+                    let mut new_genes_2 = genes_b[0..cut].to_vec();
+                    new_genes_2.extend_from_slice(&genes_a[cut..]);
+
+                    // Add first child
+                    vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes_1 });
+                    vm.telomeres.push(50);
+                    #[cfg(feature = "cortex")]
+                    {
+                        vm.activation_levels.push(0);
+                        vm.synapse_map.push(Vec::new());
+                    }
+                    let child_1 = vm.dna.helix.strands.len() - 1;
+                    vm.cladistics.register_strand(child_1, Some(a), vm.tick_counter, "Crossover".to_string());
+
+                    // Add second child
+                    vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes_2 });
+                    vm.telomeres.push(50);
+                    #[cfg(feature = "cortex")]
+                    {
+                        vm.activation_levels.push(0);
+                        vm.synapse_map.push(Vec::new());
+                    }
+                    let child_2 = vm.dna.helix.strands.len() - 1;
+                    vm.cladistics.register_strand(child_2, Some(b), vm.tick_counter, "Crossover".to_string());
+
+                    vm.stack.push(Value::Int(child_1 as i64));
+                    vm.stack.push(Value::Int(child_2 as i64));
+                    vm.energy = vm.energy.saturating_sub(20);
+                    vm.output.push(format!("CROSSOVER: {}+{} -> {}, {}", a, b, child_1, child_2));
+                } else {
+                    vm.output.push("CROSSOVER ERROR: Empty strand".to_string());
+                }
+            } else {
+                vm.output.push("CROSSOVER ERROR: Invalid strand index".to_string());
+            }
+        } else {
+            vm.output.push("CROSSOVER ERROR: Type mismatch".to_string());
+        }
+    } else {
+        vm.output.push("CROSSOVER ERROR: Stack underflow".to_string());
+    }
+    None
+}
+
 /// Combines two strands using a genetic splicing method.
 ///
 /// **OpCode:** `Splice`
