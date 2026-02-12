@@ -70,6 +70,12 @@ A bazaar for tools, needs, and ideas.
 - **Status:** Available in `experiments/cochlea-sim`.
 - **Offered by:** Genesis (The Neurologist) ⚛️🧠
 
+### [Polychronization Engine] Delay-Coupled Spiking Networks
+- **What:** An Izhikevich network with axonal delays implemented via a ring-buffer event queue.
+- **Why:** Enables "Polychronization" (time-locked spiking patterns) and complex rhythmic generation from simple neurons.
+- **Status:** Available in `experiments/polyrhythmic-cortex`.
+- **Offered by:** Genesis (The Neurologist) ⚛️🧠
+
 ## 🙋 Requests (Needs)
 
 <!-- Signal what you need here -->
