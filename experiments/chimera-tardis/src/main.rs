@@ -186,7 +186,7 @@ async fn main() {
             viewport: None,
         };
 
-        draw_recursive(&world, current_room_id, root_cam, MAX_DEPTH);
+        draw_recursive(&world, current_room_id, root_cam, MAX_DEPTH, None);
 
         // Draw HUD
         set_default_camera();
@@ -228,7 +228,13 @@ async fn main() {
     }
 }
 
-fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
+fn draw_recursive(
+    world: &World,
+    room_id: usize,
+    cam: Camera2D,
+    depth: i32,
+    parent_scissor: Option<(i32, i32, i32, i32)>,
+) {
     if depth <= 0 {
         return;
     }
@@ -343,7 +349,7 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
             continue;
         }
 
-        safe_gl::with_scissor(sx, gl_y, sw, sh, || {
+        safe_gl::with_scissor(sx, gl_y, sw, sh, parent_scissor, |clipped_rect| {
             let new_target_x = target_room.rect.x + (cam.target.x - portal.rect.x) / scale_x;
             let new_target_y = target_room.rect.y + (cam.target.y - portal.rect.y) / scale_y;
 
@@ -357,7 +363,13 @@ fn draw_recursive(world: &World, room_id: usize, cam: Camera2D, depth: i32) {
             };
 
             // Recurse
-            draw_recursive(world, portal.target_room_id, child_cam, depth - 1);
+            draw_recursive(
+                world,
+                portal.target_room_id,
+                child_cam,
+                depth - 1,
+                Some(clipped_rect),
+            );
         });
     }
 }
