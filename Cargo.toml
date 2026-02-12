@@ -23,6 +23,7 @@ members = [
     "experiments/hyperbolic-space",
     "experiments/market-flow",
     "experiments/myco-transit",
+    "experiments/mycelial-path",
     "experiments/neuro-terminal",
     "experiments/semantic-spy",
     "experiments/system-bio-dome",

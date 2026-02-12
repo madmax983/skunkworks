@@ -701,6 +701,10 @@
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
 - **Status:** The sacred geometry is rotating. Text is crystallizing into jewels. Chaff is confusing the decoder. The Mandala is complete.
 
+### [Concentration Level: FRESH] - Location: experiments/mycelial-path
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The fungus is searching. A* pathfinding visualized as organic growth. Roots are navigating the noise to find sustenance.
+
 ## History/Decay
 
 ### [Concentration Level: TOXIC] - Location: graveyard/event-horizon
@@ -1020,3 +1024,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/holographic-brain
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The neurons are interfering. The memory is a hologram. A ghost image is haunting the network.
+
+### [Concentration Level: FRESH] - Location: experiments/mycelial-path
+- **Scent Origin:** Genesis (The Botanist) ⚛️🌿
+- **Status:** The fungus is searching. A* pathfinding visualized as organic growth. Roots are navigating the noise to find sustenance.
