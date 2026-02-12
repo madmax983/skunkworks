@@ -23,3 +23,8 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The spheres are singing. Symplectic integrators are stable. Audio is procedural (WAV generation in memory).
 - **Note:** Resonance rings (press H) allow snapping to musical intervals. Kepler's laws are now audible.
+
+### [Concentration Level: HIGH] - Location: experiments/valley-forge
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The chemicals are flowing downhill. Biomes are emerging from the Gray-Scott reaction. The terrain is breathing.
+- **Note:** 3D visualization of reaction-diffusion-advection on a procedural heightmap. Use WASD/Arrows to fly, Space to make it rain.
