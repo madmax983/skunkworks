@@ -19,7 +19,8 @@ impl SentimentAnalyzer {
 
             let word_score = match clean_word {
                 // Negative
-                "error" | "err" | "fail" | "failed" | "failure" | "fatal" | "panic" | "critical" => -1.0,
+                "error" | "err" | "fail" | "failed" | "failure" | "fatal" | "panic"
+                | "critical" => -1.0,
                 "exception" | "denied" | "timeout" | "unreachable" | "broken" | "crash" => -0.8,
                 "warn" | "warning" | "bad" | "wrong" | "invalid" | "missing" => -0.5,
                 "slow" | "lag" | "latency" | "retry" => -0.3,

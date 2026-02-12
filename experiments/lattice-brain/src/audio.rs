@@ -100,7 +100,7 @@ impl AudioEngine {
 
                         // Physics Step
                         for neuron in neurons.iter_mut() {
-                            let _fired = neuron.update(dt, 0.0);
+                            let _ = neuron.update(dt, 0.0);
                             mean_field += neuron.v;
                         }
 

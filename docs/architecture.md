@@ -296,7 +296,8 @@ classDiagram
     class Izhikevich {
         +f32 v
         +f32 u
-        +update(dt, current)
+        +f32 tau
+        +update(dt, current) (f32, bool)
         +inject(current)
         +random() Izhikevich
     }

@@ -18,9 +18,9 @@
 //! let dt = 0.1; // time step
 //! for _ in 0..1000 {
 //!     // Update with 10.0 units of input current
-//!     let voltage = neuron.update(dt, 10.0);
+//!     let (voltage, spiked) = neuron.update(dt, 10.0);
 //!
-//!     if voltage >= 30.0 {
+//!     if spiked {
 //!         println!("Spike!");
 //!     }
 //! }
@@ -52,6 +52,7 @@ use rand::Rng;
 ///     c: -55.0, // Higher reset potential
 ///     d: 4.0,   // Lower reset recovery
 ///     current_decay: 0.0,
+///     tau: 10.0, // Decay time constant
 /// };
 /// ```
 #[derive(Clone, Copy, Debug)]
@@ -81,14 +82,18 @@ pub struct Izhikevich {
     pub d: f32,
 
     /// Decaying injected current (used for impulse injections).
-    /// This value is added to the input current during updates and decays exponentially (x0.95 per substep).
+    /// This value is added to the input current during updates and decays exponentially based on `tau`.
     pub current_decay: f32,
+
+    /// Time constant for current decay (in ms).
+    /// Controls how fast the injected impulse fades.
+    pub tau: f32,
 }
 
 impl Izhikevich {
     /// Creates a new neuron with default "Regular Spiking" (RS) parameters.
     ///
-    /// Parameters: $a=0.02, b=0.2, c=-65.0, d=8.0$.
+    /// Parameters: $a=0.02, b=0.2, c=-65.0, d=8.0, \tau=10.0$.
     ///
     /// # Examples
     ///
@@ -106,6 +111,7 @@ impl Izhikevich {
             c: -65.0,
             d: 8.0,
             current_decay: 0.0,
+            tau: 10.0,
         }
     }
 
@@ -135,6 +141,7 @@ impl Izhikevich {
                 c: -65.0,
                 d: 8.0,
                 current_decay: 0.0,
+                tau: 10.0,
             }
         } else if r < 0.8 {
             // Fast Spiking
@@ -146,6 +153,7 @@ impl Izhikevich {
                 c: -65.0,
                 d: 2.0,
                 current_decay: 0.0,
+                tau: 5.0, // Faster decay for fast spiking
             }
         } else {
             // Chattering
@@ -157,6 +165,7 @@ impl Izhikevich {
                 c: -50.0,
                 d: 2.0,
                 current_decay: 0.0,
+                tau: 10.0,
             }
         }
     }
@@ -188,7 +197,9 @@ impl Izhikevich {
     ///
     /// # Returns
     ///
-    /// Returns the current membrane potential `v` after the update.
+    /// Returns a tuple `(voltage, spiked)`:
+    /// * `voltage`: The membrane potential after the update.
+    /// * `spiked`: Boolean indicating if the neuron fired an action potential during this step.
     ///
     /// # Panics
     ///
@@ -200,16 +211,19 @@ impl Izhikevich {
     /// use synaptic_physics::Izhikevich;
     /// let mut neuron = Izhikevich::new();
     /// // Advance by 1.0 unit of time with 5.0 units of input current
-    /// let v = neuron.update(1.0, 5.0);
+    /// let (v, spiked) = neuron.update(1.0, 5.0);
     /// ```
-    pub fn update(&mut self, dt: f32, extra_current: f32) -> f32 {
+    pub fn update(&mut self, dt: f32, extra_current: f32) -> (f32, bool) {
         // Internal substeps for numerical stability
         let substeps = 2;
         let dt_sub = dt / substeps as f32;
+        let mut spiked = false;
 
         for _ in 0..substeps {
             // Decay the injected current
-            self.current_decay *= 0.95; // Exponential decay
+            // e^(-dt / tau)
+            let decay = (-dt_sub / self.tau).exp();
+            self.current_decay *= decay;
 
             let total_current = extra_current + self.current_decay;
 
@@ -222,10 +236,11 @@ impl Izhikevich {
             if self.v >= 30.0 {
                 self.v = self.c;
                 self.u += self.d;
+                spiked = true;
             }
         }
 
-        self.v
+        (self.v, spiked)
     }
 }
 
@@ -263,9 +278,10 @@ mod tests {
         n.v = 29.9;
         // Small step should push it over 30, triggering reset to `c` (-65.0)
         // Note: update runs 2 substeps.
-        n.update(0.01, 10.0);
+        let (_, spiked) = n.update(0.01, 100.0); // Strong current to ensure spike
 
-        // Should be near resting potential (reset value), not sky high
+        assert!(spiked, "Should have spiked");
+        // Should be near resting potential (reset value)
         assert!(n.v < 0.0);
         assert!(n.v >= -70.0);
     }
@@ -297,15 +313,25 @@ mod tests {
     #[test]
     fn test_current_decay_behavior() {
         let mut n = Izhikevich::new();
+        n.tau = 10.0;
         n.inject(100.0);
-        // decay is 0.95 per substep (2 substeps per update) => 0.9025 per update
-        n.update(1.0, 0.0);
 
-        let expected = 100.0 * 0.95 * 0.95;
+        let dt = 1.0;
+        let substeps = 2;
+        let dt_sub = dt / substeps as f32;
+
+        // Expected decay factor per substep
+        let decay_factor = (-dt_sub / n.tau).exp();
+        let expected = 100.0 * decay_factor * decay_factor; // 2 substeps
+
+        n.update(dt, 0.0);
+
         let tolerance = 0.0001;
         assert!(
             (n.current_decay - expected).abs() < tolerance,
-            "Decay should match 0.95^2 per update call"
+            "Decay should match exp(-dt/tau) behavior. Got {}, expected {}",
+            n.current_decay,
+            expected
         );
     }
 }

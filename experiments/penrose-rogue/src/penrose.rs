@@ -19,21 +19,30 @@ impl Point {
 impl std::ops::Add for Point {
     type Output = Self;
     fn add(self, other: Self) -> Self {
-        Self { x: self.x + other.x, y: self.y + other.y }
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
     }
 }
 
 impl std::ops::Sub for Point {
     type Output = Self;
     fn sub(self, other: Self) -> Self {
-        Self { x: self.x - other.x, y: self.y - other.y }
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
     }
 }
 
 impl std::ops::Mul<f64> for Point {
     type Output = Self;
     fn mul(self, scalar: f64) -> Self {
-        Self { x: self.x * scalar, y: self.y * scalar }
+        Self {
+            x: self.x * scalar,
+            y: self.y * scalar,
+        }
     }
 }
 
@@ -101,8 +110,11 @@ impl Pentagrid {
                 // x*vs_x + y*vs_y = ks - gs
 
                 // Determinant
-                let det = self.vectors[r].x * self.vectors[s].y - self.vectors[r].y * self.vectors[s].x;
-                if det.abs() < 1e-9 { continue; } // Parallel (should not happen for 72 deg)
+                let det =
+                    self.vectors[r].x * self.vectors[s].y - self.vectors[r].y * self.vectors[s].x;
+                if det.abs() < 1e-9 {
+                    continue;
+                } // Parallel (should not happen for 72 deg)
 
                 for kr in -range..=range {
                     for ks in -range..=range {
@@ -127,7 +139,9 @@ impl Pentagrid {
 
                         for m in 0..5 {
                             if m != r && m != s {
-                                let val = intersection.x * self.vectors[m].x + intersection.y * self.vectors[m].y + self.gammas[m];
+                                let val = intersection.x * self.vectors[m].x
+                                    + intersection.y * self.vectors[m].y
+                                    + self.gammas[m];
                                 k[m] = val.ceil() as i32;
                             }
                         }
@@ -156,15 +170,19 @@ impl Pentagrid {
                         v_points[0] = self.compute_vertex(&base_k);
 
                         // Vertex 1: base_k with r-1
-                        let mut k_r_minus = base_k; k_r_minus[r] -= 1;
+                        let mut k_r_minus = base_k;
+                        k_r_minus[r] -= 1;
                         v_points[1] = self.compute_vertex(&k_r_minus);
 
                         // Vertex 2: base_k with r-1, s-1
-                        let mut k_rs_minus = base_k; k_rs_minus[r] -= 1; k_rs_minus[s] -= 1;
+                        let mut k_rs_minus = base_k;
+                        k_rs_minus[r] -= 1;
+                        k_rs_minus[s] -= 1;
                         v_points[2] = self.compute_vertex(&k_rs_minus);
 
                         // Vertex 3: base_k with s-1
-                        let mut k_s_minus = base_k; k_s_minus[s] -= 1;
+                        let mut k_s_minus = base_k;
+                        k_s_minus[s] -= 1;
                         v_points[3] = self.compute_vertex(&k_s_minus);
 
                         // Determine Rhombus Type
@@ -175,9 +193,9 @@ impl Pentagrid {
                         // diff 1 (72 deg) -> Thick
                         // diff 2 (144 deg) -> Thin
                         let kind = if diff == 1 || diff == 4 {
-                             RhombusType::Thick
+                            RhombusType::Thick
                         } else {
-                             RhombusType::Thin
+                            RhombusType::Thin
                         };
 
                         rhombi.push(Rhombus {

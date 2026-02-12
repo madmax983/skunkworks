@@ -352,11 +352,15 @@ pub fn exec_quantum_scribe(
         let c = char_code as char;
 
         vm.grid[cy][cx] = Value::Str(c.to_string());
-        vm.output
-            .push(format!("QUANTUM_SCRIBE: Collapsed to '{}' at {},{}", c, cx, cy));
+        vm.output.push(format!(
+            "QUANTUM_SCRIBE: Collapsed to '{}' at {},{}",
+            c, cx, cy
+        ));
     } else {
-        vm.output
-            .push(format!("QUANTUM_SCRIBE: Magnitude {:.2} too low at {},{}", magnitude, cx, cy));
+        vm.output.push(format!(
+            "QUANTUM_SCRIBE: Magnitude {:.2} too low at {},{}",
+            magnitude, cx, cy
+        ));
     }
     vm.energy = vm.energy.saturating_sub(5);
     None

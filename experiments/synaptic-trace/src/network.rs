@@ -1,4 +1,4 @@
-use crate::neuron::Izhikevich;
+use synaptic_physics::Izhikevich;
 
 #[derive(Clone, Debug)]
 pub struct Synapse {
@@ -7,8 +7,45 @@ pub struct Synapse {
     pub weight: f32,
 }
 
+#[derive(Clone, Debug)]
+pub struct Neuron {
+    pub core: Izhikevich,
+    pub last_spike: Option<u64>,
+}
+
+impl Neuron {
+    pub fn random(rng: &mut impl rand::Rng) -> Self {
+        Self {
+            core: Izhikevich::random(rng),
+            last_spike: None,
+        }
+    }
+
+    pub fn update(&mut self, dt: f32, current: f32, tick: u64) -> bool {
+        let (_v, spiked) = self.core.update(dt, current);
+        if spiked {
+            self.last_spike = Some(tick);
+        }
+        spiked
+    }
+}
+
+// Deref allows access to core fields like `v`, `u`
+impl std::ops::Deref for Neuron {
+    type Target = Izhikevich;
+    fn deref(&self) -> &Self::Target {
+        &self.core
+    }
+}
+
+impl std::ops::DerefMut for Neuron {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.core
+    }
+}
+
 pub struct Network {
-    pub neurons: Vec<Izhikevich>,
+    pub neurons: Vec<Neuron>,
     pub synapses: Vec<Synapse>,
     pub traces: Vec<f32>, // Synaptic trace for each neuron
     pub tick: u64,
@@ -21,7 +58,7 @@ impl Network {
         let mut rng = rand::thread_rng();
 
         for _ in 0..size {
-            neurons.push(Izhikevich::random(&mut rng));
+            neurons.push(Neuron::random(&mut rng));
             traces.push(0.0);
         }
 
