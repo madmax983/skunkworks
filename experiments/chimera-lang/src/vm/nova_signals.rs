@@ -2,7 +2,9 @@
 
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
-use super::{oracle, ChimeraVM, MidiEvent, Value, GRID_SIZE};
+#[cfg(feature = "oracle")]
+use super::oracle;
+use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
 use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
 use rand::Rng;
@@ -283,6 +285,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '[' => exec_ether_send(vm, y, x, signal, &mut ctx),
                 ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
                 '#' => exec_catalyze(vm, y, x, signal, &mut ctx),
+                '$' => exec_stack_io(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -457,6 +460,32 @@ fn exec_mutate(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalC
             ctx.mutation_requests.push(MutationRequest {
                 strand_idx: s_idx as usize,
             });
+        }
+    }
+}
+
+fn exec_stack_io(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // North: Mode (0=Pop, 1=Push)
+    let mode = peek(vm, y, x, -1, 0).unwrap_or(0);
+
+    if mode == 1 {
+        // Push: Read East -> Stack
+        if let Some(val) = peek(vm, y, x, 0, 1) {
+            ctx.executions
+                .push((OpCode::Push, vec![Nucleotide::Number(val)]));
+        }
+    } else {
+        // Pop: Stack -> South
+        // Synthesize GWrite: Stack [..., val] -> GWrite(val, sy, sx)
+        if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+            ctx.executions
+                .push((OpCode::Push, vec![Nucleotide::Number(sy as i64)]));
+            ctx.executions
+                .push((OpCode::Push, vec![Nucleotide::Number(sx as i64)]));
+            ctx.executions.push((OpCode::GWrite, vec![]));
         }
     }
 }
