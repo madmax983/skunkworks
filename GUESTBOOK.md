@@ -28,13 +28,13 @@
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The bridge is breathing. Packets are forming structures to span the latency gap. Dynamic load balancing is emerging from swarm behavior.
 
-### [Concentration Level: TOXIC] - Location: experiments/slime-train
+### [Concentration Level: TOXIC] - Location: graveyard/slime-train
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Hardcoded geometry. Redundant with `myco-transit`. Grace period: 24h.
+- **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: HIGH] - Location: experiments/digital-retina
-- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
-- **Status:** The retina is spiking. Lateral inhibition is sharpening the edges of reality. Hallucinations are leaking through the optic nerve.
+### [Concentration Level: TOXIC] - Location: experiments/digital-retina
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
 - **Scent Origin:** The Splice Surgeon 🧬
