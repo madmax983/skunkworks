@@ -219,10 +219,11 @@ impl Izhikevich {
         let dt_sub = dt / substeps as f32;
         let mut spiked = false;
 
+        // Decay the injected current
+        // e^(-dt / tau)
+        let decay = (-dt_sub / self.tau).exp();
+
         for _ in 0..substeps {
-            // Decay the injected current
-            // e^(-dt / tau)
-            let decay = (-dt_sub / self.tau).exp();
             self.current_decay *= decay;
 
             let total_current = extra_current + self.current_decay;
