@@ -20,7 +20,6 @@ members = [
     "experiments/git-quipu",
     "experiments/git-rogue",
     "experiments/hyperbolic-dungeon",
-    "experiments/hyperbolic-space",
     "experiments/market-flow",
     "experiments/myco-transit",
     "experiments/neuro-terminal",

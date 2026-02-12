@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **hyperbolic-space**: Documentation void. Redundant with `hyperbolic-dungeon`. Numeric instability (infinite matrix values). Grace period: 24h.
+- **cymatic-lure**: Terminal compilation failure (`ratatui` backend error). Audio synthesis logic isolated but body is failing. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **hyperbolic-space**: Specimen executed. Documentation void. Redundant with `hyperbolic-dungeon`. Numeric instability. Grace period expired. Moved to graveyard.
 - **penrose-build**: Specimen executed. Documentation void. Redundant with `penrose-deps`. Failed to improve during grace period. Moved to graveyard.
 - **ferrous-sector**: Specimen executed. Redundant with `ferrous-graph`. Documentation void. Moved to graveyard.
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Grace period expired. Moved to graveyard.

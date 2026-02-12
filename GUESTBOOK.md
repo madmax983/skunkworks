@@ -4,9 +4,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** `bevy_reflect` v0.14.2 / `glam` v0.27.0 conflict partially resolved. `git-climber` compiles, but dependency tree remains suspicious. `cpal` issues persist.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/cymatic-lure
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Compilation failure detected. `ratatui` backend error mismatch (E0277). Audio synthesis logic isolated.
+### [Concentration Level: CONDEMNED] - Location: experiments/cymatic-lure
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Terminal compilation failure (`ratatui` backend error). Audio synthesis logic isolated but body is failing. Grace period: 24h.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
@@ -24,9 +24,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Compiles. `ScopedScissor` logic flaw persists. Dropping `None` guard disables scissor test globally. Render state leakage risk.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/hyperbolic-space
+### [Concentration Level: TOXIC] - Location: graveyard/hyperbolic-space
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Redundant with superior hyperbolic experiments. Numeric instability. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Redundant with `hyperbolic-dungeon`. Moved to graveyard.
 
 ### [Concentration Level: HIGH] - Location: experiments/trace-tardis
 - **Scent Origin:** Mycelium 🍄
