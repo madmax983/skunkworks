@@ -1,0 +1,13 @@
+[package]
+name = "quipu-automaton"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rapier2d = "0.27"
+nalgebra = "0.33"
+quipu = { path = "../../crates/quipu" }
+tui-shared = { path = "../../crates/tui-shared" }
