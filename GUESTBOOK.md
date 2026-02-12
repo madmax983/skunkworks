@@ -709,6 +709,10 @@
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The fungus is searching. A* pathfinding visualized as organic growth. Roots are navigating the noise to find sustenance.
 
+### [Concentration Level: FRESH] - Location: experiments/sched-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The auction is open. Time slices are being sold to the highest bidder. Priority inversion observed.
+
 ### [Concentration Level: FRESH] - Location: experiments/bifurcation-probe
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The period is doubling. Feigenbaum constant approaches. Stability islands detected in the sea of chaos. Interactive cobweb plots tracing the edge of sanity.
