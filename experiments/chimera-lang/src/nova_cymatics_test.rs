@@ -3,6 +3,7 @@
 use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
+use resonance_audio::audio::AudioSnapshot;
 
 fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
     let dna = Dna {
@@ -46,7 +47,7 @@ fn test_cymatics_sift() {
     snapshot[center_idx] = 1.0; // High amp
     snapshot[neighbor_idx] = 0.1; // Low amp (Node)
 
-    vm.audio_snapshot = snapshot;
+    vm.audio_snapshot.pressure = snapshot;
 
     vm.step(); // Execute Push
     vm.step(); // Execute Sift
@@ -91,7 +92,7 @@ fn test_cymatics_reshape_solidify() {
     let center_idx = 8 * 16 + 8;
     snapshot[center_idx] = 0.8; // > 0.5
 
-    vm.audio_snapshot = snapshot;
+    vm.audio_snapshot.pressure = snapshot;
 
     vm.step();
     vm.step();
@@ -128,7 +129,7 @@ fn test_cymatics_reshape_liquefy() {
     let center_idx = 8 * 16 + 8;
     snapshot[center_idx] = 0.8;
 
-    vm.audio_snapshot = snapshot;
+    vm.audio_snapshot.pressure = snapshot;
     vm.membranes[8][8] = 15; // Start with wall
 
     vm.step();

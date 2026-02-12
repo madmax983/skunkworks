@@ -1606,6 +1606,11 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., amplitude ]`
     #[cfg(feature = "resonance")]
     Hear,
+    /// **[Resonance]** Emits a loud, physical shockwave.
+    ///
+    /// **Stack:** `[ ..., duration, strength ] -> [ ... ]`
+    #[cfg(feature = "resonance")]
+    Scream,
 
     // Cymatics Features (Nova + Resonance)
     /// **[Cymatics]** Moves matter on the grid towards nodal points (low amplitude).

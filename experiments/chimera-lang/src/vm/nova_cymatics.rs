@@ -14,9 +14,9 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                 let width = 16; // GRID_SIZE
 
                 // We need audio snapshot.
-                // vm.audio_snapshot is Vec<f32>, length GRID_SIZE*GRID_SIZE (256).
+                // vm.audio_snapshot.pressure is Vec<f32>, length GRID_SIZE*GRID_SIZE (256).
 
-                if vm.audio_snapshot.len() != width * width {
+                if vm.audio_snapshot.pressure.len() != width * width {
                     vm.output
                         .push("SIFT ERROR: Audio snapshot invalid size".to_string());
                     return;
@@ -32,7 +32,7 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                     }
 
                     let curr_idx = ty * width + tx;
-                    let curr_amp = vm.audio_snapshot[curr_idx].abs();
+                    let curr_amp = vm.audio_snapshot.pressure[curr_idx].abs();
 
                     let mut best_amp = curr_amp;
                     let mut best_pos = None;
@@ -49,7 +49,7 @@ pub fn exec_sift(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
                                 // Must be empty
                                 if matches!(vm.grid[ny][nx], Value::Int(0)) {
                                     let n_idx = ny * width + nx;
-                                    let n_amp = vm.audio_snapshot[n_idx].abs();
+                                    let n_amp = vm.audio_snapshot.pressure[n_idx].abs();
                                     // Move towards LOWER amplitude (node)
                                     if n_amp < best_amp {
                                         best_amp = n_amp;
@@ -92,7 +92,7 @@ pub fn exec_reshape(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
             let threshold = (threshold_int as f32) / 100.0;
             let width = 16;
 
-            if vm.audio_snapshot.len() != width * width {
+            if vm.audio_snapshot.pressure.len() != width * width {
                 vm.output
                     .push("RESHAPE ERROR: Audio snapshot invalid".to_string());
                 return;
@@ -103,7 +103,7 @@ pub fn exec_reshape(vm: &mut ChimeraVM, _op: OpCode, _args: &[Nucleotide]) {
             for y in 0..width {
                 for x in 0..width {
                     let idx = y * width + x;
-                    let amp = vm.audio_snapshot[idx].abs();
+                    let amp = vm.audio_snapshot.pressure[idx].abs();
 
                     if amp > threshold {
                         match mode {

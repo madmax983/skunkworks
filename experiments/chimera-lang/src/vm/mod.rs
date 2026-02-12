@@ -246,7 +246,7 @@ pub mod silicon;
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::audio::{AudioCommand, AudioSnapshot};
 
 #[cfg(feature = "nova")]
 use self::nova::Organelle;
@@ -483,9 +483,9 @@ pub struct ChimeraVM {
     #[cfg(feature = "resonance")]
     pub audio_tx: Option<Sender<AudioCommand>>,
     #[cfg(feature = "resonance")]
-    pub snapshot_rx: Option<Receiver<Vec<f32>>>,
+    pub snapshot_rx: Option<Receiver<AudioSnapshot>>,
     #[cfg(feature = "resonance")]
-    pub audio_snapshot: Vec<f32>,
+    pub audio_snapshot: AudioSnapshot,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
     #[cfg(feature = "biophysics")]
@@ -778,7 +778,11 @@ impl ChimeraVM {
             #[cfg(feature = "resonance")]
             snapshot_rx: None,
             #[cfg(feature = "resonance")]
-            audio_snapshot: vec![0.0; GRID_SIZE * GRID_SIZE],
+            audio_snapshot: AudioSnapshot {
+                pressure: vec![0.0; GRID_SIZE * GRID_SIZE],
+                materials: vec![],
+                energy: vec![],
+            },
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
             #[cfg(feature = "biophysics")]
@@ -937,7 +941,7 @@ impl ChimeraVM {
     }
 
     #[cfg(feature = "resonance")]
-    pub fn set_snapshot_rx(&mut self, rx: Receiver<Vec<f32>>) {
+    pub fn set_snapshot_rx(&mut self, rx: Receiver<AudioSnapshot>) {
         self.snapshot_rx = Some(rx);
     }
 
@@ -2738,7 +2742,7 @@ impl ChimeraVM {
             | OpCode::Manifest => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
-            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
+            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {
                 resonance::exec_resonance_op(self, op, args);
                 None
             }

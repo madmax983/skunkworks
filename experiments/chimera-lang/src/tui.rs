@@ -5040,8 +5040,8 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         let mut spans = Vec::new();
         for x in 0..16 {
             let idx = y * 16 + x;
-            let val = if idx < vm.audio_snapshot.len() {
-                vm.audio_snapshot[idx]
+            let val = if idx < vm.audio_snapshot.pressure.len() {
+                vm.audio_snapshot.pressure[idx]
             } else {
                 0.0
             };
@@ -5058,7 +5058,9 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 "@"
             };
 
-            let color = if val > 0.0 {
+            let color = if val.abs() > 2.0 {
+                Color::Red // Shockwave!
+            } else if val > 0.0 {
                 if val > 0.5 {
                     Color::Cyan
                 } else {
@@ -5074,7 +5076,12 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 Color::DarkGray
             };
 
-            spans.push(Span::styled(ch, Style::default().fg(color)));
+            let mut style = Style::default().fg(color);
+            if val.abs() > 2.0 {
+                style = style.add_modifier(Modifier::RAPID_BLINK | Modifier::BOLD);
+            }
+
+            spans.push(Span::styled(ch, style));
             spans.push(Span::raw(" "));
         }
         lines.push(Line::from(spans));
