@@ -38,15 +38,13 @@ pub fn exec_interfere(
         let n_grid = GRID_SIZE as f64;
 
         for (i, gene) in strand.genes.iter().enumerate() {
-            if i >= 16 {
+            if i >= 256 {
                 break;
-            } // Limit to 16 genes per hologram layer
+            } // Limit to 256 genes per hologram layer
 
             // Map Index to Frequency (u, v)
-            // Avoid DC (0,0) and Nyquist boundaries to be safe
-            // i=0..15
-            let u = ((i % 4) * 2 + 1) as f64; // 1, 3, 5, 7
-            let v = ((i / 4) * 2 + 1) as f64; // 1, 3, 5, 7
+            let u = (i % 16) as f64;
+            let v = (i / 16) as f64;
 
             // Encode OpCode into Phase
             let op_idx = get_opcode_index(&gene.op) as f64;
@@ -111,12 +109,12 @@ pub fn exec_diffract(
         let shift_y = 4.0;
 
         for (i, gene) in strand.genes.iter().enumerate() {
-            if i >= 16 {
+            if i >= 256 {
                 break;
             }
 
-            let u = ((i % 4) * 2 + 1) as f64;
-            let v = ((i / 4) * 2 + 1) as f64;
+            let u = (i % 16) as f64;
+            let v = (i / 16) as f64;
 
             let op_idx = get_opcode_index(&gene.op) as f64;
             let phi = (op_idx / op_count) * 2.0 * PI;
@@ -150,6 +148,46 @@ pub fn exec_refract(
     _op: OpCode,
     _args: &[Nucleotide],
 ) -> Option<(usize, usize)> {
+    let genes = refract_genes(vm);
+
+    if !genes.is_empty() {
+        if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
+            vm.output.push("REFRACT: Strand limit exceeded".to_string());
+            return None;
+        }
+
+        vm.dna.helix.strands.push(crate::ast::Strand { genes });
+        vm.telomeres.push(50);
+        #[cfg(feature = "cortex")]
+        {
+            vm.activation_levels.push(0);
+            vm.synapse_map.push(Vec::new());
+        }
+
+        let new_idx = vm.dna.helix.strands.len() - 1;
+        vm.cladistics.register_strand(
+            new_idx,
+            Some(vm.ip.0),
+            vm.tick_counter,
+            "Refraction".to_string(),
+        );
+
+        vm.stack.push(Value::Int(new_idx as i64));
+        vm.energy = vm.energy.saturating_sub(30);
+        vm.output.push(format!(
+            "REFRACT: Reconstructed strand {} from hologram",
+            new_idx
+        ));
+    } else {
+        vm.output
+            .push("REFRACT: No coherent pattern found".to_string());
+    }
+
+    None
+}
+
+#[cfg(feature = "nova")]
+fn refract_genes(vm: &ChimeraVM) -> Vec<Gene> {
     let op_codes: Vec<OpCode> = OpCode::iter().collect();
     let op_count = op_codes.len() as f64;
     let n_grid = GRID_SIZE as f64;
@@ -157,9 +195,9 @@ pub fn exec_refract(
 
     let mut genes = Vec::new();
 
-    for i in 0..16 {
-        let u = ((i % 4) * 2 + 1) as f64;
-        let v = ((i / 4) * 2 + 1) as f64;
+    for i in 0..256 {
+        let u = (i % 16) as f64;
+        let v = (i / 16) as f64;
 
         // DFT: Sum H[y][x] * e^(-i 2pi (ux+vy)/N)
         let mut sum_re = 0.0;
@@ -222,48 +260,10 @@ pub fn exec_refract(
             });
         } else {
             // No signal at this frequency
-            // Stop at first gap? Or allow gaps (Nop)?
-            // If we stop, we might miss genes if there's a Nop encoded as "No Signal" (if we did that).
-            // But we encoded everything with A >= 1.0.
-            // So low magnitude means END of strand.
             break;
         }
     }
-
-    if !genes.is_empty() {
-        if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
-            vm.output.push("REFRACT: Strand limit exceeded".to_string());
-            return None;
-        }
-
-        vm.dna.helix.strands.push(crate::ast::Strand { genes });
-        vm.telomeres.push(50);
-        #[cfg(feature = "cortex")]
-        {
-            vm.activation_levels.push(0);
-            vm.synapse_map.push(Vec::new());
-        }
-
-        let new_idx = vm.dna.helix.strands.len() - 1;
-        vm.cladistics.register_strand(
-            new_idx,
-            Some(vm.ip.0),
-            vm.tick_counter,
-            "Refraction".to_string(),
-        );
-
-        vm.stack.push(Value::Int(new_idx as i64));
-        vm.energy = vm.energy.saturating_sub(30);
-        vm.output.push(format!(
-            "REFRACT: Reconstructed strand {} from hologram",
-            new_idx
-        ));
-    } else {
-        vm.output
-            .push("REFRACT: No coherent pattern found".to_string());
-    }
-
-    None
+    genes
 }
 
 #[cfg(feature = "nova")]
@@ -404,6 +404,102 @@ pub fn exec_quantum_scan(
         }
     }
     vm.energy = vm.energy.saturating_sub(5);
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_holo_invoke(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    if vm.recursion_depth > super::MAX_RECURSION_DEPTH {
+        vm.output
+            .push("HOLO_INVOKE: Recursion limit".to_string());
+        return None;
+    }
+    vm.recursion_depth += 1;
+
+    if let Some(Value::Str(input_string)) = vm.stack.pop() {
+        let genes = refract_genes(vm);
+        if genes.is_empty() {
+            vm.output
+                .push("HOLO_INVOKE: No grammar in hologram".to_string());
+            vm.stack.push(Value::Int(0)); // Fail
+        } else {
+            let start_stack_depth = vm.stack.len();
+            // Execute genes to build grammar
+            for gene in genes {
+                let _ = vm.execute_gene_inner(gene.op, &gene.args);
+            }
+
+            if vm.stack.len() > start_stack_depth {
+                let grammar = vm.stack.pop().unwrap();
+                match crate::vm::babel::run_parser(&grammar, &input_string) {
+                    Ok((ast, consumed)) => {
+                        vm.output
+                            .push(format!("HOLO_INVOKE: Parsed {} chars", consumed));
+                        vm.stack.push(ast);
+                    }
+                    Err(_) => {
+                        vm.output.push("HOLO_INVOKE: Parse failed".to_string());
+                        vm.stack.push(Value::Int(0));
+                    }
+                }
+            } else {
+                vm.output
+                    .push("HOLO_INVOKE: Hologram produced no grammar".to_string());
+                vm.stack.push(Value::Int(0));
+            }
+        }
+    } else {
+        vm.output
+            .push("HOLO_INVOKE: Stack underflow (expected string)".to_string());
+    }
+
+    vm.recursion_depth -= 1;
+    vm.energy = vm.energy.saturating_sub(10);
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_holo_speak(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    if vm.recursion_depth > super::MAX_RECURSION_DEPTH {
+        vm.output
+            .push("HOLO_SPEAK: Recursion limit".to_string());
+        return None;
+    }
+    vm.recursion_depth += 1;
+
+    let genes = refract_genes(vm);
+    if genes.is_empty() {
+        vm.output
+            .push("HOLO_SPEAK: No grammar in hologram".to_string());
+        vm.stack.push(Value::Str("".to_string()));
+    } else {
+        let start_stack_depth = vm.stack.len();
+        for gene in genes {
+            let _ = vm.execute_gene_inner(gene.op, &gene.args);
+        }
+
+        if vm.stack.len() > start_stack_depth {
+            let grammar = vm.stack.pop().unwrap();
+            let s = crate::vm::babel::generate_string(&grammar);
+            vm.output.push(format!("HOLO_SPEAK: '{}'", s));
+            vm.stack.push(Value::Str(s));
+        } else {
+            vm.output
+                .push("HOLO_SPEAK: Hologram produced no grammar".to_string());
+            vm.stack.push(Value::Str("".to_string()));
+        }
+    }
+
+    vm.recursion_depth -= 1;
+    vm.energy = vm.energy.saturating_sub(10);
     None
 }
 

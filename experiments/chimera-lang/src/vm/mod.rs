@@ -158,6 +158,9 @@ pub mod nova_hologram;
 #[cfg(test)]
 mod nova_hologram_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_hologram_grammar_test;
+#[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
 pub mod nova_linguistics;
@@ -2692,6 +2695,33 @@ impl ChimeraVM {
             OpCode::QuantumScribe => nova_hologram::exec_quantum_scribe(self, op, args),
             #[cfg(feature = "nova")]
             OpCode::QuantumScan => nova_hologram::exec_quantum_scan(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::HoloInvoke => nova_hologram::exec_holo_invoke(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::HoloSpeak => nova_hologram::exec_holo_speak(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Chr => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => {
+                            // Try to convert to char
+                            if let Some(c) = char::from_u32(n as u32) {
+                                self.stack.push(Value::Str(c.to_string()));
+                            } else {
+                                self.output.push("Error: Invalid char code".to_string());
+                                self.stack.push(Value::Str("".to_string()));
+                            }
+                        }
+                        _ => {
+                            self.output.push("Error: Type mismatch for Chr".to_string());
+                        }
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for Chr".to_string());
+                }
+                None
+            }
 
             #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),
@@ -3116,6 +3146,23 @@ impl ChimeraVM {
 
         match effective_op {
             OpCode::Add => {
+                // Check for string concatenation
+                if self.stack.len() >= 2 {
+                    let b_is_str = matches!(self.stack.last(), Some(Value::Str(_)));
+                    let a_is_str = matches!(
+                        self.stack.get(self.stack.len().saturating_sub(2)),
+                        Some(Value::Str(_))
+                    );
+
+                    if a_is_str && b_is_str {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Str(s1), Value::Str(s2)) = (a, b) {
+                            self.stack.push(Value::Str(s1 + &s2));
+                            return;
+                        }
+                    }
+                }
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a.wrapping_add(b));
             }
             OpCode::Sub => {
