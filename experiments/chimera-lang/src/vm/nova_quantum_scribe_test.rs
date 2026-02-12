@@ -16,26 +16,59 @@ mod tests {
     fn test_quantum_scan_scribe_loop() {
         let genes = vec![
             // 1. Write '*' to (8,8)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::String("*".to_string())] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("*".to_string())],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // 2. QuantumScan (at context_loc 8,8)
             // Weight 10 (1.0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] },
-            Gene { op: OpCode::QuantumScan, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            },
+            Gene {
+                op: OpCode::QuantumScan,
+                args: vec![],
+            },
             // 3. Clear Grid at (8,8)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(8)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(8)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // 4. QuantumScribe (at context_loc 8,8)
             // Threshold 5 (0.5)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::QuantumScribe, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            },
+            Gene {
+                op: OpCode::QuantumScribe,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));

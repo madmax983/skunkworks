@@ -200,13 +200,13 @@ pub mod nova_pocket;
 #[cfg(test)]
 mod nova_pocket_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_quantum_scribe_test;
+#[cfg(feature = "nova")]
 pub mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_quipu_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_quantum_scribe_test;
 #[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]

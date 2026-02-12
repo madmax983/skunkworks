@@ -1,26 +1,22 @@
+pub mod color;
 pub mod parser;
 pub mod sentiment;
-pub mod color;
 pub mod ui;
 
 use anyhow::Result;
 use clap::Parser;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use ratatui::{
-    backend::CrosstermBackend,
-    style::Color,
-    Terminal,
-};
+use image::{ImageBuffer, Rgb};
+use ratatui::{backend::CrosstermBackend, style::Color, Terminal};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 use std::path::PathBuf;
 use tui_shared::Tui;
-use image::{ImageBuffer, Rgb};
 
+use crate::color::ColorMapper;
 use crate::parser::LogEntry;
 use crate::parser::LogParser;
 use crate::sentiment::SentimentAnalyzer;
-use crate::color::ColorMapper;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -82,8 +78,8 @@ fn main() -> Result<()> {
         if !atty::is(atty::Stream::Stdin) {
             read_stdin()?
         } else {
-             // Demo Mode
-             generate_demo_logs()
+            // Demo Mode
+            generate_demo_logs()
         }
     };
 
@@ -92,17 +88,20 @@ fn main() -> Result<()> {
     let sentiment = SentimentAnalyzer::new();
     let color_mapper = ColorMapper::new();
 
-    let mapped_logs: Vec<MappedLog> = lines.into_iter().map(|line| {
-        let entry = parser.parse(&line);
-        let score = sentiment.score(&entry.message);
-        let (color, rgb) = color_mapper.map(&entry, score);
-        MappedLog {
-            entry,
-            color,
-            rgb,
-            sentiment: score,
-        }
-    }).collect();
+    let mapped_logs: Vec<MappedLog> = lines
+        .into_iter()
+        .map(|line| {
+            let entry = parser.parse(&line);
+            let score = sentiment.score(&entry.message);
+            let (color, rgb) = color_mapper.map(&entry, score);
+            MappedLog {
+                entry,
+                color,
+                rgb,
+                sentiment: score,
+            }
+        })
+        .collect();
 
     let mut app = App::new(mapped_logs);
 
@@ -152,7 +151,8 @@ fn generate_demo_logs() -> Vec<String> {
         "[2023-10-27 10:00:05] [INFO] [Network] Connected successfully!".into(),
         "[2023-10-27 10:00:06] [DEBUG] [Auth] User 'admin' attempting login".into(),
         "[2023-10-27 10:00:07] [ERROR] [Auth] Invalid password".into(),
-        "[2023-10-27 10:00:08] [CRITICAL] [Security] Multiple failed login attempts detected!".into(),
+        "[2023-10-27 10:00:08] [CRITICAL] [Security] Multiple failed login attempts detected!"
+            .into(),
         "[2023-10-27 10:00:09] [INFO] [Security] IP 10.0.0.5 banned".into(),
     ]
 }

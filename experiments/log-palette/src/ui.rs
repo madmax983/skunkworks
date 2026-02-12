@@ -1,12 +1,12 @@
+use crate::{App, ViewMode};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::Style,
-    text::{Span, Line},
-    widgets::{Block, Borders, List, ListItem, Paragraph},
+    text::{Line, Span},
     widgets::canvas::{Canvas, Context, Rectangle},
+    widgets::{Block, Borders, List, ListItem, Paragraph},
     Frame,
 };
-use crate::{App, ViewMode};
 
 pub fn draw(f: &mut Frame, app: &mut App) {
     let chunks = Layout::default()
@@ -42,14 +42,15 @@ fn draw_text_view(f: &mut Frame, app: &mut App, area: Rect) {
             let content = log.entry.raw.clone();
             let style = Style::default().fg(log.color);
 
-            ListItem::new(Line::from(vec![
-                Span::styled(content, style)
-            ]))
+            ListItem::new(Line::from(vec![Span::styled(content, style)]))
         })
         .collect();
 
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title(" Logs (Text Mode) "));
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(" Logs (Text Mode) "),
+    );
 
     f.render_widget(list, area);
 }
@@ -60,7 +61,11 @@ fn draw_spectrum_view(f: &mut Frame, app: &mut App, area: Rect) {
     // We fit as many as possible, or scroll.
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Palette (Spectrum Mode) "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Palette (Spectrum Mode) "),
+        )
         .x_bounds([0.0, area.width as f64])
         .y_bounds([0.0, area.height as f64])
         .paint(|ctx: &mut Context| {
@@ -112,7 +117,6 @@ fn draw_status_bar(f: &mut Frame, app: &mut App, area: Rect) {
         app.logs.len()
     );
 
-    let p = Paragraph::new(text)
-        .block(Block::default().borders(Borders::ALL));
+    let p = Paragraph::new(text).block(Block::default().borders(Borders::ALL));
     f.render_widget(p, area);
 }

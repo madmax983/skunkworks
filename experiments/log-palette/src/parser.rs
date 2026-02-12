@@ -27,7 +27,10 @@ impl LogParser {
             regex_bracket: Regex::new(r"^\[(.*?)\]\s+\[(\w+)\]\s+(?:\[(.*?)\]\s+)?(.*)$").unwrap(),
             // Oct 11 22:14:15 myhost sshd[123]: Failed password
             // Simplified: Timestamp Host Component: Message
-            regex_syslog: Regex::new(r"^(\w{3}\s+\d+\s+\d{2}:\d{2}:\d{2})\s+\S+\s+([^:]+):\s+(.*)$").unwrap(),
+            regex_syslog: Regex::new(
+                r"^(\w{3}\s+\d+\s+\d{2}:\d{2}:\d{2})\s+\S+\s+([^:]+):\s+(.*)$",
+            )
+            .unwrap(),
             // INFO: Something happened
             regex_simple: Regex::new(r"^(\w+):\s+(.*)$").unwrap(),
         }
@@ -57,7 +60,7 @@ impl LogParser {
         }
 
         if let Some(caps) = self.regex_simple.captures(line) {
-             return LogEntry {
+            return LogEntry {
                 raw: line.to_string(),
                 timestamp: None,
                 level: Some(caps[1].to_string()),

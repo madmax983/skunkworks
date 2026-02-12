@@ -1,6 +1,6 @@
-use palette::{FromColor, Hsl, Srgb, RgbHue};
-use ratatui::style::Color;
 use crate::parser::LogEntry;
+use palette::{FromColor, Hsl, RgbHue, Srgb};
+use ratatui::style::Color;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 

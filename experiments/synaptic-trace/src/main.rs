@@ -1,6 +1,5 @@
 mod logic;
 mod network;
-mod neuron;
 
 use logic::{assign_target_angles, calculate_strip_transforms, parse_trace, SegmentType};
 use macroquad::prelude::*;

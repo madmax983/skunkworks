@@ -4,18 +4,21 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{canvas::{Canvas, Line}, Block, Borders, Paragraph},
-    Terminal,
+    widgets::{
+        Block, Borders, Paragraph,
+        canvas::{Canvas, Line},
+    },
 };
 use std::io;
 
-use penrose::{Pentagrid, Rhombus, RhombusType, Point};
+use penrose::{Pentagrid, Point, Rhombus, RhombusType};
 
 struct App {
     grid: Pentagrid,
@@ -54,7 +57,9 @@ impl App {
     }
 
     fn move_player(&mut self, dx: f64, dy: f64) {
-        if self.rhombi.is_empty() { return; }
+        if self.rhombi.is_empty() {
+            return;
+        }
 
         let current = self.rhombi[self.player_rhomb_idx].center();
         let target = Point::new(current.x + dx, current.y + dy);
@@ -95,10 +100,7 @@ fn main() -> Result<()> {
 
     // Restore terminal
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -113,14 +115,15 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
         terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(0),
-                    Constraint::Length(1),
-                ])
+                .constraints([Constraint::Min(0), Constraint::Length(1)])
                 .split(f.area());
 
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Penrose Rogue"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Penrose Rogue"),
+                )
                 .x_bounds([app.view_x - app.zoom, app.view_x + app.zoom])
                 .y_bounds([app.view_y - app.zoom, app.view_y + app.zoom])
                 .paint(|ctx| {
@@ -138,36 +141,48 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<io::Stdout>>, app: &mut App)
 
                         // Draw 4 edges
                         ctx.draw(&Line {
-                            x1: v[0].x, y1: v[0].y,
-                            x2: v[1].x, y2: v[1].y,
+                            x1: v[0].x,
+                            y1: v[0].y,
+                            x2: v[1].x,
+                            y2: v[1].y,
                             color,
                         });
                         ctx.draw(&Line {
-                            x1: v[1].x, y1: v[1].y,
-                            x2: v[2].x, y2: v[2].y,
+                            x1: v[1].x,
+                            y1: v[1].y,
+                            x2: v[2].x,
+                            y2: v[2].y,
                             color,
                         });
                         ctx.draw(&Line {
-                            x1: v[2].x, y1: v[2].y,
-                            x2: v[3].x, y2: v[3].y,
+                            x1: v[2].x,
+                            y1: v[2].y,
+                            x2: v[3].x,
+                            y2: v[3].y,
                             color,
                         });
                         ctx.draw(&Line {
-                            x1: v[3].x, y1: v[3].y,
-                            x2: v[0].x, y2: v[0].y,
+                            x1: v[3].x,
+                            y1: v[3].y,
+                            x2: v[0].x,
+                            y2: v[0].y,
                             color,
                         });
 
                         // If player, draw 'X' inside
                         if i == app.player_rhomb_idx {
                             ctx.draw(&Line {
-                                x1: v[0].x, y1: v[0].y,
-                                x2: v[2].x, y2: v[2].y,
+                                x1: v[0].x,
+                                y1: v[0].y,
+                                x2: v[2].x,
+                                y2: v[2].y,
                                 color: Color::Red,
                             });
                             ctx.draw(&Line {
-                                x1: v[1].x, y1: v[1].y,
-                                x2: v[3].x, y2: v[3].y,
+                                x1: v[1].x,
+                                y1: v[1].y,
+                                x2: v[3].x,
+                                y2: v[3].y,
                                 color: Color::Red,
                             });
                         }
