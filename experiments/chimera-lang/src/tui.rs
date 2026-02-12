@@ -5769,7 +5769,7 @@ fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     f.render_widget(retina_widget, chunks[0]);
 
     let help = Paragraph::new(
-        "Retina Display Active.\nControl via `retina_draw`, `retina_clear` opcodes.",
+        "Retina Display Active.\nControl via `retina_draw`, `retina_clear`.\nGlitch: `scanline(y)`, `rasterize(y,x,j,m)`.",
     )
     .block(Block::default().borders(Borders::ALL));
     f.render_widget(help, chunks[1]);

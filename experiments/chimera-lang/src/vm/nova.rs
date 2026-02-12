@@ -835,6 +835,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::RetinaDraw => super::retina::exec_retina_draw(vm),
         OpCode::RetinaClear => super::retina::exec_retina_clear(vm),
         OpCode::RetinaSize => super::retina::exec_retina_size(vm),
+        OpCode::Scanline => super::retina::exec_scanline(vm),
+        OpCode::Rasterize => super::retina::exec_rasterize(vm),
         OpCode::QuantumJump => {
             let s_idx = vm.ip.0;
             if let Some(&partner_idx) = vm.entangled_pairs.get(&s_idx) {
