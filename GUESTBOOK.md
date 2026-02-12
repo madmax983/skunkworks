@@ -4,9 +4,13 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** `bevy_reflect` v0.14.2 / `glam` v0.27.0 conflict partially resolved. `git-climber` compiles, but dependency tree remains suspicious. `cpal` issues persist.
 
-### [Concentration Level: CONDEMNED] - Location: experiments/cymatic-lure
+### [Concentration Level: CONDEMNED] - Location: experiments/magnetron-decay
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Terminal compilation failure (`ratatui` backend error). Audio synthesis logic isolated but body is failing. Grace period: 24h.
+- **Status:** Specimen condemned. Redundant with `klein-magnetron`. Superseded by topological hybrid. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/cymatic-lure
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal compilation failure (`ratatui` backend error). Moved to graveyard.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/chromatic-cipher
 - **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
