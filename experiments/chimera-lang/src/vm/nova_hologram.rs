@@ -5,6 +5,8 @@ use crate::ast::{Gene, Nucleotide};
 #[cfg(feature = "nova")]
 use crate::opcode::OpCode;
 #[cfg(feature = "nova")]
+use rand::Rng;
+#[cfg(feature = "nova")]
 use std::f64::consts::PI;
 #[cfg(feature = "nova")]
 use strum::IntoEnumIterator;
@@ -24,10 +26,8 @@ pub fn exec_interfere(
     let mut strand_idx = 0;
     if let Some(Nucleotide::Number(n)) = args.first() {
         strand_idx = *n as usize;
-    } else if let Some(val) = vm.stack.pop() {
-        if let Value::Int(n) = val {
-            strand_idx = n as usize;
-        }
+    } else if let Some(Value::Int(n)) = vm.stack.pop() {
+        strand_idx = n as usize;
     }
 
     if strand_idx < vm.dna.helix.strands.len() {
@@ -93,10 +93,8 @@ pub fn exec_diffract(
     let mut strand_idx = 0;
     if let Some(Nucleotide::Number(n)) = args.first() {
         strand_idx = *n as usize;
-    } else if let Some(val) = vm.stack.pop() {
-        if let Value::Int(n) = val {
-            strand_idx = n as usize;
-        }
+    } else if let Some(Value::Int(n)) = vm.stack.pop() {
+        strand_idx = n as usize;
     }
 
     if strand_idx < vm.dna.helix.strands.len() {
@@ -283,6 +281,165 @@ pub fn exec_project(
     vm.output
         .push("PROJECT: Manifested hologram on grid".to_string());
     vm.energy = vm.energy.saturating_sub(10);
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_phase_mutate(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    let mut strand_idx = 0;
+    let mut severity = 0.0;
+
+    if let Some(Value::Int(n)) = vm.stack.pop() {
+        strand_idx = n as usize;
+    }
+
+    if let Some(Value::Int(n)) = vm.stack.pop() {
+        severity = n as f64 / 100.0;
+    }
+
+    if strand_idx < vm.dna.helix.strands.len() {
+        let strand = &vm.dna.helix.strands[strand_idx];
+        let op_codes: Vec<OpCode> = OpCode::iter().collect();
+        let op_count = op_codes.len() as f64;
+        let n_grid = GRID_SIZE as f64;
+
+        // Local Buffer
+        let mut buffer = [[(0.0, 0.0); GRID_SIZE]; GRID_SIZE];
+
+        // Encode
+        for (i, gene) in strand.genes.iter().enumerate() {
+            if i >= 16 {
+                break;
+            }
+            let u = ((i % 4) * 2 + 1) as f64;
+            let v = ((i / 4) * 2 + 1) as f64;
+
+            let op_idx = get_opcode_index(&gene.op) as f64;
+            let phi = (op_idx / op_count) * 2.0 * PI;
+
+            let mut amplitude = 1.0;
+            if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                amplitude = 1.0 + (*n as f64).abs() / 50.0;
+            }
+
+            for (y, row) in buffer.iter_mut().enumerate() {
+                for (x, cell) in row.iter_mut().enumerate() {
+                    let angle = 2.0 * PI * (u * (x as f64) + v * (y as f64)) / n_grid + phi;
+                    let re = amplitude * angle.cos();
+                    let im = amplitude * angle.sin();
+                    cell.0 += re;
+                    cell.1 += im;
+                }
+            }
+        }
+
+        // Apply Phase Noise
+        let mut rng = rand::thread_rng();
+        for row in buffer.iter_mut() {
+            for (re, im) in row.iter_mut() {
+                let magnitude = (*re * *re + *im * *im).sqrt();
+                if magnitude > 0.001 {
+                    let mut phase = im.atan2(*re);
+                    let noise = (rng.gen::<f64>() - 0.5) * 2.0 * PI * severity;
+                    phase += noise;
+
+                    *re = magnitude * phase.cos();
+                    *im = magnitude * phase.sin();
+                }
+            }
+        }
+
+        // Decode
+        let mut new_genes = Vec::new();
+        let grid_area = (GRID_SIZE * GRID_SIZE) as f64;
+
+        for i in 0..16 {
+            let u = ((i % 4) * 2 + 1) as f64;
+            let v = ((i / 4) * 2 + 1) as f64;
+
+            let mut sum_re = 0.0;
+            let mut sum_im = 0.0;
+
+            // Here we need (y, x) for angle, so iteration needs index.
+            for (y, row) in buffer.iter().enumerate() {
+                for (x, (h_re, h_im)) in row.iter().enumerate() {
+                    let angle = 2.0 * PI * (u * (x as f64) + v * (y as f64)) / n_grid;
+                    let r_re = angle.cos();
+                    let r_im = -angle.sin();
+
+                    sum_re += h_re * r_re - h_im * r_im;
+                    sum_im += h_re * r_im + h_im * r_re;
+                }
+            }
+
+            let z_re = sum_re / grid_area;
+            let z_im = sum_im / grid_area;
+            let magnitude = (z_re * z_re + z_im * z_im).sqrt();
+
+            if magnitude > 0.1 {
+                let phase = z_im.atan2(z_re);
+                let phase_norm = if phase < 0.0 { phase + 2.0 * PI } else { phase };
+                let idx_float = (phase_norm * op_count) / (2.0 * PI);
+                let idx = idx_float.round() as usize % op_codes.len();
+                let detected_op = op_codes[idx].clone();
+
+                let mut args = Vec::new();
+                if magnitude > 1.02 {
+                    let val = ((magnitude - 1.0) * 50.0).round() as i64;
+                    if val != 0 {
+                        args.push(Nucleotide::Number(val));
+                    }
+                }
+
+                new_genes.push(Gene {
+                    op: detected_op,
+                    args,
+                });
+            } else {
+                break;
+            }
+        }
+
+        if !new_genes.is_empty() {
+            if vm.dna.helix.strands.len() >= crate::vm::MAX_STRANDS {
+                vm.output
+                    .push("PHASE_MUTATE: Strand limit exceeded".to_string());
+                return None;
+            }
+
+            vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes });
+            vm.telomeres.push(50);
+            #[cfg(feature = "cortex")]
+            {
+                vm.activation_levels.push(0);
+                vm.synapse_map.push(Vec::new());
+            }
+
+            let new_idx = vm.dna.helix.strands.len() - 1;
+            vm.cladistics.register_strand(
+                new_idx,
+                Some(strand_idx),
+                vm.tick_counter,
+                "HoloMutate".to_string(),
+            );
+
+            vm.stack.push(Value::Int(new_idx as i64));
+            vm.energy = vm.energy.saturating_sub(40);
+            vm.output
+                .push(format!("PHASE_MUTATE: Mutated {} -> {}", strand_idx, new_idx));
+        } else {
+            vm.output
+                .push("PHASE_MUTATE: Signal lost in noise".to_string());
+        }
+    } else {
+        vm.output
+            .push("PHASE_MUTATE: Invalid strand index".to_string());
+    }
+
     None
 }
 

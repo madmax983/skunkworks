@@ -117,3 +117,70 @@ fn test_diffract_ghost() {
     // Let's assert that it's DIFFERENT than Interfere.
     // If we run Interfere on same grid, it should interfere constructively or destructively.
 }
+
+#[test]
+fn test_phase_mutate() {
+    let mut vm = make_vm();
+
+    // Create strand: [ push(10) push(20) add() ]
+    let genes = vec![
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(20)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+    ];
+    vm.dna.helix.strands.push(Strand {
+        genes: genes.clone(),
+    });
+
+    // Push args for PhaseMutate: [ 20, 0 ] -> Severity 20, Strand 0
+    // Stack order: Bottom -> Top. So push 20 then 0?
+    // Op logic: pop strand_idx, pop severity.
+    // So Stack should be [ severity, strand_idx ]
+    vm.stack.push(crate::vm::Value::Int(20)); // Severity
+    vm.stack.push(crate::vm::Value::Int(0)); // Strand Index
+
+    crate::vm::nova_hologram::exec_phase_mutate(&mut vm, OpCode::PhaseMutate, &[]);
+
+    // Should have a new strand
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        2,
+        "Should create a mutated strand"
+    );
+
+    let new_strand = &vm.dna.helix.strands[1];
+
+    // With severity 20 (0.2 rad noise), small changes might not flip opcodes (phase distance 2PI/N),
+    // but amplitudes might wiggle.
+    // Ops: Push(0), Push(0), Add(2). OpCount approx 150.
+    // 2PI/150 approx 0.04 rad per opcode step.
+    // 0.2 rad noise is HUGE relative to opcode spacing.
+    // So Opcodes SHOULD change.
+
+    let mut changed = false;
+    if new_strand.genes.len() != genes.len() {
+        changed = true;
+    } else {
+        for (i, gene) in new_strand.genes.iter().enumerate() {
+            if gene.op != genes[i].op {
+                changed = true;
+                break;
+            }
+            if gene.args != genes[i].args {
+                changed = true;
+                break;
+            }
+        }
+    }
+
+    assert!(changed, "Mutation should have altered the strand");
+}

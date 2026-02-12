@@ -947,6 +947,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Hologram,
 
+    /// **[Nova]** Mutates a strand via holographic phase shifting.
+    ///
+    /// **Stack:** `[ ..., severity, strand_idx ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    PhaseMutate,
+
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

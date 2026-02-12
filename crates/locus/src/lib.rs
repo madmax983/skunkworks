@@ -16,28 +16,26 @@
 //! ```
 //! use locus::{Vec2, Topology};
 //!
-//! fn main() {
-//!     let width = 20;
-//!     let height = 10;
-//!     let topo = Topology::Torus;
+//! let width = 20;
+//! let height = 10;
+//! let topo = Topology::Torus;
 //!
-//!     // Start at position (x=19.0, y=5.0) - at the right edge
-//!     let mut position = Vec2::new(19.0, 5.0);
-//!     let velocity = Vec2::new(1.0, 0.0); // Moving right
+//! // Start at position (x=19.0, y=5.0) - at the right edge
+//! let mut position = Vec2::new(19.0, 5.0);
+//! let velocity = Vec2::new(1.0, 0.0); // Moving right
 //!
-//!     // Move
-//!     position += velocity;
+//! // Move
+//! position += velocity;
 //!
-//!     // Normalize using Topology to find the grid cell
-//!     // Note: Topology expects (row, col) i.e. (y, x) integers
-//!     let y_idx = position.y.round() as i64;
-//!     let x_idx = position.x.round() as i64;
+//! // Normalize using Topology to find the grid cell
+//! // Note: Topology expects (row, col) i.e. (y, x) integers
+//! let y_idx = position.y.round() as i64;
+//! let x_idx = position.x.round() as i64;
 //!
-//!     if let Some((ny, nx)) = topo.normalize(y_idx, x_idx, width, height) {
-//!         // Should wrap to left side (x=0)
-//!         assert_eq!(nx, 0);
-//!         assert_eq!(ny, 5);
-//!     }
+//! if let Some((ny, nx)) = topo.normalize(y_idx, x_idx, width, height) {
+//!     // Should wrap to left side (x=0)
+//!     assert_eq!(nx, 0);
+//!     assert_eq!(ny, 5);
 //! }
 //! ```
 

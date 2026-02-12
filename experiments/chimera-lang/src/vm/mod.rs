@@ -2607,6 +2607,9 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
+            OpCode::PhaseMutate => nova_hologram::exec_phase_mutate(self, op, args),
+
+            #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),
 
             #[cfg(feature = "nova")]
