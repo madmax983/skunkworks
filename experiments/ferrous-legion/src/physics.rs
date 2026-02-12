@@ -1,8 +1,8 @@
 use crate::platter::Platter;
 use crate::roman::Roman;
+use num_traits::ToPrimitive;
 use ratatui::style::Color;
 use std::collections::HashSet;
-use num_traits::ToPrimitive;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec2 {
@@ -30,7 +30,10 @@ impl Vec2 {
         if l == 0.0 {
             Self::ZERO
         } else {
-            Self { x: self.x / l, y: self.y / l }
+            Self {
+                x: self.x / l,
+                y: self.y / l,
+            }
         }
     }
 
@@ -42,7 +45,10 @@ impl Vec2 {
 impl std::ops::Add for Vec2 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self {
-        Self { x: self.x + rhs.x, y: self.y + rhs.y }
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
     }
 }
 
@@ -56,7 +62,10 @@ impl std::ops::AddAssign for Vec2 {
 impl std::ops::Sub for Vec2 {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self {
-        Self { x: self.x - rhs.x, y: self.y - rhs.y }
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
     }
 }
 
@@ -70,7 +79,10 @@ impl std::ops::SubAssign for Vec2 {
 impl std::ops::Mul<f32> for Vec2 {
     type Output = Self;
     fn mul(self, rhs: f32) -> Self {
-        Self { x: self.x * rhs, y: self.y * rhs }
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
     }
 }
 
@@ -84,17 +96,22 @@ impl std::ops::MulAssign<f32> for Vec2 {
 impl std::ops::Div<f32> for Vec2 {
     type Output = Self;
     fn div(self, rhs: f32) -> Self {
-        Self { x: self.x / rhs, y: self.y / rhs }
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
     }
 }
 
 impl std::ops::Neg for Vec2 {
     type Output = Self;
     fn neg(self) -> Self {
-        Self { x: -self.x, y: -self.y }
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
     }
 }
-
 
 #[derive(Debug, Clone)]
 pub struct Body {
@@ -200,7 +217,11 @@ impl Universe {
             let gx = (body.pos.x + 100.0) as i32;
             let gy = (body.pos.y + 100.0) as i32;
 
-            if gx >= 0 && gx < self.platter.width as i32 && gy >= 0 && gy < self.platter.height as i32 {
+            if gx >= 0
+                && gx < self.platter.width as i32
+                && gy >= 0
+                && gy < self.platter.height as i32
+            {
                 let x = gx as usize;
                 let y = gy as usize;
 
@@ -208,10 +229,26 @@ impl Universe {
                 self.platter.magnetize(x, y, mag_write * dt);
 
                 // Read from platter (Gradient) -> Follow trails
-                let left = if x > 0 { self.platter.get_magnetism(x-1, y) } else { 0.0 };
-                let right = if x < self.platter.width-1 { self.platter.get_magnetism(x+1, y) } else { 0.0 };
-                let down = if y > 0 { self.platter.get_magnetism(x, y-1) } else { 0.0 };
-                let up = if y < self.platter.height-1 { self.platter.get_magnetism(x, y+1) } else { 0.0 };
+                let left = if x > 0 {
+                    self.platter.get_magnetism(x - 1, y)
+                } else {
+                    0.0
+                };
+                let right = if x < self.platter.width - 1 {
+                    self.platter.get_magnetism(x + 1, y)
+                } else {
+                    0.0
+                };
+                let down = if y > 0 {
+                    self.platter.get_magnetism(x, y - 1)
+                } else {
+                    0.0
+                };
+                let up = if y < self.platter.height - 1 {
+                    self.platter.get_magnetism(x, y + 1)
+                } else {
+                    0.0
+                };
 
                 let grad_x = (right - left) * 0.5;
                 let grad_y = (up - down) * 0.5;
@@ -227,10 +264,22 @@ impl Universe {
             body.pos += body.vel * dt;
 
             // Boundary hard limit
-            if body.pos.x < -100.0 { body.pos.x = -100.0; body.vel.x *= -1.0; }
-            if body.pos.x > 100.0 { body.pos.x = 100.0; body.vel.x *= -1.0; }
-            if body.pos.y < -100.0 { body.pos.y = -100.0; body.vel.y *= -1.0; }
-            if body.pos.y > 100.0 { body.pos.y = 100.0; body.vel.y *= -1.0; }
+            if body.pos.x < -100.0 {
+                body.pos.x = -100.0;
+                body.vel.x *= -1.0;
+            }
+            if body.pos.x > 100.0 {
+                body.pos.x = 100.0;
+                body.vel.x *= -1.0;
+            }
+            if body.pos.y < -100.0 {
+                body.pos.y = -100.0;
+                body.vel.y *= -1.0;
+            }
+            if body.pos.y > 100.0 {
+                body.pos.y = 100.0;
+                body.vel.y *= -1.0;
+            }
 
             if rand::random::<u8>() % 10 == 0 {
                 body.trail.push(body.pos);
@@ -250,9 +299,13 @@ impl Universe {
         let len = self.bodies.len();
 
         for i in 0..len {
-            if dead_indices.contains(&i) { continue; }
+            if dead_indices.contains(&i) {
+                continue;
+            }
             for j in (i + 1)..len {
-                if dead_indices.contains(&j) { continue; }
+                if dead_indices.contains(&j) {
+                    continue;
+                }
 
                 let p1 = self.bodies[i].pos;
                 let p2 = self.bodies[j].pos;
@@ -273,16 +326,24 @@ impl Universe {
                         dead_indices.insert(j);
 
                         let new_pos = (p1 * m1 + p2 * m2) / (m1 + m2);
-                        let new_vel = (self.bodies[i].vel * m1 + self.bodies[j].vel * m2) / (m1 + m2);
+                        let new_vel =
+                            (self.bodies[i].vel * m1 + self.bodies[j].vel * m2) / (m1 + m2);
                         let new_roman = Roman::from_u64(sum_val);
 
                         // Color based on magnitude
-                        let color = if sum_val >= 1000 { Color::Magenta }
-                        else if sum_val >= 500 { Color::Red }
-                        else if sum_val >= 100 { Color::Yellow }
-                        else if sum_val >= 50 { Color::Green }
-                        else if sum_val >= 10 { Color::Blue }
-                        else { Color::Cyan };
+                        let color = if sum_val >= 1000 {
+                            Color::Magenta
+                        } else if sum_val >= 500 {
+                            Color::Red
+                        } else if sum_val >= 100 {
+                            Color::Yellow
+                        } else if sum_val >= 50 {
+                            Color::Green
+                        } else if sum_val >= 10 {
+                            Color::Blue
+                        } else {
+                            Color::Cyan
+                        };
 
                         let mut body = Body::new(new_pos.x, new_pos.y, new_roman, color);
                         body.vel = new_vel;
@@ -294,9 +355,11 @@ impl Universe {
                         let v_rel = self.bodies[i].vel - self.bodies[j].vel;
                         let vel_along_normal = v_rel.dot(n);
 
-                        if vel_along_normal > 0.0 { continue; } // Separating
+                        if vel_along_normal > 0.0 {
+                            continue;
+                        } // Separating
 
-                        let j_impulse = -(1.5) * vel_along_normal / (1.0/m1 + 1.0/m2);
+                        let j_impulse = -(1.5) * vel_along_normal / (1.0 / m1 + 1.0 / m2);
                         let impulse = n * j_impulse;
 
                         self.bodies[i].vel += impulse / m1;

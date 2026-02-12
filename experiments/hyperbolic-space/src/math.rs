@@ -104,6 +104,9 @@ mod tests {
 
         // Havoc: We expect this to fail (produce Infinity)
         // Proving the system is fragile to large inputs.
-        assert!(!m.w.w.is_finite(), "Expected overflow/infinity for large input, but got finite value");
+        assert!(
+            !m.w.w.is_finite(),
+            "Expected overflow/infinity for large input, but got finite value"
+        );
     }
 }

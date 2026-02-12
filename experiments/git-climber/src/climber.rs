@@ -36,32 +36,42 @@ pub fn spawn_climber(mut commands: Commands) {
     let start_pos = Vec2::new(0.0, -150.0);
 
     // Torso
-    let torso = commands.spawn((
-        ShapeBundle {
-            path: GeometryBuilder::build_as(&shapes::Circle {
-                radius: torso_radius,
+    let torso = commands
+        .spawn((
+            ShapeBundle {
+                path: GeometryBuilder::build_as(&shapes::Circle {
+                    radius: torso_radius,
+                    ..default()
+                }),
+                spatial: SpatialBundle::from_transform(Transform::from_translation(
+                    start_pos.extend(0.0),
+                )),
                 ..default()
-            }),
-            spatial: SpatialBundle::from_transform(Transform::from_translation(start_pos.extend(0.0))),
-            ..default()
-        },
-        Fill::color(Color::srgba(0.2, 0.8, 0.2, 1.0)),
-        Stroke::new(Color::BLACK, 2.0),
-        RigidBody::Dynamic,
-        Collider::ball(torso_radius),
-        Restitution::coefficient(0.1),
-        ExternalImpulse::default(),
-        ExternalForce::default(),
-        Climber,
-    )).id();
+            },
+            Fill::color(Color::srgba(0.2, 0.8, 0.2, 1.0)),
+            Stroke::new(Color::BLACK, 2.0),
+            RigidBody::Dynamic,
+            Collider::ball(torso_radius),
+            Restitution::coefficient(0.1),
+            ExternalImpulse::default(),
+            ExternalForce::default(),
+            Climber,
+        ))
+        .id();
 
     // Limbs
     // (Type, Anchor relative to torso center)
     let limb_configs = [
         (LimbType::LeftArm, Vec2::new(-torso_radius, 0.0)),
         (LimbType::RightArm, Vec2::new(torso_radius, 0.0)),
-        (LimbType::LeftLeg, Vec2::new(-torso_radius * 0.7, -torso_radius * 0.7)),
-        (LimbType::RightLeg, Vec2::new(torso_radius * 0.7, -torso_radius * 0.7)),
+        (
+            LimbType::LeftLeg,
+            Vec2::new(-torso_radius * 0.7, -torso_radius * 0.7),
+        ),
+        (
+            LimbType::RightLeg,
+            Vec2::new(torso_radius * 0.7, -torso_radius * 0.7),
+        ),
     ];
 
     for (limb_type, anchor_pos) in limb_configs.iter() {
@@ -73,7 +83,11 @@ pub fn spawn_climber(mut commands: Commands) {
         for i in 0..2 {
             let is_hand = i == 1;
 
-            let segment_len = if is_hand { segment_length * 0.8 } else { segment_length };
+            let segment_len = if is_hand {
+                segment_length * 0.8
+            } else {
+                segment_length
+            };
 
             let spawn_pos = if i == 0 {
                 start_pos + *anchor_pos + Vec2::new(0.0, -segment_len / 2.0)
@@ -86,19 +100,30 @@ pub fn spawn_climber(mut commands: Commands) {
                 origin: RectangleOrigin::Center,
             };
 
-            let segment = commands.spawn((
-                ShapeBundle {
-                    path: GeometryBuilder::build_as(&segment_shape),
-                    spatial: SpatialBundle::from_transform(Transform::from_translation(spawn_pos.extend(0.0))),
-                    ..default()
-                },
-                Fill::color(if is_hand { Color::srgba(1.0, 0.5, 0.0, 1.0) } else { Color::srgba(0.2, 0.6, 0.2, 1.0) }),
-                RigidBody::Dynamic,
-                Collider::cuboid(limb_width / 2.0, segment_len / 2.0),
-                ExternalImpulse::default(),
-                ExternalForce::default(),
-                Limb { limb_type: *limb_type, segment_index: i },
-            )).id();
+            let segment = commands
+                .spawn((
+                    ShapeBundle {
+                        path: GeometryBuilder::build_as(&segment_shape),
+                        spatial: SpatialBundle::from_transform(Transform::from_translation(
+                            spawn_pos.extend(0.0),
+                        )),
+                        ..default()
+                    },
+                    Fill::color(if is_hand {
+                        Color::srgba(1.0, 0.5, 0.0, 1.0)
+                    } else {
+                        Color::srgba(0.2, 0.6, 0.2, 1.0)
+                    }),
+                    RigidBody::Dynamic,
+                    Collider::cuboid(limb_width / 2.0, segment_len / 2.0),
+                    ExternalImpulse::default(),
+                    ExternalForce::default(),
+                    Limb {
+                        limb_type: *limb_type,
+                        segment_index: i,
+                    },
+                ))
+                .id();
 
             // Connect to parent
             commands.entity(segment).insert(ImpulseJoint::new(
@@ -117,7 +142,9 @@ pub fn spawn_climber(mut commands: Commands) {
                         Collider::ball(5.0),
                         Sensor,
                         TransformBundle::from(Transform::from_xyz(0.0, -segment_len / 2.0, 0.0)),
-                        HandSensor { limb_type: *limb_type },
+                        HandSensor {
+                            limb_type: *limb_type,
+                        },
                     ));
                 });
             }

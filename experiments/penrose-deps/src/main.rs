@@ -2,13 +2,27 @@ mod graph;
 mod layout;
 mod render;
 
+use crate::render::{draw_iso_block, draw_stair_path, iso_project};
 use macroquad::prelude::*;
 use petgraph::visit::EdgeRef;
-use crate::render::{draw_iso_block, draw_stair_path, iso_project};
 
 enum RenderCmd {
-    Block { u: i32, v: i32, w: i32, color: Color, label: String },
-    Stair { u1: i32, v1: i32, w1: i32, u2: i32, v2: i32, w2: i32, color: Color },
+    Block {
+        u: i32,
+        v: i32,
+        w: i32,
+        color: Color,
+        label: String,
+    },
+    Stair {
+        u1: i32,
+        v1: i32,
+        w1: i32,
+        u2: i32,
+        v2: i32,
+        w2: i32,
+        color: Color,
+    },
 }
 
 #[macroquad::main("Penrose Deps")]
@@ -28,7 +42,9 @@ async fn main() {
     let mut commands: Vec<(i32, RenderCmd)> = Vec::new();
 
     for (idx, (u, v, w)) in &layout.positions {
-        let u = *u; let v = *v; let w = *w;
+        let u = *u;
+        let v = *v;
+        let w = *w;
         let label = graph[*idx].clone();
 
         // Sort key: In isometric, farther back is smaller x+y
@@ -38,11 +54,16 @@ async fn main() {
         // Let's try u + v + w.
         let sort_key = u + v + w;
 
-        commands.push((sort_key, RenderCmd::Block {
-            u, v, w,
-            color: hash_color(&label),
-            label
-        }));
+        commands.push((
+            sort_key,
+            RenderCmd::Block {
+                u,
+                v,
+                w,
+                color: hash_color(&label),
+                label,
+            },
+        ));
 
         // Add edges starting from this node
         for edge in graph.edges(*idx) {
@@ -52,11 +73,18 @@ async fn main() {
                 // Edges are tricky. Use average position.
                 let sort_key_edge = (u + v + w + u2 + v2 + w2) / 2;
 
-                commands.push((sort_key_edge, RenderCmd::Stair {
-                    u1: u, v1: v, w1: w,
-                    u2, v2, w2,
-                    color: DARKGRAY
-                }));
+                commands.push((
+                    sort_key_edge,
+                    RenderCmd::Stair {
+                        u1: u,
+                        v1: v,
+                        w1: w,
+                        u2,
+                        v2,
+                        w2,
+                        color: DARKGRAY,
+                    },
+                ));
             }
         }
     }
@@ -70,12 +98,24 @@ async fn main() {
         clear_background(LIGHTGRAY);
 
         // Input
-        if is_key_down(KeyCode::W) { cam_offset.y -= 10.0 / cam_zoom / 100.0; }
-        if is_key_down(KeyCode::S) { cam_offset.y += 10.0 / cam_zoom / 100.0; }
-        if is_key_down(KeyCode::A) { cam_offset.x -= 10.0 / cam_zoom / 100.0; }
-        if is_key_down(KeyCode::D) { cam_offset.x += 10.0 / cam_zoom / 100.0; }
-        if is_key_down(KeyCode::Up) { cam_zoom *= 1.02; }
-        if is_key_down(KeyCode::Down) { cam_zoom *= 0.98; }
+        if is_key_down(KeyCode::W) {
+            cam_offset.y -= 10.0 / cam_zoom / 100.0;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_offset.y += 10.0 / cam_zoom / 100.0;
+        }
+        if is_key_down(KeyCode::A) {
+            cam_offset.x -= 10.0 / cam_zoom / 100.0;
+        }
+        if is_key_down(KeyCode::D) {
+            cam_offset.x += 10.0 / cam_zoom / 100.0;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_zoom *= 1.02;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_zoom *= 0.98;
+        }
 
         // Camera transform
         set_camera(&Camera2D {
@@ -86,7 +126,13 @@ async fn main() {
 
         for (_, cmd) in &commands {
             match cmd {
-                RenderCmd::Block { u, v, w, color, label } => {
+                RenderCmd::Block {
+                    u,
+                    v,
+                    w,
+                    color,
+                    label,
+                } => {
                     draw_iso_block(*u, *v, *w, *color);
                     // Draw label on top
                     // Labels need to be drawn in world space but facing camera?
@@ -101,13 +147,26 @@ async fn main() {
 
                     // Simple text scaling inverse to zoom to keep readable?
                     // Or just let it scale with world.
-                    draw_text_ex(label, text_pos.x, text_pos.y, TextParams {
-                        font_size: 40, // Large font to be visible
-                        color: BLACK,
-                        ..Default::default()
-                    });
-                },
-                RenderCmd::Stair { u1, v1, w1, u2, v2, w2, color } => {
+                    draw_text_ex(
+                        label,
+                        text_pos.x,
+                        text_pos.y,
+                        TextParams {
+                            font_size: 40, // Large font to be visible
+                            color: BLACK,
+                            ..Default::default()
+                        },
+                    );
+                }
+                RenderCmd::Stair {
+                    u1,
+                    v1,
+                    w1,
+                    u2,
+                    v2,
+                    w2,
+                    color,
+                } => {
                     draw_stair_path(*u1, *v1, *w1, *u2, *v2, *w2, *color);
                 }
             }
@@ -115,7 +174,13 @@ async fn main() {
 
         set_default_camera();
         draw_text("WASD: Pan | Up/Down: Zoom", 20.0, 30.0, 30.0, BLACK);
-        draw_text(&format!("Zoom: {:.4}", cam_zoom), 20.0, 60.0, 20.0, DARKGRAY);
+        draw_text(
+            &format!("Zoom: {:.4}", cam_zoom),
+            20.0,
+            60.0,
+            20.0,
+            DARKGRAY,
+        );
 
         next_frame().await
     }

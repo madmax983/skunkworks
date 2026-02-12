@@ -1,5 +1,5 @@
-use petgraph::Graph;
 use petgraph::visit::EdgeRef;
+use petgraph::Graph;
 use std::collections::{HashMap, HashSet};
 
 pub struct Layout {
@@ -31,7 +31,9 @@ pub fn calculate_layout(graph: &Graph<String, ()>) -> Layout {
                 changed = true;
             }
         }
-        if !changed { break; }
+        if !changed {
+            break;
+        }
     }
 
     // Group by depth
@@ -53,7 +55,8 @@ pub fn calculate_layout(graph: &Graph<String, ()>) -> Layout {
         let radius_base = (count as f32).sqrt().max(1.0) * 2.0;
 
         for (i, &node) in nodes.iter().enumerate() {
-            let angle = (i as f32 / count as f32) * std::f32::consts::PI * 2.0 + (depth as f32 * 0.5);
+            let angle =
+                (i as f32 / count as f32) * std::f32::consts::PI * 2.0 + (depth as f32 * 0.5);
             let mut r = radius_base;
 
             let w = depth;

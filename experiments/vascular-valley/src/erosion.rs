@@ -29,7 +29,9 @@ pub fn erode_at(map: &mut LeafMap, start_x: usize, start_y: usize) {
 
         // Accumulate water visualization
         map.water[idx] += 0.1;
-        if map.water[idx] > 1.0 { map.water[idx] = 1.0; }
+        if map.water[idx] > 1.0 {
+            map.water[idx] = 1.0;
+        }
 
         // Find lowest neighbor
         let mut best_x = x;
@@ -39,7 +41,9 @@ pub fn erode_at(map: &mut LeafMap, start_x: usize, start_y: usize) {
         // Check 8 neighbors
         for dy in -1..=1 {
             for dx in -1..=1 {
-                if dx == 0 && dy == 0 { continue; }
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
 
                 let nx = x as isize + dx;
                 let ny = y as isize + dy;

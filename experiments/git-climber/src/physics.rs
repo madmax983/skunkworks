@@ -1,7 +1,7 @@
+use crate::cliff::CommitLedge;
+use crate::climber::{Climber, HandSensor, Limb};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::climber::{Limb, HandSensor, Climber};
-use crate::cliff::CommitLedge;
 
 #[derive(Component)]
 pub struct GrabbingLedge {
@@ -14,7 +14,15 @@ pub fn climb_control(
     mut commands: Commands,
     sensors: Query<(Entity, &Parent, &GlobalTransform), With<HandSensor>>,
     mut collision_events: EventReader<CollisionEvent>,
-    mut limbs: Query<(Entity, &mut ExternalImpulse, &mut ExternalForce, &GlobalTransform), With<Limb>>,
+    mut limbs: Query<
+        (
+            Entity,
+            &mut ExternalImpulse,
+            &mut ExternalForce,
+            &GlobalTransform,
+        ),
+        With<Limb>,
+    >,
     ledges: Query<(Entity, &GlobalTransform), With<CommitLedge>>,
     mut grabbing_limbs: Query<(Entity, &mut GrabbingLedge, &GlobalTransform)>,
     _climber: Query<(Entity, &GlobalTransform), With<Climber>>,
@@ -39,15 +47,15 @@ pub fn climb_control(
                 if !grabbing_limbs.contains(limb_entity) {
                     // Calculate grab point on ledge
                     if let Ok((_, ledge_transform)) = ledges.get(ledge_entity) {
-                         let grab_point_global = sensor_transform.translation().truncate();
-                         let ledge_pos = ledge_transform.translation().truncate();
-                         let grab_point_local = grab_point_global - ledge_pos;
+                        let grab_point_global = sensor_transform.translation().truncate();
+                        let ledge_pos = ledge_transform.translation().truncate();
+                        let grab_point_local = grab_point_global - ledge_pos;
 
-                         commands.entity(limb_entity).insert(GrabbingLedge {
-                             ledge_entity,
-                             grab_point_local,
-                             timer: Timer::from_seconds(2.0, TimerMode::Once), // Hold for 2 seconds
-                         });
+                        commands.entity(limb_entity).insert(GrabbingLedge {
+                            ledge_entity,
+                            grab_point_local,
+                            timer: Timer::from_seconds(2.0, TimerMode::Once), // Hold for 2 seconds
+                        });
                     }
                 }
             }
@@ -93,10 +101,10 @@ pub fn climb_control(
     // Set upward force to all limbs periodically
     for (limb_entity, _, mut ext_force, _) in limbs.iter_mut() {
         if !grabbing_limbs.contains(limb_entity) {
-             // Flail upwards
-             let noise = (time.elapsed_seconds() * 5.0 + limb_entity.index() as f32).sin();
-             // Base lift + noise
-             ext_force.force = Vec2::new(noise * 200.0, 500.0 + noise * 100.0);
+            // Flail upwards
+            let noise = (time.elapsed_seconds() * 5.0 + limb_entity.index() as f32).sin();
+            // Base lift + noise
+            ext_force.force = Vec2::new(noise * 200.0, 500.0 + noise * 100.0);
         }
     }
 }

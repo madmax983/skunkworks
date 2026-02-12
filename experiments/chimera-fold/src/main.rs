@@ -64,9 +64,9 @@ async fn main() {
         );
 
         if is_mouse_button_pressed(MouseButton::Left) {
-             for boid in &mut boids {
-                 boid.vm.mutate();
-             }
+            for boid in &mut boids {
+                boid.vm.mutate();
+            }
         }
 
         if is_mouse_button_down(MouseButton::Left) {

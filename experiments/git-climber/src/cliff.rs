@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 use bevy_rapier2d::prelude::*;
-use std::process::Command;
 use rand::Rng;
+use std::process::Command;
 
 #[derive(Component)]
 pub struct Cliff;
@@ -20,9 +20,7 @@ pub fn generate_cliff(mut commands: Commands) {
         .output();
 
     let commits_str = match output {
-        Ok(out) if out.status.success() => {
-            String::from_utf8_lossy(&out.stdout).to_string()
-        }
+        Ok(out) if out.status.success() => String::from_utf8_lossy(&out.stdout).to_string(),
         _ => {
             // Fallback for no git repo
             let mut s = String::new();

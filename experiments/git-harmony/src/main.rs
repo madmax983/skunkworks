@@ -2,21 +2,21 @@ use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use git_associates::GitModel;
 use ratatui::{
-    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     text::Span,
     widgets::{
-        Block, Borders, Paragraph,
         canvas::{Canvas, Circle, Context},
+        Block, Borders, Paragraph,
     },
+    Terminal,
 };
 use std::io;
-use git_associates::GitModel;
 
 pub mod synthesizer;
 

@@ -598,10 +598,7 @@ fn exec_catalyze(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Signa
     if let (Some(cat_id), Some(strand_idx)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
         ctx.executions.push((
             OpCode::Catalyze,
-            vec![
-                Nucleotide::Number(cat_id),
-                Nucleotide::Number(strand_idx),
-            ],
+            vec![Nucleotide::Number(cat_id), Nucleotide::Number(strand_idx)],
         ));
     }
 }
@@ -635,7 +632,6 @@ fn exec_unzip(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCo
         }
     }
 }
-
 
 fn exec_query(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
     if let (Some(dir_code), Some(target_val)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {

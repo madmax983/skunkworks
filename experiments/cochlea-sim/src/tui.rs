@@ -34,13 +34,16 @@ pub fn draw(
 
 fn draw_waveform(f: &mut Frame, area: Rect, data: &[f32], start: f64, end: f64) {
     let width = area.width as usize;
-    if width == 0 || data.is_empty() { return; }
+    if width == 0 || data.is_empty() {
+        return;
+    }
 
     // Simple downsampling
     let step = (data.len() / width).max(1);
     let dt = (end - start) / data.len() as f64;
 
-    let points: Vec<(f64, f64)> = data.iter()
+    let points: Vec<(f64, f64)> = data
+        .iter()
         .step_by(step)
         .enumerate()
         .map(|(i, &v)| {
@@ -50,13 +53,11 @@ fn draw_waveform(f: &mut Frame, area: Rect, data: &[f32], start: f64, end: f64) 
         })
         .collect();
 
-    let datasets = vec![
-        Dataset::default()
-            .name("Audio")
-            .marker(symbols::Marker::Braille)
-            .style(Style::default().fg(Color::Cyan))
-            .data(&points),
-    ];
+    let datasets = vec![Dataset::default()
+        .name("Audio")
+        .marker(symbols::Marker::Braille)
+        .style(Style::default().fg(Color::Cyan))
+        .data(&points)];
 
     let chart = Chart::new(datasets)
         .block(Block::default().title("Waveform").borders(Borders::ALL))
@@ -72,21 +73,23 @@ fn draw_raster(
     spikes: &[(f64, usize)],
     channels: usize,
     start: f64,
-    end: f64
+    end: f64,
 ) {
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Neurogram (Spike Raster)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Neurogram (Spike Raster)"),
+        )
         .x_bounds([start, end])
         .y_bounds([0.0, channels as f64])
         .paint(|ctx| {
-             let points: Vec<(f64, f64)> = spikes.iter()
-                .map(|&(t, ch)| (t, ch as f64))
-                .collect();
+            let points: Vec<(f64, f64)> = spikes.iter().map(|&(t, ch)| (t, ch as f64)).collect();
 
-             ctx.draw(&Points {
-                 coords: &points,
-                 color: Color::Green,
-             });
+            ctx.draw(&Points {
+                coords: &points,
+                color: Color::Green,
+            });
         });
 
     f.render_widget(canvas, area);
@@ -96,7 +99,11 @@ fn draw_spectrum(f: &mut Frame, area: Rect, data: &[f32]) {
     let data_u64: Vec<u64> = data.iter().map(|&v| (v * 100.0) as u64).collect();
 
     let sparkline = Sparkline::default()
-        .block(Block::default().title("Cochlear Activity").borders(Borders::ALL))
+        .block(
+            Block::default()
+                .title("Cochlear Activity")
+                .borders(Borders::ALL),
+        )
         .data(&data_u64)
         .style(Style::default().fg(Color::Yellow));
 

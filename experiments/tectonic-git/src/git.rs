@@ -1,5 +1,5 @@
 use anyhow::Result;
-use git_associates::{GitModel, model::LineChange};
+use git_associates::{model::LineChange, GitModel};
 
 #[derive(Debug, Clone)]
 pub struct CommitData {
@@ -25,13 +25,23 @@ impl GitScanner {
             for file in &commit.files {
                 for hunk in &file.hunks {
                     for line in &hunk.lines {
-                         if let LineChange::Added(content) = line {
-                             if content.contains("TODO") { stress += 1.0; }
-                             if content.contains("FIXME") { stress += 2.0; }
-                             if content.contains("unwrap()") { stress += 1.5; }
-                             if content.contains("panic!") { stress += 5.0; }
-                             if content.contains("unsafe") { stress += 3.0; }
-                         }
+                        if let LineChange::Added(content) = line {
+                            if content.contains("TODO") {
+                                stress += 1.0;
+                            }
+                            if content.contains("FIXME") {
+                                stress += 2.0;
+                            }
+                            if content.contains("unwrap()") {
+                                stress += 1.5;
+                            }
+                            if content.contains("panic!") {
+                                stress += 5.0;
+                            }
+                            if content.contains("unsafe") {
+                                stress += 3.0;
+                            }
+                        }
                     }
                 }
             }

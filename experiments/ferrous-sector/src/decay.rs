@@ -7,7 +7,9 @@ pub struct DecayEngine {
 
 impl DecayEngine {
     pub fn new() -> Self {
-        Self { temperature: 0.0001 }
+        Self {
+            temperature: 0.0001,
+        }
     }
 
     pub fn apply_entropy(&self, platter: &mut Platter) {

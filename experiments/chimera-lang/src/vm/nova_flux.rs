@@ -99,7 +99,8 @@ pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         let wx = cx % 16;
                         let r = 3.0 + ((v as f64) / 100.0).clamp(0.0, 1.0);
                         vm.chaos_struct.r_grid[wy][wx] = r;
-                        vm.output.push(format!("CHAOS: Set r={} at {},{}", r, wx, wy));
+                        vm.output
+                            .push(format!("CHAOS: Set r={} at {},{}", r, wx, wy));
                     }
                 }
                 2 => {

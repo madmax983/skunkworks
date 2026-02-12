@@ -1,10 +1,10 @@
+use crate::ast::{JunctionType, Nucleotide};
 use crate::opcode::OpCode;
-use crate::ast::{Nucleotide, JunctionType};
 use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BabelState {
@@ -49,8 +49,10 @@ impl BabelState {
                     } else {
                         format!("(\"chaos\")")
                     }
-                },
-                OpCode::Jump | OpCode::Brz | OpCode::JumpS | OpCode::BrzS => format!("({})", rng.gen_range(0..5)),
+                }
+                OpCode::Jump | OpCode::Brz | OpCode::JumpS | OpCode::BrzS => {
+                    format!("({})", rng.gen_range(0..5))
+                }
                 // Default: empty args ()
                 _ => format!("()"),
             };
@@ -62,7 +64,9 @@ impl BabelState {
     }
 
     pub fn confuse(&mut self) {
-        if self.all_ops.is_empty() { return; }
+        if self.all_ops.is_empty() {
+            return;
+        }
         let mut rng = rand::thread_rng();
 
         // Generate some random mappings
@@ -85,8 +89,12 @@ pub fn exec_babel_chaos_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide])
             if let Some(val) = vm.stack.pop() {
                 match val {
                     Value::Int(amount) => {
-                        vm.babel_state.integrity = (vm.babel_state.integrity - (amount as f64 / 100.0)).clamp(0.0, 1.0);
-                        vm.output.push(format!("BABEL: Integrity degraded to {:.2}", vm.babel_state.integrity));
+                        vm.babel_state.integrity =
+                            (vm.babel_state.integrity - (amount as f64 / 100.0)).clamp(0.0, 1.0);
+                        vm.output.push(format!(
+                            "BABEL: Integrity degraded to {:.2}",
+                            vm.babel_state.integrity
+                        ));
                     }
                     Value::Str(s) if s == "Speak" => {
                         let speech = vm.babel_state.speak_in_tongues();
@@ -94,24 +102,41 @@ pub fn exec_babel_chaos_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide])
                         vm.output.push("BABEL: The machine speaks!".to_string());
                     }
                     Value::Str(s) if s == "Grammar" => {
-                         // Generate random grammar structure
-                         let mut rng = rand::thread_rng();
-                         let grammar = Value::Junction(JunctionType::Any, vec![
-                             Value::Str("Seq".to_string()),
-                             Value::Junction(JunctionType::Any, vec![
-                                Value::Str("Match".to_string()),
-                                Value::Str(if rng.gen_bool(0.5) { "chaos".to_string() } else { "void".to_string() })
-                             ]),
-                             Value::Junction(JunctionType::Any, vec![
-                                Value::Str("Many".to_string()),
-                                Value::Junction(JunctionType::Any, vec![
-                                    Value::Str("Regex".to_string()),
-                                    Value::Str("[a-z]+".to_string())
-                                ])
-                             ])
-                         ]);
-                         vm.stack.push(grammar);
-                         vm.output.push("BABEL: A chaotic grammar manifests.".to_string());
+                        // Generate random grammar structure
+                        let mut rng = rand::thread_rng();
+                        let grammar = Value::Junction(
+                            JunctionType::Any,
+                            vec![
+                                Value::Str("Seq".to_string()),
+                                Value::Junction(
+                                    JunctionType::Any,
+                                    vec![
+                                        Value::Str("Match".to_string()),
+                                        Value::Str(if rng.gen_bool(0.5) {
+                                            "chaos".to_string()
+                                        } else {
+                                            "void".to_string()
+                                        }),
+                                    ],
+                                ),
+                                Value::Junction(
+                                    JunctionType::Any,
+                                    vec![
+                                        Value::Str("Many".to_string()),
+                                        Value::Junction(
+                                            JunctionType::Any,
+                                            vec![
+                                                Value::Str("Regex".to_string()),
+                                                Value::Str("[a-z]+".to_string()),
+                                            ],
+                                        ),
+                                    ],
+                                ),
+                            ],
+                        );
+                        vm.stack.push(grammar);
+                        vm.output
+                            .push("BABEL: A chaotic grammar manifests.".to_string());
                     }
                     _ => {}
                 }
@@ -120,14 +145,19 @@ pub fn exec_babel_chaos_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide])
         OpCode::Clarify => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(amount) = val {
-                    vm.babel_state.integrity = (vm.babel_state.integrity + (amount as f64 / 100.0)).clamp(0.0, 1.0);
-                    vm.output.push(format!("BABEL: Integrity restored to {:.2}", vm.babel_state.integrity));
+                    vm.babel_state.integrity =
+                        (vm.babel_state.integrity + (amount as f64 / 100.0)).clamp(0.0, 1.0);
+                    vm.output.push(format!(
+                        "BABEL: Integrity restored to {:.2}",
+                        vm.babel_state.integrity
+                    ));
                 }
             }
         }
         OpCode::Confuse => {
             vm.babel_state.confuse();
-            vm.output.push("BABEL: The language has been confounded!".to_string());
+            vm.output
+                .push("BABEL: The language has been confounded!".to_string());
         }
         _ => {}
     }

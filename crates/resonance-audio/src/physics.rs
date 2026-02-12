@@ -82,7 +82,7 @@ impl PhysicsGrid {
                 Material::Wall => {
                     self.c2_map[idx] = 0.0;
                     self.damping_map[idx] = 0.0; // Irrelevant as value is forced to 0
-                    // Clear energy at wall
+                                                 // Clear energy at wall
                     self.u[idx] = 0.0;
                     self.u_prev[idx] = 0.0;
                     self.u_next[idx] = 0.0;

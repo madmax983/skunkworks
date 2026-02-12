@@ -34,5 +34,10 @@ fn test_anisotropic_diffusion() {
 
     // Assert anisotropic behavior
     // With angle 0, diffusion should be primarily horizontal.
-    assert!(v_right > v_down, "Expected horizontal diffusion > vertical diffusion for angle 0.0. Got right: {}, down: {}", v_right, v_down);
+    assert!(
+        v_right > v_down,
+        "Expected horizontal diffusion > vertical diffusion for angle 0.0. Got right: {}, down: {}",
+        v_right,
+        v_down
+    );
 }

@@ -1,6 +1,6 @@
-use chimera_lang::prelude::*;
 use crate::lattice::Lattice;
 use ::rand::Rng;
+use chimera_lang::prelude::*;
 
 pub struct Agent {
     pub id: usize,
@@ -26,33 +26,82 @@ impl Agent {
 
         let genes = vec![
             // --- DX ---
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] }, // x=3
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // y=0
-            Gene { op: OpCode::GRead, args: vec![] }, // [Rand]
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(500)] },
-            Gene { op: OpCode::Sub, args: vec![] }, // [Rand - 500]
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // x=0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // y=1
-            Gene { op: OpCode::GWrite, args: vec![] }, // Write DX
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(3)],
+            }, // x=3
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // y=0
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            }, // [Rand]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(500)],
+            },
+            Gene {
+                op: OpCode::Sub,
+                args: vec![],
+            }, // [Rand - 500]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // x=0
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // y=1
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            }, // Write DX
             // --- DY ---
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] }, // x=3
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // y=0
-            Gene { op: OpCode::GRead, args: vec![] }, // [Rand]
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(500)] },
-            Gene { op: OpCode::Sub, args: vec![] }, // [Rand - 500]
-
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // x=1
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // y=1
-            Gene { op: OpCode::GWrite, args: vec![] }, // Write DY
-
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Loop
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(3)],
+            }, // x=3
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // y=0
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            }, // [Rand]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(500)],
+            },
+            Gene {
+                op: OpCode::Sub,
+                args: vec![],
+            }, // [Rand - 500]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // x=1
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // y=1
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            }, // Write DY
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            }, // Loop
         ];
 
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000;
 

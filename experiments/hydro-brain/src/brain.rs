@@ -122,7 +122,9 @@ impl Network {
     }
 
     pub fn get_target_for_spike(&self, source_id: usize) -> Option<usize> {
-        let candidates: Vec<&Synapse> = self.synapses.iter()
+        let candidates: Vec<&Synapse> = self
+            .synapses
+            .iter()
             .filter(|s| s.source == source_id)
             .collect();
 
@@ -142,7 +144,8 @@ impl Network {
         }
 
         // Fallback
-        self.synapses.iter()
+        self.synapses
+            .iter()
             .filter(|s| s.source == source_id)
             .last()
             .map(|s| s.target)

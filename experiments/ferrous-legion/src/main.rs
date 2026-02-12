@@ -1,8 +1,8 @@
+mod crypto;
+mod math;
 mod physics;
 mod platter;
 mod roman;
-mod math;
-mod crypto;
 
 use std::io;
 use std::time::{Duration, Instant};
@@ -12,6 +12,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use rand::Rng;
 use ratatui::{
     backend::{Backend, CrosstermBackend},
     layout::{Constraint, Direction, Layout},
@@ -23,7 +24,6 @@ use ratatui::{
     },
     Terminal,
 };
-use rand::Rng;
 
 use physics::{Body, Universe, Vec2};
 use roman::Roman;
@@ -74,9 +74,13 @@ where
         let val_u64 = rng.gen_range(1..=12); // I to XII
         let value = Roman::from_u64(val_u64);
 
-        let color = if val_u64 >= 10 { Color::Green }
-        else if val_u64 >= 5 { Color::Blue }
-        else { Color::Gray };
+        let color = if val_u64 >= 10 {
+            Color::Green
+        } else if val_u64 >= 5 {
+            Color::Blue
+        } else {
+            Color::Gray
+        };
 
         // Tangential kick
         let to_center = (center - pos).normalize_or_zero();
@@ -105,14 +109,10 @@ where
                 .split(size);
 
             let canvas = Canvas::default()
-                .block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title(format!(
-                            "Ferrous Legion | Bodies: {} | Magnetic Arithmetic Active",
-                            universe.bodies.len()
-                        )),
-                )
+                .block(Block::default().borders(Borders::ALL).title(format!(
+                    "Ferrous Legion | Bodies: {} | Magnetic Arithmetic Active",
+                    universe.bodies.len()
+                )))
                 .x_bounds([
                     pan.x as f64 - 100.0 * zoom as f64,
                     pan.x as f64 + 100.0 * zoom as f64,
@@ -167,8 +167,9 @@ where
 
             f.render_widget(canvas, chunks[0]);
 
-            let controls = Paragraph::new("Controls: [Q] Quit | [+/-] Zoom | [Arrows] Pan | [R] Reset")
-                .style(Style::default().fg(Color::White).bg(Color::DarkGray));
+            let controls =
+                Paragraph::new("Controls: [Q] Quit | [+/-] Zoom | [Arrows] Pan | [R] Reset")
+                    .style(Style::default().fg(Color::White).bg(Color::DarkGray));
             f.render_widget(controls, chunks[1]);
         })?;
 

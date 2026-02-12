@@ -1,13 +1,13 @@
-use ratatui::widgets::{Block, Borders, Paragraph};
-use ratatui::layout::{Layout, Constraint, Direction, Rect};
-use ratatui::text::Line;
-use ratatui::backend::Backend;
-use ratatui::Terminal;
 use crossterm::event::{self, Event, KeyCode};
+use ratatui::backend::Backend;
+use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::text::Line;
+use ratatui::widgets::{Block, Borders, Paragraph};
+use ratatui::Terminal;
 use std::time::Duration;
 
-use crate::platter::Platter;
 use crate::decay::DecayEngine;
+use crate::platter::Platter;
 
 pub struct App {
     pub platter: Platter,
@@ -34,7 +34,8 @@ impl App {
     }
 
     pub fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> anyhow::Result<()>
-    where <B as Backend>::Error: Send + Sync + 'static
+    where
+        <B as Backend>::Error: Send + Sync + 'static,
     {
         while !self.exit {
             terminal.draw(|f| self.ui(f))?;
@@ -47,18 +48,12 @@ impl App {
     fn ui(&mut self, f: &mut ratatui::Frame) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([
-                Constraint::Percentage(80),
-                Constraint::Percentage(20),
-            ])
+            .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
             .split(f.area());
 
         let top_chunks = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([
-                Constraint::Percentage(50),
-                Constraint::Percentage(50),
-            ])
+            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(chunks[0]);
 
         self.render_platter_view(f, top_chunks[0]);
@@ -82,15 +77,22 @@ impl App {
                 if idx < self.platter.data.len() {
                     let b = self.platter.data[idx];
                     // Replace non-printable with a dot or block
-                    let c = if b.is_ascii_graphic() { b as char } else { '·' };
+                    let c = if b.is_ascii_graphic() {
+                        b as char
+                    } else {
+                        '·'
+                    };
                     text.push(c);
                 }
             }
             text.push('\n');
         }
 
-        let p = Paragraph::new(text)
-            .block(Block::default().title("Surface View (Map)").borders(Borders::ALL));
+        let p = Paragraph::new(text).block(
+            Block::default()
+                .title("Surface View (Map)")
+                .borders(Borders::ALL),
+        );
         f.render_widget(p, area);
     }
 
@@ -121,21 +123,29 @@ impl App {
                 }
             }
 
-            lines.push(Line::from(format!("{:08x}  {}  |{}", offset, hex_part, ascii_part)));
+            lines.push(Line::from(format!(
+                "{:08x}  {}  |{}",
+                offset, hex_part, ascii_part
+            )));
         }
 
-        let p = Paragraph::new(lines)
-            .block(Block::default().title("Sector View (Hex)").borders(Borders::ALL));
+        let p = Paragraph::new(lines).block(
+            Block::default()
+                .title("Sector View (Hex)")
+                .borders(Borders::ALL),
+        );
         f.render_widget(p, area);
     }
 
     fn render_stats(&self, f: &mut ratatui::Frame, area: Rect) {
         let stats = format!(
             "Temp: {:.5} (Up/Down) | Cursor: 0x{:08x} (Left/Right) | Bytes: {} | Quit: 'q'",
-            self.decay_engine.temperature, self.cursor, self.platter.data.len()
+            self.decay_engine.temperature,
+            self.cursor,
+            self.platter.data.len()
         );
-        let p = Paragraph::new(stats)
-            .block(Block::default().title("Controls").borders(Borders::ALL));
+        let p =
+            Paragraph::new(stats).block(Block::default().title("Controls").borders(Borders::ALL));
         f.render_widget(p, area);
     }
 
@@ -145,10 +155,19 @@ impl App {
                 match key.code {
                     KeyCode::Char('q') => self.exit = true,
                     KeyCode::Up => self.decay_engine.temperature += 0.0001,
-                    KeyCode::Down => self.decay_engine.temperature = (self.decay_engine.temperature - 0.0001).max(0.0),
-                    KeyCode::Right => self.cursor = (self.cursor + 16).min(self.platter.data.len().saturating_sub(1)),
+                    KeyCode::Down => {
+                        self.decay_engine.temperature =
+                            (self.decay_engine.temperature - 0.0001).max(0.0)
+                    }
+                    KeyCode::Right => {
+                        self.cursor =
+                            (self.cursor + 16).min(self.platter.data.len().saturating_sub(1))
+                    }
                     KeyCode::Left => self.cursor = self.cursor.saturating_sub(16),
-                    KeyCode::PageDown => self.cursor = (self.cursor + 256).min(self.platter.data.len().saturating_sub(1)),
+                    KeyCode::PageDown => {
+                        self.cursor =
+                            (self.cursor + 256).min(self.platter.data.len().saturating_sub(1))
+                    }
                     KeyCode::PageUp => self.cursor = self.cursor.saturating_sub(256),
                     _ => {}
                 }

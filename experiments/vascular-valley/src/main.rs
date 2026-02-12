@@ -1,9 +1,9 @@
-mod leaf;
 mod erosion;
+mod leaf;
 
-use macroquad::prelude::*;
+use erosion::{erode_at, erode_step};
 use leaf::LeafMap;
-use erosion::{erode_step, erode_at};
+use macroquad::prelude::*;
 
 const MAP_WIDTH: usize = 400;
 const MAP_HEIGHT: usize = 400;
@@ -13,7 +13,11 @@ async fn main() {
     let mut map = LeafMap::new(MAP_WIDTH, MAP_HEIGHT);
     map.generate_shape();
 
-    let mut image = Image::gen_image_color(MAP_WIDTH as u16, MAP_HEIGHT as u16, Color::new(0.0, 0.0, 0.0, 0.0));
+    let mut image = Image::gen_image_color(
+        MAP_WIDTH as u16,
+        MAP_HEIGHT as u16,
+        Color::new(0.0, 0.0, 0.0, 0.0),
+    );
     let texture = Texture2D::from_image(&image);
 
     // Auto-erosion on by default
@@ -95,7 +99,7 @@ async fn main() {
                             color.r * (1.0 - water_alpha) + 0.0 * water_alpha,
                             color.g * (1.0 - water_alpha) + 0.5 * water_alpha,
                             color.b * (1.0 - water_alpha) + 1.0 * water_alpha,
-                            1.0
+                            1.0,
                         );
 
                         // Decay water
@@ -133,7 +137,13 @@ async fn main() {
 
         // UI
         draw_text("Vascular Valley", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Drops/Frame: {} (Up/Down)", drops_per_frame), 20.0, 60.0, 20.0, WHITE);
+        draw_text(
+            &format!("Drops/Frame: {} (Up/Down)", drops_per_frame),
+            20.0,
+            60.0,
+            20.0,
+            WHITE,
+        );
         draw_text("R: Reset | Space: Pause", 20.0, 80.0, 20.0, WHITE);
         draw_text("Click to Erode", 20.0, 100.0, 20.0, WHITE);
 

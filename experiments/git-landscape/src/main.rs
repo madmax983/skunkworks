@@ -2,7 +2,7 @@ mod audio;
 
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use git_associates::{GitModel, model::Commit};
+use git_associates::{model::Commit, GitModel};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::Color,
@@ -26,7 +26,7 @@ const WIDTH: usize = 100; // Number of X buckets (File Hash buckets)
 const DEPTH: usize = 60; // Number of Z rows (Visible Commits)
 
 struct App {
-    commits: Vec<Commit>,   // All loaded commits (Oldest -> Newest)
+    commits: Vec<Commit>,       // All loaded commits (Oldest -> Newest)
     terrain: VecDeque<Vec<u8>>, // Current visible terrain (Rows of heights)
     commit_idx: usize,          // Index of next commit to enter the horizon
     speed: f64,                 // Flight speed (commits per second)

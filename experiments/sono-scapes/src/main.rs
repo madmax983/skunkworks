@@ -71,14 +71,30 @@ async fn main() {
         clear_background(BLACK);
 
         // 1. Process Input
-        if is_key_pressed(KeyCode::Key1) { tool = Tool::Pluck; }
-        if is_key_pressed(KeyCode::Key2) { tool = Tool::Wall; }
-        if is_key_pressed(KeyCode::Key3) { tool = Tool::Slow; }
-        if is_key_pressed(KeyCode::Key4) { tool = Tool::Fast; }
-        if is_key_pressed(KeyCode::Key5) { tool = Tool::Void; }
-        if is_key_pressed(KeyCode::Key6) { tool = Tool::Listener; }
-        if is_key_pressed(KeyCode::Key7) { tool = Tool::Source; }
-        if is_key_pressed(KeyCode::Key8) { tool = Tool::Erase; }
+        if is_key_pressed(KeyCode::Key1) {
+            tool = Tool::Pluck;
+        }
+        if is_key_pressed(KeyCode::Key2) {
+            tool = Tool::Wall;
+        }
+        if is_key_pressed(KeyCode::Key3) {
+            tool = Tool::Slow;
+        }
+        if is_key_pressed(KeyCode::Key4) {
+            tool = Tool::Fast;
+        }
+        if is_key_pressed(KeyCode::Key5) {
+            tool = Tool::Void;
+        }
+        if is_key_pressed(KeyCode::Key6) {
+            tool = Tool::Listener;
+        }
+        if is_key_pressed(KeyCode::Key7) {
+            tool = Tool::Source;
+        }
+        if is_key_pressed(KeyCode::Key8) {
+            tool = Tool::Erase;
+        }
 
         if is_key_pressed(KeyCode::Space) {
             let _ = cmd_tx.send(AudioCommand::ClearWaves);
@@ -114,11 +130,41 @@ async fn main() {
                             });
                         }
                     }
-                    Tool::Wall => { let _ = cmd_tx.send(AudioCommand::PaintMaterial { x: gx, y: gy, material: Material::Wall }); }
-                    Tool::Slow => { let _ = cmd_tx.send(AudioCommand::PaintMaterial { x: gx, y: gy, material: Material::Slow }); }
-                    Tool::Fast => { let _ = cmd_tx.send(AudioCommand::PaintMaterial { x: gx, y: gy, material: Material::Fast }); }
-                    Tool::Void => { let _ = cmd_tx.send(AudioCommand::PaintMaterial { x: gx, y: gy, material: Material::Void }); }
-                    Tool::Erase => { let _ = cmd_tx.send(AudioCommand::PaintMaterial { x: gx, y: gy, material: Material::Air }); }
+                    Tool::Wall => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Wall,
+                        });
+                    }
+                    Tool::Slow => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Slow,
+                        });
+                    }
+                    Tool::Fast => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Fast,
+                        });
+                    }
+                    Tool::Void => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Void,
+                        });
+                    }
+                    Tool::Erase => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Air,
+                        });
+                    }
                     Tool::Listener => {
                         listener_pos = (gx, gy);
                         let _ = cmd_tx.send(AudioCommand::MoveListener { x: gx, y: gy });
@@ -155,7 +201,11 @@ async fn main() {
                         });
                     }
                     _ => {
-                        let _ = cmd_tx.send(AudioCommand::PaintMaterial { x: gx, y: gy, material: Material::Air });
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Air,
+                        });
                     }
                 }
             }
@@ -188,15 +238,15 @@ async fn main() {
                                         let v = val.min(1.0);
                                         // Slow/Fast tinted
                                         match mat {
-                                            Material::Slow => Color::new(v, 0.0, v*0.5, 1.0), // Purple tint
-                                            Material::Fast => Color::new(v, v*0.5, 0.0, 1.0), // Orange tint
+                                            Material::Slow => Color::new(v, 0.0, v * 0.5, 1.0), // Purple tint
+                                            Material::Fast => Color::new(v, v * 0.5, 0.0, 1.0), // Orange tint
                                             _ => Color::new(v, 0.0, 0.0, 1.0),
                                         }
                                     } else {
                                         let v = (-val).min(1.0);
                                         match mat {
-                                            Material::Slow => Color::new(0.0, v*0.5, v, 1.0), // Cyan tint
-                                            Material::Fast => Color::new(0.0, v, v*0.5, 1.0), // Green tint
+                                            Material::Slow => Color::new(0.0, v * 0.5, v, 1.0), // Cyan tint
+                                            Material::Fast => Color::new(0.0, v, v * 0.5, 1.0), // Green tint
                                             _ => Color::new(0.0, 0.0, v, 1.0),
                                         }
                                     }
@@ -207,11 +257,11 @@ async fn main() {
                             let e = snap.energy[idx];
                             let v = (e * 0.1).min(1.0);
                             // Heatmap (Blue -> Red -> Yellow)
-                             if v < 0.5 {
-                                 Color::new(0.0, v * 2.0, 1.0 - v * 2.0, 1.0)
-                             } else {
-                                 Color::new((v - 0.5) * 2.0, 1.0 - (v - 0.5) * 2.0, 0.0, 1.0)
-                             }
+                            if v < 0.5 {
+                                Color::new(0.0, v * 2.0, 1.0 - v * 2.0, 1.0)
+                            } else {
+                                Color::new((v - 0.5) * 2.0, 1.0 - (v - 0.5) * 2.0, 0.0, 1.0)
+                            }
                         }
                         ViewMode::Material => {
                             let mat = snap.materials[idx];
@@ -262,9 +312,21 @@ async fn main() {
             20.0,
             YELLOW,
         );
-        draw_text("1:Pluck 2:Wall 3:Slow 4:Fast 5:Void 6:Lis 7:Src 8:Erase", 10.0, 90.0, 20.0, GRAY);
+        draw_text(
+            "1:Pluck 2:Wall 3:Slow 4:Fast 5:Void 6:Lis 7:Src 8:Erase",
+            10.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
         draw_text("LMB: Paint/Act | RMB: Erase", 10.0, 110.0, 20.0, GRAY);
-        draw_text("Space: Clear Waves | C: Clear Walls", 10.0, 130.0, 20.0, GRAY);
+        draw_text(
+            "Space: Clear Waves | C: Clear Walls",
+            10.0,
+            130.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -284,7 +346,10 @@ fn tool_name(t: &Tool) -> &str {
 }
 
 #[cfg(feature = "audio")]
-fn setup_audio(cmd_rx: Receiver<AudioCommand>, snap_tx: Sender<AudioSnapshot>) -> Option<cpal::Stream> {
+fn setup_audio(
+    cmd_rx: Receiver<AudioCommand>,
+    snap_tx: Sender<AudioSnapshot>,
+) -> Option<cpal::Stream> {
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
     let host = cpal::default_host();

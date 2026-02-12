@@ -1,6 +1,6 @@
 use macroquad::prelude::*;
-use rayon::prelude::*;
 use num_complex::Complex;
+use rayon::prelude::*;
 
 mod agent;
 use agent::{Agent, SimParams};
@@ -14,13 +14,15 @@ async fn main() {
     let num_agents = 5000;
 
     // Initialize agents
-    let mut agents: Vec<Agent> = (0..num_agents).map(|_| {
-        let r = rand::gen_range(0.0, 0.5);
-        let theta = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
-        let pos = Complex::from_polar(r, theta);
-        let angle = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
-        Agent::new(pos, angle)
-    }).collect();
+    let mut agents: Vec<Agent> = (0..num_agents)
+        .map(|_| {
+            let r = rand::gen_range(0.0, 0.5);
+            let theta = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
+            let pos = Complex::from_polar(r, theta);
+            let angle = rand::gen_range(0.0, std::f64::consts::PI * 2.0);
+            Agent::new(pos, angle)
+        })
+        .collect();
 
     // Trail map (density field)
     let mut trail_map = vec![0.0f32; width * height];
@@ -51,15 +53,15 @@ async fn main() {
         // Sequential deposit
         for agent in &agents {
             if agent.pos.norm_sqr() < 1.0 {
-                 let x = ((agent.pos.re + 1.0) * 0.5 * (width as f64)) as usize;
-                 let y = ((agent.pos.im + 1.0) * 0.5 * (height as f64)) as usize;
+                let x = ((agent.pos.re + 1.0) * 0.5 * (width as f64)) as usize;
+                let y = ((agent.pos.im + 1.0) * 0.5 * (height as f64)) as usize;
 
-                 if x < width && y < height {
-                     trail_map[y * width + x] += deposit_amount;
-                     if trail_map[y * width + x] > 10.0 {
-                         trail_map[y * width + x] = 10.0;
-                     }
-                 }
+                if x < width && y < height {
+                    trail_map[y * width + x] += deposit_amount;
+                    if trail_map[y * width + x] > 10.0 {
+                        trail_map[y * width + x] = 10.0;
+                    }
+                }
             }
         }
 
@@ -92,15 +94,15 @@ async fn main() {
         // 3. Render to Texture
         let bytes = &mut image.bytes;
         bytes.par_chunks_mut(4).enumerate().for_each(|(i, pixel)| {
-             if i < trail_map.len() {
-                 let density = trail_map[i];
-                 let val = (density * 255.0).min(255.0) as u8;
+            if i < trail_map.len() {
+                let density = trail_map[i];
+                let val = (density * 255.0).min(255.0) as u8;
 
-                 pixel[0] = val / 4; // R
-                 pixel[1] = val / 2; // G
-                 pixel[2] = val;     // B
-                 pixel[3] = 255;     // A
-             }
+                pixel[0] = val / 4; // R
+                pixel[1] = val / 2; // G
+                pixel[2] = val; // B
+                pixel[3] = 255; // A
+            }
         });
 
         texture.update(&image);

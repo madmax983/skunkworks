@@ -237,7 +237,8 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             if a < helix_len && b < helix_len {
                 if helix_len + 1 >= MAX_STRANDS {
-                    vm.output.push("CROSSOVER ERROR: Strand limit exceeded".to_string());
+                    vm.output
+                        .push("CROSSOVER ERROR: Strand limit exceeded".to_string());
                     return None;
                 }
 
@@ -258,7 +259,10 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     new_genes_2.extend_from_slice(&genes_a[cut..]);
 
                     // Add first child
-                    vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes_1 });
+                    vm.dna
+                        .helix
+                        .strands
+                        .push(crate::ast::Strand { genes: new_genes_1 });
                     vm.telomeres.push(50);
                     #[cfg(feature = "cortex")]
                     {
@@ -266,10 +270,18 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         vm.synapse_map.push(Vec::new());
                     }
                     let child_1 = vm.dna.helix.strands.len() - 1;
-                    vm.cladistics.register_strand(child_1, Some(a), vm.tick_counter, "Crossover".to_string());
+                    vm.cladistics.register_strand(
+                        child_1,
+                        Some(a),
+                        vm.tick_counter,
+                        "Crossover".to_string(),
+                    );
 
                     // Add second child
-                    vm.dna.helix.strands.push(crate::ast::Strand { genes: new_genes_2 });
+                    vm.dna
+                        .helix
+                        .strands
+                        .push(crate::ast::Strand { genes: new_genes_2 });
                     vm.telomeres.push(50);
                     #[cfg(feature = "cortex")]
                     {
@@ -277,23 +289,33 @@ pub fn exec_crossover(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         vm.synapse_map.push(Vec::new());
                     }
                     let child_2 = vm.dna.helix.strands.len() - 1;
-                    vm.cladistics.register_strand(child_2, Some(b), vm.tick_counter, "Crossover".to_string());
+                    vm.cladistics.register_strand(
+                        child_2,
+                        Some(b),
+                        vm.tick_counter,
+                        "Crossover".to_string(),
+                    );
 
                     vm.stack.push(Value::Int(child_1 as i64));
                     vm.stack.push(Value::Int(child_2 as i64));
                     vm.energy = vm.energy.saturating_sub(20);
-                    vm.output.push(format!("CROSSOVER: {}+{} -> {}, {}", a, b, child_1, child_2));
+                    vm.output.push(format!(
+                        "CROSSOVER: {}+{} -> {}, {}",
+                        a, b, child_1, child_2
+                    ));
                 } else {
                     vm.output.push("CROSSOVER ERROR: Empty strand".to_string());
                 }
             } else {
-                vm.output.push("CROSSOVER ERROR: Invalid strand index".to_string());
+                vm.output
+                    .push("CROSSOVER ERROR: Invalid strand index".to_string());
             }
         } else {
             vm.output.push("CROSSOVER ERROR: Type mismatch".to_string());
         }
     } else {
-        vm.output.push("CROSSOVER ERROR: Stack underflow".to_string());
+        vm.output
+            .push("CROSSOVER ERROR: Stack underflow".to_string());
     }
     None
 }

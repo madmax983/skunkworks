@@ -31,19 +31,25 @@ pub fn load_standard_library() -> Vec<Value> {
     };
 
     // Rule: reaction(A, B, C) :- recipe(A, B, C).
-    let rule_direct = Value::Junction(JunctionType::Any, vec![
-        Value::Str("rule".to_string()),
-        pred("reaction", vec![var("?A"), var("?B"), var("?C")]),
-        pred("recipe", vec![var("?A"), var("?B"), var("?C")])
-    ]);
+    let rule_direct = Value::Junction(
+        JunctionType::Any,
+        vec![
+            Value::Str("rule".to_string()),
+            pred("reaction", vec![var("?A"), var("?B"), var("?C")]),
+            pred("recipe", vec![var("?A"), var("?B"), var("?C")]),
+        ],
+    );
     kb.push(rule_direct);
 
     // Rule: reaction(A, B, C) :- recipe(B, A, C). (Commutative)
-    let rule_reverse = Value::Junction(JunctionType::Any, vec![
-        Value::Str("rule".to_string()),
-        pred("reaction", vec![var("?A"), var("?B"), var("?C")]),
-        pred("recipe", vec![var("?B"), var("?A"), var("?C")])
-    ]);
+    let rule_reverse = Value::Junction(
+        JunctionType::Any,
+        vec![
+            Value::Str("rule".to_string()),
+            pred("reaction", vec![var("?A"), var("?B"), var("?C")]),
+            pred("recipe", vec![var("?B"), var("?A"), var("?C")]),
+        ],
+    );
     kb.push(rule_reverse);
 
     // Fun: What happens if we mix Life and Void?

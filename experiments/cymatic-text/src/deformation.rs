@@ -1,5 +1,5 @@
-use crate::outline::{GlyphCurve, BezierSegment};
 use crate::audio::Spectrum;
+use crate::outline::{BezierSegment, GlyphCurve};
 use macroquad::prelude::*;
 
 pub fn deform(curve: &GlyphCurve, spectrum: &Spectrum, time: f32) -> GlyphCurve {
@@ -18,7 +18,9 @@ pub fn deform(curve: &GlyphCurve, spectrum: &Spectrum, time: f32) -> GlyphCurve 
             BezierSegment::Line { start, end } => {
                 let s = distort(*start, center, spectrum, time, false);
                 let e = distort(*end, center, spectrum, time, false);
-                new_curve.segments.push(BezierSegment::Line { start: s, end: e });
+                new_curve
+                    .segments
+                    .push(BezierSegment::Line { start: s, end: e });
                 new_curve.update_bounds(s);
                 new_curve.update_bounds(e);
             }
@@ -26,17 +28,31 @@ pub fn deform(curve: &GlyphCurve, spectrum: &Spectrum, time: f32) -> GlyphCurve 
                 let s = distort(*start, center, spectrum, time, false);
                 let c = distort(*ctrl, center, spectrum, time, true);
                 let e = distort(*end, center, spectrum, time, false);
-                new_curve.segments.push(BezierSegment::Quad { start: s, ctrl: c, end: e });
+                new_curve.segments.push(BezierSegment::Quad {
+                    start: s,
+                    ctrl: c,
+                    end: e,
+                });
                 new_curve.update_bounds(s);
                 new_curve.update_bounds(c);
                 new_curve.update_bounds(e);
             }
-            BezierSegment::Cubic { start, ctrl1, ctrl2, end } => {
+            BezierSegment::Cubic {
+                start,
+                ctrl1,
+                ctrl2,
+                end,
+            } => {
                 let s = distort(*start, center, spectrum, time, false);
                 let c1 = distort(*ctrl1, center, spectrum, time, true);
                 let c2 = distort(*ctrl2, center, spectrum, time, true);
                 let e = distort(*end, center, spectrum, time, false);
-                new_curve.segments.push(BezierSegment::Cubic { start: s, ctrl1: c1, ctrl2: c2, end: e });
+                new_curve.segments.push(BezierSegment::Cubic {
+                    start: s,
+                    ctrl1: c1,
+                    ctrl2: c2,
+                    end: e,
+                });
                 new_curve.update_bounds(s);
                 new_curve.update_bounds(c1);
                 new_curve.update_bounds(c2);

@@ -27,7 +27,9 @@ impl Platter {
         for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
             if entry.file_type().is_file() {
                 // Skip hidden files and target directory to avoid massive binary blobs
-                if entry.path().to_string_lossy().contains("/.") || entry.path().to_string_lossy().contains("/target") {
+                if entry.path().to_string_lossy().contains("/.")
+                    || entry.path().to_string_lossy().contains("/target")
+                {
                     continue;
                 }
 

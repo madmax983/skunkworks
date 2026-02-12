@@ -1,12 +1,12 @@
-use crate::layout::Vec3;
-use crate::simulation::{VoxelGrid, Voxel, GRID_SIZE};
 use crate::graph::CrateGraph;
+use crate::layout::Vec3;
+use crate::simulation::{Voxel, VoxelGrid, GRID_SIZE};
 use petgraph::graph::NodeIndex;
-use std::collections::HashMap;
-use ratatui::widgets::{Widget, Block, Borders};
-use ratatui::layout::Rect;
 use ratatui::buffer::Buffer;
-use ratatui::style::{Color, Style, Modifier};
+use ratatui::layout::Rect;
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::widgets::{Block, Borders, Widget};
+use std::collections::HashMap;
 
 pub struct TuiState {
     pub slice_z: usize,
@@ -38,7 +38,12 @@ impl<'a> CaveWidget<'a> {
         positions: &'a HashMap<NodeIndex, Vec3>,
         graph: &'a CrateGraph,
     ) -> Self {
-        Self { grid, state, positions, graph }
+        Self {
+            grid,
+            state,
+            positions,
+            graph,
+        }
     }
 }
 
@@ -67,38 +72,46 @@ impl<'a> Widget for CaveWidget<'a> {
                 };
 
                 if let Some(c) = buf.cell_mut((inner.x + x as u16, inner.y + y as u16)) {
-                       c.set_symbol(char_sym);
-                       c.set_style(style);
+                    c.set_symbol(char_sym);
+                    c.set_style(style);
                 }
             }
         }
 
         // Render Nodes that are on this slice (or near it)
         for (node, pos) in self.positions {
-             let px = (pos.x * self.grid.width as f32) as usize;
-             let py = (pos.y * self.grid.height as f32) as usize;
-             let pz = (pos.z * self.grid.depth as f32) as usize;
+            let px = (pos.x * self.grid.width as f32) as usize;
+            let py = (pos.y * self.grid.height as f32) as usize;
+            let pz = (pos.z * self.grid.depth as f32) as usize;
 
-             // Show nodes within +/- 1 Z level
-             if pz.abs_diff(z) <= 1 {
-                 if px < inner.width as usize && py < inner.height as usize {
-                      let name = &self.graph[*node];
-                      // Just show first char
-                      let symbol = &name[0..1];
-                      let color = if pz == z { Color::Yellow } else { Color::Rgb(100, 100, 0) }; // Dimmer if not exact Z
-                      if let Some(c) = buf.cell_mut((inner.x + px as u16, inner.y + py as u16)) {
-                             c.set_symbol(symbol);
-                             c.set_style(Style::default().fg(color).add_modifier(Modifier::BOLD));
-                      }
-                 }
-             }
+            // Show nodes within +/- 1 Z level
+            if pz.abs_diff(z) <= 1 {
+                if px < inner.width as usize && py < inner.height as usize {
+                    let name = &self.graph[*node];
+                    // Just show first char
+                    let symbol = &name[0..1];
+                    let color = if pz == z {
+                        Color::Yellow
+                    } else {
+                        Color::Rgb(100, 100, 0)
+                    }; // Dimmer if not exact Z
+                    if let Some(c) = buf.cell_mut((inner.x + px as u16, inner.y + py as u16)) {
+                        c.set_symbol(symbol);
+                        c.set_style(Style::default().fg(color).add_modifier(Modifier::BOLD));
+                    }
+                }
+            }
         }
 
         // Render Cursor
-        if self.state.cursor_x < inner.width as usize && self.state.cursor_y < inner.height as usize {
-             if let Some(c) = buf.cell_mut((inner.x + self.state.cursor_x as u16, inner.y + self.state.cursor_y as u16)) {
-                    c.set_style(Style::default().bg(Color::Blue));
-             }
+        if self.state.cursor_x < inner.width as usize && self.state.cursor_y < inner.height as usize
+        {
+            if let Some(c) = buf.cell_mut((
+                inner.x + self.state.cursor_x as u16,
+                inner.y + self.state.cursor_y as u16,
+            )) {
+                c.set_style(Style::default().bg(Color::Blue));
+            }
         }
     }
 }

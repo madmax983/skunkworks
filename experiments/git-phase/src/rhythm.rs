@@ -29,8 +29,8 @@ pub fn generate_pattern(data: &[u8], length: usize) -> Vec<Instrument> {
         let slice = &data[start_idx..end_idx];
 
         if slice.is_empty() {
-             // Fallback if slice is empty (shouldn't happen due to logic above unless data is empty)
-             pattern.push(Instrument::Rest);
+            // Fallback if slice is empty (shouldn't happen due to logic above unless data is empty)
+            pattern.push(Instrument::Rest);
         } else {
             // Calculate sum of bytes in this chunk
             let sum: u32 = slice.iter().map(|&b| b as u32).sum();

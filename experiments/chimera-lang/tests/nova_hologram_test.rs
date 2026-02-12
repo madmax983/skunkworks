@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -17,18 +17,24 @@ mod tests {
         // [ Push(10) ] - Strand 0 (Dummy)
         // [ Interfere(0) ] - Strand 1 (Execution)
         let strand0 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }],
         };
 
         let strand1 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Interfere, args: vec![Nucleotide::Number(0)] }
-            ]
+            genes: vec![Gene {
+                op: OpCode::Interfere,
+                args: vec![Nucleotide::Number(0)],
+            }],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Execute Strand 1
@@ -51,19 +57,30 @@ mod tests {
     #[test]
     fn test_hologram_refract() {
         let strand0 = Strand {
-            genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }
-            ]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }],
         };
 
         let strand1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Interfere, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::Refract, args: vec![] }
-            ]
+                Gene {
+                    op: OpCode::Interfere,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Refract,
+                    args: vec![],
+                },
+            ],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![strand0, strand1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![strand0, strand1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Execute Strand 1: Interfere
@@ -89,7 +106,12 @@ mod tests {
         let mut vm = make_vm();
 
         // Add dummy strand to prevent immediate halt
-        vm.dna.helix.strands.push(Strand { genes: vec![Gene { op: OpCode::Project, args: vec![] }] });
+        vm.dna.helix.strands.push(Strand {
+            genes: vec![Gene {
+                op: OpCode::Project,
+                args: vec![],
+            }],
+        });
 
         // Manually set some hologram values
         vm.hologram_grid[8][8] = (10.0, 0.0); // High magnitude

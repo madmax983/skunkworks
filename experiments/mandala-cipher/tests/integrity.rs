@@ -1,4 +1,4 @@
-use mandala_cipher::{encode, decode, MandalaConfig, Shape};
+use mandala_cipher::{decode, encode, MandalaConfig, Shape};
 
 #[test]
 fn test_roundtrip() {

@@ -1,8 +1,8 @@
-use std::fmt;
-use std::str::FromStr;
 use anyhow::{anyhow, Result};
 use num_bigint::BigUint;
 use num_traits::Zero;
+use std::fmt;
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum BaseSymbol {

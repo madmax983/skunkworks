@@ -29,22 +29,26 @@ pub fn synthesize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let catalyst = Catalyst {
                     id,
                     recipe,
-                    charge: 100, // Initial charge
+                    charge: 100,    // Initial charge
                     stability: 0.9, // 90% stability
                 };
 
                 vm.catalysts.push(catalyst);
                 vm.energy = vm.energy.saturating_sub(50);
-                vm.output.push(format!("SYNTHESIZE: Created Catalyst #{}", id));
+                vm.output
+                    .push(format!("SYNTHESIZE: Created Catalyst #{}", id));
                 vm.stack.push(Value::Int(id as i64));
             } else {
-                vm.output.push("Error: Invalid strand index for synthesize".to_string());
+                vm.output
+                    .push("Error: Invalid strand index for synthesize".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for synthesize".to_string());
+            vm.output
+                .push("Error: Type mismatch for synthesize".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for synthesize".to_string());
+        vm.output
+            .push("Error: Stack underflow for synthesize".to_string());
     }
     None
 }
@@ -99,21 +103,28 @@ pub fn catalyze(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         }
 
                         vm.energy = vm.energy.saturating_sub(20);
-                        vm.output.push(format!("CATALYZE: Applied #{} to Strand {} ({} mutations)", c_id, t_idx, mutations));
+                        vm.output.push(format!(
+                            "CATALYZE: Applied #{} to Strand {} ({} mutations)",
+                            c_id, t_idx, mutations
+                        ));
                     } else {
                         vm.output.push("Error: Invalid target strand".to_string());
                     }
                 } else {
-                    vm.output.push(format!("CATALYZE: Catalyst #{} depleted", c_id));
+                    vm.output
+                        .push(format!("CATALYZE: Catalyst #{} depleted", c_id));
                 }
             } else {
-                vm.output.push(format!("CATALYZE: Catalyst #{} not found", c_id));
+                vm.output
+                    .push(format!("CATALYZE: Catalyst #{} not found", c_id));
             }
         } else {
-            vm.output.push("Error: Type mismatch for catalyze".to_string());
+            vm.output
+                .push("Error: Type mismatch for catalyze".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for catalyze".to_string());
+        vm.output
+            .push("Error: Stack underflow for catalyze".to_string());
     }
     None
 }
@@ -132,32 +143,66 @@ mod tests {
 
         let s0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
             ],
         };
 
         let s1 = Strand {
             genes: vec![
-                Gene { op: OpCode::Nop, args: vec![] },
-                Gene { op: OpCode::Nop, args: vec![] },
-                Gene { op: OpCode::Nop, args: vec![] },
+                Gene {
+                    op: OpCode::Nop,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Nop,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Nop,
+                    args: vec![],
+                },
             ],
         };
 
         let s2 = Strand {
             genes: vec![
                 // Synthesize(0)
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-                Gene { op: OpCode::Synthesize, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(0)],
+                },
+                Gene {
+                    op: OpCode::Synthesize,
+                    args: vec![],
+                },
                 // Catalyze(cat_id=1, target=1)
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Target
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Cat ID (starts at 1)
-                Gene { op: OpCode::Catalyze, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Target
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Cat ID (starts at 1)
+                Gene {
+                    op: OpCode::Catalyze,
+                    args: vec![],
+                },
+            ],
         };
 
-        let dna = Dna { helix: Helix { strands: vec![s0, s1, s2] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![s0, s1, s2],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 1000; // Give enough energy
 
@@ -180,11 +225,21 @@ mod tests {
         vm.step(); // Catalyze
 
         // Check if Strand 1 was mutated
-        let mutated = vm.dna.helix.strands[1].genes.iter().any(|g| g.op == OpCode::Push);
+        let mutated = vm.dna.helix.strands[1]
+            .genes
+            .iter()
+            .any(|g| g.op == OpCode::Push);
         // With stability 0.0, everything should mutate to Push
         assert!(mutated, "Target strand should be mutated");
 
-        let push_count = vm.dna.helix.strands[1].genes.iter().filter(|g| g.op == OpCode::Push).count();
-        assert_eq!(push_count, 3, "All Nops should be replaced by Push (from recipe)");
+        let push_count = vm.dna.helix.strands[1]
+            .genes
+            .iter()
+            .filter(|g| g.op == OpCode::Push)
+            .count();
+        assert_eq!(
+            push_count, 3,
+            "All Nops should be replaced by Push (from recipe)"
+        );
     }
 }

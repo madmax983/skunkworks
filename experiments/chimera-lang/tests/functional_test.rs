@@ -15,13 +15,19 @@ mod tests {
     #[test]
     fn test_quote() {
         let genes = vec![
-            Gene { op: OpCode::Quote, args: vec![] },
-            Gene { op: OpCode::Add, args: vec![] }, // Should be quoted, not executed
+            Gene {
+                op: OpCode::Quote,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            }, // Should be quoted, not executed
         ];
         let mut vm = make_vm(genes);
         vm.step(); // quote
-        // vm step logic executes Quote. Quote consumes next gene (Add) and pushes string "add".
-        // IP advances past Add.
+                   // vm step logic executes Quote. Quote consumes next gene (Add) and pushes string "add".
+                   // IP advances past Add.
 
         assert_eq!(vm.stack.len(), 1);
         if let Some(Value::Str(s)) = vm.stack.last() {
@@ -40,26 +46,59 @@ mod tests {
         // Strand 2: [ push(20) add ]
         // Strand 0: [ push(2) push(1) chain call ]
 
-        let s1 = Strand { genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }] };
-        let s2 = Strand { genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(20)] },
-            Gene { op: OpCode::Add, args: vec![] }
-        ] };
+        let s1 = Strand {
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }],
+        };
+        let s2 = Strand {
+            genes: vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(20)],
+                },
+                Gene {
+                    op: OpCode::Add,
+                    args: vec![],
+                },
+            ],
+        };
 
-        let s0 = Strand { genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }, // Index of s2
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Index of s1
-            Gene { op: OpCode::Chain, args: vec![] },
-            Gene { op: OpCode::Call, args: vec![] } // Call the new strand
-        ] };
+        let s0 = Strand {
+            genes: vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                }, // Index of s2
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Index of s1
+                Gene {
+                    op: OpCode::Chain,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Call,
+                    args: vec![],
+                }, // Call the new strand
+            ],
+        };
 
-        let dna = Dna { helix: Helix { strands: vec![s0, s1, s2] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![s0, s1, s2],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Step until done
         for _ in 0..10 {
             vm.step();
-            if vm.halted { break; }
+            if vm.halted {
+                break;
+            }
         }
 
         // Result: 10 + 20 = 30
@@ -78,16 +117,42 @@ mod tests {
         // 5. Exec -> Pops new strand index, executes it
         // Execution: Push(10), Add (pops 10, pops 5) -> 15
 
-        let s1 = Strand { genes: vec![Gene { op: OpCode::Add, args: vec![] }] };
-        let s0 = Strand { genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // Value to curry
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // Index of s1
-            Gene { op: OpCode::Curry, args: vec![] },
-            Gene { op: OpCode::Exec, args: vec![] } // Call the new strand (Exec pops index)
-        ] };
+        let s1 = Strand {
+            genes: vec![Gene {
+                op: OpCode::Add,
+                args: vec![],
+            }],
+        };
+        let s0 = Strand {
+            genes: vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(5)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(10)],
+                }, // Value to curry
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                }, // Index of s1
+                Gene {
+                    op: OpCode::Curry,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Exec,
+                    args: vec![],
+                }, // Call the new strand (Exec pops index)
+            ],
+        };
 
-        let dna = Dna { helix: Helix { strands: vec![s0, s1] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![s0, s1],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         for _ in 0..10 {
@@ -103,16 +168,47 @@ mod tests {
         // Strand 2: [ push(2) push(2) push(2) ]
         // Strand 0: [ push(2) push(1) crossover ]
 
-        let s1 = Strand { genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }; 3] };
-        let s2 = Strand { genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }; 3] };
+        let s1 = Strand {
+            genes: vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)]
+                };
+                3
+            ],
+        };
+        let s2 = Strand {
+            genes: vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)]
+                };
+                3
+            ],
+        };
 
-        let s0 = Strand { genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Crossover, args: vec![] }
-        ] };
+        let s0 = Strand {
+            genes: vec![
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(1)],
+                },
+                Gene {
+                    op: OpCode::Crossover,
+                    args: vec![],
+                },
+            ],
+        };
 
-        let dna = Dna { helix: Helix { strands: vec![s0, s1, s2] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![s0, s1, s2],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         vm.step();

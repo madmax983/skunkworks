@@ -1,5 +1,5 @@
-use std::f64::consts::PI;
 use rand::prelude::*;
+use std::f64::consts::PI;
 
 pub const SAMPLE_RATE: f32 = 44100.0;
 
@@ -29,7 +29,8 @@ impl SignalGenerator {
         let freq_start = 150.0;
         let freq_end = 50.0;
 
-        let phase = freq_start * local_t + (freq_end - freq_start) / (2.0 * decay) * local_t * local_t;
+        let phase =
+            freq_start * local_t + (freq_end - freq_start) / (2.0 * decay) * local_t * local_t;
         let amp = (1.0 - local_t / decay).powi(2);
 
         ((phase * 2.0 * PI).sin() * amp) as f32
