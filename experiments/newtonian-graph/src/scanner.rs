@@ -36,7 +36,7 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
     // 1. Scan files
     for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
         let path = entry.path();
-        if path.extension().map_or(false, |ext| ext == "rs") {
+        if path.extension().is_some_and(|ext| ext == "rs") {
             let content = match fs::read_to_string(path) {
                 Ok(c) => c,
                 Err(_) => continue,
