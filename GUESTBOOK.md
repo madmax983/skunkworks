@@ -988,3 +988,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-legion
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Legion is forming. Roman Numerals are colliding and merging. Magnetic Arithmetic is active.
+
+### [Concentration Level: FRESH] - Location: experiments/harmonic-engine
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The gears are singing. Mechanical integration of differential equations verified. The Ball-and-Disk integrator is driving the melody.
