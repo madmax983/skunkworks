@@ -54,6 +54,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+#[allow(clippy::collapsible_if)]
 fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<()>
 where
     <B as Backend>::Error: Send + Sync + 'static,

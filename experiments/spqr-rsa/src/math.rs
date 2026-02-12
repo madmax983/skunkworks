@@ -1,4 +1,4 @@
-use crate::roman::{BaseSymbol, Roman, Symbol};
+use crate::roman::{Roman, Symbol};
 use num_bigint::BigUint;
 use num_traits::{One, ToPrimitive, Zero};
 use std::ops::{Add, Div, Mul, Rem, Sub};
@@ -40,54 +40,26 @@ impl Roman {
             let last = stack[stack.len() - 1];
             let prev = stack[stack.len() - 2];
 
-            if last.base == prev.base && last.vinculum == prev.vinculum {
-                // Two identical symbols.
-                // If they are V, L, D, (V), (L), (D)... -> merge to next
-                // V+V = X
-                if matches!(last.base, BaseSymbol::V | BaseSymbol::L | BaseSymbol::D) {
-                    stack.pop();
-                    stack.pop();
-                    let next = self.next_symbol(last);
-                    stack.push(next);
-                    continue;
-                }
+            // Only merge if symbols are identical
+            if last != prev {
+                break;
+            }
 
-                // If they are I, X, C, M -> we need 5 to merge.
-                // Check if we have 5.
-                if stack.len() >= 5 {
-                    let mut all_match = true;
-                    for i in 0..5 {
-                        let s = stack[stack.len() - 1 - i];
-                        if s.base != last.base || s.vinculum != last.vinculum {
-                            all_match = false;
-                            break;
-                        }
-                    }
-                    if all_match {
-                        for _ in 0..5 {
-                            stack.pop();
-                        }
-                        let next = self.next_symbol(last);
-                        stack.push(next);
-                        continue;
-                    }
+            // Determine how many we need to merge
+            // V, L, D require 2 to merge (V+V=X)
+            // I, X, C, M require 5 to merge (I*5=V)
+            let needed = if last.is_five_unit() { 2 } else { 5 };
+
+            if stack.len() >= needed {
+                // Verify all needed symbols are identical
+                let start_index = stack.len() - needed;
+                if stack[start_index..].iter().all(|s| *s == last) {
+                    stack.truncate(start_index);
+                    stack.push(last.next_magnitude());
+                    continue;
                 }
             }
             break;
-        }
-    }
-
-    fn next_symbol(&self, s: Symbol) -> Symbol {
-        match s.base {
-            BaseSymbol::I => Symbol::new(BaseSymbol::V, s.vinculum),
-            BaseSymbol::V => Symbol::new(BaseSymbol::X, s.vinculum),
-            BaseSymbol::X => Symbol::new(BaseSymbol::L, s.vinculum),
-            BaseSymbol::L => Symbol::new(BaseSymbol::C, s.vinculum),
-            BaseSymbol::C => Symbol::new(BaseSymbol::D, s.vinculum),
-            BaseSymbol::D => Symbol::new(BaseSymbol::M, s.vinculum),
-            BaseSymbol::M => Symbol::new(BaseSymbol::V, s.vinculum + 1), // M -> (V) implies 5000? No.
-                                                                         // Wait. 5 M = 5000. (V) = 5000. Correct.
-                                                                         // But 2 D = M (1000). Correct.
         }
     }
 }
