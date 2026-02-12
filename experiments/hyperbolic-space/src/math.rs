@@ -95,4 +95,15 @@ mod tests {
         // Should be 1.0
         assert_relative_eq!(mag_sq, 1.0, epsilon = 1e-5);
     }
+
+    #[test]
+    fn test_boost_overflow() {
+        // Boost magnitude > 88.0 causes overflow in f32 exp/cosh/sinh
+        let displacement = Vec3::new(100.0, 0.0, 0.0);
+        let m = boost(displacement);
+
+        // Havoc: We expect this to fail (produce Infinity)
+        // Proving the system is fragile to large inputs.
+        assert!(!m.w.w.is_finite(), "Expected overflow/infinity for large input, but got finite value");
+    }
 }
