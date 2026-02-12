@@ -984,3 +984,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/spqr-rsa
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Scribes are calculating. RSA encryption performed with Roman Numerals. Additive notation normalization drives the math. The tablets are carved.
+
+### [Concentration Level: FRESH] - Location: experiments/heap-fungus
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The forest floor is hungry. Memory allocations are dropping like fruit. The Mark-and-Sweep war has begun.
