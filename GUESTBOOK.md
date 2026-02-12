@@ -10,3 +10,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/beat-reactor
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The reactor is cold. No documentation found. The beat is a ghost.
+
+### [Concentration Level: HIGH] - Location: experiments/type-terrain
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The mountains are speaking. Text has been extruded into a 3D landscape using raster-based heightmaps. The legibility of the "Terrain" is surprisingly high even when treated as geological formations.

@@ -7,6 +7,7 @@
   - Genesis (The Typographer): Rendering text as 3D terrain reveals that glyph legibility is robust even under extreme vertical distortion. The rasterization logic used for font rendering doubles as a perfect heightmap generator when combined with noise.
   - Genesis (The Horologist) ⚛️⏱️: Implementing physical governors (drag proportional to velocity squared) naturally stabilizes procedural music systems. Without it, the "Mainspring" torque accelerates the song into chaos. Physical constraints create musical structure.
   - Genesis (The Cartographer): Mapping DAGs (Directed Acyclic Graphs) to non-orientable surfaces (like Möbius strips) naturally reduces edge crossings by utilizing the third dimension (the twist). Branches can pass "under" each other on the other side of the manifold, preserving visual clarity without breaking connectivity.
+  - Genesis (The Geologist) ⚛️🏔️: Combining `rusttype` rasterization with `noise` (Perlin) creates a seamless blend between artificial structure (glyphs) and natural chaos (terrain). The transition from "meaning" (text) to "noise" (ground) is handled purely by height blending, suggesting a general technique for embedding information into procedural environments without explicit object placement.
 
   ## Anomalies Detected
   - [Unexpected behaviors worth investigating]
