@@ -22,6 +22,7 @@ pub struct Neuron {
     pub e_l: f32,
 
     pub i_inj: f32,
+    pub last_spike: u64,
 }
 
 impl Neuron {
@@ -39,10 +40,11 @@ impl Neuron {
             e_k: -77.0,
             e_l: -54.387,
             i_inj: 0.0,
+            last_spike: 0,
         }
     }
 
-    pub fn step(&mut self, dt: f32) {
+    pub fn step(&mut self, dt: f32, tick: u64) -> bool {
         let v = self.v;
         let alpha_n = if (v + 55.0).abs() < 1e-5 {
             0.1
@@ -77,7 +79,15 @@ impl Neuron {
         self.h += dh * dt;
 
         // Decay injected current to prevent accumulation without input
-        self.i_inj *= 0.9;
+        self.i_inj *= 0.99;
+
+        if self.v > 0.0 {
+            if tick > self.last_spike + 20 {
+                self.last_spike = tick;
+                return true;
+            }
+        }
+        false
     }
 }
 
@@ -164,8 +174,42 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
             }
         }
         OpCode::Axon => {
-            // Placeholder
-            vm.output.push("AXON: Not implemented yet".to_string());
+            // Stack: [ ..., x_source, y_source, x_target, y_target ] (Top)
+            // Popping order: y_target, x_target, y_source, x_source
+            if vm.stack.len() >= 4 {
+                let y_tgt_val = vm.stack.pop().unwrap();
+                let x_tgt_val = vm.stack.pop().unwrap();
+                let y_src_val = vm.stack.pop().unwrap();
+                let x_src_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(ys), Value::Int(xs), Value::Int(yt), Value::Int(xt)) =
+                    (y_src_val, x_src_val, y_tgt_val, x_tgt_val)
+                {
+                    if vm.is_valid_coord(ys, xs) && vm.is_valid_coord(yt, xt) {
+                        let source = (ys as usize, xs as usize);
+                        let target = (yt as usize, xt as usize);
+
+                        if vm.neurons.contains_key(&source) && vm.neurons.contains_key(&target) {
+                            vm.biophysics_synapses
+                                .entry(source)
+                                .or_default()
+                                .push((target, 1.0)); // Default weight 1.0
+                            vm.output.push(format!(
+                                "AXON: Connected ({},{}) -> ({},{})",
+                                xs, ys, xt, yt
+                            ));
+                        } else {
+                            vm.output.push("AXON: Neurons must exist at both ends".to_string());
+                        }
+                    } else {
+                        vm.output.push("AXON: Invalid coordinates".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for axon".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for axon".to_string());
+            }
         }
         _ => {}
     }
