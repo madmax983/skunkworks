@@ -700,6 +700,36 @@ stateDiagram-v2
     Offspring --> [*] : Apoptosis
 ```
 
+### Nova Feature: Holographic Memory (ADR 028)
+
+The Holographic Memory system enables the storage of genetic information as distributed interference patterns, allowing for fuzzy retrieval and resilience to local damage.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant HologramGrid as ComplexGrid
+    participant DNA
+
+    Note over VM: OpCode::Interfere(StrandIdx)
+    VM->>DNA: Get Genes
+    loop Per Gene
+        DNA-->>VM: Gene(Op, Arg)
+        VM->>HologramGrid: Inverse DFT (Add Wave)
+        Note right of HologramGrid: Accumulate Interference
+    end
+
+    Note over VM: OpCode::Refract
+    VM->>HologramGrid: Forward DFT (Extract Frequencies)
+    loop Per Frequency
+        HologramGrid-->>VM: Magnitude & Phase
+        alt Magnitude > Threshold
+            VM->>VM: Phase -> OpCode
+            VM->>VM: Amplitude -> Arg
+            VM->>DNA: Append New Gene
+        end
+    end
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
