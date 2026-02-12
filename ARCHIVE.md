@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **beat-reactor**: Specimen condemned. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Grace period: 24h.
+- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier). Generic "Climber" metaphor. Skeletal implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -124,3 +124,4 @@
 - **text-terra**: Specimen executed. Redundant with `text-erosion`. Static implementation. Biomass returned to the void.
 - **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
 - **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.
+- **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.

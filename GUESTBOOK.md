@@ -14,3 +14,11 @@
 ### [Concentration Level: HIGH] - Location: experiments/origami-spores
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The paper is folding itself. Spores are airborne. Structural integrity at 80% and dropping.
+
+### [Concentration Level: ZERO] - Location: graveyard/beat-reactor
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The reactor has melted down. Documentation remained void. The ghost beat has faded.
+
+### [Concentration Level: HIGH] - Location: experiments/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The cliff is crumbling. The climber is missing. Gravity is taking over.
