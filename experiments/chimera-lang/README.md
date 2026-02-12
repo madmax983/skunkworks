@@ -55,6 +55,11 @@ Strands have a limited lifespan (default: 50 executions). When a strand's telome
 *   `entangle(strand_a, strand_b)`: Creates a quantum link between two strands. Any mutation (random or via `transcribe`) to one strand is instantly propagated to the other.
 *   `decohere(strand_idx)`: Breaks the quantum link for the target strand and its partner.
 
+### Quantum Cybernetics (Nova Feature)
+Links the Holographic genetics with the physical Grid.
+*   `quantum_scribe(threshold)`: Collapses the local Hologram wavefunction into a physical grid character. If magnitude > threshold, phase determines the character.
+*   `quantum_scan(weight)`: Encodes the local physical grid character into the Hologram.
+
 ### Organelles (Nova Feature)
 *   `spawn(type, strand_idx)`: Spawns an active agent (Organelle) at the current grid location. The Organelle executes the code in `strand_idx` independently.
     *   **Types**:

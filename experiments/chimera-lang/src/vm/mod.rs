@@ -205,6 +205,9 @@ pub mod nova_quipu;
 #[cfg(test)]
 mod nova_quipu_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_quantum_scribe_test;
+#[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
 pub mod nova_resonance_war;
@@ -2601,6 +2604,10 @@ impl ChimeraVM {
             OpCode::Hologram => nova_hologram::exec_hologram(self, op, args),
             #[cfg(feature = "nova")]
             OpCode::PhaseMutate => nova_hologram::exec_phase_mutate(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::QuantumScribe => nova_hologram::exec_quantum_scribe(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::QuantumScan => nova_hologram::exec_quantum_scan(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Guild => nova_guild::exec_guild(self),
