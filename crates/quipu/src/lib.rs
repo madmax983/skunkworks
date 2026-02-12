@@ -54,6 +54,20 @@ impl Cord {
         }
         total
     }
+
+    /// Checked integer subtraction. Computes `self - rhs`, returning `None` if underflow occurred.
+    ///
+    /// This is safer than the `Sub` implementation which panics on underflow (since Quipus
+    /// cannot represent negative numbers).
+    pub fn checked_sub(&self, rhs: &Self) -> Option<Self> {
+        let v1 = self.value();
+        let v2 = rhs.value();
+        if v1 < v2 {
+            None
+        } else {
+            Some(Cord::from(v1 - v2))
+        }
+    }
 }
 
 impl From<u64> for Cord {
@@ -216,5 +230,15 @@ mod tests {
         let c2 = Cord::from(25);
         let diff = c1 - c2;
         assert_eq!(diff.value(), 75);
+    }
+
+    #[test]
+    fn test_checked_sub() {
+        let c1 = Cord::from(50);
+        let c2 = Cord::from(20);
+        let c3 = Cord::from(60);
+
+        assert_eq!(c1.checked_sub(&c2).unwrap().value(), 30);
+        assert!(c1.checked_sub(&c3).is_none());
     }
 }

@@ -43,16 +43,28 @@ fn test_oscillator_coupling() {
     let mut angles = Vec::new();
     for _ in 0..100 {
         world.step();
-        let body = world.rigid_body_set.get(world.integrators[idx_y].output_handle).unwrap();
+        let body = world
+            .rigid_body_set
+            .get(world.integrators[idx_y].output_handle)
+            .unwrap();
         angles.push(body.rotation().angle());
     }
 
     // Check for change
-    assert!(angles.last().unwrap() != angles.first().unwrap(), "Oscillator should move");
+    assert!(
+        angles.last().unwrap() != angles.first().unwrap(),
+        "Oscillator should move"
+    );
 
     // Check if ball moved (Value oscillated)
-    let ball = world.rigid_body_set.get(world.integrators[idx_y].ball_handle).unwrap();
+    let ball = world
+        .rigid_body_set
+        .get(world.integrators[idx_y].ball_handle)
+        .unwrap();
     let final_pos = ball.translation().x;
-    assert!((final_pos - (-15.0)).abs() > 0.01, "Ball should move from initial position (relative to disk center)");
+    assert!(
+        (final_pos - (-15.0)).abs() > 0.01,
+        "Ball should move from initial position (relative to disk center)"
+    );
     // Initial: -20.0 + 5.0 = -15.0.
 }

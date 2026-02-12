@@ -634,6 +634,10 @@ impl Topology {
     /// assert_eq!(klein.normalize(-1, 2, 10, 10), Some((9, 7)));
     /// ```
     pub fn normalize(&self, y: i64, x: i64, width: usize, height: usize) -> Option<(usize, usize)> {
+        if width == 0 || height == 0 {
+            return None;
+        }
+
         let w = width as i64;
         let h = height as i64;
         match self {

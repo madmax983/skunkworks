@@ -1,5 +1,5 @@
-use rapier2d::prelude::*;
 use nalgebra::Vector2;
+use rapier2d::prelude::*;
 
 pub struct MechanicalIntegrator {
     pub disk_handle: RigidBodyHandle,
@@ -51,7 +51,8 @@ impl PhysicsWorld {
             .build();
         let disk_handle = self.rigid_body_set.insert(disk_rb);
         let disk_collider = ColliderBuilder::ball(10.0).sensor(true).build(); // Sensor so ball doesn't collide physically
-        self.collider_set.insert_with_parent(disk_collider, disk_handle, &mut self.rigid_body_set);
+        self.collider_set
+            .insert_with_parent(disk_collider, disk_handle, &mut self.rigid_body_set);
 
         // Ball (Value) - Dynamic, driven by couplings or external force
         // We constrain it to Y=0 relative to disk center (only moving in X)
@@ -71,7 +72,8 @@ impl PhysicsWorld {
         // But for now, let's just set linear velocity in X and 0 in Y every frame.
 
         let ball_collider = ColliderBuilder::ball(1.0).build();
-        self.collider_set.insert_with_parent(ball_collider, ball_handle, &mut self.rigid_body_set);
+        self.collider_set
+            .insert_with_parent(ball_collider, ball_handle, &mut self.rigid_body_set);
 
         // Output Cylinder - Dynamic, driven by integrator logic
         let output_rb = RigidBodyBuilder::dynamic()
@@ -80,7 +82,11 @@ impl PhysicsWorld {
             .build();
         let output_handle = self.rigid_body_set.insert(output_rb);
         let output_collider = ColliderBuilder::cuboid(2.0, 5.0).build();
-        self.collider_set.insert_with_parent(output_collider, output_handle, &mut self.rigid_body_set);
+        self.collider_set.insert_with_parent(
+            output_collider,
+            output_handle,
+            &mut self.rigid_body_set,
+        );
 
         self.integrators.push(MechanicalIntegrator {
             disk_handle,
@@ -102,7 +108,7 @@ impl PhysicsWorld {
         for integrator in &self.integrators {
             if let (Some(disk), Some(ball)) = (
                 self.rigid_body_set.get(integrator.disk_handle),
-                self.rigid_body_set.get(integrator.ball_handle)
+                self.rigid_body_set.get(integrator.ball_handle),
             ) {
                 let w_disk = disk.angvel();
                 let r_ball = ball.translation().x - integrator.disk_center.x;
@@ -125,12 +131,15 @@ impl PhysicsWorld {
         // 2. Coupling Logic: Drive Target Ball based on Source Output
         let mut ball_updates = Vec::new();
         for (source_idx, target_idx, gain) in &self.couplings {
-             if let Some(source_body) = self.rigid_body_set.get(self.integrators[*source_idx].output_handle) {
-                 let w_source = source_body.angvel();
-                 // Target ball velocity = w_source * gain
-                 let v_target = w_source * *gain;
-                 ball_updates.push((self.integrators[*target_idx].ball_handle, v_target));
-             }
+            if let Some(source_body) = self
+                .rigid_body_set
+                .get(self.integrators[*source_idx].output_handle)
+            {
+                let w_source = source_body.angvel();
+                // Target ball velocity = w_source * gain
+                let v_target = w_source * *gain;
+                ball_updates.push((self.integrators[*target_idx].ball_handle, v_target));
+            }
         }
 
         // Apply ball updates
