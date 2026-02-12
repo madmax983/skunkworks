@@ -26,9 +26,11 @@ impl Universe {
         self.bodies.push(body);
     }
 
-    fn calculate_forces(&self) -> Vec<Vec2> {
+    pub fn step(&mut self, dt: f32) {
         let n = self.bodies.len();
         let mut forces = vec![Vec2::ZERO; n];
+
+        // 1. Calculate forces (O(N^2) but optimized to N(N-1)/2)
         for i in 0..n {
             for j in (i + 1)..n {
                 let r_vec = self.bodies[j].pos - self.bodies[i].pos;
@@ -42,19 +44,11 @@ impl Universe {
                 }
             }
         }
-        forces
-    }
 
-    pub fn step(&mut self, dt: f32) {
-        let n = self.bodies.len();
-
-        // 1. Calculate initial forces
-        let forces = self.calculate_forces();
-
-        // 2. First half-kick (velocity) and drift (position)
+        // 2. Symplectic Euler Integration
         for i in 0..n {
             let acc = forces[i] / self.bodies[i].mass;
-            self.bodies[i].vel += acc * 0.5 * dt;
+            self.bodies[i].vel += acc * dt;
             let vel = self.bodies[i].vel;
             self.bodies[i].pos += vel * dt;
 
@@ -64,15 +58,6 @@ impl Universe {
             }
             let pos = self.bodies[i].pos;
             self.bodies[i].trail.push_back(pos);
-        }
-
-        // 3. Calculate final forces (at new positions)
-        let new_forces = self.calculate_forces();
-
-        // 4. Second half-kick (velocity)
-        for i in 0..n {
-            let acc = new_forces[i] / self.bodies[i].mass;
-            self.bodies[i].vel += acc * 0.5 * dt;
         }
     }
 

@@ -3,7 +3,7 @@ use macroquad::prelude::*;
 mod graph;
 use graph::Graph;
 mod glitch;
-use glitch::TextGlitcher;
+use glitch::corrupt;
 
 #[macroquad::main("Mnemonic Rot")]
 async fn main() {
@@ -20,7 +20,6 @@ async fn main() {
     }
 
     let mut entropy = 0.0;
-    let mut hovered_node: Option<usize> = None;
 
     // Camera
     let mut offset = vec2(0.0, 0.0);
@@ -91,7 +90,7 @@ async fn main() {
 
         // 2. Apply Forces & Decay
         let dt = get_frame_time();
-        hovered_node = None;
+        let mut hovered_node: Option<usize> = None;
         let world_mouse = (mouse_vec - offset) / zoom;
 
         for (i, node) in graph.nodes.iter_mut().enumerate() {
@@ -189,7 +188,7 @@ async fn main() {
 
             // Content
             let intensity = 1.0 - node.health;
-            let corrupted = TextGlitcher::corrupt(&node.content, intensity);
+            let corrupted = corrupt(&node.content, intensity);
 
             // Render text lines
             let lines: Vec<&str> = corrupted.lines().take(35).collect();

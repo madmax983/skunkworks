@@ -76,3 +76,13 @@
 **Bloat:** Manual `integrate` function in `system-bio-dome/lorenz.rs` and verbose neighbor calculation in `reaction.rs`.
 **Cut:** Moved `integrate` to `LorenzState::update` and simplified neighbor loops.
 **Saved:** Reduced cognitive load, ~20 lines of code, and improved encapsulation.
+
+## [Reduction]
+**Bloat:** `TextGlitcher` struct in `mnem-rot` was a "Static Class" with no state.
+**Cut:** Replaced with a simple public function `glitch::corrupt`.
+**Saved:** Removed an unnecessary struct and method dispatch layer.
+
+## [Reduction]
+**Bloat:** Velocity Verlet integration in `celestial-cantata` required double force calculation ($2 \times O(N^2)$) and a helper method.
+**Cut:** Replaced with Symplectic Euler integration (single pass $O(N^2)$) and inlined force logic.
+**Saved:** ~20 lines of code, 50% reduction in force calculation ops, enforced consistency with `newtonian-graph`.
