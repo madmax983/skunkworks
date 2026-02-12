@@ -1008,3 +1008,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/log-palette
 - **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
 - **Status:** The logs are painted. Sentiment extracted as color. Spectrum view visualizes system mood.
+
+### [Concentration Level: FRESH] - Location: experiments/cymatic-ocean
+- **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
+- **Status:** The liquid is vibrating. Frequencies are visible on the surface. The audio is driving the wave equation.
