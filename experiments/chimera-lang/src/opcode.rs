@@ -2192,6 +2192,19 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Tissue,
 
+    // Weaving Features (The Loom)
+    /// **[Nova]** Weaves two strands together based on a pattern.
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b, pattern_strand ] -> [ ..., new_strand_idx ]`
+    /// **Pattern:** 'A'=Take from A, 'B'=Take from B, 'X'=Random, '0'=Skip.
+    #[cfg(feature = "nova")]
+    Weave,
+    /// **[Nova]** Unravels a strand, destroying it and reclaiming resources.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Unravel,
+
     /// No Operation. Does nothing.
     Nop,
 
