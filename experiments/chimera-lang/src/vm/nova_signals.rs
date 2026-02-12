@@ -98,6 +98,13 @@ struct NeuronStimulus {
     amount: f32,
 }
 
+struct HoloWrite {
+    y: usize,
+    x: usize,
+    re: Option<f64>,
+    im: Option<f64>,
+}
+
 struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
@@ -108,6 +115,7 @@ struct SignalContext {
     mutation_requests: Vec<MutationRequest>,
     ether_writes: Vec<EtherWrite>,
     ether_reads: Vec<EtherRead>,
+    holo_writes: Vec<HoloWrite>,
     #[cfg(feature = "biophysics")]
     neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
@@ -126,6 +134,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         mutation_requests: Vec::new(),
         ether_writes: Vec::new(),
         ether_reads: Vec::new(),
+        holo_writes: Vec::new(),
         #[cfg(feature = "biophysics")]
         neuron_stimuli: Vec::new(),
         executions: Vec::new(),
@@ -286,6 +295,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
                 '#' => exec_catalyze(vm, y, x, signal, &mut ctx),
                 '$' => exec_stack_io(vm, y, x, signal, &mut ctx),
+                '~' => exec_wave(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -344,6 +354,15 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 3.5 Apply Resonance, Entropy & Mutations
     for w in ctx.resonance_writes {
         vm.resonance_grid[w.y][w.x] = (w.freq, w.amp);
+    }
+
+    for w in ctx.holo_writes {
+        if let Some(re) = w.re {
+            vm.hologram_grid[w.y][w.x].0 = re;
+        }
+        if let Some(im) = w.im {
+            vm.hologram_grid[w.y][w.x].1 = im;
+        }
     }
 
     #[cfg(feature = "biophysics")]
@@ -949,5 +968,65 @@ fn exec_ether_recv(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Sig
 fn exec_project_signal(_vm: &ChimeraVM, _y: usize, _x: usize, signal: u8, ctx: &mut SignalContext) {
     if signal > 0 {
         ctx.executions.push((OpCode::Project, vec![]));
+    }
+}
+
+fn exec_wave(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // ~: Wave Operator (Hologram Interface)
+    // North: Mode (0=ReadRe, 1=ReadIm, 2=WriteRe, 3=WriteIm)
+    // East: Value (for Write, scaled by 100)
+    // South: Output (for Read, scaled by 100)
+
+    let mode = peek(vm, y, x, -1, 0).unwrap_or(0);
+
+    match mode {
+        0 => {
+            // Read Re
+            let val = vm.hologram_grid[y][x].0 * 100.0;
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.grid_writes.push(GridWrite {
+                    y: sy,
+                    x: sx,
+                    val: Value::Str(val_to_char(val as i64).to_string()),
+                });
+            }
+        }
+        1 => {
+            // Read Im
+            let val = vm.hologram_grid[y][x].1 * 100.0;
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.grid_writes.push(GridWrite {
+                    y: sy,
+                    x: sx,
+                    val: Value::Str(val_to_char(val as i64).to_string()),
+                });
+            }
+        }
+        2 => {
+            // Write Re
+            if let Some(val) = peek(vm, y, x, 0, 1) {
+                ctx.holo_writes.push(HoloWrite {
+                    y,
+                    x,
+                    re: Some(val as f64 / 100.0),
+                    im: None,
+                });
+            }
+        }
+        3 => {
+            // Write Im
+            if let Some(val) = peek(vm, y, x, 0, 1) {
+                ctx.holo_writes.push(HoloWrite {
+                    y,
+                    x,
+                    re: None,
+                    im: Some(val as f64 / 100.0),
+                });
+            }
+        }
+        _ => {}
     }
 }

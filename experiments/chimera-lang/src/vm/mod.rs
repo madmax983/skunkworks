@@ -3736,6 +3736,25 @@ impl ChimeraVM {
             return;
         }
 
+        #[cfg(feature = "nova")]
+        if self.hologram_mode {
+            nova_hologram::mutate_hologram(self, 0.5);
+            let new_genes = nova_hologram::refract_genes(self);
+            if !new_genes.is_empty() {
+                let helix_len = self.dna.helix.strands.len();
+                if helix_len > 0 {
+                    let mut rng = rand::thread_rng();
+                    let target_idx = rng.gen_range(0..helix_len);
+                    self.dna.helix.strands[target_idx] = crate::ast::Strand { genes: new_genes };
+                    self.output.push(format!(
+                        "HOLOGRAPHIC MUTATION: Refracted strand {}",
+                        target_idx
+                    ));
+                }
+            }
+            return;
+        }
+
         let mut rng = rand::thread_rng();
         let helix_len = self.dna.helix.strands.len();
         if helix_len == 0 {

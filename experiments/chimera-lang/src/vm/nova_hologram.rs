@@ -187,7 +187,24 @@ pub fn exec_refract(
 }
 
 #[cfg(feature = "nova")]
-fn refract_genes(vm: &ChimeraVM) -> Vec<Gene> {
+pub fn mutate_hologram(vm: &mut ChimeraVM, intensity: f64) {
+    let mut rng = rand::thread_rng();
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            let (re, im) = vm.hologram_grid[y][x];
+            let magnitude = (re * re + im * im).sqrt();
+            if magnitude > 0.001 {
+                let phase = im.atan2(re);
+                let noise = rng.gen_range(-intensity..intensity);
+                let new_phase = phase + noise;
+                vm.hologram_grid[y][x] = (magnitude * new_phase.cos(), magnitude * new_phase.sin());
+            }
+        }
+    }
+}
+
+#[cfg(feature = "nova")]
+pub fn refract_genes(vm: &ChimeraVM) -> Vec<Gene> {
     let op_codes: Vec<OpCode> = OpCode::iter().collect();
     let op_count = op_codes.len() as f64;
     let n_grid = GRID_SIZE as f64;
