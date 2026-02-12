@@ -7603,12 +7603,14 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             "Chronostasis Timer: {} ticks",
             vm.chronostasis_timer
         )),
+        Line::from(format!("Chronos Integrity: {:.1}%", vm.chronos_integrity)),
+        Line::from(format!("Active Time Loops: {}", vm.paradox_loops.len())),
         Line::from(" "),
         Line::from(format!("Cursor: {},{}", cx, cy)),
         Line::from(" "),
         Line::from("Opcodes:"),
         Line::from("  TimeWarp(factor, radius)"),
-        Line::from("  Chronostasis(ticks)"),
+        Line::from("  TimeLoop(id) / Paradox(id, val)"),
         Line::from("  Retrograde(ticks)"),
         Line::from("  Sporulate / Germinate"),
     ];
@@ -7630,6 +7632,16 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     if echoes.is_empty() {
         echoes.push(ListItem::new("No history recorded."));
+    }
+
+    // Add Active Loops
+    if !vm.paradox_loops.is_empty() {
+        echoes.push(ListItem::new(""));
+        echoes
+            .push(ListItem::new("--- Active Loops ---").style(Style::default().fg(Color::Yellow)));
+        for (id, idx) in &vm.paradox_loops {
+            echoes.push(ListItem::new(format!("ID {}: Spore #{}", id, idx)));
+        }
     }
 
     let echo_list = List::new(echoes).block(

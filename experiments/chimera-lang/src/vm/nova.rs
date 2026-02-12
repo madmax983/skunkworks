@@ -1217,7 +1217,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         OpCode::Sporulate => super::nova_chronos::exec_sporulate(vm),
+        OpCode::TimeLoop => super::nova_chronos::exec_time_loop(vm),
         OpCode::Germinate => super::nova_chronos::exec_germinate(vm),
+        OpCode::Paradox => super::nova_chronos::exec_paradox(vm),
         OpCode::Retrograde => super::nova_chronos::exec_retrograde(vm),
         OpCode::Incubate => super::nova_genetics::exec_incubate(vm),
         OpCode::Methylate => super::nova_genetics::exec_methylate(vm),

@@ -402,6 +402,19 @@ pub enum OpCode {
     /// **Effect:** Reverts *everything* (Grid, DNA, Stack) to the spore's state.
     #[cfg(feature = "nova")]
     Germinate,
+    /// **[Nova]** Creates a named Time Loop anchor.
+    ///
+    /// **Stack:** `[ ..., loop_id ] -> [ ... ]`
+    /// **Effect:** Saves state to a specific slot.
+    #[cfg(feature = "nova")]
+    TimeLoop,
+    /// **[Nova]** Triggers a Paradox, rewinding time but keeping a value.
+    ///
+    /// **Stack:** `[ ..., loop_id, value ] -> [ ..., value ]`
+    /// **Effect:** Restores state from loop_id, but pushes value to stack.
+    /// **Risk:** Increases Paradox counter. Too much Paradox causes issues.
+    #[cfg(feature = "nova")]
+    Paradox,
     /// **[Nova]** Splices a strand from a saved Spore (timeline) into the current genome.
     ///
     /// **Stack:** `[ ..., spore_id, strand_idx ] -> [ ..., new_strand_idx ]`

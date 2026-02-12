@@ -6,20 +6,20 @@ pub struct HolographicMemory {
     pub width: usize,
     pub height: usize,
     pub memory: Vec<Complex<f64>>, // Accumulated interference pattern (Frequency Domain? No, usually spatial)
-    // Wait, in digital holography, we usually record the hologram in the spatial domain (CCD).
-    // The hologram IS the interference pattern.
-    // H(x,y) = |O(x,y) + R(x,y)|^2
-    // But here we want to store it in frequency domain?
-    // h(u,v) = FFT(H(x,y))?
-    // Let's stick to the `hologram-text` approach which stores `data` as Complex<f64> which is the FFT.
-    // In `hologram-text`, `from_text` does:
-    // 1. Create spatial grid.
-    // 2. Modulate with Reference Beam (phase shift).
-    // 3. FFT.
-    // So `data` is the FFT of (Object * Reference).
-    // This is basically storing the Object spectrum shifted by the carrier frequency.
+                                   // Wait, in digital holography, we usually record the hologram in the spatial domain (CCD).
+                                   // The hologram IS the interference pattern.
+                                   // H(x,y) = |O(x,y) + R(x,y)|^2
+                                   // But here we want to store it in frequency domain?
+                                   // h(u,v) = FFT(H(x,y))?
+                                   // Let's stick to the `hologram-text` approach which stores `data` as Complex<f64> which is the FFT.
+                                   // In `hologram-text`, `from_text` does:
+                                   // 1. Create spatial grid.
+                                   // 2. Modulate with Reference Beam (phase shift).
+                                   // 3. FFT.
+                                   // So `data` is the FFT of (Object * Reference).
+                                   // This is basically storing the Object spectrum shifted by the carrier frequency.
 
-    // So `memory` here will be the sum of these FFTs.
+                                   // So `memory` here will be the sum of these FFTs.
 }
 
 impl HolographicMemory {

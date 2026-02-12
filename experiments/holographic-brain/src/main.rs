@@ -14,7 +14,10 @@ use ratatui::{
     },
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 mod brain;
 mod hologram;
@@ -113,14 +116,23 @@ impl App {
             .split(chunks[1]);
 
         // Header
-        let title = Paragraph::new(" HOLOGRAPHIC BRAIN - Neural Network with Frequency Domain Memory ")
-            .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
-            .block(Block::default().borders(Borders::ALL));
+        let title =
+            Paragraph::new(" HOLOGRAPHIC BRAIN - Neural Network with Frequency Domain Memory ")
+                .style(
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                )
+                .block(Block::default().borders(Borders::ALL));
         f.render_widget(title, chunks[0]);
 
         // 1. Neurons (Spatial Domain)
         let canvas_neurons = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title(" Neurons (Spatial) "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Neurons (Spatial) "),
+            )
             .marker(ratatui::symbols::Marker::Block)
             .x_bounds([0.0, self.brain.width as f64])
             .y_bounds([0.0, self.brain.height as f64])
@@ -159,7 +171,11 @@ impl App {
         let max_spec = spectrum.iter().cloned().fold(0.0_f64, f64::max);
 
         let canvas_hologram = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title(" Hologram (Frequency) "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Hologram (Frequency) "),
+            )
             .marker(ratatui::symbols::Marker::Block) // Braille is finer but Block is brighter
             .x_bounds([0.0, self.brain.width as f64])
             .y_bounds([0.0, self.brain.height as f64])
@@ -184,7 +200,11 @@ impl App {
         let max_recon = reconstruction.iter().cloned().fold(0.0_f64, f64::max);
 
         let canvas_recon = Canvas::default()
-            .block(Block::default().borders(Borders::ALL).title(" Reconstruction (Ghost) "))
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(" Reconstruction (Ghost) "),
+            )
             .marker(ratatui::symbols::Marker::Block)
             .x_bounds([0.0, self.brain.width as f64])
             .y_bounds([0.0, self.brain.height as f64])

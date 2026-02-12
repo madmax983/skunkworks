@@ -60,7 +60,45 @@ pub fn exec_sporulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         return None;
     }
 
-    let spore = Spore {
+    let spore = create_spore(vm);
+    let id = vm.spores.len();
+    vm.spores.push(spore);
+    vm.stack.push(Value::Int(id as i64));
+    vm.energy = vm.energy.saturating_sub(50);
+    vm.output.push(format!("SPORULATE: Created Spore {}", id));
+    None
+}
+
+pub fn exec_time_loop(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if let Some(val) = vm.stack.pop() {
+        if let Value::Int(loop_id) = val {
+            if vm.spores.len() >= crate::vm::MAX_SPORES {
+                vm.output.push("Error: Spore limit exceeded".to_string());
+                return None;
+            }
+
+            let spore = create_spore(vm);
+            let idx = vm.spores.len();
+            vm.spores.push(spore);
+            vm.paradox_loops.insert(loop_id, idx);
+            vm.energy = vm.energy.saturating_sub(50);
+            vm.output.push(format!(
+                "TIME_LOOP: Anchor {} set at index {}",
+                loop_id, idx
+            ));
+        } else {
+            vm.output
+                .push("Error: Type mismatch for time_loop".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for time_loop".to_string());
+    }
+    None
+}
+
+fn create_spore(vm: &ChimeraVM) -> Spore {
+    Spore {
         phase: vm.phase,
         chirality: vm.chirality,
         dna: vm.dna.clone(),
@@ -104,14 +142,54 @@ pub fn exec_sporulate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         synapse_map: vm.synapse_map.clone(),
         #[cfg(feature = "cortex")]
         activation_levels: vm.activation_levels.clone(),
-    };
+    }
+}
 
-    let id = vm.spores.len();
-    vm.spores.push(spore);
-    vm.stack.push(Value::Int(id as i64));
-    vm.energy = vm.energy.saturating_sub(50);
-    vm.output.push(format!("SPORULATE: Created Spore {}", id));
-    None
+fn restore_state(vm: &mut ChimeraVM, spore: &Spore) {
+    vm.phase = spore.phase;
+    vm.chirality = spore.chirality;
+    vm.dna = spore.dna.clone();
+    vm.stack = spore.stack.clone();
+    vm.ip = spore.ip;
+    vm.output = spore.output.clone();
+    vm.halted = spore.halted;
+    vm.energy = spore.energy;
+    vm.grid = spore.grid.clone();
+    vm.chaos_mode = spore.chaos_mode;
+    vm.recursion_depth = spore.recursion_depth;
+    vm.context_loc = spore.context_loc;
+    vm.epigenome = spore.epigenome.clone();
+    vm.telomeres = spore.telomeres.clone();
+    vm.hormone_grid = spore.hormone_grid.clone();
+    vm.waste_grid = spore.waste_grid.clone();
+    vm.mutagen_grid = spore.mutagen_grid.clone();
+    vm.light_grid = spore.light_grid.clone();
+    vm.call_stack = spore.call_stack.clone();
+    vm.input_buffer = spore.input_buffer.clone();
+    vm.receptors = spore.receptors.clone();
+    vm.entangled_pairs = spore.entangled_pairs.clone();
+    vm.portals = spore.portals.clone();
+    vm.membranes = spore.membranes.clone();
+    vm.chroma_grid = spore.chroma_grid.clone();
+    vm.sonar_target = spore.sonar_target;
+    vm.symbiotes = spore.symbiotes.clone();
+    vm.ether = spore.ether.clone();
+    vm.reflexes = spore.reflexes.clone();
+    vm.remap_table = spore.remap_table.clone();
+    vm.direction = spore.direction;
+    vm.mycelium = spore.mycelium.clone();
+    vm.immune_system = spore.immune_system.clone();
+    vm.dictionary = spore.dictionary.clone();
+    vm.gravity_grid = spore.gravity_grid.clone();
+    vm.wind_grid = spore.wind_grid.clone();
+    vm.moisture_grid = spore.moisture_grid.clone();
+    vm.entropy_grid = spore.entropy_grid.clone();
+    vm.relativity_mode = spore.relativity_mode;
+    #[cfg(feature = "cortex")]
+    {
+        vm.synapse_map = spore.synapse_map.clone();
+        vm.activation_levels = spore.activation_levels.clone();
+    }
 }
 
 pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
@@ -119,52 +197,9 @@ pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let Value::Int(id) = val {
             let idx = id as usize;
             if idx < vm.spores.len() {
-                let spore = &vm.spores[idx];
-                vm.phase = spore.phase;
-                vm.chirality = spore.chirality;
-                vm.dna = spore.dna.clone();
-                vm.stack = spore.stack.clone();
-                vm.ip = spore.ip;
-                vm.output = spore.output.clone();
-                vm.halted = spore.halted;
-                vm.energy = spore.energy;
-                vm.grid = spore.grid.clone();
-                vm.chaos_mode = spore.chaos_mode;
-                vm.recursion_depth = spore.recursion_depth;
-                vm.context_loc = spore.context_loc;
-                vm.epigenome = spore.epigenome.clone();
-                vm.telomeres = spore.telomeres.clone();
-                vm.hormone_grid = spore.hormone_grid.clone();
-                vm.waste_grid = spore.waste_grid.clone();
-                vm.mutagen_grid = spore.mutagen_grid.clone();
-                vm.light_grid = spore.light_grid.clone();
-                vm.call_stack = spore.call_stack.clone();
-                vm.input_buffer = spore.input_buffer.clone();
-                vm.receptors = spore.receptors.clone();
-                vm.entangled_pairs = spore.entangled_pairs.clone();
-                vm.portals = spore.portals.clone();
-                vm.membranes = spore.membranes.clone();
-                vm.chroma_grid = spore.chroma_grid.clone();
-                vm.sonar_target = spore.sonar_target;
-                vm.symbiotes = spore.symbiotes.clone();
-                vm.ether = spore.ether.clone();
-                vm.reflexes = spore.reflexes.clone();
-                vm.remap_table = spore.remap_table.clone();
-                vm.direction = spore.direction;
-                vm.mycelium = spore.mycelium.clone();
-                vm.immune_system = spore.immune_system.clone();
-                vm.dictionary = spore.dictionary.clone();
-                vm.gravity_grid = spore.gravity_grid.clone();
-                vm.wind_grid = spore.wind_grid.clone();
-                vm.moisture_grid = spore.moisture_grid.clone();
-                vm.entropy_grid = spore.entropy_grid.clone();
-                vm.relativity_mode = spore.relativity_mode;
-                #[cfg(feature = "cortex")]
-                {
-                    vm.synapse_map = spore.synapse_map.clone();
-                    vm.activation_levels = spore.activation_levels.clone();
-                }
-
+                // Cloning the spore so we can mutate vm
+                let spore = vm.spores[idx].clone();
+                restore_state(vm, &spore);
                 vm.output.push(format!("GERMINATE: Restored Spore {}", idx));
             } else {
                 vm.output
@@ -177,6 +212,58 @@ pub fn exec_germinate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     } else {
         vm.output
             .push("Error: Stack underflow for germinate".to_string());
+    }
+    None
+}
+
+pub fn exec_paradox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let val = vm.stack.pop().unwrap();
+        let id_val = vm.stack.pop().unwrap();
+
+        if let Value::Int(loop_id) = id_val {
+            if let Some(&idx) = vm.paradox_loops.get(&loop_id) {
+                if idx < vm.spores.len() {
+                    // Clone spore to restore
+                    let spore = vm.spores[idx].clone();
+
+                    // Check integrity cost
+                    // Cost increases with stack depth of value being sent back?
+                    // For now, flat cost + slight recursive cost
+                    let entropy_cost = 5.0 + (val.depth() as f64);
+
+                    if vm.chronos_integrity <= entropy_cost {
+                        vm.output
+                            .push("PARADOX FAILURE: Chronos Integrity Critical".to_string());
+                        vm.halted = true; // Timeline collapse
+                        return None;
+                    }
+
+                    restore_state(vm, &spore);
+
+                    // Apply Paradox Effects
+                    vm.stack.push(val); // Push the future knowledge
+                    vm.chronos_integrity -= entropy_cost;
+
+                    vm.output.push(format!(
+                        "PARADOX: Timeline Rewound to Anchor {} (Integrity: {:.1}%)",
+                        loop_id, vm.chronos_integrity
+                    ));
+                } else {
+                    vm.output
+                        .push("Error: Invalid Spore Index in Paradox Map".to_string());
+                }
+            } else {
+                vm.output
+                    .push(format!("Error: Unknown Time Loop ID {}", loop_id));
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for paradox ID".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for paradox".to_string());
     }
     None
 }

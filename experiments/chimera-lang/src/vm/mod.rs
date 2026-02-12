@@ -429,6 +429,10 @@ pub struct ChimeraVM {
     pub pheromones: Vec<nova_scent::Scent>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
+    #[cfg(feature = "nova")]
+    pub paradox_loops: HashMap<i64, usize>,
+    #[cfg(feature = "nova")]
+    pub chronos_integrity: f64,
     pub call_stack: Vec<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub input_buffer: VecDeque<char>,
@@ -713,6 +717,10 @@ impl ChimeraVM {
             pheromones: Vec::new(),
             #[cfg(feature = "nova")]
             spores: Vec::new(),
+            #[cfg(feature = "nova")]
+            paradox_loops: HashMap::new(),
+            #[cfg(feature = "nova")]
+            chronos_integrity: 100.0,
             call_stack: Vec::new(),
             #[cfg(feature = "nova")]
             input_buffer: VecDeque::new(),
@@ -2516,7 +2524,9 @@ impl ChimeraVM {
             | OpCode::Identity
             | OpCode::Differentiate
             | OpCode::Sporulate
+            | OpCode::TimeLoop
             | OpCode::Germinate
+            | OpCode::Paradox
             | OpCode::Spawn
             | OpCode::Incubate
             | OpCode::Methylate
