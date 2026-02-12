@@ -10,3 +10,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/beat-reactor
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The reactor is cold. No documentation found. The beat is a ghost.
+
+### [Concentration Level: HIGH] - Location: experiments/origami-spores
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The paper is folding itself. Spores are airborne. Structural integrity at 80% and dropping.

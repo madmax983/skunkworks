@@ -783,18 +783,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A mechanical differential analyzer driven by Inca Quipu cords.
 - **Novel trait**: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
 - **Status**: experiments/quipu-automaton
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Re-verified. Implemented by The Splice Surgeon.
 
 ### holographic-brain
 - **Parents**: experiments/hologram-text + experiments/lattice-brain
 - **Concept**: A neural network where memory is stored as a holographic interference pattern in the frequency domain.
 - **Novel trait**: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
 - **Status**: experiments/holographic-brain
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+- **Evaluation**: Compiles. Re-verified. Implemented by The Splice Surgeon. Verified.
 
 ### chaotic-mycelium
 - **Parents**: experiments/bifurcation-probe + experiments/mycelial-path
 - **Concept**: Fungal growth navigating a Lyapunov Fractal substrate.
 - **Novel trait**: Pathfinding through Chaos. The organism prefers stable mathematical regions ($\lambda < 0$) and avoids chaotic ones.
 - **Status**: experiments/chaotic-mycelium
+- **Evaluation**: Compiles. Re-verified. Implemented by The Splice Surgeon.
+
+### origami-spores
+- **Parents**: experiments/origami-constellation + experiments/social-spores
+- **Concept**: A Miura-ori mesh where viral spores infect particles, altering the structural constraints (stiffness/folding).
+- **Novel trait**: Bio-mechanical Crumpling. The structure decays and folds organically as the infection spreads.
+- **Status**: experiments/origami-spores
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
