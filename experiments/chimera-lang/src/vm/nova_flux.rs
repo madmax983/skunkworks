@@ -149,3 +149,39 @@ pub fn exec_chaos(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     }
     None
 }
+
+pub fn exec_entropy_surge(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    vm.glitch_level = (vm.glitch_level + 0.2).clamp(0.0, 1.0);
+
+    let mut rng = rand::thread_rng();
+    let rows = vm.grid.len();
+    if rows > 0 {
+        let cols = vm.grid[0].len();
+        let ry = rng.gen_range(0..rows);
+        let rx = rng.gen_range(0..cols);
+        vm.entropy_grid[ry][rx] = vm.entropy_grid[ry][rx].saturating_add(50).min(100);
+        vm.output.push(format!(
+            "ENTROPY SURGE: Level {:.2}, Spike at {},{}",
+            vm.glitch_level, rx, ry
+        ));
+    }
+
+    vm.energy = vm.energy.saturating_sub(10);
+    None
+}
+
+pub fn exec_quantum_tunnel(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let s_idx = vm.ip.0;
+    if s_idx < vm.dna.helix.strands.len() {
+        let len = vm.dna.helix.strands[s_idx].genes.len();
+        if len > 0 {
+            let mut rng = rand::thread_rng();
+            let new_gene = rng.gen_range(0..len);
+            vm.energy = vm.energy.saturating_sub(5);
+            vm.output
+                .push(format!("QUANTUM TUNNEL: {} -> gene {}", s_idx, new_gene));
+            return Some((s_idx, new_gene));
+        }
+    }
+    None
+}
