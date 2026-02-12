@@ -1,3 +1,37 @@
+//! # Git Associates 🤝
+//!
+//! A friendly, high-level wrapper around `git2` for analyzing repository history, diffs, and file changes.
+//!
+//! This crate simplifies common git operations needed for visualization tools or analysis scripts,
+//! abstracting away the complexities of `git2`'s low-level API.
+//!
+//! ## Features
+//!
+//! - **History Traversal**: Easily fetch commit logs with metadata.
+//! - **Diff Analysis**: Get detailed stats on insertions, deletions, and file modifications.
+//! - **Working Directory**: Diff the current working directory against `HEAD`.
+//! - **Hunk Extraction**: Parse diffs into structured hunks and lines.
+//!
+//! ## Example
+//!
+//! ```no_run
+//! use git_associates::GitModel;
+//!
+//! fn main() -> anyhow::Result<()> {
+//!     // Open the repository in the current directory
+//!     let model = GitModel::open(".")?;
+//!
+//!     // Fetch the last 10 commits
+//!     let history = model.history(10)?;
+//!
+//!     for commit in history {
+//!         println!("{} - {}", commit.short_hash, commit.message);
+//!     }
+//!
+//!     Ok(())
+//! }
+//! ```
+
 pub mod model;
 
 use anyhow::{Context, Result};
@@ -6,20 +40,51 @@ use git2::{DiffFlags, Repository, Sort};
 use model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
 use std::path::Path;
 
+/// A wrapper around a Git repository that provides high-level analysis methods.
 pub struct GitModel {
     repo: Repository,
 }
 
 impl GitModel {
+    /// Opens a git repository at the specified path.
+    ///
+    /// The path can be the root of the repository or any subdirectory within it.
+    /// This function uses `git2::Repository::discover` to find the git directory.
+    ///
+    /// # Arguments
+    ///
+    /// * `path` - The path to the repository or a subdirectory.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the repository cannot be found or opened.
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
         let repo = Repository::discover(path).context("Failed to discover git repository")?;
         Ok(Self { repo })
     }
 
+    /// Retrieves the commit history with basic metadata.
+    ///
+    /// This method fetches the most recent commits up to the specified limit.
+    /// It does *not* include detailed diff statistics or file changes, making it faster
+    /// than [`history_with_diffs`](Self::history_with_diffs).
+    ///
+    /// # Arguments
+    ///
+    /// * `limit` - The maximum number of commits to retrieve.
     pub fn history(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history_internal(limit, false)
     }
 
+    /// Retrieves the commit history including file diff statistics.
+    ///
+    /// In addition to basic metadata, this method computes the diff for each commit against its parent,
+    /// populating the `stats` and `files` fields of the [`Commit`] struct.
+    ///
+    /// # Performance
+    ///
+    /// This operation is more expensive than [`history`](Self::history) because it involves
+    /// computing diffs for every commit.
     pub fn history_with_diffs(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history_internal(limit, true)
     }
@@ -63,6 +128,10 @@ impl GitModel {
         Ok(commits)
     }
 
+    /// Crawls the commit graph. Alias for [`history`](Self::history).
+    ///
+    /// This method exists primarily for semantic clarity when the intent is to traverse
+    /// the graph structure rather than just list history.
     pub fn crawl_graph(&self, limit: usize) -> Result<Vec<Commit>> {
         self.history(limit)
     }
@@ -93,6 +162,14 @@ impl GitModel {
         ))
     }
 
+    /// Computes the diff between the working directory and the HEAD commit.
+    ///
+    /// This is useful for checking uncommitted changes (both staged and unstaged).
+    /// Untracked files are included in the diff.
+    ///
+    /// # Returns
+    ///
+    /// A [`DiffStats`] object containing details about modified, added, and removed files.
     pub fn diff_workdir(&self) -> Result<DiffStats> {
         let mut diff_opts = git2::DiffOptions::new();
         diff_opts.include_untracked(true);
