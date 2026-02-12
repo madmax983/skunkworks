@@ -194,6 +194,131 @@ classDiagram
     GhostReplayer ..> GhostEvent : Deserializes
 ```
 
+## Shared Domain Logic
+
+Specialized libraries that encapsulate specific domain knowledge or data structures, reused across multiple experiments.
+
+### Quipu Data Structures (crates/quipu)
+
+Encapsulates Inca recording devices (`Knot`, `Cord`, `Quipu`) to ensure consistent representation and behavior (ADR 024).
+
+```mermaid
+classDiagram
+    direction LR
+    class Quipu {
+        +Vec~Cord~ cords
+        +display()
+    }
+
+    class Cord {
+        +Vec~Vec~Knot~~ clusters
+        +value() u64
+        +add(Cord) Cord
+        +sub(Cord) Cord
+    }
+
+    class Knot {
+        <<Enum>>
+        +Simple
+        +Long(u8)
+        +FigureEight
+        +value() u8
+    }
+
+    Quipu *-- Cord : Contains
+    Cord *-- Knot : Contains
+```
+
+### Locus Geometry (crates/locus)
+
+Provides standard 2D vector math and topological wrapping logic for grid-based simulations (ADR 025).
+
+```mermaid
+classDiagram
+    direction LR
+    class Vec2 {
+        +f64 x
+        +f64 y
+        +add()
+        +sub()
+        +magnitude()
+        +normalize()
+        +reflect()
+    }
+
+    class Topology {
+        <<Enum>>
+        +Plane
+        +Torus
+        +KleinBottle
+        +Mobius
+        +normalize(y, x) Option~y, x~
+    }
+
+    Topology ..> Vec2 : Complements
+```
+
+### Market Simulation (crates/market-sim)
+
+Implements a Continuous Double Auction (CDA) using a physics-based particle system (ADR 026).
+
+```mermaid
+classDiagram
+    direction TB
+    class Grid {
+        +Vec~Particle~ cells
+        +update() Vec~TradeEvent~
+    }
+
+    class Particle {
+        <<Enum>>
+        +Bid(buyer_id)
+        +Ask(seller_id)
+        +Trade(age)
+    }
+
+    class TradeEvent {
+        +usize buyer
+        +usize seller
+        +f32 price
+    }
+
+    Grid *-- Particle : Contains
+    Grid ..> TradeEvent : Emits
+```
+
+### Synaptic Physics (crates/synaptic-physics)
+
+Encapsulates the Izhikevich neuron model for biologically plausible neural simulations (ADR 027).
+
+```mermaid
+classDiagram
+    class Izhikevich {
+        +f32 v
+        +f32 u
+        +update(dt, current)
+        +inject(current)
+        +random() Izhikevich
+    }
+```
+
+### Git Associates (crates/git-associates)
+
+Helper utilities for scanning and parsing Git history, used by `tectonic-git`.
+
+```mermaid
+classDiagram
+    class GitAssociates {
+        <<Library>>
+    }
+    class GitScanner {
+        +scan_repo(path)
+        +parse_diffs()
+    }
+
+    GitAssociates *-- GitScanner : Exports
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
