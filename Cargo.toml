@@ -135,6 +135,7 @@ members = [
     "experiments/mandala-cipher", "experiments/penrose-deps",
     "experiments/biomorphic-strings", "experiments/ferrous-sector",
     "experiments/ferrous-graph", "experiments/spqr-rsa",
+    "experiments/ferrous-legion",
 ]
 resolver = "2"
 

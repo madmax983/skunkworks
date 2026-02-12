@@ -984,3 +984,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/spqr-rsa
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Scribes are calculating. RSA encryption performed with Roman Numerals. Additive notation normalization drives the math. The tablets are carved.
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-legion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Legion is forming. Roman Numerals are colliding and merging. Magnetic Arithmetic is active.
