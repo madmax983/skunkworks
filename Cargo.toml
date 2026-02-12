@@ -132,7 +132,7 @@ members = [
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/kinetic-folds", "experiments/swap-meet",
     "experiments/cochlea-sim",
     "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/git-climber", "experiments/dependency-karst",
-    "experiments/mandala-cipher",
+    "experiments/mandala-cipher", "experiments/penrose-deps",
 ]
 resolver = "2"
 
