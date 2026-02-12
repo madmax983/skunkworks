@@ -296,7 +296,8 @@ pub fn exec_hologram(
 ) -> Option<(usize, usize)> {
     vm.hologram_mode = !vm.hologram_mode;
     let status = if vm.hologram_mode { "ON" } else { "OFF" };
-    vm.output.push(format!("HOLOGRAM: Visualization {}", status));
+    vm.output
+        .push(format!("HOLOGRAM: Visualization {}", status));
     None
 }
 

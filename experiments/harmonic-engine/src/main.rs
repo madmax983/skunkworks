@@ -1,12 +1,12 @@
-use std::{error::Error, io, time::Duration};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use ratatui::{prelude::*, widgets::*};
+use harmonic_engine::{audio::MusicBox, physics::PhysicsWorld};
 use nalgebra::Vector2;
-use harmonic_engine::{physics::PhysicsWorld, audio::MusicBox};
+use ratatui::{prelude::*, widgets::*};
+use std::{error::Error, io, time::Duration};
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Setup Terminal
@@ -62,56 +62,66 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .split(f.area());
 
             let canvas = ratatui::widgets::canvas::Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Harmonic Engine"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Harmonic Engine"),
+                )
                 .paint(|ctx| {
                     // Draw integrators
                     for integrator in &world.integrators {
-                         if let Some(disk) = world.rigid_body_set.get(integrator.disk_handle) {
-                             let pos = disk.translation();
-                             ctx.draw(&ratatui::widgets::canvas::Circle {
-                                 x: pos.x as f64,
-                                 y: pos.y as f64,
-                                 radius: 10.0,
-                                 color: Color::White,
-                             });
-                         }
-                         if let Some(ball) = world.rigid_body_set.get(integrator.ball_handle) {
-                             let pos = ball.translation();
-                             ctx.draw(&ratatui::widgets::canvas::Circle {
-                                 x: pos.x as f64,
-                                 y: pos.y as f64,
-                                 radius: 1.0,
-                                 color: Color::Red,
-                             });
-                         }
-                         if let Some(cyl) = world.rigid_body_set.get(integrator.output_handle) {
-                             let pos = cyl.translation();
-                             let rot = cyl.rotation().angle();
-                             // Draw Output Cylinder as a rotating line/bar
-                             ctx.draw(&ratatui::widgets::canvas::Line {
-                                 x1: pos.x as f64,
-                                 y1: pos.y as f64,
-                                 x2: (pos.x + 8.0 * rot.cos()) as f64,
-                                 y2: (pos.y + 8.0 * rot.sin()) as f64,
-                                 color: Color::Yellow,
-                             });
-                             // Draw a perpendicular line to show rotation clearly
-                             ctx.draw(&ratatui::widgets::canvas::Line {
-                                 x1: pos.x as f64,
-                                 y1: pos.y as f64,
-                                 x2: (pos.x + 8.0 * (rot + 1.57).cos()) as f64,
-                                 y2: (pos.y + 8.0 * (rot + 1.57).sin()) as f64,
-                                 color: Color::Yellow,
-                             });
-                         }
+                        if let Some(disk) = world.rigid_body_set.get(integrator.disk_handle) {
+                            let pos = disk.translation();
+                            ctx.draw(&ratatui::widgets::canvas::Circle {
+                                x: pos.x as f64,
+                                y: pos.y as f64,
+                                radius: 10.0,
+                                color: Color::White,
+                            });
+                        }
+                        if let Some(ball) = world.rigid_body_set.get(integrator.ball_handle) {
+                            let pos = ball.translation();
+                            ctx.draw(&ratatui::widgets::canvas::Circle {
+                                x: pos.x as f64,
+                                y: pos.y as f64,
+                                radius: 1.0,
+                                color: Color::Red,
+                            });
+                        }
+                        if let Some(cyl) = world.rigid_body_set.get(integrator.output_handle) {
+                            let pos = cyl.translation();
+                            let rot = cyl.rotation().angle();
+                            // Draw Output Cylinder as a rotating line/bar
+                            ctx.draw(&ratatui::widgets::canvas::Line {
+                                x1: pos.x as f64,
+                                y1: pos.y as f64,
+                                x2: (pos.x + 8.0 * rot.cos()) as f64,
+                                y2: (pos.y + 8.0 * rot.sin()) as f64,
+                                color: Color::Yellow,
+                            });
+                            // Draw a perpendicular line to show rotation clearly
+                            ctx.draw(&ratatui::widgets::canvas::Line {
+                                x1: pos.x as f64,
+                                y1: pos.y as f64,
+                                x2: (pos.x + 8.0 * (rot + 1.57).cos()) as f64,
+                                y2: (pos.y + 8.0 * (rot + 1.57).sin()) as f64,
+                                color: Color::Yellow,
+                            });
+                        }
                     }
 
                     // Draw Coupling Lines (Abstract)
                     // From Output of 1 to Ball of 0
                     if world.integrators.len() > 1 {
                         // idx_v (1) -> idx_y (0)
-                        if let Some(cyl) = world.rigid_body_set.get(world.integrators[idx_v].output_handle) {
-                            if let Some(ball) = world.rigid_body_set.get(world.integrators[idx_y].ball_handle) {
+                        if let Some(cyl) = world
+                            .rigid_body_set
+                            .get(world.integrators[idx_v].output_handle)
+                        {
+                            if let Some(ball) = world
+                                .rigid_body_set
+                                .get(world.integrators[idx_y].ball_handle)
+                            {
                                 ctx.draw(&ratatui::widgets::canvas::Line {
                                     x1: cyl.translation().x as f64,
                                     y1: cyl.translation().y as f64,
@@ -121,9 +131,15 @@ fn main() -> Result<(), Box<dyn Error>> {
                                 });
                             }
                         }
-                         // idx_y (0) -> idx_v (1)
-                        if let Some(cyl) = world.rigid_body_set.get(world.integrators[idx_y].output_handle) {
-                            if let Some(ball) = world.rigid_body_set.get(world.integrators[idx_v].ball_handle) {
+                        // idx_y (0) -> idx_v (1)
+                        if let Some(cyl) = world
+                            .rigid_body_set
+                            .get(world.integrators[idx_y].output_handle)
+                        {
+                            if let Some(ball) = world
+                                .rigid_body_set
+                                .get(world.integrators[idx_v].ball_handle)
+                            {
                                 ctx.draw(&ratatui::widgets::canvas::Line {
                                     x1: cyl.translation().x as f64,
                                     y1: cyl.translation().y as f64,
@@ -134,7 +150,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                             }
                         }
                     }
-
                 })
                 .x_bounds([-40.0, 40.0])
                 .y_bounds([-30.0, 30.0]);
@@ -147,15 +162,19 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .map(|s| ListItem::new(Line::from(s.as_str())))
                 .collect();
 
-            let list = List::new(log)
-                .block(Block::default().borders(Borders::ALL).title("Music Log"));
+            let list =
+                List::new(log).block(Block::default().borders(Borders::ALL).title("Music Log"));
             f.render_widget(list, chunks[1]);
         })?;
     }
 
     // Restore Terminal
     disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen, DisableMouseCapture)?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
     terminal.show_cursor()?;
 
     Ok(())
