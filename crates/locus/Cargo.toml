@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 description = "Lightweight 2D geometry library for TUI applications"
 
+[dev-dependencies]
+proptest = "1.0"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"], optional = true }
 
