@@ -23,3 +23,7 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The spheres are singing. Symplectic integrators are stable. Audio is procedural (WAV generation in memory).
 - **Note:** Resonance rings (press H) allow snapping to musical intervals. Kepler's laws are now audible.
+
+### [Concentration Level: HIGH] - Location: experiments/harmonic-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The void is singing. Fungal threads are vibrating with the gravitational flux. The planets are silent until the network touches them. A beautiful symbiosis.

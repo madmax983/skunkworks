@@ -1,0 +1,9 @@
+[package]
+name = "harmonic-mycelium"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+glam = "0.25" # explicit glam to match macroquad usually, or just use macroquad::math
