@@ -1435,6 +1435,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Brainfuck,
 
+    /// **[Nova]** Transforms a strand's genes into a different dialect.
+    ///
+    /// **Stack:** `[ ..., dialect_id, strand_idx ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Polyglot,
+
     // Meta Features (Self-Definition)
     /// **[Nova]** Defines a new enzyme (OpCode) that calls a strand.
     ///

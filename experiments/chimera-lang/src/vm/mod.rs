@@ -2443,6 +2443,9 @@ impl ChimeraVM {
             | OpCode::Pangram => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Polyglot => nova_linguistics::exec_polyglot(self),
+
+            #[cfg(feature = "nova")]
             OpCode::Cook | OpCode::Spice | OpCode::Savor | OpCode::Cultivate | OpCode::Banquet => {
                 nova::exec_nova_op(self, op, args)
             }

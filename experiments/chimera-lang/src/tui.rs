@@ -109,6 +109,8 @@ pub(crate) enum ViewMode {
     Hologram,
     #[cfg(feature = "nova")]
     Weaver,
+    #[cfg(feature = "nova")]
+    Tongues,
 }
 
 enum InputMode {
@@ -596,6 +598,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Weaver = app_state.view_mode {
                 render_weaver(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Tongues = app_state.view_mode {
+                render_tongues(f, vm, app_state);
                 return;
             }
 
@@ -1222,6 +1230,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     // Don't clear buffer, keep it for preview
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Tongues => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1471,6 +1484,8 @@ where
                             ViewMode::Hologram => ViewMode::Genome,
                             #[cfg(feature = "nova")]
                             ViewMode::Weaver => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Tongues => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1632,6 +1647,8 @@ where
                     KeyCode::Char('I') => app_state.view_mode = ViewMode::Hologram,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('J') => app_state.view_mode = ViewMode::Tongues,
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -2159,6 +2176,12 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Tongues => {
+                            if app_state.selected_strand + 1 < vm.dna.helix.strands.len() {
+                                app_state.selected_strand += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Weaver | ViewMode::Laboratory => {
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method/Pattern
@@ -2264,6 +2287,12 @@ where
                         ViewMode::Grimoire => {
                             if app_state.selected_sigil_index > 0 {
                                 app_state.selected_sigil_index -= 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Tongues => {
+                            if app_state.selected_strand > 0 {
+                                app_state.selected_strand -= 1;
                             }
                         }
                         #[cfg(feature = "nova")]
@@ -2531,6 +2560,8 @@ where
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
+                        ViewMode::Tongues => {}
+                        #[cfg(feature = "nova")]
                         ViewMode::Weaver | ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
                                 app_state.selected_strand += 1;
@@ -2689,6 +2720,8 @@ where
                         ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
+                        ViewMode::Tongues => {}
+                        #[cfg(feature = "nova")]
                         ViewMode::Weaver | ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
@@ -2800,6 +2833,10 @@ where
                         match app_state.view_mode {
                             #[cfg(feature = "nova")]
                             ViewMode::Phylogeny => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Tongues => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -4291,6 +4328,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
         #[cfg(feature = "nova")]
         ViewMode::Weaver => "THE WEAVER",
+        #[cfg(feature = "nova")]
+        ViewMode::Tongues => "TOWER OF BABEL",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4847,6 +4886,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hyperspace, "Hyperspace", "H"));
         views.push((ViewMode::Hologram, "Hologram", "I"));
         views.push((ViewMode::Weaver, "The Weaver", "W"));
+        views.push((ViewMode::Tongues, "Tower of Babel", "J"));
     }
     views
 }
@@ -8351,4 +8391,60 @@ fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Wave Analysis"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_tongues(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .split(f.area());
+
+    // Left: Dialects List
+    let dialects = vec![
+        "0: Antonym (Semantic Inversion)",
+        "1: Chaotic (Entropy Injection)",
+        "2: Constructive (Growth & Order)",
+    ];
+    let items: Vec<ListItem> = dialects
+        .iter()
+        .map(|d| ListItem::new(*d).style(Style::default().fg(Color::Cyan)))
+        .collect();
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Known Dialects (Use Polyglot(id, strand))"),
+    );
+    f.render_widget(list, chunks[0]);
+
+    // Right: Corpus
+    let mut lines = Vec::new();
+    for (i, strand) in vm.dna.helix.strands.iter().enumerate() {
+        let mut style = Style::default().fg(Color::White);
+        if i == app_state.selected_strand {
+            style = style.fg(Color::Yellow).add_modifier(Modifier::BOLD);
+        }
+
+        let mut genes_str = String::new();
+        for (g_idx, gene) in strand.genes.iter().enumerate() {
+            if g_idx > 0 {
+                genes_str.push(' ');
+            }
+            genes_str.push_str(&format!("{}", gene.op));
+            if genes_str.len() > 60 {
+                genes_str.push_str("...");
+                break;
+            }
+        }
+
+        lines.push(ListItem::new(format!("{}: {}", i, genes_str)).style(style));
+    }
+
+    let strand_list = List::new(lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Corpus (Genome)"),
+    );
+    f.render_widget(strand_list, chunks[1]);
 }

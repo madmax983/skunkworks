@@ -1,6 +1,110 @@
 #![cfg(feature = "nova")]
 
 use super::{ChimeraVM, Value};
+use crate::opcode::OpCode;
+use std::collections::HashMap;
+
+/// Transforms a strand's genes into a different dialect.
+///
+/// **OpCode:** `Polyglot`
+/// **Stack:** `[ ..., dialect_id, strand_idx ] -> [ ..., new_strand_idx ]`
+pub fn exec_polyglot(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    if vm.stack.len() >= 2 {
+        let strand_val = vm.stack.pop().unwrap();
+        let dialect_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(dialect_id), Value::Int(s_idx)) = (dialect_val, strand_val) {
+            let s_idx = s_idx as usize;
+            if s_idx < vm.dna.helix.strands.len() {
+                // Clone the target strand
+                let mut new_genes = vm.dna.helix.strands[s_idx].genes.clone();
+                let map = get_dialect_map(dialect_id as usize);
+
+                // Apply dialect mapping
+                for gene in &mut new_genes {
+                    if let Some(new_op) = map.get(&gene.op) {
+                        gene.op = new_op.clone();
+                    }
+                }
+
+                // Add new strand to helix
+                vm.dna
+                    .helix
+                    .strands
+                    .push(crate::ast::Strand { genes: new_genes });
+                vm.telomeres.push(50);
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
+
+                let new_idx = vm.dna.helix.strands.len() - 1;
+                vm.cladistics.register_strand(
+                    new_idx,
+                    Some(s_idx),
+                    vm.tick_counter,
+                    format!("Polyglot({})", dialect_id),
+                );
+
+                vm.stack.push(Value::Int(new_idx as i64));
+                vm.energy = vm.energy.saturating_sub(25);
+                vm.output.push(format!(
+                    "POLYGLOT: Translated strand {} to dialect {}",
+                    s_idx, dialect_id
+                ));
+            } else {
+                vm.output
+                    .push("Error: Strand index out of bounds for polyglot".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for polyglot".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for polyglot".to_string());
+    }
+    None
+}
+
+fn get_dialect_map(id: usize) -> HashMap<OpCode, OpCode> {
+    let mut map = HashMap::new();
+    match id {
+        0 => {
+            // Antonym (Inversion)
+            map.insert(OpCode::Add, OpCode::Sub);
+            map.insert(OpCode::Sub, OpCode::Add);
+            map.insert(OpCode::Mul, OpCode::Div);
+            map.insert(OpCode::Div, OpCode::Mul);
+            map.insert(OpCode::Mitosis, OpCode::Apoptosis);
+            map.insert(OpCode::Apoptosis, OpCode::Mitosis);
+            map.insert(OpCode::Lumine, OpCode::Gravitate);
+            map.insert(OpCode::Gravitate, OpCode::Lumine);
+            map.insert(OpCode::Pray, OpCode::Sacrifice);
+            map.insert(OpCode::Sacrifice, OpCode::Pray);
+            map.insert(OpCode::Bind, OpCode::Unbind);
+            map.insert(OpCode::Unbind, OpCode::Bind);
+        }
+        1 => {
+            // Chaotic (Entropy)
+            map.insert(OpCode::Push, OpCode::Scramble);
+            map.insert(OpCode::Jump, OpCode::QuantumTunnel);
+            map.insert(OpCode::GRead, OpCode::Entropy);
+            map.insert(OpCode::Sow, OpCode::Glitch);
+        }
+        2 => {
+            // Constructive (Growth)
+            map.insert(OpCode::Apoptosis, OpCode::Mitosis);
+            map.insert(OpCode::Drop, OpCode::Dup);
+            map.insert(OpCode::Sub, OpCode::Add);
+            map.insert(OpCode::Div, OpCode::Mul);
+            map.insert(OpCode::Consume, OpCode::Photosynthesize);
+        }
+        _ => {}
+    }
+    map
+}
 
 /// Calculates the Levenshtein distance between two strings.
 ///
