@@ -35,6 +35,12 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
+#[cfg(feature = "nova")]
+use std::fs::File;
+#[cfg(feature = "nova")]
+use std::io::Read;
+#[cfg(feature = "nova")]
+use strum::IntoEnumIterator;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -2304,6 +2310,152 @@ impl ChimeraVM {
         None
     }
 
+    #[cfg(feature = "nova")]
+    fn exec_scavenge_op(&mut self) -> Option<(usize, usize)> {
+        if self.stack.len() >= 2 {
+            let len_val = self.stack.pop().unwrap();
+            let path_val = self.stack.pop().unwrap();
+
+            if let (Value::Str(path), Value::Int(len)) = (path_val, len_val) {
+                if len <= 0 || len > 1024 * 1024 {
+                    self.output
+                        .push(format!("Error: Invalid Scavenge length {} (Max 1MB)", len));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let mut file = match File::open(&path) {
+                    Ok(f) => f,
+                    Err(_) => {
+                        self.output
+                            .push(format!("Error: Failed to open file '{}'", path));
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                let mut buffer = vec![0u8; len as usize];
+                if let Ok(bytes_read) = file.read(&mut buffer) {
+                    let opcodes: Vec<OpCode> = OpCode::iter().collect();
+                    let count = opcodes.len();
+                    let mut genes = Vec::new();
+
+                    for b in &buffer[0..bytes_read] {
+                        let idx = (*b as usize) % count;
+                        let op = opcodes[idx].clone();
+                        genes.push(crate::ast::Gene {
+                            op,
+                            args: vec![],
+                        });
+                    }
+
+                    let strand = crate::ast::Strand { genes };
+                    self.dna.helix.strands.push(strand);
+                    let new_idx = self.dna.helix.strands.len() - 1;
+
+                    self.stack.push(Value::Int(new_idx as i64));
+                    self.output.push(format!(
+                        "SCAVENGE: Consumed {} bytes from '{}'",
+                        bytes_read, path
+                    ));
+                } else {
+                    self.output
+                        .push(format!("Error: Failed to read file '{}'", path));
+                    self.stack.push(Value::Int(-1));
+                }
+            } else {
+                self.output
+                    .push("Error: Scavenge requires [path: Str, len: Int]".to_string());
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Scavenge".to_string());
+        }
+        None
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_digest_op(&mut self) -> Option<(usize, usize)> {
+        use std::io::{Seek, SeekFrom};
+
+        if self.stack.len() >= 2 {
+            let len_val = self.stack.pop().unwrap();
+            let offset_val = self.stack.pop().unwrap();
+
+            if let (Value::Int(offset), Value::Int(len)) = (offset_val, len_val) {
+                if len <= 0 || len > 1024 * 1024 {
+                    self.output
+                        .push(format!("Error: Invalid Digest length {} (Max 1MB)", len));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let path = match std::env::current_exe() {
+                    Ok(p) => p,
+                    Err(_) => {
+                        self.output
+                            .push("Error: Failed to find executable path".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                let mut file = match File::open(&path) {
+                    Ok(f) => f,
+                    Err(_) => {
+                        self.output
+                            .push("Error: Failed to open executable".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                if file.seek(SeekFrom::Start(offset as u64)).is_err() {
+                    self.output.push("Error: Seek failed".to_string());
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let mut buffer = vec![0u8; len as usize];
+                if let Ok(bytes_read) = file.read(&mut buffer) {
+                    let opcodes: Vec<OpCode> = OpCode::iter().collect();
+                    let count = opcodes.len();
+                    let mut genes = Vec::new();
+
+                    for b in &buffer[0..bytes_read] {
+                        let idx = (*b as usize) % count;
+                        let op = opcodes[idx].clone();
+                        genes.push(crate::ast::Gene {
+                            op,
+                            args: vec![],
+                        });
+                    }
+
+                    let strand = crate::ast::Strand { genes };
+                    self.dna.helix.strands.push(strand);
+                    let new_idx = self.dna.helix.strands.len() - 1;
+
+                    self.stack.push(Value::Int(new_idx as i64));
+                    self.output.push(format!(
+                        "DIGEST: Cannibalized {} bytes from offset {}",
+                        bytes_read, offset
+                    ));
+                } else {
+                    self.output
+                        .push("Error: Failed to read executable".to_string());
+                    self.stack.push(Value::Int(-1));
+                }
+            } else {
+                self.output
+                    .push("Error: Digest requires [offset: Int, len: Int]".to_string());
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Digest".to_string());
+        }
+        None
+    }
+
     pub(crate) fn execute_gene_inner(
         &mut self,
         op: OpCode,
@@ -2641,6 +2793,11 @@ impl ChimeraVM {
 
             #[cfg(feature = "nova")]
             OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Scavenge => self.exec_scavenge_op(),
+            #[cfg(feature = "nova")]
+            OpCode::Digest => self.exec_digest_op(),
 
             #[cfg(feature = "nova")]
             OpCode::EntropySurge => {
