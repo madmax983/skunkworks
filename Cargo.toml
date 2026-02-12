@@ -131,7 +131,7 @@ members = [
     "experiments/chimera-fold", "experiments/git-phase", "experiments/tesseract-timeseries", "experiments/vascular-valley", "experiments/biotic-chaos",
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/kinetic-folds", "experiments/swap-meet",
     "experiments/cochlea-sim",
-    "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock",
+    "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/git-climber",
 ]
 resolver = "2"
 
