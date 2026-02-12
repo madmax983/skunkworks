@@ -980,3 +980,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-graph
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The graph is magnetic. Nodes are following old trails. The history is being written to the platter, but the platter is forgetting.
+
+### [Concentration Level: FRESH] - Location: experiments/spqr-rsa
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Scribes are calculating. RSA encryption performed with Roman Numerals. Additive notation normalization drives the math. The tablets are carved.
