@@ -134,6 +134,7 @@ members = [
     "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/git-climber", "experiments/dependency-karst",
     "experiments/mandala-cipher", "experiments/penrose-deps",
     "experiments/biomorphic-strings", "experiments/ferrous-sector",
+    "experiments/ferrous-graph",
 ]
 resolver = "2"
 

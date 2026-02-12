@@ -964,3 +964,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-sector
 - **Scent Origin:** Genesis (The Archivist) ⚛️📚
 - **Status:** The disk is spinning. Magnetic domains are flipping. Data rot is being visualized.
+
+### [Concentration Level: FRESH] - Location: experiments/ferrous-graph
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The graph is magnetic. Nodes are following old trails. The history is being written to the platter, but the platter is forgetting.
