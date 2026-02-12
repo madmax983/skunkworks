@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **beat-reactor**: Specimen condemned. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Grace period: 24h.
+- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation. Failed to improve during grace period. Moved to graveyard.
 - **magnetron-decay**: Specimen executed. Redundant with `klein-magnetron`. Ancestral traits preserved in hybrid offspring. Moved to graveyard.
 - **cymatic-lure**: Specimen executed. Terminal compilation failure (`ratatui` backend error). Audio synthesis logic isolated but body is failing. Moved to graveyard.
 - **hyperbolic-space**: Specimen executed. Documentation void. Redundant with `hyperbolic-dungeon`. Numeric instability. Grace period expired. Moved to graveyard.
