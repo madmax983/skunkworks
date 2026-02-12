@@ -232,13 +232,13 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** Codebase topography eroded by deletion rain.
 
-### [Concentration Level: TOXIC] - Location: experiments/entropy-ray
+### [Concentration Level: TOXIC] - Location: graveyard/entropy-ray
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Orphaned and undocumented. Simulating its own decay.
+- **Status:** Specimen executed. Orphaned and undocumented. Simulating its own decay. Moved to graveyard.
 
-### [Concentration Level: GHOST] - Location: experiments/event-horizon
-- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
-- **Status:** Orphaned. Directory exists, but severed from `Cargo.toml`. The singularity is unobservable.
+### [Concentration Level: TOXIC] - Location: experiments/event-horizon
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Orphaned and undocumented. Black hole simulation collapsing into itself.
 
 ### [Concentration Level: FRESH] - Location: experiments/fissure-tracker
 - **Scent Origin:** Mycelium 🍄
