@@ -4908,59 +4908,90 @@ fn render_palette(f: &mut Frame, app_state: &AppState) {
 
 #[cfg(feature = "biophysics")]
 fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
+    use ratatui::widgets::canvas::{Canvas, Line as CanvasLine};
+
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(f.area());
 
+    // Left: Neural Map (Canvas)
+    let canvas = Canvas::default()
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Connectome"),
+        )
+        .x_bounds([0.0, 16.0])
+        .y_bounds([0.0, 16.0])
+        .paint(|ctx| {
+            // Draw Synapses
+            for (source, targets) in &vm.biophysics_synapses {
+                let sx = source.1 as f64 + 0.5;
+                let sy = 16.0 - (source.0 as f64 + 0.5);
+
+                for (target, _) in targets {
+                    let tx = target.1 as f64 + 0.5;
+                    let ty = 16.0 - (target.0 as f64 + 0.5);
+
+                    ctx.draw(&CanvasLine {
+                        x1: sx,
+                        y1: sy,
+                        x2: tx,
+                        y2: ty,
+                        color: Color::DarkGray,
+                    });
+                }
+            }
+
+            // Draw Neurons
+            for (coord, neuron) in &vm.neurons {
+                let x = coord.1 as f64 + 0.5;
+                let y = 16.0 - (coord.0 as f64 + 0.5);
+
+                let _color = if neuron.v > 0.0 {
+                    Color::Yellow
+                } else if neuron.v > -50.0 {
+                    Color::Cyan
+                } else {
+                    Color::Blue
+                };
+
+                let symbol = if neuron.v > 0.0 { "*" } else { "O" };
+                ctx.print(x, y, symbol);
+            }
+
+            // Draw selection cursor
+            if let Some((y, x)) = app_state.selected_neuron_coords {
+                let cx = x as f64 + 0.5;
+                let cy = 16.0 - (y as f64 + 0.5);
+                ctx.print(cx, cy, "+");
+            }
+        });
+    f.render_widget(canvas, chunks[0]);
+
+    // Right: Details
     let right_split = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(chunks[1]);
 
-    // Neuron List
-    let mut neuron_items = Vec::new();
-    let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-    neurons_sorted.sort();
-
-    for (i, coord) in neurons_sorted.iter().enumerate() {
-        let neuron = &vm.neurons[coord];
-        let is_selected = app_state.selected_neuron_coords == Some(**coord);
-
-        let style = if is_selected {
-            Style::default()
-                .fg(Color::Yellow)
-                .add_modifier(Modifier::BOLD)
-        } else {
-            Style::default().fg(Color::White)
-        };
-
-        // Auto-select first if none selected
-        if app_state.selected_neuron_coords.is_none() && i == 0 {
-            app_state.selected_neuron_coords = Some(**coord);
-        }
-
-        neuron_items.push(ListItem::new(Span::styled(
-            format!("({}, {}) - {:.2}mV", coord.1, coord.0, neuron.v),
-            style,
-        )));
-    }
-
-    let neuron_list = List::new(neuron_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Neurons (Cortex)"),
-    );
-    f.render_widget(neuron_list, chunks[0]);
-
-    // Details & Oscilloscope
     if let Some(coord) = app_state.selected_neuron_coords {
         if let Some(neuron) = vm.neurons.get(&coord) {
-            // Sparkline
-            // ratatui::widgets::Sparkline is what we need but we must import it if not present.
-            // Wait, previous code used Sparkline but it wasn't in imports in my `read_file`.
-            // It must be there or I missed it.
-            // I'll assume it works as it was existing code.
+            let details = vec![
+                Line::from(format!("Neuron [{}, {}]", coord.1, coord.0)),
+                Line::from(format!("V: {:.2} mV", neuron.v)),
+                Line::from(format!("I_inj: {:.2}", neuron.i_inj)),
+                Line::from(" "),
+                Line::from(format!("Last Spike: {}", neuron.last_spike)),
+            ];
+            let info = Paragraph::new(details).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Biophysics"),
+            );
+            f.render_widget(info, right_split[0]);
+
             let history = &app_state.voltage_history;
             let sparkline = ratatui::widgets::Sparkline::default()
                 .block(
@@ -4971,23 +5002,15 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
                 .data(history)
                 .style(Style::default().fg(Color::Cyan));
             f.render_widget(sparkline, right_split[1]);
-
-            // Details
-            let details = vec![
-                Line::from(format!("Membrane Potential (v): {:.2} mV", neuron.v)),
-                Line::from(format!("Injected Current (i_inj): {:.2}", neuron.i_inj)),
-                Line::from(" "),
-                Line::from(format!("Na Activation (m): {:.4}", neuron.m)),
-                Line::from(format!("Na Inactivation (h): {:.4}", neuron.h)),
-                Line::from(format!("K Activation (n): {:.4}", neuron.n)),
-            ];
-            let info = Paragraph::new(details).block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title(format!("Neuron Details [{}, {}]", coord.1, coord.0)),
-            );
+        } else {
+            let info = Paragraph::new("Selected neuron died or missing.")
+                .block(Block::default().borders(Borders::ALL));
             f.render_widget(info, right_split[0]);
         }
+    } else {
+        let info = Paragraph::new("Select a neuron to view details.")
+            .block(Block::default().borders(Borders::ALL));
+        f.render_widget(info, right_split[0]);
     }
 }
 #[cfg(feature = "resonance")]

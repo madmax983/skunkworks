@@ -488,6 +488,8 @@ pub struct ChimeraVM {
     pub audio_snapshot: Vec<f32>,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
+    #[cfg(feature = "biophysics")]
+    pub biophysics_synapses: HashMap<(usize, usize), Vec<((usize, usize), f32)>>,
     #[cfg(feature = "nova")]
     pub blackbox: blackbox::Blackbox,
     #[cfg(feature = "silicon")]
@@ -779,6 +781,8 @@ impl ChimeraVM {
             audio_snapshot: vec![0.0; GRID_SIZE * GRID_SIZE],
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
+            #[cfg(feature = "biophysics")]
+            biophysics_synapses: HashMap::new(),
             #[cfg(feature = "nova")]
             blackbox: blackbox::Blackbox::new(),
             #[cfg(feature = "silicon")]
@@ -1777,8 +1781,21 @@ impl ChimeraVM {
 
         #[cfg(feature = "biophysics")]
         if !time_frozen {
-            for neuron in self.neurons.values_mut() {
-                neuron.step(0.1);
+            let mut spikes = Vec::new();
+            for (coord, neuron) in self.neurons.iter_mut() {
+                if neuron.step(0.1, self.tick_counter) {
+                    spikes.push(*coord);
+                }
+            }
+
+            for source in spikes {
+                if let Some(targets) = self.biophysics_synapses.get(&source) {
+                    for (target, weight) in targets {
+                        if let Some(target_neuron) = self.neurons.get_mut(target) {
+                            target_neuron.i_inj += weight * 10.0;
+                        }
+                    }
+                }
             }
         }
 
