@@ -20,16 +20,36 @@ impl BaseSymbol {
         *self as u64
     }
 
-    pub fn from_char(c: char) -> Option<Self> {
+    pub fn is_five_unit(&self) -> bool {
+        matches!(self, Self::V | Self::L | Self::D)
+    }
+
+    pub fn next_magnitude(&self) -> Option<Self> {
+        match self {
+            Self::I => Some(Self::V),
+            Self::V => Some(Self::X),
+            Self::X => Some(Self::L),
+            Self::L => Some(Self::C),
+            Self::C => Some(Self::D),
+            Self::D => Some(Self::M),
+            Self::M => None,
+        }
+    }
+}
+
+impl TryFrom<char> for BaseSymbol {
+    type Error = anyhow::Error;
+
+    fn try_from(c: char) -> Result<Self, Self::Error> {
         match c {
-            'I' => Some(Self::I),
-            'V' => Some(Self::V),
-            'X' => Some(Self::X),
-            'L' => Some(Self::L),
-            'C' => Some(Self::C),
-            'D' => Some(Self::D),
-            'M' => Some(Self::M),
-            _ => None,
+            'I' => Ok(Self::I),
+            'V' => Ok(Self::V),
+            'X' => Ok(Self::X),
+            'L' => Ok(Self::L),
+            'C' => Ok(Self::C),
+            'D' => Ok(Self::D),
+            'M' => Ok(Self::M),
+            _ => Err(anyhow!("Invalid Roman numeral char: {}", c)),
         }
     }
 }
@@ -49,6 +69,21 @@ impl Symbol {
         let val = BigUint::from(self.base.value());
         let multiplier = BigUint::from(1000u32).pow(self.vinculum);
         val * multiplier
+    }
+
+    pub fn is_five_unit(&self) -> bool {
+        self.base.is_five_unit()
+    }
+
+    pub fn next_magnitude(&self) -> Self {
+        match self.base.next_magnitude() {
+            Some(next_base) => Self::new(next_base, self.vinculum),
+            None => {
+                // M -> (V)
+                // If base is M, next is V with vinculum + 1
+                Self::new(BaseSymbol::V, self.vinculum + 1)
+            }
+        }
     }
 }
 
@@ -74,6 +109,12 @@ impl Ord for Symbol {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Roman {
     pub digits: Vec<Symbol>,
+}
+
+impl Default for Roman {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Roman {
@@ -116,19 +157,19 @@ impl Roman {
         }
         let mut digits = Vec::new();
         // Additive-only mappings to ensure sorting (normalize) preserves value
-        let mappings = [
-            (1000, vec![Symbol::new(BaseSymbol::M, 0)]),
-            (500, vec![Symbol::new(BaseSymbol::D, 0)]),
-            (100, vec![Symbol::new(BaseSymbol::C, 0)]),
-            (50, vec![Symbol::new(BaseSymbol::L, 0)]),
-            (10, vec![Symbol::new(BaseSymbol::X, 0)]),
-            (5, vec![Symbol::new(BaseSymbol::V, 0)]),
-            (1, vec![Symbol::new(BaseSymbol::I, 0)]),
+        const MAPPINGS: [(u64, BaseSymbol); 7] = [
+            (1000, BaseSymbol::M),
+            (500, BaseSymbol::D),
+            (100, BaseSymbol::C),
+            (50, BaseSymbol::L),
+            (10, BaseSymbol::X),
+            (5, BaseSymbol::V),
+            (1, BaseSymbol::I),
         ];
 
-        for (val, syms) in mappings.iter() {
-            while n >= *val {
-                digits.extend_from_slice(syms);
+        for (val, base) in MAPPINGS {
+            while n >= val {
+                digits.push(Symbol::new(base, 0));
                 n -= val;
             }
         }
@@ -178,13 +219,8 @@ impl FromStr for Roman {
         }
         let mut digits = Vec::new();
         for c in s.chars() {
-            if let Some(base) = BaseSymbol::from_char(c) {
-                digits.push(Symbol::new(base, 0));
-            } else {
-                // Handling parentheses for vinculum is hard without a proper parser.
-                // For now, let's just support basic chars.
-                return Err(anyhow!("Invalid Roman numeral char: {}", c));
-            }
+            let base = BaseSymbol::try_from(c)?;
+            digits.push(Symbol::new(base, 0));
         }
         Ok(Roman { digits })
     }
