@@ -2248,6 +2248,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Digest,
 
+    // Chimeric Features (Language Synthesis)
+    /// **[Chimeric]** Executes a string of Chimeric code (Concatenative Logic).
+    ///
+    /// **Stack:** `[ ..., code_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chimeric,
+
     /// No Operation. Does nothing.
     Nop,
 

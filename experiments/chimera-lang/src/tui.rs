@@ -109,6 +109,8 @@ pub(crate) enum ViewMode {
     Hologram,
     #[cfg(feature = "nova")]
     Weaver,
+    #[cfg(feature = "nova")]
+    Terminal,
 }
 
 enum InputMode {
@@ -188,6 +190,12 @@ pub(crate) struct AppState {
     pub(crate) catalyst_scroll: usize,
     pub(crate) show_view_selector: bool,
     pub(crate) view_selector_state: std::cell::RefCell<ListState>,
+    #[cfg(feature = "nova")]
+    pub(crate) terminal_input: String,
+    #[cfg(feature = "nova")]
+    pub(crate) terminal_history: Vec<String>,
+    #[cfg(feature = "nova")]
+    pub(crate) terminal_history_idx: usize,
 }
 
 impl AppState {
@@ -265,6 +273,12 @@ impl AppState {
             pandemonium_radius: 5.0,
             pandemonium_selected_tool: 0,
             catalyst_scroll: 0,
+            #[cfg(feature = "nova")]
+            terminal_input: String::new(),
+            #[cfg(feature = "nova")]
+            terminal_history: Vec::new(),
+            #[cfg(feature = "nova")]
+            terminal_history_idx: 0,
         }
     }
 }
@@ -622,6 +636,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Terminal = app_state.view_mode {
+                render_terminal(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -714,6 +734,51 @@ where
                                 app_state.palette_char = Some(chars[app_state.palette_idx]);
                             }
                             app_state.palette_open = false;
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Terminal = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Enter => {
+                            let input = app_state.terminal_input.clone();
+                            if !input.is_empty() {
+                                app_state.terminal_history.push(input.clone());
+                                app_state.terminal_history_idx = app_state.terminal_history.len();
+                                app_state.terminal_input.clear();
+
+                                vm.output.push(format!("> {}", input));
+                                vm.stack.push(crate::vm::Value::Str(input));
+                                crate::vm::nova_chimeric::exec_chimeric_op(
+                                    vm,
+                                    crate::opcode::OpCode::Chimeric,
+                                    &[],
+                                );
+                            }
+                        }
+                        KeyCode::Up => {
+                            if app_state.terminal_history_idx > 0 {
+                                app_state.terminal_history_idx -= 1;
+                                app_state.terminal_input = app_state.terminal_history[app_state.terminal_history_idx].clone();
+                            }
+                        }
+                        KeyCode::Down => {
+                            if app_state.terminal_history_idx + 1 < app_state.terminal_history.len() {
+                                app_state.terminal_history_idx += 1;
+                                app_state.terminal_input = app_state.terminal_history[app_state.terminal_history_idx].clone();
+                            } else {
+                                app_state.terminal_history_idx = app_state.terminal_history.len();
+                                app_state.terminal_input.clear();
+                            }
+                        }
+                        KeyCode::Char(c) => {
+                            app_state.terminal_input.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.terminal_input.pop();
                         }
                         _ => {}
                     }
@@ -1222,6 +1287,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     // Don't clear buffer, keep it for preview
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Terminal => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1470,7 +1540,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Hologram => ViewMode::Genome,
                             #[cfg(feature = "nova")]
-                            ViewMode::Weaver => ViewMode::Genome,
+                            ViewMode::Weaver => ViewMode::Terminal,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Terminal => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1628,6 +1700,8 @@ where
                     KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -2261,6 +2335,8 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2497,6 +2573,8 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2657,6 +2735,8 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2817,6 +2897,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -2862,6 +2944,10 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Weaver => {
                                 // Allow editing mode for Pattern entry
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Terminal => {
+                                app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
                                 if app_state.selected_strand < vm.dna.helix.strands.len() {
@@ -4332,6 +4418,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
         #[cfg(feature = "nova")]
         ViewMode::Weaver => "THE WEAVER",
+        #[cfg(feature = "nova")]
+        ViewMode::Terminal => "CHIMERIC TERMINAL",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
     };
@@ -4888,6 +4976,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hyperspace, "Hyperspace", "H"));
         views.push((ViewMode::Hologram, "Hologram", "I"));
         views.push((ViewMode::Weaver, "The Weaver", "W"));
+        views.push((ViewMode::Terminal, "Terminal", "`"));
     }
     views
 }
@@ -8392,4 +8481,31 @@ fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Wave Analysis"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    // Show last N lines, oldest first (standard terminal log)
+    let log_start = vm.output.len().saturating_sub(30);
+    let log_items: Vec<ListItem> = vm.output.iter()
+        .skip(log_start)
+        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)))
+        .collect();
+
+    let log_list = List::new(log_items).block(
+        Block::default().borders(Borders::ALL).title("Chimeric Console (Type '?' for help)")
+    );
+    f.render_widget(log_list, chunks[0]);
+
+    // Input Line
+    let input_text = format!("> {}_", app_state.terminal_input);
+    let input_widget = Paragraph::new(input_text).block(
+        Block::default().borders(Borders::ALL).title("Input").border_style(Style::default().fg(Color::Yellow))
+    );
+    f.render_widget(input_widget, chunks[1]);
 }
