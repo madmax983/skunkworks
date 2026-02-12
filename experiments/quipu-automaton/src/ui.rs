@@ -21,22 +21,38 @@ pub fn ui(f: &mut Frame, physics: &PhysicsWorld, machine: &QuipuMachine) {
         .split(f.area());
 
     // 1. Input Log
-    let input_text = format!("Input Cord:\n{}\n\nValue: {}", machine.input_cord, machine.input_cord.value());
+    let input_text = format!(
+        "Input Cord:\n{}\n\nValue: {}",
+        machine.input_cord,
+        machine.input_cord.value()
+    );
     let input_widget = Paragraph::new(input_text)
         .block(Block::default().borders(Borders::ALL).title("Input Source"))
         .style(Style::default().fg(Color::Cyan));
     f.render_widget(input_widget, chunks[0]);
 
     // 2. Output Log
-    let output_text = format!("Output Cord:\n{}\n\nValue: {}", machine.output_cord, machine.output_cord.value());
+    let output_text = format!(
+        "Output Cord:\n{}\n\nValue: {}",
+        machine.output_cord,
+        machine.output_cord.value()
+    );
     let output_widget = Paragraph::new(output_text)
-        .block(Block::default().borders(Borders::ALL).title("Output Result"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Output Result"),
+        )
         .style(Style::default().fg(Color::Green));
     f.render_widget(output_widget, chunks[2]);
 
     // 3. Machine Visualization (Canvas)
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Quipu Automaton"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Quipu Automaton"),
+        )
         .x_bounds([-20.0, 20.0])
         .y_bounds([-20.0, 20.0]) // Physics coords: -20 (Bottom) to 20 (Top)
         .paint(|ctx| {
@@ -54,8 +70,10 @@ pub fn ui(f: &mut Frame, physics: &PhysicsWorld, machine: &QuipuMachine) {
 
                 // Draw pivot point or anchor (spring connection)
                 ctx.draw(&Line {
-                    x1: x, y1: y,
-                    x2: -10.0, y2: y, // Connection to left wall (anchor)
+                    x1: x,
+                    y1: y,
+                    x2: -10.0,
+                    y2: y, // Connection to left wall (anchor)
                     color: Color::DarkGray,
                 });
             }
@@ -83,7 +101,7 @@ pub fn ui(f: &mut Frame, physics: &PhysicsWorld, machine: &QuipuMachine) {
                     y2: y + r * angle.sin(),
                     color: Color::Black,
                 });
-                 ctx.draw(&Line {
+                ctx.draw(&Line {
                     x1: x,
                     y1: y,
                     x2: x + r * (angle + 3.14159).cos(),
@@ -120,7 +138,10 @@ pub fn ui(f: &mut Frame, physics: &PhysicsWorld, machine: &QuipuMachine) {
     f.render_widget(canvas, chunks[1]);
 
     // Overlay Stats
-    let stats = format!("Integrator: {:.2}\nAngle: {:.2}", machine.integrator_value, machine.wheel_angle);
+    let stats = format!(
+        "Integrator: {:.2}\nAngle: {:.2}",
+        machine.integrator_value, machine.wheel_angle
+    );
     let stats_widget = Paragraph::new(stats)
         .block(Block::default().borders(Borders::NONE))
         .style(Style::default().fg(Color::White));

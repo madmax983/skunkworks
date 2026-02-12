@@ -1,0 +1,13 @@
+[package]
+name = "thread-symphony"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+cpal = "0.15"
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+crossbeam-channel = "0.5"
+parking_lot = "0.12"

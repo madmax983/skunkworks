@@ -756,15 +756,15 @@ impl Topology {
                         // Case 2: Huge Height
                         // y must be >= 0 to map to valid range [height - 1 - y, height - 1]
                         if y >= 0 {
-                             let twisted_y = (height - 1) - (y as usize);
-                             Some((twisted_y, nx))
+                            let twisted_y = (height - 1) - (y as usize);
+                            Some((twisted_y, nx))
                         } else {
                             None
                         }
                     }
                 } else {
                     // No Twist
-                     // Check bounds
+                    // Check bounds
                     if height <= i64::MAX as usize {
                         let h = height as i64;
                         if (0..h).contains(&y) {

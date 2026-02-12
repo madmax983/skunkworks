@@ -58,7 +58,9 @@ impl AudioSystem {
 
                         for sample in data.iter_mut() {
                             let audio_freq = current_params.freq * 10.0;
-                            *sample = (phase * 2.0 * std::f32::consts::PI).sin() * 0.1 * current_params.amp;
+                            *sample = (phase * 2.0 * std::f32::consts::PI).sin()
+                                * 0.1
+                                * current_params.amp;
                             phase = (phase + audio_freq / sample_rate) % 1.0;
                         }
                     },
@@ -78,10 +80,10 @@ impl AudioSystem {
 
         #[cfg(not(feature = "audio"))]
         {
-            println!("Audio disabled (build with --features audio). Running in silent simulation mode.");
-            Ok(Self {
-                params,
-            })
+            println!(
+                "Audio disabled (build with --features audio). Running in silent simulation mode."
+            );
+            Ok(Self { params })
         }
     }
 }

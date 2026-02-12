@@ -20,14 +20,14 @@ async fn main() {
         // We stretch the 1000x1000 world to fit the screen
         let world_mouse = vec2(
             mouse_pos.0 / screen_width() * WORLD_SIZE,
-            mouse_pos.1 / screen_height() * WORLD_SIZE
+            mouse_pos.1 / screen_height() * WORLD_SIZE,
         );
 
         if is_mouse_button_down(MouseButton::Left) {
             // Add firewall every frame is too much, maybe throttle?
             // Or just allow painting barriers.
             // Let's add with a small chance or if moved enough, or just every frame (dense wall)
-             world.add_firewall(world_mouse, 20.0);
+            world.add_firewall(world_mouse, 20.0);
         }
 
         if is_key_pressed(KeyCode::C) {
@@ -73,8 +73,20 @@ async fn main() {
 
         // UI
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("Packets: {}", world.agents.len()), 10.0, 60.0, 30.0, WHITE);
-        draw_text("Left Click: Deploy Firewall | C: Clear Rules", 10.0, screen_height() - 20.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Packets: {}", world.agents.len()),
+            10.0,
+            60.0,
+            30.0,
+            WHITE,
+        );
+        draw_text(
+            "Left Click: Deploy Firewall | C: Clear Rules",
+            10.0,
+            screen_height() - 20.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

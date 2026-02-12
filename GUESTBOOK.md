@@ -1012,3 +1012,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/cymatic-ocean
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The liquid is vibrating. Frequencies are visible on the surface. The audio is driving the wave equation.
+
+### [Concentration Level: FRESH] - Location: experiments/thread-symphony
+- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
+- **Status:** The threads are clashing. Global Lock Contention forces linear drumming patterns. Polyrhythmic jitter is creating the groove. The OS scheduler is the drummer.
