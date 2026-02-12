@@ -769,11 +769,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Force-directed graph where nodes are magnetic particles floating over a decaying magnetic platter.
 - **Novel trait**: Path Dependence via Magnetic Hysteresis. Nodes leave trails that attract other nodes; bits rot over time.
 - **Status**: experiments/ferrous-graph
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Verified.
 
 ### ferrous-legion
 - **Parents**: experiments/ferrous-graph + experiments/spqr-rsa
 - **Concept**: A TUI visualization where Roman Numeral particles interact via "Magnetic Arithmetic".
 - **Novel trait**: Physical accumulation of value.
 - **Status**: experiments/ferrous-legion
+- **Evaluation**: Compiles. Verified.
+
+### quipu-automaton
+- **Parents**: experiments/harmonic-engine + experiments/quipu-symphony
+- **Concept**: A mechanical differential analyzer driven by Inca Quipu cords.
+- **Novel trait**: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
+- **Status**: experiments/quipu-automaton
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
