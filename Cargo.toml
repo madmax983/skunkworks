@@ -70,6 +70,7 @@ members = [
     "experiments/entropic-rain", 
     "experiments/beat-cortex", 
     "experiments/harmony-of-spheres", 
+    "experiments/chaotic-mycelium",
     "experiments/bio-chain",
     "experiments/primordial-soup", 
     "experiments/hyperbolic-finder", 

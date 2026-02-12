@@ -790,4 +790,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A neural network where memory is stored as a holographic interference pattern in the frequency domain.
 - **Novel trait**: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
 - **Status**: experiments/holographic-brain
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chaotic-mycelium
+- **Parents**: experiments/bifurcation-probe + experiments/mycelial-path
+- **Concept**: Fungal growth navigating a Lyapunov Fractal substrate.
+- **Novel trait**: Pathfinding through Chaos. The organism prefers stable mathematical regions ($\lambda < 0$) and avoids chaotic ones.
+- **Status**: experiments/chaotic-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
