@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bandwidth-bazaar**: Documentation void. Chaotic implementation. Generic. Grace period: 24h.
+- **hyperbolic-space**: Documentation void. Redundant with `hyperbolic-dungeon`. Numeric instability (infinite matrix values). Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -120,3 +120,4 @@
 - **kinetic-crease**: Specimen executed. Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **text-terra**: Specimen executed. Redundant with `text-erosion`. Static implementation. Biomass returned to the void.
 - **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
+- **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.

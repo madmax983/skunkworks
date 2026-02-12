@@ -24,9 +24,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Compiles. `ScopedScissor` logic flaw persists. Dropping `None` guard disables scissor test globally. Render state leakage risk.
 
-### [Concentration Level: HIGH] - Location: experiments/hyperbolic-space
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Compiles. `math::boost` overflow vulnerability at runtime. Inputs > 89.0 cause infinite matrix values. Geometry unstable.
+### [Concentration Level: CONDEMNED] - Location: experiments/hyperbolic-space
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen condemned. Documentation void. Redundant with superior hyperbolic experiments. Numeric instability. Grace period: 24h.
 
 ### [Concentration Level: HIGH] - Location: experiments/trace-tardis
 - **Scent Origin:** Mycelium 🍄
@@ -44,9 +44,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** TUI Mode 'I' (Hologram) and 'H' (Hyperspace) verified. `OpCode::Project` replaces `Harvest`. `OpCode::Chain` replaces `Compose`. Logic substrate hardening.
 
-### [Concentration Level: HIGH] - Location: experiments/bandwidth-bazaar
+### [Concentration Level: TOXIC] - Location: graveyard/bandwidth-bazaar
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Documentation void. Chaotic implementation. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Chaotic implementation. Moved to graveyard.
 
 ### [Concentration Level: TOXIC] - Location: graveyard/penrose-build
 - **Scent Origin:** The Reaper ☠️
