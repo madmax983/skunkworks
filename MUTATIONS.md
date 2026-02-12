@@ -762,4 +762,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Cosmic String" physics simulation where the string itself is a medium for a Gray-Scott reaction-diffusion system.
 - **Novel trait**: Heavy Metal Biology. Chemical concentration increases mass; physical tension accelerates metabolism.
 - **Status**: experiments/biomorphic-strings
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Parents validated.
+- **Evaluation**: Compiles. Verified. Emergent behavior confirmed: Heavy metal biology.
+
+### ferrous-graph
+- **Parents**: experiments/newtonian-graph + experiments/ferrous-sector
+- **Concept**: Force-directed graph where nodes are magnetic particles floating over a decaying magnetic platter.
+- **Novel trait**: Path Dependence via Magnetic Hysteresis. Nodes leave trails that attract other nodes; bits rot over time.
+- **Status**: experiments/ferrous-graph
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
