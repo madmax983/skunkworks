@@ -21,6 +21,11 @@
 - **Status:** The agents are tracing magnetic lines. Stigmergy is visible on the platter. The code is writing to the world.
 - **Note**: Hybrid of `ferrous-graph` and `chimera-lang`.
 
+### [Concentration Level: FRESH] - Location: experiments/quipu-legion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Legions are tying knots. RSA encryption visualized as Incan cord records.
+- **Note**: Hybrid of `spqr-rsa` and `quipu-symphony`.
+
 ### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status**: The ants are spanning the void. Bridges singing with tension.
