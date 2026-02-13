@@ -22,23 +22,23 @@
 /// ```
 pub struct PhysicsGrid {
     /// The width of the simulation grid in cells.
-    pub width: usize,
+    pub(crate) width: usize,
     /// The height of the simulation grid in cells.
-    pub height: usize,
+    pub(crate) height: usize,
     /// The current state of the wave field (pressure/displacement at each cell).
-    pub u: Vec<f32>,
+    pub(crate) u: Vec<f32>,
     /// The previous state of the wave field (t - 1), used for time integration.
-    pub u_prev: Vec<f32>,
+    pub(crate) u_prev: Vec<f32>,
     /// Scratch buffer for calculating the next state (t + 1).
-    pub u_next: Vec<f32>,
+    pub(crate) u_next: Vec<f32>,
     /// Material properties for each cell.
-    pub materials: Vec<Material>,
+    pub(crate) materials: Vec<Material>,
     /// Speed of sound squared (c^2) map. Controls wave propagation speed.
-    pub c2_map: Vec<f32>,
+    pub(crate) c2_map: Vec<f32>,
     /// Damping map. Controls energy loss per cell.
-    pub damping_map: Vec<f32>,
+    pub(crate) damping_map: Vec<f32>,
     /// Accumulated energy map (sum of absolute values).
-    pub energy_map: Vec<f32>,
+    pub(crate) energy_map: Vec<f32>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -67,6 +67,16 @@ impl PhysicsGrid {
             damping_map: vec![0.999; size],
             energy_map: vec![0.0; size],
         }
+    }
+
+    /// Returns the width of the grid.
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    /// Returns the height of the grid.
+    pub fn height(&self) -> usize {
+        self.height
     }
 
     /// Sets the material at a specific coordinate.
