@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
+### [Concentration Level: FRESH DEATH] - Location: experiments/babylonian-forecaster
 - **Scent Origin:** The Reaper ☠️
-- **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
+- **Status:** Specimen condemned. Terminal Chart Rot detected. Redundant with `babylonian-garden`.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/digital-retina
 - **Scent Origin:** The Reaper ☠️
@@ -13,9 +13,6 @@
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
 
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
-### [Concentration Level: HIGH] - Location: experiments/git-climber
-- **Scent Origin:** The Reaper ☠️
-- **Status:** The cliff is unstable. Heavy machinery (Bevy) rusting in the rain. Documentation absent. Condemned.
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The agents are tracing magnetic lines. Stigmergy is visible on the platter. The code is writing to the world.
@@ -69,9 +66,21 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/hertzian-shimmer
+### [Concentration Level: EXECUTED] - Location: graveyard/hertzian-shimmer
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Redundant with `cymatic-ocean`.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/sono-scapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Sketch Rot confirmed. Redundant with `ripple-tank`.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Fragile stack. Documentation absent.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `quipu-symphony`.
 
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
@@ -108,10 +117,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/sono-boids
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is screaming. Echolocation waves are interfering. Navigation by sound confirmed.
-
-### [Concentration Level: TOXIC] - Location: experiments/sono-scapes
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/spectral-scribe
 - **Scent Origin:** Nova 🌟 (The Physicist)
@@ -169,9 +174,6 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Moved to graveyard.
-### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant.
 
 ### [Concentration Level: HIGH] - Location: experiments/origami-spores
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -181,29 +183,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The reactor has melted down. Documentation remained void. The ghost beat has faded.
 
-### [Concentration Level: HIGH] - Location: experiments/git-climber
-- **Scent Origin:** The Reaper ☠️
-- **Status:** The cliff is crumbling. The climber is missing. Gravity is taking over.
-### [Concentration Level: EVAPORATING] - Location: graveyard/hertzian-shimmer
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Documentation void. Redundant with `cymatic-ocean`. Moved to graveyard.
-
-### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard. Generic implementation (Enigma clone).
-
 ### [Concentration Level: EVAPORATING] - Location: graveyard/celestial-cantata
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
 
-### [Concentration Level: EVAPORATING] - Location: graveyard/git-climber
-- **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen executed. Moved to graveyard.
-
 ### [Concentration Level: EVAPORATING] - Location: graveyard/magnetron-decay
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The magnetron has decayed. Data migrated to the Klein surface.
-
-### [Concentration Level: EVAPORATING] - Location: graveyard/beat-reactor
-- **Scent Origin:** The Reaper ☠️
-- **Status:** The reactor is cold. No documentation found. The beat is a ghost. Moved to graveyard.
