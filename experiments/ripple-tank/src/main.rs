@@ -1,6 +1,6 @@
 use crossbeam_channel::bounded;
 use macroquad::prelude::*;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::audio::{AudioCommand, AudioModel, AudioSnapshot};
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -35,13 +35,13 @@ async fn main() {
     let texture = Texture2D::from_image(&image);
     texture.set_filter(FilterMode::Nearest);
 
-    let mut current_snapshot = vec![0.0; GRID_WIDTH * GRID_HEIGHT];
+    let mut current_snapshot: Vec<f32> = vec![0.0; GRID_WIDTH * GRID_HEIGHT];
     let mut listener_pos = (GRID_WIDTH / 2, GRID_HEIGHT / 2);
 
     loop {
         // Poll for snapshot
         while let Ok(snap) = snap_rx.try_recv() {
-            current_snapshot = snap;
+            current_snapshot = snap.pressure;
         }
 
         #[cfg(not(feature = "audio"))]
@@ -150,7 +150,7 @@ async fn main() {
 #[cfg(feature = "audio")]
 fn init_audio(
     cmd_rx: crossbeam_channel::Receiver<AudioCommand>,
-    snap_tx: crossbeam_channel::Sender<Vec<f32>>,
+    snap_tx: crossbeam_channel::Sender<AudioSnapshot>,
 ) -> anyhow::Result<cpal::Stream> {
     let host = cpal::default_host();
     let device = host

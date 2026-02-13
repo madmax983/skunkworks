@@ -13,7 +13,7 @@ use ratatui::{
     },
     Frame,
 };
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::audio::{AudioCommand, AudioModel, AudioSnapshot};
 use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
@@ -81,7 +81,7 @@ struct App {
     wave_model: AudioModel,
     wave_grid: Vec<f32>,
     cmd_tx: Sender<AudioCommand>,
-    snap_rx: Receiver<Vec<f32>>,
+    snap_rx: Receiver<AudioSnapshot>,
     running: bool,
 }
 
@@ -114,7 +114,7 @@ impl App {
 
         // Check for snapshots
         while let Ok(snap) = self.snap_rx.try_recv() {
-            self.wave_grid = snap;
+            self.wave_grid = snap.pressure;
         }
 
         // Update boids
