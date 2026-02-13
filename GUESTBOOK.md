@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/luminous-valley
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
+- **Note:** Hybrid of `valley-forge` and `luminous-flock`.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Thriving ecosystem. Nova features active. Documented and feature-rich.
