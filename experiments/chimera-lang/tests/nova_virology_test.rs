@@ -1,10 +1,11 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
-    use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value};
-    use crate::vm::nova::Organelle;
-    use crate::vm::nova::OrganelleType;
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
+    use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
+    use chimera_lang::vm::nova::Organelle;
+    use chimera_lang::vm::nova::OrganelleType;
+    use chimera_lang::vm::memetics;
 
     fn make_vm() -> ChimeraVM {
         let genes = vec![Gene {
@@ -51,7 +52,7 @@ mod tests {
         vm.organelles.push(organelle);
 
         // 3. Infect (5, 5) with Virus carrying Payload
-        let virus = crate::vm::memetics::Virus {
+        let virus = memetics::Virus {
             name: "GeneTherapy".to_string(),
             color: (0, 255, 0),
             pattern: "X".to_string(),
@@ -60,13 +61,13 @@ mod tests {
         };
         vm.virus_library.push(virus);
 
-        vm.viral_grid[5][5] = Some(crate::vm::memetics::ViralState {
+        vm.viral_grid[5][5] = Some(memetics::ViralState {
             infection_level: 100,
             virus_id: 0,
         });
 
         // 4. Run Outbreak
-        crate::vm::memetics::exec_memetics_op(&mut vm, OpCode::Outbreak, &[]);
+        memetics::exec_memetics_op(&mut vm, OpCode::Outbreak, &[]);
 
         // 5. Verify Transduction
         let strand_0 = &vm.dna.helix.strands[0];

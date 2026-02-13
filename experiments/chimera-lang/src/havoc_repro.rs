@@ -161,4 +161,42 @@ mod tests {
 
         // Assert that we didn't crash (if we crashed, test fails with panic, which is also a win)
     }
+
+    #[test]
+    #[cfg(feature = "nova")]
+    fn test_scavenge_path_traversal() {
+        // 👺 HAVOC: Path Traversal via Scavenge
+        // 1. Target a file known to exist outside the likely sandbox (../../Cargo.toml relative to experiments/chimera-lang)
+        // 2. Call Scavenge on it.
+        // 3. Assert that access is DENIED (secure).
+
+        let genes = vec![
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::String("../../Cargo.toml".to_string())],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Scavenge,
+                args: vec![],
+            },
+        ];
+
+        let mut vm = ChimeraVM::new(make_dna(genes));
+        vm.step(); // Push path
+        vm.step(); // Push len
+        vm.step(); // Scavenge
+
+        // If secure, output should contain "Error".
+        // If vulnerable, output should contain "SCAVENGE: Consumed".
+
+        let vulnerable = vm.output.iter().any(|s| s.contains("SCAVENGE: Consumed"));
+        if vulnerable {
+             println!("VM Output: {:?}", vm.output);
+        }
+        assert!(!vulnerable, "SECURITY BREACH: Path traversal detected! Able to read ../../Cargo.toml");
+    }
 }
