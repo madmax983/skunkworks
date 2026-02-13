@@ -28,13 +28,13 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
-- **Status**: The ants are spanning the void. Bridges singing with tension.
+- **Status:** The ants are spanning the void. Bridges singing with tension.
 - **Note**: Hybrid of `biomimetic-bridge` and `harmony-of-spheres`.
 
 ### [Concentration Level: FRESH] - Location: experiments/luminous-valley
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
-- **Note:** Hybrid of `valley-forge` and `luminous-flock`.
+- **Note**: Hybrid of `valley-forge` and `luminous-flock`.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
@@ -212,3 +212,7 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/beat-reactor
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The reactor is cold. No documentation found. The beat is a ghost. Moved to graveyard.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-pachinko
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Pachinko board is alive. The pins are hungrier than expected. Evolution is driving the physics.

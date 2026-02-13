@@ -1,0 +1,13 @@
+[package]
+name = "chimera-pachinko"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+locus = { path = "../../crates/locus" }
+chimera-lang = { path = "../chimera-lang" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+tui-shared = { path = "../../crates/tui-shared" }
