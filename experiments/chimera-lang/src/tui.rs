@@ -1730,7 +1730,24 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('T') => app_state.view_mode = ViewMode::Chronos,
+                    KeyCode::Char('T') => {
+                        if let ViewMode::Babel = app_state.view_mode {
+                            if let Some(ast) = &app_state.babel_ast {
+                                vm.stack.push(ast.clone());
+                                vm.stack.push(crate::vm::Value::Str(app_state.babel_input.clone()));
+                                crate::vm::babel::exec_babel_op(
+                                    vm,
+                                    crate::opcode::OpCode::Tongue,
+                                    &[],
+                                );
+                                if let Some(res) = vm.stack.pop() {
+                                    app_state.babel_result = format!("{}", res);
+                                }
+                            }
+                        } else {
+                            app_state.view_mode = ViewMode::Chronos;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('U') => app_state.view_mode = ViewMode::Logos,
                     #[cfg(feature = "nova")]

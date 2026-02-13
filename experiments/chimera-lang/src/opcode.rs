@@ -2089,6 +2089,21 @@ pub enum OpCode {
     /// **Stack:** `[ ..., p ] -> [ ..., parser_junction ]`
     #[cfg(feature = "nova")]
     ParserOpt,
+    /// **[Babel]** Creates a variadic sequence parser.
+    ///
+    /// **Stack:** `[ ..., p1, p2, ..., pn, count ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserSeqN,
+    /// **[Babel]** Creates a variadic alternative parser.
+    ///
+    /// **Stack:** `[ ..., p1, p2, ..., pn, count ] -> [ ..., parser_junction ]`
+    #[cfg(feature = "nova")]
+    ParserAltN,
+    /// **[Babel]** "Tongue of Madness": Parses input, mutates CST, regenerates string.
+    ///
+    /// **Stack:** `[ ..., grammar, input_string ] -> [ ..., corrupted_string ]`
+    #[cfg(feature = "nova")]
+    Tongue,
     /// **[Babel]** Generates a string from a Grammar.
     ///
     /// **Stack:** `[ ..., grammar_junction ] -> [ ..., generated_string ]`

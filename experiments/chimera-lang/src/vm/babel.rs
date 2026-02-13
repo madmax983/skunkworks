@@ -21,6 +21,40 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for Generate".to_string());
             }
         }
+        OpCode::Tongue => {
+            // [ grammar, input ] -> [ corrupted ]
+            if vm.stack.len() >= 2 {
+                let input_val = vm.stack.pop().unwrap();
+                let grammar_val = vm.stack.pop().unwrap();
+
+                if let Value::Str(input_str) = input_val {
+                    // 1. Parse
+                    match run_parser(&grammar_val, &input_str) {
+                        Ok((cst, consumed)) => {
+                            if consumed == input_str.len() {
+                                // 2. Mutate CST
+                                let mutated_cst = mutate_cst(&cst, 0.2); // 20% base corruption rate
+                                // 3. Flatten
+                                let output_str = flatten_cst(&mutated_cst);
+                                vm.stack.push(Value::Str(output_str));
+                                vm.output.push("TONGUE: Reality corrupted.".to_string());
+                            } else {
+                                vm.output.push(format!("TONGUE: Partial match ({} chars), cannot corrupt.", consumed));
+                                vm.stack.push(Value::Str(input_str));
+                            }
+                        }
+                        Err(_) => {
+                            vm.output.push("TONGUE: Parse failed.".to_string());
+                            vm.stack.push(Value::Str(input_str));
+                        }
+                    }
+                } else {
+                    vm.output.push("Error: Tongue input must be string".to_string());
+                }
+            } else {
+                vm.output.push("Error: Stack underflow for Tongue".to_string());
+            }
+        }
         OpCode::Scribe => {
             if let Some(val) = vm.stack.pop() {
                 let s = match val {
@@ -77,12 +111,6 @@ pub fn exec_babel_op(
                             }
                         }
                         "Mutate" => {
-                            // Stack: [ ..., rate, grammar ] -> [ ..., mutated ]
-                            // We already popped "Mutate" as type_str.
-                            // The arguments popped earlier (args) was just [type_str].
-                            // We need to pop real args from stack.
-                            // Actually, exec_babel_op logic for Grammar op is:
-                            // Pop type_str. Then switch on it to pop args.
                             if vm.stack.len() >= 2 {
                                 let rate_val = vm.stack.pop().unwrap();
                                 let grammar_val = vm.stack.pop().unwrap();
@@ -129,7 +157,7 @@ pub fn exec_babel_op(
                             } else {
                                 vm.output
                                     .push(format!("PARSE: Partial match ({} chars)", consumed));
-                                vm.stack.push(Value::Int(0)); // Failure indicator? Or partial AST? For now, failure.
+                                vm.stack.push(Value::Int(0)); // Failure indicator
                             }
                         }
                         Err(_) => {
@@ -181,6 +209,25 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for ParserSeq".to_string());
             }
         }
+        OpCode::ParserSeqN => {
+            if let Some(Value::Int(count)) = vm.stack.pop() {
+                let count = count as usize;
+                if vm.stack.len() >= count {
+                    let mut args = vec![Value::Str("Seq".to_string())];
+                    let mut items = Vec::new();
+                    for _ in 0..count {
+                        items.push(vm.stack.pop().unwrap());
+                    }
+                    items.reverse();
+                    args.extend(items);
+                    vm.stack.push(Value::Junction(JunctionType::Any, args));
+                } else {
+                    vm.output.push("Error: Stack underflow for ParserSeqN".to_string());
+                }
+            } else {
+                vm.output.push("Error: ParserSeqN requires count".to_string());
+            }
+        }
         OpCode::ParserAlt => {
             if vm.stack.len() >= 2 {
                 let p2 = vm.stack.pop().unwrap();
@@ -192,6 +239,25 @@ pub fn exec_babel_op(
             } else {
                 vm.output
                     .push("Error: Stack underflow for ParserAlt".to_string());
+            }
+        }
+        OpCode::ParserAltN => {
+            if let Some(Value::Int(count)) = vm.stack.pop() {
+                let count = count as usize;
+                if vm.stack.len() >= count {
+                    let mut args = vec![Value::Str("Alt".to_string())];
+                    let mut items = Vec::new();
+                    for _ in 0..count {
+                        items.push(vm.stack.pop().unwrap());
+                    }
+                    items.reverse();
+                    args.extend(items);
+                    vm.stack.push(Value::Junction(JunctionType::Any, args));
+                } else {
+                    vm.output.push("Error: Stack underflow for ParserAltN".to_string());
+                }
+            } else {
+                vm.output.push("Error: ParserAltN requires count".to_string());
             }
         }
         OpCode::ParserMany => {
@@ -246,9 +312,6 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                         return Err(());
                     }
                     if let Value::Str(pattern) = &args[1] {
-                        // Compile regex. Note: This is inefficient to do every time.
-                        // In a real VM we'd cache this or pre-compile.
-                        // We prepend ^ to anchor to start of string for parser behavior
                         let anchored = format!("^{}", pattern);
                         if let Ok(re) = regex::Regex::new(&anchored) {
                             if let Some(mat) = re.find(input) {
@@ -261,32 +324,31 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     return Err(());
                 }
                 "Seq" => {
-                    if args.len() < 3 {
-                        return Err(());
+                    // Variadic Seq
+                    let mut total_consumed = 0;
+                    let mut results = Vec::new();
+                    // Args[1..] are sub-parsers
+                    for parser in args.iter().skip(1) {
+                        let current_input = &input[total_consumed..];
+                        match run_parser(parser, current_input) {
+                            Ok((res, consumed)) => {
+                                results.push(res);
+                                total_consumed += consumed;
+                            }
+                            Err(_) => return Err(()),
+                        }
                     }
-                    let p1 = &args[1];
-                    let p2 = &args[2];
-
-                    let (res1, consumed1) = run_parser(p1, input)?;
-                    let (res2, consumed2) = run_parser(p2, &input[consumed1..])?;
-
                     Ok((
-                        Value::Junction(JunctionType::All, vec![res1, res2]),
-                        consumed1 + consumed2,
+                        Value::Junction(JunctionType::All, results),
+                        total_consumed,
                     ))
                 }
                 "Alt" => {
-                    if args.len() < 3 {
-                        return Err(());
-                    }
-                    let p1 = &args[1];
-                    let p2 = &args[2];
-
-                    if let Ok(res) = run_parser(p1, input) {
-                        return Ok(res);
-                    }
-                    if let Ok(res) = run_parser(p2, input) {
-                        return Ok(res);
+                    // Variadic Alt
+                    for parser in args.iter().skip(1) {
+                        if let Ok(res) = run_parser(parser, input) {
+                            return Ok(res);
+                        }
                     }
                     Err(())
                 }
@@ -300,8 +362,9 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
 
                     while let Ok((res, consumed)) = run_parser(p, &input[total_consumed..]) {
                         if consumed == 0 {
+                            // Prevent infinite loops on empty matches
                             break;
-                        } // Prevent infinite loops on empty matches
+                        }
                         results.push(res);
                         total_consumed += consumed;
                     }
@@ -317,6 +380,9 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                     if let Ok(res) = run_parser(p, input) {
                         Ok(res)
                     } else {
+                        // Optional returns empty junction on fail? Or just empty consumed?
+                        // Return empty match AST or None?
+                        // Let's return empty junction.
                         Ok((Value::Junction(JunctionType::All, Vec::new()), 0))
                     }
                 }
@@ -356,7 +422,6 @@ fn generate_string_depth(parser: &Value, depth: usize) -> String {
                 "Regex" => {
                     if args.len() >= 2 {
                         if let Value::Str(pattern) = &args[1] {
-                            // Simple mock generation
                             return format!("~{}~", pattern);
                         }
                     }
@@ -409,7 +474,6 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
             return grammar.clone();
         }
         if let Value::Str(type_str) = &args[0] {
-            // Chance to change the structure completely (Drift)
             if rng.gen_bool(0.05) {
                 // Return a random simple grammar
                 let simple_types = ["Match", "Regex"];
@@ -427,7 +491,6 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
 
             match type_str.as_str() {
                 "Match" => {
-                    // Mutate literal
                     if args.len() >= 2 {
                         if let Value::Str(s) = &args[1] {
                             let mut chars: Vec<char> = s.chars().collect();
@@ -436,17 +499,14 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
                                 let mutation_type = rng.gen_range(0..3);
                                 match mutation_type {
                                     0 => {
-                                        // Change char
                                         chars[idx] = rng.gen_range(b'a'..=b'z') as char;
                                     }
                                     1 => {
-                                        // Delete char
                                         if chars.len() > 1 {
                                             chars.remove(idx);
                                         }
                                     }
                                     2 => {
-                                        // Insert char
                                         chars.insert(idx, rng.gen_range(b'a'..=b'z') as char);
                                     }
                                     _ => {}
@@ -465,13 +525,10 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
                     }
                 }
                 "Seq" => {
-                    // Swap or mutate children
                     let mut new_args = args.clone();
-                    // Mutate children
                     for i in 1..new_args.len() {
                         new_args[i] = mutate_grammar(&new_args[i], rate);
                     }
-                    // Swap
                     if new_args.len() > 2 && rng.gen_bool(0.3) {
                         let idx1 = rng.gen_range(1..new_args.len());
                         let idx2 = rng.gen_range(1..new_args.len());
@@ -480,12 +537,10 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
                     return Value::Junction(JunctionType::Any, new_args);
                 }
                 "Alt" => {
-                    // Similar to Seq
                     let mut new_args = args.clone();
                     for i in 1..new_args.len() {
                         new_args[i] = mutate_grammar(&new_args[i], rate);
                     }
-                    // Chance to become Seq?
                     if rng.gen_bool(0.1) {
                         new_args[0] = Value::Str("Seq".to_string());
                     }
@@ -496,10 +551,6 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
                     if new_args.len() >= 2 {
                         new_args[1] = mutate_grammar(&new_args[1], rate);
                     }
-                    // Chance to unwrap?
-                    if rng.gen_bool(0.1) && new_args.len() >= 2 {
-                        return new_args[1].clone();
-                    }
                     return Value::Junction(JunctionType::Any, new_args);
                 }
                 _ => {}
@@ -507,4 +558,53 @@ pub fn mutate_grammar(grammar: &Value, rate: f64) -> Value {
         }
     }
     grammar.clone()
+}
+
+fn mutate_cst(cst: &Value, rate: f64) -> Value {
+    let mut rng = rand::thread_rng();
+    if !rng.gen_bool(rate) {
+        return cst.clone();
+    }
+
+    match cst {
+        Value::Str(s) => {
+            let mut chars: Vec<char> = s.chars().collect();
+            if !chars.is_empty() {
+                let idx = rng.gen_range(0..chars.len());
+                chars[idx] = match rng.gen_range(0..3) {
+                    0 => (chars[idx] as u8 ^ 32) as char,
+                    1 => rng.gen_range(33..126) as u8 as char,
+                    _ => '?',
+                };
+            }
+            Value::Str(chars.into_iter().collect())
+        }
+        Value::Junction(JunctionType::All, children) => {
+            let mut new_children = children.clone();
+            if new_children.len() > 1 && rng.gen_bool(0.3) {
+                let i1 = rng.gen_range(0..new_children.len());
+                let i2 = rng.gen_range(0..new_children.len());
+                new_children.swap(i1, i2);
+            }
+            for child in &mut new_children {
+                *child = mutate_cst(child, rate);
+            }
+            Value::Junction(JunctionType::All, new_children)
+        }
+        _ => cst.clone(),
+    }
+}
+
+fn flatten_cst(cst: &Value) -> String {
+    match cst {
+        Value::Str(s) => s.clone(),
+        Value::Junction(JunctionType::All, children) => {
+            let mut s = String::new();
+            for child in children {
+                s.push_str(&flatten_cst(child));
+            }
+            s
+        }
+        _ => String::new(),
+    }
 }
