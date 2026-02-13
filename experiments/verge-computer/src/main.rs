@@ -1,17 +1,18 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
+use std::f32::consts::PI;
 use verge_computer::{
     cpu::{self, Instruction, Program},
     mechanism,
     view::ViewPlugin,
-    EscapeWheel, VergeComputerPlugin,
+    VergeComputerPlugin,
 };
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(50.0))
-        // .add_plugins(RapierDebugRenderPlugin::default()) // Disabled for nicer visuals
+        // .add_plugins(RapierDebugRenderPlugin::default())
         .add_plugins(VergeComputerPlugin)
         .add_plugins(ViewPlugin)
         .add_systems(Startup, setup)
@@ -32,18 +33,14 @@ fn setup(mut commands: Commands) {
 
     // 1. Escape Wheel
     let wheel_pos = Vec2::new(0.0, 0.0);
-    let teeth = 12;
-    let radius = 3.0;
+    let teeth = 30;
+    let radius = 10.0;
+    let mass_density = 5.0; // Heavy wheel
 
-    let wheel = mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, 0.5);
+    let wheel = mechanism::spawn_gear(&mut commands, wheel_pos, teeth, radius, mass_density);
 
     commands
         .entity(wheel)
-        .insert(EscapeWheel {
-            last_angle: 0.0,
-            teeth,
-            cumulative_angle: 0.0,
-        })
         .insert(MainSpring)
         .insert(ExternalForce::default())
         .insert(ImpulseJoint::new(
@@ -54,14 +51,21 @@ fn setup(mut commands: Commands) {
         ));
 
     // 2. Anchor
-    let anchor_pos = Vec2::new(0.0, 5.0);
-    let anchor = mechanism::spawn_anchor(&mut commands, anchor_pos);
+    let span_teeth = 7.5;
+    let pitch_angle = 2.0 * PI / (teeth as f32);
+    let half_span_angle = (span_teeth * pitch_angle) / 2.0;
+    // Calculate pivot distance for tangent pallets
+    let pivot_dist = radius / half_span_angle.cos();
+
+    let anchor_pos = Vec2::new(0.0, pivot_dist);
+    let anchor = mechanism::spawn_anchor(&mut commands, anchor_pos, radius, teeth, span_teeth);
 
     commands.entity(anchor).insert(ImpulseJoint::new(
         ground,
         RevoluteJointBuilder::new()
             .local_anchor1(anchor_pos)
-            .local_anchor2(Vec2::ZERO),
+            .local_anchor2(Vec2::ZERO)
+            .limits([-0.5, 0.5]),
     ));
 
     // 3. CPU Visualization
@@ -98,7 +102,7 @@ fn setup(mut commands: Commands) {
 
 fn apply_torque(mut query: Query<&mut ExternalForce, With<MainSpring>>) {
     for mut force in &mut query {
-        force.torque = -150.0;
+        force.torque = -5000.0; // Strong spring for 30 teeth
     }
 }
 

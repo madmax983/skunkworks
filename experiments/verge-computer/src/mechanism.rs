@@ -7,11 +7,81 @@ pub struct MechanismPlugin;
 
 impl Plugin for MechanismPlugin {
     fn build(&self, _app: &mut App) {
-        // No systems here yet, just helper functions exportable
+        // No systems here yet
     }
 }
 
-/// Spawns a gear with N teeth.
+pub fn get_tooth_points(height: f32, width: f32) -> Vec<Vec2> {
+    vec![
+        Vec2::new(0.0, width / 2.0),
+        Vec2::new(0.0, -width / 2.0),
+        Vec2::new(height, -width / 2.0),
+    ]
+}
+
+pub fn get_tooth_collider(height: f32, width: f32) -> Collider {
+    let points = get_tooth_points(height, width);
+    Collider::convex_hull(&points).unwrap()
+}
+
+pub fn get_anchor_colliders(radius: f32, span_teeth: f32, tooth_pitch_angle: f32) -> Vec<(Vect, f32, Collider)> {
+    let mut shapes = Vec::new();
+
+    let half_span_angle = (span_teeth * tooth_pitch_angle) / 2.0;
+    // Pivot distance for tangent pallets
+    // pivot_dist = radius / cos(half_span_angle)
+    // arm_length = radius * tan(half_span_angle)
+
+    // Safety clamp to avoid division by zero or weird angles
+    let safe_angle = half_span_angle.clamp(0.1, 1.5);
+    let arm_length = radius * safe_angle.tan();
+
+    let pallet_size = Vec2::new(0.4, 0.8);
+    let pallet_collider = Collider::cuboid(pallet_size.x / 2.0, pallet_size.y / 2.0);
+
+    // Arm angle from vertical
+    // In the tangent triangle, angle at pivot = PI/2 - angle at center
+    let arm_angle = PI / 2.0 - safe_angle;
+
+    // Calculate pallet positions relative to anchor pivot (0,0)
+    // Left Pallet: -px, py
+    // Right Pallet: px, py
+    // Where px = arm_length * sin(arm_angle), py = -arm_length * cos(arm_angle)
+    let px = arm_length * arm_angle.sin();
+    let py = -arm_length * arm_angle.cos();
+
+    // Left Pallet
+    shapes.push((
+        Vect::new(-px, py),
+        0.5, // Tilt
+        pallet_collider.clone(),
+    ));
+
+    // Right Pallet
+    shapes.push((
+        Vect::new(px, py),
+        -0.5, // Tilt
+        pallet_collider.clone(),
+    ));
+
+    // Arms
+    let arm_shape = Collider::cuboid(0.1, arm_length / 2.0);
+    // Left Arm
+    shapes.push((
+        Vect::new(-px/2.0, py/2.0),
+        arm_angle,
+        arm_shape.clone()
+    ));
+    // Right Arm
+    shapes.push((
+        Vect::new(px/2.0, py/2.0),
+        -arm_angle,
+        arm_shape.clone()
+    ));
+
+    shapes
+}
+
 pub fn spawn_gear(
     commands: &mut Commands,
     position: Vec2,
@@ -20,31 +90,24 @@ pub fn spawn_gear(
     mass_density: f32,
 ) -> Entity {
     let mut shapes = Vec::new();
-
-    // Main disk (rim)
-    // Reduce radius slightly to allow teeth to sit on it
     shapes.push((Vect::ZERO, 0.0, Collider::ball(radius - 0.5)));
 
-    // Teeth
-    // Calculate tooth dimensions based on circumference
-    // Circumference = 2 * PI * radius
-    // Pitch = Circumference / teeth
-    let pitch = (2.0 * PI * radius) / (teeth as f32);
-    let tooth_width = pitch * 0.5; // Fill 50% of pitch with tooth
-    let tooth_height = 1.0;
+    let circumference = 2.0 * PI * radius;
+    let pitch = circumference / (teeth as f32);
+    let tooth_width = pitch * 0.8;
+    let tooth_height = 1.2;
 
-    // Rapier cuboid uses half-extents
-    let tooth_shape = Collider::cuboid(tooth_height / 2.0, tooth_width / 2.0);
+    let tooth_shape = get_tooth_collider(tooth_height, tooth_width);
 
     for i in 0..teeth {
         let angle = (i as f32) * 2.0 * PI / (teeth as f32);
-        let dist = radius;
+        let dist = radius - 0.2;
         let x = dist * angle.cos();
         let y = dist * angle.sin();
 
         shapes.push((
             Vect::new(x, y),
-            angle, // Rotate to point outward
+            angle,
             tooth_shape.clone(),
         ));
     }
@@ -59,43 +122,33 @@ pub fn spawn_gear(
                 linear_damping: 0.1,
                 angular_damping: 0.5,
             },
-            // Axis lock to z-rotation only (2D physics handles this naturally but we want to pin it)
-            // Wait, if we pin translation, it rotates around its center. Correct.
             LockedAxes::TRANSLATION_LOCKED,
+            crate::EscapeWheel {
+                last_angle: 0.0,
+                teeth,
+                cumulative_angle: 0.0,
+                radius,
+            }
         ))
         .id()
 }
 
-/// Spawns an Anchor (for the escapement)
-pub fn spawn_anchor(commands: &mut Commands, position: Vec2) -> Entity {
+pub fn spawn_anchor(
+    commands: &mut Commands,
+    position: Vec2,
+    wheel_radius: f32,
+    wheel_teeth: usize,
+    span_teeth: f32
+) -> Entity {
     let mut shapes = Vec::new();
 
-    // Anchor geometry is specific to the escape wheel size.
-    // Assuming escape wheel is roughly radius 5.0 nearby below.
+    let pitch_angle = 2.0 * PI / (wheel_teeth as f32);
+    let pallet_shapes = get_anchor_colliders(wheel_radius, span_teeth, pitch_angle);
+    shapes.extend(pallet_shapes);
 
-    // Left pallet
-    shapes.push((
-        Vect::new(-1.5, -2.0),
-        0.5, // Tilted
-        Collider::cuboid(0.2, 0.2),
-    ));
-
-    // Right pallet
-    shapes.push((
-        Vect::new(1.5, -2.0),
-        -0.5, // Tilted opposite
-        Collider::cuboid(0.2, 0.2),
-    ));
-
-    // Arms connecting to pivot
-    shapes.push((Vect::new(-2.5, -1.5), 0.5, Collider::cuboid(0.2, 2.0)));
-    shapes.push((Vect::new(2.5, -1.5), -0.5, Collider::cuboid(0.2, 2.0)));
-
-    // Pendulum Rod (upwards or downwards) - let's make it a pendulum swinging below
-    shapes.push((Vect::new(0.0, -8.0), 0.0, Collider::cuboid(0.2, 8.0)));
-
-    // Bob
-    shapes.push((Vect::new(0.0, -16.0), 0.0, Collider::ball(2.0)));
+    // Pendulum
+    shapes.push((Vect::new(0.0, -6.0), 0.0, Collider::cuboid(0.2, 6.0)));
+    shapes.push((Vect::new(0.0, -12.0), 0.0, Collider::ball(1.5)));
 
     commands
         .spawn((
@@ -106,9 +159,13 @@ pub fn spawn_anchor(commands: &mut Commands, position: Vec2) -> Entity {
             Damping {
                 linear_damping: 0.1,
                 angular_damping: 0.1,
-            }, // Low damping for pendulum
+            },
             LockedAxes::TRANSLATION_LOCKED,
-            Anchor,
+            Anchor {
+                wheel_radius,
+                span_teeth,
+                wheel_teeth,
+            },
         ))
         .id()
 }

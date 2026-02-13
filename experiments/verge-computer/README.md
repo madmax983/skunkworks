@@ -1,46 +1,34 @@
-# Verge Computer ⚛️⏱️
+# ⚛️ Verge Computer
 
-**Genesis: The Horologist**
+> "The clockwork that computes."
 
-A mechanical computer simulation where a **Verge Escapement** regulates a **CPU clock cycle**.
-Built with Bevy, Bevy Rapier 2D, and Lyon.
-
-## Concept
-Smashing together:
-*   **Verge Escapement** (An Anchor escapement in this 2D sim)
-*   **CPU Clock Cycle Visualization**
-
-A crown wheel (Escape Wheel) is driven by a mainspring (Constant Torque).
-An anchor escapement locks and releases the wheel, creating a discrete "tick".
-Each physical "tick" triggers a CPU micro-operation (Fetch -> Decode -> Execute).
-
-The CPU currently executes a **Fibonacci Sequence** program stored in its memory.
+This experiment simulates a mechanical computer driven by a **Graham Escapement**.
+A physics-based **Escape Wheel** (30 teeth) is driven by a **Mainspring** (torque) and regulated by an **Anchor** (pendulum).
+Each "tick" of the escapement drives a single clock cycle of a simple **CPU** executing a Fibonacci sequence.
 
 ## Mechanism
-*   **Physics:** `bevy_rapier2d` simulates the rigid body dynamics of the gear train and escapement.
-*   **Logic:** A custom VM (`cpu.rs`) interprets instructions (`LOAD`, `ADD`, `MOV`, `JMP`).
-*   **Visuals:** `bevy_prototype_lyon` renders the "Brass" gear and "Steel" anchor.
+- **Physics Engine**: `bevy_rapier2d`.
+- **Rendering**: `bevy_prototype_lyon`.
+- **Escapement**: Graham/Deadbeat style with tangent pallets.
+- **CPU**: A simple register machine (4 registers) with `LOAD`, `ADD`, `MOV`, `JMP` instructions.
 
-## Running
+## How to Run
 ```bash
-cargo run -p verge-computer
+cargo run
 ```
+You should see:
+- A brass Escape Wheel turning clockwise.
+- A steel Anchor rocking back and forth.
+- A green indicator flashing on each tick.
+- Text overlay showing the CPU state (PC, Registers).
 
-## Program (Fibonacci)
-The ROM contains:
-```assembly
-0: LOAD R0, 0
-1: LOAD R1, 1
-2: LOAD R2, 0
-3: ADD R2, R0
-4: ADD R2, R1
-5: MOV R0, R1
-6: MOV R1, R2
-7: JMP 2
-```
+## Concept
+Combining horology and computing:
+- **Tick**: One escapement cycle = One CPU clock edge.
+- **Regulation**: The pendulum period determines the CPU clock speed.
+- **Power**: The mainspring provides the energy for computation.
 
-## Architecture
-*   `mechanism.rs`: Physics body generation (Gears, Anchors).
-*   `cpu.rs`: The virtual machine state and instruction set.
-*   `view.rs`: Vector graphics rendering.
-*   `lib.rs`: The plugin wiring it all together.
+## Status
+- [x] Physics Simulation (Escapement works!)
+- [x] Visuals (Gears and Anchor rendered with Lyon)
+- [x] CPU Logic (Fibonacci program running)

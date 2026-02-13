@@ -21,10 +21,15 @@ pub struct EscapeWheel {
     pub last_angle: f32,
     pub teeth: usize,
     pub cumulative_angle: f32,
+    pub radius: f32,
 }
 
 #[derive(Component)]
-pub struct Anchor;
+pub struct Anchor {
+    pub wheel_radius: f32,
+    pub span_teeth: f32,
+    pub wheel_teeth: usize,
+}
 
 fn detect_tick_system(
     mut events: EventWriter<TickEvent>,

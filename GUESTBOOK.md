@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/verge-computer
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The brass is ticking. Graham Escapement regulating CPU clock cycles. Computation is now a function of spring tension and gravity.
+- **Note:** Hybrid of `verge-escapement` and `cpu-clock-visualization`. Physics driven by Bevy Rapier.
+
 ### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
