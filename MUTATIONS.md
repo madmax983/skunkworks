@@ -839,11 +839,18 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A visualization where RSA keys and messages are represented as Roman Numerals, but the ciphertext is physically knotted into a Quipu Cord.
 - **Novel trait**: Cryptographic Knotting. Visualizing the trapdoor function as the transformation from Symbol (Roman) to Knot (Inca).
 - **Status**: experiments/quipu-legion
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified.
 
 ### chimera-pachinko
 - **Parents**: experiments/synaptic-pachinko + experiments/chimera-lang
 - **Concept**: A Pachinko board where the "pins" are living ChimeraVM agents that gain energy from collisions and evolve to catch more packets.
 - **Novel trait**: Evo-Pachinko. The board layout self-organizes through natural selection.
 - **Status**: experiments/chimera-pachinko
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified.
+
+### etymological-mycelium
+- **Parents**: experiments/git-etymologist + experiments/chaotic-mycelium
+- **Concept**: The Etymology of Code visualized as a Fungal Network. Spores (lines) grow hyphae towards their future versions (commits).
+- **Novel trait**: Semantic Mycology. The code grows.
+- **Status**: experiments/etymological-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

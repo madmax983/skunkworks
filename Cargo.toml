@@ -134,7 +134,7 @@ members = [
     "experiments/biomorphic-strings",
     "experiments/ferrous-graph", "experiments/spqr-rsa",
     "experiments/ferrous-legion", "experiments/harmonic-engine", "experiments/log-palette", "experiments/quipu-automaton", "experiments/locust-ddos", "experiments/thread-symphony", "experiments/holographic-brain", "experiments/bifurcation-probe",
-    "experiments/origami-spores", "experiments/valley-forge", "experiments/harmonic-mycelium", "experiments/luminous-valley", "experiments/gravitational-bridge", "experiments/ferrous-chimera", "experiments/quipu-legion", "experiments/chimera-pachinko", "experiments/git-etymologist",
+    "experiments/origami-spores", "experiments/valley-forge", "experiments/harmonic-mycelium", "experiments/luminous-valley", "experiments/gravitational-bridge", "experiments/ferrous-chimera", "experiments/quipu-legion", "experiments/chimera-pachinko", "experiments/git-etymologist", "experiments/etymological-mycelium",
 ]
 resolver = "2"
 
