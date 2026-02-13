@@ -48,6 +48,13 @@
 
 ## 🍂 History/Decay
 
+### [Concentration Level: EVAPORATING] - Location: experiments/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Moved to graveyard.
 ### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Condemned. Documentation void. Redundant.
