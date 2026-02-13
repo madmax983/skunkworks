@@ -853,4 +853,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: The Etymology of Code visualized as a Fungal Network. Spores (lines) grow hyphae towards their future versions (commits).
 - **Novel trait**: Semantic Mycology. The code grows.
 - **Status**: experiments/etymological-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### chimera-process
+- **Parents**: experiments/process-canopy + experiments/chimera-lang
+- **Concept**: OS Processes driven by Artificial Life. Each PID hosts a ChimeraVM agent.
+- **Novel trait**: System monitoring via Artificial Life metabolism. High CPU = High Metabolic Rate.
+- **Status**: experiments/chimera-process
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

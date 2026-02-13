@@ -263,3 +263,7 @@
 ### [Concentration Level: FRESH] - Location: experiments/klein-files
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** The file system is twisting. The directory tree is mapped to the Figure-8 immersion. Inside is outside. Navigation is non-orientable.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-process
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The OS is alive. Processes are metabolizing CPU cycles. Agents are crawling through the kernel.
