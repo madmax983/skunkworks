@@ -158,17 +158,27 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
             let val = &vm.grid[y][x];
             let c = match val {
-                Value::Str(s) if s.len() == 1 => s.chars().next().unwrap(),
-                Value::Str(s) => match s.as_str() {
-                    "*" | ">" | "<" | "^" | "v" | "+" => s.chars().next().unwrap(),
-                    _ => '\0',
-                },
+                Value::Str(s) => {
+                    let mut chars = s.chars();
+                    if let Some(first) = chars.next() {
+                        if chars.next().is_none() {
+                            first
+                        } else {
+                            match s.as_str() {
+                                "*" | ">" | "<" | "^" | "v" | "+" => first,
+                                _ => '\0',
+                            }
+                        }
+                    } else {
+                        '\0'
+                    }
+                }
                 _ => '\0',
             };
 
-            let is_uppercase = c.is_ascii_uppercase();
+            let is_uppercase = c.is_uppercase(); // Use Unicode uppercase
             let is_bang = c == '*';
-            let is_special = matches!(c, '@' | '^');
+            let is_special = matches!(c, '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω');
             let active = signal > 0 || is_uppercase || is_bang || is_special;
 
             if !active {
@@ -306,6 +316,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 '#' => exec_catalyze(vm, y, x, signal, &mut ctx),
                 '$' => exec_stack_io(vm, y, x, signal, &mut ctx),
                 '~' => exec_wave(vm, y, x, signal, &mut ctx),
+                'Ψ' | 'ψ' => exec_psi(vm, y, x, signal, &mut ctx),
+                'Φ' | 'φ' => exec_phi(vm, y, x, signal, &mut ctx),
+                'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -1101,5 +1114,67 @@ fn exec_wave(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCon
             }
         }
         _ => {}
+    }
+}
+
+fn exec_psi(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+    // Ψ: Quantum Observer
+    // North: Target Magnitude (scaled by 100)
+    // If local hologram magnitude matches target, bang all neighbors.
+
+    let target = peek(vm, y, x, -1, 0).unwrap_or(0);
+
+    // Calculate local magnitude
+    let (re, im) = vm.hologram_grid[y][x];
+    let mag = (re * re + im * im).sqrt() * 100.0;
+
+    if (mag as i64 - target).abs() <= 5 {
+        // Match! Fire bang.
+        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        for (dy, dx) in neighbors {
+            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(1);
+            }
+        }
+    }
+}
+
+fn exec_phi(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+    // Φ: Golden Ratio Resonator
+    // Checks neighbors: N + E == S ?
+
+    if let (Some(n), Some(e), Some(s)) = (
+        peek(vm, y, x, -1, 0),
+        peek(vm, y, x, 0, 1),
+        peek(vm, y, x, 1, 0),
+    ) {
+        if n + e == s {
+            // Resonance! Gain Energy.
+            ctx.executions
+                .push((OpCode::Push, vec![Nucleotide::Number(10)]));
+            ctx.executions.push((OpCode::Consume, vec![]));
+        }
+    }
+}
+
+fn exec_omega(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+    // Ω: Entropy Sink
+    // Passive:
+    // Reduces local entropy.
+    // Increases hologram complexity.
+
+    let entropy = vm.entropy_grid[y][x];
+    if entropy > 0 {
+        // Reduce entropy by 10
+        ctx.entropy_writes.push(EntropyWrite { y, x, val: -10 });
+
+        // Increase Hologram Phase/Complexity
+        let (re, im) = vm.hologram_grid[y][x];
+        ctx.holo_writes.push(HoloWrite {
+            y,
+            x,
+            re: Some(re + 0.1),
+            im: Some(im - 0.1),
+        });
     }
 }

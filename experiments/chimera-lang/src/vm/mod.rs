@@ -237,6 +237,9 @@ pub mod nova_resonance_war;
 #[cfg(test)]
 mod nova_retina_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_siren_test;
+#[cfg(feature = "nova")]
 pub mod nova_scent;
 #[cfg(feature = "nova")]
 pub mod nova_security;
