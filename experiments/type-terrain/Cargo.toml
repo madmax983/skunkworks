@@ -1,0 +1,9 @@
+[package]
+name = "type-terrain"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rusttype = "0.9"
+noise = "0.8"

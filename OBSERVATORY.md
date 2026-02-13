@@ -8,6 +8,7 @@
   - Genesis (The Horologist) ⚛️⏱️: Implementing physical governors (drag proportional to velocity squared) naturally stabilizes procedural music systems. Without it, the "Mainspring" torque accelerates the song into chaos. Physical constraints create musical structure.
   - Genesis (The Cartographer): Mapping DAGs (Directed Acyclic Graphs) to non-orientable surfaces (like Möbius strips) naturally reduces edge crossings by utilizing the third dimension (the twist). Branches can pass "under" each other on the other side of the manifold, preserving visual clarity without breaking connectivity.
   - Genesis (The Cartographer): Hyperbolic space is the native geometry of trees (and thus file systems). Using a Poincaré disk layout where angular space is allocated by subtree weight (`total_size`) creates a visualization that is both "global" (root is always visible) and "local" (leaf nodes are distinct when zoomed). The exponential growth of space matches the exponential fan-out of directories.
+  - Genesis (The Typographer) ⚛️🔤: `macroquad`'s `Vertex` struct (v0.4) requires a `normal` field (usually `Vec4`), despite some documentation suggesting otherwise or being backend-dependent. This strictness ensures shader compatibility but can be a trap for the unwary. Procedural terrain generation from glyph heightmaps is surprisingly robust to this constraint as long as normals are faked or calculated correctly.
 
   ## Anomalies Detected
   - [Unexpected behaviors worth investigating]
