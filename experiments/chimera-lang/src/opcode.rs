@@ -2281,6 +2281,28 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chimeric,
 
+    // Cambrian Features (Evolutionary Events)
+    /// **[Nova]** Triggers speciation (groups strands by genetic similarity).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Speciate,
+    /// **[Nova]** Triggers a meteor strike event (Mass Extinction).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Meteor,
+    /// **[Nova]** Triggers the Great Filter (culls weak species).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    GreatFilter,
+    /// **[Nova]** Pushes the number of active species to the stack.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., count ]`
+    #[cfg(feature = "nova")]
+    Census,
+
     /// No Operation. Does nothing.
     Nop,
 

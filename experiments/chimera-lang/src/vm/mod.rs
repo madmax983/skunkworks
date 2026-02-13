@@ -112,6 +112,8 @@ pub mod nova_ballistics;
 #[cfg(feature = "nova")]
 pub mod nova_bestiary;
 #[cfg(feature = "nova")]
+pub mod nova_cambrian;
+#[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
@@ -646,6 +648,8 @@ pub struct ChimeraVM {
     pub hologram_mode: bool,
     #[cfg(feature = "nova")]
     pub attractor: nova_attractor::AttractorState,
+    #[cfg(feature = "nova")]
+    pub cambrian: nova_cambrian::CambrianState,
 }
 
 impl ChimeraVM {
@@ -949,6 +953,8 @@ impl ChimeraVM {
             hologram_mode: false,
             #[cfg(feature = "nova")]
             attractor: nova_attractor::AttractorState::new(),
+            #[cfg(feature = "nova")]
+            cambrian: nova_cambrian::CambrianState::new(),
         }
     }
 
@@ -2537,7 +2543,7 @@ impl ChimeraVM {
         None
     }
 
-    pub(crate) fn execute_gene_inner(
+    pub fn execute_gene_inner(
         &mut self,
         op: OpCode,
         args: &[Nucleotide],
@@ -2872,6 +2878,10 @@ impl ChimeraVM {
             | OpCode::Retrograde
             | OpCode::Synthesize
             | OpCode::Catalyze
+            | OpCode::Speciate
+            | OpCode::Meteor
+            | OpCode::GreatFilter
+            | OpCode::Census
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

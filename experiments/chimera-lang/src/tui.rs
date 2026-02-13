@@ -115,6 +115,8 @@ pub(crate) enum ViewMode {
     Terminal,
     #[cfg(feature = "nova")]
     Attractor,
+    #[cfg(feature = "nova")]
+    Cambrian,
 }
 
 enum InputMode {
@@ -650,6 +652,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Attractor = app_state.view_mode {
                 render_attractor(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Cambrian = app_state.view_mode {
+                render_cambrian(f, vm, app_state);
                 return;
             }
 
@@ -1308,6 +1316,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Cambrian => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1560,12 +1573,26 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Terminal => ViewMode::Attractor,
                             #[cfg(feature = "nova")]
-                            ViewMode::Attractor => ViewMode::Genome,
+                            ViewMode::Attractor => ViewMode::Cambrian,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Cambrian => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
-                    #[cfg(feature = "silicon")]
-                    KeyCode::Char('F') => app_state.view_mode = ViewMode::Foundry,
+                    #[cfg(any(feature = "nova", feature = "silicon"))]
+                    KeyCode::Char('F') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Cambrian = app_state.view_mode {
+                            crate::vm::nova_cambrian::great_filter(vm);
+                            app_state.status_msg = "GREAT FILTER! Weak culled.".to_string();
+                            continue;
+                        }
+
+                        #[cfg(feature = "silicon")]
+                        {
+                            app_state.view_mode = ViewMode::Foundry;
+                        }
+                    }
                     #[cfg(feature = "elektra")]
                     KeyCode::Char('E') => app_state.view_mode = ViewMode::Elektra,
                     KeyCode::Char('p') => {
@@ -1722,6 +1749,90 @@ where
                     KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('C') => {
+                        if matches!(app_state.view_mode, ViewMode::Cambrian) {
+                            // Toggle chaos in cambrian? No, switch to genome
+                            app_state.view_mode = ViewMode::Genome;
+                        } else {
+                            app_state.view_mode = ViewMode::Cambrian;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('S') => {
+                        if let ViewMode::Cambrian = app_state.view_mode {
+                            crate::vm::nova_cambrian::speciate(vm);
+                            app_state.status_msg = "Manual Speciation Triggered".to_string();
+                        } else if let ViewMode::Arena = app_state.view_mode {
+                            if let Some(arena) = &mut vm.arena {
+                                // Add random gladiators if empty
+                                if arena.combatants.is_empty() {
+                                    // Use some existing strands or random
+                                    let mut rng = rand::thread_rng();
+                                    use rand::Rng;
+                                    if !vm.dna.helix.strands.is_empty() {
+                                        let s1 = vm.dna.helix.strands
+                                            [rng.gen_range(0..vm.dna.helix.strands.len())]
+                                        .clone();
+                                        let s2 = vm.dna.helix.strands
+                                            [rng.gen_range(0..vm.dna.helix.strands.len())]
+                                        .clone();
+                                        arena.add_gladiator(s1, rng.gen());
+                                        arena.add_gladiator(s2, rng.gen());
+                                    }
+                                }
+                                arena.start();
+                                app_state.status_msg = "Arena Started!".to_string();
+                            }
+                        } else if let ViewMode::Kaleidoscope = app_state.view_mode {
+                             // Step Piet
+                            if vm.piet_state.is_none() {
+                                vm.piet_state = Some(crate::vm::piet::init_piet(vm));
+                            }
+                            if let Some(mut state) = vm.piet_state.take() {
+                                crate::vm::piet::step_piet_once(vm, &mut state);
+                                vm.piet_state = Some(state);
+                            }
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('M') => {
+                        if let ViewMode::Cambrian = app_state.view_mode {
+                            crate::vm::nova_cambrian::meteor_strike(vm);
+                            app_state.status_msg = "METEOR STRIKE! Mass Extinction.".to_string();
+                        } else if let ViewMode::Babel = app_state.view_mode {
+                            // Initialize if needed
+                            if app_state.babel_ast.is_none() {
+                                // Seed: Seq(Match("A"), Match("B"))
+                                app_state.babel_ast = Some(crate::vm::Value::Junction(
+                                    crate::ast::JunctionType::Any,
+                                    vec![
+                                        crate::vm::Value::Str("Seq".to_string()),
+                                        crate::vm::Value::Junction(
+                                            crate::ast::JunctionType::Any,
+                                            vec![
+                                                crate::vm::Value::Str("Match".to_string()),
+                                                crate::vm::Value::Str("A".to_string()),
+                                            ],
+                                        ),
+                                        crate::vm::Value::Junction(
+                                            crate::ast::JunctionType::Any,
+                                            vec![
+                                                crate::vm::Value::Str("Match".to_string()),
+                                                crate::vm::Value::Str("B".to_string()),
+                                            ],
+                                        ),
+                                    ],
+                                ));
+                            }
+
+                            if let Some(ast) = &app_state.babel_ast {
+                                let new_ast = crate::vm::babel::mutate_grammar(ast, 0.2); // 20% rate
+                                app_state.babel_ast = Some(new_ast);
+                                app_state.status_msg = "Grammar Mutated".to_string();
+                            }
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -1994,66 +2105,6 @@ where
                                 ],
                             ));
                             app_state.status_msg = "Grammar Reset".to_string();
-                        }
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('M') => {
-                        if let ViewMode::Babel = app_state.view_mode {
-                            // Initialize if needed
-                            if app_state.babel_ast.is_none() {
-                                // Seed: Seq(Match("A"), Match("B"))
-                                app_state.babel_ast = Some(crate::vm::Value::Junction(
-                                    crate::ast::JunctionType::Any,
-                                    vec![
-                                        crate::vm::Value::Str("Seq".to_string()),
-                                        crate::vm::Value::Junction(
-                                            crate::ast::JunctionType::Any,
-                                            vec![
-                                                crate::vm::Value::Str("Match".to_string()),
-                                                crate::vm::Value::Str("A".to_string()),
-                                            ],
-                                        ),
-                                        crate::vm::Value::Junction(
-                                            crate::ast::JunctionType::Any,
-                                            vec![
-                                                crate::vm::Value::Str("Match".to_string()),
-                                                crate::vm::Value::Str("B".to_string()),
-                                            ],
-                                        ),
-                                    ],
-                                ));
-                            }
-
-                            if let Some(ast) = &app_state.babel_ast {
-                                let new_ast = crate::vm::babel::mutate_grammar(ast, 0.2); // 20% rate
-                                app_state.babel_ast = Some(new_ast);
-                                app_state.status_msg = "Grammar Mutated".to_string();
-                            }
-                        }
-                    }
-                    #[cfg(feature = "nova")]
-                    KeyCode::Char('S') => {
-                        if let ViewMode::Arena = app_state.view_mode {
-                            if let Some(arena) = &mut vm.arena {
-                                // Add random gladiators if empty
-                                if arena.combatants.is_empty() {
-                                    // Use some existing strands or random
-                                    let mut rng = rand::thread_rng();
-                                    use rand::Rng;
-                                    if !vm.dna.helix.strands.is_empty() {
-                                        let s1 = vm.dna.helix.strands
-                                            [rng.gen_range(0..vm.dna.helix.strands.len())]
-                                        .clone();
-                                        let s2 = vm.dna.helix.strands
-                                            [rng.gen_range(0..vm.dna.helix.strands.len())]
-                                        .clone();
-                                        arena.add_gladiator(s1, rng.gen());
-                                        arena.add_gladiator(s2, rng.gen());
-                                    }
-                                }
-                                arena.start();
-                                app_state.status_msg = "Arena Started!".to_string();
-                            }
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -2359,6 +2410,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Cambrian => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2599,6 +2652,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Cambrian => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2763,6 +2818,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Cambrian => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2927,6 +2984,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Cambrian => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -2951,6 +3010,10 @@ where
                         match app_state.view_mode {
                             #[cfg(feature = "nova")]
                             ViewMode::Phylogeny => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Cambrian => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -4456,6 +4519,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
         #[cfg(feature = "nova")]
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
+        #[cfg(feature = "nova")]
+        ViewMode::Cambrian => "CAMBRIAN EXPLOSION (EVOLUTION)",
     };
 
     let title = match app_state.input_mode {
@@ -5014,6 +5079,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Weaver, "The Weaver", "W"));
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
+        views.push((ViewMode::Cambrian, "Cambrian Explosion", "C"));
     }
     views
 }
@@ -8619,4 +8685,59 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     ];
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_cambrian(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(20), Constraint::Percentage(50), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Top: Status
+    let status_text = vec![
+        Line::from(vec![
+            Span::styled("CAMBRIAN ERA ", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+            Span::raw(format!("(Epoch {})", vm.cambrian.epoch))
+        ]),
+        Line::from(format!("Extinction Timer: {} ticks", vm.cambrian.extinction_timer)),
+        Line::from(format!("Next Event: {}", vm.cambrian.next_extinction_event)),
+        Line::from(format!("Active Species: {}", vm.cambrian.species.len())),
+    ];
+
+    let status_block = Paragraph::new(status_text)
+        .block(Block::default().borders(Borders::ALL).title("Evolutionary Clock"));
+    f.render_widget(status_block, chunks[0]);
+
+    // Middle: Species List
+    let mut species_items = Vec::new();
+    let mut species_list: Vec<_> = vm.cambrian.species.values().collect();
+    // Sort by population descending
+    species_list.sort_by(|a, b| b.population.cmp(&a.population));
+
+    for s in species_list.iter().take(20) {
+        let color = Color::Rgb(s.color.0, s.color.1, s.color.2);
+        let item = ListItem::new(format!(
+            "{:<20} | Pop: {:<5} | Energy: {:.1} | Hash: {:x}",
+            s.name, s.population, s.average_energy, s.genome_hash
+        )).style(Style::default().fg(color));
+        species_items.push(item);
+    }
+
+    let list_block = List::new(species_items)
+        .block(Block::default().borders(Borders::ALL).title("Dominant Species"));
+    f.render_widget(list_block, chunks[1]);
+
+    // Bottom: Controls
+    let controls = vec![
+        Line::from("Controls:"),
+        Line::from("  S: Manual Speciation (Re-scan genomes)"),
+        Line::from("  M: Trigger Meteor Strike (Mass Extinction)"),
+        Line::from("  F: Trigger Great Filter (Cull Weak)"),
+        Line::from(" "),
+        Line::from("Note: Speciation happens automatically on events."),
+    ];
+    let controls_block = Paragraph::new(controls)
+        .block(Block::default().borders(Borders::ALL).title("Divine Intervention"));
+    f.render_widget(controls_block, chunks[2]);
 }

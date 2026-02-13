@@ -990,6 +990,10 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Chaos => super::nova_flux::exec_chaos(vm),
         OpCode::Synthesize => super::catalyst::synthesize(vm),
         OpCode::Catalyze => super::catalyst::catalyze(vm),
+        OpCode::Speciate => super::nova_cambrian::exec_speciate(vm, op, args),
+        OpCode::Meteor => super::nova_cambrian::exec_meteor(vm, op, args),
+        OpCode::GreatFilter => super::nova_cambrian::exec_great_filter(vm, op, args),
+        OpCode::Census => super::nova_cambrian::exec_census(vm, op, args),
         OpCode::Piet => {
             if let Some(val) = vm.stack.pop() {
                 if let Value::Int(steps) = val {
