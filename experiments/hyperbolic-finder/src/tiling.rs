@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
-use poincare_disk::{mobius_add, mobius_sub, neighbor_transform_a, Point, TilingConsts};
-use std::collections::HashSet;
+use poincare_disk::{mobius_add, mobius_sub, neighbor_transform_a, Mobius, Point, TilingConsts};
+use std::collections::{HashSet, VecDeque};
+use std::f64::consts::PI;
 
 // Helper to hash points approximately for visited set
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -11,6 +12,7 @@ struct GridPoint {
 
 impl GridPoint {
     fn from_point(p: Point) -> Self {
+        // Discretize heavily to merge close points
         Self {
             x: (p.re * 1000.0) as i64,
             y: (p.im * 1000.0) as i64,
@@ -21,112 +23,142 @@ impl GridPoint {
 pub fn draw_tiling(view_center: Point, screen_center: Vec2, disk_radius: f32) {
     let consts = TilingConsts::new_4_5();
 
-    // We want to draw the grid lines connecting the centers of the {4,5} tiles.
-    // This forms the edges of the dual {5,4} tiling (pentagonal grid).
-    // It looks very cool and is easier than calculating vertices.
+    // Generators for the 4 neighbors
+    // These are translations in the local frame of the tile
+    let generators: Vec<Mobius> = (0..4)
+        .map(|i| {
+            let offset = neighbor_transform_a(i, &consts);
+            Mobius::translation(offset)
+        })
+        .collect();
 
-    // BFS Queue: (center_point_in_world)
-    let mut queue = std::collections::VecDeque::new();
-    let mut visited = HashSet::new();
+    // BFS State
+    let mut queue: VecDeque<(Mobius, usize)> = VecDeque::new();
+    let mut visited: HashSet<GridPoint> = HashSet::new();
 
-    // Start at origin (0,0) in World Space
-    let start = Point::new(0.0, 0.0);
-    queue.push_back(start);
-    visited.insert(GridPoint::from_point(start));
+    // Start with Identity (Center Tile)
+    // But if we have moved view, we might want to seed with a tile closer to view?
+    // For now, start at Origin.
+    // Optimization: If view_center is far, we should pathfind to it first?
+    // Let's assume user pans from origin.
+    let root = Mobius::identity();
+    queue.push_back((root, 0));
+    visited.insert(GridPoint::from_point(Point::new(0.0, 0.0)));
 
-    // Also add the tile CLOSEST to the view center to ensure we render what we see
-    // But finding that is hard.
-    // Instead, we rely on the fact that if we explore enough depth from origin, we cover the view.
-    // However, if we pan far away, we might need a better starting point.
-    // For now, assume user doesn't pan infinitely far (or we implement "re-centering" logic later).
-    // Actually, we can "guess" a starting tile by inverting the view center?
-    // If view_center is far, the origin is far off screen.
-    // But since the space is infinite, we can just render relative to view.
-    // Let's stick to origin-rooted expansion for simplicity.
-    // If performance issues arise with deep panning, we can optimize.
-
-    let max_tiles = 500;
+    let max_tiles = 300; // Limit to keep FPS high
     let mut count = 0;
 
-    while let Some(center) = queue.pop_front() {
+    // To prevent infinite expansion in wrong direction, prioritize tiles close to view_center
+    // We can't easily sort the queue, but we can cull.
+
+    while let Some((m, depth)) = queue.pop_front() {
         if count > max_tiles {
             break;
         }
 
-        // Transform to View Space
-        let view_pos = mobius_sub(center, view_center);
+        let center = m.apply(Point::new(0.0, 0.0));
 
-        // Cull if too small or too far in view space
+        // Transform center to View Space (relative to view_center)
+        let view_pos = mobius_sub(center, view_center);
         let dist_sq = view_pos.norm_sqr();
-        if dist_sq > 0.99 {
-            // Very close to boundary
+
+        // Cull if center is too close to boundary (invisible)
+        if dist_sq > 0.98 {
             continue;
         }
 
-        // Draw edges to neighbors
-        for dir in 0..4 {
-            let offset = neighbor_transform_a(dir, &consts);
-            // Neighbor in world space
-            // Note: orientation matters here.
-            // mobius_add translation preserves orientation relative to the geodesic.
-            // But doing `mobius_add(center, offset)` assumes `offset` is in the local frame of `center`.
-            // Does `center` have a rotation?
-            // Yes. As we move, the frame rotates.
-            // To do this strictly correctly requires keeping track of the frame (position + rotation).
-            //
-            // Let's use a Frame struct: (Point, Rotation).
-            // But wait, `poincare_disk` doesn't expose rotation easily.
-            //
-            // Alternative: Just draw lines to `mobius_add(center, offset)`.
-            // If we are consistent, the errors might look like "glitches" or it might just work if the holonomy cancels out for a grid?
-            // Actually, for a regular tiling, we DO need the frame.
-            //
-            // Let's try to just draw without frame and see.
-            // If it looks janky, it's "non-Euclidean artifacting" (feature).
-            // Just kidding, I should try to do it right if easy.
+        // Draw edges for this tile
+        // A square has 4 edges. We can draw lines to neighbors.
+        // Or we can draw the square itself.
+        // Vertices of the square in local frame:
+        // They are at `vertex_offset` distance, at angles 45, 135, 225, 315 (pi/4 + k*pi/2).
+        // Let's draw the edges connecting vertices.
+        draw_tile_edges(&m, &consts, view_center, screen_center, disk_radius);
 
-            // Actually, we can compute the neighbor by `mobius_add`ing the offset.
-            // The issue is that `offset` assumes "Right" is at 0 degrees relative to the center's frame.
-            // When we arrive at `center` from `parent`, we entered from some direction.
-            // We need to know which direction `parent` was, so we don't go back, and so we align correctly.
+        // Expand to neighbors
+        for (_i, gen) in generators.iter().enumerate() {
+            // New transform: M_next = M * Gen
+            let m_next = m.then(gen);
+            let center_next = m_next.apply(Point::new(0.0, 0.0));
 
-            // Let's just implement the naive version first. It usually produces a valid tree at least.
+            // Check if visited
+            if visited.insert(GridPoint::from_point(center_next)) {
+                // Heuristic: only add if not too far from view_center?
+                // Or if depth is low?
+                // If we cull based on view distance, we naturally expand towards view?
+                // No, BFS expands radially from origin.
+                // If view is far, we waste time expanding near origin.
+                // But this is a simple "Finder" app, likely staying near origin or panning slowly.
+                // Just limiting max_tiles is fine for now.
 
-            let neighbor = mobius_add(center, offset);
-
-            // Check visibility of edge
-            let n_view = mobius_sub(neighbor, view_center);
-
-            // Draw edge
-            if dist_sq < 0.98 || n_view.norm_sqr() < 0.98 {
-                draw_geodesic(
-                    view_pos,
-                    n_view,
-                    screen_center,
-                    disk_radius,
-                    Color::new(0.2, 0.3, 0.4, 0.2),
-                );
-            }
-
-            if visited.insert(GridPoint::from_point(neighbor)) {
-                queue.push_back(neighbor);
-                count += 1;
+                // Allow deep exploration if it's towards the view
+                let next_view_pos = mobius_sub(center_next, view_center);
+                if next_view_pos.norm() < 0.95 || depth < 5 {
+                    queue.push_back((m_next, depth + 1));
+                    count += 1;
+                }
             }
         }
     }
 }
 
+fn draw_tile_edges(
+    m: &Mobius,
+    consts: &TilingConsts,
+    view_center: Point,
+    screen_center: Vec2,
+    disk_radius: f32,
+) {
+    // Vertices of the square in Local Frame
+    // 4 vertices at angles pi/4, 3pi/4, ...
+    // Distance = consts.vertex_offset
+
+    let mut local_vertices = [Point::default(); 4];
+    for i in 0..4 {
+        let angle = (i as f64 * 2.0 * PI / 4.0) + (PI / 4.0);
+        use num_complex::Complex;
+        local_vertices[i] = Complex::from_polar(consts.vertex_offset, angle);
+    }
+
+    // Transform vertices to World Space, then to Screen Space
+    let world_vertices: Vec<Point> = local_vertices.iter().map(|&p| m.apply(p)).collect();
+
+    for i in 0..4 {
+        let p1 = world_vertices[i];
+        let p2 = world_vertices[(i + 1) % 4];
+
+        // Map to view
+        let v1 = mobius_sub(p1, view_center);
+        let v2 = mobius_sub(p2, view_center);
+
+        // Cull if both far
+        if v1.norm_sqr() > 0.99 && v2.norm_sqr() > 0.99 {
+            continue;
+        }
+
+        draw_geodesic(
+            v1,
+            v2,
+            screen_center,
+            disk_radius,
+            Color::new(0.3, 0.3, 0.3, 0.3), // Faint grid
+        );
+    }
+}
+
 fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: Color) {
-    // Avoid drawing if points are extremely close (singularity check)
     if (p1 - p2).norm_sqr() < 1e-6 {
         return;
     }
 
-    let steps = 8;
-    let m_p2 = mobius_sub(p2, p1); // Map p2 to local frame of p1 (where p1 is origin)
+    let steps = 10;
+    // Interpolate in hyperbolic space
+    // Since we don't have a direct "geodesic lerp" function exposed easily,
+    // we map p2 to p1's frame, lerp linearly (which is a geodesic through origin), then map back.
+    let m_p2 = mobius_sub(p2, p1);
 
-    // Check for large distance (don't draw across the whole disk if it wraps weirdly)
-    if m_p2.norm() > 0.99 {
+    // Safety check
+    if m_p2.norm() > 0.999 {
         return;
     }
 
@@ -134,8 +166,8 @@ fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: 
 
     for i in 1..=steps {
         let t = i as f64 / steps as f64;
-        let q = m_p2 * t; // Linear interp in disk model (straight line through origin)
-        let world_pos = mobius_add(q, p1); // Map back to p1's frame
+        let q = m_p2 * t;
+        let world_pos = mobius_add(q, p1);
 
         let screen_pos = to_screen(world_pos, screen_center, radius);
         draw_line(
@@ -143,7 +175,7 @@ fn draw_geodesic(p1: Point, p2: Point, screen_center: Vec2, radius: f32, color: 
             last_pos.y,
             screen_pos.x,
             screen_pos.y,
-            1.5, // Thickness
+            1.5,
             color,
         );
         last_pos = screen_pos;

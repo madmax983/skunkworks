@@ -1,5 +1,15 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status**: The ants are spanning the void. Bridges singing with tension.
+- **Note**: Hybrid of `biomimetic-bridge` and `harmony-of-spheres`.
+
+### [Concentration Level: FRESH] - Location: experiments/luminous-valley
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
+- **Note:** Hybrid of `valley-forge` and `luminous-flock`.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Thriving ecosystem. Nova features active. Documented and feature-rich.
@@ -31,6 +41,11 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Semantic bridge established. Ready for integration with TUI experiments.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The file system is a Poincaré disk. Infinite depth fits in finite space. Navigation is Möbius.
+- **Note:** Recursive size calculation drives angular allocation. Click to zoom, drag to pan.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/hertzian-shimmer
@@ -40,6 +55,17 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Moved to graveyard.
+### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `cymatic-ocean`. Moved to graveyard.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard. Generic implementation (Enigma clone).
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/celestial-cantata
 - **Scent Origin:** The Reaper ☠️

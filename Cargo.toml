@@ -91,7 +91,6 @@ members = [
     "experiments/laban-rover", 
     "experiments/chromatic-cipher", 
     "experiments/repo-fossil", 
-    "experiments/hertzian-shimmer", 
     "experiments/chimera-fossil",
     "experiments/cam-automaton", 
     "experiments/git-cantata",
@@ -122,7 +121,7 @@ members = [
     "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/quantum-lexicon",
     "experiments/hyperbolic-bridge",
-    "experiments/cipher-gears", "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
+    "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",
     "experiments/origami-swarm", "experiments/pixel-archivist",
     "experiments/mnem-rot", "experiments/mnem-bridge", "experiments/tectonic-flock", "experiments/waggle-dance", "experiments/heap-glacier",
     "experiments/impossible-explorer", "experiments/chimera-bridge",
@@ -135,7 +134,7 @@ members = [
     "experiments/biomorphic-strings",
     "experiments/ferrous-graph", "experiments/spqr-rsa",
     "experiments/ferrous-legion", "experiments/harmonic-engine", "experiments/log-palette", "experiments/quipu-automaton", "experiments/locust-ddos", "experiments/thread-symphony", "experiments/holographic-brain", "experiments/bifurcation-probe",
-    "experiments/origami-spores", "experiments/valley-forge", "experiments/harmonic-mycelium",
+    "experiments/origami-spores", "experiments/valley-forge", "experiments/harmonic-mycelium", "experiments/luminous-valley", "experiments/gravitational-bridge",
 ]
 resolver = "2"
 

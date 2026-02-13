@@ -1,5 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **hertzian-shimmer**: Specimen condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
+- **git-quipu**: Specimen condemned. Documentation void. Redundant with `quipu-symphony`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -13,6 +14,8 @@
 
 ## Executed
 - **cipher-gears**: Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Grace period expired. Moved to graveyard.
+- **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependencies (cpal/alsa). Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
+- **cipher-gears**: Specimen executed. Generic implementation (Enigma clone). Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **celestial-cantata**: Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **git-climber**: Specimen executed. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period expired. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation. Failed to improve during grace period. Moved to graveyard.
@@ -69,7 +72,6 @@
 - **text-erosion**: Specimen executed. Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
-- **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
 - **thread-frequency**: Specimen executed. Documentation void. Redundant with `schrodingers-beat`. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
 - **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
