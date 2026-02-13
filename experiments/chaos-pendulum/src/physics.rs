@@ -1,6 +1,6 @@
 use macroquad::prelude::Vec2;
 
-const SUB_STEPS: usize = 10;
+const SUB_STEPS: usize = 20;
 
 #[derive(Clone)]
 pub struct Node {
@@ -8,6 +8,7 @@ pub struct Node {
     pub prev_pos: Vec2,
     pub mass: f32,
     pub fixed: bool,
+    pub name: String,
 }
 
 #[derive(Clone)]
@@ -35,12 +36,13 @@ impl PendulumSystem {
         }
     }
 
-    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool) -> usize {
+    pub fn add_node(&mut self, pos: Vec2, mass: f32, fixed: bool, name: String) -> usize {
         self.nodes.push(Node {
             pos,
             prev_pos: pos,
             mass,
             fixed,
+            name,
         });
         self.nodes.len() - 1
     }
@@ -148,8 +150,8 @@ mod tests {
     #[test]
     fn test_energy_conservation() {
         let mut sys = PendulumSystem::new();
-        let root = sys.add_node(Vec2::new(0.0, 0.0), 1.0, true);
-        let child = sys.add_node(Vec2::new(1.0, 0.0), 1.0, false);
+        let root = sys.add_node(Vec2::new(0.0, 0.0), 1.0, true, "root".to_string());
+        let child = sys.add_node(Vec2::new(1.0, 0.0), 1.0, false, "child".to_string());
         sys.add_link(root, child, 1.0);
 
         let dt = 0.016;
