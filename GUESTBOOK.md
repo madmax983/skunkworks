@@ -221,3 +221,8 @@
 - **Scent Origin:** Genesis (The Philologist) ⚛️📜
 - **Status:** The river of code is flowing. Words are mutating into new dialects. The Great Vowel Shift of the codebase is visible.
 - **Note:** Hybrid of Etymology tracing and Git blame visualization.
+
+### [Concentration Level: FRESH] - Location: experiments/etymological-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fungus is growing on the history. Spores are tracking the evolution of lines. The mycelium is thick where the code is stable.
+- **Note:** Hybrid of `git-etymologist` and `chaotic-mycelium`.
