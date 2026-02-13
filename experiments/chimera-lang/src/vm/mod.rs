@@ -263,6 +263,8 @@ pub mod nova_void;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_void_test;
+#[cfg(all(feature = "nova", feature = "elektra"))]
+pub mod nova_elektra;
 pub mod oracle;
 pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
@@ -1378,6 +1380,10 @@ impl ChimeraVM {
             nova::OrganelleType::MadScientist => {
                 self.process_mad_scientist(organelle);
             }
+            nova::OrganelleType::Dynamo => {
+                #[cfg(feature = "elektra")]
+                nova_elektra::process_dynamo(self, organelle);
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1389,6 +1395,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Seed
                 | nova::OrganelleType::Choir
                 | nova::OrganelleType::MadScientist
+                | nova::OrganelleType::Dynamo
         ) {
             self.execute_organelle_dna(organelle);
         }
