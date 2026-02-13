@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use ::rand::Rng;
+use macroquad::prelude::*;
 use std::f64::consts::TAU;
 
 #[derive(Clone, Debug)]
@@ -29,7 +29,12 @@ impl Dna {
             cohesion_weight: rng.gen_range(0.8..1.2),
             natural_freq: 0.01 + rng.gen::<f64>() * 0.03,
             coupling_strength: 0.02,
-            color: Color::new(rng.gen_range(0.5..1.0), rng.gen_range(0.5..1.0), rng.gen_range(0.5..1.0), 1.0),
+            color: Color::new(
+                rng.gen_range(0.5..1.0),
+                rng.gen_range(0.5..1.0),
+                rng.gen_range(0.5..1.0),
+                1.0,
+            ),
         }
     }
 }
@@ -53,7 +58,11 @@ impl Boid {
 
         Self {
             position: Vec3::new(x, 5.0, z),
-            velocity: Vec3::new(angle.cos() * dna.max_speed, 0.0, angle.sin() * dna.max_speed),
+            velocity: Vec3::new(
+                angle.cos() * dna.max_speed,
+                0.0,
+                angle.sin() * dna.max_speed,
+            ),
             acceleration: Vec3::ZERO,
             dna,
             phase: rng.gen::<f64>(),
@@ -81,10 +90,18 @@ impl Boid {
         self.acceleration = Vec3::ZERO;
 
         // Wrap around boundaries (-width/2 to width/2)
-        if self.position.x < -width/2.0 { self.position.x += width; }
-        if self.position.x > width/2.0 { self.position.x -= width; }
-        if self.position.z < -depth/2.0 { self.position.z += depth; }
-        if self.position.z > depth/2.0 { self.position.z -= depth; }
+        if self.position.x < -width / 2.0 {
+            self.position.x += width;
+        }
+        if self.position.x > width / 2.0 {
+            self.position.x -= width;
+        }
+        if self.position.z < -depth / 2.0 {
+            self.position.z += depth;
+        }
+        if self.position.z > depth / 2.0 {
+            self.position.z -= depth;
+        }
     }
 
     pub fn update_flash(&mut self) {

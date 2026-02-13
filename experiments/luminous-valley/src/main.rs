@@ -180,9 +180,9 @@ fn generate_heightmap(seed: u32) -> Image {
             let i = (y * W + x) * 4;
             let v = (val * 255.0) as u8;
             bytes[i] = v;
-            bytes[i+1] = v;
-            bytes[i+2] = v;
-            bytes[i+3] = 255;
+            bytes[i + 1] = v;
+            bytes[i + 2] = v;
+            bytes[i + 3] = 255;
         }
     }
 
@@ -247,11 +247,15 @@ async fn main() {
     rt_b.texture.set_filter(FilterMode::Linear);
 
     let mut initial_bytes = vec![0u8; W * H * 4];
-    for i in 0..W*H {
-        initial_bytes[i*4] = 255;
-        initial_bytes[i*4+1] = if macroquad::rand::gen_range(0, 100) > 98 { 255 } else { 0 };
-        initial_bytes[i*4+2] = 0;
-        initial_bytes[i*4+3] = 255;
+    for i in 0..W * H {
+        initial_bytes[i * 4] = 255;
+        initial_bytes[i * 4 + 1] = if macroquad::rand::gen_range(0, 100) > 98 {
+            255
+        } else {
+            0
+        };
+        initial_bytes[i * 4 + 2] = 0;
+        initial_bytes[i * 4 + 3] = 255;
     }
     rt_a.texture.update(&Image {
         width: W as u16,
@@ -274,7 +278,8 @@ async fn main() {
             textures: vec!["HeightMap".to_string()],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     let render_material = load_material(
         ShaderSource::Glsl {
@@ -286,7 +291,8 @@ async fn main() {
             textures: vec!["HeightMap".to_string(), "Texture".to_string()],
             ..Default::default()
         },
-    ).unwrap();
+    )
+    .unwrap();
 
     let plane_mesh = generate_plane_mesh(250, 250);
 
@@ -301,12 +307,24 @@ async fn main() {
     let cam_target = Vec3::new(0.0, 0.0, 0.0);
 
     loop {
-        if is_key_down(KeyCode::Left) { cam_pos.x -= 0.1; }
-        if is_key_down(KeyCode::Right) { cam_pos.x += 0.1; }
-        if is_key_down(KeyCode::Up) { cam_pos.z -= 0.1; }
-        if is_key_down(KeyCode::Down) { cam_pos.z += 0.1; }
-        if is_key_down(KeyCode::W) { cam_pos.y += 0.1; }
-        if is_key_down(KeyCode::S) { cam_pos.y -= 0.1; }
+        if is_key_down(KeyCode::Left) {
+            cam_pos.x -= 0.1;
+        }
+        if is_key_down(KeyCode::Right) {
+            cam_pos.x += 0.1;
+        }
+        if is_key_down(KeyCode::Up) {
+            cam_pos.z -= 0.1;
+        }
+        if is_key_down(KeyCode::Down) {
+            cam_pos.z += 0.1;
+        }
+        if is_key_down(KeyCode::W) {
+            cam_pos.y += 0.1;
+        }
+        if is_key_down(KeyCode::S) {
+            cam_pos.y -= 0.1;
+        }
 
         // --- Simulation Pass ---
         set_camera(&Camera2D {
@@ -320,17 +338,18 @@ async fn main() {
         simulation_material.set_uniform("Time", get_time() as f32);
 
         if is_key_down(KeyCode::Space) {
-             simulation_material.set_uniform("MouseDown", 1.0f32);
-             simulation_material.set_uniform("MousePos", (0.5f32, 0.5f32));
+            simulation_material.set_uniform("MouseDown", 1.0f32);
+            simulation_material.set_uniform("MousePos", (0.5f32, 0.5f32));
         } else {
-             simulation_material.set_uniform("MouseDown", 0.0f32);
+            simulation_material.set_uniform("MouseDown", 0.0f32);
         }
 
         simulation_material.set_texture("HeightMap", heightmap_tex.clone());
 
         draw_texture_ex(
             &current_rt.texture,
-            -1.0, -1.0,
+            -1.0,
+            -1.0,
             WHITE,
             DrawTextureParams {
                 dest_size: Some(vec2(2.0, 2.0)),
@@ -394,9 +413,21 @@ async fn main() {
         set_default_camera();
 
         draw_text("Luminous Valley", 20.0, 30.0, 30.0, WHITE);
-        draw_text("Keys: Arrows/WASD to move camera. Space to Rain.", 20.0, 50.0, 20.0, LIGHTGRAY);
+        draw_text(
+            "Keys: Arrows/WASD to move camera. Space to Rain.",
+            20.0,
+            50.0,
+            20.0,
+            LIGHTGRAY,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 70.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Boids: {}", world.boids.len()), 20.0, 90.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Boids: {}", world.boids.len()),
+            20.0,
+            90.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

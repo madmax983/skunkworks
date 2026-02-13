@@ -101,12 +101,12 @@ pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
+pub mod nova_astrology;
+#[cfg(feature = "nova")]
 pub mod nova_attractor;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_attractor_test;
-#[cfg(feature = "nova")]
-pub mod nova_astrology;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
 #[cfg(feature = "nova")]
@@ -172,10 +172,10 @@ mod nova_harvest_test;
 pub mod nova_hologram;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_hologram_test;
+mod nova_hologram_grammar_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
-mod nova_hologram_grammar_test;
+mod nova_hologram_test;
 #[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
@@ -1413,22 +1413,26 @@ impl ChimeraVM {
                 0 => {
                     // Irradiate
                     self.mutagen_grid[cy][cx] = self.mutagen_grid[cy][cx].saturating_add(50);
-                    self.output.push(format!("MAD SCIENTIST: Irradiated {},{}", cx, cy));
-                },
+                    self.output
+                        .push(format!("MAD SCIENTIST: Irradiated {},{}", cx, cy));
+                }
                 1 => {
                     // Alchemy
                     if alchemy::perform_alchemy(self, cy, cx) {
-                        self.output.push(format!("MAD SCIENTIST: Transmuted {},{}", cx, cy));
+                        self.output
+                            .push(format!("MAD SCIENTIST: Transmuted {},{}", cx, cy));
                     } else {
-                        self.output.push(format!("MAD SCIENTIST: Failed alchemy at {},{}", cx, cy));
+                        self.output
+                            .push(format!("MAD SCIENTIST: Failed alchemy at {},{}", cx, cy));
                     }
-                },
+                }
                 2 => {
                     // Entropy Surge
                     if let Some(_) = nova_flux::exec_entropy_surge(self) {
-                         self.output.push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
+                        self.output
+                            .push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
                     }
-                },
+                }
                 3 => {
                     // Spawn
                     if self.organelles.len() < MAX_ORGANELLES {
@@ -1450,9 +1454,10 @@ impl ChimeraVM {
                             genome_id: 0,
                         };
                         self.organelles.push(new_org);
-                        self.output.push(format!("MAD SCIENTIST: Created life at {},{}", cx, cy));
+                        self.output
+                            .push(format!("MAD SCIENTIST: Created life at {},{}", cx, cy));
                     }
-                },
+                }
                 _ => {}
             }
             self.energy = self.energy.saturating_sub(10);
@@ -2405,7 +2410,33 @@ impl ChimeraVM {
                     return None;
                 }
 
-                let mut file = match File::open(&path) {
+                // Security Check: Sandbox Enforcement
+                let target_path = self.sandbox_root.join(&path);
+                let canonical_target = match target_path.canonicalize() {
+                    Ok(p) => p,
+                    Err(_) => {
+                        self.output
+                            .push(format!("Error: Failed to resolve path '{}'", path));
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                let canonical_root = match self.sandbox_root.canonicalize() {
+                    Ok(p) => p,
+                    Err(_) => self.sandbox_root.clone(),
+                };
+
+                if !canonical_target.starts_with(&canonical_root) {
+                    self.output.push(format!(
+                        "SECURITY: Access denied to '{}' (Outside Sandbox)",
+                        path
+                    ));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let mut file = match File::open(&canonical_target) {
                     Ok(f) => f,
                     Err(_) => {
                         self.output
@@ -2424,10 +2455,7 @@ impl ChimeraVM {
                     for b in &buffer[0..bytes_read] {
                         let idx = (*b as usize) % count;
                         let op = opcodes[idx].clone();
-                        genes.push(crate::ast::Gene {
-                            op,
-                            args: vec![],
-                        });
+                        genes.push(crate::ast::Gene { op, args: vec![] });
                     }
 
                     let strand = crate::ast::Strand { genes };
@@ -2506,10 +2534,7 @@ impl ChimeraVM {
                     for b in &buffer[0..bytes_read] {
                         let idx = (*b as usize) % count;
                         let op = opcodes[idx].clone();
-                        genes.push(crate::ast::Gene {
-                            op,
-                            args: vec![],
-                        });
+                        genes.push(crate::ast::Gene { op, args: vec![] });
                     }
 
                     let strand = crate::ast::Strand { genes };
@@ -2967,7 +2992,8 @@ impl ChimeraVM {
                         }
                     }
                 } else {
-                    self.output.push("Error: Stack underflow for Chr".to_string());
+                    self.output
+                        .push("Error: Stack underflow for Chr".to_string());
                 }
                 None
             }

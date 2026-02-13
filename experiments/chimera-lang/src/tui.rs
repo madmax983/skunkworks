@@ -773,13 +773,18 @@ where
                         KeyCode::Up => {
                             if app_state.terminal_history_idx > 0 {
                                 app_state.terminal_history_idx -= 1;
-                                app_state.terminal_input = app_state.terminal_history[app_state.terminal_history_idx].clone();
+                                app_state.terminal_input = app_state.terminal_history
+                                    [app_state.terminal_history_idx]
+                                    .clone();
                             }
                         }
                         KeyCode::Down => {
-                            if app_state.terminal_history_idx + 1 < app_state.terminal_history.len() {
+                            if app_state.terminal_history_idx + 1 < app_state.terminal_history.len()
+                            {
                                 app_state.terminal_history_idx += 1;
-                                app_state.terminal_input = app_state.terminal_history[app_state.terminal_history_idx].clone();
+                                app_state.terminal_input = app_state.terminal_history
+                                    [app_state.terminal_history_idx]
+                                    .clone();
                             } else {
                                 app_state.terminal_history_idx = app_state.terminal_history.len();
                                 app_state.terminal_input.clear();
@@ -8547,20 +8552,27 @@ fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Show last N lines, oldest first (standard terminal log)
     let log_start = vm.output.len().saturating_sub(30);
-    let log_items: Vec<ListItem> = vm.output.iter()
+    let log_items: Vec<ListItem> = vm
+        .output
+        .iter()
         .skip(log_start)
         .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)))
         .collect();
 
     let log_list = List::new(log_items).block(
-        Block::default().borders(Borders::ALL).title("Chimeric Console (Type '?' for help)")
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Chimeric Console (Type '?' for help)"),
     );
     f.render_widget(log_list, chunks[0]);
 
     // Input Line
     let input_text = format!("> {}_", app_state.terminal_input);
     let input_widget = Paragraph::new(input_text).block(
-        Block::default().borders(Borders::ALL).title("Input").border_style(Style::default().fg(Color::Yellow))
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Input")
+            .border_style(Style::default().fg(Color::Yellow)),
     );
     f.render_widget(input_widget, chunks[1]);
 }
@@ -8573,7 +8585,11 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Strange Attractor (X/Z Plane)"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Strange Attractor (X/Z Plane)"),
+        )
         .x_bounds([-50.0, 50.0])
         .y_bounds([0.0, 100.0])
         .paint(|ctx| {
@@ -8601,12 +8617,15 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     // Info
     let info = vec![
         Line::from("ATTRACTOR STATE"),
-        Line::from(format!("Mode: {}", match vm.attractor.mode {
-            0 => "Lorenz",
-            1 => "Rossler",
-            2 => "Thomas",
-            _ => "Unknown"
-        })),
+        Line::from(format!(
+            "Mode: {}",
+            match vm.attractor.mode {
+                0 => "Lorenz",
+                1 => "Rossler",
+                2 => "Thomas",
+                _ => "Unknown",
+            }
+        )),
         Line::from(format!("X: {:.4}", vm.attractor.x)),
         Line::from(format!("Y: {:.4}", vm.attractor.y)),
         Line::from(format!("Z: {:.4}", vm.attractor.z)),
@@ -8617,6 +8636,7 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         Line::from(format!("Beta:  {:.4}", vm.attractor.beta)),
         Line::from(format!("dt:    {:.4}", vm.attractor.dt)),
     ];
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
     f.render_widget(info_widget, chunks[1]);
 }

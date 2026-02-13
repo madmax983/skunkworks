@@ -23,11 +23,14 @@ use ratatui::{
     Terminal,
 };
 
-use universe::Universe;
 use agent::Agent;
-use chimera_lang::{ast::{Dna, Helix, Strand, Gene, Nucleotide}, opcode::OpCode};
-use rand::Rng;
+use chimera_lang::{
+    ast::{Dna, Gene, Helix, Nucleotide, Strand},
+    opcode::OpCode,
+};
 use physics::Vec2;
+use rand::Rng;
+use universe::Universe;
 
 fn random_dna() -> Dna {
     let mut rng = rand::thread_rng();
@@ -37,7 +40,10 @@ fn random_dna() -> Dna {
     for _ in 0..20 {
         let op_choice = rng.gen_range(0..10);
         let (op, args) = match op_choice {
-            0 => (OpCode::Push, vec![Nucleotide::Number(rng.gen_range(0..100))]),
+            0 => (
+                OpCode::Push,
+                vec![Nucleotide::Number(rng.gen_range(0..100))],
+            ),
             1 => (OpCode::Add, vec![]),
             2 => (OpCode::Sub, vec![]),
             3 => (OpCode::Mul, vec![]),

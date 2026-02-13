@@ -25,7 +25,9 @@ impl AudioEngine {
 
         for freq in frequencies {
             let wav_data = generate_sine_wave(freq, 0.5); // 0.5 seconds decay
-            let sound = load_sound_from_bytes(&wav_data).await.expect("Failed to load sound");
+            let sound = load_sound_from_bytes(&wav_data)
+                .await
+                .expect("Failed to load sound");
             notes.insert(freq as u32, sound);
         }
 
@@ -33,7 +35,9 @@ impl AudioEngine {
     }
 
     pub fn play_closest(&self, freq: f32) {
-        if self.notes.is_empty() { return; }
+        if self.notes.is_empty() {
+            return;
+        }
 
         // Find closest key
         let target = freq as u32;

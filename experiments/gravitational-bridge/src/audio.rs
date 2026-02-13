@@ -23,7 +23,9 @@ impl AudioEngine {
     }
 
     pub fn play_freq(&self, freq: f32) {
-        if self.notes.is_empty() { return; }
+        if self.notes.is_empty() {
+            return;
+        }
         let target = freq as u32;
         let mut closest_freq = 0;
         let mut min_diff = u32::MAX;

@@ -32,9 +32,9 @@ pub fn calculate_lyapunov(map: &impl ChaoticMap, initial_x: f64, steps: usize) -
         if deriv > 1e-9 {
             sum_log_deriv += deriv.ln();
         } else {
-             // Handle derivative 0 case (super-stable fixed point).
-             // Log(0) is -inf. We return a sufficiently large negative number to represent stability.
-             return -10.0;
+            // Handle derivative 0 case (super-stable fixed point).
+            // Log(0) is -inf. We return a sufficiently large negative number to represent stability.
+            return -10.0;
         }
         x = map.iterate(x);
     }

@@ -1,9 +1,9 @@
 mod audio;
 mod physics;
 
-use macroquad::prelude::*;
 use crate::audio::AudioEngine;
-use crate::physics::{Body, update, G};
+use crate::physics::{update, Body, G};
+use macroquad::prelude::*;
 use std::f32::consts::PI;
 
 const STAR_MASS: f32 = 50000.0;
@@ -24,7 +24,7 @@ struct Ant {
     speed: f32,
     state: AntState,
     bridge_idx: Option<usize>, // If bridging, which bridge index
-    bridge_progress: f32, // 0.0 to 1.0 along bridge
+    bridge_progress: f32,      // 0.0 to 1.0 along bridge
 }
 
 struct Bridge {
@@ -72,7 +72,12 @@ async fn main() {
             ants.push(Ant {
                 planet_idx: i + 1,
                 angle: rand::gen_range(0.0, 2.0 * PI),
-                speed: rand::gen_range(0.5, 2.0) * (if rand::gen_range(0, 2) == 0 { 1.0 } else { -1.0 }),
+                speed: rand::gen_range(0.5, 2.0)
+                    * (if rand::gen_range(0, 2) == 0 {
+                        1.0
+                    } else {
+                        -1.0
+                    }),
                 state: AntState::Foraging,
                 bridge_idx: None,
                 bridge_progress: 0.0,
@@ -96,8 +101,16 @@ async fn main() {
 
             // Just spawn static for now or calculate orbital vel
             let dist = pos.length();
-            let v_mag = if dist > 10.0 { (G * STAR_MASS / dist).sqrt() } else { 0.0 };
-            let v_dir = if dist > 10.0 { Vec2::new(-pos.y, pos.x).normalize() } else { Vec2::ZERO };
+            let v_mag = if dist > 10.0 {
+                (G * STAR_MASS / dist).sqrt()
+            } else {
+                0.0
+            };
+            let v_dir = if dist > 10.0 {
+                Vec2::new(-pos.y, pos.x).normalize()
+            } else {
+                Vec2::ZERO
+            };
             let vel = v_dir * v_mag;
 
             bodies.push(Body::new(pos, vel, PLANET_MASS, 15.0, WHITE));
@@ -132,7 +145,8 @@ async fn main() {
         }
 
         for (i, f) in bridge_forces.iter().enumerate() {
-            if i > 0 { // Don't move star
+            if i > 0 {
+                // Don't move star
                 bodies[i].vel += *f * dt; // F=ma, assuming m=1 for simplicity or scale force
             }
         }
@@ -144,7 +158,9 @@ async fn main() {
         // Check for broken bridges
         let mut broken_indices = Vec::new();
         for (i, bridge) in bridges.iter().enumerate() {
-            let dist = bodies[bridge.planet_a].pos.distance(bodies[bridge.planet_b].pos);
+            let dist = bodies[bridge.planet_a]
+                .pos
+                .distance(bodies[bridge.planet_b].pos);
             if dist > BRIDGE_BREAK_DIST {
                 broken_indices.push(i);
                 audio.play_freq(100.0 + rand::gen_range(0.0, 50.0));
@@ -175,25 +191,34 @@ async fn main() {
         // Form new bridges
         // Only check if we don't have too many?
         for i in 1..bodies.len() {
-            for j in (i+1)..bodies.len() {
+            for j in (i + 1)..bodies.len() {
                 let dist = bodies[i].pos.distance(bodies[j].pos);
                 if dist < BRIDGE_THRESHOLD {
                     // Check if exists
-                    if !bridges.iter().any(|b| (b.planet_a == i && b.planet_b == j) || (b.planet_a == j && b.planet_b == i)) {
+                    if !bridges.iter().any(|b| {
+                        (b.planet_a == i && b.planet_b == j) || (b.planet_a == j && b.planet_b == i)
+                    }) {
                         // Create
                         let bridge_idx = bridges.len();
-                        bridges.push(Bridge { planet_a: i, planet_b: j });
+                        bridges.push(Bridge {
+                            planet_a: i,
+                            planet_b: j,
+                        });
                         audio.play_freq(400.0 + dist);
 
                         // Recruit ants
                         let mut recruited = 0;
                         for ant in ants.iter_mut() {
-                            if ant.state == AntState::Foraging && (ant.planet_idx == i || ant.planet_idx == j) {
+                            if ant.state == AntState::Foraging
+                                && (ant.planet_idx == i || ant.planet_idx == j)
+                            {
                                 ant.state = AntState::Bridging;
                                 ant.bridge_idx = Some(bridge_idx);
                                 ant.bridge_progress = if ant.planet_idx == i { 0.0 } else { 1.0 };
                                 recruited += 1;
-                                if recruited > 5 { break; }
+                                if recruited > 5 {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -213,7 +238,11 @@ async fn main() {
                             let bridge = &bridges[b_idx];
                             // Move along bridge
                             // speed dictates direction?
-                            let direction = if ant.planet_idx == bridge.planet_a { 1.0 } else { -1.0 };
+                            let direction = if ant.planet_idx == bridge.planet_a {
+                                1.0
+                            } else {
+                                -1.0
+                            };
                             ant.bridge_progress += ant.speed * 0.1 * direction * dt;
 
                             // Reached other side?
@@ -282,7 +311,13 @@ async fn main() {
 
         set_default_camera();
         draw_text("Left Click: Spawn Planet", 10.0, 20.0, 20.0, WHITE);
-        draw_text(&format!("Bridges: {}", bridges.len()), 10.0, 40.0, 20.0, WHITE);
+        draw_text(
+            &format!("Bridges: {}", bridges.len()),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
         draw_text(&format!("Ants: {}", ants.len()), 10.0, 60.0, 20.0, WHITE);
 
         next_frame().await;

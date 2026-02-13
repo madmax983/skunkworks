@@ -1,15 +1,13 @@
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
-    use crate::vm::{ChimeraVM, Value};
     use crate::vm::nova_chimeric;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
-            helix: Helix {
-                strands: vec![],
-            },
+            helix: Helix { strands: vec![] },
         };
         ChimeraVM::new(dna)
     }

@@ -16,9 +16,9 @@ mod tests {
     fn test_attractor_modes() {
         let mut attractor = AttractorState::new();
         attractor.mode = 1; // Rossler
-        // Initialize appropriate params for Rossler manually if not calling init op
-        // But AttractorState::new() sets Lorenz params.
-        // We should set params to verify step logic isn't NAN or same.
+                            // Initialize appropriate params for Rossler manually if not calling init op
+                            // But AttractorState::new() sets Lorenz params.
+                            // We should set params to verify step logic isn't NAN or same.
         attractor.sigma = 0.2;
         attractor.rho = 0.2;
         attractor.beta = 5.7;

@@ -1,6 +1,6 @@
 use crate::agent::Agent;
-use crate::platter::Platter;
 use crate::physics::Vec2;
+use crate::platter::Platter;
 
 pub struct Universe {
     pub agents: Vec<Agent>,
@@ -30,8 +30,12 @@ impl Universe {
             let gy = (agent.body.pos.y + 100.0) as i32;
 
             let mut mag_val = 0.0;
-            if gx >= 0 && gx < self.platter.width as i32 && gy >= 0 && gy < self.platter.height as i32 {
-                 mag_val = self.platter.get_magnetism(gx as usize, gy as usize);
+            if gx >= 0
+                && gx < self.platter.width as i32
+                && gy >= 0
+                && gy < self.platter.height as i32
+            {
+                mag_val = self.platter.get_magnetism(gx as usize, gy as usize);
             }
 
             agent.sense(mag_val);
@@ -41,7 +45,9 @@ impl Universe {
             if !agent.vm.halted {
                 for _ in 0..5 {
                     agent.vm.step();
-                    if agent.vm.halted { break; }
+                    if agent.vm.halted {
+                        break;
+                    }
                 }
             } else {
                 // Re-energize if halted? Or respawn logic?
@@ -61,13 +67,21 @@ impl Universe {
             agent.body.acc = Vec2::ZERO; // Reset acc
 
             // Bounds check / Wrap around
-            if agent.body.pos.x < -100.0 { agent.body.pos.x = 100.0; }
-            if agent.body.pos.x > 100.0 { agent.body.pos.x = -100.0; }
-            if agent.body.pos.y < -100.0 { agent.body.pos.y = 100.0; }
-            if agent.body.pos.y > 100.0 { agent.body.pos.y = -100.0; }
+            if agent.body.pos.x < -100.0 {
+                agent.body.pos.x = 100.0;
+            }
+            if agent.body.pos.x > 100.0 {
+                agent.body.pos.x = -100.0;
+            }
+            if agent.body.pos.y < -100.0 {
+                agent.body.pos.y = 100.0;
+            }
+            if agent.body.pos.y > 100.0 {
+                agent.body.pos.y = -100.0;
+            }
 
             // Update trail
-             if rand::random::<u8>() % 5 == 0 {
+            if rand::random::<u8>() % 5 == 0 {
                 agent.body.trail.push(agent.body.pos);
                 if agent.body.trail.len() > 20 {
                     agent.body.trail.remove(0);
@@ -77,8 +91,13 @@ impl Universe {
             // 4. Stigmergy (Emit)
             let gx = (agent.body.pos.x + 100.0) as i32;
             let gy = (agent.body.pos.y + 100.0) as i32;
-            if gx >= 0 && gx < self.platter.width as i32 && gy >= 0 && gy < self.platter.height as i32 {
-                 self.platter.magnetize(gx as usize, gy as usize, emit * mag_write * dt);
+            if gx >= 0
+                && gx < self.platter.width as i32
+                && gy >= 0
+                && gy < self.platter.height as i32
+            {
+                self.platter
+                    .magnetize(gx as usize, gy as usize, emit * mag_write * dt);
             }
         }
 

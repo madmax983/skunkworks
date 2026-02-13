@@ -134,9 +134,13 @@ pub fn exec_weave_op(
                     let reclaimed = genes_count as i64;
                     vm.energy = vm.energy.saturating_add(reclaimed);
 
-                    vm.output.push(format!("UNRAVEL: Destroyed strand {}, reclaimed {} energy", idx, reclaimed));
+                    vm.output.push(format!(
+                        "UNRAVEL: Destroyed strand {}, reclaimed {} energy",
+                        idx, reclaimed
+                    ));
                 } else {
-                    vm.output.push("Error: Invalid strand index for Unravel".to_string());
+                    vm.output
+                        .push("Error: Invalid strand index for Unravel".to_string());
                 }
             } else {
                 vm.output.push("Error: Invalid arg for Unravel".to_string());

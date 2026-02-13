@@ -1,11 +1,11 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+    use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use std::io::Write;
+    use chimera_lang::vm::{ChimeraVM, Value};
     use std::fs::File;
+    use std::io::Write;
 
     fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
         let dna = Dna {
@@ -50,8 +50,16 @@ mod tests {
         }
 
         // Check if a new strand was created.
-        assert_eq!(vm.dna.helix.strands.len(), 2, "Expected a new strand to be created via Scavenge");
-        assert_eq!(vm.dna.helix.strands[1].genes.len(), 4, "Expected 4 genes in the new strand");
+        assert_eq!(
+            vm.dna.helix.strands.len(),
+            2,
+            "Expected a new strand to be created via Scavenge"
+        );
+        assert_eq!(
+            vm.dna.helix.strands[1].genes.len(),
+            4,
+            "Expected 4 genes in the new strand"
+        );
 
         // Cleanup
         let _ = std::fs::remove_file(path);
@@ -84,7 +92,15 @@ mod tests {
             println!("{}", msg);
         }
 
-        assert_eq!(vm.dna.helix.strands.len(), 2, "Expected a new strand to be created via Digest");
-        assert_eq!(vm.dna.helix.strands[1].genes.len(), 10, "Expected 10 genes in the new strand");
+        assert_eq!(
+            vm.dna.helix.strands.len(),
+            2,
+            "Expected a new strand to be created via Digest"
+        );
+        assert_eq!(
+            vm.dna.helix.strands[1].genes.len(),
+            10,
+            "Expected 10 genes in the new strand"
+        );
     }
 }

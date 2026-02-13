@@ -1,10 +1,14 @@
+use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use crate::vm::{ChimeraVM, Value};
-use crate::ast::{Nucleotide, Gene, Strand};
 use std::str::FromStr;
 
 #[cfg(feature = "nova")]
-pub fn exec_chimeric_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) -> Option<(usize, usize)> {
+pub fn exec_chimeric_op(
+    vm: &mut ChimeraVM,
+    op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
     if let OpCode::Chimeric = op {
         if let Some(val) = vm.stack.pop() {
             let code = match val {
@@ -13,7 +17,8 @@ pub fn exec_chimeric_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) ->
             };
             return exec_chimeric_source(vm, &code);
         } else {
-            vm.output.push("Error: Chimeric op requires code string on stack".to_string());
+            vm.output
+                .push("Error: Chimeric op requires code string on stack".to_string());
         }
     }
     None
@@ -53,11 +58,20 @@ fn exec_chimeric_source(vm: &mut ChimeraVM, source: &str) -> Option<(usize, usiz
                             }
 
                             if let Some(o) = op {
-                                genes.push(Gene { op: o, args: vec![] });
+                                genes.push(Gene {
+                                    op: o,
+                                    args: vec![],
+                                });
                             } else if let Ok(n) = t.parse::<i64>() {
-                                genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(n)] });
+                                genes.push(Gene {
+                                    op: OpCode::Push,
+                                    args: vec![Nucleotide::Number(n)],
+                                });
                             } else {
-                                genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::String(t.to_string())] });
+                                genes.push(Gene {
+                                    op: OpCode::Push,
+                                    args: vec![Nucleotide::String(t.to_string())],
+                                });
                             }
                             i += 1;
                         }
@@ -67,7 +81,8 @@ fn exec_chimeric_source(vm: &mut ChimeraVM, source: &str) -> Option<(usize, usiz
                             vm.dna.helix.strands.push(strand);
                             let idx = vm.dna.helix.strands.len() - 1;
                             vm.dictionary.insert(name.to_string(), idx);
-                            vm.output.push(format!("CHIMERIC: Defined {} @ {}", name, idx));
+                            vm.output
+                                .push(format!("CHIMERIC: Defined {} @ {}", name, idx));
                         }
                     }
                 }
@@ -84,8 +99,10 @@ fn exec_chimeric_source(vm: &mut ChimeraVM, source: &str) -> Option<(usize, usiz
             }
             "?" => {
                 // Help / Intro
-                vm.output.push("CHIMERIC: Concatenative Meta-Language".to_string());
-                vm.output.push("Commands: def name { ... }, run, dump".to_string());
+                vm.output
+                    .push("CHIMERIC: Concatenative Meta-Language".to_string());
+                vm.output
+                    .push("Commands: def name { ... }, run, dump".to_string());
             }
             _ => {
                 // Try parse as OpCode
@@ -110,7 +127,9 @@ fn exec_chimeric_source(vm: &mut ChimeraVM, source: &str) -> Option<(usize, usiz
                 } else if let Ok(n) = token.parse::<i64>() {
                     vm.stack.push(Value::Int(n));
                 } else if let Some(&idx) = vm.dictionary.get(token) {
-                    if let Some(jump) = vm.execute_gene_inner(OpCode::Call, &[Nucleotide::Number(idx as i64)]) {
+                    if let Some(jump) =
+                        vm.execute_gene_inner(OpCode::Call, &[Nucleotide::Number(idx as i64)])
+                    {
                         return Some(jump);
                     }
                 } else {
