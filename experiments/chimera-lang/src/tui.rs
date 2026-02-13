@@ -115,6 +115,8 @@ pub(crate) enum ViewMode {
     Terminal,
     #[cfg(feature = "nova")]
     Attractor,
+    #[cfg(feature = "nova")]
+    Altar,
 }
 
 enum InputMode {
@@ -200,6 +202,8 @@ pub(crate) struct AppState {
     pub(crate) terminal_history: Vec<String>,
     #[cfg(feature = "nova")]
     pub(crate) terminal_history_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) altar_sacrifice: i64,
 }
 
 impl AppState {
@@ -283,6 +287,8 @@ impl AppState {
             terminal_history: Vec::new(),
             #[cfg(feature = "nova")]
             terminal_history_idx: 0,
+            #[cfg(feature = "nova")]
+            altar_sacrifice: 10,
         }
     }
 }
@@ -650,6 +656,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Attractor = app_state.view_mode {
                 render_attractor(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Altar = app_state.view_mode {
+                render_altar(f, vm, app_state);
                 return;
             }
 
@@ -1308,6 +1320,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Altar => {
+                                app_state.input_mode = InputMode::Normal;
+                                app_state.input_buffer.clear();
+                            }
                             }
                         }
                         KeyCode::Tab =>
@@ -1560,7 +1577,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Terminal => ViewMode::Attractor,
                             #[cfg(feature = "nova")]
-                            ViewMode::Attractor => ViewMode::Genome,
+                            ViewMode::Attractor => ViewMode::Altar,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Altar => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1601,8 +1620,21 @@ where
                             }
                         }
                     }
-                    #[cfg(feature = "biophysics")]
-                    KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
+                    KeyCode::Char('b') => {
+                        #[cfg(feature = "elektra")]
+                        if let ViewMode::Elektra = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.voltage_grid[y][x] = 100.0;
+                            vm.resistance_grid[y][x] = -1.0;
+                            app_state.status_msg = "Battery placed".to_string();
+                            continue;
+                        }
+
+                        #[cfg(feature = "biophysics")]
+                        {
+                            app_state.view_mode = ViewMode::Cortex;
+                        }
+                    }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('a') => {
                         if let ViewMode::Alchemy = app_state.view_mode {
@@ -1773,6 +1805,24 @@ where
                             app_state.query_mode = true;
                             app_state.query_input.clear();
                             app_state.query_results.clear();
+                        }
+                    }
+                    #[cfg(feature = "elektra")]
+                    KeyCode::Char('g') => {
+                        if let ViewMode::Elektra = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.voltage_grid[y][x] = 0.0;
+                            vm.resistance_grid[y][x] = -2.0;
+                            app_state.status_msg = "Ground placed".to_string();
+                        }
+                    }
+                    #[cfg(feature = "elektra")]
+                    KeyCode::Char('w') => {
+                        if let ViewMode::Elektra = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.grid[y][x] = crate::vm::Value::Int(1);
+                            vm.resistance_grid[y][x] = 1.0; // Reset resistance if needed
+                            app_state.status_msg = "Wire placed".to_string();
                         }
                     }
                     KeyCode::Char('?') => {
@@ -2091,6 +2141,8 @@ where
                         } else if let ViewMode::Pandemonium = app_state.view_mode {
                             app_state.pandemonium_radius =
                                 (app_state.pandemonium_radius - 1.0).max(1.0);
+                        } else if let ViewMode::Altar = app_state.view_mode {
+                            app_state.altar_sacrifice = (app_state.altar_sacrifice - 5).max(0);
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -2100,6 +2152,8 @@ where
                                 (app_state.kaleidoscope_hue_idx + 1) % 6;
                         } else if let ViewMode::Pandemonium = app_state.view_mode {
                             app_state.pandemonium_radius += 1.0;
+                        } else if let ViewMode::Altar = app_state.view_mode {
+                            app_state.altar_sacrifice += 5;
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -2120,7 +2174,18 @@ where
                         }
                     }
                     KeyCode::Char('m') => vm.mutate(),
-                    KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
+                    KeyCode::Char('c') => {
+                        #[cfg(feature = "elektra")]
+                        if let ViewMode::Elektra = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.grid[y][x] = crate::vm::Value::Int(0);
+                            vm.voltage_grid[y][x] = 0.0;
+                            vm.resistance_grid[y][x] = 1.0;
+                            app_state.status_msg = "Cleared cell".to_string();
+                            continue;
+                        }
+                        vm.chaos_mode = !vm.chaos_mode;
+                    }
                     KeyCode::Down => match app_state.view_mode {
                         ViewMode::Genome => {
                             let s_len = vm.dna.helix.strands.len();
@@ -2294,7 +2359,7 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Altar => {
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method/Pattern
                                 0 => {
@@ -2406,7 +2471,7 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Altar => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method
@@ -2674,7 +2739,7 @@ where
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Altar => {
                             if app_state.selected_strand < 2 {
                                 app_state.selected_strand += 1;
                             } else {
@@ -2836,7 +2901,7 @@ where
                         ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory | ViewMode::Altar => {
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
                             } else {
@@ -2929,6 +2994,20 @@ where
                         ViewMode::Attractor => {}
                     },
                     KeyCode::Enter => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Altar = app_state.view_mode {
+                            match crate::vm::nova_altar::perform_ritual(
+                                vm,
+                                app_state.lab_parent_a,
+                                app_state.lab_parent_b,
+                                app_state.altar_sacrifice,
+                            ) {
+                                Ok(msg) => app_state.status_msg = msg,
+                                Err(e) => app_state.status_msg = format!("Ritual Failed: {}", e),
+                            }
+                            continue;
+                        }
+
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
                             // Trace current circuit
@@ -2979,6 +3058,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Altar => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4456,6 +4539,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
         #[cfg(feature = "nova")]
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
+        #[cfg(feature = "nova")]
+        ViewMode::Altar => "THE ALTAR (GENETIC RITUAL)",
     };
 
     let title = match app_state.input_mode {
@@ -5014,6 +5099,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Weaver, "The Weaver", "W"));
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
+        views.push((ViewMode::Altar, "The Altar", "x"));
     }
     views
 }
@@ -7549,9 +7635,12 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  ;   MIDI CC   (K, V, C)"),
         Line::from("  ?   Random"),
         Line::from("  N/S/E/W (Directional I/O)"),
-        Line::from("  A/B/D (Math: + - /)"),
+        Line::from("  A/B/D/&/% (Math: + - / AND MOD)"),
         Line::from("  M (Mutate), C (Clock)"),
         Line::from("  Q (Query), H (Harvest)"),
+        Line::from("  T (Teleport), L (Laser)"),
+        Line::from("  U (Unzip/Split Strand)"),
+        Line::from("  $ (Stack Interface)"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
@@ -8619,4 +8708,120 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     ];
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_altar(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(30), // Parent A
+                Constraint::Percentage(30), // Parent B
+                Constraint::Percentage(40), // Ritual
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
+
+    // Helper to render strand
+    let render_strand = |idx: usize, title: &str, is_focused: bool| {
+        let mut items = Vec::new();
+        if idx < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[idx];
+            for gene in &strand.genes {
+                items.push(ListItem::new(format!("{}", gene.op)));
+            }
+        } else {
+            items.push(ListItem::new("Invalid Strand"));
+        }
+
+        let border_style = if is_focused {
+            Style::default()
+                .fg(Color::Red)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::DarkGray)
+        };
+
+        List::new(items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(format!("{} (Idx: {})", title, idx))
+                .border_style(border_style),
+        )
+    };
+
+    // Parent A
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_a,
+            "Sire (Left)",
+            app_state.selected_strand == 0,
+        ),
+        chunks[0],
+    );
+
+    // Parent B
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_b,
+            "Dam (Right)",
+            app_state.selected_strand == 1,
+        ),
+        chunks[1],
+    );
+
+    // Ritual Status
+    let ritual_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(10), Constraint::Min(0)].as_ref())
+        .split(chunks[2]);
+
+    let sacrifice = app_state.altar_sacrifice;
+    let chaos_factor = (sacrifice as f64 / 100.0).clamp(0.01, 0.9);
+    let energy_style = if vm.energy >= sacrifice {
+        Style::default().fg(Color::Green)
+    } else {
+        Style::default().fg(Color::Red)
+    };
+
+    let info = vec![
+        Line::from(Span::styled("THE ALTAR", Style::default().fg(Color::Red).add_modifier(Modifier::BOLD))),
+        Line::from(" "),
+        Line::from(format!("Sacrifice: {} Energy ([ / ])", sacrifice)),
+        Line::from(Span::styled(format!("Current Energy: {}", vm.energy), energy_style)),
+        Line::from(format!("Chaos Factor: {:.2}", chaos_factor)),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Arrows: Select Parent"),
+        Line::from("  Enter:  PERFORM RITUAL"),
+    ];
+
+    let border_style = if app_state.selected_strand == 2 {
+        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Ritual Configuration")
+            .border_style(border_style),
+    );
+    f.render_widget(info_widget, ritual_chunks[0]);
+
+    // Outcome Log
+    let mut logs = Vec::new();
+    logs.push(ListItem::new("Recent Rituals:"));
+    // Filter output for "Ritual"
+    for msg in vm.output.iter().rev().take(10) {
+        if msg.contains("Ritual") {
+            logs.push(ListItem::new(msg.clone()).style(Style::default().fg(Color::Yellow)));
+        }
+    }
+
+    let log_list = List::new(logs).block(Block::default().borders(Borders::ALL).title("Grimoire Log"));
+    f.render_widget(log_list, ritual_chunks[1]);
 }

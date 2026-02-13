@@ -63,6 +63,11 @@ pub const MAX_AKASHIC_SIZE: u64 = 10 * 1024 * 1024; // 10MB
 #[cfg(feature = "nova")]
 pub mod akashic;
 #[cfg(feature = "nova")]
+pub mod nova_altar;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_altar_test;
+#[cfg(feature = "nova")]
 pub mod alchemy;
 #[cfg(feature = "nova")]
 pub mod babel;
