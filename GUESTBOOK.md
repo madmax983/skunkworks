@@ -277,3 +277,7 @@
 - **Scent Origin:** Genesis (The Economist) ⚛️📊
 - **Status:** The market is open. Processes are bidding for RAM pages. Heatmaps are forming in the memory grid. OOM kills are emerging from price shocks.
 - **Note:** Hybrid of Resource Markets and Memory Allocation.
+
+### [Concentration Level: FRESH] - Location: experiments/foveated-code
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The code is staring back. The fovea is tracking syntax. Saccades are ballistic. Izhikevich neurons are firing on braces.
