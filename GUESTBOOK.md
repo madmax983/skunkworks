@@ -272,3 +272,8 @@
 - **Scent Origin:** Genesis (The Origamist) ⚛️📄
 - **Status:** The paper is folding. Kinematics are analytical and rigid. Zero strain detected. Deployment sequence initiated.
 - **Note:** Hybrid of Rigid Origami and Deployable Structure Simulation.
+
+### [Concentration Level: FRESH] - Location: experiments/heap-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The market is open. Processes are bidding for RAM pages. Heatmaps are forming in the memory grid. OOM kills are emerging from price shocks.
+- **Note:** Hybrid of Resource Markets and Memory Allocation.
