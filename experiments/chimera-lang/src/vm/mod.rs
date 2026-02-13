@@ -575,7 +575,7 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub grid_history: VecDeque<Vec<Vec<Value>>>,
     pub execution_trail: Vec<u8>,
-    pub gene_execution_counts: HashMap<(usize, usize), u64>,
+    pub gene_execution_counts: Vec<Vec<u64>>,
     pub dream_traces: Vec<dream::DreamTrace>,
     pub sandbox_root: std::path::PathBuf,
     pub tick_counter: u64,
@@ -880,7 +880,7 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             grid_history: VecDeque::new(),
             execution_trail,
-            gene_execution_counts: HashMap::new(),
+            gene_execution_counts: Vec::new(),
             dream_traces: Vec::new(),
             sandbox_root: std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
             tick_counter: 0,
@@ -2131,7 +2131,14 @@ impl ChimeraVM {
     /// Runtime errors (stack underflow, type mismatch, division by zero) are silent:
     /// they push an error message to `self.output` and return gracefully, mimicking biological resilience.
     fn execute_gene(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
-        *self.gene_execution_counts.entry(self.ip).or_insert(0) += 1;
+        // Record execution count (Lazy resize)
+        if self.gene_execution_counts.len() <= self.ip.0 {
+            self.gene_execution_counts.resize(self.ip.0 + 1, Vec::new());
+        }
+        if self.gene_execution_counts[self.ip.0].len() <= self.ip.1 {
+            self.gene_execution_counts[self.ip.0].resize(self.ip.1 + 1, 0);
+        }
+        self.gene_execution_counts[self.ip.0][self.ip.1] += 1;
 
         // Mark trail
         let (cy, cx) = self.context_loc;

@@ -40,11 +40,11 @@ fn test_heatmap_tracking() {
 
     // Check counts
     // Strand 0, Gene 0 (Push) should be executed
-    let count_0 = *vm.gene_execution_counts.get(&(0, 0)).unwrap_or(&0);
+    let count_0 = *vm.gene_execution_counts.get(0).and_then(|s| s.get(0)).unwrap_or(&0);
     assert!(count_0 > 0, "Gene 0 should have been executed");
 
     // Gene 3 (Jump) should be executed
-    let count_3 = *vm.gene_execution_counts.get(&(0, 3)).unwrap_or(&0);
+    let count_3 = *vm.gene_execution_counts.get(0).and_then(|s| s.get(3)).unwrap_or(&0);
     assert!(count_3 > 0, "Gene 3 should have been executed");
 }
 
@@ -92,6 +92,6 @@ fn test_viral_injection() {
     assert_eq!(vm.stack.last(), Some(&Value::Int(30)));
 
     // Check injection counts
-    let count_injected = *vm.gene_execution_counts.get(&(0, 1)).unwrap_or(&0);
+    let count_injected = *vm.gene_execution_counts.get(0).and_then(|s| s.get(1)).unwrap_or(&0);
     assert_eq!(count_injected, 1, "Injected gene should execute once");
 }

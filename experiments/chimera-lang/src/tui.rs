@@ -4313,9 +4313,11 @@ fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         .split(f.area());
 
     let mut max_count = 1;
-    for count in vm.gene_execution_counts.values() {
-        if *count > max_count {
-            max_count = *count;
+    for strand_counts in &vm.gene_execution_counts {
+        for count in strand_counts {
+            if *count > max_count {
+                max_count = *count;
+            }
         }
     }
 
@@ -4329,7 +4331,11 @@ fn render_heatmap(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         )));
 
         for (g_idx, gene) in strand.genes.iter().enumerate() {
-            let count = vm.gene_execution_counts.get(&(s_idx, g_idx)).unwrap_or(&0);
+            let count = vm
+                .gene_execution_counts
+                .get(s_idx)
+                .and_then(|s| s.get(g_idx))
+                .unwrap_or(&0);
             let ratio = (*count as f64) / (max_count as f64);
             let color = if ratio < 0.01 {
                 Color::DarkGray
