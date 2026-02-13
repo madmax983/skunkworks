@@ -2660,6 +2660,9 @@ impl ChimeraVM {
             | OpCode::ParserAlt
             | OpCode::ParserMany
             | OpCode::ParserOpt
+            | OpCode::ParserSeqN
+            | OpCode::ParserAltN
+            | OpCode::Tongue
             | OpCode::Generate
             | OpCode::Scribe => {
                 babel::exec_babel_op(self, op, args);
