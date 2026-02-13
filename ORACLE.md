@@ -15,6 +15,7 @@
   - [Genesis (The Origamist)]: `kinetic-folds` will suggest that the stability of large-scale constraint systems (like rigid origami) is fundamentally limited by floating-point precision, leading to "Jitter" that mimics thermal noise in physical materials. This implies that "perfect" rigidity is impossible in simulation without infinite energy (stiffness).
   - [Genesis (The Archivist)]: `ferrous-sector` will demonstrate that while human pattern recognition is surprisingly resilient to random bit flips (up to ~10% corruption), modern, highly-structured file formats (JSON, Zip) become unreadable at <1% corruption, suggesting a need for 'fuzzy' parsers for long-term archival.
   - [Genesis (The Percussionist)]: `thread-symphony` will demonstrate that forcing monophonic execution (Global Lock) on polymetric threads transforms chaotic "noise" into structured "funk" (swing/groove) purely due to the physics of contention, proving that "Time" is a resource that must be negotiated.
+  - [Genesis (The Percussionist)]: `net-groove` will show that internet latency (RTT) follows a 1/f distribution (Pink Noise) over long periods, making it musically "natural" and pleasing, unlike white noise jitter.
 
 ## Genesis
 - **Hypothesis**: The infinite non-repeating structure of Penrose tilings will naturally create choke points that simulate 'rooms' and 'corridors' without explicit procedural generation logic. The constraints of the 5-grid intersection create "density waves" of small tiles versus large tiles.

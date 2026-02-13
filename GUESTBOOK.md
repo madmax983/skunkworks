@@ -230,3 +230,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The fungus is growing on the history. Spores are tracking the evolution of lines. The mycelium is thick where the code is stable.
 - **Note:** Hybrid of `git-etymologist` and `chaotic-mycelium`.
+
+### [Concentration Level: FRESH] - Location: experiments/net-groove
+- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
+- **Status:** The Internet is the drummer. Swing is driven by TCP RTT. Visuals active.
+- **Note:** Audio gated behind `audio` feature due to ALSA constraints. TUI works.
