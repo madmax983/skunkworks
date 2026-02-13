@@ -1,5 +1,7 @@
 #[cfg(feature = "nova")]
 use crate::vm::{nova::Organelle, ChimeraVM, Value};
+#[cfg(feature = "nova")]
+use rand::Rng;
 
 #[cfg(feature = "nova")]
 pub fn exec_plant(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
@@ -72,76 +74,101 @@ pub fn tick_seed(vm: &mut ChimeraVM, organelle: &mut Organelle) -> bool {
         return false;
     }
 
-    // Peek/Pop state
-    let mut turtle_stack_val = vm.stack.pop().unwrap();
-    let mut index_val = vm.stack.pop().unwrap();
-    let mut string_val = vm.stack.pop().unwrap();
-    let rules_val = vm.stack.last().unwrap().clone();
+    // Check Resonance for Growth Boost
+    let (cy, cx) = vm.context_loc;
+    let mut speed = 1;
+    if cy < crate::vm::GRID_SIZE && cx < crate::vm::GRID_SIZE {
+        let amp = vm.resonance_grid[cy][cx].1;
+        if amp > 0.5 {
+            speed = 2;
+        }
+    }
 
-    let mut alive = true;
-    let mut grew = false;
+    let mut still_alive = true;
 
-    if let (Value::Int(idx), Value::Str(s)) = (&mut index_val, &mut string_val) {
-        let i = *idx as usize;
-        if i >= s.len() {
-            alive = false;
-        } else {
-            let c = s.chars().nth(i).unwrap();
-            let mut next_idx = i + 1;
+    for _ in 0..speed {
+        if vm.stack.len() < 4 {
+            still_alive = false;
+            break;
+        }
 
-            let mut expansion = None;
+        // Peek/Pop state
+        let mut turtle_stack_val = vm.stack.pop().unwrap();
+        let mut index_val = vm.stack.pop().unwrap();
+        let mut string_val = vm.stack.pop().unwrap();
+        let rules_val = vm.stack.last().unwrap().clone();
 
-            match &rules_val {
-                Value::Str(rule_s) => {
-                    expansion = check_rule(c, rule_s);
-                }
-                Value::Junction(_, vals) => {
-                    for v in vals {
-                        if let Value::Str(rule_s) = v {
-                            if let Some(res) = check_rule(c, rule_s) {
-                                expansion = Some(res);
-                                break;
+        let mut alive = true;
+        let mut grew = false;
+
+        if let (Value::Int(idx), Value::Str(s)) = (&mut index_val, &mut string_val) {
+            let i = *idx as usize;
+            if i >= s.len() {
+                alive = false;
+            } else {
+                let c = s.chars().nth(i).unwrap();
+                let mut next_idx = i + 1;
+
+                let mut expansion = None;
+
+                match &rules_val {
+                    Value::Str(rule_s) => {
+                        expansion = check_rule(c, rule_s);
+                    }
+                    Value::Junction(_, vals) => {
+                        for v in vals {
+                            if let Value::Str(rule_s) = v {
+                                if let Some(res) = check_rule(c, rule_s) {
+                                    expansion = Some(res);
+                                    break;
+                                }
                             }
                         }
                     }
+                    _ => {}
                 }
-                _ => {}
-            }
 
-            if let Some(replacement) = expansion {
-                if s.len() + replacement.len() < 1000 {
-                    let mut new_s = String::new();
-                    new_s.push_str(&s[0..i]);
-                    new_s.push_str(&replacement);
-                    new_s.push_str(&s[i + 1..]);
-                    *s = new_s;
+                if let Some(replacement) = expansion {
+                    if s.len() + replacement.len() < 1000 {
+                        let mut new_s = String::new();
+                        new_s.push_str(&s[0..i]);
+                        new_s.push_str(&replacement);
+                        new_s.push_str(&s[i + 1..]);
+                        *s = new_s;
 
-                    next_idx = i;
-                    vm.energy = vm.energy.saturating_sub(1);
+                        next_idx = i; // Process the expansion in next ticks
+                        vm.energy = vm.energy.saturating_sub(1);
+                    } else {
+                        // Limit reached, interpret instead
+                        interpret_char(vm, organelle, c, &mut turtle_stack_val);
+                        grew = true;
+                    }
                 } else {
                     interpret_char(vm, organelle, c, &mut turtle_stack_val);
                     grew = true;
                 }
-            } else {
-                interpret_char(vm, organelle, c, &mut turtle_stack_val);
-                grew = true;
+
+                *idx = next_idx as i64;
             }
-
-            *idx = next_idx as i64;
+        } else {
+            alive = false;
         }
-    } else {
-        alive = false;
+
+        vm.stack.push(string_val);
+        vm.stack.push(index_val);
+        vm.stack.push(turtle_stack_val);
+
+        if grew {
+            // Optional: consume extra energy?
+        }
+
+        if !alive {
+            still_alive = false;
+            break;
+        }
     }
 
-    vm.stack.push(string_val);
-    vm.stack.push(index_val);
-    vm.stack.push(turtle_stack_val);
-
-    if grew {
-        // Optional: consume extra energy?
-    }
-
-    alive
+    still_alive
 }
 
 #[cfg(feature = "nova")]
@@ -217,6 +244,39 @@ fn interpret_char(
         }
         'L' => {
             vm.grid[cy][cx] = Value::Str("♣".to_string());
+        }
+        '♪' => {
+            // Sonic Bloom: Emit note
+            let notes = ["Do", "Re", "Mi", "Fa", "Sol", "La", "Si"];
+            let mut rng = rand::thread_rng();
+            let note = notes[rng.gen_range(0..notes.len())];
+            vm.chorus_buffer.push_back(note.to_string());
+            if vm.chorus_buffer.len() > crate::vm::MAX_CHORUS_SIZE {
+                vm.chorus_buffer.pop_front();
+            }
+            // Trigger effects if any
+            if let Some(target) = crate::vm::nova::check_chorus_chords(vm) {
+                 vm.output.push(format!("PLANT: Sang {} -> Triggered {}", note, target));
+            } else {
+                 vm.output.push(format!("PLANT: Sang {}", note));
+            }
+        }
+        '~' => {
+            // Wiggle: Harmonic Tropism
+            let mut amp = 0.0;
+            if cy < crate::vm::GRID_SIZE && cx < crate::vm::GRID_SIZE {
+                 amp = vm.resonance_grid[cy][cx].1;
+            }
+
+            let mut rng = rand::thread_rng();
+            // Wiggle probability increases with amplitude
+            if amp > 0.1 || rng.gen_bool(0.1) {
+                let ndy = rng.gen_range(-1..=1);
+                let ndx = rng.gen_range(-1..=1);
+                if ndy != 0 || ndx != 0 {
+                    organelle.direction = (ndy, ndx);
+                }
+            }
         }
         _ => {}
     }
