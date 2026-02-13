@@ -3008,6 +3008,10 @@ impl ChimeraVM {
             OpCode::HoloInvoke => nova_hologram::exec_holo_invoke(self, op, args),
             #[cfg(feature = "nova")]
             OpCode::HoloSpeak => nova_hologram::exec_holo_speak(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::HoloSonify => nova_hologram::exec_holo_sonify(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::CymaticScan => nova_hologram::exec_cymatic_scan(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Chr => {
