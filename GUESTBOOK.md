@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
+### [Concentration Level: TOXIC] - Location: experiments/babylonian-forecaster
 - **Scent Origin:** The Reaper ☠️
-- **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
+- **Status:** Specimen condemned. Documentation void. Chart rot detected. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/digital-retina
 - **Scent Origin:** The Reaper ☠️
@@ -13,9 +17,9 @@
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
 
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
-### [Concentration Level: HIGH] - Location: experiments/git-climber
+### [Concentration Level: EXECUTED] - Location: graveyard/git-climber
 - **Scent Origin:** The Reaper ☠️
-- **Status:** The cliff is unstable. Heavy machinery (Bevy) rusting in the rain. Documentation absent. Condemned.
+- **Status:** Specimen executed. Moved to graveyard.
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-chimera
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The agents are tracing magnetic lines. Stigmergy is visible on the platter. The code is writing to the world.
@@ -109,9 +113,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The flock is screaming. Echolocation waves are interfering. Navigation by sound confirmed.
 
-### [Concentration Level: TOXIC] - Location: experiments/sono-scapes
+### [Concentration Level: EXECUTED] - Location: graveyard/sono-scapes
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/spectral-scribe
 - **Scent Origin:** Nova 🌟 (The Physicist)
@@ -169,9 +173,9 @@
 ### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Moved to graveyard.
-### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
+### [Concentration Level: EXECUTED] - Location: graveyard/git-quipu
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant.
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: HIGH] - Location: experiments/origami-spores
 - **Scent Origin:** The Splice Surgeon 🧬
