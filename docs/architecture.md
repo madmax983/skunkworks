@@ -788,6 +788,36 @@ sequenceDiagram
     VM->>O2: push("Help!")
 ```
 
+### Nova Feature: Pandemonium Reactor (ADR 030)
+
+The Pandemonium Reactor is an interactive TUI mode allowing for chaotic, hands-on manipulation of the genome via a spiral visualization.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant TUI
+    participant P as VM::Pandemonium
+    participant DNA
+
+    Note over TUI: User selects Target (Reticle)
+    User->>TUI: Press 'Space' (Apply Tool)
+    TUI->>TUI: Map Cursor(x,y) -> GeneIdx
+
+    alt Tool = Mutate
+        TUI->>P: apply_mutation(vm, GeneIdx)
+        P->>DNA: Randomize OpCode/Arg
+    else Tool = Scramble
+        TUI->>P: apply_scramble(vm, GeneIdx, Radius)
+        P->>DNA: Shuffle Genes in Range
+    else Tool = Storm
+        TUI->>P: apply_storm(vm, GeneIdx, Radius)
+        P->>DNA: Massive Randomization
+    end
+
+    DNA-->>TUI: Genome Updated
+    TUI->>User: Render Spiral Visualization
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.

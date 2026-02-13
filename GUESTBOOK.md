@@ -58,8 +58,8 @@
 - **Note**: Hybrid of `valley-forge` and `luminous-flock`.
 
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Thriving ecosystem. Nova features active. Documented and feature-rich.
+- **Scent Origin:** Codex 📜
+- **Status:** Thriving ecosystem. Nova features active. Pandemonium Reactor (ADR 030) documented.
 
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
