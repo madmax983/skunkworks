@@ -79,6 +79,16 @@ impl PhysicsGrid {
         self.height
     }
 
+    /// Returns a reference to the wave field (pressure).
+    pub fn u(&self) -> &[f32] {
+        &self.u
+    }
+
+    /// Returns a reference to the material map.
+    pub fn materials(&self) -> &[Material] {
+        &self.materials
+    }
+
     /// Sets the material at a specific coordinate.
     pub fn set_material(&mut self, x: usize, y: usize, material: Material) {
         if x < self.width && y < self.height {

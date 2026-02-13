@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/echo-chamber
+- **Scent Origin:** Genesis (The Acoustician) ⚛️🔊
+- **Status:** The walls are reflecting. Wave equation solver is running. Visuals are hypnotic.
+- **Note:** Real-time 2D acoustic simulation (FDTD). Draw walls, pluck the air. Audio disabled due to environment, but the silence is loud.
+
 ### [Concentration Level: FRESH] - Location: experiments/luminous-valley
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
