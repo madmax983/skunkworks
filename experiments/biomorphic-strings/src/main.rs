@@ -7,6 +7,8 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use glam::Vec3;
+use rand::Rng;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
@@ -18,8 +20,6 @@ use ratatui::{
     },
     Terminal,
 };
-use glam::Vec3;
-use rand::Rng;
 
 mod physics;
 use physics::BioString;
@@ -64,7 +64,11 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
 
             // Render Canvas
             let canvas = Canvas::default()
-                .block(Block::default().borders(Borders::ALL).title("Biomorphic Strings"))
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .title("Biomorphic Strings"),
+                )
                 .x_bounds([-50.0, 50.0])
                 .y_bounds([-25.0, 25.0])
                 .paint(|ctx| {
@@ -113,10 +117,13 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                     Span::styled("Q", Style::default().fg(Color::Yellow)),
                     Span::raw(" to Quit"),
                 ]),
-                Line::from(vec![
-                    Span::raw(format!("Nodes: {} | Tension: {:.1} | Feed: {:.3} | Kill: {:.3}",
-                        string.nodes.len(), string.tension, string.feed, string.kill)),
-                ]),
+                Line::from(vec![Span::raw(format!(
+                    "Nodes: {} | Tension: {:.1} | Feed: {:.3} | Kill: {:.3}",
+                    string.nodes.len(),
+                    string.tension,
+                    string.feed,
+                    string.kill
+                ))]),
             ])
             .block(Block::default().borders(Borders::ALL));
             f.render_widget(status, chunks[1]);
@@ -131,12 +138,12 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
                 match key.code {
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char('r') => {
-                         string = BioString::new(start, end, 80, 20.0, 0.5);
+                        string = BioString::new(start, end, 80, 20.0, 0.5);
                     }
                     KeyCode::Char(' ') => {
                         // Pluck a random node
                         let mut rng = rand::thread_rng();
-                        let idx = rng.gen_range(1..string.nodes.len()-1);
+                        let idx = rng.gen_range(1..string.nodes.len() - 1);
                         let force = Vec3::new(0.0, rng.gen_range(10.0..50.0), 0.0);
                         string.pluck(idx, force);
                     }
@@ -148,7 +155,7 @@ fn run_app(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> Result
         if last_tick.elapsed() >= tick_rate {
             // Physics Update (sub-step for stability)
             let dt = 0.016; // 60 FPS
-            // Run physics 5 times per frame for stability
+                            // Run physics 5 times per frame for stability
             for _ in 0..5 {
                 string.update(dt / 5.0);
             }

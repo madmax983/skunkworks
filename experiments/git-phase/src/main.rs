@@ -4,14 +4,17 @@ use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::Color,
-    widgets::{Block, Borders, Paragraph, canvas::{Canvas, Circle, Context}},
+    widgets::{
+        canvas::{Canvas, Circle, Context},
+        Block, Borders, Paragraph,
+    },
 };
-use std::time::{Duration, Instant};
 use std::f64::consts::PI;
+use std::time::{Duration, Instant};
 
+mod audio;
 mod git;
 mod rhythm;
-mod audio;
 
 use git::GitSource;
 use rhythm::{generate_pattern, Instrument};
@@ -73,7 +76,7 @@ fn main() -> Result<()> {
         &mut phase1,
         &mut phase2,
         &mut last_tick,
-        &mut status_msg
+        &mut status_msg,
     );
 
     // Teardown is automatic via Drop, but we can call exit if needed.
@@ -106,8 +109,12 @@ fn run_app(
             *phase1 += steps_per_sec * delta;
             *phase2 += steps_per_sec * delta * *speed_ratio;
 
-            if *phase1 >= args.length as f32 { *phase1 -= args.length as f32; }
-            if *phase2 >= args.length as f32 { *phase2 -= args.length as f32; }
+            if *phase1 >= args.length as f32 {
+                *phase1 -= args.length as f32;
+            }
+            if *phase2 >= args.length as f32 {
+                *phase2 -= args.length as f32;
+            }
         }
 
         // Draw
@@ -136,7 +143,7 @@ fn run_app(
 
         // Input
         if event::poll(Duration::from_millis(16))? {
-             if let Event::Key(key) = event::read()? {
+            if let Event::Key(key) = event::read()? {
                 if key.kind == KeyEventKind::Press {
                     match key.code {
                         KeyCode::Char('q') => return Ok(()),
@@ -146,7 +153,14 @@ fn run_app(
                         KeyCode::Char('r') => {
                             *status_msg = "Rendering output.wav...".to_string();
                             // Render (120 beats duration)
-                            match audio::render_wav("output.wav", pattern1, pattern2, args.bpm, 120, *speed_ratio) {
+                            match audio::render_wav(
+                                "output.wav",
+                                pattern1,
+                                pattern2,
+                                args.bpm,
+                                120,
+                                *speed_ratio,
+                            ) {
                                 Ok(_) => *status_msg = "Rendered output.wav".to_string(),
                                 Err(e) => *status_msg = format!("Error: {}", e),
                             }
@@ -166,7 +180,12 @@ fn draw_rings(ctx: &mut Context, p1: &[Instrument], p2: &[Instrument], phase1: f
     let radius2 = 60.0;
 
     // Outer Ring (P1)
-    ctx.draw(&Circle { x: center_x, y: center_y, radius: radius1, color: Color::DarkGray });
+    ctx.draw(&Circle {
+        x: center_x,
+        y: center_y,
+        radius: radius1,
+        color: Color::DarkGray,
+    });
     for (i, instr) in p1.iter().enumerate() {
         let angle = (i as f64 / p1.len() as f64) * 2.0 * PI - PI / 2.0;
         let x = center_x + radius1 * angle.cos();
@@ -179,18 +198,32 @@ fn draw_rings(ctx: &mut Context, p1: &[Instrument], p2: &[Instrument], phase1: f
         };
 
         let r = if *instr == Instrument::Rest { 1.0 } else { 2.0 };
-        ctx.draw(&Circle { x, y, radius: r, color });
+        ctx.draw(&Circle {
+            x,
+            y,
+            radius: r,
+            color,
+        });
     }
 
     // Cursor P1
     let angle1 = (phase1 as f64 / p1.len() as f64) * 2.0 * PI - PI / 2.0;
     let x1 = center_x + radius1 * angle1.cos();
     let y1 = center_y + radius1 * angle1.sin();
-    ctx.draw(&Circle { x: x1, y: y1, radius: 3.0, color: Color::White });
-
+    ctx.draw(&Circle {
+        x: x1,
+        y: y1,
+        radius: 3.0,
+        color: Color::White,
+    });
 
     // Inner Ring (P2)
-    ctx.draw(&Circle { x: center_x, y: center_y, radius: radius2, color: Color::DarkGray });
+    ctx.draw(&Circle {
+        x: center_x,
+        y: center_y,
+        radius: radius2,
+        color: Color::DarkGray,
+    });
     for (i, instr) in p2.iter().enumerate() {
         let angle = (i as f64 / p2.len() as f64) * 2.0 * PI - PI / 2.0;
         let x = center_x + radius2 * angle.cos();
@@ -202,12 +235,22 @@ fn draw_rings(ctx: &mut Context, p1: &[Instrument], p2: &[Instrument], phase1: f
             Instrument::Rest => Color::DarkGray,
         };
         let r = if *instr == Instrument::Rest { 1.0 } else { 2.0 };
-        ctx.draw(&Circle { x, y, radius: r, color });
+        ctx.draw(&Circle {
+            x,
+            y,
+            radius: r,
+            color,
+        });
     }
 
     // Cursor P2
     let angle2 = (phase2 as f64 / p2.len() as f64) * 2.0 * PI - PI / 2.0;
     let x2 = center_x + radius2 * angle2.cos();
     let y2 = center_y + radius2 * angle2.sin();
-    ctx.draw(&Circle { x: x2, y: y2, radius: 3.0, color: Color::White });
+    ctx.draw(&Circle {
+        x: x2,
+        y: y2,
+        radius: 3.0,
+        color: Color::White,
+    });
 }

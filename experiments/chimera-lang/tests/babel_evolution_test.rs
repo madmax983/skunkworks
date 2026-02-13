@@ -55,7 +55,10 @@ mod tests {
 
         // Generate from mutated grammar
         let output = generate_string(&current);
-        assert_ne!(output, "AAAAA", "Mutated grammar should generate different string (likely)");
+        assert_ne!(
+            output, "AAAAA",
+            "Mutated grammar should generate different string (likely)"
+        );
     }
 
     #[test]
@@ -65,10 +68,7 @@ mod tests {
 
         let mut grammar = Value::Junction(
             JunctionType::Any,
-            vec![
-                Value::Str("Match".to_string()),
-                Value::Str("A".to_string()),
-            ],
+            vec![Value::Str("Match".to_string()), Value::Str("A".to_string())],
         );
 
         // Nest it 60 times
@@ -82,13 +82,16 @@ mod tests {
                         JunctionType::Any,
                         vec![Value::Str("Match".to_string()), Value::Str(".".to_string())],
                     ),
-                ]
+                ],
             );
         }
 
         let output = generate_string(&grammar);
         // It should contain "..." due to depth limit
-        assert!(output.contains("...") || output.len() > 50, "Output should handle depth");
+        assert!(
+            output.contains("...") || output.len() > 50,
+            "Output should handle depth"
+        );
         // Actually generate_string_depth logic returns "..." immediately if depth > 50.
         // And since we nest Seq(grammar, ...), the 'grammar' part is at depth+1.
         // Eventually it hits limit.

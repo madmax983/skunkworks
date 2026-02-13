@@ -1,6 +1,7 @@
 use crossbeam_channel::{bounded, Receiver, Sender};
 use macroquad::prelude::*;
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::audio::{AudioCommand, AudioModel, AudioSnapshot};
+use resonance_audio::physics::Material;
 use std::thread;
 use std::time::Duration;
 
@@ -11,9 +12,19 @@ const SIM_HEIGHT: usize = 60;
 enum Tool {
     Pluck,
     Wall,
+    Slow,
+    Fast,
+    Void,
     Listener,
     Source,
     Erase,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum ViewMode {
+    Wave,
+    Energy,
+    Material,
 }
 
 fn window_conf() -> Conf {
@@ -37,13 +48,12 @@ async fn main() {
     #[cfg(not(feature = "audio"))]
     let _audio_thread = setup_mock_audio(cmd_rx, snap_tx.clone());
 
-    // If audio fails to init (returns None), we should fallback to mock.
-    // But setup_audio handles fallback internally? No, I need to check.
-    // I'll make setup_audio return Option<Stream>. If None, spawn mock.
-
     // Initial State
     let mut tool = Tool::Pluck;
-    let mut grid_u = vec![0.0; SIM_WIDTH * SIM_HEIGHT];
+    let mut view_mode = ViewMode::Wave;
+
+    let mut last_snapshot: Option<AudioSnapshot> = None;
+
     let texture = Texture2D::from_image(&Image::gen_image_color(
         SIM_WIDTH as u16,
         SIM_HEIGHT as u16,
@@ -68,19 +78,36 @@ async fn main() {
             tool = Tool::Wall;
         }
         if is_key_pressed(KeyCode::Key3) {
-            tool = Tool::Listener;
+            tool = Tool::Slow;
         }
         if is_key_pressed(KeyCode::Key4) {
-            tool = Tool::Source;
+            tool = Tool::Fast;
         }
         if is_key_pressed(KeyCode::Key5) {
+            tool = Tool::Void;
+        }
+        if is_key_pressed(KeyCode::Key6) {
+            tool = Tool::Listener;
+        }
+        if is_key_pressed(KeyCode::Key7) {
+            tool = Tool::Source;
+        }
+        if is_key_pressed(KeyCode::Key8) {
             tool = Tool::Erase;
         }
+
         if is_key_pressed(KeyCode::Space) {
             let _ = cmd_tx.send(AudioCommand::ClearWaves);
         }
         if is_key_pressed(KeyCode::C) {
             let _ = cmd_tx.send(AudioCommand::ClearWalls);
+        }
+        if is_key_pressed(KeyCode::Tab) {
+            view_mode = match view_mode {
+                ViewMode::Wave => ViewMode::Energy,
+                ViewMode::Energy => ViewMode::Material,
+                ViewMode::Material => ViewMode::Wave,
+            };
         }
 
         // Mouse Interaction
@@ -89,16 +116,12 @@ async fn main() {
             let sw = screen_width();
             let sh = screen_height();
 
-            // Map screen to grid
-            // Assuming full screen fill
             let gx = (mx / sw * SIM_WIDTH as f32) as usize;
             let gy = (my / sh * SIM_HEIGHT as f32) as usize;
 
             if gx < SIM_WIDTH && gy < SIM_HEIGHT {
                 match tool {
                     Tool::Pluck => {
-                        // Only pluck on press or drag?
-                        // Pluck is continuous excitation if held
                         if is_mouse_button_pressed(MouseButton::Left) {
                             let _ = cmd_tx.send(AudioCommand::Pluck {
                                 x: gx,
@@ -108,17 +131,45 @@ async fn main() {
                         }
                     }
                     Tool::Wall => {
-                        let _ = cmd_tx.send(AudioCommand::AddWall { x: gx, y: gy });
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Wall,
+                        });
+                    }
+                    Tool::Slow => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Slow,
+                        });
+                    }
+                    Tool::Fast => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Fast,
+                        });
+                    }
+                    Tool::Void => {
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Void,
+                        });
                     }
                     Tool::Erase => {
-                        let _ = cmd_tx.send(AudioCommand::RemoveWall { x: gx, y: gy });
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Air,
+                        });
                     }
                     Tool::Listener => {
                         listener_pos = (gx, gy);
                         let _ = cmd_tx.send(AudioCommand::MoveListener { x: gx, y: gy });
                     }
                     Tool::Source => {
-                        // Add a tone source
                         if is_mouse_button_pressed(MouseButton::Left) {
                             let freq = 220.0 + (gy as f32 / SIM_HEIGHT as f32) * 880.0;
                             let _ = cmd_tx.send(AudioCommand::Oscillate {
@@ -133,7 +184,6 @@ async fn main() {
             }
         }
 
-        // Right click to erase/stop source
         if is_mouse_button_down(MouseButton::Right) {
             let (mx, my) = mouse_position();
             let sw = screen_width();
@@ -151,7 +201,11 @@ async fn main() {
                         });
                     }
                     _ => {
-                        let _ = cmd_tx.send(AudioCommand::RemoveWall { x: gx, y: gy });
+                        let _ = cmd_tx.send(AudioCommand::PaintMaterial {
+                            x: gx,
+                            y: gy,
+                            material: Material::Air,
+                        });
                     }
                 }
             }
@@ -159,50 +213,76 @@ async fn main() {
 
         // 2. Receive Snapshot
         while let Ok(snap) = snap_rx.try_recv() {
-            grid_u = snap;
+            last_snapshot = Some(snap);
         }
 
         // 3. Update Texture
-        // We need to efficiently update the texture.
-        // Macroquad Image is strictly CPU side, then we upload.
-        let mut image = Image::gen_image_color(SIM_WIDTH as u16, SIM_HEIGHT as u16, BLACK);
-        for y in 0..SIM_HEIGHT {
-            for x in 0..SIM_WIDTH {
-                let idx = y * SIM_WIDTH + x;
-                let val = grid_u[idx];
+        if let Some(snap) = &last_snapshot {
+            let mut image = Image::gen_image_color(SIM_WIDTH as u16, SIM_HEIGHT as u16, BLACK);
 
-                // Color Map
-                // Val is approx -1.0 to 1.0
-                // Red = +ve, Blue = -ve
-                let color = if val > 0.0 {
-                    Color::new(val.min(1.0), 0.0, 0.0, 1.0)
-                } else {
-                    Color::new(0.0, 0.0, (-val).min(1.0), 1.0)
-                };
+            for y in 0..SIM_HEIGHT {
+                for x in 0..SIM_WIDTH {
+                    let idx = y * SIM_WIDTH + x;
 
-                // If it's a wall, how do we know?
-                // The snapshot only contains 'u'.
-                // We assume walls have u=0 always (enforced by physics).
-                // But waves also cross 0.
-                // We need 'walls' in the snapshot if we want to render them distinctly.
-                // OR we keep a local copy of walls?
-                // For now, walls will just be black (0.0).
-                // Wait, users want to see walls.
-                // I should probably track walls locally in main loop since we send the commands.
-                // But that desyncs.
-                // Ideally snapshot includes walls.
-                // But changing snapshot signature requires changing `resonance-audio`.
-                // I won't do that now. I'll just render waves.
-                // Actually, walls at 0.0 will be black.
+                    let color = match view_mode {
+                        ViewMode::Wave => {
+                            // Waves + Materials
+                            let val = snap.pressure[idx];
+                            let mat = snap.materials[idx];
+                            match mat {
+                                Material::Wall => WHITE,
+                                Material::Void => DARKGRAY,
+                                _ => {
+                                    // Waves
+                                    if val > 0.0 {
+                                        let v = val.min(1.0);
+                                        // Slow/Fast tinted
+                                        match mat {
+                                            Material::Slow => Color::new(v, 0.0, v * 0.5, 1.0), // Purple tint
+                                            Material::Fast => Color::new(v, v * 0.5, 0.0, 1.0), // Orange tint
+                                            _ => Color::new(v, 0.0, 0.0, 1.0),
+                                        }
+                                    } else {
+                                        let v = (-val).min(1.0);
+                                        match mat {
+                                            Material::Slow => Color::new(0.0, v * 0.5, v, 1.0), // Cyan tint
+                                            Material::Fast => Color::new(0.0, v, v * 0.5, 1.0), // Green tint
+                                            _ => Color::new(0.0, 0.0, v, 1.0),
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ViewMode::Energy => {
+                            let e = snap.energy[idx];
+                            let v = (e * 0.1).min(1.0);
+                            // Heatmap (Blue -> Red -> Yellow)
+                            if v < 0.5 {
+                                Color::new(0.0, v * 2.0, 1.0 - v * 2.0, 1.0)
+                            } else {
+                                Color::new((v - 0.5) * 2.0, 1.0 - (v - 0.5) * 2.0, 0.0, 1.0)
+                            }
+                        }
+                        ViewMode::Material => {
+                            let mat = snap.materials[idx];
+                            match mat {
+                                Material::Air => BLACK,
+                                Material::Wall => WHITE,
+                                Material::Slow => BLUE,
+                                Material::Fast => ORANGE,
+                                Material::Void => DARKGRAY,
+                            }
+                        }
+                    };
 
-                image.set_pixel(x as u32, y as u32, color);
+                    image.set_pixel(x as u32, y as u32, color);
+                }
             }
+
+            // Mark listener
+            image.set_pixel(listener_pos.0 as u32, listener_pos.1 as u32, GREEN);
+            texture.update(&image);
         }
-
-        // Mark listener
-        image.set_pixel(listener_pos.0 as u32, listener_pos.1 as u32, GREEN);
-
-        texture.update(&image);
 
         // 4. Draw
         draw_texture_ex(
@@ -217,16 +297,36 @@ async fn main() {
         );
 
         // UI
-        draw_text("SONO-SCAPES", 10.0, 20.0, 30.0, WHITE);
+        draw_text("SONO-SCAPES: Acoustic Architect", 10.0, 20.0, 30.0, WHITE);
         draw_text(
-            &format!("Tool: {:?} (1-5)", tool_name(&tool)),
+            &format!("Tool: {:?} (1-8)", tool_name(&tool)),
             10.0,
             50.0,
             20.0,
             WHITE,
         );
-        draw_text("LMB: Action, RMB: Erase", 10.0, 70.0, 20.0, GRAY);
-        draw_text("Space: Clear Waves, C: Clear Walls", 10.0, 90.0, 20.0, GRAY);
+        draw_text(
+            &format!("View: {:?} (Tab)", view_mode),
+            10.0,
+            70.0,
+            20.0,
+            YELLOW,
+        );
+        draw_text(
+            "1:Pluck 2:Wall 3:Slow 4:Fast 5:Void 6:Lis 7:Src 8:Erase",
+            10.0,
+            90.0,
+            20.0,
+            GRAY,
+        );
+        draw_text("LMB: Paint/Act | RMB: Erase", 10.0, 110.0, 20.0, GRAY);
+        draw_text(
+            "Space: Clear Waves | C: Clear Walls",
+            10.0,
+            130.0,
+            20.0,
+            GRAY,
+        );
 
         next_frame().await
     }
@@ -236,6 +336,9 @@ fn tool_name(t: &Tool) -> &str {
     match t {
         Tool::Pluck => "Pluck",
         Tool::Wall => "Wall",
+        Tool::Slow => "Slow Medium",
+        Tool::Fast => "Fast Medium",
+        Tool::Void => "Void (Absorb)",
         Tool::Listener => "Listener",
         Tool::Source => "Source",
         Tool::Erase => "Erase",
@@ -243,7 +346,10 @@ fn tool_name(t: &Tool) -> &str {
 }
 
 #[cfg(feature = "audio")]
-fn setup_audio(cmd_rx: Receiver<AudioCommand>, snap_tx: Sender<Vec<f32>>) -> Option<cpal::Stream> {
+fn setup_audio(
+    cmd_rx: Receiver<AudioCommand>,
+    snap_tx: Sender<AudioSnapshot>,
+) -> Option<cpal::Stream> {
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 
     let host = cpal::default_host();
@@ -284,7 +390,7 @@ fn setup_audio(cmd_rx: Receiver<AudioCommand>, snap_tx: Sender<Vec<f32>>) -> Opt
 #[allow(dead_code)]
 fn setup_mock_audio(
     cmd_rx: Receiver<AudioCommand>,
-    snap_tx: Sender<Vec<f32>>,
+    snap_tx: Sender<AudioSnapshot>,
 ) -> Option<thread::JoinHandle<()>> {
     let handle = thread::spawn(move || {
         let mut model = AudioModel::new(SIM_WIDTH, SIM_HEIGHT, cmd_rx, snap_tx);

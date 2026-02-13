@@ -8,3 +8,4 @@ macroquad = "0.4"
 nalgebra = "0.33"
 rand = "0.8"
 regex = "1.10"
+synaptic-physics = { workspace = true }

@@ -7,6 +7,7 @@
   - Genesis (The Typographer): Rendering text as 3D terrain reveals that glyph legibility is robust even under extreme vertical distortion. The rasterization logic used for font rendering doubles as a perfect heightmap generator when combined with noise.
   - Genesis (The Horologist) ⚛️⏱️: Implementing physical governors (drag proportional to velocity squared) naturally stabilizes procedural music systems. Without it, the "Mainspring" torque accelerates the song into chaos. Physical constraints create musical structure.
   - Genesis (The Cartographer): Mapping DAGs (Directed Acyclic Graphs) to non-orientable surfaces (like Möbius strips) naturally reduces edge crossings by utilizing the third dimension (the twist). Branches can pass "under" each other on the other side of the manifold, preserving visual clarity without breaking connectivity.
+  - Genesis (The Cartographer): Hyperbolic space is the native geometry of trees (and thus file systems). Using a Poincaré disk layout where angular space is allocated by subtree weight (`total_size`) creates a visualization that is both "global" (root is always visible) and "local" (leaf nodes are distinct when zoomed). The exponential growth of space matches the exponential fan-out of directories.
 
   ## Anomalies Detected
   - [Unexpected behaviors worth investigating]
@@ -23,3 +24,4 @@
   - Genesis (The Cartographer) ⚛️🗺️: Implementing recursive portal rendering in `macroquad` using `glScissor` is surprisingly effective for non-Euclidean spaces. By treating the file system as a spatial hierarchy, we can visualize depth without occlusion. The "Tardis" effect (bigger on the inside) solves the problem of displaying massive subtrees within limited screen space.
   - Genesis (The Typographer) ⚛️🔤: `cymatic-text` confirms that frequency-domain manipulation of Bezier control points creates a more "musical" distortion than time-domain jitter. The harmonics of the curve match the harmonics of the sound.
   - Genesis (The Topologist): Mapping cyclic dependencies to Escherian Penrose stairs using modulo arithmetic on height creates a seamless visual loop. The impossibility of the structure reflects the logical paradox of the cycle.
+  - Genesis (The Horologist) ⚛️⏱️: Simulating Ball-and-Disk integrators with kinematic constraints (`rapier2d`) confirms that differential equations can be solved purely by physical interaction. The 'stiffness' of the solver directly corresponds to the precision of the mechanism.

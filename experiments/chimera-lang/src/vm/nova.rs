@@ -61,6 +61,8 @@ pub enum OrganelleType {
     Choir,
     /// Moves randomly and triggers random glitches or entropy.
     Wisp,
+    /// The Mad Scientist. Performs random experiments (Alchemy, Mutation, Chaos).
+    MadScientist,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -835,6 +837,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::RetinaDraw => super::retina::exec_retina_draw(vm),
         OpCode::RetinaClear => super::retina::exec_retina_clear(vm),
         OpCode::RetinaSize => super::retina::exec_retina_size(vm),
+        OpCode::Scanline => super::retina::exec_scanline(vm),
+        OpCode::Rasterize => super::retina::exec_rasterize(vm),
         OpCode::QuantumJump => {
             let s_idx = vm.ip.0;
             if let Some(&partner_idx) = vm.entangled_pairs.get(&s_idx) {
@@ -1107,6 +1111,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             4 => (OrganelleType::Ribosome, (0, 1)), // Default East
                             5 => (OrganelleType::Void, (0, 0)),
                             6 => (OrganelleType::Alchemist, (0, 0)),
+                            10 => (OrganelleType::MadScientist, (0, 0)),
                             _ => (OrganelleType::Worker, (0, 0)),
                         };
 
@@ -1217,7 +1222,9 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             None
         }
         OpCode::Sporulate => super::nova_chronos::exec_sporulate(vm),
+        OpCode::TimeLoop => super::nova_chronos::exec_time_loop(vm),
         OpCode::Germinate => super::nova_chronos::exec_germinate(vm),
+        OpCode::Paradox => super::nova_chronos::exec_paradox(vm),
         OpCode::Retrograde => super::nova_chronos::exec_retrograde(vm),
         OpCode::Incubate => super::nova_genetics::exec_incubate(vm),
         OpCode::Methylate => super::nova_genetics::exec_methylate(vm),
@@ -1933,6 +1940,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Seed) => 7,
                 Some(OrganelleType::Choir) => 8,
                 Some(OrganelleType::Wisp) => 9,
+                Some(OrganelleType::MadScientist) => 10,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -1951,6 +1959,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             7 => Some(OrganelleType::Seed),
                             8 => Some(OrganelleType::Choir),
                             9 => Some(OrganelleType::Wisp),
+                            10 => Some(OrganelleType::MadScientist),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 

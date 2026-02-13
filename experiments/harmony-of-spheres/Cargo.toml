@@ -5,11 +5,4 @@ edition = "2021"
 
 [dependencies]
 macroquad = "0.4"
-cpal = { version = "0.15", optional = true }
-ringbuf = "0.3"
-rand = { workspace = true }
-anyhow = { workspace = true }
-
-[features]
-default = ["audio"]
-audio = ["cpal"]
+anyhow = "1.0"

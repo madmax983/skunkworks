@@ -49,14 +49,27 @@ fn test_crispr_syntax_compile_and_run() {
 
     // Verify output
     println!("VM Output: {:?}", vm.output);
-    assert!(vm.output.iter().any(|s| s.contains("Cut done")), "Did not find 'Cut done'");
-    assert!(vm.output.iter().any(|s| s.contains("CRISPR_SCAN")), "Did not find 'CRISPR_SCAN'");
-    assert!(vm.output.iter().any(|s| s.contains("CAS9_CUT")), "Did not find 'CAS9_CUT'");
+    assert!(
+        vm.output.iter().any(|s| s.contains("Cut done")),
+        "Did not find 'Cut done'"
+    );
+    assert!(
+        vm.output.iter().any(|s| s.contains("CRISPR_SCAN")),
+        "Did not find 'CRISPR_SCAN'"
+    );
+    assert!(
+        vm.output.iter().any(|s| s.contains("CAS9_CUT")),
+        "Did not find 'CAS9_CUT'"
+    );
 
     // Verify strand count increased (original + target + main + new_tail)
     // Target: 0
     // Main: 1
     // Guide: 2 (Anonymous)
     // New Tail: 3
-    assert_eq!(vm.dna.helix.strands.len(), 4, "Expected 4 strands (Target, Main, Guide, Tail)");
+    assert_eq!(
+        vm.dna.helix.strands.len(),
+        4,
+        "Expected 4 strands (Target, Main, Guide, Tail)"
+    );
 }

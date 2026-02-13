@@ -43,9 +43,14 @@ impl Grid {
 
         // 3x3 kernel neighbors (excluding center)
         let neighbors = [
-            (-1, -1), (0, -1), (1, -1),
-            (-1,  0),          (1,  0),
-            (-1,  1), (0,  1), (1,  1),
+            (-1, -1),
+            (0, -1),
+            (1, -1),
+            (-1, 0),
+            (1, 0),
+            (-1, 1),
+            (0, 1),
+            (1, 1),
         ];
 
         let mut weights = [0.0f32; 8];
@@ -66,7 +71,7 @@ impl Grid {
             let rx = dx * cos_a + dy * sin_a;
             let ry = -dx * sin_a + dy * cos_a;
 
-            let w = (- (rx*rx)/(2.0*sigma_major) - (ry*ry)/(2.0*sigma_minor)).exp();
+            let w = (-(rx * rx) / (2.0 * sigma_major) - (ry * ry) / (2.0 * sigma_minor)).exp();
             weights[i] = w;
             total_weight += w;
         }
@@ -91,40 +96,44 @@ impl Grid {
         let next_v = &mut self.next_v;
 
         // Parallel iteration over rows
-        next_u.par_iter_mut().zip(next_v.par_iter_mut()).enumerate().for_each(|(i, (nu, nv))| {
-            let x = i % width;
-            let y = i / width;
+        next_u
+            .par_iter_mut()
+            .zip(next_v.par_iter_mut())
+            .enumerate()
+            .for_each(|(i, (nu, nv))| {
+                let x = i % width;
+                let y = i / width;
 
-            // Handle boundaries (wrap or clamp) - Wrapping is better for patterns
-            let mut lap_u = 0.0;
-            let mut lap_v = 0.0;
+                // Handle boundaries (wrap or clamp) - Wrapping is better for patterns
+                let mut lap_u = 0.0;
+                let mut lap_v = 0.0;
 
-            let cur_u = u[i];
-            let cur_v = v[i];
+                let cur_u = u[i];
+                let cur_v = v[i];
 
-            for (j, &(dx, dy)) in neighbors.iter().enumerate() {
-                // Wrap coordinates
-                let nx = (x as isize + dx).rem_euclid(width as isize) as usize;
-                let ny = (y as isize + dy).rem_euclid(height as isize) as usize;
-                let nidx = ny * width + nx;
+                for (j, &(dx, dy)) in neighbors.iter().enumerate() {
+                    // Wrap coordinates
+                    let nx = (x as isize + dx).rem_euclid(width as isize) as usize;
+                    let ny = (y as isize + dy).rem_euclid(height as isize) as usize;
+                    let nidx = ny * width + nx;
 
-                let w = weights[j];
-                lap_u += w * u[nidx];
-                lap_v += w * v[nidx];
-            }
+                    let w = weights[j];
+                    lap_u += w * u[nidx];
+                    lap_v += w * v[nidx];
+                }
 
-            lap_u -= cur_u; // because sum of weights is 1.0
-            lap_v -= cur_v;
+                lap_u -= cur_u; // because sum of weights is 1.0
+                lap_v -= cur_v;
 
-            // Reaction-Diffusion
-            let reaction = cur_u * cur_v * cur_v;
-            *nu = cur_u + (diff_u * lap_u - reaction + f * (1.0 - cur_u)) * dt;
-            *nv = cur_v + (diff_v * lap_v + reaction - (f + k) * cur_v) * dt;
+                // Reaction-Diffusion
+                let reaction = cur_u * cur_v * cur_v;
+                *nu = cur_u + (diff_u * lap_u - reaction + f * (1.0 - cur_u)) * dt;
+                *nv = cur_v + (diff_v * lap_v + reaction - (f + k) * cur_v) * dt;
 
-            // Clamp to avoid instability
-            *nu = nu.clamp(0.0, 1.0);
-            *nv = nv.clamp(0.0, 1.0);
-        });
+                // Clamp to avoid instability
+                *nu = nu.clamp(0.0, 1.0);
+                *nv = nv.clamp(0.0, 1.0);
+            });
 
         // Swap buffers
         std::mem::swap(&mut self.u, &mut self.next_u);

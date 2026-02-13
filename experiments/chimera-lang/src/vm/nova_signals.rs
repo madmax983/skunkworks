@@ -10,6 +10,8 @@ use crate::opcode::OpCode;
 use rand::Rng;
 use std::collections::HashMap;
 
+const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
+
 fn char_to_val(c: char) -> Option<i64> {
     match c {
         '0'..='9' => Some(c as i64 - '0' as i64),
@@ -80,6 +82,12 @@ struct MutationRequest {
     strand_idx: usize,
 }
 
+struct SpawnRequest {
+    y: usize,
+    x: usize,
+    kind: crate::vm::nova::OrganelleType,
+}
+
 struct EtherWrite {
     channel: i64,
     val: Value,
@@ -98,6 +106,13 @@ struct NeuronStimulus {
     amount: f32,
 }
 
+struct HoloWrite {
+    y: usize,
+    x: usize,
+    re: Option<f64>,
+    im: Option<f64>,
+}
+
 struct SignalContext {
     next_signals: Vec<Vec<u8>>,
     grid_writes: Vec<GridWrite>,
@@ -106,8 +121,10 @@ struct SignalContext {
     resonance_writes: Vec<ResonanceWrite>,
     entropy_writes: Vec<EntropyWrite>,
     mutation_requests: Vec<MutationRequest>,
+    spawn_requests: Vec<SpawnRequest>,
     ether_writes: Vec<EtherWrite>,
     ether_reads: Vec<EtherRead>,
+    holo_writes: Vec<HoloWrite>,
     #[cfg(feature = "biophysics")]
     neuron_stimuli: Vec<NeuronStimulus>,
     executions: Vec<(OpCode, Vec<Nucleotide>)>,
@@ -124,8 +141,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         resonance_writes: Vec::new(),
         entropy_writes: Vec::new(),
         mutation_requests: Vec::new(),
+        spawn_requests: Vec::new(),
         ether_writes: Vec::new(),
         ether_reads: Vec::new(),
+        holo_writes: Vec::new(),
         #[cfg(feature = "biophysics")]
         neuron_stimuli: Vec::new(),
         executions: Vec::new(),
@@ -249,7 +268,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'K' | 'k' => exec_kill(vm, y, x, signal, &mut ctx),
                 'Y' | 'y' => exec_synthesize(vm, y, x, signal, &mut ctx),
                 'Q' | 'q' => exec_query(vm, y, x, &mut ctx),
-                'H' | 'h' => exec_harvest(vm, y, x, signal, &mut ctx),
+                'H' | 'h' => exec_project_signal(vm, y, x, signal, &mut ctx),
                 'U' | 'u' => exec_unzip(vm, y, x, signal, &mut ctx),
                 'F' | 'f' => exec_flux(vm, y, x, signal, &mut ctx),
                 'J' | 'j' => exec_jam(vm, y, x, signal, &mut ctx),
@@ -286,12 +305,51 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 ']' => exec_ether_recv(vm, y, x, signal, &mut ctx),
                 '#' => exec_catalyze(vm, y, x, signal, &mut ctx),
                 '$' => exec_stack_io(vm, y, x, signal, &mut ctx),
+                '~' => exec_wave(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
                             if signal > 0 {
                                 ctx.executions.push((op, vec![]));
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 1.5 Resonance Check (Mutagenic & Harmonic)
+    #[cfg(feature = "resonance")]
+    {
+        // Mutagenic Resonance
+        for org in &vm.organelles {
+            let (y, x) = org.context_loc;
+            let idx = y * GRID_SIZE + x;
+            if idx < vm.audio_snapshot.pressure.len() {
+                if vm.audio_snapshot.pressure[idx].abs() > 0.8 {
+                    ctx.mutation_requests.push(MutationRequest {
+                        strand_idx: org.ip.0,
+                    });
+                }
+            }
+        }
+
+        // Harmonic Convergence
+        for y in 0..size {
+            for x in 0..size {
+                let (freq, amp) = vm.resonance_grid[y][x];
+                if amp > 10.0 {
+                    // Check for Golden Frequencies (approx)
+                    // 161.8 (Phi*100), 261.6 (C4), 432.0 (Verdi A), 528.0 (Solfeggio)
+                    for g in GOLDEN_FREQUENCIES {
+                        if (freq - g).abs() < 5.0 {
+                            ctx.spawn_requests.push(SpawnRequest {
+                                y,
+                                x,
+                                kind: crate::vm::nova::OrganelleType::Wisp,
+                            });
+                            break;
                         }
                     }
                 }
@@ -346,6 +404,15 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         vm.resonance_grid[w.y][w.x] = (w.freq, w.amp);
     }
 
+    for w in ctx.holo_writes {
+        if let Some(re) = w.re {
+            vm.hologram_grid[w.y][w.x].0 = re;
+        }
+        if let Some(im) = w.im {
+            vm.hologram_grid[w.y][w.x].1 = im;
+        }
+    }
+
     #[cfg(feature = "biophysics")]
     for s in ctx.neuron_stimuli {
         let coord = (s.y, s.x);
@@ -379,8 +446,33 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     let val = rng.gen_range(0..100);
                     vm.dna.helix.strands[req.strand_idx].genes[g_idx].args[0] =
                         Nucleotide::Number(val);
+                    vm.output.push(format!("MUTATION: Resonance hit strand {}", req.strand_idx));
                 }
             }
+        }
+    }
+
+    for req in ctx.spawn_requests {
+        if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+            vm.organelle_id_counter += 1;
+            let new_org = crate::vm::nova::Organelle {
+                stack: Vec::new(),
+                ip: (0, 0), // Default start
+                context_loc: (req.y, req.x),
+                call_stack: Vec::new(),
+                recursion_depth: 0,
+                halted: false,
+                kind: req.kind,
+                direction: (0, 0),
+                ttl: Some(100), // Finite life
+                name: "Resonance Child".to_string(),
+                traits: vec!["Harmonic".to_string()],
+                id: vm.organelle_id_counter,
+                tissue_id: None,
+                genome_id: 0,
+            };
+            vm.organelles.push(new_org);
+            vm.output.push(format!("HARMONIC: Spawned Wisp at {},{}", req.x, req.y));
         }
     }
 
@@ -490,7 +582,7 @@ fn exec_stack_io(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Signa
     }
 }
 
-fn exec_voltage(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+fn exec_voltage(_vm: &ChimeraVM, _y: usize, _x: usize, _signal: u8, _ctx: &mut SignalContext) {
     // V: Voltmeter
     // North: Threshold (Default 0)
     // East: Output Value (Default '1')
@@ -513,6 +605,12 @@ fn exec_voltage(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut Signa
 
     #[cfg(feature = "elektra")]
     {
+        // Remove underscore prefixes to use them
+        let vm = _vm;
+        let y = _y;
+        let x = _x;
+        let ctx = _ctx;
+
         let threshold = peek(vm, y, x, -1, 0).unwrap_or(0);
         let output_val = peek(vm, y, x, 0, 1).unwrap_or(1); // Default to '1'
 
@@ -592,10 +690,7 @@ fn exec_catalyze(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Signa
     if let (Some(cat_id), Some(strand_idx)) = (peek(vm, y, x, -1, 0), peek(vm, y, x, 0, 1)) {
         ctx.executions.push((
             OpCode::Catalyze,
-            vec![
-                Nucleotide::Number(cat_id),
-                Nucleotide::Number(strand_idx),
-            ],
+            vec![Nucleotide::Number(cat_id), Nucleotide::Number(strand_idx)],
         ));
     }
 }
@@ -625,59 +720,6 @@ fn exec_unzip(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCo
                         });
                     }
                 }
-            }
-        }
-    }
-}
-
-fn exec_harvest(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
-    if signal == 0 {
-        return;
-    }
-
-    // Inputs: West (Strand), East (Length), North (Offset Y)
-    let s_idx = peek(vm, y, x, 0, -1);
-    let len = peek(vm, y, x, 0, 1);
-    let off_y = peek(vm, y, x, -1, 0).unwrap_or(1); // Default offset 1
-
-    if let (Some(s), Some(l)) = (s_idx, len) {
-        let mut op_str = String::new();
-        // Read l chars starting from (y + off_y, x)
-        for i in 0..l {
-            if let Some(val) = peek(vm, y, x, off_y, i) {
-                op_str.push(val_to_char(val));
-            } else {
-                op_str.push(' ');
-            }
-        }
-
-        // Trim
-        let clean_op = op_str.trim();
-        if let Ok(op) = clean_op.parse::<OpCode>() {
-            ctx.dna_appends.push(DnaAppend {
-                strand_idx: s as usize,
-                gene: crate::ast::Gene {
-                    op,
-                    args: vec![], // No args support yet
-                },
-            });
-
-            // Success Output
-            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                ctx.grid_writes.push(GridWrite {
-                    y: sy,
-                    x: sx,
-                    val: Value::Str("1".to_string()),
-                });
-            }
-        } else {
-            // Failure Output
-            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
-                ctx.grid_writes.push(GridWrite {
-                    y: sy,
-                    x: sx,
-                    val: Value::Str("0".to_string()),
-                });
             }
         }
     }
@@ -993,5 +1035,71 @@ fn exec_ether_recv(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut Sig
                 x: sx,
             });
         }
+    }
+}
+
+fn exec_project_signal(_vm: &ChimeraVM, _y: usize, _x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal > 0 {
+        ctx.executions.push((OpCode::Project, vec![]));
+    }
+}
+
+fn exec_wave(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // ~: Wave Operator (Hologram Interface)
+    // North: Mode (0=ReadRe, 1=ReadIm, 2=WriteRe, 3=WriteIm)
+    // East: Value (for Write, scaled by 100)
+    // South: Output (for Read, scaled by 100)
+
+    let mode = peek(vm, y, x, -1, 0).unwrap_or(0);
+
+    match mode {
+        0 => {
+            // Read Re
+            let val = vm.hologram_grid[y][x].0 * 100.0;
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.grid_writes.push(GridWrite {
+                    y: sy,
+                    x: sx,
+                    val: Value::Str(val_to_char(val as i64).to_string()),
+                });
+            }
+        }
+        1 => {
+            // Read Im
+            let val = vm.hologram_grid[y][x].1 * 100.0;
+            if let Some((sy, sx)) = vm.normalize_coords(y as i64 + 1, x as i64) {
+                ctx.grid_writes.push(GridWrite {
+                    y: sy,
+                    x: sx,
+                    val: Value::Str(val_to_char(val as i64).to_string()),
+                });
+            }
+        }
+        2 => {
+            // Write Re
+            if let Some(val) = peek(vm, y, x, 0, 1) {
+                ctx.holo_writes.push(HoloWrite {
+                    y,
+                    x,
+                    re: Some(val as f64 / 100.0),
+                    im: None,
+                });
+            }
+        }
+        3 => {
+            // Write Im
+            if let Some(val) = peek(vm, y, x, 0, 1) {
+                ctx.holo_writes.push(HoloWrite {
+                    y,
+                    x,
+                    re: None,
+                    im: Some(val as f64 / 100.0),
+                });
+            }
+        }
+        _ => {}
     }
 }

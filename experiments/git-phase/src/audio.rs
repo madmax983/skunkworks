@@ -1,5 +1,5 @@
-use hound;
 use crate::rhythm::Instrument;
+use hound;
 use std::f32::consts::PI;
 
 pub fn render_wav(
@@ -43,7 +43,7 @@ pub fn render_wav(
             Instrument::Kick => mix_sound(&mut buffer, cursor as usize, &kick),
             Instrument::Snare => mix_sound(&mut buffer, cursor as usize, &snare),
             Instrument::Hat => mix_sound(&mut buffer, cursor as usize, &hat),
-            Instrument::Rest => {},
+            Instrument::Rest => {}
         }
         cursor += samples_per_step_1;
         step_count += 1;
@@ -60,7 +60,7 @@ pub fn render_wav(
             Instrument::Kick => mix_sound(&mut buffer, cursor as usize, &kick), // Could modify pitch/pan to distinguish
             Instrument::Snare => mix_sound(&mut buffer, cursor as usize, &snare),
             Instrument::Hat => mix_sound(&mut buffer, cursor as usize, &hat),
-            Instrument::Rest => {},
+            Instrument::Rest => {}
         }
         cursor += samples_per_step_2;
         step_count += 1;

@@ -664,7 +664,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI visualization of git history as an Incan Quipu. Cords are time, knots are commits.
 - **Novel trait**: Physical History. The commit log sways in the wind.
 - **Status**: experiments/git-quipu
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Confirmed functionality.
+- **Evaluation**: CONDEMNED by The Reaper. Redundant with `quipu-symphony`. Documentation void.
 
 ### rhythmic-jungle
 - **Parents**: experiments/protocol-jungle + experiments/silicon-samba
@@ -762,4 +762,67 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A "Cosmic String" physics simulation where the string itself is a medium for a Gray-Scott reaction-diffusion system.
 - **Novel trait**: Heavy Metal Biology. Chemical concentration increases mass; physical tension accelerates metabolism.
 - **Status**: experiments/biomorphic-strings
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Parents validated.
+- **Evaluation**: Compiles. Verified. Emergent behavior confirmed: Heavy metal biology.
+
+### ferrous-graph
+- **Parents**: experiments/newtonian-graph + experiments/ferrous-sector
+- **Concept**: Force-directed graph where nodes are magnetic particles floating over a decaying magnetic platter.
+- **Novel trait**: Path Dependence via Magnetic Hysteresis. Nodes leave trails that attract other nodes; bits rot over time.
+- **Status**: experiments/ferrous-graph
+- **Evaluation**: Compiles. Verified.
+
+### ferrous-legion
+- **Parents**: experiments/ferrous-graph + experiments/spqr-rsa
+- **Concept**: A TUI visualization where Roman Numeral particles interact via "Magnetic Arithmetic".
+- **Novel trait**: Physical accumulation of value.
+- **Status**: experiments/ferrous-legion
+- **Evaluation**: Compiles. Verified.
+
+### quipu-automaton
+- **Parents**: experiments/harmonic-engine + experiments/quipu-symphony
+- **Concept**: A mechanical differential analyzer driven by Inca Quipu cords.
+- **Novel trait**: Textile Computing. Knots on a cord act as the program and input for a physical integrator.
+- **Status**: experiments/quipu-automaton
+- **Evaluation**: Compiles. Re-verified. Implemented by The Splice Surgeon.
+
+### holographic-brain
+- **Parents**: experiments/hologram-text + experiments/lattice-brain
+- **Concept**: A neural network where memory is stored as a holographic interference pattern in the frequency domain.
+- **Novel trait**: Holographic Associative Memory Loop. Neurons drive a hologram, which reconstructs a ghost image that feeds back into the neurons.
+- **Status**: experiments/holographic-brain
+- **Evaluation**: Compiles. Re-verified. Implemented by The Splice Surgeon. Verified.
+
+### chaotic-mycelium
+- **Parents**: experiments/bifurcation-probe + experiments/mycelial-path
+- **Concept**: Fungal growth navigating a Lyapunov Fractal substrate.
+- **Novel trait**: Pathfinding through Chaos. The organism prefers stable mathematical regions ($\lambda < 0$) and avoids chaotic ones.
+- **Status**: experiments/chaotic-mycelium
+- **Evaluation**: Compiles. Re-verified. Implemented by The Splice Surgeon.
+
+### origami-spores
+- **Parents**: experiments/origami-constellation + experiments/social-spores
+- **Concept**: A Miura-ori mesh where viral spores infect particles, altering the structural constraints (stiffness/folding).
+- **Novel trait**: Bio-mechanical Crumpling. The structure decays and folds organically as the infection spreads.
+- **Status**: experiments/origami-spores
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### harmonic-mycelium
+- **Parents**: experiments/harmony-of-spheres + experiments/chaotic-mycelium
+- **Concept**: Fungal network growing through a dynamic N-body system. Gravity affects growth cost/direction.
+- **Novel trait**: Gravitational Tropism. The fungus traces the contours of the gravitational field.
+- **Status**: experiments/harmonic-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### luminous-valley
+- **Parents**: experiments/valley-forge + experiments/luminous-flock
+- **Concept**: Boids flocking over a 3D terrain, reacting to the chemical state of a reaction-diffusion simulation.
+- **Novel trait**: Bio-luminescent Terrain Interaction. Boids act as mobile sensors, flashing faster and changing color over active chemical zones.
+- **Status**: experiments/luminous-valley
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### gravitational-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/harmony-of-spheres
+- **Concept**: Ants building dynamic bridges between orbiting planets. Bridges stretch and break due to gravitational forces.
+- **Novel trait**: Interplanetary Structural Engineering.
+- **Status**: experiments/gravitational-bridge
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

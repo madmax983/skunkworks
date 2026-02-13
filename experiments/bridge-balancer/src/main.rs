@@ -22,7 +22,7 @@ enum PacketState {
 struct Packet {
     pos: Vec2,
     state: PacketState,
-    load: f32, // 0.0 to 1.0, affects speed
+    load: f32,     // 0.0 to 1.0, affects speed
     patience: f32, // Decreases while waiting
 }
 
@@ -51,13 +51,13 @@ impl World {
             for x in 0..width {
                 // Ground
                 if y >= mid_y - 2 && y <= mid_y + 2 {
-                     terrain[y * width + x] = Terrain::Solid;
+                    terrain[y * width + x] = Terrain::Solid;
                 }
 
                 // Gap
                 if x > width / 3 && x < 2 * width / 3 {
                     if terrain[y * width + x] == Terrain::Solid {
-                         terrain[y * width + x] = Terrain::Gap;
+                        terrain[y * width + x] = Terrain::Gap;
                     }
                 }
             }
@@ -156,10 +156,10 @@ impl World {
 
                         // If walking on bridge, refresh usage
                         if t == Terrain::Bridge {
-                             let idx = (gy as usize) * width + (gx as usize);
-                             if idx < bridge_usage.len() {
-                                 bridge_usage[idx] = 2.0; // Reset usage timer
-                             }
+                            let idx = (gy as usize) * width + (gx as usize);
+                            if idx < bridge_usage.len() {
+                                bridge_usage[idx] = 2.0; // Reset usage timer
+                            }
                         }
                     } else if t == Terrain::Gap {
                         // Hit a gap
@@ -170,24 +170,24 @@ impl World {
                         // For this simulation, they just stick to the lane height roughly
                         // But let's allow them to move if it's close to center
                         if (gy - (height as i32 / 2)).abs() < 10 {
-                             // Treat empty as walkable-ish but maybe they fall if too far?
-                             // No, let's keep it simple: Only walk on Solid/Bridge.
-                             // But we need to allow them to "step onto" a bridge forming next to them.
+                            // Treat empty as walkable-ish but maybe they fall if too far?
+                            // No, let's keep it simple: Only walk on Solid/Bridge.
+                            // But we need to allow them to "step onto" a bridge forming next to them.
 
-                             // Look for neighbor bridge
-                             let mut found = false;
-                             for dy in -1..=1 {
-                                 let ny = gy + dy;
-                                 if get_terrain(gx, ny) == Terrain::Bridge {
-                                     packet.pos.y = ny as f32;
-                                     packet.pos.x = next_pos.x;
-                                     found = true;
-                                     break;
-                                 }
-                             }
-                             if !found {
-                                 packet.state = PacketState::Waiting;
-                             }
+                            // Look for neighbor bridge
+                            let mut found = false;
+                            for dy in -1..=1 {
+                                let ny = gy + dy;
+                                if get_terrain(gx, ny) == Terrain::Bridge {
+                                    packet.pos.y = ny as f32;
+                                    packet.pos.x = next_pos.x;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if !found {
+                                packet.state = PacketState::Waiting;
+                            }
                         }
                     }
                 }
@@ -204,15 +204,15 @@ impl World {
                         // Only bridge if we are actually in a gap or empty space that needs bridging
                         let t = get_terrain(gx, gy);
                         if t == Terrain::Gap || t == Terrain::Empty {
-                             new_bridges.push((gx, gy));
-                             packet.state = PacketState::Bridging;
-                             packet.pos = vec2(gx as f32, gy as f32); // Snap
+                            new_bridges.push((gx, gy));
+                            packet.state = PacketState::Bridging;
+                            packet.pos = vec2(gx as f32, gy as f32); // Snap
 
-                             // Initial usage
-                             let idx = (gy as usize) * width + (gx as usize);
-                             if idx < bridge_usage.len() {
-                                 bridge_usage[idx] = 5.0; // Initial grace period
-                             }
+                            // Initial usage
+                            let idx = (gy as usize) * width + (gx as usize);
+                            if idx < bridge_usage.len() {
+                                bridge_usage[idx] = 5.0; // Initial grace period
+                            }
                         } else {
                             // If we are waiting on solid ground, maybe try to move around?
                             // Jitter
@@ -238,7 +238,7 @@ impl World {
         }
 
         for (bx, by) in new_bridges {
-             self.set_terrain(bx, by, Terrain::Bridge);
+            self.set_terrain(bx, by, Terrain::Bridge);
         }
 
         for (bx, by) in dissolved_bridges {
@@ -293,19 +293,31 @@ async fn main() {
                 let t = world.get_terrain(x as i32, y as i32);
                 match t {
                     Terrain::Solid => {
-                        draw_rectangle(x as f32 * CELL_SIZE, y as f32 * CELL_SIZE, CELL_SIZE, CELL_SIZE, GRAY);
-                    },
+                        draw_rectangle(
+                            x as f32 * CELL_SIZE,
+                            y as f32 * CELL_SIZE,
+                            CELL_SIZE,
+                            CELL_SIZE,
+                            GRAY,
+                        );
+                    }
                     Terrain::Gap => {
-                         // Gap is dark
-                    },
+                        // Gap is dark
+                    }
                     Terrain::Bridge => {
                         // Color based on usage?
                         let idx = y * GRID_WIDTH + x;
                         let usage = world.bridge_usage[idx];
                         let intensity = (usage / 2.0).min(1.0);
                         let color = Color::new(0.0, 0.5 + intensity * 0.5, 1.0 - intensity, 1.0);
-                        draw_rectangle(x as f32 * CELL_SIZE, y as f32 * CELL_SIZE, CELL_SIZE, CELL_SIZE, color);
-                    },
+                        draw_rectangle(
+                            x as f32 * CELL_SIZE,
+                            y as f32 * CELL_SIZE,
+                            CELL_SIZE,
+                            CELL_SIZE,
+                            color,
+                        );
+                    }
                     Terrain::Empty => {}
                 };
             }
@@ -316,16 +328,43 @@ async fn main() {
             if p.state != PacketState::Bridging {
                 if p.state == PacketState::Waiting {
                     // Glow for latency/congestion
-                    draw_circle(p.pos.x * CELL_SIZE + CELL_SIZE/2.0, p.pos.y * CELL_SIZE + CELL_SIZE/2.0, 6.0, Color::new(1.0, 0.0, 0.0, 0.3));
-                    draw_circle(p.pos.x * CELL_SIZE + CELL_SIZE/2.0, p.pos.y * CELL_SIZE + CELL_SIZE/2.0, 3.0, RED);
+                    draw_circle(
+                        p.pos.x * CELL_SIZE + CELL_SIZE / 2.0,
+                        p.pos.y * CELL_SIZE + CELL_SIZE / 2.0,
+                        6.0,
+                        Color::new(1.0, 0.0, 0.0, 0.3),
+                    );
+                    draw_circle(
+                        p.pos.x * CELL_SIZE + CELL_SIZE / 2.0,
+                        p.pos.y * CELL_SIZE + CELL_SIZE / 2.0,
+                        3.0,
+                        RED,
+                    );
                 } else {
-                    draw_circle(p.pos.x * CELL_SIZE + CELL_SIZE/2.0, p.pos.y * CELL_SIZE + CELL_SIZE/2.0, 3.0, WHITE);
+                    draw_circle(
+                        p.pos.x * CELL_SIZE + CELL_SIZE / 2.0,
+                        p.pos.y * CELL_SIZE + CELL_SIZE / 2.0,
+                        3.0,
+                        WHITE,
+                    );
                 }
             }
         }
 
-        draw_text("Space: Surge Traffic | L-Click: Dig Gap | R-Click: Fill", 10.0, 20.0, 20.0, WHITE);
-        draw_text(&format!("Packets: {}", world.packets.len()), 10.0, 40.0, 20.0, WHITE);
+        draw_text(
+            "Space: Surge Traffic | L-Click: Dig Gap | R-Click: Fill",
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Packets: {}", world.packets.len()),
+            10.0,
+            40.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

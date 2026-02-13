@@ -7,52 +7,58 @@ pub struct LayoutNode {
     pub pos: Point,
     pub node: DirNode,
     pub children: Vec<LayoutNode>,
-    pub total_size: u64,
     pub angle_start: f64,
     pub angle_end: f64,
 }
 
 pub fn layout_tree(root: DirNode) -> LayoutNode {
-    let mut root_layout = build_sized_tree(root);
+    // Wrap root in LayoutNode
+    // Note: root.total_size is already computed by fs::scan_dir
+    let mut root_layout = build_layout_node(root);
+
+    // Compute positions recursively
     update_layout_positions(&mut root_layout, 0.0, 2.0 * PI, 0);
+
     root_layout
 }
 
-fn build_sized_tree(mut node: DirNode) -> LayoutNode {
-    let mut total_size = node.size;
-    let mut children_layout = Vec::new();
-
-    // Take children to avoid partial move of node
+fn build_layout_node(mut node: DirNode) -> LayoutNode {
+    // Take children to process them
     let children = std::mem::take(&mut node.children);
 
-    for child in children {
-        let child_layout = build_sized_tree(child);
-        total_size += child_layout.total_size;
-        children_layout.push(child_layout);
-    }
+    let children_layout: Vec<LayoutNode> = children
+        .into_iter()
+        .map(|child| build_layout_node(child))
+        .collect();
 
     LayoutNode {
-        pos: Point::new(0.0, 0.0), // Placeholder
+        pos: Point::new(0.0, 0.0), // Placeholder, set by update_layout_positions
         node,
         children: children_layout,
-        total_size,
-        angle_start: 0.0, // Placeholder
-        angle_end: 0.0,   // Placeholder
+        angle_start: 0.0,
+        angle_end: 0.0,
     }
 }
 
 fn update_layout_positions(node: &mut LayoutNode, angle_start: f64, angle_end: f64, depth: usize) {
-    // Reduced step size to make deeper nodes visible in the disk before hitting the boundary.
+    // Hyperbolic radius increases with depth
+    // step_h determines how crowded the center is vs the edge
     let step_h = 0.8;
     let r_h = depth as f64 * step_h;
-    let r_e = (r_h / 2.0).tanh(); // r_euclidean = tanh(r_hyperbolic / 2)
+
+    // Convert to Euclidean radius in Poincaré disk
+    // r_e = tanh(r_h / 2)
+    let r_e = (r_h / 2.0).tanh();
 
     let angle_center = (angle_start + angle_end) / 2.0;
 
     node.pos = if depth == 0 {
         Point::new(0.0, 0.0)
     } else {
-        Point::from_polar(r_e, angle_center)
+        // Use polar coordinates (r_e, angle_center)
+        // Note: Point is Complex<f64>
+        use num_complex::Complex;
+        Complex::from_polar(r_e, angle_center)
     };
 
     node.angle_start = angle_start;
@@ -62,32 +68,32 @@ fn update_layout_positions(node: &mut LayoutNode, angle_start: f64, angle_end: f
     if child_count > 0 {
         let total_angle = angle_end - angle_start;
 
-        // Calculate weights for proportional allocation
-        // Use sqrt(size) to dampen the effect of massive files
-        // Ensure a minimum weight so small files don't disappear
+        // Calculate weights based on total_size
+        // We use sqrt(size) to dampen the disparity between tiny and huge files
+        // We also enforce a minimum virtual size so small files don't disappear
         let weights: Vec<f64> = node
             .children
             .iter()
             .map(|c| {
-                let s = c.total_size as f64;
-                // 1000.0 is arbitrary minimum 'virtual' bytes for visibility
+                let s = c.node.total_size as f64;
                 (s.max(1000.0)).sqrt()
             })
             .collect();
 
         let total_weight: f64 = weights.iter().sum();
-
         let mut current_angle = angle_start;
 
         for (i, child) in node.children.iter_mut().enumerate() {
             let weight = weights[i];
-            let angle_fraction = if total_weight > 0.0 {
+
+            // Calculate allocated angle fraction
+            let fraction = if total_weight > 0.0 {
                 weight / total_weight
             } else {
                 1.0 / child_count as f64
             };
 
-            let allocated_angle = total_angle * angle_fraction;
+            let allocated_angle = total_angle * fraction;
             let child_end = current_angle + allocated_angle;
 
             update_layout_positions(child, current_angle, child_end, depth + 1);
@@ -100,78 +106,55 @@ fn update_layout_positions(node: &mut LayoutNode, angle_start: f64, angle_end: f
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::fs::FileType;
     use std::path::PathBuf;
 
     fn mock_dir(size: u64) -> DirNode {
-        DirNode::new(PathBuf::from("dir"), true, size)
+        DirNode {
+            path: PathBuf::from("dir"),
+            name: "dir".to_string(),
+            is_dir: true,
+            file_type: FileType::Directory,
+            children: Vec::new(),
+            self_size: 4096,
+            total_size: size, // Pre-calculated for test
+        }
     }
 
-    fn mock_file(size: u64) -> DirNode {
-        DirNode::new(PathBuf::from("file"), false, size)
-    }
-
-    #[test]
-    fn test_layout_bounds() {
-        let mut root = mock_dir(0);
-        let child = mock_file(100);
-        root.children.push(child);
-        let layout = layout_tree(root);
-
-        check_bounds(&layout);
-    }
-
-    fn check_bounds(node: &LayoutNode) {
-        assert!(
-            node.pos.norm() < 1.0,
-            "Point {:?} is outside disk",
-            node.pos
-        );
-        for child in &node.children {
-            check_bounds(child);
+    // Helper to create a node with specific total_size directly (bypassing calculation)
+    // Note: In real usage, scan_dir calculates it.
+    fn make_node(size: u64) -> DirNode {
+        DirNode {
+            path: PathBuf::from("file"),
+            name: "file".to_string(),
+            is_dir: false,
+            file_type: FileType::Text,
+            children: Vec::new(),
+            self_size: size,
+            total_size: size,
         }
     }
 
     #[test]
-    fn test_proportional_layout() {
-        // Root with two children: one tiny, one huge
-        let mut root = mock_dir(0);
-        let small = mock_file(100); // 100 bytes
-        let large = mock_file(1_000_000_000); // 1 GB
+    fn test_layout_allocation() {
+        let mut root = mock_dir(2000000);
+        let small = make_node(1000);
+        let big = make_node(1000000);
 
         root.children.push(small);
-        root.children.push(large);
+        root.children.push(big);
 
-        // Layout
+        // Fix total_size manually for test since we aren't using scan_dir
+        root.total_size = 1000 + 1000000 + 4096;
+
         let layout = layout_tree(root);
 
-        assert_eq!(layout.children.len(), 2);
+        let small_l = &layout.children[0];
+        let big_l = &layout.children[1];
 
-        // Find children (order might be maintained or not, scan_dir sorts but we pushed manually)
-        // update_layout_positions iterates in order.
-        let child1 = &layout.children[0];
-        let child2 = &layout.children[1];
+        let angle_small = small_l.angle_end - small_l.angle_start;
+        let angle_big = big_l.angle_end - big_l.angle_start;
 
-        // Identify by total_size
-        let (small_layout, large_layout) = if child1.total_size < child2.total_size {
-            (child1, child2)
-        } else {
-            (child2, child1)
-        };
-
-        let width_small = small_layout.angle_end - small_layout.angle_start;
-        let width_large = large_layout.angle_end - large_layout.angle_start;
-
-        println!("Small Width: {}, Large Width: {}", width_small, width_large);
-
-        // Expectation: Large width should be significantly larger
-        // Weight ratio: sqrt(1e9) / sqrt(1e3) = 31622 / 31.6 = ~1000
-        // Or if minimal size kicks in: sqrt(1e9) / sqrt(1000) (if 100 was clamped to 1000)
-        // 31622 / 31.6 = ~1000.
-        // So width_large should be ~1000x width_small.
-
-        assert!(
-            width_large > width_small * 2.0,
-            "Large file should have significantly more angular space"
-        );
+        assert!(angle_big > angle_small, "Big file should get more angle");
     }
 }

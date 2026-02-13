@@ -31,12 +31,12 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
     let mut name_to_ids: HashMap<String, Vec<usize>> = HashMap::new();
     let mut edges = Vec::new();
 
-    println!("Scanning {}...", root.display());
+    // println!("Scanning {}...", root.display());
 
     // 1. Scan files
     for entry in WalkDir::new(root).into_iter().filter_map(|e| e.ok()) {
         let path = entry.path();
-        if path.extension().map_or(false, |ext| ext == "rs") {
+        if path.extension().is_some_and(|ext| ext == "rs") {
             let content = match fs::read_to_string(path) {
                 Ok(c) => c,
                 Err(_) => continue,
@@ -56,7 +56,7 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
         }
     }
 
-    println!("Found {} nodes.", nodes.len());
+    // println!("Found {} nodes.", nodes.len());
 
     // 2. Scan imports
     let mod_regex = Regex::new(r"mod\s+([a-zA-Z0-9_]+);").unwrap();
@@ -110,7 +110,7 @@ pub fn scan_dependencies(root: &Path) -> Result<Graph> {
     edges.sort_by(|a, b| a.source.cmp(&b.source).then(a.target.cmp(&b.target)));
     edges.dedup_by(|a, b| a.source == b.source && a.target == b.target);
 
-    println!("Found {} edges.", edges.len());
+    // println!("Found {} edges.", edges.len());
 
     Ok(Graph { nodes, edges })
 }

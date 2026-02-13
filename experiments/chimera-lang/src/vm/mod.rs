@@ -35,6 +35,12 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 #[cfg(feature = "nova")]
 use std::collections::{HashSet, VecDeque};
+#[cfg(feature = "nova")]
+use std::fs::File;
+#[cfg(feature = "nova")]
+use std::io::Read;
+#[cfg(feature = "nova")]
+use strum::IntoEnumIterator;
 
 pub const MAX_RECURSION_DEPTH: usize = 100;
 pub const MAX_CALL_STACK_DEPTH: usize = 100;
@@ -66,15 +72,17 @@ pub mod bard;
 #[cfg(feature = "nova")]
 pub mod blackbox;
 pub mod catalyst;
+pub mod chimera_chaos;
 #[cfg(feature = "nova")]
 pub mod cladistics;
-pub mod chimera_chaos;
 pub mod cortex;
 pub mod dream;
 #[cfg(feature = "elektra")]
 pub mod elektra;
 #[cfg(feature = "git")]
 pub mod git;
+#[cfg(feature = "nova")]
+pub mod grimoire;
 pub mod havoc;
 #[cfg(feature = "hive")]
 pub mod hive;
@@ -92,6 +100,11 @@ pub mod nova;
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
+#[cfg(feature = "nova")]
+pub mod nova_attractor;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_attractor_test;
 #[cfg(feature = "nova")]
 pub mod nova_astrology;
 #[cfg(feature = "nova")]
@@ -111,6 +124,11 @@ pub mod nova_bureaucracy;
 pub mod nova_cartography;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
+#[cfg(feature = "nova")]
+pub mod nova_chimeric;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_chimeric_test;
 #[cfg(feature = "nova")]
 pub mod nova_chronos;
 #[cfg(feature = "nova")]
@@ -146,12 +164,18 @@ pub mod nova_genetics;
 #[cfg(feature = "nova")]
 pub mod nova_geology;
 #[cfg(feature = "nova")]
-pub mod grimoire;
-#[cfg(feature = "nova")]
 pub mod nova_guild;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_harvest_test;
+#[cfg(feature = "nova")]
+pub mod nova_hologram;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_hologram_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_hologram_grammar_test;
 #[cfg(feature = "nova")]
 pub mod nova_ley;
 #[cfg(feature = "nova")]
@@ -195,6 +219,9 @@ pub mod nova_pocket;
 #[cfg(test)]
 mod nova_pocket_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_quantum_scribe_test;
+#[cfg(feature = "nova")]
 pub mod nova_quipu;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -223,6 +250,11 @@ mod nova_sovereignty_test;
 pub mod nova_strings;
 #[cfg(feature = "nova")]
 pub mod nova_ward;
+#[cfg(feature = "nova")]
+pub mod nova_weaver;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_weaver_test;
 pub mod oracle;
 pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
@@ -238,7 +270,7 @@ pub mod silicon;
 #[cfg(feature = "resonance")]
 use crossbeam_channel::{Receiver, Sender};
 #[cfg(feature = "resonance")]
-use resonance_audio::audio::AudioCommand;
+use resonance_audio::audio::{AudioCommand, AudioSnapshot};
 
 #[cfg(feature = "nova")]
 use self::nova::Organelle;
@@ -421,6 +453,10 @@ pub struct ChimeraVM {
     pub pheromones: Vec<nova_scent::Scent>,
     #[cfg(feature = "nova")]
     pub spores: Vec<Spore>,
+    #[cfg(feature = "nova")]
+    pub paradox_loops: HashMap<i64, usize>,
+    #[cfg(feature = "nova")]
+    pub chronos_integrity: f64,
     pub call_stack: Vec<(usize, usize)>,
     #[cfg(feature = "nova")]
     pub input_buffer: VecDeque<char>,
@@ -475,11 +511,13 @@ pub struct ChimeraVM {
     #[cfg(feature = "resonance")]
     pub audio_tx: Option<Sender<AudioCommand>>,
     #[cfg(feature = "resonance")]
-    pub snapshot_rx: Option<Receiver<Vec<f32>>>,
+    pub snapshot_rx: Option<Receiver<AudioSnapshot>>,
     #[cfg(feature = "resonance")]
-    pub audio_snapshot: Vec<f32>,
+    pub audio_snapshot: AudioSnapshot,
     #[cfg(feature = "biophysics")]
     pub neurons: std::collections::HashMap<(usize, usize), neuron::Neuron>,
+    #[cfg(feature = "biophysics")]
+    pub biophysics_synapses: HashMap<(usize, usize), Vec<((usize, usize), f32)>>,
     #[cfg(feature = "nova")]
     pub blackbox: blackbox::Blackbox,
     #[cfg(feature = "silicon")]
@@ -602,6 +640,12 @@ pub struct ChimeraVM {
     pub catalysts: Vec<catalyst::Catalyst>,
     #[cfg(feature = "nova")]
     pub babel_state: babel_chaos::BabelState,
+    #[cfg(feature = "nova")]
+    pub hologram_grid: Vec<Vec<(f64, f64)>>,
+    #[cfg(feature = "nova")]
+    pub hologram_mode: bool,
+    #[cfg(feature = "nova")]
+    pub attractor: nova_attractor::AttractorState,
 }
 
 impl ChimeraVM {
@@ -699,6 +743,10 @@ impl ChimeraVM {
             pheromones: Vec::new(),
             #[cfg(feature = "nova")]
             spores: Vec::new(),
+            #[cfg(feature = "nova")]
+            paradox_loops: HashMap::new(),
+            #[cfg(feature = "nova")]
+            chronos_integrity: 100.0,
             call_stack: Vec::new(),
             #[cfg(feature = "nova")]
             input_buffer: VecDeque::new(),
@@ -764,9 +812,15 @@ impl ChimeraVM {
             #[cfg(feature = "resonance")]
             snapshot_rx: None,
             #[cfg(feature = "resonance")]
-            audio_snapshot: vec![0.0; GRID_SIZE * GRID_SIZE],
+            audio_snapshot: AudioSnapshot {
+                pressure: vec![0.0; GRID_SIZE * GRID_SIZE],
+                materials: vec![],
+                energy: vec![],
+            },
             #[cfg(feature = "biophysics")]
             neurons: std::collections::HashMap::new(),
+            #[cfg(feature = "biophysics")]
+            biophysics_synapses: HashMap::new(),
             #[cfg(feature = "nova")]
             blackbox: blackbox::Blackbox::new(),
             #[cfg(feature = "silicon")]
@@ -889,6 +943,12 @@ impl ChimeraVM {
             catalysts: Vec::new(),
             #[cfg(feature = "nova")]
             babel_state: babel_chaos::BabelState::new(),
+            #[cfg(feature = "nova")]
+            hologram_grid: vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE],
+            #[cfg(feature = "nova")]
+            hologram_mode: false,
+            #[cfg(feature = "nova")]
+            attractor: nova_attractor::AttractorState::new(),
         }
     }
 
@@ -917,7 +977,7 @@ impl ChimeraVM {
     }
 
     #[cfg(feature = "resonance")]
-    pub fn set_snapshot_rx(&mut self, rx: Receiver<Vec<f32>>) {
+    pub fn set_snapshot_rx(&mut self, rx: Receiver<AudioSnapshot>) {
         self.snapshot_rx = Some(rx);
     }
 
@@ -1303,6 +1363,9 @@ impl ChimeraVM {
             nova::OrganelleType::Choir => {
                 self.process_choir_organelle(organelle);
             }
+            nova::OrganelleType::MadScientist => {
+                self.process_mad_scientist(organelle);
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1313,6 +1376,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Alchemist
                 | nova::OrganelleType::Seed
                 | nova::OrganelleType::Choir
+                | nova::OrganelleType::MadScientist
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1335,6 +1399,69 @@ impl ChimeraVM {
         }
 
         !organelle.halted
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_mad_scientist(&mut self, organelle: &mut Organelle) {
+        let (cy, cx) = self.context_loc;
+        let mut rng = rand::thread_rng();
+
+        // 10% chance to do science
+        if rng.gen_bool(0.1) {
+            let experiment = rng.gen_range(0..4);
+            match experiment {
+                0 => {
+                    // Irradiate
+                    self.mutagen_grid[cy][cx] = self.mutagen_grid[cy][cx].saturating_add(50);
+                    self.output.push(format!("MAD SCIENTIST: Irradiated {},{}", cx, cy));
+                },
+                1 => {
+                    // Alchemy
+                    if alchemy::perform_alchemy(self, cy, cx) {
+                        self.output.push(format!("MAD SCIENTIST: Transmuted {},{}", cx, cy));
+                    } else {
+                        self.output.push(format!("MAD SCIENTIST: Failed alchemy at {},{}", cx, cy));
+                    }
+                },
+                2 => {
+                    // Entropy Surge
+                    if let Some(_) = nova_flux::exec_entropy_surge(self) {
+                         self.output.push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
+                    }
+                },
+                3 => {
+                    // Spawn
+                    if self.organelles.len() < MAX_ORGANELLES {
+                        self.organelle_id_counter += 1;
+                        let new_org = Organelle {
+                            stack: Vec::new(),
+                            ip: (0, 0),
+                            context_loc: (cy, cx),
+                            call_stack: Vec::new(),
+                            recursion_depth: 0,
+                            halted: false,
+                            kind: nova::OrganelleType::Worker,
+                            direction: (0, 0),
+                            ttl: None,
+                            name: "Igor".to_string(),
+                            traits: vec!["Assistant".to_string()],
+                            id: self.organelle_id_counter,
+                            tissue_id: None,
+                            genome_id: 0,
+                        };
+                        self.organelles.push(new_org);
+                        self.output.push(format!("MAD SCIENTIST: Created life at {},{}", cx, cy));
+                    }
+                },
+                _ => {}
+            }
+            self.energy = self.energy.saturating_sub(10);
+        }
+
+        // Brownian Motion
+        let dy = rng.gen_range(-1..=1);
+        let dx = rng.gen_range(-1..=1);
+        organelle.direction = (dy, dx);
     }
 
     #[cfg(feature = "nova")]
@@ -1761,8 +1888,21 @@ impl ChimeraVM {
 
         #[cfg(feature = "biophysics")]
         if !time_frozen {
-            for neuron in self.neurons.values_mut() {
-                neuron.step(0.1);
+            let mut spikes = Vec::new();
+            for (coord, neuron) in self.neurons.iter_mut() {
+                if neuron.step(0.1, self.tick_counter) {
+                    spikes.push(*coord);
+                }
+            }
+
+            for source in spikes {
+                if let Some(targets) = self.biophysics_synapses.get(&source) {
+                    for (target, weight) in targets {
+                        if let Some(target_neuron) = self.neurons.get_mut(target) {
+                            target_neuron.i_inj += weight * 10.0;
+                        }
+                    }
+                }
             }
         }
 
@@ -1810,6 +1950,43 @@ impl ChimeraVM {
             let mut rng = rand::thread_rng();
             if rng.gen_bool(0.1) {
                 self.mutate();
+            }
+        }
+
+        #[cfg(feature = "nova")]
+        if !time_frozen && self.glitch_level > 0.8 {
+            let mut rng = rand::thread_rng();
+
+            // Throttle message
+            if self.tick_counter % 10 == 0 {
+                self.output.push("ENTROPY STORM ACTIVE".to_string());
+            }
+
+            // Spontaneous Tunneling (5%)
+            if rng.gen_bool(0.05) {
+                if let Some(target) = nova_flux::exec_quantum_tunnel(self) {
+                    self.ip = target;
+                }
+            }
+
+            // Reality Flux (5%)
+            if rng.gen_bool(0.05) {
+                let rows = self.grid.len();
+                if rows > 0 {
+                    let cols = self.grid[0].len();
+                    let ry = rng.gen_range(0..rows);
+                    let rx = rng.gen_range(0..cols);
+                    self.grid[ry][rx] = Value::Int(rng.gen_range(0..100));
+                    self.output
+                        .push(format!("STORM: Reality warp at {},{}", rx, ry));
+                }
+            }
+
+            // Amnesia (1%)
+            if rng.gen_bool(0.01) {
+                self.stack.pop();
+                self.output
+                    .push("STORM: Memory lost (Stack Pop)".to_string());
             }
         }
 
@@ -2214,6 +2391,152 @@ impl ChimeraVM {
         None
     }
 
+    #[cfg(feature = "nova")]
+    fn exec_scavenge_op(&mut self) -> Option<(usize, usize)> {
+        if self.stack.len() >= 2 {
+            let len_val = self.stack.pop().unwrap();
+            let path_val = self.stack.pop().unwrap();
+
+            if let (Value::Str(path), Value::Int(len)) = (path_val, len_val) {
+                if len <= 0 || len > 1024 * 1024 {
+                    self.output
+                        .push(format!("Error: Invalid Scavenge length {} (Max 1MB)", len));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let mut file = match File::open(&path) {
+                    Ok(f) => f,
+                    Err(_) => {
+                        self.output
+                            .push(format!("Error: Failed to open file '{}'", path));
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                let mut buffer = vec![0u8; len as usize];
+                if let Ok(bytes_read) = file.read(&mut buffer) {
+                    let opcodes: Vec<OpCode> = OpCode::iter().collect();
+                    let count = opcodes.len();
+                    let mut genes = Vec::new();
+
+                    for b in &buffer[0..bytes_read] {
+                        let idx = (*b as usize) % count;
+                        let op = opcodes[idx].clone();
+                        genes.push(crate::ast::Gene {
+                            op,
+                            args: vec![],
+                        });
+                    }
+
+                    let strand = crate::ast::Strand { genes };
+                    self.dna.helix.strands.push(strand);
+                    let new_idx = self.dna.helix.strands.len() - 1;
+
+                    self.stack.push(Value::Int(new_idx as i64));
+                    self.output.push(format!(
+                        "SCAVENGE: Consumed {} bytes from '{}'",
+                        bytes_read, path
+                    ));
+                } else {
+                    self.output
+                        .push(format!("Error: Failed to read file '{}'", path));
+                    self.stack.push(Value::Int(-1));
+                }
+            } else {
+                self.output
+                    .push("Error: Scavenge requires [path: Str, len: Int]".to_string());
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Scavenge".to_string());
+        }
+        None
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_digest_op(&mut self) -> Option<(usize, usize)> {
+        use std::io::{Seek, SeekFrom};
+
+        if self.stack.len() >= 2 {
+            let len_val = self.stack.pop().unwrap();
+            let offset_val = self.stack.pop().unwrap();
+
+            if let (Value::Int(offset), Value::Int(len)) = (offset_val, len_val) {
+                if len <= 0 || len > 1024 * 1024 {
+                    self.output
+                        .push(format!("Error: Invalid Digest length {} (Max 1MB)", len));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let path = match std::env::current_exe() {
+                    Ok(p) => p,
+                    Err(_) => {
+                        self.output
+                            .push("Error: Failed to find executable path".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                let mut file = match File::open(&path) {
+                    Ok(f) => f,
+                    Err(_) => {
+                        self.output
+                            .push("Error: Failed to open executable".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                if file.seek(SeekFrom::Start(offset as u64)).is_err() {
+                    self.output.push("Error: Seek failed".to_string());
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let mut buffer = vec![0u8; len as usize];
+                if let Ok(bytes_read) = file.read(&mut buffer) {
+                    let opcodes: Vec<OpCode> = OpCode::iter().collect();
+                    let count = opcodes.len();
+                    let mut genes = Vec::new();
+
+                    for b in &buffer[0..bytes_read] {
+                        let idx = (*b as usize) % count;
+                        let op = opcodes[idx].clone();
+                        genes.push(crate::ast::Gene {
+                            op,
+                            args: vec![],
+                        });
+                    }
+
+                    let strand = crate::ast::Strand { genes };
+                    self.dna.helix.strands.push(strand);
+                    let new_idx = self.dna.helix.strands.len() - 1;
+
+                    self.stack.push(Value::Int(new_idx as i64));
+                    self.output.push(format!(
+                        "DIGEST: Cannibalized {} bytes from offset {}",
+                        bytes_read, offset
+                    ));
+                } else {
+                    self.output
+                        .push("Error: Failed to read executable".to_string());
+                    self.stack.push(Value::Int(-1));
+                }
+            } else {
+                self.output
+                    .push("Error: Digest requires [offset: Int, len: Int]".to_string());
+            }
+        } else {
+            self.output
+                .push("Error: Stack underflow for Digest".to_string());
+        }
+        None
+    }
+
     pub(crate) fn execute_gene_inner(
         &mut self,
         op: OpCode,
@@ -2442,7 +2765,9 @@ impl ChimeraVM {
             | OpCode::Identity
             | OpCode::Differentiate
             | OpCode::Sporulate
+            | OpCode::TimeLoop
             | OpCode::Germinate
+            | OpCode::Paradox
             | OpCode::Spawn
             | OpCode::Incubate
             | OpCode::Methylate
@@ -2506,6 +2831,8 @@ impl ChimeraVM {
             | OpCode::RetinaDraw
             | OpCode::RetinaClear
             | OpCode::RetinaSize
+            | OpCode::Scanline
+            | OpCode::Rasterize
             | OpCode::EgregoreLink
             | OpCode::EgregoreTithe
             | OpCode::EgregoreChannel
@@ -2548,6 +2875,25 @@ impl ChimeraVM {
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
+            OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Scavenge => self.exec_scavenge_op(),
+            #[cfg(feature = "nova")]
+            OpCode::Digest => self.exec_digest_op(),
+
+            #[cfg(feature = "nova")]
+            OpCode::Chimeric => nova_chimeric::exec_chimeric_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::EntropySurge => {
+                nova_flux::exec_entropy_surge(self);
+                None
+            }
+            #[cfg(feature = "nova")]
+            OpCode::QuantumTunnel => nova_flux::exec_quantum_tunnel(self),
+
+            #[cfg(feature = "nova")]
             OpCode::Chain | OpCode::Curry | OpCode::Quote => {
                 nova_functional::exec_functional_op(self, op, args)
             }
@@ -2573,6 +2919,56 @@ impl ChimeraVM {
             #[cfg(feature = "nova")]
             OpCode::Crucible => {
                 alchemy::exec_crucible_op(self, op, args);
+                None
+            }
+
+            #[cfg(feature = "nova")]
+            OpCode::AttractorInit
+            | OpCode::AttractorStep
+            | OpCode::AttractorSurf
+            | OpCode::AttractorMap => nova_attractor::exec_attractor_op(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Interfere => nova_hologram::exec_interfere(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Diffract => nova_hologram::exec_diffract(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Refract => nova_hologram::exec_refract(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Project => nova_hologram::exec_project(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::Hologram => nova_hologram::exec_hologram(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::PhaseMutate => nova_hologram::exec_phase_mutate(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::QuantumScribe => nova_hologram::exec_quantum_scribe(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::QuantumScan => nova_hologram::exec_quantum_scan(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::HoloInvoke => nova_hologram::exec_holo_invoke(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::HoloSpeak => nova_hologram::exec_holo_speak(self, op, args),
+
+            #[cfg(feature = "nova")]
+            OpCode::Chr => {
+                if let Some(val) = self.stack.pop() {
+                    match val {
+                        Value::Int(n) => {
+                            // Try to convert to char
+                            if let Some(c) = char::from_u32(n as u32) {
+                                self.stack.push(Value::Str(c.to_string()));
+                            } else {
+                                self.output.push("Error: Invalid char code".to_string());
+                                self.stack.push(Value::Str("".to_string()));
+                            }
+                        }
+                        _ => {
+                            self.output.push("Error: Type mismatch for Chr".to_string());
+                        }
+                    }
+                } else {
+                    self.output.push("Error: Stack underflow for Chr".to_string());
+                }
                 None
             }
 
@@ -2643,7 +3039,7 @@ impl ChimeraVM {
             | OpCode::Manifest => oracle::exec_oracle_op(self, op, args),
 
             #[cfg(feature = "resonance")]
-            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear => {
+            OpCode::Pluck | OpCode::Oscillate | OpCode::Hear | OpCode::Scream => {
                 resonance::exec_resonance_op(self, op, args);
                 None
             }
@@ -2999,6 +3395,23 @@ impl ChimeraVM {
 
         match effective_op {
             OpCode::Add => {
+                // Check for string concatenation
+                if self.stack.len() >= 2 {
+                    let b_is_str = matches!(self.stack.last(), Some(Value::Str(_)));
+                    let a_is_str = matches!(
+                        self.stack.get(self.stack.len().saturating_sub(2)),
+                        Some(Value::Str(_))
+                    );
+
+                    if a_is_str && b_is_str {
+                        let b = self.stack.pop().unwrap();
+                        let a = self.stack.pop().unwrap();
+                        if let (Value::Str(s1), Value::Str(s2)) = (a, b) {
+                            self.stack.push(Value::Str(s1 + &s2));
+                            return;
+                        }
+                    }
+                }
                 Self::binary_op(&mut self.stack, &mut self.output, |a, b| a.wrapping_add(b));
             }
             OpCode::Sub => {
@@ -3412,6 +3825,25 @@ impl ChimeraVM {
     pub fn mutate(&mut self) {
         #[cfg(feature = "nova")]
         if self.phase == nova::Phase::Crystalline {
+            return;
+        }
+
+        #[cfg(feature = "nova")]
+        if self.hologram_mode {
+            nova_hologram::mutate_hologram(self, 0.5);
+            let new_genes = nova_hologram::refract_genes(self);
+            if !new_genes.is_empty() {
+                let helix_len = self.dna.helix.strands.len();
+                if helix_len > 0 {
+                    let mut rng = rand::thread_rng();
+                    let target_idx = rng.gen_range(0..helix_len);
+                    self.dna.helix.strands[target_idx] = crate::ast::Strand { genes: new_genes };
+                    self.output.push(format!(
+                        "HOLOGRAPHIC MUTATION: Refracted strand {}",
+                        target_idx
+                    ));
+                }
+            }
             return;
         }
 

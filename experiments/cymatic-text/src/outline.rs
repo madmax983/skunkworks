@@ -1,11 +1,23 @@
 use macroquad::prelude::Vec2;
-use rusttype::{OutlineBuilder, Scale, Font};
+use rusttype::{Font, OutlineBuilder, Scale};
 
 #[derive(Clone, Debug)]
 pub enum BezierSegment {
-    Line { start: Vec2, end: Vec2 },
-    Quad { start: Vec2, ctrl: Vec2, end: Vec2 },
-    Cubic { start: Vec2, ctrl1: Vec2, ctrl2: Vec2, end: Vec2 },
+    Line {
+        start: Vec2,
+        end: Vec2,
+    },
+    Quad {
+        start: Vec2,
+        ctrl: Vec2,
+        end: Vec2,
+    },
+    Cubic {
+        start: Vec2,
+        ctrl1: Vec2,
+        ctrl2: Vec2,
+        end: Vec2,
+    },
 }
 
 #[derive(Clone, Debug, Default)]

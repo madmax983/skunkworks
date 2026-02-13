@@ -2,16 +2,16 @@ use ::rand::Rng;
 use macroquad::prelude::*; // Disambiguate external rand
 
 mod model;
-use model::{Agent, Meaning, Symbol};
+use model::{Agent, Meaning};
 
 const AGENT_COUNT: usize = 50;
 const INTERACTION_RADIUS: f32 = 30.0;
 const INTERACTION_COOLDOWN: f32 = 2.0;
 
-fn symbol_to_color(s: Option<Symbol>) -> Color {
+fn symbol_to_color(s: Option<u8>) -> Color {
     match s {
         Some(sym) => {
-            let hue = sym.0 as f32 / 255.0;
+            let hue = sym as f32 / 255.0;
             macroquad::color::hsl_to_rgb(hue, 1.0, 0.5)
         }
         None => GRAY,
@@ -22,16 +22,22 @@ fn symbol_to_color(s: Option<Symbol>) -> Color {
 async fn main() {
     let mut rng = ::rand::thread_rng();
     let mut agents: Vec<Agent> = (0..AGENT_COUNT)
-        .map(|i| {
+        .map(|_| {
             Agent::new(
-                i,
                 rng.gen_range(0.0..screen_width()),
                 rng.gen_range(0.0..screen_height()),
             )
         })
         .collect();
 
-    let mut interaction_lines: Vec<((f32, f32), (f32, f32), Color, f32)> = Vec::new(); // (start, end, color, alpha)
+    struct InteractionLine {
+        start: Vec2,
+        end: Vec2,
+        color: Color,
+        alpha: f32,
+    }
+
+    let mut interaction_lines: Vec<InteractionLine> = Vec::new();
 
     loop {
         let dt = get_frame_time();
@@ -41,8 +47,8 @@ async fn main() {
         clear_background(BLACK);
 
         // Update agents
-        for i in 0..agents.len() {
-            agents[i].update_pos(dt, screen_w, screen_h);
+        for agent in &mut agents {
+            agent.update_pos(dt, screen_w, screen_h);
         }
 
         // Interactions
@@ -75,12 +81,12 @@ async fn main() {
 
                     // Visual feedback
                     let color = if success { GREEN } else { RED };
-                    interaction_lines.push((
-                        (agent_i.x, agent_i.y),
-                        (agent_j.x, agent_j.y),
+                    interaction_lines.push(InteractionLine {
+                        start: vec2(agent_i.x, agent_i.y),
+                        end: vec2(agent_j.x, agent_j.y),
                         color,
-                        1.0,
-                    ));
+                        alpha: 1.0,
+                    });
 
                     // Store last result for visual state
                     agent_i.last_interaction_result = Some(success);
@@ -90,19 +96,19 @@ async fn main() {
         }
 
         // Draw interaction lines
-        interaction_lines.retain_mut(|(_, _, _, alpha)| {
-            *alpha -= dt * 0.5;
-            *alpha > 0.0
+        interaction_lines.retain_mut(|line| {
+            line.alpha -= dt * 0.5;
+            line.alpha > 0.0
         });
 
-        for (start, end, color, alpha) in &interaction_lines {
+        for line in &interaction_lines {
             draw_line(
-                start.0,
-                start.1,
-                end.0,
-                end.1,
+                line.start.x,
+                line.start.y,
+                line.end.x,
+                line.end.y,
                 2.0,
-                Color::new(color.r, color.g, color.b, *alpha),
+                Color::new(line.color.r, line.color.g, line.color.b, line.alpha),
             );
         }
 
@@ -113,15 +119,15 @@ async fn main() {
 
             // Protocol visualization (Rings)
             // Outer: Greeting
-            let c_greet = symbol_to_color(agent.protocol.get_symbol(Meaning::Greetings));
+            let c_greet = symbol_to_color(agent.vocabulary.get(&Meaning::Greetings).cloned());
             draw_circle(agent.x, agent.y, 7.0, c_greet);
 
             // Middle: Ack
-            let c_ack = symbol_to_color(agent.protocol.get_symbol(Meaning::Ack));
+            let c_ack = symbol_to_color(agent.vocabulary.get(&Meaning::Ack).cloned());
             draw_circle(agent.x, agent.y, 5.0, c_ack);
 
             // Inner: Trade
-            // let c_trade = symbol_to_color(agent.protocol.get_symbol(Meaning::Trade));
+            // let c_trade = symbol_to_color(agent.vocabulary.get(&Meaning::Trade).cloned());
             // draw_circle(agent.x, agent.y, 3.0, c_trade);
 
             // Status indicator (Success/Fail glow)

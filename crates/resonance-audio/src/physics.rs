@@ -22,58 +22,107 @@
 /// ```
 pub struct PhysicsGrid {
     /// The width of the simulation grid in cells.
-    pub width: usize,
+    pub(crate) width: usize,
     /// The height of the simulation grid in cells.
-    pub height: usize,
+    pub(crate) height: usize,
     /// The current state of the wave field (pressure/displacement at each cell).
-    pub u: Vec<f32>,
+    pub(crate) u: Vec<f32>,
     /// The previous state of the wave field (t - 1), used for time integration.
-    pub u_prev: Vec<f32>,
+    pub(crate) u_prev: Vec<f32>,
     /// Scratch buffer for calculating the next state (t + 1).
-    pub u_next: Vec<f32>,
-    /// Boolean mask where `true` indicates a wall (reflective boundary) and `false` is open space.
-    pub walls: Vec<bool>,
-    /// Damping factor applied at each step to simulate energy loss (0.0 = instant stop, 1.0 = no loss).
-    pub damping: f32,
+    pub(crate) u_next: Vec<f32>,
+    /// Material properties for each cell.
+    pub(crate) materials: Vec<Material>,
+    /// Speed of sound squared (c^2) map. Controls wave propagation speed.
+    pub(crate) c2_map: Vec<f32>,
+    /// Damping map. Controls energy loss per cell.
+    pub(crate) damping_map: Vec<f32>,
+    /// Accumulated energy map (sum of absolute values).
+    pub(crate) energy_map: Vec<f32>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Material {
+    Air,
+    Wall,
+    Slow, // High refractive index
+    Fast, // Low refractive index
+    Void, // Absorbs everything
 }
 
 impl PhysicsGrid {
     /// Creates a new physics grid with the specified dimensions.
     ///
-    /// The grid is initialized with zero energy (silence) and no walls.
-    /// The default damping is set to 0.999 for high resonance.
+    /// The grid is initialized with zero energy (silence) and Air everywhere.
     pub fn new(width: usize, height: usize) -> Self {
+        let size = width * height;
         Self {
             width,
             height,
-            u: vec![0.0; width * height],
-            u_prev: vec![0.0; width * height],
-            u_next: vec![0.0; width * height],
-            walls: vec![false; width * height],
-            damping: 0.999, // High resonance
+            u: vec![0.0; size],
+            u_prev: vec![0.0; size],
+            u_next: vec![0.0; size],
+            materials: vec![Material::Air; size],
+            c2_map: vec![0.4; size],
+            damping_map: vec![0.999; size],
+            energy_map: vec![0.0; size],
+        }
+    }
+
+    /// Returns the width of the grid.
+    pub fn width(&self) -> usize {
+        self.width
+    }
+
+    /// Returns the height of the grid.
+    pub fn height(&self) -> usize {
+        self.height
+    }
+
+    /// Sets the material at a specific coordinate.
+    pub fn set_material(&mut self, x: usize, y: usize, material: Material) {
+        if x < self.width && y < self.height {
+            let idx = y * self.width + x;
+            self.materials[idx] = material;
+            match material {
+                Material::Air => {
+                    self.c2_map[idx] = 0.4;
+                    self.damping_map[idx] = 0.999;
+                }
+                Material::Wall => {
+                    self.c2_map[idx] = 0.0;
+                    self.damping_map[idx] = 0.0; // Irrelevant as value is forced to 0
+                                                 // Clear energy at wall
+                    self.u[idx] = 0.0;
+                    self.u_prev[idx] = 0.0;
+                    self.u_next[idx] = 0.0;
+                }
+                Material::Slow => {
+                    self.c2_map[idx] = 0.1; // Slower wave speed
+                    self.damping_map[idx] = 0.995; // Slightly more damping
+                }
+                Material::Fast => {
+                    self.c2_map[idx] = 0.5; // Max 0.5 for 2D stability (Courant limit)
+                    self.damping_map[idx] = 0.999;
+                }
+                Material::Void => {
+                    self.c2_map[idx] = 0.5;
+                    self.damping_map[idx] = 0.5; // Heavy damping
+                }
+            }
         }
     }
 
     /// Advances the simulation by one time step.
-    ///
-    /// This method implements the discrete 2D wave equation:
-    /// `u_next[x,y] = 2*u[x,y] - u_prev[x,y] + c^2 * Laplacian(u)`
-    ///
-    /// It handles:
-    /// - Wave propagation using a 5-point stencil Laplacian.
-    /// - Wall reflections (walls force value to 0, causing reflection).
-    /// - Damping.
-    /// - Buffer swapping (prev -> curr, curr -> next).
     pub fn step(&mut self) {
         let w = self.width;
         let h = self.height;
-        let c2 = 0.5; // Courant number squared
 
         for y in 1..h - 1 {
             for x in 1..w - 1 {
                 let idx = y * w + x;
 
-                if self.walls[idx] {
+                if self.materials[idx] == Material::Wall {
                     self.u_next[idx] = 0.0;
                     continue;
                 }
@@ -85,18 +134,19 @@ impl PhysicsGrid {
 
                 let u_curr = self.u[idx];
                 let u_prev = self.u_prev[idx];
+                let c2 = self.c2_map[idx];
+                let damping = self.damping_map[idx];
 
-                // Laplacian with wall check?
-                // If neighbor is wall, its value is 0.
-                // Since we enforce 0 for walls, we don't need explicit check here,
-                // provided we zeroed them out.
                 let laplacian =
                     self.u[up] + self.u[down] + self.u[left] + self.u[right] - 4.0 * u_curr;
 
                 let mut val = 2.0 * u_curr - u_prev + c2 * laplacian;
-                val *= self.damping;
+                val *= damping;
 
                 self.u_next[idx] = val;
+
+                // Accumulate energy with decay
+                self.energy_map[idx] = self.energy_map[idx] * 0.9995 + val.abs() * 0.005;
             }
         }
 
@@ -112,31 +162,20 @@ impl PhysicsGrid {
     pub fn pluck(&mut self, x: usize, y: usize, strength: f32) {
         if x > 0 && x < self.width - 1 && y > 0 && y < self.height - 1 {
             let idx = y * self.width + x;
-            if !self.walls[idx] {
+            if self.materials[idx] != Material::Wall {
                 self.u[idx] += strength;
             }
         }
     }
 
     /// Adds a wall at the specified coordinates.
-    ///
-    /// Also clears any existing energy at that point to prevent instabilities.
     pub fn add_wall(&mut self, x: usize, y: usize) {
-        if x < self.width && y < self.height {
-            let idx = y * self.width + x;
-            self.walls[idx] = true;
-            self.u[idx] = 0.0;
-            self.u_prev[idx] = 0.0;
-            self.u_next[idx] = 0.0;
-        }
+        self.set_material(x, y, Material::Wall);
     }
 
     /// Removes a wall from the specified coordinates.
     pub fn remove_wall(&mut self, x: usize, y: usize) {
-        if x < self.width && y < self.height {
-            let idx = y * self.width + x;
-            self.walls[idx] = false;
-        }
+        self.set_material(x, y, Material::Air);
     }
 
     /// Resets all wave states to zero, silencing the simulation.
@@ -144,11 +183,18 @@ impl PhysicsGrid {
         self.u.fill(0.0);
         self.u_prev.fill(0.0);
         self.u_next.fill(0.0);
+        self.energy_map.fill(0.0);
     }
 
     /// Removes all walls from the grid.
     pub fn clear_walls(&mut self) {
-        self.walls.fill(false);
+        for i in 0..self.materials.len() {
+            if self.materials[i] == Material::Wall {
+                self.materials[i] = Material::Air;
+                self.c2_map[i] = 0.5;
+                self.damping_map[i] = 0.999;
+            }
+        }
     }
 
     /// Gets the current wave value (pressure) at the specified coordinates.

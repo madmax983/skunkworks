@@ -1,0 +1,12 @@
+[package]
+name = "harmonic-engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+tui-shared = { workspace = true }
+rapier2d = "0.27"
+nalgebra = "0.33"

@@ -44,7 +44,7 @@ pub struct FluidSolver {
     pub gravity: f32,
     pub h: f32, // Smoothing radius
     pub rest_density: f32,
-    pub k: f32, // Gas constant (stiffness)
+    pub k: f32,  // Gas constant (stiffness)
     pub mu: f32, // Viscosity
 }
 
@@ -119,8 +119,12 @@ impl FluidSolver {
             let mut fy = 0.0;
 
             for j in 0..n {
-                if i == j { continue; }
-                if self.particles[i].container_id != self.particles[j].container_id { continue; }
+                if i == j {
+                    continue;
+                }
+                if self.particles[i].container_id != self.particles[j].container_id {
+                    continue;
+                }
 
                 let dx = self.particles[j].x - self.particles[i].x;
                 let dy = self.particles[j].y - self.particles[i].y;

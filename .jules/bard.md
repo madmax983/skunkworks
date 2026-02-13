@@ -35,3 +35,7 @@ Collisions happen when they meet in the middle. The documentation must make this
 ## 2026-06-03 - Vec2 vs Topology Coordinates
 **Confusion:** Users (and Bard) mixed up `Vec2(x, y)` (Cartesian: horizontal, vertical) and `Topology::normalize(y, x)` (Matrix: row, col). This led to off-by-one errors and incorrect wrapping behavior.
 **Clarification:** `Vec2` is designed for continuous physics (X-right, Y-down/up), while `Topology` operates on discrete grid indices (Row-major: Y-down, X-right). Documentation must explicitly warn about swapping coordinates when bridging these systems.
+
+## 2026-06-05 - Git Associates Usage
+**Confusion:** Multiple experiments reimplemented git logic using fragile `std::process::Command` calls, unaware of the robust `git-associates` crate.
+**Clarification:** `git-associates` provides a safe, high-level wrapper around `git2` for analyzing history and diffs. It should be the first choice for any git-related functionality to ensure consistency and performance.

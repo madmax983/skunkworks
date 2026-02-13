@@ -402,6 +402,19 @@ pub enum OpCode {
     /// **Effect:** Reverts *everything* (Grid, DNA, Stack) to the spore's state.
     #[cfg(feature = "nova")]
     Germinate,
+    /// **[Nova]** Creates a named Time Loop anchor.
+    ///
+    /// **Stack:** `[ ..., loop_id ] -> [ ... ]`
+    /// **Effect:** Saves state to a specific slot.
+    #[cfg(feature = "nova")]
+    TimeLoop,
+    /// **[Nova]** Triggers a Paradox, rewinding time but keeping a value.
+    ///
+    /// **Stack:** `[ ..., loop_id, value ] -> [ ..., value ]`
+    /// **Effect:** Restores state from loop_id, but pushes value to stack.
+    /// **Risk:** Increases Paradox counter. Too much Paradox causes issues.
+    #[cfg(feature = "nova")]
+    Paradox,
     /// **[Nova]** Splices a strand from a saved Spore (timeline) into the current genome.
     ///
     /// **Stack:** `[ ..., spore_id, strand_idx ] -> [ ..., new_strand_idx ]`
@@ -683,6 +696,17 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., width, height ]`
     #[cfg(feature = "nova")]
     RetinaSize,
+    /// **[Nova]** Reads a row of the Retina buffer.
+    ///
+    /// **Stack:** `[ ..., row_index ] -> [ ..., junction_of_pixels ]`
+    #[cfg(feature = "nova")]
+    Scanline,
+    /// **[Nova]** Writes a Junction of values to the Retina buffer with glitch effects.
+    ///
+    /// **Stack:** `[ ..., y, x, junction, mode ] -> [ ... ]`
+    /// **Mode:** 0=Linear, 1=Scatter, 2=XOR, 3=Sort.
+    #[cfg(feature = "nova")]
+    Rasterize,
 
     // Quantum Features (Superposition)
     /// **[Nova]** Instantly jumps to the entangled partner strand.
@@ -881,6 +905,16 @@ pub enum OpCode {
     /// **Cost:** Energy proportional to amount.
     #[cfg(feature = "nova")]
     Stabilize,
+    /// **[Nova]** Increases global entropy and injects chaos into a random grid cell.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    EntropySurge,
+    /// **[Nova]** Forcefully jumps the IP to a random gene in the current strand.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    QuantumTunnel,
     /// **[Nova]** Instantly converts a grid cell to high entropy.
     ///
     /// **Stack:** `[ ..., y, x ] -> [ ... ]`
@@ -919,6 +953,96 @@ pub enum OpCode {
     /// **Effect:** Increases Havoc rate and local Entropy.
     #[cfg(feature = "nova")]
     Chaos,
+
+    // Attractor Features (Nova - Chaos Dynamics)
+    /// **[Nova]** Initializes the Strange Attractor.
+    ///
+    /// **Stack:** `[ ..., mode ] -> [ ... ]`
+    /// **Mode:** 0=Lorenz, 1=Rossler, 2=Thomas.
+    #[cfg(feature = "nova")]
+    AttractorInit,
+    /// **[Nova]** Steps the Strange Attractor simulation.
+    ///
+    /// **Stack:** `[ ..., dt ] -> [ ... ]`
+    /// **dt:** Time delta (e.g. 0.01).
+    #[cfg(feature = "nova")]
+    AttractorStep,
+    /// **[Nova]** Warps the IP based on the Attractor state.
+    ///
+    /// **Stack:** `[ ..., scale ] -> [ ... ]`
+    /// **Effect:** Jumps to strand index derived from Attractor Z.
+    #[cfg(feature = "nova")]
+    AttractorSurf,
+    /// **[Nova]** Maps the Attractor state to Grid variables.
+    ///
+    /// **Stack:** `[ ..., target ] -> [ ... ]`
+    /// **Target:** 0=Entropy, 1=Mutation Rate, 2=Grid Warp.
+    #[cfg(feature = "nova")]
+    AttractorMap,
+
+    // Holographic Features (Nova)
+    /// **[Nova]** Encodes a strand into the Hologram Grid (Interference).
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Interfere,
+    /// **[Nova]** Decodes the Hologram Grid into a new strand (Refraction).
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., new_strand_idx ]`
+    #[cfg(feature = "nova")]
+    Refract,
+    /// **[Nova]** Projects the Hologram intensity onto the main Grid.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Project,
+    /// **[Nova]** Diffracts a strand into the Hologram Grid (Ghost/Split).
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Diffract,
+    /// **[Nova]** Toggles Holographic View/Mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Hologram,
+    /// **[Nova]** Applies phase shift noise to the hologram grid (Mutation).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    PhaseMutate,
+
+    /// **[Nova]** Collapses the local Hologram wavefunction into a physical grid character.
+    ///
+    /// **Stack:** `[ ..., threshold ] -> [ ... ]`
+    /// **Effect:** If `|H(y,x)| > threshold`, maps Phase(H) to an ASCII character and writes it to `Grid(y,x)`.
+    #[cfg(feature = "nova")]
+    QuantumScribe,
+
+    /// **[Nova]** Encodes the local physical grid character into the Hologram.
+    ///
+    /// **Stack:** `[ ..., weight ] -> [ ... ]`
+    /// **Effect:** Maps `Grid(y,x)` character to Phase, and adds `weight * e^(i*phase)` to `Hologram(y,x)`.
+    #[cfg(feature = "nova")]
+    QuantumScan,
+
+    /// **[Nova]** Refracts the Hologram into a Grammar and parses a string with it.
+    ///
+    /// **Stack:** `[ ..., input_string ] -> [ ..., result_ast ]`
+    #[cfg(feature = "nova")]
+    HoloInvoke,
+
+    /// **[Nova]** Refracts the Hologram into a Grammar and generates a string from it.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., output_string ]`
+    #[cfg(feature = "nova")]
+    HoloSpeak,
+
+    /// **[Nova]** Converts an integer to a 1-character string (ASCII).
+    ///
+    /// **Stack:** `[ ..., int ] -> [ ..., string ]`
+    #[cfg(feature = "nova")]
+    Chr,
 
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///
@@ -1550,6 +1674,11 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., amplitude ]`
     #[cfg(feature = "resonance")]
     Hear,
+    /// **[Resonance]** Emits a loud, physical shockwave.
+    ///
+    /// **Stack:** `[ ..., duration, strength ] -> [ ... ]`
+    #[cfg(feature = "resonance")]
+    Scream,
 
     // Cymatics Features (Nova + Resonance)
     /// **[Cymatics]** Moves matter on the grid towards nodal points (low amplitude).
@@ -2117,6 +2246,40 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ..., tissue_id ]`
     #[cfg(feature = "nova")]
     Tissue,
+
+    // Weaving Features (The Loom)
+    /// **[Nova]** Weaves two strands together based on a pattern.
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b, pattern_strand ] -> [ ..., new_strand_idx ]`
+    /// **Pattern:** 'A'=Take from A, 'B'=Take from B, 'X'=Random, '0'=Skip.
+    #[cfg(feature = "nova")]
+    Weave,
+    /// **[Nova]** Unravels a strand, destroying it and reclaiming resources.
+    ///
+    /// **Stack:** `[ ..., strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Unravel,
+
+    // Scavenger Features (Mad Science)
+    /// **[Scavenge]** Reads raw bytes from a file and converts them into DNA.
+    ///
+    /// **Stack:** `[ ..., path_string, len ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Reads `len` bytes from `path`, maps each byte to an OpCode, creates a new strand.
+    #[cfg(feature = "nova")]
+    Scavenge,
+    /// **[Scavenge]** Reads raw bytes from the running executable itself (Self-Cannibalism).
+    ///
+    /// **Stack:** `[ ..., offset, len ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Reads `len` bytes from the binary at `offset`, maps to OpCodes, creates a new strand.
+    #[cfg(feature = "nova")]
+    Digest,
+
+    // Chimeric Features (Language Synthesis)
+    /// **[Chimeric]** Executes a string of Chimeric code (Concatenative Logic).
+    ///
+    /// **Stack:** `[ ..., code_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chimeric,
 
     /// No Operation. Does nothing.
     Nop,

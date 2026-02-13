@@ -1,5 +1,5 @@
-use crate::neuron::Izhikevich;
 use rand::Rng;
+use synaptic_physics::Izhikevich;
 
 #[derive(Clone, Debug)]
 pub struct Synapse {
@@ -11,6 +11,7 @@ pub struct Synapse {
 
 pub struct Network {
     pub neurons: Vec<Izhikevich>,
+    pub last_spikes: Vec<Option<u64>>, // Track spike times locally
     pub synapses: Vec<Synapse>,
     pub traces: Vec<f32>, // Synaptic trace for each neuron (for STDP)
     pub tick: u64,
@@ -19,19 +20,28 @@ pub struct Network {
 impl Network {
     pub fn new(size: usize) -> Self {
         let mut neurons = Vec::with_capacity(size);
+        let mut last_spikes = Vec::with_capacity(size);
         let mut traces = Vec::with_capacity(size);
         let mut rng = rand::thread_rng();
 
         for _ in 0..size {
             neurons.push(Izhikevich::random(&mut rng));
+            last_spikes.push(None);
             traces.push(0.0);
         }
 
         Self {
             neurons,
+            last_spikes,
             synapses: Vec::new(),
             traces,
             tick: 0,
+        }
+    }
+
+    pub fn inject(&mut self, index: usize, current: f32) {
+        if let Some(neuron) = self.neurons.get_mut(index) {
+            neuron.inject(current);
         }
     }
 
@@ -52,7 +62,7 @@ impl Network {
         }
     }
 
-    pub fn step(&mut self, dt: f32, inputs: &[f32]) {
+    pub fn step(&mut self, dt: f32) {
         self.tick += 1;
         let decay = 0.95; // Trace decay
         let a_plus = 0.1; // Potentiation
@@ -61,14 +71,11 @@ impl Network {
         // 1. Calculate synaptic currents
         let mut currents = vec![0.0; self.neurons.len()];
 
-        // Add external inputs
-        for (i, &input) in inputs.iter().enumerate().take(self.neurons.len()) {
-            currents[i] += input;
-        }
+        // Note: External inputs are now handled by neuron.current_decay via inject()
 
         // Add synaptic currents from *previous* step spikes
         for syn in &self.synapses {
-            if let Some(t) = self.neurons[syn.pre].last_spike {
+            if let Some(t) = self.last_spikes[syn.pre] {
                 if t == self.tick - 1 {
                     currents[syn.post] += syn.weight;
                 }
@@ -77,7 +84,12 @@ impl Network {
 
         // 2. Update Neurons and Traces
         for (i, neuron) in self.neurons.iter_mut().enumerate() {
-            let spiked = neuron.update(dt, currents[i], self.tick);
+            // update() returns (voltage, spiked)
+            let (_, spiked) = neuron.update(dt, currents[i]);
+
+            if spiked {
+                self.last_spikes[i] = Some(self.tick);
+            }
 
             // Update trace
             self.traces[i] *= decay;
@@ -88,8 +100,8 @@ impl Network {
 
         // 3. Apply STDP (Plasticity)
         for syn in &mut self.synapses {
-            let pre_spiked = self.neurons[syn.pre].last_spike == Some(self.tick);
-            let post_spiked = self.neurons[syn.post].last_spike == Some(self.tick);
+            let pre_spiked = self.last_spikes[syn.pre] == Some(self.tick);
+            let post_spiked = self.last_spikes[syn.post] == Some(self.tick);
 
             if pre_spiked {
                 // Pre spiked NOW. Check POST trace.
@@ -123,15 +135,20 @@ mod tests {
 
         // Make neuron 0 spike
         // Step 1: Inject huge current into 0 for multiple steps until spike
-        let mut inputs = vec![50.0, 0.0];
+        // Using inject() now instead of raw inputs vector
+        net.inject(0, 50.0);
+
         let mut spiked_at = None;
 
         for _ in 0..10 {
-            net.step(1.0, &inputs);
-            if net.neurons[0].last_spike == Some(net.tick) {
+            net.step(1.0);
+            if net.last_spikes[0] == Some(net.tick) {
                 spiked_at = Some(net.tick);
                 break;
             }
+            // Keep injecting if needed, but 50 should trigger it quickly.
+            // Decay might reduce it, so re-inject if needed?
+            // 50 is huge, tau is 10. Decay is slow. Should be fine.
         }
 
         assert!(
@@ -140,15 +157,14 @@ mod tests {
             net.neurons[0].v
         );
 
-        // Step 2: Continue simulation without input.
+        // Step 2: Continue simulation.
         // Neuron 1 should receive current 1 tick after spike.
-        inputs = vec![0.0, 0.0];
 
         let spike_tick = spiked_at.unwrap();
         // Run until tick == spike_tick + 1
         while net.tick <= spike_tick + 1 {
             let v_prev = net.neurons[1].v;
-            net.step(1.0, &inputs);
+            net.step(1.0);
 
             if net.tick == spike_tick + 1 {
                 // This step, synapse should have fired.

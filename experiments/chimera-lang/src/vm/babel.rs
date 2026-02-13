@@ -96,7 +96,8 @@ pub fn exec_babel_op(
                                 let mutated = mutate_grammar(&grammar_val, rate);
                                 vm.stack.push(mutated);
                             } else {
-                                vm.output.push("Error: Stack underflow for Grammar(Mutate)".to_string());
+                                vm.output
+                                    .push("Error: Stack underflow for Grammar(Mutate)".to_string());
                             }
                         }
                         _ => {

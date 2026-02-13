@@ -89,7 +89,7 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
     let mut cost = 0;
 
     // Recipe Helper
-    let check_recipe = |target: &[&str]| -> bool {
+    let _check_recipe = |target: &[&str]| -> bool {
         if ingredients.len() != target.len() {
             return false;
         }
@@ -114,12 +114,15 @@ pub fn transmute_crucible(vm: &mut ChimeraVM) {
         {
             let i1 = ingredients[0].clone();
             let i2 = ingredients[1].clone();
-            let goal = Value::Junction(JunctionType::Any, vec![
-                Value::Str("reaction".to_string()),
-                i1,
-                i2,
-                Value::Str("?Result".to_string())
-            ]);
+            let goal = Value::Junction(
+                JunctionType::Any,
+                vec![
+                    Value::Str("reaction".to_string()),
+                    i1,
+                    i2,
+                    Value::Str("?Result".to_string()),
+                ],
+            );
 
             let mut solutions = Vec::new();
             crate::vm::oracle::solve(

@@ -17,7 +17,7 @@ use std::{
 };
 use tui_shared::Tui;
 
-use resonance_audio::audio::{AudioCommand, AudioModel};
+use resonance_audio::audio::{AudioCommand, AudioModel, AudioSnapshot};
 
 // Chimera Imports
 use chimera_lang::{
@@ -186,7 +186,7 @@ fn run_app(
     width: usize,
     height: usize,
     cmd_tx: Sender<AudioCommand>,
-    snap_rx: crossbeam_channel::Receiver<Vec<f32>>,
+    snap_rx: crossbeam_channel::Receiver<AudioSnapshot>,
 ) -> io::Result<()> {
     let mut cursor_x = width / 2;
     let mut cursor_y = height / 2;
@@ -220,7 +220,7 @@ fn run_app(
     loop {
         // Poll for snapshot
         while let Ok(snap) = snap_rx.try_recv() {
-            grid_u = snap;
+            grid_u = snap.pressure;
         }
 
         // Agent Logic

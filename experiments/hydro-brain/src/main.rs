@@ -61,9 +61,9 @@ impl App {
 
         // Safety check: if containers are empty (first run), sync them
         if self.fluid.containers.is_empty() && !self.network.neurons.is_empty() {
-             self.network.layout(width, height);
-             self.fluid.containers.clear();
-             for n in &self.network.neurons {
+            self.network.layout(width, height);
+            self.fluid.containers.clear();
+            for n in &self.network.neurons {
                 self.fluid.add_container(n.id, n.x, n.y, n.w, n.h);
             }
         }
@@ -100,14 +100,20 @@ impl App {
 
     fn pour(&mut self, input_idx: usize) {
         // Pour into the Nth neuron of the first layer
-        if let Some(neuron) = self.network.neurons.iter().find(|n| n.layer == 0 && n.index_in_layer == input_idx) {
+        if let Some(neuron) = self
+            .network
+            .neurons
+            .iter()
+            .find(|n| n.layer == 0 && n.index_in_layer == input_idx)
+        {
             // Spawn a cluster of particles
             let center_x = neuron.x + neuron.w / 2.0;
             let center_y = neuron.y + 1.0;
 
             for i in 0..5 {
                 let offset_x = (i as f32 - 2.0) * 0.5;
-                self.fluid.add_particle(center_x + offset_x, center_y, neuron.id);
+                self.fluid
+                    .add_particle(center_x + offset_x, center_y, neuron.id);
             }
             self.particles_poured += 5;
         }
@@ -126,7 +132,11 @@ fn ui(f: &mut Frame, app: &mut App) {
     app.height = chunks[0].height as f32 * 2.0; // *2 for vertical resolution (half-blocks usually, or just scaling)
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title(" Hydro-Brain 🧠💧 "))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Hydro-Brain 🧠💧 "),
+        )
         .x_bounds([0.0, app.width as f64])
         .y_bounds([app.height as f64, 0.0]) // Inverted Y
         .paint(|ctx| {
@@ -142,22 +152,33 @@ fn ui(f: &mut Frame, app: &mut App) {
                 let y2 = tgt.y as f64; // Top of tgt
 
                 ctx.draw(&Line {
-                    x1, y1, x2, y2,
+                    x1,
+                    y1,
+                    x2,
+                    y2,
                     color: Color::DarkGray,
                 });
             }
 
             // Draw Traveling Spikes
             for spike in &app.network.traveling_spikes {
-                 ctx.print(spike.x as f64, spike.y as f64, ratatui::text::Span::styled("•", Style::default().fg(Color::Yellow)));
+                ctx.print(
+                    spike.x as f64,
+                    spike.y as f64,
+                    ratatui::text::Span::styled("•", Style::default().fg(Color::Yellow)),
+                );
             }
 
             // Draw Neurons (Containers)
             for n in &app.network.neurons {
                 // Draw Box
-                let color = if n.layer == 0 { Color::Green }
-                           else if n.layer == app.network.layers.len() - 1 { Color::Red }
-                           else { Color::White };
+                let color = if n.layer == 0 {
+                    Color::Green
+                } else if n.layer == app.network.layers.len() - 1 {
+                    Color::Red
+                } else {
+                    Color::White
+                };
 
                 // Top line
                 /*
@@ -169,26 +190,32 @@ fn ui(f: &mut Frame, app: &mut App) {
                 */
                 // Bottom line
                 ctx.draw(&Line {
-                    x1: n.x as f64, y1: (n.y + n.h) as f64,
-                    x2: (n.x + n.w) as f64, y2: (n.y + n.h) as f64,
+                    x1: n.x as f64,
+                    y1: (n.y + n.h) as f64,
+                    x2: (n.x + n.w) as f64,
+                    y2: (n.y + n.h) as f64,
                     color,
                 });
                 // Left line
                 ctx.draw(&Line {
-                    x1: n.x as f64, y1: n.y as f64,
-                    x2: n.x as f64, y2: (n.y + n.h) as f64,
+                    x1: n.x as f64,
+                    y1: n.y as f64,
+                    x2: n.x as f64,
+                    y2: (n.y + n.h) as f64,
                     color,
                 });
                 // Right line
                 ctx.draw(&Line {
-                    x1: (n.x + n.w) as f64, y1: n.y as f64,
-                    x2: (n.x + n.w) as f64, y2: (n.y + n.h) as f64,
+                    x1: (n.x + n.w) as f64,
+                    y1: n.y as f64,
+                    x2: (n.x + n.w) as f64,
+                    y2: (n.y + n.h) as f64,
                     color,
                 });
             }
 
             // Draw Fluid
-             let fluid_points: Vec<(f64, f64)> = app
+            let fluid_points: Vec<(f64, f64)> = app
                 .fluid
                 .particles
                 .iter()
@@ -246,7 +273,7 @@ fn main() -> Result<()> {
             // For now, update is called in UI.
             // Better practice: update physics here using stored width/height.
             // But width/height are initialized to 100.0, so fine.
-             app.update(app.width, app.height);
+            app.update(app.width, app.height);
             last_tick = Instant::now();
         }
     }

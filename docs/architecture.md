@@ -194,6 +194,132 @@ classDiagram
     GhostReplayer ..> GhostEvent : Deserializes
 ```
 
+## Shared Domain Logic
+
+Specialized libraries that encapsulate specific domain knowledge or data structures, reused across multiple experiments.
+
+### Quipu Data Structures (crates/quipu)
+
+Encapsulates Inca recording devices (`Knot`, `Cord`, `Quipu`) to ensure consistent representation and behavior (ADR 024).
+
+```mermaid
+classDiagram
+    direction LR
+    class Quipu {
+        +Vec~Cord~ cords
+        +display()
+    }
+
+    class Cord {
+        +Vec~Vec~Knot~~ clusters
+        +value() u64
+        +add(Cord) Cord
+        +sub(Cord) Cord
+    }
+
+    class Knot {
+        <<Enum>>
+        +Simple
+        +Long(u8)
+        +FigureEight
+        +value() u8
+    }
+
+    Quipu *-- Cord : Contains
+    Cord *-- Knot : Contains
+```
+
+### Locus Geometry (crates/locus)
+
+Provides standard 2D vector math and topological wrapping logic for grid-based simulations (ADR 025).
+
+```mermaid
+classDiagram
+    direction LR
+    class Vec2 {
+        +f64 x
+        +f64 y
+        +add()
+        +sub()
+        +magnitude()
+        +normalize()
+        +reflect()
+    }
+
+    class Topology {
+        <<Enum>>
+        +Plane
+        +Torus
+        +KleinBottle
+        +Mobius
+        +normalize(y, x) Option~y, x~
+    }
+
+    Topology ..> Vec2 : Complements
+```
+
+### Market Simulation (crates/market-sim)
+
+Implements a Continuous Double Auction (CDA) using a physics-based particle system (ADR 026).
+
+```mermaid
+classDiagram
+    direction TB
+    class Grid {
+        +Vec~Particle~ cells
+        +update() Vec~TradeEvent~
+    }
+
+    class Particle {
+        <<Enum>>
+        +Bid(buyer_id)
+        +Ask(seller_id)
+        +Trade(age)
+    }
+
+    class TradeEvent {
+        +usize buyer
+        +usize seller
+        +f32 price
+    }
+
+    Grid *-- Particle : Contains
+    Grid ..> TradeEvent : Emits
+```
+
+### Synaptic Physics (crates/synaptic-physics)
+
+Encapsulates the Izhikevich neuron model for biologically plausible neural simulations (ADR 027).
+
+```mermaid
+classDiagram
+    class Izhikevich {
+        +f32 v
+        +f32 u
+        +f32 tau
+        +update(dt, current) (f32, bool)
+        +inject(current)
+        +random() Izhikevich
+    }
+```
+
+### Git Associates (crates/git-associates)
+
+Helper utilities for scanning and parsing Git history, used by `tectonic-git`.
+
+```mermaid
+classDiagram
+    class GitAssociates {
+        <<Library>>
+    }
+    class GitScanner {
+        +scan_repo(path)
+        +parse_diffs()
+    }
+
+    GitAssociates *-- GitScanner : Exports
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
@@ -572,6 +698,94 @@ stateDiagram-v2
     Genome --> Offspring : Mitosis (Clone)
     Genome --> Offspring : Splice (Crossover)
     Offspring --> [*] : Apoptosis
+```
+
+### Nova Feature: Holographic Memory (ADR 028)
+
+The Holographic Memory system enables the storage of genetic information as distributed interference patterns, allowing for fuzzy retrieval and resilience to local damage.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant HologramGrid as ComplexGrid
+    participant DNA
+
+    Note over VM: OpCode::Interfere(StrandIdx)
+    VM->>DNA: Get Genes
+    loop Per Gene
+        DNA-->>VM: Gene(Op, Arg)
+        VM->>HologramGrid: Inverse DFT (Add Wave)
+        Note right of HologramGrid: Accumulate Interference
+    end
+
+    Note over VM: OpCode::Refract
+    VM->>HologramGrid: Forward DFT (Extract Frequencies)
+    loop Per Frequency
+        HologramGrid-->>VM: Magnitude & Phase
+        alt Magnitude > Threshold
+            VM->>VM: Phase -> OpCode
+            VM->>VM: Amplitude -> Arg
+            VM->>DNA: Append New Gene
+        end
+    end
+```
+
+### Nova Feature: Metazoa (ADR 029)
+
+The Metazoa system enables multicellularity by allowing the VM to spawn independent `Organelle` agents that can bond into `Tissue` structures.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +Vec~Organelle~ organelles
+        +HashMap~usize, Tissue~ tissues
+        +step()
+    }
+
+    class Organelle {
+        +usize id
+        +Option~usize~ tissue_id
+        +OrganelleType kind
+        +Vec~Value~ stack
+        +step()
+    }
+
+    class Tissue {
+        +usize id
+        +Vec~usize~ members
+    }
+
+    class OrganelleType {
+        <<Enum>>
+        +Worker
+        +Chloroplast
+        +Mitochondria
+        +Lysosome
+    }
+
+    ChimeraVM *-- Organelle : Owns
+    ChimeraVM *-- Tissue : Owns
+    Tissue o-- Organelle : References
+    Organelle ..> OrganelleType : Is-A
+```
+
+```mermaid
+sequenceDiagram
+    participant O1 as Organelle (A)
+    participant O2 as Organelle (B)
+    participant VM
+    participant T as Tissue
+
+    Note over O1: OpCode::Bond(East)
+    O1->>VM: bond_with(O2)
+    VM->>T: Create(A, B)
+    T-->>O1: tissue_id = 1
+    T-->>O2: tissue_id = 1
+
+    Note over O1: OpCode::Signify("Help!")
+    O1->>VM: broadcast(1, "Help!")
+    VM->>O2: push("Help!")
 ```
 
 ### Experiment: Tectonic Git (ADR 023)

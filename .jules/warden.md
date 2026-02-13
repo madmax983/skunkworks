@@ -11,3 +11,7 @@
 ## 2024-05-26 - Akashic Record Data Loss
 **Threat:** The `AkashicWrite` OpCode would overwrite the entire database file if `load_records` failed (e.g. due to corruption or size limit), leading to catastrophic data loss.
 **Defense:** Implemented atomic writes (write-to-temp + rename) and strict size checks in `save_records`. Refactored `load_records` to report errors instead of returning an empty map.
+
+## 2025-01-27 - Locus Division by Zero Panic (DoS)
+**Threat:** `Topology::normalize` panicked due to division by zero (via `rem_euclid`) when `width` or `height` were 0. This is a DoS vector if dimensions are user-controlled (e.g. terminal resize).
+**Defense:** Added explicit checks for `width == 0 || height == 0` at the start of `normalize`, returning `None`.

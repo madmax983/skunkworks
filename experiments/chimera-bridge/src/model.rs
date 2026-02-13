@@ -1,6 +1,6 @@
-use chimera_lang::vm::{ChimeraVM, Value};
-use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide};
+use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
 use chimera_lang::opcode::OpCode;
+use chimera_lang::vm::{ChimeraVM, Value};
 use rand::Rng;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -30,9 +30,18 @@ impl Ant {
         // but the VM state (memory/registers) can influence it.
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Add, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Add,
+                args: vec![],
+            },
         ];
 
         let dna = Dna {

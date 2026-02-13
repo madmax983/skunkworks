@@ -11,7 +11,10 @@ use ratatui::{
     widgets::{Block, Borders, Paragraph},
     Frame, Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 use biomorphic_clock::simulation::Grid;
 
@@ -79,10 +82,7 @@ pub fn run_app(mut app: App) -> Result<()> {
     let res = run_loop(&mut terminal, &mut app);
 
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -110,17 +110,17 @@ fn run_loop<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> Result<()>
                         match key.code {
                             KeyCode::Char('q') => app.should_quit = true,
                             KeyCode::Char('r') => {
-                                 let w = app.grid.width;
-                                 let h = app.grid.height;
-                                 app.resize(w as u16 + 2, h as u16 + 2); // Hack to trigger reseed
+                                let w = app.grid.width;
+                                let h = app.grid.height;
+                                app.resize(w as u16 + 2, h as u16 + 2); // Hack to trigger reseed
                             }
                             _ => {}
                         }
                     }
-                },
+                }
                 Event::Resize(w, h) => {
                     app.resize(w, h);
-                },
+                }
                 _ => {}
             }
         }
@@ -171,11 +171,11 @@ fn ui(f: &mut Frame, app: &App) {
             let ch = gradient.chars().nth(char_idx).unwrap_or(' ');
 
             let color = if v > 0.3 {
-                 Color::Cyan
+                Color::Cyan
             } else if v > 0.1 {
-                 Color::Blue
+                Color::Blue
             } else {
-                 Color::DarkGray
+                Color::DarkGray
             };
 
             spans.push(Span::styled(ch.to_string(), Style::default().fg(color)));

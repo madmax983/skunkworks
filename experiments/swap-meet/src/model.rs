@@ -1,6 +1,6 @@
-use ratatui::style::Color;
 use rand::seq::SliceRandom;
 use rand::{thread_rng, Rng};
+use ratatui::style::Color;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Block {
@@ -50,7 +50,7 @@ impl Market {
 
         // 0. Income
         for agent in self.agents.iter_mut() {
-             agent.wealth += rng.gen_range(2.0..8.0);
+            agent.wealth += rng.gen_range(2.0..8.0);
         }
 
         // 1. Rent Collection
@@ -66,7 +66,9 @@ impl Market {
 
         // 2. Eviction (Bankruptcy)
         // Identify bankrupt agents
-        let bankrupt_ids: Vec<usize> = self.agents.iter()
+        let bankrupt_ids: Vec<usize> = self
+            .agents
+            .iter()
             .filter(|a| a.wealth < 0.0)
             .map(|a| a.id)
             .collect();
@@ -95,18 +97,28 @@ impl Market {
                 // Neighbors
                 for dy in -1..=1 {
                     for dx in -1..=1 {
-                        if dx == 0 && dy == 0 { continue; }
+                        if dx == 0 && dy == 0 {
+                            continue;
+                        }
                         let nx = x as isize + dx;
                         let ny = y as isize + dy;
-                        if nx >= 0 && nx < self.width as isize && ny >= 0 && ny < self.height as isize {
-                             let n_idx = (ny as usize) * self.width + (nx as usize);
-                             sum += self.grid[n_idx].rent;
-                             count += 1.0;
+                        if nx >= 0
+                            && nx < self.width as isize
+                            && ny >= 0
+                            && ny < self.height as isize
+                        {
+                            let n_idx = (ny as usize) * self.width + (nx as usize);
+                            sum += self.grid[n_idx].rent;
+                            count += 1.0;
                         }
                     }
                 }
 
-                let avg = if count > 0.0 { sum / count } else { self.grid[idx].rent };
+                let avg = if count > 0.0 {
+                    sum / count
+                } else {
+                    self.grid[idx].rent
+                };
                 let diffusion = 0.1;
                 new_rents[idx] = self.grid[idx].rent * (1.0 - diffusion) + avg * diffusion;
             }
@@ -128,7 +140,7 @@ impl Market {
         agent_indices.shuffle(&mut rng);
 
         for &agent_idx in &agent_indices {
-             let (wants_more, wealth, id) = {
+            let (wants_more, wealth, id) = {
                 let a = &self.agents[agent_idx];
                 (a.owned_blocks.len() < a.desired_blocks, a.wealth, a.id)
             };

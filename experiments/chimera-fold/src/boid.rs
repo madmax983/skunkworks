@@ -1,7 +1,7 @@
 use crate::pbd::{Constraint, PbdSystem};
+use ::rand::Rng;
 use chimera_lang::prelude::*;
 use macroquad::prelude::*;
-use ::rand::Rng;
 
 const SIM_STEPS: usize = 2;
 
@@ -52,24 +52,57 @@ impl OrigamiBoid {
         let actuator_idx = system.constraints.len() - 1;
 
         let mesh_indices = vec![
-            i_head as u16, i_tail as u16, i_left as u16,
-            i_head as u16, i_right as u16, i_tail as u16,
-            i_head as u16, i_left as u16, i_tail as u16,
-            i_head as u16, i_tail as u16, i_right as u16,
+            i_head as u16,
+            i_tail as u16,
+            i_left as u16,
+            i_head as u16,
+            i_right as u16,
+            i_tail as u16,
+            i_head as u16,
+            i_left as u16,
+            i_tail as u16,
+            i_head as u16,
+            i_tail as u16,
+            i_right as u16,
         ];
 
         // 2. Create Brain (ChimeraVM)
         // Default DNA: Reads Phase (0,0) and writes to Actuator (1,0)
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // x=0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // y=0
-            Gene { op: OpCode::GRead, args: vec![] }, // Stack: [Phase]
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // x=0
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // y=1
-            Gene { op: OpCode::GWrite, args: vec![] }, // Write Phase to Actuator
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] }, // Loop
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // x=0
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // y=0
+            Gene {
+                op: OpCode::GRead,
+                args: vec![],
+            }, // Stack: [Phase]
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // x=0
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }, // y=1
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            }, // Write Phase to Actuator
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            }, // Loop
         ];
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
         vm.energy = 10000; // High energy for longevity
 
@@ -82,7 +115,9 @@ impl OrigamiBoid {
                 rng.gen_range(-1.0..1.0),
                 rng.gen_range(-1.0..1.0),
                 rng.gen_range(-1.0..1.0),
-            ).normalize() * 0.5,
+            )
+            .normalize()
+                * 0.5,
             phase: rng.gen::<f32>(),
             actuator_idx,
             mesh_indices,
@@ -125,7 +160,8 @@ impl OrigamiBoid {
             if dist_sq > 0.0 && dist_sq < view_radius * view_radius {
                 // Separation
                 if dist_sq < separate_radius * separate_radius {
-                    let diff = (self.center_of_mass - other_pos).normalize_or_zero() / dist_sq.sqrt();
+                    let diff =
+                        (self.center_of_mass - other_pos).normalize_or_zero() / dist_sq.sqrt();
                     separation += diff;
                 }
                 // Alignment
@@ -174,12 +210,24 @@ impl OrigamiBoid {
         let size = bounds_max - bounds_min;
         let mut center_shift = Vec3::ZERO;
 
-        if self.center_of_mass.x < bounds_min.x { center_shift.x += size.x; }
-        if self.center_of_mass.x > bounds_max.x { center_shift.x -= size.x; }
-        if self.center_of_mass.y < bounds_min.y { center_shift.y += size.y; }
-        if self.center_of_mass.y > bounds_max.y { center_shift.y -= size.y; }
-        if self.center_of_mass.z < bounds_min.z { center_shift.z += size.z; }
-        if self.center_of_mass.z > bounds_max.z { center_shift.z -= size.z; }
+        if self.center_of_mass.x < bounds_min.x {
+            center_shift.x += size.x;
+        }
+        if self.center_of_mass.x > bounds_max.x {
+            center_shift.x -= size.x;
+        }
+        if self.center_of_mass.y < bounds_min.y {
+            center_shift.y += size.y;
+        }
+        if self.center_of_mass.y > bounds_max.y {
+            center_shift.y -= size.y;
+        }
+        if self.center_of_mass.z < bounds_min.z {
+            center_shift.z += size.z;
+        }
+        if self.center_of_mass.z > bounds_max.z {
+            center_shift.z -= size.z;
+        }
 
         if center_shift != Vec3::ZERO {
             for p in &mut self.system.particles {
@@ -213,19 +261,23 @@ impl OrigamiBoid {
 
         // 3. Read Actuators (1,0)
         let actuator_val = match &self.vm.grid[0][1] {
-             Value::Int(n) => *n as f32 / 100.0,
-             _ => 0.5,
+            Value::Int(n) => *n as f32 / 100.0,
+            _ => 0.5,
         };
         let actuator_factor = actuator_val.clamp(0.0, 1.0);
 
         // Update Constraint
-        if let Some(Constraint::Actuator { factor, .. }) = self.system.constraints.get(self.actuator_idx) {
-             let current_factor = *factor;
-             let new_factor = current_factor + (actuator_factor - current_factor) * 0.1;
+        if let Some(Constraint::Actuator { factor, .. }) =
+            self.system.constraints.get(self.actuator_idx)
+        {
+            let current_factor = *factor;
+            let new_factor = current_factor + (actuator_factor - current_factor) * 0.1;
 
-             if let Constraint::Actuator { factor, .. } = &mut self.system.constraints[self.actuator_idx] {
-                 *factor = new_factor;
-             }
+            if let Constraint::Actuator { factor, .. } =
+                &mut self.system.constraints[self.actuator_idx]
+            {
+                *factor = new_factor;
+            }
         }
 
         // 4. Step Physics
@@ -254,14 +306,23 @@ impl OrigamiBoid {
     }
 
     pub fn draw(&self) {
-         let r = match &self.vm.grid[1][1] { Value::Int(n) => *n as f32 / 100.0, _ => (self.id % 20) as f32 / 20.0 };
-         let g = match &self.vm.grid[2][1] { Value::Int(n) => *n as f32 / 100.0, _ => 0.5 };
-         let b = match &self.vm.grid[3][1] { Value::Int(n) => *n as f32 / 100.0, _ => 0.5 + 0.5 * (self.phase * std::f32::consts::TAU).sin().abs() };
+        let r = match &self.vm.grid[1][1] {
+            Value::Int(n) => *n as f32 / 100.0,
+            _ => (self.id % 20) as f32 / 20.0,
+        };
+        let g = match &self.vm.grid[2][1] {
+            Value::Int(n) => *n as f32 / 100.0,
+            _ => 0.5,
+        };
+        let b = match &self.vm.grid[3][1] {
+            Value::Int(n) => *n as f32 / 100.0,
+            _ => 0.5 + 0.5 * (self.phase * std::f32::consts::TAU).sin().abs(),
+        };
 
-         let color = Color::new(r, g, b, 1.0);
-         let color_bytes: [u8; 4] = color.into();
+        let color = Color::new(r, g, b, 1.0);
+        let color_bytes: [u8; 4] = color.into();
 
-         let mut mesh = Mesh {
+        let mut mesh = Mesh {
             vertices: Vec::new(),
             indices: Vec::new(),
             texture: None,

@@ -1,5 +1,10 @@
 ## ☠️ Condemned (Awaiting Execution)
 - **sono-scapes**: Sketch Rot. Documentation void. Redundant with `ripple-tank`. Grace period: 24h.
+- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier). Generic "Climber" metaphor. Skeletal implementation. Grace period: 24h.
+- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period: 24h.
+- **hertzian-shimmer**: Specimen condemned. Documentation void. Fragile dependency (cpal) in hostile environment. Redundant with `cymatic-ocean`. Grace period: 24h.
+- **hertzian-shimmer**: Specimen condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
+- **git-quipu**: Specimen condemned. Documentation void. Redundant with `quipu-symphony`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -13,6 +18,18 @@
 
 ## Executed
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Sketch Rot. Moved to graveyard.
+- **cipher-gears**: Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Grace period expired. Moved to graveyard.
+- **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependencies (cpal/alsa). Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
+- **cipher-gears**: Specimen executed. Generic implementation (Enigma clone). Documentation void. Failed to improve during grace period. Moved to graveyard.
+- **celestial-cantata**: Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
+- **git-climber**: Specimen executed. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period expired. Moved to graveyard.
+- **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation. Failed to improve during grace period. Moved to graveyard.
+- **magnetron-decay**: Specimen executed. Redundant with `klein-magnetron`. Ancestral traits preserved in hybrid offspring. Moved to graveyard.
+- **cymatic-lure**: Specimen executed. Terminal compilation failure (`ratatui` backend error). Audio synthesis logic isolated but body is failing. Moved to graveyard.
+- **hyperbolic-space**: Specimen executed. Documentation void. Redundant with `hyperbolic-dungeon`. Numeric instability. Grace period expired. Moved to graveyard.
+- **penrose-build**: Specimen executed. Documentation void. Redundant with `penrose-deps`. Failed to improve during grace period. Moved to graveyard.
+- **ferrous-sector**: Specimen executed. Redundant with `ferrous-graph`. Documentation void. Moved to graveyard.
+- **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Grace period expired. Moved to graveyard.
 - **slime-train**: Specimen executed. Documentation void. Redundant with `myco-transit`. Moved to graveyard.
 - **event-horizon**: Specimen executed. Orphaned and undocumented. Collapsed into itself. Moved to graveyard.
 - **entropy-ray**: Specimen executed. Orphaned and undocumented. Simulating its own decay. Moved to graveyard.
@@ -60,7 +77,6 @@
 - **text-erosion**: Specimen executed. Documentation void. Generic implementation (SDF terrain). Lacks persona alignment. Grace period expired. Moved to graveyard.
 - **jpeg-garden**: Specimen executed. Documentation void. Implementation obscure. Grace period expired. Moved to graveyard.
 - **sculpt-term**: Terminal compilation failure (`ratatui` backend error). Documentation void. Executed.
-- **retinal-glitch**: Specimen condemned. Failed to add documentation despite grace period. Moved to graveyard.
 - **thread-frequency**: Specimen executed. Documentation void. Redundant with `schrodingers-beat`. Moved to graveyard.
 - **origami-ui**: Specimen executed. Redundant with `miura-interface`. Documentation void. Zombie status confirmed. Moved to graveyard.
 - **git_galaxy**: Specimen executed. Moved to graveyard. Naming convention violation (`snake_case`). Redundant with `git-landscape`.
@@ -118,3 +134,5 @@
 - **kinetic-crease**: Specimen executed. Documentation void. Generic implementation. Grace period expired. Moved to graveyard.
 - **text-terra**: Specimen executed. Redundant with `text-erosion`. Static implementation. Biomass returned to the void.
 - **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
+- **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.
+- **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.

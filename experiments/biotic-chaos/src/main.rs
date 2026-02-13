@@ -60,12 +60,12 @@ async fn main() {
         }
 
         if is_mouse_button_down(MouseButton::Right) {
-             let (mx, my) = mouse_position();
-             if my <= lattice_h {
-                 let gx = (mx / screen_w * GRID_W as f32) as usize;
-                 let gy = (my / lattice_h * GRID_H as f32) as usize;
-                 lattice.perturb(gx, gy, 10);
-             }
+            let (mx, my) = mouse_position();
+            if my <= lattice_h {
+                let gx = (mx / screen_w * GRID_W as f32) as usize;
+                let gy = (my / lattice_h * GRID_H as f32) as usize;
+                lattice.perturb(gx, gy, 10);
+            }
         }
 
         if is_key_pressed(KeyCode::Space) {
@@ -103,7 +103,7 @@ async fn main() {
             } else if *val < 0.8 {
                 Color::new(0.0, (*val - 0.5) * 3.3, 1.0, 1.0)
             } else {
-                 Color::new((*val - 0.8) * 5.0, 1.0, 1.0, 1.0)
+                Color::new((*val - 0.8) * 5.0, 1.0, 1.0, 1.0)
             };
 
             image.set_pixel(x as u32, y as u32, color);
@@ -119,7 +119,7 @@ async fn main() {
         let start_idx = mid_y * GRID_W;
         for x in 0..GRID_W {
             let val = lattice.cells[start_idx + x];
-             let color = if val < 0.01 {
+            let color = if val < 0.01 {
                 BLACK
             } else {
                 Color::new(val, val, val, 1.0)
@@ -137,10 +137,16 @@ async fn main() {
         // Draw Lattice
         // Take up 80% of height
         let lattice_h = screen_h * 0.8;
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_w, lattice_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_w, lattice_h)),
+                ..Default::default()
+            },
+        );
 
         // Draw History (Bifurcation Slice) at bottom
         // We need to draw it with UV shift to make it look like scrolling
@@ -148,10 +154,16 @@ async fn main() {
         // Actually, easiest is just draw it fixed for now, allowing the "scanline" to move.
 
         let history_h = screen_h - lattice_h;
-        draw_texture_ex(&history_texture, 0.0, lattice_h, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_w, history_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &history_texture,
+            0.0,
+            lattice_h,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_w, history_h)),
+                ..Default::default()
+            },
+        );
 
         // Draw scanline on history
         let scan_y = lattice_h + (current_line_idx as f32 / HISTORY_H as f32) * history_h;
@@ -160,7 +172,13 @@ async fn main() {
         // --- UI ---
         draw_text("Biotic Chaos", 10.0, 20.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 10.0, 40.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Epsilon: {:.3} (Up/Down)", lattice.epsilon), 10.0, 60.0, 20.0, YELLOW);
+        draw_text(
+            &format!("Epsilon: {:.3} (Up/Down)", lattice.epsilon),
+            10.0,
+            60.0,
+            20.0,
+            YELLOW,
+        );
         draw_text("Left Click: Paint Chaos (r=3.9)", 10.0, 80.0, 20.0, RED);
         draw_text("Right Click: Perturb", 10.0, 100.0, 20.0, GREEN);
         draw_text("Space: Pause | R: Reset", 10.0, 120.0, 20.0, LIGHTGRAY);

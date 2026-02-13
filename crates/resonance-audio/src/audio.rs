@@ -1,7 +1,15 @@
 /// Shared Audio Model Logic for Resonance Experiments
-use crate::physics::PhysicsGrid;
+use crate::physics::{Material, PhysicsGrid};
 use crossbeam_channel::{Receiver, Sender};
 use std::f32::consts::PI;
+
+/// A snapshot of the simulation state for visualization.
+#[derive(Clone)]
+pub struct AudioSnapshot {
+    pub pressure: Vec<f32>,
+    pub materials: Vec<Material>,
+    pub energy: Vec<f32>,
+}
 
 /// Commands to control the audio simulation state.
 ///
@@ -65,6 +73,12 @@ pub enum AudioCommand {
         /// The Y coordinate to clear.
         y: usize,
     },
+    /// Paints a material at the specified coordinates.
+    PaintMaterial {
+        x: usize,
+        y: usize,
+        material: Material,
+    },
     /// Instantly zeroes out all energy in the simulation grid.
     ClearWaves,
     /// Removes all walls from the simulation grid.
@@ -111,7 +125,7 @@ pub struct AudioModel {
     /// Receiver for incoming commands from the main thread.
     pub command_rx: Receiver<AudioCommand>,
     /// Sender for simulation snapshots (for visualization).
-    pub snapshot_tx: Sender<Vec<f32>>,
+    pub snapshot_tx: Sender<AudioSnapshot>,
     /// Counter for generated samples, used for snapshot timing.
     pub sample_counter: usize,
     /// Active continuous oscillators.
@@ -133,7 +147,7 @@ impl AudioModel {
         width: usize,
         height: usize,
         command_rx: Receiver<AudioCommand>,
-        snapshot_tx: Sender<Vec<f32>>,
+        snapshot_tx: Sender<AudioSnapshot>,
     ) -> Self {
         Self {
             grid: PhysicsGrid::new(width, height),
@@ -212,6 +226,9 @@ impl AudioModel {
                 }
                 AudioCommand::AddWall { x, y } => self.grid.add_wall(x, y),
                 AudioCommand::RemoveWall { x, y } => self.grid.remove_wall(x, y),
+                AudioCommand::PaintMaterial { x, y, material } => {
+                    self.grid.set_material(x, y, material)
+                }
                 AudioCommand::ClearWaves => self.grid.clear_waves(),
                 AudioCommand::ClearWalls => self.grid.clear_walls(),
                 AudioCommand::MoveListener { x, y } => {
@@ -236,7 +253,7 @@ impl AudioModel {
                 // Inject into grid using precomputed idx
                 // We checked bounds on insertion, so idx is valid.
                 // We must check if the cell is a wall.
-                if !self.grid.walls[osc.idx] {
+                if self.grid.materials[osc.idx] != Material::Wall {
                     self.grid.u[osc.idx] += val;
                 }
             }
@@ -257,7 +274,7 @@ impl AudioModel {
 
                     if *x < self.grid.width && *y < self.grid.height {
                         let idx = *y * self.grid.width + *x;
-                        if !self.grid.walls[idx] {
+                        if self.grid.materials[idx] != Material::Wall {
                             self.grid.u[idx] += val;
                         }
                     }
@@ -280,7 +297,11 @@ impl AudioModel {
             #[allow(clippy::manual_is_multiple_of)]
             if self.sample_counter % 735 == 0 {
                 // Ignore error if channel is full
-                let _ = self.snapshot_tx.try_send(self.grid.u.clone());
+                let _ = self.snapshot_tx.try_send(AudioSnapshot {
+                    pressure: self.grid.u.clone(),
+                    materials: self.grid.materials.clone(),
+                    energy: self.grid.energy_map.clone(),
+                });
             }
         }
     }

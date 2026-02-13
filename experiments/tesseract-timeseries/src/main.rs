@@ -1,7 +1,6 @@
-mod math4d;
 mod geometry;
+mod math4d;
 
-use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
@@ -10,11 +9,15 @@ use crossterm::{
 };
 use ratatui::{
     prelude::*,
-    widgets::{canvas::{Canvas, Line as CanvasLine}, Block, Borders, Paragraph},
+    widgets::{
+        canvas::{Canvas, Line as CanvasLine},
+        Block, Borders, Paragraph,
+    },
 };
+use std::time::{Duration, Instant};
 
-use math4d::{Rotor4, project_4d_to_3d};
-use geometry::{tesseract, time_series, combine, Mesh4D};
+use geometry::{combine, tesseract, time_series, Mesh4D};
+use math4d::{project_4d_to_3d, Rotor4};
 
 struct App {
     mesh: Mesh4D,
@@ -138,18 +141,26 @@ fn ui(f: &mut Frame, app: &mut App) {
     // Info Bar
     let info_text = vec![
         Line::from(vec![
-            Span::styled("Tesseract Time Series", Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+            Span::styled(
+                "Tesseract Time Series",
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            ),
             Span::raw(" | "),
-            Span::raw(format!("XW: {:.2} YW: {:.2} ZW: {:.2}", app.angle_xw, app.angle_yw, app.angle_zw)),
+            Span::raw(format!(
+                "XW: {:.2} YW: {:.2} ZW: {:.2}",
+                app.angle_xw, app.angle_yw, app.angle_zw
+            )),
         ]),
-        Line::from(vec![
-            Span::raw("Arrows: Rotate 3D | 1/2/3: Rotate 4D Planes | Space: Pause | Q: Quit"),
-        ]),
+        Line::from(vec![Span::raw(
+            "Arrows: Rotate 3D | 1/2/3: Rotate 4D Planes | Space: Pause | Q: Quit",
+        )]),
     ];
 
     f.render_widget(
         Paragraph::new(info_text).block(Block::default().borders(Borders::ALL)),
-        chunks[1]
+        chunks[1],
     );
 
     // 4D Rendering
@@ -157,12 +168,20 @@ fn ui(f: &mut Frame, app: &mut App) {
 
     // Create Rotor
     let rotor = Rotor4::new(
-        app.angle_xw, app.angle_yw, app.angle_zw,
-        app.angle_xy, app.angle_xz, app.angle_yz
+        app.angle_xw,
+        app.angle_yw,
+        app.angle_zw,
+        app.angle_xy,
+        app.angle_xz,
+        app.angle_yz,
     );
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("4D Projection"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("4D Projection"),
+        )
         .x_bounds([-2.0, 2.0])
         .y_bounds([-2.0, 2.0]) // Keep aspect ratio roughly consistent if possible
         .paint(move |ctx| {
@@ -190,7 +209,11 @@ fn ui(f: &mut Frame, app: &mut App) {
                 let y2 = p2_3d.y * (cam_dist_3d / (cam_dist_3d + p2_3d.z));
 
                 // Color based on W depth?
-                let color = if (r1.w + r2.w) > 0.0 { Color::Yellow } else { Color::Blue };
+                let color = if (r1.w + r2.w) > 0.0 {
+                    Color::Yellow
+                } else {
+                    Color::Blue
+                };
 
                 // Draw Line
                 ctx.draw(&CanvasLine {

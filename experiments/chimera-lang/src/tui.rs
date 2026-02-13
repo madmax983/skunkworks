@@ -10,7 +10,6 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
@@ -21,6 +20,8 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::io;
+
+const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
@@ -100,11 +101,20 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    #[cfg(feature = "nova")]
     Pandemonium,
     BioticChaos,
     Catalyst,
     #[cfg(feature = "nova")]
     Hyperspace,
+    #[cfg(feature = "nova")]
+    Hologram,
+    #[cfg(feature = "nova")]
+    Weaver,
+    #[cfg(feature = "nova")]
+    Terminal,
+    #[cfg(feature = "nova")]
+    Attractor,
 }
 
 enum InputMode {
@@ -184,6 +194,12 @@ pub(crate) struct AppState {
     pub(crate) catalyst_scroll: usize,
     pub(crate) show_view_selector: bool,
     pub(crate) view_selector_state: std::cell::RefCell<ListState>,
+    #[cfg(feature = "nova")]
+    pub(crate) terminal_input: String,
+    #[cfg(feature = "nova")]
+    pub(crate) terminal_history: Vec<String>,
+    #[cfg(feature = "nova")]
+    pub(crate) terminal_history_idx: usize,
 }
 
 impl AppState {
@@ -261,6 +277,12 @@ impl AppState {
             pandemonium_radius: 5.0,
             pandemonium_selected_tool: 0,
             catalyst_scroll: 0,
+            #[cfg(feature = "nova")]
+            terminal_input: String::new(),
+            #[cfg(feature = "nova")]
+            terminal_history: Vec::new(),
+            #[cfg(feature = "nova")]
+            terminal_history_idx: 0,
         }
     }
 }
@@ -562,6 +584,7 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
             if let ViewMode::Pandemonium = app_state.view_mode {
                 render_pandemonium(f, vm, app_state);
                 return;
@@ -580,6 +603,18 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Hyperspace = app_state.view_mode {
                 render_hyperspace(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Hologram = app_state.view_mode {
+                render_hologram(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Weaver = app_state.view_mode {
+                render_weaver(f, vm, app_state);
                 return;
             }
 
@@ -606,10 +641,41 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Terminal = app_state.view_mode {
+                render_terminal(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Attractor = app_state.view_mode {
+                render_attractor(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
                 apply_glitch_fx(f.buffer_mut(), vm.glitch_level);
+            }
+
+            if vm.glitch_level > 0.8 {
+                let area = f.area();
+                let warning_area = ratatui::layout::Rect {
+                    x: area.width.saturating_sub(20) / 2,
+                    y: 0,
+                    width: 20,
+                    height: 1,
+                };
+                let warning = Paragraph::new("ENTROPY STORM")
+                    .style(
+                        Style::default()
+                            .bg(Color::Red)
+                            .fg(Color::White)
+                            .add_modifier(Modifier::BOLD | Modifier::SLOW_BLINK),
+                    )
+                    .alignment(ratatui::layout::Alignment::Center);
+                f.render_widget(warning, warning_area);
             }
         })?;
 
@@ -679,6 +745,51 @@ where
                                 app_state.palette_char = Some(chars[app_state.palette_idx]);
                             }
                             app_state.palette_open = false;
+                        }
+                        _ => {}
+                    }
+                    continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Terminal = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Enter => {
+                            let input = app_state.terminal_input.clone();
+                            if !input.is_empty() {
+                                app_state.terminal_history.push(input.clone());
+                                app_state.terminal_history_idx = app_state.terminal_history.len();
+                                app_state.terminal_input.clear();
+
+                                vm.output.push(format!("> {}", input));
+                                vm.stack.push(crate::vm::Value::Str(input));
+                                crate::vm::nova_chimeric::exec_chimeric_op(
+                                    vm,
+                                    crate::opcode::OpCode::Chimeric,
+                                    &[],
+                                );
+                            }
+                        }
+                        KeyCode::Up => {
+                            if app_state.terminal_history_idx > 0 {
+                                app_state.terminal_history_idx -= 1;
+                                app_state.terminal_input = app_state.terminal_history[app_state.terminal_history_idx].clone();
+                            }
+                        }
+                        KeyCode::Down => {
+                            if app_state.terminal_history_idx + 1 < app_state.terminal_history.len() {
+                                app_state.terminal_history_idx += 1;
+                                app_state.terminal_input = app_state.terminal_history[app_state.terminal_history_idx].clone();
+                            } else {
+                                app_state.terminal_history_idx = app_state.terminal_history.len();
+                                app_state.terminal_input.clear();
+                            }
+                        }
+                        KeyCode::Char(c) => {
+                            app_state.terminal_input.push(c);
+                        }
+                        KeyCode::Backspace => {
+                            app_state.terminal_input.pop();
                         }
                         _ => {}
                     }
@@ -1161,7 +1272,8 @@ where
                                     if let Ok(v) = app_state.input_buffer.parse::<f64>() {
                                         let (x, y) = app_state.grid_cursor;
                                         vm.chaos_struct.grid[y][x] = v.clamp(0.0, 1.0);
-                                        app_state.status_msg = format!("Chaos Grid updated at {},{}", x, y);
+                                        app_state.status_msg =
+                                            format!("Chaos Grid updated at {},{}", x, y);
                                     }
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
@@ -1172,6 +1284,27 @@ where
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Hyperspace => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Hologram => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Weaver => {
+                                    // Use input buffer as pattern
+                                    app_state.input_mode = InputMode::Normal;
+                                    // Don't clear buffer, keep it for preview
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Terminal => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Attractor => {
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
@@ -1420,6 +1553,14 @@ where
                             ViewMode::Laboratory => ViewMode::Genome,
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hologram => ViewMode::Genome,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Weaver => ViewMode::Terminal,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Terminal => ViewMode::Attractor,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Attractor => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1562,8 +1703,6 @@ where
                         }
                     }
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('O') => app_state.view_mode = ViewMode::Orca,
-                    #[cfg(feature = "nova")]
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
@@ -1577,6 +1716,57 @@ where
                     KeyCode::Char('P') => app_state.view_mode = ViewMode::Pandemonium,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('H') => app_state.view_mode = ViewMode::Hyperspace,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('I') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            // Interfere (DNA -> Hologram)
+                            let idx = app_state.selected_strand;
+                            vm.stack.push(crate::vm::Value::Int(idx as i64));
+                            crate::vm::nova_hologram::exec_interfere(
+                                vm,
+                                crate::opcode::OpCode::Interfere,
+                                &[],
+                            );
+                            app_state.status_msg = format!("Interfered strand {}", idx);
+                        } else {
+                            app_state.view_mode = ViewMode::Hologram;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('O') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            // Refract (Hologram -> DNA)
+                            crate::vm::nova_hologram::exec_refract(
+                                vm,
+                                crate::opcode::OpCode::Refract,
+                                &[],
+                            );
+                        } else {
+                            app_state.view_mode = ViewMode::Orca;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('+') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.hologram_grid[y][x].0 += 0.1;
+                            vm.hologram_grid[y][x].1 += 0.1;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('-') => {
+                        if let ViewMode::Hologram = app_state.view_mode {
+                            let (x, y) = app_state.grid_cursor;
+                            vm.hologram_grid[y][x].0 -= 0.1;
+                            vm.hologram_grid[y][x].1 -= 0.1;
+                        }
+                    }
                     #[cfg(all(feature = "oracle", feature = "nova"))]
                     KeyCode::Char('/') => {
                         if let ViewMode::Grimoire = app_state.view_mode {
@@ -1660,12 +1850,23 @@ where
                                 if let Some((s, g)) = target {
                                     match app_state.pandemonium_selected_tool {
                                         0 => crate::vm::pandemonium::apply_mutation(vm, s, g),
-                                        1 => crate::vm::pandemonium::apply_scramble(vm, s, g, app_state.pandemonium_radius),
-                                        2 => crate::vm::pandemonium::apply_purge(vm, s, g, app_state.pandemonium_radius),
+                                        1 => crate::vm::pandemonium::apply_scramble(
+                                            vm,
+                                            s,
+                                            g,
+                                            app_state.pandemonium_radius,
+                                        ),
+                                        2 => crate::vm::pandemonium::apply_purge(
+                                            vm,
+                                            s,
+                                            g,
+                                            app_state.pandemonium_radius,
+                                        ),
                                         3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
                                         _ => {}
                                     }
-                                    app_state.status_msg = format!("Pandemonium applied at {},{}", s, g);
+                                    app_state.status_msg =
+                                        format!("Pandemonium applied at {},{}", s, g);
                                 }
                             } else if let ViewMode::Fishing = app_state.view_mode {
                                 if app_state.fishing_cast {
@@ -1888,7 +2089,8 @@ where
                                 app_state.kaleidoscope_hue_idx = 5;
                             }
                         } else if let ViewMode::Pandemonium = app_state.view_mode {
-                            app_state.pandemonium_radius = (app_state.pandemonium_radius - 1.0).max(1.0);
+                            app_state.pandemonium_radius =
+                                (app_state.pandemonium_radius - 1.0).max(1.0);
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -1940,7 +2142,9 @@ where
                             }
                         }
                         ViewMode::Catalyst => {
-                            if !vm.catalysts.is_empty() && app_state.catalyst_scroll + 1 < vm.catalysts.len() {
+                            if !vm.catalysts.is_empty()
+                                && app_state.catalyst_scroll + 1 < vm.catalysts.len()
+                            {
                                 app_state.catalyst_scroll += 1;
                             }
                         }
@@ -2081,12 +2285,18 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Hyperspace => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             match app_state.selected_strand {
-                                // 0=A, 1=B, 2=Method
+                                // 0=A, 1=B, 2=Method/Pattern
                                 0 => {
                                     if app_state.lab_parent_a > 0 {
                                         app_state.lab_parent_a -= 1;
@@ -2098,8 +2308,10 @@ where
                                     }
                                 }
                                 2 => {
-                                    if app_state.lab_method > 0 {
-                                        app_state.lab_method -= 1;
+                                    if let ViewMode::Laboratory = app_state.view_mode {
+                                        if app_state.lab_method > 0 {
+                                            app_state.lab_method -= 1;
+                                        }
                                     }
                                 }
                                 _ => {}
@@ -2143,6 +2355,10 @@ where
                                 app_state.selected_neuron_coords = Some(*neurons_sorted[0]);
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2190,7 +2406,7 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method
@@ -2205,8 +2421,10 @@ where
                                     }
                                 }
                                 2 => {
-                                    if app_state.lab_method < 2 {
-                                        app_state.lab_method += 1;
+                                    if let ViewMode::Laboratory = app_state.view_mode {
+                                        if app_state.lab_method < 2 {
+                                            app_state.lab_method += 1;
+                                        }
                                     }
                                 }
                                 _ => {}
@@ -2276,8 +2494,14 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
-                            #[cfg(feature = "nova")]
-                            ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Topology => {}
                         #[cfg(feature = "nova")]
@@ -2371,6 +2595,10 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2437,10 +2665,16 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
                                 app_state.selected_strand += 1;
                             } else {
@@ -2525,6 +2759,10 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2566,6 +2804,12 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Hyperspace => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Hologram => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                         ViewMode::Catalyst => {}
                         #[cfg(feature = "elektra")]
                         ViewMode::Elektra => {
@@ -2592,7 +2836,7 @@ where
                         ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Laboratory => {
+                        ViewMode::Weaver | ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
                             } else {
@@ -2679,6 +2923,10 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -2715,6 +2963,22 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Hyperspace => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Hologram => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Weaver => {
+                                // Allow editing mode for Pattern entry
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Terminal => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Attractor => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -3669,7 +3933,9 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Span::styled(
                 &app_state.babel_pattern,
                 if app_state.babel_focus == 0 {
-                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD)
                 } else {
                     Style::default()
                 },
@@ -3680,7 +3946,9 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             Span::styled(
                 &app_state.babel_input,
                 if app_state.babel_focus == 1 {
-                    Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                    Style::default()
+                        .fg(Color::Yellow)
+                        .add_modifier(Modifier::BOLD)
                 } else {
                     Style::default()
                 },
@@ -3693,11 +3961,8 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         )),
         Line::from(Span::raw(format!("Tablet Size: {}", vm.tablet.len()))),
     ];
-    let input_widget = Paragraph::new(input_lines).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Parser Test"),
-    );
+    let input_widget = Paragraph::new(input_lines)
+        .block(Block::default().borders(Borders::ALL).title("Parser Test"));
     f.render_widget(input_widget, bottom_chunks[0]);
 
     // 4. Babel Chaos & Controls (Bottom Right)
@@ -3708,7 +3973,11 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     let integrity = vm.babel_state.integrity;
     let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Linguistic Integrity"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Linguistic Integrity"),
+        )
         .gauge_style(Style::default().fg(if integrity > 0.8 {
             Color::Green
         } else if integrity > 0.4 {
@@ -3729,10 +3998,16 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         map_items.push(ListItem::new("No active confusions."));
     } else {
         for (k, v) in &vm.babel_state.chaos_map {
-            map_items.push(ListItem::new(format!("{} -> {}", k, v)).style(Style::default().fg(Color::Magenta)));
+            map_items.push(
+                ListItem::new(format!("{} -> {}", k, v)).style(Style::default().fg(Color::Magenta)),
+            );
         }
     }
-    let map_list = List::new(map_items).block(Block::default().borders(Borders::ALL).title("Chaos Mappings"));
+    let map_list = List::new(map_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Chaos Mappings"),
+    );
     f.render_widget(map_list, lower_right[0]);
 
     let controls = vec![
@@ -3743,11 +4018,8 @@ fn render_babel(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  Space: Run Parser (Regex)"),
         Line::from("  Tab: Switch Focus (Pattern/Input)"),
     ];
-    let control_widget = Paragraph::new(controls).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Lab Controls"),
-    );
+    let control_widget = Paragraph::new(controls)
+        .block(Block::default().borders(Borders::ALL).title("Lab Controls"));
     f.render_widget(control_widget, lower_right[1]);
 }
 
@@ -4174,8 +4446,16 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Catalyst => "CATALYST CHAMBER (DIRECTED EVOLUTION)",
         #[cfg(feature = "nova")]
         ViewMode::Hyperspace => "HYPERSPACE (RECURSION TUNNEL)",
+        #[cfg(feature = "nova")]
+        ViewMode::Hologram => "HOLOGRAPHIC PLATE (INTERFERENCE)",
+        #[cfg(feature = "nova")]
+        ViewMode::Weaver => "THE WEAVER",
+        #[cfg(feature = "nova")]
+        ViewMode::Terminal => "CHIMERIC TERMINAL",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
     };
 
     let title = match app_state.input_mode {
@@ -4403,6 +4683,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => Color::Green,
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
+                        crate::vm::nova::OrganelleType::MadScientist => Color::Magenta,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -4415,6 +4696,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => "S",
                         crate::vm::nova::OrganelleType::Choir => "♫",
                         crate::vm::nova::OrganelleType::Wisp => "*",
+                        crate::vm::nova::OrganelleType::MadScientist => "⚛",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
@@ -4563,14 +4845,17 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
             let content = if vm.babel_state.integrity < 0.9 {
                 let mut rng = rand::thread_rng();
                 if rng.gen_bool(1.0 - vm.babel_state.integrity) {
-                    val.chars().map(|c| {
-                        if rng.gen_bool(0.3) {
-                            let glitch_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
-                            glitch_chars[rng.gen_range(0..glitch_chars.len())]
-                        } else {
-                            c
-                        }
-                    }).collect()
+                    val.chars()
+                        .map(|c| {
+                            if rng.gen_bool(0.3) {
+                                let glitch_chars =
+                                    ['!', '@', '#', '$', '%', '^', '&', '*', '?', '¿', '¡'];
+                                glitch_chars[rng.gen_range(0..glitch_chars.len())]
+                            } else {
+                                c
+                            }
+                        })
+                        .collect()
                 } else {
                     val.clone()
                 }
@@ -4725,6 +5010,10 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::BioticChaos, "Biotic Chaos", "Tab"));
         views.push((ViewMode::Catalyst, "Catalyst Chamber", "Tab"));
         views.push((ViewMode::Hyperspace, "Hyperspace", "H"));
+        views.push((ViewMode::Hologram, "Hologram", "I"));
+        views.push((ViewMode::Weaver, "The Weaver", "W"));
+        views.push((ViewMode::Terminal, "Terminal", "`"));
+        views.push((ViewMode::Attractor, "Attractor", "A"));
     }
     views
 }
@@ -4834,59 +5123,83 @@ fn render_palette(f: &mut Frame, app_state: &AppState) {
 
 #[cfg(feature = "biophysics")]
 fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
+    use ratatui::widgets::canvas::{Canvas, Line as CanvasLine};
+
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([Constraint::Percentage(30), Constraint::Percentage(70)].as_ref())
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(f.area());
 
+    // Left: Neural Map (Canvas)
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Connectome"))
+        .x_bounds([0.0, 16.0])
+        .y_bounds([0.0, 16.0])
+        .paint(|ctx| {
+            // Draw Synapses
+            for (source, targets) in &vm.biophysics_synapses {
+                let sx = source.1 as f64 + 0.5;
+                let sy = 16.0 - (source.0 as f64 + 0.5);
+
+                for (target, _) in targets {
+                    let tx = target.1 as f64 + 0.5;
+                    let ty = 16.0 - (target.0 as f64 + 0.5);
+
+                    ctx.draw(&CanvasLine {
+                        x1: sx,
+                        y1: sy,
+                        x2: tx,
+                        y2: ty,
+                        color: Color::DarkGray,
+                    });
+                }
+            }
+
+            // Draw Neurons
+            for (coord, neuron) in &vm.neurons {
+                let x = coord.1 as f64 + 0.5;
+                let y = 16.0 - (coord.0 as f64 + 0.5);
+
+                let _color = if neuron.v > 0.0 {
+                    Color::Yellow
+                } else if neuron.v > -50.0 {
+                    Color::Cyan
+                } else {
+                    Color::Blue
+                };
+
+                let symbol = if neuron.v > 0.0 { "*" } else { "O" };
+                ctx.print(x, y, symbol);
+            }
+
+            // Draw selection cursor
+            if let Some((y, x)) = app_state.selected_neuron_coords {
+                let cx = x as f64 + 0.5;
+                let cy = 16.0 - (y as f64 + 0.5);
+                ctx.print(cx, cy, "+");
+            }
+        });
+    f.render_widget(canvas, chunks[0]);
+
+    // Right: Details
     let right_split = Layout::default()
         .direction(Direction::Vertical)
         .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
         .split(chunks[1]);
 
-    // Neuron List
-    let mut neuron_items = Vec::new();
-    let mut neurons_sorted: Vec<_> = vm.neurons.keys().collect();
-    neurons_sorted.sort();
-
-    for (i, coord) in neurons_sorted.iter().enumerate() {
-        let neuron = &vm.neurons[coord];
-        let is_selected = app_state.selected_neuron_coords == Some(**coord);
-
-        let style = if is_selected {
-            Style::default()
-                .fg(Color::Yellow)
-                .add_modifier(Modifier::BOLD)
-        } else {
-            Style::default().fg(Color::White)
-        };
-
-        // Auto-select first if none selected
-        if app_state.selected_neuron_coords.is_none() && i == 0 {
-            app_state.selected_neuron_coords = Some(**coord);
-        }
-
-        neuron_items.push(ListItem::new(Span::styled(
-            format!("({}, {}) - {:.2}mV", coord.1, coord.0, neuron.v),
-            style,
-        )));
-    }
-
-    let neuron_list = List::new(neuron_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Neurons (Cortex)"),
-    );
-    f.render_widget(neuron_list, chunks[0]);
-
-    // Details & Oscilloscope
     if let Some(coord) = app_state.selected_neuron_coords {
         if let Some(neuron) = vm.neurons.get(&coord) {
-            // Sparkline
-            // ratatui::widgets::Sparkline is what we need but we must import it if not present.
-            // Wait, previous code used Sparkline but it wasn't in imports in my `read_file`.
-            // It must be there or I missed it.
-            // I'll assume it works as it was existing code.
+            let details = vec![
+                Line::from(format!("Neuron [{}, {}]", coord.1, coord.0)),
+                Line::from(format!("V: {:.2} mV", neuron.v)),
+                Line::from(format!("I_inj: {:.2}", neuron.i_inj)),
+                Line::from(" "),
+                Line::from(format!("Last Spike: {}", neuron.last_spike)),
+            ];
+            let info = Paragraph::new(details)
+                .block(Block::default().borders(Borders::ALL).title("Biophysics"));
+            f.render_widget(info, right_split[0]);
+
             let history = &app_state.voltage_history;
             let sparkline = ratatui::widgets::Sparkline::default()
                 .block(
@@ -4897,23 +5210,15 @@ fn render_cortex(f: &mut Frame, vm: &mut ChimeraVM, app_state: &mut AppState) {
                 .data(history)
                 .style(Style::default().fg(Color::Cyan));
             f.render_widget(sparkline, right_split[1]);
-
-            // Details
-            let details = vec![
-                Line::from(format!("Membrane Potential (v): {:.2} mV", neuron.v)),
-                Line::from(format!("Injected Current (i_inj): {:.2}", neuron.i_inj)),
-                Line::from(" "),
-                Line::from(format!("Na Activation (m): {:.4}", neuron.m)),
-                Line::from(format!("Na Inactivation (h): {:.4}", neuron.h)),
-                Line::from(format!("K Activation (n): {:.4}", neuron.n)),
-            ];
-            let info = Paragraph::new(details).block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title(format!("Neuron Details [{}, {}]", coord.1, coord.0)),
-            );
+        } else {
+            let info = Paragraph::new("Selected neuron died or missing.")
+                .block(Block::default().borders(Borders::ALL));
             f.render_widget(info, right_split[0]);
         }
+    } else {
+        let info = Paragraph::new("Select a neuron to view details.")
+            .block(Block::default().borders(Borders::ALL));
+        f.render_widget(info, right_split[0]);
     }
 }
 #[cfg(feature = "resonance")]
@@ -4929,10 +5234,22 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         let mut spans = Vec::new();
         for x in 0..16 {
             let idx = y * 16 + x;
-            let val = if idx < vm.audio_snapshot.len() {
-                vm.audio_snapshot[idx]
+            let val = if idx < vm.audio_snapshot.pressure.len() {
+                vm.audio_snapshot.pressure[idx]
             } else {
                 0.0
+            };
+
+            // Check Harmonic
+            #[cfg(feature = "nova")]
+            let (freq, amp_res) = vm.resonance_grid[y][x];
+            #[cfg(not(feature = "nova"))]
+            let (freq, amp_res) = (0.0, 0.0);
+
+            let is_harmonic = if amp_res > 10.0 {
+                GOLDEN_FREQUENCIES.iter().any(|&g| (freq - g).abs() < 5.0)
+            } else {
+                false
             };
 
             // Visualizing -1.0 to 1.0
@@ -4947,7 +5264,11 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 "@"
             };
 
-            let color = if val > 0.0 {
+            let color = if abs_val > 0.8 {
+                Color::Red // Mutation / Shockwave
+            } else if is_harmonic {
+                Color::Yellow // Harmonic
+            } else if val > 0.0 {
                 if val > 0.5 {
                     Color::Cyan
                 } else {
@@ -4963,7 +5284,15 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 Color::DarkGray
             };
 
-            spans.push(Span::styled(ch, Style::default().fg(color)));
+            let mut style = Style::default().fg(color);
+            if abs_val > 0.8 {
+                style = style.add_modifier(Modifier::RAPID_BLINK | Modifier::BOLD);
+            }
+            if is_harmonic {
+                style = style.add_modifier(Modifier::BOLD);
+            }
+
+            spans.push(Span::styled(ch, style));
             spans.push(Span::raw(" "));
         }
         lines.push(Line::from(spans));
@@ -5583,7 +5912,7 @@ fn render_retina(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     f.render_widget(retina_widget, chunks[0]);
 
     let help = Paragraph::new(
-        "Retina Display Active.\nControl via `retina_draw`, `retina_clear` opcodes.",
+        "Retina Display Active.\nControl via `retina_draw`, `retina_clear`.\nGlitch: `scanline(y)`, `rasterize(y,x,j,m)`.",
     )
     .block(Block::default().borders(Borders::ALL));
     f.render_widget(help, chunks[1]);
@@ -6155,6 +6484,145 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Circuit Analyzer"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(25), // Strand A
+                Constraint::Percentage(25), // Strand B
+                Constraint::Percentage(50), // Loom
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
+
+    // Helper to render strand preview (reused concept from Laboratory)
+    let render_strand = |idx: usize, title: &str, is_focused: bool| {
+        let mut items = Vec::new();
+        if idx < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[idx];
+            for gene in &strand.genes {
+                items.push(ListItem::new(format!("{}", gene.op)));
+            }
+        } else {
+            items.push(ListItem::new("Invalid Strand"));
+        }
+
+        let border_style = if is_focused {
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::White)
+        };
+
+        List::new(items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(format!("{} (Idx: {})", title, idx))
+                .border_style(border_style),
+        )
+    };
+
+    // Strand A
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_a,
+            "Warp A",
+            app_state.selected_strand == 0,
+        ),
+        chunks[0],
+    );
+
+    // Strand B
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_b,
+            "Warp B",
+            app_state.selected_strand == 1,
+        ),
+        chunks[1],
+    );
+
+    // Loom (Pattern & Result)
+    let loom_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
+        .split(chunks[2]);
+
+    let pattern_str = &app_state.input_buffer;
+    let pattern_display = if pattern_str.is_empty() {
+        "Type pattern (Enter to edit)... e.g. ABAB".to_string()
+    } else {
+        pattern_str.clone()
+    };
+
+    let pattern_widget = Paragraph::new(pattern_display).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Weaving Pattern (A/B/X/0)")
+            .border_style(Style::default().fg(Color::Cyan)),
+    );
+    f.render_widget(pattern_widget, loom_chunks[0]);
+
+    // Preview Result
+    let mut preview_items = Vec::new();
+    let idx_a = app_state.lab_parent_a;
+    let idx_b = app_state.lab_parent_b;
+
+    if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
+        let strand_a = &vm.dna.helix.strands[idx_a];
+        let strand_b = &vm.dna.helix.strands[idx_b];
+        let mut ptr_a = 0;
+        let mut ptr_b = 0;
+
+        for c in pattern_str.chars() {
+            match c.to_ascii_uppercase() {
+                'A' => {
+                    if ptr_a < strand_a.genes.len() {
+                        preview_items.push(
+                            ListItem::new(format!("{}", strand_a.genes[ptr_a].op))
+                                .style(Style::default().fg(Color::Green)),
+                        );
+                        ptr_a += 1;
+                    }
+                }
+                'B' => {
+                    if ptr_b < strand_b.genes.len() {
+                        preview_items.push(
+                            ListItem::new(format!("{}", strand_b.genes[ptr_b].op))
+                                .style(Style::default().fg(Color::Blue)),
+                        );
+                        ptr_b += 1;
+                    }
+                }
+                'X' => {
+                    preview_items.push(
+                        ListItem::new("Random(A/B)").style(Style::default().fg(Color::Magenta)),
+                    );
+                    // Increment both? No, random logic is complex to preview statically.
+                    // Just showing placeholder.
+                }
+                '0' => {
+                    preview_items.push(
+                        ListItem::new("Nop (Skip)").style(Style::default().fg(Color::DarkGray)),
+                    );
+                }
+                _ => {}
+            }
+        }
+    }
+
+    let preview_list = List::new(preview_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Weft (Result Preview)"),
+    );
+    f.render_widget(preview_list, loom_chunks[1]);
 }
 
 #[cfg(feature = "nova")]
@@ -7487,12 +7955,14 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             "Chronostasis Timer: {} ticks",
             vm.chronostasis_timer
         )),
+        Line::from(format!("Chronos Integrity: {:.1}%", vm.chronos_integrity)),
+        Line::from(format!("Active Time Loops: {}", vm.paradox_loops.len())),
         Line::from(" "),
         Line::from(format!("Cursor: {},{}", cx, cy)),
         Line::from(" "),
         Line::from("Opcodes:"),
         Line::from("  TimeWarp(factor, radius)"),
-        Line::from("  Chronostasis(ticks)"),
+        Line::from("  TimeLoop(id) / Paradox(id, val)"),
         Line::from("  Retrograde(ticks)"),
         Line::from("  Sporulate / Germinate"),
     ];
@@ -7514,6 +7984,16 @@ fn render_chronos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     if echoes.is_empty() {
         echoes.push(ListItem::new("No history recorded."));
+    }
+
+    // Add Active Loops
+    if !vm.paradox_loops.is_empty() {
+        echoes.push(ListItem::new(""));
+        echoes
+            .push(ListItem::new("--- Active Loops ---").style(Style::default().fg(Color::Yellow)));
+        for (id, idx) in &vm.paradox_loops {
+            echoes.push(ListItem::new(format!("ID {}: Spore #{}", id, idx)));
+        }
     }
 
     let echo_list = List::new(echoes).block(
@@ -7607,6 +8087,7 @@ fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(info_widget, chunks[1]);
 }
 
+#[cfg(feature = "nova")]
 fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -7614,7 +8095,11 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         .split(f.area());
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Pandemonium Reactor"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Pandemonium Reactor"),
+        )
         .paint(|ctx| {
             let mut linear_idx = 0;
             for (s_idx, strand) in vm.dna.helix.strands.iter().enumerate() {
@@ -7633,7 +8118,11 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     };
 
                     ctx.draw(&ratatui::widgets::canvas::Line {
-                        x1: x, y1: y, x2: x+0.2, y2: y+0.2, color
+                        x1: x,
+                        y1: y,
+                        x2: x + 0.2,
+                        y2: y + 0.2,
+                        color,
                     });
 
                     linear_idx += 1;
@@ -7671,15 +8160,22 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("PANDEMONIUM REACTOR"),
         Line::from(" "),
         Line::from(format!("Tool: {} (1-4)", tool_name)),
-        Line::from(format!("Radius: {:.1} ([ / ])", app_state.pandemonium_radius)),
-        Line::from(format!("Cursor: {:.1}, {:.1}", app_state.pandemonium_cursor.0, app_state.pandemonium_cursor.1)),
+        Line::from(format!(
+            "Radius: {:.1} ([ / ])",
+            app_state.pandemonium_radius
+        )),
+        Line::from(format!(
+            "Cursor: {:.1}, {:.1}",
+            app_state.pandemonium_cursor.0, app_state.pandemonium_cursor.1
+        )),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Arrows: Move Cursor"),
         Line::from("  Space: Apply Tool"),
     ];
 
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Controls"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Controls"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -7737,7 +8233,9 @@ fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
     }
 
     let grid_widget = Paragraph::new(grid_lines).block(
-        Block::default().borders(Borders::ALL).title("Biotic Chaos (CML)"),
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Biotic Chaos (CML)"),
     );
     f.render_widget(grid_widget, chunks[0]);
 
@@ -7764,9 +8262,8 @@ fn render_biotic_chaos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) 
         Line::from("  chaos(2, v) -> Set coupling (v/100)"),
     ];
 
-    let info_widget = Paragraph::new(info).block(
-        Block::default().borders(Borders::ALL).title("Parameters"),
-    );
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Parameters"));
     f.render_widget(info_widget, chunks[1]);
 }
 
@@ -7785,7 +8282,9 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     } else {
         for (i, cat) in vm.catalysts.iter().enumerate() {
             let style = if i == app_state.catalyst_scroll {
-                Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD)
             } else {
                 Style::default().fg(Color::Cyan)
             };
@@ -7812,9 +8311,10 @@ fn render_catalyst(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let mut recipe_lines = Vec::new();
     if !vm.catalysts.is_empty() && app_state.catalyst_scroll < vm.catalysts.len() {
         let cat = &vm.catalysts[app_state.catalyst_scroll];
-        recipe_lines.push(Line::from(vec![
-            Span::styled(format!("Catalyst #{} Analysis", cat.id), Style::default().add_modifier(Modifier::BOLD)),
-        ]));
+        recipe_lines.push(Line::from(vec![Span::styled(
+            format!("Catalyst #{} Analysis", cat.id),
+            Style::default().add_modifier(Modifier::BOLD),
+        )]));
         recipe_lines.push(Line::from(""));
         recipe_lines.push(Line::from("Recipe (Gene Pattern):"));
 
@@ -7879,7 +8379,9 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 let step = relative_depth as f64;
                 let scale = 100.0 * (1.0 - (step / (max_steps + 2.0)));
 
-                if scale <= 0.0 { break; }
+                if scale <= 0.0 {
+                    break;
+                }
 
                 let rect_w = scale;
                 let rect_h = scale * 0.6;
@@ -7906,7 +8408,11 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                     } else {
                         format!("Current: Strand {}:{}", vm.ip.0, vm.ip.1)
                     };
-                    ctx.print(center_x - rect_w / 2.0 + 2.0, center_y + rect_h / 2.0 - 5.0, label);
+                    ctx.print(
+                        center_x - rect_w / 2.0 + 2.0,
+                        center_y + rect_h / 2.0 - 5.0,
+                        label,
+                    );
                 }
             }
         })
@@ -7924,6 +8430,193 @@ fn render_hyperspace(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
         Line::from("  Compose, Curry, Quote: Functional Ops"),
         Line::from("  Call/Ret: Manual flow"),
     ];
-    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Metrics"));
+    let info_widget =
+        Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Metrics"));
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_hologram(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // Hologram Grid Visualization
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let (re, im) = vm.hologram_grid[y][x];
+            let magnitude = (re * re + im * im).sqrt();
+            let phase = im.atan2(re); // -PI to PI
+
+            // Visualizing Magnitude as Character density
+            let ch = if magnitude < 0.1 {
+                " ".to_string()
+            } else if magnitude < 1.0 {
+                "·".to_string()
+            } else if magnitude < 2.0 {
+                "~".to_string()
+            } else if magnitude < 5.0 {
+                "x".to_string()
+            } else if magnitude < 10.0 {
+                "%".to_string()
+            } else {
+                "#".to_string()
+            };
+
+            // Visualizing Phase as Color
+            // Map -PI..PI to Hue spectrum
+            let hue = (phase + std::f64::consts::PI) / (2.0 * std::f64::consts::PI); // 0.0 to 1.0
+
+            let color = if magnitude < 0.1 {
+                Color::DarkGray
+            } else if hue < 0.16 {
+                Color::Red
+            } else if hue < 0.33 {
+                Color::Yellow
+            } else if hue < 0.5 {
+                Color::Green
+            } else if hue < 0.66 {
+                Color::Cyan
+            } else if hue < 0.83 {
+                Color::Blue
+            } else {
+                Color::Magenta
+            };
+
+            let mut style = Style::default().fg(color);
+
+            if magnitude > 10.0 {
+                style = style.add_modifier(Modifier::BOLD);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Interference Pattern (Re/Im)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info Panel
+    let (cx, cy) = app_state.grid_cursor;
+    let (re, im) = vm.hologram_grid[cy][cx];
+    let mag = (re * re + im * im).sqrt();
+    let phase = im.atan2(re);
+
+    let info = vec![
+        Line::from("HOLOGRAPHIC PLATE"),
+        Line::from(" "),
+        Line::from(format!("Cursor: {},{}", cx, cy)),
+        Line::from(format!("Real: {:.4}", re)),
+        Line::from(format!("Imag: {:.4}", im)),
+        Line::from(format!("Mag:  {:.4}", mag)),
+        Line::from(format!("Phase:{:.4} rad", phase)),
+        Line::from(" "),
+        Line::from("Operations:"),
+        Line::from("  Interfere(s) -> Encode Strand"),
+        Line::from("  Refract()    -> Decode to Strand"),
+        Line::from("  Project()    -> Manifest on Grid"),
+    ];
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Wave Analysis"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    // Show last N lines, oldest first (standard terminal log)
+    let log_start = vm.output.len().saturating_sub(30);
+    let log_items: Vec<ListItem> = vm.output.iter()
+        .skip(log_start)
+        .map(|s| ListItem::new(s.clone()).style(Style::default().fg(Color::Green)))
+        .collect();
+
+    let log_list = List::new(log_items).block(
+        Block::default().borders(Borders::ALL).title("Chimeric Console (Type '?' for help)")
+    );
+    f.render_widget(log_list, chunks[0]);
+
+    // Input Line
+    let input_text = format!("> {}_", app_state.terminal_input);
+    let input_widget = Paragraph::new(input_text).block(
+        Block::default().borders(Borders::ALL).title("Input").border_style(Style::default().fg(Color::Yellow))
+    );
+    f.render_widget(input_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Strange Attractor (X/Z Plane)"))
+        .x_bounds([-50.0, 50.0])
+        .y_bounds([0.0, 100.0])
+        .paint(|ctx| {
+            let mut prev_x = vm.attractor.x;
+            let mut prev_z = vm.attractor.z;
+
+            // Draw history
+            for (hx, _hy, hz) in &vm.attractor.history {
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: prev_x,
+                    y1: prev_z,
+                    x2: *hx,
+                    y2: *hz,
+                    color: Color::Cyan,
+                });
+                prev_x = *hx;
+                prev_z = *hz;
+            }
+
+            // Current pos
+            ctx.print(vm.attractor.x, vm.attractor.z, "@");
+        });
+    f.render_widget(canvas, chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from("ATTRACTOR STATE"),
+        Line::from(format!("Mode: {}", match vm.attractor.mode {
+            0 => "Lorenz",
+            1 => "Rossler",
+            2 => "Thomas",
+            _ => "Unknown"
+        })),
+        Line::from(format!("X: {:.4}", vm.attractor.x)),
+        Line::from(format!("Y: {:.4}", vm.attractor.y)),
+        Line::from(format!("Z: {:.4}", vm.attractor.z)),
+        Line::from(" "),
+        Line::from("Params:"),
+        Line::from(format!("Sigma: {:.4}", vm.attractor.sigma)),
+        Line::from(format!("Rho:   {:.4}", vm.attractor.rho)),
+        Line::from(format!("Beta:  {:.4}", vm.attractor.beta)),
+        Line::from(format!("dt:    {:.4}", vm.attractor.dt)),
+    ];
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
     f.render_widget(info_widget, chunks[1]);
 }

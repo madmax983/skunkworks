@@ -73,8 +73,8 @@ pub fn exec_resonance_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         let (cy, cx) = vm.context_loc;
         let width = 16; // GRID_SIZE
         let idx = cy * width + cx;
-        let val = if idx < vm.audio_snapshot.len() {
-            vm.audio_snapshot[idx]
+        let val = if idx < vm.audio_snapshot.pressure.len() {
+            vm.audio_snapshot.pressure[idx]
         } else {
             0.0
         };
@@ -82,5 +82,91 @@ pub fn exec_resonance_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
         let int_val = (val * 100.0) as i64;
         vm.stack.push(Value::Int(int_val));
         vm.energy = vm.energy.saturating_sub(1);
+    } else if op == OpCode::Scream {
+        // stack: duration, strength
+        if vm.stack.len() >= 2 {
+            let s_val = vm.stack.pop().unwrap();
+            let d_val = vm.stack.pop().unwrap();
+
+            if let (Value::Int(s), Value::Int(d)) = (s_val, d_val) {
+                let strength = (s as f32) / 10.0; // High amplitude
+                let duration = d as u64;
+                let (cy, cx) = vm.context_loc;
+
+                // Audio
+                if let Some(tx) = &vm.audio_tx {
+                    let _ = tx.send(AudioCommand::Tone {
+                        x: cx,
+                        y: cy,
+                        frequency: 110.0, // Low rumble
+                        strength,
+                        duration_ms: duration * 10, // 10ms per tick approx
+                    });
+                    vm.output.push(format!(
+                        "SCREAM: {},{} str={:.2} dur={}",
+                        cx, cy, strength, duration
+                    ));
+                } else {
+                    vm.output.push("SCREAM: No audio channel".to_string());
+                }
+
+                // Visual Shockwave (Manually hacking snapshot for TUI)
+                // We want a ring of high values.
+                let radius = (s as f32 / 20.0).max(1.0) as usize;
+                let width = 16;
+                for y in 0..width {
+                    for x in 0..width {
+                        let dx = (x as isize - cx as isize).abs();
+                        let dy = (y as isize - cy as isize).abs();
+                        let dist = ((dx * dx + dy * dy) as f32).sqrt();
+                        if (dist - radius as f32).abs() < 1.5 {
+                            let idx = y * width + x;
+                            if idx < vm.audio_snapshot.pressure.len() {
+                                vm.audio_snapshot.pressure[idx] = 5.0; // Super bright red
+                            }
+                        }
+                    }
+                }
+
+                // Physics Push
+                #[cfg(feature = "nova")]
+                {
+                    // Copy topology to avoid borrow conflict
+                    let topology = vm.topology;
+                    let width = 16; // GRID_SIZE
+                    let height = 16;
+
+                    for i in 0..vm.organelles.len() {
+                        let (oy, ox) = vm.organelles[i].context_loc;
+                        let dx = ox as f32 - cx as f32;
+                        let dy = oy as f32 - cy as f32;
+                        let dist = (dx * dx + dy * dy).sqrt();
+
+                        if dist < (strength) && dist > 0.1 {
+                            // Push away
+                            let push_x = (dx / dist * 2.0).round() as i64;
+                            let push_y = (dy / dist * 2.0).round() as i64;
+
+                            if let Some((ny, nx)) = topology.normalize(
+                                oy as i64 + push_y,
+                                ox as i64 + push_x,
+                                width,
+                                height,
+                            ) {
+                                vm.organelles[i].context_loc = (ny, nx);
+                            }
+                        }
+                    }
+                }
+
+                vm.energy = vm.energy.saturating_sub(10);
+            } else {
+                vm.output
+                    .push("Error: Type mismatch for scream".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Stack underflow for scream".to_string());
+        }
     }
 }

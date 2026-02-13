@@ -112,7 +112,7 @@ impl Brain {
             // Yes, otherwise nothing happens.
             let dt = 1.0;
             for neuron in &mut self.neurons {
-                neuron.update(dt, 0.0);
+                let _ = neuron.update(dt, 0.0);
             }
             // We ignore propagation in fallback for simplicity unless needed.
         }

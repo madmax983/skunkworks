@@ -1,0 +1,12 @@
+[package]
+name = "ferrous-graph"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+walkdir = "2.3"
+regex = "1.10"

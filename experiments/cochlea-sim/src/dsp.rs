@@ -1,10 +1,15 @@
 use std::f32::consts::PI;
 
 pub struct BandPassFilter {
-    b0: f32, b1: f32, b2: f32,
-    a1: f32, a2: f32,
-    x1: f32, x2: f32,
-    y1: f32, y2: f32,
+    b0: f32,
+    b1: f32,
+    b2: f32,
+    a1: f32,
+    a2: f32,
+    x1: f32,
+    x2: f32,
+    y1: f32,
+    y2: f32,
 }
 
 impl BandPassFilter {
@@ -27,17 +32,17 @@ impl BandPassFilter {
             b2: b2 / a0,
             a1: a1 / a0,
             a2: a2 / a0,
-            x1: 0.0, x2: 0.0,
-            y1: 0.0, y2: 0.0,
+            x1: 0.0,
+            x2: 0.0,
+            y1: 0.0,
+            y2: 0.0,
         }
     }
 
     pub fn process(&mut self, x: f32) -> f32 {
-        let y = self.b0 * x
-              + self.b1 * self.x1
-              + self.b2 * self.x2
-              - self.a1 * self.y1
-              - self.a2 * self.y2;
+        let y = self.b0 * x + self.b1 * self.x1 + self.b2 * self.x2
+            - self.a1 * self.y1
+            - self.a2 * self.y2;
 
         self.x2 = self.x1;
         self.x1 = x;

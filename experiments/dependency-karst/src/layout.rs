@@ -16,7 +16,11 @@ impl Vec3 {
     }
 
     pub fn zero() -> Self {
-        Self { x: 0.0, y: 0.0, z: 0.0 }
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
     }
 
     pub fn distance_sq(&self, other: Vec3) -> f32 {
@@ -77,11 +81,14 @@ impl Layout {
         let mut positions = HashMap::new();
 
         for node in graph.node_indices() {
-            positions.insert(node, Vec3::new(
-                rng.gen_range(0.2..0.8),
-                rng.gen_range(0.2..0.8),
-                rng.gen_range(0.2..0.8),
-            ));
+            positions.insert(
+                node,
+                Vec3::new(
+                    rng.gen_range(0.2..0.8),
+                    rng.gen_range(0.2..0.8),
+                    rng.gen_range(0.2..0.8),
+                ),
+            );
         }
 
         let mut layout = Layout { positions };
@@ -156,7 +163,7 @@ impl Layout {
             }
 
             // Gravity to center
-             for u in &nodes {
+            for u in &nodes {
                 let p = self.positions[u];
                 let center = Vec3::new(0.5, 0.5, 0.5);
                 let delta = Vec3::new(center.x - p.x, center.y - p.y, center.z - p.z);
@@ -165,8 +172,7 @@ impl Layout {
                 entry.x += delta.x * center_gravity;
                 entry.y += delta.y * center_gravity;
                 entry.z += delta.z * center_gravity;
-             }
-
+            }
 
             // Apply forces
             for (node, force) in forces {
