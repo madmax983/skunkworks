@@ -1,0 +1,13 @@
+[package]
+name = "quipu-legion"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+quipu = { path = "../../crates/quipu" }
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = { workspace = true }
+rand = { workspace = true }
+num-bigint = { version = "0.4", features = ["rand"] }
+num-traits = "0.2"

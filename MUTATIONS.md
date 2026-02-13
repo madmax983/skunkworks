@@ -833,3 +833,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Magnetic Stigmergy. Agents communicate via the magnetic field they modify as they move.
 - **Status**: experiments/ferrous-chimera
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### quipu-legion
+- **Parents**: experiments/spqr-rsa + experiments/quipu-symphony
+- **Concept**: A visualization where RSA keys and messages are represented as Roman Numerals, but the ciphertext is physically knotted into a Quipu Cord.
+- **Novel trait**: Cryptographic Knotting. Visualizing the trapdoor function as the transformation from Symbol (Roman) to Knot (Inca).
+- **Status**: experiments/quipu-legion
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
