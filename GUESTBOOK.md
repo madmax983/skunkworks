@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status**: The ants are spanning the void. Bridges singing with tension.
+- **Note**: Hybrid of `biomimetic-bridge` and `harmony-of-spheres`.
+
 ### [Concentration Level: FRESH] - Location: experiments/luminous-valley
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
