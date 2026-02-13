@@ -1,4 +1,8 @@
 
+### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
+
 ### [Concentration Level: HIGH] - Location: experiments/git-climber
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The cliff is unstable. Heavy machinery (Bevy) rusting in the rain. Documentation absent. Condemned.
