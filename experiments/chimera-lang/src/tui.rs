@@ -10,7 +10,6 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
@@ -21,6 +20,8 @@ use ratatui::{
     Frame, Terminal,
 };
 use std::io;
+
+const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
@@ -100,6 +101,7 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    #[cfg(feature = "nova")]
     Pandemonium,
     BioticChaos,
     Catalyst,
@@ -111,6 +113,8 @@ pub(crate) enum ViewMode {
     Weaver,
     #[cfg(feature = "nova")]
     Terminal,
+    #[cfg(feature = "nova")]
+    Attractor,
 }
 
 enum InputMode {
@@ -580,6 +584,7 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
             if let ViewMode::Pandemonium = app_state.view_mode {
                 render_pandemonium(f, vm, app_state);
                 return;
@@ -639,6 +644,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Terminal = app_state.view_mode {
                 render_terminal(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Attractor = app_state.view_mode {
+                render_attractor(f, vm, app_state);
                 return;
             }
 
@@ -1292,6 +1303,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Attractor => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1542,7 +1558,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Weaver => ViewMode::Terminal,
                             #[cfg(feature = "nova")]
-                            ViewMode::Terminal => ViewMode::Genome,
+                            ViewMode::Terminal => ViewMode::Attractor,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Attractor => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1702,6 +1720,8 @@ where
                     KeyCode::Char('W') => app_state.view_mode = ViewMode::Weaver,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -2337,6 +2357,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2575,6 +2597,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2737,6 +2761,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2899,6 +2925,8 @@ where
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Terminal => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Attractor => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -2947,6 +2975,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Terminal => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Attractor => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4422,6 +4454,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Terminal => "CHIMERIC TERMINAL",
         #[cfg(feature = "silicon")]
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
+        #[cfg(feature = "nova")]
+        ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
     };
 
     let title = match app_state.input_mode {
@@ -4649,6 +4683,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => Color::Green,
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
+                        crate::vm::nova::OrganelleType::MadScientist => Color::Magenta,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -4661,6 +4696,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => "S",
                         crate::vm::nova::OrganelleType::Choir => "♫",
                         crate::vm::nova::OrganelleType::Wisp => "*",
+                        crate::vm::nova::OrganelleType::MadScientist => "⚛",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 
@@ -4977,6 +5013,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Hologram, "Hologram", "I"));
         views.push((ViewMode::Weaver, "The Weaver", "W"));
         views.push((ViewMode::Terminal, "Terminal", "`"));
+        views.push((ViewMode::Attractor, "Attractor", "A"));
     }
     views
 }
@@ -5203,6 +5240,18 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 0.0
             };
 
+            // Check Harmonic
+            #[cfg(feature = "nova")]
+            let (freq, amp_res) = vm.resonance_grid[y][x];
+            #[cfg(not(feature = "nova"))]
+            let (freq, amp_res) = (0.0, 0.0);
+
+            let is_harmonic = if amp_res > 10.0 {
+                GOLDEN_FREQUENCIES.iter().any(|&g| (freq - g).abs() < 5.0)
+            } else {
+                false
+            };
+
             // Visualizing -1.0 to 1.0
             let abs_val = val.abs();
             let ch = if abs_val < 0.1 {
@@ -5215,8 +5264,10 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 "@"
             };
 
-            let color = if val.abs() > 2.0 {
-                Color::Red // Shockwave!
+            let color = if abs_val > 0.8 {
+                Color::Red // Mutation / Shockwave
+            } else if is_harmonic {
+                Color::Yellow // Harmonic
             } else if val > 0.0 {
                 if val > 0.5 {
                     Color::Cyan
@@ -5234,8 +5285,11 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             };
 
             let mut style = Style::default().fg(color);
-            if val.abs() > 2.0 {
+            if abs_val > 0.8 {
                 style = style.add_modifier(Modifier::RAPID_BLINK | Modifier::BOLD);
+            }
+            if is_harmonic {
+                style = style.add_modifier(Modifier::BOLD);
             }
 
             spans.push(Span::styled(ch, style));
@@ -8033,6 +8087,7 @@ fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(info_widget, chunks[1]);
 }
 
+#[cfg(feature = "nova")]
 fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
@@ -8508,4 +8563,60 @@ fn render_terminal(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default().borders(Borders::ALL).title("Input").border_style(Style::default().fg(Color::Yellow))
     );
     f.render_widget(input_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("Strange Attractor (X/Z Plane)"))
+        .x_bounds([-50.0, 50.0])
+        .y_bounds([0.0, 100.0])
+        .paint(|ctx| {
+            let mut prev_x = vm.attractor.x;
+            let mut prev_z = vm.attractor.z;
+
+            // Draw history
+            for (hx, _hy, hz) in &vm.attractor.history {
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: prev_x,
+                    y1: prev_z,
+                    x2: *hx,
+                    y2: *hz,
+                    color: Color::Cyan,
+                });
+                prev_x = *hx;
+                prev_z = *hz;
+            }
+
+            // Current pos
+            ctx.print(vm.attractor.x, vm.attractor.z, "@");
+        });
+    f.render_widget(canvas, chunks[0]);
+
+    // Info
+    let info = vec![
+        Line::from("ATTRACTOR STATE"),
+        Line::from(format!("Mode: {}", match vm.attractor.mode {
+            0 => "Lorenz",
+            1 => "Rossler",
+            2 => "Thomas",
+            _ => "Unknown"
+        })),
+        Line::from(format!("X: {:.4}", vm.attractor.x)),
+        Line::from(format!("Y: {:.4}", vm.attractor.y)),
+        Line::from(format!("Z: {:.4}", vm.attractor.z)),
+        Line::from(" "),
+        Line::from("Params:"),
+        Line::from(format!("Sigma: {:.4}", vm.attractor.sigma)),
+        Line::from(format!("Rho:   {:.4}", vm.attractor.rho)),
+        Line::from(format!("Beta:  {:.4}", vm.attractor.beta)),
+        Line::from(format!("dt:    {:.4}", vm.attractor.dt)),
+    ];
+    let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
+    f.render_widget(info_widget, chunks[1]);
 }

@@ -1,5 +1,9 @@
 # Chimera Lang 🧬
 
+> ⚠️ **IMPORTANT**: Advanced features (including `incubate` and `Pandemonium`) require the `nova` feature flag.
+> If you encounter "OpCode not found" or compilation errors, ensure you have enabled the `nova` feature.
+> See [Nova Features](#nova-features) below.
+
 Chimera is a bio-inspired, stack-based esoteric programming language. It simulates a biological cell with DNA, enzymes, and metabolism.
 
 ## Core Concepts

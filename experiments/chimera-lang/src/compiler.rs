@@ -151,6 +151,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             Rule::arrow_jump => self.parse_arrow_jump(inner),
             Rule::question_branch => self.parse_question_branch(inner),
             Rule::call => self.parse_call(inner),
+            #[cfg(feature = "nova")]
             Rule::crispr_block => self.parse_crispr_block(inner),
             _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
         }
@@ -273,6 +274,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }
     }
 
+    #[cfg(feature = "nova")]
     fn parse_crispr_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
         let target_name = parts.next().unwrap().as_str();
