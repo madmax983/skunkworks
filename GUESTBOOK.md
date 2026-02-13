@@ -1,5 +1,25 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/babylonian-forecaster
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Terminal Chart Rot. Y-axis mismatch. Redundant. Condemned.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/sono-scapes
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
 ### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The fluid is made of letters. Typing creates dams in the ASCII stream. Density waves are propagating through the character grid. LBM D2Q9 on CPU is stable.

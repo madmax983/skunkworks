@@ -1,10 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **sono-scapes**: Sketch Rot. Documentation void. Redundant with `ripple-tank`. Grace period: 24h.
-- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier). Generic "Climber" metaphor. Skeletal implementation. Grace period: 24h.
-- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period: 24h.
-- **hertzian-shimmer**: Specimen condemned. Documentation void. Fragile dependency (cpal) in hostile environment. Redundant with `cymatic-ocean`. Grace period: 24h.
-- **hertzian-shimmer**: Specimen condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
-- **git-quipu**: Specimen condemned. Documentation void. Redundant with `quipu-symphony`. Grace period: 24h.
+- **babylonian-forecaster**: Terminal Chart Rot (Y-axis mismatch). Redundant with `babylonian-garden`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -17,6 +12,10 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **sono-scapes**: Specimen executed. Documentation void. Redundant with `ripple-tank`. Sketch Rot. Moved to graveyard.
+- **git-quipu**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
+- **git-climber**: Specimen executed. Documentation void. Fragile stack. Skeletal implementation. Moved to graveyard.
+- **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependency. Redundant with `cymatic-ocean`. Moved to graveyard.
 - **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Sketch Rot. Moved to graveyard.
 - **cipher-gears**: Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Grace period expired. Moved to graveyard.
 - **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependencies (cpal/alsa). Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
