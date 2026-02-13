@@ -21,6 +21,8 @@ use ratatui::{
 };
 use std::io;
 
+const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub(crate) enum ViewMode {
     Genome,
@@ -5236,6 +5238,18 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 0.0
             };
 
+            // Check Harmonic
+            #[cfg(feature = "nova")]
+            let (freq, amp_res) = vm.resonance_grid[y][x];
+            #[cfg(not(feature = "nova"))]
+            let (freq, amp_res) = (0.0, 0.0);
+
+            let is_harmonic = if amp_res > 10.0 {
+                GOLDEN_FREQUENCIES.iter().any(|&g| (freq - g).abs() < 5.0)
+            } else {
+                false
+            };
+
             // Visualizing -1.0 to 1.0
             let abs_val = val.abs();
             let ch = if abs_val < 0.1 {
@@ -5248,8 +5262,10 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                 "@"
             };
 
-            let color = if val.abs() > 2.0 {
-                Color::Red // Shockwave!
+            let color = if abs_val > 0.8 {
+                Color::Red // Mutation / Shockwave
+            } else if is_harmonic {
+                Color::Yellow // Harmonic
             } else if val > 0.0 {
                 if val > 0.5 {
                     Color::Cyan
@@ -5267,8 +5283,11 @@ fn render_resonance(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
             };
 
             let mut style = Style::default().fg(color);
-            if val.abs() > 2.0 {
+            if abs_val > 0.8 {
                 style = style.add_modifier(Modifier::RAPID_BLINK | Modifier::BOLD);
+            }
+            if is_harmonic {
+                style = style.add_modifier(Modifier::BOLD);
             }
 
             spans.push(Span::styled(ch, style));

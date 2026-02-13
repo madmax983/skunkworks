@@ -91,7 +91,6 @@ members = [
     "experiments/laban-rover", 
     "experiments/chromatic-cipher", 
     "experiments/repo-fossil", 
-    "experiments/hertzian-shimmer", 
     "experiments/chimera-fossil",
     "experiments/cam-automaton", 
     "experiments/git-cantata",

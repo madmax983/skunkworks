@@ -10,6 +10,8 @@ use crate::opcode::OpCode;
 use rand::Rng;
 use std::collections::HashMap;
 
+const GOLDEN_FREQUENCIES: [f32; 4] = [161.8, 261.6, 432.0, 528.0];
+
 fn char_to_val(c: char) -> Option<i64> {
     match c {
         '0'..='9' => Some(c as i64 - '0' as i64),
@@ -80,6 +82,12 @@ struct MutationRequest {
     strand_idx: usize,
 }
 
+struct SpawnRequest {
+    y: usize,
+    x: usize,
+    kind: crate::vm::nova::OrganelleType,
+}
+
 struct EtherWrite {
     channel: i64,
     val: Value,
@@ -113,6 +121,7 @@ struct SignalContext {
     resonance_writes: Vec<ResonanceWrite>,
     entropy_writes: Vec<EntropyWrite>,
     mutation_requests: Vec<MutationRequest>,
+    spawn_requests: Vec<SpawnRequest>,
     ether_writes: Vec<EtherWrite>,
     ether_reads: Vec<EtherRead>,
     holo_writes: Vec<HoloWrite>,
@@ -132,6 +141,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         resonance_writes: Vec::new(),
         entropy_writes: Vec::new(),
         mutation_requests: Vec::new(),
+        spawn_requests: Vec::new(),
         ether_writes: Vec::new(),
         ether_reads: Vec::new(),
         holo_writes: Vec::new(),
@@ -309,6 +319,44 @@ pub fn process_signals(vm: &mut ChimeraVM) {
         }
     }
 
+    // 1.5 Resonance Check (Mutagenic & Harmonic)
+    #[cfg(feature = "resonance")]
+    {
+        // Mutagenic Resonance
+        for org in &vm.organelles {
+            let (y, x) = org.context_loc;
+            let idx = y * GRID_SIZE + x;
+            if idx < vm.audio_snapshot.pressure.len() {
+                if vm.audio_snapshot.pressure[idx].abs() > 0.8 {
+                    ctx.mutation_requests.push(MutationRequest {
+                        strand_idx: org.ip.0,
+                    });
+                }
+            }
+        }
+
+        // Harmonic Convergence
+        for y in 0..size {
+            for x in 0..size {
+                let (freq, amp) = vm.resonance_grid[y][x];
+                if amp > 10.0 {
+                    // Check for Golden Frequencies (approx)
+                    // 161.8 (Phi*100), 261.6 (C4), 432.0 (Verdi A), 528.0 (Solfeggio)
+                    for g in GOLDEN_FREQUENCIES {
+                        if (freq - g).abs() < 5.0 {
+                            ctx.spawn_requests.push(SpawnRequest {
+                                y,
+                                x,
+                                kind: crate::vm::nova::OrganelleType::Wisp,
+                            });
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // 2. Apply Writes
     for w in ctx.grid_writes {
         vm.grid[w.y][w.x] = w.val;
@@ -398,8 +446,33 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     let val = rng.gen_range(0..100);
                     vm.dna.helix.strands[req.strand_idx].genes[g_idx].args[0] =
                         Nucleotide::Number(val);
+                    vm.output.push(format!("MUTATION: Resonance hit strand {}", req.strand_idx));
                 }
             }
+        }
+    }
+
+    for req in ctx.spawn_requests {
+        if vm.organelles.len() < crate::vm::MAX_ORGANELLES {
+            vm.organelle_id_counter += 1;
+            let new_org = crate::vm::nova::Organelle {
+                stack: Vec::new(),
+                ip: (0, 0), // Default start
+                context_loc: (req.y, req.x),
+                call_stack: Vec::new(),
+                recursion_depth: 0,
+                halted: false,
+                kind: req.kind,
+                direction: (0, 0),
+                ttl: Some(100), // Finite life
+                name: "Resonance Child".to_string(),
+                traits: vec!["Harmonic".to_string()],
+                id: vm.organelle_id_counter,
+                tissue_id: None,
+                genome_id: 0,
+            };
+            vm.organelles.push(new_org);
+            vm.output.push(format!("HARMONIC: Spawned Wisp at {},{}", req.x, req.y));
         }
     }
 
