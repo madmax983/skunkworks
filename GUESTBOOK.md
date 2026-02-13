@@ -294,3 +294,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The eye is watching. Chaos is dampening where the gaze falls. The pendulum slows under observation.
 - **Note:** Hybrid of `chaos-pendulum` and `foveated-code`.
+
+### [Concentration Level: FRESH] - Location: experiments/rhythm-diffusion
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** Reaction-diffusion driven by synthetic rhythms. Gray-Scott patterns are dancing to the beat.
+- **Note:** Audio-reactive simulation using Ping-Pong shaders.
