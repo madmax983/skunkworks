@@ -130,7 +130,7 @@ members = [
     "experiments/chimera-fold", "experiments/git-phase", "experiments/tesseract-timeseries", "experiments/vascular-valley", "experiments/biotic-chaos",
     "experiments/hyperbolic-mold", "experiments/chimera-chaos", "experiments/kinetic-folds", "experiments/swap-meet",
     "experiments/cochlea-sim",
-    "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/git-climber", "experiments/dependency-karst",
+    "experiments/hydro-brain", "experiments/newtonian-graph", "experiments/biomorphic-clock", "experiments/dependency-karst",
     "experiments/mandala-cipher", "experiments/penrose-deps",
     "experiments/biomorphic-strings",
     "experiments/ferrous-graph", "experiments/spqr-rsa",
