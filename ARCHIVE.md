@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **cipher-gears**: Specimen condemned. Generic implementation (Enigma clone). Documentation void. Redundant with other cipher experiments. Grace period: 24h.
+- **hertzian-shimmer**: Specimen condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **cipher-gears**: Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Grace period expired. Moved to graveyard.
 - **celestial-cantata**: Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **git-climber**: Specimen executed. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period expired. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation. Failed to improve during grace period. Moved to graveyard.
