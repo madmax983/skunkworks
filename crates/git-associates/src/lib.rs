@@ -41,6 +41,23 @@ use model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
 use std::path::Path;
 
 /// A wrapper around a Git repository that provides high-level analysis methods.
+///
+/// `GitModel` is the entry point for the `git-associates` library. It wraps a standard `git2::Repository`
+/// and provides methods tailored for data analysis, visualization, and semantic understanding of
+/// repository history.
+///
+/// It prioritizes usability over raw performance or exhaustiveness, making it ideal for tools
+/// that need to "understand" the codebase evolution.
+///
+/// # Examples
+///
+/// ```no_run
+/// use git_associates::GitModel;
+///
+/// let model = GitModel::open(".").unwrap();
+/// let changes = model.diff_workdir().unwrap();
+/// println!("Modified files: {}", changes.files.len());
+/// ```
 pub struct GitModel {
     repo: Repository,
 }

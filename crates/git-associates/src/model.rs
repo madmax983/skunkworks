@@ -27,7 +27,8 @@ pub struct Commit {
     pub stats: Option<CommitStats>,
     /// List of files changed in this commit.
     ///
-    /// This is empty unless requested via [`GitModel::history_with_diffs`](crate::GitModel::history_with_diffs).
+    /// This list is **only populated** if the commit was retrieved using [`GitModel::history_with_diffs`](crate::GitModel::history_with_diffs).
+    /// Otherwise, it will be an empty vector.
     pub files: Vec<FileChange>,
 }
 
@@ -57,7 +58,8 @@ pub struct FileChange {
     pub is_binary: bool,
     /// List of hunks (contiguous blocks of changes).
     ///
-    /// This may be empty depending on how the diff was generated.
+    /// This list contains the detailed line-by-line diffs.
+    /// It is populated when using [`GitModel::history_with_diffs`](crate::GitModel::history_with_diffs) or [`GitModel::diff_workdir`](crate::GitModel::diff_workdir).
     pub hunks: Vec<Hunk>,
 }
 
@@ -74,23 +76,58 @@ pub struct DiffStats {
 
 /// A contiguous block of changes in a file diff.
 ///
-/// A hunk typically starts with a header (e.g., `@@ -1,5 +1,5 @@`) and contains
-/// a mix of context lines, added lines, and removed lines.
+/// A hunk typically starts with a header and contains a mix of context lines,
+/// added lines, and removed lines.
+///
+/// # Examples
+///
+/// ```
+/// use git_associates::model::{Hunk, LineChange};
+///
+/// let hunk = Hunk {
+///     header: "@@ -1,3 +1,3 @@".to_string(),
+///     lines: vec![
+///         LineChange::Context("fn main() {".to_string()),
+///         LineChange::Removed("    println!(\"Hello\");".to_string()),
+///         LineChange::Added("    println!(\"World\");".to_string()),
+///         LineChange::Context("}".to_string()),
+///     ],
+/// };
+/// ```
 #[derive(Debug, Clone)]
 pub struct Hunk {
     /// The hunk header line (e.g., `@@ -10,4 +10,5 @@`).
+    ///
+    /// - `-10,4`: Old file starts at line 10, shows 4 lines.
+    /// - `+10,5`: New file starts at line 10, shows 5 lines.
     pub header: String,
     /// The lines within this hunk.
     pub lines: Vec<LineChange>,
 }
 
 /// A single line change within a hunk.
+///
+/// # Examples
+///
+/// ```
+/// use git_associates::model::LineChange;
+///
+/// let added = LineChange::Added("let x = 5;".to_string());
+/// let removed = LineChange::Removed("let x = 4;".to_string());
+/// let context = LineChange::Context("fn foo() {".to_string());
+/// ```
 #[derive(Debug, Clone)]
 pub enum LineChange {
-    /// A line that exists in both old and new versions (context).
+    /// A line that exists in both old and new versions (unchanged).
+    ///
+    /// Displayed with a leading space ` ` in standard diffs.
     Context(String),
     /// A line that was added in the new version.
+    ///
+    /// Displayed with a leading `+` in standard diffs.
     Added(String),
     /// A line that was removed from the old version.
+    ///
+    /// Displayed with a leading `-` in standard diffs.
     Removed(String),
 }
