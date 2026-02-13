@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **git-quipu**: Specimen condemned. Documentation void. Redundant with `quipu-symphony`. Grace period: 24h.
+- **hyperbolic-hell**: Specimen condemned. Documentation void. Redundant with `hyperbolic-dungeon`. Generic implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **git-quipu**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Grace period expired. Moved to graveyard.
 - **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependencies (cpal/alsa). Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
 - **cipher-gears**: Specimen executed. Generic implementation (Enigma clone). Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **celestial-cantata**: Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.

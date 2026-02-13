@@ -43,9 +43,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
+### [Concentration Level: FRESH DEATH] - Location: experiments/hyperbolic-hell
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Redundant.
+- **Status:** Condemned. Documentation void. Generic implementation.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/hertzian-shimmer
 - **Scent Origin:** The Reaper ☠️
