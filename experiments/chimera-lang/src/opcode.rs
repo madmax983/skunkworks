@@ -954,6 +954,32 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chaos,
 
+    // Attractor Features (Nova - Chaos Dynamics)
+    /// **[Nova]** Initializes the Strange Attractor.
+    ///
+    /// **Stack:** `[ ..., mode ] -> [ ... ]`
+    /// **Mode:** 0=Lorenz, 1=Rossler, 2=Thomas.
+    #[cfg(feature = "nova")]
+    AttractorInit,
+    /// **[Nova]** Steps the Strange Attractor simulation.
+    ///
+    /// **Stack:** `[ ..., dt ] -> [ ... ]`
+    /// **dt:** Time delta (e.g. 0.01).
+    #[cfg(feature = "nova")]
+    AttractorStep,
+    /// **[Nova]** Warps the IP based on the Attractor state.
+    ///
+    /// **Stack:** `[ ..., scale ] -> [ ... ]`
+    /// **Effect:** Jumps to strand index derived from Attractor Z.
+    #[cfg(feature = "nova")]
+    AttractorSurf,
+    /// **[Nova]** Maps the Attractor state to Grid variables.
+    ///
+    /// **Stack:** `[ ..., target ] -> [ ... ]`
+    /// **Target:** 0=Entropy, 1=Mutation Rate, 2=Grid Warp.
+    #[cfg(feature = "nova")]
+    AttractorMap,
+
     // Holographic Features (Nova)
     /// **[Nova]** Encodes a strand into the Hologram Grid (Interference).
     ///
@@ -2247,6 +2273,13 @@ pub enum OpCode {
     /// **Effect:** Reads `len` bytes from the binary at `offset`, maps to OpCodes, creates a new strand.
     #[cfg(feature = "nova")]
     Digest,
+
+    // Chimeric Features (Language Synthesis)
+    /// **[Chimeric]** Executes a string of Chimeric code (Concatenative Logic).
+    ///
+    /// **Stack:** `[ ..., code_string ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Chimeric,
 
     /// No Operation. Does nothing.
     Nop,

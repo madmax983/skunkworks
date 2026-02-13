@@ -1,188 +1,175 @@
-pub mod audio;
-pub mod physics;
+mod audio;
+mod physics;
 
-use audio::{init_audio, Oscillator, SharedState};
 use macroquad::prelude::*;
-use physics::{Body, Universe, G};
-use std::sync::{Arc, RwLock};
+use crate::audio::AudioEngine;
+use crate::physics::{Body, update, check_crossings, G};
+
+const STAR_MASS: f32 = 50000.0;
 
 #[macroquad::main("Harmony of Spheres")]
 async fn main() {
-    let mut universe = Universe::new();
+    let audio = AudioEngine::new().await;
+    let mut bodies = Vec::new();
 
-    // Central Star
-    universe.add_body(Body::new(0.0, 0.0, 5000.0, 20.0, YELLOW));
+    // Create Star
+    bodies.push(Body::new(
+        Vec2::new(0.0, 0.0),
+        Vec2::new(0.0, 0.0),
+        STAR_MASS,
+        20.0,
+        YELLOW,
+    ));
 
-    // Planet 1
-    let r1 = 200.0;
-    let v1 = (G * 5000.0 / r1).sqrt();
-    universe.add_body(Body::new(r1, 0.0, 10.0, 8.0, BLUE).with_velocity(0.0, v1));
+    // String visual state
+    let mut string_flash = 0.0;
 
-    // Planet 2
-    let r2 = 350.0;
-    let v2 = (G * 5000.0 / r2).sqrt();
-    universe.add_body(Body::new(r2, 0.0, 20.0, 12.0, RED).with_velocity(0.0, v2));
+    // Harmony Mode
+    let mut harmony_mode = false;
+    let base_radius = 200.0;
+    let ratios = [(1.0, 1.0), (4.0, 3.0), (3.0, 2.0), (2.0, 1.0), (3.0, 1.0), (4.0, 1.0)];
 
-    // Planet 3
-    let r3 = 500.0;
-    let v3 = (G * 5000.0 / r3).sqrt() * 0.8;
-    universe.add_body(Body::new(r3, 0.0, 5.0, 6.0, GREEN).with_velocity(0.0, v3));
-
-    // Audio Setup
-    let audio_state = Arc::new(RwLock::new(SharedState::new()));
-
-    #[allow(unused_variables)]
-    let stream = init_audio(audio_state.clone()).unwrap_or_else(|e| {
-        eprintln!("Audio init failed: {}", e);
-        audio::AudioHandle {
-            #[cfg(feature = "audio")]
-            _stream: None,
-        }
-    });
-
-    let mut cam_zoom = 0.002;
-    let mut cam_target = Vec2::ZERO;
-    let mut paused = false;
+    // Previous positions for crossing detection
+    let mut old_positions: Vec<Vec2> = bodies.iter().map(|b| b.pos).collect();
 
     loop {
-        if is_key_down(KeyCode::Minus) || is_key_down(KeyCode::KpSubtract) {
-            cam_zoom *= 0.98;
-        }
-        if is_key_down(KeyCode::Equal) || is_key_down(KeyCode::KpAdd) {
-            cam_zoom *= 1.02;
-        }
+        let dt = get_frame_time().min(0.05);
 
-        if is_key_down(KeyCode::Left) {
-            cam_target.x -= 10.0 / cam_zoom / 60.0;
-        }
-        if is_key_down(KeyCode::Right) {
-            cam_target.x += 10.0 / cam_zoom / 60.0;
-        }
-        if is_key_down(KeyCode::Up) {
-            cam_target.y += 10.0 / cam_zoom / 60.0;
-        }
-        if is_key_down(KeyCode::Down) {
-            cam_target.y -= 10.0 / cam_zoom / 60.0;
-        }
-
-        if is_key_pressed(KeyCode::Space) {
-            paused = !paused;
-        }
-
-        if is_key_pressed(KeyCode::R) {
-            universe = Universe::new();
-            universe.add_body(Body::new(0.0, 0.0, 5000.0, 20.0, YELLOW));
-        }
-
-        if is_key_pressed(KeyCode::C) {
-            for body in &mut universe.bodies {
-                body.trail.clear();
-            }
+        // Input
+        if is_key_pressed(KeyCode::H) {
+            harmony_mode = !harmony_mode;
         }
 
         if is_mouse_button_pressed(MouseButton::Left) {
             let mpos = mouse_position();
-            let world_pos = Camera2D {
-                target: cam_target,
-                zoom: Vec2::splat(cam_zoom),
-                ..Default::default()
-            }
-            .screen_to_world(Vec2::new(mpos.0, mpos.1));
+            let mut pos = Vec2::new(mpos.0 - screen_width() / 2.0, mpos.1 - screen_height() / 2.0); // Center at screen center
 
-            let dist = world_pos.length();
-            if dist > 10.0 {
-                let v_circ = (G * 5000.0 / dist).sqrt();
-                let v_dir = Vec2::new(-world_pos.y, world_pos.x).normalize();
+            let mut dist = pos.length();
 
-                let mass = rand::gen_range(2.0, 10.0);
-                let radius = mass;
-                let color = Color::new(
-                    rand::gen_range(0.5, 1.0),
-                    rand::gen_range(0.5, 1.0),
-                    rand::gen_range(0.5, 1.0),
-                    1.0,
-                );
+            if harmony_mode {
+                // Snap to closest resonant ring
+                let mut best_r = dist;
+                let mut min_diff = f32::MAX;
 
-                universe.add_body(
-                    Body::new(world_pos.x, world_pos.y, mass, radius, color)
-                        .with_velocity(v_dir.x * v_circ, v_dir.y * v_circ),
-                );
-            }
-        }
-
-        if !paused {
-            let dt = 0.05;
-            let physics_steps = 4;
-            let physics_dt = dt / physics_steps as f32;
-
-            for _ in 0..physics_steps {
-                universe.step(physics_dt);
-            }
-        }
-
-        if let Ok(mut state) = audio_state.write() {
-            state.oscillators.clear();
-            for (i, body) in universe.bodies.iter().enumerate() {
-                if i == 0 {
-                    continue;
+                for (n, d) in ratios {
+                    let ratio: f32 = n / d;
+                    // Period ratio T/T_base = ratio
+                    // r/r_base = ratio^(2/3)
+                    let r_target = base_radius * ratio.powf(2.0/3.0);
+                    let diff = (dist - r_target).abs();
+                    if diff < min_diff {
+                        min_diff = diff;
+                        best_r = r_target;
+                    }
                 }
-                let speed = body.vel.length();
-                let dist = body.pos.length();
-                let freq = 50.0 + speed * 10.0;
-                let vol = (1000.0 / (dist + 100.0)).clamp(0.0, 0.5);
-                state.oscillators.push(Oscillator {
-                    frequency: freq,
-                    amplitude: vol,
-                });
+
+                if min_diff < 30.0 { // Snap threshold
+                    pos = pos.normalize() * best_r;
+                    dist = best_r;
+                }
+            }
+
+            if dist > 10.0 {
+                let v_mag = (G * STAR_MASS / dist).sqrt(); // v = sqrt(GM/r)
+                // Tangent direction: (-y, x) / r
+                let v_dir = Vec2::new(-pos.y, pos.x) / dist;
+                let vel = v_dir * v_mag;
+
+                bodies.push(Body::new(
+                    pos,
+                    vel,
+                    1.0,
+                    5.0,
+                    Color::new(rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), 1.0),
+                ));
+                old_positions.push(pos);
             }
         }
 
+        if is_key_pressed(KeyCode::Space) {
+            bodies.truncate(1); // Keep star
+            old_positions.truncate(1);
+        }
+
+        if is_mouse_button_pressed(MouseButton::Right) && bodies.len() > 1 {
+            bodies.pop();
+            old_positions.pop();
+        }
+
+        // Physics
+        // Store old positions for checking crossings
+        // We need to update old_positions carefully.
+        // Actually, update() updates bodies in place.
+        // We should capture old positions BEFORE update.
+        // But the list size might change (add/remove above).
+        // Sync old_positions size first.
+
+        if old_positions.len() != bodies.len() {
+            old_positions = bodies.iter().map(|b| b.pos).collect();
+        } else {
+            for (i, b) in bodies.iter().enumerate() {
+                old_positions[i] = b.pos;
+            }
+        }
+
+        update(&mut bodies, dt);
+
+        // Check Crossings
+        let events = check_crossings(&bodies, &old_positions);
+        for freq in events {
+            audio.play_closest(freq);
+            string_flash = 1.0;
+        }
+
+        // Draw
         clear_background(BLACK);
+
+        // Center Camera
         set_camera(&Camera2D {
-            target: cam_target,
-            zoom: Vec2::splat(cam_zoom),
+            target: Vec2::new(0.0, 0.0),
+            zoom: Vec2::new(1.0 / (screen_height() / 2.0), -1.0 / (screen_height() / 2.0)), // Flip Y
             ..Default::default()
         });
 
-        for body in &universe.bodies {
-            if body.trail.len() < 2 {
-                continue;
-            }
-            for i in 0..body.trail.len() - 1 {
-                let p1 = body.trail[i];
-                let p2 = body.trail[i + 1];
-                let alpha = (i as f32 / body.trail.len() as f32).powf(2.0);
-                draw_line(
-                    p1.x,
-                    p1.y,
-                    p2.x,
-                    p2.y,
-                    2.0 * alpha,
-                    Color::new(body.color.r, body.color.g, body.color.b, alpha),
-                );
+        // Draw String
+        let string_color = Color::new(1.0, 1.0, 1.0, 0.2 + 0.8 * string_flash);
+        draw_line(0.0, 0.0, 2000.0, 0.0, 2.0 + 3.0 * string_flash, string_color);
+        if string_flash > 0.0 {
+            string_flash -= dt * 5.0;
+        }
+
+        // Draw Resonant Rings
+        if harmony_mode {
+            for (n, d) in ratios {
+                let ratio: f32 = n / d;
+                let r = base_radius * ratio.powf(2.0/3.0);
+                draw_circle_lines(0.0, 0.0, r, 1.0, Color::new(1.0, 1.0, 1.0, 0.1));
             }
         }
 
-        for body in &universe.bodies {
+        // Draw Bodies
+        for body in &bodies {
+            // Draw Trail
+            for i in 0..body.trail.len().saturating_sub(1) {
+                let p1 = body.trail[i];
+                let p2 = body.trail[i+1];
+                let alpha = (i as f32 / body.trail.len() as f32) * 0.5;
+                draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(body.color.r, body.color.g, body.color.b, alpha));
+            }
+
             draw_circle(body.pos.x, body.pos.y, body.radius, body.color);
         }
 
+        // UI (Screen Space)
         set_default_camera();
-        draw_text("Harmony of Spheres", 10.0, 20.0, 30.0, GOLD);
-        draw_text(
-            "Controls: Arrows (Pan), +/- (Zoom), Click (Spawn), Space (Pause), R (Reset)",
-            10.0,
-            50.0,
-            20.0,
-            GRAY,
-        );
-        draw_text(
-            &format!("Bodies: {}", universe.bodies.len()),
-            10.0,
-            screen_height() - 40.0,
-            20.0,
-            WHITE,
-        );
+        draw_text("Left Click: Add Planet | Right Click: Remove | Space: Clear", 10.0, 30.0, 20.0, WHITE);
+        draw_text(&format!("Bodies: {}", bodies.len()), 10.0, 50.0, 20.0, WHITE);
+        draw_text(&format!("FPS: {}", get_fps()), 10.0, 70.0, 20.0, WHITE);
+        if harmony_mode {
+            draw_text("Harmony Mode: ON (Snapping to Resonant Orbits)", 10.0, 90.0, 20.0, GREEN);
+        } else {
+            draw_text("Harmony Mode: OFF (Press H to toggle)", 10.0, 90.0, 20.0, GRAY);
+        }
 
         next_frame().await
     }

@@ -664,7 +664,7 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A TUI visualization of git history as an Incan Quipu. Cords are time, knots are commits.
 - **Novel trait**: Physical History. The commit log sways in the wind.
 - **Status**: experiments/git-quipu
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Tests passed. Confirmed functionality.
+- **Evaluation**: CONDEMNED by The Reaper. Redundant with `quipu-symphony`. Documentation void.
 
 ### rhythmic-jungle
 - **Parents**: experiments/protocol-jungle + experiments/silicon-samba
@@ -804,4 +804,25 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: A Miura-ori mesh where viral spores infect particles, altering the structural constraints (stiffness/folding).
 - **Novel trait**: Bio-mechanical Crumpling. The structure decays and folds organically as the infection spreads.
 - **Status**: experiments/origami-spores
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### harmonic-mycelium
+- **Parents**: experiments/harmony-of-spheres + experiments/chaotic-mycelium
+- **Concept**: Fungal network growing through a dynamic N-body system. Gravity affects growth cost/direction.
+- **Novel trait**: Gravitational Tropism. The fungus traces the contours of the gravitational field.
+- **Status**: experiments/harmonic-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### luminous-valley
+- **Parents**: experiments/valley-forge + experiments/luminous-flock
+- **Concept**: Boids flocking over a 3D terrain, reacting to the chemical state of a reaction-diffusion simulation.
+- **Novel trait**: Bio-luminescent Terrain Interaction. Boids act as mobile sensors, flashing faster and changing color over active chemical zones.
+- **Status**: experiments/luminous-valley
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### gravitational-bridge
+- **Parents**: experiments/biomimetic-bridge + experiments/harmony-of-spheres
+- **Concept**: Ants building dynamic bridges between orbiting planets. Bridges stretch and break due to gravitational forces.
+- **Novel trait**: Interplanetary Structural Engineering.
+- **Status**: experiments/gravitational-bridge
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.

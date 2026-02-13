@@ -37,7 +37,7 @@ pub enum Command {
 
 pub struct AudioEngine {
     network: Network,
-    inputs: Vec<f32>, // Decaying input currents
+    // inputs removed, handled internally by neurons
     cmd_rx: Receiver<Command>,
     snap_tx: Sender<Snapshot>,
     sample_count: u32,
@@ -48,11 +48,8 @@ impl AudioEngine {
         let (cmd_tx, cmd_rx) = unbounded();
         let (snap_tx, snap_rx) = unbounded();
 
-        let inputs = vec![0.0; network.neurons.len()];
-
         let engine = Self {
             network,
-            inputs,
             cmd_rx,
             snap_tx,
             sample_count: 0,
@@ -62,32 +59,27 @@ impl AudioEngine {
     }
 
     pub fn process_step(&mut self) -> f32 {
-        // 1. Decay Inputs
-        for input in &mut self.inputs {
-            *input *= 0.95;
-        }
+        // 1. Decay Inputs - Handled by Izhikevich model internally (current_decay)
 
         // 2. Process Commands
         while let Ok(cmd) = self.cmd_rx.try_recv() {
             match cmd {
                 Command::Inject { index, current } => {
-                    if index < self.inputs.len() {
-                        self.inputs[index] += current;
-                    }
+                    self.network.inject(index, current);
                 }
                 Command::SetParams { index, a, b, c, d } => {
-                    if index < self.network.neurons.len() {
-                        self.network.neurons[index].a = a;
-                        self.network.neurons[index].b = b;
-                        self.network.neurons[index].c = c;
-                        self.network.neurons[index].d = d;
+                    if let Some(neuron) = self.network.neurons.get_mut(index) {
+                        neuron.a = a;
+                        neuron.b = b;
+                        neuron.c = c;
+                        neuron.d = d;
                     }
                 }
             }
         }
 
         // 3. Step Network
-        self.network.step(1.0, &self.inputs);
+        self.network.step(1.0);
 
         // 4. Generate Audio Sample
         // Mix mean field (low freq) and spikes (high freq clicks)
@@ -95,9 +87,9 @@ impl AudioEngine {
         let mut spike_accum = 0.0;
         let mut spike_vec = Vec::with_capacity(self.network.neurons.len());
 
-        for n in &self.network.neurons {
+        for (i, n) in self.network.neurons.iter().enumerate() {
             mean_field += n.v;
-            let spiked = n.last_spike == Some(self.network.tick);
+            let spiked = self.network.last_spikes[i] == Some(self.network.tick);
             if spiked {
                 spike_accum += 1.0;
             }

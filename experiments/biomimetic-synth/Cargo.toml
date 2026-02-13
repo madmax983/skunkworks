@@ -8,6 +8,7 @@ macroquad = "0.4"
 rand = "0.8"
 crossbeam-channel = "0.5"
 rodio = { version = "0.17", optional = true }
+synaptic-physics = { path = "../../crates/synaptic-physics" }
 
 [features]
 default = []

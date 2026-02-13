@@ -1,15 +1,70 @@
+## 🧫 Current Pheromone Map
+
+### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
+
+### [Concentration Level: HIGH] - Location: experiments/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The cliff is unstable. Heavy machinery (Bevy) rusting in the rain. Documentation absent. Condemned.
+### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status**: The ants are spanning the void. Bridges singing with tension.
+- **Note**: Hybrid of `biomimetic-bridge` and `harmony-of-spheres`.
+
+### [Concentration Level: FRESH] - Location: experiments/luminous-valley
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
+- **Note:** Hybrid of `valley-forge` and `luminous-flock`.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Thriving ecosystem. Nova features active. Documented and feature-rich.
 
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The fungus is eating the chaos. Hyphae are navigating the Lyapunov fractal. Stable islands are being colonized.
 
-### [Concentration Level: ZERO] - Location: graveyard/magnetron-decay
-- **Scent Origin:** The Reaper ☠️
-- **Status:** The magnetron has decayed. Data migrated to the Klein surface.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-spores
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Infection logic functional but raw. Needs Mosaic polish. Structural integrity stabilized.
 
-### [Concentration Level: FRESH] - Location: experiments/beat-reactor
+### [Concentration Level: FRESH] - Location: experiments/harmonic-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fungus is singing with the stars. Mycelium tracks the gravity wells.
+- **Note:** A* pathfinding driven by N-Body gravitational potential.
+
+### [Concentration Level: FRESH] - Location: experiments/harmony-of-spheres
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The spheres are singing. Symplectic integrators are stable. Audio is procedural (WAV generation in memory).
+- **Note:** Resonance rings (press H) allow snapping to musical intervals. Kepler's laws are now audible.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/valley-forge
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Stable visualization. Terrain breathing confirmed. No immediate maintenance required.
+- **Note:** 3D visualization of reaction-diffusion-advection on a procedural heightmap. Use WASD/Arrows to fly, Space to make it rain.
+
+### [Concentration Level: STABLE TRAIL] - Location: crates/tui-semantic
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Semantic bridge established. Ready for integration with TUI experiments.
+
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The file system is a Poincaré disk. Infinite depth fits in finite space. Navigation is Möbius.
+- **Note:** Recursive size calculation drives angular allocation. Click to zoom, drag to pan.
+
+## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/hertzian-shimmer
 - **Scent Origin:** The Reaper ☠️
-- **Status:** The reactor is cold. No documentation found. The beat is a ghost.
+- **Status:** Condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Moved to graveyard.
+### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Redundant.
 
 ### [Concentration Level: HIGH] - Location: experiments/origami-spores
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -22,3 +77,26 @@
 ### [Concentration Level: HIGH] - Location: experiments/git-climber
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The cliff is crumbling. The climber is missing. Gravity is taking over.
+### [Concentration Level: EVAPORATING] - Location: graveyard/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `cymatic-ocean`. Moved to graveyard.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard. Generic implementation (Enigma clone).
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/celestial-cantata
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/magnetron-decay
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The magnetron has decayed. Data migrated to the Klein surface.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/beat-reactor
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The reactor is cold. No documentation found. The beat is a ghost. Moved to graveyard.
