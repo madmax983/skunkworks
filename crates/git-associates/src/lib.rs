@@ -106,7 +106,7 @@ impl GitModel {
         self.history_internal(limit, true)
     }
 
-    fn history_internal(&self, limit: usize, include_hunks: bool) -> Result<Vec<Commit>> {
+    fn history_internal(&self, limit: usize, compute_diffs: bool) -> Result<Vec<Commit>> {
         let mut revwalk = self.repo.revwalk().context("Failed to create revwalker")?;
         revwalk.set_sorting(Sort::TIME)?;
         revwalk.push_head()?;
@@ -126,9 +126,14 @@ impl GitModel {
             let parents: Vec<String> = commit.parents().map(|p| p.id().to_string()).collect();
 
             // Stats
-            let (stats, files) = self
-                .get_commit_diff(&commit, include_hunks)
-                .unwrap_or_default();
+            let (stats, files) = if compute_diffs {
+                match self.get_commit_diff(&commit, true) {
+                    Ok((s, f)) => (Some(s), f),
+                    Err(_) => (None, Vec::new()),
+                }
+            } else {
+                (None, Vec::new())
+            };
 
             commits.push(Commit {
                 hash,
@@ -137,20 +142,12 @@ impl GitModel {
                 message,
                 timestamp,
                 parents,
-                stats: Some(stats),
+                stats,
                 files,
             });
         }
 
         Ok(commits)
-    }
-
-    /// Crawls the commit graph. Alias for [`history`](Self::history).
-    ///
-    /// This method exists primarily for semantic clarity when the intent is to traverse
-    /// the graph structure rather than just list history.
-    pub fn crawl_graph(&self, limit: usize) -> Result<Vec<Commit>> {
-        self.history(limit)
     }
 
     fn get_commit_diff(
