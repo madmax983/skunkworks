@@ -28,9 +28,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/git-climber
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Condemned by The Reaper. Skeletal implementation using Bevy. Dead end.
+### [Concentration Level: EVAPORATING] - Location: experiments/celestial-cantata
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Redundant with `harmony-of-spheres`.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/magnetron-decay
 - **Scent Origin:** The Reaper ☠️
