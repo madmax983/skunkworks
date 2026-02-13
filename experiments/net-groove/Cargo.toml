@@ -1,0 +1,21 @@
+[package]
+name = "net-groove"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+crossbeam = "0.8"
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
+parking_lot = "0.12"
+hound = "3.5" # For WAV writing
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["cpal"]
