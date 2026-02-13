@@ -1594,6 +1594,12 @@ where
                         }
                     }
                     #[cfg(feature = "nova")]
+                    KeyCode::Char('5') => {
+                        if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_selected_tool = 4;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
                     KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
                     KeyCode::Char('i') => {
                         app_state.input_mode = InputMode::Injection;
@@ -1880,6 +1886,12 @@ where
                                             app_state.pandemonium_radius,
                                         ),
                                         3 => crate::vm::pandemonium::apply_duplicate(vm, s, g),
+                                        4 => crate::vm::pandemonium::apply_storm(
+                                            vm,
+                                            s,
+                                            g,
+                                            app_state.pandemonium_radius,
+                                        ),
                                         _ => {}
                                     }
                                     app_state.status_msg =
@@ -8201,6 +8213,7 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         1 => "Scramble (Radius)",
         2 => "Purge (Radius)",
         3 => "Duplicate (Single Gene)",
+        4 => "Storm (Chaos & Lightning)",
         _ => "Unknown",
     };
 
