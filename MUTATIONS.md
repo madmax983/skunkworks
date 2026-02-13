@@ -805,3 +805,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Bio-mechanical Crumpling. The structure decays and folds organically as the infection spreads.
 - **Status**: experiments/origami-spores
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### harmonic-mycelium
+- **Parents**: experiments/harmony-of-spheres + experiments/chaotic-mycelium
+- **Concept**: Fungal network growing through a dynamic N-body system. Gravity affects growth cost/direction.
+- **Novel trait**: Gravitational Tropism. The fungus traces the contours of the gravitational field.
+- **Status**: experiments/harmonic-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
