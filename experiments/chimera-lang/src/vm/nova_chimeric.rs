@@ -73,8 +73,17 @@ fn exec_chimeric_source(vm: &mut ChimeraVM, source: &str) -> Option<(usize, usiz
                 }
             }
             "run" => {
+                if vm.recursion_depth >= crate::vm::MAX_RECURSION_DEPTH {
+                    vm.output.push("Error: Recursion limit exceeded in chimeric run".to_string());
+                    return None;
+                }
+
                 if let Some(Value::Str(s)) = vm.stack.pop() {
-                    if let Some(jump) = exec_chimeric_source(vm, &s) {
+                    vm.recursion_depth += 1;
+                    let result = exec_chimeric_source(vm, &s);
+                    vm.recursion_depth -= 1;
+
+                    if let Some(jump) = result {
                         return Some(jump);
                     }
                 }
