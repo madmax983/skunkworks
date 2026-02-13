@@ -34,7 +34,8 @@ mod tests {
         // let pattern_val = vm.stack.pop().unwrap();
         // let rate_val = vm.stack.pop().unwrap();
 
-        // So we need to push: Rate, then Pattern, then Name.
+        // So we need to push: Payload, Rate, then Pattern, then Name.
+        vm.stack.push(Value::Int(-1)); // Payload
         vm.stack.push(Value::Int(100)); // Rate
         vm.stack.push(Value::Str("FOO".to_string())); // Pattern
         vm.stack.push(Value::Str("TestVirus".to_string())); // Name (Top)
@@ -63,6 +64,7 @@ mod tests {
             color: (255, 0, 0),
             pattern: "TARGET".to_string(),
             mutation_rate: 0,
+            payload: None,
         };
         vm.virus_library.push(virus);
 
