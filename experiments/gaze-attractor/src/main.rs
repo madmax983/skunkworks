@@ -1,11 +1,6 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
-    backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
     widgets::{Block, Borders, Paragraph},
@@ -14,6 +9,7 @@ use ratatui::{
     Terminal,
 };
 use std::{io, time::{Duration, Instant}};
+use tui_shared::Tui;
 
 mod physics;
 mod eye;
@@ -23,27 +19,17 @@ use app::{App, Mode};
 
 fn main() -> Result<()> {
     // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Create app
-    let size = terminal.size()?;
+    let size = tui.terminal.size()?;
     // Physics world size matches terminal size
     let mut app = App::new(size.width as f32, size.height as f32);
 
-    let res = run_app(&mut terminal, &mut app);
+    let res = run_app(&mut tui.terminal, &mut app);
 
     // Restore terminal
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
+    drop(tui);
 
     if let Err(err) = res {
         println!("{:?}", err);
@@ -52,7 +38,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()> {
+fn run_app(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>, app: &mut App) -> io::Result<()> {
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
 
@@ -93,7 +79,7 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
             Constraint::Min(0),
             Constraint::Length(3),
         ].as_ref())
-        .split(f.size());
+        .split(f.area());
 
     // Physics Y grows DOWN (0 is top).
     // Canvas Y grows UP (0 is bottom).

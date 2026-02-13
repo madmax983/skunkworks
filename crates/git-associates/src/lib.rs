@@ -37,7 +37,7 @@ pub mod model;
 use anyhow::{Context, Result};
 use chrono::{TimeZone, Utc};
 use git2::{DiffFlags, Repository, Sort};
-use model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
+pub use model::{Commit, CommitStats, DiffStats, FileChange, Hunk, LineChange};
 use std::path::Path;
 
 /// A wrapper around a Git repository that provides high-level analysis methods.
