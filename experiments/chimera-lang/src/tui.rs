@@ -4683,6 +4683,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => Color::Green,
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
+                        crate::vm::nova::OrganelleType::MadScientist => Color::Magenta,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
@@ -4695,6 +4696,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Seed => "S",
                         crate::vm::nova::OrganelleType::Choir => "♫",
                         crate::vm::nova::OrganelleType::Wisp => "*",
+                        crate::vm::nova::OrganelleType::MadScientist => "⚛",
                         crate::vm::nova::OrganelleType::Worker => "O",
                     };
 

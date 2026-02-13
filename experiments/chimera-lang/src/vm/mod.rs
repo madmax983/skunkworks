@@ -1363,6 +1363,9 @@ impl ChimeraVM {
             nova::OrganelleType::Choir => {
                 self.process_choir_organelle(organelle);
             }
+            nova::OrganelleType::MadScientist => {
+                self.process_mad_scientist(organelle);
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1373,6 +1376,7 @@ impl ChimeraVM {
                 | nova::OrganelleType::Alchemist
                 | nova::OrganelleType::Seed
                 | nova::OrganelleType::Choir
+                | nova::OrganelleType::MadScientist
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1395,6 +1399,69 @@ impl ChimeraVM {
         }
 
         !organelle.halted
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_mad_scientist(&mut self, organelle: &mut Organelle) {
+        let (cy, cx) = self.context_loc;
+        let mut rng = rand::thread_rng();
+
+        // 10% chance to do science
+        if rng.gen_bool(0.1) {
+            let experiment = rng.gen_range(0..4);
+            match experiment {
+                0 => {
+                    // Irradiate
+                    self.mutagen_grid[cy][cx] = self.mutagen_grid[cy][cx].saturating_add(50);
+                    self.output.push(format!("MAD SCIENTIST: Irradiated {},{}", cx, cy));
+                },
+                1 => {
+                    // Alchemy
+                    if alchemy::perform_alchemy(self, cy, cx) {
+                        self.output.push(format!("MAD SCIENTIST: Transmuted {},{}", cx, cy));
+                    } else {
+                        self.output.push(format!("MAD SCIENTIST: Failed alchemy at {},{}", cx, cy));
+                    }
+                },
+                2 => {
+                    // Entropy Surge
+                    if let Some(_) = nova_flux::exec_entropy_surge(self) {
+                         self.output.push("MAD SCIENTIST: Triggered ENTROPY SURGE!".to_string());
+                    }
+                },
+                3 => {
+                    // Spawn
+                    if self.organelles.len() < MAX_ORGANELLES {
+                        self.organelle_id_counter += 1;
+                        let new_org = Organelle {
+                            stack: Vec::new(),
+                            ip: (0, 0),
+                            context_loc: (cy, cx),
+                            call_stack: Vec::new(),
+                            recursion_depth: 0,
+                            halted: false,
+                            kind: nova::OrganelleType::Worker,
+                            direction: (0, 0),
+                            ttl: None,
+                            name: "Igor".to_string(),
+                            traits: vec!["Assistant".to_string()],
+                            id: self.organelle_id_counter,
+                            tissue_id: None,
+                            genome_id: 0,
+                        };
+                        self.organelles.push(new_org);
+                        self.output.push(format!("MAD SCIENTIST: Created life at {},{}", cx, cy));
+                    }
+                },
+                _ => {}
+            }
+            self.energy = self.energy.saturating_sub(10);
+        }
+
+        // Brownian Motion
+        let dy = rng.gen_range(-1..=1);
+        let dx = rng.gen_range(-1..=1);
+        organelle.direction = (dy, dx);
     }
 
     #[cfg(feature = "nova")]
