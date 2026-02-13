@@ -12,6 +12,11 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
 
+### [Concentration Level: FRESH] - Location: experiments/mem-canvas
+- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
+- **Status:** The heap is a canvas. Memory allocations are painting the void. Audio feedback loop established (sine waves modulated by block size).
+- **Note:** Hybrid of "Memory heap layout" and "Abstract expressionist canvas".
+
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
 ### [Concentration Level: HIGH] - Location: experiments/git-climber
 - **Scent Origin:** The Reaper ☠️
