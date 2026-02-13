@@ -4,6 +4,129 @@ use super::{ChimeraVM, Value};
 use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WeaverNode {
+    pub id: usize,
+    pub op: OpCode,
+    pub args: Vec<Nucleotide>,
+    pub x: f64,
+    pub y: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WeaverGraph {
+    pub nodes: HashMap<usize, WeaverNode>,
+    pub edges: Vec<(usize, usize)>, // (from, to)
+    pub selected_node: Option<usize>,
+    pub next_id: usize,
+    pub cursor: (f64, f64),
+}
+
+impl WeaverGraph {
+    pub fn new() -> Self {
+        Self {
+            nodes: HashMap::new(),
+            edges: Vec::new(),
+            selected_node: None,
+            next_id: 0,
+            cursor: (0.0, 0.0),
+        }
+    }
+
+    pub fn add_node(&mut self, op: OpCode, x: f64, y: f64) -> usize {
+        let id = self.next_id;
+        self.next_id += 1;
+        self.nodes.insert(id, WeaverNode {
+            id,
+            op,
+            args: Vec::new(),
+            x,
+            y,
+        });
+        id
+    }
+
+    pub fn remove_node(&mut self, id: usize) {
+        self.nodes.remove(&id);
+        self.edges.retain(|(from, to)| *from != id && *to != id);
+        if self.selected_node == Some(id) {
+            self.selected_node = None;
+        }
+    }
+
+    pub fn link(&mut self, from: usize, to: usize) {
+        if self.nodes.contains_key(&from) && self.nodes.contains_key(&to) {
+            // Avoid duplicates
+            if !self.edges.contains(&(from, to)) {
+                self.edges.push((from, to));
+            }
+        }
+    }
+
+    pub fn get_node_at(&self, x: f64, y: f64) -> Option<usize> {
+        for node in self.nodes.values() {
+            if x >= node.x && x <= node.x + 8.0 && y >= node.y && y <= node.y + 4.0 {
+                return Some(node.id);
+            }
+        }
+        None
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WeaverState {
+    pub graph: WeaverGraph,
+}
+
+impl WeaverState {
+    pub fn new() -> Self {
+        Self {
+            graph: WeaverGraph::new(),
+        }
+    }
+}
+
+pub fn compile_graph(graph: &WeaverGraph) -> Vec<Gene> {
+    // Simple linearization: Find start nodes (indegree 0) and traverse.
+    // If cycles, break them?
+    // For now, let's just sort by ID or position for determinism if disconnected.
+    // Better: Sort by X coordinate. Left-to-Right execution.
+    // This is the simplest visual programming model.
+    // Edges can be "jumps".
+
+    // Strategy 1: Spatial Sort (Reader Order)
+    // Execute nodes from top-left to bottom-right.
+    // Ignore edges for sequence? No, edges are crucial.
+
+    // Strategy 2: Explicit Start Node?
+    // Let's assume the node with lowest ID is start, or user marks it.
+    // Let's try Spatial Sort.
+    // 1. Sort nodes by Y then X.
+    // 2. Iterate and generate genes.
+    // 3. Edges representing Jumps?
+
+    // Actually, "The Weaver" implies weaving threads.
+    // Let's stick to Spatial Sort for now. It's robust.
+    // "Reading" the loom.
+
+    let mut nodes: Vec<&WeaverNode> = graph.nodes.values().collect();
+    nodes.sort_by(|a, b| {
+        a.y.partial_cmp(&b.y).unwrap_or(std::cmp::Ordering::Equal)
+            .then(a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal))
+    });
+
+    let mut genes = Vec::new();
+    for node in nodes {
+        genes.push(Gene {
+            op: node.op.clone(),
+            args: node.args.clone(),
+        });
+    }
+    genes
+}
 
 /// Executes Weave-related OpCodes.
 pub fn exec_weave_op(

@@ -646,6 +646,8 @@ pub struct ChimeraVM {
     pub hologram_mode: bool,
     #[cfg(feature = "nova")]
     pub attractor: nova_attractor::AttractorState,
+    #[cfg(feature = "nova")]
+    pub weaver: nova_weaver::WeaverState,
 }
 
 impl ChimeraVM {
@@ -949,6 +951,8 @@ impl ChimeraVM {
             hologram_mode: false,
             #[cfg(feature = "nova")]
             attractor: nova_attractor::AttractorState::new(),
+            #[cfg(feature = "nova")]
+            weaver: nova_weaver::WeaverState::new(),
         }
     }
 

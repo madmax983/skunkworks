@@ -1302,9 +1302,24 @@ where
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Weaver => {
-                                    // Use input buffer as pattern
+                                    if let Some(selected) = vm.weaver.graph.selected_node {
+                                        if let Some(node) = vm.weaver.graph.nodes.get_mut(&selected) {
+                                            if let Ok(op) = app_state.input_buffer.parse::<crate::opcode::OpCode>() {
+                                                node.op = op;
+                                                app_state.status_msg = "OpCode Updated".to_string();
+                                            } else if let Ok(n) = app_state.input_buffer.parse::<i64>() {
+                                                node.args.clear();
+                                                node.args.push(crate::ast::Nucleotide::Number(n));
+                                                app_state.status_msg = "Arg Updated (Number)".to_string();
+                                            } else {
+                                                node.args.clear();
+                                                node.args.push(crate::ast::Nucleotide::String(app_state.input_buffer.clone()));
+                                                app_state.status_msg = "Arg Updated (String)".to_string();
+                                            }
+                                        }
+                                    }
                                     app_state.input_mode = InputMode::Normal;
-                                    // Don't clear buffer, keep it for preview
+                                    app_state.input_buffer.clear();
                                 }
                                 #[cfg(feature = "nova")]
                                 ViewMode::Terminal => {
@@ -1602,8 +1617,15 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('z') => app_state.view_mode = ViewMode::Bestiary,
                     KeyCode::Char('i') => {
-                        app_state.input_mode = InputMode::Injection;
-                        app_state.input_buffer.clear();
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Weaver = app_state.view_mode {
+                             let (x, y) = vm.weaver.graph.cursor;
+                             vm.weaver.graph.add_node(crate::opcode::OpCode::Nop, x, y);
+                             app_state.status_msg = "Added Node (Nop)".to_string();
+                        } else {
+                            app_state.input_mode = InputMode::Injection;
+                            app_state.input_buffer.clear();
+                        }
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('r') => {
@@ -1726,6 +1748,18 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('L') => app_state.view_mode = ViewMode::Babel,
                     #[cfg(feature = "nova")]
+                    KeyCode::Char('l') => {
+                        if let ViewMode::Weaver = app_state.view_mode {
+                            if let Some(selected) = vm.weaver.graph.selected_node {
+                                let (cx, cy) = vm.weaver.graph.cursor;
+                                if let Some(t) = vm.weaver.graph.get_node_at(cx, cy) {
+                                    vm.weaver.graph.link(selected, t);
+                                    app_state.status_msg = format!("Linked {} -> {}", selected, t);
+                                }
+                            }
+                        }
+                    }
+                    #[cfg(feature = "nova")]
                     KeyCode::Char('=') => app_state.view_mode = ViewMode::Strings,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('Y') => app_state.view_mode = ViewMode::Hydra,
@@ -1824,6 +1858,19 @@ where
                     }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Weaver = app_state.view_mode {
+                            let (cx, cy) = vm.weaver.graph.cursor;
+                            let hit = vm.weaver.graph.get_node_at(cx, cy);
+                            vm.weaver.graph.selected_node = hit;
+                            if let Some(id) = hit {
+                                app_state.status_msg = format!("Selected Node {}", id);
+                            } else {
+                                app_state.status_msg = "Deselected".to_string();
+                            }
+                            continue;
+                        }
+
                         #[cfg(feature = "nova")]
                         if let ViewMode::Babel = app_state.view_mode {
                             // Run Parse
@@ -2187,6 +2234,10 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Weaver => {
+                            vm.weaver.graph.cursor.1 += 1.0;
+                        }
                         ViewMode::Catalyst => {
                             if !vm.catalysts.is_empty()
                                 && app_state.catalyst_scroll + 1 < vm.catalysts.len()
@@ -2340,7 +2391,7 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Laboratory => {
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method/Pattern
                                 0 => {
@@ -2433,6 +2484,10 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Weaver => {
+                            vm.weaver.graph.cursor.1 -= 1.0;
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
                             if app_state.grid_cursor.1 > 0 {
                                 app_state.grid_cursor.1 -= 1;
@@ -2458,7 +2513,7 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Laboratory => {
                             let max_strand = vm.dna.helix.strands.len().saturating_sub(1);
                             match app_state.selected_strand {
                                 // 0=A, 1=B, 2=Method
@@ -2732,12 +2787,16 @@ where
                         ViewMode::Catalyst => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Laboratory => {
                             if app_state.selected_strand < 2 {
                                 app_state.selected_strand += 1;
                             } else {
                                 app_state.selected_strand = 0;
                             }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Weaver => {
+                            vm.weaver.graph.cursor.0 += 1.0;
                         }
                         #[cfg(feature = "nova")]
                         ViewMode::Dream => {}
@@ -2840,6 +2899,10 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Weaver => {
+                            vm.weaver.graph.cursor.0 -= 1.0;
+                        }
+                        #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
                             if app_state.grid_cursor.0 > 0 {
                                 app_state.grid_cursor.0 -= 1;
@@ -2900,7 +2963,7 @@ where
                         ViewMode::Schematic => {}
                         ViewMode::Heatmap => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::Weaver | ViewMode::Laboratory => {
+                        ViewMode::Laboratory => {
                             if app_state.selected_strand > 0 {
                                 app_state.selected_strand -= 1;
                             } else {
@@ -2998,10 +3061,10 @@ where
                             }
                         }
                     },
+
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
-                            // Trace current circuit
                             let (x, y) = app_state.grid_cursor;
                             vm.stack.push(crate::vm::Value::Int(y as i64));
                             vm.stack.push(crate::vm::Value::Int(x as i64));
@@ -3011,8 +3074,7 @@ where
                                 &[],
                             );
                             if let Some(crate::vm::Value::Int(idx)) = vm.stack.last() {
-                                app_state.status_msg = format!("Traced circuit to strand {}", idx);
-                                app_state.selected_strand = *idx as usize;
+                                app_state.status_msg = format!("Traced Circuit to Strand {}", idx);
                             }
                             continue;
                         }
@@ -3041,7 +3103,12 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Weaver => {
-                                // Allow editing mode for Pattern entry
+                                if vm.weaver.graph.selected_node.is_some() {
+                                    app_state.input_buffer.clear();
+                                    app_state.status_msg = "Editing Node (Type OpCode or Arg)".to_string();
+                                } else {
+                                    app_state.input_mode = InputMode::Normal;
+                                }
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Terminal => {
@@ -6564,142 +6631,64 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+fn render_weaver(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     let chunks = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints(
-            [
-                Constraint::Percentage(25), // Strand A
-                Constraint::Percentage(25), // Strand B
-                Constraint::Percentage(50), // Loom
-            ]
-            .as_ref(),
-        )
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
         .split(f.area());
 
-    // Helper to render strand preview (reused concept from Laboratory)
-    let render_strand = |idx: usize, title: &str, is_focused: bool| {
-        let mut items = Vec::new();
-        if idx < vm.dna.helix.strands.len() {
-            let strand = &vm.dna.helix.strands[idx];
-            for gene in &strand.genes {
-                items.push(ListItem::new(format!("{}", gene.op)));
+    let graph = &vm.weaver.graph;
+    let (cx, cy) = graph.cursor;
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("The Voidweaver (Node Editor)"))
+        .x_bounds([cx - 50.0, cx + 50.0]) // Pan with cursor
+        .y_bounds([cy - 25.0, cy + 25.0])
+        .paint(|ctx| {
+            // Draw Edges
+            for (from, to) in &graph.edges {
+                if let (Some(n1), Some(n2)) = (graph.nodes.get(from), graph.nodes.get(to)) {
+                    ctx.draw(&ratatui::widgets::canvas::Line {
+                        x1: n1.x + 4.0, // Center-ish of node box
+                        y1: n1.y,
+                        x2: n2.x,
+                        y2: n2.y,
+                        color: Color::DarkGray,
+                    });
+                }
             }
-        } else {
-            items.push(ListItem::new("Invalid Strand"));
-        }
 
-        let border_style = if is_focused {
-            Style::default()
-                .fg(Color::Yellow)
-                .add_modifier(Modifier::BOLD)
-        } else {
-            Style::default().fg(Color::White)
-        };
+            // Draw Nodes
+            for node in graph.nodes.values() {
+                let color = if Some(node.id) == graph.selected_node {
+                    Color::Yellow
+                } else {
+                    Color::Cyan
+                };
 
-        List::new(items).block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title(format!("{} (Idx: {})", title, idx))
-                .border_style(border_style),
-        )
-    };
+                // Draw Box
+                ctx.draw(&Rectangle {
+                    x: node.x,
+                    y: node.y,
+                    width: 8.0,
+                    height: 4.0,
+                    color,
+                });
 
-    // Strand A
-    f.render_widget(
-        render_strand(
-            app_state.lab_parent_a,
-            "Warp A",
-            app_state.selected_strand == 0,
-        ),
-        chunks[0],
-    );
-
-    // Strand B
-    f.render_widget(
-        render_strand(
-            app_state.lab_parent_b,
-            "Warp B",
-            app_state.selected_strand == 1,
-        ),
-        chunks[1],
-    );
-
-    // Loom (Pattern & Result)
-    let loom_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Length(3), Constraint::Min(0)].as_ref())
-        .split(chunks[2]);
-
-    let pattern_str = &app_state.input_buffer;
-    let pattern_display = if pattern_str.is_empty() {
-        "Type pattern (Enter to edit)... e.g. ABAB".to_string()
-    } else {
-        pattern_str.clone()
-    };
-
-    let pattern_widget = Paragraph::new(pattern_display).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Weaving Pattern (A/B/X/0)")
-            .border_style(Style::default().fg(Color::Cyan)),
-    );
-    f.render_widget(pattern_widget, loom_chunks[0]);
-
-    // Preview Result
-    let mut preview_items = Vec::new();
-    let idx_a = app_state.lab_parent_a;
-    let idx_b = app_state.lab_parent_b;
-
-    if idx_a < vm.dna.helix.strands.len() && idx_b < vm.dna.helix.strands.len() {
-        let strand_a = &vm.dna.helix.strands[idx_a];
-        let strand_b = &vm.dna.helix.strands[idx_b];
-        let mut ptr_a = 0;
-        let mut ptr_b = 0;
-
-        for c in pattern_str.chars() {
-            match c.to_ascii_uppercase() {
-                'A' => {
-                    if ptr_a < strand_a.genes.len() {
-                        preview_items.push(
-                            ListItem::new(format!("{}", strand_a.genes[ptr_a].op))
-                                .style(Style::default().fg(Color::Green)),
-                        );
-                        ptr_a += 1;
-                    }
-                }
-                'B' => {
-                    if ptr_b < strand_b.genes.len() {
-                        preview_items.push(
-                            ListItem::new(format!("{}", strand_b.genes[ptr_b].op))
-                                .style(Style::default().fg(Color::Blue)),
-                        );
-                        ptr_b += 1;
-                    }
-                }
-                'X' => {
-                    preview_items.push(
-                        ListItem::new("Random(A/B)").style(Style::default().fg(Color::Magenta)),
-                    );
-                    // Increment both? No, random logic is complex to preview statically.
-                    // Just showing placeholder.
-                }
-                '0' => {
-                    preview_items.push(
-                        ListItem::new("Nop (Skip)").style(Style::default().fg(Color::DarkGray)),
-                    );
-                }
-                _ => {}
+                // Label
+                ctx.print(node.x + 1.0, node.y + 2.0, format!("{:?}", node.op));
+                ctx.print(node.x + 1.0, node.y + 1.0, format!("#{}", node.id));
             }
-        }
-    }
 
-    let preview_list = List::new(preview_items).block(
-        Block::default()
-            .borders(Borders::ALL)
-            .title("Weft (Result Preview)"),
-    );
-    f.render_widget(preview_list, loom_chunks[1]);
+            // Draw Cursor
+            ctx.print(cx, cy, "+");
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    let help = Paragraph::new("Controls: Arrows: Move | I: Insert | D: Delete | L: Link | C: Compile | Enter: Edit Args")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(help, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
