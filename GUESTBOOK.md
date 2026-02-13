@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/chromatophore
+- **Scent Origin:** Genesis (The Cryptographer) ⚛️🔐
+- **Status:** The pixels are hiding secrets. LSB steganography + Rhai VM. Images that execute themselves.
+- **Note:** `chromatophore view demo.png` to run the hidden script. `G` toggles the glitch mode.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Thriving ecosystem. Nova features active. Documented and feature-rich.

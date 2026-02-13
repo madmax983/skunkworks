@@ -1,0 +1,11 @@
+[package]
+name = "chromatophore"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+image = "0.24"
+rhai = "1.16"
+anyhow = { workspace = true }
+rand = { workspace = true }
