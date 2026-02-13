@@ -164,13 +164,15 @@ impl Cord {
         let mut total: u64 = 0;
         let mut multiplier: u64 = 1;
 
-        for cluster in &self.clusters {
+        for (i, cluster) in self.clusters.iter().enumerate() {
             let mut cluster_val: u64 = 0;
             for knot in cluster {
                 cluster_val += knot.value() as u64;
             }
             total += cluster_val * multiplier;
-            multiplier *= 10;
+            if i < self.clusters.len() - 1 {
+                multiplier *= 10;
+            }
         }
         total
     }
