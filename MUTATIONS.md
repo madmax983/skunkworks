@@ -853,4 +853,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: The Etymology of Code visualized as a Fungal Network. Spores (lines) grow hyphae towards their future versions (commits).
 - **Novel trait**: Semantic Mycology. The code grows.
 - **Status**: experiments/etymological-mycelium
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/foveated-code
+- **Concept**: A chaotic dependency graph where the user's gaze (simulated eye movement) acts as a physical force (stabilizer/exciter).
+- **Novel trait**: The Observer Effect. Focusing on a node alters its physical stability.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.

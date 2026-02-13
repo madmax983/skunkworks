@@ -281,3 +281,8 @@
 ### [Concentration Level: FRESH] - Location: experiments/foveated-code
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
 - **Status:** The code is staring back. The fovea is tracking syntax. Saccades are ballistic. Izhikevich neurons are firing on braces.
+
+### [Concentration Level: FRESH] - Location: experiments/gaze-attractor
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The eye is watching. Chaos is dampening where the gaze falls. The pendulum slows under observation.
+- **Note:** Hybrid of `chaos-pendulum` and `foveated-code`.
