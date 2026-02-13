@@ -1,5 +1,10 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/slime-metro
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The city is growing. 200,000 agents are laying transit lines. Pheromones are guiding the flow.
+- **Note:** Hybrid of `slime-mold` and `urban-planning`. Agents transport cargo between procedural stations.
+
 ### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
