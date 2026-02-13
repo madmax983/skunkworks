@@ -24,43 +24,39 @@ pub fn start_monitoring(state: Arc<GrooveState>) {
 fn spawn_monitor(state: Arc<GrooveState>, addr: &'static str, instrument: Instrument) {
     thread::spawn(move || {
         loop {
-            // DNS Resolution (part of the latency groove)
-            let socket_addr = match addr.to_socket_addrs() {
-                Ok(mut addrs) => addrs.next(),
-                Err(_) => None,
-            };
+            let latency = measure_latency(addr);
 
-            if let Some(socket_addr) = socket_addr {
-                let start = Instant::now();
-                let result = TcpStream::connect_timeout(&socket_addr, TIMEOUT);
-
-                // Elapsed time includes connect time
-                // If failed, we consider it "max latency" (timeout)
-                let elapsed = if result.is_ok() {
-                    start.elapsed()
-                } else {
-                    TIMEOUT
-                };
-
-                match instrument {
-                    Instrument::Kick => state.set_kick_latency(elapsed),
-                    Instrument::Snare => state.set_snare_latency(elapsed),
-                    Instrument::Hat => state.set_hat_latency(elapsed),
-                }
-            } else {
-                // DNS failed
-                let elapsed = TIMEOUT;
-                match instrument {
-                    Instrument::Kick => state.set_kick_latency(elapsed),
-                    Instrument::Snare => state.set_snare_latency(elapsed),
-                    Instrument::Hat => state.set_hat_latency(elapsed),
-                }
+            match instrument {
+                Instrument::Kick => state.set_kick_latency(latency),
+                Instrument::Snare => state.set_snare_latency(latency),
+                Instrument::Hat => state.set_hat_latency(latency),
             }
 
             // Sleep to avoid flooding
             thread::sleep(PING_INTERVAL);
         }
     });
+}
+
+fn measure_latency(addr: &str) -> Duration {
+    // DNS Resolution (part of the latency groove)
+    let socket_addr = match addr.to_socket_addrs() {
+        Ok(mut addrs) => addrs.next(),
+        Err(_) => None,
+    };
+
+    if let Some(socket_addr) = socket_addr {
+        let start = Instant::now();
+        // Elapsed time includes connect time
+        if TcpStream::connect_timeout(&socket_addr, TIMEOUT).is_ok() {
+            start.elapsed()
+        } else {
+            TIMEOUT
+        }
+    } else {
+        // DNS failed
+        TIMEOUT
+    }
 }
 
 #[cfg(test)]

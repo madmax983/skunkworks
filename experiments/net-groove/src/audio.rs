@@ -169,9 +169,9 @@ impl Synthesizer {
 
         // Initialize logic for start (hacky fix for 0 initialization)
         if self.current_sample == 1 {
-            self.next_kick_sample = beat_duration_samples * 0 + kick_offset; // Beat 1
-            self.next_snare_sample = beat_duration_samples * 1 + snare_offset; // Beat 2
-            self.next_hat_sample = beat_duration_samples * 0 + hat_offset; // Beat 1
+            self.next_kick_sample = kick_offset; // Beat 1
+            self.next_snare_sample = beat_duration_samples + snare_offset; // Beat 2
+            self.next_hat_sample = hat_offset; // Beat 1
         }
 
         // Synthesis
