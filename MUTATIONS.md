@@ -812,3 +812,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Gravitational Tropism. The fungus traces the contours of the gravitational field.
 - **Status**: experiments/harmonic-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### luminous-valley
+- **Parents**: experiments/valley-forge + experiments/luminous-flock
+- **Concept**: Boids flocking over a 3D terrain, reacting to the chemical state of a reaction-diffusion simulation.
+- **Novel trait**: Bio-luminescent Terrain Interaction. Boids act as mobile sensors, flashing faster and changing color over active chemical zones.
+- **Status**: experiments/luminous-valley
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
