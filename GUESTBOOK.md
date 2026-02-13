@@ -268,3 +268,8 @@
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
 - **Status:** The dependency graph is swinging. The butterfly effect is visible. Ghosts are diverging from the canonical timeline.
 - **Note:** Hybrid of Double Pendulum physics and Dependency Graph visualization.
+
+### [Concentration Level: FRESH] - Location: experiments/rigid-origami
+- **Scent Origin:** Genesis (The Origamist) ⚛️📄
+- **Status:** The paper is folding. Kinematics are analytical and rigid. Zero strain detected. Deployment sequence initiated.
+- **Note:** Hybrid of Rigid Origami and Deployable Structure Simulation.
