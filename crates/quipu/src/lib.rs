@@ -125,10 +125,12 @@ impl Knot {
 /// - **Index 2:** Hundreds ($10^2$)
 /// - ...and so on.
 ///
-/// # Example
+/// # Examples
+///
+/// ## Creating a Cord
 ///
 /// ```
-/// use quipu::Cord;
+/// use quipu::{Cord, Knot};
 ///
 /// let cord = Cord::from(205);
 /// // This cord will have:
@@ -137,9 +139,28 @@ impl Knot {
 /// // - Index 2 (Hundreds): 2 Simple Knots
 /// assert_eq!(cord.value(), 205);
 /// ```
+///
+/// ## Accessing Clusters (Advanced)
+///
+/// You can inspect the raw knots if needed, though `value()` is preferred.
+///
+/// ```
+/// use quipu::{Cord, Knot};
+///
+/// let cord = Cord::from(12);
+/// // 12 -> 2 Units, 1 Ten
+///
+/// // Units (10^0)
+/// assert_eq!(cord.clusters[0], vec![Knot::Long(2)]);
+///
+/// // Tens (10^1)
+/// assert_eq!(cord.clusters[1], vec![Knot::Simple]);
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct Cord {
     /// The clusters of knots, ordered from Units (index 0) to highest power.
+    ///
+    /// `clusters[0]` represents units ($10^0$), `clusters[1]` represents tens ($10^1$), etc.
     pub clusters: Vec<Vec<Knot>>,
 }
 
@@ -209,6 +230,21 @@ impl Cord {
 }
 
 impl From<u64> for Cord {
+    /// Converts a `u64` integer into a `Cord`.
+    ///
+    /// This process mimics the physical act of tying knots:
+    /// - Digits 1-9 in the units place become Long Knots (or Figure-Eight for 1).
+    /// - Digits 1-9 in higher places become clusters of Simple Knots.
+    /// - Zeros become empty spaces (empty clusters).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let c = Cord::from(321);
+    /// assert_eq!(c.value(), 321);
+    /// ```
     fn from(mut val: u64) -> Self {
         if val == 0 {
             return Cord::default();
@@ -244,6 +280,22 @@ impl From<u64> for Cord {
 }
 
 impl fmt::Display for Cord {
+    /// Formats the Cord for display, mimicking the visual appearance of a Quipu.
+    ///
+    /// The cord is displayed vertically (top-down), so higher powers of 10 appear first.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use quipu::Cord;
+    ///
+    /// let cord = Cord::from(123);
+    /// // Output:
+    /// // ●          (100)
+    /// // ● ●        (20)
+    /// // ≡3         (3)
+    /// println!("{}", cord);
+    /// ```
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.clusters.is_empty() {
             return write!(f, "(empty)");
@@ -266,7 +318,7 @@ impl fmt::Display for Cord {
                 }
             }
             if i > 0 {
-                write!(f, "\n")?;
+                writeln!(f)?;
             }
         }
         Ok(())
@@ -297,7 +349,7 @@ impl Sub for Cord {
         if self.value() < rhs.value() {
             // In a real library we might want to return Result or panic,
             // but for now panic fits the original behavior.
-            panic!("Quipu subtraction resulted in negative value (not supported by Incas!)");
+            panic!("Quipu subtraction resulted in negative value (not supported by Incas! Use Cord::checked_sub for safety)");
         }
 
         let val = self.value() - rhs.value();
@@ -340,9 +392,9 @@ impl Quipu {
 
 impl fmt::Display for Quipu {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Quipu with {} cords:\n", self.cords.len())?;
+        writeln!(f, "Quipu with {} cords:", self.cords.len())?;
         for (i, cord) in self.cords.iter().enumerate() {
-            write!(f, "Cord {}:\n{}\n", i, cord)?;
+            writeln!(f, "Cord {}:\n{}", i, cord)?;
         }
         Ok(())
     }
