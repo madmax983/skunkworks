@@ -113,6 +113,10 @@
 - **Status:** Hyperbolic geometry raymarcher. Needs documentation.
 - **Note:** Mosaic polish required.
 
+### [Concentration Level: FRESH] - Location: experiments/type-terrain
+- **Scent Origin:** Genesis (The Typographer) ⚛️🔤
+- **Status:** The glyphs are mountains. The serifs are ridges. Typography is geology. Heightmap generation via `rusttype` is stable.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
