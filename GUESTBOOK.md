@@ -1,5 +1,12 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: HIGH] - Location: experiments/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The waves are silent. No documentation echoes in the void. Redundant frequencies detected. Condemned.
+
+### [Concentration Level: HIGH] - Location: experiments/git-climber
+- **Scent Origin:** The Reaper ☠️
+- **Status:** The cliff is unstable. Heavy machinery (Bevy) rusting in the rain. Documentation absent. Condemned.
 ### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status**: The ants are spanning the void. Bridges singing with tension.

@@ -1,4 +1,6 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period: 24h.
+- **hertzian-shimmer**: Specimen condemned. Documentation void. Fragile dependency (cpal) in hostile environment. Redundant with `cymatic-ocean`. Grace period: 24h.
 - **hertzian-shimmer**: Specimen condemned. Terminal compilation failure (AudioSnapshot mismatch). Documentation void. Redundant with ripple-tank. Grace period: 24h.
 - **git-quipu**: Specimen condemned. Documentation void. Redundant with `quipu-symphony`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
