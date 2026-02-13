@@ -22,6 +22,7 @@ pub struct Synthesizer {
     tick_duration: Duration,
 
     pub active_notes: Vec<VisualNote>,
+    pub status_msg: String,
 }
 
 #[derive(Debug, Clone)]
@@ -35,7 +36,7 @@ pub struct VisualNote {
 }
 
 impl Synthesizer {
-    pub fn new(diff: DiffStats) -> Self {
+    pub fn new(diff: DiffStats, status_msg: String) -> Self {
         #[cfg(feature = "audio")]
         let (stream, stream_handle) = match OutputStream::try_default() {
             Ok((s, h)) => (Some(s), Some(h)),
@@ -54,6 +55,7 @@ impl Synthesizer {
             last_tick: Instant::now(),
             tick_duration: Duration::from_millis(100), // Tempo
             active_notes: Vec::new(),
+            status_msg,
         }
     }
 
@@ -80,31 +82,43 @@ impl Synthesizer {
             return None;
         }
 
-        if self.current_file_idx >= self.diff.files.len() {
-            // Loop back to start
-            self.current_file_idx = 0;
-            self.current_hunk_idx = 0;
-            self.current_line_idx = 0;
+        // Prevent infinite loops if all files have 0 hunks
+        let mut files_checked = 0;
+        let total_files = self.diff.files.len();
+
+        while files_checked <= total_files {
+            if self.current_file_idx >= total_files {
+                // Loop back to start
+                self.current_file_idx = 0;
+                self.current_hunk_idx = 0;
+                self.current_line_idx = 0;
+            }
+
+            let file = &self.diff.files[self.current_file_idx];
+
+            // If we are past the last hunk of this file, move to next file
+            if self.current_hunk_idx >= file.hunks.len() {
+                self.current_file_idx += 1;
+                self.current_hunk_idx = 0;
+                self.current_line_idx = 0;
+                files_checked += 1;
+                continue;
+            }
+
+            let hunk = &file.hunks[self.current_hunk_idx];
+            // If we are past the last line of this hunk, move to next hunk
+            if self.current_line_idx >= hunk.lines.len() {
+                self.current_hunk_idx += 1;
+                self.current_line_idx = 0;
+                continue;
+            }
+
+            let line = hunk.lines[self.current_line_idx].clone();
+            self.current_line_idx += 1;
+            return Some(line);
         }
 
-        let file = &self.diff.files[self.current_file_idx];
-        if self.current_hunk_idx >= file.hunks.len() {
-            self.current_file_idx += 1;
-            self.current_hunk_idx = 0;
-            self.current_line_idx = 0;
-            return self.next_event(); // Recurse
-        }
-
-        let hunk = &file.hunks[self.current_hunk_idx];
-        if self.current_line_idx >= hunk.lines.len() {
-            self.current_hunk_idx += 1;
-            self.current_line_idx = 0;
-            return self.next_event();
-        }
-
-        let line = hunk.lines[self.current_line_idx].clone();
-        self.current_line_idx += 1;
-        Some(line)
+        None
     }
 
     fn play_event(&mut self, event: LineChange) {
@@ -149,5 +163,35 @@ impl Synthesizer {
                 sink.detach();
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use git_associates::model::{FileChange, DiffStats};
+
+    #[test]
+    fn test_next_event_infinite_loop() {
+        let file_change = FileChange {
+            path: "test.rs".to_string(),
+            extension: "rs".to_string(),
+            insertions: 0,
+            deletions: 0,
+            is_binary: false,
+            hunks: vec![], // No hunks
+        };
+
+        let diff = DiffStats {
+            files: vec![file_change],
+            total_added: 0,
+            total_removed: 0,
+        };
+
+        let mut synth = Synthesizer::new(diff, "Test".to_string());
+
+        // This should return None, not recurse infinitely
+        let event = synth.next_event();
+        assert!(event.is_none());
     }
 }

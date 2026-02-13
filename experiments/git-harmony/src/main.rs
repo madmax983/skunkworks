@@ -32,12 +32,27 @@ fn main() -> Result<()> {
 
     // Logic
     // We try to get diff, if it fails (e.g. no git repo), we handle it
-    let diff = match GitModel::open(".") {
-        Ok(model) => model.diff_workdir().unwrap_or_default(),
-        Err(_) => git_associates::model::DiffStats::default(),
+    let (diff, status_msg) = match GitModel::open(".") {
+        Ok(model) => match model.diff_workdir() {
+            Ok(d) => {
+                if d.files.is_empty() {
+                    (d, "No changes detected.".to_string())
+                } else {
+                    (d, "Playing git diffs...".to_string())
+                }
+            }
+            Err(_) => (
+                git_associates::model::DiffStats::default(),
+                "Error reading diffs".to_string(),
+            ),
+        },
+        Err(_) => (
+            git_associates::model::DiffStats::default(),
+            "Error: Not a git repository".to_string(),
+        ),
     };
 
-    let mut synth = Synthesizer::new(diff);
+    let mut synth = Synthesizer::new(diff, status_msg);
 
     // Loop
     let res = run_app(&mut terminal, &mut synth);
@@ -118,7 +133,7 @@ fn run_app(
                 .active_notes
                 .last()
                 .map(|n| n.text.clone())
-                .unwrap_or_else(|| "Waiting for git diff...".to_string());
+                .unwrap_or_else(|| synth.status_msg.clone());
             let count = synth.active_notes.len();
 
             let p = Paragraph::new(format!(
