@@ -262,6 +262,11 @@ pub mod nova_weaver;
 #[cfg(test)]
 mod nova_weaver_test;
 #[cfg(feature = "nova")]
+pub mod nova_construct;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_construct_test;
+#[cfg(feature = "nova")]
 pub mod nova_void;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -659,6 +664,8 @@ pub struct ChimeraVM {
     pub attractor: nova_attractor::AttractorState,
     #[cfg(feature = "nova")]
     pub void_rifts: Vec<nova_void::VoidRift>,
+    #[cfg(feature = "nova")]
+    pub construct: nova_construct::ConstructState,
 }
 
 impl ChimeraVM {
@@ -964,6 +971,8 @@ impl ChimeraVM {
             attractor: nova_attractor::AttractorState::new(),
             #[cfg(feature = "nova")]
             void_rifts: Vec::new(),
+            #[cfg(feature = "nova")]
+            construct: nova_construct::ConstructState::new(),
         }
     }
 

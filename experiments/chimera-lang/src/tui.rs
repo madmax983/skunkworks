@@ -117,6 +117,8 @@ pub(crate) enum ViewMode {
     Attractor,
     #[cfg(feature = "nova")]
     Virology,
+    #[cfg(feature = "nova")]
+    Construct,
 }
 
 enum InputMode {
@@ -658,6 +660,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Virology = app_state.view_mode {
                 render_virology(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Construct = app_state.view_mode {
+                render_construct(f, vm, app_state);
                 return;
             }
 
@@ -1321,6 +1329,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Construct => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1575,7 +1588,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => ViewMode::Virology,
                             #[cfg(feature = "nova")]
-                            ViewMode::Virology => ViewMode::Genome,
+                            ViewMode::Virology => ViewMode::Construct,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Construct => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1626,7 +1641,10 @@ where
                     KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('a') => {
-                        if let ViewMode::Alchemy = app_state.view_mode {
+                        if let ViewMode::Construct = app_state.view_mode {
+                            vm.construct.add_node(crate::opcode::OpCode::Push, Some(crate::vm::Value::Int(10)));
+                            app_state.status_msg = "Added Node".to_string();
+                        } else if let ViewMode::Alchemy = app_state.view_mode {
                             // Add to Crucible
                             match app_state.alchemy_selection {
                                 0 => {
@@ -1655,7 +1673,10 @@ where
                     }
                     #[cfg(feature = "nova")]
                     KeyCode::Char('x') => {
-                        if let ViewMode::Graveyard = app_state.view_mode {
+                        if let ViewMode::Construct = app_state.view_mode {
+                            vm.construct.delete_selection();
+                            app_state.status_msg = "Deleted Selection".to_string();
+                        } else if let ViewMode::Graveyard = app_state.view_mode {
                             if app_state.selected_graveyard_strand < vm.graveyard.len() {
                                 vm.graveyard.remove(app_state.selected_graveyard_strand);
                                 app_state.status_msg = "Exterminated strand.".to_string();
@@ -1684,6 +1705,48 @@ where
                     KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('e') => {
+                        if let ViewMode::Construct = app_state.view_mode {
+                            if let Some(id) = vm.construct.selected_node {
+                                if let Some(node) = vm.construct.nodes.get_mut(&id) {
+                                    // Cycle OpCodes
+                                    node.op = match node.op {
+                                        crate::opcode::OpCode::Push => crate::opcode::OpCode::Add,
+                                        crate::opcode::OpCode::Add => crate::opcode::OpCode::Sub,
+                                        crate::opcode::OpCode::Sub => crate::opcode::OpCode::Mul,
+                                        crate::opcode::OpCode::Mul => crate::opcode::OpCode::Div,
+                                        crate::opcode::OpCode::Div => crate::opcode::OpCode::Print,
+                                        crate::opcode::OpCode::Print => crate::opcode::OpCode::Dup,
+                                        crate::opcode::OpCode::Dup => crate::opcode::OpCode::Push,
+                                        _ => crate::opcode::OpCode::Push,
+                                    };
+                                    node.label = format!("{:?}", node.op);
+                                }
+                            }
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('v') => {
+                        if let ViewMode::Construct = app_state.view_mode {
+                            if let Some(id) = vm.construct.selected_node {
+                                if let Some(node) = vm.construct.nodes.get_mut(&id) {
+                                    // Cycle Values
+                                    if node.op == crate::opcode::OpCode::Push {
+                                        node.value = match node.value {
+                                            Some(crate::vm::Value::Int(1)) => Some(crate::vm::Value::Int(10)),
+                                            Some(crate::vm::Value::Int(10)) => Some(crate::vm::Value::Int(100)),
+                                            Some(crate::vm::Value::Int(100)) => Some(crate::vm::Value::Str("A".to_string())),
+                                            Some(crate::vm::Value::Str(_)) => Some(crate::vm::Value::Int(1)),
+                                            _ => Some(crate::vm::Value::Int(1)),
+                                        };
+                                    }
+                                }
+                            }
+                        } else {
+                            app_state.view_mode = ViewMode::Virology;
+                        }
+                    }
                     KeyCode::Char('f') => {
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
@@ -1761,8 +1824,6 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
                     #[cfg(feature = "nova")]
-                    KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
-                    #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
                             // Interfere (DNA -> Hologram)
@@ -1825,7 +1886,16 @@ where
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
                         #[cfg(feature = "nova")]
-                        if let ViewMode::Babel = app_state.view_mode {
+                        if let ViewMode::Construct = app_state.view_mode {
+                            let (cx, cy) = vm.construct.cursor;
+                            vm.construct.selected_node = None;
+                            for node in vm.construct.nodes.values() {
+                                if cx >= node.x && cx <= node.x + 10.0 && cy >= node.y && cy <= node.y + 5.0 {
+                                    vm.construct.selected_node = Some(node.id);
+                                    break;
+                                }
+                            }
+                        } else if let ViewMode::Babel = app_state.view_mode {
                             // Run Parse
                             vm.stack
                                 .push(crate::vm::Value::Str(app_state.babel_pattern.clone()));
@@ -2166,7 +2236,24 @@ where
                         }
                     }
                     KeyCode::Char('m') => vm.mutate(),
-                    KeyCode::Char('c') => vm.chaos_mode = !vm.chaos_mode,
+                    KeyCode::Char('c') => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Construct = app_state.view_mode {
+                            if vm.construct.linking_from.is_some() {
+                                vm.construct.complete_link();
+                                app_state.status_msg = "Link Completed".to_string();
+                            } else {
+                                vm.construct.start_link();
+                                app_state.status_msg = "Link Started".to_string();
+                            }
+                        } else {
+                            vm.chaos_mode = !vm.chaos_mode;
+                        }
+                        #[cfg(not(feature = "nova"))]
+                        {
+                            vm.chaos_mode = !vm.chaos_mode;
+                        }
+                    }
                     KeyCode::Down => match app_state.view_mode {
                         ViewMode::Genome => {
                             let s_len = vm.dna.helix.strands.len();
@@ -2410,6 +2497,10 @@ where
                             if app_state.grid_cursor.1 < 15 {
                                 app_state.grid_cursor.1 += 1;
                             }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Construct => {
+                            vm.construct.cursor.1 += 1.0;
                         }
                     },
                     KeyCode::Up => match app_state.view_mode {
@@ -2657,6 +2748,10 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Construct => {
+                            vm.construct.cursor.1 -= 1.0;
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2826,6 +2921,10 @@ where
                             if app_state.grid_cursor.0 < 15 {
                                 app_state.grid_cursor.0 += 1;
                             }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Construct => {
+                            vm.construct.cursor.0 += 1.0;
                         }
                     },
                     KeyCode::Left => match app_state.view_mode {
@@ -2997,8 +3096,25 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Construct => {
+                            vm.construct.cursor.0 -= 1.0;
+                        }
                     },
                     KeyCode::Enter => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Construct = app_state.view_mode {
+                            // Compile
+                            match vm.construct.compile() {
+                                Ok(strand) => {
+                                    vm.dna.helix.strands.push(strand);
+                                    app_state.status_msg = "Compiled Construct to Helix!".to_string();
+                                }
+                                Err(e) => app_state.status_msg = format!("Compile Error: {}", e),
+                            }
+                            continue;
+                        }
+
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
                             // Trace current circuit
@@ -3053,6 +3169,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Virology => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Construct => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4550,6 +4670,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
         #[cfg(feature = "nova")]
         ViewMode::Virology => "VIROLOGY LAB",
+        #[cfg(feature = "nova")]
+        ViewMode::Construct => "THE CONSTRUCT (VISUAL PROGRAMMING)",
     };
 
     let title = match app_state.input_mode {
@@ -5109,6 +5231,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
         views.push((ViewMode::Virology, "Virology", "v"));
+        views.push((ViewMode::Construct, "The Construct", "C"));
     }
     views
 }
@@ -7782,6 +7905,84 @@ fn render_strings(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
     let list = List::new(items).block(Block::default().borders(Borders::ALL).title("String Stats"));
     f.render_widget(list, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_construct(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(f.area());
+
+    use ratatui::widgets::canvas::{Canvas, Line, Rectangle};
+
+    let canvas = Canvas::default()
+        .block(Block::default().borders(Borders::ALL).title("The Construct (Visual Node Editor)"))
+        .x_bounds([0.0, 100.0])
+        .y_bounds([0.0, 50.0])
+        .paint(|ctx| {
+            // Draw Links
+            for link in &vm.construct.links {
+                if let (Some(from), Some(to)) = (vm.construct.nodes.get(&link.from), vm.construct.nodes.get(&link.to)) {
+                    // Left-Right flow
+                    let x1 = from.x + 10.0; // Right edge (width 10)
+                    let y1 = from.y + 2.5;  // Middle (height 5)
+
+                    let x2 = to.x;
+                    let y2 = to.y + 2.5;
+
+                    ctx.draw(&Line {
+                        x1, y1, x2, y2, color: Color::DarkGray
+                    });
+                }
+            }
+
+            // Draw Linking Line
+            if let Some(from_id) = vm.construct.linking_from {
+                if let Some(from) = vm.construct.nodes.get(&from_id) {
+                    let x1 = from.x + 10.0;
+                    let y1 = from.y + 2.5;
+                    let (cx, cy) = vm.construct.cursor;
+                    ctx.draw(&Line {
+                        x1, y1, x2: cx, y2: cy, color: Color::Yellow
+                    });
+                }
+            }
+
+            // Draw Nodes
+            for node in vm.construct.nodes.values() {
+                let color = if Some(node.id) == vm.construct.selected_node {
+                    Color::Yellow
+                } else {
+                    Color::Cyan
+                };
+
+                ctx.draw(&Rectangle {
+                    x: node.x,
+                    y: node.y,
+                    width: 10.0,
+                    height: 5.0,
+                    color,
+                });
+
+                // Label
+                ctx.print(node.x + 1.0, node.y + 3.0, node.label.clone());
+                if let Some(val) = &node.value {
+                    ctx.print(node.x + 1.0, node.y + 2.0, format!("{}", val));
+                }
+                ctx.print(node.x + 1.0, node.y + 1.0, format!("ID:{}", node.id));
+            }
+
+            // Draw Cursor
+            let (cx, cy) = vm.construct.cursor;
+            ctx.print(cx, cy, "+");
+        });
+
+    f.render_widget(canvas, chunks[0]);
+
+    let help = Paragraph::new("Controls: Arrows: Move | A: Add Node | C: Connect | X: Delete | Enter: Compile | Space: Select")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(help, chunks[1]);
 }
 
 #[cfg(feature = "nova")]
