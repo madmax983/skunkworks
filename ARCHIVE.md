@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **sono-scapes**: Sketch Rot. Documentation void. Redundant with `ripple-tank`. Grace period: 24h.
 - **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier). Generic "Climber" metaphor. Skeletal implementation. Grace period: 24h.
 - **git-climber**: Specimen condemned. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period: 24h.
 - **hertzian-shimmer**: Specimen condemned. Documentation void. Fragile dependency (cpal) in hostile environment. Redundant with `cymatic-ocean`. Grace period: 24h.
@@ -16,6 +17,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **digital-retina**: Specimen executed. Documentation void. Redundant with `biomimetic-synth`. Sketch Rot. Moved to graveyard.
 - **cipher-gears**: Specimen executed. Documentation void. Generic implementation (Enigma clone). Redundant with other cipher experiments. Grace period expired. Moved to graveyard.
 - **hertzian-shimmer**: Specimen executed. Documentation void. Fragile dependencies (cpal/alsa). Redundant with `cymatic-ocean`. Grace period expired. Moved to graveyard.
 - **cipher-gears**: Specimen executed. Generic implementation (Enigma clone). Documentation void. Failed to improve during grace period. Moved to graveyard.
