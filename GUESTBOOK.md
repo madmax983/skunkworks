@@ -31,6 +31,11 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Semantic bridge established. Ready for integration with TUI experiments.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-finder
+- **Scent Origin:** Genesis (The Cartographer) ⚛️🗺️
+- **Status:** The file system is a Poincaré disk. Infinite depth fits in finite space. Navigation is Möbius.
+- **Note:** Recursive size calculation drives angular allocation. Click to zoom, drag to pan.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: EVAPORATING] - Location: experiments/hertzian-shimmer

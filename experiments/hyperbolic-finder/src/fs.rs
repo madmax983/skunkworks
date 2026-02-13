@@ -43,11 +43,14 @@ pub struct DirNode {
     pub is_dir: bool,
     pub file_type: FileType,
     pub children: Vec<DirNode>,
-    pub size: u64,
+    /// Size of the file itself (bytes). For directories, typically 4096.
+    pub self_size: u64,
+    /// Total size of this node + all recursive children (bytes).
+    pub total_size: u64,
 }
 
 impl DirNode {
-    pub fn new(path: PathBuf, is_dir: bool, size: u64) -> Self {
+    pub fn new(path: PathBuf, is_dir: bool, self_size: u64) -> Self {
         let name = path
             .file_name()
             .unwrap_or(path.as_os_str())
@@ -60,7 +63,8 @@ impl DirNode {
             is_dir,
             file_type,
             children: Vec::new(),
-            size,
+            self_size,
+            total_size: self_size,
         }
     }
 }
@@ -71,6 +75,7 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize) -> Result<DirNode> {
     let mut node = DirNode::new(path.to_path_buf(), metadata.is_dir(), metadata.len());
 
     if max_depth > 0 && node.is_dir {
+        // Read directory entries
         match fs::read_dir(path) {
             Ok(entries) => {
                 for entry in entries {
@@ -86,21 +91,33 @@ pub fn scan_dir<P: AsRef<Path>>(path: P, max_depth: usize) -> Result<DirNode> {
                             continue;
                         }
 
+                        // Recursively scan children
+                        // We use a Result here but swallow errors for individual children
+                        // so one bad permission doesn't stop the whole scan.
                         if let Ok(child) = scan_dir(&child_path, max_depth - 1) {
                             node.children.push(child);
                         }
                     }
                 }
             }
-            Err(_) => {}
+            Err(_) => {
+                // Permission denied or other error reading dir: treat as empty dir
+            }
         }
     }
 
-    // Sort children: directories first, then alphabetical
+    // Calculate total size
+    // Note: We sum children's total_size, not self_size, because children might be dirs with content.
+    for child in &node.children {
+        node.total_size += child.total_size;
+    }
+
+    // Sort children: directories first, then by size descending
     node.children.sort_by(|a, b| match (a.is_dir, b.is_dir) {
         (true, false) => std::cmp::Ordering::Less,
         (false, true) => std::cmp::Ordering::Greater,
-        _ => a.name.cmp(&b.name),
+        // Within same type, sort by size descending
+        _ => b.total_size.cmp(&a.total_size),
     });
 
     Ok(node)

@@ -13,10 +13,11 @@ const DISK_SCALE: f32 = 0.45;
 
 #[macroquad::main("Hyperbolic Finder")]
 async fn main() -> anyhow::Result<()> {
-    // Scan current directory
-    let root_path = std::env::current_dir()?;
-    let fs_root = scan_dir(root_path, 5)?;
-    let layout_root = layout_tree(fs_root);
+    // Current state
+    let mut current_path = std::env::current_dir()?;
+    // Root of the current visualization
+    let mut fs_root = scan_dir(&current_path, 5)?;
+    let mut layout_root = layout_tree(fs_root.clone());
 
     // Navigation State
     let mut view_center = Point::new(0.0, 0.0);
@@ -52,16 +53,10 @@ async fn main() -> anyhow::Result<()> {
             is_dragging = true;
             drag_start_mouse = mouse_z;
             // The world point currently under the mouse is P = mobius_add(mouse_z, view_center)
-            // Note: view transform maps World -> Screen (Disk).
-            // T(p) = mobius_sub(p, view_center).
-            // So p = mobius_add(disk_point, view_center).
             drag_locked_world_point = mobius_add(mouse_z, view_center);
         }
 
         if is_mouse_button_down(MouseButton::Left) && is_dragging {
-            // We want new_view_center such that drag_locked_world_point maps to mouse_z (current)
-            // T(P) = mouse_z  => mobius_sub(P, C) = mouse_z
-            // => C = mobius_sub(P, mouse_z)
             target_center = mobius_sub(drag_locked_world_point, mouse_z);
             view_center = target_center; // Instant update for responsiveness
         }
@@ -71,13 +66,21 @@ async fn main() -> anyhow::Result<()> {
             // On release, check if it was a click (short drag)
             if (mouse_z - drag_start_mouse).norm() < 0.02 && is_mouse_in_disk {
                 // It was a click! Navigate to node.
-                if let Some(clicked_node_pos) = find_closest_node(
+                if let Some((clicked_pos, clicked_node)) = find_closest_node(
                     &layout_root,
                     view_center,
                     mouse_z,
                     0.05, // hit radius
                 ) {
-                    target_center = clicked_node_pos;
+                    if clicked_node.node.is_dir {
+                        // If directory, center on it
+                        target_center = clicked_pos;
+                        // TODO: If it's a deep directory, maybe re-root?
+                        // For now, just center.
+                    } else {
+                        // File action
+                        println!("Clicked file: {:?}", clicked_node.node.path);
+                    }
                 }
             }
         }
@@ -90,7 +93,6 @@ async fn main() -> anyhow::Result<()> {
         // --- Animation ---
         let diff = target_center - view_center;
         if diff.norm() > 0.0001 {
-            // Lerp in disk for smooth transition if not dragging
             if !is_dragging {
                 view_center = view_center + diff * 0.1;
             }
@@ -124,11 +126,35 @@ async fn main() -> anyhow::Result<()> {
 
         // UI Overlay
         draw_text("Hyperbolic Finder", 20.0, 30.0, 30.0, WHITE);
-        draw_text(&format!("View: {:.2}", view_center), 20.0, 50.0, 20.0, GRAY);
+        draw_text(
+            &format!("Path: {}", current_path.display()),
+            20.0,
+            60.0,
+            20.0,
+            GRAY,
+        );
 
         // Buttons
-        if Button::new("Reset View", 20.0, h - 50.0, 120.0, 30.0).draw() {
+        let btn_w = 120.0;
+        let btn_h = 30.0;
+        let btn_y = h - 50.0;
+
+        if Button::new("Reset View", 20.0, btn_y, btn_w, btn_h).draw() {
             target_center = Point::new(0.0, 0.0);
+        }
+
+        if Button::new("Up (..)", 160.0, btn_y, btn_w, btn_h).draw() {
+            if let Some(parent) = current_path.parent() {
+                let parent_buf = parent.to_path_buf();
+                // Re-scan from parent
+                if let Ok(new_root) = scan_dir(&parent_buf, 5) {
+                    current_path = parent_buf;
+                    fs_root = new_root;
+                    layout_root = layout_tree(fs_root.clone());
+                    target_center = Point::new(0.0, 0.0);
+                    view_center = Point::new(0.0, 0.0);
+                }
+            }
         }
 
         // Hover Info
@@ -151,36 +177,38 @@ async fn main() -> anyhow::Result<()> {
     }
 }
 
-fn find_closest_node(
-    node: &LayoutNode,
+fn find_closest_node<'a>(
+    node: &'a LayoutNode,
     view_center: Point,
     click_z: Point, // point in transformed space (screen)
     hit_radius: f64,
-) -> Option<Point> {
+) -> Option<(Point, &'a LayoutNode)> {
     let z_prime = mobius_sub(node.pos, view_center);
     let dist = (z_prime - click_z).norm();
 
     // Adjust effective hit radius based on node size
-    let size_factor = (node.total_size as f64).max(1.0).log10();
+    let size_factor = (node.node.total_size as f64).max(1.0).log10();
     let effective_radius = hit_radius * (1.0 + size_factor * 0.2);
 
     let mut best_match = None;
     let mut min_dist = effective_radius;
 
     if dist < min_dist {
-        best_match = Some(node.pos);
+        best_match = Some((node.pos, node));
         min_dist = dist;
     }
 
     if z_prime.norm() < 0.95 {
         for child in &node.children {
-            if let Some(match_pos) = find_closest_node(child, view_center, click_z, min_dist) {
-                // To compare accurately, we should check distance in screen space
+            if let Some((match_pos, match_node)) =
+                find_closest_node(child, view_center, click_z, min_dist)
+            {
+                // Check dist again in screen space
                 let child_prime = mobius_sub(match_pos, view_center);
                 let child_dist = (child_prime - click_z).norm();
                 if child_dist < min_dist {
                     min_dist = child_dist;
-                    best_match = Some(match_pos);
+                    best_match = Some((match_pos, match_node));
                 }
             }
         }
@@ -232,16 +260,14 @@ fn draw_node_recursive(
     let scale = 1.0 - z_prime.norm_sqr();
 
     // Scale node size based on total content size (Memory Visualization)
-    // log10(bytes) gives a nice 0-12 range for typical files
-    let size_factor = (node.total_size as f64).max(1.0).log10() as f32;
+    let size_factor = (node.node.total_size as f64).max(1.0).log10() as f32;
     // Base size depends on hyperbolic scale (distance from center)
-    // We boost larger files/folders to make them stand out as "heavy" objects
     let radius = ((5.0 + size_factor * 1.5) * scale as f32 + 2.0).max(1.0);
 
     let color = get_color(node.node.file_type);
 
     // If it's a large directory, draw a "halo" to indicate mass
-    if node.total_size > 1_000_000 {
+    if node.node.total_size > 1_000_000 {
         draw_circle(
             screen_pos.x,
             screen_pos.y,
@@ -256,7 +282,7 @@ fn draw_node_recursive(
     if (z_prime - mouse_z).norm() < (radius / disk_radius) as f64 {
         *hover_state = Some((
             node.node.name.clone(),
-            format_size(node.node.size),
+            format_size(node.node.total_size),
             screen_pos.y,
         ));
         // Highlight
