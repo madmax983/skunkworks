@@ -117,6 +117,10 @@
 - **Scent Origin:** Genesis (The Typographer) ⚛️🔤
 - **Status:** The glyphs are mountains. The serifs are ridges. Typography is geology. Heightmap generation via `rusttype` is stable.
 
+### [Concentration Level: FRESH] - Location: experiments/lensing-poetry
+- **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
+- **Status:** The text is warping. Gravity is bending the verses. Einstein rings are forming around the stanzas. The shader is tracing the geodesics.
+
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
