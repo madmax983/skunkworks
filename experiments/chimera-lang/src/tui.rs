@@ -10,7 +10,6 @@ use crossterm::{
 use pest::Parser;
 #[cfg(feature = "nova")]
 use rand::Rng;
-#[cfg(feature = "nova")]
 use ratatui::widgets::canvas::{Canvas, Rectangle};
 use ratatui::{
     backend::CrosstermBackend,
@@ -100,6 +99,7 @@ pub(crate) enum ViewMode {
     Chronos,
     #[cfg(feature = "nova")]
     Logos,
+    #[cfg(feature = "nova")]
     Pandemonium,
     BioticChaos,
     Catalyst,
@@ -582,6 +582,7 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
             if let ViewMode::Pandemonium = app_state.view_mode {
                 render_pandemonium(f, vm, app_state);
                 return;
@@ -8065,6 +8066,7 @@ fn render_logos(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     f.render_widget(info_widget, chunks[1]);
 }
 
+#[cfg(feature = "nova")]
 fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Horizontal)
