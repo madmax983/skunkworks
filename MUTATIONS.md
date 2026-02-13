@@ -854,3 +854,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Semantic Mycology. The code grows.
 - **Status**: experiments/etymological-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### hyperbolic-mycelium
+- **Parents**: experiments/etymological-mycelium + experiments/hyperbolic-lexicon
+- **Concept**: Git history visualized as a fungal network growing through the infinite Poincaré Disk.
+- **Novel trait**: Hyperbolic Phylogeny. Visualizing exponential evolutionary trees in non-Euclidean space.
+- **Status**: experiments/hyperbolic-mycelium
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

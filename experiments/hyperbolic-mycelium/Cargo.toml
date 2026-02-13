@@ -1,0 +1,12 @@
+[package]
+name = "hyperbolic-mycelium"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+poincare-disk = { path = "../../crates/poincare-disk" }
+git2 = "0.18"
+rand = "0.8"
+strsim = "0.11"
+num-complex = "0.4"

@@ -255,6 +255,11 @@
 - **Status:** The fungus is growing on the history. Spores are tracking the evolution of lines. The mycelium is thick where the code is stable.
 - **Note:** Hybrid of `git-etymologist` and `chaotic-mycelium`.
 
+### [Concentration Level: FRESH] - Location: experiments/hyperbolic-mycelium
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The fungus is expanding into infinity. Hyphae are following hyperbolic geodesics. The history is a fractal.
+- **Note:** Hybrid of `etymological-mycelium` and `hyperbolic-lexicon`.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/net-groove
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Linux audio build issues detected (alsa-sys). `cpal` gated behind feature flag. Visuals active.
