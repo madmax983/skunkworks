@@ -263,3 +263,8 @@
 ### [Concentration Level: FRESH] - Location: experiments/klein-files
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
 - **Status:** The file system is twisting. The directory tree is mapped to the Figure-8 immersion. Inside is outside. Navigation is non-orientable.
+
+### [Concentration Level: FRESH] - Location: experiments/chaos-pendulum
+- **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
+- **Status:** The dependency graph is swinging. The butterfly effect is visible. Ghosts are diverging from the canonical timeline.
+- **Note:** Hybrid of Double Pendulum physics and Dependency Graph visualization.
