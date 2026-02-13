@@ -606,8 +606,8 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Parents**: Genesis (The Oceanographer)
 - **Concept**: Fluid simulation where text acts as physical obstacles.
 - **Novel trait**: Liquid Typography.
-- **Status**: experiments/ink-jet
-- **Evaluation**: Compiles. Verified.
+- **Status**: graveyard/ink-jet
+- **Evaluation**: Executed.
 
 ### morph-physics
 - **Parents**: Genesis (The Philologist)

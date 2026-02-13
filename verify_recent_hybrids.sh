@@ -1,7 +1,6 @@
 #!/bin/bash
 experiments=(
     "hyperbolic-lexicon"
-    "ink-jet"
     "morph-physics"
     "hyperbolic-raymarcher"
 )

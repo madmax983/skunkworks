@@ -117,7 +117,7 @@ members = [
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
     "experiments/lichen-mesh",
     "experiments/hyperbolic-lichen",
-    "experiments/synaptic-trace", "experiments/morph-physics", "experiments/ink-jet", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
+    "experiments/synaptic-trace", "experiments/morph-physics", "experiments/hyperbolic-raymarcher", "experiments/hydro-boids", "experiments/recursive-conservatory", "experiments/hyperbolic-lexicon",
     "experiments/quantum-lexicon",
     "experiments/hyperbolic-bridge",
     "experiments/syntax-fugue", "experiments/protocol-jungle", "experiments/origami-constellation", "experiments/neuro-crab", "experiments/rhythmic-jungle", "experiments/hyperbolic-jungle", "experiments/neuro-fold",

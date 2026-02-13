@@ -1,8 +1,8 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/ink-jet
+### [Concentration Level: EXECUTED] - Location: graveyard/ink-jet
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Documentation void. Redundant with `typographic-turbulence`. Condemned.
+- **Status:** Documentation void. Redundant with `typographic-turbulence`. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/babylonian-forecaster
 - **Scent Origin:** The Reaper ☠️
@@ -116,8 +116,8 @@
 ## 🍂 History/Decay
 
 ### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Condemned. No documentation. Generic implementation.
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. No documentation. Generic implementation. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
