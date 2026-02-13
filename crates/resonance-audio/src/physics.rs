@@ -122,10 +122,8 @@ impl PhysicsGrid {
             for x in 1..w - 1 {
                 let idx = y * w + x;
 
-                if self.materials[idx] == Material::Wall {
-                    self.u_next[idx] = 0.0;
-                    continue;
-                }
+                // Wall handling is implicit via c2_map[idx] == 0.0 and damping_map[idx] == 0.0,
+                // which results in val = 0.0. This allows us to skip the branch and memory lookup.
 
                 let up = (y - 1) * w + x;
                 let down = (y + 1) * w + x;
