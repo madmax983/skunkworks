@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **ink-jet**: Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Grace period: 24h.
+- **biotic-chaos**: Documentation void. Generic implementation (CML). Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -136,3 +136,4 @@
 - **venation-vines**: Specimen executed. Redundant with `rhizome-radar` (Space Colonization). Documentation void. Moved to graveyard.
 - **bandwidth-bazaar**: Specimen executed. Documentation void. Chaotic macroquad implementation. Failed to improve during grace period. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation (padding fields, ghost audio). Redundant with `cymatic-ocean`. Failed to improve during grace period. Moved to graveyard.
+- **ink-jet**: Specimen executed. Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Grace period expired. Moved to graveyard.

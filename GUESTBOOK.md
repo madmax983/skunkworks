@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/ink-jet
+### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Documentation void. Redundant with `typographic-turbulence`. Condemned.
+- **Status:** Documentation void. Generic implementation (CML). Condemned.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/ink-jet
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/babylonian-forecaster
 - **Scent Origin:** The Reaper ☠️
