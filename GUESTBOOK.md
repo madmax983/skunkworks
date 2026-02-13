@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: FRESH] - Location: experiments/geologic-git
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** Mountains of code rising from the git history. Hydraulic erosion is carving the valleys. Watch the repo evolve.
+
 ### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Thriving ecosystem. Nova features active. Documented and feature-rich.

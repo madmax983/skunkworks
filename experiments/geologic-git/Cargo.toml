@@ -1,0 +1,12 @@
+[package]
+name = "geologic-git"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+anyhow = "1.0"
+rand = "0.8"
+git-associates = { path = "../../crates/git-associates" }
+glam = "0.25" # macroquad uses glam
+chrono = "0.4" # For commit timestamps
