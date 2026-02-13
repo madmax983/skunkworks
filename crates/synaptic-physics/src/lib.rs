@@ -6,6 +6,11 @@
 //! spiking and bursting behavior of cortical neurons. It combines the biological plausibility of
 //! Hodgkin-Huxley-type dynamics with the computational efficiency of integrate-and-fire models.
 //!
+//! The model uses a system of two ordinary differential equations to simulate membrane potential dynamics:
+//!
+//! 1. $v' = 0.04v^2 + 5v + 140 - u + I$
+//! 2. $u' = a(bv - u)$
+//!
 //! ## Usage
 //!
 //! ```rust
@@ -31,6 +36,7 @@
 //!   IEEE Transactions on Neural Networks, 14(6), 1569-1572.
 
 use rand::Rng;
+use std::fmt;
 
 /// The Izhikevich neuron model.
 ///
@@ -90,6 +96,16 @@ pub struct Izhikevich {
     pub tau: f32,
 }
 
+impl fmt::Display for Izhikevich {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Izhikevich(v={:.1} mV, u={:.1}, I={:.1})",
+            self.v, self.u, self.current_decay
+        )
+    }
+}
+
 impl Izhikevich {
     /// Creates a new neuron with default "Regular Spiking" (RS) parameters.
     ///
@@ -103,6 +119,15 @@ impl Izhikevich {
     /// assert_eq!(neuron.a, 0.02);
     /// ```
     pub fn new() -> Self {
+        Self::new_regular_spiking()
+    }
+
+    /// Creates a "Regular Spiking" (RS) neuron.
+    ///
+    /// Typical of cortical excitatory neurons.
+    ///
+    /// Parameters: $a=0.02, b=0.2, c=-65.0, d=8.0, \tau=10.0$.
+    pub fn new_regular_spiking() -> Self {
         Self {
             v: -65.0,
             u: -13.0,
@@ -115,7 +140,43 @@ impl Izhikevich {
         }
     }
 
-    /// Creates a new neuron with random parameters.
+    /// Creates a "Fast Spiking" (FS) neuron.
+    ///
+    /// Typical of inhibitory interneurons.
+    ///
+    /// Parameters: $a=0.1, b=0.2, c=-65.0, d=2.0, \tau=5.0$.
+    pub fn new_fast_spiking() -> Self {
+        Self {
+            v: -65.0,
+            u: -13.0,
+            a: 0.1,
+            b: 0.2,
+            c: -65.0,
+            d: 2.0,
+            current_decay: 0.0,
+            tau: 5.0,
+        }
+    }
+
+    /// Creates a "Chattering" (CH) neuron.
+    ///
+    /// Typical of bursting cortical neurons.
+    ///
+    /// Parameters: $a=0.02, b=0.2, c=-50.0, d=2.0, \tau=10.0$.
+    pub fn new_chattering() -> Self {
+        Self {
+            v: -65.0,
+            u: -13.0,
+            a: 0.02,
+            b: 0.2,
+            c: -50.0,
+            d: 2.0,
+            current_decay: 0.0,
+            tau: 10.0,
+        }
+    }
+
+    /// Creates a new neuron with random parameters selected from presets.
     ///
     /// Selects between three common firing patterns based on probabilities:
     /// - **Regular Spiking (60%):** Standard cortical neuron behavior.
@@ -132,41 +193,11 @@ impl Izhikevich {
     pub fn random(rng: &mut impl Rng) -> Self {
         let r = rng.gen::<f32>();
         if r < 0.6 {
-            // Regular Spiking
-            Self {
-                v: -65.0,
-                u: -13.0,
-                a: 0.02,
-                b: 0.2,
-                c: -65.0,
-                d: 8.0,
-                current_decay: 0.0,
-                tau: 10.0,
-            }
+            Self::new_regular_spiking()
         } else if r < 0.8 {
-            // Fast Spiking
-            Self {
-                v: -65.0,
-                u: -13.0,
-                a: 0.1,
-                b: 0.2,
-                c: -65.0,
-                d: 2.0,
-                current_decay: 0.0,
-                tau: 5.0, // Faster decay for fast spiking
-            }
+            Self::new_fast_spiking()
         } else {
-            // Chattering
-            Self {
-                v: -65.0,
-                u: -13.0,
-                a: 0.02,
-                b: 0.2,
-                c: -50.0,
-                d: 2.0,
-                current_decay: 0.0,
-                tau: 10.0,
-            }
+            Self::new_chattering()
         }
     }
 
@@ -189,6 +220,7 @@ impl Izhikevich {
     /// Updates the neuron state for a time step `dt`.
     ///
     /// Performs numerical integration (Euler method) to advance the simulation.
+    /// This method uses internal substeps (default: 2) to maintain stability even with larger `dt`.
     ///
     /// # Parameters
     ///
@@ -198,8 +230,8 @@ impl Izhikevich {
     /// # Returns
     ///
     /// Returns a tuple `(voltage, spiked)`:
-    /// * `voltage`: The membrane potential after the update.
-    /// * `spiked`: Boolean indicating if the neuron fired an action potential during this step.
+    /// * `voltage`: The membrane potential after the update. If a spike occurred, this may be the reset potential.
+    /// * `spiked`: Boolean indicating if the neuron fired an action potential (reached threshold 30mV) during any substep.
     ///
     /// # Panics
     ///
@@ -334,5 +366,27 @@ mod tests {
             n.current_decay,
             expected
         );
+    }
+
+    #[test]
+    fn test_named_constructors() {
+        let rs = Izhikevich::new_regular_spiking();
+        assert_eq!(rs.a, 0.02);
+        assert_eq!(rs.d, 8.0);
+
+        let fs = Izhikevich::new_fast_spiking();
+        assert_eq!(fs.a, 0.1);
+        assert_eq!(fs.d, 2.0);
+
+        let ch = Izhikevich::new_chattering();
+        assert_eq!(ch.c, -50.0);
+    }
+
+    #[test]
+    fn test_display() {
+        let n = Izhikevich::new();
+        let s = format!("{}", n);
+        assert!(s.contains("Izhikevich(v="));
+        assert!(s.contains("mV"));
     }
 }
