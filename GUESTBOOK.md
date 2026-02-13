@@ -1,5 +1,13 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/bifurcation-probe
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Generic implementation. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Documentation void. Generic CML implementation. Moved to graveyard.
+
 ### [Concentration Level: EXECUTED] - Location: graveyard/ink-jet
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Documentation void. Redundant with `typographic-turbulence`. Moved to graveyard.
