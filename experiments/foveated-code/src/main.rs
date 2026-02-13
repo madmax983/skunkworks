@@ -1,12 +1,9 @@
 use std::io;
 use std::time::{Duration, Instant};
 use anyhow::Result;
-use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use ratatui::{backend::CrosstermBackend, Terminal};
+use crossterm::event::{self, Event, KeyCode};
+use ratatui::Terminal;
+use tui_shared::Tui;
 
 mod retina;
 mod eye;
@@ -16,30 +13,20 @@ use app::App;
 
 fn main() -> Result<()> {
     // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // Create app with content
     let content = include_str!("main.rs").to_string();
 
     // Get terminal size for retina size
-    let size = terminal.size()?;
+    let size = tui.terminal.size()?;
     let mut app = App::new(size.width as usize, size.height as usize, content);
 
     // Run loop
-    let res = run_app(&mut terminal, &mut app);
+    let res = run_app(&mut tui.terminal, &mut app);
 
     // Restore terminal
-    disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen,
-        DisableMouseCapture
-    )?;
-    terminal.show_cursor()?;
+    drop(tui);
 
     if let Err(err) = res {
         println!("{:?}", err);
@@ -48,7 +35,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app<B: ratatui::backend::Backend<Error = std::io::Error>>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<()> {
+fn run_app(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>, app: &mut App) -> io::Result<()> {
     let tick_rate = Duration::from_millis(32);
     let mut last_tick = Instant::now();
 

@@ -9,3 +9,5 @@ crossterm = { workspace = true }
 ratatui = { workspace = true }
 rand = { workspace = true }
 chrono = "0.4"
+tui-shared = { path = "../../crates/tui-shared" }
+git-associates = { path = "../../crates/git-associates" }

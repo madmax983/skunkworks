@@ -1,9 +1,5 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     prelude::*,
     widgets::{
@@ -12,60 +8,85 @@ use ratatui::{
     },
 };
 use std::time::{Duration, Instant};
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
 
-mod git;
 mod sim;
 mod terrain;
 
-use git::GitScanner;
 use sim::Simulation;
 use terrain::Terrain;
+use tui_shared::Tui;
+use git_associates::{GitModel, Commit, FileChange};
 
 fn main() -> Result<()> {
     // Terminal setup
-    enable_raw_mode()?;
-    let mut stdout = std::io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    let mut tui = Tui::init()?;
 
     // App state
     // We try to load history. If it fails (e.g. not a git repo), we fail gracefully-ish.
-    let mut commits = match GitScanner::load_history() {
-        Ok(c) => c,
-        Err(_) => vec![], // Empty history
+    let mut commits = match GitModel::open(".") {
+        Ok(model) => {
+            match model.history_with_diffs(usize::MAX) {
+                Ok(mut c) => {
+                    c.reverse(); // Sort Oldest to Newest
+                    c
+                },
+                Err(_) => vec![],
+            }
+        },
+        Err(_) => vec![],
     };
 
     if commits.is_empty() {
         // Create dummy data for demo if no git history found
-        commits.push(git::Commit {
-            hash: "DEMO01".into(),
-            timestamp: 0,
-            changes: vec![
-                git::FileChange {
-                    path: "mountain.rs".into(),
-                    added: 50,
-                    deleted: 0,
+        commits.push(Commit {
+            hash: "DEMO01".to_string(),
+            short_hash: "DEMO01".to_string(),
+            author: "Demo".to_string(),
+            message: "Demo".to_string(),
+            timestamp: chrono::Utc::now(),
+            parents: vec![],
+            stats: None,
+            files: vec![
+                FileChange {
+                    path: "mountain.rs".to_string(),
+                    extension: "rs".to_string(),
+                    insertions: 50,
+                    deletions: 0,
+                    is_binary: false,
+                    hunks: vec![],
                 },
-                git::FileChange {
-                    path: "valley.rs".into(),
-                    added: 20,
-                    deleted: 0,
+                FileChange {
+                    path: "valley.rs".to_string(),
+                    extension: "rs".to_string(),
+                    insertions: 20,
+                    deletions: 0,
+                    is_binary: false,
+                    hunks: vec![],
                 },
             ],
         });
-        commits.push(git::Commit {
-            hash: "DEMO02".into(),
-            timestamp: 1,
-            changes: vec![git::FileChange {
-                path: "mountain.rs".into(),
-                added: 0,
-                deleted: 20,
+        commits.push(Commit {
+            hash: "DEMO02".to_string(),
+            short_hash: "DEMO02".to_string(),
+            author: "Demo".to_string(),
+            message: "Demo".to_string(),
+            timestamp: chrono::Utc::now(),
+            parents: vec![],
+            stats: None,
+            files: vec![FileChange {
+                path: "mountain.rs".to_string(),
+                extension: "rs".to_string(),
+                insertions: 0,
+                deletions: 20,
+                is_binary: false,
+                hunks: vec![],
             }],
         });
     }
 
-    let size = terminal.size()?;
+    let size = tui.terminal.size()?;
     let width = size.width as usize;
     let height = (size.height.saturating_sub(4)) as usize;
 
@@ -86,20 +107,20 @@ fn main() -> Result<()> {
             let end_idx = (commit_idx + speed).min(commits.len());
             for i in commit_idx..end_idx {
                 let commit = &commits[i];
-                for change in &commit.changes {
-                    let path_str = change.path.to_string_lossy();
-                    let x = GitScanner::map_path(&path_str, width);
+                for change in &commit.files {
+                    let path_str = &change.path;
+                    let x = map_path(path_str, width);
 
                     // Additions -> Uplift
-                    if change.added > 0 {
+                    if change.insertions > 0 {
                         // Limit height growth scaling
-                        terrain.uplift(x, (change.added as f64 * 0.2).min(5.0));
+                        terrain.uplift(x, (change.insertions as f64 * 0.2).min(5.0));
                     }
 
                     // Deletions -> Rain
-                    if change.deleted > 0 {
+                    if change.deletions > 0 {
                         // Cap spawn count to avoid explosion
-                        sim.spawn(x, change.deleted.min(20));
+                        sim.spawn(x, change.deletions.min(20));
                     }
                 }
             }
@@ -110,7 +131,7 @@ fn main() -> Result<()> {
         sim.update(0.05, &mut terrain);
 
         // Draw
-        terminal.draw(|f| {
+        tui.terminal.draw(|f| {
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
                 .constraints([Constraint::Min(0), Constraint::Length(3)])
@@ -121,7 +142,7 @@ fn main() -> Result<()> {
                 let c = &commits[commit_idx.saturating_sub(1)];
                 format!(
                     "Commit: {} | Rain: {} | Speed: {} | [SPACE] Pause [+/-] Speed [q] Quit",
-                    &c.hash[0..7.min(c.hash.len())],
+                    &c.short_hash,
                     sim.particles.len(),
                     speed
                 )
@@ -201,9 +222,14 @@ fn main() -> Result<()> {
         }
     }
 
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
+    drop(tui);
 
     Ok(())
+}
+
+fn map_path(path: &str, width: usize) -> usize {
+    let mut hasher = DefaultHasher::new();
+    path.hash(&mut hasher);
+    let h = hasher.finish();
+    (h as usize) % width
 }

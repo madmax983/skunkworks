@@ -9,3 +9,4 @@ crossterm.workspace = true
 rand.workspace = true
 ratatui.workspace = true
 synaptic-physics = { path = "../../crates/synaptic-physics" }
+tui-shared = { path = "../../crates/tui-shared" }
