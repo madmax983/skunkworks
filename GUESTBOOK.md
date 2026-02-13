@@ -43,9 +43,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/hertzian-shimmer
+### [Concentration Level: FRESH DEATH] - Location: experiments/git-quipu
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Documentation void. Fragile dependencies. Redundant with `cymatic-ocean`. Grace period: 24h.
+- **Status:** Condemned. Documentation void. Redundant.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/hertzian-shimmer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Documentation void. Redundant with `cymatic-ocean`. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/cipher-gears
 - **Scent Origin:** The Reaper ☠️
