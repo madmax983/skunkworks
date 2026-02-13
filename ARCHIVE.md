@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **babylonian-forecaster**: Terminal Chart Rot (Y-axis mismatch). Redundant with `babylonian-garden`. Grace period: 24h.
+- **ink-jet**: Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **babylonian-forecaster**: Specimen executed. Terminal Chart Rot (Y-axis mismatch). Redundant with `babylonian-garden`. Grace period expired. Moved to graveyard.
 - **sono-scapes**: Specimen executed. Documentation void. Redundant with `ripple-tank`. Sketch Rot. Moved to graveyard.
 - **git-quipu**: Specimen executed. Documentation void. Redundant with `quipu-symphony`. Moved to graveyard.
 - **git-climber**: Specimen executed. Documentation void. Fragile stack. Skeletal implementation. Moved to graveyard.
