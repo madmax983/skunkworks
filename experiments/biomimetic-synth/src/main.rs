@@ -1,6 +1,5 @@
 mod audio;
 mod network;
-mod neuron;
 
 use crate::audio::{AudioEngine, Command, Snapshot};
 use crate::network::Network;
