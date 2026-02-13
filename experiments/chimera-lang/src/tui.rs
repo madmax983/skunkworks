@@ -1824,6 +1824,19 @@ where
                                     arena.tick();
                                 }
                             } else if let ViewMode::Pandemonium = app_state.view_mode {
+                                if app_state.pandemonium_selected_tool == 4 {
+                                    #[cfg(feature = "elektra")]
+                                    {
+                                        crate::vm::elektra::trigger_storm(vm);
+                                        app_state.status_msg = "STORM TRIGGERED!".to_string();
+                                    }
+                                    #[cfg(not(feature = "elektra"))]
+                                    {
+                                        app_state.status_msg = "Storm requires Elektra feature.".to_string();
+                                    }
+                                    continue;
+                                }
+
                                 let cx = app_state.pandemonium_cursor.0;
                                 let cy = app_state.pandemonium_cursor.1;
 
@@ -2078,6 +2091,12 @@ where
                     KeyCode::Char('4') => {
                         if let ViewMode::Pandemonium = app_state.view_mode {
                             app_state.pandemonium_selected_tool = 3;
+                        }
+                    }
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('5') => {
+                        if let ViewMode::Pandemonium = app_state.view_mode {
+                            app_state.pandemonium_selected_tool = 4;
                         }
                     }
                     #[cfg(feature = "nova")]
@@ -4684,9 +4703,13 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
                         crate::vm::nova::OrganelleType::Choir => Color::Blue,
                         crate::vm::nova::OrganelleType::Wisp => Color::Yellow,
                         crate::vm::nova::OrganelleType::MadScientist => Color::Magenta,
+                        crate::vm::nova::OrganelleType::Dynamo => Color::Yellow,
+                        crate::vm::nova::OrganelleType::LightningRod => Color::Cyan,
                         crate::vm::nova::OrganelleType::Worker => Color::White,
                     };
                     let char_code = match organelle.kind {
+                        crate::vm::nova::OrganelleType::Dynamo => "D",
+                        crate::vm::nova::OrganelleType::LightningRod => "T",
                         crate::vm::nova::OrganelleType::Chloroplast => "C",
                         crate::vm::nova::OrganelleType::Mitochondria => "M",
                         crate::vm::nova::OrganelleType::Lysosome => "L",
@@ -8153,6 +8176,7 @@ fn render_pandemonium(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         1 => "Scramble (Radius)",
         2 => "Purge (Radius)",
         3 => "Duplicate (Single Gene)",
+        4 => "Storm (Global Lightning)",
         _ => "Unknown",
     };
 

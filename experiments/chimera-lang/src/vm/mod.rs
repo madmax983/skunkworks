@@ -1366,6 +1366,12 @@ impl ChimeraVM {
             nova::OrganelleType::MadScientist => {
                 self.process_mad_scientist(organelle);
             }
+            nova::OrganelleType::Dynamo => {
+                self.process_dynamo(organelle);
+            }
+            nova::OrganelleType::LightningRod => {
+                self.process_lightning_rod(organelle);
+            }
             nova::OrganelleType::Worker => {}
         }
 
@@ -1377,6 +1383,8 @@ impl ChimeraVM {
                 | nova::OrganelleType::Seed
                 | nova::OrganelleType::Choir
                 | nova::OrganelleType::MadScientist
+                | nova::OrganelleType::Dynamo
+                | nova::OrganelleType::LightningRod
         ) {
             self.execute_organelle_dna(organelle);
         }
@@ -1462,6 +1470,51 @@ impl ChimeraVM {
         let dy = rng.gen_range(-1..=1);
         let dx = rng.gen_range(-1..=1);
         organelle.direction = (dy, dx);
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_dynamo(&mut self, _organelle: &mut Organelle) {
+        // Cost: 5 Energy -> +50V
+        if self.energy >= 5 {
+            self.energy -= 5;
+            #[cfg(feature = "elektra")]
+            {
+                let (cy, cx) = self.context_loc;
+                self.voltage_grid[cy][cx] += 50.0;
+                self.output.push(format!("DYNAMO: Generated 50V at {},{}", cx, cy));
+            }
+        }
+    }
+
+    #[cfg(feature = "nova")]
+    fn process_lightning_rod(&mut self, _organelle: &mut Organelle) {
+        #[cfg(feature = "elektra")]
+        {
+            let (cy, cx) = self.context_loc;
+            let voltage = self.voltage_grid[cy][cx];
+            if voltage.abs() > 10.0 {
+                // Absorb
+                let absorbed = voltage.abs();
+                self.voltage_grid[cy][cx] = 0.0;
+
+                // Conversion efficiency 10%
+                let energy_gain = (absorbed * 0.1) as i64;
+                self.energy = self.energy.saturating_add(energy_gain);
+                self.output.push(format!("LIGHTNING ROD: Absorbed {:.1}V -> {} Energy", voltage, energy_gain));
+
+                if absorbed > 1000.0 {
+                    // Overload risk
+                    use rand::Rng;
+                    let mut rng = rand::thread_rng();
+                    if rng.gen_bool(0.2) {
+                        _organelle.halted = true;
+                        self.output.push("LIGHTNING ROD: OVERLOAD! Organelle destroyed.".to_string());
+                        // Explosion?
+                        self.grid[cy][cx] = Value::Int(0);
+                    }
+                }
+            }
+        }
     }
 
     #[cfg(feature = "nova")]

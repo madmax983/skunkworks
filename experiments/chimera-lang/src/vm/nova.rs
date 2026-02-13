@@ -63,6 +63,10 @@ pub enum OrganelleType {
     Wisp,
     /// The Mad Scientist. Performs random experiments (Alchemy, Mutation, Chaos).
     MadScientist,
+    /// Converts Metabolic Energy into Electrical Voltage.
+    Dynamo,
+    /// Absorbs high voltage to generate massive energy (risk of overload).
+    LightningRod,
 }
 
 /// An independent execution unit spawned by the main strand.
@@ -1112,6 +1116,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             5 => (OrganelleType::Void, (0, 0)),
                             6 => (OrganelleType::Alchemist, (0, 0)),
                             10 => (OrganelleType::MadScientist, (0, 0)),
+                            11 => (OrganelleType::Dynamo, (0, 0)),
+                            12 => (OrganelleType::LightningRod, (0, 0)),
                             _ => (OrganelleType::Worker, (0, 0)),
                         };
 
@@ -1941,6 +1947,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                 Some(OrganelleType::Choir) => 8,
                 Some(OrganelleType::Wisp) => 9,
                 Some(OrganelleType::MadScientist) => 10,
+                Some(OrganelleType::Dynamo) => 11,
+                Some(OrganelleType::LightningRod) => 12,
             };
             vm.stack.push(Value::Int(id));
             None
@@ -1960,6 +1968,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
                             8 => Some(OrganelleType::Choir),
                             9 => Some(OrganelleType::Wisp),
                             10 => Some(OrganelleType::MadScientist),
+                            11 => Some(OrganelleType::Dynamo),
+                            12 => Some(OrganelleType::LightningRod),
                             _ => Some(OrganelleType::Worker), // 0 or others fallback to Worker
                         };
 

@@ -172,10 +172,28 @@ pub fn exec_elektra_op(
                 let x_val = vm.stack.pop().unwrap();
                 let y_val = vm.stack.pop().unwrap();
                 if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
-                    vm.output.push(format!("LIGHTNING: Strike at {},{}", x, y));
-                    // Could trigger neighbors
+                    if x >= 0 && x < GRID_SIZE as i64 && y >= 0 && y < GRID_SIZE as i64 {
+                        let ux = x as usize;
+                        let uy = y as usize;
+                        vm.voltage_grid[uy][ux] += 1000.0; // Strike!
+                        vm.output.push(format!("LIGHTNING: Strike at {},{}", x, y));
+                    }
                 }
             }
+        }
+        OpCode::Channel => {
+            // Lowers resistance (increase conductivity)
+            let (y, x) = vm.context_loc;
+            vm.resistance_grid[y][x] = 0.1;
+            vm.energy = vm.energy.saturating_sub(1);
+            vm.output.push(format!("CHANNEL: Low resistance at {},{}", x, y));
+        }
+        OpCode::Shield => {
+            // Raises resistance (insulator)
+            let (y, x) = vm.context_loc;
+            vm.resistance_grid[y][x] = 100.0;
+            vm.energy = vm.energy.saturating_sub(1);
+            vm.output.push(format!("SHIELD: High resistance at {},{}", x, y));
         }
         OpCode::TeslaCoil => {
             // [power, radius]
@@ -302,17 +320,22 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 }
 
                 // Determine effective resistance based on grid content
-                // 1 (Wire) -> 0.1, Else -> 100.0 (Air)
-                // If resistance_grid is set to something else (e.g. by future resistor op), use it?
-                // For now, resistance_grid > 0 is just "initialized".
-                // We trust grid content more for wiring.
-                let cell_val = &vm.grid[y][x];
-                let conductivity = match cell_val {
-                    Value::Int(0) => 0.0,                                  // Air
-                    Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
-                    Value::Int(_) => 0.01,                                 // Other matter
-                    _ => 0.0,                                              // Air
-                };
+                // If resistance_grid is explicitly set (positive), use it.
+                // Otherwise infer from grid content.
+                let mut conductivity = 0.0;
+                let explicit_r = vm.resistance_grid[y][x];
+
+                if explicit_r > 0.0 {
+                    conductivity = 1.0 / explicit_r;
+                } else {
+                    let cell_val = &vm.grid[y][x];
+                    conductivity = match cell_val {
+                        Value::Int(0) => 0.0,                                  // Air
+                        Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0, // Wire
+                        Value::Int(_) => 0.01,                                 // Other matter
+                        _ => 0.0,                                              // Air
+                    };
+                }
 
                 if conductivity <= 0.001 {
                     // Insulator, V decays to 0
@@ -331,12 +354,17 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                         let ny = ny as usize;
                         let nx = nx as usize;
 
-                        let neighbor_val = &vm.grid[ny][nx];
-                        let neighbor_cond = match neighbor_val {
-                            Value::Int(0) => 0.0,
-                            Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
-                            Value::Int(_) => 0.01,
-                            _ => 0.0,
+                        let n_r = vm.resistance_grid[ny][nx];
+                        let neighbor_cond = if n_r > 0.0 {
+                            1.0 / n_r
+                        } else {
+                            let neighbor_val = &vm.grid[ny][nx];
+                            match neighbor_val {
+                                Value::Int(0) => 0.0,
+                                Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
+                                Value::Int(_) => 0.01,
+                                _ => 0.0,
+                            }
                         };
 
                         // Harmonic mean of conductivity (Series conductance)
@@ -389,6 +417,77 @@ pub fn update_circuit(vm: &mut ChimeraVM) {
                 }
             }
             vm.current_grid[y][x] = max_diff * conductivity;
+        }
+    }
+}
+
+pub fn trigger_storm(vm: &mut ChimeraVM) {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+
+    // 1-3 strikes per storm tick
+    let strikes = rng.gen_range(1..=3);
+
+    for _ in 0..strikes {
+        let sx = rng.gen_range(0..GRID_SIZE);
+        let sy = rng.gen_range(0..GRID_SIZE);
+
+        vm.voltage_grid[sy][sx] += 2000.0; // High voltage injection
+        vm.output.push(format!("STORM: Lightning struck at {},{}", sx, sy));
+
+        // Propagate charge along path of least resistance (Greedy Walk)
+        let mut curr_x = sx;
+        let mut curr_y = sy;
+        let mut path_len = 0;
+
+        while path_len < 20 {
+            let mut best_cond = -1.0;
+            let mut next_pos = None;
+
+            let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+            for (dy, dx) in neighbors {
+                let ny = curr_y as i64 + dy;
+                let nx = curr_x as i64 + dx;
+
+                if ny >= 0 && ny < GRID_SIZE as i64 && nx >= 0 && nx < GRID_SIZE as i64 {
+                    let ny = ny as usize;
+                    let nx = nx as usize;
+
+                    let r = vm.resistance_grid[ny][nx];
+                    // Calculate conductivity. If r < 0 (Battery/Ground), treat as very conductive.
+                    let cond = if r < 0.0 {
+                        1000.0
+                    } else if r > 0.0 {
+                        1.0 / r
+                    } else {
+                        // Infer from grid
+                        match &vm.grid[ny][nx] {
+                            Value::Int(0) => 0.0,
+                            Value::Int(1) | Value::Int(2) | Value::Int(3) => 10.0,
+                            _ => 0.01,
+                        }
+                    };
+
+                    // Pick best neighbor
+                    if cond > best_cond {
+                        best_cond = cond;
+                        next_pos = Some((ny, nx));
+                    }
+                }
+            }
+
+            if let Some((ny, nx)) = next_pos {
+                if best_cond > 0.001 {
+                    vm.voltage_grid[ny][nx] += 1000.0; // Propagate
+                    curr_x = nx;
+                    curr_y = ny;
+                    path_len += 1;
+                } else {
+                    break; // Dead end (Insulator)
+                }
+            } else {
+                break;
+            }
         }
     }
 }

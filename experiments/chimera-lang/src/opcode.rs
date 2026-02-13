@@ -337,6 +337,18 @@ pub enum OpCode {
     #[cfg(feature = "elektra")]
     Lightning,
 
+    /// **[Elektra]** Lowers resistance at the current location (increases conductivity).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Channel,
+
+    /// **[Elektra]** Raises resistance at the current location (decreases conductivity).
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "elektra")]
+    Shield,
+
     /// **[Elektra]** Converts internal Energy to Voltage at the current location.
     ///
     /// **Stack:** `[ ..., amount ] -> [ ... ]`
