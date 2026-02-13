@@ -1,0 +1,11 @@
+[package]
+name = "ferrous-chimera"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+chimera-lang = { path = "../chimera-lang" }
