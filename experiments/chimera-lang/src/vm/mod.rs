@@ -4752,3 +4752,4 @@ mod sentry_value_test {
         assert_eq!(v2.depth(), 1);
     }
 }
+#[cfg(test)] mod nova_logic_test;

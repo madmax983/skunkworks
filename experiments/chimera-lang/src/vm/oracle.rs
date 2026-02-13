@@ -487,6 +487,116 @@ fn check_dynamic_predicates(
         }
         if let Value::Str(pred_name) = &args[0] {
             match pred_name.as_str() {
+                "voltage" => {
+                    // voltage(X, Y, V)
+                    #[cfg(feature = "elektra")]
+                    if args.len() == 4 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_v = &args[3];
+
+                        for y in 0..crate::vm::GRID_SIZE {
+                            for x in 0..crate::vm::GRID_SIZE {
+                                let fact_x = Value::Int(x as i64);
+                                let fact_y = Value::Int(y as i64);
+                                let fact_v = Value::Int(vm.voltage_grid[y][x] as i64);
+
+                                if let Some(s1) = unify(arg_x, &fact_x, subst) {
+                                    if let Some(s2) = unify(arg_y, &fact_y, &s1) {
+                                        if let Some(s3) = unify(arg_v, &fact_v, &s2) {
+                                            solve(
+                                                remaining_goals,
+                                                s3,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "signal" => {
+                    // signal(X, Y, S)
+                    #[cfg(feature = "nova")]
+                    if args.len() == 4 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_s = &args[3];
+
+                        for y in 0..crate::vm::GRID_SIZE {
+                            for x in 0..crate::vm::GRID_SIZE {
+                                let fact_x = Value::Int(x as i64);
+                                let fact_y = Value::Int(y as i64);
+                                let fact_s = Value::Int(vm.signal_grid[y][x] as i64);
+
+                                if let Some(s1) = unify(arg_x, &fact_x, subst) {
+                                    if let Some(s2) = unify(arg_y, &fact_y, &s1) {
+                                        if let Some(s3) = unify(arg_s, &fact_s, &s2) {
+                                            solve(
+                                                remaining_goals,
+                                                s3,
+                                                kb,
+                                                vm,
+                                                solutions,
+                                                depth + 1,
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
+                "hologram" => {
+                    // hologram(X, Y, Mag, Phase)
+                    #[cfg(feature = "nova")]
+                    if args.len() == 5 {
+                        let arg_x = &args[1];
+                        let arg_y = &args[2];
+                        let arg_mag = &args[3];
+                        let arg_phase = &args[4];
+
+                        for y in 0..crate::vm::GRID_SIZE {
+                            for x in 0..crate::vm::GRID_SIZE {
+                                let fact_x = Value::Int(x as i64);
+                                let fact_y = Value::Int(y as i64);
+
+                                let (re, im) = vm.hologram_grid[y][x];
+                                let mag = (re * re + im * im).sqrt();
+                                let phase = im.atan2(re);
+
+                                // Scale to Int for Prolog compat (0-100 or 0-1000?)
+                                // Let's use 100 as base scale
+                                let fact_mag = Value::Int((mag * 100.0) as i64);
+                                let fact_phase = Value::Int((phase * 100.0) as i64);
+
+                                if let Some(s1) = unify(arg_x, &fact_x, subst) {
+                                    if let Some(s2) = unify(arg_y, &fact_y, &s1) {
+                                        if let Some(s3) = unify(arg_mag, &fact_mag, &s2) {
+                                            if let Some(s4) = unify(arg_phase, &fact_phase, &s3) {
+                                                solve(
+                                                    remaining_goals,
+                                                    s4,
+                                                    kb,
+                                                    vm,
+                                                    solutions,
+                                                    depth + 1,
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                }
                 "cell" => {
                     // cell(X, Y, Val)
                     if args.len() == 4 {

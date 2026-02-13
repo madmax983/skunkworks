@@ -178,7 +178,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
             let is_uppercase = c.is_uppercase(); // Use Unicode uppercase
             let is_bang = c == '*';
-            let is_special = matches!(c, '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω');
+            let is_special = matches!(c, '@' | '^' | 'Ψ' | 'ψ' | 'Φ' | 'φ' | 'Ω' | 'ω' | 'Π');
             let active = signal > 0 || is_uppercase || is_bang || is_special;
 
             if !active {
@@ -319,6 +319,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Ψ' | 'ψ' => exec_psi(vm, y, x, signal, &mut ctx),
                 'Φ' | 'φ' => exec_phi(vm, y, x, signal, &mut ctx),
                 'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
+                'Π' => exec_pi(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
@@ -1114,6 +1115,46 @@ fn exec_wave(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalCon
             }
         }
         _ => {}
+    }
+}
+
+fn exec_pi(vm: &ChimeraVM, y: usize, x: usize, _signal: u8, ctx: &mut SignalContext) {
+    // Π: Prolog Gate
+    // North: Query ID (Fact ID in KB)
+    // Checks if Fact(ID) exists or succeeds.
+    // If true, Bangs neighbors.
+
+    let query_id = peek(vm, y, x, -1, 0).unwrap_or(0);
+    let query_val = Value::Int(query_id);
+
+    // Check KB directly first for speed
+    let mut success = vm.knowledge_base.contains(&query_val);
+
+    if !success {
+        #[cfg(feature = "oracle")]
+        {
+            let mut solutions = Vec::new();
+            crate::vm::oracle::solve(
+                &[query_val],
+                HashMap::new(),
+                &vm.knowledge_base,
+                vm,
+                &mut solutions,
+                0,
+            );
+            if !solutions.is_empty() {
+                success = true;
+            }
+        }
+    }
+
+    if success {
+        let neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        for (dy, dx) in neighbors {
+            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy, x as i64 + dx) {
+                ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(1);
+            }
+        }
     }
 }
 
