@@ -221,7 +221,17 @@ pub struct State {
 
     // Miller indices
     pub miller_indices: [i32; 3],
+    pub miller_distance: f32,
+    miller_buffer: wgpu::Buffer,
+    miller_bind_group: wgpu::BindGroup,
     plane_buffer: wgpu::Buffer,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
+struct MillerParams {
+    normal: [f32; 3],
+    distance: f32,
 }
 
 impl State {
@@ -341,8 +351,41 @@ impl State {
             label: Some("camera_bind_group"),
         });
 
+        // --- Miller Params ---
+        let miller_params = MillerParams {
+            normal: [0.0, 0.0, 0.0],
+            distance: 0.0,
+        };
+        let miller_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("Miller Buffer"),
+            contents: bytemuck::cast_slice(&[miller_params]),
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+        });
+        let miller_bind_group_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                entries: &[wgpu::BindGroupLayoutEntry {
+                    binding: 0,
+                    visibility: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                    count: None,
+                }],
+                label: Some("miller_bind_group_layout"),
+            });
+        let miller_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            layout: &miller_bind_group_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 0,
+                resource: miller_buffer.as_entire_binding(),
+            }],
+            label: Some("miller_bind_group"),
+        });
+
         // --- Instance Data ---
-        let instances = crystal
+        let mut instances = crystal
             .atoms
             .iter()
             .map(|atom| {
@@ -369,6 +412,33 @@ impl State {
                 }
             })
             .collect::<Vec<_>>();
+
+        // Add bonds
+        for (parent_idx, child_idx) in &crystal.bonds {
+            let p1 = crystal.atoms[*parent_idx].position;
+            let p2 = crystal.atoms[*child_idx].position;
+
+            let p1_vec = cgmath::Vector3::new(p1.x as f32, p1.y as f32, p1.z as f32);
+            let p2_vec = cgmath::Vector3::new(p2.x as f32, p2.y as f32, p2.z as f32);
+
+            let diff = p2_vec - p1_vec;
+            let len = diff.magnitude();
+
+            if len > 0.001 {
+                let mid = p1_vec + diff * 0.5;
+                let dir = diff.normalize();
+                let up = cgmath::Vector3::unit_z();
+
+                let rotation: cgmath::Quaternion<f32> = cgmath::Quaternion::between_vectors(up, dir);
+
+                instances.push(InstanceRaw {
+                    model_pos: [mid.x, mid.y, mid.z],
+                    color: [0.5, 0.5, 0.5, 1.0],
+                    scale: [0.05, 0.05, len],
+                    rotation: [rotation.v.x, rotation.v.y, rotation.v.z, rotation.s],
+                });
+            }
+        }
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -397,7 +467,7 @@ impl State {
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Render Pipeline Layout"),
-                bind_group_layouts: &[&camera_bind_group_layout],
+                bind_group_layouts: &[&camera_bind_group_layout, &miller_bind_group_layout],
                 push_constant_ranges: &[],
             });
 
@@ -466,6 +536,9 @@ impl State {
             depth_texture,
             depth_view,
             miller_indices: [0, 0, 0],
+            miller_distance: 0.0,
+            miller_buffer,
+            miller_bind_group,
             plane_buffer,
         }
     }
@@ -513,9 +586,11 @@ impl State {
                         PhysicalKey::Code(KeyCode::KeyK) => self.miller_indices[1] -= 1,
                         PhysicalKey::Code(KeyCode::KeyN) => self.miller_indices[2] += 1,
                         PhysicalKey::Code(KeyCode::KeyM) => self.miller_indices[2] -= 1,
+                        PhysicalKey::Code(KeyCode::BracketRight) => self.miller_distance += 0.5,
+                        PhysicalKey::Code(KeyCode::BracketLeft) => self.miller_distance -= 0.5,
                         _ => return self.camera_controller.process_events(key_event),
                     }
-                    println!("Miller Indices: {:?}", self.miller_indices);
+                    println!("Miller Indices: {:?}, Distance: {}", self.miller_indices, self.miller_distance);
                     true
                 } else {
                     self.camera_controller.process_events(key_event)
@@ -540,12 +615,13 @@ impl State {
         let h = self.miller_indices[0] as f32;
         let k = self.miller_indices[1] as f32;
         let l = self.miller_indices[2] as f32;
-        let normal = cgmath::Vector3::new(h, k, l);
+        let normal_vec = cgmath::Vector3::new(h, k, l);
+        let normal_mag = normal_vec.magnitude();
 
-        let (rotation, color) = if normal.magnitude() < 0.001 {
-            ([0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 0.0])
+        let (rotation, color, normalized_normal) = if normal_mag < 0.001 {
+            ([0.0, 0.0, 0.0, 1.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
         } else {
-            let normal = normal.normalize();
+            let normal = normal_vec.normalize();
             let up = cgmath::Vector3::unit_z(); // Initial plane normal
                                                 // Rotation from up to normal
             let rotation = if normal.dot(up).abs() > 0.999 {
@@ -566,11 +642,33 @@ impl State {
             (
                 [rotation.v.x, rotation.v.y, rotation.v.z, rotation.s],
                 [1.0, 1.0, 1.0, 0.3],
+                [normal.x, normal.y, normal.z]
             )
         };
 
+        // Update Miller Uniforms
+        let miller_params = MillerParams {
+            normal: normalized_normal,
+            distance: self.miller_distance,
+        };
+        self.queue.write_buffer(
+            &self.miller_buffer,
+            0,
+            bytemuck::cast_slice(&[miller_params]),
+        );
+
+        // Update Plane Visual
+        // To visualize the plane at distance d along normal n, we need to translate it by d * n
+        let model_pos = if normal_mag > 0.001 {
+            let n = cgmath::Vector3::new(normalized_normal[0], normalized_normal[1], normalized_normal[2]);
+            let p = n * self.miller_distance;
+            [p.x, p.y, p.z]
+        } else {
+            [0.0, 0.0, 0.0]
+        };
+
         let plane_instance = InstanceRaw {
-            model_pos: [0.0, 0.0, 0.0],
+            model_pos,
             color,
             scale: [50.0, 50.0, 0.05],
             rotation,
@@ -624,6 +722,7 @@ impl State {
 
             render_pass.set_pipeline(&self.render_pipeline);
             render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
+            render_pass.set_bind_group(1, &self.miller_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
 
             // Draw Atoms
