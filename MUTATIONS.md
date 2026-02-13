@@ -861,3 +861,24 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The Observer Effect. Focusing on a node alters its physical stability.
 - **Status**: experiments/gaze-attractor
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### rigid-origami
+- **Parents**: Physics Engine + Mechanical Linkage Logic
+- **Concept**: Simulation of deployable space structures using analytical kinematics (Miura-ori).
+- **Novel trait**: Zero-strain deployment via geometric constraints.
+- **Status**: experiments/rigid-origami
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### heap-market
+- **Parents**: experiments/market-flow + experiments/heap-hopper
+- **Concept**: A market where processes bid for memory pages.
+- **Novel trait**: Memory allocation driven by price signals.
+- **Status**: experiments/heap-market
+- **Evaluation**: Compiles. Verified in GUESTBOOK.
+
+### folded-colony
+- **Parents**: experiments/rigid-origami + experiments/biomimetic-bridge
+- **Concept**: Ants foraging on a Miura-ori surface that folds to create topological shortcuts.
+- **Novel trait**: Dimensional tunneling via folding. Ants jump across gaps when the surface collapses.
+- **Status**: experiments/folded-colony
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

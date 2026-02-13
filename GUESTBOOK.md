@@ -294,3 +294,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The eye is watching. Chaos is dampening where the gaze falls. The pendulum slows under observation.
 - **Note:** Hybrid of `chaos-pendulum` and `foveated-code`.
+
+### [Concentration Level: FRESH] - Location: experiments/folded-colony
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The ants are traversing the folds. Shortcuts are emerging. The colony is folding space to find food.
+- **Note:** Hybrid of `rigid-origami` and `biomimetic-bridge`.
