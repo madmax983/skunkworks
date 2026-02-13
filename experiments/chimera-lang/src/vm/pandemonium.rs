@@ -3,6 +3,7 @@ use crate::ast::Nucleotide;
 use crate::opcode::OpCode;
 use rand::seq::SliceRandom;
 use rand::Rng;
+use strum::IntoEnumIterator;
 
 pub fn apply_mutation(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
     if strand_idx < vm.dna.helix.strands.len() {
@@ -11,25 +12,13 @@ pub fn apply_mutation(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
             let mut rng = rand::thread_rng();
             // 50% change op, 50% change arg
             if rng.gen_bool(0.5) {
-                let enzymes = [
-                    OpCode::Push,
-                    OpCode::Add,
-                    OpCode::Sub,
-                    OpCode::Mul,
-                    OpCode::Div,
-                    OpCode::Dup,
-                    OpCode::Swap,
-                    OpCode::Drop,
-                    OpCode::Print,
-                    OpCode::Jump,
-                    OpCode::Brz,
-                    OpCode::Photosynthesize,
-                    OpCode::Consume,
-                    OpCode::GRead,
-                    OpCode::GWrite,
-                ];
-                let new_op = enzymes[rng.gen_range(0..enzymes.len())].clone();
-                strand.genes[gene_idx].op = new_op;
+                let count = OpCode::iter().count();
+                if count > 0 {
+                    let idx = rng.gen_range(0..count);
+                    if let Some(op) = OpCode::iter().nth(idx) {
+                        strand.genes[gene_idx].op = op;
+                    }
+                }
             } else {
                 if !strand.genes[gene_idx].args.is_empty() {
                     let val = rng.gen_range(0..100);
@@ -79,6 +68,60 @@ pub fn apply_duplicate(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize) {
 
         if let Some(g) = gene {
             vm.dna.helix.strands[strand_idx].genes.insert(gene_idx, g);
+        }
+    }
+}
+
+pub fn apply_storm(vm: &mut ChimeraVM, strand_idx: usize, gene_idx: usize, radius: f64) {
+    let r = radius as usize;
+    if strand_idx < vm.dna.helix.strands.len() {
+        let strand = &mut vm.dna.helix.strands[strand_idx];
+        let start = gene_idx.saturating_sub(r);
+        let end = (gene_idx + r).min(strand.genes.len());
+
+        let mut rng = rand::thread_rng();
+
+        for i in start..end {
+            if rng.gen_bool(0.5) {
+                // Apply Storm mutation
+                #[cfg(feature = "elektra")]
+                {
+                    let storm_ops = [
+                        OpCode::Lightning,
+                        OpCode::Shock,
+                        OpCode::TeslaCoil,
+                        OpCode::Electrogenesis,
+                        OpCode::Induction,
+                        OpCode::Battery,
+                        OpCode::Ground,
+                        OpCode::CircuitBreaker,
+                    ];
+                    strand.genes[i].op = storm_ops[rng.gen_range(0..storm_ops.len())].clone();
+                }
+
+                #[cfg(all(feature = "nova", not(feature = "elektra")))]
+                {
+                    let chaos_ops = [
+                        OpCode::Chaos,
+                        OpCode::Glitch,
+                        OpCode::Scramble,
+                        OpCode::Disintegrate,
+                        OpCode::EntropySurge,
+                    ];
+                    strand.genes[i].op = chaos_ops[rng.gen_range(0..chaos_ops.len())].clone();
+                }
+
+                #[cfg(not(any(feature = "elektra", feature = "nova")))]
+                {
+                    // Fallback for minimal features
+                    let basic_chaos = [
+                        OpCode::Drop,
+                        OpCode::Swap,
+                        OpCode::Nop,
+                    ];
+                    strand.genes[i].op = basic_chaos[rng.gen_range(0..basic_chaos.len())].clone();
+                }
+            }
         }
     }
 }
