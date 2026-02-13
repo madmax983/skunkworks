@@ -854,3 +854,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Semantic Mycology. The code grows.
 - **Status**: experiments/etymological-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-current
+- **Parents**: experiments/typographic-turbulence + experiments/chimera-lang
+- **Concept**: Evolutionary Hydrodynamics. ChimeraVM agents drifting in a fluid simulation made of text.
+- **Novel trait**: Fluid-driven genetic evolution.
+- **Status**: experiments/chimera-current
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

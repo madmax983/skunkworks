@@ -255,3 +255,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The Internet is the drummer. Swing is driven by TCP RTT. Visuals active.
 - **Note:** Audio gated behind `audio` feature due to ALSA constraints. TUI works.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-current
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are swimming in the text fluid. They are eating the letters. Evolution is hydrodynamic.
+- **Note**: Hybrid of `typographic-turbulence` and `chimera-lang`.
