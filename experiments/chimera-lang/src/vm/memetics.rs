@@ -21,6 +21,7 @@ pub struct Virus {
     pub color: (u8, u8, u8), // RGB
     pub pattern: String,     // Target text pattern (contains match)
     pub mutation_rate: u8,   // 0-100
+    pub payload: Option<usize>, // DNA Strand index to inject
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
@@ -195,16 +196,23 @@ pub fn exec_memetics_op(
             None
         }
         OpCode::Infect => {
-            // Stack: [ ..., mutation_rate, pattern_str, name_str ]
-            if vm.stack.len() >= 3 {
+            // Stack: [ ..., payload_idx, mutation_rate, pattern_str, name_str ]
+            if vm.stack.len() >= 4 {
                 let name_val = vm.stack.pop().unwrap();
                 let pattern_val = vm.stack.pop().unwrap();
                 let rate_val = vm.stack.pop().unwrap();
+                let payload_val = vm.stack.pop().unwrap();
 
-                if let (Value::Str(name), Value::Str(pattern), Value::Int(rate)) =
-                    (name_val, pattern_val, rate_val)
+                if let (Value::Str(name), Value::Str(pattern), Value::Int(rate), Value::Int(p_idx)) =
+                    (name_val, pattern_val, rate_val, payload_val)
                 {
                     let mutation_rate = rate.clamp(0, 100) as u8;
+                    let payload = if p_idx >= 0 && (p_idx as usize) < vm.dna.helix.strands.len() {
+                        Some(p_idx as usize)
+                    } else {
+                        None
+                    };
+
                     let mut rng = rand::thread_rng();
                     let color = (
                         rng.gen_range(50..255),
@@ -217,6 +225,7 @@ pub fn exec_memetics_op(
                         color,
                         pattern: pattern.clone(),
                         mutation_rate,
+                        payload,
                     };
 
                     let virus_id = vm.virus_library.len();
@@ -279,6 +288,33 @@ pub fn exec_memetics_op(
                                                 virus_id: state.virus_id,
                                             });
                                             spread_count += 1;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Transduction (Payload Injection)
+                            if let Some(payload_idx) = virus.payload {
+                                // Check if an organelle is here
+                                let target_org_indices: Vec<usize> = vm.organelles
+                                    .iter()
+                                    .enumerate()
+                                    .filter(|(_, o)| o.context_loc == (y, x))
+                                    .map(|(i, _)| i)
+                                    .collect();
+
+                                if !target_org_indices.is_empty() && payload_idx < vm.dna.helix.strands.len() {
+                                    let payload_genes = vm.dna.helix.strands[payload_idx].genes.clone();
+
+                                    for idx in target_org_indices {
+                                        let org = &vm.organelles[idx];
+                                        // Inject into the genome referenced by the organelle
+                                        // Note: multiple organelles might share a genome. This affects all of them.
+                                        let g_id = org.genome_id as usize;
+                                        if g_id < vm.dna.helix.strands.len() {
+                                            vm.dna.helix.strands[g_id].genes.extend(payload_genes.clone());
+                                            mutation_count += 1;
+                                            vm.output.push(format!("TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})", state.virus_id, payload_idx, org.name, g_id));
                                         }
                                     }
                                 }

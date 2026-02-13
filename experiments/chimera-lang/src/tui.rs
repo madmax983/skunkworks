@@ -115,6 +115,8 @@ pub(crate) enum ViewMode {
     Terminal,
     #[cfg(feature = "nova")]
     Attractor,
+    #[cfg(feature = "nova")]
+    Virology,
 }
 
 enum InputMode {
@@ -650,6 +652,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Attractor = app_state.view_mode {
                 render_attractor(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Virology = app_state.view_mode {
+                render_virology(f, vm, app_state);
                 return;
             }
 
@@ -1308,6 +1316,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Virology => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1560,7 +1573,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Terminal => ViewMode::Attractor,
                             #[cfg(feature = "nova")]
-                            ViewMode::Attractor => ViewMode::Genome,
+                            ViewMode::Attractor => ViewMode::Virology,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Virology => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1722,6 +1737,8 @@ where
                     KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -2359,6 +2376,12 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Virology => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2599,6 +2622,12 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Virology => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2763,6 +2792,12 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Virology => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2927,6 +2962,12 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Virology => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -2979,6 +3020,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Virology => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4456,6 +4501,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
         #[cfg(feature = "nova")]
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
+        #[cfg(feature = "nova")]
+        ViewMode::Virology => "VIROLOGY LAB",
     };
 
     let title = match app_state.input_mode {
@@ -5014,6 +5061,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Weaver, "The Weaver", "W"));
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
+        views.push((ViewMode::Virology, "Virology", "v"));
     }
     views
 }
@@ -8619,4 +8667,87 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     ];
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
     f.render_widget(info_widget, chunks[1]);
+}
+#[cfg(feature = "nova")]
+fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // Left: Viral Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            if let Some(state) = &vm.viral_grid[y][x] {
+                // Color based on virus
+                if state.virus_id < vm.virus_library.len() {
+                    let virus = &vm.virus_library[state.virus_id];
+                    style = style.fg(Color::Rgb(virus.color.0, virus.color.1, virus.color.2));
+                } else {
+                    style = style.fg(Color::Red);
+                }
+
+                // Intensity based on infection level
+                if state.infection_level > 80 {
+                    style = style.add_modifier(Modifier::BOLD);
+                    ch = "☣".to_string();
+                } else if state.infection_level > 50 {
+                    ch = "x".to_string();
+                } else {
+                    ch = ".".to_string();
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Viral Grid (Infection Map)"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Virus Library
+    let mut items = Vec::new();
+    if vm.virus_library.is_empty() {
+        items.push(ListItem::new("No known viruses."));
+    } else {
+        for (i, v) in vm.virus_library.iter().enumerate() {
+            let payload_desc = if let Some(pidx) = v.payload {
+                format!("Payload: Strand {}", pidx)
+            } else {
+                "No Payload".to_string()
+            };
+
+            let content = format!(
+                "ID {}: {} (Mut: {}%) [{}]\n  Pattern: '{}'",
+                i, v.name, v.mutation_rate, payload_desc, v.pattern
+            );
+
+            let style = Style::default().fg(Color::Rgb(v.color.0, v.color.1, v.color.2));
+            items.push(ListItem::new(content).style(style));
+        }
+    }
+
+    let list = List::new(items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Virology Lab (Known Strains)"),
+    );
+    f.render_widget(list, chunks[1]);
 }
