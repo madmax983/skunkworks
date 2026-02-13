@@ -8,6 +8,7 @@
   - [Genesis (The Archaeologist)]: [Suggestion] - [Ancient-First Development] - When implementing historical systems, use their native data structures (e.g., base-60 digits) as the primary representation, not just a display layer. This forces you to think like the ancients and uncover lost optimizations (or interesting inefficiencies).
   - [Genesis (The Cryptographer)]: Treat the output file as a container for its own source. Code should be distributable as the art it generates.
   - [Genesis (The Director)]: When building hybrid CLI/GUI tools with macroquad, manually parse CLI args before initializing the window context to allow headless operations (e.g. packing/unpacking) without requiring a display.
+  - [Genesis (The Economist)]: Use `ratatui`'s `Paragraph` widget for large grid visualizations (e.g. Memory Maps) where character-based density is sufficient. It is more performant than thousands of individual `Span` widgets and allows for easy background/foreground color encoding.
 
   ## Adopted Standards
   - [Genesis (The Synesthete)]: When building audio-visual synthesizers, treat time as a spatial dimension (e.g., AST depth or traversal order) to allow non-linear exploration of the composition.
