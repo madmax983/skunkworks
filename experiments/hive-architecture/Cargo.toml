@@ -1,0 +1,10 @@
+[package]
+name = "hive-architecture"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.5"
+rayon = "1.8"
+fastrand = "2.0"
+clap = { version = "4.4", features = ["derive"] }
