@@ -255,3 +255,7 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The Internet is the drummer. Swing is driven by TCP RTT. Visuals active.
 - **Note:** Audio gated behind `audio` feature due to ALSA constraints. TUI works.
+
+### [Concentration Level: FRESH] - Location: experiments/klein-files
+- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
+- **Status:** The file system is twisting. The directory tree is mapped to the Figure-8 immersion. Inside is outside. Navigation is non-orientable.
