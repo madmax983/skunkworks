@@ -16,6 +16,11 @@
 ### [Concentration Level: HIGH] - Location: experiments/git-climber
 - **Scent Origin:** The Reaper ☠️
 - **Status:** The cliff is unstable. Heavy machinery (Bevy) rusting in the rain. Documentation absent. Condemned.
+### [Concentration Level: FRESH] - Location: experiments/ferrous-chimera
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The agents are tracing magnetic lines. Stigmergy is visible on the platter. The code is writing to the world.
+- **Note**: Hybrid of `ferrous-graph` and `chimera-lang`.
+
 ### [Concentration Level: FRESH] - Location: experiments/gravitational-bridge
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status**: The ants are spanning the void. Bridges singing with tension.

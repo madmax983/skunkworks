@@ -825,4 +825,11 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Concept**: Ants building dynamic bridges between orbiting planets. Bridges stretch and break due to gravitational forces.
 - **Novel trait**: Interplanetary Structural Engineering.
 - **Status**: experiments/gravitational-bridge
-- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### ferrous-chimera
+- **Parents**: experiments/ferrous-graph + experiments/chimera-lang
+- **Concept**: ChimeraVM agents navigating a magnetic platter where their movement leaves trails (hysteresis) that serve as external memory (Stigmergy).
+- **Novel trait**: Magnetic Stigmergy. Agents communicate via the magnetic field they modify as they move.
+- **Status**: experiments/ferrous-chimera
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
