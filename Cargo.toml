@@ -114,7 +114,7 @@ members = [
     "experiments/bridge-balancer",
     "experiments/bridge-specter", "experiments/silicon-samba",
     "experiments/hyperbolic-hell",
-    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/celestial-cantata", "experiments/astral-chimera",
+    "experiments/quipu-chimera", "experiments/gradient-garden", "experiments/system-attractor", "experiments/biomimetic-synth", "experiments/astral-chimera",
     "experiments/gravity-termites",
     "experiments/cosmic-strings", "experiments/mobius-git", "experiments/git-ghost", "experiments/ripple-tank", "experiments/quipu-serializer",
     "experiments/lichen-mesh",

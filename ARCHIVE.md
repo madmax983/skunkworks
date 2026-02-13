@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **celestial-cantata**: Specimen condemned. Redundant with `harmony-of-spheres`. Documentation void. Generic implementation. Grace period: 24h.
+- **cipher-gears**: Specimen condemned. Generic implementation (Enigma clone). Documentation void. Redundant with other cipher experiments. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **celestial-cantata**: Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
 - **git-climber**: Specimen executed. Documentation void. Fragile stack (Bevy/Rapier) for simple viz. Skeletal implementation. Grace period expired. Moved to graveyard.
 - **beat-reactor**: Specimen executed. Documentation void. Skeletal implementation. Failed to improve during grace period. Moved to graveyard.
 - **magnetron-decay**: Specimen executed. Redundant with `klein-magnetron`. Ancestral traits preserved in hybrid offspring. Moved to graveyard.

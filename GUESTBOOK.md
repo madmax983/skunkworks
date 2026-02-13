@@ -28,9 +28,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: EVAPORATING] - Location: experiments/celestial-cantata
+### [Concentration Level: EVAPORATING] - Location: experiments/cipher-gears
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Redundant with `harmony-of-spheres`.
+- **Status:** Condemned. Generic implementation (Enigma clone). Documentation void. Redundant with other cipher experiments.
+
+### [Concentration Level: EVAPORATING] - Location: graveyard/celestial-cantata
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Redundant with `harmony-of-spheres`. Documentation void. Failed to improve during grace period. Moved to graveyard.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/git-climber
 - **Scent Origin:** The Reaper ☠️
