@@ -3530,6 +3530,23 @@ fn render_signals(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
+fn draw_tension_gauge<'a>(title: &'a str, ratio: f64) -> Gauge<'a> {
+    let (tension_color, label) = if ratio < 0.5 {
+        (Color::Green, "SAFE")
+    } else if ratio < 0.8 {
+        (Color::Yellow, "WARNING")
+    } else {
+        (Color::Red, "CRITICAL")
+    };
+
+    Gauge::default()
+        .block(Block::default().borders(Borders::ALL).title(title))
+        .gauge_style(Style::default().fg(tension_color))
+        .ratio(ratio.clamp(0.0, 1.0))
+        .label(format!("{} ({:.0}%)", label, ratio * 100.0))
+}
+
+#[cfg(feature = "nova")]
 fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
@@ -3617,7 +3634,14 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                 });
 
                 // Bobber (Icon)
-                ctx.print(49.0, app_state.fishing_bobber_y, "🔴");
+                let bobber_icon = if app_state.fishing_hooked { "◎" } else { "●" };
+                ctx.print(49.5, app_state.fishing_bobber_y, bobber_icon);
+
+                if app_state.fishing_hooked {
+                    // Splash effect
+                    ctx.print(48.0, app_state.fishing_bobber_y, "~");
+                    ctx.print(51.0, app_state.fishing_bobber_y, "~");
+                }
 
                 // Fish (Icon)
                 if app_state.fishing_fish_y > 0.0 && app_state.fishing_fish_y < 100.0 {
@@ -3626,7 +3650,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                     } else {
                         "🐟"
                     };
-                    ctx.print(48.0, app_state.fishing_fish_y, fish_icon);
+                    ctx.print(49.0, app_state.fishing_fish_y, fish_icon);
                 }
 
                 // Instructions Overlay (Bottom Right)
@@ -3640,19 +3664,7 @@ fn render_fishing(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
     // Tension Bar
     let tension = app_state.fishing_tension;
-    let (tension_color, label) = if tension < 0.5 {
-        (Color::Green, "SAFE")
-    } else if tension < 0.8 {
-        (Color::Yellow, "WARNING")
-    } else {
-        (Color::Red, "CRITICAL")
-    };
-
-    let gauge = Gauge::default()
-        .block(Block::default().borders(Borders::ALL).title("Line Tension"))
-        .gauge_style(Style::default().fg(tension_color))
-        .ratio(tension.clamp(0.0, 1.0))
-        .label(format!("{} ({:.0}%)", label, tension * 100.0));
+    let gauge = draw_tension_gauge("Line Tension", tension);
     f.render_widget(gauge, chunks[1]);
 }
 

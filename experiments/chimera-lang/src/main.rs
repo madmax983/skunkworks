@@ -102,6 +102,8 @@ fn main() -> Result<()> {
             // Mosaic Philosophy: "Colorize 'True' as Green."
             if val_str == "1" || val_str.to_lowercase() == "true" {
                 val_cell = val_cell.fg(comfy_table::Color::Green);
+            } else if val_str == "0" || val_str.to_lowercase() == "false" {
+                val_cell = val_cell.fg(comfy_table::Color::Red);
             }
 
             table.add_row(vec![
