@@ -1054,6 +1054,20 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Chr,
 
+    /// **[Nova]** Converts the Hologram Grid state into MIDI events.
+    ///
+    /// **Stack:** `[ ..., threshold ] -> [ ... ]`
+    /// **Effect:** Generates notes based on hologram intensity.
+    #[cfg(feature = "nova")]
+    HoloSonify,
+
+    /// **[Nova]** Encodes the current Audio Snapshot (Cymatics) into the Hologram Grid.
+    ///
+    /// **Stack:** `[ ..., scale ] -> [ ... ]`
+    /// **Effect:** Modifies hologram based on audio pressure.
+    #[cfg(feature = "nova")]
+    CymaticScan,
+
     /// **[Nova]** Toggles the Orca Signal Processing system on the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

@@ -524,3 +524,106 @@ pub fn exec_holo_speak(
 fn get_opcode_index(op: &OpCode) -> usize {
     OpCode::iter().position(|x| x == *op).unwrap_or(0)
 }
+
+#[cfg(feature = "nova")]
+pub fn exec_holo_sonify(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    // Stack: [ ..., threshold ]
+    let threshold = if let Some(Value::Int(t)) = vm.stack.pop() {
+        t as f64 / 10.0
+    } else {
+        0.5
+    };
+
+    let mut notes_generated = 0;
+
+    for y in 0..GRID_SIZE {
+        for x in 0..GRID_SIZE {
+            let (re, im) = vm.hologram_grid[y][x];
+            let magnitude = (re * re + im * im).sqrt();
+
+            if magnitude > threshold {
+                // Pitch: Map spatial position to scale
+                // Simple pentatonic mapping? Or chromatic?
+                // Let's do a simple chromatic map for now based on index
+                let base_pitch = 36; // C2
+                let pitch = (base_pitch + (x + y * GRID_SIZE) % 64) as u8;
+
+                // Velocity: Based on Magnitude
+                let velocity = (magnitude * 20.0).clamp(1.0, 127.0) as u8;
+
+                // Duration: Based on Phase (-PI to PI) -> (1 to 16 ticks)
+                let phase = im.atan2(re);
+                let duration = (((phase + PI) / (2.0 * PI)) * 16.0).clamp(1.0, 16.0) as u8;
+
+                vm.midi_messages.push(super::MidiEvent::NoteOn {
+                    channel: 0,
+                    note: pitch,
+                    velocity,
+                    duration,
+                });
+                notes_generated += 1;
+            }
+        }
+    }
+
+    vm.output.push(format!(
+        "HOLO_SONIFY: Generated {} notes (Thresh {:.2})",
+        notes_generated, threshold
+    ));
+    vm.energy = vm.energy.saturating_sub(notes_generated.min(50) as i64);
+    None
+}
+
+#[cfg(feature = "nova")]
+pub fn exec_cymatic_scan(
+    vm: &mut ChimeraVM,
+    _op: OpCode,
+    _args: &[Nucleotide],
+) -> Option<(usize, usize)> {
+    // Stack: [ ..., scale ]
+    let scale = if let Some(Value::Int(s)) = vm.stack.pop() {
+        s as f64 / 10.0
+    } else {
+        1.0
+    };
+
+    // Need to access audio_snapshot (requires resonance feature)
+    #[cfg(feature = "resonance")]
+    {
+        let pressure_len = vm.audio_snapshot.pressure.len();
+        let grid_area = GRID_SIZE * GRID_SIZE;
+
+        if pressure_len == grid_area {
+            let mut total_energy = 0.0;
+            for y in 0..GRID_SIZE {
+                for x in 0..GRID_SIZE {
+                    let idx = y * GRID_SIZE + x;
+                    let p = vm.audio_snapshot.pressure[idx] as f64;
+
+                    // Map pressure to Real part of Hologram
+                    // Maybe use previous Real as Imaginary to rotate phase?
+                    // Or just add to Real.
+                    vm.hologram_grid[y][x].0 += p * scale;
+                    total_energy += p.abs();
+                }
+            }
+            vm.output.push(format!(
+                "CYMATIC_SCAN: Encoded audio energy {:.2} into hologram",
+                total_energy
+            ));
+        } else {
+            vm.output.push("CYMATIC_SCAN: Audio snapshot size mismatch".to_string());
+        }
+    }
+    #[cfg(not(feature = "resonance"))]
+    {
+        vm.output.push("CYMATIC_SCAN: Resonance feature disabled".to_string());
+    }
+
+    vm.energy = vm.energy.saturating_sub(10);
+    None
+}
