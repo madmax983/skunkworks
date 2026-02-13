@@ -2428,7 +2428,39 @@ impl ChimeraVM {
                     return None;
                 }
 
-                let mut file = match File::open(&path) {
+                // 🔒 WARDEN: Path Sanitization
+                // Ensure path is within sandbox_root to prevent traversal attacks
+                let sandbox = match std::fs::canonicalize(&self.sandbox_root) {
+                    Ok(p) => p,
+                    Err(_) => {
+                        self.output
+                            .push("Error: Invalid sandbox root".to_string());
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                // Treat user path as relative to sandbox, unless it's absolute (which join handles, but check below covers)
+                let target_path = self.sandbox_root.join(&path);
+
+                let canonical_target = match std::fs::canonicalize(&target_path) {
+                    Ok(p) => p,
+                    Err(_) => {
+                        self.output
+                            .push(format!("Error: Failed to resolve path '{}'", path));
+                        self.stack.push(Value::Int(-1));
+                        return None;
+                    }
+                };
+
+                if !canonical_target.starts_with(&sandbox) {
+                    self.output
+                        .push(format!("SECURITY ALERT: Path traversal attempted on '{}'", path));
+                    self.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                let mut file = match File::open(&canonical_target) {
                     Ok(f) => f,
                     Err(_) => {
                         self.output
