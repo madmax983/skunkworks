@@ -253,3 +253,30 @@ fn main() {
 ```
 
 See `examples/story_demo.rs` for a full example of programmatic usage (Requires `nova` feature).
+
+## The Altar (Mad Science) 🩸
+
+The Altar is a new interactive view for genetic splicing and ritualistic mutation.
+
+### Access
+*   Press `K` or cycle via `Tab` to **The Altar**.
+
+### Rituals
+Combine two parent strands into a new creation.
+1.  **Select Parents**: Use `Left/Right` to select Parent A or B slots. Use `Up/Down` to choose the strand index.
+2.  **Offer Sacrifice**: Use `[` and `]` to adjust the Energy sacrifice.
+    *   **Low Sacrifice (<10)**: High Chaos. The result will be unstable and prone to random mutations (Nops).
+    *   **Balanced (10-50)**: Standard crossover and mutation rates.
+    *   **High Sacrifice (>50)**: Divine Favor. Lower mutation rate, higher stability.
+    *   **Massive Sacrifice (>100)**: Grants beneficial traits (e.g., Photosynthesis).
+3.  **Perform Ritual**: Press `Enter` to consume energy and spawn the new strand.
+
+## Circuitry (Elektra) ⚡
+
+Interactive circuit building is now enabled in the **Elektra** view.
+*   **Access**: Press `E` or cycle via `Tab`.
+*   **Controls**:
+    *   `b`: Place **Battery** (100V Source).
+    *   `g`: Place **Ground** (0V Sink).
+    *   `w`: Place **Wire** (Conductor).
+    *   `c`: **Clear** cell (Air/Insulator).

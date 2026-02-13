@@ -97,6 +97,8 @@ pub mod microscope;
 pub mod neuron;
 pub mod nova;
 #[cfg(feature = "nova")]
+pub mod nova_altar;
+#[cfg(feature = "nova")]
 pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;

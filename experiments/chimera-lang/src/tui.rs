@@ -115,6 +115,8 @@ pub(crate) enum ViewMode {
     Terminal,
     #[cfg(feature = "nova")]
     Attractor,
+    #[cfg(feature = "nova")]
+    Altar,
 }
 
 enum InputMode {
@@ -200,6 +202,8 @@ pub(crate) struct AppState {
     pub(crate) terminal_history: Vec<String>,
     #[cfg(feature = "nova")]
     pub(crate) terminal_history_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) altar_sacrifice: i64,
 }
 
 impl AppState {
@@ -283,6 +287,8 @@ impl AppState {
             terminal_history: Vec::new(),
             #[cfg(feature = "nova")]
             terminal_history_idx: 0,
+            #[cfg(feature = "nova")]
+            altar_sacrifice: 10,
         }
     }
 }
@@ -653,6 +659,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Altar = app_state.view_mode {
+                render_altar(f, vm, app_state);
+                return;
+            }
+
             render_genome_and_grid(f, vm, app_state);
 
             if vm.glitch_level > 0.01 {
@@ -749,6 +761,118 @@ where
                         _ => {}
                     }
                     continue;
+                }
+
+                #[cfg(feature = "nova")]
+                if let ViewMode::Altar = app_state.view_mode {
+                    match key.code {
+                        KeyCode::Enter => {
+                            match crate::vm::nova_altar::perform_ritual(
+                                vm,
+                                app_state.lab_parent_a,
+                                app_state.lab_parent_b,
+                                app_state.altar_sacrifice,
+                            ) {
+                                Ok(idx) => {
+                                    app_state.status_msg =
+                                        format!("Ritual Successful! Created Strand {}", idx)
+                                }
+                                Err(e) => app_state.status_msg = format!("Ritual Failed: {}", e),
+                            }
+                            continue;
+                        }
+                        KeyCode::Left => {
+                            if app_state.selected_strand > 0 {
+                                app_state.selected_strand -= 1;
+                            } else {
+                                app_state.selected_strand = 2;
+                            }
+                            continue;
+                        }
+                        KeyCode::Right => {
+                            if app_state.selected_strand < 2 {
+                                app_state.selected_strand += 1;
+                            } else {
+                                app_state.selected_strand = 0;
+                            }
+                            continue;
+                        }
+                        KeyCode::Up => {
+                            match app_state.selected_strand {
+                                0 => {
+                                    if app_state.lab_parent_a + 1 < vm.dna.helix.strands.len() {
+                                        app_state.lab_parent_a += 1;
+                                    }
+                                }
+                                2 => {
+                                    if app_state.lab_parent_b + 1 < vm.dna.helix.strands.len() {
+                                        app_state.lab_parent_b += 1;
+                                    }
+                                }
+                                _ => {}
+                            }
+                            continue;
+                        }
+                        KeyCode::Down => {
+                            match app_state.selected_strand {
+                                0 => {
+                                    if app_state.lab_parent_a > 0 {
+                                        app_state.lab_parent_a -= 1;
+                                    }
+                                }
+                                2 => {
+                                    if app_state.lab_parent_b > 0 {
+                                        app_state.lab_parent_b -= 1;
+                                    }
+                                }
+                                _ => {}
+                            }
+                            continue;
+                        }
+                        KeyCode::Char('[') => {
+                            app_state.altar_sacrifice = app_state.altar_sacrifice.saturating_sub(1);
+                            continue;
+                        }
+                        KeyCode::Char(']') => {
+                            app_state.altar_sacrifice = app_state.altar_sacrifice.saturating_add(1);
+                            continue;
+                        }
+                        KeyCode::Tab => {} // Fall through
+                        _ => {}            // Fall through
+                    }
+                }
+
+                #[cfg(feature = "elektra")]
+                if let ViewMode::Elektra = app_state.view_mode {
+                    if let KeyCode::Char(c) = key.code {
+                        let (x, y) = app_state.grid_cursor;
+                        match c {
+                            'b' => {
+                                // Battery
+                                vm.voltage_grid[y][x] = 100.0;
+                                vm.resistance_grid[y][x] = -1.0;
+                                app_state.status_msg = format!("Battery placed at {},{}", x, y);
+                            }
+                            'g' => {
+                                // Ground
+                                vm.voltage_grid[y][x] = 0.0;
+                                vm.resistance_grid[y][x] = -2.0;
+                                app_state.status_msg = format!("Ground placed at {},{}", x, y);
+                            }
+                            'w' => {
+                                // Wire
+                                vm.grid[y][x] = crate::vm::Value::Int(1);
+                                app_state.status_msg = format!("Wire placed at {},{}", x, y);
+                            }
+                            'c' => {
+                                // Clear
+                                vm.grid[y][x] = crate::vm::Value::Int(0);
+                                vm.resistance_grid[y][x] = 1.0; // Air
+                                app_state.status_msg = format!("Cleared {},{}", x, y);
+                            }
+                            _ => {}
+                        }
+                    }
                 }
 
                 #[cfg(feature = "nova")]
@@ -1308,6 +1432,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Altar => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1560,7 +1689,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Terminal => ViewMode::Attractor,
                             #[cfg(feature = "nova")]
-                            ViewMode::Attractor => ViewMode::Genome,
+                            ViewMode::Attractor => ViewMode::Altar,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Altar => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1722,6 +1853,8 @@ where
                     KeyCode::Char('`') => app_state.view_mode = ViewMode::Terminal,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('K') => app_state.view_mode = ViewMode::Altar,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -2359,6 +2492,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Altar => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2599,6 +2734,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Altar => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2763,6 +2900,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Altar => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2927,6 +3066,8 @@ where
                         ViewMode::Terminal => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Attractor => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::Altar => {}
                     },
                     KeyCode::Enter => {
                         #[cfg(feature = "silicon")]
@@ -2979,6 +3120,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Altar => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Genome => {
@@ -4456,6 +4601,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Foundry => "FOUNDRY (GENETIC CIRCUITRY)",
         #[cfg(feature = "nova")]
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
+        #[cfg(feature = "nova")]
+        ViewMode::Altar => "THE ALTAR (RITUALS)",
     };
 
     let title = match app_state.input_mode {
@@ -5014,6 +5161,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Weaver, "The Weaver", "W"));
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
+        views.push((ViewMode::Altar, "The Altar", "K"));
     }
     views
 }
@@ -7552,6 +7700,9 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Line::from("  A/B/D (Math: + - /)"),
         Line::from("  M (Mutate), C (Clock)"),
         Line::from("  Q (Query), H (Harvest)"),
+        Line::from("  L (Laser), T (Teleport)"),
+        Line::from("  & (AND), % (Modulo)"),
+        Line::from("  $ (Stack Push)"),
         Line::from(" "),
         Line::from("Controls:"),
         Line::from("  Type to place operators."),
@@ -8619,4 +8770,155 @@ fn render_attractor(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
     ];
     let info_widget = Paragraph::new(info).block(Block::default().borders(Borders::ALL).title("Dynamics"));
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_altar(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(25), // Parent A
+                Constraint::Percentage(50), // Altar
+                Constraint::Percentage(25), // Parent B
+            ]
+            .as_ref(),
+        )
+        .split(f.area());
+
+    // Helper to render strand preview
+    let render_strand = |idx: usize, title: &str, is_focused: bool| {
+        let mut items = Vec::new();
+        if idx < vm.dna.helix.strands.len() {
+            let strand = &vm.dna.helix.strands[idx];
+            for gene in &strand.genes {
+                items.push(ListItem::new(format!("{}", gene.op)));
+            }
+        } else {
+            items.push(ListItem::new("Invalid Strand"));
+        }
+
+        let border_style = if is_focused {
+            Style::default()
+                .fg(Color::Red)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            Style::default().fg(Color::DarkGray)
+        };
+
+        List::new(items).block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(format!("{} (Idx: {})", title, idx))
+                .border_style(border_style),
+        )
+    };
+
+    // Parent A
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_a,
+            "Parent A",
+            app_state.selected_strand == 0,
+        ),
+        chunks[0],
+    );
+
+    // Parent B
+    f.render_widget(
+        render_strand(
+            app_state.lab_parent_b,
+            "Parent B",
+            app_state.selected_strand == 2,
+        ),
+        chunks[2],
+    );
+
+    // Altar (Center)
+    let center_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Percentage(30),
+                Constraint::Percentage(40),
+                Constraint::Percentage(30),
+            ]
+            .as_ref(),
+        )
+        .split(chunks[1]);
+
+    // Sacrifice Info
+    let sacrifice = app_state.altar_sacrifice;
+    let sac_style = if app_state.selected_strand == 1 {
+        Style::default().fg(Color::Red).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::Yellow)
+    };
+
+    let sac_text = vec![
+        Line::from(vec![
+            Span::raw("Sacrifice Amount: "),
+            Span::styled(format!("{}", sacrifice), sac_style),
+        ]),
+        Line::from(" "),
+        Line::from(if sacrifice < 10 {
+            "Effect: High Chaos, Unstable Mutations"
+        } else if sacrifice < 50 {
+            "Effect: Balanced Mutation"
+        } else {
+            "Effect: High Stability, Divine Favor"
+        }),
+        Line::from(" "),
+        Line::from("Controls:"),
+        Line::from("  Left/Right: Select Slot"),
+        Line::from("  Up/Down: Adjust Selection"),
+        Line::from("  [/]: Adjust Sacrifice"),
+        Line::from("  Enter: PERFORM RITUAL"),
+    ];
+
+    let sac_widget = Paragraph::new(sac_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Offering")
+            .border_style(if app_state.selected_strand == 1 {
+                Style::default().fg(Color::Red)
+            } else {
+                Style::default().fg(Color::White)
+            }),
+    );
+    f.render_widget(sac_widget, center_chunks[0]);
+
+    // Visuals (ASCII Art Altar)
+    let altar_art = r#"
+        /^       /         |  *  |
+      | / \ |
+      | \ / |
+      |  *  |
+     /_______    [ SACRIFICE ]
+    "#;
+
+    let art_widget = Paragraph::new(altar_art)
+        .alignment(ratatui::layout::Alignment::Center)
+        .style(Style::default().fg(Color::Red));
+    f.render_widget(art_widget, center_chunks[1]);
+
+    // Result Preview (Latest Strand)
+    let last_idx = vm.dna.helix.strands.len().saturating_sub(1);
+    let mut res_items = Vec::new();
+    if !vm.dna.helix.strands.is_empty() {
+        let strand = &vm.dna.helix.strands[last_idx];
+        for gene in strand.genes.iter().take(10) {
+             res_items.push(ListItem::new(format!("{}", gene.op)));
+        }
+        if strand.genes.len() > 10 {
+            res_items.push(ListItem::new("..."));
+        }
+    }
+
+    let res_list = List::new(res_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(format!("Latest Creation (Idx: {})", last_idx))
+    );
+    f.render_widget(res_list, center_chunks[2]);
 }
