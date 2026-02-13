@@ -38,7 +38,7 @@ struct App {
 impl App {
     fn new(path: &str) -> Result<Self> {
         let model = GitModel::open(path)?;
-        let mut commits = model.history(1000)?; // Load up to 1000 commits
+        let mut commits = model.history_with_diffs(1000)?; // Load up to 1000 commits
         commits.reverse(); // Oldest -> Newest
 
         // Initialize flat terrain
