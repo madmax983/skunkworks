@@ -840,3 +840,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Cryptographic Knotting. Visualizing the trapdoor function as the transformation from Symbol (Roman) to Knot (Inca).
 - **Status**: experiments/quipu-legion
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-pachinko
+- **Parents**: experiments/synaptic-pachinko + experiments/chimera-lang
+- **Concept**: A Pachinko board where the "pins" are living ChimeraVM agents that gain energy from collisions and evolve to catch more packets.
+- **Novel trait**: Evo-Pachinko. The board layout self-organizes through natural selection.
+- **Status**: experiments/chimera-pachinko
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
