@@ -255,6 +255,11 @@ pub mod nova_weaver;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_weaver_test;
+#[cfg(feature = "nova")]
+pub mod nova_void;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_void_test;
 pub mod oracle;
 pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
@@ -646,6 +651,8 @@ pub struct ChimeraVM {
     pub hologram_mode: bool,
     #[cfg(feature = "nova")]
     pub attractor: nova_attractor::AttractorState,
+    #[cfg(feature = "nova")]
+    pub void_rifts: Vec<nova_void::VoidRift>,
 }
 
 impl ChimeraVM {
@@ -949,6 +956,8 @@ impl ChimeraVM {
             hologram_mode: false,
             #[cfg(feature = "nova")]
             attractor: nova_attractor::AttractorState::new(),
+            #[cfg(feature = "nova")]
+            void_rifts: Vec::new(),
         }
     }
 
@@ -1864,6 +1873,7 @@ impl ChimeraVM {
 
             nova_logistics::process_logistics(self);
             self.process_environment();
+            nova_void::process_rifts(self);
             nova_flux::process_flux(self);
             nova_metamorphism::process_metamorphism(self);
             if self.orca_mode {
@@ -2875,6 +2885,8 @@ impl ChimeraVM {
             | OpCode::Retrograde
             | OpCode::Synthesize
             | OpCode::Catalyze
+            | OpCode::VoidRift
+            | OpCode::VoidCast
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

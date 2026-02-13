@@ -839,6 +839,16 @@ pub enum OpCode {
     /// **Stack:** `[ ... ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Void,
+    /// **[Nova]** Opens a Void Rift at the specified location.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    VoidRift,
+    /// **[Nova]** Channels power from the nearest Void Rift.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., power ]`
+    #[cfg(feature = "nova")]
+    VoidCast,
     /// **[Nova]** Explodes the current strand, scattering genes onto the grid.
     ///
     /// **Stack:** `[ ... ] -> [ ... ]`

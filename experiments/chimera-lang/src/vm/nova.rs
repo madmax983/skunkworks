@@ -2078,6 +2078,8 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
             vm.output.push(format!("VOID: Spawned at {},{}", cx, cy));
             None
         }
+        OpCode::VoidRift => super::nova_void::exec_void_rift(vm),
+        OpCode::VoidCast => super::nova_void::exec_void_cast(vm),
         OpCode::Supernova => {
             let s_idx = vm.ip.0;
             if s_idx < vm.dna.helix.strands.len() {
