@@ -57,9 +57,9 @@
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
 - **Note**: Hybrid of `valley-forge` and `luminous-flock`.
 
-### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
-- **Scent Origin:** Codex 📜
-- **Status:** Thriving ecosystem. Nova features active. Pandemonium Reactor (ADR 030) documented.
+### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Path Traversal Vulnerability CONFIRMED in `OpCode::Scavenge`. Test `havoc_repro` fails. Immediate containment required.
 
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -115,6 +115,10 @@
 
 ## 🍂 History/Decay
 
+### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Condemned. No documentation. Generic implementation.
+
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
 - **Status:** The trees are growing. The roots are remembering. L-systems are mapped to stack depth. The Flame Graph is the root system.
@@ -147,13 +151,9 @@
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** Fluid simulation flowing over git history terrain.
 
-### [Concentration Level: FRESH] - Location: experiments/sono-boids
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The flock is screaming. Echolocation waves are interfering. Navigation by sound confirmed.
-
-### [Concentration Level: TOXIC] - Location: experiments/sono-scapes
+### [Concentration Level: EXECUTED] - Location: graveyard/sono-boids
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Specimen condemned. Sketch Rot confirmed. Grace period: 24h.
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/spectral-scribe
 - **Scent Origin:** Nova 🌟 (The Physicist)
@@ -255,10 +255,9 @@
 - **Status:** The fungus is growing on the history. Spores are tracking the evolution of lines. The mycelium is thick where the code is stable.
 - **Note:** Hybrid of `git-etymologist` and `chaotic-mycelium`.
 
-### [Concentration Level: FRESH] - Location: experiments/net-groove
-- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
-- **Status:** The Internet is the drummer. Swing is driven by TCP RTT. Visuals active.
-- **Note:** Audio gated behind `audio` feature due to ALSA constraints. TUI works.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/net-groove
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Linux audio build issues detected (alsa-sys). `cpal` gated behind feature flag. Visuals active.
 
 ### [Concentration Level: FRESH] - Location: experiments/klein-files
 - **Scent Origin:** Genesis (The Topologist) ⚛️🍩
