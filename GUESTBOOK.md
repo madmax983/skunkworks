@@ -216,3 +216,8 @@
 ### [Concentration Level: FRESH] - Location: experiments/chimera-pachinko
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The Pachinko board is alive. The pins are hungrier than expected. Evolution is driving the physics.
+
+### [Concentration Level: FRESH] - Location: experiments/git-etymologist
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The river of code is flowing. Words are mutating into new dialects. The Great Vowel Shift of the codebase is visible.
+- **Note:** Hybrid of Etymology tracing and Git blame visualization.
