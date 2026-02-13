@@ -730,6 +730,64 @@ sequenceDiagram
     end
 ```
 
+### Nova Feature: Metazoa (ADR 029)
+
+The Metazoa system enables multicellularity by allowing the VM to spawn independent `Organelle` agents that can bond into `Tissue` structures.
+
+```mermaid
+classDiagram
+    direction TB
+    class ChimeraVM {
+        +Vec~Organelle~ organelles
+        +HashMap~usize, Tissue~ tissues
+        +step()
+    }
+
+    class Organelle {
+        +usize id
+        +Option~usize~ tissue_id
+        +OrganelleType kind
+        +Vec~Value~ stack
+        +step()
+    }
+
+    class Tissue {
+        +usize id
+        +Vec~usize~ members
+    }
+
+    class OrganelleType {
+        <<Enum>>
+        +Worker
+        +Chloroplast
+        +Mitochondria
+        +Lysosome
+    }
+
+    ChimeraVM *-- Organelle : Owns
+    ChimeraVM *-- Tissue : Owns
+    Tissue o-- Organelle : References
+    Organelle ..> OrganelleType : Is-A
+```
+
+```mermaid
+sequenceDiagram
+    participant O1 as Organelle (A)
+    participant O2 as Organelle (B)
+    participant VM
+    participant T as Tissue
+
+    Note over O1: OpCode::Bond(East)
+    O1->>VM: bond_with(O2)
+    VM->>T: Create(A, B)
+    T-->>O1: tissue_id = 1
+    T-->>O2: tissue_id = 1
+
+    Note over O1: OpCode::Signify("Help!")
+    O1->>VM: broadcast(1, "Help!")
+    VM->>O2: push("Help!")
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
