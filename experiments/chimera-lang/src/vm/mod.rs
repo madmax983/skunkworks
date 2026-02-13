@@ -101,6 +101,11 @@ pub mod nova_arcana;
 #[cfg(feature = "nova")]
 pub mod nova_arena;
 #[cfg(feature = "nova")]
+pub mod nova_attractor;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_attractor_test;
+#[cfg(feature = "nova")]
 pub mod nova_astrology;
 #[cfg(feature = "nova")]
 pub mod nova_ballistics;
@@ -639,6 +644,8 @@ pub struct ChimeraVM {
     pub hologram_grid: Vec<Vec<(f64, f64)>>,
     #[cfg(feature = "nova")]
     pub hologram_mode: bool,
+    #[cfg(feature = "nova")]
+    pub attractor: nova_attractor::AttractorState,
 }
 
 impl ChimeraVM {
@@ -940,6 +947,8 @@ impl ChimeraVM {
             hologram_grid: vec![vec![(0.0, 0.0); GRID_SIZE]; GRID_SIZE],
             #[cfg(feature = "nova")]
             hologram_mode: false,
+            #[cfg(feature = "nova")]
+            attractor: nova_attractor::AttractorState::new(),
         }
     }
 
@@ -2845,6 +2854,12 @@ impl ChimeraVM {
                 alchemy::exec_crucible_op(self, op, args);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::AttractorInit
+            | OpCode::AttractorStep
+            | OpCode::AttractorSurf
+            | OpCode::AttractorMap => nova_attractor::exec_attractor_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Interfere => nova_hologram::exec_interfere(self, op, args),
