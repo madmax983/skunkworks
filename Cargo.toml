@@ -107,7 +107,7 @@ members = [
     "experiments/code-reaction",
     "experiments/lattice-brain",
     "experiments/jpeg-garden",
-    "experiments/klein-flock", "experiments/sono-boids", "experiments/babylonian-forecaster",
+    "experiments/klein-flock", "experiments/sono-boids",
     "experiments/market-swarm", "experiments/polyrhythmic-cylinder", "experiments/babylonian-garden", "experiments/phase-engine", "experiments/cryo-colony", "experiments/biomimetic-bridge",
     "experiments/bridge-balancer",
     "experiments/bridge-specter", "experiments/silicon-samba",
