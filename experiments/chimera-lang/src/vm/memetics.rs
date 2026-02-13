@@ -374,6 +374,77 @@ pub fn exec_memetics_op(
             }
             None
         }
+        OpCode::Retroscribe => {
+            // Stack: [ ..., replacement_idx, pattern_idx, target_idx ]
+            if vm.stack.len() >= 3 {
+                let target_val = vm.stack.pop().unwrap();
+                let pattern_val = vm.stack.pop().unwrap();
+                let replacement_val = vm.stack.pop().unwrap();
+
+                if let (Value::Int(t_idx), Value::Int(p_idx), Value::Int(r_idx)) =
+                    (target_val, pattern_val, replacement_val)
+                {
+                    let target = t_idx as usize;
+                    let pattern = p_idx as usize;
+                    let replacement = r_idx as usize;
+                    let helix_len = vm.dna.helix.strands.len();
+
+                    if target < helix_len && pattern < helix_len && replacement < helix_len {
+                        let pattern_genes = vm.dna.helix.strands[pattern].genes.clone();
+                        let replacement_genes = vm.dna.helix.strands[replacement].genes.clone();
+                        let target_genes = &mut vm.dna.helix.strands[target].genes;
+
+                        if pattern_genes.is_empty() {
+                            vm.output.push("RETROSCRIBE: Pattern is empty".to_string());
+                        } else {
+                            let mut found_idx = None;
+                            let p_len = pattern_genes.len();
+                            let t_len = target_genes.len();
+
+                            if t_len >= p_len {
+                                for i in 0..=(t_len - p_len) {
+                                    let mut match_found = true;
+                                    for j in 0..p_len {
+                                        if target_genes[i + j] != pattern_genes[j] {
+                                            match_found = false;
+                                            break;
+                                        }
+                                    }
+                                    if match_found {
+                                        found_idx = Some(i);
+                                        break; // First occurrence
+                                    }
+                                }
+                            }
+
+                            if let Some(idx) = found_idx {
+                                let tail = target_genes.split_off(idx + p_len);
+                                target_genes.truncate(idx);
+                                target_genes.extend(replacement_genes);
+                                target_genes.extend(tail);
+
+                                vm.output.push(format!(
+                                    "RETROSCRIBE: Rewrote Strand {} at gene {}",
+                                    target, idx
+                                ));
+                            } else {
+                                vm.output.push("RETROSCRIBE: Pattern not found".to_string());
+                            }
+                        }
+                    } else {
+                        vm.output
+                            .push("Error: Invalid strand indices for retroscribe".to_string());
+                    }
+                } else {
+                    vm.output
+                        .push("Error: Type mismatch for retroscribe".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for retroscribe".to_string());
+            }
+            None
+        }
         OpCode::Sanitize => {
             // Stack: [ ..., radius ]
             if let Some(val) = vm.stack.pop() {

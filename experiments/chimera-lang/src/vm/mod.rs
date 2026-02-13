@@ -263,6 +263,9 @@ pub mod nova_void;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_void_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod retroscribe_test;
 pub mod oracle;
 pub mod pandemonium;
 #[cfg(feature = "phylogeny")]
@@ -2745,6 +2748,7 @@ impl ChimeraVM {
             | OpCode::Shibboleth
             | OpCode::Infect
             | OpCode::Outbreak
+            | OpCode::Retroscribe
             | OpCode::Sanitize
             | OpCode::Drift
             | OpCode::Poly

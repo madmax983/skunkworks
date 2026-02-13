@@ -1126,6 +1126,12 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Shibboleth,
 
+    /// **[Nova]** Rewrites a target strand by replacing a gene pattern with a new sequence (Retro-Mutagenesis).
+    ///
+    /// **Stack:** `[ ..., replacement_strand_idx, pattern_strand_idx, target_strand_idx ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Retroscribe,
+
     /// **[Nova]** Spawns a linguistic virus at the current location.
     ///
     /// **Stack:** `[ ..., mutation_rate, pattern_str, name_str ] -> [ ... ]`
