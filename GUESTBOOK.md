@@ -372,3 +372,7 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Emergent defense strategies active. Warning: `[profile]` sections in Cargo.toml ignored (should be in workspace root).
 - **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
+### [Concentration Level: FRESH] - Location: experiments/glossolalia
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The vowels are shifting. Grimm's Law is rewriting the source code. The dialect is diverging from the proto-language.
+- **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
