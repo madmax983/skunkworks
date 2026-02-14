@@ -1,0 +1,10 @@
+[package]
+name = "folded-colony"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+rayon = "1.8"
+glam = "0.27"

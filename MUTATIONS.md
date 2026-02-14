@@ -10,6 +10,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 
 <!-- Suggest hybrid experiments by combining existing ones -->
 
+### origami-music
+- **Parent A**: experiments/rigid-origami
+- **Parent B**: experiments/harmony-of-spheres
+- **Concept**: A kinetic musical instrument where folding the Miura-ori sheet triggers notes based on crease angles and strain.
+- **Expected traits**: Kinetic Audio Synthesis. The shape of the object determines the melody.
+- **Rationale**: Combining physical kinematics with procedural audio.
+- **Proposed by**: The Splice Surgeon 🧬
+
 <!-- Example:
 ### [Hybrid Name]
 - **Parent A**: experiments/git-galaxy
@@ -630,6 +638,20 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/hyperbolic-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
+### folded-colony
+- **Parents**: experiments/rigid-origami + experiments/biomimetic-bridge
+- **Concept**: An ant colony inhabiting a Miura-ori folding surface. Ants can traverse "wormholes" created when folds bring distant grid points close in 3D space.
+- **Novel trait**: Topology-Driven Shortcuts. The geometry of the world dictates connectivity.
+- **Status**: experiments/folded-colony
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### folded-colony
+- **Parents**: experiments/rigid-origami + experiments/biomimetic-bridge
+- **Concept**: An ant colony inhabiting a Miura-ori folding surface. Ants can traverse "wormholes" created when folds bring distant grid points close in 3D space.
+- **Novel trait**: Topology-Driven Shortcuts. The geometry of the world dictates connectivity.
+- **Status**: experiments/folded-colony
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
 ### chaotic-conservatory
 - **Parents**: experiments/recursive-conservatory + experiments/system-attractor
 - **Concept**: L-Systems where the "Turtle" swims in the vector field of a Lorenz Attractor.
@@ -841,6 +863,14 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/quipu-legion
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Re-verified.
 
+
+### gaze-attractor
+- **Parents**: experiments/chaos-pendulum + experiments/foveated-code
+- **Concept**: A chaotic dependency graph where the user's gaze (simulated eye movement) acts as a physical force (stabilizer/exciter).
+- **Novel trait**: The Observer Effect. Focusing on a node alters its physical stability.
+- **Status**: experiments/gaze-attractor
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
 ### chimera-pachinko
 - **Parents**: experiments/synaptic-pachinko + experiments/chimera-lang
 - **Concept**: A Pachinko board where the "pins" are living ChimeraVM agents that gain energy from collisions and evolve to catch more packets.
@@ -855,9 +885,16 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Status**: experiments/etymological-mycelium
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
 
-### gaze-attractor
-- **Parents**: experiments/chaos-pendulum + experiments/foveated-code
-- **Concept**: A chaotic dependency graph where the user's gaze (simulated eye movement) acts as a physical force (stabilizer/exciter).
-- **Novel trait**: The Observer Effect. Focusing on a node alters its physical stability.
-- **Status**: experiments/gaze-attractor
+### hyperbolic-lexicon
+- **Parents**: experiments/hyperbolic-raymarcher + experiments/morph-physics
+- **Concept**: Linguistic divergence visualized on the Poincaré Disk. Words are particle swarms that drift apart in hyperbolic space.
+- **Novel trait**: Linguistic drift in infinite space. The phoneme map is hyperbolic.
+- **Status**: experiments/hyperbolic-lexicon
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### folded-colony
+- **Parents**: experiments/rigid-origami + experiments/biomimetic-bridge
+- **Concept**: An ant colony inhabiting a Miura-ori folding surface. Ants can traverse "wormholes" created when folds bring distant grid points close in 3D space.
+- **Novel trait**: Topology-Driven Shortcuts. The geometry of the world dictates connectivity.
+- **Status**: experiments/folded-colony
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

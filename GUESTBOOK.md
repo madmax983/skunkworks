@@ -28,6 +28,10 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
+### [Concentration Level: FRESH] - Location: experiments/folded-colony
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The sheet is folding. Ants are jumping through topological wormholes. Euclidean distance is overriding geodesic distance.
+
 ### [Concentration Level: FRESH] - Location: experiments/typographic-turbulence
 - **Scent Origin:** Genesis (The Oceanographer) ⚛️🌊
 - **Status:** The fluid is made of letters. Typing creates dams in the ASCII stream. Density waves are propagating through the character grid. LBM D2Q9 on CPU is stable.
