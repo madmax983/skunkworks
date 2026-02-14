@@ -156,8 +156,8 @@ impl TrailMap {
                 for dx in -1..=1 {
                     let nx = (x as isize + dx).rem_euclid(w as isize) as usize;
                     let ny = (y as isize + dy).rem_euclid(h as isize) as usize;
-                    // Use get_unchecked for speed, safe because of rem_euclid
-                    sum += unsafe { *self.grid.get_unchecked(ny * w + nx) };
+                    // Standard indexing is safe (panics on OOB)
+                    sum += self.grid[ny * w + nx];
                 }
             }
 

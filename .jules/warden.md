@@ -15,3 +15,7 @@
 ## 2025-01-27 - Locus Division by Zero Panic (DoS)
 **Threat:** `Topology::normalize` panicked due to division by zero (via `rem_euclid`) when `width` or `height` were 0. This is a DoS vector if dimensions are user-controlled (e.g. terminal resize).
 **Defense:** Added explicit checks for `width == 0 || height == 0` at the start of `normalize`, returning `None`.
+
+## 2025-02-18 - Bio-Transit Grid Undefined Behavior
+**Threat:** `TrailMap::diffuse_and_decay` used `unsafe { *self.grid.get_unchecked(...) }` inside a parallel loop. Since `TrailMap` fields are public, a user could truncate `grid` independently of `width` and `height`, causing the unchecked access to read out of bounds (UB).
+**Defense:** Replaced the `unsafe` block with standard safe indexing. This turns the potential UB into a safe panic if invariants are violated.
