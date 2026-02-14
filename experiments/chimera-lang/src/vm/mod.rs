@@ -128,11 +128,6 @@ pub mod nova_cartography;
 #[cfg(feature = "nova")]
 pub mod nova_chemistry;
 #[cfg(feature = "nova")]
-pub mod nova_chimeric;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_chimeric_test;
-#[cfg(feature = "nova")]
 pub mod nova_chronos;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -2941,9 +2936,6 @@ impl ChimeraVM {
             OpCode::Scavenge => self.exec_scavenge_op(),
             #[cfg(feature = "nova")]
             OpCode::Digest => self.exec_digest_op(),
-
-            #[cfg(feature = "nova")]
-            OpCode::Chimeric => nova_chimeric::exec_chimeric_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::EntropySurge => {

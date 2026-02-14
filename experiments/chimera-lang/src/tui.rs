@@ -770,12 +770,21 @@ where
                                 app_state.terminal_input.clear();
 
                                 vm.output.push(format!("> {}", input));
-                                vm.stack.push(crate::vm::Value::Str(input));
-                                crate::vm::nova_chimeric::exec_chimeric_op(
-                                    vm,
-                                    crate::opcode::OpCode::Chimeric,
-                                    &[],
-                                );
+
+                                let src = format!("strand terminal_input {{ {} }}", input);
+                                match crate::compiler::compile(&src, None) {
+                                    Ok(dna) => {
+                                        if let Some(strand) = dna.helix.strands.first() {
+                                            // Execute immediately to mimic REPL
+                                            for gene in &strand.genes {
+                                                let _ = vm.execute_gene_inner(gene.op.clone(), &gene.args);
+                                            }
+                                        }
+                                    }
+                                    Err(e) => {
+                                        vm.output.push(format!("Error: {}", e));
+                                    }
+                                }
                             }
                         }
                         KeyCode::Up => {
