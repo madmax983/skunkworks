@@ -1,6 +1,8 @@
 #![cfg(feature = "nova")]
 
 use super::nova::Phase;
+#[cfg(feature = "oracle")]
+use super::oracle;
 use super::{ChimeraVM, ChromaCell, Value};
 use crate::ast::Dna;
 use crate::opcode::OpCode;
@@ -368,6 +370,81 @@ pub fn exec_retrograde(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     } else {
         vm.output
             .push("Error: Stack underflow for retrograde".to_string());
+    }
+    None
+}
+
+#[cfg(feature = "oracle")]
+pub fn exec_divergence(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: query, count (top)
+    if vm.stack.len() >= 2 {
+        let count_val = vm.stack.pop().unwrap();
+        let query_val = vm.stack.pop().unwrap();
+
+        if let Value::Int(count) = count_val {
+            let limit = count.clamp(1, 50); // Safety limit
+
+            // Check recursion depth to prevent infinite divergence
+            if vm.recursion_depth > 5 {
+                vm.output
+                    .push("DIVERGENCE: Recursion limit reached".to_string());
+                vm.stack.push(Value::Int(0));
+                return None;
+            }
+
+            for i in 0..limit {
+                // Fork timeline
+                let mut sim_vm = vm.clone();
+                sim_vm.recursion_depth += 1;
+                sim_vm.halted = false;
+                // Silence output for simulations
+                // sim_vm.output.clear();
+
+                // Apply chaos/mutation to diverge the timeline
+                sim_vm.mutate();
+
+                // Run for a short burst to allow consequences to unfold
+                for _ in 0..10 {
+                    sim_vm.step();
+                }
+
+                let mut solutions = Vec::new();
+
+                oracle::solve(
+                    &[query_val.clone()],
+                    HashMap::new(),
+                    &sim_vm.knowledge_base,
+                    &sim_vm,
+                    &mut solutions,
+                    0,
+                );
+
+                if !solutions.is_empty() {
+                    // Success! Collapse wavefunction to this timeline.
+                    // Preserve original output log + divergence success msg
+                    let mut original_output = vm.output.clone();
+                    original_output
+                        .push(format!("DIVERGENCE: Timeline #{} Shifted! Success.", i));
+
+                    *vm = sim_vm;
+                    vm.output = original_output;
+                    vm.recursion_depth -= 1; // Fix depth
+                    vm.stack.push(Value::Int(1));
+                    return None;
+                }
+            }
+
+            // Failure
+            vm.stack.push(Value::Int(0));
+            vm.output
+                .push("DIVERGENCE: All timelines failed.".to_string());
+        } else {
+            vm.output
+                .push("Error: Type mismatch for divergence".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for divergence".to_string());
     }
     None
 }

@@ -2947,6 +2947,8 @@ impl ChimeraVM {
             | OpCode::Catalyze
             | OpCode::VoidRift
             | OpCode::VoidCast
+            #[cfg(feature = "oracle")]
+            | OpCode::Divergence
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]

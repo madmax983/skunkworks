@@ -678,6 +678,46 @@ fn check_dynamic_predicates(
                         return true;
                     }
                 }
+                "future" => {
+                    // future(Ticks, Goal)
+                    if args.len() == 3 {
+                        let arg_ticks = &args[1];
+                        let arg_goal = &args[2];
+
+                        let r_ticks = resolve(arg_ticks, subst);
+                        if let Value::Int(ticks) = r_ticks {
+                            let safe_ticks = ticks.clamp(1, 100);
+
+                            // Check recursion depth to prevent infinite future recursion
+                            if vm.recursion_depth <= 5 {
+                                // Clone VM
+                                let mut sim_vm = vm.clone();
+                                sim_vm.recursion_depth += 1;
+                                sim_vm.output.clear();
+                                sim_vm.halted = false;
+
+                                for _ in 0..safe_ticks {
+                                    sim_vm.step();
+                                    if sim_vm.halted {
+                                        break;
+                                    }
+                                }
+
+                                // Check goal on sim_vm
+                                // Note: We use recursion depth + 1 for solve depth check
+                                solve(
+                                    &[arg_goal.clone()],
+                                    subst.clone(),
+                                    kb,
+                                    &sim_vm,
+                                    solutions,
+                                    depth + 1,
+                                );
+                            }
+                        }
+                        return true;
+                    }
+                }
                 "past_cell" => {
                     // past_cell(Ticks, X, Y, Val)
                     #[cfg(feature = "nova")]

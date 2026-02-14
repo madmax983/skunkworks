@@ -937,6 +937,13 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Disintegrate,
 
+    /// **[Nova]** Forks time into N timelines, selects one where the query is true.
+    ///
+    /// **Stack:** `[ ..., count, query_term ] -> [ ..., success ]`
+    /// **Effect:** Replaces current VM state with the successful timeline.
+    #[cfg(all(feature = "nova", feature = "oracle"))]
+    Divergence,
+
     /// **[Nova]** Predicts if the current execution path leads to death within `ticks`.
     ///
     /// **Stack:** `[ ..., ticks ] -> [ ..., 1(Death)|0(Life) ]`
