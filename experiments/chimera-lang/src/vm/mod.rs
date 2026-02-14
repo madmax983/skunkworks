@@ -79,6 +79,7 @@ pub mod cortex;
 pub mod dream;
 #[cfg(feature = "elektra")]
 pub mod elektra;
+pub mod evolution;
 #[cfg(feature = "git")]
 pub mod git;
 #[cfg(feature = "nova")]
@@ -2963,9 +2964,10 @@ impl ChimeraVM {
             | OpCode::Catalyze
             | OpCode::VoidRift
             | OpCode::VoidCast
-            #[cfg(feature = "oracle")]
-            | OpCode::Divergence
             | OpCode::Chaos => nova::exec_nova_op(self, op, args),
+
+            #[cfg(feature = "oracle")]
+            OpCode::Divergence => nova::exec_nova_op(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::Weave | OpCode::Unravel => nova_weaver::exec_weave_op(self, op, args),
