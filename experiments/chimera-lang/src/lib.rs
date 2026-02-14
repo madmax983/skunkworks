@@ -113,6 +113,8 @@ mod cortex_view_test;
 mod crucible_test;
 #[cfg(all(test, feature = "elektra"))]
 mod elektra_test;
+#[cfg(all(test, feature = "elektra", feature = "nova"))]
+mod elektra_visual_test;
 #[cfg(all(test, feature = "nova"))]
 mod havoc_poly_crash;
 #[cfg(all(test, feature = "nova"))]
