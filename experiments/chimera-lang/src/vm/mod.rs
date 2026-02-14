@@ -1655,6 +1655,19 @@ impl ChimeraVM {
     fn process_ribosome(&mut self, organelle: &mut Organelle) {
         let (cy, cx) = self.context_loc;
         let val = self.grid[cy][cx].clone();
+
+        self.exec_ribosome_command(organelle, val, cy, cx);
+        self.update_ribosome_position(organelle, cy, cx);
+    }
+
+    #[cfg(feature = "nova")]
+    fn exec_ribosome_command(
+        &mut self,
+        organelle: &mut Organelle,
+        val: Value,
+        cy: usize,
+        cx: usize,
+    ) {
         match val {
             Value::Int(n) => self.stack.push(Value::Int(n)),
             Value::Junction(t, vals) => self.stack.push(Value::Junction(t, vals)),
@@ -1717,7 +1730,10 @@ impl ChimeraVM {
                 }
             },
         }
+    }
 
+    #[cfg(feature = "nova")]
+    fn update_ribosome_position(&mut self, organelle: &mut Organelle, cy: usize, cx: usize) {
         let (dy, dx) = organelle.direction;
         if let Some((mut new_y, mut new_x)) =
             self.normalize_coords(cy as i64 + dy as i64, cx as i64 + dx as i64)
