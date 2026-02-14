@@ -104,6 +104,18 @@ pub enum OpCode {
     /// **Stack:** `[ ..., val ] -> [ ... ]`
     /// **Effect:** If `val == 0`, jump to `(strand_idx, 0)`.
     Brz,
+    /// Checks if top two values are equal.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a == b else 0 ]`
+    Eq,
+    /// Checks if first value is greater than second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a > b else 0 ]`
+    Gt,
+    /// Checks if first value is less than second.
+    ///
+    /// **Stack:** `[ ..., a, b ] -> [ ..., 1 if a < b else 0 ]`
+    Lt,
     /// Generates energy from "sunlight".
     ///
     /// **Effect:** Adds 5 Energy.

@@ -2404,6 +2404,11 @@ impl ChimeraVM {
             hint = " (Hint: Hive feature. Enable 'hive' feature?)";
         }
 
+        // Git Features
+        if matches!(n, "ancestry" | "excavate" | "evolution") {
+            hint = " (Hint: Git feature. Enable 'git' feature?)";
+        }
+
         self.output
             .push(format!("Unknown enzyme: {}{}", name, hint));
         None
@@ -2596,6 +2601,10 @@ impl ChimeraVM {
             OpCode::Push => self.exec_stack_op(op, args),
             OpCode::Add | OpCode::Sub | OpCode::Mul | OpCode::Div => {
                 self.exec_math_op(op);
+                None
+            }
+            OpCode::Eq | OpCode::Gt | OpCode::Lt => {
+                self.exec_compare_op(op);
                 None
             }
             OpCode::Dup | OpCode::Swap | OpCode::Drop => self.exec_stack_op(op, args),
@@ -3346,6 +3355,85 @@ impl ChimeraVM {
         } else {
             output.push("Error: Type mismatch or complexity limit".to_string());
         }
+    }
+
+    fn exec_compare_op(&mut self, op: OpCode) {
+        if self.stack.len() < 2 {
+            self.output.push("Error: Stack underflow".to_string());
+            return;
+        }
+
+        // Check for string comparison
+        let b = self.stack.last().unwrap();
+        let a = self.stack.get(self.stack.len() - 2).unwrap();
+
+        // Handle Type Mismatch for Equality (e.g. Str == Int -> 0)
+        if op == OpCode::Eq {
+            let a_is_str = matches!(a, Value::Str(_));
+            let b_is_str = matches!(b, Value::Str(_));
+            if a_is_str != b_is_str {
+                self.stack.pop();
+                self.stack.pop();
+                self.stack.push(Value::Int(0));
+                return;
+            }
+        }
+
+        if let (Value::Str(sa), Value::Str(sb)) = (a, b) {
+            let res = match op {
+                OpCode::Eq => {
+                    if sa == sb {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                OpCode::Gt => {
+                    if sa > sb {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                OpCode::Lt => {
+                    if sa < sb {
+                        1
+                    } else {
+                        0
+                    }
+                }
+                _ => 0,
+            };
+            self.stack.pop();
+            self.stack.pop();
+            self.stack.push(Value::Int(res));
+            return;
+        }
+
+        Self::binary_op(&mut self.stack, &mut self.output, |a, b| match op {
+            OpCode::Eq => {
+                if a == b {
+                    1
+                } else {
+                    0
+                }
+            }
+            OpCode::Gt => {
+                if a > b {
+                    1
+                } else {
+                    0
+                }
+            }
+            OpCode::Lt => {
+                if a < b {
+                    1
+                } else {
+                    0
+                }
+            }
+            _ => 0,
+        });
     }
 
     fn exec_stack_op(&mut self, op: OpCode, args: &[Nucleotide]) -> Option<(usize, usize)> {
