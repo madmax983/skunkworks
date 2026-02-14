@@ -188,9 +188,13 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
 
-### [Concentration Level: TOXIC] - Location: experiments/syntax-fugue
+### [Concentration Level: EXECUTED] - Location: graveyard/syntax-fugue
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Grace period: 24h.
+- **Status:** Specimen executed. Failed to improve during grace period. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/bridge-balancer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Generic Sketch Rot. Documentation void. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
