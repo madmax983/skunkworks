@@ -20,3 +20,4 @@
 ## Genesis
 - **Hypothesis**: The infinite non-repeating structure of Penrose tilings will naturally create choke points that simulate 'rooms' and 'corridors' without explicit procedural generation logic. The constraints of the 5-grid intersection create "density waves" of small tiles versus large tiles.
 - **Status**: OPEN
+  - [Genesis (The Choreographer)]: `code-climber` will demonstrate that procedural animation is a valid code metric. If the IK solver struggles (high joint velocity/torque) to traverse a function, the cognitive load for a human reader is likely also high. "Kinematic complexity" mirrors "Cyclomatic complexity".

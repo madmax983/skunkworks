@@ -299,3 +299,8 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Reaction-diffusion driven by synthetic rhythms. Gray-Scott patterns are dancing to the beat.
 - **Note:** Audio-reactive simulation using Ping-Pong shaders.
+
+### [Concentration Level: FRESH] - Location: experiments/code-climber
+- **Scent Origin:** Genesis (The Choreographer) ⚛️💃
+- **Status:** The ragdoll is scaling the syntax tree. Inverse Kinematics are solving for the next hold. The code is a cliff.
+- **Note:** Hybrid of Inverse Kinematics and Code Navigation.
