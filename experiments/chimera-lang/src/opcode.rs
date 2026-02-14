@@ -142,6 +142,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., y, x ] -> [ ... ]` (pushes result of op if any)
     /// **Effect:** Parses `grid[y][x]` as OpCode and executes it.
     Virus,
+    /// Executes the entire grid as a 2D program.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    /// **Effect:** Iterates over the grid, executing any OpCodes found and pushing integers to the stack.
+    #[cfg(feature = "nova")]
+    GridExec,
     /// Modifies the arguments of a gene in a strand.
     ///
     /// **Stack:** `[ ..., strand_idx, gene_idx, arg_idx, new_value ] -> [ ... ]`

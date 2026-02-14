@@ -3583,6 +3583,55 @@ fn exec_observe(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Executes the grid as a 2D program.
+///
+/// **OpCode:** `GridExec`
+/// **Stack:** `[ ... ] -> [ ... ]`
+pub fn exec_grid_exec(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    let rows = vm.grid.len();
+    if rows == 0 {
+        return None;
+    }
+    let cols = vm.grid[0].len();
+
+    // Iterate row by row
+    for y in 0..rows {
+        for x in 0..cols {
+            // Clone val to release borrow on grid
+            let val = vm.grid[y][x].clone();
+
+            match val {
+                Value::Int(n) => {
+                    if n != 0 {
+                        vm.stack.push(Value::Int(n));
+                    }
+                }
+                Value::Str(s) => {
+                    if let Ok(op) = s.parse::<OpCode>() {
+                        // Temporarily set context location to current cell
+                        let old_loc = vm.context_loc;
+                        vm.context_loc = (y, x);
+
+                        // Execute instruction
+                        let result = vm.execute_gene_inner(op, &[]);
+
+                        vm.context_loc = old_loc;
+
+                        if let Some(target) = result {
+                            return Some(target);
+                        }
+                    }
+                }
+                _ => {} // Ignore others
+            }
+        }
+    }
+
+    vm.energy = vm.energy.saturating_sub(10);
+    vm.output.push("GRID_EXEC: Completed scan".to_string());
+    None
+}
+
 impl ChimeraVM {
     pub fn resurrect_from_graveyard(&mut self, index: usize) -> Result<usize, String> {
         if index < self.graveyard.len() {

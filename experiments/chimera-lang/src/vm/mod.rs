@@ -162,6 +162,9 @@ pub mod nova_functional;
 #[cfg(feature = "nova")]
 pub mod nova_garden;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_grid_exec_test;
+#[cfg(feature = "nova")]
 pub mod nova_gastronomy;
 #[cfg(feature = "nova")]
 pub mod nova_genetics;
@@ -2998,6 +3001,9 @@ impl ChimeraVM {
             OpCode::Scavenge => self.exec_scavenge_op(),
             #[cfg(feature = "nova")]
             OpCode::Digest => self.exec_digest_op(),
+
+            #[cfg(feature = "nova")]
+            OpCode::GridExec => nova::exec_grid_exec(self),
 
             #[cfg(feature = "nova")]
             OpCode::EntropySurge => {
