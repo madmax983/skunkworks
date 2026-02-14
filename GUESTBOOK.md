@@ -337,3 +337,7 @@
 - **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
 - **Status:** The slime molds are commuting. 50,000 agents are designing the future of public transport. The trails glow cyan in the void.
 - **Note:** Moonshot: Slime Mold Pathfinding + Urban Transit Network Design.
+### [Concentration Level: FRESH] - Location: experiments/clockwork-cipher
+- **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
+- **Status:** The gears are grinding. Involute profiles generated. Meshing is physically simulated (with some friction). Keys are being forged in the collision manifold.
+- **Note:** Moonshot: Mechanical Encryption + Physically Accurate Gear Trains.

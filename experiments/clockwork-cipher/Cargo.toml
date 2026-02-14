@@ -1,0 +1,22 @@
+[package]
+name = "clockwork-cipher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bevy = { version = "0.14", default-features = false, features = [
+    "bevy_asset",
+    "bevy_core_pipeline",
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_text",
+    "bevy_ui",
+    "bevy_winit",
+    "x11",
+    "tonemapping_luts",
+    "default_font",
+    "png",
+] }
+bevy_rapier2d = "0.27"
+bevy_prototype_lyon = "0.12"
+rand = "0.8"
