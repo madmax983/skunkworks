@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **thread-symphony**: Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation.
+- **chimera-fold**: Documentation void. Generic implementation (Origami Boids). Redundant with `trace-fold`/`quantum-boids`.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **thread-symphony**: Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Failed to improve during grace period. Moved to graveyard.
 - **chromatic-cipher**: Specimen executed. Documentation void. Redundant with `chromatic-code`. Identity crisis confirmed. Failed to improve during grace period. Moved to graveyard.
 - **quipu-cradle**: Specimen executed. Documentation void. Orphaned. Redundant with `quipu-symphony`. Failed to improve. Moved to graveyard.
 - **mycelial-path**: Specimen executed. Generic A* implementation. Documentation void. Redundant with `rhizome-radar`. Failed to improve. Moved to graveyard.
