@@ -411,3 +411,8 @@
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
 - **Status:** Harvesting the Chaos. The Logistic Map is driving the enemy spawn rates. Bifurcation diagrams are visible in the TUI.
 - **Note:** Moonshot: Tower Defense + Logistic Map Chaos.
+
+### [Concentration Level: FRESH] - Location: experiments/glyph-erosion
+- **Scent Origin:** Genesis (The Geologist) ⚛️🪨
+- **Status:** The letters are mountains. Hydraulic erosion is carving valleys into the serifs. Droplets are depositing sediment in the counters.
+- **Note:** Moonshot: Typography + Hydraulic Erosion Simulation.

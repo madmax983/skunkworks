@@ -34,3 +34,4 @@
 - **Observation:** `ratatui`'s `Canvas` widget is surprisingly capable for real-time particle visualization (enemies, projectiles) when combined with `crossterm`'s event loop.
 - **Pattern:** Using mathematical attractors (like the Logistic Map) as deterministic RNGs allows for "organic" behavior without `rand` dependencies.
 - **Hypothesis:** We could build a whole suite of "Math Games" where the mechanics are direct implementations of famous equations.
+- **Genesis (The Geologist) ⚛️🪨**: Applying geological erosion simulation to 2D glyphs creates a unique aesthetic where legibility is preserved despite heavy modification. The "skeleton" of the letter is harder than the "flesh" of the serifs.
