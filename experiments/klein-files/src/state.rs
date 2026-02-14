@@ -11,6 +11,7 @@ use crate::scanner::FileNode;
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 struct Vertex {
     position: [f32; 3],
+    uv: [f32; 2],
 }
 
 impl Vertex {
@@ -18,11 +19,18 @@ impl Vertex {
         wgpu::VertexBufferLayout {
             array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
             step_mode: wgpu::VertexStepMode::Vertex,
-            attributes: &[wgpu::VertexAttribute {
-                offset: 0,
-                shader_location: 0,
-                format: wgpu::VertexFormat::Float32x3,
-            }],
+            attributes: &[
+                wgpu::VertexAttribute {
+                    offset: 0,
+                    shader_location: 0,
+                    format: wgpu::VertexFormat::Float32x3,
+                },
+                wgpu::VertexAttribute {
+                    offset: std::mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
+                    shader_location: 1,
+                    format: wgpu::VertexFormat::Float32x2,
+                },
+            ],
         }
     }
 }
@@ -42,12 +50,12 @@ impl Instance {
             attributes: &[
                 wgpu::VertexAttribute {
                     offset: 0,
-                    shader_location: 1,
+                    shader_location: 2,
                     format: wgpu::VertexFormat::Float32x3,
                 },
                 wgpu::VertexAttribute {
                     offset: std::mem::size_of::<[f32; 3]>() as wgpu::BufferAddress,
-                    shader_location: 2,
+                    shader_location: 3,
                     format: wgpu::VertexFormat::Float32x4,
                 },
             ],
@@ -241,28 +249,36 @@ impl State {
             // Front
             Vertex {
                 position: [-0.05, -0.05, 0.05],
+                uv: [0.0, 0.0],
             },
             Vertex {
                 position: [0.05, -0.05, 0.05],
+                uv: [1.0, 0.0],
             },
             Vertex {
                 position: [0.05, 0.05, 0.05],
+                uv: [1.0, 1.0],
             },
             Vertex {
                 position: [-0.05, 0.05, 0.05],
+                uv: [0.0, 1.0],
             },
             // Back
             Vertex {
                 position: [-0.05, -0.05, -0.05],
+                uv: [0.0, 0.0],
             },
             Vertex {
                 position: [0.05, -0.05, -0.05],
+                uv: [1.0, 0.0],
             },
             Vertex {
                 position: [0.05, 0.05, -0.05],
+                uv: [1.0, 1.0],
             },
             Vertex {
                 position: [-0.05, 0.05, -0.05],
+                uv: [0.0, 1.0],
             },
         ];
         // Indices for 6 faces, 2 triangles each
@@ -533,16 +549,16 @@ impl State {
 
 fn create_klein_grid(a: f32, u_steps: u32, v_steps: u32) -> (Vec<Vertex>, Vec<u32>) {
     let mut vertices = Vec::new();
-    // Use slightly more than 2PI to close the loop cleanly if needed,
-    // but 0 and 2PI are same point.
-    // However, for UV mapping or texturing, we might duplicate vertices.
-    // Here we just want positions.
+    // We iterate u from 0 to 2PI (exclusive of 2PI because we wrap)
     for i in 0..u_steps {
         let u = (i as f32 / u_steps as f32) * std::f32::consts::PI * 2.0;
         for j in 0..v_steps {
             let v = (j as f32 / v_steps as f32) * std::f32::consts::PI * 2.0;
             let pos = figure_8_klein(u, v, a);
-            vertices.push(Vertex { position: pos });
+            vertices.push(Vertex {
+                position: pos,
+                uv: [u, v],
+            });
         }
     }
 
@@ -551,7 +567,24 @@ fn create_klein_grid(a: f32, u_steps: u32, v_steps: u32) -> (Vec<Vertex>, Vec<u3
     for i in 0..u_steps {
         for j in 0..v_steps {
             let curr = i * width + j;
-            let next_u = ((i + 1) % u_steps) * width + j;
+
+            // Connect along U (longitudinal)
+            // Normal wrapping: (i+1) % u_steps
+            // BUT: Klein bottle twist at the seam (u = 2PI -> u = 0)
+            let next_u = if i == u_steps - 1 {
+                // Connect to u=0, but with v flipped: (u=0, 2PI-v)
+                // v index j maps to v_steps - j
+                // if j=0 (v=0) -> v_flipped=2PI (which is 0) -> j=0
+                // if j=1 -> v_flipped=2PI-delta -> j=v_steps-1
+                let j_flipped = (width - j) % width;
+                // Next u is 0
+                0 * width + j_flipped
+            } else {
+                (i + 1) * width + j
+            };
+
+            // Connect along V (latitudinal)
+            // Standard circle wrapping
             let next_v = i * width + ((j + 1) % v_steps);
 
             // Line along U
