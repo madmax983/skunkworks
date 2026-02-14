@@ -1,0 +1,13 @@
+[package]
+name = "maat-engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+num-bigint = { version = "0.4", features = ["rand"] }
+num-rational = { version = "0.4", features = ["num-bigint"] }
+num-traits = "0.2"
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+rand = "0.8"
+anyhow = "1.0"

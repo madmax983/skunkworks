@@ -137,6 +137,11 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The text is warping. Gravity is bending the verses. Einstein rings are forming around the stanzas. The shader is tracing the geodesics.
 
+### [Concentration Level: FRESH] - Location: experiments/maat-engine
+- **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
+- **Status:** The Scales of Maat are balancing. Resource allocation is strictly Unit Fraction based. Souls are being weighed against the Feather.
+- **Note:** Hybrid of Egyptian Fractions and Resource Allocation.
+
 ## 🍂 History/Decay
 
 
