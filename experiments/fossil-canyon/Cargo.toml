@@ -1,0 +1,11 @@
+[package]
+name = "fossil-canyon"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+rand = "0.8"
+git2 = "0.18"
+walkdir = "2.3"
+anyhow = "1.0"
