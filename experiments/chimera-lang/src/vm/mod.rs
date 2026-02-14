@@ -3063,7 +3063,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "nova")]
-            OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose => {
+            OpCode::Note | OpCode::Rest | OpCode::Tempo | OpCode::Perform | OpCode::Compose | OpCode::Notate => {
                 bard::exec_bard_op(self, op, args);
                 None
             }

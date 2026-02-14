@@ -202,6 +202,8 @@ pub(crate) struct AppState {
     pub(crate) terminal_history: Vec<String>,
     #[cfg(feature = "nova")]
     pub(crate) terminal_history_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) piano_roll_cursor: (u64, u8),
 }
 
 impl AppState {
@@ -285,6 +287,8 @@ impl AppState {
             terminal_history: Vec::new(),
             #[cfg(feature = "nova")]
             terminal_history_idx: 0,
+            #[cfg(feature = "nova")]
+            piano_roll_cursor: (0, 60), // C4
         }
     }
 }
@@ -1387,6 +1391,65 @@ where
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
                 if let KeyCode::Char(c) = key.code {
+                    if let ViewMode::PianoRoll = app_state.view_mode {
+                        match c {
+                            ' ' => {
+                                let pitch = app_state.piano_roll_cursor.1;
+                                vm.score.push(crate::vm::bard::Note::new(pitch, 4, 100));
+                                app_state.piano_roll_cursor.0 += 4;
+                                continue;
+                            }
+                            'r' => {
+                                vm.score.push(crate::vm::bard::Note::new(0, 4, 0)); // Rest
+                                app_state.piano_roll_cursor.0 += 4;
+                                continue;
+                            }
+                            'x' => {
+                                // x to delete
+                                vm.score.pop();
+                                if app_state.piano_roll_cursor.0 >= 4 {
+                                    app_state.piano_roll_cursor.0 -= 4;
+                                }
+                                continue;
+                            }
+                            'C' => {
+                                crate::vm::bard::exec_bard_op(
+                                    vm,
+                                    crate::opcode::OpCode::Compose,
+                                    &[],
+                                );
+                                app_state.status_msg = "Composed Score to DNA".to_string();
+                                continue;
+                            }
+                            'L' => {
+                                // Notate current strand
+                                vm.stack
+                                    .push(crate::vm::Value::Int(app_state.selected_strand as i64));
+                                crate::vm::bard::exec_bard_op(
+                                    vm,
+                                    crate::opcode::OpCode::Notate,
+                                    &[],
+                                );
+                                app_state.status_msg =
+                                    format!("Notated Strand {}", app_state.selected_strand);
+                                continue;
+                            }
+                            'P' => {
+                                // Play
+                                crate::vm::bard::exec_bard_op(
+                                    vm,
+                                    crate::opcode::OpCode::Perform,
+                                    &[],
+                                );
+                                if let Some(crate::vm::Value::Str(abc)) = vm.stack.last() {
+                                    app_state.status_msg = format!("Exported: {}", abc);
+                                }
+                                continue;
+                            }
+                            _ => {}
+                        }
+                    }
+
                     if app_state.view_mode == ViewMode::Orca {
                         if c == ' ' {
                             // Let Space fall through
@@ -2309,7 +2372,11 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
+                        ViewMode::PianoRoll => {
+                            if app_state.piano_roll_cursor.1 > 36 {
+                                app_state.piano_roll_cursor.1 -= 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
@@ -2525,7 +2592,11 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
+                        ViewMode::PianoRoll => {
+                            if app_state.piano_roll_cursor.1 < 96 {
+                                app_state.piano_roll_cursor.1 += 1;
+                            }
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
@@ -2721,7 +2792,9 @@ where
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
+                        ViewMode::PianoRoll => {
+                            app_state.piano_roll_cursor.0 = app_state.piano_roll_cursor.0.saturating_add(4);
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
                         #[cfg(feature = "nova")]
@@ -2911,7 +2984,9 @@ where
                         #[cfg(feature = "nova")]
                         ViewMode::Graveyard => {}
                         #[cfg(feature = "nova")]
-                        ViewMode::PianoRoll => {}
+                        ViewMode::PianoRoll => {
+                            app_state.piano_roll_cursor.0 = app_state.piano_roll_cursor.0.saturating_sub(4);
+                        }
                         #[cfg(feature = "nova")]
                         ViewMode::Retina => {}
                         #[cfg(feature = "silicon")]
@@ -6249,41 +6324,52 @@ fn render_dream(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 }
 
 #[cfg(feature = "nova")]
-fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
+fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     let chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(85), Constraint::Percentage(15)].as_ref())
         .split(f.area());
 
-    // Calculate total duration to define the time window
-    let mut total_duration = 0;
-    for note in &vm.score {
-        total_duration += note.duration as u64;
-    }
+    let main_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
+        .split(chunks[0]);
 
-    let window_size = 64; // 4 measures of 16th notes
-    let window_end = total_duration as f64;
-    let window_start = (total_duration as f64 - window_size as f64).max(0.0);
+    // Calculate total duration to define the time window
+    // Window should center on cursor
+    let (cursor_time, cursor_pitch) = app_state.piano_roll_cursor;
+    let window_size = 64.0;
+    let window_start = (cursor_time as f64 - window_size / 2.0).max(0.0);
+    let window_end = window_start + window_size;
 
     let canvas = Canvas::default()
         .block(
             Block::default()
                 .borders(Borders::ALL)
-                .title("Piano Roll (MIDI Visualization)"),
+                .title("Piano Roll (Fugue Composer)"),
         )
-        .x_bounds([window_start, window_end.max(window_start + 1.0)])
-        .y_bounds([20.0, 108.0]) // MIDI 21 (A0) to 108 (C8) covers most piano range
+        .x_bounds([window_start, window_end])
+        .y_bounds([36.0, 96.0]) // C2 to C7
         .paint(|ctx| {
             // Draw grid lines (measures)
-            // Every 16 ticks is a measure
             let start_measure = (window_start as u64 / 16) * 16;
-            let end_measure = window_end as u64 + 16;
+            let end_measure = (window_end as u64) + 16;
             for t in (start_measure..end_measure).step_by(16) {
                 ctx.draw(&ratatui::widgets::canvas::Line {
                     x1: t as f64,
-                    y1: 20.0,
+                    y1: 36.0,
                     x2: t as f64,
-                    y2: 108.0,
+                    y2: 96.0,
+                    color: Color::DarkGray,
+                });
+            }
+            // Draw grid lines (pitch octaves)
+            for p in (36..96).step_by(12) {
+                ctx.draw(&ratatui::widgets::canvas::Line {
+                    x1: window_start,
+                    y1: p as f64,
+                    x2: window_end,
+                    y2: p as f64,
                     color: Color::DarkGray,
                 });
             }
@@ -6297,12 +6383,11 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
 
                 // Only draw if in window
                 if end > window_start && start < window_end && note.pitch > 0 {
-                    // Not a rest
                     let color = match note.velocity {
                         0..=40 => Color::Blue,
                         41..=80 => Color::Cyan,
                         81..=100 => Color::Green,
-                        _ => Color::Yellow, // Loud
+                        _ => Color::Yellow,
                     };
 
                     ctx.draw(&Rectangle {
@@ -6314,13 +6399,42 @@ fn render_piano_roll(f: &mut Frame, vm: &mut ChimeraVM, _app_state: &AppState) {
                     });
                 }
             }
+
+            // Draw Cursor
+            ctx.draw(&Rectangle {
+                x: cursor_time as f64,
+                y: cursor_pitch as f64,
+                width: 4.0, // Default duration
+                height: 1.0,
+                color: Color::Red,
+            });
         });
 
-    f.render_widget(canvas, chunks[0]);
+    f.render_widget(canvas, main_chunks[0]);
 
-    let help = Paragraph::new("Visualizing MIDI Score.\nX-Axis: Time (16th notes)\nY-Axis: Pitch")
-        .block(Block::default().borders(Borders::ALL));
+    // OpCode Info
+    let op_name = crate::vm::bard::get_opcode_name_for_pitch(cursor_pitch);
+    let note_name = if cursor_pitch > 0 {
+        let names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        let idx = (cursor_pitch % 12) as usize;
+        let oct = (cursor_pitch / 12) as i32 - 1; // MIDI standard C4=60
+        format!("{}{}", names[idx], oct)
+    } else {
+        "Rest".to_string()
+    };
+
+    let help_text = format!(
+        "Note: {} ({})\nOpCode: {}\nTime: {}",
+        note_name, cursor_pitch, op_name, cursor_time
+    );
+    let help = Paragraph::new(help_text)
+        .block(Block::default().borders(Borders::ALL).title("Selection"));
     f.render_widget(help, chunks[1]);
+
+    // Controls
+    let controls = Paragraph::new("Space: Place/Remove | C: Compose (DNA) | L: Load (Strand) | P: Play | Arrows: Move")
+        .block(Block::default().borders(Borders::ALL));
+    f.render_widget(controls, main_chunks[1]);
 }
 
 #[cfg(feature = "nova")]

@@ -77,6 +77,7 @@ impl Note {
 /// - `Tempo`: Logs tempo change (metadata).
 /// - `Perform`: Compiles the score to ABC notation string on the stack.
 /// - `Compose`: Compiles the score into a DNA strand.
+/// - `Notate`: Compiles a DNA strand into a score.
 pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
     match op {
         OpCode::Note => {
@@ -201,43 +202,273 @@ pub fn exec_bard_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) {
                     .push("COMPOSE: No valid genes produced".to_string());
             }
         }
+        OpCode::Notate => {
+            // stack: strand_idx (top)
+            if let Some(val) = vm.stack.pop() {
+                if let Value::Int(idx) = val {
+                    let s_idx = idx as usize;
+                    if s_idx < vm.dna.helix.strands.len() {
+                        let strand = &vm.dna.helix.strands[s_idx];
+                        for gene in &strand.genes {
+                            if let Some(note) = gene_to_note(gene) {
+                                vm.score.push(note);
+                            }
+                        }
+                        vm.energy = vm.energy.saturating_sub(10);
+                        vm.output.push(format!("NOTATE: Transcribed strand {}", s_idx));
+                    } else {
+                        vm.output.push("NOTATE: Invalid strand index".to_string());
+                    }
+                } else {
+                    vm.output.push("NOTATE: Type mismatch".to_string());
+                }
+            } else {
+                vm.output.push("NOTATE: Stack underflow".to_string());
+            }
+        }
         _ => {}
     }
 }
 
+/// Helper function for TUI to get OpCode name for a pitch.
+pub fn get_opcode_name_for_pitch(pitch: u8) -> &'static str {
+    if pitch == 0 {
+        return "Rest";
+    }
+    let octave = pitch / 12;
+    let class = pitch % 12;
+
+    match (octave, class) {
+        // Octave 3 (Arithmetic & Logic)
+        (3, 0) => "Push",
+        (3, 1) => "Pop/Drop",
+        (3, 2) => "Add",
+        (3, 3) => "Sub",
+        (3, 4) => "Mul",
+        (3, 5) => "Div",
+        (3, 6) => "Mod", // Assuming Mod might be implemented or mapped
+        (3, 7) => "Eq",  // Assuming Eq
+        (3, 8) => "Gt",  // Assuming Gt
+        (3, 9) => "Lt",  // Assuming Lt
+        (3, 10) => "Not", // Assuming Not
+        (3, 11) => "Swap",
+
+        // Octave 4 (Control Flow & IO)
+        (4, 0) => "Print",
+        (4, 1) => "Scan", // Assuming Input/Scan
+        (4, 2) => "Jump",
+        (4, 3) => "Brz",
+        (4, 4) => "Call",
+        (4, 5) => "Ret",
+        (4, 6) => "Signal",
+        (4, 7) => "Receive",
+        (4, 8) => "Broadcast",
+        (4, 9) => "Tune",
+        (4, 10) => "Sleep", // Assuming Wait/Sleep
+        (4, 11) => "Halt",
+
+        // Octave 5 (Biology)
+        (5, 0) => "Mitosis",
+        (5, 1) => "Apoptosis",
+        (5, 2) => "Spawn",
+        (5, 3) => "Differentiate",
+        (5, 4) => "Photosynthesize",
+        (5, 5) => "Consume",
+        (5, 6) => "Secrete",
+        (5, 7) => "Absorb",
+        (5, 8) => "Detect",
+        (5, 9) => "Chemotaxis",
+        (5, 10) => "Migrate",
+        (5, 11) => "Incubate",
+
+        // Octave 6 (Grid & Physics)
+        (6, 0) => "GRead",
+        (6, 1) => "GWrite",
+        (6, 2) => "Lumine",
+        (6, 3) => "SenseLight",
+        (6, 4) => "Gravitate",
+        (6, 5) => "Rift",
+        (6, 6) => "Seal",
+        (6, 7) => "Membrane",
+        (6, 8) => "Osmosis",
+        (6, 9) => "TimeWarp",
+        (6, 10) => "Chronostasis",
+        (6, 11) => "Entropy",
+
+        _ => "Unknown",
+    }
+}
+
 /// Maps a musical Note to a genetic Instruction.
-///
-/// The mapping is based on the pitch class (Note name) relative to C.
-/// Arguments (Nucleotides) are derived from Velocity and Duration.
 fn note_to_gene(note: &Note) -> Option<Gene> {
     if note.pitch == 0 {
-        return None; // Rest -> No Op (or maybe Nop?)
+        return None;
     }
 
-    // Chromatic Scale (C = 0)
+    let octave = note.pitch / 12;
     let class = note.pitch % 12;
-    // Duration used as numeric argument
     let arg_val = note.duration as i64;
-    // Velocity used as secondary argument (if needed) or alternative
-    let _vel_val = note.velocity as i64;
 
-    let (op, args) = match class {
-        0 => (OpCode::Push, vec![Nucleotide::Number(arg_val)]), // C
-        1 => (OpCode::Dup, vec![]),                             // C#
-        2 => (OpCode::Add, vec![]),                             // D
-        3 => (OpCode::Sub, vec![]),                             // D#
-        4 => (OpCode::Mul, vec![]),                             // E
-        5 => (OpCode::Div, vec![]),                             // F
-        6 => (OpCode::GRead, vec![]),                           // F#
-        7 => (OpCode::GWrite, vec![]),                          // G
-        8 => (OpCode::Print, vec![]),                           // G#
-        9 => (OpCode::Jump, vec![Nucleotide::Number(arg_val)]), // A
-        10 => (OpCode::Brz, vec![Nucleotide::Number(arg_val)]), // A#
-        11 => (OpCode::Call, vec![Nucleotide::Number(arg_val)]), // B
+    let (op, args) = match (octave, class) {
+        // Octave 3: Arithmetic & Logic
+        (3, 0) => (OpCode::Push, vec![Nucleotide::Number(arg_val)]), // Use duration as value
+        (3, 1) => (OpCode::Drop, vec![]),
+        (3, 2) => (OpCode::Add, vec![]),
+        (3, 3) => (OpCode::Sub, vec![]),
+        (3, 4) => (OpCode::Mul, vec![]),
+        (3, 5) => (OpCode::Div, vec![]),
+        (3, 6) => (OpCode::Poly, vec![Nucleotide::String("mod".to_string()), Nucleotide::String("mod".to_string())]), // Hack for Mod
+        (3, 7) => (OpCode::Poly, vec![Nucleotide::String("eq".to_string()), Nucleotide::String("eq".to_string())]), // Hack for Eq
+        (3, 8) => (OpCode::Poly, vec![Nucleotide::String("gt".to_string()), Nucleotide::String("gt".to_string())]), // Hack for Gt
+        (3, 9) => (OpCode::Poly, vec![Nucleotide::String("lt".to_string()), Nucleotide::String("lt".to_string())]), // Hack for Lt
+        (3, 10) => (OpCode::Poly, vec![Nucleotide::String("not".to_string()), Nucleotide::String("not".to_string())]), // Hack for Not
+        (3, 11) => (OpCode::Swap, vec![]),
+
+        // Octave 4: Control Flow & IO
+        (4, 0) => (OpCode::Print, vec![]),
+        (4, 1) => (OpCode::Spirit, vec![]), // Input
+        (4, 2) => (OpCode::Jump, vec![Nucleotide::Number(arg_val)]),
+        (4, 3) => (OpCode::Brz, vec![Nucleotide::Number(arg_val)]),
+        (4, 4) => (OpCode::Call, vec![Nucleotide::Number(arg_val)]),
+        (4, 5) => (OpCode::Ret, vec![]),
+        (4, 6) => (OpCode::Signal, vec![Nucleotide::Number(0), Nucleotide::Number(arg_val)]), // Channel 0 default
+        (4, 7) => (OpCode::Receive, vec![Nucleotide::Number(0)]),
+        (4, 8) => (OpCode::Broadcast, vec![Nucleotide::Number(0), Nucleotide::Number(arg_val)]),
+        (4, 9) => (OpCode::Tune, vec![Nucleotide::Number(0)]),
+        (4, 10) => (OpCode::Rest, vec![Nucleotide::Number(arg_val)]), // Sleep/Rest
+        (4, 11) => (OpCode::Apoptosis, vec![Nucleotide::Number(0)]), // Halt/Die (Self)
+
+        // Octave 5: Biology
+        (5, 0) => (OpCode::Mitosis, vec![Nucleotide::Number(0)]), // Clone self
+        (5, 1) => (OpCode::Apoptosis, vec![Nucleotide::Number(0)]),
+        (5, 2) => (OpCode::Spawn, vec![Nucleotide::Number(0), Nucleotide::Number(1)]), // Default Worker
+        (5, 3) => (OpCode::Differentiate, vec![Nucleotide::Number(1)]), // Default
+        (5, 4) => (OpCode::Photosynthesize, vec![]),
+        (5, 5) => (OpCode::Consume, vec![]),
+        (5, 6) => (OpCode::Secrete, vec![Nucleotide::Number(0), Nucleotide::Number(arg_val)]),
+        (5, 7) => (OpCode::Absorb, vec![Nucleotide::Number(0), Nucleotide::Number(arg_val)]),
+        (5, 8) => (OpCode::Detect, vec![Nucleotide::Number(0)]),
+        (5, 9) => (OpCode::Chemotaxis, vec![Nucleotide::Number(0)]),
+        (5, 10) => (OpCode::Migrate, vec![Nucleotide::Number(1), Nucleotide::Number(0)]), // Default Move
+        (5, 11) => (OpCode::Incubate, vec![Nucleotide::Number(arg_val), Nucleotide::Number(0), Nucleotide::Number(0)]),
+
+        // Octave 6: Grid & Physics
+        (6, 0) => (OpCode::GRead, vec![]),
+        (6, 1) => (OpCode::GWrite, vec![]),
+        (6, 2) => (OpCode::Lumine, vec![Nucleotide::Number(arg_val), Nucleotide::Number(5)]),
+        (6, 3) => (OpCode::SenseLight, vec![]),
+        (6, 4) => (OpCode::Gravitate, vec![Nucleotide::Number(arg_val)]),
+        (6, 5) => (OpCode::Rift, vec![Nucleotide::Number(0), Nucleotide::Number(0), Nucleotide::Number(0), Nucleotide::Number(0)]),
+        (6, 6) => (OpCode::Seal, vec![Nucleotide::Number(0), Nucleotide::Number(0)]),
+        (6, 7) => (OpCode::Membrane, vec![Nucleotide::Number(15)]), // All directions
+        (6, 8) => (OpCode::Osmosis, vec![Nucleotide::Number(1), Nucleotide::Number(0)]),
+        (6, 9) => (OpCode::TimeWarp, vec![Nucleotide::Number(2), Nucleotide::Number(5)]),
+        (6, 10) => (OpCode::Chronostasis, vec![Nucleotide::Number(arg_val)]),
+        (6, 11) => (OpCode::Entropy, vec![]),
+
         _ => return None,
     };
 
     Some(Gene { op, args })
+}
+
+/// Maps a genetic Instruction to a musical Note.
+fn gene_to_note(gene: &Gene) -> Option<Note> {
+    let (octave, class, duration) = match gene.op {
+        OpCode::Push => {
+            let dur = if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                (*n).clamp(1, 64) as u8
+            } else {
+                4
+            };
+            (3, 0, dur)
+        }
+        OpCode::Drop => (3, 1, 4),
+        OpCode::Add => (3, 2, 4),
+        OpCode::Sub => (3, 3, 4),
+        OpCode::Mul => (3, 4, 4),
+        OpCode::Div => (3, 5, 4),
+        OpCode::Swap => (3, 11, 4),
+
+        OpCode::Print => (4, 0, 4),
+        OpCode::Spirit => (4, 1, 4),
+        OpCode::Jump => {
+             let dur = if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                (*n).clamp(1, 64) as u8
+            } else {
+                4
+            };
+            (4, 2, dur)
+        }
+        OpCode::Brz => {
+             let dur = if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                (*n).clamp(1, 64) as u8
+            } else {
+                4
+            };
+            (4, 3, dur)
+        }
+        OpCode::Call => {
+             let dur = if let Some(Nucleotide::Number(n)) = gene.args.first() {
+                (*n).clamp(1, 64) as u8
+            } else {
+                4
+            };
+            (4, 4, dur)
+        }
+        OpCode::Ret => (4, 5, 4),
+        OpCode::Signal => (4, 6, 4),
+        OpCode::Receive => (4, 7, 4),
+        OpCode::Broadcast => (4, 8, 4),
+        OpCode::Tune => (4, 9, 4),
+
+        OpCode::Mitosis => (5, 0, 4),
+        OpCode::Apoptosis => (5, 1, 4),
+        OpCode::Spawn => (5, 2, 4),
+        OpCode::Differentiate => (5, 3, 4),
+        OpCode::Photosynthesize => (5, 4, 4),
+        OpCode::Consume => (5, 5, 4),
+        OpCode::Secrete => (5, 6, 4),
+        OpCode::Absorb => (5, 7, 4),
+        OpCode::Detect => (5, 8, 4),
+        OpCode::Chemotaxis => (5, 9, 4),
+        OpCode::Migrate => (5, 10, 4),
+        OpCode::Incubate => (5, 11, 4),
+
+        OpCode::GRead => (6, 0, 4),
+        OpCode::GWrite => (6, 1, 4),
+        OpCode::Lumine => (6, 2, 4),
+        OpCode::SenseLight => (6, 3, 4),
+        OpCode::Gravitate => (6, 4, 4),
+        OpCode::Rift => (6, 5, 4),
+        OpCode::Seal => (6, 6, 4),
+        OpCode::Membrane => (6, 7, 4),
+        OpCode::Osmosis => (6, 8, 4),
+        OpCode::TimeWarp => (6, 9, 4),
+        OpCode::Chronostasis => (6, 10, 4),
+        OpCode::Entropy => (6, 11, 4),
+
+        OpCode::Poly => {
+            // Check args for specific operators
+            if let Some(Nucleotide::String(s)) = gene.args.first() {
+                match s.as_str() {
+                    "mod" => (3, 6, 4),
+                    "eq" => (3, 7, 4),
+                    "gt" => (3, 8, 4),
+                    "lt" => (3, 9, 4),
+                    "not" => (3, 10, 4),
+                    _ => return None,
+                }
+            } else {
+                return None;
+            }
+        }
+
+        _ => return None,
+    };
+
+    let pitch = (octave * 12 + class) as u8;
+    Some(Note::new(pitch, duration, 100))
 }
 
 /// Converts the recorded score into an ABC Notation string.

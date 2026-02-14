@@ -127,3 +127,77 @@ fn test_bard_rest_and_tempo() {
         .iter()
         .any(|s: &String| s.contains("TEMPO: Set to 120 BPM")));
 }
+
+#[test]
+fn test_bard_roundtrip() {
+    // 1. Create a strand with specific Ops
+    // Push(10) -> C3 (36)
+    // Add -> D3 (38)
+    // Sub -> D#3 (39)
+    let genes = vec![
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(10)],
+        },
+        Gene {
+            op: OpCode::Add,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Sub,
+            args: vec![],
+        },
+        // Notate current strand (0)
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        },
+        Gene {
+            op: OpCode::Notate,
+            args: vec![],
+        },
+        // Compose back
+        Gene {
+            op: OpCode::Compose,
+            args: vec![],
+        },
+    ];
+
+    let mut vm = ChimeraVM::new(make_dna(genes));
+    while !vm.halted {
+        vm.step();
+    }
+
+    // Verify Score after Notate (and before Compose cleared it? No, Compose clears it)
+    // We can check the generated strand.
+    // The strand 0 executed: Push(10), Add, Sub, Notate(0), Compose.
+    // Notate(0) reads Strand 0: Push(10), Add, Sub, Push(0), Notate, Compose.
+    // It will convert ALL of them to notes.
+    // Push(10) -> C3, dur 10.
+    // Add -> D3, dur 4.
+    // Sub -> D#3, dur 4.
+    // Push(0) -> C3, dur 4 (default for 0? clamp(1,64) -> 1).
+    // Notate -> ? (Unknown op maps to None in note_to_gene, but gene_to_note might return None)
+    // Compose -> ?
+
+    // Result: New Strand (Index 1) should match the beginning of Strand 0.
+
+    // Check stack for new strand index
+    if let Some(Value::Int(new_idx)) = vm.stack.pop() {
+        let strand = &vm.dna.helix.strands[new_idx as usize];
+        println!("Composed Strand: {:?}", strand);
+
+        // Push(10)
+        assert_eq!(strand.genes[0].op, OpCode::Push);
+        assert_eq!(strand.genes[0].args[0], Nucleotide::Number(10));
+
+        // Add
+        assert_eq!(strand.genes[1].op, OpCode::Add);
+
+        // Sub
+        assert_eq!(strand.genes[2].op, OpCode::Sub);
+
+    } else {
+        panic!("Expected new strand index on stack");
+    }
+}
