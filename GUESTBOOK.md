@@ -123,9 +123,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
+### [Concentration Level: TOXIC] - Location: experiments/bifurcation-probe
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. No documentation. Generic implementation. Grace period: 24h.
+- **Status:** Condemned. Documentation void. Generic implementation. Grace period: 24h.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
