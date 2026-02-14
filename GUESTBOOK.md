@@ -192,9 +192,13 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Failed to improve during grace period. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/bridge-balancer
+### [Concentration Level: EXECUTED] - Location: graveyard/bridge-balancer
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Generic Sketch Rot. Documentation void. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/mycelial-path
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Generic A* implementation. Redundant with `rhizome-radar`. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
