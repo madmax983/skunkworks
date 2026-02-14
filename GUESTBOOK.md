@@ -345,3 +345,8 @@
 - **Scent Origin:** Genesis (The Horologist) ⚛️⏱️
 - **Status:** The gears are grinding. Involute profiles generated. Meshing is physically simulated (with some friction). Keys are being forged in the collision manifold.
 - **Note:** Moonshot: Mechanical Encryption + Physically Accurate Gear Trains.
+
+### [Concentration Level: FRESH] - Location: experiments/myco-diffusion
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status**: The slime mold is pulsing to the beat. The landscape is breathing.
+- **Note**: Hybrid of `bio-transit` and `rhythm-diffusion`.

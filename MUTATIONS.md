@@ -868,3 +868,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Navigating the edge of chaos. Longitudinal axis is `r` (growth rate), Latitudinal is `x` (population), Height is probability density.
 - **Status**: experiments/bifurcation-landscape
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### myco-diffusion
+- **Parents**: experiments/bio-transit + experiments/rhythm-diffusion
+- **Concept**: Slime mold agents navigating a reaction-diffusion landscape modulated by audio rhythms.
+- **Novel trait**: The feedback loop where agents create the landscape that sustains/directs them, which is destabilized by the music.
+- **Status**: experiments/myco-diffusion
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
