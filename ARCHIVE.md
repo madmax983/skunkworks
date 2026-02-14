@@ -1,5 +1,4 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **quipu-cradle**: Documentation void. Orphaned (not in workspace). Redundant with `quipu-symphony`. Sketch Rot. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +11,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **quipu-cradle**: Specimen executed. Documentation void. Orphaned. Redundant with `quipu-symphony`. Failed to improve. Moved to graveyard.
 - **mycelial-path**: Specimen executed. Generic A* implementation. Documentation void. Redundant with `rhizome-radar`. Failed to improve. Moved to graveyard.
 - **bridge-balancer**: Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
 - **syntax-fugue**: Specimen executed. Failed to improve during grace period. Moved to graveyard.
