@@ -1,7 +1,7 @@
 #![cfg(feature = "nova")]
 
-use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use crate::ast::Nucleotide;
+use crate::vm::{ChimeraVM, Value, GRID_SIZE};
 use std::collections::{HashMap, VecDeque};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -52,7 +52,8 @@ pub fn exec_mesh_net(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, 
     let (cy, cx) = vm.context_loc;
     vm.biomesh.nodes.insert((cy, cx), BioMeshNode::new(id));
     vm.energy = vm.energy.saturating_sub(10);
-    vm.output.push(format!("MESH_NET: Created Node {} at {},{}", id, cx, cy));
+    vm.output
+        .push(format!("MESH_NET: Created Node {} at {},{}", id, cx, cy));
     None
 }
 
@@ -96,7 +97,8 @@ pub fn exec_mesh_grow(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
 
         vm.energy = vm.energy.saturating_sub(5 * count);
-        vm.output.push(format!("MESH_GROW: Connected to {} neighbors", count));
+        vm.output
+            .push(format!("MESH_GROW: Connected to {} neighbors", count));
     } else {
         vm.output.push("MESH_GROW: Not a mesh node".to_string());
     }
@@ -139,7 +141,8 @@ pub fn exec_mesh_send(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let (cy, cx) = vm.context_loc;
 
             if !vm.biomesh.nodes.contains_key(&(cy, cx)) {
-                vm.output.push("MESH_SEND: Origin is not a node".to_string());
+                vm.output
+                    .push("MESH_SEND: Origin is not a node".to_string());
                 return None;
             }
 
@@ -172,17 +175,22 @@ pub fn exec_mesh_send(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 // Deliver packet instantly (for now)
                 if let Some(node) = vm.biomesh.nodes.get_mut(&target_coord) {
                     node.buffer.push_back(val);
-                    vm.output.push(format!("MESH_SEND: Packet delivered to Node {}", target_u64));
+                    vm.output.push(format!(
+                        "MESH_SEND: Packet delivered to Node {}",
+                        target_u64
+                    ));
                 }
                 vm.energy = vm.energy.saturating_sub(10);
             } else {
-                vm.output.push(format!("MESH_SEND: Target Node {} unreachable", target_u64));
+                vm.output
+                    .push(format!("MESH_SEND: Target Node {} unreachable", target_u64));
             }
         } else {
             vm.output.push("Error: Target ID must be Int".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for MeshSend".to_string());
+        vm.output
+            .push("Error: Stack underflow for MeshSend".to_string());
     }
     None
 }

@@ -18,8 +18,14 @@ fn make_vm(genes: Vec<Gene>) -> ChimeraVM {
 fn test_mesh_creation() {
     // [ push(1) mesh_net(1) ] at (8,8)
     let genes = vec![
-        Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }, // ID
-        Gene { op: OpCode::MeshNet, args: vec![] },
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(1)],
+        }, // ID
+        Gene {
+            op: OpCode::MeshNet,
+            args: vec![],
+        },
     ];
     let mut vm = make_vm(genes);
     vm.step(); // push

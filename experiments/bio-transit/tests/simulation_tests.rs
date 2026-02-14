@@ -1,4 +1,4 @@
-use bio_transit::{Agent, TrailMap, Settings, Simulation};
+use bio_transit::{Agent, Settings, Simulation, TrailMap};
 use macroquad::prelude::*;
 
 #[test]

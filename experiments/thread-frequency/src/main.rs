@@ -2,18 +2,21 @@ mod audio;
 mod musician;
 mod tui;
 
-use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
-use std::{io, time::Duration};
 use anyhow::Result;
+use audio::{AudioEngine, Voice};
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use musician::{Beacon, Musician};
 use ratatui::{backend::CrosstermBackend, Terminal};
-use audio::{AudioEngine, Voice};
-use musician::{Musician, Beacon};
-use tui::{TuiState, draw_ui};
+use std::sync::{
+    atomic::{AtomicBool, Ordering},
+    Arc, Mutex,
+};
+use std::{io, time::Duration};
+use tui::{draw_ui, TuiState};
 
 fn main() -> Result<()> {
     // Audio Setup
@@ -45,12 +48,12 @@ fn main() -> Result<()> {
     // Musicians configuration
     // Using prime-ish numbers for interesting phasing
     let configs = vec![
-        ("Kick", 500, Voice::Kick),       // 120 BPM base
-        ("Snare", 666, Voice::Snare),     // ~90 BPM
-        ("HiHat", 250, Voice::Hihat),     // 240 BPM
-        ("Clave", 400, Voice::Clave),     // 150 BPM
-        ("Bass", 1500, Voice::Synth(0)),  // Slow bass
-        ("Pad", 1103, Voice::Synth(7)),   // Prime 1103ms
+        ("Kick", 500, Voice::Kick),        // 120 BPM base
+        ("Snare", 666, Voice::Snare),      // ~90 BPM
+        ("HiHat", 250, Voice::Hihat),      // 240 BPM
+        ("Clave", 400, Voice::Clave),      // 150 BPM
+        ("Bass", 1500, Voice::Synth(0)),   // Slow bass
+        ("Pad", 1103, Voice::Synth(7)),    // Prime 1103ms
         ("Glitch", 293, Voice::Synth(12)), // Prime 293ms
     ];
 

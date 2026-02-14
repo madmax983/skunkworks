@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use bio_transit::Simulation;
+use macroquad::prelude::*;
 
 #[macroquad::main("Bio-Transit")]
 async fn main() {
@@ -69,10 +69,16 @@ async fn main() {
         let screen_w = screen_width();
         let screen_h = screen_height();
 
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_w, screen_h)),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_w, screen_h)),
+                ..Default::default()
+            },
+        );
 
         // Draw Cities
         let scale_x = screen_w / grid_w as f32;
@@ -84,15 +90,32 @@ async fn main() {
             let radius = city.radius * scale_x; // Scale radius
 
             // Draw Glow
-            draw_circle(screen_pos.x, screen_pos.y, radius * 1.5, Color::new(city.color.r, city.color.g, city.color.b, 0.3));
+            draw_circle(
+                screen_pos.x,
+                screen_pos.y,
+                radius * 1.5,
+                Color::new(city.color.r, city.color.g, city.color.b, 0.3),
+            );
             draw_circle(screen_pos.x, screen_pos.y, radius, city.color);
             draw_circle_lines(screen_pos.x, screen_pos.y, radius, 2.0, WHITE);
         }
 
         // UI
-        draw_text("BIO-TRANSIT // SLIME MOLD URBANISM", 20.0, 30.0, 30.0, WHITE);
+        draw_text(
+            "BIO-TRANSIT // SLIME MOLD URBANISM",
+            20.0,
+            30.0,
+            30.0,
+            WHITE,
+        );
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 60.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("AGENTS: {}", sim.agents.len()), 20.0, 80.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("AGENTS: {}", sim.agents.len()),
+            20.0,
+            80.0,
+            20.0,
+            LIGHTGRAY,
+        );
         draw_text("Q: Quit", 20.0, screen_h - 20.0, 20.0, DARKGRAY);
 
         next_frame().await

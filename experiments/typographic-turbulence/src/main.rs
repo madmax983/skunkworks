@@ -1,8 +1,8 @@
 mod lbm;
 mod particles;
 use lbm::{FluidSim, HEIGHT, WIDTH};
-use macroquad::prelude::*;
 use macroquad::color::hsl_to_rgb;
+use macroquad::prelude::*;
 use particles::ParticleSystem;
 
 #[macroquad::main("Typographic Turbulence")]
@@ -71,10 +71,18 @@ async fn main() {
         }
 
         // Navigation (Arrow keys)
-        if is_key_pressed(KeyCode::Left) { cursor_x = cursor_x.saturating_sub(1); }
-        if is_key_pressed(KeyCode::Right) { cursor_x = (cursor_x + 1).min(WIDTH - 1); }
-        if is_key_pressed(KeyCode::Up) { cursor_y = cursor_y.saturating_sub(1); }
-        if is_key_pressed(KeyCode::Down) { cursor_y = (cursor_y + 1).min(HEIGHT - 1); }
+        if is_key_pressed(KeyCode::Left) {
+            cursor_x = cursor_x.saturating_sub(1);
+        }
+        if is_key_pressed(KeyCode::Right) {
+            cursor_x = (cursor_x + 1).min(WIDTH - 1);
+        }
+        if is_key_pressed(KeyCode::Up) {
+            cursor_y = cursor_y.saturating_sub(1);
+        }
+        if is_key_pressed(KeyCode::Down) {
+            cursor_y = (cursor_y + 1).min(HEIGHT - 1);
+        }
 
         // Toggle Fluid View
         if is_key_pressed(KeyCode::F) {
@@ -88,7 +96,7 @@ async fn main() {
 
         if wind_tunnel {
             // Inject velocity at left boundary
-            for y in 1..HEIGHT-1 {
+            for y in 1..HEIGHT - 1 {
                 // Add velocity to the left edge
                 sim.add_velocity(1, y, 0.2, 0.0);
             }
@@ -129,7 +137,7 @@ async fn main() {
                             y as f32 * cell_h,
                             cell_w * 2.0,
                             cell_h * 2.0,
-                            color
+                            color,
                         );
                     }
                 }
@@ -140,7 +148,9 @@ async fn main() {
         for p in particle_system.particles() {
             // Fade out
             let alpha = 1.0 - (p.lifetime / p.max_lifetime).powf(2.0);
-            if alpha <= 0.0 { continue; }
+            if alpha <= 0.0 {
+                continue;
+            }
 
             let mut color = p.color;
             color.a = alpha;
@@ -164,8 +174,20 @@ async fn main() {
         draw_rectangle_lines(cursor_screen_x, cursor_screen_y, cell_w, cell_h, 2.0, GREEN);
 
         // UI Info
-        draw_text(&format!("Particles: {}", particle_system.count()), 10.0, 20.0, 20.0, WHITE);
-        draw_text("Type to add particles. Mouse to stir. F: Fluid, W: Wind Tunnel.", 10.0, 40.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Particles: {}", particle_system.count()),
+            10.0,
+            20.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            "Type to add particles. Mouse to stir. F: Fluid, W: Wind Tunnel.",
+            10.0,
+            40.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

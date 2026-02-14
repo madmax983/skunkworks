@@ -375,12 +375,7 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                             // Check for Named Sigils
                             #[cfg(feature = "nova")]
                             if let Some(sigil) = vm.sigil_registry.get(s) {
-                                if nova_sigil::check_dynamic_pattern(
-                                    vm,
-                                    y,
-                                    x,
-                                    &sigil.pattern,
-                                ) {
+                                if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
                                     // Consume pattern? Maybe not for named invocation via grid text.
                                     // Usually "Invoking" consumes materials.
                                     // Let's make it consume if it matches.
@@ -464,7 +459,10 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                     vm.tick_counter,
                     "PhageInfection".to_string(),
                 );
-                vm.output.push(format!("PHAGE: Injected strand {} as {}", clone_req.strand_idx, new_idx));
+                vm.output.push(format!(
+                    "PHAGE: Injected strand {} as {}",
+                    clone_req.strand_idx, new_idx
+                ));
             }
         }
     }
@@ -975,12 +973,16 @@ fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
                         match s.as_str() {
                             "*" | "!" => {
                                 // Mutation
-                                ctx.mutation_requests.push(MutationRequest { strand_idx: org.ip.0 });
-                            },
+                                ctx.mutation_requests.push(MutationRequest {
+                                    strand_idx: org.ip.0,
+                                });
+                            }
                             "H" | "h" => {
                                 // Host / Infection
-                                ctx.phage_clones.push(PhageCloneRequest { strand_idx: org.ip.0 });
-                            },
+                                ctx.phage_clones.push(PhageCloneRequest {
+                                    strand_idx: org.ip.0,
+                                });
+                            }
                             "#" => {
                                 // Wall - Bounce
                                 new_dir = (-dy, -dx);
@@ -988,7 +990,7 @@ fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
                             }
                             _ => {}
                         }
-                    },
+                    }
                     Value::Int(n) => {
                         // Numeric collision?
                         // Maybe change direction based on number?
@@ -998,7 +1000,7 @@ fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
                             // Non-empty, bounce?
                             // Let's just pass through numbers for now.
                         }
-                    },
+                    }
                     _ => {}
                 }
 
@@ -1017,7 +1019,6 @@ fn process_phages(vm: &ChimeraVM, ctx: &mut SignalContext) {
                         new_dir,
                     });
                 }
-
             } else {
                 // Out of bounds (if no wrap)
                 // Reverse direction

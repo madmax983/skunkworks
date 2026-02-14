@@ -1,9 +1,9 @@
 #[cfg(feature = "nova")]
 #[cfg(feature = "oracle")]
 mod tests {
-    use chimera_lang::vm::{ChimeraVM, Value};
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene, Nucleotide, JunctionType};
+    use chimera_lang::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, Value};
 
     #[test]
     fn test_divergence_mechanism() {
@@ -15,33 +15,55 @@ mod tests {
 
         let genes = vec![
             // Gene 0: Push(0) - Value. Target for mutation.
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // Gene 1: Push(0) - Y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // Gene 2: Push(0) - X
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
             // Gene 3: GWrite
-            Gene { op: OpCode::GWrite, args: vec![] },
-
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
             // Query: cell(0,0,1)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Junction(
-                JunctionType::Any,
-                vec![
-                    Nucleotide::String("cell".to_string()),
-                    Nucleotide::Number(0),
-                    Nucleotide::Number(0),
-                    Nucleotide::Number(1)
-                ]
-            )]},
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Junction(
+                    JunctionType::Any,
+                    vec![
+                        Nucleotide::String("cell".to_string()),
+                        Nucleotide::Number(0),
+                        Nucleotide::Number(0),
+                        Nucleotide::Number(1),
+                    ],
+                )],
+            },
             // Count: 200 tries
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(200)] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(200)],
+            },
             // Divergence
-            Gene { op: OpCode::Divergence, args: vec![] },
+            Gene {
+                op: OpCode::Divergence,
+                args: vec![],
+            },
         ];
 
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Enable Chaos to ensure mutation is allowed
@@ -54,7 +76,11 @@ mod tests {
                 // Success!
                 // Verify grid state
                 // Since simulation runs for 10 steps, GWrite should have happened.
-                assert_eq!(vm.grid[0][0], Value::Int(1), "Grid should contain 1 in the successful timeline");
+                assert_eq!(
+                    vm.grid[0][0],
+                    Value::Int(1),
+                    "Grid should contain 1 in the successful timeline"
+                );
                 return;
             }
         }

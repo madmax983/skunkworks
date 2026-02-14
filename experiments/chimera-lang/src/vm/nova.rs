@@ -1423,8 +1423,7 @@ fn exec_lucid(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if vm.energy >= cost {
                     vm.energy -= cost;
                     let (cy, cx) = vm.context_loc;
-                    vm.entropy_grid[cy][cx] =
-                        vm.entropy_grid[cy][cx].saturating_sub(amount).max(0);
+                    vm.entropy_grid[cy][cx] = vm.entropy_grid[cy][cx].saturating_sub(amount).max(0);
                     vm.output.push("LUCIDITY: Clarity restored.".to_string());
                 } else {
                     vm.output.push("LUCID: Insufficient energy".to_string());
@@ -1434,7 +1433,8 @@ fn exec_lucid(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for lucid".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for lucid".to_string());
+        vm.output
+            .push("Error: Stack underflow for lucid".to_string());
     }
     None
 }
@@ -1465,10 +1465,12 @@ fn exec_harmonize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         chord_str, idx
                     ));
                 } else {
-                    vm.output.push("HARMONIZE: Invalid chord (must be strings)".to_string());
+                    vm.output
+                        .push("HARMONIZE: Invalid chord (must be strings)".to_string());
                 }
             } else {
-                vm.output.push("HARMONIZE: Invalid strand index".to_string());
+                vm.output
+                    .push("HARMONIZE: Invalid strand index".to_string());
             }
         } else {
             vm.output.push("HARMONIZE: Type mismatch".to_string());
@@ -1529,11 +1531,13 @@ fn exec_quantum_jump(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             };
 
             vm.energy = vm.energy.saturating_sub(10);
-            vm.output.push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
+            vm.output
+                .push(format!("QUANTUM_JUMP: {} -> {}", s_idx, partner_idx));
             return Some((partner_idx, target_gene));
         }
     } else {
-        vm.output.push("QUANTUM_JUMP: No entangled partner".to_string());
+        vm.output
+            .push("QUANTUM_JUMP: No entangled partner".to_string());
     }
     None
 }
@@ -1541,7 +1545,8 @@ fn exec_quantum_jump(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 fn exec_relativity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     vm.relativity_mode = !vm.relativity_mode;
     let status = if vm.relativity_mode { "ON" } else { "OFF" };
-    vm.output.push(format!("RELATIVITY: Physics engine {}", status));
+    vm.output
+        .push(format!("RELATIVITY: Physics engine {}", status));
     None
 }
 
@@ -1549,7 +1554,8 @@ fn exec_graviton(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     let (cy, cx) = vm.context_loc;
     vm.gravity_grid[cy][cx] = vm.gravity_grid[cy][cx].saturating_add(50);
     vm.energy = vm.energy.saturating_sub(10);
-    vm.output.push(format!("GRAVITON: Emitted at {},{}", cx, cy));
+    vm.output
+        .push(format!("GRAVITON: Emitted at {},{}", cx, cy));
     None
 }
 
@@ -1605,10 +1611,12 @@ fn exec_terraform(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for terraform".to_string());
+            vm.output
+                .push("Error: Type mismatch for terraform".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for terraform".to_string());
+        vm.output
+            .push("Error: Stack underflow for terraform".to_string());
     }
     None
 }
@@ -1667,7 +1675,8 @@ fn exec_piet(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for piet".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for piet".to_string());
+        vm.output
+            .push("Error: Stack underflow for piet".to_string());
     }
     None
 }
@@ -1716,7 +1725,8 @@ fn exec_sing(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for sing".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for sing".to_string());
+        vm.output
+            .push("Error: Stack underflow for sing".to_string());
     }
     None
 }
@@ -1727,7 +1737,8 @@ fn exec_listen(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         .iter()
         .map(|s| Value::Str(s.clone()))
         .collect();
-    vm.stack.push(Value::Junction(crate::ast::JunctionType::All, notes));
+    vm.stack
+        .push(Value::Junction(crate::ast::JunctionType::All, notes));
     None
 }
 
@@ -1746,8 +1757,7 @@ fn exec_stabilize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if vm.energy >= cost {
                     vm.energy -= cost;
                     let (cy, cx) = vm.context_loc;
-                    vm.entropy_grid[cy][cx] =
-                        vm.entropy_grid[cy][cx].saturating_sub(amount);
+                    vm.entropy_grid[cy][cx] = vm.entropy_grid[cy][cx].saturating_sub(amount);
                     vm.glitch_level = (vm.glitch_level - (amount as f32 / 10.0)).max(0.0);
                     vm.output.push(format!(
                         "STABILIZE: Reduced entropy by {} at {},{}",
@@ -1758,10 +1768,12 @@ fn exec_stabilize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
             }
         } else {
-            vm.output.push("Error: Type mismatch for stabilize".to_string());
+            vm.output
+                .push("Error: Type mismatch for stabilize".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for stabilize".to_string());
+        vm.output
+            .push("Error: Stack underflow for stabilize".to_string());
     }
     None
 }
@@ -1776,15 +1788,19 @@ fn exec_disintegrate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.grid[ny][nx] = Value::Int(0);
                 vm.glitch_level = (vm.glitch_level + 0.5).clamp(0.0, 1.0);
                 vm.energy = vm.energy.saturating_sub(10);
-                vm.output.push(format!("DISINTEGRATE: Cell at {},{}", nx, ny));
+                vm.output
+                    .push(format!("DISINTEGRATE: Cell at {},{}", nx, ny));
             } else {
-                vm.output.push("Error: Coordinates out of bounds for disintegrate".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for disintegrate".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for disintegrate".to_string());
+            vm.output
+                .push("Error: Type mismatch for disintegrate".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for disintegrate".to_string());
+        vm.output
+            .push("Error: Stack underflow for disintegrate".to_string());
     }
     None
 }
@@ -1810,10 +1826,12 @@ fn exec_secrete(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for secrete".to_string());
+            vm.output
+                .push("Error: Type mismatch for secrete".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for secrete".to_string());
+        vm.output
+            .push("Error: Stack underflow for secrete".to_string());
     }
     None
 }
@@ -1826,10 +1844,12 @@ fn exec_detect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let intensity = vm.hormone_grid[cy][cx][channel_idx];
             vm.stack.push(Value::Int(intensity));
         } else {
-            vm.output.push("Error: Type mismatch for detect".to_string());
+            vm.output
+                .push("Error: Type mismatch for detect".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for detect".to_string());
+        vm.output
+            .push("Error: Stack underflow for detect".to_string());
     }
     None
 }
@@ -1856,10 +1876,12 @@ fn exec_absorb(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 absorbed, c, cx, cy
             ));
         } else {
-            vm.output.push("Error: Type mismatch for absorb".to_string());
+            vm.output
+                .push("Error: Type mismatch for absorb".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for absorb".to_string());
+        vm.output
+            .push("Error: Stack underflow for absorb".to_string());
     }
     None
 }
@@ -1873,12 +1895,14 @@ fn exec_detox(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.waste_grid[ty][tx] = 0;
             }
             vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50));
-            vm.output.push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
+            vm.output
+                .push(format!("DETOX: Cleansed radius {} at {},{}", r, cx, cy));
         } else {
             vm.output.push("Error: Type mismatch for detox".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for detox".to_string());
+        vm.output
+            .push("Error: Stack underflow for detox".to_string());
     }
     None
 }
@@ -1901,7 +1925,8 @@ fn exec_call(vm: &mut ChimeraVM, args: &[Nucleotide]) -> Option<(usize, usize)> 
             vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
             return Some((strand_idx, 0));
         } else {
-            vm.output.push("Error: Invalid strand index for call".to_string());
+            vm.output
+                .push("Error: Invalid strand index for call".to_string());
         }
     } else {
         vm.output.push("Error: Invalid arg for call".to_string());
@@ -1921,13 +1946,15 @@ fn exec_exec(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.call_stack.push((vm.ip.0, vm.ip.1 + 1));
                 return Some((strand_idx, 0));
             } else {
-                vm.output.push("Error: Invalid strand index for exec".to_string());
+                vm.output
+                    .push("Error: Invalid strand index for exec".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for exec".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for exec".to_string());
+        vm.output
+            .push("Error: Stack underflow for exec".to_string());
     }
     None
 }
@@ -1936,7 +1963,8 @@ fn exec_ret(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(ret_addr) = vm.call_stack.pop() {
         return Some(ret_addr);
     } else {
-        vm.output.push("Warning: Return with empty stack".to_string());
+        vm.output
+            .push("Warning: Return with empty stack".to_string());
     }
     None
 }
@@ -1950,15 +1978,18 @@ fn exec_bind(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let key = (c as u8) as char;
             if strand_idx < vm.dna.helix.strands.len() {
                 vm.receptors.insert(key, strand_idx);
-                vm.output.push(format!("BIND: '{}' -> Strand {}", key, strand_idx));
+                vm.output
+                    .push(format!("BIND: '{}' -> Strand {}", key, strand_idx));
             } else {
-                vm.output.push("Error: Invalid strand index for bind".to_string());
+                vm.output
+                    .push("Error: Invalid strand index for bind".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for bind".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for bind".to_string());
+        vm.output
+            .push("Error: Stack underflow for bind".to_string());
     }
     None
 }
@@ -1970,10 +2001,12 @@ fn exec_unbind(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.receptors.remove(&key);
             vm.output.push(format!("UNBIND: '{}'", key));
         } else {
-            vm.output.push("Error: Type mismatch for unbind".to_string());
+            vm.output
+                .push("Error: Type mismatch for unbind".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for unbind".to_string());
+        vm.output
+            .push("Error: Stack underflow for unbind".to_string());
     }
     None
 }
@@ -1999,16 +2032,20 @@ fn exec_entangle(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.entangled_pairs.insert(idx2, idx1);
                     vm.output.push(format!("ENTANGLE: {} <-> {}", idx1, idx2));
                 } else {
-                    vm.output.push("Warning: Cannot entangle strand with itself".to_string());
+                    vm.output
+                        .push("Warning: Cannot entangle strand with itself".to_string());
                 }
             } else {
-                vm.output.push("Error: Strand index out of bounds for entangle".to_string());
+                vm.output
+                    .push("Error: Strand index out of bounds for entangle".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for entangle".to_string());
+            vm.output
+                .push("Error: Type mismatch for entangle".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for entangle".to_string());
+        vm.output
+            .push("Error: Stack underflow for entangle".to_string());
     }
     None
 }
@@ -2019,15 +2056,19 @@ fn exec_decohere(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let idx = s as usize;
             if let Some(partner) = vm.entangled_pairs.remove(&idx) {
                 vm.entangled_pairs.remove(&partner);
-                vm.output.push(format!("DECOHERE: Broken link {} <-> {}", idx, partner));
+                vm.output
+                    .push(format!("DECOHERE: Broken link {} <-> {}", idx, partner));
             } else {
-                vm.output.push(format!("DECOHERE: No link found for {}", idx));
+                vm.output
+                    .push(format!("DECOHERE: No link found for {}", idx));
             }
         } else {
-            vm.output.push("Error: Type mismatch for decohere".to_string());
+            vm.output
+                .push("Error: Type mismatch for decohere".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for decohere".to_string());
+        vm.output
+            .push("Error: Stack underflow for decohere".to_string());
     }
     None
 }
@@ -2051,10 +2092,12 @@ fn exec_lumine(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for lumine".to_string());
+            vm.output
+                .push("Error: Type mismatch for lumine".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for lumine".to_string());
+        vm.output
+            .push("Error: Stack underflow for lumine".to_string());
     }
     None
 }
@@ -2078,9 +2121,7 @@ fn exec_chemotaxis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             for dy in -1..=1 {
                 for dx in -1..=1 {
-                    if let Some((ny, nx)) =
-                        vm.normalize_coords(cy as i64 + dy, cx as i64 + dx)
-                    {
+                    if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy, cx as i64 + dx) {
                         let intensity = vm.hormone_grid[ny][nx][channel_idx];
                         if intensity > max_intensity {
                             max_intensity = intensity;
@@ -2095,10 +2136,12 @@ fn exec_chemotaxis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.stack.push(Value::Int(best_dx));
             vm.energy = vm.energy.saturating_sub(5);
         } else {
-            vm.output.push("Error: Type mismatch for chemotaxis".to_string());
+            vm.output
+                .push("Error: Type mismatch for chemotaxis".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for chemotaxis".to_string());
+        vm.output
+            .push("Error: Stack underflow for chemotaxis".to_string());
     }
     None
 }
@@ -2145,16 +2188,20 @@ fn exec_differentiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if let Some(kind) = new_kind {
                     vm.signal_differentiation = Some(kind.clone());
                     vm.energy = vm.energy.saturating_sub(50);
-                    vm.output.push(format!("DIFFERENTIATE: Requesting change to {:?}", kind));
+                    vm.output
+                        .push(format!("DIFFERENTIATE: Requesting change to {:?}", kind));
                 }
             } else {
-                vm.output.push("Error: Type mismatch for differentiate".to_string());
+                vm.output
+                    .push("Error: Type mismatch for differentiate".to_string());
             }
         } else {
-            vm.output.push("Error: Nucleus cannot differentiate".to_string());
+            vm.output
+                .push("Error: Nucleus cannot differentiate".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for differentiate".to_string());
+        vm.output
+            .push("Error: Stack underflow for differentiate".to_string());
     }
     None
 }
@@ -2175,16 +2222,19 @@ fn exec_shape(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
             if let Some(topo) = new_topology {
                 vm.topology = topo;
-                vm.output.push(format!("SHAPE: Changed topology to {:?}", topo));
+                vm.output
+                    .push(format!("SHAPE: Changed topology to {:?}", topo));
                 vm.energy = vm.energy.saturating_sub(100);
             } else {
-                vm.output.push(format!("Error: Invalid topology index {}", t));
+                vm.output
+                    .push(format!("Error: Invalid topology index {}", t));
             }
         } else {
             vm.output.push("Error: Type mismatch for shape".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for shape".to_string());
+        vm.output
+            .push("Error: Stack underflow for shape".to_string());
     }
     None
 }
@@ -2212,13 +2262,15 @@ fn exec_rift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     x1, y1, x2, y2
                 ));
             } else {
-                vm.output.push("Error: Coordinates out of bounds for rift".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for rift".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for rift".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for rift".to_string());
+        vm.output
+            .push("Error: Stack underflow for rift".to_string());
     }
     None
 }
@@ -2231,18 +2283,22 @@ fn exec_seal(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if (0..16).contains(&x) && (0..16).contains(&y) {
                 if vm.portals.remove(&(y as usize, x as usize)).is_some() {
                     vm.energy = vm.energy.saturating_sub(10);
-                    vm.output.push(format!("SEAL: Closed portal at {},{}", x, y));
+                    vm.output
+                        .push(format!("SEAL: Closed portal at {},{}", x, y));
                 } else {
-                    vm.output.push(format!("SEAL: No portal found at {},{}", x, y));
+                    vm.output
+                        .push(format!("SEAL: No portal found at {},{}", x, y));
                 }
             } else {
-                vm.output.push("Error: Coordinates out of bounds for seal".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for seal".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for seal".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for seal".to_string());
+        vm.output
+            .push("Error: Stack underflow for seal".to_string());
     }
     None
 }
@@ -2256,8 +2312,7 @@ fn exec_sonar(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let mut found = false;
 
             for d in 1..=16 {
-                if let Some((ny, nx)) =
-                    vm.normalize_coords(cy as i64 + dy * d, cx as i64 + dx * d)
+                if let Some((ny, nx)) = vm.normalize_coords(cy as i64 + dy * d, cx as i64 + dx * d)
                 {
                     if !matches!(vm.grid[ny][nx], Value::Int(0)) {
                         vm.stack.push(Value::Int(d));
@@ -2281,7 +2336,8 @@ fn exec_sonar(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for sonar".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for sonar".to_string());
+        vm.output
+            .push("Error: Stack underflow for sonar".to_string());
     }
     None
 }
@@ -2295,15 +2351,19 @@ fn exec_broadcast(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if queue.len() < 100 {
                 queue.push_back(value);
                 vm.energy = vm.energy.saturating_sub(1);
-                vm.output.push(format!("BROADCAST: Sent to channel {}", channel));
+                vm.output
+                    .push(format!("BROADCAST: Sent to channel {}", channel));
             } else {
-                vm.output.push(format!("BROADCAST: Channel {} full", channel));
+                vm.output
+                    .push(format!("BROADCAST: Channel {} full", channel));
             }
         } else {
-            vm.output.push("Error: Type mismatch for broadcast".to_string());
+            vm.output
+                .push("Error: Type mismatch for broadcast".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for broadcast".to_string());
+        vm.output
+            .push("Error: Stack underflow for broadcast".to_string());
     }
     None
 }
@@ -2315,7 +2375,8 @@ fn exec_tune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if let Some(queue) = vm.ether.get_mut(&channel) {
                 if let Some(v) = queue.pop_front() {
                     value = v;
-                    vm.output.push(format!("TUNE: Received from channel {}", channel));
+                    vm.output
+                        .push(format!("TUNE: Received from channel {}", channel));
                 }
             }
             vm.stack.push(value);
@@ -2324,7 +2385,8 @@ fn exec_tune(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for tune".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for tune".to_string());
+        vm.output
+            .push("Error: Stack underflow for tune".to_string());
     }
     None
 }
@@ -2334,7 +2396,8 @@ fn exec_isomerize(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         crate::vm::Chirality::Left => crate::vm::Chirality::Right,
         crate::vm::Chirality::Right => crate::vm::Chirality::Left,
     };
-    vm.output.push(format!("ISOMERIZE: Switched to {:?}", vm.chirality));
+    vm.output
+        .push(format!("ISOMERIZE: Switched to {:?}", vm.chirality));
     None
 }
 
@@ -2349,12 +2412,15 @@ fn exec_phase_shift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             };
             vm.phase = phase;
             vm.energy = vm.energy.saturating_sub(50);
-            vm.output.push(format!("PHASE_SHIFT: Transformed to {:?}", phase));
+            vm.output
+                .push(format!("PHASE_SHIFT: Transformed to {:?}", phase));
         } else {
-            vm.output.push("Error: Type mismatch for phase_shift".to_string());
+            vm.output
+                .push("Error: Type mismatch for phase_shift".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for phase_shift".to_string());
+        vm.output
+            .push("Error: Stack underflow for phase_shift".to_string());
     }
     None
 }
@@ -2389,12 +2455,15 @@ fn exec_membrane(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
 
             vm.energy = vm.energy.saturating_sub(10);
-            vm.output.push(format!("MEMBRANE: Toggled mask {} at {},{}", mask, cx, cy));
+            vm.output
+                .push(format!("MEMBRANE: Toggled mask {} at {},{}", mask, cx, cy));
         } else {
-            vm.output.push("Error: Type mismatch for membrane".to_string());
+            vm.output
+                .push("Error: Type mismatch for membrane".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for membrane".to_string());
+        vm.output
+            .push("Error: Stack underflow for membrane".to_string());
     }
     None
 }
@@ -2419,7 +2488,8 @@ fn exec_osmosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
                 vm.context_loc = (new_y, new_x);
                 vm.energy = vm.energy.saturating_sub(20);
-                vm.output.push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
+                vm.output
+                    .push(format!("OSMOSIS: Moved to {},{}", new_x, new_y));
 
                 if let Some(target) = super::nova_ward::check_ward_trigger(vm) {
                     return Some(target);
@@ -2429,10 +2499,12 @@ fn exec_osmosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 vm.output.push("OSMOSIS: Blocked by boundary".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for osmosis".to_string());
+            vm.output
+                .push("Error: Type mismatch for osmosis".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for osmosis".to_string());
+        vm.output
+            .push("Error: Stack underflow for osmosis".to_string());
     }
     None
 }
@@ -2457,18 +2529,22 @@ fn exec_symbiosis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.symbiotes.push(organelle.ip);
                     vm.stack.extend(organelle.stack);
                     vm.energy = vm.energy.saturating_sub(20);
-                    vm.output.push(format!("SYMBIOSIS: Absorbed organelle at {},{}", nx, ny));
+                    vm.output
+                        .push(format!("SYMBIOSIS: Absorbed organelle at {},{}", nx, ny));
                 } else {
                     vm.output.push("SYMBIOSIS: No organelle found".to_string());
                 }
             } else {
-                vm.output.push("Error: Coordinates out of bounds for symbiosis".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for symbiosis".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for symbiosis".to_string());
+            vm.output
+                .push("Error: Type mismatch for symbiosis".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for symbiosis".to_string());
+        vm.output
+            .push("Error: Stack underflow for symbiosis".to_string());
     }
     None
 }
@@ -2482,15 +2558,19 @@ fn exec_reflex(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             let s_idx = s as usize;
             if s_idx < vm.dna.helix.strands.len() {
                 vm.reflexes.insert(e, s_idx);
-                vm.output.push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));
+                vm.output
+                    .push(format!("REFLEX: Bound event {} to strand {}", e, s_idx));
             } else {
-                vm.output.push("Error: Strand index out of bounds for reflex".to_string());
+                vm.output
+                    .push("Error: Strand index out of bounds for reflex".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for reflex".to_string());
+            vm.output
+                .push("Error: Type mismatch for reflex".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for reflex".to_string());
+        vm.output
+            .push("Error: Stack underflow for reflex".to_string());
     }
     None
 }
@@ -2499,7 +2579,8 @@ fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if let Some(sip) = vm.symbiotes.pop() {
         if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
             vm.symbiotes.push(sip);
-            vm.output.push("Error: Organelle limit exceeded".to_string());
+            vm.output
+                .push("Error: Organelle limit exceeded".to_string());
             return None;
         }
 
@@ -2523,7 +2604,8 @@ fn exec_lysis(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         };
         vm.organelles.push(organelle);
         vm.energy = vm.energy.saturating_sub(10);
-        vm.output.push(format!("LYSIS: Ejected symbiote to {},{}", cx, cy));
+        vm.output
+            .push(format!("LYSIS: Ejected symbiote to {},{}", cx, cy));
     } else {
         vm.output.push("LYSIS: No symbiotes to eject".to_string());
     }
@@ -2539,20 +2621,23 @@ fn exec_irradiate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 let (cy, cx) = vm.context_loc;
                 let coords = vm.get_circular_coords(cx as i64, cy as i64, r);
                 for (tx, ty) in coords {
-                    vm.mutagen_grid[ty][tx] =
-                        vm.mutagen_grid[ty][tx].saturating_add(amount);
+                    vm.mutagen_grid[ty][tx] = vm.mutagen_grid[ty][tx].saturating_add(amount);
                 }
-                vm.energy = vm.energy.saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
+                vm.energy = vm
+                    .energy
+                    .saturating_sub((r * r + 1).clamp(5, 50) + amount / 10);
                 vm.output.push(format!(
                     "IRRADIATE: Added {} mutagen at {},{} r={}",
                     amount, cx, cy, r
                 ));
             }
         } else {
-            vm.output.push("Error: Type mismatch for irradiate".to_string());
+            vm.output
+                .push("Error: Type mismatch for irradiate".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for irradiate".to_string());
+        vm.output
+            .push("Error: Stack underflow for irradiate".to_string());
     }
     None
 }
@@ -2584,7 +2669,8 @@ fn exec_devour(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
 fn exec_void_op(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     if vm.organelles.len() >= crate::vm::MAX_ORGANELLES {
-        vm.output.push("Error: Organelle limit exceeded".to_string());
+        vm.output
+            .push("Error: Organelle limit exceeded".to_string());
         return None;
     }
 
@@ -2668,7 +2754,8 @@ fn exec_supernova(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
 
         vm.cladistics.kill_strand(s_idx, vm.tick_counter);
-        vm.output.push(format!("SUPERNOVA: Strand {} exploded", s_idx));
+        vm.output
+            .push(format!("SUPERNOVA: Strand {} exploded", s_idx));
         vm.halted = true;
     }
     None
@@ -2696,7 +2783,8 @@ fn exec_singularity(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     vm.ip = (0, 0);
 
-    vm.output.push("SINGULARITY: All strands merged".to_string());
+    vm.output
+        .push("SINGULARITY: All strands merged".to_string());
     None
 }
 
@@ -2724,7 +2812,8 @@ fn exec_eval(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for eval".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for eval".to_string());
+        vm.output
+            .push("Error: Stack underflow for eval".to_string());
     }
     None
 }
@@ -2761,14 +2850,16 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     execute_strand_sync(vm, *idx as usize);
                 }
                 _ => {
-                    vm.output.push("Error: Invalid function for map".to_string());
+                    vm.output
+                        .push("Error: Invalid function for map".to_string());
                 }
             }
 
             if vm.stack.len() > stack_depth {
                 let new_items = vm.stack.split_off(stack_depth);
                 if results.len() + new_items.len() > crate::vm::MAX_JUNCTION_SIZE {
-                    vm.output.push("Error: Junction size limit exceeded in Map".to_string());
+                    vm.output
+                        .push("Error: Junction size limit exceeded in Map".to_string());
                     return None;
                 }
                 results.extend(new_items);
@@ -2777,7 +2868,8 @@ fn exec_map(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         let result = Value::Junction(crate::ast::JunctionType::Any, results);
         if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
-            vm.output.push("Error: Map result depth limit exceeded".to_string());
+            vm.output
+                .push("Error: Map result depth limit exceeded".to_string());
         } else {
             vm.stack.push(result);
             vm.energy = vm.energy.saturating_sub(10);
@@ -2826,13 +2918,15 @@ fn exec_fold(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         }
 
         if acc.depth() > crate::vm::MAX_RECURSION_DEPTH {
-            vm.output.push("Error: Fold result depth limit exceeded".to_string());
+            vm.output
+                .push("Error: Fold result depth limit exceeded".to_string());
         } else {
             vm.stack.push(acc);
             vm.energy = vm.energy.saturating_sub(10);
         }
     } else {
-        vm.output.push("Error: Stack underflow for fold".to_string());
+        vm.output
+            .push("Error: Stack underflow for fold".to_string());
     }
     None
 }
@@ -2875,7 +2969,8 @@ fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 };
                 if keep {
                     if results.len() >= crate::vm::MAX_JUNCTION_SIZE {
-                        vm.output.push("Error: Junction size limit exceeded in Filter".to_string());
+                        vm.output
+                            .push("Error: Junction size limit exceeded in Filter".to_string());
                         return None;
                     }
                     results.push(input);
@@ -2885,13 +2980,15 @@ fn exec_filter(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         let result = Value::Junction(crate::ast::JunctionType::Any, results);
         if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
-            vm.output.push("Error: Filter result depth limit exceeded".to_string());
+            vm.output
+                .push("Error: Filter result depth limit exceeded".to_string());
         } else {
             vm.stack.push(result);
             vm.energy = vm.energy.saturating_sub(10);
         }
     } else {
-        vm.output.push("Error: Stack underflow for filter".to_string());
+        vm.output
+            .push("Error: Stack underflow for filter".to_string());
     }
     None
 }
@@ -2912,7 +3009,8 @@ fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         let len = inputs_a.len().min(inputs_b.len());
         if len > crate::vm::MAX_JUNCTION_SIZE {
-            vm.output.push("Error: Junction size limit exceeded in Zip".to_string());
+            vm.output
+                .push("Error: Junction size limit exceeded in Zip".to_string());
             return None;
         }
 
@@ -2927,7 +3025,8 @@ fn exec_zip(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         let result = Value::Junction(crate::ast::JunctionType::Any, results);
         if result.depth() > crate::vm::MAX_RECURSION_DEPTH {
-            vm.output.push("Error: Zip result depth limit exceeded".to_string());
+            vm.output
+                .push("Error: Zip result depth limit exceeded".to_string());
         } else {
             vm.stack.push(result);
             vm.energy = vm.energy.saturating_sub(5);
@@ -2952,7 +3051,8 @@ fn exec_pigment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                 if r < 0 || g < 0 || b < 0 {
                     vm.chroma_grid[ny][nx].fg = None;
-                    vm.output.push(format!("PIGMENT: Cleared color at {},{}", nx, ny));
+                    vm.output
+                        .push(format!("PIGMENT: Cleared color at {},{}", nx, ny));
                 } else {
                     let rc = r.clamp(0, 255) as u8;
                     let gc = g.clamp(0, 255) as u8;
@@ -2961,13 +3061,16 @@ fn exec_pigment(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
                 vm.energy = vm.energy.saturating_sub(2);
             } else {
-                vm.output.push("Error: Coordinates out of bounds for pigment".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for pigment".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for pigment".to_string());
+            vm.output
+                .push("Error: Type mismatch for pigment".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for pigment".to_string());
+        vm.output
+            .push("Error: Stack underflow for pigment".to_string());
     }
     None
 }
@@ -2982,20 +3085,23 @@ fn exec_glyph(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                 if c < 0 {
                     vm.chroma_grid[ny][nx].char = None;
-                    vm.output.push(format!("GLYPH: Cleared char at {},{}", nx, ny));
+                    vm.output
+                        .push(format!("GLYPH: Cleared char at {},{}", nx, ny));
                 } else {
                     let ch = (c as u8) as char;
                     vm.chroma_grid[ny][nx].char = Some(ch);
                 }
                 vm.energy = vm.energy.saturating_sub(2);
             } else {
-                vm.output.push("Error: Coordinates out of bounds for glyph".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for glyph".to_string());
             }
         } else {
             vm.output.push("Error: Type mismatch for glyph".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for glyph".to_string());
+        vm.output
+            .push("Error: Stack underflow for glyph".to_string());
     }
     None
 }
@@ -3034,10 +3140,12 @@ fn exec_glitch(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.energy = vm.energy.saturating_sub(severity);
             vm.output.push(format!("GLITCH: Severity {}", severity));
         } else {
-            vm.output.push("Error: Type mismatch for glitch".to_string());
+            vm.output
+                .push("Error: Type mismatch for glitch".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for glitch".to_string());
+        vm.output
+            .push("Error: Stack underflow for glitch".to_string());
     }
     None
 }
@@ -3057,7 +3165,8 @@ fn exec_hyphae(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         vm.energy = vm.energy.saturating_sub(20);
         vm.output.push(format!("HYPHAE: Sprouted at {},{}", cx, cy));
     } else {
-        vm.output.push(format!("HYPHAE: Node already exists at {},{}", cx, cy));
+        vm.output
+            .push(format!("HYPHAE: Node already exists at {},{}", cx, cy));
     }
     None
 }
@@ -3069,9 +3178,7 @@ fn exec_connect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         if let (Value::Int(x), Value::Int(y)) = (x_val, y_val) {
             if let Some((ty, tx)) = vm.normalize_coords(y, x) {
                 let (cy, cx) = vm.context_loc;
-                if vm.mycelium.contains_key(&(cy, cx))
-                    && vm.mycelium.contains_key(&(ty, tx))
-                {
+                if vm.mycelium.contains_key(&(cy, cx)) && vm.mycelium.contains_key(&(ty, tx)) {
                     vm.mycelium.get_mut(&(cy, cx)).unwrap().push((ty, tx));
                     vm.mycelium.get_mut(&(ty, tx)).unwrap().push((cy, cx));
                     vm.energy = vm.energy.saturating_sub(10);
@@ -3080,16 +3187,20 @@ fn exec_connect(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         cx, cy, tx, ty
                     ));
                 } else {
-                    vm.output.push("CONNECT: Both ends must be Hyphae".to_string());
+                    vm.output
+                        .push("CONNECT: Both ends must be Hyphae".to_string());
                 }
             } else {
-                vm.output.push("Error: Coordinates out of bounds for connect".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for connect".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for connect".to_string());
+            vm.output
+                .push("Error: Type mismatch for connect".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for connect".to_string());
+        vm.output
+            .push("Error: Stack underflow for connect".to_string());
     }
     None
 }
@@ -3128,18 +3239,23 @@ fn exec_transport(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 if found {
                     vm.grid[ty][tx] = val;
                     vm.energy = vm.energy.saturating_sub(5);
-                    vm.output.push(format!("TRANSPORT: Sent value to {},{}", tx, ty));
+                    vm.output
+                        .push(format!("TRANSPORT: Sent value to {},{}", tx, ty));
                 } else {
-                    vm.output.push("TRANSPORT: No mycelial path found".to_string());
+                    vm.output
+                        .push("TRANSPORT: No mycelial path found".to_string());
                 }
             } else {
-                vm.output.push("Error: Coordinates out of bounds for transport".to_string());
+                vm.output
+                    .push("Error: Coordinates out of bounds for transport".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for transport".to_string());
+            vm.output
+                .push("Error: Type mismatch for transport".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for transport".to_string());
+        vm.output
+            .push("Error: Stack underflow for transport".to_string());
     }
     None
 }
@@ -3165,12 +3281,15 @@ fn exec_spore_cloud(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                 }
             }
             vm.energy = vm.energy.saturating_sub(count * 5);
-            vm.output.push(format!("SPORE_CLOUD: Sprouted {} hyphae", count));
+            vm.output
+                .push(format!("SPORE_CLOUD: Sprouted {} hyphae", count));
         } else {
-            vm.output.push("Error: Type mismatch for spore_cloud".to_string());
+            vm.output
+                .push("Error: Type mismatch for spore_cloud".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for spore_cloud".to_string());
+        vm.output
+            .push("Error: Stack underflow for spore_cloud".to_string());
     }
     None
 }
@@ -3203,7 +3322,8 @@ fn exec_match(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             vm.output.push("Error: Type mismatch for match".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for match".to_string());
+        vm.output
+            .push("Error: Stack underflow for match".to_string());
     }
     None
 }
@@ -3223,15 +3343,18 @@ fn exec_bury(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     vm.cladistics.kill_strand(s_idx, vm.tick_counter);
 
                     vm.energy = vm.energy.saturating_sub(10);
-                    vm.output.push(format!("BURY: Buried strand {} in graveyard", s_idx));
+                    vm.output
+                        .push(format!("BURY: Buried strand {} in graveyard", s_idx));
                 } else {
-                    vm.output.push("Error: Strand index out of bounds for bury".to_string());
+                    vm.output
+                        .push("Error: Strand index out of bounds for bury".to_string());
                 }
             }
             _ => vm.output.push("Error: Type mismatch for bury".to_string()),
         }
     } else {
-        vm.output.push("Error: Stack underflow for bury".to_string());
+        vm.output
+            .push("Error: Stack underflow for bury".to_string());
     }
     None
 }
@@ -3257,7 +3380,8 @@ fn exec_exhume(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
         vm.stack.push(Value::Int(new_idx as i64));
         vm.energy = vm.energy.saturating_sub(25);
-        vm.output.push(format!("EXHUME: Resurrected strand as {}", new_idx));
+        vm.output
+            .push(format!("EXHUME: Resurrected strand as {}", new_idx));
     } else {
         vm.stack.push(Value::Int(-1));
         vm.output.push("EXHUME: Graveyard empty".to_string());
@@ -3327,9 +3451,8 @@ fn exec_reincarnate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     }
 
                     if vm.dna.helix.strands.len() >= MAX_STRANDS {
-                        vm.output.push(
-                            "Error: Strand limit exceeded for reincarnate".to_string(),
-                        );
+                        vm.output
+                            .push("Error: Strand limit exceeded for reincarnate".to_string());
                         return None;
                     }
                     vm.dna.helix.strands.push(new_strand);
@@ -3361,15 +3484,17 @@ fn exec_reincarnate(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                         s_idx, new_idx
                     ));
                 } else {
-                    vm.output.push(
-                        "Error: Strand index out of bounds for reincarnate".to_string(),
-                    );
+                    vm.output
+                        .push("Error: Strand index out of bounds for reincarnate".to_string());
                 }
             }
-            _ => vm.output.push("Error: Type mismatch for reincarnate".to_string()),
+            _ => vm
+                .output
+                .push("Error: Type mismatch for reincarnate".to_string()),
         }
     } else {
-        vm.output.push("Error: Stack underflow for reincarnate".to_string());
+        vm.output
+            .push("Error: Stack underflow for reincarnate".to_string());
     }
     None
 }
@@ -3382,13 +3507,16 @@ fn exec_superpose(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
         let depth_a = a.depth();
         let depth_b = b.depth();
         if depth_a.max(depth_b) + 1 > crate::vm::MAX_RECURSION_DEPTH {
-            vm.output.push("Error: Superpose depth limit exceeded".to_string());
+            vm.output
+                .push("Error: Superpose depth limit exceeded".to_string());
         } else {
-            vm.stack.push(Value::Superposition(vec![(a, 0.5), (b, 0.5)]));
+            vm.stack
+                .push(Value::Superposition(vec![(a, 0.5), (b, 0.5)]));
             vm.energy = vm.energy.saturating_sub(10);
         }
     } else {
-        vm.output.push("Error: Stack underflow for superpose".to_string());
+        vm.output
+            .push("Error: Stack underflow for superpose".to_string());
     }
     None
 }
@@ -3417,7 +3545,8 @@ fn exec_collapse(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
     } else {
-        vm.output.push("Error: Stack underflow for collapse".to_string());
+        vm.output
+            .push("Error: Stack underflow for collapse".to_string());
     }
     None
 }
@@ -3448,7 +3577,8 @@ fn exec_observe(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             }
         }
     } else {
-        vm.output.push("Error: Stack underflow for observe".to_string());
+        vm.output
+            .push("Error: Stack underflow for observe".to_string());
     }
     None
 }

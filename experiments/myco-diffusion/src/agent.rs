@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use crate::grid::GrayScottGrid;
+use macroquad::prelude::*;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum AgentState {
@@ -98,7 +98,9 @@ impl Agent {
 
         let to_target = target - self.pos;
         let target_angle = to_target.y.atan2(to_target.x);
-        let angle_diff = (target_angle - self.angle + std::f32::consts::PI).rem_euclid(std::f32::consts::TAU) - std::f32::consts::PI;
+        let angle_diff = (target_angle - self.angle + std::f32::consts::PI)
+            .rem_euclid(std::f32::consts::TAU)
+            - std::f32::consts::PI;
 
         // Nudge
         self.angle += angle_diff * bias_strength;

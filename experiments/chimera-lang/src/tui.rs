@@ -1381,7 +1381,8 @@ where
                                 ViewMode::Evolution => {
                                     if let Ok(val) = app_state.input_buffer.parse::<i64>() {
                                         app_state.evolution_state.target_val = val;
-                                        if let Some(engine) = &mut app_state.evolution_state.engine {
+                                        if let Some(engine) = &mut app_state.evolution_state.engine
+                                        {
                                             engine.target_val = val;
                                         }
                                         app_state.status_msg = format!("Target set to {}", val);
@@ -1703,7 +1704,8 @@ where
                     #[cfg(feature = "nova")]
                     KeyCode::Char('a') => {
                         if let ViewMode::Evolution = app_state.view_mode {
-                            app_state.evolution_state.auto_run = !app_state.evolution_state.auto_run;
+                            app_state.evolution_state.auto_run =
+                                !app_state.evolution_state.auto_run;
                         } else if let ViewMode::Alchemy = app_state.view_mode {
                             // Add to Crucible
                             match app_state.alchemy_selection {
@@ -1764,16 +1766,18 @@ where
                     KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
                     KeyCode::Char('e') => {
                         if let ViewMode::Genome = app_state.view_mode {
-                             if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
-                                 let engine = crate::vm::evolution::EvolutionEngine::new(
-                                     strand.clone(),
-                                     20, // Population
-                                     app_state.evolution_state.target_val
-                                 );
-                                 app_state.evolution_state.engine = Some(engine);
-                                 app_state.view_mode = ViewMode::Evolution;
-                                 app_state.status_msg = "Evolution Initialized".to_string();
-                             }
+                            if let Some(strand) =
+                                vm.dna.helix.strands.get(app_state.selected_strand)
+                            {
+                                let engine = crate::vm::evolution::EvolutionEngine::new(
+                                    strand.clone(),
+                                    20, // Population
+                                    app_state.evolution_state.target_val,
+                                );
+                                app_state.evolution_state.engine = Some(engine);
+                                app_state.view_mode = ViewMode::Evolution;
+                                app_state.status_msg = "Evolution Initialized".to_string();
+                            }
                         }
                     }
                     KeyCode::Char('f') => {
@@ -7778,33 +7782,33 @@ fn render_orca(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             } else {
                 match val {
                     crate::vm::Value::Str(s) => {
-                    let c = s.chars().next().unwrap_or('.');
-                    let color = match c {
-                        '*' | '!' => Color::Red,
-                        ':' | ';' => Color::Magenta,
-                        '0'..='9' => Color::Cyan,
-                        'a'..='z' => Color::Green,
-                        'A'..='Z' => Color::Yellow,
-                        _ => Color::DarkGray,
-                    };
-                    (c.to_string(), color)
+                        let c = s.chars().next().unwrap_or('.');
+                        let color = match c {
+                            '*' | '!' => Color::Red,
+                            ':' | ';' => Color::Magenta,
+                            '0'..='9' => Color::Cyan,
+                            'a'..='z' => Color::Green,
+                            'A'..='Z' => Color::Yellow,
+                            _ => Color::DarkGray,
+                        };
+                        (c.to_string(), color)
+                    }
+                    crate::vm::Value::Int(n) => {
+                        let v = (*n).rem_euclid(36);
+                        let c = if v < 10 {
+                            ((v as u8) + b'0') as char
+                        } else {
+                            ((v as u8 - 10) + b'a') as char
+                        };
+                        let color = if *n == 0 {
+                            Color::DarkGray
+                        } else {
+                            Color::Cyan
+                        };
+                        (c.to_string(), color)
+                    }
+                    _ => ("?".to_string(), Color::White),
                 }
-                crate::vm::Value::Int(n) => {
-                    let v = (*n).rem_euclid(36);
-                    let c = if v < 10 {
-                        ((v as u8) + b'0') as char
-                    } else {
-                        ((v as u8 - 10) + b'a') as char
-                    };
-                    let color = if *n == 0 {
-                        Color::DarkGray
-                    } else {
-                        Color::Cyan
-                    };
-                    (c.to_string(), color)
-                }
-                _ => ("?".to_string(), Color::White),
-            }
             };
 
             style = style.fg(base_color);
@@ -9035,11 +9039,17 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
     if let Some(engine) = &app_state.evolution_state.engine {
         // Stats
         let stats = vec![
-            Line::from(Span::styled("GENETIC OPTIMIZER", Style::default().add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled(
+                "GENETIC OPTIMIZER",
+                Style::default().add_modifier(Modifier::BOLD),
+            )),
             Line::from(" "),
             Line::from(format!("Generation: {}", engine.generation)),
             Line::from(format!("Best Fitness: {}", engine.best_fitness)),
-            Line::from(format!("Target Value: {}", app_state.evolution_state.target_val)),
+            Line::from(format!(
+                "Target Value: {}",
+                app_state.evolution_state.target_val
+            )),
             Line::from(format!("Population: {}", engine.population.len())),
             Line::from(format!("Auto-Run: {}", app_state.evolution_state.auto_run)),
             Line::from(" "),
@@ -9049,40 +9059,53 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             Line::from("  Enter: Set Target"),
         ];
 
-        let stats_widget = Paragraph::new(stats)
-            .block(Block::default().borders(Borders::ALL).title("Status"));
+        let stats_widget =
+            Paragraph::new(stats).block(Block::default().borders(Borders::ALL).title("Status"));
         f.render_widget(stats_widget, top_chunks[0]);
 
         // Sparkline
         // Fitness usually drops. Sparkline shows bars. High bars = High fitness (bad).
         // We want to see it go down.
         // Limit history size
-        let history: Vec<u64> = engine.history.iter().rev().take(100).rev().map(|&x| x.min(1000) as u64).collect();
+        let history: Vec<u64> = engine
+            .history
+            .iter()
+            .rev()
+            .take(100)
+            .rev()
+            .map(|&x| x.min(1000) as u64)
+            .collect();
 
         let sparkline = ratatui::widgets::Sparkline::default()
-            .block(Block::default().title("Fitness History (Lower is Better)").borders(Borders::ALL))
+            .block(
+                Block::default()
+                    .title("Fitness History (Lower is Better)")
+                    .borders(Borders::ALL),
+            )
             .data(&history)
             .style(Style::default().fg(Color::Green));
         f.render_widget(sparkline, top_chunks[1]);
 
         // Bottom: Code
         if !engine.population.is_empty() {
-             let best = &engine.population[0];
-             let mut gene_items = Vec::new();
-             for gene in &best.genes {
-                 let args: Vec<String> = gene.args.iter().map(|a| format!("{:?}", a)).collect();
-                 let s = if args.is_empty() {
-                     format!("{}", gene.op)
-                 } else {
-                     format!("{}({})", gene.op, args.join(", "))
-                 };
-                 gene_items.push(ListItem::new(s).style(Style::default().fg(Color::Cyan)));
-             }
-             let list = List::new(gene_items)
-                .block(Block::default().borders(Borders::ALL).title(format!("Best Specimen (Fitness: {})", engine.best_fitness)));
-             f.render_widget(list, chunks[1]);
+            let best = &engine.population[0];
+            let mut gene_items = Vec::new();
+            for gene in &best.genes {
+                let args: Vec<String> = gene.args.iter().map(|a| format!("{:?}", a)).collect();
+                let s = if args.is_empty() {
+                    format!("{}", gene.op)
+                } else {
+                    format!("{}({})", gene.op, args.join(", "))
+                };
+                gene_items.push(ListItem::new(s).style(Style::default().fg(Color::Cyan)));
+            }
+            let list = List::new(gene_items).block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title(format!("Best Specimen (Fitness: {})", engine.best_fitness)),
+            );
+            f.render_widget(list, chunks[1]);
         }
-
     } else {
         let center = Paragraph::new("Evolution Engine Offline.\nSelect a Strand in Genome View and press 'E' to initialize.")
             .alignment(ratatui::layout::Alignment::Center)
@@ -9145,12 +9168,12 @@ fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         info.push(Line::from(format!("Buffer Size: {}", node.buffer.len())));
         info.push(Line::from("Connections:"));
         for (ny, nx) in &node.connections {
-             info.push(Line::from(format!("  -> {},{}", nx, ny)));
+            info.push(Line::from(format!("  -> {},{}", nx, ny)));
         }
         if !node.buffer.is_empty() {
             info.push(Line::from("Buffer Head:"));
             if let Some(val) = node.buffer.front() {
-                 info.push(Line::from(format!("  {}", val)));
+                info.push(Line::from(format!("  {}", val)));
             }
         }
     } else {

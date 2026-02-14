@@ -9,8 +9,8 @@ use ratatui::{
 use tui_shared::Tui;
 
 mod lexer;
-mod phonology;
 mod obfuscator;
+mod phonology;
 
 use obfuscator::Obfuscator;
 
@@ -53,18 +53,12 @@ fn main() -> anyhow::Result<()> {
 
             let chunks = Layout::default()
                 .direction(Direction::Vertical)
-                .constraints([
-                    Constraint::Min(3),
-                    Constraint::Length(3),
-                ])
+                .constraints([Constraint::Min(3), Constraint::Length(3)])
                 .split(size);
 
             let main_chunks = Layout::default()
                 .direction(Direction::Horizontal)
-                .constraints([
-                    Constraint::Percentage(50),
-                    Constraint::Percentage(50),
-                ])
+                .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
                 .split(chunks[0]);
 
             // Left Pane: Original
@@ -89,9 +83,7 @@ fn main() -> anyhow::Result<()> {
             f.render_widget(evolved_text, main_chunks[1]);
 
             // Bottom Pane: Controls
-            let controls_block = Block::default()
-                .title(" Controls ")
-                .borders(Borders::ALL);
+            let controls_block = Block::default().title(" Controls ").borders(Borders::ALL);
             let controls_text = Paragraph::new("SPACE: Evolve | R: Reset | Q: Quit")
                 .block(controls_block)
                 .style(Style::default().fg(Color::Yellow))

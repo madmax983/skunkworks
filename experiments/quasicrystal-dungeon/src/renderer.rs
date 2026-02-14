@@ -73,35 +73,107 @@ pub struct State {
 const VERTICES: &[Vertex] = &[
     // Cube vertices
     // Front face
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 0.0, 1.0] },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 0.0, 1.0],
+    },
     // Back face
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 0.0, -1.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, 0.0, -1.0] },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, 0.0, -1.0],
+    },
     // Top face
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [0.0, 1.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [0.0, 1.0, 0.0] },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [0.0, 1.0, 0.0],
+    },
     // Bottom face
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, -0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [0.0, -1.0, 0.0] },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [0.0, -1.0, 0.0],
+    },
     // Right face
-    Vertex { position: [0.1, -0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, -0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, 0.1, 0.1], normal: [1.0, 0.0, 0.0] },
-    Vertex { position: [0.1, -0.1, 0.1], normal: [1.0, 0.0, 0.0] },
+    Vertex {
+        position: [0.1, -0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, -0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, 0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [0.1, -0.1, 0.1],
+        normal: [1.0, 0.0, 0.0],
+    },
     // Left face
-    Vertex { position: [-0.1, -0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, -0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, 0.1], normal: [-1.0, 0.0, 0.0] },
-    Vertex { position: [-0.1, 0.1, -0.1], normal: [-1.0, 0.0, 0.0] },
+    Vertex {
+        position: [-0.1, -0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, -0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, 0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
+    Vertex {
+        position: [-0.1, 0.1, -0.1],
+        normal: [-1.0, 0.0, 0.0],
+    },
 ];
 
 const INDICES: &[u16] = &[
@@ -402,7 +474,7 @@ impl State {
                     color = [0.0, 0.8, 0.8, 0.6]; // Visited Cyan
                 }
             } else if dungeon.room_types.get(&i) == Some(&RoomType::Goal) {
-                 color = [0.5, 0.0, 0.0, 0.3]; // Unvisited Goal (Dim Red)
+                color = [0.5, 0.0, 0.0, 0.3]; // Unvisited Goal (Dim Red)
             } else {
                 // Dim unvisited based on distance?
                 // Just keep it dark blue
@@ -450,7 +522,8 @@ impl State {
 
     pub fn update_dungeon_visuals(&mut self) {
         let instances = Self::create_instances(&self.dungeon, self.selected_neighbor_idx);
-        self.queue.write_buffer(&self.instance_buffer, 0, bytemuck::cast_slice(&instances));
+        self.queue
+            .write_buffer(&self.instance_buffer, 0, bytemuck::cast_slice(&instances));
     }
 
     pub fn resize(&mut self, new_size: (u32, u32)) {

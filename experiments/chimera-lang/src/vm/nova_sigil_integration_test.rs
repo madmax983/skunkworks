@@ -1,11 +1,11 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Gene, Nucleotide, Strand, JunctionType};
+    use crate::ast::{Dna, Gene, Helix, JunctionType, Nucleotide, Strand};
+    use crate::opcode::OpCode;
+    use crate::vm::nova_sigil::Sigil;
     use crate::vm::nova_signals::process_signals;
     use crate::vm::{ChimeraVM, Value};
-    use crate::vm::nova_sigil::Sigil;
-    use crate::opcode::OpCode;
     use std::collections::HashMap;
 
     fn make_vm() -> ChimeraVM {
@@ -22,10 +22,22 @@ mod tests {
         // Strand 0: Push(100) -> GWrite(2,2)
         let strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-                Gene { op: OpCode::GWrite, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(100)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(2)],
+                },
+                Gene {
+                    op: OpCode::GWrite,
+                    args: vec![],
+                },
             ],
         };
         vm.dna.helix.strands.push(strand);
@@ -59,8 +71,11 @@ mod tests {
 
         // Check if Pattern Consumed
         match &vm.grid[0][1] {
-            Value::Int(0) => {},
-            _ => panic!("Expected pattern consumption (A->0), got {:?}", vm.grid[0][1]),
+            Value::Int(0) => {}
+            _ => panic!(
+                "Expected pattern consumption (A->0), got {:?}",
+                vm.grid[0][1]
+            ),
         }
 
         // Run the strand (4 steps)
@@ -84,10 +99,22 @@ mod tests {
 
         let strand = Strand {
             genes: vec![
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(99)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] },
-                Gene { op: OpCode::Push, args: vec![Nucleotide::Number(3)] },
-                Gene { op: OpCode::GWrite, args: vec![] },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(99)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(3)],
+                },
+                Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::Number(3)],
+                },
+                Gene {
+                    op: OpCode::GWrite,
+                    args: vec![],
+                },
             ],
         };
         vm.dna.helix.strands.push(strand);

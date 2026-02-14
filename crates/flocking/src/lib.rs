@@ -46,11 +46,7 @@ pub struct FlockingParams {
 /// * `others` - A slice of all agents (including self).
 /// * `my_idx` - The index of the current agent in the `others` slice.
 /// * `params` - The flocking parameters.
-pub fn compute_force(
-    others: &[PhysicsState],
-    my_idx: usize,
-    params: &FlockingParams,
-) -> Vec2 {
+pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingParams) -> Vec2 {
     let me = &others[my_idx];
     let mut separation = Vec2::zero();
     let mut alignment = Vec2::zero();

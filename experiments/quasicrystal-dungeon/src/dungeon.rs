@@ -1,5 +1,5 @@
 use crate::math::Quasicrystal;
-use std::collections::{HashSet, HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum RoomType {
@@ -37,7 +37,7 @@ impl Dungeon {
         let mut min_dist = f32::MAX;
 
         for (i, p) in lattice.atoms.iter().enumerate() {
-            let d = p.x*p.x + p.y*p.y + p.z*p.z;
+            let d = p.x * p.x + p.y * p.y + p.z * p.z;
             if d < min_dist {
                 min_dist = d;
                 start_idx = i;
@@ -78,7 +78,9 @@ impl Dungeon {
                 furthest_idx = curr;
             }
 
-            if curr >= lattice.adj.len() { continue; } // Safety check
+            if curr >= lattice.adj.len() {
+                continue;
+            } // Safety check
 
             for &neighbor in &lattice.adj[curr] {
                 if !visited.contains(&neighbor) {
@@ -91,7 +93,9 @@ impl Dungeon {
     }
 
     pub fn move_player(&mut self, target_idx: usize) -> bool {
-        if self.player_idx >= self.lattice.adj.len() { return false; }
+        if self.player_idx >= self.lattice.adj.len() {
+            return false;
+        }
 
         if self.lattice.adj[self.player_idx].contains(&target_idx) {
             self.player_idx = target_idx;
@@ -113,8 +117,14 @@ mod tests {
         let dungeon = Dungeon::new(qc);
 
         assert!(dungeon.visited.contains(&dungeon.player_idx));
-        assert_eq!(dungeon.room_types.get(&dungeon.player_idx), Some(&RoomType::Start));
-        assert_eq!(dungeon.room_types.get(&dungeon.goal_idx), Some(&RoomType::Goal));
+        assert_eq!(
+            dungeon.room_types.get(&dungeon.player_idx),
+            Some(&RoomType::Start)
+        );
+        assert_eq!(
+            dungeon.room_types.get(&dungeon.goal_idx),
+            Some(&RoomType::Goal)
+        );
         assert_ne!(dungeon.player_idx, dungeon.goal_idx); // Should be far apart
     }
 

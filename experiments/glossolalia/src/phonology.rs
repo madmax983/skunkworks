@@ -11,9 +11,33 @@ pub enum PhonemeType {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Phoneme {
     // Vowels
-    A, E, I, O, U, Y,
+    A,
+    E,
+    I,
+    O,
+    U,
+    Y,
     // Consonants
-    B, C, D, F, G, H, J, K, L, M, N, P, Q, R, S, T, V, W, X, Z,
+    B,
+    C,
+    D,
+    F,
+    G,
+    H,
+    J,
+    K,
+    L,
+    M,
+    N,
+    P,
+    Q,
+    R,
+    S,
+    T,
+    V,
+    W,
+    X,
+    Z,
     // Special
     #[allow(dead_code)]
     Null, // For deletion
@@ -22,11 +46,32 @@ pub enum Phoneme {
 impl fmt::Display for Phoneme {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
-            Phoneme::A => "a", Phoneme::E => "e", Phoneme::I => "i", Phoneme::O => "o", Phoneme::U => "u", Phoneme::Y => "y",
-            Phoneme::B => "b", Phoneme::C => "c", Phoneme::D => "d", Phoneme::F => "f", Phoneme::G => "g",
-            Phoneme::H => "h", Phoneme::J => "j", Phoneme::K => "k", Phoneme::L => "l", Phoneme::M => "m",
-            Phoneme::N => "n", Phoneme::P => "p", Phoneme::Q => "q", Phoneme::R => "r", Phoneme::S => "s",
-            Phoneme::T => "t", Phoneme::V => "v", Phoneme::W => "w", Phoneme::X => "x", Phoneme::Z => "z",
+            Phoneme::A => "a",
+            Phoneme::E => "e",
+            Phoneme::I => "i",
+            Phoneme::O => "o",
+            Phoneme::U => "u",
+            Phoneme::Y => "y",
+            Phoneme::B => "b",
+            Phoneme::C => "c",
+            Phoneme::D => "d",
+            Phoneme::F => "f",
+            Phoneme::G => "g",
+            Phoneme::H => "h",
+            Phoneme::J => "j",
+            Phoneme::K => "k",
+            Phoneme::L => "l",
+            Phoneme::M => "m",
+            Phoneme::N => "n",
+            Phoneme::P => "p",
+            Phoneme::Q => "q",
+            Phoneme::R => "r",
+            Phoneme::S => "s",
+            Phoneme::T => "t",
+            Phoneme::V => "v",
+            Phoneme::W => "w",
+            Phoneme::X => "x",
+            Phoneme::Z => "z",
             Phoneme::Null => "",
         };
         write!(f, "{}", s)
@@ -36,18 +81,42 @@ impl fmt::Display for Phoneme {
 impl Phoneme {
     pub fn from_char(c: char) -> Option<Self> {
         match c.to_ascii_lowercase() {
-            'a' => Some(Phoneme::A), 'e' => Some(Phoneme::E), 'i' => Some(Phoneme::I), 'o' => Some(Phoneme::O), 'u' => Some(Phoneme::U), 'y' => Some(Phoneme::Y),
-            'b' => Some(Phoneme::B), 'c' => Some(Phoneme::C), 'd' => Some(Phoneme::D), 'f' => Some(Phoneme::F), 'g' => Some(Phoneme::G),
-            'h' => Some(Phoneme::H), 'j' => Some(Phoneme::J), 'k' => Some(Phoneme::K), 'l' => Some(Phoneme::L), 'm' => Some(Phoneme::M),
-            'n' => Some(Phoneme::N), 'p' => Some(Phoneme::P), 'q' => Some(Phoneme::Q), 'r' => Some(Phoneme::R), 's' => Some(Phoneme::S),
-            't' => Some(Phoneme::T), 'v' => Some(Phoneme::V), 'w' => Some(Phoneme::W), 'x' => Some(Phoneme::X), 'z' => Some(Phoneme::Z),
+            'a' => Some(Phoneme::A),
+            'e' => Some(Phoneme::E),
+            'i' => Some(Phoneme::I),
+            'o' => Some(Phoneme::O),
+            'u' => Some(Phoneme::U),
+            'y' => Some(Phoneme::Y),
+            'b' => Some(Phoneme::B),
+            'c' => Some(Phoneme::C),
+            'd' => Some(Phoneme::D),
+            'f' => Some(Phoneme::F),
+            'g' => Some(Phoneme::G),
+            'h' => Some(Phoneme::H),
+            'j' => Some(Phoneme::J),
+            'k' => Some(Phoneme::K),
+            'l' => Some(Phoneme::L),
+            'm' => Some(Phoneme::M),
+            'n' => Some(Phoneme::N),
+            'p' => Some(Phoneme::P),
+            'q' => Some(Phoneme::Q),
+            'r' => Some(Phoneme::R),
+            's' => Some(Phoneme::S),
+            't' => Some(Phoneme::T),
+            'v' => Some(Phoneme::V),
+            'w' => Some(Phoneme::W),
+            'x' => Some(Phoneme::X),
+            'z' => Some(Phoneme::Z),
             _ => None,
         }
     }
 
     #[allow(dead_code)]
     pub fn is_vowel(&self) -> bool {
-        matches!(self, Phoneme::A | Phoneme::E | Phoneme::I | Phoneme::O | Phoneme::U | Phoneme::Y)
+        matches!(
+            self,
+            Phoneme::A | Phoneme::E | Phoneme::I | Phoneme::O | Phoneme::U | Phoneme::Y
+        )
     }
 }
 
@@ -86,7 +155,7 @@ impl EvolutionEngine {
                     replacement: |_, _| vec![Phoneme::H],
                     probability: 0.3,
                 },
-                 SoundChange {
+                SoundChange {
                     name: "Grimm: D->T".to_string(),
                     pattern: |p, i| p[i] == Phoneme::D,
                     replacement: |_, _| vec![Phoneme::T],
@@ -98,7 +167,6 @@ impl EvolutionEngine {
                     replacement: |_, _| vec![Phoneme::K],
                     probability: 0.3,
                 },
-
                 // Vowel Shift (A -> E -> I -> O -> U -> A)
                 SoundChange {
                     name: "Vowel Shift A->E".to_string(),
@@ -118,13 +186,12 @@ impl EvolutionEngine {
                     replacement: |_, _| vec![Phoneme::O],
                     probability: 0.2,
                 },
-
                 // Lenition (Intervocalic voicing)
                 SoundChange {
                     name: "Lenition S->Z".to_string(),
                     pattern: |p, i| {
                         if i > 0 && i < p.len() - 1 {
-                             p[i] == Phoneme::S && p[i-1].is_vowel() && p[i+1].is_vowel()
+                            p[i] == Phoneme::S && p[i - 1].is_vowel() && p[i + 1].is_vowel()
                         } else {
                             false
                         }
@@ -132,23 +199,23 @@ impl EvolutionEngine {
                     replacement: |_, _| vec![Phoneme::Z],
                     probability: 0.4,
                 },
-                 // Palatalization K->C before I/E
+                // Palatalization K->C before I/E
                 SoundChange {
                     name: "Palatalization K->C".to_string(),
                     pattern: |p, i| {
-                         p[i] == Phoneme::K && i < p.len() - 1 && (p[i+1] == Phoneme::I || p[i+1] == Phoneme::E)
+                        p[i] == Phoneme::K
+                            && i < p.len() - 1
+                            && (p[i + 1] == Phoneme::I || p[i + 1] == Phoneme::E)
                     },
                     replacement: |_, _| vec![Phoneme::C],
                     probability: 0.5,
                 },
-            ]
+            ],
         }
     }
 
     pub fn evolve_word(&self, word: &str, rng: &mut impl Rng) -> String {
-        let phonemes: Vec<Phoneme> = word.chars()
-            .filter_map(Phoneme::from_char)
-            .collect();
+        let phonemes: Vec<Phoneme> = word.chars().filter_map(Phoneme::from_char).collect();
 
         // Apply changes
         // Since replacements can change length, we construct a new vector
@@ -177,12 +244,11 @@ impl EvolutionEngine {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::SeedableRng;
     use rand::rngs::StdRng;
+    use rand::SeedableRng;
 
     #[test]
     fn test_phoneme_conversion() {

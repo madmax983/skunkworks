@@ -116,12 +116,12 @@ pub mod nova_bestiary;
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
+pub mod nova_biome;
+#[cfg(feature = "nova")]
 pub mod nova_biomesh;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_biomesh_test;
-#[cfg(feature = "nova")]
-pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
 #[cfg(feature = "nova")]
@@ -211,13 +211,13 @@ mod nova_orca_midi_test;
 #[cfg(test)]
 mod nova_orca_test;
 #[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_phage_test;
-#[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_paleontology_test;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_phage_test;
 #[cfg(feature = "nova")]
 pub mod nova_planes;
 #[cfg(feature = "nova")]
@@ -3297,7 +3297,11 @@ impl ChimeraVM {
             OpCode::Nop => None,
 
             #[cfg(feature = "nova")]
-            OpCode::MeshNet | OpCode::MeshGrow | OpCode::MeshPrune | OpCode::MeshSend | OpCode::MeshRecv => {
+            OpCode::MeshNet
+            | OpCode::MeshGrow
+            | OpCode::MeshPrune
+            | OpCode::MeshSend
+            | OpCode::MeshRecv => {
                 crate::vm::nova::exec_nova_op(self, op, args);
                 None
             }

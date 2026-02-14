@@ -28,9 +28,7 @@ pub fn generate_gear_collider(teeth: usize, module: f32, pressure_angle_deg: f32
 
     // 1. Central Disc (slightly smaller than root to avoid overlap issues with tooth roots)
     // Actually, make it exactly root_radius.
-    let mut shapes = vec![
-        (Vect::ZERO, 0.0, Collider::ball(root_radius * 0.99))
-    ];
+    let mut shapes = vec![(Vect::ZERO, 0.0, Collider::ball(root_radius * 0.99))];
 
     // 2. Teeth
     // Generate the polygon for ONE tooth, centered at angle 0.
@@ -46,7 +44,12 @@ pub fn generate_gear_collider(teeth: usize, module: f32, pressure_angle_deg: f32
     Collider::compound(shapes)
 }
 
-fn generate_gear_points(teeth: usize, module: f32, pressure_angle_deg: f32, steps_per_tooth: usize) -> Vec<Vec2> {
+fn generate_gear_points(
+    teeth: usize,
+    module: f32,
+    pressure_angle_deg: f32,
+    steps_per_tooth: usize,
+) -> Vec<Vec2> {
     let mut points = Vec::new();
     let tooth_angle_step = 2.0 * PI / teeth as f32;
 
@@ -54,7 +57,8 @@ fn generate_gear_points(teeth: usize, module: f32, pressure_angle_deg: f32, step
         let center_angle = i as f32 * tooth_angle_step;
 
         // Generate points for one tooth rotated by center_angle
-        let tooth_poly = generate_single_tooth_polygon(teeth, module, pressure_angle_deg, steps_per_tooth);
+        let tooth_poly =
+            generate_single_tooth_polygon(teeth, module, pressure_angle_deg, steps_per_tooth);
 
         for p in tooth_poly {
             // Rotate p by center_angle
@@ -65,7 +69,12 @@ fn generate_gear_points(teeth: usize, module: f32, pressure_angle_deg: f32, step
     points
 }
 
-fn generate_single_tooth_polygon(teeth: usize, module: f32, pressure_angle_deg: f32, steps: usize) -> Vec<Vec2> {
+fn generate_single_tooth_polygon(
+    teeth: usize,
+    module: f32,
+    pressure_angle_deg: f32,
+    steps: usize,
+) -> Vec<Vec2> {
     let pitch_radius = (teeth as f32 * module) / 2.0;
     let base_radius = pitch_radius * (pressure_angle_deg.to_radians()).cos();
     let addendum = module;
@@ -151,8 +160,5 @@ fn generate_single_tooth_polygon(teeth: usize, module: f32, pressure_angle_deg: 
 fn rotate_vec2(v: Vec2, angle: f32) -> Vec2 {
     let cos = angle.cos();
     let sin = angle.sin();
-    Vec2::new(
-        v.x * cos - v.y * sin,
-        v.x * sin + v.y * cos,
-    )
+    Vec2::new(v.x * cos - v.y * sin, v.x * sin + v.y * cos)
 }

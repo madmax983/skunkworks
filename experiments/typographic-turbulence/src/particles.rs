@@ -1,5 +1,5 @@
-use macroquad::prelude::*;
 use crate::lbm::FluidSim;
+use macroquad::prelude::*;
 
 pub struct TextParticle {
     pub position: Vec2,

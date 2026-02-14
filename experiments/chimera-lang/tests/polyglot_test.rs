@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
+    use chimera_lang::ast::Nucleotide;
     use chimera_lang::compiler::compile;
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::ast::Nucleotide;
 
     #[test]
     fn test_polyglot_grammar() {

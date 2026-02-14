@@ -77,26 +77,26 @@ impl World {
         let mut forces = Vec::with_capacity(n);
 
         for (i, boid) in self.boids.iter().enumerate() {
-             // Quantum Weighting
-             // If Prob(|1>) is high, prefer Separation (Scatter)
-             // If Prob(|0>) is high, prefer Cohesion (Gather)
-             let p_one = boid.qubit.prob_one();
-             let align_w = 1.0;
-             let coh_w = 1.0 + (1.0 - p_one);
-             let sep_w = 1.0 + p_one * 2.0;
+            // Quantum Weighting
+            // If Prob(|1>) is high, prefer Separation (Scatter)
+            // If Prob(|0>) is high, prefer Cohesion (Gather)
+            let p_one = boid.qubit.prob_one();
+            let align_w = 1.0;
+            let coh_w = 1.0 + (1.0 - p_one);
+            let sep_w = 1.0 + p_one * 2.0;
 
-             let params = FlockingParams {
-                 view_radius: PERCEPTION_RADIUS,
-                 separation_radius: PERCEPTION_RADIUS / 2.0,
-                 max_speed: boid.current_max_speed,
-                 max_force: 0.05,
-                 separation_weight: sep_w,
-                 alignment_weight: align_w,
-                 cohesion_weight: coh_w,
-             };
+            let params = FlockingParams {
+                view_radius: PERCEPTION_RADIUS,
+                separation_radius: PERCEPTION_RADIUS / 2.0,
+                max_speed: boid.current_max_speed,
+                max_force: 0.05,
+                separation_weight: sep_w,
+                alignment_weight: align_w,
+                cohesion_weight: coh_w,
+            };
 
-             let force = compute_force(&physics_states, i, &params);
-             forces.push(force);
+            let force = compute_force(&physics_states, i, &params);
+            forces.push(force);
         }
 
         for (i, boid) in self.boids.iter_mut().enumerate() {

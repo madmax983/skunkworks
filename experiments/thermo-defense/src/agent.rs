@@ -1,5 +1,5 @@
+use crate::grid::{Grid, HEIGHT, Material, WIDTH};
 use glam::Vec2;
-use crate::grid::{Grid, Material, WIDTH, HEIGHT};
 use rand::Rng;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -73,7 +73,14 @@ impl Agent {
         action
     }
 
-    fn update_termite(&mut self, grid: &Grid, rng: &mut impl Rng, idx: usize, x: usize, y: usize) -> Option<GridAction> {
+    fn update_termite(
+        &mut self,
+        grid: &Grid,
+        rng: &mut impl Rng,
+        idx: usize,
+        x: usize,
+        y: usize,
+    ) -> Option<GridAction> {
         // 1. Gather Info (Immutable)
         let (heat, defense, material) = {
             let c = &grid.cells[idx];
@@ -83,7 +90,9 @@ impl Agent {
         let mut neighbors = 0;
         for dy in -1..=1 {
             for dx in -1..=1 {
-                if dx == 0 && dy == 0 { continue; }
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
                 let nx = x as isize + dx;
                 let ny = y as isize + dy;
                 if nx >= 0 && nx < WIDTH as isize && ny >= 0 && ny < HEIGHT as isize {
@@ -113,7 +122,6 @@ impl Agent {
                 new_material = Some(Material::Wall);
                 self.carrying = false;
             }
-
         } else {
             if material == Material::Wall {
                 let should_pickup = if heat > 80.0 {
@@ -140,7 +148,14 @@ impl Agent {
         })
     }
 
-    fn update_locust(&mut self, grid: &Grid, rng: &mut impl Rng, idx: usize, x: usize, y: usize) -> Option<GridAction> {
+    fn update_locust(
+        &mut self,
+        grid: &Grid,
+        rng: &mut impl Rng,
+        idx: usize,
+        x: usize,
+        y: usize,
+    ) -> Option<GridAction> {
         let (current_heat, material) = {
             let c = &grid.cells[idx];
             (c.heat, c.material)
@@ -151,7 +166,9 @@ impl Agent {
 
         for dy in -1..=1 {
             for dx in -1..=1 {
-                if dx == 0 && dy == 0 { continue; }
+                if dx == 0 && dy == 0 {
+                    continue;
+                }
                 let nx = x as isize + dx;
                 let ny = y as isize + dy;
                 if nx >= 0 && nx < WIDTH as isize && ny >= 0 && ny < HEIGHT as isize {
@@ -206,7 +223,11 @@ mod tests {
 
         // Run multiple times to overcome probability
         for _ in 0..100 {
-            if let Some(GridAction::UpdateCell { new_material: Some(m), .. }) = agent.update(&grid, &mut rng) {
+            if let Some(GridAction::UpdateCell {
+                new_material: Some(m),
+                ..
+            }) = agent.update(&grid, &mut rng)
+            {
                 if m == Material::Empty {
                     // Applied!
                     grid.cells[idx].material = m;
@@ -220,6 +241,10 @@ mod tests {
         }
 
         assert!(agent.carrying, "Agent should have picked up the wall");
-        assert_eq!(grid.cells[idx].material, Material::Empty, "Wall should be gone");
+        assert_eq!(
+            grid.cells[idx].material,
+            Material::Empty,
+            "Wall should be gone"
+        );
     }
 }

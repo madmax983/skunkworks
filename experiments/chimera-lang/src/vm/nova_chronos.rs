@@ -423,8 +423,7 @@ pub fn exec_divergence(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
                     // Success! Collapse wavefunction to this timeline.
                     // Preserve original output log + divergence success msg
                     let mut original_output = vm.output.clone();
-                    original_output
-                        .push(format!("DIVERGENCE: Timeline #{} Shifted! Success.", i));
+                    original_output.push(format!("DIVERGENCE: Timeline #{} Shifted! Success.", i));
 
                     *vm = sim_vm;
                     vm.output = original_output;
