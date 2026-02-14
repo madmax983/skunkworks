@@ -415,3 +415,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The towers are thinking. Sensors are writing to the grid. DNA is driving the ballistics.
 - **Note:** Hybrid of `chaotic-defense` and `chimera-lang`.
+
+### [Concentration Level: FRESH] - Location: experiments/turing-terra
+- **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
+- **Status:** The mountains are breathing. Gray-Scott patterns are carving the canyons. The substrate is reacting to the user's touch.
+- **Note:** Moonshot: Reaction-Diffusion + Terrain Generation.
