@@ -314,6 +314,37 @@ pub fn exec_babel_op(
                     .push("Error: Stack underflow for ParserOpt".to_string());
             }
         }
+        OpCode::GridGrammar => {
+            if vm.stack.len() >= 2 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                if let (Value::Int(y), Value::Int(x)) = (y_val, x_val) {
+                    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+                        let grammar = read_grammar_from_grid(vm, ny, nx);
+                        vm.stack.push(grammar);
+                        vm.output
+                            .push(format!("GRID_GRAMMAR: Read from {},{}", nx, ny));
+                    }
+                } else {
+                    vm.output
+                        .push("Error: GridGrammar coords must be Int".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for GridGrammar".to_string());
+            }
+        }
+        OpCode::Glossolalia => {
+            // Stack: [ ..., amount ] -> [ ... ]
+            let amount = if let Some(Value::Int(n)) = vm.stack.pop() {
+                n.max(1) as usize
+            } else {
+                5
+            };
+            let (y, x) = vm.context_loc;
+            generate_random_grid_grammar(vm, y, x, amount);
+            vm.output.push("GLOSSOLALIA: The grid speaks!".to_string());
+        }
         _ => {}
     }
     None
@@ -707,6 +738,330 @@ fn compile_cst_recursive(val: &Value, genes: &mut Vec<Gene>, handler_idx: usize)
                 op: OpCode::Call,
                 args: vec![Nucleotide::Number(handler_idx as i64)],
             });
+        }
+    }
+}
+
+pub fn read_grammar_from_grid(vm: &ChimeraVM, y: usize, x: usize) -> Value {
+    let mut scanner = GridScanner {
+        vm,
+        visited: std::collections::HashSet::new(),
+    };
+    scanner.scan(y, x).unwrap_or(Value::Junction(
+        JunctionType::Any,
+        vec![Value::Str("Match".to_string()), Value::Str("".to_string())],
+    ))
+}
+
+struct GridScanner<'a> {
+    vm: &'a ChimeraVM,
+    visited: std::collections::HashSet<(usize, usize)>,
+}
+
+impl<'a> GridScanner<'a> {
+    fn scan(&mut self, y: usize, x: usize) -> Option<Value> {
+        if self.visited.contains(&(y, x)) {
+            return None;
+        }
+        self.visited.insert((y, x));
+
+        // Use peek to safely check boundaries
+        if let Some(val) = self.peek(y, x) {
+            match val {
+                Value::Str(s) => {
+                    let c = s.chars().next().unwrap_or('\0');
+                    match c {
+                        '"' => self.scan_string(y, x),
+                        '[' => self.scan_regex(y, x),
+                        '?' => self.scan_modifier(y, x, "Opt"),
+                        '*' => self.scan_modifier(y, x, "Many"),
+                        '+' => self.scan_modifier(y, x, "OneOrMore"),
+                        '|' | '-' | '.' | '>' | 'v' => self.scan_connector(y, x),
+                        _ => None,
+                    }
+                }
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+
+    fn peek(&self, y: usize, x: usize) -> Option<&Value> {
+        if y < crate::vm::GRID_SIZE && x < crate::vm::GRID_SIZE {
+            Some(&self.vm.grid[y][x])
+        } else {
+            None
+        }
+    }
+
+    fn scan_string(&mut self, y: usize, x: usize) -> Option<Value> {
+        // Read until closing quote
+        let mut content = String::new();
+        let mut curr_x = x + 1;
+
+        loop {
+            if let Some(val) = self.peek(y, curr_x) {
+                match val {
+                    Value::Str(s) => {
+                        if s == "\"" {
+                            break;
+                        }
+                        content.push_str(s);
+                        self.visited.insert((y, curr_x)); // Mark string content as visited
+                        curr_x += 1;
+                    }
+                    _ => break, // Unexpected end
+                }
+            } else {
+                break;
+            }
+            if curr_x >= crate::vm::GRID_SIZE {
+                break;
+            }
+        }
+        self.visited.insert((y, curr_x)); // Mark closing quote
+
+        let node = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Match".to_string()), Value::Str(content)],
+        );
+
+        // Continue scanning neighbors of the closing quote
+        self.attach_neighbors(y, curr_x, node)
+    }
+
+    fn scan_regex(&mut self, y: usize, x: usize) -> Option<Value> {
+        // Read until closing bracket
+        let mut content = String::new();
+        let mut curr_x = x + 1;
+
+        loop {
+            if let Some(val) = self.peek(y, curr_x) {
+                match val {
+                    Value::Str(s) => {
+                        if s == "]" {
+                            break;
+                        }
+                        content.push_str(s);
+                        self.visited.insert((y, curr_x));
+                        curr_x += 1;
+                    }
+                    _ => break,
+                }
+            } else {
+                break;
+            }
+            if curr_x >= crate::vm::GRID_SIZE {
+                break;
+            }
+        }
+        self.visited.insert((y, curr_x));
+
+        let node = Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str("Regex".to_string()), Value::Str(content)],
+        );
+
+        self.attach_neighbors(y, curr_x, node)
+    }
+
+    fn scan_modifier(&mut self, y: usize, x: usize, type_str: &str) -> Option<Value> {
+        // Modifiers connect to ONE child usually? Or behave like connectors?
+        // Let's say * connects to the thing it modifies.
+        // E.g.  A - * - B  (Many(A)? No, usually * follows A)
+        // Or  * - A  (Many A)
+        // Let's assume PREFIX notation for visual simplicity in tracing?
+        // * -> A  means Many(A).
+
+        let children = self.find_children(y, x);
+        if children.is_empty() {
+            return None;
+        }
+
+        // Wrap first child (or all in Alt?)
+        // Let's wrap the sequence of children.
+        // If multiple children, it's Many(Alt(Children)).
+
+        let child_node = if children.len() == 1 {
+            children[0].clone()
+        } else {
+            let mut args = vec![Value::Str("Alt".to_string())];
+            args.extend(children);
+            Value::Junction(JunctionType::Any, args)
+        };
+
+        Some(Value::Junction(
+            JunctionType::Any,
+            vec![Value::Str(type_str.to_string()), child_node],
+        ))
+    }
+
+    fn scan_connector(&mut self, y: usize, x: usize) -> Option<Value> {
+        let children = self.find_children(y, x);
+
+        if children.is_empty() {
+            None
+        } else if children.len() == 1 {
+            Some(children[0].clone())
+        } else {
+            // Branching -> Alt
+            let mut args = vec![Value::Str("Alt".to_string())];
+            args.extend(children);
+            Some(Value::Junction(JunctionType::Any, args))
+        }
+    }
+
+    fn find_children(&mut self, y: usize, x: usize) -> Vec<Value> {
+        let neighbors = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+        let mut children = Vec::new();
+
+        for (dy, dx) in neighbors {
+            let ny = y as i64 + dy;
+            let nx = x as i64 + dx;
+
+            if let Some((valid_y, valid_x)) = self.vm.normalize_coords(ny, nx) {
+                // To avoid infinite back-and-forth on a line A-B, checked visited.
+                // But scan() checks visited.
+                if let Some(child) = self.scan(valid_y, valid_x) {
+                    children.push(child);
+                }
+            }
+        }
+        children
+    }
+
+    fn attach_neighbors(&mut self, y: usize, x: usize, node: Value) -> Option<Value> {
+        // Find what comes AFTER this node.
+        let next_nodes = self.find_children(y, x);
+
+        if next_nodes.is_empty() {
+            Some(node)
+        } else {
+            // Sequence: Node -> Next
+            // If Next is Alt, then Node -> Alt(...)
+            let next_val = if next_nodes.len() == 1 {
+                next_nodes[0].clone()
+            } else {
+                let mut args = vec![Value::Str("Alt".to_string())];
+                args.extend(next_nodes);
+                Value::Junction(JunctionType::Any, args)
+            };
+
+            Some(Value::Junction(
+                JunctionType::Any,
+                vec![Value::Str("Seq".to_string()), node, next_val],
+            ))
+        }
+    }
+}
+
+pub fn generate_random_grid_grammar(vm: &mut ChimeraVM, y: usize, x: usize, amount: usize) {
+    let mut rng = rand::thread_rng();
+    grow_grammar(vm, y as i64, x as i64, amount, &mut rng);
+}
+
+fn grow_grammar(
+    vm: &mut ChimeraVM,
+    y: i64,
+    x: i64,
+    energy: usize,
+    rng: &mut impl rand::Rng,
+) {
+    if energy == 0 {
+        return;
+    }
+
+    if let Some((ny, nx)) = vm.normalize_coords(y, x) {
+        if vm.grid[ny][nx] != Value::Int(0) {
+            return;
+        }
+
+        let choice = rng.gen_range(0..10);
+        match choice {
+            0..=3 => {
+                // String
+                let len = rng.gen_range(2..5);
+                let s: String = (0..len)
+                    .map(|_| rng.gen_range(b'a'..=b'z') as char)
+                    .collect();
+
+                // Write "s"
+                if let Some((qy, qx)) = vm.normalize_coords(y, x) {
+                    vm.grid[qy][qx] = Value::Str("\"".to_string());
+                }
+                for (i, c) in s.chars().enumerate() {
+                    if let Some((cy, cx)) = vm.normalize_coords(y, x + 1 + i as i64) {
+                        vm.grid[cy][cx] = Value::Str(c.to_string());
+                    }
+                }
+                if let Some((eqy, eqx)) = vm.normalize_coords(y, x + 1 + len as i64) {
+                    vm.grid[eqy][eqx] = Value::Str("\"".to_string());
+                }
+
+                // Connector
+                if let Some((cy, cx)) = vm.normalize_coords(y, x + 2 + len as i64) {
+                    vm.grid[cy][cx] = Value::Str("-".to_string());
+                    grow_grammar(vm, y, x + 3 + len as i64, energy - 1, rng);
+                }
+            }
+            4..=5 => {
+                // Regex
+                let patterns = ["[0-9]", "[a-z]", "\\w+"];
+                let p = patterns[rng.gen_range(0..patterns.len())];
+
+                // Write [p]
+                if let Some((by, bx)) = vm.normalize_coords(y, x) {
+                    vm.grid[by][bx] = Value::Str("[".to_string());
+                }
+                for (i, c) in p.chars().enumerate() {
+                    if let Some((cy, cx)) = vm.normalize_coords(y, x + 1 + i as i64) {
+                        vm.grid[cy][cx] = Value::Str(c.to_string());
+                    }
+                }
+                if let Some((eby, ebx)) = vm.normalize_coords(y, x + 1 + p.len() as i64) {
+                    vm.grid[eby][ebx] = Value::Str("]".to_string());
+                }
+
+                if let Some((cy, cx)) = vm.normalize_coords(y, x + 2 + p.len() as i64) {
+                    vm.grid[cy][cx] = Value::Str("-".to_string());
+                    grow_grammar(vm, y, x + 3 + p.len() as i64, energy - 1, rng);
+                }
+            }
+            6..=7 => {
+                // Modifier
+                let mods = ["*", "?", "+"];
+                let m = mods[rng.gen_range(0..mods.len())];
+                vm.grid[ny][nx] = Value::Str(m.to_string());
+                // Grow next
+                if let Some((cy, cx)) = vm.normalize_coords(y, x + 1) {
+                    vm.grid[cy][cx] = Value::Str("-".to_string());
+                    grow_grammar(vm, y, x + 2, energy, rng); // Energy doesn't decrease for mod?
+                }
+            }
+            8..=9 => {
+                // Branch (.)
+                vm.grid[ny][nx] = Value::Str(".".to_string());
+
+                // Grow Up
+                if let Some((uy, ux)) = vm.normalize_coords(y - 1, x) {
+                    vm.grid[uy][ux] = Value::Str("|".to_string());
+                    grow_grammar(vm, y - 2, x, energy / 2, rng);
+                }
+
+                // Grow Down
+                if let Some((dy, dx)) = vm.normalize_coords(y + 1, x) {
+                    vm.grid[dy][dx] = Value::Str("|".to_string());
+                    grow_grammar(vm, y + 2, x, energy / 2, rng);
+                }
+
+                // Grow Right
+                if let Some((ry, rx)) = vm.normalize_coords(y, x + 1) {
+                    vm.grid[ry][rx] = Value::Str("-".to_string());
+                    grow_grammar(vm, y, x + 2, energy / 2, rng);
+                }
+            }
+            _ => {}
         }
     }
 }

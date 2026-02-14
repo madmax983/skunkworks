@@ -2858,7 +2858,8 @@ impl ChimeraVM {
             | OpCode::Tongue
             | OpCode::Generate
             | OpCode::Scribe
-            | OpCode::BabelCompile => {
+            | OpCode::BabelCompile
+            | OpCode::GridGrammar => {
                 babel::exec_babel_op(self, op, args);
                 None
             }
@@ -4901,6 +4902,8 @@ mod tests {
 }
 #[cfg(test)]
 mod babel_test;
+#[cfg(test)]
+mod babel_grid_test;
 mod nova_sequencer_test;
 
 #[cfg(test)]
