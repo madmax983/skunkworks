@@ -19,3 +19,7 @@
 ## 2025-02-18 - Bio-Transit Grid Undefined Behavior
 **Threat:** `TrailMap::diffuse_and_decay` used `unsafe { *self.grid.get_unchecked(...) }` inside a parallel loop. Since `TrailMap` fields are public, a user could truncate `grid` independently of `width` and `height`, causing the unchecked access to read out of bounds (UB).
 **Defense:** Replaced the `unsafe` block with standard safe indexing. This turns the potential UB into a safe panic if invariants are violated.
+
+## 2025-05-27 - Unbounded IPC File Read (DoS)
+**Threat:** `vm::ipc::receive` used `fs::read_to_string` on user-controlled files in the Ether directory without a size limit. An attacker could create a massive file (e.g., 10GB) causing OOM/DoS when the VM attempts to read it.
+**Defense:** Replaced `fs::read_to_string` with `File::open(...).take(1024 * 1024).read_to_string(...)`. This caps the read at 1MB. Files exceeding this limit (or truncated JSON) are deleted and an error is logged.

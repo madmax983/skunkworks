@@ -3,7 +3,9 @@ use crate::vm::{ChimeraVM, Value};
 #[cfg(feature = "nova")]
 use rand::Rng;
 #[cfg(feature = "nova")]
-use std::fs;
+use std::fs::{self, File};
+#[cfg(feature = "nova")]
+use std::io::Read;
 #[cfg(feature = "nova")]
 use std::path::Path;
 #[cfg(feature = "nova")]
@@ -85,24 +87,38 @@ pub fn receive(vm: &mut ChimeraVM) {
 
                             let lock_path = path.with_extension("json.lock");
                             if fs::rename(&path, &lock_path).is_ok() {
-                                if let Ok(content) = fs::read_to_string(&lock_path) {
-                                    if let Ok(value) = serde_json::from_str::<Value>(&content) {
-                                        vm.stack.push(value);
-                                        // Consume message
-                                        let _ = fs::remove_file(lock_path);
-                                        vm.output.push(format!(
-                                            "RECEIVE: Read from channel {}",
-                                            channel
-                                        ));
-                                        vm.energy = vm.energy.saturating_sub(5);
-                                        found = true;
-                                        break;
+                                // 🔒 WARDEN: Use capped reader to prevent DoS (Max 1MB)
+                                if let Ok(file) = File::open(&lock_path) {
+                                    let mut content = String::new();
+                                    // Limit read to 1MB. Truncated content will fail parsing safely.
+                                    if file.take(1024 * 1024).read_to_string(&mut content).is_ok() {
+                                        if let Ok(value) = serde_json::from_str::<Value>(&content) {
+                                            vm.stack.push(value);
+                                            // Consume message
+                                            let _ = fs::remove_file(lock_path);
+                                            vm.output.push(format!(
+                                                "RECEIVE: Read from channel {}",
+                                                channel
+                                            ));
+                                            vm.energy = vm.energy.saturating_sub(5);
+                                            found = true;
+                                            break;
+                                        } else {
+                                            // Corrupt or truncated, delete it
+                                            let _ = fs::remove_file(lock_path);
+                                            if content.len() >= 1024 * 1024 {
+                                                vm.output.push(format!(
+                                                    "Error: Message too large (>1MB) in channel {}",
+                                                    channel
+                                                ));
+                                            }
+                                        }
                                     } else {
-                                        // Corrupt but locked, delete it
+                                        // Read error
                                         let _ = fs::remove_file(lock_path);
                                     }
                                 } else {
-                                    // Locked but unreadable?
+                                    // Open failed
                                     let _ = fs::remove_file(lock_path);
                                 }
                             }
