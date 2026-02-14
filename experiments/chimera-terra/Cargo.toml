@@ -1,0 +1,10 @@
+[package]
+name = "chimera-terra"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4.14"
+rayon = "1.11.0"
+rand = "0.8.5"
+chimera-lang = { path = "../chimera-lang" }
