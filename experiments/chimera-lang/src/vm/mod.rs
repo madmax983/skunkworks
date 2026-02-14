@@ -250,6 +250,11 @@ pub mod nova_sigil;
 #[cfg(test)]
 mod nova_sigil_integration_test;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_runes_test;
+#[cfg(feature = "nova")]
+pub mod nova_runes;
+#[cfg(feature = "nova")]
 pub mod nova_signals;
 #[cfg(feature = "nova")]
 #[cfg(test)]
@@ -563,6 +568,8 @@ pub struct ChimeraVM {
     #[cfg(feature = "nova")]
     pub sigil_registry: HashMap<String, nova_sigil::Sigil>,
     #[cfg(feature = "nova")]
+    pub rune_links: HashMap<char, char>,
+    #[cfg(feature = "nova")]
     pub biome_grid: Vec<Vec<nova_biome::Biome>>,
     #[cfg(feature = "nova")]
     pub retina: retina::Retina,
@@ -869,6 +876,8 @@ impl ChimeraVM {
             dictionary: HashMap::new(),
             #[cfg(feature = "nova")]
             sigil_registry: HashMap::new(),
+            #[cfg(feature = "nova")]
+            rune_links: HashMap::new(),
             #[cfg(feature = "nova")]
             biome_grid,
             #[cfg(feature = "nova")]
@@ -3253,6 +3262,17 @@ impl ChimeraVM {
                 nova_geology::exec_geology_op(self, op, args);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::RuneInscribe => nova_runes::exec_rune_inscribe(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::RuneInvoke => nova_runes::exec_rune_invoke(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::RuneLink => nova_runes::exec_rune_link(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::RuneRead => nova_runes::exec_rune_read(self, op, args),
+            #[cfg(feature = "nova")]
+            OpCode::RuneSense => nova_runes::exec_rune_sense(self, op, args),
 
             #[cfg(feature = "nova")]
             OpCode::LeySense | OpCode::LeyTap | OpCode::LeyWarp | OpCode::LeyShift => {

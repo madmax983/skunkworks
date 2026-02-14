@@ -1876,6 +1876,33 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Volcano,
 
+    // Rune Features (Nova)
+    /// **[Nova]** Inscribes a Rune on the grid.
+    ///
+    /// **Stack:** `[ ..., rune_char_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    RuneInscribe,
+    /// **[Nova]** Invokes a Rune, activating its effect globally.
+    ///
+    /// **Stack:** `[ ..., rune_char_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    RuneInvoke,
+    /// **[Nova]** Links two Runes, causing one to trigger the other.
+    ///
+    /// **Stack:** `[ ..., rune_a_str, rune_b_str ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    RuneLink,
+    /// **[Nova]** Reads the Rune at a specific location.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., rune_char_str ]`
+    #[cfg(feature = "nova")]
+    RuneRead,
+    /// **[Nova]** Senses the nearest Rune.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., dy, dx, rune_char_str ]`
+    #[cfg(feature = "nova")]
+    RuneSense,
+
     // Geomancy Features (Nova)
     /// **[Nova]** Detects the nearest Ley Node.
     ///
