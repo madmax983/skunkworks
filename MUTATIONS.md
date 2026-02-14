@@ -861,3 +861,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The Observer Effect. Focusing on a node alters its physical stability.
 - **Status**: experiments/gaze-attractor
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon. Verified.
+
+### market-fold
+- **Parents**: experiments/rigid-origami + experiments/heap-market
+- **Concept**: A Miura-ori mesh whose expansion/folding is driven by market liquidity.
+- **Novel trait**: Financial Folding. The geometry of the world is determined by the economy. A crash is a physical collapse.
+- **Status**: experiments/market-fold
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

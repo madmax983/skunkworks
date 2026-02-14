@@ -304,3 +304,8 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** Reaction-diffusion driven by synthetic rhythms. Gray-Scott patterns are dancing to the beat.
 - **Note:** Audio-reactive simulation using Ping-Pong shaders.
+
+### [Concentration Level: FRESH] - Location: experiments/market-fold
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The market is crumpling. Liquidity determines the expansion of the Miura-ori surface. Bids and Asks are coloring the folds.
+- **Note:** Hybrid of `rigid-origami` and `heap-market`.
