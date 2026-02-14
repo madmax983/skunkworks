@@ -170,6 +170,25 @@ pub fn process_signals(vm: &mut ChimeraVM) {
     // 0. Process Phages
     process_phages(vm, &mut ctx);
 
+    // 0.5. Process Neuro-Chemicals
+    #[cfg(feature = "biophysics")]
+    for ((y, x), neuron) in &vm.neurons {
+        for c in 0..3 {
+            let level = vm.hormone_grid[*y][*x][c] as f32;
+            let (sensitivity, threshold) = neuron.receptors[c];
+            if level > threshold {
+                let amount = level * sensitivity;
+                if amount > 0.0 {
+                    ctx.neuron_stimuli.push(NeuronStimulus {
+                        y: *y,
+                        x: *x,
+                        amount,
+                    });
+                }
+            }
+        }
+    }
+
     // 1. Scan Phase
     for y in 0..size {
         for x in 0..size {

@@ -218,6 +218,11 @@ pub enum OpCode {
     /// **Stack:** `[ ..., y_target, x_target, y_source, x_source ] -> [ ... ]`
     #[cfg(feature = "biophysics")]
     Axon,
+    /// **[Biophysics]** Adds a chemical receptor to a neuron.
+    ///
+    /// **Stack:** `[ ..., channel, sensitivity, threshold, y, x ] -> [ ... ]`
+    #[cfg(feature = "biophysics")]
+    Receptor,
 
     // Silicon Features
     /// **[Silicon]** Runs one step of Wireworld on the grid.

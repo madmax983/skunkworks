@@ -266,6 +266,9 @@ pub mod nova_void;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_void_test;
+#[cfg(all(feature = "nova", feature = "biophysics"))]
+#[cfg(test)]
+mod neurochem_test;
 #[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
@@ -3173,7 +3176,7 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "biophysics")]
-            OpCode::NeuroGenesis | OpCode::Stimulate | OpCode::Dendrite | OpCode::Axon => {
+            OpCode::NeuroGenesis | OpCode::Stimulate | OpCode::Dendrite | OpCode::Axon | OpCode::Receptor => {
                 neuron::exec_biophysics_op(self, op, args);
                 None
             }

@@ -23,6 +23,7 @@ pub struct Neuron {
 
     pub i_inj: f32,
     pub last_spike: u64,
+    pub receptors: [(f32, f32); 3], // (sensitivity, threshold) for 3 hormone channels
 }
 
 impl Neuron {
@@ -41,6 +42,7 @@ impl Neuron {
             e_l: -54.387,
             i_inj: 0.0,
             last_spike: 0,
+            receptors: [(0.0, 0.0); 3],
         }
     }
 
@@ -211,6 +213,50 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
             } else {
                 vm.output
                     .push("Error: Stack underflow for axon".to_string());
+            }
+        }
+        OpCode::Receptor => {
+            // Stack: [ ..., channel, sensitivity, threshold, y, x ]
+            if vm.stack.len() >= 5 {
+                let x_val = vm.stack.pop().unwrap();
+                let y_val = vm.stack.pop().unwrap();
+                let t_val = vm.stack.pop().unwrap();
+                let s_val = vm.stack.pop().unwrap();
+                let c_val = vm.stack.pop().unwrap();
+
+                if let (
+                    Value::Int(x),
+                    Value::Int(y),
+                    Value::Int(thresh),
+                    Value::Int(sens),
+                    Value::Int(chan),
+                ) = (x_val, y_val, t_val, s_val, c_val)
+                {
+                    if vm.is_valid_coord(y, x) {
+                        let coord = (y as usize, x as usize);
+                        if let Some(neuron) = vm.neurons.get_mut(&coord) {
+                            let channel_idx = (chan.abs() as usize) % 3;
+                            // Sensitivity is scaled by 10.0 (e.g., 10 = 1.0)
+                            let sensitivity = sens as f32 / 10.0;
+                            let threshold = thresh as f32;
+                            neuron.receptors[channel_idx] = (sensitivity, threshold);
+                            vm.output.push(format!(
+                                "RECEPTOR: Added channel {} (sens={:.1}, thresh={:.1}) at {},{}",
+                                channel_idx, sensitivity, threshold, x, y
+                            ));
+                        } else {
+                            vm.output
+                                .push(format!("RECEPTOR: No neuron at {},{}", x, y));
+                        }
+                    } else {
+                        vm.output.push("Error: Invalid coordinate for receptor".to_string());
+                    }
+                } else {
+                    vm.output.push("Error: Type mismatch for receptor".to_string());
+                }
+            } else {
+                vm.output
+                    .push("Error: Stack underflow for receptor".to_string());
             }
         }
         _ => {}
