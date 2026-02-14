@@ -113,7 +113,7 @@ fn main() -> Result<()> {
         }
 
         // Draw TUI
-        tui.draw(&monitor, &generators, current_step)?;
+        tui.draw(&monitor, &generators, current_step, bpm)?;
 
         // Sleep briefly to yield (aim for 60 FPS update rate for TUI, logic runs faster if needed)
         // Actually, we just spin/sleep lightly.
