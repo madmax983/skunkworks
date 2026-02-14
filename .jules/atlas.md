@@ -65,3 +65,9 @@
 **Blueprint:** Created `crates/git-associates`, a shared crate using `git2` to handle history, diffs, and graph crawling. Refactored all 4 experiments to use it.
 **Stability:** Centralized git logic, standardized types (`Commit`, `FileChange`), and reduced code duplication.
 **Verification:** Verified with `cargo check` for all affected crates. Disabled `audio` feature by default in `git-harmony` and `git-landscape` to fix build issues with `alsa-sys`.
+
+## [Flocking Logic Extraction]
+**Tangle:** The Copy-Paste - `experiments/luminous-flock`, `quantum-boids`, `tectonic-flock`, and `sono-boids` all implemented Boid flocking physics (Reynolds: Separation, Alignment, Cohesion) with slight variations and code duplication.
+**Blueprint:** Created `crates/flocking` to centralize `PhysicsState` and `compute_force` (Reynolds logic). Refactored all 4 experiments to use it.
+**Stability:** Single source of truth for flocking behavior. Flexible `FlockingParams` allows customization per experiment.
+**Verification:** Verified with `cargo check` and `cargo test` for the new crate and all 4 experiments.

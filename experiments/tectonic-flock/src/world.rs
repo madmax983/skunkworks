@@ -2,6 +2,7 @@ use crate::boid::Boid;
 use crate::fissure::Fissure;
 use crate::git::{CommitData, GitScanner};
 use crate::strata::Strata;
+use flocking::{compute_force, FlockingParams, PhysicsState};
 use locus::Vec2;
 use rand::Rng;
 
@@ -119,47 +120,34 @@ impl World {
 
         // Update Boids
         let count = self.boids.len();
+        let physics_states: Vec<PhysicsState> = self.boids.iter().map(|b| b.physics).collect();
         let mut forces = Vec::with_capacity(count);
 
         // Calculate forces
-        for i in 0..count {
-            let b1 = &self.boids[i];
-            let p1 = b1.position;
-            let v1 = b1.velocity;
-            let dna = &b1.dna;
+        for (i, boid) in self.boids.iter().enumerate() {
+            let p1 = boid.position();
+            let v1 = boid.physics.velocity;
+            let dna = &boid.dna;
 
-            let mut separation = Vec2::zero();
-            let mut alignment = Vec2::zero();
-            let mut cohesion = Vec2::zero();
             let mut fissure_attract = Vec2::zero();
 
-            let mut sep_count = 0;
-            let mut ali_count = 0;
-            let mut coh_count = 0;
+            // Flocking (using crate)
+            let params = FlockingParams {
+                view_radius: dna.view_radius,
+                separation_radius: dna.view_radius / 2.0,
+                max_speed: dna.max_speed,
+                max_force: dna.max_force,
+                separation_weight: dna.separation_weight,
+                alignment_weight: dna.alignment_weight,
+                cohesion_weight: dna.cohesion_weight,
+            };
 
-            // Flocking
-            for j in 0..count {
-                if i == j {
-                    continue;
-                }
-                let b2 = &self.boids[j];
-                let dist_sq = p1.distance_squared(b2.position);
-
-                if dist_sq < dna.view_radius.powi(2) {
-                    // Sep
-                    if dist_sq < (dna.view_radius / 2.0).powi(2) {
-                        let diff = p1 - b2.position;
-                        separation += diff / dist_sq;
-                        sep_count += 1;
-                    }
-                    // Ali
-                    alignment += b2.velocity;
-                    ali_count += 1;
-                    // Coh
-                    cohesion += b2.position;
-                    coh_count += 1;
-                }
-            }
+            let flocking_force = compute_force(
+                &physics_states[i],
+                &physics_states,
+                i,
+                &params
+            );
 
             // Fissure Attraction
             // Find nearest ACTIVE fissure within view
@@ -167,24 +155,13 @@ impl World {
             let mut closest_fissure_pt = Vec2::zero();
             let mut found_fissure = false;
 
-            // Adjust fissure Y by scroll_y for distance calculation
-            // Fissure logical Y is static, but screen Y is logical - scroll_y.
-            // Wait, boids are in screen coordinates? Or logical?
-            // If boids wrap around screen (0..width, 0..height), they are in screen coordinates.
-            // But Strata/Fissures are in logical coordinates (0..infinity).
-            // We need to map fissure points to screen space to see if boid sees them.
-
             for fissure in &self.fissures {
-                // Check if fissure is visible on screen
-                // Fissure points Y range.
-                // Actually let's just check each point.
                 for pt in &fissure.points {
                     let screen_y = pt.y - self.scroll_y;
                     if screen_y >= 0.0 && screen_y <= self.height {
                         let screen_pt = Vec2::new(pt.x, screen_y);
                         let d_sq = p1.distance_squared(screen_pt);
                         if d_sq < (dna.view_radius * 3.0).powi(2) {
-                            // Can see fissures further away
                             if d_sq < closest_fissure_dist {
                                 closest_fissure_dist = d_sq;
                                 closest_fissure_pt = screen_pt;
@@ -204,35 +181,7 @@ impl World {
             }
 
             // Combine Forces
-            let mut total = Vec2::zero();
-
-            if sep_count > 0 {
-                if separation.magnitude_squared() > 0.0 {
-                    separation = separation.normalize() * dna.max_speed - v1;
-                    separation = separation.limit(dna.max_force);
-                    total += separation * dna.separation_weight;
-                }
-            }
-            if ali_count > 0 {
-                alignment /= ali_count as f64;
-                if alignment.magnitude_squared() > 0.0 {
-                    alignment = alignment.normalize() * dna.max_speed - v1;
-                    alignment = alignment.limit(dna.max_force);
-                    total += alignment * dna.alignment_weight;
-                }
-            }
-            if coh_count > 0 {
-                cohesion /= coh_count as f64;
-                let mut desired = cohesion - p1;
-                if desired.magnitude_squared() > 0.0 {
-                    desired = desired.normalize() * dna.max_speed - v1;
-                    desired = desired.limit(dna.max_force);
-                    total += desired * dna.cohesion_weight;
-                }
-            }
-
-            total += fissure_attract;
-
+            let total = flocking_force + fissure_attract;
             forces.push(total);
         }
 
@@ -242,13 +191,7 @@ impl World {
             boid.update_physics(self.width, self.height);
             // Flash phase update (keep it simple, random drift for now, or copy sync logic if wanted)
             boid.phase += boid.dna.natural_freq;
-            if boid.phase >= 1.0 {
-                boid.phase -= 1.0;
-                boid.flash_timer = 5;
-            }
-            if boid.flash_timer > 0 {
-                boid.flash_timer -= 1;
-            }
+            boid.update_flash();
         }
     }
 }
