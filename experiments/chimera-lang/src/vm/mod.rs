@@ -116,6 +116,11 @@ pub mod nova_bestiary;
 #[cfg(test)]
 mod nova_bestiary_test;
 #[cfg(feature = "nova")]
+pub mod nova_biomesh;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_biomesh_test;
+#[cfg(feature = "nova")]
 pub mod nova_biome;
 #[cfg(feature = "nova")]
 pub mod nova_botany;
@@ -658,6 +663,8 @@ pub struct ChimeraVM {
     pub attractor: nova_attractor::AttractorState,
     #[cfg(feature = "nova")]
     pub void_rifts: Vec<nova_void::VoidRift>,
+    #[cfg(feature = "nova")]
+    pub biomesh: nova_biomesh::BioMeshState,
 }
 
 impl ChimeraVM {
@@ -963,6 +970,8 @@ impl ChimeraVM {
             attractor: nova_attractor::AttractorState::new(),
             #[cfg(feature = "nova")]
             void_rifts: Vec::new(),
+            #[cfg(feature = "nova")]
+            biomesh: nova_biomesh::BioMeshState::new(),
         }
     }
 
@@ -3277,6 +3286,11 @@ impl ChimeraVM {
 
             OpCode::Nop => None,
 
+            #[cfg(feature = "nova")]
+            OpCode::MeshNet | OpCode::MeshGrow | OpCode::MeshPrune | OpCode::MeshSend | OpCode::MeshRecv => {
+                crate::vm::nova::exec_nova_op(self, op, args);
+                None
+            }
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
         }
     }

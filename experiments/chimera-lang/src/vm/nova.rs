@@ -907,6 +907,11 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Superpose => exec_superpose(vm),
         OpCode::Collapse => exec_collapse(vm),
         OpCode::Observe => exec_observe(vm),
+        OpCode::MeshNet => super::nova_biomesh::exec_mesh_net(vm, args),
+        OpCode::MeshSend => super::nova_biomesh::exec_mesh_send(vm),
+        OpCode::MeshRecv => super::nova_biomesh::exec_mesh_recv(vm),
+        OpCode::MeshGrow => super::nova_biomesh::exec_mesh_grow(vm),
+        OpCode::MeshPrune => super::nova_biomesh::exec_mesh_prune(vm),
         _ => None,
     }
 }

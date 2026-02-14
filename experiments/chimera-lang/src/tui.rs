@@ -117,6 +117,8 @@ pub(crate) enum ViewMode {
     Attractor,
     #[cfg(feature = "nova")]
     Virology,
+    #[cfg(feature = "nova")]
+    BioMesh,
     Evolution,
 }
 
@@ -685,6 +687,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Virology = app_state.view_mode {
                 render_virology(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::BioMesh = app_state.view_mode {
+                render_biomesh(f, vm, app_state);
                 return;
             }
 
@@ -1381,6 +1389,11 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::BioMesh => {
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1635,7 +1648,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => ViewMode::Virology,
                             #[cfg(feature = "nova")]
-                            ViewMode::Virology => ViewMode::Evolution,
+                            ViewMode::Virology => ViewMode::BioMesh,
+                            #[cfg(feature = "nova")]
+                            ViewMode::BioMesh => ViewMode::Evolution,
                             ViewMode::Evolution => ViewMode::Genome,
                         };
                     }
@@ -1840,6 +1855,8 @@ where
                     KeyCode::Char('A') => app_state.view_mode = ViewMode::Attractor,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('N') => app_state.view_mode = ViewMode::BioMesh,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -2497,6 +2514,12 @@ where
                             }
                         }
                         ViewMode::Evolution => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::BioMesh => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2744,6 +2767,12 @@ where
                             }
                         }
                         ViewMode::Evolution => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::BioMesh => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2915,6 +2944,12 @@ where
                             }
                         }
                         ViewMode::Evolution => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::BioMesh => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3086,6 +3121,12 @@ where
                             }
                         }
                         ViewMode::Evolution => {}
+                        #[cfg(feature = "nova")]
+                        ViewMode::BioMesh => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
                         if let ViewMode::Evolution = app_state.view_mode {
@@ -3123,6 +3164,10 @@ where
                                 app_state.input_mode = InputMode::Normal;
                             }
                             ViewMode::Catalyst => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::BioMesh => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -4649,6 +4694,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
         #[cfg(feature = "nova")]
         ViewMode::Virology => "VIROLOGY LAB",
+        #[cfg(feature = "nova")]
+        ViewMode::BioMesh => "BIOMESH",
         ViewMode::Evolution => "EVOLUTION CHAMBER",
     };
 
@@ -5209,6 +5256,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
         views.push((ViewMode::Virology, "Virology", "v"));
+        views.push((ViewMode::BioMesh, "BioMesh", "N"));
         views.push((ViewMode::Evolution, "Evolution", "E"));
     }
     views
@@ -9014,4 +9062,86 @@ fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
             .block(Block::default().borders(Borders::ALL));
         f.render_widget(center, f.area());
     }
+}
+
+#[cfg(feature = "nova")]
+fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(60), Constraint::Percentage(40)].as_ref())
+        .split(f.area());
+
+    // Left: Grid with connections
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let mut style = Style::default();
+            let mut ch = "·".to_string();
+
+            if let Some(node) = vm.biomesh.nodes.get(&(y, x)) {
+                ch = format!("N{}", node.id % 10);
+                style = style.fg(Color::Cyan).add_modifier(Modifier::BOLD);
+
+                // If buffer has data, show differently
+                if !node.buffer.is_empty() {
+                    style = style.fg(Color::Yellow).add_modifier(Modifier::RAPID_BLINK);
+                }
+            } else {
+                style = style.fg(Color::DarkGray);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            line_spans.push(Span::styled(ch, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("BioMesh Topology"),
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Right: Info
+    let (cx, cy) = app_state.grid_cursor;
+    let mut info = Vec::new();
+    info.push(Line::from(format!("Cursor: {},{}", cx, cy)));
+
+    if let Some(node) = vm.biomesh.nodes.get(&(cy, cx)) {
+        info.push(Line::from(format!("Node ID: {}", node.id)));
+        info.push(Line::from(format!("Buffer Size: {}", node.buffer.len())));
+        info.push(Line::from("Connections:"));
+        for (ny, nx) in &node.connections {
+             info.push(Line::from(format!("  -> {},{}", nx, ny)));
+        }
+        if !node.buffer.is_empty() {
+            info.push(Line::from("Buffer Head:"));
+            if let Some(val) = node.buffer.front() {
+                 info.push(Line::from(format!("  {}", val)));
+            }
+        }
+    } else {
+        info.push(Line::from("No Node at this location."));
+    }
+
+    info.push(Line::from(" "));
+    info.push(Line::from("Opcodes:"));
+    info.push(Line::from("  MeshNet(id)"));
+    info.push(Line::from("  MeshGrow()"));
+    info.push(Line::from("  MeshPrune()"));
+    info.push(Line::from("  MeshSend(id, val)"));
+    info.push(Line::from("  MeshRecv()"));
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Node Inspector"),
+    );
+    f.render_widget(info_widget, chunks[1]);
 }

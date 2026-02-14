@@ -2312,6 +2312,33 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     Unravel,
 
+    // BioMesh Features (Fungal Cybernetics)
+    /// **[Nova]** Transforms the current cell into a Mesh Node.
+    ///
+    /// **Stack:** `[ ..., id ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    MeshNet,
+    /// **[Nova]** Sends a packet to a target Node ID.
+    ///
+    /// **Stack:** `[ ..., target_id, value ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    MeshSend,
+    /// **[Nova]** Receives a packet from the local Node buffer.
+    ///
+    /// **Stack:** `[ ... ] -> [ ..., value ]`
+    #[cfg(feature = "nova")]
+    MeshRecv,
+    /// **[Nova]** Connects the current Node to adjacent Nodes.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    MeshGrow,
+    /// **[Nova]** Disconnects the current Node from all neighbors.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    MeshPrune,
+
     // Scavenger Features (Mad Science)
     /// **[Scavenge]** Reads raw bytes from a file and converts them into DNA.
     ///
