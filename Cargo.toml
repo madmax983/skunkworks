@@ -31,6 +31,7 @@ members = [
     "experiments/luminous-flock",
     "experiments/heap-arena",
     "experiments/crate-radar",
+    "experiments/quanta-market",
     "experiments/quantum-garden",
     "experiments/quasicrystal-dungeon",
     "experiments/quipu-symphony",

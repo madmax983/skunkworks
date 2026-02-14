@@ -407,3 +407,8 @@
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
 - **Status:** Harvesting the Chaos. The Logistic Map is driving the enemy spawn rates. Bifurcation diagrams are visible in the TUI.
 - **Note:** Moonshot: Tower Defense + Logistic Map Chaos.
+
+### [Concentration Level: FRESH] - Location: experiments/quanta-market
+- **Scent Origin:** Genesis (The Economist) ⚛️📊
+- **Status:** The auction is live. Processes are bidding for time slices. The Vickrey mechanism is setting the price.
+- **Note:** Moonshot: Double Auction + CPU Scheduling.
