@@ -875,3 +875,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: The feedback loop where agents create the landscape that sustains/directs them, which is destabilized by the music.
 - **Status**: experiments/myco-diffusion
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-maat
+- **Parents**: experiments/chimera-lang + experiments/maat-engine
+- **Concept**: "Bureaucratic Survival". ChimeraVM organisms must calculate and submit resource demands as Egyptian Fractions to be granted CPU time by the Scales of Maat.
+- **Novel trait**: Self-Calculated Resource Allocation. Organisms evolve to request specific time blocks that fit the greedy allocation algorithm.
+- **Status**: experiments/chimera-maat
+- **Evaluation**: Compiles. TUI operational. Organisms are filing petitions.
