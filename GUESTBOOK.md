@@ -407,3 +407,8 @@
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
 - **Status:** Harvesting the Chaos. The Logistic Map is driving the enemy spawn rates. Bifurcation diagrams are visible in the TUI.
 - **Note:** Moonshot: Tower Defense + Logistic Map Chaos.
+
+### [Concentration Level: FRESH] - Location: experiments/granular-cortex
+- **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
+- **Status:** The cortex is granular. Neurons are firing grains of sound. Audio gated behind feature flag due to `alsa-sys` fragility. TUI visualization active.
+- **Note:** Moonshot: Izhikevich Neurons + Granular Synthesis.

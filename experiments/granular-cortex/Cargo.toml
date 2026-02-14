@@ -1,0 +1,19 @@
+[package]
+name = "granular-cortex"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+audio = ["dep:cpal"]
+
+[dependencies]
+anyhow = { workspace = true }
+crossterm = { workspace = true }
+rand = { workspace = true }
+ratatui = { workspace = true }
+tui-shared = { workspace = true }
+synaptic-physics = { workspace = true }
+cpal = { version = "0.15", optional = true }
+crossbeam-channel = "0.5"
+parking_lot = "0.12"
