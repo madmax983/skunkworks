@@ -10,11 +10,24 @@ use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 
+#[cfg(feature = "audio")]
 use thread_symphony::audio::AudioEngine;
 use thread_symphony::conductor::{Instrument, Stage};
 use thread_symphony::tui::{App, MusicianState, TuiEvent};
 
 fn main() -> anyhow::Result<()> {
+    #[cfg(not(feature = "audio"))]
+    {
+        println!("Audio feature disabled. Run with --features audio to play.");
+        return Ok(());
+    }
+
+    #[cfg(feature = "audio")]
+    real_main()
+}
+
+#[cfg(feature = "audio")]
+fn real_main() -> anyhow::Result<()> {
     // 1. Audio
     let audio_engine = AudioEngine::new()?;
     let audio_tx = audio_engine.get_sender();
