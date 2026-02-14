@@ -117,6 +117,7 @@ pub(crate) enum ViewMode {
     Attractor,
     #[cfg(feature = "nova")]
     Virology,
+    Evolution,
 }
 
 enum InputMode {
@@ -202,6 +203,23 @@ pub(crate) struct AppState {
     pub(crate) terminal_history: Vec<String>,
     #[cfg(feature = "nova")]
     pub(crate) terminal_history_idx: usize,
+    pub(crate) evolution_state: EvolutionState,
+}
+
+pub(crate) struct EvolutionState {
+    pub(crate) engine: Option<crate::vm::evolution::EvolutionEngine>,
+    pub(crate) target_val: i64,
+    pub(crate) auto_run: bool,
+}
+
+impl EvolutionState {
+    fn new() -> Self {
+        Self {
+            engine: None,
+            target_val: 42,
+            auto_run: false,
+        }
+    }
 }
 
 impl AppState {
@@ -285,6 +303,7 @@ impl AppState {
             terminal_history: Vec::new(),
             #[cfg(feature = "nova")]
             terminal_history_idx: 0,
+            evolution_state: EvolutionState::new(),
         }
     }
 }
@@ -331,6 +350,14 @@ where
     <B as ratatui::backend::Backend>::Error: Send + Sync + 'static,
 {
     loop {
+        if let ViewMode::Evolution = app_state.view_mode {
+            if app_state.evolution_state.auto_run {
+                if let Some(engine) = &mut app_state.evolution_state.engine {
+                    engine.step(vm);
+                }
+            }
+        }
+
         #[cfg(feature = "nova")]
         if let ViewMode::Fishing = app_state.view_mode {
             if app_state.fishing_cast {
@@ -658,6 +685,11 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Virology = app_state.view_mode {
                 render_virology(f, vm, app_state);
+                return;
+            }
+
+            if let ViewMode::Evolution = app_state.view_mode {
+                render_evolution(f, vm, app_state);
                 return;
             }
 
@@ -1338,6 +1370,17 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                ViewMode::Evolution => {
+                                    if let Ok(val) = app_state.input_buffer.parse::<i64>() {
+                                        app_state.evolution_state.target_val = val;
+                                        if let Some(engine) = &mut app_state.evolution_state.engine {
+                                            engine.target_val = val;
+                                        }
+                                        app_state.status_msg = format!("Target set to {}", val);
+                                    }
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1592,7 +1635,8 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Attractor => ViewMode::Virology,
                             #[cfg(feature = "nova")]
-                            ViewMode::Virology => ViewMode::Genome,
+                            ViewMode::Virology => ViewMode::Evolution,
+                            ViewMode::Evolution => ViewMode::Genome,
                         };
                     }
                     KeyCode::Char('h') => app_state.view_mode = ViewMode::Heatmap,
@@ -1643,7 +1687,9 @@ where
                     KeyCode::Char('b') => app_state.view_mode = ViewMode::Cortex,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('a') => {
-                        if let ViewMode::Alchemy = app_state.view_mode {
+                        if let ViewMode::Evolution = app_state.view_mode {
+                            app_state.evolution_state.auto_run = !app_state.evolution_state.auto_run;
+                        } else if let ViewMode::Alchemy = app_state.view_mode {
                             // Add to Crucible
                             match app_state.alchemy_selection {
                                 0 => {
@@ -1701,6 +1747,20 @@ where
                     KeyCode::Char('!') => app_state.view_mode = ViewMode::Ballistics,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('~') => app_state.view_mode = ViewMode::Scent,
+                    KeyCode::Char('e') => {
+                        if let ViewMode::Genome = app_state.view_mode {
+                             if let Some(strand) = vm.dna.helix.strands.get(app_state.selected_strand) {
+                                 let engine = crate::vm::evolution::EvolutionEngine::new(
+                                     strand.clone(),
+                                     20, // Population
+                                     app_state.evolution_state.target_val
+                                 );
+                                 app_state.evolution_state.engine = Some(engine);
+                                 app_state.view_mode = ViewMode::Evolution;
+                                 app_state.status_msg = "Evolution Initialized".to_string();
+                             }
+                        }
+                    }
                     KeyCode::Char('f') => {
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
@@ -1842,6 +1902,13 @@ where
                     }
                     KeyCode::Char('q') => return Ok(()),
                     KeyCode::Char(' ') => {
+                        if let ViewMode::Evolution = app_state.view_mode {
+                            if let Some(engine) = &mut app_state.evolution_state.engine {
+                                engine.step(vm);
+                            }
+                            continue;
+                        }
+
                         #[cfg(feature = "nova")]
                         if let ViewMode::Babel = app_state.view_mode {
                             // Run Parse
@@ -2429,6 +2496,7 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        ViewMode::Evolution => {}
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2675,6 +2743,7 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        ViewMode::Evolution => {}
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -2845,6 +2914,7 @@ where
                                 app_state.grid_cursor.0 += 1;
                             }
                         }
+                        ViewMode::Evolution => {}
                     },
                     KeyCode::Left => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3015,8 +3085,14 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        ViewMode::Evolution => {}
                     },
                     KeyCode::Enter => {
+                        if let ViewMode::Evolution = app_state.view_mode {
+                            app_state.input_mode = InputMode::Editing;
+                            app_state.input_buffer.clear();
+                        }
+
                         #[cfg(feature = "silicon")]
                         if let ViewMode::Foundry = app_state.view_mode {
                             // Trace current circuit
@@ -3073,6 +3149,7 @@ where
                             ViewMode::Virology => {
                                 app_state.input_mode = InputMode::Normal;
                             }
+                            ViewMode::Evolution => {}
                             ViewMode::Genome => {
                                 if app_state.selected_strand < vm.dna.helix.strands.len() {
                                     let g_len =
@@ -4572,6 +4649,7 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Attractor => "STRANGE ATTRACTOR (DYNAMICS)",
         #[cfg(feature = "nova")]
         ViewMode::Virology => "VIROLOGY LAB",
+        ViewMode::Evolution => "EVOLUTION CHAMBER",
     };
 
     let title = match app_state.input_mode {
@@ -5131,6 +5209,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Terminal, "Terminal", "`"));
         views.push((ViewMode::Attractor, "Attractor", "A"));
         views.push((ViewMode::Virology, "Virology", "v"));
+        views.push((ViewMode::Evolution, "Evolution", "E"));
     }
     views
 }
@@ -8864,4 +8943,75 @@ fn render_virology(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Virology Lab (Known Strains)"),
     );
     f.render_widget(list, chunks[1]);
+}
+
+fn render_evolution(f: &mut Frame, _vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Top: Stats & Graph
+    let top_chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(40), Constraint::Percentage(60)].as_ref())
+        .split(chunks[0]);
+
+    if let Some(engine) = &app_state.evolution_state.engine {
+        // Stats
+        let stats = vec![
+            Line::from(Span::styled("GENETIC OPTIMIZER", Style::default().add_modifier(Modifier::BOLD))),
+            Line::from(" "),
+            Line::from(format!("Generation: {}", engine.generation)),
+            Line::from(format!("Best Fitness: {}", engine.best_fitness)),
+            Line::from(format!("Target Value: {}", app_state.evolution_state.target_val)),
+            Line::from(format!("Population: {}", engine.population.len())),
+            Line::from(format!("Auto-Run: {}", app_state.evolution_state.auto_run)),
+            Line::from(" "),
+            Line::from("Controls:"),
+            Line::from("  Space: Step Generation"),
+            Line::from("  A: Toggle Auto-Run"),
+            Line::from("  Enter: Set Target"),
+        ];
+
+        let stats_widget = Paragraph::new(stats)
+            .block(Block::default().borders(Borders::ALL).title("Status"));
+        f.render_widget(stats_widget, top_chunks[0]);
+
+        // Sparkline
+        // Fitness usually drops. Sparkline shows bars. High bars = High fitness (bad).
+        // We want to see it go down.
+        // Limit history size
+        let history: Vec<u64> = engine.history.iter().rev().take(100).rev().map(|&x| x.min(1000) as u64).collect();
+
+        let sparkline = ratatui::widgets::Sparkline::default()
+            .block(Block::default().title("Fitness History (Lower is Better)").borders(Borders::ALL))
+            .data(&history)
+            .style(Style::default().fg(Color::Green));
+        f.render_widget(sparkline, top_chunks[1]);
+
+        // Bottom: Code
+        if !engine.population.is_empty() {
+             let best = &engine.population[0];
+             let mut gene_items = Vec::new();
+             for gene in &best.genes {
+                 let args: Vec<String> = gene.args.iter().map(|a| format!("{:?}", a)).collect();
+                 let s = if args.is_empty() {
+                     format!("{}", gene.op)
+                 } else {
+                     format!("{}({})", gene.op, args.join(", "))
+                 };
+                 gene_items.push(ListItem::new(s).style(Style::default().fg(Color::Cyan)));
+             }
+             let list = List::new(gene_items)
+                .block(Block::default().borders(Borders::ALL).title(format!("Best Specimen (Fitness: {})", engine.best_fitness)));
+             f.render_widget(list, chunks[1]);
+        }
+
+    } else {
+        let center = Paragraph::new("Evolution Engine Offline.\nSelect a Strand in Genome View and press 'E' to initialize.")
+            .alignment(ratatui::layout::Alignment::Center)
+            .block(Block::default().borders(Borders::ALL));
+        f.render_widget(center, f.area());
+    }
 }
