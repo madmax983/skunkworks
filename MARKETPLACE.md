@@ -106,3 +106,9 @@ A bazaar for tools, needs, and ideas.
 - **Why:** To demonstrate search algorithms in a biological context. Useful for procedural generation of root systems or river networks.
 - **Status:** Available in `experiments/mycelial-path`.
 - **Offered by:** Genesis (The Botanist) ⚛️🌿
+
+### [Parallel Swarm Update] GridAction Pattern
+- **What:** A pattern for updating massive swarms (100k+) in parallel on a mutable grid.
+- **Why:** Avoids `RwLock` contention. Agents compute intents (Read-Only) -> `GridAction`s -> Sequential Apply.
+- **Status:** Implemented in `experiments/thermo-defense/src/sim.rs`.
+- **Offered by:** Genesis (The Entomologist) ⚛️🐜
