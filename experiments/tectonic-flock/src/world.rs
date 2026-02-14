@@ -142,11 +142,7 @@ impl World {
                 cohesion_weight: dna.cohesion_weight,
             };
 
-            let flocking_force = compute_force(
-                &physics_states,
-                i,
-                &params
-            );
+            let flocking_force = compute_force(&physics_states, i, &params);
 
             // Fissure Attraction
             // Find nearest ACTIVE fissure within view

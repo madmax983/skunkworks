@@ -1,13 +1,13 @@
 use macroquad::prelude::*;
 use rayon::prelude::*;
 
+mod agent;
 mod audio;
 mod grid;
-mod agent;
 
+use agent::{Agent, Settings};
 use audio::Synthesizer;
 use grid::GrayScottGrid;
-use agent::{Agent, Settings};
 
 fn window_conf() -> Conf {
     Conf {
@@ -110,24 +110,27 @@ async fn main() {
         // Use parallel iterator to generate pixels, then copy to image?
         // Image::set_pixel is not thread safe.
         // Let's create a buffer of colors then copy.
-        let colors: Vec<Color> = (0..grid_w * grid_h).into_par_iter().map(|i| {
-            let u = grid.u[i];
-            let v = grid.v[i];
+        let colors: Vec<Color> = (0..grid_w * grid_h)
+            .into_par_iter()
+            .map(|i| {
+                let u = grid.u[i];
+                let v = grid.v[i];
 
-            // Visualization Scheme:
-            // U is background (usually 1.0). V is the pattern (growing).
-            // We want V to be glowing.
+                // Visualization Scheme:
+                // U is background (usually 1.0). V is the pattern (growing).
+                // We want V to be glowing.
 
-            // Palette:
-            // V=0 -> Black/Dark Blue
-            // V>0 -> Cyan/Purple/White
+                // Palette:
+                // V=0 -> Black/Dark Blue
+                // V>0 -> Cyan/Purple/White
 
-            let r = v * 3.0; // Red channel
-            let g = v * 1.5 + u * 0.1; // Green channel
-            let b = v * 4.0 + u * 0.2; // Blue channel
+                let r = v * 3.0; // Red channel
+                let g = v * 1.5 + u * 0.1; // Green channel
+                let b = v * 4.0 + u * 0.2; // Blue channel
 
-            Color::new(r.min(1.0), g.min(1.0), b.min(1.0), 1.0)
-        }).collect();
+                Color::new(r.min(1.0), g.min(1.0), b.min(1.0), 1.0)
+            })
+            .collect();
 
         for (i, col) in colors.iter().enumerate() {
             let x = (i % grid_w) as u32;
@@ -138,10 +141,16 @@ async fn main() {
         texture.update(&image);
 
         // Draw Texture Scaled
-        draw_texture_ex(&texture, 0.0, 0.0, WHITE, DrawTextureParams {
-            dest_size: Some(vec2(screen_width(), screen_height())),
-            ..Default::default()
-        });
+        draw_texture_ex(
+            &texture,
+            0.0,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(vec2(screen_width(), screen_height())),
+                ..Default::default()
+            },
+        );
 
         // Draw Agents (Optional, maybe too cluttered? Let's draw faint dots)
         // Scaling
@@ -151,8 +160,9 @@ async fn main() {
         // Only draw a subset if too many? 5000 is okay for points.
         // Actually, the agents ARE the deposit, so seeing them is redundant if the trail is visible.
         // But let's draw them as tiny bright specks to show the "source".
-        if is_key_down(KeyCode::A) || true { // Toggle with A?
-             for agent in &agents {
+        if is_key_down(KeyCode::A) || true {
+            // Toggle with A?
+            for agent in &agents {
                 let sx = agent.pos.x * scale_x;
                 let sy = agent.pos.y * scale_y;
                 draw_rectangle(sx, sy, 2.0, 2.0, Color::new(1.0, 1.0, 1.0, 0.3));
@@ -161,15 +171,21 @@ async fn main() {
 
         // Draw Cities
         for city in &cities {
-             let sx = city.x * scale_x;
-             let sy = city.y * scale_y;
-             draw_circle_lines(sx, sy, 10.0, 2.0, YELLOW);
+            let sx = city.x * scale_x;
+            let sy = city.y * scale_y;
+            draw_circle_lines(sx, sy, 10.0, 2.0, YELLOW);
         }
 
         // UI
         draw_text("MYCO-DIFFUSION", 20.0, 30.0, 30.0, WHITE);
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 50.0, 20.0, LIGHTGRAY);
-        draw_text(&format!("Feed: {:.4} Kill: {:.4}", feed, kill), 20.0, 70.0, 20.0, LIGHTGRAY);
+        draw_text(
+            &format!("Feed: {:.4} Kill: {:.4}", feed, kill),
+            20.0,
+            70.0,
+            20.0,
+            LIGHTGRAY,
+        );
 
         next_frame().await
     }

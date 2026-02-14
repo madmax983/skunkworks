@@ -51,7 +51,8 @@ impl GrayScottGrid {
 
         // We zip next_u and next_v to update them together
         // Note: par_iter_mut enables parallel execution
-        self.next_u.par_iter_mut()
+        self.next_u
+            .par_iter_mut()
             .zip(self.next_v.par_iter_mut())
             .enumerate()
             .for_each(|(i, (nu, nv))| {

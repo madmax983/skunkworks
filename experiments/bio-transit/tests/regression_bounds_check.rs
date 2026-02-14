@@ -1,4 +1,4 @@
-use bio_transit::{TrailMap, Settings};
+use bio_transit::{Settings, TrailMap};
 
 #[test]
 #[should_panic]

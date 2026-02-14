@@ -82,10 +82,13 @@ pub enum Token {
 
 pub fn tokenize(input: &str) -> Vec<(Token, std::ops::Range<usize>)> {
     let lexer = Token::lexer(input);
-    lexer.spanned().filter_map(|(tok, span)| {
-        match tok {
-            Ok(token) => Some((token, span)),
-            Err(_) => None, // Skip errors/unknown tokens for now
-        }
-    }).collect()
+    lexer
+        .spanned()
+        .filter_map(|(tok, span)| {
+            match tok {
+                Ok(token) => Some((token, span)),
+                Err(_) => None, // Skip errors/unknown tokens for now
+            }
+        })
+        .collect()
 }

@@ -1,8 +1,8 @@
-use std::sync::Arc;
-use std::cmp::Ordering;
-use crossbeam_channel::Sender;
 #[cfg(feature = "audio")]
 use crossbeam_channel::Receiver;
+use crossbeam_channel::Sender;
+use std::cmp::Ordering;
+use std::sync::Arc;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Voice {
@@ -58,12 +58,14 @@ impl AudioEngine {
     #[cfg(feature = "audio")]
     pub fn new() -> anyhow::Result<(Self, Sender<RhythmEvent>, Arc<std::sync::atomic::AtomicU64>)> {
         use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+        use rand::Rng;
         use std::collections::BinaryHeap;
         use std::f32::consts::TAU;
-        use rand::Rng;
 
         let host = cpal::default_host();
-        let device = host.default_output_device().ok_or_else(|| anyhow::anyhow!("No audio output device found"))?;
+        let device = host
+            .default_output_device()
+            .ok_or_else(|| anyhow::anyhow!("No audio output device found"))?;
         let config = device.default_output_config()?;
         let sample_rate = config.sample_rate().0;
         let channels = config.channels() as usize;
@@ -100,42 +102,54 @@ impl AudioEngine {
                 Voice::Kick => {
                     let freq = 150.0 * (-age * 20.0).exp().max(0.3);
                     v.phase += freq / sample_rate * TAU;
-                    if v.phase > TAU { v.phase -= TAU; }
+                    if v.phase > TAU {
+                        v.phase -= TAU;
+                    }
 
                     let amp = (-age * 5.0).exp();
                     let signal = v.phase.sin();
                     // Add some click
-                    let click = if age < 0.005 { (rand::random::<f32>() * 2.0 - 1.0) * 0.5 } else { 0.0 };
+                    let click = if age < 0.005 {
+                        (rand::random::<f32>() * 2.0 - 1.0) * 0.5
+                    } else {
+                        0.0
+                    };
 
                     ((signal + click) * amp * v.volume, amp > 0.001)
-                },
+                }
                 Voice::Snare => {
                     let amp = (-age * 15.0).exp();
                     let tone_freq = 180.0;
                     v.phase += tone_freq / sample_rate * TAU;
-                     if v.phase > TAU { v.phase -= TAU; }
+                    if v.phase > TAU {
+                        v.phase -= TAU;
+                    }
                     let tone = v.phase.sin();
                     let noise = rand::random::<f32>() * 2.0 - 1.0;
 
                     ((tone * 0.3 + noise * 0.7) * amp * v.volume, amp > 0.001)
-                },
+                }
                 Voice::Hihat => {
-                     let amp = (-age * 40.0).exp();
-                     let noise = rand::random::<f32>() * 2.0 - 1.0;
-                     (noise * amp * v.volume * 0.5, amp > 0.001)
-                },
+                    let amp = (-age * 40.0).exp();
+                    let noise = rand::random::<f32>() * 2.0 - 1.0;
+                    (noise * amp * v.volume * 0.5, amp > 0.001)
+                }
                 Voice::Clave => {
-                     let amp = (-age * 30.0).exp();
-                     let freq = 2500.0;
-                     v.phase += freq / sample_rate * TAU;
-                      if v.phase > TAU { v.phase -= TAU; }
-                     (v.phase.sin() * amp * v.volume * 0.3, amp > 0.001)
-                },
+                    let amp = (-age * 30.0).exp();
+                    let freq = 2500.0;
+                    v.phase += freq / sample_rate * TAU;
+                    if v.phase > TAU {
+                        v.phase -= TAU;
+                    }
+                    (v.phase.sin() * amp * v.volume * 0.3, amp > 0.001)
+                }
                 Voice::Synth(note) => {
                     let amp = (-age * 3.0).exp();
                     let freq = 220.0 * (2.0f32).powf(note as f32 / 12.0);
                     v.phase += freq / sample_rate * TAU;
-                     if v.phase > TAU { v.phase -= TAU; }
+                    if v.phase > TAU {
+                        v.phase -= TAU;
+                    }
 
                     let mod_idx = 2.0 * (-age).exp();
                     let signal = (v.phase + (v.phase * 2.0).sin() * mod_idx).sin();
@@ -194,7 +208,8 @@ impl AudioEngine {
                         state.current_sample += 1;
                     }
 
-                    current_sample_atomic_clone.store(state.current_sample, std::sync::atomic::Ordering::Relaxed);
+                    current_sample_atomic_clone
+                        .store(state.current_sample, std::sync::atomic::Ordering::Relaxed);
                 },
                 err_fn,
                 None,

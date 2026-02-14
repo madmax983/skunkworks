@@ -1,6 +1,6 @@
-use crate::ast::{Strand, Gene, Nucleotide};
-use crate::vm::{ChimeraVM, Value};
+use crate::ast::{Gene, Nucleotide, Strand};
 use crate::opcode::OpCode;
+use crate::vm::{ChimeraVM, Value};
 use rand::Rng;
 
 #[derive(Clone)]
@@ -40,16 +40,22 @@ impl EvolutionEngine {
             // Run for fixed steps
             let max_ticks = 50;
             for _ in 0..max_ticks {
-                if vm.halted { break; }
+                if vm.halted {
+                    break;
+                }
                 vm.step();
             }
 
             // Calculate Fitness (Distance to target)
             // We look at the top of the stack.
-            let val = vm.stack.last().and_then(|v| match v {
-                Value::Int(n) => Some(*n),
-                _ => None,
-            }).unwrap_or(0);
+            let val = vm
+                .stack
+                .last()
+                .and_then(|v| match v {
+                    Value::Int(n) => Some(*n),
+                    _ => None,
+                })
+                .unwrap_or(0);
 
             // If stack empty, heavy penalty
             let fitness = if vm.stack.is_empty() {
@@ -93,8 +99,15 @@ impl EvolutionEngine {
         if !strand.genes.is_empty() && rng.gen_bool(0.3) {
             let idx = rng.gen_range(0..strand.genes.len());
             let ops = [
-                OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Mul, OpCode::Div,
-                OpCode::Dup, OpCode::Swap, OpCode::Drop, OpCode::Nop
+                OpCode::Push,
+                OpCode::Add,
+                OpCode::Sub,
+                OpCode::Mul,
+                OpCode::Div,
+                OpCode::Dup,
+                OpCode::Swap,
+                OpCode::Drop,
+                OpCode::Nop,
             ];
             let op = ops[rng.gen_range(0..ops.len())].clone();
             strand.genes[idx].op = op;
@@ -102,22 +115,27 @@ impl EvolutionEngine {
 
         // 2. Change Arg (Mutation)
         if !strand.genes.is_empty() && rng.gen_bool(0.3) {
-             let idx = rng.gen_range(0..strand.genes.len());
-             if !strand.genes[idx].args.is_empty() {
-                 let val = rng.gen_range(0..100);
-                 strand.genes[idx].args[0] = Nucleotide::Number(val);
-             } else if strand.genes[idx].op == OpCode::Push {
-                 // Convert Nop to Push? Or fix Push with no args
-                 strand.genes[idx].args.push(Nucleotide::Number(rng.gen_range(0..100)));
-             }
+            let idx = rng.gen_range(0..strand.genes.len());
+            if !strand.genes[idx].args.is_empty() {
+                let val = rng.gen_range(0..100);
+                strand.genes[idx].args[0] = Nucleotide::Number(val);
+            } else if strand.genes[idx].op == OpCode::Push {
+                // Convert Nop to Push? Or fix Push with no args
+                strand.genes[idx]
+                    .args
+                    .push(Nucleotide::Number(rng.gen_range(0..100)));
+            }
         }
 
         // 3. Add Gene (Insertion)
         if rng.gen_bool(0.2) {
-             let val = rng.gen_range(0..100);
-             let gene = Gene { op: OpCode::Push, args: vec![Nucleotide::Number(val)] };
-             let idx = rng.gen_range(0..=strand.genes.len());
-             strand.genes.insert(idx, gene);
+            let val = rng.gen_range(0..100);
+            let gene = Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(val)],
+            };
+            let idx = rng.gen_range(0..=strand.genes.len());
+            strand.genes.insert(idx, gene);
         }
 
         // 4. Remove Gene (Deletion)
@@ -135,11 +153,18 @@ mod tests {
 
     #[test]
     fn test_evolution_convergence() {
-        let seed = Strand { genes: vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }
-        ] };
+        let seed = Strand {
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }],
+        };
 
-        let dna = Dna { helix: Helix { strands: vec![seed.clone()] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![seed.clone()],
+            },
+        };
         let vm_template = ChimeraVM::new(dna);
 
         let mut engine = EvolutionEngine::new(seed, 20, 42);
@@ -151,7 +176,8 @@ mod tests {
 
         for _ in 0..100 {
             engine.step(&vm_template);
-            if engine.best_fitness < 10 { // Allow some slack for length penalty
+            if engine.best_fitness < 10 {
+                // Allow some slack for length penalty
                 break;
             }
         }

@@ -1,8 +1,11 @@
-use std::sync::{Arc, Mutex, atomic::{AtomicBool, AtomicU64, Ordering}};
+use crate::audio::{RhythmEvent, Voice};
+use crossbeam_channel::Sender;
+use std::sync::{
+    atomic::{AtomicBool, AtomicU64, Ordering},
+    Arc, Mutex,
+};
 use std::thread;
 use std::time::Duration;
-use crossbeam_channel::Sender;
-use crate::audio::{RhythmEvent, Voice};
 
 pub struct Beacon {
     pub last_beat: AtomicU64,
@@ -63,7 +66,8 @@ impl Musician {
         thread::spawn(move || {
             let period_samples = (self.period_ms as f64 * self.sample_rate as f64 / 1000.0) as u64;
             // Start slightly in the future
-            let start_time = self.current_time.load(Ordering::Relaxed) + self.sample_rate as u64 / 2;
+            let start_time =
+                self.current_time.load(Ordering::Relaxed) + self.sample_rate as u64 / 2;
             let mut next_beat_sample = start_time;
 
             while self.running.load(Ordering::Relaxed) {
@@ -90,11 +94,14 @@ impl Musician {
                         // Simulate work
                         let work_load = 5000;
                         let mut x: u64 = 0;
-                        for _ in 0..work_load { x = x.wrapping_add(1); std::hint::black_box(x); }
+                        for _ in 0..work_load {
+                            x = x.wrapping_add(1);
+                            std::hint::black_box(x);
+                        }
                         drop(guard);
 
                         (self.voice, 0.8)
-                    },
+                    }
                     Err(_) => {
                         // Resource busy - Contention!
                         // Play a "Clave" sound to indicate clash
@@ -114,8 +121,12 @@ impl Musician {
                 });
 
                 // Update beacon
-                self.beacon.last_beat.store(schedule_time, Ordering::Relaxed);
-                self.beacon.is_clash.store(matches!(final_voice, Voice::Clave), Ordering::Relaxed);
+                self.beacon
+                    .last_beat
+                    .store(schedule_time, Ordering::Relaxed);
+                self.beacon
+                    .is_clash
+                    .store(matches!(final_voice, Voice::Clave), Ordering::Relaxed);
 
                 // Advance beat
                 next_beat_sample += period_samples;

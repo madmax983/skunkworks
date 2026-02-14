@@ -414,7 +414,10 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }
     }
 
-    fn parse_polyglot_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+    fn parse_polyglot_block(
+        &mut self,
+        inner: pest::iterators::Pair<'i, Rule>,
+    ) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
         let grammar_name = parts.next().unwrap().as_str();
         let content_pair = parts.next().unwrap();
@@ -702,7 +705,9 @@ fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)>
                 _ => Err(anyhow!("Unknown grammar type: {}", type_str)),
             }
         } else {
-            Err(anyhow!("Invalid grammar node structure (expected Type String)"))
+            Err(anyhow!(
+                "Invalid grammar node structure (expected Type String)"
+            ))
         }
     } else {
         Err(anyhow!("Invalid grammar node (expected Junction)"))

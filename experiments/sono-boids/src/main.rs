@@ -29,7 +29,8 @@ impl Boid {
     fn new(x: f64, y: f64) -> Self {
         let mut rng = rand::thread_rng();
         let mut physics = PhysicsState::new(x, y);
-        physics.velocity = Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize();
+        physics.velocity =
+            Vec2::new(rng.gen_range(-1.0..1.0), rng.gen_range(-1.0..1.0)).normalize();
         Self { physics }
     }
 
@@ -61,7 +62,10 @@ impl Boid {
                 if wave_val > 0.2 {
                     // Turn randomly if in high wave
                     let mut rng = rand::thread_rng();
-                    self.physics.apply_force(Vec2::new(rng.gen_range(-0.5..0.5), rng.gen_range(-0.5..0.5)));
+                    self.physics.apply_force(Vec2::new(
+                        rng.gen_range(-0.5..0.5),
+                        rng.gen_range(-0.5..0.5),
+                    ));
                 }
             }
         }

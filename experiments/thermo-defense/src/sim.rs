@@ -1,5 +1,5 @@
-use crate::grid::{Grid, WIDTH, HEIGHT, Material};
 use crate::agent::{Agent, AgentType, GridAction};
+use crate::grid::{Grid, HEIGHT, Material, WIDTH};
 use rand::Rng;
 use rayon::prelude::*;
 
@@ -50,7 +50,8 @@ impl World {
         let grid = &self.grid;
         let agents = &mut self.agents;
 
-        let actions: Vec<_> = agents.par_iter_mut()
+        let actions: Vec<_> = agents
+            .par_iter_mut()
             .map(|agent| {
                 let mut rng = rand::thread_rng();
                 agent.update(grid, &mut rng)
@@ -59,14 +60,21 @@ impl World {
 
         // 3. Apply Actions (Sequential)
         for action in actions {
-            if let Some(GridAction::UpdateCell { idx, heat_delta, defense_delta, attack_delta, new_material }) = action {
-                 let cell = &mut self.grid.cells[idx];
-                 cell.heat += heat_delta;
-                 cell.pheromone_defense = (cell.pheromone_defense + defense_delta).min(100.0);
-                 cell.pheromone_attack = (cell.pheromone_attack + attack_delta).min(100.0);
-                 if let Some(m) = new_material {
-                     cell.material = m;
-                 }
+            if let Some(GridAction::UpdateCell {
+                idx,
+                heat_delta,
+                defense_delta,
+                attack_delta,
+                new_material,
+            }) = action
+            {
+                let cell = &mut self.grid.cells[idx];
+                cell.heat += heat_delta;
+                cell.pheromone_defense = (cell.pheromone_defense + defense_delta).min(100.0);
+                cell.pheromone_attack = (cell.pheromone_attack + attack_delta).min(100.0);
+                if let Some(m) = new_material {
+                    cell.material = m;
+                }
             }
         }
     }

@@ -41,7 +41,10 @@ fn test_gear_ratio() {
     let follower_delta = follower_angle - initial_follower_angle;
     let driver_delta = driver_angle;
 
-    println!("Driver Delta: {}, Follower Delta: {}", driver_delta, follower_delta);
+    println!(
+        "Driver Delta: {}, Follower Delta: {}",
+        driver_delta, follower_delta
+    );
 
     if driver_delta.abs() < 0.001 {
         println!("WARNING: Gears did not move significantly.");
@@ -54,11 +57,15 @@ fn test_gear_ratio() {
     // Check if they rotate in opposite directions
     // Driver and Follower delta should have opposite signs.
     if ratio > 0.0 {
-         println!("WARNING: Gears rotating in SAME direction! Mesh failure.");
+        println!("WARNING: Gears rotating in SAME direction! Mesh failure.");
     }
 
     // Ratio should be around -5.0
-    assert!((ratio - (-5.0)).abs() < 1.0, "Expected ratio ~ -5.0, got {}", ratio);
+    assert!(
+        (ratio - (-5.0)).abs() < 1.0,
+        "Expected ratio ~ -5.0, got {}",
+        ratio
+    );
 }
 
 fn setup_scene(mut commands: Commands) {
@@ -79,7 +86,10 @@ fn setup_scene(mut commands: Commands) {
             ..default()
         },
         LockedAxes::TRANSLATION_LOCKED,
-        Damping { linear_damping: 0.1, angular_damping: 0.1 },
+        Damping {
+            linear_damping: 0.1,
+            angular_damping: 0.1,
+        },
         ColliderMassProperties::Mass(1.0),
         Name::new("Driver"),
     ));
@@ -95,13 +105,16 @@ fn setup_scene(mut commands: Commands) {
     commands.spawn((
         SpatialBundle::from_transform(
             Transform::from_translation(follower_pos.extend(0.0))
-            .with_rotation(Quat::from_rotation_z(phase_offset))
+                .with_rotation(Quat::from_rotation_z(phase_offset)),
         ),
         RigidBody::Dynamic,
         gear::generate_gear_collider(follower_teeth, module, pressure_angle),
         ColliderMassProperties::Mass(0.2),
         LockedAxes::TRANSLATION_LOCKED,
-        Damping { linear_damping: 0.1, angular_damping: 0.1 },
+        Damping {
+            linear_damping: 0.1,
+            angular_damping: 0.1,
+        },
         Name::new("Follower"),
     ));
 }

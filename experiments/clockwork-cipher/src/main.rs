@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use bevy_rapier2d::prelude::*;
 use bevy_rapier2d::geometry::{CollisionGroups, Group};
+use bevy_rapier2d::prelude::*;
 use clockwork_cipher::gear;
 use std::f32::consts::PI;
 
@@ -56,9 +56,10 @@ fn setup_scene(mut commands: Commands) {
         module,
         pressure_angle,
         Color::srgb(0.5, 0.5, 0.5),
-        "Driver"
+        "Driver",
     );
-    commands.entity(driver_id)
+    commands
+        .entity(driver_id)
         .insert(MainDrive)
         .insert(ExternalForce::default())
         .insert(ColliderMassProperties::Mass(10.0))
@@ -88,12 +89,16 @@ fn setup_scene(mut commands: Commands) {
             module,
             pressure_angle,
             Color::srgb(1.0, 0.84, 0.0),
-            &format!("KeyGear_{}", i)
+            &format!("KeyGear_{}", i),
         );
 
-        commands.entity(id)
+        commands
+            .entity(id)
             .insert(Transform::from_translation(pos.extend(0.0)).with_rotation(total_rotation))
-            .insert(KeyGear { index: i, teeth: *teeth })
+            .insert(KeyGear {
+                index: i,
+                teeth: *teeth,
+            })
             .insert(ColliderMassProperties::Mass(5.0))
             .insert(gear_group);
 
@@ -107,9 +112,14 @@ fn setup_scene(mut commands: Commands) {
                 Transform::from_translation(Vec3::new(cam_offset, 0.0, 0.1)),
                 cam_group,
                 ShapeBundle {
-                   path: GeometryBuilder::build_as(&shapes::Circle { radius: cam_radius, center: Vec2::ZERO }),
-                   spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(cam_offset, 0.0, 0.1))),
-                   ..default()
+                    path: GeometryBuilder::build_as(&shapes::Circle {
+                        radius: cam_radius,
+                        center: Vec2::ZERO,
+                    }),
+                    spatial: SpatialBundle::from_transform(Transform::from_translation(Vec3::new(
+                        cam_offset, 0.0, 0.1,
+                    ))),
+                    ..default()
                 },
                 Fill::color(Color::srgb(0.8, 0.2, 0.2)),
             ));
@@ -139,49 +149,62 @@ fn setup_scene(mut commands: Commands) {
     ));
 }
 
-fn spawn_feeler(commands: &mut Commands, gear_pos: Vec2, index: usize, collision_groups: CollisionGroups) {
+fn spawn_feeler(
+    commands: &mut Commands,
+    gear_pos: Vec2,
+    index: usize,
+    collision_groups: CollisionGroups,
+) {
     let pivot_pos = gear_pos + Vec2::new(0.0, 60.0);
     let arm_length = 80.0;
     let arm_width = 5.0;
     let tip_radius = 5.0;
 
-    let feeler_id = commands.spawn((
-        SpatialBundle::from_transform(
-            Transform::from_translation(pivot_pos.extend(0.1))
-        ),
-        RigidBody::Dynamic,
-        Damping { angular_damping: 1.0, ..default() },
-        Feeler { index },
-        Name::new(format!("Feeler_{}", index)),
-    )).with_children(|parent| {
-        // Visual Arm
-        parent.spawn((
-            ShapeBundle {
-                path: GeometryBuilder::build_as(&shapes::Rectangle {
-                    extents: Vec2::new(arm_width, arm_length),
-                    origin: RectangleOrigin::CustomCenter(Vec2::new(0.0, -arm_length/2.0)),
-                }),
+    let feeler_id = commands
+        .spawn((
+            SpatialBundle::from_transform(Transform::from_translation(pivot_pos.extend(0.1))),
+            RigidBody::Dynamic,
+            Damping {
+                angular_damping: 1.0,
                 ..default()
             },
-            Fill::color(Color::srgb(0.3, 0.3, 1.0)),
-        ));
+            Feeler { index },
+            Name::new(format!("Feeler_{}", index)),
+        ))
+        .with_children(|parent| {
+            // Visual Arm
+            parent.spawn((
+                ShapeBundle {
+                    path: GeometryBuilder::build_as(&shapes::Rectangle {
+                        extents: Vec2::new(arm_width, arm_length),
+                        origin: RectangleOrigin::CustomCenter(Vec2::new(0.0, -arm_length / 2.0)),
+                    }),
+                    ..default()
+                },
+                Fill::color(Color::srgb(0.3, 0.3, 1.0)),
+            ));
 
-        // Collider at tip (Child)
-        parent.spawn((
-             Collider::ball(tip_radius),
-             Transform::from_translation(Vec3::new(0.0, -arm_length, 0.0)),
-             collision_groups
-        ));
-    }).id();
+            // Collider at tip (Child)
+            parent.spawn((
+                Collider::ball(tip_radius),
+                Transform::from_translation(Vec3::new(0.0, -arm_length, 0.0)),
+                collision_groups,
+            ));
+        })
+        .id();
 
-    let pivot_body = commands.spawn((
-        TransformBundle::from_transform(Transform::from_translation(pivot_pos.extend(0.0))),
-        RigidBody::Fixed,
-    )).id();
+    let pivot_body = commands
+        .spawn((
+            TransformBundle::from_transform(Transform::from_translation(pivot_pos.extend(0.0))),
+            RigidBody::Fixed,
+        ))
+        .id();
 
     commands.entity(feeler_id).insert(ImpulseJoint::new(
         pivot_body,
-        RevoluteJointBuilder::new().local_anchor1(Vec2::ZERO).local_anchor2(Vec2::ZERO)
+        RevoluteJointBuilder::new()
+            .local_anchor1(Vec2::ZERO)
+            .local_anchor2(Vec2::ZERO),
     ));
 }
 
@@ -197,27 +220,31 @@ fn spawn_visual_gear(
     let shape_path = gear::generate_gear_path(teeth, module, pressure_angle);
     let collider = gear::generate_gear_collider(teeth, module, pressure_angle);
 
-    commands.spawn((
-        ShapeBundle {
-            path: shape_path,
-            spatial: SpatialBundle::from_transform(Transform::from_translation(position.extend(0.0))),
-            ..default()
-        },
-        Fill::color(color),
-        Stroke::new(Color::BLACK, 2.0),
-        RigidBody::Dynamic,
-        collider,
-        ColliderMassProperties::Density(1.0),
-        LockedAxes::TRANSLATION_LOCKED,
-        Damping { linear_damping: 0.0, angular_damping: 0.5 },
-        Name::new(name.to_string()),
-    )).id()
+    commands
+        .spawn((
+            ShapeBundle {
+                path: shape_path,
+                spatial: SpatialBundle::from_transform(Transform::from_translation(
+                    position.extend(0.0),
+                )),
+                ..default()
+            },
+            Fill::color(color),
+            Stroke::new(Color::BLACK, 2.0),
+            RigidBody::Dynamic,
+            collider,
+            ColliderMassProperties::Density(1.0),
+            LockedAxes::TRANSLATION_LOCKED,
+            Damping {
+                linear_damping: 0.0,
+                angular_damping: 0.5,
+            },
+            Name::new(name.to_string()),
+        ))
+        .id()
 }
 
-fn rotate_drive(
-    mut query: Query<&mut ExternalForce, With<MainDrive>>,
-    _time: Res<Time>,
-) {
+fn rotate_drive(mut query: Query<&mut ExternalForce, With<MainDrive>>, _time: Res<Time>) {
     for mut force in &mut query {
         force.torque = -5000000.0;
     }
@@ -235,6 +262,9 @@ fn update_readout(
     }
 
     if let Ok(mut text) = text_query.get_single_mut() {
-        text.sections[0].value = format!("Cipher: {:02X} {:02X} {:02X} {:02X}", values[0], values[1], values[2], values[3]);
+        text.sections[0].value = format!(
+            "Cipher: {:02X} {:02X} {:02X} {:02X}",
+            values[0], values[1], values[2], values[3]
+        );
     }
 }

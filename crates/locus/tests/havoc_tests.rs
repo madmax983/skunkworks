@@ -25,4 +25,3 @@ proptest! {
         let _ = topo.normalize(y, x, width, height);
     }
 }
-

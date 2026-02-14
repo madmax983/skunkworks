@@ -5,19 +5,19 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use maat_engine::{ScalesOfMaat, Soul, to_hieroglyphs};
+use maat_engine::{to_hieroglyphs, ScalesOfMaat, Soul};
 use num_bigint::BigUint;
+use rand::Rng;
 use ratatui::{
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Borders, List, ListItem, Paragraph, Gauge},
+    widgets::{Block, Borders, Gauge, List, ListItem, Paragraph},
     Terminal,
 };
 use std::io;
 use std::time::{Duration, Instant};
-use rand::Rng;
 
 struct Agent {
     vm: ChimeraVM,
@@ -48,17 +48,33 @@ impl App {
         // E.g., Push(1), Push(3), Jump(0) -> Demand 1/3
         let mut rng = rand::thread_rng();
         let numer = rng.gen_range(1..5);
-        let denom = rng.gen_range(numer+1..20); // Proper fraction usually
+        let denom = rng.gen_range(numer + 1..20); // Proper fraction usually
 
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(denom)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(numer)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(denom)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(numer)],
+            },
             // Add some noise instructions to make it interesting
-            Gene { op: OpCode::Nop, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Nop,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
 
-        let dna = Dna { helix: Helix { strands: vec![Strand { genes }] } };
+        let dna = Dna {
+            helix: Helix {
+                strands: vec![Strand { genes }],
+            },
+        };
         let mut vm = ChimeraVM::new(dna);
 
         // Initial kickstart
@@ -100,8 +116,14 @@ impl App {
                 let n_val = agent.vm.stack.pop().unwrap_or(Value::Int(1));
                 let d_val = agent.vm.stack.pop().unwrap_or(Value::Int(10));
 
-                let n = match n_val { Value::Int(i) => i.abs() as u64, _ => 1 };
-                let d = match d_val { Value::Int(i) => i.abs() as u64, _ => 10 };
+                let n = match n_val {
+                    Value::Int(i) => i.abs() as u64,
+                    _ => 1,
+                };
+                let d = match d_val {
+                    Value::Int(i) => i.abs() as u64,
+                    _ => 10,
+                };
                 (n, d)
             } else {
                 let mut rng = rand::thread_rng();
@@ -112,7 +134,12 @@ impl App {
 
             // 2. Weigh Heart
             let soul = Soul::new(agent.id, numer, safe_denom);
-            agent.last_demand = format!("{}/{} ({})", numer, safe_denom, to_hieroglyphs(&BigUint::from(safe_denom))); // Simplified visual
+            agent.last_demand = format!(
+                "{}/{} ({})",
+                numer,
+                safe_denom,
+                to_hieroglyphs(&BigUint::from(safe_denom))
+            ); // Simplified visual
 
             match self.scales.weigh_heart(&soul) {
                 Ok(allocations) => {
@@ -209,16 +236,23 @@ fn main() -> Result<()> {
 fn ui(f: &mut ratatui::Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(3), // Title
-            Constraint::Length(5), // Scales
-            Constraint::Min(0),    // Agents
-        ].as_ref())
+        .constraints(
+            [
+                Constraint::Length(3), // Title
+                Constraint::Length(5), // Scales
+                Constraint::Min(0),    // Agents
+            ]
+            .as_ref(),
+        )
         .split(f.area());
 
     // Title
     let title = Paragraph::new("CHIMERA x MAAT: Bureaucratic Survival")
-        .style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))
+        .style(
+            Style::default()
+                .fg(Color::Yellow)
+                .add_modifier(Modifier::BOLD),
+        )
         .alignment(ratatui::layout::Alignment::Center)
         .block(Block::default().borders(Borders::ALL));
     f.render_widget(title, chunks[0]);
@@ -268,30 +302,36 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
         spans.push(Span::styled(s, Style::default().fg(color)));
     }
 
-    let timeline = Paragraph::new(Line::from(spans))
-        .block(Block::default().borders(Borders::ALL).title("The Scales of Maat (Timeline Allocation)"));
+    let timeline = Paragraph::new(Line::from(spans)).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("The Scales of Maat (Timeline Allocation)"),
+    );
     f.render_widget(timeline, chunks[1]);
 
     // Agents List
-    let items: Vec<ListItem> = app.agents.iter().map(|agent| {
-        let demand_style = if agent.allocated_ticks > 0 {
-            Style::default().fg(Color::Green)
-        } else {
-            Style::default().fg(Color::Red)
-        };
+    let items: Vec<ListItem> = app
+        .agents
+        .iter()
+        .map(|agent| {
+            let demand_style = if agent.allocated_ticks > 0 {
+                Style::default().fg(Color::Green)
+            } else {
+                Style::default().fg(Color::Red)
+            };
 
-        let content = format!(
-            "ID {:<4} | Energy {:<3} | Demand: {:<20} | Status: {}",
-            agent.id % 1000,
-            agent.vm.energy,
-            agent.last_demand,
-            agent.last_status
-        );
+            let content = format!(
+                "ID {:<4} | Energy {:<3} | Demand: {:<20} | Status: {}",
+                agent.id % 1000,
+                agent.vm.energy,
+                agent.last_demand,
+                agent.last_status
+            );
 
-        ListItem::new(Span::styled(content, Style::default().fg(agent.color)))
-    }).collect();
+            ListItem::new(Span::styled(content, Style::default().fg(agent.color)))
+        })
+        .collect();
 
-    let list = List::new(items)
-        .block(Block::default().borders(Borders::ALL).title("Petitioners"));
+    let list = List::new(items).block(Block::default().borders(Borders::ALL).title("Petitioners"));
     f.render_widget(list, chunks[2]);
 }

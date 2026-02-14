@@ -1,5 +1,5 @@
 use crate::boid::Boid;
-use flocking::{compute_force, FlockingParams, PhysicsState};
+use flocking::{FlockingParams, PhysicsState, compute_force};
 use std::f64::consts::PI;
 
 pub struct World {
@@ -43,11 +43,7 @@ impl World {
                 cohesion_weight: boid.dna.cohesion_weight,
             };
 
-            let flocking_force = compute_force(
-                &physics_states,
-                i,
-                &params
-            );
+            let flocking_force = compute_force(&physics_states, i, &params);
             forces.push(flocking_force);
 
             // 2. Calculate Firefly Phase Nudge
@@ -57,7 +53,9 @@ impl World {
             let p1 = boid.position();
 
             for (j, other) in self.boids.iter().enumerate() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 // Firefly coupling
                 // If neighbor is flashing (timer == 5), it pulls us

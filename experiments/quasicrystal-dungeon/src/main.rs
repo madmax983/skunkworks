@@ -1,13 +1,13 @@
+mod dungeon;
 mod math;
 mod renderer;
-mod dungeon;
 
 use anyhow::Result;
 use cgmath::InnerSpace;
 use cgmath::Vector3;
+use dungeon::Dungeon;
 use log::{error, info};
 use renderer::State;
-use dungeon::Dungeon;
 use std::sync::Arc;
 use winit::{
     event::*,
@@ -133,15 +133,18 @@ async fn run_window() -> Result<()> {
                                 let current_player = state.dungeon.player_idx;
                                 let neighbors = &state.dungeon.lattice.adj[current_player];
                                 if !neighbors.is_empty() {
-                                    let next_sel = if let Some(current_sel) = state.selected_neighbor_idx {
-                                        if let Some(pos) = neighbors.iter().position(|&n| n == current_sel) {
-                                            neighbors[(pos + 1) % neighbors.len()]
+                                    let next_sel =
+                                        if let Some(current_sel) = state.selected_neighbor_idx {
+                                            if let Some(pos) =
+                                                neighbors.iter().position(|&n| n == current_sel)
+                                            {
+                                                neighbors[(pos + 1) % neighbors.len()]
+                                            } else {
+                                                neighbors[0]
+                                            }
                                         } else {
                                             neighbors[0]
-                                        }
-                                    } else {
-                                        neighbors[0]
-                                    };
+                                        };
                                     state.selected_neighbor_idx = Some(next_sel);
                                     state.update_dungeon_visuals();
 
@@ -156,7 +159,8 @@ async fn run_window() -> Result<()> {
                                         state.update_dungeon_visuals();
 
                                         // Move camera to follow player?
-                                        let p = state.dungeon.lattice.atoms[state.dungeon.player_idx];
+                                        let p =
+                                            state.dungeon.lattice.atoms[state.dungeon.player_idx];
                                         let offset = Vector3::new(2.0, 2.0, 2.0);
                                         state.camera.target = p;
                                         state.camera.eye = p + offset;

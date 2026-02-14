@@ -1,8 +1,8 @@
-use std::collections::HashMap;
-use crate::lexer::{Token, tokenize};
+use crate::lexer::{tokenize, Token};
 use crate::phonology::EvolutionEngine;
 use rand::rngs::StdRng;
 use rand::SeedableRng;
+use std::collections::HashMap;
 
 pub struct Obfuscator {
     engine: EvolutionEngine,
@@ -74,7 +74,6 @@ impl Obfuscator {
 
                 // So I can just use the original slice from the span!
                 // Except for Identifier and Keywords which I want to replace.
-
                 _ => {
                     output.push_str(&code[span.clone()]);
                 }
