@@ -888,16 +888,46 @@ fn exec_teleport(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
 
 fn exec_laser(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
     if let (Some(len), Some(dir)) = (peek(vm, y, x, 0, -1), peek(vm, y, x, -1, 0)) {
-        let (dy, dx) = match dir % 4 {
-            0 => (-1, 0),
-            1 => (0, 1),
-            2 => (1, 0),
-            3 => (0, -1),
-            _ => (0, 0),
+        let mut dy = match dir % 4 {
+            0 => -1,
+            1 => 0,
+            2 => 1,
+            3 => 0,
+            _ => 0,
         };
-        for i in 1..=len.min(16) {
-            if let Some((ny, nx)) = vm.normalize_coords(y as i64 + dy * i, x as i64 + dx * i) {
+        let mut dx = match dir % 4 {
+            0 => 0,
+            1 => 1,
+            2 => 0,
+            3 => -1,
+            _ => 0,
+        };
+
+        let mut cy = y as i64;
+        let mut cx = x as i64;
+
+        for _ in 0..len.min(16) {
+            if let Some((ny, nx)) = vm.normalize_coords(cy + dy, cx + dx) {
                 ctx.next_signals[ny][nx] = ctx.next_signals[ny][nx].saturating_add(1);
+                cy = ny as i64;
+                cx = nx as i64;
+
+                // Check for Mirror
+                if let Value::Str(s) = &vm.grid[ny][nx] {
+                    if s == "/" {
+                        // Reflect /: (0,1)->(-1,0), (0,-1)->(1,0), (1,0)->(0,-1), (-1,0)->(0,1)
+                        let old_dy = dy;
+                        dy = -dx;
+                        dx = -old_dy;
+                    } else if s == "\\" {
+                        // Reflect \: (0,1)->(1,0), (0,-1)->(-1,0), (1,0)->(0,1), (-1,0)->(0,-1)
+                        let old_dy = dy;
+                        dy = dx;
+                        dx = old_dy;
+                    }
+                }
+            } else {
+                break;
             }
         }
     }
