@@ -2,6 +2,8 @@
 
 #[cfg(feature = "biophysics")]
 use super::neuron::Neuron;
+#[cfg(feature = "nova")]
+use super::nova_sigil;
 #[cfg(feature = "oracle")]
 use super::oracle;
 use super::{ChimeraVM, MidiEvent, Value, GRID_SIZE};
@@ -319,11 +321,41 @@ pub fn process_signals(vm: &mut ChimeraVM) {
                 'Ψ' | 'ψ' => exec_psi(vm, y, x, signal, &mut ctx),
                 'Φ' | 'φ' => exec_phi(vm, y, x, signal, &mut ctx),
                 'Ω' | 'ω' => exec_omega(vm, y, x, signal, &mut ctx),
+                '§' => exec_sigil(vm, y, x, signal, &mut ctx),
                 _ => {
                     if let Value::Str(s) = val {
                         if let Ok(op) = s.parse::<OpCode>() {
                             if signal > 0 {
                                 ctx.executions.push((op, vec![]));
+                            }
+                        } else if signal > 0 {
+                            // Check for Dynamic Operators in KB
+                            #[cfg(feature = "oracle")]
+                            if let Some(strand_idx) = check_kb_operator(vm, s) {
+                                ctx.executions
+                                    .push((OpCode::Call, vec![Nucleotide::Number(strand_idx)]));
+                            }
+
+                            // Check for Named Sigils
+                            #[cfg(feature = "nova")]
+                            if let Some(sigil) = vm.sigil_registry.get(s) {
+                                if nova_sigil::check_dynamic_pattern(
+                                    vm,
+                                    y,
+                                    x,
+                                    &sigil.pattern,
+                                ) {
+                                    // Consume pattern? Maybe not for named invocation via grid text.
+                                    // Usually "Invoking" consumes materials.
+                                    // Let's make it consume if it matches.
+                                    // But since we can't easily consume inside this check without cloning pattern,
+                                    // we'll defer consumption or skip it for this mode.
+                                    // Let's just execute.
+                                    ctx.executions.push((
+                                        OpCode::Call,
+                                        vec![Nucleotide::Number(sigil.strand_idx as i64)],
+                                    ));
+                                }
                             }
                         }
                     }
@@ -496,7 +528,9 @@ pub fn process_signals(vm: &mut ChimeraVM) {
 
     // 4. Execution Phase
     for (op, args) in ctx.executions {
-        vm.execute_gene_inner(op.clone(), &args);
+        if let Some(target) = vm.execute_gene_inner(op.clone(), &args) {
+            vm.ip = target;
+        }
     }
 }
 
@@ -845,6 +879,65 @@ fn exec_random(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {
             val: Value::Str(val_to_char(res).to_string()),
         });
     }
+}
+
+fn exec_sigil(vm: &ChimeraVM, y: usize, x: usize, signal: u8, ctx: &mut SignalContext) {
+    if signal == 0 {
+        return;
+    }
+    // Iterate all registered sigils and check if patterns match at (y,x)
+    for sigil in vm.sigil_registry.values() {
+        if nova_sigil::check_dynamic_pattern(vm, y, x, &sigil.pattern) {
+            // Found a match!
+            // We should consume the pattern to prevent infinite loops if the sigil doesn't move/change.
+            // But we can't easily queue consumption here because `pattern` is on the sigil.
+            // We need to queue the consumption actions.
+            // `consume_dynamic_pattern` modifies the grid directly, which we can't do here easily (we have immutable vm ref).
+            // So we queue writes.
+
+            for (dy, dx, _) in &sigil.pattern {
+                if let Some((ny, nx)) = vm.normalize_coords(y as i64 + *dy, x as i64 + *dx) {
+                    ctx.grid_writes.push(GridWrite {
+                        y: ny,
+                        x: nx,
+                        val: Value::Int(0),
+                    });
+                }
+            }
+
+            // Execute the strand
+            ctx.executions.push((
+                OpCode::Call,
+                vec![Nucleotide::Number(sigil.strand_idx as i64)],
+            ));
+
+            // Only trigger one per tick per §?
+            break;
+        }
+    }
+}
+
+#[cfg(feature = "oracle")]
+fn check_kb_operator(vm: &ChimeraVM, s: &str) -> Option<i64> {
+    // Check KB for operator("Char", StrandID)
+    // Value::Junction(Any, ["operator", "Char", StrandID])
+
+    // We iterate the KB to find it.
+    // Optimisation: We could have a cache, but for now linear scan.
+
+    let op_key = Value::Str("operator".to_string());
+    let char_key = Value::Str(s.to_string());
+
+    for fact in &vm.knowledge_base {
+        if let Value::Junction(JunctionType::Any, args) = fact {
+            if args.len() == 3 && args[0] == op_key && args[1] == char_key {
+                if let Value::Int(id) = args[2] {
+                    return Some(id);
+                }
+            }
+        }
+    }
+    None
 }
 
 fn exec_clock(vm: &ChimeraVM, y: usize, x: usize, ctx: &mut SignalContext) {

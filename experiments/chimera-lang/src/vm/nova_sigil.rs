@@ -183,7 +183,7 @@ fn check_pattern_uniform(
 }
 
 #[cfg(feature = "nova")]
-fn check_dynamic_pattern(
+pub fn check_dynamic_pattern(
     vm: &ChimeraVM,
     cy: usize,
     cx: usize,
@@ -212,7 +212,7 @@ fn consume_pattern(vm: &mut ChimeraVM, cy: usize, cx: usize, offsets: &[(i64, i6
 }
 
 #[cfg(feature = "nova")]
-fn consume_dynamic_pattern(
+pub fn consume_dynamic_pattern(
     vm: &mut ChimeraVM,
     cy: usize,
     cx: usize,

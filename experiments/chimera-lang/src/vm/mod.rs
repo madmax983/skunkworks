@@ -239,6 +239,9 @@ pub mod nova_security;
 #[cfg(feature = "nova")]
 pub mod nova_sigil;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_sigil_integration_test;
+#[cfg(feature = "nova")]
 pub mod nova_signals;
 #[cfg(feature = "nova")]
 #[cfg(test)]
