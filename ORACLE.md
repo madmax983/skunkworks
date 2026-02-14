@@ -20,3 +20,4 @@
 ## Genesis
 - **Hypothesis**: The infinite non-repeating structure of Penrose tilings will naturally create choke points that simulate 'rooms' and 'corridors' without explicit procedural generation logic. The constraints of the 5-grid intersection create "density waves" of small tiles versus large tiles.
 - **Status**: OPEN
+  - [Genesis (The Mycologist)]: `bio-transit` will reveal that adding a global 'Commuter' goal (Work/Home) to local Physarum sensing creates a 'Braess's Paradox' where adding new roads (trails) can actually slow down the overall system flow due to induced congestion at high-pheromone bottlenecks.

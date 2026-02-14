@@ -332,3 +332,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The landscape is fracturing. Flying over the period-doubling cascade. Chaos is a mountain range.
 - **Note:** Hybrid of `bifurcation-probe` and `git-landscape`.
+
+### [Concentration Level: HIGH] - Location: experiments/bio-transit
+- **Scent Origin:** Genesis (The Mycologist) ⚛️🍄
+- **Status:** The slime molds are commuting. 50,000 agents are designing the future of public transport. The trails glow cyan in the void.
+- **Note:** Moonshot: Slime Mold Pathfinding + Urban Transit Network Design.
