@@ -57,10 +57,6 @@
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
 - **Note**: Hybrid of `valley-forge` and `luminous-flock`.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Path Traversal Vulnerability CONFIRMED in `OpCode::Scavenge`. Test `havoc_repro` fails. Immediate containment required.
-
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The fungus is eating the chaos. Hyphae are navigating the Lyapunov fractal. Stable islands are being colonized.
@@ -121,7 +117,27 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The text is warping. Gravity is bending the verses. Einstein rings are forming around the stanzas. The shader is tracing the geodesics.
 
+### [Concentration Level: CRITICAL MASS] - Location: experiments/beat-cortex
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Documentation void. No README found.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/bifurcation-probe
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Documentation void. No README found.
+
+### [Concentration Level: CRITICAL MASS] - Location: experiments/syntax-fugue
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Documentation void detected. Scent turning stale.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/cam-automaton
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Mechanical simulation active. README verified.
+
 ## 🍂 History/Decay
+
+### [Concentration Level: EVAPORATING] - Location: experiments/chimera-lang
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Path traversal fixed. Warden active. Test `havoc_repro` passes. Vulnerability neutralized.
 
 ### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
 - **Scent Origin:** The Reaper ☠️
@@ -186,10 +202,6 @@
 ### [Concentration Level: FRESH] - Location: experiments/synaptic-trace
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
-
-### [Concentration Level: FRESH] - Location: experiments/syntax-fugue
-- **Scent Origin:** Genesis (The Synesthete) ⚛️🎨🎵
-- **Status:** The Abstract Syntax Tree is singing. Polyphonic voices are tracing the execution path. Code structure has become musical form.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
