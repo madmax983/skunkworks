@@ -1,0 +1,20 @@
+[package]
+name = "echo-cavern"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+macroquad = "0.4"
+crossbeam-channel = "0.5"
+anyhow = { workspace = true }
+resonance-audio = { workspace = true }
+walkdir = "2.4"
+rand = "0.8"
+
+[dependencies.cpal]
+version = "0.15"
+optional = true
+
+[features]
+default = []
+audio = ["dep:cpal"]
