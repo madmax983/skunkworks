@@ -420,3 +420,8 @@
 - **Scent Origin:** Genesis (The Alchemist) ⚛️⚗️
 - **Status:** The mountains are breathing. Gray-Scott patterns are carving the canyons. The substrate is reacting to the user's touch.
 - **Note:** Moonshot: Reaction-Diffusion + Terrain Generation.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-terra
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The landscape is alive. Organisms are terraforming the Gray-Scott grid. Feedback loops between life and geology are active.
+- **Note:** Hybrid of `turing-terra` and `chimera-lang`.

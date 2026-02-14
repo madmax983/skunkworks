@@ -889,3 +889,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Programmable Defense. Towers sense enemies via memory grid and execute DNA to fire.
 - **Status**: experiments/chimera-defense
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-terra
+- **Parents**: experiments/turing-terra + experiments/chimera-lang
+- **Concept**: "Living Terraforming". ChimeraVM agents inhabit a Reaction-Diffusion landscape, sensing chemical gradients and modifying the terrain via metabolism.
+- **Novel trait**: Feedback loop between biological agents and geological processes.
+- **Status**: experiments/chimera-terra
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.
