@@ -2351,6 +2351,18 @@ pub enum OpCode {
     #[cfg(feature = "nova")]
     MeshPrune,
 
+    // Reactor Features (Logic Automata)
+    /// **[Nova]** Toggles the Reactor (Logic Cellular Automata) mode.
+    ///
+    /// **Stack:** `[ ... ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Reactor,
+    /// **[Nova]** Registers a reaction rule.
+    ///
+    /// **Stack:** `[ ..., input_a, input_b, output ] -> [ ... ]`
+    #[cfg(feature = "nova")]
+    Reaction,
+
     // Scavenger Features (Mad Science)
     /// **[Scavenge]** Reads raw bytes from a file and converts them into DNA.
     ///
