@@ -2169,6 +2169,12 @@ pub enum OpCode {
     /// **Stack:** `[ ..., amount ] -> [ ... ]`
     #[cfg(feature = "nova")]
     Glossolalia,
+
+    /// **[Babel]** Reads a Grammar definition from the grid visually.
+    ///
+    /// **Stack:** `[ ..., y, x ] -> [ ..., grammar_junction ]`
+    #[cfg(feature = "nova")]
+    GridGrammar,
     /// **[Babel]** Restores linguistic integrity.
     ///
     /// **Stack:** `[ ..., amount ] -> [ ... ]`
