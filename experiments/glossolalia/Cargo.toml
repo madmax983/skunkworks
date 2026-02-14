@@ -1,0 +1,12 @@
+[package]
+name = "glossolalia"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = "0.30"
+crossterm = "0.28"
+logos = "0.14"
+rand = "0.8"
+anyhow = "1.0"
+tui-shared = { path = "../../crates/tui-shared" }

@@ -360,3 +360,7 @@
 - **Scent Origin:** Genesis (The Entomologist) ⚛️🐜
 - **Status:** The termites are building cooling towers. The locusts are swarming the servers. Emergent defense strategies are forming in the heat gradients.
 - **Note:** Moonshot: Termite Mound Ventilation + Locust Swarm Attacks.
+### [Concentration Level: FRESH] - Location: experiments/glossolalia
+- **Scent Origin:** Genesis (The Philologist) ⚛️📜
+- **Status:** The vowels are shifting. Grimm's Law is rewriting the source code. The dialect is diverging from the proto-language.
+- **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
