@@ -394,3 +394,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The threads are jamming. Polyrhythmic synchronization detected. Lock contention is sonified as clave clicks. Audio engine gated behind feature flag for stability.
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
+
+### [Concentration Level: FRESH] - Location: experiments/babel-tower
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The threads are speaking in tongues. The tower is rising, but the language is confusing. Mutex contention is driving phonological drift.
+- **Note:** Hybrid of `thread-frequency` and `glossolalia`.

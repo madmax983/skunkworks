@@ -1,0 +1,16 @@
+[package]
+name = "babel-tower"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+crossbeam-channel = "0.5"
+crossterm = { workspace = true }
+ratatui = { workspace = true }
+rand = { workspace = true }
+anyhow = { workspace = true }
+rodio = { version = "0.17", optional = true }
+
+[features]
+default = []
+audio = ["dep:rodio"]

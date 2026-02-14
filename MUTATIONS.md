@@ -882,3 +882,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Self-Calculated Resource Allocation. Organisms evolve to request specific time blocks that fit the greedy allocation algorithm.
 - **Status**: experiments/chimera-maat
 - **Evaluation**: Compiles. TUI operational. Organisms are filing petitions.
+
+### babel-tower
+- **Parents**: experiments/thread-frequency + experiments/glossolalia
+- **Concept**: Threads contend for a shared Mutex ("The Tower") to speak words from a script. Wait time (contention) drives phonological drift (Grimm's Law, etc).
+- **Novel trait**: Phonetic Contention. The clarity of speech is inversely proportional to the contention on the shared resource.
+- **Status**: experiments/babel-tower
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon. TUI operational. Audio optional.
