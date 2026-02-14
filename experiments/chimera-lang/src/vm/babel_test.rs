@@ -29,15 +29,38 @@ fn test_babel_compile_simple() {
     // Let's make it print "Handler Called".
     // And drop the args to clean stack.
     let handler_genes = vec![
-        Gene { op: OpCode::Drop, args: vec![] }, // Drop Count
-        Gene { op: OpCode::Drop, args: vec![] }, // Drop Type
-        Gene { op: OpCode::Print, args: vec![] }, // Print Val2
-        Gene { op: OpCode::Print, args: vec![] }, // Print Val1
-        Gene { op: OpCode::Push, args: vec![Nucleotide::String("Handler Done".to_string())] },
-        Gene { op: OpCode::Print, args: vec![] },
-        Gene { op: OpCode::Ret, args: vec![] }, // Return to caller
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // Drop Count
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // Drop Type
+        Gene {
+            op: OpCode::Print,
+            args: vec![],
+        }, // Print Val2
+        Gene {
+            op: OpCode::Print,
+            args: vec![],
+        }, // Print Val1
+        Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("Handler Done".to_string())],
+        },
+        Gene {
+            op: OpCode::Print,
+            args: vec![],
+        },
+        Gene {
+            op: OpCode::Ret,
+            args: vec![],
+        }, // Return to caller
     ];
-    vm.dna.helix.strands.push(Strand { genes: handler_genes });
+    vm.dna.helix.strands.push(Strand {
+        genes: handler_genes,
+    });
     let handler_idx = 1;
 
     // 2. Create CST: Junction(All, [Int(10), Int(20)])
@@ -86,7 +109,10 @@ fn test_babel_compile_simple() {
     assert!(vm.output.contains(&"20".to_string()), "Output missing 20");
     assert!(vm.output.contains(&"10".to_string()), "Output missing 10");
     // Value::Str is printed with quotes
-    assert!(vm.output.contains(&"\"Handler Done\"".to_string()), "Output missing Handler Done");
+    assert!(
+        vm.output.contains(&"\"Handler Done\"".to_string()),
+        "Output missing Handler Done"
+    );
 }
 
 #[cfg(feature = "nova")]
@@ -98,22 +124,27 @@ fn test_babel_compile_nested() {
     // We rely on leaves being pushed to stack.
     // [ ..., leaf, type, count ] -> Drop, Drop -> [ ..., leaf ]
     let handler_genes = vec![
-        Gene { op: OpCode::Drop, args: vec![] }, // Drop Count
-        Gene { op: OpCode::Drop, args: vec![] }, // Drop Type
-        Gene { op: OpCode::Ret, args: vec![] },
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // Drop Count
+        Gene {
+            op: OpCode::Drop,
+            args: vec![],
+        }, // Drop Type
+        Gene {
+            op: OpCode::Ret,
+            args: vec![],
+        },
     ];
-    vm.dna.helix.strands.push(Strand { genes: handler_genes });
+    vm.dna.helix.strands.push(Strand {
+        genes: handler_genes,
+    });
     let handler_idx = 1;
 
     // CST: [ [ 42 ] ] (Nested)
-    let inner = Value::Junction(
-        crate::ast::JunctionType::Any,
-        vec![Value::Int(42)],
-    );
-    let outer = Value::Junction(
-        crate::ast::JunctionType::All,
-        vec![inner],
-    );
+    let inner = Value::Junction(crate::ast::JunctionType::Any, vec![Value::Int(42)]);
+    let outer = Value::Junction(crate::ast::JunctionType::All, vec![inner]);
 
     vm.stack.push(outer);
     vm.stack.push(Value::Int(handler_idx as i64));
@@ -127,7 +158,9 @@ fn test_babel_compile_nested() {
     vm.ip = (new_idx, 0);
     for _ in 0..50 {
         vm.step();
-        if vm.ip.0 > new_idx { break; }
+        if vm.ip.0 > new_idx {
+            break;
+        }
     }
 
     // Expected Stack state:

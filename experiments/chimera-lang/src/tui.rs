@@ -1109,8 +1109,10 @@ where
                                 #[cfg(feature = "nova")]
                                 ViewMode::Crispr => {
                                     // Execute CRISPR Logic
-                                    let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
-                                    let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
+                                    let guide_tokens: Vec<&str> =
+                                        app_state.crispr_guide.split_whitespace().collect();
+                                    let replace_tokens: Vec<&str> =
+                                        app_state.crispr_replace.split_whitespace().collect();
                                     use std::str::FromStr;
 
                                     let mut guide_ops = Vec::new();
@@ -1122,12 +1124,14 @@ where
                                     let mut replace_genes = Vec::new();
                                     for t in &replace_tokens {
                                         if let Ok(op) = crate::opcode::OpCode::from_str(t) {
-                                            replace_genes.push(crate::ast::Gene { op, args: vec![] });
+                                            replace_genes
+                                                .push(crate::ast::Gene { op, args: vec![] });
                                         }
                                     }
 
                                     if guide_ops.is_empty() {
-                                        app_state.crispr_result = "Error: Empty Guide Pattern".to_string();
+                                        app_state.crispr_result =
+                                            "Error: Empty Guide Pattern".to_string();
                                     } else {
                                         let s_idx = app_state.crispr_target_strand;
                                         if s_idx < vm.dna.helix.strands.len() {
@@ -1138,7 +1142,9 @@ where
                                             while i < strand.genes.len() {
                                                 let mut matched = true;
                                                 for (j, op) in guide_ops.iter().enumerate() {
-                                                    if i + j >= strand.genes.len() || strand.genes[i + j].op != *op {
+                                                    if i + j >= strand.genes.len()
+                                                        || strand.genes[i + j].op != *op
+                                                    {
                                                         matched = false;
                                                         break;
                                                     }
@@ -1153,9 +1159,13 @@ where
                                                 }
                                             }
                                             strand.genes = new_genes;
-                                            app_state.crispr_result = format!("CRISPR: Replaced {} occurrences.", matches);
+                                            app_state.crispr_result = format!(
+                                                "CRISPR: Replaced {} occurrences.",
+                                                matches
+                                            );
                                         } else {
-                                            app_state.crispr_result = "Error: Invalid Strand".to_string();
+                                            app_state.crispr_result =
+                                                "Error: Invalid Strand".to_string();
                                         }
                                     }
                                     // Stay in Editing mode
@@ -1536,7 +1546,6 @@ where
                     }
                     continue;
                 }
-
 
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
@@ -4035,7 +4044,9 @@ fn render_crispr(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     };
 
     let strand_border = if app_state.crispr_focus == 0 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
@@ -4051,48 +4062,65 @@ fn render_crispr(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
     // Bottom: Editor
     let editor_chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Length(3), Constraint::Length(3), Constraint::Min(1)].as_ref())
+        .constraints(
+            [
+                Constraint::Length(3),
+                Constraint::Length(3),
+                Constraint::Min(1),
+            ]
+            .as_ref(),
+        )
         .split(chunks[1]);
 
     // Guide RNA (Pattern)
     let guide_border = if app_state.crispr_focus == 1 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
-    let guide_input = Paragraph::new(app_state.crispr_guide.clone())
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Guide Pattern (e.g. 'Push Add')")
-                .border_style(guide_border),
-        );
+    let guide_input = Paragraph::new(app_state.crispr_guide.clone()).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Guide Pattern (e.g. 'Push Add')")
+            .border_style(guide_border),
+    );
     f.render_widget(guide_input, editor_chunks[0]);
 
     // Replacement (Payload)
     let replace_border = if app_state.crispr_focus == 2 {
-        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+        Style::default()
+            .fg(Color::Yellow)
+            .add_modifier(Modifier::BOLD)
     } else {
         Style::default().fg(Color::White)
     };
-    let replace_input = Paragraph::new(app_state.crispr_replace.clone())
-        .block(
-            Block::default()
-                .borders(Borders::ALL)
-                .title("Payload (e.g. 'Push Sub')")
-                .border_style(replace_border),
-        );
+    let replace_input = Paragraph::new(app_state.crispr_replace.clone()).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("Payload (e.g. 'Push Sub')")
+            .border_style(replace_border),
+    );
     f.render_widget(replace_input, editor_chunks[1]);
 
     // Status / Controls
     let mut status_text = vec![
-        Line::from(Span::styled(&app_state.crispr_result, Style::default().fg(Color::Cyan))),
+        Line::from(Span::styled(
+            &app_state.crispr_result,
+            Style::default().fg(Color::Cyan),
+        )),
         Line::from(" "),
     ];
 
     if let InputMode::Editing = app_state.input_mode {
         status_text.extend(vec![
-            Line::from(Span::styled("EDITING MODE", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from(Span::styled(
+                "EDITING MODE",
+                Style::default()
+                    .fg(Color::Yellow)
+                    .add_modifier(Modifier::BOLD),
+            )),
             Line::from("  Tab: Cycle Field (Guide <-> Replace)"),
             Line::from("  Type: Edit Text"),
             Line::from("  Enter: Execute Replace"),
@@ -4100,15 +4128,21 @@ fn render_crispr(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         ]);
     } else {
         status_text.extend(vec![
-            Line::from(Span::styled("NORMAL MODE", Style::default().fg(Color::Green))),
+            Line::from(Span::styled(
+                "NORMAL MODE",
+                Style::default().fg(Color::Green),
+            )),
             Line::from("  Enter: Start Editing"),
             Line::from("  Up/Down: Change Strand"),
             Line::from("  Tab: Switch View"),
         ]);
     }
 
-    let status_widget = Paragraph::new(status_text)
-        .block(Block::default().borders(Borders::ALL).title("CRISPR Status"));
+    let status_widget = Paragraph::new(status_text).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title("CRISPR Status"),
+    );
     f.render_widget(status_widget, editor_chunks[2]);
 }
 
@@ -6870,7 +6904,9 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             crate::vm::VisualEffect::Spark { loc, color, .. } => {
                 overlay.insert(*loc, ('*', Color::Rgb(color.0, color.1, color.2)));
             }
-            crate::vm::VisualEffect::Lightning { from, to, color, .. } => {
+            crate::vm::VisualEffect::Lightning {
+                from, to, color, ..
+            } => {
                 // Bresenham's Line Algorithm
                 let (mut x0, mut y0) = (from.1 as i64, from.0 as i64);
                 let (x1, y1) = (to.1 as i64, to.0 as i64);
@@ -6927,7 +6963,9 @@ fn render_elektra(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
 
             // Fixed nodes
             let ch = if let Some((c, col)) = overlay.get(&(y, x)) {
-                style = style.fg(*col).add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
+                style = style
+                    .fg(*col)
+                    .add_modifier(Modifier::BOLD | Modifier::RAPID_BLINK);
                 c.to_string()
             } else if r == -1.0 {
                 style = style

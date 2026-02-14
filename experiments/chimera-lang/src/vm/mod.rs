@@ -94,6 +94,9 @@ pub mod memetics;
 #[cfg(feature = "nova")]
 pub mod meta;
 pub mod microscope;
+#[cfg(all(feature = "nova", feature = "biophysics"))]
+#[cfg(test)]
+mod neurochem_test;
 #[cfg(feature = "biophysics")]
 pub mod neuron;
 pub mod nova;
@@ -198,6 +201,9 @@ pub mod nova_metamorphism;
 #[cfg(feature = "nova")]
 pub mod nova_metazoa;
 #[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_mirrors_test;
+#[cfg(feature = "nova")]
 pub mod nova_morphogenesis;
 #[cfg(feature = "nova")]
 pub mod nova_optics;
@@ -210,9 +216,6 @@ mod nova_orca_midi_test;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_orca_test;
-#[cfg(feature = "nova")]
-#[cfg(test)]
-mod nova_mirrors_test;
 #[cfg(feature = "nova")]
 pub mod nova_paleontology;
 #[cfg(feature = "nova")]
@@ -269,9 +272,6 @@ pub mod nova_void;
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod nova_void_test;
-#[cfg(all(feature = "nova", feature = "biophysics"))]
-#[cfg(test)]
-mod neurochem_test;
 #[cfg(feature = "nova")]
 pub mod nova_ward;
 #[cfg(feature = "nova")]
@@ -1901,16 +1901,14 @@ impl ChimeraVM {
         }
 
         // Process Visual Effects
-        self.visual_effects.retain_mut(|effect| {
-            match effect {
-                VisualEffect::Lightning { ttl, .. } => {
-                    *ttl = ttl.saturating_sub(1);
-                    *ttl > 0
-                }
-                VisualEffect::Spark { ttl, .. } => {
-                    *ttl = ttl.saturating_sub(1);
-                    *ttl > 0
-                }
+        self.visual_effects.retain_mut(|effect| match effect {
+            VisualEffect::Lightning { ttl, .. } => {
+                *ttl = ttl.saturating_sub(1);
+                *ttl > 0
+            }
+            VisualEffect::Spark { ttl, .. } => {
+                *ttl = ttl.saturating_sub(1);
+                *ttl > 0
             }
         });
 
@@ -3211,7 +3209,11 @@ impl ChimeraVM {
             }
 
             #[cfg(feature = "biophysics")]
-            OpCode::NeuroGenesis | OpCode::Stimulate | OpCode::Dendrite | OpCode::Axon | OpCode::Receptor => {
+            OpCode::NeuroGenesis
+            | OpCode::Stimulate
+            | OpCode::Dendrite
+            | OpCode::Axon
+            | OpCode::Receptor => {
                 neuron::exec_biophysics_op(self, op, args);
                 None
             }
@@ -4837,9 +4839,9 @@ mod tests {
         assert_eq!(vm.energy, i64::MAX);
     }
 }
-mod nova_sequencer_test;
 #[cfg(test)]
 mod babel_test;
+mod nova_sequencer_test;
 
 #[cfg(test)]
 mod sentry_value_test {

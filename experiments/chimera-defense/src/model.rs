@@ -1,6 +1,6 @@
-use std::collections::VecDeque;
 use chimera_lang::prelude::*;
 use chimera_lang::vm::{ChimeraVM, Value};
+use std::collections::VecDeque;
 
 pub const WIDTH: usize = 80;
 pub const HEIGHT: usize = 24;
@@ -80,11 +80,26 @@ impl Tower {
         // 3: g_write()
         // 4: jump(0)
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(15)] },
-            Gene { op: OpCode::GWrite, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(15)],
+            },
+            Gene {
+                op: OpCode::GWrite,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
 
         let dna = Dna {
@@ -143,11 +158,11 @@ impl World {
                 chaos: LogisticMap::new(0.6, 3.2),
                 spawn_timer: 0.0,
             },
-             Nest {
+            Nest {
                 pos: Position { x: 40.0, y: 2.0 },
                 chaos: LogisticMap::new(0.1, 3.9),
                 spawn_timer: 0.0,
-            }
+            },
         ];
 
         Self {
@@ -207,11 +222,14 @@ impl World {
         }
 
         // Move enemies
-        let center = Position { x: (WIDTH / 2) as f64, y: (HEIGHT / 2) as f64 };
+        let center = Position {
+            x: (WIDTH / 2) as f64,
+            y: (HEIGHT / 2) as f64,
+        };
         for enemy in &mut self.enemies {
             let dx = center.x - enemy.pos.x;
             let dy = center.y - enemy.pos.y;
-            let dist = (dx*dx + dy*dy).sqrt();
+            let dist = (dx * dx + dy * dy).sqrt();
 
             // Deterministic jitter
             enemy.chaos_val = 3.9 * enemy.chaos_val * (1.0 - enemy.chaos_val);
@@ -242,11 +260,11 @@ impl World {
                 dead_projectiles.push(p_idx);
                 // Check collision at end
                 for (e_idx, enemy) in self.enemies.iter().enumerate() {
-                     let dx = enemy.pos.x - proj.end.x;
-                     let dy = enemy.pos.y - proj.end.y;
-                     if (dx*dx + dy*dy).sqrt() < 2.0 {
-                         hit_indices.push(e_idx);
-                     }
+                    let dx = enemy.pos.x - proj.end.x;
+                    let dy = enemy.pos.y - proj.end.y;
+                    if (dx * dx + dy * dy).sqrt() < 2.0 {
+                        hit_indices.push(e_idx);
+                    }
                 }
             }
         }
@@ -260,16 +278,16 @@ impl World {
         for idx in hit_indices {
             if idx < self.enemies.len() {
                 self.enemies[idx].hp -= 5.0;
-                 if self.enemies[idx].hp <= 0.0 {
-                     self.resources += 2.0;
-                 }
+                if self.enemies[idx].hp <= 0.0 {
+                    self.resources += 2.0;
+                }
             }
         }
         self.enemies.retain(|e| e.hp > 0.0);
 
         // Update Towers
         for tower in &mut self.towers {
-             if tower.cooldown > 0 {
+            if tower.cooldown > 0 {
                 tower.cooldown -= 1;
                 // Still tick VM? Yes, let it think.
                 tower.tick(None);
@@ -281,13 +299,13 @@ impl World {
             let mut best_target_pos = None;
 
             for enemy in &self.enemies {
-                 let dx = enemy.pos.x - tower.pos.x;
-                 let dy = enemy.pos.y - tower.pos.y;
-                 let dist = (dx*dx + dy*dy).sqrt();
-                 if dist < min_dist {
-                     min_dist = dist;
-                     best_target_pos = Some(enemy.pos);
-                 }
+                let dx = enemy.pos.x - tower.pos.x;
+                let dy = enemy.pos.y - tower.pos.y;
+                let dist = (dx * dx + dy * dy).sqrt();
+                if dist < min_dist {
+                    min_dist = dist;
+                    best_target_pos = Some(enemy.pos);
+                }
             }
 
             let sensor_info = if let Some(pos) = best_target_pos {
@@ -301,15 +319,15 @@ impl World {
 
             if let Some(should_fire) = tower.tick(sensor_info) {
                 if should_fire {
-                     if let Some(target_pos) = best_target_pos {
-                         // Spawn projectile
-                         self.projectiles.push(Projectile {
-                             start: tower.pos,
-                             end: target_pos,
-                             progress: 0.0,
-                         });
-                         tower.cooldown = 10;
-                     }
+                    if let Some(target_pos) = best_target_pos {
+                        // Spawn projectile
+                        self.projectiles.push(Projectile {
+                            start: tower.pos,
+                            end: target_pos,
+                            progress: 0.0,
+                        });
+                        tower.cooldown = 10;
+                    }
                 }
             }
         }

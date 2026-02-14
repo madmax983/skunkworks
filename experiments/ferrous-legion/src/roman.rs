@@ -295,10 +295,7 @@ mod tests {
 
         // IV = 4
         let iv = Roman {
-            digits: vec![
-                Symbol::new(BaseSymbol::I, 0),
-                Symbol::new(BaseSymbol::V, 0)
-            ]
+            digits: vec![Symbol::new(BaseSymbol::I, 0), Symbol::new(BaseSymbol::V, 0)],
         };
         assert_eq!(iv.value(), BigUint::from(4u32));
 
@@ -308,23 +305,20 @@ mod tests {
 
         // IX = 9
         let ix = Roman {
-            digits: vec![
-                Symbol::new(BaseSymbol::I, 0),
-                Symbol::new(BaseSymbol::X, 0)
-            ]
+            digits: vec![Symbol::new(BaseSymbol::I, 0), Symbol::new(BaseSymbol::X, 0)],
         };
         assert_eq!(ix.value(), BigUint::from(9u32));
 
         // MCMLIV = 1954
         let mcmliv = Roman {
-             digits: vec![
+            digits: vec![
                 Symbol::new(BaseSymbol::M, 0),
                 Symbol::new(BaseSymbol::C, 0),
                 Symbol::new(BaseSymbol::M, 0),
                 Symbol::new(BaseSymbol::L, 0),
                 Symbol::new(BaseSymbol::I, 0),
-                Symbol::new(BaseSymbol::V, 0)
-            ]
+                Symbol::new(BaseSymbol::V, 0),
+            ],
         };
         assert_eq!(mcmliv.value(), BigUint::from(1954u32));
     }

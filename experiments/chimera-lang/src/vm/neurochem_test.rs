@@ -20,24 +20,58 @@ mod tests {
         // [ push(5) push(5) dendrite() ]
         let genes = vec![
             // 1. Create Neuron at 5,5 (Stack: y, x)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-            Gene { op: OpCode::NeuroGenesis, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // x
+            Gene {
+                op: OpCode::NeuroGenesis,
+                args: vec![],
+            },
             // 2. Add Receptor
             // Stack expected: [ ..., channel, sensitivity, threshold, y, x ] (Top is x)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // channel
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // sensitivity (10 = 1.0)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(10)] }, // threshold
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // y
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(5)] }, // x
-            Gene { op: OpCode::Receptor, args: vec![] },
-
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // channel
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }, // sensitivity (10 = 1.0)
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(10)],
+            }, // threshold
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // y
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(5)],
+            }, // x
+            Gene {
+                op: OpCode::Receptor,
+                args: vec![],
+            },
             // 3. Secrete Hormone
             // Stack expected: [ ..., channel, amount ] (Top is amount)
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] }, // channel
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] }, // amount
-            Gene { op: OpCode::Secrete, args: vec![] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            }, // channel
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            }, // amount
+            Gene {
+                op: OpCode::Secrete,
+                args: vec![],
+            },
         ];
 
         let mut vm = ChimeraVM::new(make_dna(genes));
@@ -76,7 +110,11 @@ mod tests {
             // process_environment -> process_signals.
             // then vm applies neuron_stimuli to i_inj.
 
-            assert!(neuron.i_inj > 10.0, "Neuron should be stimulated by hormone. i_inj: {}", neuron.i_inj);
+            assert!(
+                neuron.i_inj > 10.0,
+                "Neuron should be stimulated by hormone. i_inj: {}",
+                neuron.i_inj
+            );
         } else {
             panic!("Neuron missing");
         }
