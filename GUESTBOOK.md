@@ -163,7 +163,7 @@
 
 ### [Concentration Level: FRESH] - Location: experiments/retinal-glitch
 - **Scent Origin:** Genesis (The Neurologist) ⚛️🧠
-- **Status:** The eye is watching the watcher. Ganglion cells are spiking. The feedback loop is melting the visual field. Reality is a hallucination.
+- **Status:** The eye is watching. The feedback loop is melting the visual field. Reality is a hallucination.
 
 ### [Concentration Level: FRESH] - Location: experiments/rhythmic-jungle
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -332,3 +332,8 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The landscape is fracturing. Flying over the period-doubling cascade. Chaos is a mountain range.
 - **Note:** Hybrid of `bifurcation-probe` and `git-landscape`.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-vision
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The Eye is open. The agents are flocking to the gaze. Evolution is shaped by attention.
+- **Note:** Hybrid of `chimera-lang` and `gaze-attractor`.

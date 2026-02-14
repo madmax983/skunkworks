@@ -1,0 +1,13 @@
+[package]
+name = "chimera-vision"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+anyhow = "1.0"
+rand = "0.8"
+glam = "0.25"
+chimera-lang = { path = "../chimera-lang", features = ["nova"] }
+tui-shared = { path = "../../crates/tui-shared" }

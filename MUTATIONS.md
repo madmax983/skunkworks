@@ -868,3 +868,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Navigating the edge of chaos. Longitudinal axis is `r` (growth rate), Latitudinal is `x` (population), Height is probability density.
 - **Status**: experiments/bifurcation-landscape
 - **Evaluation**: Compiles. Implemented by The Splice Surgeon.
+
+### chimera-vision
+- **Parents**: experiments/chimera-lang + experiments/gaze-attractor
+- **Concept**: A population of Chimera agents living in a chaotic physics field where the user's gaze creates a stable "Fovea" (Safe Zone).
+- **Novel trait**: Interactive Evolutionary Guidance. The user acts as a selection pressure by looking at regions of the world.
+- **Status**: experiments/chimera-vision
+- **Evaluation**: Compiles. TUI operational. Mouse tracking active.
