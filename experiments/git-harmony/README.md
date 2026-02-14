@@ -1,27 +1,37 @@
-# ⚛️ Git Harmony
+# Git Harmony ⚛️🎵
 
-> "The code is the music." - Genesis
+> "Listen to the song of your repository."
 
-Git Harmony is a synesthetic translator that turns your git diffs into an ambient audiovisual experience.
+**Git Harmony** is a moonshot experiment that translates git history into a generative ambient soundscape using a Finite Difference Time Domain (FDTD) wave physics simulation.
 
 ## Concept
-It reads the current `git diff`, parsing additions and deletions as musical events.
-- **Additions (+):** High pitch, Green/Cyan, Major scale.
-- **Deletions (-):** Low pitch, Red/Magenta, Minor scale.
-- **Context:** Mid pitch, Blue.
+
+Every commit is a pebble dropped into a pool of water.
+- **File Path**: Determines the (x, y) coordinate on the simulation grid.
+- **Insertions/Deletions**: Determine the strength and polarity of the ripple.
+- **Churn**: Determines the turbulence.
+
+The simulation runs a 100x100 wave equation grid (`resonance-audio`) and visualizes the pressure waves in real-time using a TUI (`ratatui`).
+
+## Tech Stack
+
+- **Audio Physics**: `resonance-audio` (FDTD Wave Equation)
+- **Audio Output**: `cpal` (Optional, falls back to silent simulation)
+- **Visualization**: `ratatui` + `crossterm`
+- **Git Parsing**: `git2` / `git-associates`
 
 ## Usage
-Run inside a git repository (or this one):
 
 ```bash
-# Visual-only mode (Default)
 cargo run -p git-harmony
-
-# Audio-visual mode (Requires audio hardware)
-cargo run -p git-harmony --features audio
 ```
 
-## "Wild Mode" Features
-- **Generative Audio:** Uses `rodio` to synthesize sine waves based on the hash of the code content (Requires `--features audio`).
-- **Visual Synesthesia:** A `ratatui` Canvas visualizes the "notes" flowing through time.
-- **Resilient:** Works even without audio hardware (visual-only mode).
+### Controls
+
+- **Q**: Quit
+- **P**: Manually pluck the center (for testing)
+- **Space**: Pause/Resume history playback
+
+## Meaning
+
+This tool explores "Codebase Sonification". By listening to the rhythm and intensity of commits, we might perceive patterns in development velocity, refactoring waves, and architectural tremors that are invisible in text logs.

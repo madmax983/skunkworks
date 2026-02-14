@@ -1,163 +1,102 @@
 use anyhow::Result;
-use crossterm::{
-    event::{self, Event, KeyCode, KeyEventKind},
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
-};
-use git_associates::GitModel;
-use ratatui::{
-    backend::CrosstermBackend,
-    layout::{Constraint, Direction, Layout},
-    style::{Color, Style},
-    text::Span,
-    widgets::{
-        canvas::{Canvas, Circle, Context},
-        Block, Borders, Paragraph,
-    },
-    Terminal,
-};
-use std::io;
+use crossterm::event::{self, Event, KeyCode, KeyEventKind};
+use git_scanner::GitScanner;
+use mapping::map_event_to_command;
+use tui::{draw_ui, init_tui, restore_tui};
+use resonance_audio::audio::{AudioCommand, AudioSnapshot};
+use std::time::{Duration, Instant};
+use crossbeam_channel::bounded;
 
-pub mod synthesizer;
-
-use synthesizer::Synthesizer;
+pub mod audio;
+pub mod git_scanner;
+pub mod mapping;
+pub mod tui;
 
 fn main() -> Result<()> {
-    // Setup
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+    // 1. Setup Channels
+    // Audio command channel
+    let (cmd_tx, cmd_rx) = bounded(1024);
+    // Snapshot channel (for visualization)
+    let (snap_tx, snap_rx) = bounded(2);
 
-    // Logic
-    // We try to get diff, if it fails (e.g. no git repo), we handle it
-    let (diff, status_msg) = match GitModel::open(".") {
-        Ok(model) => match model.diff_workdir() {
-            Ok(d) => {
-                if d.files.is_empty() {
-                    (d, "No changes detected.".to_string())
-                } else {
-                    (d, "Playing git diffs...".to_string())
-                }
-            }
-            Err(_) => (
-                git_associates::model::DiffStats::default(),
-                "Error reading diffs".to_string(),
-            ),
-        },
-        Err(_) => (
-            git_associates::model::DiffStats::default(),
-            "Error: Not a git repository".to_string(),
-        ),
+    // 2. Init Audio
+    let _audio_handle = audio::init_audio(cmd_rx, snap_tx)?;
+
+    // 3. Init Git Scanner
+    // Try to open current directory, fallback to parent if fails (e.g. inside experiments/git-harmony)
+    let scanner_result = GitScanner::new(".", 100).or_else(|_| GitScanner::new("..", 100));
+
+    let mut scanner = match scanner_result {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("Failed to open git repo: {}. Exiting.", e);
+            return Ok(());
+        }
     };
 
-    let mut synth = Synthesizer::new(diff, status_msg);
+    // 4. Init TUI
+    let mut terminal = init_tui()?;
 
-    // Loop
-    let res = run_app(&mut terminal, &mut synth);
+    // 5. Loop State
+    let mut last_tick = Instant::now();
+    let tick_rate = Duration::from_millis(100); // 10 events per second
+    let mut current_snapshot: Option<AudioSnapshot> = None;
+    let mut status_msg = String::from("Press 'q' to quit. 'p' to pluck random.");
+    let mut paused = false;
 
-    // Teardown
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    terminal.show_cursor()?;
-
-    if let Err(err) = res {
-        println!("Error: {:?}", err);
-    }
-
-    Ok(())
-}
-
-fn run_app(
-    terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
-    synth: &mut Synthesizer,
-) -> Result<()> {
     loop {
+        // Draw TUI
         terminal.draw(|f| {
-            let chunks = Layout::default()
-                .direction(Direction::Vertical)
-                .constraints([Constraint::Percentage(80), Constraint::Percentage(20)])
-                .split(f.area());
-
-            // Canvas for visual notes
-            let canvas = Canvas::default()
-                .block(
-                    Block::default()
-                        .borders(Borders::ALL)
-                        .title(" ⚛️ Git Harmony ⚛️ "),
-                )
-                .x_bounds([0.0, 100.0])
-                .y_bounds([0.0, 100.0])
-                .paint(|ctx: &mut Context| {
-                    for note in &synth.active_notes {
-                        let y = (note.pitch * 90.0 + 5.0) as f64; // Keep within bounds roughly
-
-                        // Animation: Flow from center outwards or scroll?
-                        // Let's do scrolling: New notes appear at right (100) and move left
-                        // Wait, 'life' goes 1.0 -> 0.0.
-                        // So x = life * 100.0 ? That means they start at right and move left.
-                        let x = (note.life * 90.0 + 5.0) as f64;
-
-                        let color = if note.is_add {
-                            Color::Green
-                        } else if note.is_remove {
-                            Color::Red
-                        } else {
-                            Color::Blue
-                        };
-
-                        // Draw text
-                        // Truncate text to avoid clutter
-                        let display_text = if note.text.len() > 20 {
-                            format!("{}...", &note.text[0..20])
-                        } else {
-                            note.text.clone()
-                        };
-
-                        ctx.print(x, y, Span::styled(display_text, Style::default().fg(color)));
-
-                        // Draw circle
-                        ctx.draw(&Circle {
-                            x,
-                            y,
-                            radius: 1.0 + (note.life * 2.0) as f64,
-                            color,
-                        });
-                    }
-                });
-            f.render_widget(canvas, chunks[0]);
-
-            // Status bar
-            let last_note_text = synth
-                .active_notes
-                .last()
-                .map(|n| n.text.clone())
-                .unwrap_or_else(|| synth.status_msg.clone());
-            let count = synth.active_notes.len();
-
-            let p = Paragraph::new(format!(
-                "Active Notes: {} | Current: {}",
-                count, last_note_text
-            ))
-            .block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title("Status (Press 'q' to quit)"),
-            );
-            f.render_widget(p, chunks[1]);
+            draw_ui(f, &current_snapshot, &status_msg);
         })?;
 
-        // Input
-        if event::poll(std::time::Duration::from_millis(16))? {
+        // Handle Input
+        if event::poll(Duration::from_millis(16))? {
             if let Event::Key(key) = event::read()? {
-                if key.kind == KeyEventKind::Press && key.code == KeyCode::Char('q') {
-                    return Ok(());
+                if key.kind == KeyEventKind::Press {
+                    match key.code {
+                        KeyCode::Char('q') => break,
+                        KeyCode::Char('p') => {
+                            // Manual pluck
+                            let _ = cmd_tx.send(AudioCommand::Pluck {
+                                x: 50,
+                                y: 50,
+                                strength: 1.0,
+                            });
+                            status_msg = "Manual Pluck!".to_string();
+                        },
+                        KeyCode::Char(' ') => {
+                            paused = !paused;
+                            status_msg = if paused { "Paused".to_string() } else { "Resumed".to_string() };
+                        }
+                        _ => {}
+                    }
                 }
             }
         }
 
-        // Update
-        synth.tick();
+        // Receive Audio Snapshot
+        // We only care about the latest one
+        while let Ok(snap) = snap_rx.try_recv() {
+            current_snapshot = Some(snap);
+        }
+
+        // Process Git Events
+        if !paused && last_tick.elapsed() >= tick_rate {
+            if let Some(event) = scanner.next_event() {
+                status_msg = format!("{} | {} | +{}/-{}", event.author, event.file_path, event.insertions, event.deletions);
+                let cmd = map_event_to_command(&event, 100, 100);
+                let _ = cmd_tx.send(cmd);
+            } else {
+                //status_msg = "History ended.".to_string();
+                // Maybe restart? Or just wait.
+            }
+            last_tick = Instant::now();
+        }
     }
+
+    // Teardown
+    restore_tui(&mut terminal)?;
+
+    Ok(())
 }

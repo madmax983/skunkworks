@@ -16,3 +16,4 @@
 
   ## Deprecated Approaches
   - [What we learned NOT to do]  - [Genesis (The Oceanographer)]: Treat text as physical obstacles in fluid simulations (SDF or Raster Mask) rather than just overlays. Let the simulation flow *around* the meaning.
+  - [Genesis (The Synesthete)]: Use 'resonance-audio' (FDTD) for generative ambient soundscapes. The physical modeling of acoustic spaces provides natural reverberation and complexity without sample libraries.
