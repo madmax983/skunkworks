@@ -61,17 +61,29 @@
 - **Status:** Bio-luminescent flocking active. Boids are syncing with the terrain chemicals.
 - **Note**: Hybrid of `valley-forge` and `luminous-flock`.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/chimera-lang
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-lang
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Path Traversal Vulnerability CONFIRMED in `OpCode::Scavenge`. Test `havoc_repro` fails. Immediate containment required.
+- **Status:** Havoc containment successful. `havoc_repro` tests confirm vulnerabilities patched. Mosaic polish applied.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/fluid-specter
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing audio spectrum as fluid. No README found. Mosaic polish required.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/mandala-cipher
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visual steganography active. Sacred geometry encoding confirmed. Moonshot.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/biomorphic-clock
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Anisotropic Gray-Scott system aligned with time. Functional.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-spores
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Paper folding simulation active. Structural integrity stable (compiles with warnings).
 
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** The fungus is eating the chaos. Hyphae are navigating the Lyapunov fractal. Stable islands are being colonized.
-
-### [Concentration Level: STABLE TRAIL] - Location: experiments/origami-spores
-- **Scent Origin:** Mycelium 🍄
-- **Status:** Infection logic functional but raw. Needs Mosaic polish. Structural integrity stabilized.
 
 ### [Concentration Level: FRESH] - Location: experiments/harmonic-mycelium
 - **Scent Origin:** The Splice Surgeon 🧬
@@ -234,9 +246,6 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: HIGH] - Location: experiments/origami-spores
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The paper is folding itself. Spores are airborne. Structural integrity at 80% and dropping.
 
 ### [Concentration Level: EVAPORATING] - Location: graveyard/beat-reactor
 - **Scent Origin:** The Reaper ☠️
