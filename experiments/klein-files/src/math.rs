@@ -48,4 +48,67 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_klein_topology_gluing() {
+        let a = 3.0;
+        let epsilon = 1e-4;
+
+        // Check that (u=0, v) connects to (u=2PI, 2PI-v)
+        // Note: 2PI is numerically approximate, so we use close values.
+        let u_start = 0.0;
+        let u_end = 2.0 * PI;
+
+        for i in 0..20 {
+            let v = (i as f32 / 20.0) * 2.0 * PI;
+            let p_start = figure_8_klein(u_start, v, a);
+
+            // The gluing condition: (2PI, 2PI - v)
+            let v_flipped = 2.0 * PI - v;
+            let p_end = figure_8_klein(u_end, v_flipped, a);
+
+            let dist_sq = (p_start[0] - p_end[0]).powi(2)
+                + (p_start[1] - p_end[1]).powi(2)
+                + (p_start[2] - p_end[2]).powi(2);
+
+            assert!(
+                dist_sq < epsilon,
+                "Gluing failed at v={}: dist_sq={} (expected 0). p_start={:?}, p_end={:?}",
+                v,
+                dist_sq,
+                p_start,
+                p_end
+            );
+        }
+    }
+
+    #[test]
+    fn test_klein_discontinuity() {
+        let a = 3.0;
+        // Check that (u=0, v) is NOT generally (u=2PI, v)
+        // This confirms the Möbius twist is necessary.
+        let u_start = 0.0;
+        let u_end = 2.0 * PI;
+        let v = PI / 2.0; // sin(v) = 1
+
+        let p_start = figure_8_klein(u_start, v, a);
+        let p_end = figure_8_klein(u_end, v, a);
+
+        let dist_sq = (p_start[0] - p_end[0]).powi(2)
+            + (p_start[1] - p_end[1]).powi(2)
+            + (p_start[2] - p_end[2]).powi(2);
+
+        // At v=PI/2:
+        // r(0) = a + sin(PI/2) = a + 1
+        // r(2PI) = a - sin(PI/2) = a - 1
+        // x(0) = a + 1
+        // x(2PI) = a - 1
+        // dist should be roughly 2.0
+        assert!(
+            dist_sq > 1.0,
+            "Expected discontinuity at v={}, got dist_sq={}",
+            v,
+            dist_sq
+        );
+    }
 }

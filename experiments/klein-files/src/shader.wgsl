@@ -7,11 +7,12 @@ var<uniform> camera: CameraUniform;
 
 struct VertexInput {
     @location(0) position: vec3<f32>,
+    @location(1) uv: vec2<f32>,
 };
 
 struct InstanceInput {
-    @location(1) model_pos: vec3<f32>,
-    @location(2) color: vec4<f32>,
+    @location(2) model_pos: vec3<f32>,
+    @location(3) color: vec4<f32>,
 };
 
 struct VertexOutput {
@@ -44,7 +45,22 @@ fn vs_line(
 ) -> VertexOutput {
     var out: VertexOutput;
     out.clip_position = camera.view_proj * vec4<f32>(model.position, 1.0);
-    out.color = vec4<f32>(0.5, 0.5, 0.8, 0.3); // Semi-transparent blue lines
+
+    // Generate color from UV
+    // u, v are in [0, 2PI] approx
+    let u = model.uv.x;
+    let v = model.uv.y;
+
+    // Moonshot aesthetic: Neon gradients
+    // R based on U
+    // G based on V
+    // B oscillating
+
+    let r = sin(u) * 0.5 + 0.5;
+    let g = sin(v) * 0.5 + 0.5;
+    let b = sin(u + v) * 0.5 + 0.5;
+
+    out.color = vec4<f32>(r, g, b, 0.8);
     return out;
 }
 
