@@ -237,6 +237,11 @@ pub mod nova_quipu;
 #[cfg(test)]
 mod nova_quipu_test;
 #[cfg(feature = "nova")]
+pub mod nova_reactor;
+#[cfg(feature = "nova")]
+#[cfg(test)]
+mod nova_reactor_test;
+#[cfg(feature = "nova")]
 pub mod nova_relativity;
 #[cfg(feature = "nova")]
 pub mod nova_resonance_war;
@@ -338,6 +343,29 @@ pub enum Value {
     Str(String),
     Junction(JunctionType, Vec<Value>),
     Superposition(Vec<(Value, f64)>),
+}
+
+impl Eq for Value {}
+
+#[allow(clippy::derive_hash_xor_eq)]
+impl std::hash::Hash for Value {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        std::mem::discriminant(self).hash(state);
+        match self {
+            Value::Int(i) => i.hash(state),
+            Value::Str(s) => s.hash(state),
+            Value::Junction(t, vals) => {
+                t.hash(state);
+                vals.hash(state);
+            }
+            Value::Superposition(states) => {
+                for (v, p) in states {
+                    v.hash(state);
+                    p.to_bits().hash(state);
+                }
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -689,6 +717,12 @@ pub struct ChimeraVM {
     pub void_rifts: Vec<nova_void::VoidRift>,
     #[cfg(feature = "nova")]
     pub biomesh: nova_biomesh::BioMeshState,
+    #[cfg(feature = "nova")]
+    pub reactor_mode: bool,
+    #[cfg(feature = "nova")]
+    pub reactor_cache: HashMap<(Value, Value), Option<Value>>,
+    #[cfg(feature = "nova")]
+    pub reactor_flash: Vec<Vec<u8>>,
     pub visual_effects: Vec<VisualEffect>,
 }
 
@@ -997,6 +1031,12 @@ impl ChimeraVM {
             void_rifts: Vec::new(),
             #[cfg(feature = "nova")]
             biomesh: nova_biomesh::BioMeshState::new(),
+            #[cfg(feature = "nova")]
+            reactor_mode: false,
+            #[cfg(feature = "nova")]
+            reactor_cache: HashMap::new(),
+            #[cfg(feature = "nova")]
+            reactor_flash: vec![vec![0; GRID_SIZE]; GRID_SIZE],
             visual_effects: Vec::new(),
         }
     }
@@ -1900,6 +1940,16 @@ impl ChimeraVM {
             }
         }
 
+        // Decay reactor flash
+        #[cfg(feature = "nova")]
+        for row in self.reactor_flash.iter_mut() {
+            for val in row.iter_mut() {
+                if *val > 0 {
+                    *val = val.saturating_sub(10);
+                }
+            }
+        }
+
         // Process Visual Effects
         self.visual_effects.retain_mut(|effect| {
             match effect {
@@ -1974,6 +2024,9 @@ impl ChimeraVM {
 
             if self.logos_mode {
                 nova_logos::process_logos(self);
+            }
+            if self.reactor_mode {
+                nova_reactor::process_reactor(self);
             }
         }
 
@@ -3340,6 +3393,13 @@ impl ChimeraVM {
                 crate::vm::nova::exec_nova_op(self, op, args);
                 None
             }
+
+            #[cfg(feature = "nova")]
+            OpCode::Reactor | OpCode::Reaction => {
+                crate::vm::nova::exec_nova_op(self, op, args);
+                None
+            }
+
             OpCode::Unknown(name) => self.handle_unknown_opcode(&name),
         }
     }

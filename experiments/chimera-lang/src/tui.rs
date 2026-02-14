@@ -121,6 +121,8 @@ pub(crate) enum ViewMode {
     BioMesh,
     #[cfg(feature = "nova")]
     Crispr,
+    #[cfg(feature = "nova")]
+    Reactor,
     Evolution,
 }
 
@@ -721,6 +723,12 @@ where
             #[cfg(feature = "nova")]
             if let ViewMode::Crispr = app_state.view_mode {
                 render_crispr(f, vm, app_state);
+                return;
+            }
+
+            #[cfg(feature = "nova")]
+            if let ViewMode::Reactor = app_state.view_mode {
+                render_reactor(f, vm, app_state);
                 return;
             }
 
@@ -1477,6 +1485,15 @@ where
                                     app_state.input_mode = InputMode::Normal;
                                     app_state.input_buffer.clear();
                                 }
+                                #[cfg(feature = "nova")]
+                                ViewMode::Reactor => {
+                                    let (x, y) = app_state.grid_cursor;
+                                    let val = parse_grid_value(&app_state.input_buffer);
+                                    vm.grid[y][x] = val;
+                                    app_state.status_msg = format!("Grid updated at {},{}", x, y);
+                                    app_state.input_mode = InputMode::Normal;
+                                    app_state.input_buffer.clear();
+                                }
                             }
                         }
                         KeyCode::Tab =>
@@ -1750,7 +1767,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::BioMesh => ViewMode::Crispr,
                             #[cfg(feature = "nova")]
-                            ViewMode::Crispr => ViewMode::Evolution,
+                            ViewMode::Crispr => ViewMode::Reactor,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Reactor => ViewMode::Evolution,
                             ViewMode::Evolution => ViewMode::Genome,
                         };
                     }
@@ -1960,6 +1979,8 @@ where
                     KeyCode::Char('v') => app_state.view_mode = ViewMode::Virology,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('N') => app_state.view_mode = ViewMode::BioMesh,
+                    #[cfg(feature = "nova")]
+                    KeyCode::Char('X') => app_state.view_mode = ViewMode::Reactor,
                     #[cfg(feature = "nova")]
                     KeyCode::Char('I') => {
                         if let ViewMode::Hologram = app_state.view_mode {
@@ -2625,6 +2646,12 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
+                            if app_state.grid_cursor.1 < 15 {
+                                app_state.grid_cursor.1 += 1;
+                            }
+                        }
                     },
                     KeyCode::Up => match app_state.view_mode {
                         ViewMode::Genome => {
@@ -2880,6 +2907,12 @@ where
                                 app_state.grid_cursor.1 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
+                            if app_state.grid_cursor.1 > 0 {
+                                app_state.grid_cursor.1 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Right => match app_state.view_mode {
                         #[cfg(feature = "nova")]
@@ -3055,6 +3088,12 @@ where
                         ViewMode::Evolution => {}
                         #[cfg(feature = "nova")]
                         ViewMode::BioMesh => {
+                            if app_state.grid_cursor.0 < 15 {
+                                app_state.grid_cursor.0 += 1;
+                            }
+                        }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
                             if app_state.grid_cursor.0 < 15 {
                                 app_state.grid_cursor.0 += 1;
                             }
@@ -3238,8 +3277,20 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Reactor => {
+                            if app_state.grid_cursor.0 > 0 {
+                                app_state.grid_cursor.0 -= 1;
+                            }
+                        }
                     },
                     KeyCode::Enter => {
+                        #[cfg(feature = "nova")]
+                        if let ViewMode::Reactor = app_state.view_mode {
+                            app_state.input_mode = InputMode::Editing;
+                            app_state.input_buffer.clear();
+                        }
+
                         if let ViewMode::Evolution = app_state.view_mode {
                             app_state.input_mode = InputMode::Editing;
                             app_state.input_buffer.clear();
@@ -3277,6 +3328,8 @@ where
                             ViewMode::Catalyst => {
                                 app_state.input_mode = InputMode::Normal;
                             }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Reactor => {}
                             #[cfg(feature = "nova")]
                             ViewMode::BioMesh => {
                                 app_state.input_mode = InputMode::Normal;
@@ -4912,6 +4965,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::BioMesh => "BIOMESH",
         #[cfg(feature = "nova")]
         ViewMode::Crispr => "CRISPR EDITOR",
+        #[cfg(feature = "nova")]
+        ViewMode::Reactor => "REACTOR CHAMBER",
         ViewMode::Evolution => "EVOLUTION CHAMBER",
     };
 
@@ -5475,6 +5530,7 @@ fn get_all_views() -> Vec<(ViewMode, &'static str, &'static str)> {
         views.push((ViewMode::Attractor, "Attractor", "A"));
         views.push((ViewMode::Virology, "Virology", "v"));
         views.push((ViewMode::BioMesh, "BioMesh", "N"));
+        views.push((ViewMode::Reactor, "Reactor", "X"));
         views.push((ViewMode::Evolution, "Evolution", "E"));
     }
     views
@@ -9448,6 +9504,94 @@ fn render_biomesh(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         Block::default()
             .borders(Borders::ALL)
             .title("Node Inspector"),
+    );
+    f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_reactor(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)].as_ref())
+        .split(f.area());
+
+    // Grid
+    let mut grid_lines = Vec::new();
+    for y in 0..16 {
+        let mut line_spans = Vec::new();
+        for x in 0..16 {
+            let val = &vm.grid[y][x];
+            let flash = vm.reactor_flash[y][x];
+            let mut style = Style::default();
+
+            if flash > 0 {
+                let intensity = flash;
+                // Yellow flash
+                style = style.bg(Color::Rgb(intensity, intensity, 0)).fg(Color::Black);
+            } else {
+                style = style.fg(Color::Cyan);
+            }
+
+            if app_state.grid_cursor == (x, y) {
+                style = style.add_modifier(Modifier::REVERSED);
+            }
+
+            let s = match val {
+                crate::vm::Value::Int(n) => n.to_string(),
+                crate::vm::Value::Str(s) => s.chars().next().unwrap_or(' ').to_string(),
+                _ => "?".to_string(),
+            };
+
+            // Fixed width
+            let display = format!("{:^3.3}", s);
+            line_spans.push(Span::styled(display, style));
+            line_spans.push(Span::raw(" "));
+        }
+        grid_lines.push(Line::from(line_spans));
+    }
+
+    let status = if vm.reactor_mode { "ON" } else { "OFF" };
+    let title = format!("REACTOR CHAMBER (Active: {})", status);
+
+    let grid_widget = Paragraph::new(grid_lines).block(
+        Block::default().borders(Borders::ALL).title(title)
+    );
+    f.render_widget(grid_widget, chunks[0]);
+
+    // Info
+    let mut info = Vec::new();
+    info.push(Line::from("LOGIC AUTOMATA"));
+    info.push(Line::from(" "));
+    info.push(Line::from("Rules (KB):"));
+
+    // Scan KB for reaction rules
+    let mut rules_count = 0;
+    #[cfg(feature = "oracle")]
+    for fact in &vm.knowledge_base {
+        // Simple check for reaction fact
+        if let crate::vm::Value::Junction(_, args) = fact {
+            if let Some(crate::vm::Value::Str(name)) = args.first() {
+                if name == "reaction" {
+                    if rules_count < 20 {
+                        info.push(Line::from(format!("  {}", fact)));
+                    }
+                    rules_count += 1;
+                }
+            }
+        }
+    }
+
+    if rules_count > 20 {
+        info.push(Line::from(format!("  ... and {} more", rules_count - 20)));
+    }
+
+    info.push(Line::from(" "));
+    info.push(Line::from("Controls:"));
+    info.push(Line::from("  Reactor (OpCode) to toggle"));
+    info.push(Line::from("  Reaction(A,B,C) to add rule"));
+
+    let info_widget = Paragraph::new(info).block(
+        Block::default().borders(Borders::ALL).title("Schematics")
     );
     f.render_widget(info_widget, chunks[1]);
 }
