@@ -148,3 +148,160 @@ mod tests {
         assert_eq!(force, Vec2::zero());
     }
 }
+
+#[cfg(test)]
+mod extended_tests {
+    use super::*;
+
+    // Default params for testing isolation
+    fn default_params() -> FlockingParams {
+        FlockingParams {
+            view_radius: 100.0,
+            separation_radius: 20.0,
+            max_speed: 5.0,
+            max_force: 1.0,
+            separation_weight: 0.0,
+            alignment_weight: 0.0,
+            cohesion_weight: 0.0,
+        }
+    }
+
+    #[test]
+    fn test_singularity_behavior() {
+        // Two agents at exact same position (0,0)
+        // Current logic: d_sq == 0, so loop condition `d_sq > 0.0` fails.
+        // Result: No force computed from neighbor.
+        let p1 = PhysicsState::new(0.0, 0.0);
+        let p2 = PhysicsState::new(0.0, 0.0);
+
+        let params = FlockingParams {
+            separation_weight: 1.0,
+            ..default_params()
+        };
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // This confirms current behavior prevents panic but also prevents separation
+        assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn test_separation_force() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        // Neighbor to the right, inside separation radius (20.0)
+        let p2 = PhysicsState::new(10.0, 0.0);
+
+        let params = FlockingParams {
+            separation_weight: 1.0,
+            ..default_params()
+        };
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // Force should be pushing LEFT (-x)
+        assert!(force.x < 0.0);
+        assert_eq!(force.y, 0.0);
+    }
+
+    #[test]
+    fn test_cohesion_force() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        // Neighbor to the right, outside separation (20.0) but inside view (100.0)
+        let p2 = PhysicsState::new(50.0, 0.0);
+
+        let params = FlockingParams {
+            cohesion_weight: 1.0,
+            ..default_params()
+        };
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // Force should be pulling RIGHT (+x) towards neighbor
+        assert!(force.x > 0.0);
+        assert_eq!(force.y, 0.0);
+    }
+
+    #[test]
+    fn test_alignment_force() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        let mut p2 = PhysicsState::new(10.0, 0.0);
+        // Neighbor moving UP (0, 1)
+        p2.velocity = Vec2::new(0.0, 1.0);
+
+        let params = FlockingParams {
+            alignment_weight: 1.0,
+            ..default_params()
+        };
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // Force should be steering UP (+y) to match velocity
+        assert_eq!(force.x, 0.0);
+        assert!(force.y > 0.0);
+    }
+
+    #[test]
+    fn test_view_radius_cutoff() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        // Neighbor just outside view radius (100.0)
+        let p2 = PhysicsState::new(100.1, 0.0);
+
+        let mut params = default_params();
+        params.cohesion_weight = 1.0;
+        params.separation_weight = 1.0;
+        params.alignment_weight = 1.0;
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // Should be ignored
+        assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn test_separation_radius_cutoff() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        // Neighbor inside view (100) but outside separation (20)
+        let p2 = PhysicsState::new(21.0, 0.0);
+
+        let mut params = default_params();
+        params.separation_weight = 1.0;
+        // Ensure other weights are 0 to isolate separation check
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // Should calculate NO separation force
+        assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn test_lone_wolf() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        let params = default_params();
+        let force = compute_force(&[p1], 0, &params);
+        assert_eq!(force, Vec2::zero());
+    }
+
+    #[test]
+    fn test_force_accumulation_limits() {
+        let p1 = PhysicsState::new(0.0, 0.0);
+        let p2 = PhysicsState::new(5.0, 0.0); // Close neighbor
+
+        let mut params = default_params();
+        params.max_force = 0.5;
+        params.separation_weight = 2.0;
+
+        // Separation logic:
+        // 1. diff = (-5, 0)
+        // 2. separation += (-5, 0) / 25 = (-0.2, 0)
+        // 3. separation normalize -> (-1, 0) * max_speed(5) -> (-5, 0)
+        // 4. - velocity(0) -> (-5, 0)
+        // 5. limit(max_force=0.5) -> (-0.5, 0)
+        // 6. * weight(2.0) -> (-1.0, 0)
+
+        let force = compute_force(&[p1, p2], 0, &params);
+
+        // Expect (-1.0, 0)
+        assert!((force.x - -1.0).abs() < 1e-6);
+        assert_eq!(force.y, 0.0);
+    }
+}
