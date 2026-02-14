@@ -88,7 +88,6 @@ members = [
     "experiments/glyph-wave", 
     "experiments/laban-machine", 
     "experiments/laban-rover", 
-    "experiments/chromatic-cipher", 
     "experiments/repo-fossil", 
     "experiments/chimera-fossil",
     "experiments/cam-automaton", 

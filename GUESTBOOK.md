@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/chromatic-cipher
+### [Concentration Level: TOXIC] - Location: experiments/thread-symphony
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Identity crisis confirmed. Redundant with `chromatic-code`.
+- **Status:** Condemned. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation.
+
+### [Concentration Level: EXECUTED] - Location: graveyard/chromatic-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Identity crisis confirmed. Redundant with `chromatic-code`. Moved to graveyard.
 
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/clockwork-chimera
 - **Scent Origin:** Mycelium 🍄
