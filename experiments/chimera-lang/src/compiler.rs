@@ -147,14 +147,131 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         match inner.as_rule() {
             Rule::block => self.parse_block(inner),
             Rule::literal => self.parse_literal_instruction(inner),
+            Rule::junction => self.parse_junction_instruction(inner),
             Rule::simple_op => self.parse_simple_op(inner),
             Rule::arrow_jump => self.parse_arrow_jump(inner),
             Rule::question_branch => self.parse_question_branch(inner),
             Rule::call => self.parse_call(inner),
             #[cfg(feature = "nova")]
             Rule::crispr_block => self.parse_crispr_block(inner),
+            Rule::chaos_block => self.parse_chaos_block(inner),
+            #[cfg(feature = "oracle")]
+            Rule::oracle_block => self.parse_oracle_block(inner),
+            #[cfg(not(feature = "oracle"))]
+            Rule::oracle_block => return Err(anyhow!("Oracle feature is disabled")),
             _ => unreachable!("Unexpected instruction rule: {:?}", inner.as_rule()),
         }
+    }
+
+    fn parse_junction_instruction(&self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let val = parse_junction(inner, self.strand_map)?;
+        Ok(vec![Gene {
+            op: OpCode::Push,
+            args: vec![val],
+        }])
+    }
+
+    fn parse_chaos_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let block = inner.into_inner().next().unwrap(); // chaos -> block
+        let mut genes = Vec::new();
+
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::String("0.1".to_string())],
+        });
+        genes.push(Gene {
+            op: OpCode::HavocRate,
+            args: vec![],
+        });
+
+        self.depth += 1;
+        for instr in block.into_inner() {
+            let sub = self.parse_instruction(instr)?;
+            genes.extend(sub);
+        }
+        self.depth -= 1;
+
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(0)],
+        });
+        genes.push(Gene {
+            op: OpCode::HavocRate,
+            args: vec![],
+        });
+
+        Ok(genes)
+    }
+
+    #[cfg(feature = "oracle")]
+    fn parse_oracle_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut genes = Vec::new();
+        for stmt in inner.into_inner() {
+            let def = stmt.into_inner().next().unwrap();
+            match def.as_rule() {
+                Rule::fact_def => {
+                    let arg_list = def.into_inner().next().unwrap();
+                    let mut fact_terms = Vec::new();
+                    for arg in arg_list.into_inner() {
+                        fact_terms.push(parse_argument(arg, self.strand_map)?);
+                    }
+                    let fact = Nucleotide::Junction(crate::ast::JunctionType::Any, fact_terms);
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![fact],
+                    });
+                    genes.push(Gene {
+                        op: OpCode::Assert,
+                        args: vec![],
+                    });
+                }
+                Rule::rule_def => {
+                    let mut parts = def.into_inner();
+                    let head_args = parts.next().unwrap();
+                    let query_expr = parts.next().unwrap();
+
+                    let mut head_terms = Vec::new();
+                    for arg in head_args.into_inner() {
+                        head_terms.push(parse_argument(arg, self.strand_map)?);
+                    }
+                    let head = Nucleotide::Junction(crate::ast::JunctionType::Any, head_terms);
+
+                    let mut body_goals = Vec::new();
+                    for pred in query_expr.into_inner() {
+                        let mut pred_parts = pred.into_inner();
+                        let pred_name = pred_parts.next().unwrap().as_str();
+                        let pred_args = pred_parts.next().unwrap();
+
+                        let mut term_args = vec![Nucleotide::String(pred_name.to_string())];
+                        for arg in pred_args.into_inner() {
+                            term_args.push(parse_argument(arg, self.strand_map)?);
+                        }
+                        body_goals.push(Nucleotide::Junction(crate::ast::JunctionType::Any, term_args));
+                    }
+
+                    let body = if body_goals.len() == 1 {
+                        body_goals[0].clone()
+                    } else {
+                        Nucleotide::Junction(crate::ast::JunctionType::All, body_goals)
+                    };
+
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![head],
+                    });
+                    genes.push(Gene {
+                        op: OpCode::Push,
+                        args: vec![body],
+                    });
+                    genes.push(Gene {
+                        op: OpCode::Rule,
+                        args: vec![],
+                    });
+                }
+                _ => {}
+            }
+        }
+        Ok(genes)
     }
 
     fn parse_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
@@ -371,35 +488,45 @@ fn parse_argument(
     let inner = pair.into_inner().next().unwrap();
     match inner.as_rule() {
         Rule::literal => parse_literal(inner, strand_map),
-        Rule::identifier => {
+        Rule::identifier | Rule::variable => {
             let id = inner.as_str();
-            // Try to resolve as strand index
-            if let Some(&idx) = strand_map.get(id) {
-                Ok(Nucleotide::Number(idx as i64))
+            // Try to resolve as strand index (only if identifier)
+            if inner.as_rule() == Rule::identifier {
+                if let Some(&idx) = strand_map.get(id) {
+                    return Ok(Nucleotide::Number(idx as i64));
+                }
+            }
+            // Keep as string if variable (starts with ?) to work with Oracle
+            if inner.as_rule() == Rule::variable {
+                 Ok(Nucleotide::String(id.to_string()))
             } else {
-                // Keep as identifier
-                Ok(Nucleotide::Identifier(id.to_string()))
+                 Ok(Nucleotide::Identifier(id.to_string()))
             }
         }
-        Rule::junction => {
-            let mut parts = inner.into_inner();
-            let type_str = parts.next().unwrap().as_str();
-            let args_pair = parts.next().unwrap();
-
-            let t = match type_str {
-                "any" => crate::ast::JunctionType::Any,
-                "all" => crate::ast::JunctionType::All,
-                _ => return Err(anyhow!("Invalid junction type")),
-            };
-
-            let mut vals = Vec::new();
-            for arg in args_pair.into_inner() {
-                vals.push(parse_argument(arg, strand_map)?);
-            }
-            Ok(Nucleotide::Junction(t, vals))
-        }
+        Rule::junction => parse_junction(inner, strand_map),
         _ => unreachable!("Unexpected argument rule: {:?}", inner.as_rule()),
     }
+}
+
+fn parse_junction(
+    pair: pest::iterators::Pair<Rule>,
+    strand_map: &HashMap<String, usize>,
+) -> Result<Nucleotide> {
+    let mut parts = pair.into_inner();
+    let type_str = parts.next().unwrap().as_str();
+    let args_pair = parts.next().unwrap();
+
+    let t = match type_str {
+        "any" => crate::ast::JunctionType::Any,
+        "all" => crate::ast::JunctionType::All,
+        _ => return Err(anyhow!("Invalid junction type")),
+    };
+
+    let mut vals = Vec::new();
+    for arg in args_pair.into_inner() {
+        vals.push(parse_argument(arg, strand_map)?);
+    }
+    Ok(Nucleotide::Junction(t, vals))
 }
 
 #[cfg(test)]
