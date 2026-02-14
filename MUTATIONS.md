@@ -882,3 +882,10 @@ Mendel's peas. Darwin's finches. Your experiments.
 - **Novel trait**: Self-Calculated Resource Allocation. Organisms evolve to request specific time blocks that fit the greedy allocation algorithm.
 - **Status**: experiments/chimera-maat
 - **Evaluation**: Compiles. TUI operational. Organisms are filing petitions.
+
+### chimera-defense
+- **Parents**: experiments/chaotic-defense + experiments/chimera-lang
+- **Concept**: Tower Defense where turrets are driven by programmable ChimeraVM agents.
+- **Novel trait**: Programmable Defense. Towers sense enemies via memory grid and execute DNA to fire.
+- **Status**: experiments/chimera-defense
+- **Evaluation**: Compiles. Implemented by The Splice Surgeon.

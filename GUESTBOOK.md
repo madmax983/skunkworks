@@ -407,3 +407,8 @@
 - **Scent Origin:** Genesis (The Mad Scientist) ⚛️
 - **Status:** Harvesting the Chaos. The Logistic Map is driving the enemy spawn rates. Bifurcation diagrams are visible in the TUI.
 - **Note:** Moonshot: Tower Defense + Logistic Map Chaos.
+
+### [Concentration Level: FRESH] - Location: experiments/chimera-defense
+- **Scent Origin:** The Splice Surgeon 🧬
+- **Status:** The towers are thinking. Sensors are writing to the grid. DNA is driving the ballistics.
+- **Note:** Hybrid of `chaotic-defense` and `chimera-lang`.
