@@ -818,6 +818,47 @@ sequenceDiagram
     TUI->>User: Render Spiral Visualization
 ```
 
+### Nova Feature: Quantum Mechanics (ADR 031)
+
+The Quantum system introduces non-local interaction between strands via Entanglement and probabilistic states via Superposition.
+
+```mermaid
+sequenceDiagram
+    participant VM
+    participant Strand_A
+    participant Strand_B
+    participant State
+
+    Note over VM: OpCode::Entangle(A, B)
+    VM->>State: Map A <-> B
+
+    Note over Strand_A: OpCode::Transcribe(Gene_X, Arg_New)
+    Strand_A->>VM: Modify Gene_X
+    VM->>State: Check Entanglement(A)
+    State-->>VM: Partner = B
+
+    VM->>Strand_A: Update Gene_X
+    VM->>Strand_B: Update Gene_X (Action at a distance)
+```
+
+### Nova Feature: Necromancy (ADR 031)
+
+The Necromancy system allows for the persistence and recovery of "dead" code, enabling genetic memory and ghost execution.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Alive
+    Alive --> Graveyard : Apoptosis / Bury
+    Graveyard --> Alive : Exhume / Reincarnate
+    Graveyard --> Ghost : Seance
+    Ghost --> Graveyard : End Seance
+
+    state Graveyard {
+        [*] --> Stored
+        Stored --> Consumed : Mourn (Energy Gain)
+    }
+```
+
 ### Experiment: Tectonic Git (ADR 023)
 
 **Tectonic Git** visualizes the repository history as geological strata, using code analysis to determine stability.
