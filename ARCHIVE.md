@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **bridge-balancer**: Generic implementation. Documentation void. Sketch Rot. Grace period: 24h.
+- **mycelial-path**: Generic A* implementation. Documentation void. Redundant with `rhizome-radar`. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **bridge-balancer**: Specimen executed. Documentation void. Sketch Rot. Failed to improve. Moved to graveyard.
 - **syntax-fugue**: Specimen executed. Failed to improve during grace period. Moved to graveyard.
 - **biotic-chaos**: Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
 - **ink-jet**: Specimen executed. Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Moved to graveyard.
