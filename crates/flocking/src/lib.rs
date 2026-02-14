@@ -43,16 +43,15 @@ pub struct FlockingParams {
 ///
 /// # Arguments
 ///
-/// * `me` - The physics state of the current agent.
 /// * `others` - A slice of all agents (including self).
 /// * `my_idx` - The index of the current agent in the `others` slice.
 /// * `params` - The flocking parameters.
 pub fn compute_force(
-    me: &PhysicsState,
     others: &[PhysicsState],
     my_idx: usize,
     params: &FlockingParams,
 ) -> Vec2 {
+    let me = &others[my_idx];
     let mut separation = Vec2::zero();
     let mut alignment = Vec2::zero();
     let mut cohesion = Vec2::zero();
@@ -149,7 +148,7 @@ mod tests {
             alignment_weight: 1.0,
             cohesion_weight: 1.0,
         };
-        let force = compute_force(&p1, &[p1], 0, &params);
+        let force = compute_force(&[p1], 0, &params);
         assert_eq!(force, Vec2::zero());
     }
 }

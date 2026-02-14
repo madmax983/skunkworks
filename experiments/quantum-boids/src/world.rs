@@ -95,7 +95,7 @@ impl World {
                  cohesion_weight: coh_w,
              };
 
-             let force = compute_force(&physics_states[i], &physics_states, i, &params);
+             let force = compute_force(&physics_states, i, &params);
              forces.push(force);
         }
 

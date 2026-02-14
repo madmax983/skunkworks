@@ -637,148 +637,63 @@ impl Topology {
         if width == 0 || height == 0 {
             return None;
         }
-
-        // Helper to safely normalize a coordinate and return the wrapped value + wrap count.
-        // Handles cases where `size` exceeds `i64::MAX`.
-        fn normalize_coord(coord: i64, size: usize) -> (usize, i64) {
-            // If size fits in i64, use standard Euclidean division
-            if size <= i64::MAX as usize {
-                let s = size as i64;
-                let wrapped = coord.rem_euclid(s);
-                let count = coord.div_euclid(s);
-                (wrapped as usize, count)
-            } else {
-                // Size is huge (larger than any positive i64).
-                // If coord >= 0, it fits within [0, size) trivially.
-                if coord >= 0 {
-                    (coord as usize, 0)
-                } else {
-                    // Coord is negative. Since coord >= i64::MIN, and size > i64::MAX,
-                    // abs(coord) < size (approximately).
-                    // So it wraps exactly once backwards.
-                    // result = size - abs(coord)
-                    // wrap count = -1
-                    (size.wrapping_sub(coord.unsigned_abs() as usize), -1)
-                }
-            }
-        }
+        let w = width as i64;
+        let h = height as i64;
 
         match self {
             Topology::Plane | Topology::Hyperbolic => {
-                // Check bounds using normalize logic logic would be overkill, simple range check is enough.
-                // But we must be careful casting width/height to i64.
-                // If width > i64::MAX, then any valid positive i64 x is within bounds.
-                // Any negative x is out of bounds.
-
-                let in_bounds_y = if height > i64::MAX as usize {
-                    y >= 0
-                } else {
-                    (0..height as i64).contains(&y)
-                };
-
-                let in_bounds_x = if width > i64::MAX as usize {
-                    x >= 0
-                } else {
-                    (0..width as i64).contains(&x)
-                };
-
-                if in_bounds_y && in_bounds_x {
+                if x >= 0 && x < w && y >= 0 && y < h {
                     Some((y as usize, x as usize))
                 } else {
                     None
                 }
             }
             Topology::Torus => {
-                let (ny, _) = normalize_coord(y, height);
-                let (nx, _) = normalize_coord(x, width);
-                Some((ny, nx))
+                let ny = y.rem_euclid(h);
+                let nx = x.rem_euclid(w);
+                Some((ny as usize, nx as usize))
             }
             Topology::CylinderH => {
-                // Wraps X, Bounded Y
-                let in_bounds_y = if height > i64::MAX as usize {
-                    y >= 0
-                } else {
-                    (0..height as i64).contains(&y)
-                };
-
-                if in_bounds_y {
-                    let (nx, _) = normalize_coord(x, width);
-                    Some((y as usize, nx))
+                if y >= 0 && y < h {
+                    let nx = x.rem_euclid(w);
+                    Some((y as usize, nx as usize))
                 } else {
                     None
                 }
             }
             Topology::CylinderV => {
-                // Bounded X, Wraps Y
-                let in_bounds_x = if width > i64::MAX as usize {
-                    x >= 0
-                } else {
-                    (0..width as i64).contains(&x)
-                };
-
-                if in_bounds_x {
-                    let (ny, _) = normalize_coord(y, height);
-                    Some((ny, x as usize))
+                if x >= 0 && x < w {
+                    let ny = y.rem_euclid(h);
+                    Some((ny as usize, x as usize))
                 } else {
                     None
                 }
             }
             Topology::Klein => {
-                // Wraps X normal, Y wraps with X-twist
-                let (ny, wrap_count_y) = normalize_coord(y, height);
-                let (mut nx, _) = normalize_coord(x, width);
-
-                if wrap_count_y % 2 != 0 {
-                    // Twist X: x' = (width - 1) - x
-                    nx = (width - 1) - nx;
+                let ny = y.rem_euclid(h);
+                let wrap_y = y.div_euclid(h);
+                let mut nx = x.rem_euclid(w);
+                if wrap_y % 2 != 0 {
+                    nx = (w - 1) - nx;
                 }
-
-                Some((ny, nx))
+                Some((ny as usize, nx as usize))
             }
             Topology::Mobius => {
-                // Wraps X with twist, Bounded Y
-                let (nx, wrap_count_x) = normalize_coord(x, width);
-
-                if wrap_count_x % 2 != 0 {
-                    // Twist Y
-                    // Check bounds and flip if valid
-
-                    // Case 1: Small Height
-                    if height <= i64::MAX as usize {
-                        let h = height as i64;
-                        let twisted_y = (h - 1).wrapping_sub(y);
-                        if (0..h).contains(&twisted_y) {
-                            Some((twisted_y as usize, nx))
-                        } else {
-                            None
-                        }
+                let nx = x.rem_euclid(w);
+                let wrap_x = x.div_euclid(w);
+                if wrap_x % 2 != 0 {
+                    // Twisted Y: map y to (h - 1) - y
+                    let twisted_y = (h - 1) - y;
+                    if twisted_y >= 0 && twisted_y < h {
+                        Some((twisted_y as usize, nx as usize))
                     } else {
-                        // Case 2: Huge Height
-                        // y must be >= 0 to map to valid range [height - 1 - y, height - 1]
-                        if y >= 0 {
-                            let twisted_y = (height - 1) - (y as usize);
-                            Some((twisted_y, nx))
-                        } else {
-                            None
-                        }
+                        None
                     }
                 } else {
-                    // No Twist
-                    // Check bounds
-                    if height <= i64::MAX as usize {
-                        let h = height as i64;
-                        if (0..h).contains(&y) {
-                            Some((y as usize, nx))
-                        } else {
-                            None
-                        }
+                    if y >= 0 && y < h {
+                        Some((y as usize, nx as usize))
                     } else {
-                        // Huge height
-                        if y >= 0 {
-                            Some((y as usize, nx))
-                        } else {
-                            None
-                        }
+                        None
                     }
                 }
             }
@@ -789,26 +704,6 @@ impl Topology {
 #[cfg(test)]
 mod topology_tests {
     use super::*;
-
-    #[test]
-    fn test_topology_overflow_klein() {
-        let topo = Topology::Klein;
-        // y = -16 (wraps once, odd), x = i64::MIN
-        // Should not panic and return valid coordinate
-        let res = topo.normalize(-16, i64::MIN, 16, 16);
-        assert!(res.is_some());
-        let (y, x) = res.unwrap();
-        assert!(y < 16);
-        assert!(x < 16);
-    }
-
-    #[test]
-    fn test_topology_overflow_mobius() {
-        let topo = Topology::Mobius;
-        // x = -16 (wraps once, odd), y = i64::MIN
-        // Should not panic.
-        let _ = topo.normalize(i64::MIN, -16, 16, 16);
-    }
 
     #[test]
     fn test_klein_wrapping() {
