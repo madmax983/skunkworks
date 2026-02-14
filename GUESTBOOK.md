@@ -123,9 +123,13 @@
 
 ## 🍂 History/Decay
 
-### [Concentration Level: TOXIC] - Location: experiments/biotic-chaos
+### [Concentration Level: EXECUTED] - Location: graveyard/biotic-chaos
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. No documentation. Generic implementation. Grace period: 24h.
+- **Status:** Specimen executed. No documentation. Generic implementation. Moved to graveyard.
+
+### [Concentration Level: TOXIC] - Location: experiments/beat-cortex
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. No documentation. Generic Reservoir Computing implementation. Redundant with `lattice-brain`. Grace period: 24h.
 
 ### [Concentration Level: FRESH] - Location: experiments/recursive-conservatory
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
