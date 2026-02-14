@@ -68,11 +68,14 @@ impl FluidSim {
             curl,
         } = self;
 
-        // Collision + Streaming step (Pull scheme)
+        // Collision + Streaming step (Pull scheme) + Macroscopic Update
         f_next
             .par_chunks_mut(N_DIRS)
+            .zip(density.par_iter_mut())
+            .zip(velocity_x.par_iter_mut())
+            .zip(velocity_y.par_iter_mut())
             .enumerate()
-            .for_each(|(idx, cell_next)| {
+            .for_each(|(idx, (((cell_next, rho_out), ux_out), uy_out))| {
                 let x = (idx % WIDTH) as i32;
                 let y = (idx / WIDTH) as i32;
                 let is_solid = obstacles[idx];
@@ -115,9 +118,10 @@ impl FluidSim {
                     // So if *this* node is solid, it doesn't really matter what we write to it,
                     // unless it becomes non-solid later.
                     // Let's just set it to equilibrium at zero velocity.
-                    for k in 0..9 {
-                        cell_next[k] = WEIGHTS[k];
-                    }
+                    cell_next.copy_from_slice(&WEIGHTS);
+                    *rho_out = 0.0;
+                    *ux_out = 0.0;
+                    *uy_out = 0.0;
                 } else {
                     if rho > 0.0 {
                         ux /= rho;
@@ -126,6 +130,11 @@ impl FluidSim {
                         ux = 0.0;
                         uy = 0.0;
                     }
+
+                    // Write macroscopic variables
+                    *rho_out = rho;
+                    *ux_out = ux;
+                    *uy_out = uy;
 
                     // Collision (BGK)
                     let omega = 1.0 / (3.0 * VISCOSITY + 0.5);
@@ -141,40 +150,6 @@ impl FluidSim {
 
         // Swap buffers
         std::mem::swap(f, f_next);
-
-        // Update macroscopic variables
-        density
-            .par_iter_mut()
-            .zip(velocity_x.par_iter_mut())
-            .zip(velocity_y.par_iter_mut())
-            .zip(obstacles.par_iter())
-            .enumerate()
-            .for_each(|(idx, (((rho_out, ux_out), uy_out), &is_solid))| {
-                if is_solid {
-                    *rho_out = 0.0;
-                    *ux_out = 0.0;
-                    *uy_out = 0.0;
-                } else {
-                    let mut rho = 0.0;
-                    let mut ux = 0.0;
-                    let mut uy = 0.0;
-                    let offset = idx * N_DIRS;
-                    for k in 0..9 {
-                        let val = f[offset + k];
-                        rho += val;
-                        ux += val * DIRS_X[k] as f32;
-                        uy += val * DIRS_Y[k] as f32;
-                    }
-                    *rho_out = rho;
-                    if rho > 0.0 {
-                        *ux_out = ux / rho;
-                        *uy_out = uy / rho;
-                    } else {
-                        *ux_out = 0.0;
-                        *uy_out = 0.0;
-                    }
-                }
-            });
 
         // Compute Curl (Vorticity)
         // curl = dv/dx - du/dy
@@ -228,9 +203,11 @@ impl FluidSim {
                 if px < WIDTH && py < HEIGHT {
                     let idx = py * WIDTH + px;
                     if !self.obstacles[idx] {
-                        for k in 0..9 {
-                            self.f[idx * N_DIRS + k] += amount * WEIGHTS[k];
-                        }
+                        let offset = idx * N_DIRS;
+                        self.f[offset..offset + 9]
+                            .iter_mut()
+                            .zip(WEIGHTS.iter())
+                            .for_each(|(f, &w)| *f += amount * w);
                     }
                 }
             }
@@ -256,6 +233,7 @@ impl FluidSim {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_obstacle(&mut self, x: usize, y: usize, active: bool) {
         if x < WIDTH && y < HEIGHT {
             self.obstacles[y * WIDTH + x] = active;
