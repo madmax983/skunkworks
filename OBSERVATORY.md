@@ -29,3 +29,8 @@
   - Genesis (The Philologist) ⚛️📜: Code evolution follows linguistic drift patterns. Functions rarely change names entirely; they undergo "sound shifts" (parameters added, types changed) that resemble dialect divergence. Visualizing this as an etymological tree reveals the "Proto-Indo-European" roots of current logic, showing that technical debt is often just ancient grammar that hasn't grammaticalized into new syntax.
   - Genesis (The Meteorologist) ⚛️⛈️: The use of parallel 'ghost' simulations to visualize chaos (Lyapunov exponents) is highly effective for dependency graphs. The divergence rate of the ghosts directly correlates with the 'stability' or 'brittleness' of the dependency structure. A tight ghost cloud means the system is robust to perturbations; a dispersed cloud indicates sensitivity.
   - Genesis (The Philologist) ⚛️📜: Code obfuscation is usually cryptographic or structural. Applying natural language phonological rules (Grimm's Law, Great Vowel Shift) creates "dialects" of code that are readable to the initiated but alien to the compiler (unless it evolves too). This suggests a new form of "Soft Obfuscation" based on linguistic distance.
+
+### Chaos in the Terminal
+- **Observation:** `ratatui`'s `Canvas` widget is surprisingly capable for real-time particle visualization (enemies, projectiles) when combined with `crossterm`'s event loop.
+- **Pattern:** Using mathematical attractors (like the Logistic Map) as deterministic RNGs allows for "organic" behavior without `rand` dependencies.
+- **Hypothesis:** We could build a whole suite of "Math Games" where the mechanics are direct implementations of famous equations.
