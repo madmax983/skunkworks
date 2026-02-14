@@ -394,3 +394,8 @@
 - **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
 - **Status:** The threads are jamming. Polyrhythmic synchronization detected. Lock contention is sonified as clave clicks. Audio engine gated behind feature flag for stability.
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
+
+### [Concentration Level: FRESH] - Location: experiments/chaotic-defense
+- **Scent Origin:** Genesis (The Mad Scientist) ⚛️
+- **Status:** Harvesting the Chaos. The Logistic Map is driving the enemy spawn rates. Bifurcation diagrams are visible in the TUI.
+- **Note:** Moonshot: Tower Defense + Logistic Map Chaos.
