@@ -1,20 +1,19 @@
 use cgmath::{EuclideanSpace, InnerSpace, Point3, Vector3};
 use std::collections::HashMap;
 
+#[derive(Debug, Clone)]
 pub struct Quasicrystal {
     pub atoms: Vec<Point3<f32>>,
     pub edges: Vec<(Point3<f32>, Point3<f32>)>,
+    pub adj: Vec<Vec<usize>>,
 }
 
 // Golden Ratio
 const TAU: f32 = 1.61803398875;
 
 // Basis vectors for 6D -> 3D projection (Icosahedral)
-// Derived from the 12 vertices of an icosahedron.
-// We select 6 linearly independent ones (half of them).
 fn get_basis_vectors() -> (Vec<Vector3<f32>>, Vec<Vector3<f32>>) {
     // Parallel space basis (Physical)
-    // Vertices of icosahedron: (±1, ±τ, 0) cyclic
     let norm = (1.0 + TAU * TAU).sqrt();
     let c = 1.0 / norm;
     let t = TAU / norm;
@@ -30,8 +29,6 @@ fn get_basis_vectors() -> (Vec<Vector3<f32>>, Vec<Vector3<f32>>) {
     ];
 
     // Perpendicular space basis
-    // For icosahedral symmetry, we conjugate τ -> 1-τ = -1/τ
-    // The algebraic conjugate of (1, τ) is (1, 1-τ)
     let tau_prime = 1.0 - TAU; // -0.618
     let norm_prime = (1.0 + tau_prime * tau_prime).sqrt();
     let c_p = 1.0 / norm_prime;
@@ -51,21 +48,13 @@ fn get_basis_vectors() -> (Vec<Vector3<f32>>, Vec<Vector3<f32>>) {
 
 pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
     let (basis_par, basis_perp) = get_basis_vectors();
-    let mut atom_map: HashMap<[i32; 6], Point3<f32>> = HashMap::new();
+    let mut atom_map: HashMap<[i32; 6], usize> = HashMap::new();
     let mut atoms = Vec::new();
-    let mut edges = Vec::new();
 
     // Iterate over 6D integer grid
     let range = -grid_radius..=grid_radius;
-
-    // Heuristic threshold for "window" in perp space.
-    // A perfect triacontahedron window gives the canonical tiling.
-    // A spherical window gives a slightly disordered but valid quasicrystal structure.
-    // Threshold ~ 1.5 covers the center well.
     let perp_threshold = 1.8;
 
-    // We can flatten the loop slightly or just nest deep.
-    // 6^N is manageable for small N.
     for n1 in range.clone() {
         for n2 in range.clone() {
             for n3 in range.clone() {
@@ -94,7 +83,8 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
                                 let p = Point3::from_vec(r_par);
                                 let idx = [n1, n2, n3, n4, n5, n6];
 
-                                atom_map.insert(idx, p);
+                                let current_idx = atoms.len();
+                                atom_map.insert(idx, current_idx);
                                 atoms.push(p);
                             }
                         }
@@ -104,33 +94,51 @@ pub fn generate_icosahedral_lattice(grid_radius: i32) -> Quasicrystal {
         }
     }
 
-    // Generate edges
-    // Iterate over all atoms in the map
-    // For each atom, check neighbors (idx + basis_k)
-    // Since graph is undirected, we only add if neighbor is found AND to avoid duplicates,
-    // maybe enforce an ordering?
-    // Or just check +basis_k (not -basis_k)? No, we iterate all atoms, so checking +basis_k for all k=0..5 covers all edges once (u->v) if v exists.
-    // Because if u has neighbor v=u-e_k, then v has neighbor u=v+e_k.
-    // So checking only +basis_k is sufficient to find every edge exactly once.
+    let mut edges = Vec::new();
+    let mut adj: Vec<Vec<usize>> = vec![Vec::new(); atoms.len()];
 
-    for (idx, pos) in &atom_map {
+    // To avoid duplicating edges in visual list, we can use a set of sorted tuples
+    // Or just iterate and add if neighbor_idx > current_idx (for undirected graph visual)
+    // But adj list needs both directions.
+
+    // Reconstruct the loop over atoms using the map keys is slow? No, map iteration is fine.
+    // Wait, HashMap iteration order is arbitrary. But we have `atoms` vector which is ordered by insertion (roughly).
+    // We need to iterate `atom_map` to access the `[i32; 6]` coordinate.
+    // Or store coord in struct?
+    // Let's iterate `atom_map`.
+
+    for (coord, &current_idx) in &atom_map {
+        let current_pos = atoms[current_idx];
+
+        // Check 12 neighbors in 6D grid (+/- 1 along each axis)
+        // Actually, only +1 and -1 for each of 6 dimensions.
         for k in 0..6 {
-            let mut neighbor_idx = *idx;
-            neighbor_idx[k] += 1;
+            for sign in [-1, 1] {
+                let mut neighbor_coord = *coord;
+                neighbor_coord[k] += sign;
 
-            if let Some(neighbor_pos) = atom_map.get(&neighbor_idx) {
-                edges.push((*pos, *neighbor_pos));
+                if let Some(&neighbor_idx) = atom_map.get(&neighbor_coord) {
+                    // Add to Adjacency List
+                    adj[current_idx].push(neighbor_idx);
+
+                    // Add to Visual Edges (only once per pair)
+                    // Convention: from smaller index to larger index
+                    if current_idx < neighbor_idx {
+                        let neighbor_pos = atoms[neighbor_idx];
+                        edges.push((current_pos, neighbor_pos));
+                    }
+                }
             }
-
-            // Also check -1? No, checking +1 for all nodes covers all edges.
-            // Wait. If node A is at (0,0,0,0,0,0) and B is at (1,0,0,0,0,0).
-            // When processing A, we check (1,0,0,0,0,0) -> Found B. Add A-B.
-            // When processing B, we check (2,0,0,0,0,0) -> Not found.
-            // Correct.
         }
     }
 
-    Quasicrystal { atoms, edges }
+    // Sort adjacency lists for determinism (optional but good for debugging)
+    for neighbors in &mut adj {
+        neighbors.sort();
+        neighbors.dedup(); // Should not have dups logic above, but safe.
+    }
+
+    Quasicrystal { atoms, edges, adj }
 }
 
 #[cfg(test)]
@@ -138,10 +146,19 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_generation_non_empty() {
+    fn test_generation_connectivity() {
         let qc = generate_icosahedral_lattice(2);
         assert!(!qc.atoms.is_empty());
         assert!(!qc.edges.is_empty());
+        assert_eq!(qc.adj.len(), qc.atoms.len());
+
+        // Check symmetry
+        for (i, neighbors) in qc.adj.iter().enumerate() {
+            for &n in neighbors {
+                assert!(qc.adj[n].contains(&i), "Graph must be undirected");
+            }
+        }
+
         println!("Generated {} atoms with radius 2", qc.atoms.len());
         println!("Generated {} edges with radius 2", qc.edges.len());
     }

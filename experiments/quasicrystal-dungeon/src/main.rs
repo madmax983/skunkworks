@@ -1,10 +1,13 @@
 mod math;
 mod renderer;
+mod dungeon;
 
 use anyhow::Result;
 use cgmath::InnerSpace;
+use cgmath::Vector3;
 use log::{error, info};
 use renderer::State;
+use dungeon::Dungeon;
 use std::sync::Arc;
 use winit::{
     event::*,
@@ -35,7 +38,8 @@ async fn run_headless() -> Result<()> {
     info!("Generated {} atoms", qc.atoms.len());
     info!("Generated {} edges", qc.edges.len());
 
-    let mut state = State::new(None, 800, 600, &qc).await;
+    let dungeon = Dungeon::new(qc);
+    let mut state = State::new(None, 800, 600, dungeon).await;
 
     // Position camera inside the crystal
     state.camera.eye = (2.0, 2.0, 2.0).into();
@@ -61,7 +65,8 @@ async fn run_window() -> Result<()> {
     info!("Generated {} atoms", qc.atoms.len());
     info!("Generated {} edges", qc.edges.len());
 
-    let mut state = State::new(Some(window.clone()), 800, 600, &qc).await;
+    let dungeon = Dungeon::new(qc);
+    let mut state = State::new(Some(window.clone()), 800, 600, dungeon).await;
 
     event_loop.run(move |event, target| {
         match event {
@@ -95,7 +100,7 @@ async fn run_window() -> Result<()> {
                         // Camera controls
                         let forward = (state.camera.target - state.camera.eye).normalize();
                         let right = forward.cross(state.camera.up).normalize();
-                        let speed = 0.5; // Slower speed for detailed inspection
+                        let speed = 0.5;
 
                         match keycode {
                             KeyCode::KeyW => {
@@ -121,6 +126,42 @@ async fn run_window() -> Result<()> {
                             KeyCode::ShiftLeft => {
                                 state.camera.eye.y -= speed;
                                 state.camera.target.y -= speed;
+                            }
+                            // Dungeon Controls
+                            KeyCode::Tab => {
+                                // Cycle neighbor
+                                let current_player = state.dungeon.player_idx;
+                                let neighbors = &state.dungeon.lattice.adj[current_player];
+                                if !neighbors.is_empty() {
+                                    let next_sel = if let Some(current_sel) = state.selected_neighbor_idx {
+                                        if let Some(pos) = neighbors.iter().position(|&n| n == current_sel) {
+                                            neighbors[(pos + 1) % neighbors.len()]
+                                        } else {
+                                            neighbors[0]
+                                        }
+                                    } else {
+                                        neighbors[0]
+                                    };
+                                    state.selected_neighbor_idx = Some(next_sel);
+                                    state.update_dungeon_visuals();
+
+                                    info!("Selected neighbor: {}", next_sel);
+                                }
+                            }
+                            KeyCode::Enter => {
+                                if let Some(target) = state.selected_neighbor_idx {
+                                    if state.dungeon.move_player(target) {
+                                        info!("Moved Player to {}", target);
+                                        state.selected_neighbor_idx = None;
+                                        state.update_dungeon_visuals();
+
+                                        // Move camera to follow player?
+                                        let p = state.dungeon.lattice.atoms[state.dungeon.player_idx];
+                                        let offset = Vector3::new(2.0, 2.0, 2.0);
+                                        state.camera.target = p;
+                                        state.camera.eye = p + offset;
+                                    }
+                                }
                             }
                             _ => {}
                         }
