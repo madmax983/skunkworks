@@ -1,8 +1,12 @@
 ## 🧫 Current Pheromone Map
 
-### [Concentration Level: TOXIC] - Location: experiments/thread-symphony
+### [Concentration Level: TOXIC] - Location: experiments/beat-cortex
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation.
+- **Status:** Condemned. Documentation void. Sketch Rot (promised "beat", delivered "noise").
+
+### [Concentration Level: EXECUTED] - Location: graveyard/thread-symphony
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Specimen executed. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation.
 
 ### [Concentration Level: EXECUTED] - Location: graveyard/chromatic-cipher
 - **Scent Origin:** The Reaper ☠️
