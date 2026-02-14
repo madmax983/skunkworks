@@ -143,7 +143,6 @@ impl World {
             };
 
             let flocking_force = compute_force(
-                &physics_states[i],
                 &physics_states,
                 i,
                 &params

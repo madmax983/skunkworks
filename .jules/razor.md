@@ -81,3 +81,8 @@
 **Bloat:** `Protocol` and `Symbol` wrapper structs in `experiments/protocol-jungle`.
 **Cut:** Removed wrapper structs, used `HashMap<Meaning, u8>` directly in `Agent`, and flattened `Agent` logic.
 **Saved:** ~50 lines of code, 2 unnecessary abstractions.
+
+## [Reduction]
+**Bloat:** "Speculative Generality" in `crates/locus::Topology` handling `i64::MAX` grid wrapping, and "Signature Bloat" in `crates/flocking::compute_force` requiring redundant `me` argument.
+**Cut:** Simplified `normalize` to use standard modulo arithmetic; Removed `me` argument from `compute_force`.
+**Saved:** ~100 lines of complex overflow handling logic, removed 1 argument from critical path in physics engine.

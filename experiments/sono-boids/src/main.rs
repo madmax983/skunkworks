@@ -124,7 +124,7 @@ impl App {
         };
 
         for (i, _) in self.boids.iter().enumerate() {
-            let force = compute_force(&physics_states[i], &physics_states, i, &params);
+            let force = compute_force(&physics_states, i, &params);
             forces.push(force);
         }
 
