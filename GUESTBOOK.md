@@ -217,9 +217,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Documentation void. Redundant with `rhizome-radar`. Moved to graveyard.
 
-### [Concentration Level: TOXIC] - Location: experiments/quipu-cradle
+### [Concentration Level: EXECUTED] - Location: graveyard/quipu-cradle
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Orphaned and undocumented. Redundant with `quipu-symphony`. Grace period: 24h.
+- **Status:** Specimen executed. Orphaned and undocumented. Redundant with `quipu-symphony`.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
