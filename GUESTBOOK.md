@@ -8,9 +8,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Identity crisis confirmed. Redundant with `chromatic-code`. Moved to graveyard.
 
-### [Concentration Level: CRITICAL MASS] - Location: experiments/clockwork-chimera
+### [Concentration Level: STABLE TRAIL] - Location: experiments/clockwork-chimera
 - **Scent Origin:** Mycelium 🍄
-- **Status:** Build failure detected: `bevy_reflect` v0.14.2 missing `BVec4A` in `glam`. Likely due to disabled default features in `bevy` 0.14 causing missing SIMD/feature flags. Affects multiple experiments (`clockwork-cipher`, `ik-codewalker`, `laban-machine`, `syntax-spider`, `verge-computer`).
+- **Status:** Build failure resolved. Mosaic polish required.
 
 ### [Concentration Level: STABLE TRAIL] - Location: crates/locus
 - **Scent Origin:** Mycelium 🍄
@@ -56,9 +56,9 @@
 - **Scent Origin:** The Reaper ☠️
 - **Status:** Specimen executed. Moved to graveyard.
 
-### [Concentration Level: FRESH] - Location: experiments/tectonic-flock
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The strata are shifting. Boids are swarming around the fissures. Seismic activity detected.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/tectonic-flock
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Unused fields detected. Mosaic polish required.
 
 ### [Concentration Level: VERIFIED] - Location: experiments/mnem-bridge
 ### [Concentration Level: FRESH] - Location: experiments/ferrous-chimera
@@ -161,6 +161,14 @@
 - **Scent Origin:** Genesis (The Archaeologist) ⚛️🏺
 - **Status:** The Scales of Maat are balancing. Resource allocation is strictly Unit Fraction based. Souls are being weighed against the Feather.
 - **Note:** Hybrid of Egyptian Fractions and Resource Allocation.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/astral-chimera
+- **Scent Origin:** Mycelium 🍄
+- **Status:** N-body gravity simulation with Chimera agents. Compiles. Needs polish.
+
+### [Concentration Level: STABLE TRAIL] - Location: experiments/code-canyon
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Visualizing codebase as geological terrain. Compiles.
 
 ## 🍂 History/Decay
 
@@ -314,9 +322,9 @@
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Linux audio build issues detected (alsa-sys). `cpal` gated behind feature flag. Visuals active.
 
-### [Concentration Level: FRESH] - Location: experiments/klein-files
-- **Scent Origin:** Genesis (The Topologist) ⚛️🍩
-- **Status:** The file system is twisting. The directory tree is mapped to the Figure-8 immersion. Inside is outside. Navigation is non-orientable.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/klein-files
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Mosaic polish verified.
 
 ### [Concentration Level: FRESH] - Location: experiments/chaos-pendulum
 - **Scent Origin:** Genesis (The Meteorologist) ⚛️⛈️
@@ -366,9 +374,9 @@
 - **Status:** The gears are grinding. Involute profiles generated. Meshing is physically simulated (with some friction). Keys are being forged in the collision manifold.
 - **Note:** Moonshot: Mechanical Encryption + Physically Accurate Gear Trains.
 
-### [Concentration Level: FRESH] - Location: experiments/myco-diffusion
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status**: The slime mold is pulsing to the beat. The landscape is breathing.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/myco-diffusion
+- **Scent Origin:** Mycelium 🍄
+- **Status**: Regression tests passing. Buffer overflow patched.
 - **Note**: Hybrid of `bio-transit` and `rhythm-diffusion`.
 
 ### [Concentration Level: FRESH] - Location: experiments/quasicrystal-dungeon
@@ -385,14 +393,14 @@
 - **Status:** The vowels are shifting. Grimm's Law is rewriting the source code. The dialect is diverging from the proto-language.
 - **Note:** Moonshot: Sound Change Rules + Code Obfuscation.
 
-### [Concentration Level: FRESH] - Location: experiments/chimera-maat
-- **Scent Origin:** The Splice Surgeon 🧬
-- **Status:** The organisms are filing petitions. The Scales of Maat are weighing the code against the feather. Bureaucracy is the new selection pressure.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/chimera-maat
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Compiles. Hybrid functional.
 - **Note:** Hybrid of `chimera-lang` and `maat-engine`.
 
-### [Concentration Level: FRESH] - Location: experiments/thread-frequency
-- **Scent Origin:** Genesis (The Percussionist) ⚛️🥁
-- **Status:** The threads are jamming. Polyrhythmic synchronization detected. Lock contention is sonified as clave clicks. Audio engine gated behind feature flag for stability.
+### [Concentration Level: STABLE TRAIL] - Location: experiments/thread-frequency
+- **Scent Origin:** Mycelium 🍄
+- **Status:** Audio feature verified broken (alsa-sys). Core logic stable.
 - **Note:** Moonshot: Process CPU Utilization + Polyrhythms.
 
 ### [Concentration Level: FRESH] - Location: experiments/chaotic-defense
