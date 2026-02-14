@@ -1,13 +1,41 @@
+//! # Flocking 🕊️
+//!
+//! A lightweight implementation of Reynolds' Flocking algorithm (Boids).
+//!
+//! This module provides the `PhysicsState` for agents and the `compute_force` function
+//! to calculate steering vectors based on Separation, Alignment, and Cohesion rules.
+
 use locus::Vec2;
 
+/// Represents the physical properties of an autonomous agent.
+///
+/// This struct holds the kinematic state (position, velocity, acceleration) required
+/// for the physics update loop.
+///
+/// # Examples
+///
+/// ```
+/// use flocking::PhysicsState;
+/// use locus::Vec2;
+///
+/// let mut agent = PhysicsState::new(10.0, 20.0);
+/// agent.apply_force(Vec2::new(1.0, 0.0));
+/// agent.update(5.0); // Update with max speed of 5.0
+/// ```
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct PhysicsState {
+    /// The current position in 2D space.
     pub position: Vec2,
+    /// The current velocity vector.
     pub velocity: Vec2,
+    /// The current acceleration vector (reset after each update).
     pub acceleration: Vec2,
 }
 
 impl PhysicsState {
+    /// Creates a new agent at the specified coordinates.
+    ///
+    /// The initial velocity and acceleration are set to zero.
     pub fn new(x: f64, y: f64) -> Self {
         Self {
             position: Vec2::new(x, y),
@@ -16,10 +44,25 @@ impl PhysicsState {
         }
     }
 
+    /// Applies a force to the agent, accumulating acceleration.
+    ///
+    /// Following Newton's second law (F=ma), assuming unit mass (m=1),
+    /// force is directly added to acceleration.
     pub fn apply_force(&mut self, force: Vec2) {
         self.acceleration += force;
     }
 
+    /// Updates the agent's position and velocity based on accumulated acceleration.
+    ///
+    /// This method performs the following steps:
+    /// 1. Adds acceleration to velocity.
+    /// 2. Limits velocity to `max_speed`.
+    /// 3. Adds velocity to position.
+    /// 4. Resets acceleration to zero (ready for the next frame).
+    ///
+    /// # Arguments
+    ///
+    /// * `max_speed` - The maximum magnitude of the velocity vector.
     pub fn update(&mut self, max_speed: f64) {
         self.velocity += self.acceleration;
         self.velocity = self.velocity.limit(max_speed);
@@ -28,24 +71,56 @@ impl PhysicsState {
     }
 }
 
+/// Configuration parameters for the flocking simulation.
+///
+/// These values control the behavior and emergence of the flock.
 #[derive(Clone, Copy, Debug)]
 pub struct FlockingParams {
+    /// The radius within which an agent can "see" neighbors.
+    /// Only neighbors within this distance influence Cohesion and Alignment.
     pub view_radius: f64,
+    /// The radius within which an agent tries to avoid crowding.
+    /// Only neighbors within this distance influence Separation.
     pub separation_radius: f64,
+    /// The maximum speed an agent can travel per tick.
     pub max_speed: f64,
+    /// The maximum steering force an agent can apply to change direction.
+    /// This limits how sharply an agent can turn.
     pub max_force: f64,
+    /// The weight multiplier for the Separation force.
+    /// Higher values make agents spread out more aggressively.
     pub separation_weight: f64,
+    /// The weight multiplier for the Alignment force.
+    /// Higher values make agents move in the same direction as neighbors.
     pub alignment_weight: f64,
+    /// The weight multiplier for the Cohesion force.
+    /// Higher values make agents clump together more tightly.
     pub cohesion_weight: f64,
 }
 
 /// Computes the Reynolds flocking force (Separation, Alignment, Cohesion).
 ///
+/// This function calculates the steering force required to satisfy the three rules of flocking:
+/// 1. **Separation**: Steer to avoid crowding local flockmates.
+/// 2. **Alignment**: Steer towards the average heading of local flockmates.
+/// 3. **Cohesion**: Steer to move toward the average position of local flockmates.
+///
 /// # Arguments
 ///
-/// * `others` - A slice of all agents (including self).
+/// * `others` - A slice of all agents (including the current one).
 /// * `my_idx` - The index of the current agent in the `others` slice.
-/// * `params` - The flocking parameters.
+/// * `params` - The flocking configuration parameters.
+///
+/// # Returns
+///
+/// A `Vec2` representing the total steering force to be applied to the agent.
+///
+/// # Performance
+///
+/// This function iterates over the entire `others` slice to find neighbors.
+/// For large flocks, consider using a spatial partition structure to provide a
+/// pre-filtered list of potential neighbors, or accept the O(N) cost per agent (O(N^2) total).
+#[must_use]
 pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingParams) -> Vec2 {
     let me = &others[my_idx];
     let mut separation = Vec2::zero();
@@ -86,13 +161,11 @@ pub fn compute_force(others: &[PhysicsState], my_idx: usize, params: &FlockingPa
 
     let mut total = Vec2::zero();
 
-    if sep_count > 0 {
-        if separation.magnitude_squared() > 0.0 {
-            separation = separation.normalize() * params.max_speed;
-            separation -= me.velocity;
-            separation = separation.limit(params.max_force);
-            total += separation * params.separation_weight;
-        }
+    if sep_count > 0 && separation.magnitude_squared() > 0.0 {
+        separation = separation.normalize() * params.max_speed;
+        separation -= me.velocity;
+        separation = separation.limit(params.max_force);
+        total += separation * params.separation_weight;
     }
 
     if ali_count > 0 {

@@ -63,8 +63,14 @@ mod tests {
         // (0,3) should have signal.
 
         assert!(vm.signal_grid[2][2] > 0, "Beam failed to reach (2,2)");
-        assert!(vm.signal_grid[2][3] > 0, "Beam failed to reach mirror at (2,3)");
-        assert!(vm.signal_grid[1][3] > 0, "Beam failed to reflect North to (1,3)");
+        assert!(
+            vm.signal_grid[2][3] > 0,
+            "Beam failed to reach mirror at (2,3)"
+        );
+        assert!(
+            vm.signal_grid[1][3] > 0,
+            "Beam failed to reflect North to (1,3)"
+        );
         assert!(vm.signal_grid[0][3] > 0, "Beam failed to reach (0,3)");
     }
 
@@ -102,6 +108,9 @@ mod tests {
         process_signals(&mut vm);
 
         assert!(vm.signal_grid[2][2] > 0, "Beam failed to reach (2,2)");
-        assert!(vm.signal_grid[3][3] > 0, "Beam failed to reflect South to (3,3)");
+        assert!(
+            vm.signal_grid[3][3] > 0,
+            "Beam failed to reflect South to (3,3)"
+        );
     }
 }

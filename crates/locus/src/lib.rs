@@ -689,12 +689,10 @@ impl Topology {
                     } else {
                         None
                     }
+                } else if y >= 0 && y < h {
+                    Some((y as usize, nx as usize))
                 } else {
-                    if y >= 0 && y < h {
-                        Some((y as usize, nx as usize))
-                    } else {
-                        None
-                    }
+                    None
                 }
             }
         }

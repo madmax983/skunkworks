@@ -11,16 +11,18 @@ use ratatui::{
     symbols,
     text::Span,
     widgets::{
-        Axis, Block, Borders, Chart, Dataset, GraphType, Paragraph,
         canvas::{Canvas, Context, Painter, Shape},
+        Axis, Block, Borders, Chart, Dataset, GraphType, Paragraph,
     },
-    Terminal,
-    Frame,
+    Frame, Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 mod model;
-use model::{World, WIDTH, HEIGHT};
+use model::{World, HEIGHT, WIDTH};
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
@@ -32,10 +34,7 @@ fn main() -> Result<()> {
     let res = run_app(&mut terminal);
 
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -101,61 +100,86 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
     // Main Game View
     // We can use Canvas for drawing points
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Chaotic Defense"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Chaotic Defense"),
+        )
         .x_bounds([0.0, WIDTH as f64])
         .y_bounds([0.0, HEIGHT as f64])
         .paint(|ctx: &mut Context| {
             // Draw Nests
             ctx.draw(&Points {
-                coords: &world.nests.iter().map(|n| (n.pos.x, HEIGHT as f64 - n.pos.y)).collect::<Vec<_>>(),
+                coords: &world
+                    .nests
+                    .iter()
+                    .map(|n| (n.pos.x, HEIGHT as f64 - n.pos.y))
+                    .collect::<Vec<_>>(),
                 color: Color::Magenta,
             });
             // Draw Towers
             ctx.draw(&Points {
-                coords: &world.towers.iter().map(|t| (t.pos.x, HEIGHT as f64 - t.pos.y)).collect::<Vec<_>>(),
+                coords: &world
+                    .towers
+                    .iter()
+                    .map(|t| (t.pos.x, HEIGHT as f64 - t.pos.y))
+                    .collect::<Vec<_>>(),
                 color: Color::Cyan,
             });
-             // Draw Enemies
+            // Draw Enemies
             ctx.draw(&Points {
-                coords: &world.enemies.iter().map(|e| (e.pos.x, HEIGHT as f64 - e.pos.y)).collect::<Vec<_>>(),
+                coords: &world
+                    .enemies
+                    .iter()
+                    .map(|e| (e.pos.x, HEIGHT as f64 - e.pos.y))
+                    .collect::<Vec<_>>(),
                 color: Color::Red,
             });
             // Draw Cursor
-            ctx.print(cursor_x, HEIGHT as f64 - cursor_y, Span::styled("X", Style::default().fg(Color::Yellow)));
+            ctx.print(
+                cursor_x,
+                HEIGHT as f64 - cursor_y,
+                Span::styled("X", Style::default().fg(Color::Yellow)),
+            );
         });
     f.render_widget(canvas, chunks[0]);
 
     // Bifurcation / History Plot
-    let history_data: Vec<(f64, f64)> = world.history.iter().enumerate()
+    let history_data: Vec<(f64, f64)> = world
+        .history
+        .iter()
+        .enumerate()
         .map(|(i, &val)| (i as f64, val))
         .collect();
 
-    let datasets = vec![
-        Dataset::default()
-            .name("Population (x)")
-            .marker(symbols::Marker::Braille)
-            .graph_type(GraphType::Line)
-            .style(Style::default().fg(Color::Green))
-            .data(&history_data),
-    ];
+    let datasets = vec![Dataset::default()
+        .name("Population (x)")
+        .marker(symbols::Marker::Braille)
+        .graph_type(GraphType::Line)
+        .style(Style::default().fg(Color::Green))
+        .data(&history_data)];
 
     let chart = Chart::new(datasets)
-        .block(Block::default().title("Chaos Monitor (Nest 0)").borders(Borders::ALL))
-        .x_axis(Axis::default()
-            .title("Time")
-            .bounds([0.0, 200.0])) // Fixed window size matching history capacity
-        .y_axis(Axis::default()
-            .title("x")
-            .bounds([0.0, 1.0]));
+        .block(
+            Block::default()
+                .title("Chaos Monitor (Nest 0)")
+                .borders(Borders::ALL),
+        )
+        .x_axis(Axis::default().title("Time").bounds([0.0, 200.0])) // Fixed window size matching history capacity
+        .y_axis(Axis::default().title("x").bounds([0.0, 1.0]));
 
     f.render_widget(chart, chunks[1]);
 
     // Status Bar
-    let status_text = format!("Global R: {:.4} | Resources: {:.1} | Enemies: {} | Ticks: {}",
-        world.global_r, world.resources, world.enemies.len(), world.ticks);
+    let status_text = format!(
+        "Global R: {:.4} | Resources: {:.1} | Enemies: {} | Ticks: {}",
+        world.global_r,
+        world.resources,
+        world.enemies.len(),
+        world.ticks
+    );
 
-    let status_p = Paragraph::new(status_text)
-        .block(Block::default().borders(Borders::ALL));
+    let status_p = Paragraph::new(status_text).block(Block::default().borders(Borders::ALL));
     f.render_widget(status_p, chunks[2]);
 }
 

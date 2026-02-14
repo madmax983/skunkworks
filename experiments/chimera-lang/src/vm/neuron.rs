@@ -249,10 +249,12 @@ pub fn exec_biophysics_op(vm: &mut ChimeraVM, op: OpCode, _args: &[Nucleotide]) 
                                 .push(format!("RECEPTOR: No neuron at {},{}", x, y));
                         }
                     } else {
-                        vm.output.push("Error: Invalid coordinate for receptor".to_string());
+                        vm.output
+                            .push("Error: Invalid coordinate for receptor".to_string());
                     }
                 } else {
-                    vm.output.push("Error: Type mismatch for receptor".to_string());
+                    vm.output
+                        .push("Error: Type mismatch for receptor".to_string());
                 }
             } else {
                 vm.output

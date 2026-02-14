@@ -1,4 +1,5 @@
 use anyhow::Result;
+use chimera_lang::vm::{Value, GRID_SIZE};
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
@@ -11,17 +12,18 @@ use ratatui::{
     symbols,
     text::Span,
     widgets::{
+        canvas::{Canvas, Context, Line, Painter, Shape},
         Axis, Block, Borders, Chart, Dataset, GraphType, Paragraph,
-        canvas::{Canvas, Context, Painter, Shape, Line},
     },
-    Terminal,
-    Frame,
+    Frame, Terminal,
 };
-use std::{io, time::{Duration, Instant}};
-use chimera_lang::vm::{Value, GRID_SIZE};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 
 mod model;
-use model::{World, WIDTH, HEIGHT};
+use model::{World, HEIGHT, WIDTH};
 
 fn main() -> Result<()> {
     enable_raw_mode()?;
@@ -33,10 +35,7 @@ fn main() -> Result<()> {
     let res = run_app(&mut terminal);
 
     disable_raw_mode()?;
-    execute!(
-        terminal.backend_mut(),
-        LeaveAlternateScreen
-    )?;
+    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
     terminal.show_cursor()?;
 
     if let Err(err) = res {
@@ -92,10 +91,7 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> Result<(
 fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
     let main_layout = Layout::default()
         .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Percentage(70),
-            Constraint::Percentage(30),
-        ])
+        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
         .split(f.size());
 
     let left_chunks = Layout::default()
@@ -109,23 +105,39 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
 
     // Main Game View
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Chimera Defense"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Chimera Defense"),
+        )
         .x_bounds([0.0, WIDTH as f64])
         .y_bounds([0.0, HEIGHT as f64])
         .paint(|ctx: &mut Context| {
             // Draw Nests
             ctx.draw(&Points {
-                coords: &world.nests.iter().map(|n| (n.pos.x, HEIGHT as f64 - n.pos.y)).collect::<Vec<_>>(),
+                coords: &world
+                    .nests
+                    .iter()
+                    .map(|n| (n.pos.x, HEIGHT as f64 - n.pos.y))
+                    .collect::<Vec<_>>(),
                 color: Color::Magenta,
             });
             // Draw Towers
             ctx.draw(&Points {
-                coords: &world.towers.iter().map(|t| (t.pos.x, HEIGHT as f64 - t.pos.y)).collect::<Vec<_>>(),
+                coords: &world
+                    .towers
+                    .iter()
+                    .map(|t| (t.pos.x, HEIGHT as f64 - t.pos.y))
+                    .collect::<Vec<_>>(),
                 color: Color::Cyan,
             });
-             // Draw Enemies
+            // Draw Enemies
             ctx.draw(&Points {
-                coords: &world.enemies.iter().map(|e| (e.pos.x, HEIGHT as f64 - e.pos.y)).collect::<Vec<_>>(),
+                coords: &world
+                    .enemies
+                    .iter()
+                    .map(|e| (e.pos.x, HEIGHT as f64 - e.pos.y))
+                    .collect::<Vec<_>>(),
                 color: Color::Red,
             });
 
@@ -141,41 +153,50 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
             }
 
             // Draw Cursor
-            ctx.print(cursor_x, HEIGHT as f64 - cursor_y, Span::styled("X", Style::default().fg(Color::Yellow)));
+            ctx.print(
+                cursor_x,
+                HEIGHT as f64 - cursor_y,
+                Span::styled("X", Style::default().fg(Color::Yellow)),
+            );
         });
     f.render_widget(canvas, left_chunks[0]);
 
     // Bifurcation / History Plot
-    let history_data: Vec<(f64, f64)> = world.history.iter().enumerate()
+    let history_data: Vec<(f64, f64)> = world
+        .history
+        .iter()
+        .enumerate()
         .map(|(i, &val)| (i as f64, val))
         .collect();
 
-    let datasets = vec![
-        Dataset::default()
-            .name("Population (x)")
-            .marker(symbols::Marker::Braille)
-            .graph_type(GraphType::Line)
-            .style(Style::default().fg(Color::Green))
-            .data(&history_data),
-    ];
+    let datasets = vec![Dataset::default()
+        .name("Population (x)")
+        .marker(symbols::Marker::Braille)
+        .graph_type(GraphType::Line)
+        .style(Style::default().fg(Color::Green))
+        .data(&history_data)];
 
     let chart = Chart::new(datasets)
-        .block(Block::default().title("Chaos Monitor (Nest 0)").borders(Borders::ALL))
-        .x_axis(Axis::default()
-            .title("Time")
-            .bounds([0.0, 200.0]))
-        .y_axis(Axis::default()
-            .title("x")
-            .bounds([0.0, 1.0]));
+        .block(
+            Block::default()
+                .title("Chaos Monitor (Nest 0)")
+                .borders(Borders::ALL),
+        )
+        .x_axis(Axis::default().title("Time").bounds([0.0, 200.0]))
+        .y_axis(Axis::default().title("x").bounds([0.0, 1.0]));
 
     f.render_widget(chart, left_chunks[1]);
 
     // Status Bar
-    let status_text = format!("Global R: {:.4} | Resources: {:.1} | Enemies: {} | Ticks: {}",
-        world.global_r, world.resources, world.enemies.len(), world.ticks);
+    let status_text = format!(
+        "Global R: {:.4} | Resources: {:.1} | Enemies: {} | Ticks: {}",
+        world.global_r,
+        world.resources,
+        world.enemies.len(),
+        world.ticks
+    );
 
-    let status_p = Paragraph::new(status_text)
-        .block(Block::default().borders(Borders::ALL));
+    let status_p = Paragraph::new(status_text).block(Block::default().borders(Borders::ALL));
     f.render_widget(status_p, left_chunks[2]);
 
     // Sidebar: VM Inspector
@@ -184,7 +205,7 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
     for tower in &world.towers {
         let dx = tower.pos.x - cursor_x;
         let dy = tower.pos.y - cursor_y;
-        let dist = (dx*dx + dy*dy).sqrt();
+        let dist = (dx * dx + dy * dy).sqrt();
         if dist < min_dist {
             min_dist = dist;
             selected_tower = Some(tower);
@@ -193,40 +214,43 @@ fn ui(f: &mut Frame, world: &World, cursor_x: f64, cursor_y: f64) {
 
     if let Some(tower) = selected_tower {
         let mut grid_text = String::new();
-        grid_text.push_str(&format!("Tower @ ({:.1}, {:.1})\n", tower.pos.x, tower.pos.y));
+        grid_text.push_str(&format!(
+            "Tower @ ({:.1}, {:.1})\n",
+            tower.pos.x, tower.pos.y
+        ));
         grid_text.push_str(&format!("Kills: {}\n", tower.kills));
         grid_text.push_str("VM Grid:\n");
         for y in 0..GRID_SIZE {
             for x in 0..GRID_SIZE {
-                 match &tower.vm.grid[y][x] {
-                     Value::Int(0) => grid_text.push_str(". "),
-                     Value::Int(n) => {
-                         if *n > 0 {
-                             grid_text.push_str("# ");
-                         } else {
+                match &tower.vm.grid[y][x] {
+                    Value::Int(0) => grid_text.push_str(". "),
+                    Value::Int(n) => {
+                        if *n > 0 {
+                            grid_text.push_str("# ");
+                        } else {
                             grid_text.push_str(". ");
-                         }
-                     },
-                     Value::Str(_) => grid_text.push_str("S "),
-                     _ => grid_text.push_str("? "),
-                 }
+                        }
+                    }
+                    Value::Str(_) => grid_text.push_str("S "),
+                    _ => grid_text.push_str("? "),
+                }
             }
             grid_text.push('\n');
         }
 
         // Show Inputs/Outputs specifically
         if let Value::Int(dist) = tower.vm.grid[0][0] {
-             grid_text.push_str(&format!("\nSensors:\nDist: {}\n", dist));
+            grid_text.push_str(&format!("\nSensors:\nDist: {}\n", dist));
         }
         if let Value::Int(angle) = tower.vm.grid[0][1] {
-             grid_text.push_str(&format!("Angle: {:.2}\n", angle as f64 / 100.0));
+            grid_text.push_str(&format!("Angle: {:.2}\n", angle as f64 / 100.0));
         }
 
         let p = Paragraph::new(grid_text)
             .block(Block::default().borders(Borders::ALL).title("Tower VM"));
         f.render_widget(p, main_layout[1]);
     } else {
-         let p = Paragraph::new("No Tower Selected\nHover over a tower to inspect.")
+        let p = Paragraph::new("No Tower Selected\nHover over a tower to inspect.")
             .block(Block::default().borders(Borders::ALL).title("Tower VM"));
         f.render_widget(p, main_layout[1]);
     }

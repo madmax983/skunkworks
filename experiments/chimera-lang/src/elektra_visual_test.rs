@@ -17,10 +17,22 @@ mod tests {
     #[test]
     fn test_tesla_coil_visual_effects() {
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(100)] },
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] },
-            Gene { op: OpCode::TeslaCoil, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(100)],
+            },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            },
+            Gene {
+                op: OpCode::TeslaCoil,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
         let mut vm = make_vm(genes);
 
@@ -51,13 +63,13 @@ mod tests {
         vm.step();
 
         if let Some(VisualEffect::Lightning { ttl, .. }) = vm.visual_effects.first() {
-             assert_eq!(*ttl, 2, "TTL should be 2");
+            assert_eq!(*ttl, 2, "TTL should be 2");
         }
 
         // Step 5: Push (loop) -> TTL 2->1
         vm.step();
         if let Some(VisualEffect::Lightning { ttl, .. }) = vm.visual_effects.first() {
-             assert_eq!(*ttl, 1, "TTL should be 1");
+            assert_eq!(*ttl, 1, "TTL should be 1");
         }
 
         // Step 6: Push (loop) -> TTL 1->0
@@ -68,9 +80,18 @@ mod tests {
     #[test]
     fn test_galvanize_visual_effect() {
         let genes = vec![
-            Gene { op: OpCode::Push, args: vec![Nucleotide::Number(0)] },
-            Gene { op: OpCode::Galvanize, args: vec![] },
-            Gene { op: OpCode::Jump, args: vec![Nucleotide::Number(0)] },
+            Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(0)],
+            },
+            Gene {
+                op: OpCode::Galvanize,
+                args: vec![],
+            },
+            Gene {
+                op: OpCode::Jump,
+                args: vec![Nucleotide::Number(0)],
+            },
         ];
         let mut vm = make_vm(genes);
         vm.voltage_grid[8][8] = 120.0;
