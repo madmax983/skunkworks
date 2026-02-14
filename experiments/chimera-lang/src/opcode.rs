@@ -459,6 +459,12 @@ pub enum OpCode {
     /// **Methods:** 0=Interleave, 1=Uniform Crossover, 2=Midpoint Split.
     #[cfg(feature = "nova")]
     Splice,
+    /// **[Nova]** Stitches two strands together with high-voltage seams.
+    ///
+    /// **Stack:** `[ ..., strand_a, strand_b, stitches ] -> [ ..., new_strand_idx ]`
+    /// **Effect:** Creates a new strand by alternating chunks of A and B, inserting Sparks/Glitches at seams.
+    #[cfg(feature = "nova")]
+    Frankenstein,
     /// **[Nova]** Performs a single-point crossover at a random index.
     ///
     /// **Stack:** `[ ..., strand_a, strand_b ] -> [ ..., new_strand_1, new_strand_2 ]`

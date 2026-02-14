@@ -221,6 +221,127 @@ pub fn exec_chronos_splice(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
     None
 }
 
+/// Stitches two strands together with high-voltage seams.
+///
+/// **OpCode:** `Frankenstein`
+/// **Stack:** `[ ..., strand_a, strand_b, stitches ] -> [ ..., new_strand_idx ]`
+pub fn exec_frankenstein(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
+    // stack: stitches, strand_b, strand_a (bottom)
+    if vm.stack.len() >= 3 {
+        let stitches_val = vm.stack.pop().unwrap();
+        let strand_b_val = vm.stack.pop().unwrap();
+        let strand_a_val = vm.stack.pop().unwrap();
+
+        if let (Value::Int(s_a), Value::Int(s_b), Value::Int(stitches)) =
+            (strand_a_val, strand_b_val, stitches_val)
+        {
+            let idx_a = s_a as usize;
+            let idx_b = s_b as usize;
+            let helix_len = vm.dna.helix.strands.len();
+
+            if s_a >= 0 && s_b >= 0 && idx_a < helix_len && idx_b < helix_len {
+                let genes_a = &vm.dna.helix.strands[idx_a].genes;
+                let genes_b = &vm.dna.helix.strands[idx_b].genes;
+                let len_a = genes_a.len();
+                let len_b = genes_b.len();
+
+                let n_stitches = stitches.max(1) as usize;
+                let chunk_size_a = (len_a / (n_stitches + 1)).max(1);
+                let chunk_size_b = (len_b / (n_stitches + 1)).max(1);
+
+                let mut new_genes = Vec::new();
+                let mut ptr_a = 0;
+                let mut ptr_b = 0;
+
+                for i in 0..=n_stitches {
+                    // Alternate chunks
+                    if i % 2 == 0 {
+                        // Take from A
+                        let end = (ptr_a + chunk_size_a).min(len_a);
+                        if ptr_a < len_a {
+                            new_genes.extend_from_slice(&genes_a[ptr_a..end]);
+                            ptr_a = end;
+                        }
+                    } else {
+                        // Take from B
+                        let end = (ptr_b + chunk_size_b).min(len_b);
+                        if ptr_b < len_b {
+                            new_genes.extend_from_slice(&genes_b[ptr_b..end]);
+                            ptr_b = end;
+                        }
+                    }
+
+                    // Insert Spark at seam (if not last chunk)
+                    if i < n_stitches {
+                        #[cfg(feature = "elektra")]
+                        let spark = crate::ast::Gene {
+                            op: OpCode::Lightning,
+                            args: vec![], // Lightning args handled by VM or usually grid based, but here acts as a "Spark"
+                        };
+                        #[cfg(not(feature = "elektra"))]
+                        let spark = crate::ast::Gene {
+                            op: OpCode::Glitch,
+                            args: vec![Nucleotide::Number(1)], // Minor glitch
+                        };
+                        new_genes.push(spark);
+                    }
+                }
+
+                // Append remainders if any (Frankenstein is messy)
+                if ptr_a < len_a {
+                    new_genes.extend_from_slice(&genes_a[ptr_a..]);
+                }
+                if ptr_b < len_b {
+                    new_genes.extend_from_slice(&genes_b[ptr_b..]);
+                }
+
+                if vm.dna.helix.strands.len() >= MAX_STRANDS {
+                    vm.output
+                        .push("Error: Strand limit exceeded for Frankenstein".to_string());
+                    vm.stack.push(Value::Int(-1));
+                    return None;
+                }
+
+                vm.dna
+                    .helix
+                    .strands
+                    .push(crate::ast::Strand { genes: new_genes });
+                vm.telomeres.push(50);
+                #[cfg(feature = "cortex")]
+                {
+                    vm.activation_levels.push(0);
+                    vm.synapse_map.push(Vec::new());
+                }
+                let new_idx = vm.dna.helix.strands.len() - 1;
+
+                vm.cladistics.register_strand(
+                    new_idx,
+                    Some(idx_a),
+                    vm.tick_counter,
+                    format!("Frankenstein({}, {})", idx_a, idx_b),
+                );
+
+                vm.stack.push(Value::Int(new_idx as i64));
+                vm.energy = vm.energy.saturating_sub(100); // Very expensive
+                vm.output.push(format!(
+                    "FRANKENSTEIN: It's Alive! Created strand {}",
+                    new_idx
+                ));
+            } else {
+                vm.output
+                    .push("Error: Strand index out of bounds".to_string());
+            }
+        } else {
+            vm.output
+                .push("Error: Type mismatch for Frankenstein".to_string());
+        }
+    } else {
+        vm.output
+            .push("Error: Stack underflow for Frankenstein".to_string());
+    }
+    None
+}
+
 /// Performs a single-point crossover at a random index.
 ///
 /// **OpCode:** `Crossover`
