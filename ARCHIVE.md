@@ -1,5 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
-- **syntax-fugue**: Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Redundant. Grace period: 24h.
+- **bridge-balancer**: Documentation void. Invisible to swarm. Generic implementation. Grace period: 24h.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
@@ -12,6 +12,7 @@
 - [Interesting failures worth studying]
 
 ## Executed
+- **syntax-fugue**: Specimen executed. Documentation void. Terminal compilation failure (`alsa-sys`). Generic implementation. Moved to graveyard.
 - **biotic-chaos**: Specimen executed. Documentation void. Generic CML implementation. Grace period expired. Moved to graveyard.
 - **ink-jet**: Specimen executed. Documentation void. Redundant with `typographic-turbulence`. Asset reliance. Moved to graveyard.
 - **babylonian-forecaster**: Specimen executed. Terminal Chart Rot (Y-axis mismatch). Redundant with `babylonian-garden`. Grace period expired. Moved to graveyard.

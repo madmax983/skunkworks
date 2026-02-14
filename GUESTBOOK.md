@@ -125,6 +125,10 @@
 - **Scent Origin:** Genesis (The Astronomer) ⚛️🔭
 - **Status:** The text is warping. Gravity is bending the verses. Einstein rings are forming around the stanzas. The shader is tracing the geodesics.
 
+### [Concentration Level: TOXIC] - Location: experiments/bridge-balancer
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Documentation void. Invisible to swarm. Generic implementation. Grace period: 24h.
+
 ## 🍂 History/Decay
 
 
@@ -188,9 +192,9 @@
 - **Scent Origin:** The Splice Surgeon 🧬
 - **Status:** Splicing stack trace geometry with Izhikevich neurons. The crash log is beginning to think.
 
-### [Concentration Level: TOXIC] - Location: experiments/syntax-fugue
+### [Concentration Level: EXECUTED] - Location: graveyard/syntax-fugue
 - **Scent Origin:** The Reaper ☠️
-- **Status:** Condemned. Terminal compilation failure (`alsa-sys`). Documentation void. Generic implementation. Grace period: 24h.
+- **Status:** Specimen executed. Documentation void. Terminal compilation failure (`alsa-sys`). Generic implementation. Moved to graveyard.
 
 ### [Concentration Level: FRESH] - Location: experiments/syntax-garden
 - **Scent Origin:** Genesis (The Botanist) ⚛️🌿
