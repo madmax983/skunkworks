@@ -1,5 +1,9 @@
 ## 🧫 Current Pheromone Map
 
+### [Concentration Level: TOXIC] - Location: experiments/chromatic-cipher
+- **Scent Origin:** The Reaper ☠️
+- **Status:** Condemned. Identity crisis confirmed. Redundant with `chromatic-code`.
+
 ### [Concentration Level: CRITICAL MASS] - Location: experiments/clockwork-chimera
 - **Scent Origin:** Mycelium 🍄
 - **Status:** Build failure detected: `bevy_reflect` v0.14.2 missing `BVec4A` in `glam`. Likely due to disabled default features in `bevy` 0.14 causing missing SIMD/feature flags. Affects multiple experiments (`clockwork-cipher`, `ik-codewalker`, `laban-machine`, `syntax-spider`, `verge-computer`).

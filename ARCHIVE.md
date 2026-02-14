@@ -1,4 +1,5 @@
 ## ☠️ Condemned (Awaiting Execution)
+- **chromatic-cipher**: Specimen condemned. Redundant with `chromatic-code`. Documentation void. Identity crisis confirmed.
 - [Experiment name]: [What was tried] → [Why it failed]
 
 ## Abandoned Work
