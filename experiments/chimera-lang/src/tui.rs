@@ -119,6 +119,8 @@ pub(crate) enum ViewMode {
     Virology,
     #[cfg(feature = "nova")]
     BioMesh,
+    #[cfg(feature = "nova")]
+    Crispr,
     Evolution,
 }
 
@@ -205,6 +207,16 @@ pub(crate) struct AppState {
     pub(crate) terminal_history: Vec<String>,
     #[cfg(feature = "nova")]
     pub(crate) terminal_history_idx: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_target_strand: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_guide: String,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_replace: String,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_focus: usize,
+    #[cfg(feature = "nova")]
+    pub(crate) crispr_result: String,
     pub(crate) evolution_state: EvolutionState,
 }
 
@@ -305,6 +317,16 @@ impl AppState {
             terminal_history: Vec::new(),
             #[cfg(feature = "nova")]
             terminal_history_idx: 0,
+            #[cfg(feature = "nova")]
+            crispr_target_strand: 0,
+            #[cfg(feature = "nova")]
+            crispr_guide: String::new(),
+            #[cfg(feature = "nova")]
+            crispr_replace: String::new(),
+            #[cfg(feature = "nova")]
+            crispr_focus: 0,
+            #[cfg(feature = "nova")]
+            crispr_result: String::from("Ready to edit."),
             evolution_state: EvolutionState::new(),
         }
     }
@@ -696,6 +718,12 @@ where
                 return;
             }
 
+            #[cfg(feature = "nova")]
+            if let ViewMode::Crispr = app_state.view_mode {
+                render_crispr(f, vm, app_state);
+                return;
+            }
+
             if let ViewMode::Evolution = app_state.view_mode {
                 render_evolution(f, vm, app_state);
                 return;
@@ -1079,6 +1107,60 @@ where
                                     app_state.input_buffer.clear();
                                 }
                                 #[cfg(feature = "nova")]
+                                ViewMode::Crispr => {
+                                    // Execute CRISPR Logic
+                                    let guide_tokens: Vec<&str> = app_state.crispr_guide.split_whitespace().collect();
+                                    let replace_tokens: Vec<&str> = app_state.crispr_replace.split_whitespace().collect();
+                                    use std::str::FromStr;
+
+                                    let mut guide_ops = Vec::new();
+                                    for t in &guide_tokens {
+                                        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
+                                            guide_ops.push(op);
+                                        }
+                                    }
+                                    let mut replace_genes = Vec::new();
+                                    for t in &replace_tokens {
+                                        if let Ok(op) = crate::opcode::OpCode::from_str(t) {
+                                            replace_genes.push(crate::ast::Gene { op, args: vec![] });
+                                        }
+                                    }
+
+                                    if guide_ops.is_empty() {
+                                        app_state.crispr_result = "Error: Empty Guide Pattern".to_string();
+                                    } else {
+                                        let s_idx = app_state.crispr_target_strand;
+                                        if s_idx < vm.dna.helix.strands.len() {
+                                            let strand = &mut vm.dna.helix.strands[s_idx];
+                                            let mut new_genes = Vec::new();
+                                            let mut i = 0;
+                                            let mut matches = 0;
+                                            while i < strand.genes.len() {
+                                                let mut matched = true;
+                                                for (j, op) in guide_ops.iter().enumerate() {
+                                                    if i + j >= strand.genes.len() || strand.genes[i + j].op != *op {
+                                                        matched = false;
+                                                        break;
+                                                    }
+                                                }
+                                                if matched {
+                                                    new_genes.extend(replace_genes.clone());
+                                                    i += guide_ops.len();
+                                                    matches += 1;
+                                                } else {
+                                                    new_genes.push(strand.genes[i].clone());
+                                                    i += 1;
+                                                }
+                                            }
+                                            strand.genes = new_genes;
+                                            app_state.crispr_result = format!("CRISPR: Replaced {} occurrences.", matches);
+                                        } else {
+                                            app_state.crispr_result = "Error: Invalid Strand".to_string();
+                                        }
+                                    }
+                                    // Stay in Editing mode
+                                }
+                                #[cfg(feature = "nova")]
                                 ViewMode::Chronos => {
                                     // Enable editing grid from Chronos view
                                     let (x, y) = app_state.grid_cursor;
@@ -1402,6 +1484,8 @@ where
                             #[cfg(feature = "nova")]
                             if let ViewMode::Babel = app_state.view_mode {
                                 app_state.babel_focus = (app_state.babel_focus + 1) % 2;
+                            } else if let ViewMode::Crispr = app_state.view_mode {
+                                app_state.crispr_focus = (app_state.crispr_focus + 1) % 3;
                             }
                         }
                         KeyCode::Esc => {
@@ -1418,6 +1502,12 @@ where
                                     &mut app_state.babel_input
                                 };
                                 target.push(c);
+                            } else if let ViewMode::Crispr = app_state.view_mode {
+                                if app_state.crispr_focus == 1 {
+                                    app_state.crispr_guide.push(c);
+                                } else if app_state.crispr_focus == 2 {
+                                    app_state.crispr_replace.push(c);
+                                }
                             } else {
                                 app_state.input_buffer.push(c);
                             }
@@ -1432,6 +1522,12 @@ where
                                     &mut app_state.babel_input
                                 };
                                 target.pop();
+                            } else if let ViewMode::Crispr = app_state.view_mode {
+                                if app_state.crispr_focus == 1 {
+                                    app_state.crispr_guide.pop();
+                                } else if app_state.crispr_focus == 2 {
+                                    app_state.crispr_replace.pop();
+                                }
                             } else {
                                 app_state.input_buffer.pop();
                             }
@@ -1440,6 +1536,7 @@ where
                     }
                     continue;
                 }
+
 
                 // Handle Normal Mode
                 #[cfg(feature = "nova")]
@@ -1651,7 +1748,9 @@ where
                             #[cfg(feature = "nova")]
                             ViewMode::Virology => ViewMode::BioMesh,
                             #[cfg(feature = "nova")]
-                            ViewMode::BioMesh => ViewMode::Evolution,
+                            ViewMode::BioMesh => ViewMode::Crispr,
+                            #[cfg(feature = "nova")]
+                            ViewMode::Crispr => ViewMode::Evolution,
                             ViewMode::Evolution => ViewMode::Genome,
                         };
                     }
@@ -2293,6 +2392,8 @@ where
                                 app_state.grid_cursor.1 += 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Crispr => {}
                         ViewMode::Catalyst => {
                             if !vm.catalysts.is_empty()
                                 && app_state.catalyst_scroll + 1 < vm.catalysts.len()
@@ -2546,6 +2647,8 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Crispr => {}
+                        #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
                             if app_state.grid_cursor.1 > 0 {
                                 app_state.grid_cursor.1 -= 1;
@@ -2790,6 +2893,8 @@ where
                             }
                         }
                         #[cfg(feature = "nova")]
+                        ViewMode::Crispr => {}
+                        #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
                             if app_state.grid_cursor.0 < 15 {
                                 app_state.grid_cursor.0 += 1;
@@ -2966,6 +3071,8 @@ where
                                 app_state.grid_cursor.0 -= 1;
                             }
                         }
+                        #[cfg(feature = "nova")]
+                        ViewMode::Crispr => {}
                         #[cfg(feature = "nova")]
                         ViewMode::Chronos => {
                             if app_state.grid_cursor.0 > 0 {
@@ -3172,6 +3279,10 @@ where
                             }
                             #[cfg(feature = "nova")]
                             ViewMode::BioMesh => {
+                                app_state.input_mode = InputMode::Normal;
+                            }
+                            #[cfg(feature = "nova")]
+                            ViewMode::Crispr => {
                                 app_state.input_mode = InputMode::Normal;
                             }
                             #[cfg(feature = "nova")]
@@ -3900,6 +4011,105 @@ fn render_sovereignty(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
             .title("Territory Info"),
     );
     f.render_widget(info_widget, chunks[1]);
+}
+
+#[cfg(feature = "nova")]
+fn render_crispr(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
+    let chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Percentage(50), Constraint::Percentage(50)].as_ref())
+        .split(f.area());
+
+    // Top: Target Strand
+    let idx = app_state.crispr_target_strand;
+    let mut strand_items = Vec::new();
+    let title = if idx < vm.dna.helix.strands.len() {
+        let strand = &vm.dna.helix.strands[idx];
+        for gene in &strand.genes {
+            strand_items.push(ListItem::new(format!("{}", gene.op)));
+        }
+        format!("Target Strand {} ({} genes)", idx, strand.genes.len())
+    } else {
+        strand_items.push(ListItem::new("Invalid Strand Index"));
+        format!("Target Strand {} (Invalid)", idx)
+    };
+
+    let strand_border = if app_state.crispr_focus == 0 {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::White)
+    };
+
+    let strand_list = List::new(strand_items).block(
+        Block::default()
+            .borders(Borders::ALL)
+            .title(title)
+            .border_style(strand_border),
+    );
+    f.render_widget(strand_list, chunks[0]);
+
+    // Bottom: Editor
+    let editor_chunks = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(3), Constraint::Length(3), Constraint::Min(1)].as_ref())
+        .split(chunks[1]);
+
+    // Guide RNA (Pattern)
+    let guide_border = if app_state.crispr_focus == 1 {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::White)
+    };
+    let guide_input = Paragraph::new(app_state.crispr_guide.clone())
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Guide Pattern (e.g. 'Push Add')")
+                .border_style(guide_border),
+        );
+    f.render_widget(guide_input, editor_chunks[0]);
+
+    // Replacement (Payload)
+    let replace_border = if app_state.crispr_focus == 2 {
+        Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)
+    } else {
+        Style::default().fg(Color::White)
+    };
+    let replace_input = Paragraph::new(app_state.crispr_replace.clone())
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Payload (e.g. 'Push Sub')")
+                .border_style(replace_border),
+        );
+    f.render_widget(replace_input, editor_chunks[1]);
+
+    // Status / Controls
+    let mut status_text = vec![
+        Line::from(Span::styled(&app_state.crispr_result, Style::default().fg(Color::Cyan))),
+        Line::from(" "),
+    ];
+
+    if let InputMode::Editing = app_state.input_mode {
+        status_text.extend(vec![
+            Line::from(Span::styled("EDITING MODE", Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD))),
+            Line::from("  Tab: Cycle Field (Guide <-> Replace)"),
+            Line::from("  Type: Edit Text"),
+            Line::from("  Enter: Execute Replace"),
+            Line::from("  Esc: Exit Editing"),
+        ]);
+    } else {
+        status_text.extend(vec![
+            Line::from(Span::styled("NORMAL MODE", Style::default().fg(Color::Green))),
+            Line::from("  Enter: Start Editing"),
+            Line::from("  Up/Down: Change Strand"),
+            Line::from("  Tab: Switch View"),
+        ]);
+    }
+
+    let status_widget = Paragraph::new(status_text)
+        .block(Block::default().borders(Borders::ALL).title("CRISPR Status"));
+    f.render_widget(status_widget, editor_chunks[2]);
 }
 
 #[cfg(feature = "silicon")]
@@ -4700,6 +4910,8 @@ fn render_genome_and_grid(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppStat
         ViewMode::Virology => "VIROLOGY LAB",
         #[cfg(feature = "nova")]
         ViewMode::BioMesh => "BIOMESH",
+        #[cfg(feature = "nova")]
+        ViewMode::Crispr => "CRISPR EDITOR",
         ViewMode::Evolution => "EVOLUTION CHAMBER",
     };
 
