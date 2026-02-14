@@ -1,6 +1,6 @@
-use rusttype::{Font, Scale, Point, PositionedGlyph};
 use macroquad::prelude::*;
 use noise::{NoiseFn, Perlin};
+use rusttype::{Font, Point, PositionedGlyph, Scale};
 
 pub struct FontTerrain {
     pub heightmap: Vec<f32>,
@@ -15,11 +15,14 @@ impl FontTerrain {
         let v_metrics = font.v_metrics(scale);
 
         // Layout the glyphs to find bounds
-        let start = Point { x: 0.0, y: v_metrics.ascent };
+        let start = Point {
+            x: 0.0,
+            y: v_metrics.ascent,
+        };
         let glyphs: Vec<PositionedGlyph> = font.layout(text, scale, start).collect();
 
         if glyphs.is_empty() {
-             return Self {
+            return Self {
                 heightmap: vec![],
                 width: 0,
                 height: 0,
@@ -27,10 +30,30 @@ impl FontTerrain {
         }
 
         // Calculate bounds
-        let min_x = glyphs.iter().filter_map(|g| g.pixel_bounding_box()).map(|bb| bb.min.x).min().unwrap_or(0);
-        let max_x = glyphs.iter().filter_map(|g| g.pixel_bounding_box()).map(|bb| bb.max.x).max().unwrap_or(100);
-        let min_y = glyphs.iter().filter_map(|g| g.pixel_bounding_box()).map(|bb| bb.min.y).min().unwrap_or(0);
-        let max_y = glyphs.iter().filter_map(|g| g.pixel_bounding_box()).map(|bb| bb.max.y).max().unwrap_or(100);
+        let min_x = glyphs
+            .iter()
+            .filter_map(|g| g.pixel_bounding_box())
+            .map(|bb| bb.min.x)
+            .min()
+            .unwrap_or(0);
+        let max_x = glyphs
+            .iter()
+            .filter_map(|g| g.pixel_bounding_box())
+            .map(|bb| bb.max.x)
+            .max()
+            .unwrap_or(100);
+        let min_y = glyphs
+            .iter()
+            .filter_map(|g| g.pixel_bounding_box())
+            .map(|bb| bb.min.y)
+            .min()
+            .unwrap_or(0);
+        let max_y = glyphs
+            .iter()
+            .filter_map(|g| g.pixel_bounding_box())
+            .map(|bb| bb.max.y)
+            .max()
+            .unwrap_or(100);
 
         let width = (max_x - min_x + 20) as usize; // Padding
         let height = (max_y - min_y + 20) as usize;
@@ -56,8 +79,8 @@ impl FontTerrain {
         // Apply a simple blur/spread to make it terrain-like
         // A simple box blur
         let mut blurred = heightmap.clone();
-        for y in 1..height-1 {
-            for x in 1..width-1 {
+        for y in 1..height - 1 {
+            for x in 1..width - 1 {
                 let idx = y * width + x;
                 if heightmap[idx] > 0.0 {
                     blurred[idx] = heightmap[idx];
@@ -67,7 +90,8 @@ impl FontTerrain {
                     let mut count = 0.0;
                     for dy in -1..=1 {
                         for dx in -1..=1 {
-                            let val = heightmap[((y as i32 + dy) as usize) * width + ((x as i32 + dx) as usize)];
+                            let val = heightmap
+                                [((y as i32 + dy) as usize) * width + ((x as i32 + dx) as usize)];
                             if val > 0.0 {
                                 sum += val;
                                 count += 1.0;
@@ -171,12 +195,15 @@ mod tests {
 
         let terrain = FontTerrain::new(&font_data, "A", 50.0);
 
-        assert!(!terrain.heightmap.is_empty(), "Heightmap should not be empty");
+        assert!(
+            !terrain.heightmap.is_empty(),
+            "Heightmap should not be empty"
+        );
         assert!(terrain.width > 0, "Width should be > 0");
         assert!(terrain.height > 0, "Height should be > 0");
 
         // Check if there is some height
-        let max_h = terrain.heightmap.iter().cloned().fold(0./0., f32::max);
+        let max_h = terrain.heightmap.iter().cloned().fold(0. / 0., f32::max);
         assert!(max_h > 0.0, "Max height should be > 0");
     }
 

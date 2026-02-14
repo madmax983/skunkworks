@@ -7,17 +7,17 @@ use ratatui::{
         Block, Borders, Paragraph,
     },
 };
-use std::time::{Duration, Instant};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use std::time::{Duration, Instant};
 
 mod sim;
 mod terrain;
 
+use git_associates::{Commit, FileChange, GitModel};
 use sim::Simulation;
 use terrain::Terrain;
 use tui_shared::Tui;
-use git_associates::{GitModel, Commit, FileChange};
 
 fn main() -> Result<()> {
     // Terminal setup
@@ -31,10 +31,10 @@ fn main() -> Result<()> {
                 Ok(mut c) => {
                     c.reverse(); // Sort Oldest to Newest
                     c
-                },
+                }
                 Err(_) => vec![],
             }
-        },
+        }
         Err(_) => vec![],
     };
 

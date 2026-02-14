@@ -1,7 +1,7 @@
+use crossbeam_channel::bounded;
 use macroquad::prelude::*;
 use resonance_audio::audio::{AudioCommand, AudioModel, AudioSnapshot};
 use resonance_audio::physics::Material;
-use crossbeam_channel::bounded;
 use std::path::Path;
 
 mod layout;
@@ -33,7 +33,10 @@ async fn main() {
     // 2. Build the Cavern Layout
     // We scan the current directory (or parent if current is empty/trivial)
     let path = Path::new(".");
-    let layout_items = generate_layout(path, Rect::new(0.0, 0.0, GRID_WIDTH as f32, GRID_HEIGHT as f32));
+    let layout_items = generate_layout(
+        path,
+        Rect::new(0.0, 0.0, GRID_WIDTH as f32, GRID_HEIGHT as f32),
+    );
 
     // Send layout to audio model
     // We do this by sending PaintMaterial commands
@@ -114,10 +117,10 @@ async fn main() {
 
                 let base_color = match material {
                     Material::Air => Color::new(0.05, 0.05, 0.1, 1.0), // Dark Blue
-                    Material::Wall => Color::new(0.4, 0.4, 0.4, 1.0), // Grey
+                    Material::Wall => Color::new(0.4, 0.4, 0.4, 1.0),  // Grey
                     Material::Slow => Color::new(0.2, 0.1, 0.05, 1.0), // Brown (Mud)
-                    Material::Fast => Color::new(0.0, 0.2, 0.2, 1.0), // Teal (Water/Ice)
-                    Material::Void => Color::new(0.0, 0.0, 0.0, 1.0), // Black
+                    Material::Fast => Color::new(0.0, 0.2, 0.2, 1.0),  // Teal (Water/Ice)
+                    Material::Void => Color::new(0.0, 0.0, 0.0, 1.0),  // Black
                 };
 
                 let p = pressure.clamp(-1.0, 1.0);
@@ -142,7 +145,8 @@ async fn main() {
         clear_background(BLACK);
 
         // Scale to fit screen
-        let scale = (screen_width() / GRID_WIDTH as f32).min(screen_height() / GRID_HEIGHT as f32) * 0.9;
+        let scale =
+            (screen_width() / GRID_WIDTH as f32).min(screen_height() / GRID_HEIGHT as f32) * 0.9;
         let draw_width = GRID_WIDTH as f32 * scale;
         let draw_height = GRID_HEIGHT as f32 * scale;
         let offset_x = (screen_width() - draw_width) / 2.0;
@@ -163,47 +167,85 @@ async fn main() {
 
         // Listener Movement (WASD)
         let mut moved = false;
-        if is_key_down(KeyCode::W) && listener_pos.1 > 0 { listener_pos.1 -= 1; moved = true; }
-        if is_key_down(KeyCode::S) && listener_pos.1 < GRID_HEIGHT - 1 { listener_pos.1 += 1; moved = true; }
-        if is_key_down(KeyCode::A) && listener_pos.0 > 0 { listener_pos.0 -= 1; moved = true; }
-        if is_key_down(KeyCode::D) && listener_pos.0 < GRID_WIDTH - 1 { listener_pos.0 += 1; moved = true; }
+        if is_key_down(KeyCode::W) && listener_pos.1 > 0 {
+            listener_pos.1 -= 1;
+            moved = true;
+        }
+        if is_key_down(KeyCode::S) && listener_pos.1 < GRID_HEIGHT - 1 {
+            listener_pos.1 += 1;
+            moved = true;
+        }
+        if is_key_down(KeyCode::A) && listener_pos.0 > 0 {
+            listener_pos.0 -= 1;
+            moved = true;
+        }
+        if is_key_down(KeyCode::D) && listener_pos.0 < GRID_WIDTH - 1 {
+            listener_pos.0 += 1;
+            moved = true;
+        }
 
         if moved {
-            let _ = cmd_tx.send(AudioCommand::MoveListener { x: listener_pos.0, y: listener_pos.1 });
+            let _ = cmd_tx.send(AudioCommand::MoveListener {
+                x: listener_pos.0,
+                y: listener_pos.1,
+            });
         }
 
         // Source Movement (Arrows)
-        if is_key_down(KeyCode::Up) && source_pos.1 > 0 { source_pos.1 -= 1; }
-        if is_key_down(KeyCode::Down) && source_pos.1 < GRID_HEIGHT - 1 { source_pos.1 += 1; }
-        if is_key_down(KeyCode::Left) && source_pos.0 > 0 { source_pos.0 -= 1; }
-        if is_key_down(KeyCode::Right) && source_pos.0 < GRID_WIDTH - 1 { source_pos.0 += 1; }
+        if is_key_down(KeyCode::Up) && source_pos.1 > 0 {
+            source_pos.1 -= 1;
+        }
+        if is_key_down(KeyCode::Down) && source_pos.1 < GRID_HEIGHT - 1 {
+            source_pos.1 += 1;
+        }
+        if is_key_down(KeyCode::Left) && source_pos.0 > 0 {
+            source_pos.0 -= 1;
+        }
+        if is_key_down(KeyCode::Right) && source_pos.0 < GRID_WIDTH - 1 {
+            source_pos.0 += 1;
+        }
 
         // Mouse interaction overrides source pos
         let mouse_pos = mouse_position();
         let mut hovered_item_name = None;
-        if mouse_pos.0 >= offset_x && mouse_pos.0 < offset_x + draw_width &&
-           mouse_pos.1 >= offset_y && mouse_pos.1 < offset_y + draw_height {
+        if mouse_pos.0 >= offset_x
+            && mouse_pos.0 < offset_x + draw_width
+            && mouse_pos.1 >= offset_y
+            && mouse_pos.1 < offset_y + draw_height
+        {
             let gx = ((mouse_pos.0 - offset_x) / scale) as usize;
             let gy = ((mouse_pos.1 - offset_y) / scale) as usize;
-            source_pos = (gx.clamp(0, GRID_WIDTH-1), gy.clamp(0, GRID_HEIGHT-1));
+            source_pos = (gx.clamp(0, GRID_WIDTH - 1), gy.clamp(0, GRID_HEIGHT - 1));
 
             if is_mouse_button_pressed(MouseButton::Left) {
-                let _ = cmd_tx.send(AudioCommand::Pluck { x: source_pos.0, y: source_pos.1, strength: 0.8 });
+                let _ = cmd_tx.send(AudioCommand::Pluck {
+                    x: source_pos.0,
+                    y: source_pos.1,
+                    strength: 0.8,
+                });
             }
 
             // Find item under mouse
             for item in &layout_items {
-                if (gx as f32) >= item.rect.x && (gx as f32) < (item.rect.x + item.rect.w) &&
-                   (gy as f32) >= item.rect.y && (gy as f32) < (item.rect.y + item.rect.h) {
-                       hovered_item_name = Some(item.path.file_name().unwrap_or_default().to_string_lossy());
-                       break;
+                if (gx as f32) >= item.rect.x
+                    && (gx as f32) < (item.rect.x + item.rect.w)
+                    && (gy as f32) >= item.rect.y
+                    && (gy as f32) < (item.rect.y + item.rect.h)
+                {
+                    hovered_item_name =
+                        Some(item.path.file_name().unwrap_or_default().to_string_lossy());
+                    break;
                 }
             }
         }
 
         // Actions
         if is_key_pressed(KeyCode::Space) {
-            let _ = cmd_tx.send(AudioCommand::Pluck { x: source_pos.0, y: source_pos.1, strength: 0.8 });
+            let _ = cmd_tx.send(AudioCommand::Pluck {
+                x: source_pos.0,
+                y: source_pos.1,
+                strength: 0.8,
+            });
         }
 
         if is_key_pressed(KeyCode::Enter) {
@@ -213,31 +255,43 @@ async fn main() {
                 x: source_pos.0,
                 y: source_pos.1,
                 frequency: 220.0,
-                strength
+                strength,
             });
         }
 
         // If continuous, update position of oscillator
-        if continuous_tone && (moved || is_key_down(KeyCode::Up) || is_key_down(KeyCode::Down) || is_key_down(KeyCode::Left) || is_key_down(KeyCode::Right)) {
-             // We need to remove old and add new or just update.
-             // Ideally we'd track the oscillator ID or position, but here we just blindly send update.
-             // Actually, AudioModel logic: "Check if oscillator exists... if let Some(pos) = ... position(|o| o.x == x && o.y == y)".
-             // This logic means we can't move an oscillator easily without removing old one first.
-             // For now, let's just use Pluck for movement or toggle off/on.
-             // Or we just don't support moving continuous tone easily.
+        if continuous_tone
+            && (moved
+                || is_key_down(KeyCode::Up)
+                || is_key_down(KeyCode::Down)
+                || is_key_down(KeyCode::Left)
+                || is_key_down(KeyCode::Right))
+        {
+            // We need to remove old and add new or just update.
+            // Ideally we'd track the oscillator ID or position, but here we just blindly send update.
+            // Actually, AudioModel logic: "Check if oscillator exists... if let Some(pos) = ... position(|o| o.x == x && o.y == y)".
+            // This logic means we can't move an oscillator easily without removing old one first.
+            // For now, let's just use Pluck for movement or toggle off/on.
+            // Or we just don't support moving continuous tone easily.
         }
 
         // Draw HUD
         let lx = offset_x + listener_pos.0 as f32 * scale;
         let ly = offset_y + listener_pos.1 as f32 * scale;
-        draw_circle(lx + scale/2.0, ly + scale/2.0, scale, GREEN); // Ear
+        draw_circle(lx + scale / 2.0, ly + scale / 2.0, scale, GREEN); // Ear
 
         let sx = offset_x + source_pos.0 as f32 * scale;
         let sy = offset_y + source_pos.1 as f32 * scale;
-        draw_circle_lines(sx + scale/2.0, sy + scale/2.0, scale, 2.0, RED); // Source
+        draw_circle_lines(sx + scale / 2.0, sy + scale / 2.0, scale, 2.0, RED); // Source
 
         draw_text("Echo Cavern", 10.0, 20.0, 30.0, WHITE);
-        draw_text("WASD: Move Ear | Mouse/Arrows: Move Source | Click/Space: Ping | Enter: Toggle Drone", 10.0, 50.0, 20.0, GRAY);
+        draw_text(
+            "WASD: Move Ear | Mouse/Arrows: Move Source | Click/Space: Ping | Enter: Toggle Drone",
+            10.0,
+            50.0,
+            20.0,
+            GRAY,
+        );
 
         if let Some(name) = hovered_item_name {
             draw_text(&name, mouse_pos.0 + 10.0, mouse_pos.1, 20.0, YELLOW);

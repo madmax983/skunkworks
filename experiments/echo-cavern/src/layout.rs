@@ -1,7 +1,7 @@
-use std::path::{Path, PathBuf};
-use std::fs;
 use macroquad::prelude::*;
 use resonance_audio::physics::Material;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone)]
 pub struct LayoutItem {
@@ -20,7 +20,9 @@ struct Node {
 impl Node {
     fn scan(path: &Path, depth: usize) -> Option<Self> {
         // Limit depth to avoid too much nesting
-        if depth > 4 { return None; }
+        if depth > 4 {
+            return None;
+        }
 
         let metadata = fs::metadata(path).ok()?;
         let is_dir = metadata.is_dir();
@@ -33,7 +35,9 @@ impl Node {
             if let Ok(entries) = fs::read_dir(path) {
                 for entry in entries.flatten() {
                     // Ignore hidden files
-                    if entry.file_name().to_string_lossy().starts_with('.') { continue; }
+                    if entry.file_name().to_string_lossy().starts_with('.') {
+                        continue;
+                    }
 
                     if let Some(child) = Node::scan(&entry.path(), depth + 1) {
                         size += child.size;
@@ -122,7 +126,9 @@ fn layout_node(node: &Node, rect: Rect, items: &mut Vec<LayoutItem>) {
 }
 
 fn layout_children(nodes: &[&Node], rect: Rect, items: &mut Vec<LayoutItem>) {
-    if nodes.is_empty() { return; }
+    if nodes.is_empty() {
+        return;
+    }
 
     if nodes.len() == 1 {
         layout_node(nodes[0], rect, items);
@@ -132,7 +138,9 @@ fn layout_children(nodes: &[&Node], rect: Rect, items: &mut Vec<LayoutItem>) {
     // Split based on total size to maintain area proportionality
     let total_size: u64 = nodes.iter().map(|n| n.size).sum();
     // Prevent division by zero
-    if total_size == 0 { return; }
+    if total_size == 0 {
+        return;
+    }
 
     // Find split point where left size is closest to half
     let mut left_size = 0;
@@ -145,9 +153,12 @@ fn layout_children(nodes: &[&Node], rect: Rect, items: &mut Vec<LayoutItem>) {
         split_idx = i + 1;
     }
     // Ensure at least one item on each side if possible
-    if split_idx >= nodes.len() { split_idx = nodes.len() - 1; }
-    if split_idx == 0 { split_idx = 1; }
-
+    if split_idx >= nodes.len() {
+        split_idx = nodes.len() - 1;
+    }
+    if split_idx == 0 {
+        split_idx = 1;
+    }
 
     let (left_nodes, right_nodes) = nodes.split_at(split_idx);
 

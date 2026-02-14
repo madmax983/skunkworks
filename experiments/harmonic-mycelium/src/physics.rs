@@ -33,14 +33,18 @@ pub fn update(bodies: &mut [Body], dt: f32) {
 
     for i in 0..bodies.len() {
         for j in 0..bodies.len() {
-            if i == j { continue; }
+            if i == j {
+                continue;
+            }
 
             let r = bodies[j].pos - bodies[i].pos;
             let dist_sq = r.length_squared();
             let dist = dist_sq.sqrt();
 
             // Softening to avoid singularity
-            if dist < bodies[i].radius + bodies[j].radius { continue; }
+            if dist < bodies[i].radius + bodies[j].radius {
+                continue;
+            }
 
             let f = (G * bodies[j].mass) / dist_sq;
             let dir = r / dist;
@@ -52,7 +56,9 @@ pub fn update(bodies: &mut [Body], dt: f32) {
     // 2. Apply Acceleration and Velocity
     for (i, body) in bodies.iter_mut().enumerate() {
         // Star is fixed (index 0 usually)
-        if i == 0 { continue; }
+        if i == 0 {
+            continue;
+        }
 
         body.vel += accelerations[i] * dt;
         body.pos += body.vel * dt;
@@ -70,7 +76,9 @@ pub fn check_crossings(bodies: &[Body], old_positions: &[Vec2]) -> Vec<f32> {
     let mut events = Vec::new();
 
     for (i, body) in bodies.iter().enumerate() {
-        if i == 0 { continue; } // Star doesn't trigger
+        if i == 0 {
+            continue;
+        } // Star doesn't trigger
 
         let p1 = old_positions[i];
         let p2 = body.pos;

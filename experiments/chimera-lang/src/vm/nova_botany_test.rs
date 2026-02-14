@@ -1,8 +1,8 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::vm::{ChimeraVM, Value};
     use crate::ast::{Dna, Helix};
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -47,7 +47,7 @@ mod tests {
         swap_organelle_context(&mut vm, &mut org);
 
         if let Value::Str(s) = &org.stack[1] {
-             assert_eq!(s, "F");
+            assert_eq!(s, "F");
         }
 
         // Tick 2: F -> Draw
@@ -107,9 +107,13 @@ mod tests {
         let (y, x) = vm.context_loc;
 
         // Check grid - should be drawn immediately
-        match &vm.grid[8][8] { // Note: interpret_char writes to CURRENT location (8,8) then MOVES.
+        match &vm.grid[8][8] {
+            // Note: interpret_char writes to CURRENT location (8,8) then MOVES.
             Value::Str(s) => assert_eq!(s, "#"),
-            _ => panic!("Expected # on grid at 8,8 due to boost, got {:?}", vm.grid[8][8]),
+            _ => panic!(
+                "Expected # on grid at 8,8 due to boost, got {:?}",
+                vm.grid[8][8]
+            ),
         }
 
         swap_organelle_context(&mut vm, &mut org);

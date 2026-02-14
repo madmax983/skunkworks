@@ -18,9 +18,9 @@ pub struct Meme {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Virus {
     pub name: String,
-    pub color: (u8, u8, u8), // RGB
-    pub pattern: String,     // Target text pattern (contains match)
-    pub mutation_rate: u8,   // 0-100
+    pub color: (u8, u8, u8),    // RGB
+    pub pattern: String,        // Target text pattern (contains match)
+    pub mutation_rate: u8,      // 0-100
     pub payload: Option<usize>, // DNA Strand index to inject
 }
 
@@ -203,8 +203,12 @@ pub fn exec_memetics_op(
                 let rate_val = vm.stack.pop().unwrap();
                 let payload_val = vm.stack.pop().unwrap();
 
-                if let (Value::Str(name), Value::Str(pattern), Value::Int(rate), Value::Int(p_idx)) =
-                    (name_val, pattern_val, rate_val, payload_val)
+                if let (
+                    Value::Str(name),
+                    Value::Str(pattern),
+                    Value::Int(rate),
+                    Value::Int(p_idx),
+                ) = (name_val, pattern_val, rate_val, payload_val)
                 {
                     let mutation_rate = rate.clamp(0, 100) as u8;
                     let payload = if p_idx >= 0 && (p_idx as usize) < vm.dna.helix.strands.len() {
@@ -296,15 +300,19 @@ pub fn exec_memetics_op(
                             // Transduction (Payload Injection)
                             if let Some(payload_idx) = virus.payload {
                                 // Check if an organelle is here
-                                let target_org_indices: Vec<usize> = vm.organelles
+                                let target_org_indices: Vec<usize> = vm
+                                    .organelles
                                     .iter()
                                     .enumerate()
                                     .filter(|(_, o)| o.context_loc == (y, x))
                                     .map(|(i, _)| i)
                                     .collect();
 
-                                if !target_org_indices.is_empty() && payload_idx < vm.dna.helix.strands.len() {
-                                    let payload_genes = vm.dna.helix.strands[payload_idx].genes.clone();
+                                if !target_org_indices.is_empty()
+                                    && payload_idx < vm.dna.helix.strands.len()
+                                {
+                                    let payload_genes =
+                                        vm.dna.helix.strands[payload_idx].genes.clone();
 
                                     for idx in target_org_indices {
                                         let org = &vm.organelles[idx];
@@ -312,7 +320,9 @@ pub fn exec_memetics_op(
                                         // Note: multiple organelles might share a genome. This affects all of them.
                                         let g_id = org.genome_id as usize;
                                         if g_id < vm.dna.helix.strands.len() {
-                                            vm.dna.helix.strands[g_id].genes.extend(payload_genes.clone());
+                                            vm.dna.helix.strands[g_id]
+                                                .genes
+                                                .extend(payload_genes.clone());
                                             mutation_count += 1;
                                             vm.output.push(format!("TRANSDUCTION: Virus {} injected Strand {} into Organelle {} (Genome {})", state.virus_id, payload_idx, org.name, g_id));
                                         }

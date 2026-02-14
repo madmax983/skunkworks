@@ -58,9 +58,9 @@ impl MiuraGrid {
         let denominator = c1 - 2.0 * c2;
 
         if denominator.abs() < 1e-6 {
-             // Singularity handling (should correspond to flat state usually)
-             // If flat, l_y = b
-             return self.generate_grid(l_x, b, a * alpha.cos(), 0.0);
+            // Singularity handling (should correspond to flat state usually)
+            // If flat, l_y = b
+            return self.generate_grid(l_x, b, a * alpha.cos(), 0.0);
         }
 
         let l_y_sq = (c2 * c2) / denominator;
@@ -138,7 +138,13 @@ mod tests {
                     let idx1 = j * width + i;
                     let idx2 = j * width + i + 1;
                     let d = verts[idx1].distance(verts[idx2]);
-                    assert!((d - a).abs() < 1e-4, "Horizontal edge length mismatch at exp={}: got {}, expected {}", exp, d, a);
+                    assert!(
+                        (d - a).abs() < 1e-4,
+                        "Horizontal edge length mismatch at exp={}: got {}, expected {}",
+                        exp,
+                        d,
+                        a
+                    );
                 }
             }
 
@@ -149,7 +155,13 @@ mod tests {
                     let idx1 = j * width + i;
                     let idx2 = (j + 1) * width + i;
                     let d = verts[idx1].distance(verts[idx2]);
-                    assert!((d - b).abs() < 1e-4, "Vertical edge length mismatch at exp={}: got {}, expected {}", exp, d, b);
+                    assert!(
+                        (d - b).abs() < 1e-4,
+                        "Vertical edge length mismatch at exp={}: got {}, expected {}",
+                        exp,
+                        d,
+                        b
+                    );
                 }
             }
         }

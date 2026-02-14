@@ -17,13 +17,28 @@ fn string_genes(s: &str) -> Vec<Gene> {
     }
 
     // First char
-    genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(chars[0] as i64)] });
-    genes.push(Gene { op: OpCode::Chr, args: vec![] });
+    genes.push(Gene {
+        op: OpCode::Push,
+        args: vec![Nucleotide::Number(chars[0] as i64)],
+    });
+    genes.push(Gene {
+        op: OpCode::Chr,
+        args: vec![],
+    });
 
     for c in chars.iter().skip(1) {
-        genes.push(Gene { op: OpCode::Push, args: vec![Nucleotide::Number(*c as i64)] });
-        genes.push(Gene { op: OpCode::Chr, args: vec![] });
-        genes.push(Gene { op: OpCode::Add, args: vec![] });
+        genes.push(Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(*c as i64)],
+        });
+        genes.push(Gene {
+            op: OpCode::Chr,
+            args: vec![],
+        });
+        genes.push(Gene {
+            op: OpCode::Add,
+            args: vec![],
+        });
     }
     genes
 }
@@ -41,7 +56,10 @@ fn test_holo_grammar_invocation() {
     // Build "Match"
     genes.extend(string_genes("Match"));
     // Grammar
-    genes.push(Gene { op: OpCode::Grammar, args: vec![] });
+    genes.push(Gene {
+        op: OpCode::Grammar,
+        args: vec![],
+    });
 
     let strand = Strand { genes };
     vm.dna.helix.strands.push(strand);
@@ -77,7 +95,10 @@ fn test_holo_speak_generation() {
     let mut genes = Vec::new();
     genes.extend(string_genes("world"));
     genes.extend(string_genes("Match"));
-    genes.push(Gene { op: OpCode::Grammar, args: vec![] });
+    genes.push(Gene {
+        op: OpCode::Grammar,
+        args: vec![],
+    });
 
     let strand = Strand { genes };
     vm.dna.helix.strands.push(strand);

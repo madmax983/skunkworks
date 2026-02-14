@@ -32,14 +32,18 @@ pub fn update(bodies: &mut [Body], dt: f32) {
 
     for i in 0..bodies.len() {
         for j in 0..bodies.len() {
-            if i == j { continue; }
+            if i == j {
+                continue;
+            }
 
             let r = bodies[j].pos - bodies[i].pos;
             let dist_sq = r.length_squared();
             let dist = dist_sq.sqrt();
 
             // Softening
-            if dist < bodies[i].radius + bodies[j].radius { continue; }
+            if dist < bodies[i].radius + bodies[j].radius {
+                continue;
+            }
 
             let f = (G * bodies[j].mass) / dist_sq;
             let dir = r / dist;
@@ -49,7 +53,9 @@ pub fn update(bodies: &mut [Body], dt: f32) {
     }
 
     for (i, body) in bodies.iter_mut().enumerate() {
-        if i == 0 { continue; } // Pin the central star
+        if i == 0 {
+            continue;
+        } // Pin the central star
 
         body.vel += accelerations[i] * dt;
         body.pos += body.vel * dt;

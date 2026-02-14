@@ -27,7 +27,8 @@ impl Synthesizer {
 
     pub fn get_params(&self) -> (f32, f32) {
         let feed = self.base_feed + self.feed_amp * (self.time * self.frequency * 2.0 * PI).sin();
-        let kill = self.base_kill + self.kill_amp * (self.time * self.frequency * 2.0 * PI * 0.5).cos(); // Different rhythm
+        let kill =
+            self.base_kill + self.kill_amp * (self.time * self.frequency * 2.0 * PI * 0.5).cos(); // Different rhythm
         (feed, kill)
     }
 

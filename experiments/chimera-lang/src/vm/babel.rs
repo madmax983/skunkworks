@@ -34,12 +34,15 @@ pub fn exec_babel_op(
                             if consumed == input_str.len() {
                                 // 2. Mutate CST
                                 let mutated_cst = mutate_cst(&cst, 0.2); // 20% base corruption rate
-                                // 3. Flatten
+                                                                         // 3. Flatten
                                 let output_str = flatten_cst(&mutated_cst);
                                 vm.stack.push(Value::Str(output_str));
                                 vm.output.push("TONGUE: Reality corrupted.".to_string());
                             } else {
-                                vm.output.push(format!("TONGUE: Partial match ({} chars), cannot corrupt.", consumed));
+                                vm.output.push(format!(
+                                    "TONGUE: Partial match ({} chars), cannot corrupt.",
+                                    consumed
+                                ));
                                 vm.stack.push(Value::Str(input_str));
                             }
                         }
@@ -49,10 +52,12 @@ pub fn exec_babel_op(
                         }
                     }
                 } else {
-                    vm.output.push("Error: Tongue input must be string".to_string());
+                    vm.output
+                        .push("Error: Tongue input must be string".to_string());
                 }
             } else {
-                vm.output.push("Error: Stack underflow for Tongue".to_string());
+                vm.output
+                    .push("Error: Stack underflow for Tongue".to_string());
             }
         }
         OpCode::Scribe => {
@@ -222,10 +227,12 @@ pub fn exec_babel_op(
                     args.extend(items);
                     vm.stack.push(Value::Junction(JunctionType::Any, args));
                 } else {
-                    vm.output.push("Error: Stack underflow for ParserSeqN".to_string());
+                    vm.output
+                        .push("Error: Stack underflow for ParserSeqN".to_string());
                 }
             } else {
-                vm.output.push("Error: ParserSeqN requires count".to_string());
+                vm.output
+                    .push("Error: ParserSeqN requires count".to_string());
             }
         }
         OpCode::ParserAlt => {
@@ -254,10 +261,12 @@ pub fn exec_babel_op(
                     args.extend(items);
                     vm.stack.push(Value::Junction(JunctionType::Any, args));
                 } else {
-                    vm.output.push("Error: Stack underflow for ParserAltN".to_string());
+                    vm.output
+                        .push("Error: Stack underflow for ParserAltN".to_string());
                 }
             } else {
-                vm.output.push("Error: ParserAltN requires count".to_string());
+                vm.output
+                    .push("Error: ParserAltN requires count".to_string());
             }
         }
         OpCode::ParserMany => {
@@ -338,10 +347,7 @@ pub fn run_parser(parser: &Value, input: &str) -> Result<(Value, usize), ()> {
                             Err(_) => return Err(()),
                         }
                     }
-                    Ok((
-                        Value::Junction(JunctionType::All, results),
-                        total_consumed,
-                    ))
+                    Ok((Value::Junction(JunctionType::All, results), total_consumed))
                 }
                 "Alt" => {
                     // Variadic Alt

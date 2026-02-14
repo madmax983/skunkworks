@@ -1,7 +1,7 @@
-use std::sync::Arc;
-use std::time::Duration;
 use anyhow::Result;
 use rand::Rng;
+use std::sync::Arc;
+use std::time::Duration;
 
 #[cfg(feature = "audio")]
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -28,7 +28,9 @@ impl AudioEngine {
         #[cfg(feature = "audio")]
         {
             let host = cpal::default_host();
-            let device = host.default_output_device().ok_or_else(|| anyhow::anyhow!("No audio device"))?;
+            let device = host
+                .default_output_device()
+                .ok_or_else(|| anyhow::anyhow!("No audio device"))?;
             let config = device.default_output_config()?;
             let sample_rate = config.sample_rate().0;
             let channels = config.channels() as usize;
@@ -124,9 +126,12 @@ impl Synthesizer {
         let beat_duration_samples = samples_per_beat;
 
         // Latency offsets (Swing)
-        let kick_offset = (self.state.get_kick_latency().as_secs_f64() * self.sample_rate as f64) as u64;
-        let snare_offset = (self.state.get_snare_latency().as_secs_f64() * self.sample_rate as f64) as u64;
-        let hat_offset = (self.state.get_hat_latency().as_secs_f64() * self.sample_rate as f64) as u64;
+        let kick_offset =
+            (self.state.get_kick_latency().as_secs_f64() * self.sample_rate as f64) as u64;
+        let snare_offset =
+            (self.state.get_snare_latency().as_secs_f64() * self.sample_rate as f64) as u64;
+        let hat_offset =
+            (self.state.get_hat_latency().as_secs_f64() * self.sample_rate as f64) as u64;
 
         // Trigger Logic
         if self.current_sample >= self.next_kick_sample {
@@ -135,36 +140,39 @@ impl Synthesizer {
 
             // Calculate next kick time: +2 beats
             let next_grid = self.next_kick_sample - kick_offset + (beat_duration_samples * 2);
-            let new_latency = (self.state.get_kick_latency().as_secs_f64() * self.sample_rate as f64) as u64;
+            let new_latency =
+                (self.state.get_kick_latency().as_secs_f64() * self.sample_rate as f64) as u64;
             self.next_kick_sample = next_grid + new_latency;
 
             if self.next_kick_sample < self.current_sample {
-                 self.next_kick_sample = self.current_sample + beat_duration_samples;
+                self.next_kick_sample = self.current_sample + beat_duration_samples;
             }
         }
 
         if self.current_sample >= self.next_snare_sample {
-             self.snare_phase = Some(0.0);
-             // Snare +2 beats
-             let next_grid = self.next_snare_sample - snare_offset + (beat_duration_samples * 2);
-             let new_latency = (self.state.get_snare_latency().as_secs_f64() * self.sample_rate as f64) as u64;
-             self.next_snare_sample = next_grid + new_latency;
+            self.snare_phase = Some(0.0);
+            // Snare +2 beats
+            let next_grid = self.next_snare_sample - snare_offset + (beat_duration_samples * 2);
+            let new_latency =
+                (self.state.get_snare_latency().as_secs_f64() * self.sample_rate as f64) as u64;
+            self.next_snare_sample = next_grid + new_latency;
 
-             if self.next_snare_sample < self.current_sample {
-                 self.next_snare_sample = self.current_sample + beat_duration_samples;
-             }
+            if self.next_snare_sample < self.current_sample {
+                self.next_snare_sample = self.current_sample + beat_duration_samples;
+            }
         }
 
         if self.current_sample >= self.next_hat_sample {
-             self.hat_phase = Some(0.0);
-             // Hat +0.5 beats
-             let next_grid = self.next_hat_sample - hat_offset + (beat_duration_samples / 2);
-             let new_latency = (self.state.get_hat_latency().as_secs_f64() * self.sample_rate as f64) as u64;
-             self.next_hat_sample = next_grid + new_latency;
+            self.hat_phase = Some(0.0);
+            // Hat +0.5 beats
+            let next_grid = self.next_hat_sample - hat_offset + (beat_duration_samples / 2);
+            let new_latency =
+                (self.state.get_hat_latency().as_secs_f64() * self.sample_rate as f64) as u64;
+            self.next_hat_sample = next_grid + new_latency;
 
-              if self.next_hat_sample < self.current_sample {
-                 self.next_hat_sample = self.current_sample + (beat_duration_samples / 2);
-             }
+            if self.next_hat_sample < self.current_sample {
+                self.next_hat_sample = self.current_sample + (beat_duration_samples / 2);
+            }
         }
 
         // Initialize logic for start (hacky fix for 0 initialization)
@@ -183,8 +191,10 @@ impl Synthesizer {
             let amp = (-p * 5.0).exp();
             out += (p * freq * 2.0 * std::f32::consts::PI).sin() * amp * 0.8;
 
-            self.kick_phase = Some(p + 1.0/self.sample_rate as f32);
-            if p > 0.5 { self.kick_phase = None; }
+            self.kick_phase = Some(p + 1.0 / self.sample_rate as f32);
+            if p > 0.5 {
+                self.kick_phase = None;
+            }
         }
 
         // Snare
@@ -194,8 +204,10 @@ impl Synthesizer {
             let amp = (-p * 15.0).exp();
             out += (noise * 0.5 + tone * 0.5) * amp * 0.6;
 
-            self.snare_phase = Some(p + 1.0/self.sample_rate as f32);
-            if p > 0.3 { self.snare_phase = None; }
+            self.snare_phase = Some(p + 1.0 / self.sample_rate as f32);
+            if p > 0.3 {
+                self.snare_phase = None;
+            }
         }
 
         // Hat
@@ -204,8 +216,10 @@ impl Synthesizer {
             let amp = (-p * 40.0).exp();
             out += noise * amp * 0.3;
 
-            self.hat_phase = Some(p + 1.0/self.sample_rate as f32);
-            if p > 0.1 { self.hat_phase = None; }
+            self.hat_phase = Some(p + 1.0 / self.sample_rate as f32);
+            if p > 0.1 {
+                self.hat_phase = None;
+            }
         }
 
         out.clamp(-1.0, 1.0)

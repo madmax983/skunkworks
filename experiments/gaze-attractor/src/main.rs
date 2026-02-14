@@ -3,17 +3,20 @@ use crossterm::event::{self, Event, KeyCode};
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},
-    widgets::{Block, Borders, Paragraph},
-    widgets::canvas::{Canvas, Context, Line, Rectangle},
     text::Span,
+    widgets::canvas::{Canvas, Context, Line, Rectangle},
+    widgets::{Block, Borders, Paragraph},
     Terminal,
 };
-use std::{io, time::{Duration, Instant}};
+use std::{
+    io,
+    time::{Duration, Instant},
+};
 use tui_shared::Tui;
 
-mod physics;
-mod eye;
 mod app;
+mod eye;
+mod physics;
 
 use app::{App, Mode};
 
@@ -38,7 +41,10 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>, app: &mut App) -> io::Result<()> {
+fn run_app(
+    terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>,
+    app: &mut App,
+) -> io::Result<()> {
     let tick_rate = Duration::from_millis(16);
     let mut last_tick = Instant::now();
 
@@ -51,16 +57,14 @@ fn run_app(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::S
 
         if crossterm::event::poll(timeout)? {
             match event::read()? {
-                Event::Key(key) => {
-                    match key.code {
-                        KeyCode::Char('q') => return Ok(()),
-                        KeyCode::Char('m') => app.toggle_mode(),
-                        _ => {}
-                    }
+                Event::Key(key) => match key.code {
+                    KeyCode::Char('q') => return Ok(()),
+                    KeyCode::Char('m') => app.toggle_mode(),
+                    _ => {}
                 },
                 Event::Resize(w, h) => {
                     app.resize(w as f32, h as f32);
-                },
+                }
                 _ => {}
             }
         }
@@ -75,10 +79,7 @@ fn run_app(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::S
 fn ui(f: &mut ratatui::Frame, app: &App) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(0),
-            Constraint::Length(3),
-        ].as_ref())
+        .constraints([Constraint::Min(0), Constraint::Length(3)].as_ref())
         .split(f.area());
 
     // Physics Y grows DOWN (0 is top).
@@ -87,7 +88,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
     let height = app.height as f64;
 
     let canvas = Canvas::default()
-        .block(Block::default().borders(Borders::ALL).title("Gaze Attractor"))
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title("Gaze Attractor"),
+        )
         .x_bounds([0.0, app.width as f64])
         .y_bounds([0.0, height]) // 0 at bottom, height at top
         .paint(|ctx: &mut Context| {
@@ -117,7 +122,11 @@ fn ui(f: &mut ratatui::Frame, app: &App) {
                     Color::Green
                 };
 
-                ctx.print(node.pos.x as f64, height - node.pos.y as f64, Span::styled("O", Style::default().fg(color)));
+                ctx.print(
+                    node.pos.x as f64,
+                    height - node.pos.y as f64,
+                    Span::styled("O", Style::default().fg(color)),
+                );
             }
 
             // Draw Eye/Fovea Box

@@ -1,5 +1,5 @@
-use crate::physics::PendulumSystem;
 use crate::eye::Eye;
+use crate::physics::PendulumSystem;
 use glam::Vec2;
 use rand::Rng;
 
@@ -37,7 +37,10 @@ impl App {
 
         for y in 0..rows {
             for x in 0..cols {
-                let pos = Vec2::new(start_x + x as f32 * spacing_x, start_y + y as f32 * spacing_y);
+                let pos = Vec2::new(
+                    start_x + x as f32 * spacing_x,
+                    start_y + y as f32 * spacing_y,
+                );
                 let fixed = y == 0; // Fix top row
                 let mass = if fixed { 0.0 } else { 1.0 };
                 let idx = system.add_node(pos, mass, fixed, format!("Node {}-{}", x, y));
@@ -92,7 +95,9 @@ impl App {
         self.energy_grid.fill(0.0);
 
         for node in &self.system.nodes {
-            if node.fixed { continue; }
+            if node.fixed {
+                continue;
+            }
 
             // Kinetic Energy ~ Velocity^2
             let velocity = node.pos - node.prev_pos;
@@ -119,7 +124,9 @@ impl App {
         let kick_strength = 0.5;
 
         for node in &mut self.system.nodes {
-            if node.fixed { continue; }
+            if node.fixed {
+                continue;
+            }
 
             if self.eye.in_fovea(node.pos.x, node.pos.y) {
                 match self.mode {
@@ -130,7 +137,7 @@ impl App {
                         // prev = pos - new_v
                         let v = node.pos - node.prev_pos;
                         node.prev_pos = node.pos - v * damping;
-                    },
+                    }
                     Mode::Excite => {
                         // Add random energy
                         let angle = rng.gen_range(0.0..std::f32::consts::TAU);

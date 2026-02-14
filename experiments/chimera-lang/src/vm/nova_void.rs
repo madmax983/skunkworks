@@ -46,7 +46,8 @@ pub fn process_rifts(vm: &mut ChimeraVM) {
                     vm.grid[ny][nx] = Value::Int(0);
                     rift.consumed += 1;
                     rift.severity = rift.severity.saturating_add(1);
-                    vm.output.push(format!("VOID RIFT: Consumed at {},{}", nx, ny));
+                    vm.output
+                        .push(format!("VOID RIFT: Consumed at {},{}", nx, ny));
                 }
             }
         }
@@ -61,7 +62,8 @@ pub fn process_rifts(vm: &mut ChimeraVM) {
                 let dx = rng.gen_range(-5..=5);
                 if let Some((ny, nx)) = vm.normalize_coords(ry as i64 + dy, rx as i64 + dx) {
                     new_rifts.push(VoidRift::new((ny, nx)));
-                    vm.output.push(format!("VOID RIFT: Sprouted child at {},{}", nx, ny));
+                    vm.output
+                        .push(format!("VOID RIFT: Sprouted child at {},{}", nx, ny));
                     // Reduce parent severity
                     rift.severity /= 2;
                 }
@@ -83,15 +85,19 @@ pub fn exec_void_rift(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
             if let Some((ny, nx)) = vm.normalize_coords(y, x) {
                 vm.void_rifts.push(VoidRift::new((ny, nx)));
                 vm.energy = vm.energy.saturating_sub(50);
-                vm.output.push(format!("VOID RIFT: Opened at {},{}", nx, ny));
+                vm.output
+                    .push(format!("VOID RIFT: Opened at {},{}", nx, ny));
             } else {
-                vm.output.push("Error: Invalid coordinates for void_rift".to_string());
+                vm.output
+                    .push("Error: Invalid coordinates for void_rift".to_string());
             }
         } else {
-            vm.output.push("Error: Type mismatch for void_rift".to_string());
+            vm.output
+                .push("Error: Type mismatch for void_rift".to_string());
         }
     } else {
-        vm.output.push("Error: Stack underflow for void_rift".to_string());
+        vm.output
+            .push("Error: Stack underflow for void_rift".to_string());
     }
     None
 }
@@ -119,7 +125,8 @@ pub fn exec_void_cast(vm: &mut ChimeraVM) -> Option<(usize, usize)> {
 
     if power > 0 {
         vm.stack.push(Value::Int(power));
-        vm.output.push(format!("VOID CAST: Drew {} power from rift", power));
+        vm.output
+            .push(format!("VOID CAST: Drew {} power from rift", power));
 
         // Risk: Backlash
         let mut rng = rand::thread_rng();

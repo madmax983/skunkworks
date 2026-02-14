@@ -13,7 +13,10 @@ impl Eq for Node {}
 impl Ord for Node {
     fn cmp(&self, other: &Self) -> Ordering {
         // Reverse ordering for Min-Heap behavior in BinaryHeap
-        other.f_score.partial_cmp(&self.f_score).unwrap_or(Ordering::Equal)
+        other
+            .f_score
+            .partial_cmp(&self.f_score)
+            .unwrap_or(Ordering::Equal)
     }
 }
 
@@ -43,7 +46,10 @@ impl HyphaeNetwork {
         // Initialize start
         let start_idx = (start.y as usize) * width + (start.x as usize);
         g_score[start_idx] = 0.0;
-        open_set.push(Node { pos: start, f_score: 0.0 });
+        open_set.push(Node {
+            pos: start,
+            f_score: 0.0,
+        });
 
         Self {
             open_set,
@@ -69,13 +75,19 @@ impl HyphaeNetwork {
 
         let start_idx = (self.start.y as usize) * self.width + (self.start.x as usize);
         self.g_score[start_idx] = 0.0;
-        self.open_set.push(Node { pos: self.start, f_score: 0.0 });
+        self.open_set.push(Node {
+            pos: self.start,
+            f_score: 0.0,
+        });
     }
 
     pub fn update<F>(&mut self, cost_provider: F, steps: usize)
-    where F: Fn(i32, i32) -> f32
+    where
+        F: Fn(i32, i32) -> f32,
     {
-        if self.open_set.is_empty() { return; }
+        if self.open_set.is_empty() {
+            return;
+        }
 
         self.active_tips.clear();
 
@@ -85,24 +97,35 @@ impl HyphaeNetwork {
 
                 // Neighbors (8-way)
                 let neighbors = [
-                    IVec2::new(0, 1), IVec2::new(0, -1),
-                    IVec2::new(1, 0), IVec2::new(-1, 0),
-                    IVec2::new(1, 1), IVec2::new(1, -1),
-                    IVec2::new(-1, 1), IVec2::new(-1, -1),
+                    IVec2::new(0, 1),
+                    IVec2::new(0, -1),
+                    IVec2::new(1, 0),
+                    IVec2::new(-1, 0),
+                    IVec2::new(1, 1),
+                    IVec2::new(1, -1),
+                    IVec2::new(-1, 1),
+                    IVec2::new(-1, -1),
                 ];
 
                 for &offset in &neighbors {
                     let neighbor = current.pos + offset;
 
-                    if neighbor.x < 0 || neighbor.y < 0 ||
-                       neighbor.x >= self.width as i32 || neighbor.y >= self.height as i32 {
+                    if neighbor.x < 0
+                        || neighbor.y < 0
+                        || neighbor.x >= self.width as i32
+                        || neighbor.y >= self.height as i32
+                    {
                         continue;
                     }
 
                     let idx = (neighbor.y as usize) * self.width + (neighbor.x as usize);
                     let curr_idx = (current.pos.y as usize) * self.width + (current.pos.x as usize);
 
-                    let dist_mult = if offset.x != 0 && offset.y != 0 { 1.414 } else { 1.0 };
+                    let dist_mult = if offset.x != 0 && offset.y != 0 {
+                        1.414
+                    } else {
+                        1.0
+                    };
                     let cell_cost = cost_provider(neighbor.x, neighbor.y);
 
                     let move_cost = dist_mult * cell_cost;
@@ -120,7 +143,9 @@ impl HyphaeNetwork {
                         } else {
                             for t in &self.targets {
                                 let d = neighbor.as_vec2().distance(t.as_vec2());
-                                if d < min_h { min_h = d; }
+                                if d < min_h {
+                                    min_h = d;
+                                }
                             }
                         }
 
@@ -148,22 +173,30 @@ impl HyphaeNetwork {
             for x in 0..self.width {
                 let idx = y * self.width + x;
                 if let Some(parent) = self.came_from[idx] {
-                    let p1 = Vec2::new(parent.x as f32, parent.y as f32) * cell_size + cell_size/2.0;
-                    let p2 = Vec2::new(x as f32, y as f32) * cell_size + cell_size/2.0;
+                    let p1 =
+                        Vec2::new(parent.x as f32, parent.y as f32) * cell_size + cell_size / 2.0;
+                    let p2 = Vec2::new(x as f32, y as f32) * cell_size + cell_size / 2.0;
 
                     // Fade out distant branches?
                     // Use g_score for color?
                     let cost = self.g_score[idx];
                     let alpha = (100.0 / (cost + 1.0)).clamp(0.1, 0.6);
 
-                    draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(0.5, 0.8, 0.5, alpha));
+                    draw_line(
+                        p1.x,
+                        p1.y,
+                        p2.x,
+                        p2.y,
+                        1.0,
+                        Color::new(0.5, 0.8, 0.5, alpha),
+                    );
                 }
             }
         }
 
         // Draw active tips
         for tip in &self.active_tips {
-             draw_rectangle(
+            draw_rectangle(
                 tip.x as f32 * cell_size.x,
                 tip.y as f32 * cell_size.y,
                 cell_size.x,

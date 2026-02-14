@@ -1,4 +1,4 @@
-use lensing_poetry::physics::{Body, integrate};
+use lensing_poetry::physics::{integrate, Body};
 use macroquad::prelude::*;
 
 #[test]
@@ -38,10 +38,17 @@ fn test_earth_orbit_stability() {
     // If stub, pos is (1,0).
     // If working, pos should be approx (0, 1).
     // Assert it moved significantly from (1,0)
-    assert!((pos_quarter - vec2(1.0, 0.0)).length() > 0.1, "Body did not move! Stub implementation?");
+    assert!(
+        (pos_quarter - vec2(1.0, 0.0)).length() > 0.1,
+        "Body did not move! Stub implementation?"
+    );
 
     // Assert it is still in orbit (distance ~ 1.0)
-    assert!((dist_quarter - 1.0).abs() < 0.05, "Orbit drifted significantly at quarter turn! r={}", dist_quarter);
+    assert!(
+        (dist_quarter - 1.0).abs() < 0.05,
+        "Orbit drifted significantly at quarter turn! r={}",
+        dist_quarter
+    );
 
     // Run for 100 orbits total (remaining 99.75)
     let total_steps = (period * 100.0 / dt) as usize;
@@ -58,5 +65,9 @@ fn test_earth_orbit_stability() {
     println!("Final Distance: {}", final_dist);
 
     // Symplectic should be stable.
-    assert!((final_dist - 1.0).abs() < 0.05, "Orbit drifted after 100 years! r={}", final_dist);
+    assert!(
+        (final_dist - 1.0).abs() < 0.05,
+        "Orbit drifted after 100 years! r={}",
+        final_dist
+    );
 }

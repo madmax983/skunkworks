@@ -1,13 +1,13 @@
-use std::io;
-use std::time::{Duration, Instant};
 use anyhow::Result;
 use crossterm::event::{self, Event, KeyCode};
 use ratatui::Terminal;
+use std::io;
+use std::time::{Duration, Instant};
 use tui_shared::Tui;
 
-mod retina;
-mod eye;
 mod app;
+mod eye;
+mod retina;
 
 use app::App;
 
@@ -35,7 +35,10 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_app(terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>, app: &mut App) -> io::Result<()> {
+fn run_app(
+    terminal: &mut Terminal<ratatui::backend::CrosstermBackend<std::io::Stdout>>,
+    app: &mut App,
+) -> io::Result<()> {
     let tick_rate = Duration::from_millis(32);
     let mut last_tick = Instant::now();
 

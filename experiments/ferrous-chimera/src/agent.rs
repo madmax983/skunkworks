@@ -1,5 +1,8 @@
 use crate::physics::{Body, Vec2};
-use chimera_lang::{ast::Dna, vm::{ChimeraVM, Value}};
+use chimera_lang::{
+    ast::Dna,
+    vm::{ChimeraVM, Value},
+};
 use ratatui::style::Color;
 
 pub struct Agent {

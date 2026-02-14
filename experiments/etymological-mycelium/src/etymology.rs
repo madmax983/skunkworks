@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use git2::{Repository, Oid};
+use git2::{Oid, Repository};
 use std::path::Path;
 
 #[derive(Clone, Debug)]
@@ -55,17 +55,19 @@ impl EtymologyRiver {
                     } else {
                         String::new()
                     }
-                },
+                }
                 Err(_) => String::new(), // File might not exist in this commit
             };
 
-            let lines: Vec<LineNode> = content.lines().enumerate().map(|(i, s)| {
-                LineNode {
+            let lines: Vec<LineNode> = content
+                .lines()
+                .enumerate()
+                .map(|(i, s)| LineNode {
                     content: s.to_string(),
                     original_line_num: i,
                     id: format!("{}-{}", oid, i),
-                }
-            }).collect();
+                })
+                .collect();
 
             layers.push(CommitLayer {
                 oid,

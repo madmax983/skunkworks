@@ -3,8 +3,8 @@
 mod tests {
     use chimera_lang::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use chimera_lang::opcode::OpCode;
-    use chimera_lang::vm::{ChimeraVM};
     use chimera_lang::vm::pandemonium::apply_storm;
+    use chimera_lang::vm::ChimeraVM;
 
     fn make_vm(len: usize) -> ChimeraVM {
         let mut genes = Vec::new();
@@ -44,17 +44,34 @@ mod tests {
 
                 #[cfg(feature = "elektra")]
                 {
-                    if matches!(gene.op, OpCode::Lightning | OpCode::Shock | OpCode::TeslaCoil | OpCode::Electrogenesis | OpCode::Induction | OpCode::Battery | OpCode::Ground | OpCode::CircuitBreaker) {
+                    if matches!(
+                        gene.op,
+                        OpCode::Lightning
+                            | OpCode::Shock
+                            | OpCode::TeslaCoil
+                            | OpCode::Electrogenesis
+                            | OpCode::Induction
+                            | OpCode::Battery
+                            | OpCode::Ground
+                            | OpCode::CircuitBreaker
+                    ) {
                         found_elektra = true;
                     }
                 }
 
                 #[cfg(not(feature = "elektra"))]
                 {
-                     // If no elektra, check for chaos
-                     if matches!(gene.op, OpCode::Chaos | OpCode::Glitch | OpCode::Scramble | OpCode::Disintegrate | OpCode::EntropySurge) {
+                    // If no elektra, check for chaos
+                    if matches!(
+                        gene.op,
+                        OpCode::Chaos
+                            | OpCode::Glitch
+                            | OpCode::Scramble
+                            | OpCode::Disintegrate
+                            | OpCode::EntropySurge
+                    ) {
                         found_chaos = true;
-                     }
+                    }
                 }
             }
         }
@@ -62,9 +79,15 @@ mod tests {
         assert!(changed, "Storm should mutate at least one gene");
 
         #[cfg(feature = "elektra")]
-        assert!(found_elektra, "Storm with Elektra feature should produce Elektra opcodes");
+        assert!(
+            found_elektra,
+            "Storm with Elektra feature should produce Elektra opcodes"
+        );
 
         #[cfg(all(feature = "nova", not(feature = "elektra")))]
-        assert!(found_chaos, "Storm without Elektra (but with Nova) should produce Chaos opcodes");
+        assert!(
+            found_chaos,
+            "Storm without Elektra (but with Nova) should produce Chaos opcodes"
+        );
     }
 }

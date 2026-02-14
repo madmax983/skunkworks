@@ -1,4 +1,4 @@
-use crate::physics::{ChimeraPin, PacketKind, Particle, resolve_collision};
+use crate::physics::{resolve_collision, ChimeraPin, PacketKind, Particle};
 use chimera_lang::prelude::*;
 use locus::Vec2;
 use rand::Rng;
@@ -56,7 +56,7 @@ impl GameState {
         // Malware is smaller and faster
         let mut p = Particle::new(x, 0.0, kind);
         if let PacketKind::Malware = kind {
-             p.vel.y = 10.0;
+            p.vel.y = 10.0;
         }
         self.particles.push(p);
     }
@@ -69,22 +69,30 @@ impl GameState {
             p.update(dt, gravity);
 
             // Walls
-             if p.pos.x < 1.0 { p.pos.x = 1.0; p.vel.x *= -0.8; }
-             if p.pos.x > self.width - 1.0 { p.pos.x = self.width - 1.0; p.vel.x *= -0.8; }
+            if p.pos.x < 1.0 {
+                p.pos.x = 1.0;
+                p.vel.x *= -0.8;
+            }
+            if p.pos.x > self.width - 1.0 {
+                p.pos.x = self.width - 1.0;
+                p.vel.x *= -0.8;
+            }
         }
 
         // Collisions
         let mut hits = Vec::new();
 
         for p in &mut self.particles {
-             if !p.active { continue; }
-             for pin in &mut self.pins {
-                 if let Some(_) = resolve_collision(p, pin) {
-                     // Hit!
-                     hits.push((pin.index, p.energy_value));
-                     self.score += 1;
-                 }
-             }
+            if !p.active {
+                continue;
+            }
+            for pin in &mut self.pins {
+                if let Some(_) = resolve_collision(p, pin) {
+                    // Hit!
+                    hits.push((pin.index, p.energy_value));
+                    self.score += 1;
+                }
+            }
         }
 
         // Process Hits (VM Execution)
@@ -92,7 +100,9 @@ impl GameState {
             if let Some(pin) = self.pins.get_mut(idx) {
                 // Transfer energy
                 pin.vm.energy = pin.vm.energy.saturating_add(energy);
-                if pin.vm.energy < 0 { pin.vm.energy = 0; }
+                if pin.vm.energy < 0 {
+                    pin.vm.energy = 0;
+                }
 
                 if energy > 0 {
                     // Execute VM step if hit by good packet
@@ -103,13 +113,13 @@ impl GameState {
 
                     if pin.vm.energy > 100 {
                         pin.vm.energy -= 20; // Cost of reproduction/improvement
-                        // Mutate pos slightly to catch more
+                                             // Mutate pos slightly to catch more
                         let nudge_x = rand::thread_rng().gen_range(-0.5..0.5);
-                         pin.pos.x += nudge_x;
+                        pin.pos.x += nudge_x;
                     }
                 } else {
-                     // Malware hit!
-                     // pin.vm.energy already reduced
+                    // Malware hit!
+                    // pin.vm.energy already reduced
                 }
             }
         }
@@ -126,15 +136,17 @@ impl GameState {
 
                 // Look at neighbors (simple scan)
                 for j in 0..pin_count {
-                     if i == j { continue; }
-                     let dist = (self.pins[i].pos - self.pins[j].pos).magnitude();
-                     if dist < 10.0 && self.pins[j].vm.energy > 50 {
-                         if self.pins[j].vm.energy > max_energy {
-                             max_energy = self.pins[j].vm.energy;
-                             // Clone their DNA
-                             best_dna = Some(self.pins[j].vm.dna.clone());
-                         }
-                     }
+                    if i == j {
+                        continue;
+                    }
+                    let dist = (self.pins[i].pos - self.pins[j].pos).magnitude();
+                    if dist < 10.0 && self.pins[j].vm.energy > 50 {
+                        if self.pins[j].vm.energy > max_energy {
+                            max_energy = self.pins[j].vm.energy;
+                            // Clone their DNA
+                            best_dna = Some(self.pins[j].vm.dna.clone());
+                        }
+                    }
                 }
 
                 if let Some(dna) = best_dna {
@@ -164,8 +176,14 @@ impl GameState {
 fn random_dna() -> Dna {
     let mut rng = rand::thread_rng();
     let ops = vec![
-        OpCode::Push, OpCode::Add, OpCode::Sub, OpCode::Photosynthesize,
-        OpCode::GRead, OpCode::GWrite, OpCode::Nop, OpCode::Dup
+        OpCode::Push,
+        OpCode::Add,
+        OpCode::Sub,
+        OpCode::Photosynthesize,
+        OpCode::GRead,
+        OpCode::GWrite,
+        OpCode::Nop,
+        OpCode::Dup,
     ];
 
     let mut genes = Vec::new();
@@ -182,7 +200,7 @@ fn random_dna() -> Dna {
 
     Dna {
         helix: Helix {
-            strands: vec![Strand { genes }]
-        }
+            strands: vec![Strand { genes }],
+        },
     }
 }

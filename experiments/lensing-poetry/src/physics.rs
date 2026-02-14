@@ -19,7 +19,9 @@ pub fn integrate(bodies: &mut [Body], dt: f32) {
     // Compute forces
     for i in 0..n {
         for j in 0..n {
-            if i == j { continue; }
+            if i == j {
+                continue;
+            }
 
             let r_vec = bodies[j].pos - bodies[i].pos;
             let dist_sq = r_vec.length_squared();

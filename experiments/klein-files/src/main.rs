@@ -3,6 +3,7 @@ mod math;
 mod scanner;
 mod state;
 
+use log::{error, info};
 use std::sync::Arc;
 use winit::{
     event::*,
@@ -10,7 +11,6 @@ use winit::{
     keyboard::{KeyCode, PhysicalKey},
     window::WindowBuilder,
 };
-use log::{info, error};
 
 use scanner::scan_fs;
 use state::State;
@@ -33,45 +33,43 @@ fn main() -> anyhow::Result<()> {
 
     let mut state = pollster::block_on(State::new(window.clone(), files));
 
-    event_loop.run(move |event, elwt| {
-        match event {
-            Event::WindowEvent {
-                ref event,
-                window_id,
-            } if window_id == window.id() => {
-                if !state.input(event) {
-                    match event {
-                        WindowEvent::CloseRequested
-                        | WindowEvent::KeyboardInput {
-                            event:
-                                KeyEvent {
-                                    state: ElementState::Pressed,
-                                    physical_key: PhysicalKey::Code(KeyCode::Escape),
-                                    ..
-                                },
-                            ..
-                        } => elwt.exit(),
-                        WindowEvent::Resized(physical_size) => {
-                            state.resize(*physical_size);
-                        }
-                        WindowEvent::RedrawRequested => {
-                            state.update();
-                            match state.render() {
-                                Ok(_) => {}
-                                Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
-                                Err(wgpu::SurfaceError::OutOfMemory) => elwt.exit(),
-                                Err(e) => error!("{:?}", e),
-                            }
-                        }
-                        _ => {}
+    event_loop.run(move |event, elwt| match event {
+        Event::WindowEvent {
+            ref event,
+            window_id,
+        } if window_id == window.id() => {
+            if !state.input(event) {
+                match event {
+                    WindowEvent::CloseRequested
+                    | WindowEvent::KeyboardInput {
+                        event:
+                            KeyEvent {
+                                state: ElementState::Pressed,
+                                physical_key: PhysicalKey::Code(KeyCode::Escape),
+                                ..
+                            },
+                        ..
+                    } => elwt.exit(),
+                    WindowEvent::Resized(physical_size) => {
+                        state.resize(*physical_size);
                     }
+                    WindowEvent::RedrawRequested => {
+                        state.update();
+                        match state.render() {
+                            Ok(_) => {}
+                            Err(wgpu::SurfaceError::Lost) => state.resize(state.size),
+                            Err(wgpu::SurfaceError::OutOfMemory) => elwt.exit(),
+                            Err(e) => error!("{:?}", e),
+                        }
+                    }
+                    _ => {}
                 }
             }
-            Event::AboutToWait => {
-                state.window.request_redraw();
-            }
-            _ => {}
         }
+        Event::AboutToWait => {
+            state.window.request_redraw();
+        }
+        _ => {}
     })?;
 
     Ok(())

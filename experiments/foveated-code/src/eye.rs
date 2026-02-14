@@ -61,8 +61,7 @@ impl Eye {
         let half_w = self.fovea_width / 2.0;
         let half_h = self.fovea_height / 2.0;
 
-        x >= self.x - half_w && x <= self.x + half_w &&
-        y >= self.y - half_h && y <= self.y + half_h
+        x >= self.x - half_w && x <= self.x + half_w && y >= self.y - half_h && y <= self.y + half_h
     }
 }
 
@@ -85,15 +84,18 @@ mod tests {
         // Set a block of spikes around (90, 50)
         let target_idx = 50 * 100 + 90;
         spikes[target_idx] = true;
-        spikes[target_idx+1] = true;
-        spikes[target_idx-1] = true;
-        spikes[target_idx+100] = true; // row below
+        spikes[target_idx + 1] = true;
+        spikes[target_idx - 1] = true;
+        spikes[target_idx + 100] = true; // row below
 
         // Update multiple times to drift towards target
         for _ in 0..20 {
             eye.update(&spikes, width_usize);
         }
 
-        assert!(eye.x > 60.0, "Eye should move towards spike cluster at x=90");
+        assert!(
+            eye.x > 60.0,
+            "Eye should move towards spike cluster at x=90"
+        );
     }
 }

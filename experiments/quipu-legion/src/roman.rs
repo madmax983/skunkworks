@@ -1,4 +1,4 @@
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use num_bigint::BigUint;
 use num_traits::Zero;
 use std::fmt;
@@ -170,9 +170,9 @@ impl Roman {
     }
 
     fn from_u64_chunk(mut n: u64, vinculum: u32) -> Self {
-         let mut digits = Vec::new();
-         // Basic conversion for 0..999
-         const MAPPINGS: [(u64, BaseSymbol); 7] = [
+        let mut digits = Vec::new();
+        // Basic conversion for 0..999
+        const MAPPINGS: [(u64, BaseSymbol); 7] = [
             (1000, BaseSymbol::M), // Shouldn't be reached in chunk < 1000 except maybe at boundary?
             (500, BaseSymbol::D),
             (100, BaseSymbol::C),
@@ -210,19 +210,31 @@ impl Roman {
         // And my value() logic handles subtraction if previous < current.
 
         for (val, base, _mid, _high) in levels {
-             while n >= val {
-                 // Check subtractives
-                 if val == 900 { digits.push(Symbol::new(BaseSymbol::C, vinculum)); digits.push(Symbol::new(BaseSymbol::M, vinculum)); }
-                 else if val == 400 { digits.push(Symbol::new(BaseSymbol::C, vinculum)); digits.push(Symbol::new(BaseSymbol::D, vinculum)); }
-                 else if val == 90 { digits.push(Symbol::new(BaseSymbol::X, vinculum)); digits.push(Symbol::new(BaseSymbol::C, vinculum)); }
-                 else if val == 40 { digits.push(Symbol::new(BaseSymbol::X, vinculum)); digits.push(Symbol::new(BaseSymbol::L, vinculum)); }
-                 else if val == 9 { digits.push(Symbol::new(BaseSymbol::I, vinculum)); digits.push(Symbol::new(BaseSymbol::X, vinculum)); }
-                 else if val == 4 { digits.push(Symbol::new(BaseSymbol::I, vinculum)); digits.push(Symbol::new(BaseSymbol::V, vinculum)); }
-                 else {
-                     digits.push(Symbol::new(base, vinculum));
-                 }
-                 n -= val;
-             }
+            while n >= val {
+                // Check subtractives
+                if val == 900 {
+                    digits.push(Symbol::new(BaseSymbol::C, vinculum));
+                    digits.push(Symbol::new(BaseSymbol::M, vinculum));
+                } else if val == 400 {
+                    digits.push(Symbol::new(BaseSymbol::C, vinculum));
+                    digits.push(Symbol::new(BaseSymbol::D, vinculum));
+                } else if val == 90 {
+                    digits.push(Symbol::new(BaseSymbol::X, vinculum));
+                    digits.push(Symbol::new(BaseSymbol::C, vinculum));
+                } else if val == 40 {
+                    digits.push(Symbol::new(BaseSymbol::X, vinculum));
+                    digits.push(Symbol::new(BaseSymbol::L, vinculum));
+                } else if val == 9 {
+                    digits.push(Symbol::new(BaseSymbol::I, vinculum));
+                    digits.push(Symbol::new(BaseSymbol::X, vinculum));
+                } else if val == 4 {
+                    digits.push(Symbol::new(BaseSymbol::I, vinculum));
+                    digits.push(Symbol::new(BaseSymbol::V, vinculum));
+                } else {
+                    digits.push(Symbol::new(base, vinculum));
+                }
+                n -= val;
+            }
         }
 
         Roman { digits }
@@ -265,7 +277,9 @@ impl FromStr for Roman {
         // Naive parsing: doesn't handle parenthesis for vinculum yet.
         // Assuming standard input for now.
         for c in s.chars() {
-            if c == '(' || c == ')' { continue; } // Skip vinculum markers for naive parse
+            if c == '(' || c == ')' {
+                continue;
+            } // Skip vinculum markers for naive parse
             let base = BaseSymbol::try_from(c)?;
             digits.push(Symbol::new(base, 0));
         }

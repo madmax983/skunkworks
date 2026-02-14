@@ -1,11 +1,11 @@
 mod audio;
-mod physics;
 mod fungus;
+mod physics;
 
-use macroquad::prelude::*;
 use crate::audio::AudioEngine;
-use crate::physics::{Body, update, check_crossings, G};
 use crate::fungus::HyphaeNetwork;
+use crate::physics::{check_crossings, update, Body, G};
+use macroquad::prelude::*;
 
 const STAR_MASS: f32 = 50000.0;
 const GRID_W: usize = 150;
@@ -54,7 +54,12 @@ async fn main() {
                     vel,
                     100.0, // Planet mass
                     8.0,
-                    Color::new(rand::gen_range(0.5, 1.0), rand::gen_range(0.5, 1.0), rand::gen_range(1.0, 1.0), 1.0),
+                    Color::new(
+                        rand::gen_range(0.5, 1.0),
+                        rand::gen_range(0.5, 1.0),
+                        rand::gen_range(1.0, 1.0),
+                        1.0,
+                    ),
                 ));
             }
         }
@@ -83,46 +88,53 @@ async fn main() {
 
         // --- Fungus ---
         // Update targets (Planets)
-        let targets: Vec<IVec2> = bodies.iter().skip(1).map(|b| {
-            // Map world pos to grid pos
-            // World: (-w/2, -h/2) to (w/2, h/2)
-            // Grid: (0, 0) to (GRID_W, GRID_H)
+        let targets: Vec<IVec2> = bodies
+            .iter()
+            .skip(1)
+            .map(|b| {
+                // Map world pos to grid pos
+                // World: (-w/2, -h/2) to (w/2, h/2)
+                // Grid: (0, 0) to (GRID_W, GRID_H)
 
-            // world_x = (grid_x / GRID_W - 0.5) * screen_w
-            // grid_x = (world_x / screen_w + 0.5) * GRID_W
+                // world_x = (grid_x / GRID_W - 0.5) * screen_w
+                // grid_x = (world_x / screen_w + 0.5) * GRID_W
 
-            let gx = ((b.pos.x / screen_w) + 0.5) * GRID_W as f32;
-            let gy = ((b.pos.y / screen_h) + 0.5) * GRID_H as f32;
-            IVec2::new(gx as i32, gy as i32)
-        }).collect();
+                let gx = ((b.pos.x / screen_w) + 0.5) * GRID_W as f32;
+                let gy = ((b.pos.y / screen_h) + 0.5) * GRID_H as f32;
+                IVec2::new(gx as i32, gy as i32)
+            })
+            .collect();
 
         fungus.set_targets(targets);
 
         // Grow
         // Cost Function: Inverse Potential
-        fungus.update(|x, y| {
-            // Convert grid (x,y) to world
-            let wx = (x as f32 / GRID_W as f32 - 0.5) * screen_w;
-            let wy = (y as f32 / GRID_H as f32 - 0.5) * screen_h;
-            let p = Vec2::new(wx, wy);
+        fungus.update(
+            |x, y| {
+                // Convert grid (x,y) to world
+                let wx = (x as f32 / GRID_W as f32 - 0.5) * screen_w;
+                let wy = (y as f32 / GRID_H as f32 - 0.5) * screen_h;
+                let p = Vec2::new(wx, wy);
 
-            let mut potential = 0.0;
-            for b in &bodies {
-                let r = p.distance(b.pos).max(10.0); // Avoid singularity
-                potential += (G * b.mass) / r; // Potential is negative, but we use magnitude here
-            }
+                let mut potential = 0.0;
+                for b in &bodies {
+                    let r = p.distance(b.pos).max(10.0); // Avoid singularity
+                    potential += (G * b.mass) / r; // Potential is negative, but we use magnitude here
+                }
 
-            // Higher potential (closer to mass) -> Lower cost
-            // Potential near star ~ 1000 * 50000 / 20 ~ 2,500,000
-            // Potential far away ~ 1000 * 50000 / 500 ~ 100,000
+                // Higher potential (closer to mass) -> Lower cost
+                // Potential near star ~ 1000 * 50000 / 20 ~ 2,500,000
+                // Potential far away ~ 1000 * 50000 / 500 ~ 100,000
 
-            // We want cost ~1.0 near star and ~25.0 far away to create a gradient.
-            // Cost = K / Potential
-            // K = 2,500,000
+                // We want cost ~1.0 near star and ~25.0 far away to create a gradient.
+                // Cost = K / Potential
+                // K = 2,500,000
 
-            let cost = 2_500_000.0 / (potential + 1.0);
-            cost.max(1.0)
-        }, 100); // 100 steps per frame
+                let cost = 2_500_000.0 / (potential + 1.0);
+                cost.max(1.0)
+            },
+            100,
+        ); // 100 steps per frame
 
         // --- Draw ---
         clear_background(BLACK);
@@ -188,8 +200,15 @@ async fn main() {
             // Trails
             for i in 0..body.trail.len().saturating_sub(1) {
                 let p1 = body.trail[i] + center;
-                let p2 = body.trail[i+1] + center;
-                draw_line(p1.x, p1.y, p2.x, p2.y, 1.0, Color::new(body.color.r, body.color.g, body.color.b, 0.5));
+                let p2 = body.trail[i + 1] + center;
+                draw_line(
+                    p1.x,
+                    p1.y,
+                    p2.x,
+                    p2.y,
+                    1.0,
+                    Color::new(body.color.r, body.color.g, body.color.b, 0.5),
+                );
             }
 
             let p = body.pos + center;
@@ -199,8 +218,20 @@ async fn main() {
         // UI
         draw_text("Harmonic Mycelium", 10.0, 30.0, 20.0, WHITE);
         draw_text("Click to add planet. R to reset.", 10.0, 50.0, 20.0, GRAY);
-        draw_text(&format!("Bodies: {}", bodies.len()), 10.0, 70.0, 20.0, WHITE);
-        draw_text(&format!("Tips: {}", fungus.active_tips.len()), 10.0, 90.0, 20.0, GREEN);
+        draw_text(
+            &format!("Bodies: {}", bodies.len()),
+            10.0,
+            70.0,
+            20.0,
+            WHITE,
+        );
+        draw_text(
+            &format!("Tips: {}", fungus.active_tips.len()),
+            10.0,
+            90.0,
+            20.0,
+            GREEN,
+        );
 
         next_frame().await
     }

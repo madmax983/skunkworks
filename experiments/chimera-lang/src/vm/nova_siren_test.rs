@@ -64,6 +64,9 @@ mod tests {
         process_signals(&mut vm);
 
         assert!(vm.entropy_grid[1][1] < 50, "Omega did not reduce entropy");
-        assert!(vm.hologram_grid[1][1].0 != 0.0 || vm.hologram_grid[1][1].1 != 0.0, "Omega did not update hologram");
+        assert!(
+            vm.hologram_grid[1][1].0 != 0.0 || vm.hologram_grid[1][1].1 != 0.0,
+            "Omega did not update hologram"
+        );
     }
 }

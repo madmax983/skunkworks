@@ -1,6 +1,6 @@
-use walkdir::WalkDir;
-use std::path::{Path, PathBuf};
 use std::f32::consts::PI;
+use std::path::{Path, PathBuf};
+use walkdir::WalkDir;
 
 #[derive(Debug, Clone)]
 #[allow(dead_code)]

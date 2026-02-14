@@ -22,7 +22,8 @@ async fn main() {
         }
     }
 
-    let font_bytes = font_bytes.expect("Failed to load font.ttf. Run from experiments/type-terrain or root.");
+    let font_bytes =
+        font_bytes.expect("Failed to load font.ttf. Run from experiments/type-terrain or root.");
 
     // Generate Terrain
     let text = "GENESIS";
@@ -30,7 +31,11 @@ async fn main() {
     let mesh = terrain.to_mesh();
 
     // Camera setup
-    let mut cam_pos = vec3(terrain.width as f32 / 2.0, 50.0, terrain.height as f32 / 2.0 + 50.0);
+    let mut cam_pos = vec3(
+        terrain.width as f32 / 2.0,
+        50.0,
+        terrain.height as f32 / 2.0 + 50.0,
+    );
     let mut cam_yaw: f32 = 0.0;
     let mut cam_pitch: f32 = -0.5;
 
@@ -77,7 +82,12 @@ async fn main() {
         set_camera(&Camera3D {
             position: cam_pos,
             up: vec3(0., 1., 0.),
-            target: cam_pos + vec3(cam_yaw.sin() * cam_pitch.cos(), cam_pitch.sin(), cam_yaw.cos() * cam_pitch.cos()),
+            target: cam_pos
+                + vec3(
+                    cam_yaw.sin() * cam_pitch.cos(),
+                    cam_pitch.sin(),
+                    cam_yaw.cos() * cam_pitch.cos(),
+                ),
             ..Default::default()
         });
 

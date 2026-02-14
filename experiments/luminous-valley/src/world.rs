@@ -16,8 +16,8 @@ impl World {
         };
 
         for _ in 0..num_boids {
-            let x = rand::gen_range(-width/2.0, width/2.0);
-            let z = rand::gen_range(-depth/2.0, depth/2.0);
+            let x = rand::gen_range(-width / 2.0, width / 2.0);
+            let z = rand::gen_range(-depth / 2.0, depth / 2.0);
             w.boids.push(Boid::new(x, z));
         }
         w
@@ -45,7 +45,9 @@ impl World {
             let dna = self.boids[i].dna.clone();
 
             for j in 0..count {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
 
                 let p2 = self.boids[j].position;
                 let d_sq = p1.distance_squared(p2);

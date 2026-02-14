@@ -256,16 +256,17 @@ fn interpret_char(
             }
             // Trigger effects if any
             if let Some(target) = crate::vm::nova::check_chorus_chords(vm) {
-                 vm.output.push(format!("PLANT: Sang {} -> Triggered {}", note, target));
+                vm.output
+                    .push(format!("PLANT: Sang {} -> Triggered {}", note, target));
             } else {
-                 vm.output.push(format!("PLANT: Sang {}", note));
+                vm.output.push(format!("PLANT: Sang {}", note));
             }
         }
         '~' => {
             // Wiggle: Harmonic Tropism
             let mut amp = 0.0;
             if cy < crate::vm::GRID_SIZE && cx < crate::vm::GRID_SIZE {
-                 amp = vm.resonance_grid[cy][cx].1;
+                amp = vm.resonance_grid[cy][cx].1;
             }
 
             let mut rng = rand::thread_rng();

@@ -61,65 +61,69 @@ impl FluidSim {
         } = self;
 
         // Collision + Streaming step
-        f_next.par_chunks_mut(N_DIRS).enumerate().for_each(|(idx, cell_next)| {
-            let x = (idx % WIDTH) as i32;
-            let y = (idx / WIDTH) as i32;
-            let is_solid = obstacles[idx];
+        f_next
+            .par_chunks_mut(N_DIRS)
+            .enumerate()
+            .for_each(|(idx, cell_next)| {
+                let x = (idx % WIDTH) as i32;
+                let y = (idx / WIDTH) as i32;
+                let is_solid = obstacles[idx];
 
-            // Streaming: Pull from neighbors
-            let mut rho = 0.0;
-            let mut ux = 0.0;
-            let mut uy = 0.0;
-            let mut f_in = [0.0; 9];
+                // Streaming: Pull from neighbors
+                let mut rho = 0.0;
+                let mut ux = 0.0;
+                let mut uy = 0.0;
+                let mut f_in = [0.0; 9];
 
-            for k in 0..9 {
-                let nx = x - DIRS_X[k];
-                let ny = y - DIRS_Y[k];
+                for k in 0..9 {
+                    let nx = x - DIRS_X[k];
+                    let ny = y - DIRS_Y[k];
 
-                let val;
-                if nx >= 0 && nx < WIDTH as i32 && ny >= 0 && ny < HEIGHT as i32 {
-                    let n_idx = (ny as usize) * WIDTH + (nx as usize);
-                    if obstacles[n_idx] {
-                        val = f[idx * N_DIRS + INV_DIRS[k]];
+                    let val;
+                    if nx >= 0 && nx < WIDTH as i32 && ny >= 0 && ny < HEIGHT as i32 {
+                        let n_idx = (ny as usize) * WIDTH + (nx as usize);
+                        if obstacles[n_idx] {
+                            val = f[idx * N_DIRS + INV_DIRS[k]];
+                        } else {
+                            val = f[n_idx * N_DIRS + k];
+                        }
                     } else {
-                        val = f[n_idx * N_DIRS + k];
+                        val = f[idx * N_DIRS + INV_DIRS[k]];
+                    }
+                    f_in[k] = val;
+                    rho += val;
+                    ux += val * DIRS_X[k] as f32;
+                    uy += val * DIRS_Y[k] as f32;
+                }
+
+                if is_solid {
+                    for k in 0..9 {
+                        cell_next[k] = WEIGHTS[k];
                     }
                 } else {
-                     val = f[idx * N_DIRS + INV_DIRS[k]];
-                }
-                f_in[k] = val;
-                rho += val;
-                ux += val * DIRS_X[k] as f32;
-                uy += val * DIRS_Y[k] as f32;
-            }
+                    if rho > 0.0 {
+                        ux /= rho;
+                        uy /= rho;
+                    } else {
+                        ux = 0.0;
+                        uy = 0.0;
+                    }
 
-            if is_solid {
-                for k in 0..9 {
-                    cell_next[k] = WEIGHTS[k];
-                }
-            } else {
-                if rho > 0.0 {
-                    ux /= rho;
-                    uy /= rho;
-                } else {
-                    ux = 0.0;
-                    uy = 0.0;
-                }
+                    let omega = 1.0 / (3.0 * VISCOSITY + 0.5);
+                    let u2 = ux * ux + uy * uy;
 
-                let omega = 1.0 / (3.0 * VISCOSITY + 0.5);
-                let u2 = ux * ux + uy * uy;
-
-                for k in 0..9 {
-                    let cu = DIRS_X[k] as f32 * ux + DIRS_Y[k] as f32 * uy;
-                    let f_eq = rho * WEIGHTS[k] * (1.0 + 3.0 * cu + 4.5 * cu * cu - 1.5 * u2);
-                    cell_next[k] = f_in[k] + omega * (f_eq - f_in[k]);
+                    for k in 0..9 {
+                        let cu = DIRS_X[k] as f32 * ux + DIRS_Y[k] as f32 * uy;
+                        let f_eq = rho * WEIGHTS[k] * (1.0 + 3.0 * cu + 4.5 * cu * cu - 1.5 * u2);
+                        cell_next[k] = f_in[k] + omega * (f_eq - f_in[k]);
+                    }
                 }
-            }
-        });
+            });
 
         std::mem::swap(f, f_next);
 
-        density.par_iter_mut()
+        density
+            .par_iter_mut()
             .zip(velocity_x.par_iter_mut())
             .zip(velocity_y.par_iter_mut())
             .zip(obstacles.par_iter())
@@ -153,39 +157,39 @@ impl FluidSim {
     }
 
     pub fn add_density(&mut self, x: usize, y: usize, amount: f32) {
-         for dy in 0..3 {
-             for dx in 0..3 {
-                 let px = x + dx;
-                 let py = y + dy;
-                 if px < WIDTH && py < HEIGHT {
-                     let idx = py * WIDTH + px;
-                     if !self.obstacles[idx] {
-                         for k in 0..9 {
-                             self.f[idx * N_DIRS + k] += amount * WEIGHTS[k];
-                         }
-                     }
-                 }
-             }
-         }
+        for dy in 0..3 {
+            for dx in 0..3 {
+                let px = x + dx;
+                let py = y + dy;
+                if px < WIDTH && py < HEIGHT {
+                    let idx = py * WIDTH + px;
+                    if !self.obstacles[idx] {
+                        for k in 0..9 {
+                            self.f[idx * N_DIRS + k] += amount * WEIGHTS[k];
+                        }
+                    }
+                }
+            }
+        }
     }
 
     pub fn add_velocity(&mut self, x: usize, y: usize, amount_x: f32, amount_y: f32) {
         for dy in 0..3 {
-             for dx in 0..3 {
-                 let px = x + dx;
-                 let py = y + dy;
-                 if px < WIDTH && py < HEIGHT {
-                     let idx = py * WIDTH + px;
-                     if !self.obstacles[idx] {
+            for dx in 0..3 {
+                let px = x + dx;
+                let py = y + dy;
+                if px < WIDTH && py < HEIGHT {
+                    let idx = py * WIDTH + px;
+                    if !self.obstacles[idx] {
                         let rho = self.density[idx];
                         for k in 0..9 {
                             let cu = DIRS_X[k] as f32 * amount_x + DIRS_Y[k] as f32 * amount_y;
                             self.f[idx * N_DIRS + k] += 3.0 * rho * WEIGHTS[k] * cu;
                         }
-                     }
-                 }
-             }
-         }
+                    }
+                }
+            }
+        }
     }
 
     pub fn set_obstacle(&mut self, x: usize, y: usize, active: bool) {
@@ -215,7 +219,12 @@ mod tests {
         // Float precision might cause drift, but should be small
         // With density initialized to 1.0, sum is N_CELLS = 20000.
         // Step shouldn't change it much.
-        assert!((initial_mass - final_mass).abs() < 10.0, "Mass not conserved: {} vs {}", initial_mass, final_mass);
+        assert!(
+            (initial_mass - final_mass).abs() < 10.0,
+            "Mass not conserved: {} vs {}",
+            initial_mass,
+            final_mass
+        );
     }
 
     #[test]

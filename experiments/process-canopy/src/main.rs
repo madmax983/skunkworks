@@ -1,13 +1,13 @@
-mod monitor;
 mod lsystem;
-mod tree;
+mod monitor;
 mod simulation;
+mod tree;
 
 use macroquad::prelude::*;
 use monitor::fetch_processes;
-use tree::Tree;
+use simulation::{ScheduleMode, Sun};
 use sysinfo::System;
-use simulation::{Sun, ScheduleMode};
+use tree::Tree;
 
 #[macroquad::main("Process Canopy")]
 async fn main() {
@@ -44,16 +44,19 @@ async fn main() {
 
         // Priority Logic: Snap Sun to Highest CPU if mode is Priority
         if sun.mode == ScheduleMode::Priority && !trees.is_empty() {
-             // Find tree with highest CPU
-             if let Some(target) = trees.iter().max_by(|a, b| a.stats.cpu_usage.partial_cmp(&b.stats.cpu_usage).unwrap()) {
-                 // Move sun towards target
-                 let diff = target.position.x - sun.position.x;
-                 if diff.abs() > 5.0 {
-                     sun.position.x += diff.signum() * 200.0 * dt;
-                 } else {
-                     sun.position.x = target.position.x;
-                 }
-             }
+            // Find tree with highest CPU
+            if let Some(target) = trees
+                .iter()
+                .max_by(|a, b| a.stats.cpu_usage.partial_cmp(&b.stats.cpu_usage).unwrap())
+            {
+                // Move sun towards target
+                let diff = target.position.x - sun.position.x;
+                if diff.abs() > 5.0 {
+                    sun.position.x += diff.signum() * 200.0 * dt;
+                } else {
+                    sun.position.x = target.position.x;
+                }
+            }
         }
 
         clear_background(SKYBLUE);
@@ -77,10 +80,28 @@ async fn main() {
         // Draw UI
         draw_text(&format!("FPS: {}", get_fps()), 20.0, 20.0, 30.0, BLACK);
         draw_text("Top 20 Processes by CPU", 20.0, 50.0, 20.0, BLACK);
-        draw_text(&format!("Scheduler Mode: {} (Space)", match sun.mode { ScheduleMode::RoundRobin => "Round Robin", ScheduleMode::Priority => "Priority" }), 20.0, 80.0, 20.0, BLACK);
+        draw_text(
+            &format!(
+                "Scheduler Mode: {} (Space)",
+                match sun.mode {
+                    ScheduleMode::RoundRobin => "Round Robin",
+                    ScheduleMode::Priority => "Priority",
+                }
+            ),
+            20.0,
+            80.0,
+            20.0,
+            BLACK,
+        );
 
         // Instructions
-        draw_text("Sun highlights active process (simulated)", 20.0, screen_height() - 40.0, 20.0, WHITE);
+        draw_text(
+            "Sun highlights active process (simulated)",
+            20.0,
+            screen_height() - 40.0,
+            20.0,
+            WHITE,
+        );
 
         next_frame().await
     }

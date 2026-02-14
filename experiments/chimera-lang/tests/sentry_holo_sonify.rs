@@ -1,8 +1,8 @@
 #[cfg(feature = "nova")]
 mod tests {
-    use chimera_lang::ast::{Dna, Helix, Strand, Gene};
-    use chimera_lang::vm::{ChimeraVM, MidiEvent};
+    use chimera_lang::ast::{Dna, Gene, Helix, Strand};
     use chimera_lang::opcode::OpCode;
+    use chimera_lang::vm::{ChimeraVM, MidiEvent};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -25,7 +25,9 @@ mod tests {
             args: vec![],
         };
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes: vec![gene] }] }
+            helix: Helix {
+                strands: vec![Strand { genes: vec![gene] }],
+            },
         };
         vm.dna = dna;
 
@@ -33,13 +35,13 @@ mod tests {
 
         assert!(!vm.midi_messages.is_empty(), "Should generate MIDI");
         if let MidiEvent::NoteOn { note, velocity, .. } = vm.midi_messages[0] {
-             // (5 + 5*16) % 64 + 36
-             // 85 % 64 = 21. 21 + 36 = 57.
-             // Wait, GRID_SIZE is 16.
-             // x=5, y=5. index = 5 + 5*16 = 85.
-             // 85 % 64 = 21. 21+36 = 57 (A3).
-             assert_eq!(note, 57);
-             assert!(velocity > 0);
+            // (5 + 5*16) % 64 + 36
+            // 85 % 64 = 21. 21 + 36 = 57.
+            // Wait, GRID_SIZE is 16.
+            // x=5, y=5. index = 5 + 5*16 = 85.
+            // 85 % 64 = 21. 21+36 = 57 (A3).
+            assert_eq!(note, 57);
+            assert!(velocity > 0);
         } else {
             panic!("Expected NoteOn");
         }
@@ -65,7 +67,9 @@ mod tests {
             args: vec![],
         };
         let dna = Dna {
-            helix: Helix { strands: vec![Strand { genes: vec![gene] }] }
+            helix: Helix {
+                strands: vec![Strand { genes: vec![gene] }],
+            },
         };
         vm.dna = dna;
 

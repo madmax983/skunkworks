@@ -209,8 +209,7 @@ fn ui(f: &mut Frame, app: &App) {
     // Status Bar
     let status = format!(
         "R: {:.5} | Speed: {:.3} | Space: Pause | Up/Down: Speed",
-        app.r,
-        app.speed
+        app.r, app.speed
     );
     f.render_widget(
         Paragraph::new(status).block(Block::default().borders(Borders::ALL)),

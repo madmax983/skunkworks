@@ -1,7 +1,7 @@
-use winit::window::Window;
-use winit::event::*;
-use wgpu::util::DeviceExt;
 use std::sync::Arc;
+use wgpu::util::DeviceExt;
+use winit::event::*;
+use winit::window::Window;
 
 use crate::camera::{Camera, CameraController};
 use crate::math::figure_8_klein;
@@ -18,13 +18,11 @@ impl Vertex {
         wgpu::VertexBufferLayout {
             array_stride: std::mem::size_of::<Vertex>() as wgpu::BufferAddress,
             step_mode: wgpu::VertexStepMode::Vertex,
-            attributes: &[
-                wgpu::VertexAttribute {
-                    offset: 0,
-                    shader_location: 0,
-                    format: wgpu::VertexFormat::Float32x3,
-                },
-            ],
+            attributes: &[wgpu::VertexAttribute {
+                offset: 0,
+                shader_location: 0,
+                format: wgpu::VertexFormat::Float32x3,
+            }],
         }
     }
 }
@@ -215,18 +213,21 @@ impl State {
         });
 
         // --- Instances ---
-        let instances_data: Vec<Instance> = files.iter().map(|f| {
-            let pos = figure_8_klein(f.u, f.v, 3.0);
-            let color = if f.is_dir {
-                [0.2, 0.8, 0.2, 1.0]
-            } else {
-                [0.8, 0.2, 0.2, 1.0]
-            };
-            Instance {
-                model_pos: pos,
-                color,
-            }
-        }).collect();
+        let instances_data: Vec<Instance> = files
+            .iter()
+            .map(|f| {
+                let pos = figure_8_klein(f.u, f.v, 3.0);
+                let color = if f.is_dir {
+                    [0.2, 0.8, 0.2, 1.0]
+                } else {
+                    [0.8, 0.2, 0.2, 1.0]
+                };
+                Instance {
+                    model_pos: pos,
+                    color,
+                }
+            })
+            .collect();
 
         let instance_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("Instance Buffer"),
@@ -238,9 +239,31 @@ impl State {
         // --- Cube Geometry ---
         let vertex_data = [
             // Front
-            Vertex { position: [-0.05, -0.05, 0.05] }, Vertex { position: [0.05, -0.05, 0.05] }, Vertex { position: [0.05, 0.05, 0.05] }, Vertex { position: [-0.05, 0.05, 0.05] },
+            Vertex {
+                position: [-0.05, -0.05, 0.05],
+            },
+            Vertex {
+                position: [0.05, -0.05, 0.05],
+            },
+            Vertex {
+                position: [0.05, 0.05, 0.05],
+            },
+            Vertex {
+                position: [-0.05, 0.05, 0.05],
+            },
             // Back
-            Vertex { position: [-0.05, -0.05, -0.05] }, Vertex { position: [0.05, -0.05, -0.05] }, Vertex { position: [0.05, 0.05, -0.05] }, Vertex { position: [-0.05, 0.05, -0.05] },
+            Vertex {
+                position: [-0.05, -0.05, -0.05],
+            },
+            Vertex {
+                position: [0.05, -0.05, -0.05],
+            },
+            Vertex {
+                position: [0.05, 0.05, -0.05],
+            },
+            Vertex {
+                position: [-0.05, 0.05, -0.05],
+            },
         ];
         // Indices for 6 faces, 2 triangles each
         let index_data: [u16; 36] = [
@@ -281,11 +304,12 @@ impl State {
         // --- Shaders & Pipelines ---
         let shader = device.create_shader_module(wgpu::include_wgsl!("shader.wgsl"));
 
-        let render_pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("Render Pipeline Layout"),
-            bind_group_layouts: &[&camera_bind_group_layout],
-            push_constant_ranges: &[],
-        });
+        let render_pipeline_layout =
+            device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+                label: Some("Render Pipeline Layout"),
+                bind_group_layouts: &[&camera_bind_group_layout],
+                push_constant_ranges: &[],
+            });
 
         // Pipeline for Cubes (Triangle List)
         let render_pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
@@ -406,11 +430,14 @@ impl State {
                 sample_count: 1,
                 dimension: wgpu::TextureDimension::D2,
                 format: Self::DEPTH_FORMAT,
-                usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+                usage: wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | wgpu::TextureUsages::TEXTURE_BINDING,
                 label: Some("depth_texture"),
                 view_formats: &[],
             });
-            self.depth_view = self.depth_texture.create_view(&wgpu::TextureViewDescriptor::default());
+            self.depth_view = self
+                .depth_texture
+                .create_view(&wgpu::TextureViewDescriptor::default());
 
             self.camera.aspect = self.config.width as f32 / self.config.height as f32;
         }
@@ -439,11 +466,15 @@ impl State {
 
     pub fn render(&mut self) -> Result<(), wgpu::SurfaceError> {
         let output = self.surface.get_current_texture()?;
-        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+        let view = output
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
 
-        let mut encoder = self.device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
-            label: Some("Render Encoder"),
-        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Render Encoder"),
+            });
 
         {
             let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -477,7 +508,8 @@ impl State {
             render_pass.set_pipeline(&self.line_pipeline);
             render_pass.set_bind_group(0, &self.camera_bind_group, &[]);
             render_pass.set_vertex_buffer(0, self.klein_vertex_buffer.slice(..));
-            render_pass.set_index_buffer(self.klein_index_buffer.slice(..), wgpu::IndexFormat::Uint32);
+            render_pass
+                .set_index_buffer(self.klein_index_buffer.slice(..), wgpu::IndexFormat::Uint32);
             render_pass.draw_indexed(0..self.klein_num_indices, 0, 0..1);
 
             // Draw File Instances (Cubes)
@@ -486,7 +518,8 @@ impl State {
                 // Bind Group 0 (Camera) is already set and compatible
                 render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
                 render_pass.set_vertex_buffer(1, self.instance_buffer.slice(..));
-                render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
+                render_pass
+                    .set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
                 render_pass.draw_indexed(0..self.num_indices, 0, 0..self.num_instances);
             }
         }

@@ -1,10 +1,10 @@
 #[cfg(feature = "nova")]
 #[cfg(test)]
 mod tests {
-    use crate::ast::{Dna, Helix, Strand, Gene, Nucleotide};
-    use crate::vm::{ChimeraVM, Value};
+    use crate::ast::{Dna, Gene, Helix, Nucleotide, Strand};
     use crate::opcode::OpCode;
     use crate::vm::nova_weaver::exec_weave_op;
+    use crate::vm::{ChimeraVM, Value};
 
     fn make_vm() -> ChimeraVM {
         let dna = Dna {
@@ -19,11 +19,17 @@ mod tests {
 
         // Strand 0 (A): [ Push(1) ]
         let s0 = Strand {
-            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }],
         };
         // Strand 1 (B): [ Push(2) ]
         let s1 = Strand {
-            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            }],
         };
 
         vm.dna.helix.strands.push(s0);
@@ -58,19 +64,31 @@ mod tests {
 
         // Strand 0 (A): [ Push(1) ]
         let s0 = Strand {
-            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(1)] }]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(1)],
+            }],
         };
         // Strand 1 (B): [ Push(2) ]
         let s1 = Strand {
-            genes: vec![Gene { op: OpCode::Push, args: vec![Nucleotide::Number(2)] }]
+            genes: vec![Gene {
+                op: OpCode::Push,
+                args: vec![Nucleotide::Number(2)],
+            }],
         };
 
         // Strand 2 (Pattern): [ Add(A..), Brz(B..) ] -> Pattern "AB"
         let s2_pat = Strand {
             genes: vec![
-                Gene { op: OpCode::Add, args: vec![] }, // Starts with 'A'
-                Gene { op: OpCode::Brz, args: vec![] }, // Starts with 'B'
-            ]
+                Gene {
+                    op: OpCode::Add,
+                    args: vec![],
+                }, // Starts with 'A'
+                Gene {
+                    op: OpCode::Brz,
+                    args: vec![],
+                }, // Starts with 'B'
+            ],
         };
 
         vm.dna.helix.strands.push(s0);
@@ -102,10 +120,19 @@ mod tests {
         // Strand 0: 3 genes
         let s0 = Strand {
             genes: vec![
-                Gene { op: OpCode::Nop, args: vec![] },
-                Gene { op: OpCode::Nop, args: vec![] },
-                Gene { op: OpCode::Nop, args: vec![] },
-            ]
+                Gene {
+                    op: OpCode::Nop,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Nop,
+                    args: vec![],
+                },
+                Gene {
+                    op: OpCode::Nop,
+                    args: vec![],
+                },
+            ],
         };
         vm.dna.helix.strands.push(s0);
         vm.energy = 0;
