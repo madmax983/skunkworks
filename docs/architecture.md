@@ -320,6 +320,41 @@ classDiagram
     GitAssociates *-- GitScanner : Exports
 ```
 
+### Flocking Physics (crates/flocking)
+
+Encapsulates Reynolds' flocking rules to ensure consistent Boid behavior across experiments (ADR 032).
+
+```mermaid
+classDiagram
+    direction LR
+    class PhysicsState {
+        +Vec2 position
+        +Vec2 velocity
+        +Vec2 acceleration
+        +update(max_speed)
+        +apply_force(force)
+    }
+
+    class FlockingParams {
+        +f64 view_radius
+        +f64 separation_radius
+        +f64 max_speed
+        +f64 max_force
+        +f64 separation_weight
+        +f64 alignment_weight
+        +f64 cohesion_weight
+    }
+
+    class FlockingUtils {
+        <<Module>>
+        +compute_force(agents, idx, params) Vec2
+    }
+
+    PhysicsState ..> FlockingUtils : Processed by
+    FlockingUtils ..> FlockingParams : Configured by
+    note for PhysicsState "Uses locus::Vec2"
+```
+
 ## Experiment: Git Harmony
 
 **Git Harmony** (formerly Git Rhythm) generates music from git diffs ("Code Singing").
