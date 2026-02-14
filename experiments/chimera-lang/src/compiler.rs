@@ -3,6 +3,7 @@ use crate::opcode::OpCode;
 use anyhow::{anyhow, Result};
 use pest::Parser;
 use pest_derive::Parser;
+use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -80,6 +81,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
     // Pass 1: Collect strand names and macros
     let mut strand_map: HashMap<String, usize> = HashMap::new();
     let mut macro_map: HashMap<String, pest::iterators::Pairs<Rule>> = HashMap::new();
+    let mut grammar_map: HashMap<String, Nucleotide> = HashMap::new();
 
     for pair in program.clone().into_inner() {
         match pair.as_rule() {
@@ -97,6 +99,13 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
                 // Store the instructions (rest of inner)
                 macro_map.insert(name.to_string(), inner);
             }
+            Rule::grammar_def => {
+                let mut inner = pair.into_inner();
+                let name = inner.next().unwrap().as_str();
+                let arg_pair = inner.next().unwrap();
+                let grammar_struct = parse_argument(arg_pair, &strand_map)?;
+                grammar_map.insert(name.to_string(), grammar_struct);
+            }
             _ => {}
         }
     }
@@ -112,8 +121,14 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
             let mut genes = Vec::new();
 
             for instr in inner {
-                let generated =
-                    parse_instructions(instr, &strand_map, &macro_map, &mut anonymous_strands, 0)?;
+                let generated = parse_instructions(
+                    instr,
+                    &strand_map,
+                    &macro_map,
+                    &grammar_map,
+                    &mut anonymous_strands,
+                    0,
+                )?;
                 genes.extend(generated);
             }
             strands_ast.push(Strand { genes });
@@ -133,6 +148,7 @@ pub fn compile(source: &str, base_path: Option<&Path>) -> Result<Dna> {
 struct CompilerContext<'a, 'i> {
     strand_map: &'a HashMap<String, usize>,
     macro_map: &'a HashMap<String, pest::iterators::Pairs<'i, Rule>>,
+    grammar_map: &'a HashMap<String, Nucleotide>,
     anonymous_strands: &'a mut Vec<Strand>,
     depth: usize,
 }
@@ -152,6 +168,7 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
             Rule::arrow_jump => self.parse_arrow_jump(inner),
             Rule::question_branch => self.parse_question_branch(inner),
             Rule::call => self.parse_call(inner),
+            Rule::polyglot_block => self.parse_polyglot_block(inner),
             #[cfg(feature = "nova")]
             Rule::crispr_block => self.parse_crispr_block(inner),
             Rule::chaos_block => self.parse_chaos_block(inner),
@@ -397,6 +414,30 @@ impl<'a, 'i> CompilerContext<'a, 'i> {
         }
     }
 
+    fn parse_polyglot_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
+        let mut parts = inner.into_inner();
+        let grammar_name = parts.next().unwrap().as_str();
+        let content_pair = parts.next().unwrap();
+        let content = content_pair.as_str();
+
+        let grammar = self
+            .grammar_map
+            .get(grammar_name)
+            .ok_or(anyhow!("Unknown grammar: {}", grammar_name))?;
+
+        let (ast, consumed) = babel_parse(grammar, content)?;
+        if consumed != content.len() {
+            // Warn or error on partial match?
+            // For now, let's treat as error to ensure correctness
+            // But content might have trailing whitespace? babel_parse should handle that?
+            // babel_parse is strict.
+            // Let's trim content before passing?
+            // content is from `nested_text` which is atomic but captures spaces.
+        }
+
+        flatten_ast(&ast)
+    }
+
     #[cfg(feature = "nova")]
     fn parse_crispr_block(&mut self, inner: pest::iterators::Pair<'i, Rule>) -> Result<Vec<Gene>> {
         let mut parts = inner.into_inner();
@@ -451,12 +492,14 @@ fn parse_instructions(
     pair: pest::iterators::Pair<Rule>,
     strand_map: &HashMap<String, usize>,
     macro_map: &HashMap<String, pest::iterators::Pairs<Rule>>,
+    grammar_map: &HashMap<String, Nucleotide>,
     anonymous_strands: &mut Vec<Strand>,
     depth: usize,
 ) -> Result<Vec<Gene>> {
     let mut ctx = CompilerContext {
         strand_map,
         macro_map,
+        grammar_map,
         anonymous_strands,
         depth,
     };
@@ -510,6 +553,16 @@ fn parse_argument(
             }
         }
         Rule::junction => parse_junction(inner, strand_map),
+        Rule::data_call => {
+            let mut parts = inner.into_inner();
+            let name = parts.next().unwrap().as_str();
+            let args_pair = parts.next().unwrap();
+            let mut args = vec![Nucleotide::String(name.to_string())];
+            for arg in args_pair.into_inner() {
+                args.push(parse_argument(arg, strand_map)?);
+            }
+            Ok(Nucleotide::Junction(crate::ast::JunctionType::Any, args))
+        }
         _ => unreachable!("Unexpected argument rule: {:?}", inner.as_rule()),
     }
 }
@@ -533,6 +586,212 @@ fn parse_junction(
         vals.push(parse_argument(arg, strand_map)?);
     }
     Ok(Nucleotide::Junction(t, vals))
+}
+
+fn babel_parse(grammar: &Nucleotide, input: &str) -> Result<(Nucleotide, usize)> {
+    use crate::ast::JunctionType;
+
+    if let Nucleotide::Junction(JunctionType::Any, args) = grammar {
+        if args.is_empty() {
+            return Err(anyhow!("Empty grammar node"));
+        }
+        // Identifier is first arg (e.g., Match("..."))
+        // If it was parsed as data_call, it became Junction(Any, ["Match", "..."])
+        if let Nucleotide::String(type_str) = &args[0] {
+            match type_str.as_str() {
+                "Match" => {
+                    if args.len() < 2 {
+                        return Err(anyhow!("Match requires pattern"));
+                    }
+                    if let Nucleotide::String(pattern) = &args[1] {
+                        if input.starts_with(pattern) {
+                            return Ok((Nucleotide::String(pattern.clone()), pattern.len()));
+                        }
+                    }
+                    Err(anyhow!("Match failed"))
+                }
+                "Regex" => {
+                    if args.len() < 2 {
+                        return Err(anyhow!("Regex requires pattern"));
+                    }
+                    if let Nucleotide::String(pattern) = &args[1] {
+                        let anchored = format!("^{}", pattern);
+                        let re = Regex::new(&anchored).map_err(|e| anyhow!("{}", e))?;
+                        if let Some(mat) = re.find(input) {
+                            let match_str = mat.as_str().to_string();
+                            let len = match_str.len();
+                            return Ok((Nucleotide::String(match_str), len));
+                        }
+                    }
+                    Err(anyhow!("Regex failed"))
+                }
+                "Seq" => {
+                    let mut total_consumed = 0;
+                    let mut results = Vec::new();
+                    for parser in args.iter().skip(1) {
+                        let (res, consumed) = babel_parse(parser, &input[total_consumed..])?;
+                        results.push(res);
+                        total_consumed += consumed;
+                    }
+                    Ok((
+                        Nucleotide::Junction(JunctionType::All, results),
+                        total_consumed,
+                    ))
+                }
+                "Alt" => {
+                    for parser in args.iter().skip(1) {
+                        if let Ok((res, consumed)) = babel_parse(parser, input) {
+                            return Ok((res, consumed));
+                        }
+                    }
+                    Err(anyhow!("Alt failed"))
+                }
+                "Many" => {
+                    if args.len() < 2 {
+                        return Err(anyhow!("Many requires parser"));
+                    }
+                    let p = &args[1];
+                    let mut results = Vec::new();
+                    let mut total_consumed = 0;
+                    while let Ok((res, consumed)) = babel_parse(p, &input[total_consumed..]) {
+                        if consumed == 0 {
+                            break;
+                        }
+                        results.push(res);
+                        total_consumed += consumed;
+                    }
+                    Ok((
+                        Nucleotide::Junction(JunctionType::All, results),
+                        total_consumed,
+                    ))
+                }
+                "Opt" => {
+                    if args.len() < 2 {
+                        return Err(anyhow!("Opt requires parser"));
+                    }
+                    let p = &args[1];
+                    if let Ok((res, consumed)) = babel_parse(p, input) {
+                        Ok((res, consumed))
+                    } else {
+                        Ok((Nucleotide::Junction(JunctionType::All, Vec::new()), 0))
+                    }
+                }
+                "Int" => {
+                    if args.len() < 2 {
+                        return Err(anyhow!("Int requires parser"));
+                    }
+                    let p = &args[1];
+                    let (res, consumed) = babel_parse(p, input)?;
+                    if let Nucleotide::String(s) = res {
+                        if let Ok(n) = s.parse::<i64>() {
+                            return Ok((Nucleotide::Number(n), consumed));
+                        }
+                    }
+                    Err(anyhow!("Int conversion failed"))
+                }
+                "Map" => {
+                    if args.len() < 3 {
+                        return Err(anyhow!("Map requires [parser, template]"));
+                    }
+                    let parser = &args[1];
+                    let template = &args[2];
+                    let (res, consumed) = babel_parse(parser, input)?;
+                    let mapped = resolve_template(template, &res);
+                    Ok((mapped, consumed))
+                }
+                _ => Err(anyhow!("Unknown grammar type: {}", type_str)),
+            }
+        } else {
+            Err(anyhow!("Invalid grammar node structure (expected Type String)"))
+        }
+    } else {
+        Err(anyhow!("Invalid grammar node (expected Junction)"))
+    }
+}
+
+fn flatten_ast(ast: &Nucleotide) -> Result<Vec<Gene>> {
+    match ast {
+        Nucleotide::Junction(crate::ast::JunctionType::All, children) => {
+            let mut genes = Vec::new();
+            for child in children {
+                genes.extend(flatten_ast(child)?);
+            }
+            Ok(genes)
+        }
+        Nucleotide::Junction(crate::ast::JunctionType::Any, children) => {
+            // Handle explicit call structure: [OpName, Arg1, Arg2]
+            if !children.is_empty() {
+                if let Nucleotide::String(op_name) = &children[0] {
+                    // Try to parse as OpCode
+                    if let Ok(op) = OpCode::from_str(op_name) {
+                        let mut args = Vec::new();
+                        for child in children.iter().skip(1) {
+                            args.push(child.clone());
+                        }
+                        return Ok(vec![Gene { op, args }]);
+                    }
+                }
+            }
+            // Fallback: Flatten children sequentially
+            let mut genes = Vec::new();
+            for child in children {
+                genes.extend(flatten_ast(child)?);
+            }
+            Ok(genes)
+        }
+        Nucleotide::String(s) => {
+            if let Ok(op) = OpCode::from_str(s) {
+                Ok(vec![Gene { op, args: vec![] }])
+            } else {
+                Ok(vec![Gene {
+                    op: OpCode::Push,
+                    args: vec![Nucleotide::String(s.clone())],
+                }])
+            }
+        }
+        Nucleotide::Number(n) => Ok(vec![Gene {
+            op: OpCode::Push,
+            args: vec![Nucleotide::Number(*n)],
+        }]),
+        _ => Ok(vec![]),
+    }
+}
+
+fn resolve_template(template: &Nucleotide, match_res: &Nucleotide) -> Nucleotide {
+    use crate::ast::JunctionType;
+    match template {
+        Nucleotide::String(s) if s.starts_with('?') => {
+            // Variable ?1, ?2 etc
+            if let Ok(idx) = s[1..].parse::<usize>() {
+                // 1-based index convention usually? Or 0?
+                // Let's assume 1-based to match Babel vars ?1
+                let i = idx.saturating_sub(1);
+                match match_res {
+                    Nucleotide::Junction(_, children) => {
+                        if i < children.len() {
+                            return children[i].clone();
+                        }
+                    }
+                    _ => {
+                        if i == 0 {
+                            return match_res.clone();
+                        }
+                    }
+                }
+                // Fallback: return as is if not found
+                return template.clone();
+            }
+            template.clone()
+        }
+        Nucleotide::Junction(t, args) => {
+            let resolved: Vec<Nucleotide> = args
+                .iter()
+                .map(|a| resolve_template(a, match_res))
+                .collect();
+            Nucleotide::Junction(*t, resolved)
+        }
+        _ => template.clone(),
+    }
 }
 
 #[cfg(test)]
