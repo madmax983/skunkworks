@@ -2483,7 +2483,7 @@ where
                                 }
                                 2 => {
                                     if let ViewMode::Laboratory = app_state.view_mode {
-                                        if app_state.lab_method < 2 {
+                                        if app_state.lab_method < 3 {
                                             app_state.lab_method += 1;
                                         }
                                     }
@@ -5828,6 +5828,7 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
         0 => "Interleave",
         1 => "Uniform Crossover",
         2 => "Midpoint Split",
+        3 => "Frankenstein",
         _ => "Unknown",
     };
 
@@ -5909,6 +5910,28 @@ fn render_laboratory(f: &mut Frame, vm: &mut ChimeraVM, app_state: &AppState) {
                             .style(Style::default().fg(Color::Magenta)),
                     );
                 }
+            }
+            3 => {
+                // Frankenstein (Preview)
+                // Just show interleaved chunks with sparks
+                preview_items.push(
+                    ListItem::new("Frankenstein Stitching...").style(Style::default().fg(Color::Red)),
+                );
+                preview_items.push(
+                    ListItem::new("[ A Chunk ]").style(Style::default().fg(Color::Cyan)),
+                );
+                preview_items.push(
+                    ListItem::new("⚡ SPARK ⚡").style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                );
+                preview_items.push(
+                    ListItem::new("[ B Chunk ]").style(Style::default().fg(Color::Magenta)),
+                );
+                preview_items.push(
+                    ListItem::new("⚡ SPARK ⚡").style(Style::default().fg(Color::Yellow).add_modifier(Modifier::BOLD)),
+                );
+                preview_items.push(
+                    ListItem::new("...").style(Style::default().fg(Color::DarkGray)),
+                );
             }
             _ => {}
         }

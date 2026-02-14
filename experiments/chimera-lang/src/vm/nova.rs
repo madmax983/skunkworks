@@ -1164,6 +1164,7 @@ pub fn exec_nova_op(vm: &mut ChimeraVM, op: OpCode, args: &[Nucleotide]) -> Opti
         OpCode::Telomerase => super::nova_genetics::exec_telomerase(vm),
         OpCode::TLen => super::nova_genetics::exec_tlen(vm),
         OpCode::Splice => super::nova_genetics::exec_splice(vm),
+        OpCode::Frankenstein => super::nova_genetics::exec_frankenstein(vm),
         OpCode::Recombine => super::nova_genetics::exec_recombine(vm),
         OpCode::SIndex => {
             vm.stack.push(Value::Int(vm.ip.0 as i64));

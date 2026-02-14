@@ -2764,6 +2764,7 @@ impl ChimeraVM {
             | OpCode::Balance
             | OpCode::Ticker
             | OpCode::Splice
+            | OpCode::Frankenstein
             | OpCode::Relativity
             | OpCode::Graviton
             | OpCode::EventHorizon
